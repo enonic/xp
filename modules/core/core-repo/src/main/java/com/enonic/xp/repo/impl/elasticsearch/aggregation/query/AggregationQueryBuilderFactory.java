@@ -1,11 +1,10 @@
 package com.enonic.xp.repo.impl.elasticsearch.aggregation.query;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.query.aggregation.AbstractHistogramAggregationQuery;
 import com.enonic.xp.query.aggregation.AbstractRangeAggregationQuery;
@@ -32,7 +31,7 @@ public class AggregationQueryBuilderFactory
 
     private Set<AbstractAggregationBuilder> doCreate( final AggregationQueries aggregationQueries )
     {
-        Set<AbstractAggregationBuilder> aggregationBuilders = Sets.newHashSet();
+        Set<AbstractAggregationBuilder> aggregationBuilders = new HashSet<>();
 
         for ( final AggregationQuery aggregationQuery : aggregationQueries )
         {

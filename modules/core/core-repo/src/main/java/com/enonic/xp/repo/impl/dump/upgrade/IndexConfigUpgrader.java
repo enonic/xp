@@ -1,13 +1,13 @@
 package com.enonic.xp.repo.impl.dump.upgrade;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
@@ -66,6 +66,7 @@ public class IndexConfigUpgrader
         return NAME;
     }
 
+    @Override
     protected void upgradeRepository( final RepositoryId repositoryId )
     {
         if ( ContentConstants.CONTENT_REPO_ID.equals( repositoryId ) )
@@ -133,7 +134,7 @@ public class IndexConfigUpgrader
 
     private NodeVersionDataJson getNode( final BlobRecord nodeBlobRecord )
     {
-        final CharSource charSource = nodeBlobRecord.getBytes().asCharSource( Charsets.UTF_8 );
+        final CharSource charSource = nodeBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 );
         try
         {
             return deserializeValue( charSource.read(), NodeVersionDataJson.class );
@@ -146,7 +147,7 @@ public class IndexConfigUpgrader
 
     private PatternIndexConfigDocument getIndexConfigDocument( final BlobRecord indexConfigBlobRecord )
     {
-        final CharSource charSource = indexConfigBlobRecord.getBytes().asCharSource( Charsets.UTF_8 );
+        final CharSource charSource = indexConfigBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 );
         try
         {
             final IndexConfigDocumentJson indexConfigDocumentJson = deserializeValue( charSource.read(), IndexConfigDocumentJson.class );

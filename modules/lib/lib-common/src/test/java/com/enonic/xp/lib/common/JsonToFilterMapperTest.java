@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.common;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.ExistsFilter;
@@ -40,9 +40,9 @@ public class JsonToFilterMapperTest
     public void notExists_filter()
         throws Exception
     {
-        Map<String, Object> value = Maps.newHashMap();
+        Map<String, Object> value = new HashMap<>();
 
-        final HashMap<String, Object> notExistsFilter = Maps.newHashMap();
+        final HashMap<String, Object> notExistsFilter = new HashMap<>();
         notExistsFilter.put( "field", "myField" );
 
         value.put( "notExists", notExistsFilter );
@@ -62,9 +62,9 @@ public class JsonToFilterMapperTest
     public void boolean_filter()
         throws Exception
     {
-        Map<String, Object> filter = Maps.newHashMap();
+        Map<String, Object> filter = new HashMap<>();
 
-        final Map<String, Object> boolFilter = Maps.newHashMap();
+        final Map<String, Object> boolFilter = new HashMap<>();
         boolFilter.put( "must", Lists.newArrayList( createExistsFilter(), createExistsFilter() ) );
         boolFilter.put( "mustNot", Lists.newArrayList( createExistsFilter() ) );
         boolFilter.put( "should", Lists.newArrayList( createExistsFilter(), createExistsFilter(), createExistsFilter() ) );
@@ -92,10 +92,10 @@ public class JsonToFilterMapperTest
     public void values_filter()
         throws Exception
     {
-        Map<String, Object> value = Maps.newHashMap();
+        Map<String, Object> value = new HashMap<>();
 
         List<String> values = Lists.newArrayList( "fisk", "ost", "løk" );
-        final HashMap<String, Object> valueFilter = Maps.newHashMap();
+        final HashMap<String, Object> valueFilter = new HashMap<>();
         valueFilter.put( "field", "myField" );
         valueFilter.put( "values", values );
 
@@ -112,10 +112,10 @@ public class JsonToFilterMapperTest
     public void ids_filter()
         throws Exception
     {
-        Map<String, Object> value = Maps.newHashMap();
+        Map<String, Object> value = new HashMap<>();
 
         List<String> values = Lists.newArrayList( "fisk", "ost", "løk" );
-        final HashMap<String, Object> valueFilter = Maps.newHashMap();
+        final HashMap<String, Object> valueFilter = new HashMap<>();
         valueFilter.put( "values", values );
 
         value.put( "ids", valueFilter );
@@ -130,7 +130,7 @@ public class JsonToFilterMapperTest
     public void invalid_filter_type()
         throws IllegalArgumentException
     {
-        Map<String, Object> value = Maps.newHashMap();
+        Map<String, Object> value = new HashMap<>();
         value.put( "dummy", "ost" );
 
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
@@ -143,7 +143,7 @@ public class JsonToFilterMapperTest
     public void array_on_root_single()
         throws Exception
     {
-        final List<Map<String, Object>> existsFilters = Lists.newArrayList();
+        final List<Map<String, Object>> existsFilters = new ArrayList<>();
         existsFilters.add( createExistsFilter() );
 
         final Filters filters = com.enonic.xp.lib.common.JsonToFilterMapper.create( existsFilters );
@@ -155,7 +155,7 @@ public class JsonToFilterMapperTest
     public void array_on_root()
         throws Exception
     {
-        final List<Map<String, Object>> existsFilters = Lists.newArrayList();
+        final List<Map<String, Object>> existsFilters = new ArrayList<>();
         existsFilters.add( createExistsFilter() );
         existsFilters.add( createExistsFilter() );
         existsFilters.add( createExistsFilter() );
@@ -169,8 +169,8 @@ public class JsonToFilterMapperTest
 
     private Map<String, Object> createExistsFilter()
     {
-        Map<String, Object> filter = Maps.newHashMap();
-        final Map<String, Object> filterValues = Maps.newHashMap();
+        Map<String, Object> filter = new HashMap<>();
+        final Map<String, Object> filterValues = new HashMap<>();
         filterValues.put( "field", "myField" );
         filter.put( "exists", filterValues );
         return filter;

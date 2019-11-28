@@ -1,8 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.application.json;
 
+import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 public class MarketApplicationsJson
 {
@@ -12,7 +11,7 @@ public class MarketApplicationsJson
 
     public MarketApplicationsJson()
     {
-        hits = Maps.newHashMap();
+        hits = new HashMap<>();
     }
 
     public Map<String, MarketApplicationJson> getHits()

@@ -13,11 +13,11 @@ import static org.mockito.ArgumentMatchers.eq;
 public class AddMembersHandlerTest
     extends ScriptTestSupport
 {
-    private final PrincipalKey USER = PrincipalKey.from( "user:mystore:user1" );
+    private static final PrincipalKey USER = PrincipalKey.from( "user:mystore:user1" );
 
-    private final PrincipalKey GROUP = PrincipalKey.from( "group:mystore:group1" );
+    private static final PrincipalKey GROUP = PrincipalKey.from( "group:mystore:group1" );
 
-    private final PrincipalKey ROLE = PrincipalKey.from( "role:roleId" );
+    private static final PrincipalKey ROLE = PrincipalKey.from( "role:roleId" );
 
     private SecurityService securityService;
 

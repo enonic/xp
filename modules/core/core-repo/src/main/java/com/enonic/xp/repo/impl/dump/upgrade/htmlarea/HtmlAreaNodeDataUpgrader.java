@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.dump.upgrade.htmlarea;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -9,8 +10,6 @@ import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.data.Property;
@@ -68,7 +67,7 @@ public class HtmlAreaNodeDataUpgrader
     public boolean upgrade( final NodeVersion nodeVersion, final PatternIndexConfigDocument indexConfigDocument,
                             DumpUpgradeStepResult.Builder result )
     {
-        references = Sets.newHashSet();
+        references = new HashSet<>();
         this.nodeVersion = nodeVersion;
 
         this.result = result;

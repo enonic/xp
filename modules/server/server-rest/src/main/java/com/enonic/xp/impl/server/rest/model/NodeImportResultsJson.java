@@ -1,14 +1,13 @@
 package com.enonic.xp.impl.server.rest.model;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.export.NodeImportResult;
 
 public class NodeImportResultsJson
 {
-    private final List<NodeImportResultJson> nodeImportResults = Lists.newArrayList();
+    private final List<NodeImportResultJson> nodeImportResults = new ArrayList<>();
 
     public static NodeImportResultsJson from( final List<NodeImportResult> results )
     {

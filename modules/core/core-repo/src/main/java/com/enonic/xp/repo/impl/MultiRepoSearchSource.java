@@ -1,10 +1,9 @@
 package com.enonic.xp.repo.impl;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.repository.RepositoryIds;
@@ -48,7 +47,7 @@ public class MultiRepoSearchSource
 
     public static final class Builder
     {
-        private Set<SingleRepoSearchSource> sources = Sets.newHashSet();
+        private Set<SingleRepoSearchSource> sources = new HashSet<>();
 
         private Builder()
         {

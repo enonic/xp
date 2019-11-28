@@ -1,8 +1,8 @@
 package com.enonic.xp.launcher.impl.util;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.launcher.VersionInfo;
@@ -81,7 +81,7 @@ public final class BannerPrinter
         try
         {
             final URL url = getClass().getResource( "banner.txt" );
-            return Resources.toString( url, Charsets.UTF_8 );
+            return Resources.toString( url, StandardCharsets.UTF_8 );
         }
         catch ( final Exception e )
         {

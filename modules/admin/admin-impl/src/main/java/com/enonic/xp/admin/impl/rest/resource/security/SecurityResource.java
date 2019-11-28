@@ -22,8 +22,6 @@ import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateGroupJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateIdProviderJson;
@@ -295,7 +293,7 @@ public final class SecurityResource
     private FetchPrincipalsWithRolesResult fetchPrincipalsWithRoles( final PrincipalQuery.Builder principalQuery, final String roles,
                                                                      final int from, final int size )
     {
-        final List<Principal> resultingPrincipals = Lists.newArrayList();
+        final List<Principal> resultingPrincipals = new ArrayList<>();
         int totalCount;
         int fromTemp = from;
         final AtomicInteger unfilteredCount = new AtomicInteger( 0 );
@@ -642,7 +640,7 @@ public final class SecurityResource
         this.idProviderControllerService = idProviderControllerService;
     }
 
-    private class FetchPrincipalsWithRolesResult
+    private static class FetchPrincipalsWithRolesResult
     {
         private List<Principal> principals;
 

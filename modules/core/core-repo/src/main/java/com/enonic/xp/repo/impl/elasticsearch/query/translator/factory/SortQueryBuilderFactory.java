@@ -8,8 +8,6 @@ import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.query.expr.DynamicOrderExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
@@ -38,7 +36,7 @@ public class SortQueryBuilderFactory
             return new ArrayList<>();
         }
 
-        List<SortBuilder> sortBuilders = Lists.newArrayList();
+        List<SortBuilder> sortBuilders = new ArrayList<>();
 
         for ( final OrderExpr orderExpr : orderExpressions )
         {

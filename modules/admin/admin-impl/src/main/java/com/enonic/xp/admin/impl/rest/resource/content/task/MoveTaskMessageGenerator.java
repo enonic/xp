@@ -13,6 +13,7 @@ class MoveTaskMessageGenerator
         return "Nothing was moved.";
     }
 
+    @Override
     void appendMessageForSingleFailure( final StringBuilder builder, final MoveRunnableTaskResult result )
     {
         final List<ContentPath> existsFailed = result.getExistsFailed();
@@ -22,8 +23,7 @@ class MoveTaskMessageGenerator
 
         if ( existsFailed != null && existsFailed.size() == 1 )
         {
-            builder.append( String.format( "Item \"%s\" already exists at \"%s\".", existsFailed.get( 0 ).getName(),
-                                           result.getDestination().toString() ) );
+            builder.append( String.format( "Item \"%s\" already exists at \"%s\".", existsFailed.get( 0 ).getName(), result.getDestination().toString() ) );
         }
         else if ( notExistsFailed != null && notExistsFailed.size() == 1 )
         {
@@ -40,6 +40,7 @@ class MoveTaskMessageGenerator
         }
     }
 
+    @Override
     void appendMessageForMultipleFailure( final StringBuilder builder, final MoveRunnableTaskResult result )
     {
         builder.append( "Failed to move " ).append( result.getFailureCount() ).append( " items" );
@@ -73,6 +74,7 @@ class MoveTaskMessageGenerator
         builder.append( "." );
     }
 
+    @Override
     void appendMessageForSingleSuccess( final StringBuilder builder, final MoveRunnableTaskResult result )
     {
         final List<ContentPath> alreadyMoved = result.getAlreadyMoved();
@@ -87,6 +89,7 @@ class MoveTaskMessageGenerator
         }
     }
 
+    @Override
     void appendMessageForMultipleSuccess( final StringBuilder builder, final MoveRunnableTaskResult result )
     {
         builder.append( result.getSuccessCount() ).append( " items were moved" );

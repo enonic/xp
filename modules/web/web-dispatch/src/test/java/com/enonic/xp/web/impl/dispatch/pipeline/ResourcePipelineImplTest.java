@@ -1,5 +1,9 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,7 +15,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceReference;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
 
@@ -55,7 +58,7 @@ public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, 
         this.pipeline.add( def1 );
         Mockito.verify( def1, Mockito.times( 0 ) ).init( Mockito.any() );
 
-        this.pipeline.activate( Maps.newHashMap() );
+        this.pipeline.activate( new HashMap<>() );
 
         this.pipeline.init( this.context );
         Mockito.verify( def1, Mockito.times( 1 ) ).init( this.context );
@@ -71,13 +74,13 @@ public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, 
         final D def = newDefinition();
         this.pipeline.add( def );
 
-        this.pipeline.activate( Maps.newHashMap() );
+        this.pipeline.activate( new HashMap<>() );
 
         this.pipeline.destroy();
         Mockito.verify( def, Mockito.times( 1 ) ).destroy();
     }
 
-    protected final class MyServiceReference<T>
+    protected static final class MyServiceReference<T>
         implements ServiceReference<T>
     {
         @Override
@@ -114,6 +117,12 @@ public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, 
         public int compareTo( final Object reference )
         {
             return 0;
+        }
+
+        @Override
+        public Dictionary<String, Object> getProperties()
+        {
+            return new Hashtable<>();
         }
     }
 }

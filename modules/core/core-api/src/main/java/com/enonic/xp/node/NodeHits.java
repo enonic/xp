@@ -1,11 +1,11 @@
 package com.enonic.xp.node;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
@@ -20,7 +20,7 @@ public class NodeHits
 
     public static NodeHits empty()
     {
-        final List<NodeHit> returnFields = Lists.newArrayList();
+        final List<NodeHit> returnFields = new ArrayList<>();
         return new NodeHits( returnFields );
     }
 
@@ -41,7 +41,7 @@ public class NodeHits
 
     public static class Builder
     {
-        private final List<NodeHit> nodeHits = Lists.newArrayList();
+        private final List<NodeHit> nodeHits = new ArrayList<>();
 
         public Builder add( final NodeHit nodeHit )
         {

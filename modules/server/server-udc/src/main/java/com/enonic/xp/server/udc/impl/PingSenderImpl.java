@@ -2,12 +2,11 @@ package com.enonic.xp.server.udc.impl;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Charsets;
 
 final class PingSenderImpl
     implements PingSender
@@ -49,7 +48,7 @@ final class PingSenderImpl
         conn.setReadTimeout( (int) HTTP_TIMEOUT );
         conn.setRequestMethod( "POST" );
 
-        conn.getOutputStream().write( body.getBytes( Charsets.UTF_8 ) );
+        conn.getOutputStream().write( body.getBytes( StandardCharsets.UTF_8 ) );
 
         final int status = conn.getResponseCode();
         if ( status >= 300 )

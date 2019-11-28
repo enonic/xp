@@ -80,7 +80,7 @@ public class ContentTypeValidationResult
 
     public static class Builder
     {
-        private ImmutableList.Builder<ContentTypeValidationError> errors = new ImmutableList.Builder<ContentTypeValidationError>();
+        private ImmutableList.Builder<ContentTypeValidationError> errors = new ImmutableList.Builder<>();
 
         public Builder addError( ContentTypeValidationError error )
         {

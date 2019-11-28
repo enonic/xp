@@ -21,6 +21,7 @@ public class TermSuggestion
             super( name );
         }
 
+        @Override
         public TermSuggestion build()
         {
             return new TermSuggestion( this );

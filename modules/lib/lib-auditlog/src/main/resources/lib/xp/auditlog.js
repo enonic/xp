@@ -36,7 +36,6 @@ function nullOrValue(value) {
  * @param {string} [params.time] Log entry timestamp. Defaults to now.
  * @param {string} [params.source] Log entry source. Defaults to the application ID.
  * @param {string} [params.user] Log entry user. Defaults to the user of current context.
- * @param {string} [params.message] Log entry message. Defaults to empty string.
  * @param {array}  [params.objects] URIs to objects that relate to this log entry. Defaults to empty array.
  * @param {object} [params.data] Custom extra data for the this log entry. Defaults to empty object.
  *
@@ -48,7 +47,6 @@ exports.log = function (params) {
     bean.time = nullOrValue(params.time);
     bean.source = params.source === undefined ? app.name : params.source;
     bean.user = nullOrValue(params.user);
-    bean.message = nullOrValue(params.message);
     bean.objectUris = __.toScriptValue(params.objects);
     bean.data = __.toScriptValue(params.data);
 

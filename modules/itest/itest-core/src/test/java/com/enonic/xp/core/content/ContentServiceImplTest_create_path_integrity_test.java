@@ -1,5 +1,6 @@
 package com.enonic.xp.core.content;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -7,8 +8,6 @@ import java.util.concurrent.Future;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
@@ -31,7 +30,7 @@ public class ContentServiceImplTest_create_path_integrity_test
     public void create()
         throws Exception
     {
-        List<Future> threads = Lists.newArrayList();
+        List<Future> threads = new ArrayList<>();
 
         final ExecutorService executor = Executors.newFixedThreadPool( 5 );
 

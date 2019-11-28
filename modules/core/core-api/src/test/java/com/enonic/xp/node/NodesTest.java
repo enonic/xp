@@ -1,11 +1,10 @@
 package com.enonic.xp.node;
 
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.Sets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -15,7 +14,7 @@ public class NodesTest
     public void preserves_order_set()
         throws Exception
     {
-        final Set<Node> nodeSet = Sets.newLinkedHashSet();
+        final Set<Node> nodeSet = new LinkedHashSet<>();
 
         final Node node1 = Node.create( NodeId.from( "z" ) ).build();
         final Node node2 = Node.create( NodeId.from( "y" ) ).build();

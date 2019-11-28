@@ -5,12 +5,12 @@ import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.stream.StreamSupport;
 
 import javax.ws.rs.core.MediaType;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.eclipse.jetty.client.util.BytesContentProvider;
+import org.eclipse.jetty.client.util.MultiPartContentProvider;
 import org.jboss.resteasy.core.Dispatcher;
 import org.jboss.resteasy.mock.MockHttpRequest;
 import org.jboss.resteasy.mock.MockHttpResponse;
@@ -86,15 +86,14 @@ public final class RestRequestBuilder
     public RestRequestBuilder multipart( final String name, final String fileName, final byte[] data, final MediaType type )
         throws Exception
     {
-        final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        builder.addBinaryBody( name, data, ContentType.create( type.toString() ), fileName );
-        final HttpEntity entity = builder.build();
-
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        entity.writeTo( out );
+        MultiPartContentProvider multiPart = new MultiPartContentProvider();
+        multiPart.addFilePart( name, fileName, new BytesContentProvider( data ), null );
+        multiPart.close();
+        StreamSupport.stream( multiPart.spliterator(), false ).forEachOrdered( bb -> out.writeBytes( bb.array() ) );
 
         this.entity = out.toByteArray();
-        this.entityType = entity.getContentType().getValue();
+        this.entityType = multiPart.getContentType();
         return this;
     }
 

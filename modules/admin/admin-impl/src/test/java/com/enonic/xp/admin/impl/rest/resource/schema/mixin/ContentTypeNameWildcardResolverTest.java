@@ -48,7 +48,7 @@ public class ContentTypeNameWildcardResolverTest
     public void no_wildcards()
     {
         List<String> toResolve = Lists.newArrayList( "myapp:foo", "myapp:bar" );
-        List<String> resolved = resolver.resolveWildcards( toResolve, ( ApplicationKey.from( "myapp" ) ) );
+        List<String> resolved = resolver.resolveWildcards( toResolve, ApplicationKey.from( "myapp" ) );
 
         assertEquals( toResolve, resolved );
     }

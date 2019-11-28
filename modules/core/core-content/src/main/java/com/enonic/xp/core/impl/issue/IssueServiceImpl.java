@@ -85,6 +85,7 @@ public class IssueServiceImpl
             execute();
     }
 
+    @Override
     public IssueComment createComment( final CreateIssueCommentParams params )
     {
         return CreateIssueCommentCommand.create().
@@ -94,6 +95,7 @@ public class IssueServiceImpl
             execute();
     }
 
+    @Override
     public FindIssueCommentsResult findComments( final IssueCommentQuery query )
     {
         return FindIssueCommentsCommand.create().
@@ -103,6 +105,7 @@ public class IssueServiceImpl
             execute();
     }
 
+    @Override
     public DeleteIssueCommentResult deleteComment( DeleteIssueCommentParams params )
     {
         return DeleteIssueCommentCommand.create().
@@ -112,6 +115,7 @@ public class IssueServiceImpl
             execute();
     }
 
+    @Override
     public IssueComment updateComment( final UpdateIssueCommentParams params )
     {
         return UpdateIssueCommentCommand.create().

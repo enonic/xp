@@ -70,17 +70,17 @@ public final class ValueExpr
     public String toString()
     {
         final ValueType type = this.value.getType();
-        if ( type == ValueTypes.DOUBLE )
+        if ( type.equals( ValueTypes.DOUBLE ) )
         {
             return this.value.asString();
         }
 
-        if ( type == ValueTypes.DATE_TIME )
+        if ( type.equals( ValueTypes.DATE_TIME ) )
         {
             return typecastFunction( "instant", this.value.asString() );
         }
 
-        if ( type == ValueTypes.GEO_POINT )
+        if ( type.equals( ValueTypes.GEO_POINT ) )
         {
             return typecastFunction( "geoPoint", this.value.asString() );
         }

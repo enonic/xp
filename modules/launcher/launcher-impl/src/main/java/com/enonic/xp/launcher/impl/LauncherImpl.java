@@ -13,8 +13,6 @@ import com.enonic.xp.launcher.impl.env.EnvironmentResolver;
 import com.enonic.xp.launcher.impl.env.RequirementChecker;
 import com.enonic.xp.launcher.impl.env.SystemProperties;
 import com.enonic.xp.launcher.impl.framework.FrameworkService;
-import com.enonic.xp.launcher.impl.logging.LogActivator;
-import com.enonic.xp.launcher.impl.logging.LogConfigurator;
 import com.enonic.xp.launcher.impl.provision.ProvisionActivator;
 import com.enonic.xp.launcher.impl.util.BannerPrinter;
 
@@ -82,26 +80,13 @@ public final class LauncherImpl
         }
     }
 
-    private void setupLogging()
-    {
-        final LogConfigurator configurator = new LogConfigurator( this.env );
-        configurator.configure();
-    }
-
     private void createFramework()
     {
         this.framework = new FrameworkService();
         this.framework.listener( this.listener );
         this.framework.config( this.config );
 
-        addLogActivator();
         addProvisionActivator();
-    }
-
-    private void addLogActivator()
-    {
-        final LogActivator activator = new LogActivator();
-        this.framework.activator( activator );
     }
 
     private void addProvisionActivator()
@@ -117,7 +102,6 @@ public final class LauncherImpl
     {
         resolveEnv();
         printBanner();
-        setupLogging();
         loadConfiguration();
         applyConfigToSystemProperties();
         createFramework();

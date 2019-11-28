@@ -30,7 +30,7 @@ class ContentNodeHelper
         final NodePaths.Builder builder = NodePaths.create();
 
         builder.addNodePaths(
-            contentPaths.stream().map( ( ContentNodeHelper::translateContentPathToNodePath ) ).collect( Collectors.toList() ) );
+            contentPaths.stream().map( ContentNodeHelper::translateContentPathToNodePath ).collect( Collectors.toList() ) );
 
         return builder.build();
     }
@@ -38,7 +38,7 @@ class ContentNodeHelper
     public static ContentPaths translateNodePathsToContentPaths( final NodePaths nodePaths )
     {
         return ContentPaths.from(
-            nodePaths.stream().map( ( ContentNodeHelper::translateNodePathToContentPath ) ).collect( Collectors.toList() ) );
+            nodePaths.stream().map( ContentNodeHelper::translateNodePathToContentPath ).collect( Collectors.toList() ) );
     }
 
     public static ContentPath translateNodePathToContentPath( final NodePath nodePath )

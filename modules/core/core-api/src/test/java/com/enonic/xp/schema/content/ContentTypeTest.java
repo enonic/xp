@@ -2,7 +2,7 @@ package com.enonic.xp.schema.content;
 
 
 import java.time.Instant;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -172,8 +172,8 @@ public class ContentTypeTest
         assertFalse( ctFilter.isContentTypeAllowed( ContentTypeName.from( "myapplication:my_type2" ) ) );
         assertFalse( ctFilter.isContentTypeAllowed( ContentTypeName.audioMedia() ) );
         assertFalse( ctFilter.isContentTypeAllowed( ContentTypeName.documentMedia() ) );
-        assertTrue( ctFilter.equals( ( ctFilter1 ) ) );
-        assertFalse( ctFilter.equals( ( builder ) ) );
+        assertTrue( ctFilter.equals( ctFilter1 ) );
+        assertFalse( ctFilter.equals( builder ) );
     }
 
     @Test
@@ -202,10 +202,7 @@ public class ContentTypeTest
     @Test
     public void getContentTypesParams()
     {
-        List<ContentTypeName> list = new ArrayList<ContentTypeName>()
-        {{
-                add( ContentTypeName.audioMedia() );
-            }};
+        List<ContentTypeName> list = Collections.singletonList( ContentTypeName.audioMedia() );
         GetContentTypesParams params1 = new GetContentTypesParams();
         params1.contentTypeNames( ContentTypeNames.create().add( ContentTypeName.archiveMedia() ).addAll( list ).build() );
         GetContentTypesParams params2 = new GetContentTypesParams();

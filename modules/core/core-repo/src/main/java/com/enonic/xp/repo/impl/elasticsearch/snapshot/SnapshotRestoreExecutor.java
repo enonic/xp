@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -11,8 +12,6 @@ import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotR
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.cluster.ClusterManager;
 import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.repository.RepositoryId;
@@ -22,7 +21,7 @@ import com.enonic.xp.util.Exceptions;
 public class SnapshotRestoreExecutor
     extends AbstractSnapshotExecutor
 {
-    private final Logger LOG = LoggerFactory.getLogger( SnapshotRestoreExecutor.class );
+    private static final Logger LOG = LoggerFactory.getLogger( SnapshotRestoreExecutor.class );
 
     private final ClusterManager clusterManager;
 
@@ -59,7 +58,7 @@ public class SnapshotRestoreExecutor
             builder.failed( true );
         }
 
-        final List<String> indices = Lists.newArrayList();
+        final List<String> indices = new ArrayList<>();
         indices.addAll( tempResults.getIndices() );
         indices.addAll( result.getIndices() );
 

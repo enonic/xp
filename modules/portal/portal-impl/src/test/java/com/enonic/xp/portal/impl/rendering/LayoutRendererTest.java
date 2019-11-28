@@ -142,6 +142,7 @@ public class LayoutRendererTest
             build();
         final ControllerScript controllerScript = new ControllerScript()
         {
+            @Override
             public PortalResponse execute( final PortalRequest portalRequest )
             {
                 return PortalResponse.create().body(
@@ -149,6 +150,7 @@ public class LayoutRendererTest
                     MediaType.HTML_UTF_8 ).status( HttpStatus.OK ).build();
             }
 
+            @Override
             public void onSocketEvent( final WebSocketEvent event )
             {
             }
@@ -188,11 +190,13 @@ public class LayoutRendererTest
             build();
         final ControllerScript controllerScript = new ControllerScript()
         {
+            @Override
             public PortalResponse execute( final PortalRequest portalRequest )
             {
                 return new PortalResponseSerializer( null ).serialize();
             }
 
+            @Override
             public void onSocketEvent( final WebSocketEvent event )
             {
             }

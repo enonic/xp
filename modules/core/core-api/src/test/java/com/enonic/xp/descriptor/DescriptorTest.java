@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DescriptorTest
 {
-    private final class MyDescriptor
+    private static final class MyDescriptor
         extends Descriptor
     {
         MyDescriptor( final String key )

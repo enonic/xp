@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.exception;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 import com.google.common.escape.Escaper;
 import com.google.common.html.HtmlEscapers;
@@ -11,7 +12,7 @@ final class HtmlBuilder
 
     private final StringBuilder str;
 
-    private final Stack<String> openTags;
+    private final Deque<String> openTags;
 
     private boolean addedInner;
 
@@ -19,7 +20,7 @@ final class HtmlBuilder
     {
         this.escaper = HtmlEscapers.htmlEscaper();
         this.str = new StringBuilder();
-        this.openTags = new Stack<>();
+        this.openTags = new ArrayDeque<>();
         this.addedInner = false;
     }
 

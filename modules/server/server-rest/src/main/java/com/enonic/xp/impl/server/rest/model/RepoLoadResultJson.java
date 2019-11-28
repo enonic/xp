@@ -1,8 +1,7 @@
 package com.enonic.xp.impl.server.rest.model;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.dump.BranchLoadResult;
 import com.enonic.xp.dump.RepoLoadResult;
@@ -60,7 +59,7 @@ public class RepoLoadResultJson
 
     public static final class Builder
     {
-        private final List<BranchLoadResultJson> branches = Lists.newArrayList();
+        private final List<BranchLoadResultJson> branches = new ArrayList<>();
 
         private VersionsLoadResultJson versions;
 

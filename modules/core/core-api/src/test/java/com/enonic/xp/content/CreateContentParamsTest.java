@@ -137,7 +137,7 @@ public class CreateContentParamsTest
         }
         catch ( Exception e )
         {
-            assertEquals( "parentContentPath cannot be null", e.getMessage() );
+            assertEquals( "parentPath cannot be null", e.getMessage() );
         }
     }
 

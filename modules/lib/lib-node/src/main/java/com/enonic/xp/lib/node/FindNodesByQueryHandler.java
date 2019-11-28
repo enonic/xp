@@ -19,6 +19,7 @@ public final class FindNodesByQueryHandler
         return new Builder();
     }
 
+    @Override
     public Object execute()
     {
         final NodeQuery nodeQuery = createNodeQuery();

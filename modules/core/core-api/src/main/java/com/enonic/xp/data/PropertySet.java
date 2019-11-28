@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -15,7 +16,6 @@ import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
@@ -76,7 +76,7 @@ public final class PropertySet
                 final Value value = property.getValue();
                 if ( value.isPropertySet() )
                 {
-                    setMapValue( map, name, value.asData() == null ? Maps.newHashMap() : value.asData().toMap() );
+                    setMapValue( map, name, value.asData() == null ? new HashMap<>() : value.asData().toMap() );
                 }
                 else
                 {
@@ -523,7 +523,7 @@ public final class PropertySet
             {
                 if ( property.getValue() instanceof PropertySetValue )
                 {
-                    propertySize += ( ( (PropertySet) property.getValue().getObject() ).getPropertySize() );
+                    propertySize += ( (PropertySet) property.getValue().getObject() ).getPropertySize();
                 }
             }
         }

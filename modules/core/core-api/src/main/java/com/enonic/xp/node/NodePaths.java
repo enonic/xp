@@ -1,6 +1,7 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
@@ -8,7 +9,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -83,7 +83,7 @@ public class NodePaths
 
     public static class Builder
     {
-        private final Set<NodePath> nodePaths = Sets.newHashSet();
+        private final Set<NodePath> nodePaths = new HashSet<>();
 
         public Builder addNodePath( final NodePath nodePath )
         {

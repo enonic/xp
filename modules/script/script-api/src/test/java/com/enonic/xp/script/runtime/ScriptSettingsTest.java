@@ -27,7 +27,7 @@ public class ScriptSettingsTest
         assertEquals( "hello", settings.getBinding( String.class ).get() );
 
         assertNotNull( settings.getBinding( Integer.class ) );
-        assertEquals( new Integer( 2 ), settings.getBinding( Integer.class ).get() );
+        assertEquals( 2, settings.getBinding( Integer.class ).get() );
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.enonic.xp.script.impl.executor;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -10,7 +11,6 @@ import javax.script.ScriptEngine;
 import javax.script.SimpleBindings;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.Striped;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
@@ -65,7 +65,7 @@ public final class ScriptExecutorImpl
 
     private JavascriptHelper javascriptHelper;
 
-    private final static Striped<Lock> requireLocks = Striped.lazyWeakLock( 1000 );
+    private final static Striped<Lock> REQUIRE_LOCKS = Striped.lazyWeakLock( 1000 );
 
     public void setScriptSettings( final ScriptSettings scriptSettings )
     {
@@ -100,8 +100,8 @@ public final class ScriptExecutorImpl
     public void initialize()
     {
         this.engine = NashornHelper.getScriptEngine( this.classLoader );
-        this.mocks = Maps.newHashMap();
-        this.disposers = Maps.newHashMap();
+        this.mocks = new HashMap<>();
+        this.disposers = new HashMap<>();
         this.exportsCache = new ScriptExportsCache();
 
         final JavascriptHelperFactory javascriptHelperFactory = new JavascriptHelperFactory( this.engine );
@@ -161,7 +161,7 @@ public final class ScriptExecutorImpl
             return cached;
         }
 
-        final Lock lock = requireLocks.get( key );
+        final Lock lock = REQUIRE_LOCKS.get( key );
         try
         {
             if ( lock.tryLock( 5, TimeUnit.MINUTES ) )

@@ -1,11 +1,11 @@
 package com.enonic.xp.highlight;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 
 public class HighlightedProperty
@@ -60,7 +60,7 @@ public class HighlightedProperty
     {
         private String name;
 
-        private Set<String> fragments = Sets.newHashSet();
+        private Set<String> fragments = new HashSet<>();
 
         private Builder()
         {

@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
@@ -10,8 +11,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationDescriptorService;
@@ -28,7 +27,7 @@ public class ApplicationDescriptorServiceImpl
 
     public ApplicationDescriptorServiceImpl()
     {
-        this.appDescriptorMap = Maps.newConcurrentMap();
+        this.appDescriptorMap = new ConcurrentHashMap<>();
     }
 
     @Override

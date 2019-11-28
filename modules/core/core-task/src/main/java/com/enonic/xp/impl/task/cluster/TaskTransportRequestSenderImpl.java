@@ -26,18 +26,21 @@ public final class TaskTransportRequestSenderImpl
 
     private TransportService transportService;
 
+    @Override
     public List<TaskInfo> getByTaskId( final TaskId taskId )
     {
         final TransportRequest transportRequest = new TaskTransportRequest( TaskTransportRequest.Type.BY_ID, taskId );
         return send( transportRequest );
     }
 
+    @Override
     public List<TaskInfo> getRunningTasks()
     {
         final TransportRequest transportRequest = new TaskTransportRequest( TaskTransportRequest.Type.RUNNING, null );
         return send( transportRequest );
     }
 
+    @Override
     public List<TaskInfo> getAllTasks()
     {
         final TransportRequest transportRequest = new TaskTransportRequest( TaskTransportRequest.Type.ALL, null );

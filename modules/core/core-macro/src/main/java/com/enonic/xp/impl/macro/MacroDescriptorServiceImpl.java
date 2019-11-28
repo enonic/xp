@@ -1,14 +1,12 @@
 package com.enonic.xp.impl.macro;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -63,7 +61,7 @@ public final class MacroDescriptorServiceImpl
     @Override
     public MacroDescriptors getByApplication( final ApplicationKey applicationKey )
     {
-        final List<MacroDescriptor> list = Lists.newArrayList();
+        final List<MacroDescriptor> list = new ArrayList<>();
         if ( isSystem( applicationKey ) )
         {
             list.addAll( builtinMacrosDescriptors.getAll().getSet() );
@@ -99,7 +97,7 @@ public final class MacroDescriptorServiceImpl
     @Override
     public MacroDescriptors getAll()
     {
-        final Set<MacroDescriptor> set = Sets.newLinkedHashSet();
+        final Set<MacroDescriptor> set = new LinkedHashSet<>();
         set.addAll( builtinMacrosDescriptors.getAll().getSet() );
 
         for ( final Application application : this.applicationService.getInstalledApplications() )

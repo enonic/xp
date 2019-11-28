@@ -64,7 +64,7 @@ public class SystemResourceTest
         Mockito.when( taskService.submitTask( Mockito.isA( VacuumRunnableTask.class ), eq( "vacuum" ) ) ).thenReturn(
             TaskId.from( "task-id" ) );
 
-        final TaskResultJson result = resource.vacuum();
+        final TaskResultJson result = resource.vacuum( null );
         assertEquals( "task-id", result.getTaskId() );
     }
 

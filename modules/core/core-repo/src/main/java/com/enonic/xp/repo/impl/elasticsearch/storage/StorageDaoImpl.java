@@ -21,6 +21,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.node.NodeStorageException;
+import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.executor.CopyExecutor;
@@ -190,7 +191,8 @@ public class StorageDaoImpl
             return new GetResults();
         }
 
-        final MultiGetRequestBuilder multiGetRequestBuilder = new MultiGetRequestBuilder( this.client, MultiGetAction.INSTANCE );
+        final MultiGetRequestBuilder multiGetRequestBuilder = new MultiGetRequestBuilder( this.client, MultiGetAction.INSTANCE ).
+            setPreference( SearchPreference.LOCAL.getName() );
 
         for ( final GetByIdRequest request : requests.getRequests() )
         {

@@ -2,6 +2,7 @@ package com.enonic.xp.server.impl.status;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Maps;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.status.StatusContext;
@@ -42,7 +42,7 @@ public abstract class BaseReporterTest<T extends StatusReporter>
         throws Exception
     {
         this.reporter = newReporter();
-        this.params = Maps.newHashMap();
+        this.params = new HashMap<>();
     }
 
     protected abstract T newReporter()

@@ -1,12 +1,12 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 public class WeightedQueryFieldNames
     implements Iterable<WeightedQueryFieldName>
@@ -32,7 +32,7 @@ public class WeightedQueryFieldNames
 
     public static WeightedQueryFieldNames from( final String weightedQueryFieldNamesString )
     {
-        List<WeightedQueryFieldName> list = Lists.newArrayList();
+        List<WeightedQueryFieldName> list = new ArrayList<>();
 
         if ( Strings.isNullOrEmpty( weightedQueryFieldNamesString ) )
         {

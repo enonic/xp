@@ -72,7 +72,7 @@ public class ContentServiceImplTest_versions
             type( ContentTypeName.folder() ).
             build() );
 
-        this.contentService.push( PushContentParams.create().
+        this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             target( CTX_OTHER.getBranch() ).
             build() );

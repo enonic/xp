@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PartDescriptorsTest
 {
 
-    private static final List<PartDescriptor> partDescriptorsList = new ArrayList<PartDescriptor>();
+    private static final List<PartDescriptor> PART_DESCRIPTORS_LIST = new ArrayList<>();
 
     @BeforeAll
     public static void initRegionDescriptors()
@@ -38,42 +38,42 @@ public class PartDescriptorsTest
             key( DescriptorKey.from( "module:new-part3" ) ).
             build();
 
-        partDescriptorsList.add( partDescriptor1 );
-        partDescriptorsList.add( partDescriptor2 );
-        partDescriptorsList.add( partDescriptor3 );
+        PART_DESCRIPTORS_LIST.add( partDescriptor1 );
+        PART_DESCRIPTORS_LIST.add( partDescriptor2 );
+        PART_DESCRIPTORS_LIST.add( partDescriptor3 );
     }
 
     @Test
     public void fromArray()
     {
         final PartDescriptors partDescriptors =
-            PartDescriptors.from( partDescriptorsList.get( 0 ), partDescriptorsList.get( 1 ), partDescriptorsList.get( 2 ) );
+            PartDescriptors.from( PART_DESCRIPTORS_LIST.get( 0 ), PART_DESCRIPTORS_LIST.get( 1 ), PART_DESCRIPTORS_LIST.get( 2 ) );
 
         assertEquals( 3, partDescriptors.getSize() );
-        assertTrue( partDescriptors.contains( partDescriptorsList.get( 0 ) ) );
-        assertTrue( partDescriptors.contains( partDescriptorsList.get( 1 ) ) );
-        assertTrue( partDescriptors.contains( partDescriptorsList.get( 2 ) ) );
+        assertTrue( partDescriptors.contains( PART_DESCRIPTORS_LIST.get( 0 ) ) );
+        assertTrue( partDescriptors.contains( PART_DESCRIPTORS_LIST.get( 1 ) ) );
+        assertTrue( partDescriptors.contains( PART_DESCRIPTORS_LIST.get( 2 ) ) );
     }
 
     @Test
     public void fromCollection()
     {
-        final PartDescriptors partDescriptors = PartDescriptors.from( partDescriptorsList );
+        final PartDescriptors partDescriptors = PartDescriptors.from( PART_DESCRIPTORS_LIST );
 
         assertEquals( 3, partDescriptors.getSize() );
-        assertTrue( partDescriptors.contains( partDescriptorsList.get( 0 ) ) );
-        assertTrue( partDescriptors.contains( partDescriptorsList.get( 1 ) ) );
-        assertTrue( partDescriptors.contains( partDescriptorsList.get( 2 ) ) );
+        assertTrue( partDescriptors.contains( PART_DESCRIPTORS_LIST.get( 0 ) ) );
+        assertTrue( partDescriptors.contains( PART_DESCRIPTORS_LIST.get( 1 ) ) );
+        assertTrue( partDescriptors.contains( PART_DESCRIPTORS_LIST.get( 2 ) ) );
     }
 
     @Test
     public void fromIterable()
     {
-        final PartDescriptors partDescriptors = PartDescriptors.from( (Iterable) partDescriptorsList );
+        final PartDescriptors partDescriptors = PartDescriptors.from( (Iterable) PART_DESCRIPTORS_LIST );
 
         assertEquals( 3, partDescriptors.getSize() );
-        assertTrue( partDescriptors.contains( partDescriptorsList.get( 0 ) ) );
-        assertTrue( partDescriptors.contains( partDescriptorsList.get( 1 ) ) );
-        assertTrue( partDescriptors.contains( partDescriptorsList.get( 2 ) ) );
+        assertTrue( partDescriptors.contains( PART_DESCRIPTORS_LIST.get( 0 ) ) );
+        assertTrue( partDescriptors.contains( PART_DESCRIPTORS_LIST.get( 1 ) ) );
+        assertTrue( partDescriptors.contains( PART_DESCRIPTORS_LIST.get( 2 ) ) );
     }
 }

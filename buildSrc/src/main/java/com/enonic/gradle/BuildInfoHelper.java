@@ -1,9 +1,7 @@
 package com.enonic.gradle;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
 
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
@@ -15,8 +13,6 @@ import org.eclipse.jgit.revwalk.RevWalk;
 
 public final class BuildInfoHelper
 {
-    private final static DateFormat DATE_FORMAT = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ssZ" );
-
     public static BuildInfo extract( final File baseDir )
         throws Exception
     {
@@ -45,9 +41,9 @@ public final class BuildInfoHelper
         final RevWalk rw = new RevWalk( repository );
         final RevCommit commit = rw.parseCommit( revision );
         final PersonIdent author = commit.getAuthorIdent();
-        final Date commitDate = author.getWhen();
+        final Instant commitDate = author.getWhen().toInstant();
 
-        return DATE_FORMAT.format( commitDate );
+        return commitDate.toString();
     }
 }
 

@@ -14,6 +14,7 @@ import com.enonic.xp.web.serializer.ResponseSerializationService;
 public final class ResponseSerializationServiceImpl
     implements ResponseSerializationService
 {
+    @Override
     public void serialize( final WebRequest webRequest, final WebResponse webResponse, final HttpServletResponse response )
         throws IOException
     {

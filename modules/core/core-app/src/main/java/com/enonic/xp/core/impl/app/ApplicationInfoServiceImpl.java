@@ -58,46 +58,55 @@ public final class ApplicationInfoServiceImpl
 
     private IdProviderDescriptorService idProviderDescriptorService;
 
+    @Override
     public ContentTypes getContentTypes( final ApplicationKey applicationKey )
     {
         return contentTypeService.getByApplication( applicationKey );
     }
 
+    @Override
     public PageDescriptors getPageDescriptors( final ApplicationKey applicationKey )
     {
         return this.pageDescriptorService.getByApplication( applicationKey );
     }
 
+    @Override
     public PartDescriptors getPartDescriptors( final ApplicationKey applicationKey )
     {
         return this.partDescriptorService.getByApplication( applicationKey );
     }
 
+    @Override
     public LayoutDescriptors getLayoutDescriptors( final ApplicationKey applicationKey )
     {
         return this.layoutDescriptorService.getByApplication( applicationKey );
     }
 
+    @Override
     public RelationshipTypes getRelationshipTypes( final ApplicationKey applicationKey )
     {
         return this.relationshipTypeService.getByApplication( applicationKey );
     }
 
+    @Override
     public MacroDescriptors getMacroDescriptors( final ApplicationKey applicationKey )
     {
         return this.macroDescriptorService.getByApplications( ApplicationKeys.from( applicationKey, ApplicationKey.SYSTEM ) );
     }
 
+    @Override
     public Descriptors<TaskDescriptor> getTaskDescriptors( final ApplicationKey applicationKey )
     {
         return this.taskDescriptorService.getTasks( applicationKey );
     }
 
+    @Override
     public Contents getContentReferences( final ApplicationKey applicationKey )
     {
         return this.contentService.findByApplicationKey( applicationKey );
     }
 
+    @Override
     public IdProviders getIdProviderReferences( final ApplicationKey applicationKey )
     {
         return IdProviders.from( securityService.getIdProviders().
@@ -107,11 +116,13 @@ public final class ApplicationInfoServiceImpl
 
     }
 
+    @Override
     public IdProviderDescriptor getIdProviderDescriptor( final ApplicationKey applicationKey )
     {
         return this.idProviderDescriptorService.getDescriptor( applicationKey );
     }
 
+    @Override
     public ApplicationInfo getApplicationInfo( final ApplicationKey applicationKey )
     {
         return ApplicationInfo.create().

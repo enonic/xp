@@ -1,5 +1,7 @@
 package com.enonic.xp.launcher.impl.framework;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,10 +13,9 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.launcher.LauncherListener;
 import com.enonic.xp.launcher.impl.SharedConstants;
@@ -38,7 +39,7 @@ public final class FrameworkService
 
     public FrameworkService()
     {
-        this.activators = Lists.newArrayList();
+        this.activators = new ArrayList<>();
     }
 
     public FrameworkService config( final ConfigProperties config )
@@ -63,12 +64,19 @@ public final class FrameworkService
     {
         updateBootDelegation();
         updateSystemPackagesExtra();
+        setupLogging();
 
-        final Map<String, Object> map = Maps.newHashMap();
+        final Map<String, Object> map = new HashMap<>();
         map.put( LOG_LOGGER_PROP, new FrameworkLogger() );
         map.putAll( this.config );
 
         this.felix = new Felix( map );
+    }
+
+    private void setupLogging()
+    {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
     }
 
     private void updateBootDelegation()

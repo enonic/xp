@@ -1,9 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.admin.impl.json.aggregation.AggregationJson;
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
@@ -26,7 +26,7 @@ public abstract class AbstractContentQueryResultJson<T extends ContentIdJson>
 
     public abstract static class Builder<T extends Builder>
     {
-        private Set<AggregationJson> aggregations = Sets.newHashSet();
+        private Set<AggregationJson> aggregations = new HashSet<>();
 
         private ContentListMetaData metadata;
 

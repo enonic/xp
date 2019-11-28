@@ -1,9 +1,8 @@
 package com.enonic.xp.testing.mock;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceKey;
@@ -26,7 +25,7 @@ public final class MockBeanContext
     public MockBeanContext( final ResourceKey resourceKey, final MockServiceRegistry serviceRegistry )
     {
         this.resourceKey = resourceKey;
-        this.bindings = Maps.newHashMap();
+        this.bindings = new HashMap<>();
         this.serviceRegistry = serviceRegistry;
     }
 

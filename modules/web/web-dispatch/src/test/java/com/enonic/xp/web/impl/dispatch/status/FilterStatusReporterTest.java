@@ -42,7 +42,7 @@ public class FilterStatusReporterTest
 
 
     @WebFilter
-    private final class MyFilter
+    private static final class MyFilter
         implements Filter
     {
         @Override

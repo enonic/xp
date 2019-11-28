@@ -45,6 +45,7 @@ import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationSucces
 import com.enonic.xp.admin.impl.rest.resource.application.json.GetMarketApplicationsJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ListApplicationJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationsJson;
+import com.enonic.xp.admin.impl.rest.resource.content.page.part.PartDescriptorIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
@@ -103,7 +104,7 @@ public final class ApplicationResource
 
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
 
-    private final static Striped<Lock> lockStriped = Striped.lazyWeakLock( 100 );
+    private final static Striped<Lock> LOCK_STRIPED = Striped.lazyWeakLock( 100 );
 
     private ApplicationService applicationService;
 
@@ -139,9 +140,12 @@ public final class ApplicationResource
 
     private static final ApplicationImageHelper HELPER = new ApplicationImageHelper();
 
+    private PartDescriptorIconUrlResolver partDescriptorIconUrlResolver;
+
     public ApplicationResource()
     {
         iconUrlResolver = new ApplicationIconUrlResolver();
+        partDescriptorIconUrlResolver = new PartDescriptorIconUrlResolver();
     }
 
     @GET
@@ -203,6 +207,7 @@ public final class ApplicationResource
                 Collectors.toList() ) ) ).
 
             setContentTypeIconUrlResolver( this.contentTypeIconUrlResolver ).
+            setPartDescriptorIconUrlResolver( this.partDescriptorIconUrlResolver ).
             setMacroIconUrlResolver( this.macroIconUrlResolver ).
             setRelationshipTypeIconUrlResolver( this.relationshipTypeIconUrlResolver ).
             setLocaleMessageResolver( new LocaleMessageResolver( this.localeService, applicationKey ) ).
@@ -587,7 +592,7 @@ public final class ApplicationResource
 
     private <V> V lock( Object key, Callable<V> callable )
     {
-        final Lock lock = lockStriped.get( key );
+        final Lock lock = LOCK_STRIPED.get( key );
         try
         {
             if ( lock.tryLock( 30, TimeUnit.MINUTES ) )

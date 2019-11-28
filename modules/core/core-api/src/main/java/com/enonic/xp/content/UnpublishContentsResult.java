@@ -1,9 +1,9 @@
 package com.enonic.xp.content;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Lists;
 
 @Beta
 public class UnpublishContentsResult
@@ -35,7 +35,7 @@ public class UnpublishContentsResult
 
     public static final class Builder
     {
-        private List<ContentId> unpublishedContents = Lists.newArrayList();
+        private List<ContentId> unpublishedContents = new ArrayList<>();
 
         private ContentPath contentPath;
 

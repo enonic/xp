@@ -160,7 +160,7 @@ public final class ServletRequestUrlHelper
     public static String getFullUrl( final HttpServletRequest req )
     {
         //Appends the server part
-        StringBuffer fullUrl = new StringBuffer( getServerUrl( req ) );
+        StringBuilder fullUrl = new StringBuilder( getServerUrl( req ) );
 
         //Appends the path part
         fullUrl.append( getPath( req ) );

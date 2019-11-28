@@ -18,6 +18,7 @@ public class VacuumServiceImplTest
     {
 
         final VacuumServiceImpl service = new VacuumServiceImpl();
+        service.activate( new TestVacuumConfig() );
 
         service.addTask( new VacuumTask()
         {

@@ -125,7 +125,7 @@ public class FieldSet
 
         private String name;
 
-        private List<FormItem> formItems = new ArrayList<FormItem>();
+        private List<FormItem> formItems = new ArrayList<>();
 
         private Builder()
         {

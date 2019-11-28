@@ -5,11 +5,11 @@ dependencies {
     compile 'commons-lang:commons-lang:2.4'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.9.6'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.6'
-    compile 'org.jparsec:jparsec:3.0'
+    compile 'org.jparsec:jparsec:3.1'
     compile 'commons-io:commons-io:2.4'
-    compile 'org.osgi:osgi.core:6.0.0'
-    compile 'org.osgi:osgi.cmpn:6.0.0'
-    compile 'org.slf4j:slf4j-api:1.7.25'
+    compile 'org.osgi:osgi.core:7.0.0'
+    compile 'org.osgi:osgi.cmpn:7.0.0'
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
     compile 'javax.mail:mail:1.4.7'
     compile 'io.dropwizard.metrics:metrics-core:3.1.2'
 }

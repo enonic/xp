@@ -15,7 +15,7 @@ import com.enonic.xp.repository.RepositoryId;
 public abstract class AbstractMetaDumpUpgrader
     extends AbstractDumpUpgrader
 {
-    private final Logger LOG = LoggerFactory.getLogger( AbstractMetaDumpUpgrader.class );
+    private static final Logger LOG = LoggerFactory.getLogger( AbstractMetaDumpUpgrader.class );
 
     protected BufferFileDumpReader tmpDumpReader;
 

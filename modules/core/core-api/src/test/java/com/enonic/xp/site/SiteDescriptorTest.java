@@ -1,10 +1,9 @@
 package com.enonic.xp.site;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
@@ -42,7 +41,7 @@ public class SiteDescriptorTest
             build();
 
         //Builds MixinNames
-        List<XDataMapping> xDataMappingList = Lists.newArrayList();
+        List<XDataMapping> xDataMappingList = new ArrayList<>();
         xDataMappingList.add( XDataMapping.create().xDataName( XDataName.from( "myapplication:my" ) ).build() );
         XDataMappings xDataMappings = XDataMappings.from( xDataMappingList );
 

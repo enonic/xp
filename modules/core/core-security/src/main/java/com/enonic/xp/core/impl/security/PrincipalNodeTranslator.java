@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
@@ -31,7 +30,7 @@ abstract class PrincipalNodeTranslator
 {
     static Principals fromNodes( final Nodes nodes )
     {
-        final LinkedHashSet<Principal> principals = Sets.newLinkedHashSet();
+        final LinkedHashSet<Principal> principals = new LinkedHashSet<>();
 
         for ( final Node node : nodes )
         {

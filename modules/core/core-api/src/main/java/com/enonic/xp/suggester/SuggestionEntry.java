@@ -1,11 +1,11 @@
 package com.enonic.xp.suggester;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 public abstract class SuggestionEntry<OPTION extends SuggestionOption>
 {
@@ -58,7 +58,7 @@ public abstract class SuggestionEntry<OPTION extends SuggestionOption>
 
         private Integer length;
 
-        private List<OPTION> suggestionOptions = Lists.newArrayList();
+        private List<OPTION> suggestionOptions = new ArrayList<>();
 
         @SuppressWarnings("unchecked")
         public T text( final String text )

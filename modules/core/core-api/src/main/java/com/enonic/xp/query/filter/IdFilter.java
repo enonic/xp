@@ -1,11 +1,11 @@
 package com.enonic.xp.query.filter;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
@@ -57,7 +57,7 @@ public class IdFilter
     public static final class Builder
         extends FieldFilter.Builder<Builder>
     {
-        private List<String> values = Lists.newArrayList();
+        private List<String> values = new ArrayList<>();
 
         private Builder()
         {

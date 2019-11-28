@@ -23,6 +23,7 @@ public final class ContentAlreadyExistsException
         return path;
     }
 
+    @Override
     public String getCode()
     {
         return "contentAlreadyExists";

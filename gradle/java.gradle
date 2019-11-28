@@ -1,5 +1,4 @@
 apply plugin: 'java'
-apply plugin: 'groovy'
 apply plugin: 'jacoco'
 
 def defaultEncoding = 'UTF-8'
@@ -19,7 +18,9 @@ configurations {
 }
 
 ext {
-    felixVersion = '6.0.1'
+    slf4jVersion = '1.7.29'
+    felixVersion = '6.0.3'
+    jettyVersion = '9.4.22.v20191022'
 }
 
 dependencies {
@@ -29,7 +30,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.28.2'
     testImplementation 'org.mockito:mockito-junit-jupiter:2.28.2'
     testImplementation 'org.springframework:spring-test:4.1.6.RELEASE'
-    testRuntimeOnly 'org.slf4j:slf4j-simple:1.7.25'
+    testRuntimeOnly "org.slf4j:slf4j-simple:${slf4jVersion}"
     testOutput sourceSets.test.output
 }
 
@@ -87,3 +88,7 @@ publishing.publications {
         artifact sourcesJar
     }
 }
+
+task allDependencies(type: DependencyReportTask) {}
+
+task allDependencyInsight(type: DependencyInsightReportTask) {}

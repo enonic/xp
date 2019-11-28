@@ -20,6 +20,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
+import com.enonic.xp.extractor.impl.config.ExtractorConfig;
 
 @Component(immediate = true)
 public class BinaryExtractorImpl
@@ -27,17 +28,17 @@ public class BinaryExtractorImpl
 {
     private final static Logger LOG = LoggerFactory.getLogger( BinaryExtractorImpl.class );
 
-    private final static int WRITE_LIMIT = 100 * 1000;
-
     private Detector detector;
 
     private Parser parser;
+
+    private ExtractorConfig extractorConfig;
 
     @Override
     public ExtractedData extract( final ByteSource source )
     {
         final ParseContext context = new ParseContext();
-        final BodyContentHandler handler = new BodyContentHandler( WRITE_LIMIT );
+        final BodyContentHandler handler = new BodyContentHandler( extractorConfig.getBodySizeLimit() );
         final Metadata metadata = new Metadata();
 
         try (final InputStream stream = source.openStream())
@@ -64,6 +65,12 @@ public class BinaryExtractorImpl
     public void setDetector( final Detector detector )
     {
         this.detector = detector;
+    }
+
+    @Reference
+    public void setExtractorConfig( final ExtractorConfig extractorConfig )
+    {
+        this.extractorConfig = extractorConfig;
     }
 
 }

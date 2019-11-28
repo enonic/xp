@@ -1,9 +1,9 @@
 package com.enonic.xp.index;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
@@ -46,7 +46,7 @@ public class UpdateIndexSettingsParams
 
     public static final class Builder
     {
-        private Set<RepositoryId> repositoryIds = Sets.newHashSet();
+        private Set<RepositoryId> repositoryIds = new HashSet<>();
 
         private String settings;
 

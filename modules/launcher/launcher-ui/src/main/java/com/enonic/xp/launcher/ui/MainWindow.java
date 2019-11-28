@@ -46,6 +46,7 @@ public final class MainWindow
 
         addWindowListener( new WindowAdapter()
         {
+            @Override
             public void windowClosing( final WindowEvent windowEvent )
             {
                 exit();

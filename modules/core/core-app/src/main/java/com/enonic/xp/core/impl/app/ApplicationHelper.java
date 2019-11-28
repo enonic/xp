@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -12,8 +13,8 @@ import org.osgi.framework.VersionRange;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -95,7 +96,7 @@ public final class ApplicationHelper
     static Set<String> getCapabilities( final Bundle bundle )
     {
         final String value = getHeader( bundle, X_CAPABILITY, "" );
-        return Sets.newHashSet( Splitter.on( ',' ).omitEmptyStrings().trimResults().split( value ) );
+        return ImmutableSet.copyOf( Splitter.on( ',' ).omitEmptyStrings().trimResults().split( value ) );
     }
 
     static List<String> getSourcePaths( final Bundle bundle )
@@ -103,7 +104,7 @@ public final class ApplicationHelper
         final String value = getHeader( bundle, X_SOURCE_PATHS, "" );
         if ( Strings.isNullOrEmpty( value ) )
         {
-            return Lists.newArrayList();
+            return new ArrayList<>();
         }
         return Lists.newArrayList( Splitter.on( ',' ).trimResults().split( value ) );
     }

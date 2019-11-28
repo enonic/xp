@@ -100,13 +100,13 @@ public final class FilterExprParserContext
             return null;
         }
 
-        ArrayList<Object> list = new ArrayList<Object>();
+        ArrayList<Object> list = new ArrayList<>();
         for ( String part : str.split( "," ) )
         {
             list.add( parseValue( part ) );
         }
 
-        return list.toArray( new Object[list.size()] );
+        return list.toArray( new Object[0] );
     }
 
     private Object parseValue( String str )
@@ -197,7 +197,7 @@ public final class FilterExprParserContext
     {
         try
         {
-            return new Double( str );
+            return Double.valueOf( str );
         }
         catch ( Exception e )
         {
@@ -209,7 +209,7 @@ public final class FilterExprParserContext
     {
         try
         {
-            return new Integer( str );
+            return Integer.valueOf( str );
         }
         catch ( Exception e )
         {

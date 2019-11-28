@@ -1,10 +1,9 @@
 package com.enonic.xp.repo.impl.index;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.Sets;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -14,7 +13,7 @@ public class IndexFieldNameNormalizerTest
     public void normalize_collection()
         throws Exception
     {
-        Set<String> paths = Sets.newHashSet();
+        Set<String> paths = new HashSet<>();
         paths.add( "VaLue1" );
         paths.add( "ValuE2" );
         paths.add( "VALue3" );

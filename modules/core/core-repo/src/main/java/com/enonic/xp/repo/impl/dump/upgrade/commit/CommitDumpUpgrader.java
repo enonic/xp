@@ -4,8 +4,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.HashSet;
 
-import com.google.common.collect.Sets;
-
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.repo.impl.dump.serializer.json.BranchDumpEntryJson;
@@ -27,9 +25,9 @@ public class CommitDumpUpgrader
 
     private static final String NAME = "Version commit";
 
-    final HashSet<String> commitedNodeIds = Sets.newHashSet();
+    final HashSet<String> commitedNodeIds = new HashSet<>();
 
-    final HashSet<String> commitedVersionIds = Sets.newHashSet();
+    final HashSet<String> commitedVersionIds = new HashSet<>();
 
     boolean processingMaster = false;
 
@@ -40,6 +38,7 @@ public class CommitDumpUpgrader
         super( basePath );
     }
 
+    @Override
     protected void upgradeRepository( final RepositoryId repositoryId )
     {
         commitedNodeIds.clear();

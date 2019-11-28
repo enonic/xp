@@ -1,21 +1,15 @@
 package com.enonic.xp.core.impl.content.processor;
 
 import java.util.Iterator;
-import java.util.Set;
-
-import com.google.common.collect.Sets;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.enonic.xp.content.processor.ContentProcessor;
 
 public class ContentProcessors
     implements Iterable<ContentProcessor>
 {
-    private final Set<ContentProcessor> processors;
-
-    public ContentProcessors()
-    {
-        this.processors = Sets.newHashSet();
-    }
+    private final List<ContentProcessor> processors = new CopyOnWriteArrayList<>();
 
     @Override
     public Iterator<ContentProcessor> iterator()

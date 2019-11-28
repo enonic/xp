@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Maps;
-
 import com.enonic.xp.app.ApplicationService;
 
 public class ApplicationDeployerManagerTest
@@ -36,7 +34,7 @@ public class ApplicationDeployerManagerTest
         applicationDeployerManager.setStoredApplicationsDeployer( storedApplicationsDeployer );
 
         autoDeployer = new AutoDeployer();
-        final HashMap<String, String> autoDeployerConfig = Maps.newHashMap();
+        final HashMap<String, String> autoDeployerConfig = new HashMap<>();
         autoDeployerConfig.put( "deploy.1", "http://localhost/url1" );
         autoDeployer.activate( autoDeployerConfig );
         applicationDeployerManager.setAutoDeployer( autoDeployer );

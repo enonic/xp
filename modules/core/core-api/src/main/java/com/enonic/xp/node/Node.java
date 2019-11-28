@@ -375,7 +375,7 @@ public final class Node
         public Builder timestamp( final Instant timestamp )
         {
             this.timestamp = timestamp;
-            if ( timestamp != null && timestamp.getNano() % 1_000_000 != 0 )
+            if ( timestamp != null )
             {
                 this.timestamp = timestamp.truncatedTo( ChronoUnit.MILLIS );
             }

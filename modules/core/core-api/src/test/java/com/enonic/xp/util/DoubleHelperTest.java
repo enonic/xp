@@ -17,7 +17,7 @@ public class DoubleHelperTest
     public void test_compare()
     {
         assertTrue( DoubleHelper.fuzzyEquals( ONE, 1.0 ) );
-        assertTrue( DoubleHelper.fuzzyEquals( ONE, 1.00000000000000001 ) );
+        assertTrue( DoubleHelper.fuzzyEquals( ONE, 1.00000000000000001D ) );
 
         assertFalse( DoubleHelper.fuzzyEquals( ONE, 1.0001 ) );
         assertFalse( DoubleHelper.fuzzyEquals( ONE, -1.0 ) );
@@ -27,7 +27,7 @@ public class DoubleHelperTest
     public void test_compare_zero()
     {
         assertTrue( DoubleHelper.fuzzyEquals( ZERO, 0.0 ) );
-        assertTrue( DoubleHelper.fuzzyEquals( ZERO, 0.000000000000000001 ) );
+        assertTrue( DoubleHelper.fuzzyEquals( ZERO, 0.000000000000000001D ) );
 
         assertFalse( DoubleHelper.fuzzyEquals( ZERO, 0.0001 ) );
     }

@@ -31,6 +31,7 @@ public abstract class AbstractRangeFunctionArg<T>
         return includeFrom;
     }
 
+    @Override
     public boolean includeTo()
     {
         return includeTo;

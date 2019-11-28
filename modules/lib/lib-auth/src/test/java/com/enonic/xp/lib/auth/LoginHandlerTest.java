@@ -149,7 +149,7 @@ public class LoginHandlerTest
         assertEquals( "idprovider3", matcher.loginIdProviderAttempts.get( 2 ).toString() );
     }
 
-    private class AuthTokenMatcher
+    private static class AuthTokenMatcher
         implements ArgumentMatcher<AuthenticationToken>
     {
         EmailPasswordAuthToken thisObject;

@@ -1,8 +1,8 @@
 package com.enonic.xp.support;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 public class ResourceTestHelper
@@ -19,7 +19,7 @@ public class ResourceTestHelper
         final URL url = getResource( testInstance.getClass().getSimpleName() + "-" + fileName );
         try
         {
-            return Resources.toString( url, Charsets.UTF_8 );
+            return Resources.toString( url, StandardCharsets.UTF_8 );
         }
         catch ( final Exception e )
         {

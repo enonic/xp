@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class LocalScopeImplTest
 {
-    private final class SampleValue
+    private static final class SampleValue
     {
     }
 

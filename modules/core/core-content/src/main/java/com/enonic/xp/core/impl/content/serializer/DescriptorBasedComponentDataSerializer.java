@@ -13,6 +13,7 @@ abstract class DescriptorBasedComponentDataSerializer<DATA extends DescriptorBas
 
     public static final String CONFIG = "config";
 
+    @Override
     protected void applyComponentToData( final DescriptorBasedComponent component, final PropertySet asData )
     {
         if ( !component.hasDescriptor() )

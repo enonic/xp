@@ -1,5 +1,6 @@
 package com.enonic.xp.dump;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -74,9 +75,9 @@ public class RepoDumpResult
 
     public static final class Builder
     {
-        private List<BranchDumpResult> branchResults = Lists.newArrayList();
+        private List<BranchDumpResult> branchResults = new ArrayList<>();
 
-        private List<DumpError> versionsErrors = Lists.newArrayList();
+        private List<DumpError> versionsErrors = new ArrayList<>();
 
         private RepositoryId repositoryId;
 

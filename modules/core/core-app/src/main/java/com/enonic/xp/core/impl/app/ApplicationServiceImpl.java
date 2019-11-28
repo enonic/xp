@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.osgi.framework.Bundle;
@@ -19,7 +20,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.Application;
@@ -45,9 +45,9 @@ public final class ApplicationServiceImpl
 {
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationServiceImpl.class );
 
-    private final ConcurrentMap<ApplicationKey, Boolean> localApplicationSet = Maps.newConcurrentMap();
+    private final ConcurrentMap<ApplicationKey, Boolean> localApplicationSet = new ConcurrentHashMap<>();
 
-    private ApplicationRegistry registry = new ApplicationRegistry();
+    private final ApplicationRegistry registry = new ApplicationRegistry();
 
     private BundleContext context;
 

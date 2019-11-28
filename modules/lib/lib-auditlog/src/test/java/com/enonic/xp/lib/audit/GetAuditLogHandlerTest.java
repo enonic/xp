@@ -17,7 +17,6 @@ public class GetAuditLogHandlerTest
         AuditLog mocklog = auditLogBuilder( LogAuditLogParams.create().
             type( "testlog" ).build() ).
             source( "testbundle" ).
-            message( "Fetched message" ).
             build();
 
         Mockito.when( this.auditLogService.get( Mockito.any( AuditLogId.class ) ) ).thenReturn( mocklog );

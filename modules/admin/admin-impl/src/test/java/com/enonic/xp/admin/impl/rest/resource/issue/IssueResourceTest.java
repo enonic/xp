@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.issue;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,6 @@ import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.admin.impl.json.issue.DeleteIssueCommentResultJson;
 import com.enonic.xp.admin.impl.json.issue.IssueCommentJson;
@@ -367,7 +367,7 @@ public class IssueResourceTest
         FindIssueCommentsResult result = FindIssueCommentsResult.create().hits( 1 ).totalHits( 3 ).comments( comments ).build();
         Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn( result );
 
-        final Map params = Maps.newHashMap();
+        final Map params = new HashMap<>();
         params.put( "id", issue.getId().toString() );
         params.put( "createdTime", createdTime );
 
@@ -392,7 +392,7 @@ public class IssueResourceTest
         FindIssueCommentsResult result = FindIssueCommentsResult.create().hits( 1 ).totalHits( 3 ).comments( comments ).build();
         Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn( result );
 
-        final Map params = Maps.newHashMap();
+        final Map params = new HashMap<>();
         params.put( "id", issue.getId().toString() );
         params.put( "createdTime", createdTime );
 
@@ -416,7 +416,7 @@ public class IssueResourceTest
         Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn(
             FindIssueCommentsResult.create().build() );
 
-        final Map params = Maps.newHashMap();
+        final Map params = new HashMap<>();
         params.put( "id", issue.getId().toString() );
         params.put( "createdTime", createdTime );
 
@@ -529,7 +529,7 @@ public class IssueResourceTest
         final User creator = User.ANONYMOUS;
 
         final CreateIssueCommentJson params =
-            new CreateIssueCommentJson( issue.getId().toString(), comment.getText(), comment.getCreator().toString() );
+            new CreateIssueCommentJson( issue.getId().toString(), comment.getText(), comment.getCreator().toString(), false );
 
         IssueResource resource = getResourceInstance();
         Mockito.when( securityService.getUser( params.creator ) ).thenReturn( Optional.ofNullable( creator ) );
@@ -552,7 +552,7 @@ public class IssueResourceTest
         final IssueComment comment = createIssueComment( Instant.now() );
 
         final CreateIssueCommentJson params =
-            new CreateIssueCommentJson( issue.getId().toString(), comment.getText(), comment.getCreator().toString() );
+            new CreateIssueCommentJson( issue.getId().toString(), comment.getText(), comment.getCreator().toString(), false );
 
         IssueResource resource = getResourceInstance();
         Mockito.when( issueService.getIssue( params.issueId ) ).thenReturn( issue );
@@ -568,7 +568,7 @@ public class IssueResourceTest
         final IssueComment comment = createIssueComment( Instant.now() );
 
         final CreateIssueCommentJson params =
-            new CreateIssueCommentJson( issue.getId().toString(), comment.getText(), comment.getCreator().toString() );
+            new CreateIssueCommentJson( issue.getId().toString(), comment.getText(), comment.getCreator().toString(), false );
 
         IssueResource resource = getResourceInstance();
         Mockito.when( issueService.getIssue( params.issueId ) ).thenThrow( new IssueNotFoundException( issue.getId() ) );
@@ -589,7 +589,7 @@ public class IssueResourceTest
 
         Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn( result );
 
-        final Map params = Maps.newHashMap();
+        final Map params = new HashMap<>();
         params.put( "createdTime", comment.getCreated() );
         params.put( "id", comment.getId() );
 

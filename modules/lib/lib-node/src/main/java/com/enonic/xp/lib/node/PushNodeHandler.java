@@ -37,6 +37,7 @@ public final class PushNodeHandler
         this.exclude = builder.exclude;
     }
 
+    @Override
     public Object execute()
     {
         final NodeIds.Builder toBePushed = NodeIds.create();
@@ -100,7 +101,7 @@ public final class PushNodeHandler
                 includeChildren( includeChildren ).
                 build() );
 
-            result.getNodeComparisons().forEach( ( nodeComparison -> {
+            result.getNodeComparisons().forEach( nodeComparison -> {
                 if ( nodeComparison.getCompareStatus().equals( CompareStatus.PENDING_DELETE ) )
                 {
                     toBeDeleted.add( nodeComparison.getNodeId() );
@@ -110,7 +111,7 @@ public final class PushNodeHandler
 
                     toBePushed.add( nodeComparison.getNodeId() );
                 }
-            } ) );
+            } );
         }
     }
 

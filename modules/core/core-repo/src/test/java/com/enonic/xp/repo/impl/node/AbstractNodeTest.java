@@ -339,18 +339,21 @@ public abstract class AbstractNodeTest
 
     protected Node createNode( final CreateNodeParams createNodeParams, final boolean refresh )
     {
-        final CreateNodeParams createParamsWithAnalyzer = CreateNodeParams.create( createNodeParams ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
+        final CreateNodeParams.Builder createParamsWithAnalyzer = CreateNodeParams.create( createNodeParams );
+
+        if ( createNodeParams.getIndexConfigDocument() == null )
+        {
+            createParamsWithAnalyzer.indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                build() ).
-            build();
+                build() );
+        }
 
         final Node createdNode = CreateNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            params( createParamsWithAnalyzer ).
+            params( createParamsWithAnalyzer.build() ).
             build().
             execute();
 

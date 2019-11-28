@@ -23,6 +23,7 @@ class BranchAlreadyExistException
         return branch;
     }
 
+    @Override
     public String getCode()
     {
         return "branchAlreadyExists";

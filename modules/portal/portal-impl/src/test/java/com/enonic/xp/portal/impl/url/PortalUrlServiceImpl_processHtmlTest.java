@@ -2,13 +2,13 @@ package com.enonic.xp.portal.impl.url;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
 
@@ -350,9 +350,9 @@ public class PortalUrlServiceImpl_processHtmlTest
     {
         //Reads the input and output files
         final URL inputUrl = this.getClass().getResource( inputName );
-        final CharSource inputCharSource = Resources.asCharSource( inputUrl, Charsets.UTF_8 );
+        final CharSource inputCharSource = Resources.asCharSource( inputUrl, StandardCharsets.UTF_8 );
         final URL expectedOutputUrl = this.getClass().getResource( expectedOutputName );
-        final CharSource expectedOutputCharSource = Resources.asCharSource( expectedOutputUrl, Charsets.UTF_8 );
+        final CharSource expectedOutputCharSource = Resources.asCharSource( expectedOutputUrl, StandardCharsets.UTF_8 );
 
         //Processes the input file
         final ProcessHtmlParams processHtmlParams = new ProcessHtmlParams().

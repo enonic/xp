@@ -11,9 +11,10 @@ repositories {
 }
 
 dependencies {
-    compile 'biz.aQute.bnd:biz.aQute.bnd.gradle:4.2.0'
+    compile 'biz.aQute.bnd:biz.aQute.bnd.gradle:4.3.0'
     compile 'com.moowork.gradle:gradle-node-plugin:1.0.1'
     compile 'org.eclipse.jgit:org.eclipse.jgit:3.7.0.201502260915-r'
     compile 'com.gradle.publish:plugin-publish-plugin:0.9.3'
     compile 'gradle.plugin.com.enonic.gradle:gradle-defaults:2.0.1'
+    runtimeOnly 'com.github.ben-manes:gradle-versions-plugin:0.25.0'
 }

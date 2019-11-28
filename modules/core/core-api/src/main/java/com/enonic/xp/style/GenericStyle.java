@@ -23,21 +23,25 @@ public final class GenericStyle
         this.displayNameI18nKey = builder.displayNameI18nKey;
     }
 
+    @Override
     public String getElement()
     {
         return STYLE_ELEMENT_NAME;
     }
 
+    @Override
     public String getName()
     {
         return name;
     }
 
+    @Override
     public String getDisplayName()
     {
         return displayName;
     }
 
+    @Override
     public String getDisplayNameI18nKey()
     {
         return displayNameI18nKey;

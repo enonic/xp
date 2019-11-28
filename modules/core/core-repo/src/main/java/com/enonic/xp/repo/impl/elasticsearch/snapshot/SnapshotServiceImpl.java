@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
 import java.io.File;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,8 +24,6 @@ import org.elasticsearch.snapshots.SnapshotInfo;
 import org.elasticsearch.snapshots.SnapshotState;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.cluster.ClusterManager;
 import com.enonic.xp.event.EventPublisher;
@@ -260,7 +259,7 @@ public class SnapshotServiceImpl
 
     private Set<String> deleteByBefore( final Instant before )
     {
-        final Set<String> deleted = Sets.newHashSet();
+        final Set<String> deleted = new HashSet<>();
 
         final SnapshotResults snapshotResults = doListSnapshots();
 
@@ -278,7 +277,7 @@ public class SnapshotServiceImpl
 
     private Set<String> deleteByName( final Set<String> snapshotNames )
     {
-        final Set<String> deletedNames = Sets.newHashSet();
+        final Set<String> deletedNames = new HashSet<>();
 
         for ( final String name : snapshotNames )
         {

@@ -1,16 +1,14 @@
 package com.enonic.xp.repository;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Function;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -23,13 +21,12 @@ public final class Repositories
     private Repositories( final Set<Repository> set )
     {
         super( ImmutableSet.copyOf( set ) );
-        this.map = Maps.uniqueIndex( set, new ToIdFunction() );
+        this.map = set.stream().collect( ImmutableMap.toImmutableMap( Repository::getId, Function.identity() ) );
     }
 
     public RepositoryIds getIds()
     {
-        final Collection<RepositoryId> ids = Collections2.transform( this.set, new ToIdFunction() );
-        return RepositoryIds.from( ids );
+        return RepositoryIds.from( map.keySet() );
     }
 
     public Repository getRepositoryById( final RepositoryId repositoryId )
@@ -58,16 +55,6 @@ public final class Repositories
         return new Repositories( ImmutableSet.copyOf( repositorys ) );
     }
 
-    private final static class ToIdFunction
-        implements Function<Repository, RepositoryId>
-    {
-        @Override
-        public RepositoryId apply( final Repository value )
-        {
-            return value.getId();
-        }
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -75,7 +62,7 @@ public final class Repositories
 
     public static class Builder
     {
-        private Set<Repository> repositorys = Sets.newLinkedHashSet();
+        private Set<Repository> repositorys = new LinkedHashSet<>();
 
         public Builder add( Repository repository )
         {

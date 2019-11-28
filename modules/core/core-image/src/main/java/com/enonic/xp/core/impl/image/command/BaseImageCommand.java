@@ -78,7 +78,7 @@ abstract class BaseImageCommand
 
         try
         {
-            return new Integer( arg.toString() );
+            return Integer.valueOf( arg.toString() );
         }
         catch ( Exception e )
         {
@@ -100,7 +100,7 @@ abstract class BaseImageCommand
 
         try
         {
-            return new Float( arg.toString() );
+            return Float.valueOf( arg.toString() );
         }
         catch ( Exception e )
         {
@@ -122,7 +122,7 @@ abstract class BaseImageCommand
 
         try
         {
-            return new Double( arg.toString() );
+            return Double.valueOf( arg.toString() );
         }
         catch ( Exception e )
         {

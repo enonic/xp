@@ -1,7 +1,9 @@
 package com.enonic.xp.media;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 // Image orientation values from EXIF metadata
 // See http://www.impulseadventure.com/photo/exif-orientation.html
@@ -18,15 +20,8 @@ public enum ImageOrientation
 
     private static final ImageOrientation DEFAULT = ImageOrientation.TopLeft; // no rotation needed
 
-    private static final Map<Integer, ImageOrientation> LOOKUP_TABLE = new HashMap<>();
-
-    static
-    {
-        for ( final ImageOrientation imageOrientation : ImageOrientation.values() )
-        {
-            LOOKUP_TABLE.put( imageOrientation.value, imageOrientation );
-        }
-    }
+    private static final Map<Integer, ImageOrientation> LOOKUP_TABLE =
+        Arrays.stream( values() ).collect( Collectors.toMap( e -> e.value, Function.identity() ) );
 
     private final int value;
 
@@ -42,8 +37,7 @@ public enum ImageOrientation
 
     public static ImageOrientation valueOf( final int value )
     {
-        final ImageOrientation orientation = LOOKUP_TABLE.get( value );
-        return orientation == null ? DEFAULT : orientation;
+        return LOOKUP_TABLE.getOrDefault( value, DEFAULT );
     }
 
     public static ImageOrientation from( final String value )
@@ -54,9 +48,7 @@ public enum ImageOrientation
         }
         try
         {
-            final Integer intValue = Integer.valueOf( value );
-            final ImageOrientation orientation = LOOKUP_TABLE.get( intValue );
-            return orientation == null ? DEFAULT : orientation;
+            return valueOf( Integer.parseInt( value ) );
         }
         catch ( NumberFormatException e )
         {
@@ -72,9 +64,7 @@ public enum ImageOrientation
         }
         try
         {
-            final Integer intValue = Integer.valueOf( value );
-            final ImageOrientation orientation = LOOKUP_TABLE.get( intValue );
-            return orientation != null;
+            return LOOKUP_TABLE.containsKey( Integer.parseInt( value ) );
         }
         catch ( NumberFormatException e )
         {

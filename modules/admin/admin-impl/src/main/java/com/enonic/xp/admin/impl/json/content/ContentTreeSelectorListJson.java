@@ -28,7 +28,7 @@ public class ContentTreeSelectorListJson
 
     public static ContentTreeSelectorListJson empty()
     {
-        return new ContentTreeSelectorListJson( new ArrayList<ContentTreeSelectorJson>(), new ContentListMetaDataJson(
+        return new ContentTreeSelectorListJson( new ArrayList<>(), new ContentListMetaDataJson(
             ContentListMetaData.create().hits( 0 ).totalHits( 0 ).build() ) );
     }
 

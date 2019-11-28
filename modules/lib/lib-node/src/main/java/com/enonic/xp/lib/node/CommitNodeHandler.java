@@ -25,6 +25,7 @@ public final class CommitNodeHandler
         return new Builder();
     }
 
+    @Override
     public NodeCommitEntryMapper execute()
     {
         final NodeCommitEntry nodeCommitEntry = NodeCommitEntry.create().

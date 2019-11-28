@@ -1,9 +1,8 @@
 package com.enonic.xp.launcher.impl.env;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.launcher.LauncherException;
 import com.enonic.xp.launcher.impl.SharedConstants;
@@ -45,7 +44,7 @@ final class EnvironmentImpl
     @Override
     public Map<String, String> getAsMap()
     {
-        final Map<String, String> map = Maps.newHashMap();
+        final Map<String, String> map = new HashMap<>();
         map.put( XP_HOME_DIR, this.homeDir.getAbsolutePath() );
         map.put( XP_INSTALL_DIR, this.installDir.getAbsolutePath() );
         return map;

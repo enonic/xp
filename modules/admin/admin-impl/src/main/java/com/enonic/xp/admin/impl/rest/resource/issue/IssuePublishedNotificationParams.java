@@ -34,6 +34,7 @@ public class IssuePublishedNotificationParams
             this.publisher = publisher;
         }
 
+        @Override
         public IssuePublishedNotificationParams build()
         {
             return new IssuePublishedNotificationParams( this );

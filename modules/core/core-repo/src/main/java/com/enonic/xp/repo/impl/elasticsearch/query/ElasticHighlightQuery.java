@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -8,7 +9,6 @@ import org.elasticsearch.search.highlight.HighlightBuilder;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.query.highlight.HighlightQuerySettings;
 import com.enonic.xp.query.highlight.constants.Encoder;
@@ -127,7 +127,7 @@ public class ElasticHighlightQuery
 
     public static class Builder
     {
-        private Set<HighlightBuilder.Field> fields = Sets.newHashSet();
+        private Set<HighlightBuilder.Field> fields = new HashSet<>();
 
         private HighlightQuerySettings settings = HighlightQuerySettings.empty();
 

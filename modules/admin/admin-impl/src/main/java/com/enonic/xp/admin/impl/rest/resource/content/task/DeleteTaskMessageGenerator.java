@@ -14,16 +14,19 @@ class DeleteTaskMessageGenerator
         return "Nothing to delete.";
     }
 
+    @Override
     void appendMessageForSingleFailure( final StringBuilder builder, final DeleteRunnableTaskResult result )
     {
         builder.append( String.format( "Item \"%s\" could not be deleted.", result.getFailed().get( 0 ).getName() ) );
     }
 
+    @Override
     void appendMessageForMultipleFailure( final StringBuilder builder, final DeleteRunnableTaskResult result )
     {
         builder.append( String.format( "Failed to delete %s items. ", result.getFailureCount() ) );
     }
 
+    @Override
     void appendMessageForSingleSuccess( final StringBuilder builder, final DeleteRunnableTaskResult result )
     {
         final List<ContentPath> pending = result.getPending();
@@ -46,6 +49,7 @@ class DeleteTaskMessageGenerator
         }
     }
 
+    @Override
     void appendMessageForMultipleSuccess( final StringBuilder builder, final DeleteRunnableTaskResult result )
     {
         final List<ContentPath> pending = result.getPending();

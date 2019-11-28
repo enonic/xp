@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.Contents;
@@ -29,6 +30,8 @@ public class IssueNotificationParams
 
     private final List<IssueComment> comments;
 
+    private final LocaleMessageResolver localeMessageResolver;
+
     public IssueNotificationParams( final Builder builder )
     {
         this.issue = builder.issue;
@@ -39,6 +42,7 @@ public class IssueNotificationParams
         this.items = builder.items;
         this.compareResults = builder.compareResults;
         this.comments = builder.comments != null ? builder.comments : Collections.emptyList();
+        this.localeMessageResolver = builder.localeMessageResolver;
     }
 
     public Issue getIssue()
@@ -86,6 +90,11 @@ public class IssueNotificationParams
         return this.comments;
     }
 
+    public LocaleMessageResolver getLocaleMessageResolver()
+    {
+        return localeMessageResolver;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -93,6 +102,8 @@ public class IssueNotificationParams
 
     public static class Builder<B extends Builder>
     {
+        private LocaleMessageResolver localeMessageResolver;
+
         private Issue issue;
 
         private User creator;
@@ -123,6 +134,7 @@ public class IssueNotificationParams
             this.icons = source.icons;
             this.compareResults = source.compareResults;
             this.comments = source.comments;
+            this.localeMessageResolver = source.localeMessageResolver;
         }
 
         public B issue( final Issue issue )
@@ -170,6 +182,12 @@ public class IssueNotificationParams
         public B comments( final List<IssueComment> comments )
         {
             this.comments = comments;
+            return (B) this;
+        }
+
+        public B localeMessageResolver( final LocaleMessageResolver localeMessageResolver )
+        {
+            this.localeMessageResolver = localeMessageResolver;
             return (B) this;
         }
 

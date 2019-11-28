@@ -1,10 +1,10 @@
 package com.enonic.xp.index;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 @Beta
 public class UpdateIndexSettingsResult
@@ -28,7 +28,7 @@ public class UpdateIndexSettingsResult
 
     public static final class Builder
     {
-        private final Set<String> updatedIndexes = Sets.newHashSet();
+        private final Set<String> updatedIndexes = new HashSet<>();
 
         private Builder()
         {

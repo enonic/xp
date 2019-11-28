@@ -24,6 +24,7 @@ final class ScriptEventListenerImpl
 
     boolean localOnly;
 
+    @Override
     public ApplicationKey getApplication()
     {
         return this.application;

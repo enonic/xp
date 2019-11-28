@@ -160,7 +160,7 @@ public class ImageContentProcessorTest
         assertEquals( xDataInfo.getName(), extraData.getName() );
         assertEquals( extraData.getData().getString( "shutterTime", 0 ), "1" );
         assertEquals( extraData.getData().getString( "altitude", 0 ), "2" );
-        assertEquals( extraData.getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ), new Long( 13 ) );
+        assertEquals( 13, extraData.getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ) );
     }
 
     @Test
@@ -230,7 +230,7 @@ public class ImageContentProcessorTest
         result.getEditor().edit( editableContent );
         assertEquals( editableContent.extraDatas.first().getData().getString( "shutterTime", 0 ), "1" );
         assertEquals( editableContent.extraDatas.first().getData().getString( "altitude", 0 ), "2" );
-        assertEquals( editableContent.extraDatas.first().getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ), new Long( 13 ) );
+        assertEquals( 13, editableContent.extraDatas.first().getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ) );
     }
 
     private static Form createGpsInfoMixinForm()

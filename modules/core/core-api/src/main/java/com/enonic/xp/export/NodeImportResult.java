@@ -1,10 +1,10 @@
 package com.enonic.xp.export;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
@@ -19,9 +19,9 @@ public class NodeImportResult
 
     private final boolean dryRun;
 
-    private List<ImportError> importErrors = Lists.newArrayList();
+    private List<ImportError> importErrors = new ArrayList<>();
 
-    private List<String> exportedBinaries = Lists.newArrayList();
+    private List<String> exportedBinaries = new ArrayList<>();
 
     private NodeImportResult( final Builder builder )
     {
@@ -90,9 +90,9 @@ public class NodeImportResult
 
         private final NodePaths.Builder updatedNodes = NodePaths.create();
 
-        private final List<String> exportedBinaries = Lists.newArrayList();
+        private final List<String> exportedBinaries = new ArrayList<>();
 
-        private final List<ImportError> importErrors = Lists.newArrayList();
+        private final List<ImportError> importErrors = new ArrayList<>();
 
         private boolean dryRun = false;
 

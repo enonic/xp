@@ -1,11 +1,11 @@
 package com.enonic.xp.query.filter;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 public class IndicesFilter
     extends Filter
@@ -59,7 +59,7 @@ public class IndicesFilter
     public static final class Builder
         extends Filter.Builder<Builder>
     {
-        private final Set<String> indices = Sets.newHashSet();
+        private final Set<String> indices = new HashSet<>();
 
         private Filter filter;
 

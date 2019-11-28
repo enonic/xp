@@ -1,10 +1,10 @@
 package com.enonic.xp.testing.helper;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Assertions;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 public final class TestHelper
@@ -52,6 +52,6 @@ public final class TestHelper
             return null;
         }
 
-        return Resources.toString( url, Charsets.UTF_8 );
+        return Resources.toString( url, StandardCharsets.UTF_8 );
     }
 }
