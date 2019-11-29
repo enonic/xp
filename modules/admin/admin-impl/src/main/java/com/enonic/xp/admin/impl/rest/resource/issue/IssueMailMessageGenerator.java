@@ -15,6 +15,7 @@ import javax.mail.internet.InternetAddress;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrSubstitutor;
 
+import com.google.common.base.Strings;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.issue.IssueComment;
@@ -34,15 +35,30 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
     public MailMessage generateMessage()
     {
         final String sender = getSender();
-        final String recipients = generateRecipients();
-        final String copyRecipients = getCopyRecepients();
         final String messageSubject = generateMessageSubject();
         final String messageBody = generateMessageBody();
+        String recipients = generateRecipients();
+        String copyRecipients = getCopyRecepients();
 
+        if ( Strings.isNullOrEmpty( recipients ) )
+        {
+            if ( Strings.isNullOrEmpty( copyRecipients ) )
+            {
+                return null;
+            }
+            else
+            {
+                recipients = copyRecipients;
+                copyRecipients = "";
+            }
+        }
+
+        final String finalRecipients = recipients;
+        final String finalCopyRecipients = copyRecipients;
         return msg -> {
             msg.setFrom( new InternetAddress( sender, "Content Studio" ) );
-            msg.addRecipients( Message.RecipientType.TO, recipients );
-            msg.addRecipients( Message.RecipientType.CC, copyRecipients );
+            msg.addRecipients( Message.RecipientType.TO, finalRecipients );
+            msg.addRecipients( Message.RecipientType.CC, finalCopyRecipients );
             msg.setSubject( messageSubject );
             msg.setContent( messageBody, "text/html; charset=UTF-8" );
         };
