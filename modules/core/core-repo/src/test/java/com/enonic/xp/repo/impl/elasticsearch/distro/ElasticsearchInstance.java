@@ -1,15 +1,11 @@
 package com.enonic.xp.repo.impl.elasticsearch.distro;
 
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import com.enonic.xp.repo.impl.elasticsearch.distro.config.ElasticsearchDownloaderConfig;
 
-import static com.enonic.xp.repo.impl.elasticsearch.distro.ElasticsearchConstants.ROOT_DATA_DIR;
-import static com.enonic.xp.repo.impl.elasticsearch.distro.ElasticsearchConstants.TMP_ELASTICSEARCH_DIR;
 
 public class ElasticsearchInstance
 {
@@ -20,12 +16,15 @@ public class ElasticsearchInstance
 
     private Path esConfigDir;
 
+    private Path esTmpDir;
+
     public ElasticsearchInstance()
     {
         initialize();
 
         elasticsearchServer = ElasticsearchServer.ElasticsearchServerBuilder.builder().
-            esPathConf( esConfigDir.toAbsolutePath().toString() ).
+            esPathConf( esConfigDir ).
+            esPathTmp( esTmpDir ).
             downloaderConfig( ElasticsearchDownloaderConfig.builder().build() ).
             build();
     }
@@ -34,9 +33,12 @@ public class ElasticsearchInstance
     {
         try
         {
-            Path rootDirectory = Files.createTempDirectory( TMP_ELASTICSEARCH_DIR );
+            Path rootDirectory = Files.createTempDirectory( ElasticsearchConstants.FIXTURE_ELASTICSEARCH_DIR );
 
-            final Path dataDir = rootDirectory.resolve( ROOT_DATA_DIR );
+            final Path dataDir = rootDirectory.resolve( ElasticsearchConstants.ROOT_DATA_DIR_NAME );
+
+            esTmpDir = rootDirectory.resolve( ElasticsearchConstants.ELASTICSEARCH_TMP_DIR_NAME );
+            Files.createDirectories( esTmpDir );
 
             final Path pathHome = dataDir.resolve( "index" );
             Files.createDirectories( pathHome );
@@ -49,9 +51,6 @@ public class ElasticsearchInstance
 
             esConfigDir = dataDir.resolve( "elasticConfig" );
             Files.createDirectories( esConfigDir );
-
-            copyResource( "jvm.options" );
-            copyResource( "log4j2.properties" );
 
             final Path elasticsearchYml = esConfigDir.resolve( "elasticsearch.yml" );
             Files.createFile( elasticsearchYml );
@@ -86,16 +85,4 @@ public class ElasticsearchInstance
     {
         return snapshotsDir;
     }
-
-    private void copyResource( final String resourceName )
-        throws Exception
-    {
-        URL resource = getClass().getClassLoader().getResource( "elastic/config/" + resourceName );
-
-        if ( resource != null )
-        {
-            Files.copy( Paths.get( resource.toURI() ), esConfigDir.resolve( resourceName ) );
-        }
-    }
-
 }

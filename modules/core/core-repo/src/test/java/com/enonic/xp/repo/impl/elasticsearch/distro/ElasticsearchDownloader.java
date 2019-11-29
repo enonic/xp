@@ -33,8 +33,6 @@ class ElasticsearchDownloader
     public void download()
         throws IOException
     {
-        FileUtils.forceMkdir( ES_DIR.toFile() );
-
         URL url = getDownloadUrl();
         String localFileName = constructLocalFileName( url );
         File target = new File( ES_DIR.toFile(), localFileName );

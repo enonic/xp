@@ -2,10 +2,9 @@ package com.enonic.xp.repo.impl.elasticsearch.distro;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.rauschig.jarchivelib.ArchiveFormat;
 import org.rauschig.jarchivelib.Archiver;
 import org.rauschig.jarchivelib.ArchiverFactory;
@@ -15,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.repo.impl.elasticsearch.distro.config.ElasticsearchDownloaderConfig;
 
-import static com.enonic.xp.repo.impl.elasticsearch.distro.ElasticsearchConstants.ES_DIR;
 
 class ElasticsearchInstaller
 {
@@ -32,23 +30,21 @@ class ElasticsearchInstaller
     public void install()
         throws IOException
     {
+        if ( Files.exists( ElasticsearchConstants.ES_EXECUTABLE_PATH ) )
+        {
+            LOGGER.info( "Skip Elasticsearch installation as it is already installed: {}", ElasticsearchConstants.ES_EXECUTABLE_PATH );
+            return;
+        }
+
+        Files.createDirectories( ElasticsearchConstants.ES_DIR );
+
         downloader.download();
 
-        FileUtils.forceMkdir( getInstallationDirectory() );
+        LOGGER.info( "Installing Elasticsearch into {}", getInstallationDirectory() );
 
-        LOGGER.info( "Installing Elasticsearch into the " + getInstallationDirectory() + "..." );
-
-        try
-        {
-            final Path source = ES_DIR.resolve( ElasticsearchArtifact.getArchiveNameByOS() );
-            unzip( source );
-            LOGGER.info( "Done" );
-        }
-        catch ( IOException e )
-        {
-            LOGGER.info( "Failure : " + e );
-            throw new RuntimeException( e );
-        }
+        final Path source = ElasticsearchConstants.ES_DIR.resolve( ElasticsearchArtifact.getArchiveNameByOS() );
+        unzip( source );
+        LOGGER.info( "Completed Elasticsearch installation" );
     }
 
     private void unzip( Path downloadedTo )
@@ -57,12 +53,11 @@ class ElasticsearchInstaller
         Archiver archiver = SystemUtils.IS_OS_WINDOWS
             ? ArchiverFactory.createArchiver( ArchiveFormat.ZIP )
             : ArchiverFactory.createArchiver( ArchiveFormat.TAR, CompressionType.GZIP );
-        archiver.extract( downloadedTo.toFile(), ES_DIR.toFile() );
+        archiver.extract( downloadedTo.toFile(), ElasticsearchConstants.ES_DIR.toFile() );
     }
 
     public File getInstallationDirectory()
     {
-        return ES_DIR.toFile();
+        return ElasticsearchConstants.ES_DIR.toFile();
     }
-
 }

@@ -14,8 +14,25 @@ public interface ElasticsearchConstants
 
     Path ES_DIR = Path.of( System.getProperty( "java.io.tmpdir" ), "elasticsearch-dir" );
 
-    String ROOT_DATA_DIR = "elasticsearch-data";
+    Path ES_EXECUTABLE_PATH = ES_DIR.resolve( EXTRACTED_ARCHIVE_NAME ).resolve( "bin" ).resolve( getExecutableName() );
 
-    String TMP_ELASTICSEARCH_DIR = "elasticsearchFixture";
+    Path ES_CONFIG_EXTRACTED_PATH = ES_DIR.resolve( EXTRACTED_ARCHIVE_NAME ).resolve( "config" );
 
+    String ROOT_DATA_DIR_NAME = "elasticsearch-data";
+
+    String FIXTURE_ELASTICSEARCH_DIR = "elasticsearch-fixture";
+
+    String ELASTICSEARCH_TMP_DIR_NAME = "temp";
+
+    static String getExecutableName()
+    {
+        if ( SystemUtils.IS_OS_WINDOWS )
+        {
+            return "elasticsearch.bat";
+        }
+        else
+        {
+            return "elasticsearch";
+        }
+    }
 }

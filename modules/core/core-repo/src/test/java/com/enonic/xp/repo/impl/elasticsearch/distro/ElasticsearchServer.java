@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -13,9 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.repo.impl.elasticsearch.distro.config.ElasticsearchDownloaderConfig;
-
-import static com.enonic.xp.repo.impl.elasticsearch.distro.ElasticsearchConstants.EXTRACTED_ARCHIVE_NAME;
-
 
 public class ElasticsearchServer
 {
@@ -29,14 +28,16 @@ public class ElasticsearchServer
 
     private final AtomicBoolean statedSuccessfully = new AtomicBoolean();
 
-    private final String esPathConf;
+    private final Path esPathConf;
 
+    private final Path esPathTmp;
 
     private final ElasticsearchInstaller installer;
 
     private ElasticsearchServer( final ElasticsearchServerBuilder builder )
     {
         this.esPathConf = builder.esPathConf;
+        this.esPathTmp = builder.esPathTmp;
         this.installer = new ElasticsearchInstaller( builder.downloaderConfig );
     }
 
@@ -44,10 +45,25 @@ public class ElasticsearchServer
         throws InterruptedException, IOException
     {
         installer.install();
+        copyConfigFiles();
         startElasticProcess();
         installExitHook();
         startedLatch.await();
     }
+
+    private void copyConfigFiles()
+        throws IOException
+    {
+        copyConfigFile( "jvm.options" );
+        copyConfigFile( "log4j2.properties" );
+    }
+
+    private void copyConfigFile( String filename )
+        throws IOException
+    {
+        Files.copy( ElasticsearchConstants.ES_CONFIG_EXTRACTED_PATH.resolve( filename ), esPathConf.resolve( filename ) );
+    }
+
 
     public synchronized void stop()
     {
@@ -75,10 +91,11 @@ public class ElasticsearchServer
     public void startElasticProcess()
         throws IOException
     {
-        final ProcessBuilder processBuilder = new ProcessBuilder(
-            Path.of( installer.getInstallationDirectory().getPath(), EXTRACTED_ARCHIVE_NAME, "bin", executableFilename() ).toString() ).
+        final ProcessBuilder processBuilder = new ProcessBuilder( ElasticsearchConstants.ES_EXECUTABLE_PATH.toString() ).
             redirectErrorStream( true );
-        processBuilder.environment().put( "ES_PATH_CONF", esPathConf );
+        final Map<String, String> environment = processBuilder.environment();
+        environment.put( "ES_PATH_CONF", esPathConf.toAbsolutePath().toString() );
+        environment.put( "ES_TMPDIR", esPathTmp.toAbsolutePath().toString() );
 
         process = processBuilder.start();
 
@@ -123,7 +140,9 @@ public class ElasticsearchServer
 
     public static class ElasticsearchServerBuilder
     {
-        private String esPathConf;
+        private Path esPathConf;
+
+        private Path esPathTmp;
 
         private ElasticsearchDownloaderConfig downloaderConfig;
 
@@ -132,9 +151,15 @@ public class ElasticsearchServer
             return new ElasticsearchServerBuilder();
         }
 
-        public ElasticsearchServerBuilder esPathConf( final String esPathConf )
+        public ElasticsearchServerBuilder esPathConf( final Path esPathConf )
         {
             this.esPathConf = esPathConf;
+            return this;
+        }
+
+        public ElasticsearchServerBuilder esPathTmp( final Path esPathTmp )
+        {
+            this.esPathTmp = esPathTmp;
             return this;
         }
 
@@ -159,16 +184,5 @@ public class ElasticsearchServer
         process.destroy();
         process.waitFor( 1, TimeUnit.MINUTES );
     }
-
-    private static String executableFilename()
-    {
-        return "elasticsearch" + ( isWindows() ? ".bat" : "" );
-    }
-
-    private static boolean isWindows()
-    {
-        return System.getProperty( "os.name" ).startsWith( "Windows" );
-    }
-
 }
 
