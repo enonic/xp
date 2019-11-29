@@ -6,10 +6,14 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.Collections2;
 
 import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertyPath;
 
 @Beta
 public class IndexPath
 {
+
+    public static final String INDEX_PATH_DIVIDER = "@";
+
     private final String path;
 
     private IndexPath( final String path )
@@ -63,10 +67,6 @@ public class IndexPath
 
     private static class IndexFieldNameNormalizer
     {
-        private static final String FIELD_PATH_SEPARATOR = ".";
-
-        private static final String INDEX_PATH_SEPARATOR = "_";
-
         public static String normalize( final String path )
         {
             return doNormalize( path );
@@ -77,7 +77,7 @@ public class IndexPath
             String normalized = path;
 
             normalized = normalized.toLowerCase().trim();
-            //normalized = normalized.replace( FIELD_PATH_SEPARATOR, INDEX_PATH_SEPARATOR );
+            normalized = normalized.replace( PropertyPath.ELEMENT_DIVIDER, INDEX_PATH_DIVIDER );
 
             return normalized;
         }

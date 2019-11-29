@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.issue;
 
 
-import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
+import static com.enonic.xp.index.IndexPath.INDEX_PATH_DIVIDER;
 
 public final class IssuePropertyNames
 {
@@ -25,7 +25,7 @@ public final class IssuePropertyNames
 
     public static final String PUBLISH_REQUEST = "publishRequest";
 
-    public static final String PUBLISH_REQUEST_ITEM_ID = PUBLISH_REQUEST + ELEMENT_DIVIDER + "items" + ELEMENT_DIVIDER + "itemId";
+    public static final String PUBLISH_REQUEST_ITEM_ID = String.join( INDEX_PATH_DIVIDER, PUBLISH_REQUEST, "items", "itemId" );
 
     public static final String TYPE = "type";
 }

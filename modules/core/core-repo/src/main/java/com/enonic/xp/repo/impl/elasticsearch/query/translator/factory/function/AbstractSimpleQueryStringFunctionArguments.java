@@ -6,6 +6,8 @@ import org.elasticsearch.index.query.Operator;
 
 import com.enonic.xp.query.expr.ValueExpr;
 
+import static com.enonic.xp.index.IndexPath.INDEX_PATH_DIVIDER;
+
 public abstract class AbstractSimpleQueryStringFunctionArguments
     extends AbstractFunctionArguments
 {
@@ -35,7 +37,9 @@ public abstract class AbstractSimpleQueryStringFunctionArguments
 
         final String fieldString = arguments.get( FIELDNAME_INDEX ).getValue().asString();
 
-        this.fieldNames = WeightedQueryFieldNames.from( fieldString );
+        final String normalizedFieldString = fieldString.replaceAll( "\\.", INDEX_PATH_DIVIDER );
+
+        this.fieldNames = WeightedQueryFieldNames.from( normalizedFieldString );
 
         searchString = arguments.get( SEARCHSTRING_INDEX ).getValue().asString();
 

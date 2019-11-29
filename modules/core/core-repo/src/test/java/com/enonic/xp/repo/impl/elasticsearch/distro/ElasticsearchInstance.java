@@ -56,7 +56,7 @@ public class ElasticsearchInstance
             final Path elasticsearchYml = esConfigDir.resolve( "elasticsearch.yml" );
             Files.createFile( elasticsearchYml );
 
-            final String builder = "path.repo: [" + snapshotsDir.toString() + "]";
+            final String builder = "path.repo: ['" + snapshotsDir.toString() + "']";
             Files.writeString( elasticsearchYml, builder );
         }
         catch ( Exception e )

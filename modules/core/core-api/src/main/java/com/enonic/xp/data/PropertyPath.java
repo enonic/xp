@@ -20,7 +20,7 @@ public final class PropertyPath
 {
     public final static PropertyPath ROOT = new PropertyPath();
 
-    public final static String ELEMENT_DIVIDER = "@";
+    public final static String ELEMENT_DIVIDER = ".";
 
     private final ImmutableList<Element> elements;
 
@@ -269,6 +269,7 @@ public final class PropertyPath
         return s.toString();
     }
 
+    // TODO ES TRANSLATOR
     private static ImmutableList<Element> splitPathIntoElements( final String path )
     {
         List<Element> elements = new ArrayList<>();
