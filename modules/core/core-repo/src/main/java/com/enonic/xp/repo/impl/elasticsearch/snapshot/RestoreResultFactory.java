@@ -12,6 +12,17 @@ class RestoreResultFactory
     {
         final RestoreInfo restoreInfo = response.getRestoreInfo();
 
+        if ( restoreInfo.failedShards() > 0 )
+        {
+            return RestoreResult.create().
+                failed( true ).
+                name( restoreInfo.name() ).
+                indices( restoreInfo.indices() ).
+                message( "Restore failed, " + response.getRestoreInfo().failedShards() + " of " + response.getRestoreInfo().totalShards() +
+                             " shards failed" ).
+                build();
+        }
+
         return RestoreResult.create().
             repositoryId( respositoryId ).
             name( restoreInfo.name() ).
