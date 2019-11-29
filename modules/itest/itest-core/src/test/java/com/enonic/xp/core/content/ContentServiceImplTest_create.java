@@ -38,8 +38,15 @@ public class ContentServiceImplTest_create
     public void create_content_generated_properties()
         throws Exception
     {
+        final PropertySet propertySet = new PropertySet();
+        propertySet.setString( "nested_prop", "value" );
+
+        final PropertyTree data = new PropertyTree();
+        data.addSet( "prop",  propertySet );
+
+
         final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
+            contentData( data ).
             displayName( "This is my content" ).
             parent( ContentPath.ROOT ).
             type( ContentTypeName.folder() ).
@@ -66,6 +73,7 @@ public class ContentServiceImplTest_create
         assertNotNull( storedContent.getModifier() );
         assertNotNull( storedContent.getChildOrder() );
         assertEquals( ContentConstants.DEFAULT_CHILD_ORDER, storedContent.getChildOrder() );
+        assertEquals( "value", storedContent.getData().getSet( "prop" ).getString( "nested_prop" ) );
     }
 
     @Test

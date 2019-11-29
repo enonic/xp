@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -30,7 +29,6 @@ public class FlattenedPageIndexUpgraderTest
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    @Disabled("ES Upgrade")
     public void testPageFlattened()
         throws Exception
     {
@@ -53,7 +51,7 @@ public class FlattenedPageIndexUpgraderTest
         }
 
         final String descriptorKeyStr =
-            data.getString( PropertyPath.from( "components" + ELEMENT_DIVIDER + "page" + ELEMENT_DIVIDER + "descriptor" ) );
+            data.getString( PropertyPath.from( String.join( ELEMENT_DIVIDER, "components", "page", "descriptor" ) ) );
 
         if ( descriptorKeyStr == null )
         {
