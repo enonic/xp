@@ -53,6 +53,10 @@ test {
     useJUnitPlatform {
         excludeTags 'elasticsearch'
     }
+    testLogging {
+        events "PASSED", "SKIPPED", "FAILED"
+    }
+
     systemProperty 'java.awt.headless', 'true'
     jvmArgs '-Xmx2048m', '-noverify', '-XX:TieredStopAtLevel=1'
 }
@@ -64,9 +68,12 @@ task integrationTest(type: Test) {
     useJUnitPlatform {
         includeTags 'elasticsearch'
     }
+    testLogging {
+        events "PASSED", "SKIPPED", "FAILED"
+    }
 
     systemProperty 'java.awt.headless', 'true'
-    jvmArgs '-Xmx2048m'
+    jvmArgs '-Xmx2048m', '-noverify', '-XX:TieredStopAtLevel=1'
 
     shouldRunAfter test
 }
