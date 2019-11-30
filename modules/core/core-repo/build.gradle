@@ -3,6 +3,7 @@ apply from: "$rootDir/gradle/osgi.gradle"
 dependencies {
     compile project( ':core:core-api' )
     compile 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.4.0'
+    compile 'org.apache.logging.log4j:log4j-to-slf4j:2.12.1'
     compile 'org.apache.commons:commons-compress:1.14'
     testCompile 'org.rauschig:jarchivelib:1.0.0'
     testCompile project( path: ':core:core-blobstore', configuration: 'testOutput' )
