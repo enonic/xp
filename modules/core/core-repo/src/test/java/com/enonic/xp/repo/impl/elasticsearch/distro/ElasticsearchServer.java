@@ -91,9 +91,12 @@ public class ElasticsearchServer
     public void startElasticProcess()
         throws IOException
     {
-        final ProcessBuilder processBuilder = new ProcessBuilder( ElasticsearchConstants.ES_EXECUTABLE_PATH.toString() ).
-            redirectErrorStream( true );
+        final ProcessBuilder processBuilder =
+            new ProcessBuilder( ElasticsearchConstants.ES_EXECUTABLE_PATH.toString(), "-Ediscovery.type=single-node",
+                                "-Ecluster.routing.allocation.disk.threshold_enabled=false" ).
+                redirectErrorStream( true );
         final Map<String, String> environment = processBuilder.environment();
+        environment.put( "ES_JAVA_OPTS", "-Xmx256m -Xms256m -XX:-AlwaysPreTouch" );
         environment.put( "ES_PATH_CONF", esPathConf.toAbsolutePath().toString() );
         environment.put( "ES_TMPDIR", esPathTmp.toAbsolutePath().toString() );
 
