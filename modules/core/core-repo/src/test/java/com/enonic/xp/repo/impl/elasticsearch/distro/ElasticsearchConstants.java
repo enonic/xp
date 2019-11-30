@@ -20,8 +20,6 @@ public interface ElasticsearchConstants
 
     String ROOT_DATA_DIR_NAME = "elasticsearch-data";
 
-    String FIXTURE_ELASTICSEARCH_DIR = "elasticsearch-fixture";
-
     String ELASTICSEARCH_TMP_DIR_NAME = "temp";
 
     static String getExecutableName()

@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.http.HttpHost;
@@ -18,7 +19,6 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -111,35 +111,51 @@ public abstract class AbstractElasticsearchIntegrationTest
     }
 
     static class ElasticsearchExtension
-        implements BeforeAllCallback, AfterAllCallback
+        implements BeforeAllCallback
     {
-        ElasticsearchInstance elasticsearchInstance;
+        static ElasticsearchInstance elasticsearchInstance;
 
         @Override
         public void beforeAll( ExtensionContext context )
-            throws IOException, InterruptedException
         {
-            elasticsearchInstance = new ElasticsearchInstance();
-            elasticsearchInstance.start();
+            ExtensionContext.Store rootStore = context.getRoot().getStore( ExtensionContext.Namespace.GLOBAL );
+            rootStore.getOrComputeIfAbsent( "elasticsearch-fixture", key -> {
+                try
+                {
+                    Path rootDirectory = Files.createTempDirectory( "elasticsearch-fixture" );
 
-            snapshotsDir = elasticsearchInstance.getSnapshotsDir();
+                    elasticsearchInstance = new ElasticsearchInstance( rootDirectory );
+                    elasticsearchInstance.start();
+                }
+                catch ( IOException e )
+                {
+                    throw new UncheckedIOException( e );
+                }
+                snapshotsDir = elasticsearchInstance.getSnapshotsDir();
 
-            client = new RestHighLevelClient( RestClient.builder( new HttpHost( "localhost", 9200, "http" ) ) );
+                client = new RestHighLevelClient( RestClient.builder( new HttpHost( "localhost", 9200, "http" ) ) );
 
-            indexService = new IndexServiceInternalImpl();
-            indexService.setClient( client );
+                indexService = new IndexServiceInternalImpl();
+                indexService.setClient( client );
+                return new ElasticsearchResource();
+            } );
+
         }
 
-        @Override
-        public void afterAll( final ExtensionContext context )
-            throws Exception
+        static class ElasticsearchResource
+            implements ExtensionContext.Store.CloseableResource
         {
-            elasticsearchInstance.stop();
-
-            if ( client != null )
+            @Override
+            public void close()
+                throws Throwable
             {
-                LOG.info( "Disconnect from Elasticsearch Client" );
-                client.close();
+                elasticsearchInstance.stop();
+
+                if ( client != null )
+                {
+                    LOG.info( "Disconnect from Elasticsearch Client" );
+                    client.close();
+                }
             }
         }
     }

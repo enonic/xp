@@ -11,38 +11,22 @@ import com.enonic.xp.repo.impl.elasticsearch.distro.config.ElasticsearchDownload
 public class ElasticsearchInstance
 {
 
-    private ElasticsearchServer elasticsearchServer;
+    private final ElasticsearchServer elasticsearchServer;
 
-    private Path snapshotsDir;
+    private final Path snapshotsDir;
 
-    private Path esConfigDir;
-
-    private Path esTmpDir;
-
-    public ElasticsearchInstance()
+    public ElasticsearchInstance( final Path rootPath )
         throws IOException
     {
-        initialize();
+        if ( !Files.isDirectory( rootPath ) )
+        {
+            throw new IllegalArgumentException( "rootPath must be directory" );
+        }
 
-        elasticsearchServer = ElasticsearchServer.ElasticsearchServerBuilder.builder().
-            esPathConf( esConfigDir ).
-            esPathTmp( esTmpDir ).
-            downloaderConfig( ElasticsearchDownloaderConfig.builder().build() ).
-            build();
-    }
+        final Path dataDir = rootPath.resolve( ElasticsearchConstants.ROOT_DATA_DIR_NAME );
 
-    private void initialize()
-        throws IOException
-    {
-        Path rootDirectory = Files.createTempDirectory( ElasticsearchConstants.FIXTURE_ELASTICSEARCH_DIR );
-
-        final Path dataDir = rootDirectory.resolve( ElasticsearchConstants.ROOT_DATA_DIR_NAME );
-
-        esTmpDir = rootDirectory.resolve( ElasticsearchConstants.ELASTICSEARCH_TMP_DIR_NAME );
+        final Path esTmpDir = rootPath.resolve( ElasticsearchConstants.ELASTICSEARCH_TMP_DIR_NAME );
         Files.createDirectories( esTmpDir );
-
-        final Path pathHome = dataDir.resolve( "index" );
-        Files.createDirectories( pathHome );
 
         final Path pathData = dataDir.resolve( "data" );
         Files.createDirectories( pathData );
@@ -53,7 +37,7 @@ public class ElasticsearchInstance
         snapshotsDir = dataDir.resolve( "repo" );
         Files.createDirectories( snapshotsDir );
 
-        esConfigDir = dataDir.resolve( "config" );
+        final Path esConfigDir = dataDir.resolve( "config" );
         Files.createDirectories( esConfigDir );
 
         final Path elasticsearchYml = esConfigDir.resolve( "elasticsearch.yml" );
@@ -66,11 +50,19 @@ public class ElasticsearchInstance
             writer.newLine();
             writer.write( "path.data: '" + pathData + "'" );
             writer.newLine();
+            writer.write( "discovery.type: single-node" );
+            writer.newLine();
         }
+
+        elasticsearchServer = ElasticsearchServer.ElasticsearchServerBuilder.builder().
+            esPathConf( esConfigDir ).
+            esPathTmp( esTmpDir ).
+            downloaderConfig( ElasticsearchDownloaderConfig.builder().build() ).
+            build();
     }
 
     public void start()
-        throws IOException, InterruptedException
+        throws IOException
     {
         if ( !elasticsearchServer.isStarted() )
         {
