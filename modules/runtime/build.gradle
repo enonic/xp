@@ -40,7 +40,7 @@ addBundle( 'net.java.dev.jna:jna:4.1.0', 6)
 // Library dependencies
 addBundle( 'com.google.guava:guava:26.0-jre', 8 )
 addBundle( 'commons-lang:commons-lang:2.4', 8 )
-addBundle( 'commons-io:commons-io:2.4', 8 )
+addBundle( "commons-io:commons-io:${commonsIoVersion}", 8 )
 addBundle( 'org.apache.commons:commons-compress:1.19', 8 )
 addBundle( 'com.fasterxml.jackson.core:jackson-core:2.9.10', 8 )
 addBundle( 'com.fasterxml.jackson.core:jackson-annotations:2.9.10', 8 )

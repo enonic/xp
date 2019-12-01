@@ -15,7 +15,6 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
@@ -359,16 +358,7 @@ public class FileDumpReader
     private String readEntry( final TarArchiveInputStream tarInputStream )
         throws IOException
     {
-        byte[] bytesToRead = new byte[1024];
-        ByteArrayOutputStream entryAsByteStream = new ByteArrayOutputStream();
-        int length;
-        while ( ( length = tarInputStream.read( bytesToRead ) ) != -1 )
-        {
-            entryAsByteStream.write( bytesToRead, 0, length );
-        }
-        entryAsByteStream.close();
-
-        return entryAsByteStream.toString( StandardCharsets.UTF_8.name() );
+        return new String( tarInputStream.readAllBytes(), StandardCharsets.UTF_8 );
     }
 
     @Override

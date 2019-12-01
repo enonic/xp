@@ -2,13 +2,12 @@ package com.enonic.xp.repo.impl.dump;
 
 import java.io.File;
 import java.net.URI;
-import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -950,10 +949,10 @@ public class DumpServiceImplTest
         final URI oldDumpUri = getClass().
             getResource( "/dumps/dump-6-15-5" ).
             toURI();
-        final File oldDumpFile = new File( oldDumpUri );
-        final File tmpDumpFile = Files.createDirectory( this.temporaryFolder.resolve( dumpName ) ).toFile();
-        FileUtils.copyDirectory( oldDumpFile, tmpDumpFile );
-        return tmpDumpFile;
+        final Path oldDumpFile = Path.of( oldDumpUri );
+        final Path tmpDumpFile = this.temporaryFolder.resolve( dumpName );
+        FileUtils.copyDirectoryRecursively( oldDumpFile, tmpDumpFile );
+        return tmpDumpFile.toFile();
     }
 
     private void verifyBinaries( final Node node, final Node updatedNode, final NodeVersionQueryResult versions )
