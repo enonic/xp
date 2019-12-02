@@ -155,7 +155,7 @@ public class PropertyTreeTest
         PropertyTree tree = new PropertyTree();
         tree.addProperty( "myProp", ValueFactory.newString( "otherType" ) );
 
-        assertThrows( IllegalArgumentException.class, () -> tree.addProperty( "myProp", ValueFactory.newBoolean( true ) ) );
+        assertThrows(IllegalArgumentException.class, () -> tree.addProperty( "myProp", ValueFactory.newBoolean( true ) ) );
     }
 
     @Test
@@ -215,14 +215,14 @@ public class PropertyTreeTest
     public void adding_root_PropertySet_must_throw_IllegalArgumentException()
     {
         PropertyTree tree = new PropertyTree();
-        assertThrows( IllegalArgumentException.class, () -> tree.addSet( "myProp", tree.getRoot() ) );
+        assertThrows(IllegalArgumentException.class, () -> tree.addSet( "myProp", tree.getRoot() ) );
     }
 
     @Test
     public void setting_root_PropertySet_must_throw_IllegalArgumentException()
     {
         PropertyTree tree = new PropertyTree();
-        assertThrows( IllegalArgumentException.class, () -> tree.setSet( "myProp", tree.getRoot() ) );
+        assertThrows(IllegalArgumentException.class, () -> tree.setSet( "myProp", tree.getRoot() ) );
     }
 
     @Test

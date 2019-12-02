@@ -18,7 +18,7 @@ public class PropertySetTest
         PropertySet set = new PropertySet( new PropertyTree() );
 
         // exercise & verify
-        assertThrows( IndexOutOfBoundsException.class, () -> set.setProperty( "myProp", 1, ValueFactory.newString( "myValue" ) ) );
+        assertThrows(IndexOutOfBoundsException.class, () -> set.setProperty( "myProp", 1, ValueFactory.newString( "myValue" ) ));
     }
 
     @Test

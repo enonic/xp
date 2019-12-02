@@ -37,7 +37,7 @@ public class ContentMappingConstraintTest
     public void testInvalidExpression()
         throws Exception
     {
-        assertThrows( IllegalArgumentException.class, () -> ContentMappingConstraint.parse( "_path='/'" ) );
+        assertThrows(IllegalArgumentException.class, () -> ContentMappingConstraint.parse( "_path='/'" ));
     }
 
     @Test

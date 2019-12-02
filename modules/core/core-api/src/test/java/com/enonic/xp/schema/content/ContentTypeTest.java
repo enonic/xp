@@ -119,23 +119,24 @@ public class ContentTypeTest
     @Test
     public void contentTypeBuilder()
     {
-        ContentType.Builder builder = ContentType.
-            create().
-            name( ContentTypeName.media() ).
-            form( MEDIA_DEFAULT ).
-            setAbstract().
-            setFinal().
-            allowChildContent( true ).
-            setBuiltIn().
-            displayNameExpression( "displayNameExpression" ).
-            displayName( "displayName" ).
-            displayNameLabel( "displayNameLabel" ).
-            displayNameLabelI18nKey( "displayNameLabelI18nKey" ).
-            description( "description" ).
-            modifiedTime( Instant.now() ).
-            createdTime( Instant.now() ).
-            creator( PrincipalKey.ofAnonymous() ).
-            modifier( PrincipalKey.ofAnonymous() );
+        ContentType.Builder builder =
+            ContentType.
+                create().
+                name( ContentTypeName.media() ).
+                form( MEDIA_DEFAULT ).
+                setAbstract().
+                setFinal().
+                allowChildContent( true ).
+                setBuiltIn().
+                displayNameExpression( "displayNameExpression" ).
+                displayName( "displayName" ).
+                displayNameLabel( "displayNameLabel" ).
+                displayNameLabelI18nKey( "displayNameLabelI18nKey" ).
+                description( "description" ).
+                modifiedTime( Instant.now() ).
+                createdTime( Instant.now() ).
+                creator( PrincipalKey.ofAnonymous() ).
+                modifier( PrincipalKey.ofAnonymous() );
         ContentType contentType1 = builder.build();
         ContentType contentType2 = ContentType.create( contentType1 ).build();
         assertEquals( contentType1.getName(), contentType2.getName() );

@@ -34,7 +34,7 @@ public class InputValidationVisitorTest
         propertyTree.setLong( "myTextLine", 33L );
 
         final InputValidationVisitor validationVisitor = new InputValidationVisitor( propertyTree, InputTypes.BUILTIN );
-        assertThrows( InputTypeValidationException.class, () -> validationVisitor.traverse( form ) );
+        assertThrows(InputTypeValidationException.class, () -> validationVisitor.traverse( form ));
     }
 
     @Test
@@ -81,7 +81,7 @@ public class InputValidationVisitorTest
         propertyTree.setLong( "myFormItemSet.myTextLine", 33L );
 
         final InputValidationVisitor validationVisitor = new InputValidationVisitor( propertyTree, InputTypes.BUILTIN );
-        assertThrows( InputTypeValidationException.class, () -> validationVisitor.traverse( form ) );
+        assertThrows(InputTypeValidationException.class, () -> validationVisitor.traverse( form ));
     }
 
     @Test
@@ -136,7 +136,7 @@ public class InputValidationVisitorTest
         propertyTree.setLong( "myOptionSet.myOptionSetOption1.myTextLine1", 33L );
 
         final InputValidationVisitor validationVisitor = new InputValidationVisitor( propertyTree, InputTypes.BUILTIN );
-        assertThrows( InputTypeValidationException.class, () -> validationVisitor.traverse( form ) );
+        assertThrows(InputTypeValidationException.class, () -> validationVisitor.traverse( form ));
     }
 
     @Test

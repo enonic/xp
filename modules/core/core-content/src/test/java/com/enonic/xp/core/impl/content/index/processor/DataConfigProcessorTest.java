@@ -36,7 +36,7 @@ public class DataConfigProcessorTest
     public void test_data()
         throws Exception
     {
-        final PatternIndexConfigDocument result = processForm( Form.create().build() );
+        final PatternIndexConfigDocument result = processForm(Form.create().build());
 
         assertEquals( 1, result.getPathIndexConfigs().size() );
         assertEquals( IndexConfig.BY_TYPE, result.getConfigForPath( PropertyPath.from( DATA ) ) );
@@ -57,11 +57,13 @@ public class DataConfigProcessorTest
             addFormItem( myTextLine ).
             build();
 
-        final PatternIndexConfigDocument result = processForm( form );
+        final PatternIndexConfigDocument result = processForm(form);
+
 
         assertEquals( 2, result.getPathIndexConfigs().size() );
         assertEquals( "htmlStripper",
-                      result.getConfigForPath( PropertyPath.from( DATA + ".htmlArea" ) ).getIndexValueProcessors().get( 0 ).getName() );
+                      result.getConfigForPath( PropertyPath.from( DATA + ".htmlArea" ) ).getIndexValueProcessors().get(
+                          0 ).getName() );
 
     }
 
@@ -77,7 +79,8 @@ public class DataConfigProcessorTest
         Mockito.when( contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ) ).thenReturn(
             contentType );
 
-        final DataConfigProcessor configProcessor = new DataConfigProcessor( getDataForm( contentTypeService, contentTypeName ) );
+        final DataConfigProcessor configProcessor =
+            new DataConfigProcessor( getDataForm( contentTypeService, contentTypeName) );
 
         return configProcessor.processDocument( PatternIndexConfigDocument.create() ).build();
     }

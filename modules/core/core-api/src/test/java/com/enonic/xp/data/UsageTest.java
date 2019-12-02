@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
-import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 

@@ -11,7 +11,6 @@ import com.enonic.xp.data.PropertyPath;
 @Beta
 public class IndexPath
 {
-
     public static final String DIVIDER = "@";
 
     private final String path;
