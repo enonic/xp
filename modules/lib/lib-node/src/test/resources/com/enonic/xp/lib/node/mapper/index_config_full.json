@@ -12,21 +12,6 @@
   },
   "configs": [
     {
-      "path": "property1@*@property3",
-      "config": {
-        "decideByType": true,
-        "enabled": true,
-        "nGram": false,
-        "fulltext": false,
-        "includeInAllText": false,
-        "path": false,
-        "indexValueProcessors": [],
-        "languages": [
-          "en"
-        ]
-      }
-    },
-    {
       "path": "property1@x",
       "config": {
         "decideByType": true,
@@ -50,6 +35,21 @@
         "path": false,
         "indexValueProcessors": [],
         "languages": []
+      }
+    },
+    {
+      "path": "property1@*@property3",
+      "config": {
+        "decideByType": true,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": false,
+        "indexValueProcessors": [],
+        "languages": [
+          "en"
+        ]
       }
     },
     {

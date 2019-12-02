@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.node.mapper;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.index.IndexConfig;
@@ -15,7 +14,6 @@ public class IndexConfigDocMapperTest
     extends BaseMapperTest
 {
     @Test
-    @Disabled("ES IndexPath")
     public void all()
         throws Exception
     {
