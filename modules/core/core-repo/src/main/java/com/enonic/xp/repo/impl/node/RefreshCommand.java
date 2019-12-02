@@ -40,16 +40,20 @@ public class RefreshCommand
         {
             if ( RefreshMode.ALL == refreshMode )
             {
-                indices.add( IndexNameResolver.resolveSearchIndexName( repositoryId ) );
+                indices.add( IndexNameResolver.resolveSearchIndexName( repositoryId, ContextAccessor.current().getBranch() ) );
             }
 
             indices.add( IndexNameResolver.resolveVersionIndexName( repositoryId ) );
             indices.add( IndexNameResolver.resolveBranchIndexName( repositoryId ) );
             indices.add( IndexNameResolver.resolveCommitIndexName( repositoryId ) );
         }
+        else if ( refreshMode.equals( RefreshMode.SEARCH ) )
+        {
+            indices.add( IndexNameResolver.resolveSearchIndexName( repositoryId, ContextAccessor.current().getBranch() ) );
+        }
         else
         {
-            indices.add( IndexNameResolver.resolveIndexName( repositoryId, IndexType.valueOf( refreshMode.name() ) ) );
+            indices.add( IndexNameResolver.resolveStorageIndexName( repositoryId, IndexType.valueOf( refreshMode.name() ) ) );
         }
 
         this.indexServiceInternal.refresh( indices.toArray( new String[indices.size()] ) );

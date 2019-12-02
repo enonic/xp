@@ -20,6 +20,8 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.index.IndexService;
+import com.enonic.xp.index.InitSearchIndicesParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.RefreshMode;
@@ -56,6 +58,8 @@ public class RepositoryServiceImpl
     private RepositoryEntryService repositoryEntryService;
 
     private IndexServiceInternal indexServiceInternal;
+
+    private IndexService indexService;
 
     private NodeRepositoryService nodeRepositoryService;
 
@@ -109,6 +113,13 @@ public class RepositoryServiceImpl
             this.nodeRepositoryService.create( params );
         }
 
+        if ( !this.indexServiceInternal.indicesExists(
+            IndexNameResolver.resolveSearchIndexName( repositoryId, RepositoryConstants.MASTER_BRANCH ) ) )
+        {
+            this.indexService.initSearchIndices(
+                new InitSearchIndicesParams( repositoryId, Branches.from( RepositoryConstants.MASTER_BRANCH ) ) );
+        }
+
         //If the root node does not exist, creates it
         if ( getRootNode( params.getRepositoryId(), RepositoryConstants.MASTER_BRANCH ) == null )
         {
@@ -149,6 +160,11 @@ public class RepositoryServiceImpl
         if ( previousRepository.getBranches().contains( newBranch ) )
         {
             throw new BranchAlreadyExistException( newBranch );
+        }
+
+        if ( !this.indexServiceInternal.indicesExists( IndexNameResolver.resolveSearchIndexName( repositoryId, newBranch ) ) )
+        {
+            this.indexService.initSearchIndices( new InitSearchIndicesParams( repositoryId, Branches.from( newBranch ) ) );
         }
 
         //If the root node does not exist, creates it
@@ -250,6 +266,7 @@ public class RepositoryServiceImpl
             deleteRootNode( branch );
         }
 
+        indexServiceInternal.deleteIndices( IndexNameResolver.resolveSearchIndexName( repositoryId, branch ) );
         //Updates the repository entry
         return repositoryEntryService.removeBranchFromRepositoryEntry( repositoryId, branch );
     }
@@ -374,6 +391,12 @@ public class RepositoryServiceImpl
     public void setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )
     {
         this.indexServiceInternal = indexServiceInternal;
+    }
+
+    @Reference
+    public void setIndexService( final IndexService indexService )
+    {
+        this.indexService = indexService;
     }
 
     @Reference

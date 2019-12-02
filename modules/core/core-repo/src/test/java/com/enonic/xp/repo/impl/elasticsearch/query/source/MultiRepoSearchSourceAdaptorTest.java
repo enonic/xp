@@ -34,7 +34,7 @@ public class MultiRepoSearchSourceAdaptorTest
                 build() ).
             build() );
 
-        assertEquals( "search-repo1", source.getIndexNames().iterator().next() );
+        assertEquals( "search-repo1-branch1", source.getIndexNames().iterator().next() );
     }
 
 
@@ -51,7 +51,7 @@ public class MultiRepoSearchSourceAdaptorTest
             build() );
 
         assertEquals( 1, source.getFilters().getSize() );
-        assertEquals( "search-repo1", source.getIndexNames().iterator().next() );
+        assertEquals( "search-repo1-branch1", source.getIndexNames().iterator().next() );
     }
 
     @Test
@@ -71,7 +71,7 @@ public class MultiRepoSearchSourceAdaptorTest
                 build() ).
             build() );
 
-        assertTrue( source.getIndexNames().containsAll( Arrays.asList( "search-repo1", "search-repo2" ) ) );
+        assertTrue( source.getIndexNames().containsAll( Arrays.asList( "search-repo1-branch1", "search-repo2-branch2" ) ) );
 
         final Filters filters = source.getFilters();
 

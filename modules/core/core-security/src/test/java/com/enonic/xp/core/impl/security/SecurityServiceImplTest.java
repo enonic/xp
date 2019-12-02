@@ -136,12 +136,18 @@ public class SecurityServiceImplTest
         repositoryEntryService.setNodeStorageService( storageService );
         repositoryEntryService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 
+        final IndexServiceImpl indexService = new IndexServiceImpl();
+        indexService.setNodeSearchService( searchService );
+        indexService.setRepositoryEntryService( repositoryEntryService );
+        indexService.setIndexServiceInternal( this.indexServiceInternal );
+
         this.repositoryService = new RepositoryServiceImpl();
         this.repositoryService.setRepositoryEntryService( repositoryEntryService );
         this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
         this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
         this.repositoryService.setNodeStorageService( storageService );
         this.repositoryService.setNodeSearchService( searchService );
+        this.repositoryService.setIndexService( indexService );
         this.repositoryService.initialize();
 
         this.eventPublisher = Mockito.mock( EventPublisher.class );
@@ -153,10 +159,6 @@ public class SecurityServiceImplTest
         this.nodeService.setRepositoryService( repositoryService );
         this.nodeService.setEventPublisher( this.eventPublisher );
         this.nodeService.initialize();
-
-        IndexServiceImpl indexService = new IndexServiceImpl();
-        indexService.setNodeSearchService( searchService );
-        indexService.setIndexServiceInternal( this.indexServiceInternal );
 
         securityService = new SecurityServiceImpl();
         securityService.setNodeService( this.nodeService );

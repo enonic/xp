@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.index.ApplyMappingRequest;
@@ -131,7 +132,7 @@ public class IndexServiceInternalImpl
         {
             final GetRequest request = new GetRequest().
                 id( nodeId.toString() ).
-                index( IndexNameResolver.resolveSearchIndexName( repositoryId ) );
+                index( IndexNameResolver.resolveSearchIndexName( repositoryId, source ) );
 
             final GetResponse response = this.client.get( request, RequestOptions.DEFAULT );
 
@@ -144,7 +145,7 @@ public class IndexServiceInternalImpl
 
             final IndexRequest req = Requests.indexRequest().
                 id( nodeId.toString() ).
-                index( IndexNameResolver.resolveSearchIndexName( repositoryId ) ).
+                index( IndexNameResolver.resolveSearchIndexName( repositoryId, target ) ).
                 source( sourceValues ).
                 setRefreshPolicy( WriteRequest.RefreshPolicy.NONE );
 
@@ -214,7 +215,14 @@ public class IndexServiceInternalImpl
     @Override
     public IndexSettings getIndexSettings( final RepositoryId repositoryId, final IndexType indexType )
     {
-        final String indexName = IndexNameResolver.resolveIndexName( repositoryId, indexType );
+        if ( repositoryId == null || indexType == null )
+        {
+            return null;
+        }
+
+        final String indexName = IndexType.SEARCH == indexType
+            ? IndexNameResolver.resolveSearchIndexName( repositoryId, ContextAccessor.current().getBranch() )
+            : IndexNameResolver.resolveStorageIndexName( repositoryId, indexType );
 
         if ( indexName == null )
         {
@@ -227,7 +235,6 @@ public class IndexServiceInternalImpl
             request.masterNodeTimeout( GET_SETTINGS_TIMEOUT );
 
             final GetSettingsResponse response = client.indices().getSettings( request, RequestOptions.DEFAULT );
-
             final ImmutableOpenMap<String, Settings> settingsMap = response.getIndexToSettings();
 
             final Settings settings = settingsMap.get( indexName );
@@ -248,7 +255,15 @@ public class IndexServiceInternalImpl
     @Override
     public Map<String, Object> getIndexMapping( final RepositoryId repositoryId, final Branch branch, final IndexType indexType )
     {
-        final String indexName = IndexNameResolver.resolveIndexName( repositoryId, indexType );
+
+        if ( repositoryId == null || indexType == null )
+        {
+            return null;
+        }
+
+        final String indexName = IndexType.SEARCH == indexType
+            ? IndexNameResolver.resolveSearchIndexName( repositoryId, branch )
+            : IndexNameResolver.resolveStorageIndexName( repositoryId, indexType );
 
         if ( indexName == null )
         {

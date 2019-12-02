@@ -119,10 +119,10 @@ public class DumpServiceImplTest
     public void admin_role_required()
         throws Exception
     {
-        assertThrows(RepoDumpException.class, () -> {
-            doDump(SystemDumpParams.create().
-                    dumpName("testDump").
-                    build());
+        assertThrows( RepoDumpException.class, () -> {
+            doDump( SystemDumpParams.create().
+                dumpName( "testDump" ).
+                build() );
 
         } );
     }
@@ -639,7 +639,6 @@ public class DumpServiceImplTest
     }
 
     @Test
-    @Disabled("Should be fixed after re-implementing search index - should be added branch, nodeid, _id=UUID_<branch-name>)")
     public void dumpAndLoadListener()
     {
         createNode( NodePath.ROOT, "myNode" );
@@ -1054,7 +1053,8 @@ public class DumpServiceImplTest
 
     private void deleteSystemIndices()
     {
-        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveSearchIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
+        IndexNameResolver.resolveSearchIndexNames( SystemConstants.SYSTEM_REPO.getId(), SystemConstants.SYSTEM_REPO.getBranches() ).
+            forEach( this.indexServiceInternal::deleteIndices );
         this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveBranchIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
         this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveVersionIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
         this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveCommitIndexName( SystemConstants.SYSTEM_REPO.getId() ) );

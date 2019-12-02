@@ -8,9 +8,9 @@ import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.IndexFilter;
+import com.enonic.xp.query.filter.IndicesFilter;
 import com.enonic.xp.repo.impl.MultiRepoSearchSource;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AclFilterBuilderFactory;
-import com.enonic.xp.repo.impl.storage.BaseStorageName;
 import com.enonic.xp.repository.RepositoryId;
 
 class MultiRepoSearchSourceAdaptor
@@ -19,9 +19,9 @@ class MultiRepoSearchSourceAdaptor
     static ESSource adapt( final MultiRepoSearchSource source )
     {
         final ESSource.Builder esSourceBuilder = ESSource.create().
-            indexNames( source.getRepositoryIds().stream().
-                map( AbstractSourceAdapter::createSearchIndexName ).
-                map( BaseStorageName::getName ).
+            indexNames( source.getSources().stream().map(
+                singleRepoSource -> AbstractSourceAdapter.createSearchIndexName( singleRepoSource.getRepositoryId(),
+                                                                                 singleRepoSource.getBranch() ) ).
                 collect( Collectors.toSet() ) ).
             addFilter( createSourceFilters( source ) );
 
@@ -78,10 +78,14 @@ class MultiRepoSearchSourceAdaptor
         }
 
         filters.must( IndexFilter.create().
-            value( createSearchIndexName( repoId ).getName() ).
+            value( createSearchIndexName( repoId, entry.getBranch() ) ).
             build() );
 
-        return filters.build();
+        return IndicesFilter.create().
+            addIndex( createSearchIndexName( repoId, entry.getBranch() ) ).
+            filter( filters.
+                build() ).
+            build();
     }
 
     private static Filter createBranchFilter( final Branch branch )

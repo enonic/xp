@@ -22,6 +22,7 @@ import com.enonic.xp.node.RestoreParams;
 import com.enonic.xp.node.SnapshotParams;
 import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
+import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
@@ -66,11 +67,16 @@ public class SnapshotServiceImplTest
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
         nodeRepositoryService.setIndexServiceInternal( this.indexServiceInternal );
 
+        final IndexServiceImpl indexService = new IndexServiceImpl();
+        indexService.setIndexServiceInternal( this.indexServiceInternal );
+        indexService.setRepositoryEntryService( repositoryEntryService );
+
         this.repositoryService = new RepositoryServiceImpl();
         repositoryService.setIndexServiceInternal( this.indexServiceInternal );
         repositoryService.setNodeStorageService( this.storageService );
         repositoryService.setNodeSearchService( this.searchService );
         repositoryService.setNodeRepositoryService( nodeRepositoryService );
+        repositoryService.setIndexService( indexService );
         repositoryService.setRepositoryEntryService( this.repositoryEntryService );
 
         eventPublisher = Mockito.mock( EventPublisher.class );

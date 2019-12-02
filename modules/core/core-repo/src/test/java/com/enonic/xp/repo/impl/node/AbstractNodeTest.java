@@ -1,10 +1,8 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
@@ -50,6 +48,7 @@ import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
 import com.enonic.xp.repo.impl.elasticsearch.snapshot.SnapshotServiceImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
+import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
@@ -242,12 +241,18 @@ public abstract class AbstractNodeTest
         this.repositoryEntryService.setNodeSearchService( this.searchService );
         this.repositoryEntryService.setBinaryService( this.binaryService );
 
+        final IndexServiceImpl indexService = new IndexServiceImpl();
+        indexService.setIndexDataService( indexedDataService );
+        indexService.setIndexServiceInternal( indexServiceInternal );
+        indexService.setRepositoryEntryService( repositoryEntryService );
+
         this.repositoryService = new RepositoryServiceImpl();
         this.repositoryService.setRepositoryEntryService( this.repositoryEntryService );
         this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
         this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
         this.repositoryService.setNodeStorageService( this.storageService );
         this.repositoryService.setNodeSearchService( this.searchService );
+        this.repositoryService.setIndexService( indexService );
 
         this.nodeService.setRepositoryService( this.repositoryService );
     }
@@ -268,6 +273,7 @@ public abstract class AbstractNodeTest
             callWith( () -> {
                 this.repositoryService.createRepository( CreateRepositoryParams.create().
                     repositoryId( repository.getId() ).
+//                    setBranches( repository.getBranches() ).
                     rootPermissions( rootPermissions ).
                     build() );
 
@@ -446,12 +452,12 @@ public abstract class AbstractNodeTest
 
     protected void printContentRepoIndex()
     {
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), WS_DEFAULT.getValue() );
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId(), WS_DEFAULT ), WS_DEFAULT.getValue() );
     }
 
     protected void printSearchIndex( final RepositoryId repositoryId, final Branch branch )
     {
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( repositoryId ), branch.getValue() );
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( repositoryId, branch ), branch.getValue() );
     }
 
     protected void printBranchIndex()

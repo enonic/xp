@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
@@ -79,7 +78,6 @@ public class PushNodesCommandTest
     }
 
     @Test
-    @Disabled("Should be fixed after re-implementing search index - should be added branch, nodeid, _id=UUID_<branch-name>)")
     public void only_selected_node_pushed()
         throws Exception
     {
@@ -99,6 +97,9 @@ public class PushNodesCommandTest
             build() );
 
         final PushNodesResult result = pushNodes( NodeIds.from( node.id() ), WS_OTHER );
+
+        refresh();
+
         assertEquals( 1, result.getSuccessful().getSize() );
 
         final FindNodesByQueryResult allNodesInOther = CTX_OTHER.callWith( () -> FindNodesByQueryCommand.create().
@@ -185,6 +186,9 @@ public class PushNodesCommandTest
 
         //Pushed the renames content
         result = pushNodes( NodeIds.from( node.id() ), WS_OTHER );
+
+        refresh();
+
         assertEquals( 1, result.getSuccessful().getSize() );
         assertNull( getNodeByPathInOther( NodePath.create( "/my-node" ).build() ) );
         assertNotNull( getNodeByPathInOther( NodePath.create( "/my-node-renamed" ).build() ) );
@@ -316,6 +320,8 @@ public class PushNodesCommandTest
             getTargetNode();
 
         pushNodes( NodeIds.from( node1.id() ), WS_OTHER );
+
+        refresh();
 
         assertNotNull( getNodeByPathInOther( NodePath.create( movedNode.path(), child1.name().toString() ).build() ) );
 

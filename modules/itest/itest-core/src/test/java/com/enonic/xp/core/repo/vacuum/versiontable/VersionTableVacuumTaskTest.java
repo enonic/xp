@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.Node;
@@ -72,7 +71,6 @@ class VersionTableVacuumTaskTest
     }
 
     @Test
-    @Disabled("Should be fixed after re-implementing search index - should be added branch, nodeid, _id=UUID_<branch-name>)")
     void version_deleted_in_all_branches()
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );

@@ -36,7 +36,7 @@ public class IndexDataServiceImpl
         return GetByIdRequest.create().
             storageSettings( StorageSource.create().
                 storageType( SearchStorageType.from( context.getBranch() ) ).
-                storageName( SearchStorageName.from( context.getRepositoryId() ) ).
+                storageName( SearchStorageName.from( context.getRepositoryId(), context.getBranch() ) ).
                 build() ).
             returnFields( returnFields ).
             id( nodeId.toString() ).
@@ -76,7 +76,7 @@ public class IndexDataServiceImpl
         this.storageDao.delete( DeleteRequest.create().
             settings( StorageSource.create().
                 storageType( SearchStorageType.from( context.getBranch() ) ).
-                storageName( SearchStorageName.from( context.getRepositoryId() ) ).
+                storageName( SearchStorageName.from( context.getRepositoryId(), context.getBranch() ) ).
                 build() ).
             id( nodeId.toString() ).
             build() );
@@ -89,7 +89,7 @@ public class IndexDataServiceImpl
         this.storageDao.delete( DeleteRequests.create().
             settings( StorageSource.create().
                 storageType( SearchStorageType.from( context.getBranch() ) ).
-                storageName( SearchStorageName.from( context.getRepositoryId() ) ).
+                storageName( SearchStorageName.from( context.getRepositoryId(), context.getBranch() ) ).
                 build() ).
             ids( nodeIds.getAsStrings() ).
             build() );
@@ -114,7 +114,7 @@ public class IndexDataServiceImpl
     {
         this.storageDao.copy( CopyRequest.create().
             storageSettings( StorageSource.create().
-                storageName( SearchStorageName.from( context.getRepositoryId() ) ).
+                storageName( SearchStorageName.from( context.getRepositoryId(), context.getBranch() ) ).
                 storageType( SearchStorageType.from( context.getBranch() ) ).
                 build() ).
             nodeIds( pushNodeParams.getNodeIds() ).

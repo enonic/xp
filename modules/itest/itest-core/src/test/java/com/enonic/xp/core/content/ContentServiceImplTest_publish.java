@@ -24,8 +24,8 @@ import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.MoveContentParams;
-import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PublishContentResult;
+import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
@@ -140,7 +140,6 @@ public class ContentServiceImplTest_publish
     }
 
     @Test
-    @Disabled("Should be fixed after re-implementing search index - should be added branch, nodeid, _id=UUID_<branch-name>)")
     public void push_deleted()
         throws Exception
     {
@@ -356,7 +355,6 @@ public class ContentServiceImplTest_publish
     }
 
     @Test
-    @Disabled("Should be fixed after re-implementing search index - should be added branch, nodeid, _id=UUID_<branch-name>)")
     public void publish_move_delete_moved_also_published()
         throws Exception
     {

@@ -42,7 +42,9 @@ class FindNodesByMultiRepoQueryResultFactory
     private static RepositoryId getRepoId( final SearchHit hit )
     {
         final String indexName = hit.getIndexName();
-        final String repoName = indexName.substring( SearchStorageName.STORAGE_INDEX_PREFIX.length() + SearchStorageName.DIVIDER.length() );
+        final String repoBranchName =
+            indexName.substring( SearchStorageName.STORAGE_INDEX_PREFIX.length() + SearchStorageName.DIVIDER.length() );
+        final String repoName = repoBranchName.substring( 0, repoBranchName.lastIndexOf( SearchStorageName.DIVIDER ) );
         return RepositoryId.from( repoName );
     }
 }

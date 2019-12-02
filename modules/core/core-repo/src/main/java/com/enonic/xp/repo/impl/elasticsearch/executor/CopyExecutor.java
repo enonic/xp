@@ -114,7 +114,7 @@ public class CopyExecutor
         {
             bulkRequest.add( Requests.indexRequest().
                 id( hit.getId() ).
-                index( IndexNameResolver.resolveSearchIndexName( copyRequest.getTargetRepo() ) ).
+                index( IndexNameResolver.resolveSearchIndexName( copyRequest.getTargetRepo(), copyRequest.getTargetBranch() ) ).
                 source( hit.getSourceAsMap() ).
                 setRefreshPolicy( WriteRequest.RefreshPolicy.NONE ) );
         }

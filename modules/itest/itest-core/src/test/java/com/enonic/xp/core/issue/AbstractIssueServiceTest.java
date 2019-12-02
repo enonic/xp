@@ -123,9 +123,6 @@ public class AbstractIssueServiceTest
         IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl();
         indexedDataService.setStorageDao( storageDao );
 
-        indexService = new IndexServiceImpl();
-        indexService.setIndexServiceInternal(indexServiceInternal);
-
         NodeStorageServiceImpl storageService = new NodeStorageServiceImpl();
         storageService.setBranchService(branchService);
         storageService.setVersionService(versionService);
@@ -149,11 +146,16 @@ public class AbstractIssueServiceTest
         repositoryEntryService.setEventPublisher( eventPublisher );
         repositoryEntryService.setBinaryService( binaryService );
 
+        indexService = new IndexServiceImpl();
+        indexService.setIndexServiceInternal( indexServiceInternal );
+        indexService.setRepositoryEntryService( repositoryEntryService );
+
         repositoryService = new RepositoryServiceImpl();
         repositoryService.setRepositoryEntryService( repositoryEntryService );
         repositoryService.setIndexServiceInternal( elasticsearchIndexService );
         repositoryService.setNodeRepositoryService( nodeRepositoryService );
         repositoryService.setNodeStorageService(storageService);
+        repositoryService.setIndexService( indexService );
         repositoryService.initialize();
 
         nodeService = new NodeServiceImpl();

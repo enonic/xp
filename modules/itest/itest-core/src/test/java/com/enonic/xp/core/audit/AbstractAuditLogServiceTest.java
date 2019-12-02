@@ -89,9 +89,6 @@ public class AbstractAuditLogServiceTest
         this.indexedDataService = new IndexDataServiceImpl();
         this.indexedDataService.setStorageDao( storageDao );
 
-        this.indexService = new IndexServiceImpl();
-        this.indexService.setIndexServiceInternal( this.indexServiceInternal );
-
         this.storageService = new NodeStorageServiceImpl();
         this.storageService.setBranchService( this.branchService );
         this.storageService.setVersionService( this.versionService );
@@ -115,11 +112,16 @@ public class AbstractAuditLogServiceTest
         repositoryEntryService.setEventPublisher( eventPublisher );
         repositoryEntryService.setBinaryService( this.binaryService );
 
+        this.indexService = new IndexServiceImpl();
+        this.indexService.setIndexServiceInternal( this.indexServiceInternal );
+        this.indexService.setRepositoryEntryService( repositoryEntryService );
+
         this.repositoryService = new RepositoryServiceImpl();
         this.repositoryService.setRepositoryEntryService( repositoryEntryService );
         this.repositoryService.setIndexServiceInternal( elasticsearchIndexService );
         this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
         this.repositoryService.setNodeStorageService( this.storageService );
+        this.repositoryService.setIndexService( this.indexService );
         this.repositoryService.initialize();
 
         this.nodeService = new NodeServiceImpl();

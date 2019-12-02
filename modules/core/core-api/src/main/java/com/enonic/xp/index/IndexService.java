@@ -23,4 +23,6 @@ public interface IndexService
     ReindexResult reindex( ReindexParams params );
 
     void purgeSearchIndex( PurgeIndexParams params );
+
+    void initSearchIndices( InitSearchIndicesParams params );
 }

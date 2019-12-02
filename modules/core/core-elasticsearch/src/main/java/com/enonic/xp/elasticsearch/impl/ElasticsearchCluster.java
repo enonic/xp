@@ -87,7 +87,7 @@ public final class ElasticsearchCluster
                         build();
                 }
             }
-            return toClusterHealth( healthResponse.getStatus() );
+            return toClusterHealth( healthResponse );
         }
         catch ( Exception e )
         {
@@ -200,14 +200,17 @@ public final class ElasticsearchCluster
         return response.getState().getNodes();
     }
 
-    private ClusterHealth toClusterHealth( final org.elasticsearch.cluster.health.ClusterHealthStatus status )
+    private ClusterHealth toClusterHealth( final ClusterHealthResponse healthResponse )
     {
-        if ( status == org.elasticsearch.cluster.health.ClusterHealthStatus.RED )
+        if ( healthResponse.getStatus() == org.elasticsearch.cluster.health.ClusterHealthStatus.RED )
         {
-            return ClusterHealth.red();
+            return ClusterHealth.create().
+                status( ClusterHealthStatus.RED ).
+                errorMessage( healthResponse.toString() ).
+                build();
         }
 
-        if ( status == org.elasticsearch.cluster.health.ClusterHealthStatus.YELLOW )
+        if ( healthResponse.getStatus() == org.elasticsearch.cluster.health.ClusterHealthStatus.YELLOW )
         {
             return ClusterHealth.yellow();
         }

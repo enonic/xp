@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.index;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentConstants;
@@ -133,7 +132,6 @@ public class IndexServiceImplTest
     }
 
     @Test
-    @Disabled("Should be fixed after re-implementing search index - should be added branch, nodeid, _id=UUID_<branch-name>)")
     public void reindex_other_branch()
         throws Exception
     {
@@ -163,6 +161,7 @@ public class IndexServiceImplTest
         refresh();
 
         assertNull( queryForNode( node.id() ) );
+        assertNull( CTX_OTHER.callWith( () -> queryForNode( node.id() ) ) );
 
         this.indexService.reindex( ReindexParams.create().
             addBranch( CTX_DEFAULT.getBranch() ).
@@ -183,7 +182,7 @@ public class IndexServiceImplTest
 
         refresh();
 
-        assertNull( queryForNode( node.id() ) );
+        assertNotNull( queryForNode( node.id() ) );
         assertNotNull( CTX_OTHER.callWith( () -> queryForNode( node.id() ) ) );
     }
 
@@ -288,10 +287,7 @@ public class IndexServiceImplTest
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            query( NodeQuery.create().query( QueryParser.parse(
-                "_id = '" + nodeId.toString() + "' AND branch = '" + ContextAccessor.current().getBranch().getValue() + "'" ) ).build() ).
-//            query( NodeQuery.create().query( QueryParser.parse(
-//                "nodeid = '" + nodeId.toString() + "' AND branch = '" + ContextAccessor.current().getBranch().getValue() + "'" ) ).build() ).
+            query( NodeQuery.create().query( QueryParser.parse( "_id = '" + nodeId.toString() + "'" ) ).build() ).
             build().
             execute();
 
@@ -310,7 +306,7 @@ public class IndexServiceImplTest
             settings( "{\"index\": {\"number_of_replicas\": 2}}" ).
             build() );
 
-        assertEquals( 4, result.getUpdatedIndexes().size() );
+        assertEquals( 5, result.getUpdatedIndexes().size() );
     }
 
     @Test

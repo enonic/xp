@@ -198,9 +198,6 @@ public class AbstractContentServiceTest
         IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl();
         indexServiceInternal.setClient( client );
 
-        IndexServiceImpl indexService = new IndexServiceImpl();
-        indexService.setIndexServiceInternal(indexServiceInternal);
-
         NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl();
         nodeDao.setBlobStore( blobStore );
 
@@ -233,12 +230,17 @@ public class AbstractContentServiceTest
         repositoryEntryService.setEventPublisher( eventPublisher );
         repositoryEntryService.setBinaryService( binaryService );
 
+        IndexServiceImpl indexService = new IndexServiceImpl();
+        indexService.setIndexServiceInternal( indexServiceInternal );
+        indexService.setRepositoryEntryService( repositoryEntryService );
+
         RepositoryServiceImpl repositoryService = new RepositoryServiceImpl();
         repositoryService.setRepositoryEntryService( repositoryEntryService );
         repositoryService.setIndexServiceInternal( elasticsearchIndexService );
         repositoryService.setNodeRepositoryService( nodeRepositoryService );
         repositoryService.setNodeStorageService(storageService);
         repositoryService.setNodeSearchService(searchService);
+        repositoryService.setIndexService( indexService );
         repositoryService.initialize();
 
         nodeService = new NodeServiceImpl();

@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.index;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -8,8 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.IndexType;
+import com.enonic.xp.index.InitSearchIndicesParams;
 import com.enonic.xp.index.PurgeIndexParams;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
@@ -57,7 +60,7 @@ public class IndexServiceImpl
     {
         if ( params.isInitialize() )
         {
-            doInitializeSearchIndex( params.getRepositoryId() );
+            doInitializeSearchIndex( params.getRepositoryId(), params.getBranches() );
         }
 
         return ReindexExecutor.create().
@@ -99,21 +102,26 @@ public class IndexServiceImpl
 
         for ( final RepositoryId repositoryId : params.getRepositoryIds() )
         {
-            updateIndexSettings( repositoryId, updateIndexSettings, params.isRequireClosedIndex(), result );
+            final Repository repository = repositoryEntryService.getRepositoryEntry( repositoryId );
+
+            if ( repository != null )
+            {
+                updateIndexSettings( repository, updateIndexSettings, params.isRequireClosedIndex(), result );
+            }
         }
 
         return result.build();
     }
 
-    private void updateIndexSettings( final RepositoryId repositoryId, final UpdateIndexSettings updateIndexSettings,
-                                      final boolean closeIndex, final UpdateIndexSettingsResult.Builder result )
+    private void updateIndexSettings( final Repository repository, final UpdateIndexSettings updateIndexSettings, final boolean closeIndex,
+                                      final UpdateIndexSettingsResult.Builder result )
     {
-        final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
-        final String versionIndexName = IndexNameResolver.resolveVersionIndexName( repositoryId );
-        final String branchIndexName = IndexNameResolver.resolveBranchIndexName( repositoryId );
-        final String commitIndexName = IndexNameResolver.resolveCommitIndexName( repositoryId );
+        final Set<String> searchIndexNames = IndexNameResolver.resolveSearchIndexNames( repository.getId(), repository.getBranches() );
+        final String versionIndexName = IndexNameResolver.resolveVersionIndexName( repository.getId() );
+        final String branchIndexName = IndexNameResolver.resolveBranchIndexName( repository.getId() );
+        final String commitIndexName = IndexNameResolver.resolveCommitIndexName( repository.getId() );
 
-        updateIndexSettings( searchIndexName, updateIndexSettings, result, closeIndex );
+        searchIndexNames.forEach( searchIndexName -> updateIndexSettings( searchIndexName, updateIndexSettings, result, closeIndex ) );
         updateIndexSettings( versionIndexName, updateIndexSettings, result, closeIndex );
         updateIndexSettings( branchIndexName, updateIndexSettings, result, closeIndex );
         updateIndexSettings( commitIndexName, updateIndexSettings, result, closeIndex );
@@ -164,12 +172,28 @@ public class IndexServiceImpl
     @Override
     public void purgeSearchIndex( final PurgeIndexParams params )
     {
-        doInitializeSearchIndex( params.getRepositoryId() );
+        final Repository repository = this.repositoryEntryService.getRepositoryEntry( params.getRepositoryId() );
+
+        if ( repository != null )
+        {
+            doInitializeSearchIndex( params.getRepositoryId(), repository.getBranches() );
+        }
     }
 
-    private void doInitializeSearchIndex( final RepositoryId repositoryId )
+    @Override
+    public void initSearchIndices( final InitSearchIndicesParams params )
     {
-        final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
+        doInitializeSearchIndex( params.getRepositoryId(), params.getBranches() );
+    }
+
+    private void doInitializeSearchIndex( final RepositoryId repositoryId, final Branches branches )
+    {
+        branches.forEach( branch -> doInitializeSearchIndex( repositoryId, branch ) );
+    }
+
+    private void doInitializeSearchIndex( final RepositoryId repositoryId, final Branch branch )
+    {
+        final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId, branch );
 
         indexServiceInternal.deleteIndices( searchIndexName );
         indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
