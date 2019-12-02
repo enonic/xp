@@ -403,7 +403,7 @@ public class DuplicateNodeCommandTest
     {
         if ( duplicateReferences.size() > 0 )
         {
-            org.junit.jupiter.api.Assertions.assertTrue( duplicateReferences.containsAll( referencesOutsideTree ), "Ref outside duplicate-tree updated" );
+            assertTrue( duplicateReferences.containsAll( referencesOutsideTree ), "Ref outside duplicate-tree updated" );
         }
     }
 
@@ -419,7 +419,7 @@ public class DuplicateNodeCommandTest
                 if ( ref.getName().equals( dup.getName() ) )
                 {
                     found = true;
-                    org.junit.jupiter.api.Assertions.assertNotEquals( ref.getReference().getNodeId(),
+                    assertNotEquals( ref.getReference().getNodeId(),
                                      dup.getReference().getNodeId() ,
                             "Reference within duplicated tree should be moved to duplicated child");
                 }

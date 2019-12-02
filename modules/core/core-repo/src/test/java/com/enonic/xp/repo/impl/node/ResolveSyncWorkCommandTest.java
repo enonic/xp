@@ -1573,7 +1573,7 @@ public class ResolveSyncWorkCommandTest
             fail( builder.toString() );
         }
 
-        org.junit.jupiter.api.Assertions.assertEquals( expectedNodes
+        assertEquals( expectedNodes
 
             .nodes.size(), result.getSize() ,
                 createAssertFailMessage( result, expectedNodes ));

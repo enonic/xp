@@ -7,7 +7,6 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
 
-
 public class IndexConfigDocMapperTest
     extends BaseMapperTest
 {

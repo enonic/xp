@@ -48,10 +48,10 @@ public class FormJsonToPropertyTreeTranslatorTest
     {
         final JsonNode node = loadJson( "propertyNotInForm" );
 
-        final IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> {
+        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
             new FormJsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
-        } );
-        assertEquals( "No mapping defined for property cheesecake with value not allowed", ex.getMessage() );
+        });
+        assertEquals( "No mapping defined for property cheesecake with value not allowed", ex.getMessage());
     }
 
     @Test
@@ -86,8 +86,8 @@ public class FormJsonToPropertyTreeTranslatorTest
 
         final Property property = data.getProperty( "checkbox" );
 
-        assertTrue( property.getValue().isBoolean() );
-        assertEquals( true, property.getBoolean() );
+        assertTrue( property.getValue().isBoolean());
+        assertEquals( true, property.getBoolean());
     }
 
     @Test
