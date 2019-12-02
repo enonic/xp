@@ -16,7 +16,6 @@ import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.Mixins;
 
-import static com.enonic.xp.form.FormItemPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -109,14 +108,10 @@ public class MixinServiceImplTest
 
         final Form transformedForm = service.inlineFormItems( form );
 
-        assertEquals( "address" + ELEMENT_DIVIDER + "label",
-                      transformedForm.getInput( "address" + ELEMENT_DIVIDER + "label" ).getPath().toString() );
-        assertEquals( "address" + ELEMENT_DIVIDER + "street",
-                      transformedForm.getInput( "address" + ELEMENT_DIVIDER + "street" ).getPath().toString() );
-        assertEquals( "address" + ELEMENT_DIVIDER + "postalNo",
-                      transformedForm.getInput( "address" + ELEMENT_DIVIDER + "postalNo" ).getPath().toString() );
-        assertEquals( "address" + ELEMENT_DIVIDER + "country",
-                      transformedForm.getInput( "address" + ELEMENT_DIVIDER + "country" ).getPath().toString() );
+        assertEquals( "address.label", transformedForm.getInput( "address.label" ).getPath().toString() );
+        assertEquals( "address.street", transformedForm.getInput( "address.street" ).getPath().toString() );
+        assertEquals( "address.postalNo", transformedForm.getInput( "address.postalNo" ).getPath().toString() );
+        assertEquals( "address.country", transformedForm.getInput( "address.country" ).getPath().toString() );
     }
 
     @Test
@@ -139,20 +134,14 @@ public class MixinServiceImplTest
 
         assertNotNull( transformedForm.getFormItemSet( "home" ) );
         assertNotNull( transformedForm.getFormItemSet( "cottage" ) );
-        assertNotNull( transformedForm.getFormItemSet( "home" + ELEMENT_DIVIDER + "address" ) );
-        assertNotNull( transformedForm.getFormItemSet( "cottage" + ELEMENT_DIVIDER + "address" ) );
-        assertEquals( "home" + ELEMENT_DIVIDER + "address" + ELEMENT_DIVIDER + "street",
-                      transformedForm.getInput( "home" + ELEMENT_DIVIDER + "address" + ELEMENT_DIVIDER + "street" ).getPath().toString() );
-        assertEquals( "home" + ELEMENT_DIVIDER + "address" + ELEMENT_DIVIDER + "postalNo", transformedForm.getInput(
-            "home" + ELEMENT_DIVIDER + "address" + ELEMENT_DIVIDER + "postalNo" ).getPath().toString() );
-        assertEquals( "home" + ELEMENT_DIVIDER + "address" + ELEMENT_DIVIDER + "country",
-                      transformedForm.getInput( "home" + ELEMENT_DIVIDER + "address" + ELEMENT_DIVIDER + "country" ).getPath().toString() );
-        assertEquals( InputTypeName.TEXT_LINE,
-                      transformedForm.getInput( "home" + ELEMENT_DIVIDER + "address" + ELEMENT_DIVIDER + "street" ).getInputType() );
-        assertEquals( "cottage" + ELEMENT_DIVIDER + "address" + ELEMENT_DIVIDER + "street", transformedForm.getInput(
-            "cottage" + ELEMENT_DIVIDER + "address" + ELEMENT_DIVIDER + "street" ).getPath().toString() );
-        assertEquals( InputTypeName.TEXT_LINE,
-                      transformedForm.getInput( "cottage" + ELEMENT_DIVIDER + "address" + ELEMENT_DIVIDER + "street" ).getInputType() );
+        assertNotNull( transformedForm.getFormItemSet( "home.address" ) );
+        assertNotNull( transformedForm.getFormItemSet( "cottage.address" ) );
+        assertEquals( "home.address.street", transformedForm.getInput( "home.address.street" ).getPath().toString() );
+        assertEquals( "home.address.postalNo", transformedForm.getInput( "home.address.postalNo" ).getPath().toString() );
+        assertEquals( "home.address.country", transformedForm.getInput( "home.address.country" ).getPath().toString() );
+        assertEquals( InputTypeName.TEXT_LINE, transformedForm.getInput( "home.address.street" ).getInputType() );
+        assertEquals( "cottage.address.street", transformedForm.getInput( "cottage.address.street" ).getPath().toString() );
+        assertEquals( InputTypeName.TEXT_LINE, transformedForm.getInput( "cottage.address.street" ).getInputType() );
     }
 
     @Test
@@ -166,10 +155,8 @@ public class MixinServiceImplTest
 
         final Form transformedForm = service.inlineFormItems( form );
 
-        assertEquals( "address" + ELEMENT_DIVIDER + "street",
-                      transformedForm.getInput( "address" + ELEMENT_DIVIDER + "street" ).getPath().toString() );
-        assertEquals( "address" + ELEMENT_DIVIDER + "myFieldInLayout",
-                      transformedForm.getInput( "address" + ELEMENT_DIVIDER + "myFieldInLayout" ).getPath().toString() );
+        assertEquals( "address.street", transformedForm.getInput( "address.street" ).getPath().toString() );
+        assertEquals( "address.myFieldInLayout", transformedForm.getInput( "address.myFieldInLayout" ).getPath().toString() );
     }
 
     @Test
@@ -216,17 +203,12 @@ public class MixinServiceImplTest
 
         assertNotNull( transformedForm.getInput( "title" ) );
         assertNotNull( transformedForm.getOptionSet( "myOptionSet" ) );
-        assertNotNull( transformedForm.getOptionSetOption( "myOptionSet" + ELEMENT_DIVIDER + "myOptionSetOption1" ) );
-        assertNotNull( transformedForm.getInput(
-            "myOptionSet" + ELEMENT_DIVIDER + "myOptionSetOption1" + ELEMENT_DIVIDER + "address" + ELEMENT_DIVIDER + "label" ) );
-        assertNotNull( transformedForm.getInput(
-            "myOptionSet" + ELEMENT_DIVIDER + "myOptionSetOption1" + ELEMENT_DIVIDER + "address" + ELEMENT_DIVIDER + "street" ) );
-        assertNotNull( transformedForm.getInput(
-            "myOptionSet" + ELEMENT_DIVIDER + "myOptionSetOption1" + ELEMENT_DIVIDER + "address" + ELEMENT_DIVIDER + "postalNo" ) );
-        assertNotNull( transformedForm.getInput(
-            "myOptionSet" + ELEMENT_DIVIDER + "myOptionSetOption1" + ELEMENT_DIVIDER + "address" + ELEMENT_DIVIDER + "country" ) );
-        assertNotNull( transformedForm.getOptionSetOption( "myOptionSet" + ELEMENT_DIVIDER + "myOptionSetOption2" ) );
-        assertNotNull(
-            transformedForm.getInput( "myOptionSet" + ELEMENT_DIVIDER + "myOptionSetOption2" + ELEMENT_DIVIDER + "myTextLine2" ) );
+        assertNotNull( transformedForm.getOptionSetOption( "myOptionSet.myOptionSetOption1" ) );
+        assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.label" ) );
+        assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.street" ) );
+        assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.postalNo" ) );
+        assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.country" ) );
+        assertNotNull( transformedForm.getOptionSetOption( "myOptionSet.myOptionSetOption2" ) );
+        assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption2.myTextLine2" ) );
     }
 }

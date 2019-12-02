@@ -21,15 +21,15 @@ public class IndexNodeIndexPathResolverTest
     {
         return Stream.of(
             Arguments.of( "A", ValueExpr.string( "test" ), "a" ),
-            Arguments.of( "A.b", ValueExpr.string( "test" ), String.join( IndexPath.INDEX_PATH_DIVIDER, "a", "b" ) ),
-            Arguments.of( "A.B.c", ValueExpr.string( "test" ), String.join( IndexPath.INDEX_PATH_DIVIDER, "a", "b", "c" ) ),
-            Arguments.of( "A.b.c", ValueExpr.number( 1.0 ), String.join( IndexPath.INDEX_PATH_DIVIDER, "a", "b", "c", "_number" ) ),
+            Arguments.of( "A.b", ValueExpr.string( "test" ), String.join( IndexPath.DIVIDER, "a", "b" ) ),
+            Arguments.of( "A.B.c", ValueExpr.string( "test" ), String.join( IndexPath.DIVIDER, "a", "b", "c" ) ),
+            Arguments.of( "A.b.c", ValueExpr.number( 1.0 ), String.join( IndexPath.DIVIDER, "a", "b", "c", "_number" ) ),
             Arguments.of( "A.B.C", ValueExpr.number( 1L ),
-                                        String.join( IndexPath.INDEX_PATH_DIVIDER, "a", "b", "c", "_number" ) ),
+                                        String.join( IndexPath.DIVIDER, "a", "b", "c", "_number" ) ),
             Arguments.of( "A.B.C", ValueExpr.geoPoint( "80,80" ),
-                                        String.join( IndexPath.INDEX_PATH_DIVIDER, "a", "b", "c", "_geopoint" ) ),
+                                        String.join( IndexPath.DIVIDER, "a", "b", "c", "_geopoint" ) ),
             Arguments.of( "A.B.C", ValueExpr.instant( "2013-08-01T10:00:00.000Z" ),
-                                        String.join( IndexPath.INDEX_PATH_DIVIDER, "a", "b", "c", "_datetime" ) ) );
+                                        String.join( IndexPath.DIVIDER, "a", "b", "c", "_datetime" ) ) );
     }
 
 

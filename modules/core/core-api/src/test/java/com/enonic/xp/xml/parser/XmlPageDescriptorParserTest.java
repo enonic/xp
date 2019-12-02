@@ -10,7 +10,6 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 
-import static com.enonic.xp.form.FormItemPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -70,13 +69,11 @@ public class XmlPageDescriptorParserTest
 
         assertNotNull( config.getFormItem( "myFormItemSet" ).toFormItemSet() );
         assertEquals( "My form item set", config.getFormItem( "myFormItemSet" ).toFormItemSet().getLabel() );
-        assertEquals( InputTypeName.TEXT_LINE,
-                      config.getFormItem( "myFormItemSet" + ELEMENT_DIVIDER + "fieldSetItem" ).toInput().getInputType() );
-        assertEquals( "Field set Item", config.getFormItem( "myFormItemSet" + ELEMENT_DIVIDER + "fieldSetItem" ).toInput().getLabel() );
+        assertEquals( InputTypeName.TEXT_LINE, config.getFormItem( "myFormItemSet.fieldSetItem" ).toInput().getInputType() );
+        assertEquals( "Field set Item", config.getFormItem( "myFormItemSet.fieldSetItem" ).toInput().getLabel() );
 
-        assertEquals( "key2.label", config.getFormItem( "myFormItemSet" + ELEMENT_DIVIDER + "fieldSetItem" ).toInput().getLabelI18nKey() );
-        assertEquals( "key2.help-text",
-                      config.getFormItem( "myFormItemSet" + ELEMENT_DIVIDER + "fieldSetItem" ).toInput().getHelpTextI18nKey() );
+        assertEquals( "key2.label", config.getFormItem( "myFormItemSet.fieldSetItem" ).toInput().getLabelI18nKey() );
+        assertEquals( "key2.help-text", config.getFormItem( "myFormItemSet.fieldSetItem" ).toInput().getHelpTextI18nKey() );
 
         final RegionDescriptors regions = result.getRegions();
         assertNotNull( regions );

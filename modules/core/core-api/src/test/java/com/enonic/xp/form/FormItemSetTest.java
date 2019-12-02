@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.inputtype.InputTypeName;
 
-import static com.enonic.xp.form.FormItemPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -24,8 +23,8 @@ public class FormItemSetTest
         // exercise
 
         // verify
-        assertEquals( "mySet" + ELEMENT_DIVIDER + "myInput", formItemSet.getInput( "myInput" ).getPath().toString() );
-        assertEquals( "mySet" + ELEMENT_DIVIDER + "myInput", formItemSet.getInput( FormItemPath.from( "myInput" ) ).getPath().toString() );
+        assertEquals( "mySet.myInput", formItemSet.getInput( "myInput" ).getPath().toString() );
+        assertEquals( "mySet.myInput", formItemSet.getInput( FormItemPath.from( "myInput" ) ).getPath().toString() );
     }
 
     @Test
@@ -38,8 +37,8 @@ public class FormItemSetTest
         // exercise
 
         // verify
-        assertEquals( "mySet" + ELEMENT_DIVIDER + "mymixin", formItemSet.getInlineMixin( "mymixin" ).getPath().toString() );
-        assertEquals( "mySet" + ELEMENT_DIVIDER + "mymixin", formItemSet.getInlineMixin( FormItemPath.from( "mymixin" ) ).getPath().toString() );
+        assertEquals( "mySet.mymixin", formItemSet.getInlineMixin( "mymixin" ).getPath().toString() );
+        assertEquals( "mySet.mymixin", formItemSet.getInlineMixin( FormItemPath.from( "mymixin" ) ).getPath().toString() );
     }
 
 
@@ -54,11 +53,11 @@ public class FormItemSetTest
         myOuterSet.add( myInnerSet );
 
         // exercise
-        assertEquals( "myOuterSet" + ELEMENT_DIVIDER + "myInnerSet", myOuterSet.getFormItemSet( "myInnerSet" ).getPath().toString() );
-        assertEquals( "myOuterSet" + ELEMENT_DIVIDER + "myInnerSet", myOuterSet.getFormItemSet( FormItemPath.from( "myInnerSet" ) ).getPath().toString() );
-        assertEquals( "myOuterSet" + ELEMENT_DIVIDER + "myInnerSet" + ELEMENT_DIVIDER + "myInnermostSet",
-                      myOuterSet.getFormItemSet( "myInnerSet" + ELEMENT_DIVIDER + "myInnermostSet" ).getPath().toString() );
-        assertEquals( "myOuterSet" + ELEMENT_DIVIDER + "myInnerSet" + ELEMENT_DIVIDER + "myInnermostSet",
+        assertEquals( "myOuterSet.myInnerSet", myOuterSet.getFormItemSet( "myInnerSet" ).getPath().toString() );
+        assertEquals( "myOuterSet.myInnerSet", myOuterSet.getFormItemSet( FormItemPath.from( "myInnerSet" ) ).getPath().toString() );
+        assertEquals( "myOuterSet.myInnerSet.myInnermostSet",
+                      myOuterSet.getFormItemSet( "myInnerSet.myInnermostSet" ).getPath().toString() );
+        assertEquals( "myOuterSet.myInnerSet.myInnermostSet",
                       myOuterSet.getFormItemSet( "myInnerSet" ).getFormItemSet( "myInnermostSet" ).getPath().toString() );
     }
 
@@ -144,7 +143,7 @@ public class FormItemSetTest
         assertSame( formItemSet.getLabel(), copy.getLabel() );
         assertNotSame( formItemSet.getFormItems(), copy.getFormItems() );
         assertNotSame( formItemSet.getInput( "myField" ), copy.getInput( "myField" ) );
-        assertEquals( "myFormItemSet" + ELEMENT_DIVIDER + "myField", copy.getInput( "myField" ).getPath().toString() );
+        assertEquals( "myFormItemSet.myField", copy.getInput( "myField" ).getPath().toString() );
         assertEquals( formItemSet.getPath(), copy.getInput( "myField" ).getParent().getPath() );
     }
 }

@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.inputtype.InputTypeName;
 
-import static com.enonic.xp.form.FormItemPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InputVisitorTest
@@ -93,11 +92,9 @@ public class InputVisitorTest
 
         iv.traverse( form );
 
-        final List<String> expected = Arrays.asList( "myTextLine", "myCheckbox", "myLong", "myFormItemSet" + ELEMENT_DIVIDER + "myTextLine",
-                                                     "myOptionSet" + ELEMENT_DIVIDER + "myOptionSetOption1" + ELEMENT_DIVIDER +
-                                                         "myTextLine1",
-                                                     "myOptionSet" + ELEMENT_DIVIDER + "myOptionSetOption2" + ELEMENT_DIVIDER +
-                                                         "myTextLine2" );
+        final List<String> expected =
+            Arrays.asList( "myTextLine", "myCheckbox", "myLong", "myFormItemSet.myTextLine", "myOptionSet.myOptionSetOption1.myTextLine1",
+                           "myOptionSet.myOptionSetOption2.myTextLine2" );
 
         assertEquals( expected, itemPathsVisited );
     }

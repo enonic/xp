@@ -23,7 +23,6 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataNames;
 
-import static com.enonic.xp.form.FormItemPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -178,8 +177,7 @@ public class XmlContentTypeParserTest
         assertEquals( "translated.help-text", radioOptionSet.getHelpTextI18nKey() );
         assertEquals( "translated.label", radioOptionSet.getLabelI18nKey() );
 
-        final Input inputInsideOption =
-            radioOptionSet.getFormItems().getInput( FormItemPath.from( "option_1" + ELEMENT_DIVIDER + "text-input" ) );
+        final Input inputInsideOption = radioOptionSet.getFormItems().getInput( FormItemPath.from( "option_1.text-input" ) );
 
         assertEquals( "translated.help-text", inputInsideOption.getHelpTextI18nKey() );
         assertEquals( "translated.label", inputInsideOption.getLabelI18nKey() );
@@ -271,8 +269,7 @@ public class XmlContentTypeParserTest
         assertEquals( "translated.label", radioOptionSet.getLabelI18nKey() );
         assertEquals( "translated.label", radioOptionSet.getLabel() );
 
-        final Input inputInsideOption =
-            radioOptionSet.getFormItems().getInput( FormItemPath.from( "option_1" + ELEMENT_DIVIDER + "text-input" ) );
+        final Input inputInsideOption = radioOptionSet.getFormItems().getInput( FormItemPath.from( "option_1.text-input" ) );
 
         assertEquals( "translated.help-text", inputInsideOption.getHelpTextI18nKey() );
         assertEquals( "translated.help-text", inputInsideOption.getHelpText() );

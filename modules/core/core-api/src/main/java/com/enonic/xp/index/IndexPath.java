@@ -12,7 +12,7 @@ import com.enonic.xp.data.PropertyPath;
 public class IndexPath
 {
 
-    public static final String INDEX_PATH_DIVIDER = "@";
+    public static final String DIVIDER = "@";
 
     private final String path;
 
@@ -77,7 +77,7 @@ public class IndexPath
             String normalized = path;
 
             normalized = normalized.toLowerCase().trim();
-            normalized = normalized.replace( PropertyPath.ELEMENT_DIVIDER, INDEX_PATH_DIVIDER );
+            normalized = normalized.replace( PropertyPath.ELEMENT_DIVIDER, DIVIDER );
 
             return normalized;
         }

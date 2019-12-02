@@ -15,13 +15,13 @@ import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 
-import static com.enonic.xp.index.IndexPath.INDEX_PATH_DIVIDER;
+import static com.enonic.xp.index.IndexPath.DIVIDER;
 
 public class CheckContentValidityCommand
     extends AbstractContentCommand
 {
     private static final String WORKFLOW_STATE_FIELD =
-        String.join( INDEX_PATH_DIVIDER, ContentPropertyNames.WORKFLOW_INFO, ContentPropertyNames.WORKFLOW_INFO_STATE );
+        String.join( DIVIDER, ContentPropertyNames.WORKFLOW_INFO, ContentPropertyNames.WORKFLOW_INFO_STATE );
 
     private final ContentIds contentIds;
 
