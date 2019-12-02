@@ -269,7 +269,6 @@ public final class PropertyPath
         return s.toString();
     }
 
-    // TODO ES TRANSLATOR
     private static ImmutableList<Element> splitPathIntoElements( final String path )
     {
         List<Element> elements = new ArrayList<>();
