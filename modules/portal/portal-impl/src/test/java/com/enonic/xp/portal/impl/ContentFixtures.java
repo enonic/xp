@@ -34,7 +34,6 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 
-import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
@@ -104,7 +103,7 @@ public final class ContentFixtures
         final PropertyTree tree = new PropertyTree();
         tree.setLong( "a", 1L );
         tree.setString( "b", "2" );
-        tree.setBoolean( "c" + ELEMENT_DIVIDER + "d", true );
+        tree.setBoolean( "c.d", true );
 
         final PropertySet set1 = tree.addSet( "c" );
         set1.setBoolean( "d", true );

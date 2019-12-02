@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.support.AbstractEqualsTest;
 
-import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -73,20 +72,18 @@ public class PropertyTest
     public void property_copy()
     {
         PropertyTree sourceTree = new PropertyTree();
-        sourceTree.setString( "outerSet" + ELEMENT_DIVIDER + "innerSet" + ELEMENT_DIVIDER + "myString", "myValue" );
+        sourceTree.setString( "outerSet.innerSet.myString", "myValue" );
         System.out.println( sourceTree );
 
         PropertyTree destinationTree = new PropertyTree();
         PropertySet destiSet = destinationTree.addSet( "destiSet" );
-        sourceTree.getProperty( "outerSet" + ELEMENT_DIVIDER + "innerSet" ).copyTo( destiSet );
+        sourceTree.getProperty( "outerSet.innerSet" ).copyTo( destiSet );
 
         System.out.println( destinationTree.toString() );
 
         // Verify the property from the source and destination tree are equals
-        assertEquals( sourceTree.getProperty( "outerSet" + ELEMENT_DIVIDER + "innerSet" ),
-                      destinationTree.getProperty( "destiSet" + ELEMENT_DIVIDER + "innerSet" ) );
-        assertEquals( sourceTree.getProperty( "outerSet" + ELEMENT_DIVIDER + "innerSet" + ELEMENT_DIVIDER + "myString" ),
-                      destinationTree.getProperty( "destiSet" + ELEMENT_DIVIDER + "innerSet" + ELEMENT_DIVIDER + "myString" ) );
+        assertEquals( sourceTree.getProperty( "outerSet.innerSet" ), destinationTree.getProperty( "destiSet.innerSet" ) );
+        assertEquals( sourceTree.getProperty( "outerSet.innerSet.myString" ), destinationTree.getProperty( "destiSet.innerSet.myString" ) );
     }
 
 

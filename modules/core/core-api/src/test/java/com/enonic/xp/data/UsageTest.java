@@ -60,7 +60,7 @@ public class UsageTest
         assertSame( set, tree.getValue( "mySet", 0 ).asData() );
         assertSame( set, tree.getSet( "mySet", 0 ) );
         assertSame( set, tree.getSet( "mySet" ) );
-        assertSame( "myValue", tree.getString( "mySet" + ELEMENT_DIVIDER + "myProp[0]" ) );
+        assertSame( "myValue", tree.getString( "mySet.myProp[0]" ) );
     }
 
     @Test

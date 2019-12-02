@@ -21,7 +21,6 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
-import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,10 +48,10 @@ public class FormJsonToPropertyTreeTranslatorTest
     {
         final JsonNode node = loadJson( "propertyNotInForm" );
 
-        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+        final IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> {
             new FormJsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
-        });
-        assertEquals( "No mapping defined for property cheesecake with value not allowed", ex.getMessage());
+        } );
+        assertEquals( "No mapping defined for property cheesecake with value not allowed", ex.getMessage() );
     }
 
     @Test
@@ -87,8 +86,8 @@ public class FormJsonToPropertyTreeTranslatorTest
 
         final Property property = data.getProperty( "checkbox" );
 
-        assertTrue( property.getValue().isBoolean());
-        assertEquals( true, property.getBoolean());
+        assertTrue( property.getValue().isBoolean() );
+        assertEquals( true, property.getBoolean() );
     }
 
     @Test
@@ -147,8 +146,8 @@ public class FormJsonToPropertyTreeTranslatorTest
         final JsonNode node = loadJson( "fieldset" );
         final PropertyTree data = new FormJsonToPropertyTreeTranslator( createFormForFieldSet(), true ).translate( node );
 
-        final Property key = data.getProperty( "attributes" + ELEMENT_DIVIDER + "key" );
-        final Property numberProp = data.getProperty( "attributes" + ELEMENT_DIVIDER + "number" );
+        final Property key = data.getProperty( "attributes.key" );
+        final Property numberProp = data.getProperty( "attributes.number" );
 
         assertEquals( ValueTypes.STRING.getName(), key.getType().getName() );
         assertEquals( "value", key.getValue().asString() );

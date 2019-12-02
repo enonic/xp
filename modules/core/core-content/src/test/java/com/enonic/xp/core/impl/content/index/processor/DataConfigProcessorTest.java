@@ -16,7 +16,6 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 
 import static com.enonic.xp.content.ContentPropertyNames.DATA;
-import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DataConfigProcessorTest
@@ -62,8 +61,7 @@ public class DataConfigProcessorTest
 
         assertEquals( 2, result.getPathIndexConfigs().size() );
         assertEquals( "htmlStripper",
-                      result.getConfigForPath( PropertyPath.from( DATA + ELEMENT_DIVIDER + "htmlArea" ) ).getIndexValueProcessors().get(
-                          0 ).getName() );
+                      result.getConfigForPath( PropertyPath.from( DATA + ".htmlArea" ) ).getIndexValueProcessors().get( 0 ).getName() );
 
     }
 

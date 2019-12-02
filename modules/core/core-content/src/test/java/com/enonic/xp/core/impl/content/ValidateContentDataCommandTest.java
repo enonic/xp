@@ -26,7 +26,6 @@ import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
-import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -94,7 +93,7 @@ public class ValidateContentDataCommandTest
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
         final Content content = Content.create().path( "/mycontent" ).type( contentType.getName() ).build();
-        content.getData().setString( "mySet" + ELEMENT_DIVIDER + "myInput", "thing" );
+        content.getData().setString( "mySet.myInput", "thing" );
 
         // exercise
         final ValidationErrors result = executeValidation( content.getData(), contentType.getName() );
@@ -149,7 +148,7 @@ public class ValidateContentDataCommandTest
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
         final Content content = Content.create().path( "/mycontent" ).type( contentType.getName() ).displayName( "" ).build();
-        content.getData().setString( "mySet" + ELEMENT_DIVIDER + "myInput", "thing" );
+        content.getData().setString( "mySet.myInput", "thing" );
 
         // exercise
         final ValidationErrors result =
@@ -177,7 +176,7 @@ public class ValidateContentDataCommandTest
 
         final Content content = Content.create().path( "/mycontent" ).type( contentType.getName() ).
             name( ContentName.unnamed() ).displayName( "display-name" ).build();
-        content.getData().setString( "mySet" + ELEMENT_DIVIDER + "myInput", "thing" );
+        content.getData().setString( "mySet.myInput", "thing" );
 
         // exercise
         final ValidationErrors result =

@@ -15,9 +15,8 @@ public class PatternIndexConfigDocumentTest
     {
         final PatternIndexConfigDocument config = PatternIndexConfigDocument.create().
             add( "page", IndexConfig.MINIMAL ).
-            add( "page" + ELEMENT_DIVIDER + "region" + ELEMENT_DIVIDER + "another", IndexConfig.BY_TYPE ).
-            add( "page" + ELEMENT_DIVIDER + "region" + ELEMENT_DIVIDER + "component" + ELEMENT_DIVIDER + "textcomponent" + ELEMENT_DIVIDER +
-                     "text", IndexConfig.FULLTEXT ).
+            add( "page.region.another", IndexConfig.BY_TYPE ).
+            add( "page.region.component.textcomponent" + ELEMENT_DIVIDER + "text", IndexConfig.FULLTEXT ).
             build();
 
         assertEquals( IndexConfig.FULLTEXT,
@@ -33,8 +32,8 @@ public class PatternIndexConfigDocumentTest
     {
         final PatternIndexConfigDocument config = PatternIndexConfigDocument.create().
             add( "page", IndexConfig.NONE ).
-            add( "page" + ELEMENT_DIVIDER + "region", IndexConfig.FULLTEXT ).
-            add( "page" + ELEMENT_DIVIDER + "region" + ELEMENT_DIVIDER + "**", IndexConfig.FULLTEXT ).
+            add( "page.region", IndexConfig.FULLTEXT ).
+            add( "page.region.**", IndexConfig.FULLTEXT ).
             defaultConfig( IndexConfig.MINIMAL ).
             build();
 
@@ -49,9 +48,8 @@ public class PatternIndexConfigDocumentTest
     {
         final PatternIndexConfigDocument config = PatternIndexConfigDocument.create().
             add( "page", IndexConfig.MINIMAL ).
-            add( "page" + ELEMENT_DIVIDER + "regions" + ELEMENT_DIVIDER + "**" + ELEMENT_DIVIDER + "text", IndexConfig.FULLTEXT ).
-            add( "page" + ELEMENT_DIVIDER + "regions" + ELEMENT_DIVIDER + "*" + ELEMENT_DIVIDER + "center" + ELEMENT_DIVIDER + "*" +
-                     ELEMENT_DIVIDER + "text", IndexConfig.NONE ).
+            add( "page.regions.**.text", IndexConfig.FULLTEXT ).
+            add( "page.regions.*.center.*" + ELEMENT_DIVIDER + "text", IndexConfig.NONE ).
             build();
 
         assertEquals( IndexConfig.FULLTEXT, config.getConfigForPath(

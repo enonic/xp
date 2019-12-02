@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -96,21 +95,21 @@ public class PropertySetTest
 
         assertEquals( "2", set.getString( "b", 0 ) );
 
-        set.setString( "set[0]" + ELEMENT_DIVIDER + "c[0]", "1" );
-        set.setString( "set[0]" + ELEMENT_DIVIDER + "c[0]", "2" );
+        set.setString( "set[0].c[0]", "1" );
+        set.setString( "set[0].c[0]", "2" );
 
-        assertEquals( "2", set.getString( "set[0]" + ELEMENT_DIVIDER + "c[0]" ) );
+        assertEquals( "2", set.getString( "set[0].c[0]" ) );
 
-        set.setString( "set[1]" + ELEMENT_DIVIDER + "d[0]", "1" );
-        set.setString( "set[1]" + ELEMENT_DIVIDER + "d[0]", "2" );
-        set.setString( "set[1]" + ELEMENT_DIVIDER + "d", "3" );
+        set.setString( "set[1].d[0]", "1" );
+        set.setString( "set[1].d[0]", "2" );
+        set.setString( "set[1].d", "3" );
 
-        assertEquals( "3", set.getString( "set[1]" + ELEMENT_DIVIDER + "d[0]" ) );
+        assertEquals( "3", set.getString( "set[1].d[0]" ) );
 
-        set.setString( "set[1]" + ELEMENT_DIVIDER + "d[1]", "1" );
-        set.setString( "set[1]" + ELEMENT_DIVIDER + "d[1]", "2" );
+        set.setString( "set[1].d[1]", "1" );
+        set.setString( "set[1].d[1]", "2" );
 
-        assertEquals( "2", set.getString( "set[1]" + ELEMENT_DIVIDER + "d[1]" ) );
+        assertEquals( "2", set.getString( "set[1].d[1]" ) );
     }
 
     @Test
@@ -124,10 +123,8 @@ public class PropertySetTest
         PropertySet copy = setSource.copy( destinationTree );
         destinationTree.addSet( "setCopy", copy );
 
-        assertEquals( sourceTree.getProperty( "setSource" + ELEMENT_DIVIDER + "a[0]" ).getValue(),
-                      destinationTree.getProperty( "setCopy" + ELEMENT_DIVIDER + "a[0]" ).getValue() );
-        assertEquals( sourceTree.getProperty( "setSource" + ELEMENT_DIVIDER + "a[1]" ).getValue(),
-                      destinationTree.getProperty( "setCopy" + ELEMENT_DIVIDER + "a[1]" ).getValue() );
+        assertEquals( sourceTree.getProperty( "setSource.a[0]" ).getValue(), destinationTree.getProperty( "setCopy.a[0]" ).getValue() );
+        assertEquals( sourceTree.getProperty( "setSource.a[1]" ).getValue(), destinationTree.getProperty( "setCopy.a[1]" ).getValue() );
     }
 
     @Test

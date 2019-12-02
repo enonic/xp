@@ -20,7 +20,6 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageIndexUpgrader;
 import com.enonic.xp.repo.impl.node.json.IndexConfigDocumentJson;
 
-import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -50,8 +49,7 @@ public class FlattenedPageIndexUpgraderTest
             throw new RuntimeException( "page components is empty" );
         }
 
-        final String descriptorKeyStr =
-            data.getString( PropertyPath.from( String.join( ELEMENT_DIVIDER, "components", "page", "descriptor" ) ) );
+        final String descriptorKeyStr = data.getString( PropertyPath.from( "components.page.descriptor" ) );
 
         if ( descriptorKeyStr == null )
         {

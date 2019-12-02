@@ -39,7 +39,6 @@ import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
-import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -116,7 +115,7 @@ public class ModifyNodeHandlerTest
         final EditableNode editedNode = getEditedNode( node );
         assertEquals( "modified", editedNode.data.getString( "myString" ) );
         assertEquals( "originalValue", editedNode.data.getString( "notChanged" ) );
-        assertEquals( new GeoPoint( 0, 0 ), editedNode.data.getGeoPoint( "mySet" + ELEMENT_DIVIDER + "myGeoPoint" ) );
+        assertEquals( new GeoPoint( 0, 0 ), editedNode.data.getGeoPoint( "mySet.myGeoPoint" ) );
         final Iterable<String> myArray = editedNode.data.getStrings( "myArray" );
         assertNotNull( myArray );
         final ArrayList<String> myArrayValues = Lists.newArrayList( myArray );
