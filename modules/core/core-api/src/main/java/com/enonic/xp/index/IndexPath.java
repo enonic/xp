@@ -73,6 +73,10 @@ public class IndexPath
 
         private static String doNormalize( final String path )
         {
+            if ( path.contains( DIVIDER ) )
+            {
+                throw new IllegalArgumentException( DIVIDER + " is illegal in path " + path );
+            }
             String normalized = path;
 
             normalized = normalized.toLowerCase().trim();

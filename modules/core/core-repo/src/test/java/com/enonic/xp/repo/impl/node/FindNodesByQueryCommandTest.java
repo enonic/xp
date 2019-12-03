@@ -167,11 +167,11 @@ public class FindNodesByQueryCommandTest
     {
         final PropertyTree data = new PropertyTree();
 
-        final String path1 = "test@string@with@path";
+        final String path1 = "test.string.with.path";
         final String value1 = "myValue";
 
         data.setString( path1, value1 );
-        final String path2 = "test@string@with@path2";
+        final String path2 = "test.string.with.path2";
         final String value2 = "myValue2";
 
         data.setString( path2, value2 );
