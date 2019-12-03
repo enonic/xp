@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyPath;
 
-import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PatternIndexConfigDocumentTest
@@ -16,7 +15,7 @@ public class PatternIndexConfigDocumentTest
         final PatternIndexConfigDocument config = PatternIndexConfigDocument.create().
             add( "page", IndexConfig.MINIMAL ).
             add( "page.region.another", IndexConfig.BY_TYPE ).
-            add( "page.region.component.textcomponent" + ELEMENT_DIVIDER + "text", IndexConfig.FULLTEXT ).
+            add( "page.region.component.textcomponent.text", IndexConfig.FULLTEXT ).
             build();
 
         assertEquals( IndexConfig.FULLTEXT,
@@ -49,7 +48,7 @@ public class PatternIndexConfigDocumentTest
         final PatternIndexConfigDocument config = PatternIndexConfigDocument.create().
             add( "page", IndexConfig.MINIMAL ).
             add( "page.regions.**.text", IndexConfig.FULLTEXT ).
-            add( "page.regions.*.center.*" + ELEMENT_DIVIDER + "text", IndexConfig.NONE ).
+            add( "page.regions.*.center.*.text", IndexConfig.NONE ).
             build();
 
         assertEquals( IndexConfig.FULLTEXT, config.getConfigForPath(

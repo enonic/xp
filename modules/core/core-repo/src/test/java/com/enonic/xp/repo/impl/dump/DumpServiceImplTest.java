@@ -217,7 +217,7 @@ public class DumpServiceImplTest
 
         final BranchDumpResult result = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
         assertNotNull( result );
-        org.junit.jupiter.api.Assertions.assertEquals( 2, result.getSuccessful() );
+        assertEquals( 2, result.getSuccessful() );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
 
@@ -247,7 +247,7 @@ public class DumpServiceImplTest
 
         final BranchDumpResult result = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
         assertNotNull( result );
-        org.junit.jupiter.api.Assertions.assertEquals( 2, result.getSuccessful() );
+        assertEquals( 2, result.getSuccessful() );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
 
@@ -270,10 +270,10 @@ public class DumpServiceImplTest
             build() ) );
 
         // 4 of node, 1 of root
-        org.junit.jupiter.api.Assertions.assertEquals( 5, systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).getVersions() );
+        assertEquals( 5, systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).getVersions() );
         final BranchDumpResult branchDumpResult = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
 
-        org.junit.jupiter.api.Assertions.assertEquals( 2, branchDumpResult.getSuccessful() );
+        assertEquals( 2, branchDumpResult.getSuccessful() );
     }
 
     @Test
@@ -587,7 +587,7 @@ public class DumpServiceImplTest
         final VersionsLoadResult versionsLoadResult = repoLoadResult.getVersionsLoadResult();
         assertNotNull( versionsLoadResult );
         // One for root, 4 for myNode
-        org.junit.jupiter.api.Assertions.assertEquals( 5, versionsLoadResult.getSuccessful() );
+        assertEquals( 5, versionsLoadResult.getSuccessful() );
     }
 
     private RepoLoadResult getRepoLoadResult( final SystemLoadResult result, final RepositoryId repositoryId )
@@ -913,7 +913,7 @@ public class DumpServiceImplTest
         final Iterable<Reference> postProcessedReferences = postNode.data().getReferences( "processedReferences" );
         assertEquals( 2, Iterables.size( postProcessedReferences ) );
 
-        final String postValue = postNode.data().getString( "data@post" );
+        final String postValue = postNode.data().getString( "data.post" );
         assertTrue( postValue.contains( "<figure class=\"editor-align-justify\">" ) );
         assertTrue( postValue.contains( "<figure class=\"editor-align-justify editor-style-original\">" ) );
         assertTrue( postValue.contains( "src=\"media://cf09fe7a-1be9-46bb-ad84-87ba69630cb7\"" ) );

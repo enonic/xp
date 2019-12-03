@@ -14,8 +14,6 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.util.GlobPatternMatcher;
 
-import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
-
 @Beta
 public class PatternIndexConfigDocument
     extends AbstractIndexConfigDocument
@@ -80,7 +78,7 @@ public class PatternIndexConfigDocument
 
         for ( final PathIndexConfig pathIndexConfig : pathIndexConfigs )
         {
-            if ( GlobPatternMatcher.match( pathIndexConfig.getPath().toString(), path, ELEMENT_DIVIDER ) )
+            if ( GlobPatternMatcher.match( pathIndexConfig.getPath().toString(), path, PropertyPath.ELEMENT_DIVIDER ) )
             {
                 return pathIndexConfig.getIndexConfig();
             }

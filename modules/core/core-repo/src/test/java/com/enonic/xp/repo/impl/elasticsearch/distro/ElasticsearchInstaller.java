@@ -17,7 +17,6 @@ import com.enonic.xp.repo.impl.elasticsearch.distro.config.ElasticsearchDownload
 
 class ElasticsearchInstaller
 {
-
     private static final Logger LOGGER = LoggerFactory.getLogger( ElasticsearchInstaller.class );
 
     private final ElasticsearchDownloader downloader;

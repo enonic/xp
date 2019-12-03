@@ -51,7 +51,7 @@ public class HtmlAreaNodeDataUpgraderTest
         throws IOException
     {
         final PropertyTree data = new PropertyTree();
-        data.setString( "data@htmlarea", readTestResource( "htmlarea-source.xml" ) );
+        data.setString( "data.htmlarea", readTestResource( "htmlarea-source.xml" ) );
         final NodeVersion nodeVersion = NodeVersion.create().
             nodeType( ContentConstants.CONTENT_NODE_COLLECTION ).
             data( data ).
@@ -74,7 +74,7 @@ public class HtmlAreaNodeDataUpgraderTest
             collect( Collectors.toList() );
         assertTrue( expectedReferences.containsAll( upgradedProcessedReferences ) );
 
-        assertEquals( readTestResource( "htmlarea-expected.xml" ), upgradedData.getString( "data@htmlarea" ) );
+        assertEquals( readTestResource( "htmlarea-expected.xml" ), upgradedData.getString( "data.htmlarea" ) );
     }
 
     private PatternIndexConfigDocument createIndexConfigDocument()

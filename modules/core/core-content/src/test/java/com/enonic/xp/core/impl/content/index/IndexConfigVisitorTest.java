@@ -11,7 +11,6 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.inputtype.InputTypeName;
 
-import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IndexConfigVisitorTest
@@ -102,7 +101,6 @@ public class IndexConfigVisitorTest
         final PatternIndexConfigDocument document = builder.build();
         assertEquals( 1, document.getPathIndexConfigs().size() );
         assertEquals( "htmlStripper", document.getConfigForPath(
-            PropertyPath.from( "parent.myoptionset.myoptionsetoption2" + ELEMENT_DIVIDER + "htmlArea" ) ).getIndexValueProcessors().get(
-            0 ).getName() );
+            PropertyPath.from( "parent.myoptionset.myoptionsetoption2.htmlArea" ) ).getIndexValueProcessors().get( 0 ).getName() );
     }
 }

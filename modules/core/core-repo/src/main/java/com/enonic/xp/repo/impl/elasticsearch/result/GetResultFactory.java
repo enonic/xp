@@ -20,10 +20,9 @@ public class GetResultFactory
 
         final Map<String, Object> sourceAsMap = getResponse.getSourceAsMap();
 
-        for ( final String filedName : sourceAsMap.keySet() )
+        for ( final Map.Entry<String, Object> filed : sourceAsMap.entrySet() )
         {
-            final Object fieldValue = sourceAsMap.get( filedName );
-            builder.add( filedName, fieldValue );
+            builder.add( filed.getKey(), filed.getValue() );
         }
 
         return GetResult.create().

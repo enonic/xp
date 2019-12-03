@@ -61,7 +61,7 @@ public class NodeEditTest
     private Node createNode()
     {
         PropertyTree rootDataSet = new PropertyTree();
-        rootDataSet.setDouble( "a@b@c", 2.0 );
+        rootDataSet.setDouble( "a.b.c", 2.0 );
         rootDataSet.setLocalDate( "b", LocalDate.now() );
         rootDataSet.setString( "c", "runar" );
 

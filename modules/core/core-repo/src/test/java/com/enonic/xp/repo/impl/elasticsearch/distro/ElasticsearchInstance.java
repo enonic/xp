@@ -10,7 +10,6 @@ import com.enonic.xp.repo.impl.elasticsearch.distro.config.ElasticsearchDownload
 
 public class ElasticsearchInstance
 {
-
     private final ElasticsearchServer elasticsearchServer;
 
     private final Path snapshotsDir;

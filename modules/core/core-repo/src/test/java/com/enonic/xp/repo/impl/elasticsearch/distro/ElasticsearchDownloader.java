@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.repo.impl.elasticsearch.distro.config.ElasticsearchDownloaderConfig;
 
-import static com.enonic.xp.repo.impl.elasticsearch.distro.ElasticsearchConstants.ES_DIR;
-
 class ElasticsearchDownloader
 {
     private static final Logger logger = LoggerFactory.getLogger( ElasticsearchDownloader.class );
@@ -35,7 +33,7 @@ class ElasticsearchDownloader
     {
         URL url = getDownloadUrl();
         String localFileName = constructLocalFileName( url );
-        File target = new File( ES_DIR.toFile(), localFileName );
+        File target = new File( ElasticsearchConstants.ES_DIR.toFile(), localFileName );
         File statusFile = new File( target.getParentFile(), target.getName() + ELS_PACKAGE_STATUS_FILE_SUFFIX );
         removeBrokenDownload( target, statusFile );
         if ( !target.exists() )

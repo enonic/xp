@@ -8,7 +8,6 @@ import org.elasticsearch.search.suggest.Suggest;
 import org.elasticsearch.search.suggest.term.TermSuggestion;
 import org.elasticsearch.search.suggest.term.TermSuggestion.Entry;
 import org.elasticsearch.search.suggest.term.TermSuggestion.Entry.Option;
-import org.jparsec.internal.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -36,7 +35,7 @@ public class SuggestionsFactoryTest
     @Test
     public void testEmpty()
     {
-        final Suggest suggest = new Suggest( Lists.arrayList());
+        final Suggest suggest = new Suggest( Collections.emptyList() );
         final Suggestions suggestions = SuggestionsFactory.create( suggest );
 
         assertNotNull( suggestions );
