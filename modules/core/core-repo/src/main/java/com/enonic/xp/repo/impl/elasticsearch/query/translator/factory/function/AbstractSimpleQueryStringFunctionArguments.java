@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
 
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.query.expr.ValueExpr;
 
@@ -36,7 +37,7 @@ public abstract class AbstractSimpleQueryStringFunctionArguments
 
         final String fieldString = arguments.get( FIELDNAME_INDEX ).getValue().asString();
 
-        final String normalizedFieldString = fieldString.replaceAll( "\\.", IndexPath.DIVIDER );
+        final String normalizedFieldString = fieldString.replace( PropertyPath.ELEMENT_DIVIDER, IndexPath.DIVIDER );
 
         this.fieldNames = WeightedQueryFieldNames.from( normalizedFieldString );
 

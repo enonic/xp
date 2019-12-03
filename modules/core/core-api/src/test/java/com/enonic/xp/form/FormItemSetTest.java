@@ -69,7 +69,7 @@ public class FormItemSetTest
         parent.add( Input.create().name( "child" ).label( "child" ).inputType( InputTypeName.TEXT_LINE ).build() );
 
         // verify
-        assertEquals( String.join( FormItemPath.ELEMENT_DIVIDER, "parent", "child" ), parent.getInput( "child" ).getPath().toString() );
+        assertEquals( "parent.child", parent.getInput( "child" ).getPath().toString() );
     }
 
     @Test

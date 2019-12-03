@@ -16,7 +16,7 @@ public class FormItemPath
 {
     public static final FormItemPath ROOT = new FormItemPath();
 
-    public final static String ELEMENT_DIVIDER = ".";
+    private final static String ELEMENT_DIVIDER = ".";
 
     private final FormItemPath parentPath;
 

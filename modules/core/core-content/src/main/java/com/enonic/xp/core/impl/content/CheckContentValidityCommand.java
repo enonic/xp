@@ -9,19 +9,18 @@ import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.ExistsFilter;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 
-import static com.enonic.xp.index.IndexPath.DIVIDER;
-
 public class CheckContentValidityCommand
     extends AbstractContentCommand
 {
     private static final String WORKFLOW_STATE_FIELD =
-        String.join( DIVIDER, ContentPropertyNames.WORKFLOW_INFO, ContentPropertyNames.WORKFLOW_INFO_STATE );
+        String.join( IndexPath.DIVIDER, ContentPropertyNames.WORKFLOW_INFO, ContentPropertyNames.WORKFLOW_INFO_STATE );
 
     private final ContentIds contentIds;
 
