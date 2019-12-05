@@ -4,8 +4,6 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.admin.impl.json.ItemJson;
@@ -14,6 +12,8 @@ import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolv
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.MixinIconUrlResolver;
 import com.enonic.xp.schema.mixin.Mixin;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public class MixinJson
     implements ItemJson
@@ -48,7 +48,7 @@ public class MixinJson
 
     public String getDisplayName()
     {
-        if ( StringUtils.isNotBlank( mixin.getDisplayNameI18nKey() ) )
+        if ( !nullToEmpty( mixin.getDisplayNameI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( mixin.getDisplayNameI18nKey(), mixin.getDisplayName() );
         }
@@ -60,7 +60,7 @@ public class MixinJson
 
     public String getDescription()
     {
-        if ( StringUtils.isNotBlank( mixin.getDescriptionI18nKey() ) )
+        if ( !nullToEmpty( mixin.getDescriptionI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( mixin.getDescriptionI18nKey(), mixin.getDescription() );
         }

@@ -24,7 +24,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -91,6 +90,8 @@ import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 
 @Path(ResourceConstants.REST_ROOT + "application")
@@ -395,7 +396,7 @@ public final class ApplicationResource
         else
         {
             responseBuilder = Response.ok( icon.toByteArray(), icon.getMimeType() );
-            if ( StringUtils.isNotEmpty( hash ) )
+            if ( !isNullOrEmpty( hash ) )
             {
                 applyMaxAge( Integer.MAX_VALUE, responseBuilder );
             }
@@ -576,7 +577,7 @@ public final class ApplicationResource
 
     private Applications filterApplications( final Applications applications, final String query )
     {
-        if ( StringUtils.isNotBlank( query ) )
+        if ( !nullToEmpty( query ).isBlank() )
         {
             return Applications.from( applications.stream().
                 filter( ( application ) -> containsIgnoreCase( application.getDisplayName(), query ) ||

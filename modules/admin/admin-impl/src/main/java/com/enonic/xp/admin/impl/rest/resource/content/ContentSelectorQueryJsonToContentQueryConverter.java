@@ -2,8 +2,6 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 
 import java.util.List;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.ContentTypeNameWildcardResolver;
 import com.enonic.xp.content.Content;
@@ -25,6 +23,8 @@ import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.site.Site;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class ContentSelectorQueryJsonToContentQueryConverter
 {
@@ -131,7 +131,7 @@ public class ContentSelectorQueryJsonToContentQueryConverter
             expr = this.addAllowPathToExpr( allowedPath, expr );
         }
 
-        if ( Strings.isNullOrEmpty( this.contentQueryJson.getQueryExprString() ) )
+        if ( isNullOrEmpty( this.contentQueryJson.getQueryExprString() ) )
         {
             return constraintExprToQueryExpr( expr );
         }

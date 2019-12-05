@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.base.Preconditions;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public class FormOptionSetOption
     extends FormItem
@@ -32,7 +32,7 @@ public class FormOptionSetOption
         super();
 
         Preconditions.checkNotNull( builder.name, "a name is required for a FormItemSet" );
-        Preconditions.checkArgument( StringUtils.isNotBlank( builder.name ), "a name is required for a FormItemSet" );
+        Preconditions.checkArgument( !nullToEmpty( builder.name ).isBlank(), "a name is required for a FormItemSet" );
         Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctations: " + builder.name );
 
         this.name = builder.name;

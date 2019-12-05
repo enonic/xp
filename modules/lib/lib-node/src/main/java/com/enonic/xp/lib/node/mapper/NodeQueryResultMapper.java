@@ -1,8 +1,6 @@
 package com.enonic.xp.lib.node.mapper;
 
 import com.enonic.xp.aggregation.Aggregations;
-import com.enonic.xp.highlight.HighlightedProperties;
-import com.enonic.xp.highlight.HighlightedProperty;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeHits;
@@ -53,40 +51,12 @@ public final class NodeQueryResultMapper
         gen.end();
     }
 
-    private void serialize( final MapGenerator gen, final Aggregations aggregations )
-    {
-        if ( aggregations != null )
-        {
-            gen.map( "aggregations" );
-            new AggregationMapper( aggregations ).serialize( gen );
-            gen.end();
-        }
-    }
-
     private void serialize( final MapGenerator gen, final Suggestions suggestions )
     {
         if ( suggestions != null && suggestions.isNotEmpty() )
         {
             gen.map( "suggestions" );
             new SuggestionsMapper( suggestions ).serialize( gen );
-            gen.end();
-        }
-    }
-
-    private void serialize( final MapGenerator gen, final HighlightedProperties highlightedProperties )
-    {
-        if ( highlightedProperties != null && !highlightedProperties.isEmpty() )
-        {
-            gen.map( "highlight" );
-            for ( HighlightedProperty highlightedProperty : highlightedProperties )
-            {
-                gen.array( highlightedProperty.getName() );
-                for ( String fragment : highlightedProperty.getFragments() )
-                {
-                    gen.value( fragment );
-                }
-                gen.end();
-            }
             gen.end();
         }
     }

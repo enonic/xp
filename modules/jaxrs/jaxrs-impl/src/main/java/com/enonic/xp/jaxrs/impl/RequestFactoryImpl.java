@@ -14,11 +14,11 @@ import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpResponse;
 import org.jboss.resteasy.spi.ResteasyUriInfo;
 
-import com.google.common.base.Strings;
 import com.google.common.net.UrlEscapers;
 
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.joining;
 
 final class RequestFactoryImpl
@@ -49,7 +49,7 @@ final class RequestFactoryImpl
         final String requestURI = Arrays.stream( rawRequestURI.split( "/" ) ).
             map( UrlEscapers.urlFragmentEscaper()::escape ).
             collect( joining( "/" ) );
-        final String absoluteUri = ServletRequestUrlHelper.getServerUrl() + ( Strings.isNullOrEmpty( requestURI ) ? "/" : requestURI );
+        final String absoluteUri = ServletRequestUrlHelper.getServerUrl() + ( isNullOrEmpty( requestURI ) ? "/" : requestURI );
         return new ResteasyUriInfo( absoluteUri, request.getQueryString(), request.getContextPath() );
     }
 
