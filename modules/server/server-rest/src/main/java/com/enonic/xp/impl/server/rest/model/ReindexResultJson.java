@@ -4,6 +4,10 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.ReindexResult;
 
@@ -37,5 +41,16 @@ public final class ReindexResultJson
         }
 
         return json;
+    }
+
+    @Override
+    public String toString()
+    {
+        ObjectNode node = new ObjectMapper().valueToTree( this );
+        // instants are not formatted nicely by default so doing it manually
+        JsonNodeFactory factory = JsonNodeFactory.instance;
+        node.set( "startTime", factory.textNode( startTime.toString() ) );
+        node.set( "endTime", factory.textNode( endTime.toString() ) );
+        return node.toString();
     }
 }

@@ -8,6 +8,7 @@ import com.google.common.annotations.Beta;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.task.ProgressReporter;
 
 @Beta
 public class ReindexParams
@@ -18,11 +19,14 @@ public class ReindexParams
 
     private final Branches branches;
 
+    private final ProgressReporter progressReporter;
+
     private ReindexParams( Builder builder )
     {
         initialize = builder.initialize;
         repositoryId = builder.repositoryId;
         branches = Branches.from( builder.branches );
+        progressReporter = builder.progressReporter;
     }
 
     public static Builder create()
@@ -45,6 +49,11 @@ public class ReindexParams
         return branches;
     }
 
+    public ProgressReporter getProgressReporter()
+    {
+        return this.progressReporter;
+    }
+
 
     public static final class Builder
     {
@@ -53,6 +62,8 @@ public class ReindexParams
         private boolean initialize;
 
         private RepositoryId repositoryId;
+
+        private ProgressReporter progressReporter;
 
         private Builder()
         {
@@ -79,6 +90,12 @@ public class ReindexParams
         public Builder setBranches( final Branches branches )
         {
             this.branches.addAll( branches.getSet() );
+            return this;
+        }
+
+        public Builder progressReporter( final ProgressReporter progressReporter )
+        {
+            this.progressReporter = progressReporter;
             return this;
         }
 

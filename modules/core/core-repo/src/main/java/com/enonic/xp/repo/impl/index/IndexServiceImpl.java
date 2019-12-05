@@ -66,7 +66,7 @@ public class IndexServiceImpl
             indexDataService( this.indexDataService ).
             nodeSearchService( this.nodeSearchService ).
             nodeVersionService( this.nodeVersionService ).
-            progressReporter( createLogProgressReporter() ).
+            progressReporter( params.getProgressReporter() != null ? params.getProgressReporter() : createLogProgressReporter() ).
             build().
             execute();
     }
