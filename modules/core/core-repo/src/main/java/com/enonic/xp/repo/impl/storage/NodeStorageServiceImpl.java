@@ -166,7 +166,9 @@ public class NodeStorageServiceImpl
             nodeVersionKey = nodeVersionService.store( NodeVersion.from( params.getNode() ), context );
         }
 
-        storeVersionMetadata( params.getNode(), nodeVersionId, nodeVersionKey, context );
+        if (params.getNodeVersionId() == null) {
+            storeVersionMetadata( params.getNode(), nodeVersionId, nodeVersionKey, context );
+        }
 
         return moveInBranchAndReIndex( params.getNode(), nodeVersionId, nodeVersionKey, nodeBranchEntry.getNodePath(), context );
     }
