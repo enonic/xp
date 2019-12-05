@@ -2,9 +2,9 @@ package com.enonic.xp.launcher.impl.env;
 
 import java.io.File;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.launcher.impl.SharedConstants;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class EnvironmentResolver
     implements SharedConstants
@@ -27,7 +27,7 @@ public final class EnvironmentResolver
     private File resolveInstallDir()
     {
         final String path = this.properties.get( XP_INSTALL_DIR );
-        if ( Strings.isNullOrEmpty( path ) )
+        if ( isNullOrEmpty( path ) )
         {
             return null;
         }
@@ -41,7 +41,7 @@ public final class EnvironmentResolver
         final String envValue = this.properties.getEnv( XP_HOME_DIR_ENV );
 
         final String path = firstOf( propValue, envValue );
-        if ( Strings.isNullOrEmpty( path ) )
+        if ( isNullOrEmpty( path ) )
         {
             return installDir != null ? new File( installDir, "home" ) : null;
         }
@@ -51,7 +51,7 @@ public final class EnvironmentResolver
 
     private String firstOf( final String value1, final String value2 )
     {
-        if ( !Strings.isNullOrEmpty( value1 ) )
+        if ( !isNullOrEmpty( value1 ) )
         {
             return value1;
         }

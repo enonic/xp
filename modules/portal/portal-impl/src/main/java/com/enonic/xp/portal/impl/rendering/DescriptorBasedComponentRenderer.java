@@ -2,8 +2,6 @@ package com.enonic.xp.portal.impl.rendering;
 
 import java.text.MessageFormat;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.html.HtmlEscapers;
 import com.google.common.net.MediaType;
 
@@ -18,6 +16,8 @@ import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.DescriptorBasedComponent;
 import com.enonic.xp.web.HttpStatus;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBasedComponent>
     implements Renderer<R>
@@ -79,7 +79,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
             if ( renderMode == RenderMode.EDIT && contentType != null && contentType.withoutParameters().type().equals( "text" ) )
             {
                 final Object bodyObj = portalResponse.getBody();
-                if ( ( bodyObj == null ) || bodyObj instanceof String && StringUtils.isBlank( (String) bodyObj ) )
+                if ( ( bodyObj == null ) || bodyObj instanceof String && nullToEmpty( (String) bodyObj ).isBlank() )
                 {
                     if ( portalResponse.getStatus().equals( HttpStatus.METHOD_NOT_ALLOWED ) )
                     {

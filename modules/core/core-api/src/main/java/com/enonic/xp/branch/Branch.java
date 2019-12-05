@@ -2,7 +2,8 @@ package com.enonic.xp.branch;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Beta
 public final class Branch
@@ -13,7 +14,7 @@ public final class Branch
 
     private Branch( final Builder builder )
     {
-        Preconditions.checkArgument( !Strings.isNullOrEmpty( builder.value ), "Branch name cannot be null or empty" );
+        Preconditions.checkArgument( !isNullOrEmpty( builder.value ), "Branch name cannot be null or empty" );
         Preconditions.checkArgument( builder.value.matches( "^" + VALID_REPOSITORY_ID_REGEX + "$" ),
                                      "Branch name format incorrect: " + builder.value );
         this.value = builder.value;

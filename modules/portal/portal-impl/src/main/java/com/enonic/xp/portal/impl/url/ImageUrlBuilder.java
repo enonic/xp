@@ -2,8 +2,6 @@ package com.enonic.xp.portal.impl.url;
 
 import java.nio.charset.StandardCharsets;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.collect.Multimap;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
@@ -12,6 +10,8 @@ import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.url.ImageUrlParams;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class ImageUrlBuilder
     extends GenericEndpointUrlBuilder<ImageUrlParams>
@@ -73,7 +73,7 @@ final class ImageUrlBuilder
         if ( this.params.getFormat() != null )
         {
             final String extension = Files.getFileExtension( name );
-            if ( StringUtils.isEmpty( extension ) || !this.params.getFormat().equals( extension ) )
+            if ( isNullOrEmpty( extension ) || !this.params.getFormat().equals( extension ) )
             {
                 return name + "." + this.params.getFormat();
             }
