@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +29,8 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 final class ValidateContentDataCommand
 {
@@ -101,7 +102,7 @@ final class ValidateContentDataCommand
         {
             this.resultBuilder.add( new ValidationError( "name is required" ) );
         }
-        if ( StringUtils.isBlank( displayName ) )
+        if ( nullToEmpty( displayName ).isBlank() )
         {
             this.resultBuilder.add( new ValidationError( "displayName is required" ) );
         }

@@ -5,8 +5,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class WeightedQueryFieldNames
     implements Iterable<WeightedQueryFieldName>
@@ -34,7 +35,7 @@ public class WeightedQueryFieldNames
     {
         List<WeightedQueryFieldName> list = new ArrayList<>();
 
-        if ( Strings.isNullOrEmpty( weightedQueryFieldNamesString ) )
+        if ( isNullOrEmpty( weightedQueryFieldNamesString ) )
         {
             return null;
         }

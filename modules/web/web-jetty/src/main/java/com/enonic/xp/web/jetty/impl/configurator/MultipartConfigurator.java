@@ -5,7 +5,7 @@ import javax.servlet.MultipartConfigElement;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.servlet.ServletHolder;
 
-import com.google.common.base.Strings;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class MultipartConfigurator
     extends JettyConfigurator<ServletHolder>
@@ -25,7 +25,7 @@ public final class MultipartConfigurator
     private String getStore()
     {
         final String location = this.config.multipart_store();
-        return Strings.isNullOrEmpty( location ) ? FileUtils.getTempDirectoryPath() : location;
+        return isNullOrEmpty( location ) ? FileUtils.getTempDirectoryPath() : location;
     }
 
     private long getMaxFileSize()

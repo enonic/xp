@@ -3,8 +3,6 @@ package com.enonic.xp.admin.impl.json.form;
 import java.util.Collection;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -18,6 +16,8 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 @Beta
 public class InputJson
@@ -57,7 +57,7 @@ public class InputJson
 
     public String getLabel()
     {
-        if ( localeMessageResolver != null && StringUtils.isNotBlank( input.getLabelI18nKey() ) )
+        if ( localeMessageResolver != null && !nullToEmpty( input.getLabelI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( input.getLabelI18nKey(), input.getLabel() );
         }
@@ -89,7 +89,7 @@ public class InputJson
 
     public String getHelpText()
     {
-        if ( localeMessageResolver != null && StringUtils.isNotBlank( input.getHelpTextI18nKey() ) )
+        if ( localeMessageResolver != null && !nullToEmpty( input.getHelpTextI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( input.getHelpTextI18nKey(), input.getHelpText() );
         }

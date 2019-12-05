@@ -4,11 +4,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.data.Value;
 import com.enonic.xp.query.QueryException;
 import com.enonic.xp.query.expr.ValueExpr;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 class RangeFunctionArgsFactory
 {
@@ -115,8 +115,8 @@ class RangeFunctionArgsFactory
     {
         final StringRangeFunctionArg args = new StringRangeFunctionArg();
         args.setFieldName( fieldName );
-        args.setFrom( isNullOrEmpty( from ) ? null : from.getValue().asString() );
-        args.setTo( isNullOrEmpty( to ) ? null : to.getValue().asString() );
+        args.setFrom( hasValue( from ) ? null : from.getValue().asString() );
+        args.setTo( hasValue( to ) ? null : to.getValue().asString() );
         args.setIncludeFrom( includeFrom );
         args.setIncludeTo( includeTo );
 
@@ -128,8 +128,8 @@ class RangeFunctionArgsFactory
     {
         final NumericRangeFunctionArg args = new NumericRangeFunctionArg();
         args.setFieldName( fieldName );
-        args.setFrom( isNullOrEmpty( from ) ? null : from.getValue().asDouble() );
-        args.setTo( isNullOrEmpty( to ) ? null : to.getValue().asDouble() );
+        args.setFrom( hasValue( from ) ? null : from.getValue().asDouble() );
+        args.setTo( hasValue( to ) ? null : to.getValue().asDouble() );
         args.setIncludeFrom( includeFrom );
         args.setIncludeTo( includeTo );
 
@@ -141,19 +141,17 @@ class RangeFunctionArgsFactory
     {
         final InstantRangeFunctionArg args = new InstantRangeFunctionArg();
         args.setFieldName( fieldName );
-        args.setFrom( isNullOrEmpty( from ) ? null : from.getValue().asInstant() );
-        args.setTo( isNullOrEmpty( to ) ? null : to.getValue().asInstant() );
+        args.setFrom( hasValue( from ) ? null : from.getValue().asInstant() );
+        args.setTo( hasValue( to ) ? null : to.getValue().asInstant() );
         args.setIncludeFrom( includeFrom );
         args.setIncludeTo( includeTo );
 
         return args;
     }
 
-
-    private static boolean isNullOrEmpty( final ValueExpr valueExpr )
+    private static boolean hasValue( final ValueExpr valueExpr )
     {
-        return valueExpr == null || valueExpr.getValue() == null || Strings.isNullOrEmpty( valueExpr.getValue().asString() );
+        return valueExpr == null || valueExpr.getValue() == null || isNullOrEmpty( valueExpr.getValue().asString() );
 
     }
-
 }

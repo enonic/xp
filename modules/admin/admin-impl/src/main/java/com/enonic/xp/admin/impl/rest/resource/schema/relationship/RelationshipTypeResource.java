@@ -12,7 +12,6 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -28,6 +27,8 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
 import com.enonic.xp.security.RoleKeys;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Path(ResourceConstants.REST_ROOT + "schema/relationship")
 @Produces(MediaType.APPLICATION_JSON)
@@ -105,7 +106,7 @@ public final class RelationshipTypeResource
         {
             final Object image = HELPER.isSvg( icon ) ? icon.toByteArray() : HELPER.resizeImage( icon.asInputStream(), size );
             responseBuilder = Response.ok( image, icon.getMimeType() );
-            if ( StringUtils.isNotEmpty( hash ) )
+            if ( !isNullOrEmpty( hash ) )
             {
                 applyMaxAge( Integer.MAX_VALUE, responseBuilder );
             }

@@ -10,7 +10,6 @@ import java.util.Optional;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
@@ -57,6 +56,7 @@ import com.enonic.xp.web.HttpStatus;
 
 import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.IdProviderAccess.READ;
+import static com.google.common.base.Strings.nullToEmpty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -159,7 +159,7 @@ public class SecurityResourceTest
     {
         MockRestResponse result = request().path( "security/idprovider" ).get();
 
-        assertTrue( StringUtils.isBlank( result.getAsString() ) );
+        assertTrue( nullToEmpty( result.getAsString() ).isBlank() );
         assertEquals( HttpStatus.NO_CONTENT.value(), result.getStatus() );
     }
 

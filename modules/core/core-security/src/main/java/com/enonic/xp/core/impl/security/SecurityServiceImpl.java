@@ -102,6 +102,7 @@ import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 
 import static com.enonic.xp.core.impl.security.SecurityInitializer.DEFAULT_ID_PROVIDER_ACL;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Component(immediate = true)
 public final class SecurityServiceImpl
@@ -566,7 +567,7 @@ public final class SecurityServiceImpl
 
     private boolean passwordMatch( final User user, final String password )
     {
-        if ( Strings.isNullOrEmpty( password ) )
+        if ( isNullOrEmpty( password ) )
         {
             return false;
         }

@@ -2,10 +2,11 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Strings;
 
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.aggregation.HistogramAggregationQuery;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class HistogramAggregationQueryJson
     extends AggregationQueryJson
@@ -41,7 +42,7 @@ public class HistogramAggregationQueryJson
             builder.extendedBoundMin( extendedBoundMin );
         }
 
-        if ( Strings.isNullOrEmpty( order ) )
+        if ( isNullOrEmpty( order ) )
         {
             HistogramAggregationQuery.Order.valueOf( order );
         }

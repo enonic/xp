@@ -14,8 +14,7 @@ import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.script.ScriptValue;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static com.google.common.base.Strings.nullToEmpty;
 
 public final class CreateContentHandler
     extends BaseContentHandler
@@ -47,11 +46,11 @@ public final class CreateContentHandler
     @Override
     protected Object doExecute()
     {
-        if ( isBlank( this.name ) && isNotBlank( this.displayName ) && isNotBlank( this.parentPath ) )
+        if ( nullToEmpty( this.name ).isBlank() && !nullToEmpty( this.displayName ).isBlank() && !nullToEmpty( this.parentPath ).isBlank() )
         {
             this.name = generateUniqueContentName( ContentPath.from( this.parentPath ), this.displayName );
         }
-        if ( isBlank( this.displayName ) && isNotBlank( this.name ) )
+        if ( nullToEmpty( this.displayName ).isBlank() && !nullToEmpty( this.name ).isBlank() )
         {
             this.displayName = this.name;
         }

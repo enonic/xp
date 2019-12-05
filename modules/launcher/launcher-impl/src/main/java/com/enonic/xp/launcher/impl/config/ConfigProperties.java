@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.apache.felix.utils.properties.InterpolationHelper;
 
-import com.google.common.base.Strings;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class ConfigProperties
     extends HashMap<String, String>
@@ -34,6 +34,6 @@ public final class ConfigProperties
     public File getFile( final String key )
     {
         final String value = get( key );
-        return Strings.isNullOrEmpty( value ) ? null : new File( value );
+        return isNullOrEmpty( value ) ? null : new File( value );
     }
 }

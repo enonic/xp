@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
@@ -19,6 +18,7 @@ import com.google.common.net.HttpHeaders;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.extractor.impl.config.ExtractorConfigImpl;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -65,7 +65,7 @@ public class BinaryExtractorImplTest
 
         assertEquals( "application/pdf", metadata.get( HttpHeaders.CONTENT_TYPE ).iterator().next() );
         final String extractedText = extractedData.getText();
-        assertFalse( Strings.isNullOrEmpty( extractedText ) );
+        assertFalse( isNullOrEmpty( extractedText ) );
         assertTrue( extractedText.contains( "Velkommen" ) );
     }
 

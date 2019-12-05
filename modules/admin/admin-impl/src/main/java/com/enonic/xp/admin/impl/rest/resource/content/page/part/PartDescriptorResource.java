@@ -15,7 +15,6 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -36,6 +35,8 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.PartDescriptors;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/part/descriptor")
 @Produces(MediaType.APPLICATION_JSON)
@@ -124,7 +125,7 @@ public final class PartDescriptorResource
             responseBuilder = Response.ok( image, icon.getMimeType() );
         }
 
-        if ( StringUtils.isNotEmpty( hash ) )
+        if ( !isNullOrEmpty( hash ) )
         {
             applyMaxAge( Integer.MAX_VALUE, responseBuilder );
         }
