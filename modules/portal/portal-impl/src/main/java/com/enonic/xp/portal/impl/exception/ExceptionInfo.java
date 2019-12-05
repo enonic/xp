@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.exception;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
@@ -10,6 +9,8 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 final class ExceptionInfo
 {
@@ -77,7 +78,7 @@ final class ExceptionInfo
 
     public PortalResponse toResponse( final WebRequest req )
     {
-        final String accept = Strings.nullToEmpty( req.getHeaders().get( HttpHeaders.ACCEPT ) );
+        final String accept = nullToEmpty( req.getHeaders().get( HttpHeaders.ACCEPT ) );
         final boolean isHtml = accept.contains( "text/html" );
         return isHtml ? toHtmlResponse() : toJsonResponse();
     }

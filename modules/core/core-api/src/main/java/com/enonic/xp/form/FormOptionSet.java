@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.StreamSupport;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.base.Preconditions;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public class FormOptionSet
     extends FormItem
@@ -37,7 +37,7 @@ public class FormOptionSet
         super();
 
         Preconditions.checkNotNull( builder.name, "a name is required for a FormItemSet" );
-        Preconditions.checkArgument( StringUtils.isNotBlank( builder.name ), "a name is required for a FormOptionSet" );
+        Preconditions.checkArgument( !nullToEmpty( builder.name ).isBlank(), "a name is required for a FormOptionSet" );
         Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctuations: " + builder.name );
 
         this.name = builder.name;

@@ -4,8 +4,6 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -20,6 +18,7 @@ import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.schema.xdata.XDataName;
 
+import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.lang.StringUtils.substringAfter;
 import static org.apache.commons.lang.StringUtils.substringBefore;
 
@@ -245,7 +244,7 @@ public final class ContentMappingConstraint
         }
         final String id = substringBefore( expression, SEPARATOR ).trim();
         final String value = substringAfter( expression, SEPARATOR ).trim();
-        if ( StringUtils.isBlank( id ) )
+        if ( nullToEmpty( id ).isBlank() )
         {
             throw new IllegalArgumentException( "Invalid match expression: " + expression );
         }

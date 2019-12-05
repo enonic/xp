@@ -12,6 +12,7 @@ import com.enonic.xp.query.highlight.constants.Encoder;
 import com.enonic.xp.query.highlight.constants.Fragmenter;
 import com.enonic.xp.query.highlight.constants.Order;
 import com.enonic.xp.query.highlight.constants.TagsSchema;
+import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticHighlightQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 
@@ -50,6 +51,7 @@ public class SearchRequestBuilderFactory
             setQuery( query.getQuery() ).
             setPostFilter( query.getFilter() ).
             setFrom( query.getFrom() ).
+            setPreference( SearchPreference.LOCAL.getName() ).
             setSize( resolvedSize );
 
         query.getSortBuilders().forEach( searchRequestBuilder::addSort );
@@ -74,7 +76,6 @@ public class SearchRequestBuilderFactory
     {
         highlight.getFields().forEach( builder::addHighlightedField );
 
-
         final Encoder encoder = highlight.getEncoder();
         final TagsSchema tagsSchema = highlight.getTagsSchema();
         final Fragmenter fragmenter = highlight.getFragmenter();
@@ -87,34 +88,44 @@ public class SearchRequestBuilderFactory
         final Boolean requireFieldMatch = highlight.getRequireFieldMatch();
 
         builder.setHighlighterType( HIGHLIGHTER_TYPE );
-        if (encoder != null) {
+        if ( encoder != null )
+        {
             builder.setHighlighterEncoder( encoder.value() );
         }
-        if (fragmenter != null) {
+        if ( fragmenter != null )
+        {
             builder.setHighlighterFragmenter( fragmenter.value() );
         }
-        if (fragmentSize != null) {
+        if ( fragmentSize != null )
+        {
             builder.setHighlighterFragmentSize( fragmentSize );
         }
-        if (noMatchSize != null) {
+        if ( noMatchSize != null )
+        {
             builder.setHighlighterNoMatchSize( noMatchSize );
         }
-        if (numOfFragments != null) {
+        if ( numOfFragments != null )
+        {
             builder.setHighlighterNumOfFragments( numOfFragments );
         }
-        if (order != null) {
+        if ( order != null )
+        {
             builder.setHighlighterOrder( order.value() );
         }
-        if (preTags != null && !preTags.isEmpty()) {
-            builder.setHighlighterPreTags( preTags.toArray( new String[preTags.size()] ));
+        if ( preTags != null && !preTags.isEmpty() )
+        {
+            builder.setHighlighterPreTags( preTags.toArray( new String[preTags.size()] ) );
         }
-        if (postTags != null && !postTags.isEmpty()) {
-            builder.setHighlighterPostTags( postTags.toArray( new String[postTags.size()]) );
+        if ( postTags != null && !postTags.isEmpty() )
+        {
+            builder.setHighlighterPostTags( postTags.toArray( new String[postTags.size()] ) );
         }
-        if (requireFieldMatch != null) {
+        if ( requireFieldMatch != null )
+        {
             builder.setHighlighterRequireFieldMatch( requireFieldMatch );
         }
-        if (tagsSchema != null) {
+        if ( tagsSchema != null )
+        {
             builder.setHighlighterTagsSchema( tagsSchema.value() );
         }
 

@@ -4,13 +4,13 @@ import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.range.geodistance.GeoDistanceBuilder;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.query.aggregation.DistanceRange;
 import com.enonic.xp.query.aggregation.GeoDistanceAggregationQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AbstractBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.index.IndexValueType;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 class GeoDistanceAggregationQueryBuilderFactory
     extends AbstractBuilderFactory
@@ -29,7 +29,7 @@ class GeoDistanceAggregationQueryBuilderFactory
             lat( query.getOrigin().getLatitude() ).
             lon( query.getOrigin().getLongitude() );
 
-        if ( !Strings.isNullOrEmpty( query.getUnit() ) )
+        if ( !isNullOrEmpty( query.getUnit() ) )
         {
             geoDistanceBuilder.unit( DistanceUnit.fromString( query.getUnit() ) );
         }
@@ -56,7 +56,7 @@ class GeoDistanceAggregationQueryBuilderFactory
 
     private void addBoundedToAndFrom( final GeoDistanceBuilder geoDistanceBuilder, final DistanceRange range, final String key )
     {
-        if ( Strings.isNullOrEmpty( key ) )
+        if ( isNullOrEmpty( key ) )
         {
             geoDistanceBuilder.addRange( range.getFrom(), range.getTo() );
         }
@@ -68,7 +68,7 @@ class GeoDistanceAggregationQueryBuilderFactory
 
     private void addUnboundedFrom( final GeoDistanceBuilder geoDistanceBuilder, final DistanceRange range, final String key )
     {
-        if ( Strings.isNullOrEmpty( key ) )
+        if ( isNullOrEmpty( key ) )
         {
             geoDistanceBuilder.addUnboundedFrom( range.getFrom() );
         }
@@ -80,7 +80,7 @@ class GeoDistanceAggregationQueryBuilderFactory
 
     private void addUnboundedTo( final GeoDistanceBuilder geoDistanceBuilder, final DistanceRange range, final String key )
     {
-        if ( Strings.isNullOrEmpty( key ) )
+        if ( isNullOrEmpty( key ) )
         {
             geoDistanceBuilder.addUnboundedTo( range.getTo() );
         }

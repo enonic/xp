@@ -1,7 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.macro.json;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.admin.impl.json.form.FormJson;
@@ -9,6 +7,8 @@ import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.macro.MacroDescriptor;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public class MacroDescriptorJson
 {
@@ -60,7 +60,7 @@ public class MacroDescriptorJson
 
     public String getDisplayName()
     {
-        if ( StringUtils.isNotBlank( displayNameI18nKey ) )
+        if ( !nullToEmpty( displayNameI18nKey ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( displayNameI18nKey, displayName );
         }
@@ -72,7 +72,7 @@ public class MacroDescriptorJson
 
     public String getDescription()
     {
-        if ( StringUtils.isNotBlank( descriptionI18nKey ) )
+        if ( !nullToEmpty( descriptionI18nKey ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( descriptionI18nKey, description );
         }

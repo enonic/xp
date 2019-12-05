@@ -5,10 +5,11 @@ import java.util.Collection;
 import java.util.List;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Strings;
 
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class IdFilter
     extends FieldFilter
@@ -26,7 +27,7 @@ public class IdFilter
     @Override
     public String getFieldName()
     {
-        if ( Strings.isNullOrEmpty( this.fieldName ) )
+        if ( isNullOrEmpty( this.fieldName ) )
         {
             return defaultIdFieldName;
         }

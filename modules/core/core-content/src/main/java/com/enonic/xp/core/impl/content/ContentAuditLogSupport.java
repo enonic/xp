@@ -6,10 +6,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.base.Strings;
-
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.audit.AuditLogUri;
 import com.enonic.xp.audit.AuditLogUris;
@@ -55,6 +51,8 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 class ContentAuditLogSupport
 {
@@ -608,9 +606,9 @@ class ContentAuditLogSupport
 
     private String generateNameFromParams( final ContentName contentName, final String displayName )
     {
-        if ( contentName == null || StringUtils.isEmpty( contentName.toString() ) )
+        if ( contentName == null || isNullOrEmpty( contentName.toString() ) )
         {
-            if ( Strings.isNullOrEmpty( displayName ) )
+            if ( isNullOrEmpty( displayName ) )
             {
                 return ContentName.unnamed().toString();
             }

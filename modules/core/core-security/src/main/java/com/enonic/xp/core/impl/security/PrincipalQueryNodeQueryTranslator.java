@@ -3,8 +3,6 @@ package com.enonic.xp.core.impl.security;
 import java.util.Collections;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.expr.DynamicConstraintExpr;
@@ -23,6 +21,7 @@ import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.EMAIL_KEY;
 import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.ID_PROVIDER_KEY;
 import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.NAME_KEY;
 import static com.enonic.xp.core.impl.security.PrincipalPropertyNames.PRINCIPAL_TYPE_KEY;
+import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.stream.Collectors.toList;
 
 final class PrincipalQueryNodeQueryTranslator
@@ -53,13 +52,13 @@ final class PrincipalQueryNodeQueryTranslator
         }
 
         final String searchText = principalQuery.getSearchText();
-        if ( StringUtils.isNotBlank( searchText ) )
+        if ( !nullToEmpty( searchText ).isBlank() )
         {
             nodeQueryBuilder.query( getQueryExpression( searchText ) );
         }
 
         final String email = principalQuery.getEmail();
-        if ( StringUtils.isNotBlank( email ) )
+        if ( !nullToEmpty( email ).isBlank() )
         {
             nodeQueryBuilder.addQueryFilter( ValueFilter.create().
                 fieldName( EMAIL_KEY ).
@@ -68,7 +67,7 @@ final class PrincipalQueryNodeQueryTranslator
         }
 
         final String name = principalQuery.getName();
-        if ( StringUtils.isNotBlank( name ) )
+        if ( !nullToEmpty( name ).isBlank() )
         {
             nodeQueryBuilder.addQueryFilter( ValueFilter.create().
                 fieldName( NAME_KEY ).
@@ -77,7 +76,7 @@ final class PrincipalQueryNodeQueryTranslator
         }
 
         final String displayName = principalQuery.getDisplayName();
-        if ( StringUtils.isNotBlank( displayName ) )
+        if ( !nullToEmpty( displayName ).isBlank() )
         {
             nodeQueryBuilder.addQueryFilter( ValueFilter.create().
                 fieldName( DISPLAY_NAME_KEY ).

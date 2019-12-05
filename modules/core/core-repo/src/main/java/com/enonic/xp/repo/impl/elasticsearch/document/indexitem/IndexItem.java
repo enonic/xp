@@ -1,10 +1,10 @@
 package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
 import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public abstract class IndexItem<T extends IndexValue>
 {
@@ -39,7 +39,7 @@ public abstract class IndexItem<T extends IndexValue>
 
     private String getTypeContextPostfix()
     {
-        return Strings.isNullOrEmpty( valueType().getPostfix() ) ? "" : INDEX_VALUE_TYPE_SEPARATOR + valueType().getPostfix();
+        return isNullOrEmpty( valueType().getPostfix() ) ? "" : INDEX_VALUE_TYPE_SEPARATOR + valueType().getPostfix();
 
     }
 

@@ -1,10 +1,10 @@
 package com.enonic.xp.elasticsearch.impl.status.cluster;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class ElasticsearchClusterReport
 {
@@ -41,7 +41,7 @@ final class ElasticsearchClusterReport
                     nodesJson.add( node.toJson() );
                 }
             }
-            if ( StringUtils.isNotEmpty( clusterState.getErrorMessage() ) )
+            if ( !isNullOrEmpty( clusterState.getErrorMessage() ) )
             {
                 errorMessages.add( clusterState.getErrorMessage() );
             }
@@ -53,11 +53,11 @@ final class ElasticsearchClusterReport
 
         if ( clusterHealth != null )
         {
-            if ( StringUtils.isNotEmpty( clusterHealth.getClusterHealthStatus() ) )
+            if ( !isNullOrEmpty( clusterHealth.getClusterHealthStatus() ) )
             {
                 json.put( "state", clusterHealth.getClusterHealthStatus() );
             }
-            if ( StringUtils.isNotEmpty( clusterHealth.getErrorMessage() ) )
+            if ( !isNullOrEmpty( clusterHealth.getErrorMessage() ) )
             {
                 errorMessages.add( clusterHealth.getErrorMessage() );
             }

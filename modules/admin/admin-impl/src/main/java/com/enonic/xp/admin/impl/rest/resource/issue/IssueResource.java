@@ -21,7 +21,6 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.admin.impl.json.issue.DeleteIssueCommentResultJson;
@@ -76,6 +75,8 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "issue")
 @Produces(MediaType.APPLICATION_JSON)
@@ -103,7 +104,7 @@ public final class IssueResource
         final Issue issue = issueService.create( generateCreateIssueParams( json ) );
         final List<IssueComment> comments = new ArrayList<>();
 
-        if ( !Strings.isNullOrEmpty( json.description ) )
+        if ( !isNullOrEmpty( json.description ) )
         {
             Optional<User> creator = securityService.getUser( issue.getCreator() );
             if ( creator.isPresent() )

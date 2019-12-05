@@ -4,11 +4,12 @@ import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Strings;
 
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.RangeFilter;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class RangeFilterJson
     extends FilterJson
@@ -23,12 +24,12 @@ public class RangeFilterJson
         final RangeFilter.Builder builder = RangeFilter.create().
             fieldName( fieldName );
 
-        if ( !Strings.isNullOrEmpty( from ) )
+        if ( !isNullOrEmpty( from ) )
         {
             builder.from( ValueFactory.newDateTime( Instant.parse( from ) ) );
         }
 
-        if ( !Strings.isNullOrEmpty( to ) )
+        if ( !isNullOrEmpty( to ) )
         {
             builder.from( ValueFactory.newDateTime( Instant.parse( to ) ) );
         }
