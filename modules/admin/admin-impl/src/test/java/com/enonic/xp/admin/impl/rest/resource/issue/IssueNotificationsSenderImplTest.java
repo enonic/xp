@@ -371,6 +371,51 @@ public class IssueNotificationsSenderImplTest
 
         Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
+        verifyRecipients( creator.getEmail() );
+        verify( mailService, times( 1 ) ).send( any() );
+        verify( securityService, times( 2 ) ).getUser( any() );
+        verify( contentService, times( 1 ) ).getByIds( any() );
+        verify( contentService, times( 1 ) ).compare( Mockito.any( CompareContentsParams.class ) );
+    }
+
+    @Test
+    public void testNotifyIssueCommentedBySingleApprover()
+        throws Exception
+    {
+        final User creator = generateUserNoEmail();
+        final User approver = User.ANONYMOUS;
+        final Issue issue = createIssue( creator.getKey(), PrincipalKeys.from( approver.getKey() ) );
+        final Content content = Content.create().
+            id( ContentId.from( "aaa" ) ).
+            type( ContentTypeName.folder() ).
+            name( "name" ).
+            parentPath( ContentPath.from( "/aaa" ) ).
+            build();
+        final Contents contents = Contents.from( content );
+        final CompareContentResults compareResults = CompareContentResults.create().
+            add( new CompareContentResult( CompareStatus.NEW, ContentId.from( "aaa" ) ) ).
+            add( new CompareContentResult( CompareStatus.NEW, ContentId.from( "contentId2" ) ) ).
+            build();
+
+        Mockito.when( securityService.getUser( issue.getCreator() ) ).thenReturn( Optional.of( creator ) );
+        Mockito.when( securityService.getUser( issue.getApproverIds().first() ) ).thenReturn( Optional.of( approver ) );
+        Mockito.when( contentService.getByIds( Mockito.any( GetContentByIdsParams.class ) ) ).thenReturn( contents );
+        Mockito.when( contentService.compare( Mockito.any( CompareContentsParams.class ) ) ).thenReturn( compareResults );
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().name( "mycontenttype" ).icon( Icon.from( new byte[]{1}, "image/svg+xml", Instant.now() ) ).setBuiltIn(
+                true ).build() );
+
+        IssueCommentedNotificationParams params = notificationFactoryBuilder.
+            issue( issue ).
+            comments( this.createComments( User.ANONYMOUS.getKey() ) ).
+            url( "url" ).
+            build().
+            commentedParams();
+
+        issueNotificationsSender.notifyIssueCommented( params );
+
+        Thread.sleep( 1000 ); // giving a chance to run threads that send mails
+
         verify( mailService, never() ).send( any() );
         verify( securityService, times( 2 ) ).getUser( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
@@ -418,7 +463,7 @@ public class IssueNotificationsSenderImplTest
 
         Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
-        verifyRecipients( approvers.get( 1 ).getEmail() );
+        verifyRecipients( approvers.get( 1 ).getEmail() + ";" + creator.getEmail() );
         verify( mailService, times( 1 ) ).send( any() );
         verify( securityService, times( 3 ) ).getUser( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
