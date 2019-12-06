@@ -16,12 +16,12 @@ if (result) {
 
 // BEGIN
 // Gets a single content by path and versionId.
-var result_by_path_and_version_id = contentLib.get({
+var resultByPathAndVersionId = contentLib.get({
     key: '/path/to/mycontent',
     versionId: 'versionId'
 });
 
-if (result_by_path_and_version_id) {
+if (resultByPathAndVersionId) {
     log.info('Display Name = ' + result.displayName);
 } else {
     log.info('Content was not found');
@@ -30,12 +30,12 @@ if (result_by_path_and_version_id) {
 
 // BEGIN
 // Gets a single content by id and versionId.
-var result_by_id_and_version_id = contentLib.get({
+var resultByIdAndVersionId = contentLib.get({
     key: '123456',
     versionId: 'versionId'
 });
 
-if (result_by_id_and_version_id) {
+if (resultByIdAndVersionId) {
     log.info('Display Name = ' + result.displayName);
 } else {
     log.info('Content was not found');
@@ -85,5 +85,5 @@ var expected = {
 // END
 
 assert.assertJsonEquals(expected, result);
-assert.assertJsonEquals(expected, result_by_path_and_version_id);
-assert.assertJsonEquals(expected, result_by_id_and_version_id);
+assert.assertJsonEquals(expected, resultByPathAndVersionId);
+assert.assertJsonEquals(expected, resultByIdAndVersionId);
