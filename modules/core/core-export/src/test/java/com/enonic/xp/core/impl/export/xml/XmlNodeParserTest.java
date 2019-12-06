@@ -28,28 +28,6 @@ public class XmlNodeParserTest
     }
 
     @Test
-    // Handles the double-encoded-case that happens with old 5.0.1 exports.
-    public void testParse_double_decoded()
-        throws Exception
-    {
-        final Node.Builder builder = Node.create();
-
-        final XmlNodeParser parser = new XmlNodeParser();
-        parser.source( getClass().getResource( "node-double-encoded.xml" ) );
-        parser.builder( builder );
-        parser.parse();
-
-        final Node node = builder.build();
-
-        final XmlNodeSerializer serializer = new XmlNodeSerializer();
-        serializer.node( node ).exportNodeIds( true );
-        final String result = serializer.serialize();
-
-        assertXml( "node.xml", result );
-    }
-
-
-    @Test
     public void testParse_empty_tags()
         throws Exception
     {
