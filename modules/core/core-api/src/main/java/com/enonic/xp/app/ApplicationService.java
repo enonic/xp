@@ -38,10 +38,13 @@ public interface ApplicationService
 
     void publishUninstalledEvent( final ApplicationKey key );
 
+    @Deprecated
     void invalidate( ApplicationKey key );
+
+    void invalidate( ApplicationKey key, ApplicationInvalidationLevel level );
 
     @Deprecated
     void installAllStoredApplications();
 
-    void installAllStoredApplications(final ApplicationInstallationParams params);
+    void installAllStoredApplications( final ApplicationInstallationParams params );
 }
