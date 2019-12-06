@@ -7,6 +7,8 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentVersionId;
+import com.enonic.xp.context.ContextAccessor;
 
 public class GetContentHandlerTest
     extends BaseContentHandlerTest
@@ -16,6 +18,10 @@ public class GetContentHandlerTest
     {
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
+        Mockito.when( this.contentService.getByPathAndVersionId( Mockito.any( ContentPath.class ),
+                                                                 Mockito.any( ContentVersionId.class ) ) ).thenReturn( content );
+        Mockito.when( this.contentService.getByIdAndVersionId( Mockito.any( ContentId.class ),
+                                                               Mockito.any( ContentVersionId.class ) ) ).thenReturn(content );
 
         runScript( "/lib/xp/examples/content/get.js" );
     }
@@ -69,4 +75,53 @@ public class GetContentHandlerTest
 
         runFunction( "/test/GetContentHandlerTest.js", "getByPath_notFound" );
     }
+
+    @Test
+    public void getByIdAndVersionId()
+    {
+        final Content content = TestDataFixtures.newExampleContent();
+
+        final ContentId contentId = ContentId.from( "mycontentId" );
+        final ContentVersionId versionId = ContentVersionId.from( "versionId" );
+        Mockito.when( this.contentService.getByIdAndVersionId( contentId, versionId ) ).thenReturn( content );
+
+        runFunction( "/test/GetContentHandlerTest.js", "getByIdAndVersionId" );
+    }
+
+    @Test
+    public void getByIdAndVersionId_NotFound()
+    {
+        final ContentId contentId = ContentId.from( "mycontentId" );
+        final ContentVersionId versionId = ContentVersionId.from( "versionId" );
+        Mockito.when( this.contentService.getByIdAndVersionId( contentId, versionId ) ).thenThrow(
+            new ContentNotFoundException( contentId, versionId, ContextAccessor.current().getBranch() ) );
+
+        runFunction( "/test/GetContentHandlerTest.js", "getByIdAndVersionId_notFound" );
+    }
+
+    @Test
+    public void getByPathAndVersionId()
+    {
+        final Content content = TestDataFixtures.newExampleContent();
+
+        final ContentPath path = ContentPath.from( "/a/b/mycontent" );
+        final ContentVersionId versionId = ContentVersionId.from( "versionId" );
+
+        Mockito.when( this.contentService.getByPathAndVersionId( path, versionId ) ).thenReturn( content );
+
+        runFunction( "/test/GetContentHandlerTest.js", "getByPathAndVersionId" );
+    }
+
+    @Test
+    public void getByPathAndVersionId_NotFound()
+    {
+        final ContentPath path = ContentPath.from( "/a/b/mycontent" );
+        final ContentVersionId versionId = ContentVersionId.from( "versionId" );
+
+        Mockito.when( this.contentService.getByPathAndVersionId( path, versionId ) ).thenThrow(
+            new ContentNotFoundException( path, versionId, ContextAccessor.current().getBranch() ) );
+
+        runFunction( "/test/GetContentHandlerTest.js", "getByPathAndVersionId_notFound" );
+    }
+
 }
