@@ -85,7 +85,7 @@ public class IssueNotificationParamsFactory
 
     public IssueNotificationParams createdParams()
     {
-        return createMessageParams();
+        return createMessageParams( true );
     }
 
     public IssueUpdatedNotificationParams updatedParams()
@@ -105,7 +105,13 @@ public class IssueNotificationParamsFactory
 
     private IssueNotificationParams createMessageParams()
     {
-        PrincipalKey creatorOrModifierKey = issue.getModifier() != null ? issue.getModifier() : issue.getCreator();
+        return createMessageParams( false );
+    }
+
+    private IssueNotificationParams createMessageParams( boolean preferModifierOverCreator )
+    {
+        PrincipalKey creatorOrModifierKey =
+            preferModifierOverCreator && issue.getModifier() != null ? issue.getModifier() : issue.getCreator();
         final User creatorOrModifier = securityService.getUser( creatorOrModifierKey ).orElse( null );
         final ContentIds contentIds = ContentIds.from(
             issue.getPublishRequest().getItems().stream().map( PublishRequestItem::getId ).collect( Collectors.toList() ) );

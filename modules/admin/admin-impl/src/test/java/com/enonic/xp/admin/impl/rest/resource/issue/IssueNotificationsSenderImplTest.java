@@ -186,6 +186,42 @@ public class IssueNotificationsSenderImplTest
         verify( contentService, times( 1 ) ).compare( Mockito.any( CompareContentsParams.class ) );
     }
 
+    @Test
+    public void testNotifyExistingIssueAssigned()
+        throws Exception
+    {
+        final User creator = generateUser();
+        final User modifier = generateUser( "modifier@user.com" );
+        final List<User> approvers =
+            Arrays.asList( generateUser( "modifier@user.com" ), generateUser( "other@user.com" ), generateUser( "more@user.com" ) );
+        final PrincipalKeys approverIds =
+            PrincipalKeys.from( approvers.stream().map( approver -> approver.getKey() ).collect( Collectors.toList() ) );
+        final Issue issue = createIssue( creator.getKey(), modifier.getKey(), approverIds );
+        final Contents contents = Contents.empty();
+
+        Mockito.when( securityService.getUser( issue.getModifier() ) ).thenReturn( Optional.of( modifier ) );
+        approvers.stream().forEach(
+            approver -> Mockito.when( securityService.getUser( approver.getKey() ) ).thenReturn( Optional.of( approver ) ) );
+        Mockito.when( contentService.getByIds( Mockito.any( GetContentByIdsParams.class ) ) ).thenReturn( contents );
+
+        IssueNotificationParams params = notificationFactoryBuilder.
+            issue( issue ).
+            comments( this.createComments( creator.getKey() ) ).
+            url( "url" ).
+            build().
+            createdParams();
+
+        issueNotificationsSender.notifyIssueCreated( params );
+
+        Thread.sleep( 1000 ); // giving a chance to run threads that send mails
+
+        verifyRecipients( "other@user.com;more@user.com" );
+        verify( securityService, times( 4 ) ).getUser( any() );
+        verify( mailService, times( 1 ) ).send( any() );
+        verify( contentService, times( 1 ) ).getByIds( any() );
+        verify( contentService, times( 1 ) ).compare( Mockito.any( CompareContentsParams.class ) );
+    }
+
     private void verifyRecipients( final String recipients )
         throws Exception
     {
@@ -581,11 +617,17 @@ public class IssueNotificationsSenderImplTest
 
     private Issue createIssue( final PrincipalKey creator, final PrincipalKeys approvers )
     {
+        return createIssue( creator, null, approvers );
+    }
+
+    private Issue createIssue( final PrincipalKey creator, final PrincipalKey modifier, final PrincipalKeys approvers )
+    {
         return Issue.create().
             id( IssueId.create() ).
             title( "title" ).
             description( "description" ).
             creator( creator ).
+            modifier( modifier ).
             addApproverIds( approvers ).setPublishRequest( PublishRequest.create().addExcludeId( ContentId.from( "exclude-id" ) ).addItem(
             PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ).build();
     }
