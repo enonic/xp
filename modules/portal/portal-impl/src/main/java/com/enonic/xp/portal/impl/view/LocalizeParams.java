@@ -13,6 +13,8 @@ import com.google.common.collect.Multimap;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 class LocalizeParams
 {
     private String key;
@@ -52,7 +54,7 @@ class LocalizeParams
 
     private void locale( final String locale )
     {
-        this.locale = Strings.isNullOrEmpty( locale ) ? resolveLocale() : Locale.forLanguageTag( locale );
+        this.locale = isNullOrEmpty( locale ) ? resolveLocale() : Locale.forLanguageTag( locale );
     }
 
     private Locale resolveLocale()
@@ -91,7 +93,7 @@ class LocalizeParams
 
     private void parseValues( final String valuesAsString )
     {
-        if ( Strings.isNullOrEmpty( valuesAsString ) )
+        if ( isNullOrEmpty( valuesAsString ) )
         {
             this.params = new ArrayList<>().toArray();
             return;

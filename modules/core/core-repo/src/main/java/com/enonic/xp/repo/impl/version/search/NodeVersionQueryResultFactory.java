@@ -2,8 +2,6 @@ package com.enonic.xp.repo.impl.version.search;
 
 import java.time.Instant;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.blob.NodeVersionKey;
@@ -20,6 +18,8 @@ import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class NodeVersionQueryResultFactory
 {
@@ -78,10 +78,10 @@ public class NodeVersionQueryResultFactory
             nodeVersionId( NodeVersionId.from( versionId ) ).
             nodeVersionKey( nodeVersionKey ).
             binaryBlobKeys( binaryBlobKeys ).
-            timestamp( Strings.isNullOrEmpty( timestamp ) ? null : Instant.parse( timestamp ) ).
+            timestamp( isNullOrEmpty( timestamp ) ? null : Instant.parse( timestamp ) ).
             nodePath( NodePath.create( nodePath ).build() ).
             nodeId( NodeId.from( nodeId ) ).
-            nodeCommitId( Strings.isNullOrEmpty( commitId ) ? null : NodeCommitId.from( commitId ) ).
+            nodeCommitId( isNullOrEmpty( commitId ) ? null : NodeCommitId.from( commitId ) ).
             build();
     }
 

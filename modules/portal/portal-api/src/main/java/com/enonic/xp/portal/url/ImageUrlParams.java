@@ -5,6 +5,8 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 @Beta
 public final class ImageUrlParams
     extends AbstractUrlParams<ImageUrlParams>
@@ -78,7 +80,7 @@ public final class ImageUrlParams
 
     public ImageUrlParams quality( final String value )
     {
-        return Strings.isNullOrEmpty( value ) ? this : quality( Integer.valueOf( value ) );
+        return isNullOrEmpty( value ) ? this : quality( Integer.valueOf( value ) );
     }
 
     public ImageUrlParams format( final String value )

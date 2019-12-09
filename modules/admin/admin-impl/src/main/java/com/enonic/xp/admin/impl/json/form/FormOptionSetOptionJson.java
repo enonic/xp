@@ -3,8 +3,6 @@ package com.enonic.xp.admin.impl.json.form;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Preconditions;
 
@@ -12,6 +10,8 @@ import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolv
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.FormOptionSetOption;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public class FormOptionSetOptionJson
 {
@@ -49,7 +49,7 @@ public class FormOptionSetOptionJson
 
     public String getLabel()
     {
-        if ( localeMessageResolver != null && StringUtils.isNotBlank( formOptionSetOption.getLabelI18nKey() ) )
+        if ( localeMessageResolver != null && !nullToEmpty( formOptionSetOption.getLabelI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( formOptionSetOption.getLabelI18nKey(), formOptionSetOption.getLabel() );
         }
@@ -61,7 +61,7 @@ public class FormOptionSetOptionJson
 
     public String getHelpText()
     {
-        if ( localeMessageResolver != null && StringUtils.isNotBlank( formOptionSetOption.getHelpTextI18nKey() ) )
+        if ( localeMessageResolver != null && !nullToEmpty( formOptionSetOption.getHelpTextI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( formOptionSetOption.getHelpTextI18nKey(), formOptionSetOption.getHelpText() );
         }

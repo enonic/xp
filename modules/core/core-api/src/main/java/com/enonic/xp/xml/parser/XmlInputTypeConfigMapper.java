@@ -3,7 +3,6 @@ package com.enonic.xp.xml.parser;
 import org.w3c.dom.Attr;
 
 import com.google.common.base.CaseFormat;
-import com.google.common.base.Strings;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
@@ -11,6 +10,8 @@ import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.xml.DomElement;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class XmlInputTypeConfigMapper
 {
@@ -79,7 +80,7 @@ final class XmlInputTypeConfigMapper
 
     private String resolveValue( final String name, final String value )
     {
-        if ( Strings.isNullOrEmpty( value ) )
+        if ( isNullOrEmpty( value ) )
         {
             return null;
         }

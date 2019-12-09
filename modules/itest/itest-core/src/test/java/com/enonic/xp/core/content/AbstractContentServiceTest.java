@@ -162,6 +162,8 @@ public class AbstractContentServiceTest
 
     protected ContentTypeServiceImpl contentTypeService;
 
+    protected AuditLogService auditLogService;
+
     @BeforeEach
     public void setUpAbstractContentServiceTest()
         throws Exception
@@ -278,7 +280,7 @@ public class AbstractContentServiceTest
         PageDescriptorService pageDescriptorService = Mockito.mock(PageDescriptorService.class);
         PartDescriptorService partDescriptorService = Mockito.mock(PartDescriptorService.class);
         LayoutDescriptorService layoutDescriptorService = Mockito.mock(LayoutDescriptorService.class);
-        AuditLogService auditLogService = Mockito.mock( AuditLogService.class );
+        auditLogService = Mockito.mock( AuditLogService.class );
 
         contentService.setNodeService( nodeService );
         contentService.setEventPublisher( eventPublisher );

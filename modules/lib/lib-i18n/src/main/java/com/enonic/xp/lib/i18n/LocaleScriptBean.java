@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Supplier;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
@@ -17,6 +15,7 @@ import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.site.Site;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.toList;
 
 public final class LocaleScriptBean
@@ -97,7 +96,7 @@ public final class LocaleScriptBean
 
     private Locale resolveLocale( final String locale )
     {
-        return Strings.isNullOrEmpty( locale ) ? resolveLocaleFromSite() : Locale.forLanguageTag( locale );
+        return isNullOrEmpty( locale ) ? resolveLocaleFromSite() : Locale.forLanguageTag( locale );
     }
 
     private Locale resolveLocaleFromSite()

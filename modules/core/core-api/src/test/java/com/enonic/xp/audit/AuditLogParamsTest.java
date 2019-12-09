@@ -26,7 +26,6 @@ public class AuditLogParamsTest
         assertNotNull( params.getTime() );
         assertNotNull( params.getSource() );
         assertNotNull( params.getUser() );
-        assertNotNull( params.getMessage() );
         assertNotNull( params.getObjectUris() );
         assertNotNull( params.getData() );
     }
@@ -39,7 +38,6 @@ public class AuditLogParamsTest
             time( AuditLogTestBuilder.time ).
             source( AuditLogTestBuilder.source ).
             user( AuditLogTestBuilder.user ).
-            message( AuditLogTestBuilder.message ).
             objectUris( AuditLogTestBuilder.objectUris ).
             data( AuditLogTestBuilder.data ).
             build();
@@ -48,7 +46,6 @@ public class AuditLogParamsTest
         assertEquals( AuditLogTestBuilder.time, params.getTime() );
         assertEquals( AuditLogTestBuilder.source, params.getSource() );
         assertEquals( AuditLogTestBuilder.user, params.getUser() );
-        assertEquals( AuditLogTestBuilder.message, params.getMessage() );
         assertEquals( AuditLogTestBuilder.objectUris, params.getObjectUris() );
         assertEquals( AuditLogTestBuilder.data, params.getData() );
     }

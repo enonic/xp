@@ -43,18 +43,9 @@ public final class NodeMultiRepoQueryResultMapper
             gen.value( "repoId", nodeHit.getRepositoryId().toString() );
             gen.value( "branch", nodeHit.getBranch().getValue() );
             serialize( gen, nodeHit.getExplanation() );
+            serialize( gen, nodeHit.getHighlight() );
             gen.end();
         }
         gen.end();
-    }
-
-    private void serialize( final MapGenerator gen, final Aggregations aggregations )
-    {
-        if ( aggregations != null )
-        {
-            gen.map( "aggregations" );
-            new AggregationMapper( aggregations ).serialize( gen );
-            gen.end();
-        }
     }
 }

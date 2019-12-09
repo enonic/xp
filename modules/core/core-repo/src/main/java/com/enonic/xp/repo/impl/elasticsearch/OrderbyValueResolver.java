@@ -2,10 +2,10 @@ package com.enonic.xp.repo.impl.elasticsearch;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueTypes;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class OrderbyValueResolver
 {
@@ -55,7 +55,7 @@ public class OrderbyValueResolver
 
     private static String getOrderbyValueForString( String value )
     {
-        if ( Strings.isNullOrEmpty( value ) )
+        if ( isNullOrEmpty( value ) )
         {
             return "";
         }

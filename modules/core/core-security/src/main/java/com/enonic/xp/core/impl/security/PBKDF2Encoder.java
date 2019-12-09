@@ -6,10 +6,10 @@ import java.util.Arrays;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.util.HexEncoder;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class PBKDF2Encoder
     implements PasswordEncoder
@@ -111,7 +111,7 @@ final class PBKDF2Encoder
 
         public static AuthenticationHash from( final String key )
         {
-            if ( Strings.isNullOrEmpty( key ) )
+            if ( isNullOrEmpty( key ) )
             {
                 return null;
             }
