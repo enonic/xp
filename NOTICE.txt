@@ -33,6 +33,14 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     MIT License
     https://github.com/typetools/checker-framework/blob/master/LICENSE.txt
 
+    Dropwizard Metrics
+    Apache License 2.0
+    https://github.com/dropwizard/metrics/blob/4.1-development/LICENSE
+
+    Eclipse Jetty
+    Apache License 2.0
+    https://www.eclipse.org/jetty/licenses.html
+
     ElasticSearch
     Apache License 2.0
     https://github.com/elastic/elasticsearch/blob/master/LICENSE.txt
@@ -103,10 +111,6 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Eclipse Public License 1.0
     https://logback.qos.ch/license.html
     Source code: https://github.com/qos-ch/logback
-
-    Metrics
-    Apache License 2.0
-    https://github.com/dropwizard/metrics/blob/4.1-development/LICENSE
 
     OSGi Utilities
     Apache License 2.0
