@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
@@ -41,6 +42,21 @@ public class PortalUrlServiceImpl_identityUrlTest
         final String url = this.service.identityUrl( params );
         assertEquals( "/portal/draft/context/path/_/idprovider/system/login", url );
     }
+
+    @Test
+    public void createUrl_normalizedCharacters()
+    {
+        this.portalRequest.setContentPath( ContentPath.from( ContentPath.ROOT, "feåtures" ) );
+
+        final IdentityUrlParams params = new IdentityUrlParams().
+            portalRequest( this.portalRequest ).
+            userStoreKey( UserStoreKey.system() ).
+            idProviderFunction( "login" );
+
+        final String url = this.service.identityUrl( params );
+        assertEquals( "/portal/draft/_/idprovider/system/login", url );
+    }
+
 
     @Test
     public void createUrl_withoutFunction()
