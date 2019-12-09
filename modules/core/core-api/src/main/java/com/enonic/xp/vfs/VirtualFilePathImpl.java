@@ -7,7 +7,8 @@ import java.util.regex.Pattern;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 class VirtualFilePathImpl
     implements VirtualFilePath
@@ -50,7 +51,7 @@ class VirtualFilePathImpl
 
         for ( final String element : elementArray )
         {
-            if ( !Strings.isNullOrEmpty( element ) )
+            if ( !isNullOrEmpty( element ) )
             {
                 elements.add( element );
             }

@@ -5,12 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Strings;
 
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.repo.impl.dump.DumpConstants;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.util.Version;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class DumpMetaJson
 {
@@ -71,7 +72,7 @@ public class DumpMetaJson
                     resultEntry -> systemDumpResult.add( RepoDumpResultJson.fromJson( resultEntry.getKey(), resultEntry.getValue() ) ) );
             dumpMeta.systemDumpResult( systemDumpResult.build() );
         }
-        if ( !Strings.isNullOrEmpty( dumpMetaJson.getModelVersion() ) )
+        if ( !isNullOrEmpty( dumpMetaJson.getModelVersion() ) )
         {
             final Version modelVersion = Version.valueOf( dumpMetaJson.getModelVersion() );
             dumpMeta.modelVersion( modelVersion );

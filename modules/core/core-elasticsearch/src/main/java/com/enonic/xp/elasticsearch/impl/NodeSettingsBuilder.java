@@ -6,12 +6,12 @@ import java.util.stream.Collectors;
 import org.elasticsearch.common.settings.Settings;
 import org.osgi.framework.BundleContext;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class NodeSettingsBuilder
 {
@@ -77,7 +77,7 @@ final class NodeSettingsBuilder
     private String createZenUnicastHostString( final Configuration source )
     {
         final String sockets = source.get( ES_UNICAST_SOCKETS_OPTION );
-        if ( !Strings.isNullOrEmpty( sockets ) )
+        if ( !isNullOrEmpty( sockets ) )
         {
             return sockets;
         }

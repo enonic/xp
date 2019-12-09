@@ -3,8 +3,6 @@ package com.enonic.xp.core.impl.schema.content;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.WordUtils;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.core.impl.schema.SchemaHelper;
@@ -317,12 +315,13 @@ final class BuiltinContentTypes
 
     private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
     {
-        final String displayName = WordUtils.capitalize( contentTypeName.getLocalName() );
+        final String localName = contentTypeName.getLocalName();
+        final String displayName = localName.substring( 0, 1 ).toUpperCase() + localName.substring( 1 );
         final String app = contentTypeName.getApplicationKey().getName();
         return ContentType.create().
             name( contentTypeName ).
             displayName( displayName ).
-            displayNameI18nKey( app + "." + contentTypeName.getLocalName().toLowerCase() + ".displayName" ).
+            displayNameI18nKey( app + "." + localName + ".displayName" ).
             setBuiltIn();
     }
 

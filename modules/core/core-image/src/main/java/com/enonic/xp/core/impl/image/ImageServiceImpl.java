@@ -19,7 +19,6 @@ import javax.imageio.stream.ImageInputStream;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.base.Strings;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
@@ -37,6 +36,8 @@ import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Component
 public class ImageServiceImpl
@@ -210,7 +211,7 @@ public class ImageServiceImpl
             }
 
             //Applies the filters
-            if ( !Strings.isNullOrEmpty( readImageParams.getFilterParam() ) )
+            if ( !isNullOrEmpty( readImageParams.getFilterParam() ) )
             {
                 bufferedImage = applyFilters( bufferedImage, readImageParams.getFilterParam() );
             }

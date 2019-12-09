@@ -13,7 +13,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
@@ -32,6 +31,8 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Path("/repo/index")
 @Produces(MediaType.APPLICATION_JSON)
@@ -64,7 +65,7 @@ public final class IndexResource
     {
         final RepositoryIds.Builder repositoryIds = RepositoryIds.create();
 
-        if ( !Strings.isNullOrEmpty( request.repositoryId ) )
+        if ( !isNullOrEmpty( request.repositoryId ) )
         {
             repositoryIds.add( RepositoryId.from( request.repositoryId ) );
         }

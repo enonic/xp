@@ -22,8 +22,7 @@ public final class IdProviderKey
     {
         Preconditions.checkArgument( !nullToEmpty( id ).isBlank(), "IdProviderKey cannot be blank: %s", id );
         Preconditions.checkArgument( !RESERVED_ID_PROVIDER_KEY.equalsIgnoreCase( id ),
-                                     "IdProviderKey id is reserved and cannot be used: %s",
-                                     id );
+                                     "IdProviderKey id is reserved and cannot be used: %s", id );
         this.id = CharacterChecker.check( id, "Invalid IdProviderKey [" + id + "]" );
     }
 

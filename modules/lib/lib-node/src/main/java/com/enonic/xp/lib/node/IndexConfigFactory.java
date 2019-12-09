@@ -1,7 +1,5 @@
 package com.enonic.xp.lib.node;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.ValueTypes;
@@ -15,6 +13,7 @@ import static com.enonic.xp.lib.node.NodePropertyConstants.ANALYZER;
 import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_ARRAY;
 import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_PATH;
 import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_SETTINGS;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class IndexConfigFactory
 {
@@ -40,7 +39,7 @@ public class IndexConfigFactory
 
         final String analyzer = this.propertySet.getString( ANALYZER );
 
-        if ( !Strings.isNullOrEmpty( analyzer ) )
+        if ( !isNullOrEmpty( analyzer ) )
         {
             builder.analyzer( analyzer );
         }

@@ -5,8 +5,6 @@ import java.util.Iterator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.aggregation.Bucket;
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.aggregation.Buckets;
@@ -21,6 +19,7 @@ import com.enonic.xp.query.aggregation.NumericRange;
 import com.enonic.xp.query.aggregation.NumericRangeAggregationQuery;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -125,7 +124,7 @@ public class NumericRangeAggregationTest
 
         assertEquals( count, buck.getDocCount() );
 
-        if ( !Strings.isNullOrEmpty( key ) )
+        if ( !isNullOrEmpty( key ) )
         {
             assertEquals( buck.getKey(), key );
         }

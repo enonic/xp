@@ -1,9 +1,8 @@
 package com.enonic.xp.schema;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 
 import com.enonic.xp.app.ApplicationKey;
 
@@ -20,8 +19,10 @@ public abstract class BaseSchemaName
 
     protected BaseSchemaName( final String name )
     {
-        this.applicationKey = ApplicationKey.from( StringUtils.substringBefore( name, SEPARATOR ) );
-        this.localName = StringUtils.substringAfter( name, SEPARATOR );
+        Preconditions.checkNotNull( name, "BaseSchemaName can't be null" );
+        final int index = name.indexOf( SEPARATOR );
+        this.applicationKey = ApplicationKey.from( index == -1 ? name : name.substring( 0, index ) );
+        this.localName = index == -1 ? "" : name.substring( index + 1 );
         this.refString = Joiner.on( SEPARATOR ).join( this.applicationKey.toString(), this.localName );
     }
 
