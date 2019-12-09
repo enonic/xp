@@ -271,6 +271,13 @@ public final class LocaleServiceImpl
     }
 
     @Override
+    @Deprecated
+    public void invalidate( final ApplicationKey key )
+    {
+        invalidate( key, ApplicationInvalidationLevel.FULL );
+    }
+
+    @Override
     public void invalidate( final ApplicationKey appKey, final ApplicationInvalidationLevel level )
     {
         final String cacheKeyPrefix = appKey.toString() + KEY_SEPARATOR;

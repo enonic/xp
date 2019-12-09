@@ -43,6 +43,13 @@ public final class ScriptRuntimeFactoryDelegate
     }
 
     @Override
+    @Deprecated
+    public void invalidate( final ApplicationKey key )
+    {
+        invalidate( key, ApplicationInvalidationLevel.FULL );
+    }
+
+    @Override
     public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
     {
         this.provider.invalidate( key );
