@@ -3,10 +3,16 @@ package com.enonic.xp.script.impl.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jdk.nashorn.api.scripting.NashornException;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
+
 import com.enonic.xp.resource.ResourceKey;
 
 public final class ScriptLogger
 {
+
+    private static final String NASHORN_EXCEPTION_MEMBER = "nashornException";
+
     private final LogArgConverter converter;
 
     private final ResourceKey source;
@@ -22,7 +28,18 @@ public final class ScriptLogger
 
     public void debug( final String message, final Object arg )
     {
-        this.log.debug( format( message, arg ) );
+        if ( arg instanceof Throwable )
+        {
+            this.log.debug( message, (Throwable) arg );
+        }
+        else if ( arg instanceof ScriptObjectMirror && ( (ScriptObjectMirror) arg ).hasMember( NASHORN_EXCEPTION_MEMBER ) )
+        {
+            this.log.debug( message, (NashornException) ( (ScriptObjectMirror) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) );
+        }
+        else
+        {
+            this.log.debug( format( message, arg ) );
+        }
     }
 
     public void debug( final String message, final Object... args )
@@ -32,7 +49,18 @@ public final class ScriptLogger
 
     public void info( final String message, final Object arg )
     {
-        this.log.info( format( message, arg ) );
+        if ( arg instanceof Throwable )
+        {
+            this.log.info( message, (Throwable) arg );
+        }
+        else if ( arg instanceof ScriptObjectMirror && ( (ScriptObjectMirror) arg ).hasMember( NASHORN_EXCEPTION_MEMBER ) )
+        {
+            this.log.info( message, (NashornException) ( (ScriptObjectMirror) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) );
+        }
+        else
+        {
+            this.log.info( format( message, arg ) );
+        }
     }
 
     public void info( final String message, final Object... args )
@@ -42,7 +70,18 @@ public final class ScriptLogger
 
     public void warning( final String message, final Object arg )
     {
-        this.log.warn( format( message, arg ) );
+        if ( arg instanceof Throwable )
+        {
+            this.log.warn( message, (Throwable) arg );
+        }
+        else if ( arg instanceof ScriptObjectMirror && ( (ScriptObjectMirror) arg ).hasMember( NASHORN_EXCEPTION_MEMBER ) )
+        {
+            this.log.warn( message, (NashornException) ( (ScriptObjectMirror) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) );
+        }
+        else
+        {
+            this.log.warn( format( message, arg ) );
+        }
     }
 
     public void warning( final String message, final Object... args )
@@ -52,7 +91,18 @@ public final class ScriptLogger
 
     public void error( final String message, final Object arg )
     {
-        this.log.error( format( message, arg ) );
+        if ( arg instanceof Throwable )
+        {
+            this.log.error( message, (Throwable) arg );
+        }
+        else if ( arg instanceof ScriptObjectMirror && ( (ScriptObjectMirror) arg ).hasMember( NASHORN_EXCEPTION_MEMBER ) )
+        {
+            this.log.error( message, (NashornException) ( (ScriptObjectMirror) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) );
+        }
+        else
+        {
+            this.log.error( format( message, arg ) );
+        }
     }
 
     public void error( final String message, final Object... args )
