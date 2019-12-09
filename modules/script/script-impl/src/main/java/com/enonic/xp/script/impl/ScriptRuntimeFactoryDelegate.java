@@ -4,6 +4,7 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.script.runtime.ScriptRuntime;
@@ -42,7 +43,14 @@ public final class ScriptRuntimeFactoryDelegate
     }
 
     @Override
+    @Deprecated
     public void invalidate( final ApplicationKey key )
+    {
+        invalidate( key, ApplicationInvalidationLevel.FULL );
+    }
+
+    @Override
+    public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
     {
         this.provider.invalidate( key );
     }
