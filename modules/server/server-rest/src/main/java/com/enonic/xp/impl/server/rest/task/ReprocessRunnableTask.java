@@ -60,7 +60,7 @@ public class ReprocessRunnableTask
             {
                 ContentPath contentPath = ContentPath.from( ContentPath.ROOT, CONTENT_ROOT_NAME );
 
-                if ( !contentPath.equals( content.getPath() ) )
+                if ( !ContentPath.ROOT.equals( params.getSourceBranchPath().getContentPath() ) )
                 {
                     contentPath = ContentPath.from( contentPath, content.getPath().asRelative() );
                 }
