@@ -70,9 +70,9 @@ import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
-import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PublishStatus;
+import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
@@ -172,19 +172,6 @@ public class ContentServiceImpl
     private AuditLogService auditLogService;
 
     private ContentAuditLogSupport contentAuditLogSupport;
-
-    public ContentServiceImpl()
-    {
-        final ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().
-            setNameFormat( "apply-permissions-thread-%d" ).
-            setUncaughtExceptionHandler( ( t, e ) -> LOG.error( "Apply Permissions failed", e ) ).
-            build();
-<<<<<<< HEAD
-        this.contentProcessors = new ContentProcessors();
-=======
-        this.applyPermissionsExecutor = Executors.newFixedThreadPool( 5, namedThreadFactory );
->>>>>>> master
-    }
 
     @Activate
     public void initialize()
