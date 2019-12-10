@@ -14,6 +14,7 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
@@ -589,15 +590,15 @@ public class ApplicationServiceImplTest
         this.service.addInvalidator( invalidator2 );
         this.service.invalidate( key );
 
-        Mockito.verify( invalidator1, Mockito.times( 1 ) ).invalidate( key );
-        Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key );
+        Mockito.verify( invalidator1, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
+        Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
 
         this.service.removeInvalidator( invalidator1 );
         this.service.removeInvalidator( invalidator2 );
         this.service.invalidate( key );
 
-        Mockito.verify( invalidator1, Mockito.times( 1 ) ).invalidate( key );
-        Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key );
+        Mockito.verify( invalidator1, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
+        Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
     }
 
     private class ApplicationEventMatcher
