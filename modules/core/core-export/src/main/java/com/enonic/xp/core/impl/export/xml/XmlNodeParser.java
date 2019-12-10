@@ -8,9 +8,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
-
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -29,6 +26,8 @@ import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.parser.XmlObjectParser;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public final class XmlNodeParser
     extends XmlObjectParser<XmlNodeParser>
@@ -55,8 +54,7 @@ public final class XmlNodeParser
         }
 
         final String timestampString = root.getChildValue( "timestamp" );
-        this.builder.timestamp(
-            timestampString != null && StringUtils.isNotBlank( timestampString ) ? Instant.parse( timestampString ) : null );
+        this.builder.timestamp( nullToEmpty( timestampString ).isBlank() ? null : Instant.parse( timestampString ) );
 
         this.builder.childOrder( ChildOrder.from( root.getChildValue( "childOrder" ) ) );
         this.builder.nodeType( NodeType.from( root.getChildValue( "nodeType" ) ) );
@@ -189,12 +187,7 @@ public final class XmlNodeParser
 
     private void addXmlProperty( final PropertySet set, final String name, final String value )
     {
-        set.addXml( name, xmlDecodeString( value ) );
-    }
-
-    private String xmlDecodeString( final String value )
-    {
-        return StringEscapeUtils.unescapeXml( value );
+        set.addXml( name, value );
     }
 
     private void addGeoPointProperty( final PropertySet set, final String name, final String value )

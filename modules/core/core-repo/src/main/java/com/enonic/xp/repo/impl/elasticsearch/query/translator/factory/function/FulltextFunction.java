@@ -4,9 +4,9 @@ import org.elasticsearch.index.query.MatchAllQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.query.expr.FunctionExpr;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 class FulltextFunction
     extends AbstractSimpleQueryStringFunction
@@ -15,7 +15,7 @@ class FulltextFunction
     {
         final FulltextFunctionArguments arguments = new FulltextFunctionArguments( functionExpr.getArguments() );
 
-        if ( Strings.isNullOrEmpty( arguments.getSearchString() ) )
+        if ( isNullOrEmpty( arguments.getSearchString() ) )
         {
             return new MatchAllQueryBuilder();
         }

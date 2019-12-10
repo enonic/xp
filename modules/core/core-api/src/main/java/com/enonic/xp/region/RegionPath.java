@@ -3,8 +3,6 @@ package com.enonic.xp.region;
 import com.google.common.annotations.Beta;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.apache.commons.lang.StringUtils.substringAfterLast;
-import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 
 @Beta
 public final class RegionPath
@@ -71,10 +69,11 @@ public final class RegionPath
 
     public static RegionPath from( final String regionPath )
     {
-        if ( regionPath.contains( DIVIDER ) )
+        final int dividerIndex = regionPath.lastIndexOf( DIVIDER );
+        if ( dividerIndex > -1 )
         {
-            final String componentPath = substringBeforeLast( regionPath, DIVIDER );
-            final String regionName = substringAfterLast( regionPath, DIVIDER );
+            final String componentPath = regionPath.substring( 0, dividerIndex );
+            final String regionName = regionPath.substring( dividerIndex + 1 );
             return new RegionPath( ComponentPath.from( componentPath ), regionName );
         }
         else

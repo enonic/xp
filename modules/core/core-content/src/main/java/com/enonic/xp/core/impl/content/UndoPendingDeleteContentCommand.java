@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.content;
 
-
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.UndoPendingDeleteContentParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -25,7 +25,7 @@ final class UndoPendingDeleteContentCommand
 {
     private final UndoPendingDeleteContentParams params;
 
-    private int pendingDeleteUndoneContents;
+    private Contents.Builder pendingDeleteUndoneContents = Contents.create();
 
     private UndoPendingDeleteContentCommand( final Builder builder )
     {
@@ -38,12 +38,12 @@ final class UndoPendingDeleteContentCommand
         return new Builder();
     }
 
-    int execute()
+    Contents execute()
     {
         this.nodeService.refresh( RefreshMode.ALL );
         doExecute();
         nodeService.refresh( RefreshMode.ALL );
-        return pendingDeleteUndoneContents;
+        return pendingDeleteUndoneContents.build();
     }
 
     private void doExecute()
@@ -76,7 +76,7 @@ final class UndoPendingDeleteContentCommand
             nodeState( NodeState.DEFAULT ).
             build() );
 
-        pendingDeleteUndoneContents += result.getUpdatedNodes().getSize();
+        pendingDeleteUndoneContents.addAll( this.translator.fromNodes( result.getUpdatedNodes(), false ) );
     }
 
     private void ensureValidParent( final NodeComparison nodeComparison )

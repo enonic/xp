@@ -5,10 +5,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 
 @Beta
 public final class NamePrettyfier
@@ -38,7 +39,7 @@ public final class NamePrettyfier
 
     public static String create( final String originalName )
     {
-        if ( StringUtils.isBlank( originalName ) )
+        if ( nullToEmpty( originalName ).isBlank() )
         {
             throw new IllegalArgumentException( "Generate name failed; Original name cannot be empty or blank" );
         }
@@ -55,7 +56,7 @@ public final class NamePrettyfier
 
         prettifiedPathName = transcribe( prettifiedPathName );
 
-        if ( StringUtils.isBlank( prettifiedPathName ) )
+        if ( nullToEmpty( prettifiedPathName ).isBlank() )
         {
             return DEFAULT_PATHNAME;
         }
@@ -65,7 +66,7 @@ public final class NamePrettyfier
 
     private static String replaceTrailingHyphens( String prettifiedName )
     {
-        if ( StringUtils.isBlank( prettifiedName ) )
+        if ( nullToEmpty( prettifiedName ).isBlank() )
         {
             return "";
         }
@@ -77,7 +78,7 @@ public final class NamePrettyfier
 
     private static String replaceHyphensAroundDot( String prettifiedName )
     {
-        if ( StringUtils.isBlank( prettifiedName ) )
+        if ( nullToEmpty( prettifiedName ).isBlank() )
         {
             return "";
         }
@@ -89,7 +90,7 @@ public final class NamePrettyfier
 
     private static String ensureNiceBeginningAndEnding( String prettifiedName )
     {
-        if ( StringUtils.isBlank( prettifiedName ) )
+        if ( nullToEmpty( prettifiedName ).isBlank() )
         {
             return "";
         }
@@ -113,7 +114,7 @@ public final class NamePrettyfier
 
     private static String replaceWithHyphens( String prettifiedName )
     {
-        if ( StringUtils.isEmpty( prettifiedName ) )
+        if ( isNullOrEmpty( prettifiedName ) )
         {
             return "";
         }
@@ -128,7 +129,7 @@ public final class NamePrettyfier
 
     private static String makeLowerCase( String prettifiedName )
     {
-        if ( StringUtils.isEmpty( prettifiedName ) )
+        if ( isNullOrEmpty( prettifiedName ) )
         {
             return "";
         }
@@ -139,7 +140,7 @@ public final class NamePrettyfier
 
     private static String replaceBlankSpaces( String prettifiedName )
     {
-        if ( StringUtils.isEmpty( prettifiedName ) )
+        if ( isNullOrEmpty( prettifiedName ) )
         {
             return "";
         }
@@ -153,7 +154,7 @@ public final class NamePrettyfier
 
     private static String removeUnsafeCharacters( String prettifiedName )
     {
-        if ( StringUtils.isEmpty( prettifiedName ) )
+        if ( isNullOrEmpty( prettifiedName ) )
         {
             return "";
         }

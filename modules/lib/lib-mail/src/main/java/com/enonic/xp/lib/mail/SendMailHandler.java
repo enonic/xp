@@ -17,7 +17,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -198,7 +197,8 @@ public final class SendMailHandler
     private InternetAddress[] toAddresses( final String[] addressList )
         throws Exception
     {
-        return Stream.of( addressList ).filter( StringUtils::isNotBlank ).map( this::toAddress ).toArray( InternetAddress[]::new );
+        return Stream.of( addressList ).filter( string -> !nullToEmpty( string ).isBlank() ).map( this::toAddress ).toArray(
+            InternetAddress[]::new );
     }
 
     private List<Attachment> getAttachments()

@@ -33,7 +33,6 @@ public class AuditLogSerializer
         data.addInstant( AuditLogPropertyNames.TIME, auditLogParams.getTime() );
         data.addString( AuditLogPropertyNames.SOURCE, auditLogParams.getSource() );
         data.addString( AuditLogPropertyNames.USER, auditLogParams.getUser().toString() );
-        data.addString( AuditLogPropertyNames.MESSAGE, auditLogParams.getMessage() );
         data.addStrings( AuditLogPropertyNames.OBJECTURIS, objectUris );
         data.addSet( AuditLogPropertyNames.DATA, auditLogParams.getData().getRoot().copy( data.getTree() ) );
 
@@ -58,7 +57,6 @@ public class AuditLogSerializer
             time( data.getInstant( AuditLogPropertyNames.TIME ) ).
             source( data.getString( AuditLogPropertyNames.SOURCE ) ).
             user( PrincipalKey.from( data.getString( AuditLogPropertyNames.USER ) ) ).
-            message( data.getString( AuditLogPropertyNames.MESSAGE ) ).
             objectUris( objectUris.build() ).
             data( data.getSet( AuditLogPropertyNames.DATA ).toTree() ).
             build();

@@ -24,14 +24,14 @@ public class SetPublishInfoCommand
 
     private final ContentPublishInfo contentPublishInfo;
 
-    private final PushContentListener pushContentListener;
+    private final PushContentListener publishContentListener;
 
     private SetPublishInfoCommand( final Builder builder )
     {
         super( builder );
         this.nodeIds = builder.nodeIds;
         this.contentPublishInfo = builder.contentPublishInfo == null ? ContentPublishInfo.create().build() : builder.contentPublishInfo;
-        this.pushContentListener = builder.pushContentListener;
+        this.publishContentListener = builder.publishContentListener;
     }
 
     public void execute()
@@ -91,9 +91,9 @@ public class SetPublishInfoCommand
                 } ).
                 id( id ).
                 build() );
-            if ( pushContentListener != null )
+            if ( publishContentListener != null )
             {
-                pushContentListener.contentPushed( 1 );
+                publishContentListener.contentPushed( 1 );
             }
         }
 
@@ -145,7 +145,7 @@ public class SetPublishInfoCommand
 
         private ContentPublishInfo contentPublishInfo;
 
-        private PushContentListener pushContentListener;
+        private PushContentListener publishContentListener;
 
         public Builder()
         {
@@ -168,9 +168,9 @@ public class SetPublishInfoCommand
             return this;
         }
 
-        public SetPublishInfoCommand.Builder pushListener( final PushContentListener pushContentListener )
+        public SetPublishInfoCommand.Builder pushListener( final PushContentListener publishContentListener )
         {
-            this.pushContentListener = pushContentListener;
+            this.publishContentListener = publishContentListener;
             return this;
         }
 

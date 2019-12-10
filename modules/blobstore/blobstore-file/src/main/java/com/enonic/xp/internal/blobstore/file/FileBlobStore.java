@@ -6,12 +6,13 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
+import com.google.common.io.MoreFiles;
+import com.google.common.io.RecursiveDeleteOption;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
@@ -139,7 +140,7 @@ public final class FileBlobStore
 
             if ( segmentDirectory.exists() )
             {
-                FileUtils.deleteDirectory( segmentDirectory );
+                MoreFiles.deleteRecursively( segmentDirectory.toPath(), RecursiveDeleteOption.ALLOW_INSECURE );
             }
 
             if ( segmentParentDirectory.exists() && segmentParentDirectory.list().length == 0 )

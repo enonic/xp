@@ -70,7 +70,7 @@ public class AuditLogServiceImpl
 
     private void logAuditLog( final AuditLog auditLog )
     {
-        final String message = String.format( "%s %s %s", auditLog.getType(), auditLog.getSource(), auditLog.getMessage() );
+        final String message = String.format( "%s %s", auditLog.getType(), auditLog.getSource() );
         LOG.info( message );
     }
 

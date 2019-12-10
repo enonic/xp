@@ -11,6 +11,7 @@ import com.enonic.xp.mail.EmailValidator;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Objects.requireNonNull;
 
 @Beta
@@ -39,7 +40,7 @@ public final class User
         super( builder );
         checkNotNull( builder.login, "login is required for a User" );
 
-        if ( !Strings.isNullOrEmpty( builder.email ) )
+        if ( !isNullOrEmpty( builder.email ) )
         {
             checkArgument( EmailValidator.isValid( builder.email ), "Email [" + builder.email + "] is not valid" );
         }

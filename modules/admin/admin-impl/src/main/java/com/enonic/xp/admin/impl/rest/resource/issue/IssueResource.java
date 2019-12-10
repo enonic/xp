@@ -21,7 +21,6 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.admin.impl.json.issue.DeleteIssueCommentResultJson;
@@ -44,6 +43,7 @@ import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.CreatePublishRequestIssueParams;
@@ -75,6 +75,8 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "issue")
 @Produces(MediaType.APPLICATION_JSON)
@@ -93,6 +95,8 @@ public final class IssueResource
 
     private ContentTypeService contentTypeService;
 
+    private LocaleService localeService;
+
     @POST
     @Path("create")
     public IssueJson create( final CreateIssueJson json, @Context HttpServletRequest request )
@@ -100,7 +104,7 @@ public final class IssueResource
         final Issue issue = issueService.create( generateCreateIssueParams( json ) );
         final List<IssueComment> comments = new ArrayList<>();
 
-        if ( !Strings.isNullOrEmpty( json.description ) )
+        if ( !isNullOrEmpty( json.description ) )
         {
             Optional<User> creator = securityService.getUser( issue.getCreator() );
             if ( creator.isPresent() )
@@ -120,6 +124,7 @@ public final class IssueResource
             securityService( securityService ).
             contentService( contentService ).
             contentTypeService( contentTypeService ).
+            localeService( localeService ).
             issue( issue ).
             comments( comments ).
             url( request.getHeader( HttpHeaders.REFERER ) ).
@@ -188,6 +193,7 @@ public final class IssueResource
                 securityService( securityService ).
                 contentService( contentService ).
                 contentTypeService( contentTypeService ).
+                localeService( localeService ).
                 issue( issue ).
                 comments( comments ).
                 url( request.getHeader( HttpHeaders.REFERER ) ).
@@ -204,6 +210,7 @@ public final class IssueResource
                 securityService( securityService ).
                 contentService( contentService ).
                 contentTypeService( contentTypeService ).
+                localeService( localeService ).
                 issue( issue ).
                 comments( comments ).
                 url( request.getHeader( HttpHeaders.REFERER ) );
@@ -257,20 +264,24 @@ public final class IssueResource
 
         final IssueComment comment = issueService.createComment( params );
 
-        final IssueCommentQuery commentsQuery = IssueCommentQuery.create().issue( issue.getId() ).build();
-        final FindIssueCommentsResult results = issueService.findComments( commentsQuery );
+        if ( !json.silent )
+        {
+            final IssueCommentQuery commentsQuery = IssueCommentQuery.create().issue( issue.getId() ).build();
+            final FindIssueCommentsResult results = issueService.findComments( commentsQuery );
 
-        IssueCommentedNotificationParams notificationParams = IssueNotificationParamsFactory.create().
-            securityService( securityService ).
-            contentService( contentService ).
-            contentTypeService( contentTypeService ).
-            issue( issue ).
-            comments( results.getIssueComments() ).
-            url( request.getHeader( HttpHeaders.REFERER ) ).
-            build().
-            commentedParams();
+            IssueCommentedNotificationParams notificationParams = IssueNotificationParamsFactory.create().
+                securityService( securityService ).
+                contentService( contentService ).
+                contentTypeService( contentTypeService ).
+                localeService( localeService ).
+                issue( issue ).
+                comments( results.getIssueComments() ).
+                url( request.getHeader( HttpHeaders.REFERER ) ).
+                build().
+                commentedParams();
 
-        issueNotificationsSender.notifyIssueCommented( notificationParams );
+            issueNotificationsSender.notifyIssueCommented( notificationParams );
+        }
 
         return new IssueCommentJson( comment );
     }
@@ -546,4 +557,11 @@ public final class IssueResource
     {
         this.contentTypeService = contentTypeService;
     }
+
+    @Reference
+    public void setLocaleService( final LocaleService localeService )
+    {
+        this.localeService = localeService;
+    }
+
 }

@@ -11,12 +11,19 @@ public class IssueCreatedMailMessageGenerator
     @Override
     protected String generateMessageSubject()
     {
-        return String.format( "You were assigned a new issue \"%s\" (#%d) by %s", params.getIssue().getTitle(),
-                              params.getIssue().getIndex(), params.getCreator().getDisplayName() );
+        return String.format( "%s (#%d)", params.getIssue().getTitle(), params.getIssue().getIndex() );
     }
 
     @Override
-    protected String getSender() {
+    protected String generateMessageTitle()
+    {
+        final String message = params.getLocaleMessageResolver().localizeMessage( "issue.email.created", "%s assigned you a new %s" );
+        return String.format( message, params.getCreator().getDisplayName(), getIssueTypeText() );
+    }
+
+    @Override
+    protected String getSender()
+    {
         return super.getCreatorEmail();
     }
 
@@ -27,7 +34,9 @@ public class IssueCreatedMailMessageGenerator
     }
 
     @Override
-    protected String getCopyRecepients() {
+    protected String getCopyRecepients()
+    {
         return "";
     }
+
 }

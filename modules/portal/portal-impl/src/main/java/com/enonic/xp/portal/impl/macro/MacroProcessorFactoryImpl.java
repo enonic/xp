@@ -3,11 +3,12 @@ package com.enonic.xp.portal.impl.macro;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+
+import com.google.common.io.Files;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.macro.MacroProcessor;
@@ -35,7 +36,7 @@ public final class MacroProcessorFactoryImpl
     {
         if ( isSystem( scriptResourceKey ) )
         {
-            final String name = StringUtils.substringBefore( scriptResourceKey.getName(), ".js" );
+            final String name = Files.getNameWithoutExtension( scriptResourceKey.getName() );
             return this.macroProcessors.get( name );
         }
         else

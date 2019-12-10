@@ -1,11 +1,9 @@
 package com.enonic.xp.config;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.Properties;
-
-import org.apache.commons.io.IOUtils;
-
-import com.enonic.xp.util.Exceptions;
 
 final class ConfigLoader
 {
@@ -18,8 +16,16 @@ final class ConfigLoader
 
     public Properties load( final String name )
     {
-        final InputStream in = findFile( name );
-        return loadProperties( in );
+        try (final InputStream in = findFile( name ))
+        {
+            final Properties props = new Properties();
+            props.load( in );
+            return props;
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     private InputStream findFile( final String name )
@@ -31,23 +37,5 @@ final class ConfigLoader
         }
 
         return in;
-    }
-
-    private Properties loadProperties( final InputStream in )
-    {
-        try
-        {
-            final Properties props = new Properties();
-            props.load( in );
-            return props;
-        }
-        catch ( final Exception e )
-        {
-            throw Exceptions.unchecked( e );
-        }
-        finally
-        {
-            IOUtils.closeQuietly( in );
-        }
     }
 }

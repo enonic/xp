@@ -101,7 +101,7 @@ public class ElasticsearchClusterTest
         throws Exception
     {
         setClusterHealth( ClusterHealthStatus.RED );
-        assertEquals( ClusterHealth.red(), this.activator.getHealth() );
+        assertEquals( ClusterHealth.red().getStatus(), this.activator.getHealth().getStatus() );
     }
 
     @Test

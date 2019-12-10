@@ -5,8 +5,10 @@ import java.util.Iterator;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.CompareContentParams;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareStatus;
@@ -22,11 +24,12 @@ import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.MoveContentParams;
-import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -36,6 +39,7 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.util.Reference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -154,7 +158,7 @@ public class ContentServiceImplTest_publish
         final PublishContentResult push = this.contentService.publish( pushParams );
         assertEquals( 1, push.getPushedContents().getSize() );
 
-        contentService.delete( DeleteContentParams.create().
+        contentService.deleteWithoutFetch( DeleteContentParams.create().
             contentPath( content.getPath() ).
             build() );
 
@@ -340,7 +344,7 @@ public class ContentServiceImplTest_publish
 
         this.contentService.move( params );
 
-        this.contentService.delete( DeleteContentParams.create().
+        this.contentService.deleteWithoutFetch( DeleteContentParams.create().
             contentPath( content2.getPath() ).
             build() );
 
@@ -462,6 +466,37 @@ public class ContentServiceImplTest_publish
         assertNotNull( version.getPublishInfo().getTimestamp() );
         assertEquals( "user:system:test-user", version.getPublishInfo().getPublisher().toString() );
         assertNull( version.getPublishInfo().getMessage() );
+    }
+
+    @Test
+    public void audit_data()
+        throws Exception
+    {
+        final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            name( "myContent" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final PublishContentResult push = this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( CTX_OTHER.getBranch() ).
+            includeDependencies( false ).
+            build() );
+
+        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).times( 2 ) ).log( captor.capture() );
+
+        final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
+
+        assertEquals( content.getId().toString(), logResultSet.getStrings( "pushedContents" ).iterator().next() );
+        assertFalse( logResultSet.getStrings( "deletedContents" ).iterator().hasNext() );
+        assertFalse( logResultSet.getStrings( "pendingContents" ).iterator().hasNext() );
     }
 
     private Content doRename( final ContentId contentId, final String newName )

@@ -5,13 +5,13 @@ import java.util.regex.Pattern;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.util.CharacterChecker;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Beta
 public final class PrincipalKey
@@ -45,7 +45,7 @@ public final class PrincipalKey
         checkArgument( ( type == PrincipalType.ROLE ) || ( idProviderKey != null ), "Principal id provider cannot be null" );
         this.idProviderKey = idProviderKey;
         this.type = checkNotNull( type, "Principal type cannot be null" );
-        checkArgument( !Strings.isNullOrEmpty( principalId ), "Principal id cannot be null or empty" );
+        checkArgument( !isNullOrEmpty( principalId ), "Principal id cannot be null or empty" );
         this.principalId = CharacterChecker.check( principalId, "Not a valid principal key [" + principalId + "]" );
         if ( type == PrincipalType.ROLE )
         {
@@ -67,7 +67,7 @@ public final class PrincipalKey
 
     public static PrincipalKey from( final String principalKey )
     {
-        checkArgument( !Strings.isNullOrEmpty( principalKey ), "Principal key cannot be null or empty" );
+        checkArgument( !isNullOrEmpty( principalKey ), "Principal key cannot be null or empty" );
         if ( ANONYMOUS_PRINCIPAL.toString().equals( principalKey ) )
         {
             return ANONYMOUS_PRINCIPAL;

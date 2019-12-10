@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.ContentConstants;
@@ -18,6 +20,7 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueComment;
@@ -37,6 +40,8 @@ public class IssueNotificationParamsFactory
 
     private ContentTypeIconResolver contentTypeIconResolver;
 
+    private LocaleMessageResolver localeMessageResolver;
+
     private Issue issue;
 
     private List<IssueComment> comments;
@@ -50,6 +55,7 @@ public class IssueNotificationParamsFactory
         this.securityService = builder.securityService;
         this.contentService = builder.contentService;
         this.contentTypeIconResolver = new ContentTypeIconResolver( builder.contentTypeService );
+        this.localeMessageResolver = new LocaleMessageResolver( builder.localeService, ApplicationKey.SYSTEM );
         this.issue = builder.issue;
         this.comments = builder.comments;
         this.recipients = builder.recipients;
@@ -116,6 +122,7 @@ public class IssueNotificationParamsFactory
             creator( creator ).
             approvers( approvers ).
             items( contents ).
+            localeMessageResolver( localeMessageResolver ).
             url( url ).
             icons( icons ).
             compareResults( compareResults ).
@@ -161,6 +168,8 @@ public class IssueNotificationParamsFactory
 
         private String url;
 
+        private LocaleService localeService;
+
         private Builder()
         {
         }
@@ -204,6 +213,12 @@ public class IssueNotificationParamsFactory
         public Builder contentTypeService( final ContentTypeService contentTypeService )
         {
             this.contentTypeService = contentTypeService;
+            return this;
+        }
+
+        public Builder localeService( final LocaleService localeService )
+        {
+            this.localeService = localeService;
             return this;
         }
 

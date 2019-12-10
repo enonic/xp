@@ -23,7 +23,6 @@ var expected = {
             'time': '2019-08-12T08:44:02.767Z',
             'source': 'testbundle',
             'user': 'user:system:anonymous',
-            'message': 'Fetched message',
             'objects': [],
             'data': {}
         }

@@ -29,7 +29,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -194,10 +193,10 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 import static java.lang.Math.toIntExact;
 import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
-import static org.apache.commons.lang.StringUtils.isBlank;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content")
@@ -278,11 +277,11 @@ public final class ContentResource
         final String focalX = form.getAsString( "focalX" );
         final String focalY = form.getAsString( "focalY" );
 
-        if ( StringUtils.isNotBlank( focalX ) )
+        if ( !nullToEmpty( focalX ).isBlank() )
         {
             createMediaParams.focalX( Double.valueOf( focalX ) );
         }
-        if ( StringUtils.isNotBlank( focalY ) )
+        if ( !nullToEmpty( focalY ).isBlank() )
         {
             createMediaParams.focalY( Double.valueOf( focalY ) );
         }
@@ -334,11 +333,11 @@ public final class ContentResource
         final String focalX = form.getAsString( "focalX" );
         final String focalY = form.getAsString( "focalY" );
 
-        if ( StringUtils.isNotBlank( focalX ) )
+        if ( !nullToEmpty( focalX ).isBlank() )
         {
             params.focalX( Double.valueOf( focalX ) );
         }
-        if ( StringUtils.isNotBlank( focalY ) )
+        if ( !nullToEmpty( focalY ).isBlank() )
         {
             params.focalY( Double.valueOf( focalY ) );
         }
@@ -656,7 +655,7 @@ public final class ContentResource
 
     private ContentIds sortContentIds( final ContentIds contentIds, final String field )
     {
-        if ( StringUtils.isBlank( field ) )
+        if ( nullToEmpty( field ).isBlank() )
         {
             return contentIds;
         }
@@ -764,7 +763,7 @@ public final class ContentResource
             final String moveBefore = reorderChildJson.getMoveBefore();
             builder.add( ReorderChildParams.create().
                 contentToMove( ContentId.from( reorderChildJson.getContentId() ) ).
-                contentToMoveBefore( isBlank( moveBefore ) ? null : ContentId.from( moveBefore ) ).
+                contentToMoveBefore( nullToEmpty( moveBefore ).isBlank() ? null : ContentId.from( moveBefore ) ).
                 build() );
         }
 
@@ -992,7 +991,7 @@ public final class ContentResource
     {
         final ContentPath parentContentPath;
 
-        if ( StringUtils.isEmpty( parentIdParam ) )
+        if ( isNullOrEmpty( parentIdParam ) )
         {
             parentContentPath = null;
         }
@@ -1324,27 +1323,26 @@ public final class ContentResource
     public LocaleListJson getLocales( @QueryParam("query") final String query )
     {
         Locale[] locales = Locale.getAvailableLocales();
-        if ( StringUtils.isNotBlank( query ) )
+        if ( !nullToEmpty( query ).isBlank() )
         {
-            String trimmedQuery = query.trim();
+            String trimmedQuery = query.trim().toLowerCase();
             locales = Arrays.stream( locales ).
-                filter( ( locale ) -> containsIgnoreCase( locale.toLanguageTag(), trimmedQuery ) ||
-                    containsIgnoreCase( locale.getDisplayName( locale ), trimmedQuery ) ||
-                    containsIgnoreCase( locale.getLanguage(), trimmedQuery ) ||
-                    containsIgnoreCase( locale.getDisplayLanguage( locale ), trimmedQuery ) ||
-                    containsIgnoreCase( locale.getVariant(), trimmedQuery ) ||
-                    containsIgnoreCase( locale.getDisplayVariant( locale ), trimmedQuery ) ||
-                    containsIgnoreCase( locale.getCountry(), trimmedQuery ) ||
-                    containsIgnoreCase( locale.getDisplayCountry( locale ), trimmedQuery ) ||
-                    containsIgnoreCase( getFormattedDisplayName( locale ), trimmedQuery ) &&
-                        StringUtils.isNotEmpty( locale.toLanguageTag() ) && StringUtils.isNotEmpty( locale.getDisplayName() ) ).
+                filter( locale -> nullToEmpty( locale.toLanguageTag() ).toLowerCase().contains( trimmedQuery ) ||
+                    nullToEmpty( locale.getDisplayName( locale ) ).toLowerCase().contains( trimmedQuery ) ||
+                    nullToEmpty( locale.getLanguage() ).toLowerCase().contains( trimmedQuery ) ||
+                    nullToEmpty( locale.getDisplayLanguage( locale ) ).toLowerCase().contains( trimmedQuery ) ||
+                    nullToEmpty( locale.getVariant() ).toLowerCase().contains( trimmedQuery ) ||
+                    nullToEmpty( locale.getDisplayVariant( locale ) ).toLowerCase().contains( trimmedQuery ) ||
+                    nullToEmpty( locale.getCountry() ).toLowerCase().contains( trimmedQuery ) ||
+                    nullToEmpty( locale.getDisplayCountry( locale ) ).toLowerCase().contains( trimmedQuery ) ||
+                    nullToEmpty( getFormattedDisplayName( locale ) ).toLowerCase().contains( trimmedQuery ) &&
+                        !isNullOrEmpty( locale.toLanguageTag() ) && !isNullOrEmpty( locale.getDisplayName() ) ).
                 toArray( Locale[]::new );
         }
         else
         {
             locales = Arrays.stream( locales ).
-                filter(
-                    ( locale ) -> StringUtils.isNotEmpty( locale.toLanguageTag() ) && StringUtils.isNotEmpty( locale.getDisplayName() ) ).
+                filter( ( locale ) -> !isNullOrEmpty( locale.toLanguageTag() ) && !isNullOrEmpty( locale.getDisplayName() ) ).
                 toArray( Locale[]::new );
         }
         return new LocaleListJson( locales );
@@ -1424,8 +1422,8 @@ public final class ContentResource
     {
 
         final FindContentByParentParams params = FindContentByParentParams.create().
-            parentId( StringUtils.isNotEmpty( parentId ) ? ContentId.from( parentId ) : null ).
-            childOrder( StringUtils.isNotEmpty( childOrder ) ? ChildOrder.from( childOrder ) : null ).
+            parentId( isNullOrEmpty( parentId ) ? null : ContentId.from( parentId ) ).
+            childOrder( isNullOrEmpty( childOrder ) ? null : ChildOrder.from( childOrder ) ).
             build();
 
         final FindContentIdsByParentResult result = this.contentService.findIdsByParent( params );
