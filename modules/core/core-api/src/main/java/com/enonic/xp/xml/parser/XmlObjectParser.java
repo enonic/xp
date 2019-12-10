@@ -24,8 +24,6 @@ import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.schema.SchemaValidator;
 
-import static com.enonic.xp.xml.parser.ByteOrderMarkHelper.openStreamSkippingBOM;
-
 @Beta
 public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
 {
@@ -100,7 +98,7 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
 
         final InputSource source = new InputSource();
         source.setSystemId( this.systemId );
-        source.setCharacterStream( openStreamSkippingBOM( this.source ) );
+        source.setCharacterStream( ByteOrderMarkHelper.openStreamSkippingBOM( this.source ) );
 
         final Document doc = builder.parse( source );
         return doParse( doc );

@@ -10,7 +10,7 @@
   <module name="TreeWalker">
     <module name="UnusedImports"/>
     <module name="IllegalImport">
-      <property name="illegalPkgs" value="sun, org.mockito.internal"/>
+      <property name="illegalPkgs" value="sun, org.mockito.internal, org.apache.commons.io"/>
     </module>
     <module name="ConstantName"/>
     <module name="ParameterName"/>
