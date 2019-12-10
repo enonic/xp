@@ -13,6 +13,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
@@ -63,13 +64,18 @@ final class ApplicationRegistry
 
     public void invalidate( final ApplicationKey key )
     {
+        invalidate( key, ApplicationInvalidationLevel.FULL );
+    }
+
+    public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
+    {
         this.applications.remove( key );
 
         for ( final ApplicationInvalidator invalidator : this.invalidators )
         {
             try
             {
-                invalidator.invalidate( key );
+                invalidator.invalidate( key, level );
             }
             catch ( Exception e )
             {

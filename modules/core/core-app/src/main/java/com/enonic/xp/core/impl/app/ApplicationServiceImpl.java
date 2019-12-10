@@ -23,6 +23,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInstallationParams;
+import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
@@ -586,11 +587,16 @@ public final class ApplicationServiceImpl
         }
     }
 
-
     @Override
     public void invalidate( final ApplicationKey key )
     {
         this.registry.invalidate( key );
+    }
+
+    @Override
+    public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
+    {
+        this.registry.invalidate( key, level );
     }
 
     @Reference

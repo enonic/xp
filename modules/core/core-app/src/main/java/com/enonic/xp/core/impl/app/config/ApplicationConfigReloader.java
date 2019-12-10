@@ -5,6 +5,7 @@ import java.util.Dictionary;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.cm.ManagedService;
 
+import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.config.ConfigBuilder;
@@ -40,6 +41,6 @@ final class ApplicationConfigReloader
             ApplicationConfigMap.INSTANCE.put( this.key, config );
         }
 
-        this.service.invalidate( this.key );
+        this.service.invalidate( this.key, ApplicationInvalidationLevel.CACHE );
     }
 }
