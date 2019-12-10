@@ -2,9 +2,6 @@ package com.enonic.xp.impl.server.rest.task;
 
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
@@ -12,6 +9,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.impl.server.rest.model.ReindexRequestJson;
 import com.enonic.xp.impl.server.rest.model.ReindexResultJson;
+import com.enonic.xp.impl.server.rest.task.listener.ReindexListenerImpl;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
@@ -25,13 +23,7 @@ public class ReindexRunnableTask
 {
     private final ReindexRequestJson params;
 
-    private int total;
-
-    private int current;
-
     private IndexService indexService;
-
-    private final static Logger LOG = LoggerFactory.getLogger( ReindexRunnableTask.class );
 
     private ReindexRunnableTask( Builder builder )
     {
@@ -50,7 +42,7 @@ public class ReindexRunnableTask
     {
         final ReindexResult result = this.indexService.reindex( ReindexParams.create().
             setBranches( parseBranches( params.branches ) ).
-            progressReporter( progressReporter ).
+            listener( new ReindexListenerImpl( progressReporter ) ).
             initialize( params.initialize ).
             repositoryId( parseRepositoryId( params.repository ) ).
             build() );
