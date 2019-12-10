@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
@@ -270,7 +271,14 @@ public final class LocaleServiceImpl
     }
 
     @Override
-    public void invalidate( final ApplicationKey appKey )
+    @Deprecated
+    public void invalidate( final ApplicationKey key )
+    {
+        invalidate( key, ApplicationInvalidationLevel.FULL );
+    }
+
+    @Override
+    public void invalidate( final ApplicationKey appKey, final ApplicationInvalidationLevel level )
     {
         final String cacheKeyPrefix = appKey.toString() + KEY_SEPARATOR;
         bundleCache.keySet().removeIf( ( k ) -> k.startsWith( cacheKeyPrefix ) );
