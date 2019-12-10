@@ -3,16 +3,17 @@ package com.enonic.xp.server.internal.config;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
-public class ConfigWatcherTest
+class ConfigWatcherTest
 {
     @TempDir
-    public Path temporaryFolder;
+    Path temporaryFolder;
 
     private ConfigInstaller installer;
 
@@ -23,66 +24,63 @@ public class ConfigWatcherTest
     private File dir2;
 
     @BeforeEach
-    public void setup()
+    void setup()
         throws Exception
     {
-        this.installer = Mockito.mock( ConfigInstaller.class );
-        this.watcher = new ConfigWatcher();
-        this.watcher.setInstaller( this.installer );
+        dir1 = Files.createDirectory( temporaryFolder.resolve( "dir1" ) ).toFile();
+        dir2 = Files.createDirectory( temporaryFolder.resolve( "dir2" ) ).toFile();
 
-        this.dir1 = Files.createDirectory(this.temporaryFolder.resolve( "dir1" ) ).toFile();
-        this.dir2 = Files.createDirectory(this.temporaryFolder.resolve( "dir2" ) ).toFile();
+        installer = Mockito.mock( ConfigInstaller.class );
+        watcher = new ConfigWatcher( new ConfigPaths( dir1.getAbsolutePath() + "," + dir2.getAbsolutePath() ) );
+        watcher.setInstaller( installer );
 
-        this.watcher.configPaths = new ConfigPaths( this.dir1.getAbsolutePath() + "," + this.dir2.getAbsolutePath() );
     }
 
-    private File touchFile( final File dir, final String name )
+    private File createFile( final File dir, final String name )
         throws Exception
     {
-        final File file = new File( dir, name );
-        com.google.common.io.Files.touch( file );
-        return file;
+        return Files.createFile( dir.toPath().resolve( name ) ).toFile();
     }
 
     @Test
-    public void initFiles()
+    void initFiles()
         throws Exception
     {
-        final File file1 = touchFile( this.dir1, "com.foo.bar.cfg" );
-        final File file2 = touchFile( this.dir2, "com.foo.bar.cfg" );
+        final File file1 = createFile( dir1, "com.foo.bar.cfg" );
+        final File file2 = createFile( dir2, "com.foo.bar.cfg" );
 
-        this.watcher.activate();
-        Mockito.verify( this.installer, Mockito.times( 2 ) ).updateConfig( file1 );
-        Mockito.verify( this.installer, Mockito.times( 0 ) ).updateConfig( file2 );
-        this.watcher.deactivate();
+        watcher.activate();
+        Mockito.verify( installer, Mockito.times( 2 ) ).updateConfig( file1 );
+        Mockito.verify( installer, Mockito.times( 0 ) ).updateConfig( file2 );
+        watcher.deactivate();
     }
 
     @Test
-    public void watchFiles()
+    void watchFiles()
         throws Exception
     {
-        this.watcher.activate();
+        watcher.activate();
 
-        final File file1 = touchFile( this.dir1, "com.foo.bar.cfg" );
+        final File file1 = createFile( dir1, "com.foo.bar.cfg" );
         Thread.sleep( 600 );
-        Mockito.verify( this.installer, Mockito.times( 1 ) ).updateConfig( file1 );
+        Mockito.verify( installer, Mockito.times( 1 ) ).updateConfig( file1 );
 
-        final File file2 = touchFile( this.dir2, "com.foo.bar.cfg" );
+        final File file2 = createFile( dir2, "com.foo.bar.cfg" );
         Thread.sleep( 600 );
-        Mockito.verify( this.installer, Mockito.times( 2 ) ).updateConfig( file1 );
+        Mockito.verify( installer, Mockito.times( 2 ) ).updateConfig( file1 );
 
-        com.google.common.io.Files.touch( file1 );
+        Files.setLastModifiedTime( file1.toPath(), FileTime.fromMillis( System.currentTimeMillis() ) );
         Thread.sleep( 600 );
-        Mockito.verify( this.installer, Mockito.times( 3 ) ).updateConfig( file1 );
+        Mockito.verify( installer, Mockito.times( 3 ) ).updateConfig( file1 );
 
-        file1.delete();
+        Files.delete( file1.toPath() );
         Thread.sleep( 600 );
-        Mockito.verify( this.installer, Mockito.times( 1 ) ).updateConfig( file2 );
+        Mockito.verify( installer, Mockito.times( 1 ) ).updateConfig( file2 );
 
-        file2.delete();
+        Files.delete( file2.toPath() );
         Thread.sleep( 600 );
-        Mockito.verify( this.installer, Mockito.times( 1 ) ).deleteConfig( file2.getName() );
+        Mockito.verify( installer, Mockito.times( 1 ) ).deleteConfig( file2.getName() );
 
-        this.watcher.deactivate();
+        watcher.deactivate();
     }
 }

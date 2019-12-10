@@ -6,4 +6,5 @@ ext {
     jacksonDatabindVersion = '2.9.10.1'
     junitJupiterVersion = '5.5.2'
     dropwizardMetricsVersion = '4.1.2'
+    commonsIoVersion = '2.6'
 }
