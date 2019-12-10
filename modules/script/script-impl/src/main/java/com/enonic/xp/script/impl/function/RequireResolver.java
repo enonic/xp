@@ -2,12 +2,13 @@ package com.enonic.xp.script.impl.function;
 
 import java.util.List;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class RequireResolver
 {
@@ -59,7 +60,7 @@ final class RequireResolver
 
     static List<String> findSearchPaths( final String path )
     {
-        if ( !Strings.isNullOrEmpty( Files.getFileExtension( path ) ) )
+        if ( !isNullOrEmpty( Files.getFileExtension( path ) ) )
         {
             return Lists.newArrayList( path );
         }

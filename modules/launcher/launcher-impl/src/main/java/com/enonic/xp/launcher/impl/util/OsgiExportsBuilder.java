@@ -7,8 +7,9 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import com.google.common.reflect.ClassPath;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class OsgiExportsBuilder
 {
@@ -49,7 +50,7 @@ public final class OsgiExportsBuilder
 
     private String createExport( final String name, final String options )
     {
-        if ( !Strings.isNullOrEmpty( options ) )
+        if ( !isNullOrEmpty( options ) )
         {
             return name + options;
         }

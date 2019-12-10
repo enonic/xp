@@ -1,14 +1,14 @@
 package com.enonic.xp.util;
 
-import org.apache.commons.lang.StringUtils;
+import com.google.common.base.CharMatcher;
 
 public final class CharacterChecker
 {
-    private final static char[] ILLEGAL_CHARACTERS = {'<', '>', '"', '\''};
+    private static final CharMatcher ILLEGAL_CHAR_MATCHER = CharMatcher.anyOf( "<>\"'" );
 
     public static String check( final String value, final String errorMessage )
     {
-        if ( StringUtils.containsAny( value, ILLEGAL_CHARACTERS ) )
+        if ( ILLEGAL_CHAR_MATCHER.matchesAnyOf( value ) )
         {
             throw new IllegalArgumentException( errorMessage );
         }

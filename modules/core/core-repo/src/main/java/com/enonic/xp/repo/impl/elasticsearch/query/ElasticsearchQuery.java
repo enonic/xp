@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -163,7 +164,7 @@ public class ElasticsearchQuery
 
     private String getSortBuildersAsString()
     {
-        return StringUtils.join( sortBuilders, "," );
+        return sortBuilders.stream().map( Objects::toString ).collect( Collectors.joining( "," ) );
     }
 
     public static class Builder
