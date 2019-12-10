@@ -49,7 +49,7 @@ function nullOrValue(value) {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the content.
- * @param {string} params.versionId Version Id of the content.
+ * @param {string} [params.versionId] Version Id of the content.
  *
  * @returns {object} The content (as JSON) fetched from the repository.
  */
