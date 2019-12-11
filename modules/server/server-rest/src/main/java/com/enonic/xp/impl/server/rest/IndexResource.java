@@ -17,6 +17,7 @@ import com.enonic.xp.impl.server.rest.model.ReindexResultJson;
 import com.enonic.xp.impl.server.rest.model.UpdateIndexSettingsRequestJson;
 import com.enonic.xp.impl.server.rest.model.UpdateIndexSettingsResultJson;
 import com.enonic.xp.impl.server.rest.task.ReindexRunnableTask;
+import com.enonic.xp.impl.server.rest.task.listener.ReindexListenerImpl;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
@@ -52,6 +53,7 @@ public final class IndexResource
             setBranches( ReindexRunnableTask.parseBranches( request.branches ) ).
             initialize( request.initialize ).
             repositoryId( ReindexRunnableTask.parseRepositoryId( request.repository ) ).
+            listener( new ReindexListenerImpl() ).
             build() );
 
         return ReindexResultJson.create( result );
