@@ -15,6 +15,34 @@ if (result) {
 // END
 
 // BEGIN
+// Gets a single content by path and versionId.
+var resultByPathAndVersionId = contentLib.get({
+    key: '/path/to/mycontent',
+    versionId: 'versionId'
+});
+
+if (resultByPathAndVersionId) {
+    log.info('Display Name = ' + result.displayName);
+} else {
+    log.info('Content was not found');
+}
+// END
+
+// BEGIN
+// Gets a single content by id and versionId.
+var resultByIdAndVersionId = contentLib.get({
+    key: '123456',
+    versionId: 'versionId'
+});
+
+if (resultByIdAndVersionId) {
+    log.info('Display Name = ' + result.displayName);
+} else {
+    log.info('Content was not found');
+}
+// END
+
+// BEGIN
 // Content as it is returned.
 var expected = {
     '_id': '123456',
@@ -57,3 +85,5 @@ var expected = {
 // END
 
 assert.assertJsonEquals(expected, result);
+assert.assertJsonEquals(expected, resultByPathAndVersionId);
+assert.assertJsonEquals(expected, resultByIdAndVersionId);
