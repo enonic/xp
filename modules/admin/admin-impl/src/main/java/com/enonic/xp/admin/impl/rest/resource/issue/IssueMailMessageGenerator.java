@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -36,28 +37,16 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
         final String sender = getSender();
         final String messageSubject = generateMessageSubject();
         final String messageBody = generateMessageBody();
-        String recipients = generateRecipients();
-        String copyRecipients = getCopyRecepients();
+        final String recipients = generateRecipients();
 
-        if ( Strings.isNullOrEmpty( recipients ) )
+        if ( recipients.isBlank() )
         {
-            if ( Strings.isNullOrEmpty( copyRecipients ) )
-            {
-                return null;
-            }
-            else
-            {
-                recipients = copyRecipients;
-                copyRecipients = "";
-            }
+            return null;
         }
 
-        final String finalRecipients = recipients;
-        final String finalCopyRecipients = copyRecipients;
         return msg -> {
             msg.setFrom( new InternetAddress( sender, "Content Studio" ) );
-            msg.addRecipients( Message.RecipientType.TO, finalRecipients );
-            msg.addRecipients( Message.RecipientType.CC, finalCopyRecipients );
+            msg.addRecipients( Message.RecipientType.TO, recipients );
             msg.setSubject( messageSubject );
             msg.setContent( messageBody, "text/html; charset=UTF-8" );
         };
@@ -71,12 +60,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
 
     protected String generateRecipients()
     {
-        return this.getApproverEmails();
-    }
-
-    protected String getCopyRecepients()
-    {
-        return "";
+        return String.join( ",", this.getApproverEmails() );
     }
 
     protected boolean shouldShowComments()
@@ -102,17 +86,17 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
         return params.getIssue().getIssueType() == IssueType.PUBLISH_REQUEST;
     }
 
-    protected String getApproverEmails()
-    {
-        return getApproverEmails( null );
-    }
-
-    protected String getApproverEmails( final String exceptEmail )
+    protected List<String> getApproverEmails()
     {
         return params.getApprovers().stream().
-            filter( approver -> !Strings.nullToEmpty( approver.getEmail() ).isBlank() && !approver.getEmail().equals( exceptEmail ) ).
+            filter( approver -> !Strings.nullToEmpty( approver.getEmail() ).isBlank() ).
             map( approver -> approver.getEmail() ).
-            collect( Collectors.joining( "," ) );
+            collect( Collectors.toList() );
+    }
+
+    protected void filterEmail( final List<String> emails, final String email )
+    {
+        emails.removeIf( eml -> eml.equals( email ) );
     }
 
     protected String getCreatorEmail()
