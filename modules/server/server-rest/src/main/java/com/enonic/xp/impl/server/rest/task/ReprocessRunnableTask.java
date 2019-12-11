@@ -23,7 +23,7 @@ import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
 
-import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_NAME;
+import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH;
 
 public class ReprocessRunnableTask
     extends AbstractRunnableTask
@@ -58,13 +58,14 @@ public class ReprocessRunnableTask
         {
             if ( !params.isSkipChildren() )
             {
-                ContentPath contentPath = ContentPath.from( ContentPath.ROOT, CONTENT_ROOT_NAME );
-
+                String nodePath = CONTENT_ROOT_PATH.asAbsolute().toString();
                 if ( !ContentPath.ROOT.equals( params.getSourceBranchPath().getContentPath() ) )
                 {
-                    contentPath = ContentPath.from( contentPath, content.getPath().asRelative() );
+                    nodePath += content.getPath().
+                        asAbsolute().
+                        toString();
                 }
-                ConstraintExpr pathExpr = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( contentPath.toString() + "/*" ) );
+                ConstraintExpr pathExpr = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( nodePath + "/*" ) );
                 ContentQuery countChildren = ContentQuery.create().queryExpr( QueryExpr.from( pathExpr ) ).size( 0 ).build();
 
                 total = (int) contentService.find( countChildren ).getTotalHits() + 1;
