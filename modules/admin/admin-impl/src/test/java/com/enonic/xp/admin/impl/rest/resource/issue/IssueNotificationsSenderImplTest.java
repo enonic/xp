@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -215,7 +216,7 @@ public class IssueNotificationsSenderImplTest
 
         Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
-        verifyRecipients( "other@user.com;more@user.com" );
+        verifyRecipients( approvers.stream().map( approver -> approver.getEmail() ).collect( Collectors.joining( ";" ) ) );
         verify( securityService, times( 4 ) ).getUser( any() );
         verify( mailService, times( 1 ) ).send( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
@@ -282,8 +283,7 @@ public class IssueNotificationsSenderImplTest
         throws Exception
     {
         final User creator = User.ANONYMOUS;
-        final User approver = generateUserNoEmail();
-        final Issue issue = createIssue( creator.getKey(), PrincipalKeys.from( approver.getKey() ) );
+        final Issue issue = createIssue( creator.getKey(), PrincipalKeys.empty() );
         final Content content = Content.create().
             id( ContentId.from( "aaa" ) ).
             type( ContentTypeName.folder() ).
@@ -297,7 +297,6 @@ public class IssueNotificationsSenderImplTest
             build();
 
         Mockito.when( securityService.getUser( issue.getCreator() ) ).thenReturn( Optional.of( creator ) );
-        Mockito.when( securityService.getUser( issue.getApproverIds().first() ) ).thenReturn( Optional.of( approver ) );
         Mockito.when( contentService.getByIds( Mockito.any( GetContentByIdsParams.class ) ) ).thenReturn( Contents.from( content ) );
         Mockito.when( contentService.compare( Mockito.any( CompareContentsParams.class ) ) ).thenReturn( compareResults );
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
@@ -316,7 +315,7 @@ public class IssueNotificationsSenderImplTest
         Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
         verify( mailService, Mockito.never() ).send( any() );
-        verify( securityService, times( 2 ) ).getUser( any() );
+        verify( securityService, times( 1 ) ).getUser( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
         verify( contentService, times( 1 ) ).compare( Mockito.any( CompareContentsParams.class ) );
     }
@@ -627,7 +626,9 @@ public class IssueNotificationsSenderImplTest
             title( "title" ).
             description( "description" ).
             creator( creator ).
+            createdTime( Instant.now().minus( 3, ChronoUnit.MINUTES ) ).
             modifier( modifier ).
+            modifiedTime( modifier != null ? Instant.now() : null ).
             addApproverIds( approvers ).setPublishRequest( PublishRequest.create().addExcludeId( ContentId.from( "exclude-id" ) ).addItem(
             PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ).build();
     }

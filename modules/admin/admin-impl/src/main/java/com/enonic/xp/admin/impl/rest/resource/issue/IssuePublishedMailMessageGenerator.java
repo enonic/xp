@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
+import java.util.List;
+
 public class IssuePublishedMailMessageGenerator
     extends IssueMailMessageGenerator<IssuePublishedNotificationParams>
 {
@@ -37,13 +39,14 @@ public class IssuePublishedMailMessageGenerator
     @Override
     protected String generateRecipients()
     {
-        return getApproverEmails( params.getPublisher().getEmail() );
-    }
-
-    @Override
-    protected String getCopyRecepients()
-    {
         final String creatorEmail = super.getCreatorEmail();
-        return !creatorEmail.equals( params.getPublisher().getEmail() ) ? creatorEmail : "";
+        final String publisherEmail = params.getPublisher().getEmail();
+        List<String> emails = getApproverEmails();
+        filterEmail( emails, publisherEmail );
+        if ( !creatorEmail.equals( publisherEmail ) )
+        {
+            emails.add( creatorEmail );
+        }
+        return String.join( ",", emails );
     }
 }

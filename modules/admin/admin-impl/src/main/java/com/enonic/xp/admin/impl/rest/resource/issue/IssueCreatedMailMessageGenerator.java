@@ -1,5 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
+import java.util.List;
+
+import com.enonic.xp.issue.Issue;
+
 public class IssueCreatedMailMessageGenerator
     extends IssueMailMessageGenerator<IssueNotificationParams>
 {
@@ -31,6 +35,15 @@ public class IssueCreatedMailMessageGenerator
     @Override
     protected String generateRecipients()
     {
-        return getApproverEmails( params.getCreator().getEmail() );
+        final Issue issue = params.getIssue();
+        final boolean isNew = issue.getModifiedTime() == null || issue.getModifiedTime().equals( issue.getCreatedTime() );
+
+        List<String> emails = getApproverEmails();
+        final String creatorEmail = this.getCreatorEmail();
+        if ( isNew && !creatorEmail.isBlank() )
+        {
+            filterEmail( emails, creatorEmail );
+        }
+        return String.join( ",", emails );
     }
 }
