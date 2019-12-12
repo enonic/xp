@@ -1,17 +1,11 @@
 package com.enonic.xp.elasticsearch.impl;
 
-import java.util.Hashtable;
 import java.util.Map;
 
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.ClusterAdminClient;
-import org.elasticsearch.cluster.ClusterService;
-import org.elasticsearch.common.inject.Injector;
-import org.elasticsearch.common.logging.ESLoggerFactory;
-import org.elasticsearch.common.logging.slf4j.Slf4jESLoggerFactory;
-import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.cluster.ClusterInfoService;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.transport.TransportService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -33,7 +27,7 @@ public final class ElasticsearchActivator
 
     private ServiceRegistration<ClusterAdminClient> clusterAdminClientReg;
 
-    private ServiceRegistration<ClusterService> clusterServiceReg;
+    private ServiceRegistration<ClusterInfoService> clusterServiceReg;
 
     private ServiceRegistration<TransportService> transportServiceReg;
 
@@ -42,29 +36,28 @@ public final class ElasticsearchActivator
     @SuppressWarnings("WeakerAccess")
     public ElasticsearchActivator()
     {
-        ESLoggerFactory.setDefaultFactory( new Slf4jESLoggerFactory() );
     }
 
     @Activate
     @SuppressWarnings("WeakerAccess")
     public void activate( final BundleContext context, final Map<String, String> map )
     {
-        final Settings settings = new NodeSettingsBuilder( context, this.clusterConfig ).
+        /*final Settings settings = new NodeSettingsBuilder( context, this.clusterConfig ).
             buildSettings( map );
 
         this.node = NodeBuilder.nodeBuilder().settings( settings ).build();
         this.node.start();
 
         final Injector injector = this.node.injector();
-        final ClusterService clusterService = injector.getInstance( ClusterService.class );
+        final ClusterInfoService clusterService = injector.getInstance( ClusterInfoService.class );
         final TransportService transportService = injector.getInstance( TransportService.class );
 
         this.nodeReg = context.registerService( Node.class, this.node, new Hashtable<>() );
-        this.clusterServiceReg = context.registerService( ClusterService.class, clusterService, new Hashtable<>() );
+        this.clusterServiceReg = context.registerService( ClusterInfoService.class, clusterService, new Hashtable<>() );
         this.transportServiceReg = context.registerService( TransportService.class, transportService, new Hashtable<>() );
         this.adminClientReg = context.registerService( AdminClient.class, this.node.client().admin(), new Hashtable<>() );
         this.clusterAdminClientReg =
-            context.registerService( ClusterAdminClient.class, this.node.client().admin().cluster(), new Hashtable<>() );
+            context.registerService( ClusterAdminClient.class, this.node.client().admin().cluster(), new Hashtable<>() );*/
     }
 
     @Deactivate
@@ -76,7 +69,6 @@ public final class ElasticsearchActivator
         this.clusterServiceReg.unregister();
         this.adminClientReg.unregister();
         this.clusterAdminClientReg.unregister();
-        this.node.close();
     }
 
     @Reference

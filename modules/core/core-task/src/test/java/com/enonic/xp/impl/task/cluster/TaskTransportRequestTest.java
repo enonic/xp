@@ -24,7 +24,7 @@ public class TaskTransportRequestTest
         oldRequest.writeTo( streamOutput );
 
         final TaskTransportRequest newRequest = new TaskTransportRequest();
-        final StreamInput bytesStreamInput = new ByteBufferStreamInput( ByteBuffer.wrap( streamOutput.bytes().array() ) );
+        final StreamInput bytesStreamInput = new ByteBufferStreamInput( ByteBuffer.wrap( streamOutput.bytes().toBytesRef().bytes ) );
         newRequest.readFrom( bytesStreamInput );
 
         assertEquals( oldRequest.getType(), newRequest.getType() );

@@ -4,7 +4,7 @@ dependencies {
     compile project( ':core:core-api' )
     compile project( ':script:script-api' )
     compile project( ':portal:portal-api' )
-    compile ('org.elasticsearch:elasticsearch:2.4.6') {
+    compile ('org.elasticsearch.client:elasticsearch-rest-high-level-client:7.4.0') {
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-cbor'
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-yaml'
         exclude group: 'org.yaml', module: 'snakeyaml'
@@ -13,6 +13,7 @@ dependencies {
     runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-smile:${jacksonVersion}"
     runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jacksonVersion}"
     runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
+    runtimeOnly 'org.apache.logging.log4j:log4j-to-slf4j:2.12.1'
 
     testCompile project( path: ':core:core-api', configuration: 'testOutput' )
     testCompile project( path: ':core:core-app', configuration: 'testOutput' )

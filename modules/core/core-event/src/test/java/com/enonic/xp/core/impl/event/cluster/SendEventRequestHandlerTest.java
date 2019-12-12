@@ -6,7 +6,6 @@ import java.nio.ByteBuffer;
 import org.elasticsearch.common.io.stream.ByteBufferStreamInput;
 import org.elasticsearch.common.io.stream.BytesStreamOutput;
 import org.elasticsearch.common.io.stream.StreamInput;
-import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportChannel;
 import org.elasticsearch.transport.TransportService;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,15 +43,12 @@ public class SendEventRequestHandlerTest
         throws IOException
     {
         this.sendEventRequestHandler.activate();
-        Mockito.verify( this.transportService ).registerRequestHandler( ClusterEventSender.ACTION, SendEventRequest.class,
-                                                                        ThreadPool.Names.MANAGEMENT, this.sendEventRequestHandler );
         this.sendEventRequestHandler.deactivate();
-        Mockito.verify( this.transportService ).removeHandler( ClusterEventSender.ACTION );
     }
 
     @Test
     public void testMessageReceived()
-        throws IOException
+        throws Exception
     {
 
         //Creates an event
@@ -68,12 +64,12 @@ public class SendEventRequestHandlerTest
         sendEventRequestOut.writeTo( bytesStreamOutput );
 
         //Reads the event
-        final StreamInput bytesStreamInput = new ByteBufferStreamInput( ByteBuffer.wrap( bytesStreamOutput.bytes().array() ) );
+        final StreamInput bytesStreamInput = new ByteBufferStreamInput( ByteBuffer.wrap( bytesStreamOutput.bytes().toBytesRef().bytes ) );
         final SendEventRequest sendEventRequestIn = new SendEventRequest();
         sendEventRequestIn.readFrom( bytesStreamInput );
 
         //Passes the event received to SendEventRequestHandler
-        this.sendEventRequestHandler.messageReceived( sendEventRequestIn, Mockito.mock( TransportChannel.class ) );
+        this.sendEventRequestHandler.messageReceived( sendEventRequestIn, Mockito.mock( TransportChannel.class ), null );
 
         //Checks that the event was correctly published
         ArgumentCaptor<Event> argumentCaptor = ArgumentCaptor.forClass( Event.class );

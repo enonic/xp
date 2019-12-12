@@ -49,7 +49,7 @@ public class TaskTransportResponseTest
         oldResponse.writeTo( streamOutput );
 
         final TaskTransportResponse newResponse = new TaskTransportResponse();
-        final StreamInput bytesStreamInput = new ByteBufferStreamInput( ByteBuffer.wrap( streamOutput.bytes().array() ) );
+        final StreamInput bytesStreamInput = new ByteBufferStreamInput( ByteBuffer.wrap( streamOutput.bytes().toBytesRef().bytes ) );
         newResponse.readFrom( bytesStreamInput );
 
         assertEquals( oldResponse.getTaskInfos(), newResponse.getTaskInfos() );

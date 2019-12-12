@@ -11,12 +11,13 @@ import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.cluster.ClusterState;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
-import org.elasticsearch.cluster.routing.RestoreSource;
+import org.elasticsearch.cluster.routing.RecoverySource;
 import org.elasticsearch.cluster.routing.RoutingTable;
 import org.elasticsearch.cluster.routing.ShardRouting;
 import org.elasticsearch.cluster.routing.ShardRoutingState;
 import org.elasticsearch.cluster.routing.UnassignedInfo;
 import org.elasticsearch.common.transport.TransportAddress;
+import org.elasticsearch.index.shard.ShardId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -57,9 +58,10 @@ public class IndexReporterTest
         throws Exception
     {
         Mockito.doAnswer( invocation -> {
-            final RestoreSource restoreResource = null;
+            final RecoverySource restoreResource = null;
             final UnassignedInfo unassignedInfo = new UnassignedInfo( UnassignedInfo.Reason.INDEX_CREATED, "" );
-            final ShardRouting shardRouting = ShardRouting.newUnassigned( "myindex", 0, restoreResource, true, unassignedInfo );
+            final ShardRouting shardRouting =
+                ShardRouting.newUnassigned( ShardId.fromString( "[myindex][0]" ), false, restoreResource, unassignedInfo );
 
             final RoutingTable routingTable = Mockito.mock( RoutingTable.class );
             Mockito.when( routingTable.shardsWithState( ShardRoutingState.STARTED ) ).thenReturn( Arrays.asList( shardRouting ) );
@@ -73,7 +75,7 @@ public class IndexReporterTest
             final TransportAddress transportAddress = Mockito.mock( TransportAddress.class );
             Mockito.when( transportAddress.toString() ).thenReturn( "hostAddress" );
 
-            Mockito.when( discoveryNode.address() ).thenReturn( transportAddress );
+            Mockito.when( discoveryNode.getAddress() ).thenReturn( transportAddress );
             Mockito.when( discoveryNode.getId() ).thenReturn( "hostId" );
 
             // Mock discoveryNodes

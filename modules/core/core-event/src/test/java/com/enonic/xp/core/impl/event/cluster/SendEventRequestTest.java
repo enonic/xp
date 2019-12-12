@@ -31,7 +31,7 @@ public class SendEventRequestTest
         sendEventRequestOut.writeTo( bytesStreamOutput );
 
         //Reads the event
-        final StreamInput bytesStreamInput = new ByteBufferStreamInput( ByteBuffer.wrap( bytesStreamOutput.bytes().array() ) );
+        final StreamInput bytesStreamInput = new ByteBufferStreamInput( ByteBuffer.wrap( bytesStreamOutput.bytes().toBytesRef().bytes ) );
         final SendEventRequest sendEventRequestIn = new SendEventRequest();
         sendEventRequestIn.readFrom( bytesStreamInput );
 

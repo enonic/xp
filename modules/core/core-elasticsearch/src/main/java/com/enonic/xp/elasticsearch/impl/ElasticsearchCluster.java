@@ -1,6 +1,7 @@
 package com.enonic.xp.elasticsearch.impl;
 
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
@@ -19,8 +20,6 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.UnmodifiableIterator;
 
 import com.enonic.xp.cluster.Cluster;
 import com.enonic.xp.cluster.ClusterHealth;
@@ -109,7 +108,7 @@ public final class ElasticsearchCluster
             cluster().
             state( clusterStateRequest ).
             actionGet();
-        final UnmodifiableIterator<IndexMetaData> indiceIterator = clusterStateResponse.getState().
+        final Iterator<IndexMetaData> indiceIterator = clusterStateResponse.getState().
             getMetaData().
             getIndices().
             valuesIt();

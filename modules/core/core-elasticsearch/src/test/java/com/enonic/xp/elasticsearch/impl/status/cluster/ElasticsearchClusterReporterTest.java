@@ -1,8 +1,8 @@
 package com.enonic.xp.elasticsearch.impl.status.cluster;
 
+import java.net.InetAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.Version;
@@ -10,13 +10,13 @@ import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.client.ClusterAdminClient;
+import org.elasticsearch.cluster.ClusterInfoService;
 import org.elasticsearch.cluster.ClusterName;
-import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.cluster.ClusterState;
 import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
-import org.elasticsearch.common.transport.LocalTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -39,7 +39,7 @@ public class ElasticsearchClusterReporterTest
 
     private ClusterState clusterState;
 
-    private ClusterService clusterService;
+    private ClusterInfoService clusterService;
 
     private ActionFuture<ClusterStateResponse> clusterStateInfo;
 
@@ -54,7 +54,7 @@ public class ElasticsearchClusterReporterTest
         this.clusterStateInfo = Mockito.mock( ActionFuture.class );
         this.clusterHealthInfo = Mockito.mock( ActionFuture.class );
 
-        this.clusterService = Mockito.mock( ClusterService.class );
+        this.clusterService = Mockito.mock( ClusterInfoService.class );
 
         Mockito.when( clusterAdminClient.state( Mockito.any() ) ).thenReturn( clusterStateInfo );
         Mockito.when( clusterAdminClient.health( Mockito.any() ) ).thenReturn( clusterHealthInfo );
@@ -79,7 +79,6 @@ public class ElasticsearchClusterReporterTest
 
         final ClusterStateProvider clusterStateProvider = new ClusterStateProvider();
         clusterStateProvider.setClusterAdminClient( clusterAdminClient );
-        clusterStateProvider.setClusterService( clusterService );
 
         clusterReporter.setClusterHealthProvider( clusterHealthProvider );
         clusterReporter.setClusterStateProvider( clusterStateProvider );
@@ -96,17 +95,15 @@ public class ElasticsearchClusterReporterTest
     public void cluster_with_one_node()
         throws Exception
     {
-        final DiscoveryNode node1 =
-            new DiscoveryNode( "nodeName", "nodeId", "hostName", "hostAddress", new LocalTransportAddress( "10.10.10.1" ), new HashMap<>(),
-                               Version.fromString( "1.0.0" ) );
+        final DiscoveryNode node1 = new DiscoveryNode( "nodeName", new TransportAddress( InetAddress.getByName( "10.10.10.1" ), 9300 ),
+                                                       Version.fromString( "1.0.0" ) );
 
         final DiscoveryNodes nodes = DiscoveryNodes.builder().
-            put( node1 ).
+            add( node1 ).
             localNodeId( node1.getId() ).
             build();
 
         Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
-        Mockito.when( this.clusterService.localNode() ).thenReturn( node1 );
 
         assertJson( "cluster_with_one_node.json", clusterReporter.getReport().toString() );
     }
@@ -126,17 +123,15 @@ public class ElasticsearchClusterReporterTest
     {
         Mockito.when( clusterHealthInfo.actionGet() ).thenThrow( new ElasticsearchException( "cluster health info exception" ) );
 
-        final DiscoveryNode node1 =
-            new DiscoveryNode( "nodeName", "nodeId", "hostName", "hostAddress", new LocalTransportAddress( "10.10.10.1" ), new HashMap<>(),
-                               Version.fromString( "1.0.0" ) );
+        final DiscoveryNode node1 = new DiscoveryNode( "nodeName", new TransportAddress( InetAddress.getByName( "10.10.10.1" ), 9300 ),
+                                                       Version.fromString( "1.0.0" ) );
 
         final DiscoveryNodes nodes = DiscoveryNodes.builder().
-            put( node1 ).
+            add( node1 ).
             localNodeId( node1.getId() ).
             build();
 
         Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
-        Mockito.when( this.clusterService.localNode() ).thenReturn( node1 );
 
         assertJson( "cluster_health_info_exception.json", clusterReporter.getReport().toString() );
     }
@@ -145,23 +140,20 @@ public class ElasticsearchClusterReporterTest
     public void cluster_with_two_nodes()
         throws Exception
     {
-        final DiscoveryNode node1 =
-            new DiscoveryNode( "nodeName1", "nodeId1", "hostName1", "hostAddress1", new LocalTransportAddress( "10.10.10.1" ),
-                               new HashMap<>(), Version.fromString( "1.0.0" ) );
+        final DiscoveryNode node1 = new DiscoveryNode( "nodeName", new TransportAddress( InetAddress.getByName( "10.10.10.1" ), 9300 ),
+                                                       Version.fromString( "1.0.0" ) );
 
-        final DiscoveryNode node2 =
-            new DiscoveryNode( "nodeName2", "nodeId2", "hostName2", "hostAddress2", new LocalTransportAddress( "10.10.10.2" ),
-                               new HashMap<>(), Version.fromString( "1.0.0" ) );
+        final DiscoveryNode node2 = new DiscoveryNode( "nodeName", new TransportAddress( InetAddress.getByName( "10.10.10.2" ), 9300 ),
+                                                       Version.fromString( "1.0.0" ) );
 
         final DiscoveryNodes nodes = DiscoveryNodes.builder().
-            put( node1 ).
-            put( node2 ).
+            add( node1 ).
+            add( node2 ).
             localNodeId( node1.getId() ).
             masterNodeId( node2.getId() ).
             build();
 
         Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
-        Mockito.when( this.clusterService.localNode() ).thenReturn( node1 );
 
         final JsonNode expectedReport = parseJson( readFromFile( "cluster_with_two_nodes.json" ) );
         final JsonNode report = clusterReporter.getReport();

@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.event.cluster;
 
-import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.cluster.ClusterState;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
@@ -44,16 +43,12 @@ public class ClusterEventSenderTest
 
         //Mocks Elasticsearch cluster service
         final ClusterState clusterState = Mockito.mock( ClusterState.class );
-        final ClusterService clusterService = Mockito.mock( ClusterService.class );
-        Mockito.when( clusterService.localNode() ).thenReturn( this.localNode );
-        Mockito.when( clusterService.state() ).thenReturn( clusterState );
         Mockito.when( clusterState.nodes() ).thenReturn( discoveryNodes );
 
         //Mocks Elasticsearch transport service
         this.transportService = Mockito.mock( TransportService.class );
 
         this.clusterEventSender = new ClusterEventSender();
-        this.clusterEventSender.setClusterService( clusterService );
         this.clusterEventSender.setTransportService( this.transportService );
 
     }
