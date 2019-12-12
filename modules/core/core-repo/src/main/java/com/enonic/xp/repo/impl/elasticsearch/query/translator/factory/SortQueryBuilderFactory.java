@@ -58,7 +58,7 @@ public class SortQueryBuilderFactory
         final FieldSortBuilder fieldSortBuilder =
             new FieldSortBuilder( fieldNameResolver.resolveOrderByFieldName( fieldOrderExpr.getField().getFieldPath() ) );
         fieldSortBuilder.order( SortOrder.valueOf( fieldOrderExpr.getDirection().name() ) );
-//        fieldSortBuilder.ignoreUnmapped( IGNORE_UNMAPPED ); TODO ES:
+        fieldSortBuilder.unmappedType( "long" );
 
         return fieldSortBuilder;
     }
