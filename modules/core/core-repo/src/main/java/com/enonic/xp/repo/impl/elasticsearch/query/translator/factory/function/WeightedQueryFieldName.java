@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
-import com.google.common.base.Strings;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class WeightedQueryFieldName
 {
@@ -26,7 +26,7 @@ public class WeightedQueryFieldName
 
     public static WeightedQueryFieldName from( final String value )
     {
-        if ( Strings.isNullOrEmpty( value ) )
+        if ( isNullOrEmpty( value ) )
         {
             return null;
         }

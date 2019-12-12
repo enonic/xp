@@ -2,7 +2,7 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':jaxrs:jaxrs-api' )
-    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.9.6'
+    compile "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:${jacksonVersion}"
     compile 'org.jboss.resteasy:resteasy-jaxrs:3.0.8.Final'
     testCompile project( path: ':jaxrs:jaxrs-api', configuration: 'testOutput' )
     testCompile project( path: ':web:web-jetty', configuration: 'testOutput' )

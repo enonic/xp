@@ -4,7 +4,7 @@ dependencies {
     compile project( ':core:core-api' )
     testCompile project( path: ':core:core-api', configuration: 'testOutput' )
     testCompile "org.apache.felix:org.apache.felix.framework:${felixVersion}"
-    testCompile 'org.ops4j.pax.tinybundles:tinybundles:2.1.1'
+    testImplementation 'org.ops4j.pax.tinybundles:tinybundles:3.0.0'
 }
 
 jar {

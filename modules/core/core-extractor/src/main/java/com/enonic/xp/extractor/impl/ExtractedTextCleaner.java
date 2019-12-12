@@ -1,7 +1,8 @@
 package com.enonic.xp.extractor.impl;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Strings;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 class ExtractedTextCleaner
 {
@@ -28,7 +29,7 @@ class ExtractedTextCleaner
     {
         String cleanedText = value;
 
-        if ( Strings.isNullOrEmpty( cleanedText ) )
+        if ( isNullOrEmpty( cleanedText ) )
         {
             return "";
         }

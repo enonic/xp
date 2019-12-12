@@ -7,12 +7,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMappings;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class VirtualHostConfigMap
 {
@@ -94,7 +94,7 @@ final class VirtualHostConfigMap
     private String getString( final String name )
     {
         final String value = this.map.get( name );
-        if ( Strings.isNullOrEmpty( value ) )
+        if ( isNullOrEmpty( value ) )
         {
             return null;
         }

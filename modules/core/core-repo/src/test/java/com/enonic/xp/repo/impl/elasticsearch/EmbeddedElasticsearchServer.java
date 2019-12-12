@@ -2,9 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch;
 
 
 import java.io.File;
-import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
@@ -69,21 +67,6 @@ public class EmbeddedElasticsearchServer
     {
         LOG.info( " --- Shutting down ES integration test server instance" );
         node.close();
-        deleteDataDirectory();
-    }
-
-    private void deleteDataDirectory()
-    {
-        try
-        {
-            final String path = dataDirectory + "-" + this.now;
-            LOG.info( "Deleting index data directory " + path );
-            FileUtils.deleteDirectory( new File( path ) );
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( "Could not delete data directory of embedded elasticsearch server", e );
-        }
     }
 
     public File getSnapshotsDir()
