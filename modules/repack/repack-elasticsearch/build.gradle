@@ -20,10 +20,8 @@ jar {
              'org.elasticsearch.*;-split-package:=merge-first' + ',' +
              'org.apache.lucene.*;-split-package:=merge-first' + ',' +
              'org.joda.time.*;-split-package:=merge-first' + ',' +
-             'com.spatial4j.*'+ ',' +
+             'org.apache.http.*'+ ',' +
              'org.tartarus.*' + ',' +
-             'org.jboss.netty.*' + ',' +
-             'com.ning.compress.*'  + ',' +
              'com.carrotsearch.hppc.*' + ',' +
              'com.tdunning.math.stats.*',
          'Import-Package': '*;resolution:=optional',
@@ -33,6 +31,6 @@ jar {
              'com.fasterxml.jackson.dataformat.cbor.*' + ',' +
              'com.fasterxml.jackson.dataformat.yaml.*' + ',' +
              'org.yaml.snakeyaml.*' + ',' +
-             'com.twitter.jsr166e.*'
+             ''
     )
 }

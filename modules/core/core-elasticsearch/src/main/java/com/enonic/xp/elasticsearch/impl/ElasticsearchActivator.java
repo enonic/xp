@@ -2,8 +2,11 @@ package com.enonic.xp.elasticsearch.impl;
 
 import java.util.Map;
 
+import org.apache.http.HttpHost;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.ClusterAdminClient;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.cluster.ClusterInfoService;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.transport.TransportService;
@@ -21,7 +24,11 @@ public final class ElasticsearchActivator
 {
     private Node node;
 
+    private RestHighLevelClient client;
+
     private ServiceRegistration<Node> nodeReg;
+
+    private ServiceRegistration<RestHighLevelClient> clientReg;
 
     private ServiceRegistration<AdminClient> adminClientReg;
 
@@ -42,7 +49,19 @@ public final class ElasticsearchActivator
     @SuppressWarnings("WeakerAccess")
     public void activate( final BundleContext context, final Map<String, String> map )
     {
-        /*final Settings settings = new NodeSettingsBuilder( context, this.clusterConfig ).
+        Thread thread = Thread.currentThread();
+        ClassLoader contextClassLoader = thread.getContextClassLoader();
+        thread.setContextClassLoader( getClass().getClassLoader() );
+        try
+        {
+            client = new RestHighLevelClient( RestClient.builder( new HttpHost( "localhost", 9200, "http" ) ) );
+        }
+        finally
+        {
+            thread.setContextClassLoader( contextClassLoader );
+        }
+        clientReg = context.registerService( RestHighLevelClient.class, client, null );
+    /*final Settings settings = new NodeSettingsBuilder( context, this.clusterConfig ).
             buildSettings( map );
 
         this.node = NodeBuilder.nodeBuilder().settings( settings ).build();
@@ -64,11 +83,12 @@ public final class ElasticsearchActivator
     @SuppressWarnings("WeakerAccess")
     public void deactivate()
     {
-        this.nodeReg.unregister();
+        clientReg.unregister();
+       /* this.nodeReg.unregister();
         this.transportServiceReg.unregister();
         this.clusterServiceReg.unregister();
         this.adminClientReg.unregister();
-        this.clusterAdminClientReg.unregister();
+        this.clusterAdminClientReg.unregister();*/
     }
 
     @Reference

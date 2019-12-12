@@ -169,8 +169,19 @@ public class IndexServiceInternalImpl
 
         try
         {
-            final CreateIndexResponse createIndexResponse = client.indices().
-                create( createIndexRequest, RequestOptions.DEFAULT );
+            Thread thread = Thread.currentThread();
+            ClassLoader contextClassLoader = thread.getContextClassLoader();
+            thread.setContextClassLoader( RestHighLevelClient.class.getClassLoader() );
+            final CreateIndexResponse createIndexResponse;
+            try
+            {
+                createIndexResponse = client.indices().
+                    create( createIndexRequest, RequestOptions.DEFAULT );
+            }
+            finally
+            {
+                thread.setContextClassLoader( contextClassLoader );
+            }
 
             LOG.info( "Index {} created with status {}", indexName, createIndexResponse.isAcknowledged() );
         }
