@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -116,7 +117,7 @@ public class IssueNotificationsSenderImplTest
 
         Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
-        verifyRecipients( approver.getEmail() );
+        verifyRecipients( Set.of( approver.getEmail() ) );
         verify( securityService, times( 2 ) ).getUser( any() );
         verify( mailService, times( 1 ) ).send( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
@@ -180,7 +181,7 @@ public class IssueNotificationsSenderImplTest
 
         Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
-        verifyRecipients( "other@user.com;more@user.com" );
+        verifyRecipients( Set.of( approvers.get( 1 ).getEmail(), approvers.get( 2 ).getEmail() ) );
         verify( securityService, times( 4 ) ).getUser( any() );
         verify( mailService, times( 1 ) ).send( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
@@ -216,20 +217,20 @@ public class IssueNotificationsSenderImplTest
 
         Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
-        verifyRecipients( approvers.stream().map( approver -> approver.getEmail() ).collect( Collectors.joining( ";" ) ) );
+        verifyRecipients( approvers.stream().map( approver -> approver.getEmail() ).collect( Collectors.toSet() ) );
         verify( securityService, times( 4 ) ).getUser( any() );
         verify( mailService, times( 1 ) ).send( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
         verify( contentService, times( 1 ) ).compare( Mockito.any( CompareContentsParams.class ) );
     }
 
-    private void verifyRecipients( final String recipients )
+    private void verifyRecipients( final Set<String> recipients )
         throws Exception
     {
         verify( mailService ).send( mailCaptor.capture() );
         MimeMessage msg = new MimeMessage( Session.getDefaultInstance( new Properties() ) );
         mailCaptor.getValue().compose( msg );
-        final String allRecipients = Arrays.stream( msg.getAllRecipients() ).map( Address::toString ).collect( Collectors.joining( ";" ) );
+        final Set<String> allRecipients = Arrays.stream( msg.getAllRecipients() ).map( Address::toString ).collect( Collectors.toSet() );
         assertEquals( recipients, allRecipients );
     }
 
@@ -271,7 +272,7 @@ public class IssueNotificationsSenderImplTest
 
         Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
-        verifyRecipients( approver.getEmail() + ";" + creator.getEmail() );
+        verifyRecipients( Set.of( approver.getEmail(), creator.getEmail() ) );
         verify( mailService, times( 1 ) ).send( any() );
         verify( securityService, times( 2 ) ).getUser( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
@@ -361,7 +362,7 @@ public class IssueNotificationsSenderImplTest
 
         Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
-        verifyRecipients( "other@user.com;more@user.com;" + creator.getEmail() );
+        verifyRecipients( Set.of( approvers.get( 1 ).getEmail(), approvers.get( 2 ).getEmail(), creator.getEmail() ) );
         verify( mailService, Mockito.times( 1 ) ).send( any() );
         verify( securityService, times( 4 ) ).getUser( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
@@ -406,7 +407,7 @@ public class IssueNotificationsSenderImplTest
 
         Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
-        verifyRecipients( creator.getEmail() );
+        verifyRecipients( Set.of( creator.getEmail() ) );
         verify( mailService, times( 1 ) ).send( any() );
         verify( securityService, times( 2 ) ).getUser( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
@@ -498,7 +499,7 @@ public class IssueNotificationsSenderImplTest
 
         Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
-        verifyRecipients( approvers.get( 1 ).getEmail() + ";" + creator.getEmail() );
+        verifyRecipients( Set.of( approvers.get( 1 ).getEmail(), creator.getEmail() ) );
         verify( mailService, times( 1 ) ).send( any() );
         verify( securityService, times( 3 ) ).getUser( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
@@ -529,7 +530,7 @@ public class IssueNotificationsSenderImplTest
 
         Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
-        verifyRecipients( approver.getEmail() + ";" + creator.getEmail() );
+        verifyRecipients( Set.of( approver.getEmail(), creator.getEmail() ) );
         verify( mailService, times( 1 ) ).send( any() );
         verify( securityService, times( 2 ) ).getUser( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
@@ -607,7 +608,7 @@ public class IssueNotificationsSenderImplTest
 
         Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
-        verifyRecipients( approvers.get( 1 ).getEmail() + ";" + creator.getEmail() );
+        verifyRecipients( Set.of( approvers.get( 1 ).getEmail(), creator.getEmail() ) );
         verify( mailService, times( 1 ) ).send( any() );
         verify( securityService, times( 3 ) ).getUser( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
