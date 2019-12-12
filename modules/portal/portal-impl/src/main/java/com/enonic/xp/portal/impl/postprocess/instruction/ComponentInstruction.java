@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.portal.PortalRequest;
@@ -18,7 +19,6 @@ import com.enonic.xp.portal.impl.rendering.Renderer;
 import com.enonic.xp.portal.impl.rendering.RendererFactory;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 import com.enonic.xp.region.Component;
-import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.ComponentService;
 import com.enonic.xp.region.LayoutComponent;
@@ -87,7 +87,6 @@ public final class ComponentInstruction
         else
         {
             final String name = substringAfter( componentSelector, APPLICATION_COMPONENT_PREFIX );
-            final ComponentName componentName = new ComponentName( name );
             final ApplicationKey currentApplication;
             if ( portalRequest.getPageTemplate() != null && portalRequest.getPageTemplate().getController() != null )
             {
@@ -97,7 +96,7 @@ public final class ComponentInstruction
             {
                 currentApplication = portalRequest.getApplicationKey();
             }
-            component = currentApplication == null ? null : componentService.getByName( currentApplication, componentName );
+            component = currentApplication == null ? null : componentService.getByKey( DescriptorKey.from( currentApplication, name ) );
         }
         return renderComponent( portalRequest, component );
     }

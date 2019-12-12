@@ -1,10 +1,8 @@
 package com.enonic.xp.core.impl.content.page.region;
 
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.Component;
-import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorNotFoundException;
@@ -18,9 +16,7 @@ import com.enonic.xp.resource.ResourceService;
 
 class GetComponentByNameCommand
 {
-    private ApplicationKey applicationKey;
-
-    private ComponentName name;
+    private DescriptorKey descriptorKey;
 
     private PartDescriptorService partDescriptorService;
 
@@ -30,21 +26,17 @@ class GetComponentByNameCommand
 
     public Component execute()
     {
-        final String componentDescriptorName = name.toString();
-
-        final PartDescriptor partDescriptor = getPartDescriptor( componentDescriptorName );
+        final PartDescriptor partDescriptor = getPartDescriptor();
         if ( partDescriptor != null && componentExists( partDescriptor.getComponentPath() ) )
         {
             return PartComponent.create().
-                name( this.name ).
                 descriptor( partDescriptor.getKey() ).
                 build();
         }
-        final LayoutDescriptor layoutDescriptor = getLayoutDescriptor( componentDescriptorName );
+        final LayoutDescriptor layoutDescriptor = getLayoutDescriptor();
         if ( layoutDescriptor != null && componentExists( layoutDescriptor.getComponentPath() ) )
         {
             return LayoutComponent.create().
-                name( this.name ).
                 descriptor( layoutDescriptor.getKey() ).
                 build();
         }
@@ -56,11 +48,10 @@ class GetComponentByNameCommand
         return resourceService.getResource( componentPath ).exists();
     }
 
-    private PartDescriptor getPartDescriptor( final String descriptorName )
+    private PartDescriptor getPartDescriptor()
     {
         try
         {
-            final DescriptorKey descriptorKey = DescriptorKey.from( this.applicationKey, descriptorName );
             return partDescriptorService.getByKey( descriptorKey );
         }
         catch ( PartDescriptorNotFoundException e )
@@ -69,11 +60,10 @@ class GetComponentByNameCommand
         }
     }
 
-    private LayoutDescriptor getLayoutDescriptor( final String descriptorName )
+    private LayoutDescriptor getLayoutDescriptor()
     {
         try
         {
-            final DescriptorKey descriptorKey = DescriptorKey.from( this.applicationKey, descriptorName );
             return layoutDescriptorService.getByKey( descriptorKey );
         }
         catch ( LayoutDescriptorNotFoundException e )
@@ -82,15 +72,9 @@ class GetComponentByNameCommand
         }
     }
 
-    public GetComponentByNameCommand applicationKey( final ApplicationKey applicationKey )
+    public GetComponentByNameCommand descriptorKey( final DescriptorKey descriptorKey )
     {
-        this.applicationKey = applicationKey;
-        return this;
-    }
-
-    public GetComponentByNameCommand name( final ComponentName name )
-    {
-        this.name = name;
+        this.descriptorKey = descriptorKey;
         return this;
     }
 
