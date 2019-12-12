@@ -6,8 +6,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.mail.Message;
@@ -86,15 +86,15 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
         return params.getIssue().getIssueType() == IssueType.PUBLISH_REQUEST;
     }
 
-    protected List<String> getApproverEmails()
+    protected Set<String> getApproverEmails()
     {
         return params.getApprovers().stream().
             filter( approver -> !Strings.nullToEmpty( approver.getEmail() ).isBlank() ).
             map( approver -> approver.getEmail() ).
-            collect( Collectors.toList() );
+            collect( Collectors.toSet() );
     }
 
-    protected void filterEmail( final List<String> emails, final String email )
+    protected void filterEmail( final Set<String> emails, final String email )
     {
         emails.removeIf( eml -> eml.equals( email ) );
     }

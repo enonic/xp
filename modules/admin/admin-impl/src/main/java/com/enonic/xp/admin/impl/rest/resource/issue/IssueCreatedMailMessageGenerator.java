@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
-import java.util.List;
+import java.util.Set;
 
 import com.enonic.xp.issue.Issue;
 
@@ -38,7 +38,7 @@ public class IssueCreatedMailMessageGenerator
         final Issue issue = params.getIssue();
         final boolean isNew = issue.getModifiedTime() == null || issue.getModifiedTime().equals( issue.getCreatedTime() );
 
-        List<String> emails = getApproverEmails();
+        final Set<String> emails = getApproverEmails();
         final String creatorEmail = this.getCreatorEmail();
         if ( isNew && !creatorEmail.isBlank() )
         {

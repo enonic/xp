@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
-import java.util.List;
+import java.util.Set;
 
 public class IssueCommentedMailMessageGenerator
     extends IssueMailMessageGenerator<IssueCommentedNotificationParams>
@@ -33,12 +33,9 @@ public class IssueCommentedMailMessageGenerator
     {
         final String creatorEmail = super.getCreatorEmail();
         final String modifierEmail = params.getModifier().getEmail();
-        final List<String> emails = getApproverEmails();
+        final Set<String> emails = getApproverEmails();
+        emails.add( creatorEmail );
         filterEmail( emails, modifierEmail );
-        if ( !creatorEmail.equals( modifierEmail ) )
-        {
-            emails.add( creatorEmail );
-        }
 
         return String.join( ",", emails );
     }
