@@ -205,7 +205,7 @@ public class ContentServiceImpl
 
         this.translator = new ContentNodeTranslator( nodeService, contentDataSerializer );
 
-        this.contentAuditLogSupport = config.auditlogEnabled() ? ContentAuditLogSupport.create().
+        this.contentAuditLogSupport = config.auditlog_enabled() ? ContentAuditLogSupport.create().
             auditLogService( auditLogService ).
             build() : null;
     }
