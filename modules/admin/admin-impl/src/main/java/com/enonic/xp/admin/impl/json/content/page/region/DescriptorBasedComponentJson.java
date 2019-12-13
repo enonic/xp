@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.json.content.page.region;
 
 import java.util.List;
 
+import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTreeJson;
 import com.enonic.xp.region.DescriptorBasedComponent;
@@ -13,9 +14,9 @@ public abstract class DescriptorBasedComponentJson<COMPONENT extends DescriptorB
 {
     private final List<PropertyArrayJson> config;
 
-    protected DescriptorBasedComponentJson( final COMPONENT component )
+    protected DescriptorBasedComponentJson( final COMPONENT component, final ComponentNameResolver componentNameResolver )
     {
-        super( component );
+        super( component, componentNameResolver );
         this.config = component.getConfig() != null ? PropertyTreeJson.toJson( component.getConfig() ) : null;
     }
 

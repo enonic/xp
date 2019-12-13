@@ -15,6 +15,8 @@ public class ImageComponent
 {
     private static final String CAPTION = "caption";
 
+    private static final ComponentName NAME = ComponentName.from( "Image" );
+
     private ContentId image;
 
     private PropertyTree config;
@@ -26,12 +28,12 @@ public class ImageComponent
         this.config = builder.config != null ? builder.config : new PropertyTree();
     }
 
-    public static Builder create()
+    public static <T extends Builder<T>> Builder<T> create()
     {
         return new Builder();
     }
 
-    public static Builder create( final ImageComponent source )
+    public static <T extends Builder<T>> Builder<T> create( final ImageComponent source )
     {
         return new Builder( source );
     }
@@ -46,6 +48,12 @@ public class ImageComponent
     public ComponentType getType()
     {
         return ImageComponentType.INSTANCE;
+    }
+
+    @Override
+    public ComponentName getName()
+    {
+        return NAME;
     }
 
     public ContentId getImage()
@@ -106,8 +114,8 @@ public class ImageComponent
         return Objects.hash( super.hashCode(), image, config );
     }
 
-    public static class Builder
-        extends Component.Builder
+    public static class Builder<T extends Builder<T>>
+        extends Component.Builder<T>
     {
         private ContentId image;
 
@@ -125,29 +133,16 @@ public class ImageComponent
             config = source.config != null ? source.config.copy() : null;
         }
 
-        public Builder image( final ContentId value )
+        public T image( final ContentId value )
         {
             this.image = value;
-            return this;
+            return (T) this;
         }
 
-        @Override
-        public Builder name( ComponentName value )
-        {
-            this.name = value;
-            return this;
-        }
-
-        public Builder name( String value )
-        {
-            this.name = value != null ? new ComponentName( value ) : null;
-            return this;
-        }
-
-        public Builder config( final PropertyTree config )
+        public T config( final PropertyTree config )
         {
             this.config = config;
-            return this;
+            return (T) this;
         }
 
         public ImageComponent build()

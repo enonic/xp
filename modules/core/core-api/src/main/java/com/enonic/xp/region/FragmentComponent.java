@@ -10,6 +10,8 @@ import com.enonic.xp.content.ContentId;
 public class FragmentComponent
     extends Component
 {
+    private static final ComponentName NAME = ComponentName.from( "Fragment" );
+
     private ContentId fragment;
 
     public FragmentComponent( final Builder builder )
@@ -38,6 +40,12 @@ public class FragmentComponent
     public ComponentType getType()
     {
         return FragmentComponentType.INSTANCE;
+    }
+
+    @Override
+    public ComponentName getName()
+    {
+        return NAME;
     }
 
     public ContentId getFragment()
@@ -71,7 +79,7 @@ public class FragmentComponent
     }
 
     public static class Builder
-        extends Component.Builder
+        extends Component.Builder<Builder>
     {
         private ContentId fragment;
 
@@ -89,19 +97,6 @@ public class FragmentComponent
         public Builder fragment( final ContentId value )
         {
             this.fragment = value;
-            return this;
-        }
-
-        @Override
-        public Builder name( ComponentName value )
-        {
-            this.name = value;
-            return this;
-        }
-
-        public Builder name( String value )
-        {
-            this.name = value != null ? new ComponentName( value ) : null;
             return this;
         }
 

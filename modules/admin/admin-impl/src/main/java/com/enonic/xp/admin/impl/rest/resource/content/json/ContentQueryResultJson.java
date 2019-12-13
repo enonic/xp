@@ -6,6 +6,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.admin.impl.json.content.ContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.content.Content;
@@ -20,9 +21,10 @@ public class ContentQueryResultJson
     }
 
     public static ContentQueryResultJson.Builder newBuilder( final ContentIconUrlResolver iconUrlResolver,
-                                                             final ContentPrincipalsResolver contentPrincipalsResolver )
+                                                             final ContentPrincipalsResolver contentPrincipalsResolver,
+                                                             final ComponentNameResolver componentNameResolver )
     {
-        return new Builder( iconUrlResolver, contentPrincipalsResolver );
+        return new Builder( iconUrlResolver, contentPrincipalsResolver, componentNameResolver );
     }
 
     public static class Builder
@@ -32,18 +34,22 @@ public class ContentQueryResultJson
 
         private final ContentPrincipalsResolver contentPrincipalsResolver;
 
+        private final ComponentNameResolver componentNameResolver;
+
         private Set<ContentJson> contents = new LinkedHashSet<>();
 
-        public Builder( final ContentIconUrlResolver iconUrlResolver, final ContentPrincipalsResolver contentPrincipalsResolver )
+        public Builder( final ContentIconUrlResolver iconUrlResolver, final ContentPrincipalsResolver contentPrincipalsResolver,
+                        final ComponentNameResolver componentNameResolver )
         {
             this.iconUrlResolver = iconUrlResolver;
             this.contentPrincipalsResolver = contentPrincipalsResolver;
+            this.componentNameResolver = componentNameResolver;
         }
 
         @Override
         public Builder addContent( final Content content )
         {
-            this.contents.add( new ContentJson( content, iconUrlResolver, contentPrincipalsResolver ) );
+            this.contents.add( new ContentJson( content, iconUrlResolver, contentPrincipalsResolver, componentNameResolver ) );
             return this;
         }
 

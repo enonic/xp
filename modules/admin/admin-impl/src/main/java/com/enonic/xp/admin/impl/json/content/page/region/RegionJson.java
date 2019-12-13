@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.Region;
 
@@ -30,12 +31,14 @@ public class RegionJson
         this.region = builder.build();
     }
 
-    public RegionJson( final Region region )
+    public RegionJson( final Region region, final ComponentNameResolver componentNameResolver )
     {
         this.region = region;
+
+        final ComponentJsonSerializer componentJsonSerializer = new ComponentJsonSerializer( componentNameResolver );
         for ( final Component component : region.getComponents() )
         {
-            this.components.add( ComponentJsonSerializer.toJson( component ) );
+            this.components.add( componentJsonSerializer.toJson( component ) );
         }
     }
 

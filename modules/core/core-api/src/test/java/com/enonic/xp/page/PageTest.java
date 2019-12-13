@@ -23,12 +23,10 @@ public class PageTest
         final Region region1 = Region.create().
             name( "main" ).
             add( PartComponent.create().
-                name( "MyPart" ).
                 descriptor( "descriptor-x" ).
                 config( new PropertyTree() ).
                 build() ).
             add( PartComponent.create().
-                name( "MyOtherPart" ).
                 descriptor( "descriptor-y" ).
                 config( new PropertyTree() ).
                 build() ).
@@ -37,12 +35,10 @@ public class PageTest
         final Region region2 = Region.create().
             name( "apart" ).
             add( PartComponent.create().
-                name( "MyPart" ).
                 descriptor( "descriptor-x" ).
                 config( new PropertyTree() ).
                 build() ).
             add( PartComponent.create().
-                name( "MyOtherPart" ).
                 descriptor( "descriptor-y" ).
                 config( new PropertyTree() ).
                 build() ).
@@ -122,12 +118,10 @@ public class PageTest
         final Region region1 = Region.create().
             name( "main" ).
             add( PartComponent.create().
-                name( "MyPart" ).
                 descriptor( "descriptor-x" ).
                 config( new PropertyTree() ).
                 build() ).
             add( PartComponent.create().
-                name( "MyOtherPart" ).
                 descriptor( "descriptor-y" ).
                 config( new PropertyTree() ).
                 build() ).

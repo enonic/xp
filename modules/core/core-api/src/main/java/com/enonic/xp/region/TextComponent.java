@@ -1,6 +1,5 @@
 package com.enonic.xp.region;
 
-
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
@@ -9,6 +8,8 @@ import com.google.common.annotations.Beta;
 public class TextComponent
     extends Component
 {
+    private static final ComponentName NAME = ComponentName.from( "Text" );
+
     private String text;
 
     protected TextComponent( final Builder builder )
@@ -17,12 +18,12 @@ public class TextComponent
         this.text = builder.text != null ? builder.text : "";
     }
 
-    public static Builder create()
+    public static <T extends Builder<T>> Builder<T> create()
     {
         return new Builder();
     }
 
-    public static Builder create( final TextComponent source )
+    public static <T extends Builder<T>> Builder<T> create( final TextComponent source )
     {
         return new Builder( source );
     }
@@ -37,6 +38,12 @@ public class TextComponent
     public ComponentType getType()
     {
         return TextComponentType.INSTANCE;
+    }
+
+    @Override
+    public ComponentName getName()
+    {
+        return NAME;
     }
 
     public String getText()
@@ -71,8 +78,8 @@ public class TextComponent
         return Objects.hash( super.hashCode(), text );
     }
 
-    public static class Builder
-        extends Component.Builder
+    public static class Builder<T extends Builder<T>>
+        extends Component.Builder<T>
 
     {
         private String text;
@@ -88,23 +95,10 @@ public class TextComponent
             text = source.text;
         }
 
-        @Override
-        public Builder name( ComponentName value )
-        {
-            this.name = value;
-            return this;
-        }
-
-        public Builder name( String value )
-        {
-            this.name = value != null ? new ComponentName( value ) : null;
-            return this;
-        }
-
-        public Builder text( String value )
+        public T text( String value )
         {
             this.text = value;
-            return this;
+            return (T) this;
         }
 
         public TextComponent build()

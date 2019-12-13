@@ -21,7 +21,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.resource.Resource;
@@ -226,7 +225,7 @@ public class ServiceHandlerTest
     {
         setupContentAndSite();
         this.request.setEndpointPath( "/_/service/forbidden/test" );
-        assertThrows(WebException.class, () ->  this.handler.handle( this.request, PortalResponse.create().build(), null ));
+        assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
     }
 
     @Test
@@ -249,12 +248,12 @@ public class ServiceHandlerTest
         this.request.setRawPath( "/webapp/forbidden/_/service/demo/test" );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
-        assertThrows(WebException.class, () ->  {
+        assertThrows( WebException.class, () -> {
             final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
             assertEquals( HttpStatus.OK, response.getStatus() );
             Mockito.verify( this.controllerScript ).execute( this.request );
             assertNotNull( this.request.getApplicationKey() );
-        });
+        } );
     }
 
     private void setupContentAndSite()
@@ -289,7 +288,7 @@ public class ServiceHandlerTest
         {
             PageRegions pageRegions = PageRegions.create().
                 add( Region.create().name( "main-region" ).
-                    add( PartComponent.create().name( ComponentName.from( "mypart" ) ).
+                    add( PartComponent.create().descriptor( "myapp:mypart" ).
                         build() ).
                     build() ).
                 build();
