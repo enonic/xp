@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.project;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -14,13 +15,18 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.project.json.DeleteProjectParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectJson;
-import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectsJson;
+import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.project.CreateProjectParams;
+import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.web.multipart.MultipartForm;
+import com.enonic.xp.web.multipart.MultipartItem;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "project")
@@ -34,17 +40,19 @@ public final class ProjectResource
 
     @POST
     @Path("create")
-    public ProjectJson create( final ProjectParamsJson params )
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public ProjectJson create( final MultipartForm form )
     {
-        final Project project = projectService.create( params.getCreateParams() );
+        final Project project = projectService.create( createParams( form ) );
         return new ProjectJson( project );
     }
 
     @POST
     @Path("modify")
-    public ProjectJson modify( final ProjectParamsJson params )
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public ProjectJson modify( final MultipartForm form )
     {
-        final Project modifiedProject = this.projectService.modify( params.getModifyParams() );
+        final Project modifiedProject = this.projectService.modify( ModifyProjectParams.create( createParams( form ) ).build() );
         return new ProjectJson( modifiedProject );
     }
 
@@ -68,6 +76,28 @@ public final class ProjectResource
     {
         final Project project = this.projectService.get( ProjectName.from( projectName ) );
         return new ProjectJson( project );
+    }
+
+    private CreateProjectParams createParams( final MultipartForm form )
+    {
+
+        final CreateProjectParams.Builder builder = CreateProjectParams.create().
+            name( ProjectName.from( form.getAsString( "name" ) ) ).
+            displayName( form.getAsString( "displayName" ) ).
+            description( form.getAsString( "description" ) );
+
+        final MultipartItem icon = form.get( "icon" );
+
+        if ( icon != null )
+        {
+            builder.icon( CreateAttachment.create().
+                name( ProjectConstants.PROJECT_ICON_PROPERTY ).
+                mimeType( icon.getContentType().toString() ).
+                byteSource( icon.getBytes() ).
+                build() );
+        }
+
+        return builder.build();
     }
 
     @Reference
