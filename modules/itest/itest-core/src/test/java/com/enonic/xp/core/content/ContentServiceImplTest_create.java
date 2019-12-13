@@ -1,12 +1,12 @@
 package com.enonic.xp.core.content;
 
 import java.time.Instant;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.attachment.Attachments;
@@ -189,19 +189,19 @@ public class ContentServiceImplTest_create
             type( ContentTypeName.folder() ).
             workflowInfo( WorkflowInfo.create().
                 state( WorkflowState.PENDING_APPROVAL ).
-                checks( ImmutableMap.of( "My check", WorkflowCheckState.REJECTED ) ).
+                checks( Map.of( "My check", WorkflowCheckState.REJECTED ) ).
                 build() ).
             build();
 
         final Content content = this.contentService.create( createContentParams );
         assertNotNull( content.getWorkflowInfo() );
         assertEquals( WorkflowState.PENDING_APPROVAL, content.getWorkflowInfo().getState() );
-        assertEquals( ImmutableMap.of( "My check", WorkflowCheckState.REJECTED ), content.getWorkflowInfo().getChecks() );
+        assertEquals( Map.of( "My check", WorkflowCheckState.REJECTED ), content.getWorkflowInfo().getChecks() );
 
         final Content storedContent = this.contentService.getById( content.getId() );
         assertNotNull( storedContent.getWorkflowInfo() );
         assertEquals( WorkflowState.PENDING_APPROVAL, storedContent.getWorkflowInfo().getState() );
-        assertEquals( ImmutableMap.of( "My check", WorkflowCheckState.REJECTED ), storedContent.getWorkflowInfo().getChecks() );
+        assertEquals( Map.of( "My check", WorkflowCheckState.REJECTED ), storedContent.getWorkflowInfo().getChecks() );
     }
 
     @Test

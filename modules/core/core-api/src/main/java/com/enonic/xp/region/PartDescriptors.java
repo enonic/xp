@@ -18,8 +18,7 @@ public final class PartDescriptors
 
     public static PartDescriptors empty()
     {
-        final ImmutableList<PartDescriptor> list = ImmutableList.of();
-        return new PartDescriptors( list );
+        return new PartDescriptors( ImmutableList.of() );
     }
 
     public static PartDescriptors from( final PartDescriptor... descriptors )

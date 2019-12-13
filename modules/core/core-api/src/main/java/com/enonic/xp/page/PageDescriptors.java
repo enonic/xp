@@ -18,8 +18,7 @@ public final class PageDescriptors
 
     public static PageDescriptors empty()
     {
-        final ImmutableList<PageDescriptor> list = ImmutableList.of();
-        return new PageDescriptors( list );
+        return new PageDescriptors( ImmutableList.of() );
     }
 
     public static PageDescriptors from( final PageDescriptor... pageDescriptors )

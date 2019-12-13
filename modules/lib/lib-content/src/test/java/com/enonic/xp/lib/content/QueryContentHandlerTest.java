@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.content;
 
 import java.time.Instant;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -83,7 +84,7 @@ public class QueryContentHandlerTest
 
         final Aggregations aggregations = Aggregations.from( aggr1, aggr2, aggr3, aggr4, aggr5 );
 
-        final ImmutableMap highlight = ImmutableMap.of( ContentId.from( "123" ), HighlightedProperties.create().
+        final Map<ContentId, HighlightedProperties> highlight = Map.of( ContentId.from( "123" ), HighlightedProperties.create().
             add( HighlightedProperty.create().
                 name( "property1" ).
                 addFragment( "fragment1_1" ).
@@ -117,7 +118,7 @@ public class QueryContentHandlerTest
             totalHits( 0 ).
             contents( ContentIds.empty() ).
             aggregations( Aggregations.empty() ).
-            highlight( ImmutableMap.of() ).
+            highlight( Map.of() ).
             build();
         Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findResult );
         Mockito.when( this.contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.empty() );
