@@ -5,8 +5,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.base.Joiner;
-
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.HtmlTag;
@@ -44,7 +42,7 @@ public class ContributionInjectionTest
         final List<String> result = doInject( HtmlTag.BODY_END );
         assertNotNull( result );
         assertEquals( 2, result.size() );
-        assertEquals( "1,2", Joiner.on( "," ).join( result ) );
+        assertEquals( "1,2", String.join( ",", result ) );
     }
 
     @Test

@@ -1,7 +1,6 @@
 package com.enonic.xp.schema;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -23,14 +22,14 @@ public abstract class BaseSchemaName
         final int index = name.indexOf( SEPARATOR );
         this.applicationKey = ApplicationKey.from( index == -1 ? name : name.substring( 0, index ) );
         this.localName = index == -1 ? "" : name.substring( index + 1 );
-        this.refString = Joiner.on( SEPARATOR ).join( this.applicationKey.toString(), this.localName );
+        this.refString = this.applicationKey + SEPARATOR + this.localName;
     }
 
     protected BaseSchemaName( final ApplicationKey applicationKey, final String localName )
     {
         this.applicationKey = applicationKey;
         this.localName = localName;
-        this.refString = Joiner.on( SEPARATOR ).join( this.applicationKey.toString(), this.localName );
+        this.refString = this.applicationKey + SEPARATOR + this.localName;
     }
 
     public String getLocalName()

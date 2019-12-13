@@ -3,12 +3,11 @@ package com.enonic.xp.portal.impl.url;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.net.UrlEscapers;
 
@@ -127,9 +126,8 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
             return urlEncodePathSegment( value );
         }
 
-        final Iterable<String> splitted = Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value );
-        final Stream<String> transformed = Lists.newArrayList( splitted ).stream().map( this::urlEncodePathSegment );
-        return Joiner.on( '/' ).join( transformed.iterator() );
+        return StreamSupport.stream( Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value ).spliterator(), false ).
+            map( this::urlEncodePathSegment ).collect( Collectors.joining( "/" ) );
     }
 
     public final String build()
