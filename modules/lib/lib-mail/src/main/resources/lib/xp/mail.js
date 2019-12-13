@@ -9,7 +9,7 @@
 
 function checkRequired(params, name) {
     if (params[name] === undefined) {
-        throw "Parameter '" + name + "' is required";
+        throw 'Parameter \'' + name + '\' is required';
     }
 }
 

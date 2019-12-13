@@ -2,13 +2,13 @@ package com.enonic.xp.repo.impl.dump.upgrade;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 import com.google.common.io.Files;
@@ -39,6 +39,10 @@ import com.enonic.xp.util.Version;
 public class RepositoryIdDumpUpgrader
     extends AbstractMetaDumpUpgrader
 {
+    private static final Version MODEL_VERSION = new Version( 5 );
+
+    private static final String NAME = "CMS Repository renaming";
+
     private static final RepositoryId OLD_REPOSITORY_ID = Pre5ContentConstants.CONTENT_REPO_ID;
 
     private static final RepositoryId NEW_REPOSITORY_ID = ContentConstants.CONTENT_REPO_ID;
@@ -47,8 +51,6 @@ public class RepositoryIdDumpUpgrader
 
     private static final Segment SEGMENT =
         RepositorySegmentUtils.toSegment( ContentConstants.CONTENT_REPO_ID, NodeConstants.NODE_SEGMENT_LEVEL );
-
-    private static final Version MODEL_VERSION = new Version( 5, 0, 0 );
 
     public RepositoryIdDumpUpgrader( final Path basePath )
     {
@@ -62,9 +64,15 @@ public class RepositoryIdDumpUpgrader
     }
 
     @Override
-    public void upgrade( final String dumpName )
+    public String getName()
     {
-        super.upgrade( dumpName );
+        return NAME;
+    }
+
+    @Override
+    public void doUpgrade( final String dumpName )
+    {
+        super.doUpgrade( dumpName );
 
         upgradeRepositoryDir();
         upgradeDumpMetaFile();
@@ -188,6 +196,7 @@ public class RepositoryIdDumpUpgrader
     }
 
 
+    @Override
     protected void upgradeRepository( final RepositoryId repositoryId )
     {
         if ( SystemConstants.SYSTEM_REPO_ID.equals( repositoryId ) )
@@ -196,6 +205,7 @@ public class RepositoryIdDumpUpgrader
         }
     }
 
+    @Override
     protected void upgradeBranch( final RepositoryId repositoryId, final Branch branch )
     {
         if ( ContentConstants.BRANCH_MASTER.equals( branch ) )
@@ -204,16 +214,19 @@ public class RepositoryIdDumpUpgrader
         }
     }
 
+    @Override
     protected void upgradeBranchEntries( final RepositoryId repositoryId, final Branch branch, final File entriesFile )
     {
         super.upgradeBranchEntries( repositoryId, branch, entriesFile );
     }
 
+    @Override
     protected boolean hasToUpgradeEntry( final RepositoryId repositoryId, final String entryContent, final String entryName )
     {
         return OLD_REPOSITORY_FILE_NAME.equals( entryName );
     }
 
+    @Override
     protected String upgradeEntryName( final RepositoryId repositoryId, final String entryName )
     {
         return upgradeString( entryName );
@@ -231,7 +244,7 @@ public class RepositoryIdDumpUpgrader
 
     private NodeVersionDataJson getNodeVersion( final DumpBlobRecord dumpBlobRecord )
     {
-        final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( Charsets.UTF_8 );
+        final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 );
         try
         {
             return deserializeValue( charSource.read(), NodeVersionDataJson.class );
@@ -245,7 +258,7 @@ public class RepositoryIdDumpUpgrader
     private void writeNodeVersion( final NodeVersion nodeVersion, final DumpBlobRecord dumpBlobRecord )
     {
         final String serializedUpgradedNodeVersion = NodeVersionJsonSerializer.create( false ).toNodeString( nodeVersion );
-        final ByteSource byteSource = ByteSource.wrap( serializedUpgradedNodeVersion.getBytes( Charsets.UTF_8 ) );
+        final ByteSource byteSource = ByteSource.wrap( serializedUpgradedNodeVersion.getBytes( StandardCharsets.UTF_8 ) );
         try
         {
             byteSource.copyTo( dumpBlobRecord.getByteSink() );

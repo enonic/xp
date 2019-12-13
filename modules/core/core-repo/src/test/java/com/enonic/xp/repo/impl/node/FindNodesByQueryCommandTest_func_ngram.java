@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfig;
@@ -13,16 +13,16 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.parser.QueryParser;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FindNodesByQueryCommandTest_func_ngram
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -111,6 +111,26 @@ public class FindNodesByQueryCommandTest_func_ngram
 
         queryAndAssert( node, "ngram('title', 'test', 'AND')", 1 );
         queryAndAssert( node, "ngram('title', 'delim', 'AND')", 1 );
+    }
+
+    @Test
+    public void ascii_folding_with_wildcard()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "title", "grønnsaker" );
+
+        final Node node = createNode( CreateNodeParams.create().
+            name( "my-node-1" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            indexConfigDocument( PatternIndexConfigDocument.create().
+                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build() ).
+            build(), true );
+
+        queryAndAssert( node, "ngram('title', 'grønnsak*', 'AND')", 1 );
     }
 
     private Node createNodes()

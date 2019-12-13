@@ -1,17 +1,17 @@
 package com.enonic.xp.schema.xdata;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.support.AbstractImmutableEntityList;
@@ -25,7 +25,7 @@ public final class XDatas
     private XDatas( final ImmutableList<XData> list )
     {
         super( list );
-        this.map = Maps.uniqueIndex( list, XData::getName );
+        this.map = list.stream().collect( ImmutableMap.toImmutableMap( XData::getName, Function.identity() ) );
     }
 
     public XDatas add( final XData... xDatas )
@@ -40,7 +40,7 @@ public final class XDatas
 
     private XDatas add( final ImmutableList<XData> xDatas )
     {
-        final List<XData> tmp = Lists.newArrayList();
+        final List<XData> tmp = new ArrayList<>();
         tmp.addAll( this.list );
         tmp.addAll( xDatas );
 

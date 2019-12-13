@@ -2,10 +2,10 @@ package com.enonic.xp.lib.content;
 
 import java.time.Instant;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.aggregation.Bucket;
@@ -14,29 +14,29 @@ import com.enonic.xp.aggregation.Buckets;
 import com.enonic.xp.aggregation.DateRangeBucket;
 import com.enonic.xp.aggregation.NumericRangeBucket;
 import com.enonic.xp.aggregation.StatsAggregation;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.highlight.HighlightedProperties;
+import com.enonic.xp.highlight.HighlightedProperty;
 
 public class QueryContentHandlerTest
     extends BaseContentHandlerTest
 {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
     public void testExample()
     {
-        setupQuery( 2, true );
+        setupQuery( 2, true, true );
         runScript( "/lib/xp/examples/content/query.js" );
     }
 
     @Test
     public void filterArray()
     {
-        setupQuery( 2, false );
+        setupQuery( 2, false, false );
         runFunction( "/test/QueryContentHandlerTest_filter_array.js", "query" );
     }
 
@@ -44,11 +44,11 @@ public class QueryContentHandlerTest
     public void query()
         throws Exception
     {
-        setupQuery( 3, true );
+        setupQuery( 3, true, false );
         runFunction( "/test/QueryContentHandlerTest.js", "query" );
     }
 
-    private void setupQuery( final int count, final boolean aggs )
+    private void setupQuery( final int count, final boolean aggs, final boolean addHighlight )
     {
         final Contents contents = TestDataFixtures.newContents( count );
 
@@ -82,11 +82,27 @@ public class QueryContentHandlerTest
         final StatsAggregation aggr5 = StatsAggregation.create( "item_count" ).avg( 3 ).max( 5 ).min( 1 ).sum( 15 ).count( 5 ).build();
 
         final Aggregations aggregations = Aggregations.from( aggr1, aggr2, aggr3, aggr4, aggr5 );
+
+        final ImmutableMap highlight = ImmutableMap.of( ContentId.from( "123" ), HighlightedProperties.create().
+            add( HighlightedProperty.create().
+                name( "property1" ).
+                addFragment( "fragment1_1" ).
+                addFragment( "fragment1_2" ).
+                build() ).
+            build(), ContentId.from( "456" ), HighlightedProperties.create().
+            add( HighlightedProperty.create().
+                name( "property2" ).
+                addFragment( "fragment2_1" ).
+                addFragment( "fragment2_2" ).
+                build() ).
+            build() );
+
         final FindContentIdsByQueryResult findResult = FindContentIdsByQueryResult.create().
             hits( contents.getSize() ).
             totalHits( 20 ).
             contents( contents.getIds() ).
             aggregations( aggs ? aggregations : null ).
+            highlight( addHighlight ? highlight : null ).
             build();
         Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findResult );
         Mockito.when( this.contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( contents );
@@ -101,6 +117,7 @@ public class QueryContentHandlerTest
             totalHits( 0 ).
             contents( ContentIds.empty() ).
             aggregations( Aggregations.empty() ).
+            highlight( ImmutableMap.of() ).
             build();
         Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findResult );
         Mockito.when( this.contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.empty() );

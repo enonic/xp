@@ -1,9 +1,9 @@
 package com.enonic.xp.content;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Lists;
 
 @Beta
 public class DeleteContentsResult
@@ -35,9 +35,9 @@ public class DeleteContentsResult
 
     public static final class Builder
     {
-        private List<ContentId> pendingContents = Lists.newArrayList();
+        private List<ContentId> pendingContents = new ArrayList<>();
 
-        private List<ContentId> deletedContents = Lists.newArrayList();
+        private List<ContentId> deletedContents = new ArrayList<>();
 
         private Builder()
         {

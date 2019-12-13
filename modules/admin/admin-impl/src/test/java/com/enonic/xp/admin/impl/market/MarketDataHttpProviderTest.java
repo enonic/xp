@@ -1,59 +1,128 @@
 package com.enonic.xp.admin.impl.market;
 
-import org.junit.Before;
-import org.junit.Test;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.net.InetSocketAddress;
+import java.util.List;
+import java.util.zip.GZIPOutputStream;
 
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.Protocol;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.sun.net.httpserver.HttpServer;
 
 import com.enonic.xp.market.MarketException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MarketDataHttpProviderTest
+class MarketDataHttpProviderTest
 {
     private MarketDataHttpProvider provider;
 
-    private String marketUrl = "https://market.enonic.com/applications";
+    private HttpServer server;
 
-    @Before
-    public void setUp()
+    private String marketUrl;
+
+    @BeforeEach
+    void setUp()
         throws Exception
     {
-        this.provider = new MarketDataHttpProvider();
+        server = HttpServer.create( new InetSocketAddress( 0 ), 0 );
+        server.start();
+        marketUrl = "http://localhost:" + this.server.getAddress().getPort();
+
+        provider = new MarketDataHttpProvider();
+        provider.activate( new MarketConfig()
+        {
+            @Override
+            public String marketUrl()
+            {
+                return marketUrl;
+            }
+
+            @Override
+            public Class<? extends Annotation> annotationType()
+            {
+                return null;
+            }
+        } );
+    }
+
+    @AfterEach
+    void shutdown()
+    {
+        this.server.stop( 0 );
     }
 
     @Test
-    public void test_403()
-        throws Exception
+    void test_403()
     {
         testStatus( 403 );
     }
 
     @Test
-    public void test_404()
-        throws Exception
+    void test_404()
     {
         testStatus( 404 );
     }
 
     @Test
-    public void test_500()
-        throws Exception
+    void test_500()
     {
         testStatus( 500 );
     }
 
+
+    @Test
+    void test_200()
+        throws Exception
+    {
+        this.server.createContext( "/", exchange -> {
+            exchange.sendResponseHeaders( 200, 0 );
+            try (final InputStream is = getClass().getResourceAsStream( "empty_result.json" ))
+            {
+                OutputStream os = exchange.getResponseBody();
+                os.write( is.readAllBytes() );
+            }
+            exchange.close();
+        } );
+        provider.search( List.of(), "latest", 0, 0 );
+    }
+
+    @Test
+    void test_200_gzip()
+        throws Exception
+    {
+        this.server.createContext( "/", exchange -> {
+            final byte[] bytes;
+            try (final InputStream is = getClass().getResourceAsStream(
+                "empty_result.json" ); final ByteArrayOutputStream out = new ByteArrayOutputStream(); final GZIPOutputStream gzip = new GZIPOutputStream(
+                out ))
+            {
+                gzip.write( is.readAllBytes() );
+                gzip.finish();
+                bytes = out.toByteArray();
+            }
+
+            exchange.getResponseHeaders().add( "Content-Encoding", "gzip" );
+            exchange.sendResponseHeaders( 200, 0 );
+            OutputStream os = exchange.getResponseBody();
+            os.write( bytes );
+            exchange.close();
+        } );
+        provider.search( List.of(), "latest", 0, 0 );
+    }
+
     private void testStatus( final int code )
     {
-        final Response response = createResponse( code );
+        prepareResponse( code );
 
         try
         {
-            provider.parseResponse( response );
+            provider.search( List.of(), "latest", 0, 0 );
         }
         catch ( MarketException e )
         {
@@ -62,15 +131,11 @@ public class MarketDataHttpProviderTest
         }
     }
 
-    private Response createResponse( final int code )
+    private void prepareResponse( final int code )
     {
-        return new Response.Builder().
-            code( code ).
-            request( new Request.Builder().
-                url( this.marketUrl ).
-                build() ).
-            protocol( Protocol.HTTP_1_1 ).
-            body( ResponseBody.create( MediaType.parse( "application/json" ), "this is my body" ) ).
-            build();
+        this.server.createContext( "/", exchange -> {
+            exchange.sendResponseHeaders( code, 0 );
+            exchange.close();
+        } );
     }
 }

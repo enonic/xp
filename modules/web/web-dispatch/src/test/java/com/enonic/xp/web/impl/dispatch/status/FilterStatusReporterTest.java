@@ -10,11 +10,11 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.ServiceReference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FilterStatusReporterTest
     extends ResourceReporterTest
@@ -42,7 +42,7 @@ public class FilterStatusReporterTest
 
 
     @WebFilter
-    private final class MyFilter
+    private static final class MyFilter
         implements Filter
     {
         @Override

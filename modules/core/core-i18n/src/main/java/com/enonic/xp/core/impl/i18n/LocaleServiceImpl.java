@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.i18n;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -13,10 +13,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
@@ -26,6 +26,7 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang.StringUtils.substringBefore;
 import static org.apache.commons.lang.StringUtils.substringBetween;
@@ -221,18 +222,18 @@ public final class LocaleServiceImpl
 
         props.putAll( loadBundle( applicationKey, bundleName, "" ) );
 
-        if ( StringUtils.isNotEmpty( lang ) )
+        if ( !isNullOrEmpty( lang ) )
         {
             lang = lang.toLowerCase();
             props.putAll( loadBundle( applicationKey, bundleName, DELIMITER + lang ) );
         }
 
-        if ( StringUtils.isNotEmpty( country ) )
+        if ( !isNullOrEmpty( country ) )
         {
             props.putAll( loadBundle( applicationKey, bundleName, DELIMITER + lang + DELIMITER + country ) );
         }
 
-        if ( StringUtils.isNotEmpty( variant ) )
+        if ( !isNullOrEmpty( variant ) )
         {
             variant = variant.toLowerCase();
             props.putAll( loadBundle( applicationKey, bundleName, DELIMITER + lang + DELIMITER + country + DELIMITER + variant ) );
@@ -256,7 +257,7 @@ public final class LocaleServiceImpl
 
         if ( resource.exists() )
         {
-            try (InputStream in = resource.openStream())
+            try (Reader in = resource.openReader())
             {
                 properties.load( in );
             }
@@ -270,7 +271,14 @@ public final class LocaleServiceImpl
     }
 
     @Override
-    public void invalidate( final ApplicationKey appKey )
+    @Deprecated
+    public void invalidate( final ApplicationKey key )
+    {
+        invalidate( key, ApplicationInvalidationLevel.FULL );
+    }
+
+    @Override
+    public void invalidate( final ApplicationKey appKey, final ApplicationInvalidationLevel level )
     {
         final String cacheKeyPrefix = appKey.toString() + KEY_SEPARATOR;
         bundleCache.keySet().removeIf( ( k ) -> k.startsWith( cacheKeyPrefix ) );

@@ -6,15 +6,13 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.util.GlobPatternMatcher;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 @Beta
 public class PatternIndexConfigDocument
@@ -94,6 +92,7 @@ public class PatternIndexConfigDocument
         return defaultConfig;
     }
 
+    @Override
     public AllTextIndexConfig getAllTextConfig()
     {
         return allTextConfig;
@@ -121,20 +120,15 @@ public class PatternIndexConfigDocument
         {
             return false;
         }
-        if ( !Objects.equals( this.allTextConfig, that.allTextConfig ) )
-        {
-            return false;
-        }
-
-        return true;
+        return Objects.equals( this.allTextConfig, that.allTextConfig );
     }
 
     public static final class Builder
         extends AbstractIndexConfigDocument.Builder<Builder>
     {
-        private SortedSet<PathIndexConfig> pathIndexConfigs = Sets.newTreeSet();
+        private SortedSet<PathIndexConfig> pathIndexConfigs = new TreeSet<>();
 
-        private Map<String, PathIndexConfig> stringPathIndexConfigMap = Maps.newHashMap();
+        private Map<String, PathIndexConfig> stringPathIndexConfigMap = new HashMap<>();
 
         private IndexConfig defaultConfig = IndexConfig.BY_TYPE;
 
@@ -203,7 +197,7 @@ public class PatternIndexConfigDocument
 
         public Builder addAllTextConfigLanguage( final String language )
         {
-            if ( StringUtils.isNotBlank( language ) )
+            if ( !nullToEmpty( language ).isBlank() )
             {
                 this.allTextIndexConfig.addLanguage( language );
             }

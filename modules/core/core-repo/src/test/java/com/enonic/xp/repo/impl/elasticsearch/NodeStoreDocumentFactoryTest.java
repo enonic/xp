@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch;
 
 import java.util.Collection;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.PropertyTree;
@@ -17,7 +17,8 @@ import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexValueString
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NodeStoreDocumentFactoryTest
 {

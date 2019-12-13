@@ -6,8 +6,8 @@ import com.enonic.xp.query.aggregation.AbstractRangeAggregationQuery;
 import com.enonic.xp.query.aggregation.DateRangeAggregationQuery;
 import com.enonic.xp.query.aggregation.GeoDistanceAggregationQuery;
 import com.enonic.xp.query.aggregation.NumericRangeAggregationQuery;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AbstractBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 
 class RangeAggregationQueryBuilderFactory
     extends AbstractBuilderFactory

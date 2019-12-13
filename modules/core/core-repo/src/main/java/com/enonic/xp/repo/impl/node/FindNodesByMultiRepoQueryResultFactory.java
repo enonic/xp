@@ -34,6 +34,7 @@ class FindNodesByMultiRepoQueryResultFactory
             nodeId( NodeId.from( hit.getId() ) ).
             score( hit.getScore() ).
             explanation( hit.getExplanation() ).
+            highlight( hit.getHighlightedProperties() ).
             build();
     }
 

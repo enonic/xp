@@ -2,7 +2,7 @@ package com.enonic.xp.macro;
 
 import java.time.Instant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
@@ -10,7 +10,7 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MacroDescriptorTest
 {

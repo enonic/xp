@@ -1,4 +1,5 @@
 include 'core:core-api'
+include 'core:core-audit'
 include 'core:core-event'
 include 'core:core-schema'
 include 'core:core-repo'
@@ -39,6 +40,7 @@ include 'web:web-jetty'
 include 'web:web-dos'
 include 'web:web-dispatch'
 include 'web:web-session'
+include 'web:web-header'
 
 include 'jaxrs:jaxrs-api'
 include 'jaxrs:jaxrs-impl'
@@ -53,7 +55,6 @@ include 'admin:admin-event'
 
 include 'itest:itest-core'
 
-include 'tools:toolbox'
 include 'tools:testing'
 
 include 'lib:lib-common'
@@ -72,6 +73,7 @@ include 'lib:lib-value'
 include 'lib:lib-event'
 include 'lib:lib-admin'
 include 'lib:lib-cluster'
+include 'lib:lib-auditlog'
 
 include 'launcher:launcher-api'
 include 'launcher:launcher-impl'
@@ -82,20 +84,14 @@ include 'blobstore:blobstore-file'
 
 include 'app:app-system'
 
-include 'repack:repack-attoparser'
 include 'repack:repack-elasticsearch'
-include 'repack:repack-jparsec'
-include 'repack:repack-okhttp'
 include 'repack:repack-resteasy'
 include 'repack:repack-javax-cache-api'
-include 'repack:repack-saxon'
 
 include 'runtime'
 include 'docs'
 
 rootProject.name = 'xp'
-
-enableFeaturePreview( 'STABLE_PUBLISHING' )
 
 configureProjects( rootProject )
 
@@ -113,6 +109,3 @@ def configureProject( p )
     p.projectDir = new File( (File) settingsDir, "modules/${dirName}" )
     assert p.projectDir.isDirectory()
 }
-
-
-

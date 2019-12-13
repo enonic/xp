@@ -1,12 +1,12 @@
 package com.enonic.xp.util;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.google.common.net.MediaType;
 
@@ -21,14 +21,13 @@ public final class MediaTypes
 
     private final static MediaType DEFAULT = MediaType.OCTET_STREAM;
 
-    private final List<MediaTypeProvider> providers;
+    private final List<MediaTypeProvider> providers = new CopyOnWriteArrayList<>();
 
     private final Map<String, MediaType> mediaTypes;
 
     private MediaTypes()
     {
-        this.providers = Lists.newArrayList();
-        this.mediaTypes = Maps.newHashMap();
+        this.mediaTypes = new HashMap<>();
 
         this.mediaTypes.put( "gif", MediaType.GIF );
         this.mediaTypes.put( "png", MediaType.PNG );
@@ -37,6 +36,9 @@ public final class MediaTypes
         this.mediaTypes.put( "pdf", MediaType.PDF );
         this.mediaTypes.put( "json", MediaType.JSON_UTF_8.withoutParameters() );
         this.mediaTypes.put( "js", MediaType.JAVASCRIPT_UTF_8.withoutParameters() );
+        this.mediaTypes.put( "es", MediaType.JAVASCRIPT_UTF_8.withoutParameters() );
+        this.mediaTypes.put( "es6", MediaType.JAVASCRIPT_UTF_8.withoutParameters() );
+        this.mediaTypes.put( "mjs", MediaType.JAVASCRIPT_UTF_8.withoutParameters() );
         this.mediaTypes.put( "css", MediaType.CSS_UTF_8.withoutParameters() );
         this.mediaTypes.put( "html", MediaType.HTML_UTF_8.withoutParameters() );
         this.mediaTypes.put( "xml", MediaType.XML_UTF_8.withoutParameters() );
@@ -70,7 +72,7 @@ public final class MediaTypes
     @Override
     public Map<String, MediaType> asMap()
     {
-        final Map<String, MediaType> map = Maps.newHashMap( this.mediaTypes );
+        final Map<String, MediaType> map = new HashMap<>( this.mediaTypes );
         for ( final MediaTypeProvider provider : this.providers )
         {
             map.putAll( provider.asMap() );

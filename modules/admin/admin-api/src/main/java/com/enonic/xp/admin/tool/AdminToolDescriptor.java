@@ -1,7 +1,6 @@
 package com.enonic.xp.admin.tool;
 
-import java.util.LinkedList;
-import java.util.List;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
@@ -31,7 +30,7 @@ public class AdminToolDescriptor
         displayNameI18nKey = builder.displayNameI18nKey;
         description = builder.description;
         descriptionI18nKey = builder.descriptionI18nKey;
-        allowedPrincipals = PrincipalKeys.from( builder.allowedPrincipals );
+        allowedPrincipals = PrincipalKeys.from( builder.allowedPrincipals.build() );
     }
 
     public DescriptorKey getKey()
@@ -113,7 +112,7 @@ public class AdminToolDescriptor
 
         private String descriptionI18nKey;
 
-        private List<PrincipalKey> allowedPrincipals = new LinkedList<>();
+        private ImmutableSet.Builder<PrincipalKey> allowedPrincipals = ImmutableSet.builder();
 
         private Builder()
         {

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.jparsec.internal.util.Lists;
-
 import com.google.common.collect.ImmutableList;
 
 public final class AllTextIndexConfig
@@ -55,7 +53,7 @@ public final class AllTextIndexConfig
 
     public static class Builder
     {
-        private List<String> languages = Lists.arrayList();
+        private List<String> languages = new ArrayList<>();
 
         Builder()
         {

@@ -1,15 +1,17 @@
 package com.enonic.xp.context;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class LocalScopeImplTest
 {
-    private final class SampleValue
+    private static final class SampleValue
     {
     }
 

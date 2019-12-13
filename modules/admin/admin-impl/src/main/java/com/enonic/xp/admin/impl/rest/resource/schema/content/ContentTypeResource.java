@@ -15,7 +15,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -44,6 +43,8 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.support.AbstractImmutableEntityList;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Path(ResourceConstants.REST_ROOT + "schema/content")
 @Produces("application/json")
@@ -162,7 +163,6 @@ public final class ContentTypeResource
 
         final LocaleMessageResolver localeMessageResolver =
             new LocaleMessageResolver( this.localeService, ApplicationKey.from( applicationKey ) );
-        ;
         return new ContentTypeSummaryListJson( contentTypes, this.contentTypeIconUrlResolver, localeMessageResolver );
     }
 
@@ -183,7 +183,7 @@ public final class ContentTypeResource
         final Object image = HELPER.isSvg( icon ) ? icon.toByteArray() : HELPER.resizeImage( icon.asInputStream(), size );
         final Response.ResponseBuilder responseBuilder = Response.ok( image, icon.getMimeType() );
 
-        if ( StringUtils.isNotEmpty( hash ) )
+        if ( !isNullOrEmpty( hash ) )
         {
             applyMaxAge( Integer.MAX_VALUE, responseBuilder );
         }

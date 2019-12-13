@@ -2,6 +2,7 @@ package com.enonic.xp.web.impl.dispatch.status;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +13,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.web.dispatch.DispatchConstants;
@@ -30,7 +30,7 @@ public abstract class ResourceStatusReporter<T extends ResourceDefinition>
     ResourceStatusReporter( final String name )
     {
         this.name = name;
-        this.map = Maps.newHashMap();
+        this.map = new HashMap<>();
         this.list = Lists.newCopyOnWriteArrayList();
     }
 

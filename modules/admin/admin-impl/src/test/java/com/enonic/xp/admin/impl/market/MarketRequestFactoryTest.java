@@ -1,33 +1,33 @@
 package com.enonic.xp.admin.impl.market;
 
+import java.net.http.HttpRequest;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import com.squareup.okhttp.Request;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.Assert.*;
-
-public class MarketRequestFactoryTest
+class MarketRequestFactoryTest
 {
     @Test
-    public void test_create()
-        throws Exception
+    void test_create()
     {
         final List<String> ids = Arrays.asList( "1", "2", "3" );
-        final String url = "https://market.test.com/test", version = "newest";
-        final Integer from = 0, to = 10;
+        final String url = "https://market.test.com/test";
+        final String version = "newest";
+        final int from = 0;
+        final int to = 10;
 
-        final Request request = MarketRequestFactory.
+        final HttpRequest request = MarketRequestFactory.
             create( url, ids, version, from, to );
 
-        assertTrue( request.isHttps() );
+        assertEquals( "https", request.uri().getScheme() );
 
-        assertEquals( request.httpUrl().encodedPath(), "/test" );
-        assertEquals( request.httpUrl().queryParameter( "xpVersion" ), version );
-        assertEquals( request.httpUrl().queryParameter( "start" ), from.toString() );
-        assertEquals( request.httpUrl().queryParameter( "count" ), to.toString() );
-
+        assertEquals( request.uri().getPath(), "/test" );
+        assertTrue( request.uri().getQuery().contains( "xpVersion=newest" ) );
+        assertTrue( request.uri().getQuery().contains( "start=0" ) );
+        assertTrue( request.uri().getQuery().contains( "count=10" ) );
     }
 }

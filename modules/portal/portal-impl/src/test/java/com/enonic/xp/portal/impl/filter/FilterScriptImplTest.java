@@ -4,8 +4,8 @@ import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -28,7 +28,8 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FilterScriptImplTest
 {
@@ -44,7 +45,7 @@ public class FilterScriptImplTest
     {
     }
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

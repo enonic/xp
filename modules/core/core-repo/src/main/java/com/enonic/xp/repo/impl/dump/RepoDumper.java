@@ -2,13 +2,12 @@ package com.enonic.xp.repo.impl.dump;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -51,7 +50,7 @@ class RepoDumper
 {
     private static final int DEFAULT_BATCH_SIZE = 5000;
 
-    private final Logger LOG = LoggerFactory.getLogger( RepoDumper.class );
+    private static final Logger LOG = LoggerFactory.getLogger( RepoDumper.class );
 
     private final RepositoryId repositoryId;
 
@@ -89,7 +88,7 @@ class RepoDumper
 
     public RepoDumpResult execute()
     {
-        final Set<NodeId> dumpedNodes = Sets.newHashSet();
+        final Set<NodeId> dumpedNodes = new HashSet<>();
 
         getBranches().forEach( ( branch ) -> dumpedNodes.addAll( setContext( branch ).callWith( this::doExecute ) ) );
 
@@ -107,7 +106,7 @@ class RepoDumper
     {
         this.nodeService.refresh( RefreshMode.ALL );
 
-        Set<NodeId> dumpedNodes = Sets.newHashSet();
+        Set<NodeId> dumpedNodes = new HashSet<>();
 
         final Branch branch = ContextAccessor.current().getBranch();
 
@@ -133,7 +132,7 @@ class RepoDumper
 
     private Set<NodeId> dumpBranch( final BranchDumpResult.Builder dumpResult )
     {
-        Set<NodeId> dumpedNodes = Sets.newHashSet();
+        Set<NodeId> dumpedNodes = new HashSet<>();
 
         final Node rootNode = this.nodeService.getRoot();
         final BatchedGetChildrenExecutor executor = BatchedGetChildrenExecutor.create().
@@ -169,7 +168,7 @@ class RepoDumper
         {
             writer.openVersionsMeta( this.repositoryId );
 
-            dumpedNodes.stream().forEach( ( nodeId ) -> {
+            dumpedNodes.forEach( ( nodeId ) -> {
 
                 final VersionsDumpEntry.Builder builder = VersionsDumpEntry.create( nodeId );
 
@@ -177,7 +176,7 @@ class RepoDumper
 
                 for ( final NodeVersionMetadata metaData : versions.getNodeVersionsMetadata() )
                 {
-                    doStoreVersion( builder, metaData );
+                    doStoreVersion( builder, metaData, this.dumpResult );
                     this.dumpResult.addedVersion();
                 }
 
@@ -224,13 +223,21 @@ class RepoDumper
         }
     }
 
-    private void doStoreVersion( final VersionsDumpEntry.Builder builder, final NodeVersionMetadata metaData )
+    private void doStoreVersion( final VersionsDumpEntry.Builder builder, final NodeVersionMetadata metaData,
+                                 final RepoDumpResult.Builder dumpResult )
     {
-        final NodeVersion nodeVersion = this.nodeService.getByNodeVersionKey( metaData.getNodeVersionKey() );
-        builder.addVersion( VersionMetaFactory.create( metaData ) );
+        try
+        {
+            final NodeVersion nodeVersion = this.nodeService.getByNodeVersionKey( metaData.getNodeVersionKey() );
+            builder.addVersion( VersionMetaFactory.create( metaData ) );
 
-        storeVersionBlob( metaData );
-        storeVersionBinaries( metaData, nodeVersion );
+            storeVersionBlob( metaData );
+            storeVersionBinaries( metaData, nodeVersion );
+        }
+        catch ( Exception e )
+        {
+            dumpResult.error( DumpError.error( e.getMessage() ) );
+        }
     }
 
     private void storeVersionBlob( final NodeVersionMetadata metaData )
@@ -297,7 +304,7 @@ class RepoDumper
         }
         catch ( Exception e )
         {
-            dumpResult.error( DumpError.error( "Cannot dump node with id [" + nodeId + "]: " + e.getMessage() ) );
+            dumpResult.error( DumpError.error( "Cannot dump node with id [" + nodeId + "]: " + e.getMessage() ) );
         }
     }
 

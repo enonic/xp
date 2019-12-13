@@ -1,10 +1,10 @@
 package com.enonic.xp.context;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
@@ -19,7 +19,7 @@ public final class ContextBuilder
 
     private ContextBuilder()
     {
-        this.attributes = Maps.newHashMap();
+        this.attributes = new HashMap<>();
     }
 
     public ContextBuilder repositoryId( final String value )

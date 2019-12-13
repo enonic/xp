@@ -1,20 +1,17 @@
 package com.enonic.xp.repo.impl.dump;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
-import com.enonic.xp.repo.impl.node.NodeHelper;
 
 public class RepoLoaderTest
     extends AbstractNodeTest
 {
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         createDefaultRootNode();
     }
 

@@ -2,6 +2,7 @@ package com.enonic.xp.server.internal.config;
 
 import java.io.File;
 import java.io.FileReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
 import java.util.Properties;
 
@@ -27,14 +28,15 @@ final class ConfigLoader
         throws Exception
     {
         final Properties props = new Properties();
-        props.load( new FileReader( file ) );
+        try (FileReader reader = new FileReader( file, StandardCharsets.UTF_8 ))
+        {
+            props.load(reader);
+        }
 
         final ConfigBuilder builder = ConfigBuilder.create();
         builder.addAll( props );
 
         final Configuration config = this.interpolator.interpolate( builder.build() );
-        final Hashtable<String, Object> result = new Hashtable<>();
-        result.putAll( config.asMap() );
-        return result;
+        return new Hashtable<>( config.asMap() );
     }
 }

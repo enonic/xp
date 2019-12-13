@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.LinkOption;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.io.Files;
 
@@ -17,24 +17,24 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileDumpReaderTest
 {
-    @Rule
-    public final TemporaryFolder root = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private FileDumpReader fileDumpReader;
 
     private File dumpFolder;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        this.dumpFolder = root.newFolder( "myDump" );
+        this.dumpFolder = java.nio.file.Files.createDirectory( this.temporaryFolder.resolve( "myDump" ) ).toFile();
         createMetaDataFile( dumpFolder );
-        this.fileDumpReader = new FileDumpReader( root.getRoot().toPath(), "myDump", null );
+        this.fileDumpReader = new FileDumpReader( temporaryFolder.toFile().toPath(), "myDump", null );
     }
 
     @Test

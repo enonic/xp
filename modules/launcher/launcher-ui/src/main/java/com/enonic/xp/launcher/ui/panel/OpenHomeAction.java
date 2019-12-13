@@ -18,6 +18,7 @@ final class OpenHomeAction
         setEnabled( true );
     }
 
+    @Override
     public void actionPerformed( ActionEvent event )
     {
         final File dir = MainWindow.get().getHomeDir();

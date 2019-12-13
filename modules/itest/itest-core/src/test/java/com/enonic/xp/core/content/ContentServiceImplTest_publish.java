@@ -1,11 +1,14 @@
 package com.enonic.xp.core.content;
 
 import java.time.Instant;
+import java.util.Iterator;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.CompareContentParams;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareStatus;
@@ -15,12 +18,18 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
+import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.FindContentVersionsParams;
+import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.MoveContentParams;
-import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.RenameContentParams;
+import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -29,7 +38,12 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ContentServiceImplTest_publish
     extends AbstractContentServiceTest
@@ -38,13 +52,6 @@ public class ContentServiceImplTest_publish
     private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
     private Content content1, content2, content1_1, content1_2_offline, content2_1;
-
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void push_one_content()
@@ -71,7 +78,35 @@ public class ContentServiceImplTest_publish
         assertEquals( 1, push.getPushedContents().getSize() );
     }
 
-    @Ignore
+    @Test
+    public void publish_workflow_not_ready()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            name( "myContent" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            workflowInfo( WorkflowInfo.create().
+                state( WorkflowState.PENDING_APPROVAL ).
+                build() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final PublishContentResult push = this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( CTX_OTHER.getBranch() ).
+            includeDependencies( false ).
+            build() );
+
+        assertEquals( 0, push.getDeletedContents().getSize() );
+        assertEquals( 1, push.getFailedContents().getSize() );
+        assertEquals( 0, push.getPushedContents().getSize() );
+    }
+
+    @Disabled
     @Test
     public void push_one_content_not_valid()
         throws Exception
@@ -123,7 +158,7 @@ public class ContentServiceImplTest_publish
         final PublishContentResult push = this.contentService.publish( pushParams );
         assertEquals( 1, push.getPushedContents().getSize() );
 
-        contentService.delete( DeleteContentParams.create().
+        contentService.deleteWithoutFetch( DeleteContentParams.create().
             contentPath( content.getPath() ).
             build() );
 
@@ -189,7 +224,7 @@ public class ContentServiceImplTest_publish
     }
 
 
-    @Ignore("This test is not correct; it should not be allowed to exclude parent if new")
+    @Disabled("This test is not correct; it should not be allowed to exclude parent if new")
     @Test
     public void push_exclude_empty()
         throws Exception
@@ -229,7 +264,7 @@ public class ContentServiceImplTest_publish
         assertEquals( 1, result.getPushedContents().getSize() );
     }
 
-    @Ignore("This test is not correct; it should not be allowed to exclude parent if new")
+    @Disabled("This test is not correct; it should not be allowed to exclude parent if new")
     @Test
     public void push_exclude_with_children()
         throws Exception
@@ -309,7 +344,7 @@ public class ContentServiceImplTest_publish
 
         this.contentService.move( params );
 
-        this.contentService.delete( DeleteContentParams.create().
+        this.contentService.deleteWithoutFetch( DeleteContentParams.create().
             contentPath( content2.getPath() ).
             build() );
 
@@ -377,12 +412,91 @@ public class ContentServiceImplTest_publish
 
         doPublish( ContentIds.empty(), b.getId() );
 
-        System.out.println( "" );
+        System.out.println();
         System.out.println( "After second push:" );
         printContentTree( getByPath( ContentPath.ROOT ).getId() );
         printContentTree( getByPath( ContentPath.ROOT ).getId(), CTX_OTHER );
 
         assertStatus( b.getId(), CompareStatus.EQUAL );
+    }
+
+    @Test
+    public void publish_with_message()
+    {
+        final Content content = createContent( ContentPath.ROOT, "a" );
+
+        this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( WS_OTHER ).
+            message( "My message" ).
+            build() );
+
+        FindContentVersionsResult versions = this.contentService.getVersions( FindContentVersionsParams.create().
+            contentId( content.getId() ).
+            build() );
+
+        Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
+        assertTrue( iterator.hasNext() );
+
+        ContentVersion version = iterator.next();
+        assertNotNull( version.getPublishInfo().getTimestamp() );
+        assertEquals( "user:system:test-user", version.getPublishInfo().getPublisher().toString() );
+        assertEquals( "My message", version.getPublishInfo().getMessage() );
+    }
+
+    @Test
+    public void publish_with_message_no_message()
+    {
+        final Content content = createContent( ContentPath.ROOT, "a" );
+
+        this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( WS_OTHER ).
+            message( null ).
+            build() );
+
+        FindContentVersionsResult versions = this.contentService.getVersions( FindContentVersionsParams.create().
+            contentId( content.getId() ).
+            build() );
+
+        Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
+        assertTrue( iterator.hasNext() );
+
+        ContentVersion version = iterator.next();
+        assertNotNull( version.getPublishInfo().getTimestamp() );
+        assertEquals( "user:system:test-user", version.getPublishInfo().getPublisher().toString() );
+        assertNull( version.getPublishInfo().getMessage() );
+    }
+
+    @Test
+    public void audit_data()
+        throws Exception
+    {
+        final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            name( "myContent" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final PublishContentResult push = this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( CTX_OTHER.getBranch() ).
+            includeDependencies( false ).
+            build() );
+
+        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).times( 2 ) ).log( captor.capture() );
+
+        final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
+
+        assertEquals( content.getId().toString(), logResultSet.getStrings( "pushedContents" ).iterator().next() );
+        assertFalse( logResultSet.getStrings( "deletedContents" ).iterator().hasNext() );
+        assertFalse( logResultSet.getStrings( "pendingContents" ).iterator().hasNext() );
     }
 
     private Content doRename( final ContentId contentId, final String newName )

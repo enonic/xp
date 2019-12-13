@@ -9,8 +9,8 @@ var stream1 = TestClass.createByteSource('Hello World');
 // BEGIN
 
 var repo = nodeLib.connect({
-    repoId: "com.enonic.cms.default",
-    branch: "master"
+    repoId: 'com.enonic.cms.default',
+    branch: 'master'
 });
 
 // Editor to call for node.
@@ -35,37 +35,37 @@ if (result) {
 // BEGIN
 // Node modified.
 var expected = {
-    "_id": "abc",
-    "_name": "myNode",
-    "_path": "/myNode",
-    "_childOrder": "_ts DESC",
-    "_indexConfig": {
-        "default": {
-            "decideByType": true,
-            "enabled": true,
-            "nGram": false,
-            "fulltext": false,
-            "includeInAllText": false,
-            "path": false,
-            "indexValueProcessors": [],
-            "languages": []
+    '_id': 'abc',
+    '_name': 'myNode',
+    '_path': '/myNode',
+    '_childOrder': '_ts DESC',
+    '_indexConfig': {
+        'default': {
+            'decideByType': true,
+            'enabled': true,
+            'nGram': false,
+            'fulltext': false,
+            'includeInAllText': false,
+            'path': false,
+            'indexValueProcessors': [],
+            'languages': []
         },
-        "configs": []
+        'configs': []
     },
-    "_inheritsPermissions": false,
-    "_state": "DEFAULT",
-    "_nodeType": "default",
-    "myString": "modifiedValue",
-    "untouchedString": "originalValue",
-    "untouchedBoolean": true,
-    "untouchedDouble": 2,
-    "untouchedLong": 2,
-    "untouchedLink": "myLink",
-    "untouchedInstant": "2017-01-02T10:00:00Z",
-    "untouchedBinaryRef": "abcd",
-    "untouchedGeoPoint": "30.0,-30.0",
-    "untouchedLocalDate": "2017-03-24",
-    "untouchedReference": "myReference"
+    '_inheritsPermissions': false,
+    '_state': 'DEFAULT',
+    '_nodeType': 'default',
+    'myString': 'modifiedValue',
+    'untouchedString': 'originalValue',
+    'untouchedBoolean': true,
+    'untouchedDouble': 2,
+    'untouchedLong': 2,
+    'untouchedLink': 'myLink',
+    'untouchedInstant': '2017-01-02T10:00:00Z',
+    'untouchedBinaryRef': 'abcd',
+    'untouchedGeoPoint': '30.0,-30.0',
+    'untouchedLocalDate': '2017-03-24',
+    'untouchedReference': 'myReference'
 };
 // END
 

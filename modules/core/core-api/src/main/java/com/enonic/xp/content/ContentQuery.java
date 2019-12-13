@@ -1,17 +1,18 @@
 package com.enonic.xp.content;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
+import com.enonic.xp.query.highlight.HighlightQuery;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
@@ -30,6 +31,8 @@ public class ContentQuery
 
     private final Filters queryFilters;
 
+    private final HighlightQuery highlight;
+
     private final int from;
 
     private final int size;
@@ -43,6 +46,7 @@ public class ContentQuery
         this.size = builder.size;
         this.aggregationQueries = AggregationQueries.fromCollection( ImmutableSet.copyOf( builder.aggregationQueries ) );
         this.queryFilters = builder.queryFilters.build();
+        this.highlight = builder.highlight;
     }
 
     public static Builder create()
@@ -85,6 +89,11 @@ public class ContentQuery
         return queryFilters;
     }
 
+    public HighlightQuery getHighlight()
+    {
+        return highlight;
+    }
+
     public static class Builder
     {
         private QueryExpr queryExpr;
@@ -97,9 +106,11 @@ public class ContentQuery
 
         private int size = DEFAULT_FETCH_SIZE;
 
-        private Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
+        private Set<AggregationQuery> aggregationQueries = new HashSet<>();
 
         private Filters.Builder queryFilters = Filters.create();
+
+        private HighlightQuery highlight;
 
         public Builder queryExpr( final QueryExpr queryExpr )
         {
@@ -152,6 +163,12 @@ public class ContentQuery
         public Builder queryFilter( final Filter queryFilter )
         {
             this.queryFilters.add( queryFilter );
+            return this;
+        }
+
+        public Builder highlight( final HighlightQuery highlight )
+        {
+            this.highlight = highlight;
             return this;
         }
 

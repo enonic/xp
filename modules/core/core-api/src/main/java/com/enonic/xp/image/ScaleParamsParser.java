@@ -56,7 +56,7 @@ public final class ScaleParamsParser
             return null;
         }
 
-        ArrayList<Object> list = new ArrayList<Object>();
+        ArrayList<Object> list = new ArrayList<>();
         for(int i = 1 ; i < args.length; i++) {
             list.add( parseIntegerValue( args[i] ) );
         }
@@ -79,7 +79,7 @@ public final class ScaleParamsParser
 
         try
         {
-            return new Integer( str );
+            return Integer.valueOf( str );
         }
         catch ( Exception e )
         {

@@ -1,6 +1,8 @@
 package com.enonic.xp.node;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NodeIdTest
 {
@@ -25,11 +27,11 @@ public class NodeIdTest
         NodeId.from( "14d5bcaa-1f9b-4b65-b9d6-d9c045e2b0aa" );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void slash()
         throws Exception
     {
-        NodeId.from( "my/path" );
+        assertThrows(IllegalArgumentException.class, () -> NodeId.from( "my/path" ));
     }
 
 }

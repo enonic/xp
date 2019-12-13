@@ -9,17 +9,19 @@ import javax.websocket.Endpoint;
 import javax.websocket.server.ServerEndpointConfig;
 
 import org.eclipse.jetty.websocket.server.WebSocketServerFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ServerContainerImplTest
 {
     private ServerContainerImpl container;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         final ServletContext context = Mockito.mock( ServletContext.class );
@@ -27,53 +29,53 @@ public class ServerContainerImplTest
         this.container = new ServerContainerImpl( new WebSocketServerFactory( context ) );
     }
 
-    @Test(expected = DeploymentException.class)
+    @Test
     public void testConnectToServer1()
         throws Exception
     {
-        this.container.connectToServer( getClass(), new URI( "/" ) );
+        assertThrows(DeploymentException.class, () -> this.container.connectToServer( getClass(), new URI( "/" ) ));
     }
 
-    @Test(expected = DeploymentException.class)
+    @Test
     public void testConnectToServer2()
         throws Exception
     {
-        this.container.connectToServer( new Object(), new URI( "/" ) );
+        assertThrows(DeploymentException.class, () -> this.container.connectToServer( new Object(), new URI( "/" ) ));
     }
 
-    @Test(expected = DeploymentException.class)
+    @Test
     public void testConnectToServer3()
         throws Exception
     {
-        this.container.connectToServer( Mockito.mock( Endpoint.class ), Mockito.mock( ClientEndpointConfig.class ), new URI( "/" ) );
+        assertThrows(DeploymentException.class, () -> this.container.connectToServer( Mockito.mock( Endpoint.class ), Mockito.mock( ClientEndpointConfig.class ), new URI( "/" ) ));
     }
 
-    @Test(expected = DeploymentException.class)
+    @Test
     public void testConnectToServer4()
         throws Exception
     {
-        this.container.connectToServer( Endpoint.class, Mockito.mock( ClientEndpointConfig.class ), new URI( "/" ) );
+        assertThrows(DeploymentException.class, () -> this.container.connectToServer( Endpoint.class, Mockito.mock( ClientEndpointConfig.class ), new URI( "/" ) ));
     }
 
-    @Test(expected = DeploymentException.class)
+    @Test
     public void testAddEndpoint1()
         throws Exception
     {
-        this.container.addEndpoint( Endpoint.class );
+        assertThrows(DeploymentException.class, () -> this.container.addEndpoint( Endpoint.class ));
     }
 
-    @Test(expected = DeploymentException.class)
+    @Test
     public void testAddEndpoint2()
         throws Exception
     {
-        this.container.addEndpoint( Object.class );
+        assertThrows(DeploymentException.class, () -> this.container.addEndpoint( Object.class ));
     }
 
-    @Test(expected = DeploymentException.class)
+    @Test
     public void testAddEndpoint3()
         throws Exception
     {
-        this.container.addEndpoint( Mockito.mock( ServerEndpointConfig.class ) );
+        assertThrows(DeploymentException.class, () -> this.container.addEndpoint( Mockito.mock( ServerEndpointConfig.class ) ));
     }
 
     @Test

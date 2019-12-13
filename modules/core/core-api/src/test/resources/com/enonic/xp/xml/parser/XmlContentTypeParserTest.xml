@@ -3,6 +3,7 @@
   <display-name>All the Base Types</display-name>
   <description>description</description>
   <display-name-expression>${firstName} ${lastName}</display-name-expression>
+  <display-name-label>Display Name Label</display-name-label>
   <super-type>content</super-type>
   <is-abstract>false</is-abstract>
   <is-final>true</is-final>

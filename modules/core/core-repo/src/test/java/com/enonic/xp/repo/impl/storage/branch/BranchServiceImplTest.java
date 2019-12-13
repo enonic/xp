@@ -2,8 +2,8 @@ package com.enonic.xp.repo.impl.storage.branch;
 
 import java.time.Instant;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.blob.NodeVersionKey;
@@ -27,7 +27,7 @@ import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BranchServiceImplTest
 {
@@ -40,7 +40,7 @@ public class BranchServiceImplTest
 
     private InternalContext context;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

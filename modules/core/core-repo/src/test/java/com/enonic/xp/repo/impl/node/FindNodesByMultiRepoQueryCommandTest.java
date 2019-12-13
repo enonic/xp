@@ -4,8 +4,8 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextBuilder;
@@ -32,7 +32,9 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static com.enonic.xp.repository.RepositoryConstants.MASTER_BRANCH;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FindNodesByMultiRepoQueryCommandTest
     extends AbstractNodeTest
@@ -46,12 +48,10 @@ public class FindNodesByMultiRepoQueryCommandTest
     private static final User REPO_USER_3 =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "repo-user-3" ) ).login( "repo-user-3" ).build();
 
-    @Override
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -209,10 +209,10 @@ public class FindNodesByMultiRepoQueryCommandTest
     {
         final MultiRepoNodeHits nodeHits = result.getNodeHits();
         final Set<RepositoryId> repositories = nodeHits.stream().map( MultiRepoNodeHit::getRepositoryId ).collect( Collectors.toSet() );
-        assertEquals( "Wrong number of repositories", repositoryIds.length, repositories.size() );
+        assertEquals( repositoryIds.length, repositories.size(), "Wrong number of repositories" );
         for ( final RepositoryId repoId : repositoryIds )
         {
-            assertTrue( "missing repo '" + repoId + "' in result set", repositories.contains( repoId ) );
+            assertTrue( repositories.contains( repoId ), "missing repo '" + repoId + "' in result set" );
         }
     }
 
@@ -220,10 +220,10 @@ public class FindNodesByMultiRepoQueryCommandTest
     {
         final MultiRepoNodeHits nodeHits = result.getNodeHits();
         final Set<Branch> resultBranches = nodeHits.stream().map( MultiRepoNodeHit::getBranch ).collect( Collectors.toSet() );
-        assertEquals( "Wrong number of branches in result", branches.length, resultBranches.size() );
+        assertEquals( branches.length, resultBranches.size(), "Wrong number of branches in result" );
         for ( final Branch branch : resultBranches )
         {
-            assertTrue( "missing repo '" + branch + "' in result set", resultBranches.contains( branch ) );
+            assertTrue( resultBranches.contains( branch ) , "missing repo '" + branch + "' in result set");
         }
     }
 

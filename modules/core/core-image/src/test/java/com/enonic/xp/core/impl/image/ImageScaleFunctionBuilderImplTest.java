@@ -8,21 +8,22 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.impl.image.command.ScaleWidthFunctionCommand;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ScaleParams;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public final class ImageScaleFunctionBuilderImplTest
 {
 
     private BufferedImage source;
 
-    @Before
+    @BeforeEach
     public final void setUp()
         throws Exception
     {

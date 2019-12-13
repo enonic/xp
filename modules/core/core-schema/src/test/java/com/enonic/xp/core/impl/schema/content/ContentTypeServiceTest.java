@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.schema.content;
 
 import java.util.Collection;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -14,7 +14,8 @@ import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ContentTypeServiceTest
     extends AbstractSchemaTest
@@ -101,7 +102,7 @@ public class ContentTypeServiceTest
     public void getMimeTypes()
     {
         final Collection<String> audioMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.audioMedia() ) );
-        assertEquals( audioMimeTypes.size(), 11 );
+        assertEquals( audioMimeTypes.size(), 12 );
 
         final Collection<String> imageMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.imageMedia() ) );
         assertEquals( imageMimeTypes.size(), 9 );

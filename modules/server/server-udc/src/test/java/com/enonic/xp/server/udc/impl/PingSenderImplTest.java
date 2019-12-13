@@ -1,50 +1,53 @@
 package com.enonic.xp.server.udc.impl;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
-import com.squareup.okhttp.mockwebserver.MockResponse;
-import com.squareup.okhttp.mockwebserver.MockWebServer;
-import com.squareup.okhttp.mockwebserver.RecordedRequest;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import com.sun.net.httpserver.HttpServer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PingSenderImplTest
 {
     private PingSender sender;
 
-    private MockWebServer server;
+    private HttpServer server;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {
-        this.server = new MockWebServer();
+        this.server = HttpServer.create( new InetSocketAddress( 0 ), 0 );
         this.server.start();
 
         final UdcInfoGenerator generator = new UdcInfoGenerator();
-        this.sender = new PingSenderImpl( generator, "http://localhost:" + this.server.getPort() );
+        this.sender = new PingSenderImpl( generator, "http://localhost:" + this.server.getAddress().getPort() );
     }
 
-    @After
+    @AfterEach
     public void shutdown()
         throws Exception
     {
-        this.server.shutdown();
+        this.server.stop( 0 );
     }
 
     @Test
     public void testPing()
         throws Exception
     {
-        final MockResponse response = new MockResponse();
-        response.setResponseCode( 200 );
-
-        this.server.enqueue( response );
+        CompletableFuture<String> requestMethod = new CompletableFuture<>();
+        this.server.createContext( "/", exchange -> {
+            requestMethod.complete( exchange.getRequestMethod() );
+            exchange.sendResponseHeaders( 200, 0 );
+            exchange.close();
+        } );
         this.sender.send();
 
-        final RecordedRequest req = this.server.takeRequest();
-        assertEquals( "POST", req.getMethod() );
+        assertEquals( "POST", requestMethod.get( 1, TimeUnit.MINUTES ) );
     }
 }

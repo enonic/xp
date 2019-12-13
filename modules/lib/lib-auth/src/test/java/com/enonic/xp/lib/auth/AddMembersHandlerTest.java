@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.auth;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.security.PrincipalKey;
@@ -8,16 +8,16 @@ import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class AddMembersHandlerTest
     extends ScriptTestSupport
 {
-    private final PrincipalKey USER = PrincipalKey.from( "user:mystore:user1" );
+    private static final PrincipalKey USER = PrincipalKey.from( "user:mystore:user1" );
 
-    private final PrincipalKey GROUP = PrincipalKey.from( "group:mystore:group1" );
+    private static final PrincipalKey GROUP = PrincipalKey.from( "group:mystore:group1" );
 
-    private final PrincipalKey ROLE = PrincipalKey.from( "role:roleId" );
+    private static final PrincipalKey ROLE = PrincipalKey.from( "role:roleId" );
 
     private SecurityService securityService;
 

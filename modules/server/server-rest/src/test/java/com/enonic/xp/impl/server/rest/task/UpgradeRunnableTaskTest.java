@@ -1,12 +1,13 @@
 package com.enonic.xp.impl.server.rest.task;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.dump.DumpService;
+import com.enonic.xp.dump.DumpUpgradeResult;
+import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.dump.SystemDumpUpgradeParams;
-import com.enonic.xp.dump.SystemDumpUpgradeResult;
 import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeRequestJson;
 import com.enonic.xp.task.AbstractRunnableTaskTest;
 import com.enonic.xp.task.RunnableTask;
@@ -18,15 +19,14 @@ public class UpgradeRunnableTaskTest
 {
     private DumpService dumpService;
 
-    @Before
-    @Override
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.dumpService = Mockito.mock( DumpService.class );
     }
 
+    @Override
     protected UpgradeRunnableTask createAndRunTask()
     {
         return null;
@@ -49,9 +49,14 @@ public class UpgradeRunnableTaskTest
     @Test
     public void upgrade()
     {
-        final SystemDumpUpgradeResult upgradeResult = SystemDumpUpgradeResult.create().
+        final DumpUpgradeResult upgradeResult = DumpUpgradeResult.create().
             initialVersion( Version.emptyVersion ).
-            upgradedVersion( new Version( 1, 0, 0 ) ).
+            upgradedVersion( new Version( 1 ) ).
+            stepResult( DumpUpgradeStepResult.create().
+                stepName( "Step1" ).
+                initialVersion( Version.emptyVersion ).
+                upgradedVersion( new Version( 1 ) ).
+                build() ).
             build();
         Mockito.when( this.dumpService.upgrade( Mockito.isA( SystemDumpUpgradeParams.class ) ) ).thenReturn( upgradeResult );
 

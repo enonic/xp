@@ -1,5 +1,6 @@
 package com.enonic.xp.launcher.impl.util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -7,8 +8,6 @@ import java.util.stream.Collectors;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.common.reflect.ClassPath;
 
 public final class OsgiExportsBuilder
@@ -31,7 +30,7 @@ public final class OsgiExportsBuilder
 
     private Iterable<String> expandExports( final Iterable<String> list )
     {
-        final List<String> result = Lists.newArrayList();
+        final List<String> result = new ArrayList<>();
         for ( final String item : list )
         {
             expandExports( result, item );
@@ -76,7 +75,7 @@ public final class OsgiExportsBuilder
     {
         if ( !recursive )
         {
-            return Sets.newHashSet( name );
+            return Set.of( name );
         }
 
         return this.packageNames.stream().filter( item -> matchesPackage( name, item ) ).collect( Collectors.toSet() );

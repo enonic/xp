@@ -1,7 +1,8 @@
 package com.enonic.xp.query.expr;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FieldExprTest
 {
@@ -10,7 +11,7 @@ public class FieldExprTest
     {
         final FieldExpr expr = FieldExpr.from( "name" );
 
-        Assert.assertEquals( "name", expr.getFieldPath() );
-        Assert.assertEquals( "name", expr.toString() );
+        assertEquals( "name", expr.getFieldPath() );
+        assertEquals( "name", expr.toString() );
     }
 }

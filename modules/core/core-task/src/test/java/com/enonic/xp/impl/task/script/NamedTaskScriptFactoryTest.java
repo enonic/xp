@@ -2,8 +2,8 @@ package com.enonic.xp.impl.task.script;
 
 import java.net.URL;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.osgi.framework.Bundle;
@@ -25,14 +25,14 @@ import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskId;
 
-import static junit.framework.TestCase.assertNotNull;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class NamedTaskScriptFactoryTest
 {
     private NamedTaskScriptFactory namedTaskScriptFactory;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         final PortalScriptService portalScriptService = setupPortalScriptService();

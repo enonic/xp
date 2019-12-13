@@ -4,9 +4,11 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
@@ -14,6 +16,7 @@ import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
@@ -21,6 +24,9 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.WorkflowCheckState;
+import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
@@ -34,18 +40,13 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.acl.AccessControlList;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentServiceImplTest_update
     extends AbstractContentServiceTest
 {
-
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void update_content_modified_time_updated()
@@ -464,5 +465,73 @@ public class ContentServiceImplTest_update
         assertNotNull( storedContent.getPublishInfo().getTo() );
         assertEquals( storedContent.getPublishInfo().getFrom(), Instant.parse( "2016-11-03T10:43:44Z" ) );
         assertEquals( storedContent.getPublishInfo().getTo(), Instant.parse( "2016-11-23T10:43:44Z" ) );
+    }
+
+    @Test
+    public void update_workflow_info()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            workflowInfo( WorkflowInfo.inProgress() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final UpdateContentParams updateContentParams = new UpdateContentParams();
+        updateContentParams.
+            contentId( content.getId() ).
+            editor( edit -> {
+                edit.workflowInfo = WorkflowInfo.create().state( WorkflowState.PENDING_APPROVAL ).checks(
+                    ImmutableMap.of( "Laywer review", WorkflowCheckState.PENDING ) ).build();
+            } );
+
+        this.contentService.update( updateContentParams );
+
+        final Content storedContent = this.contentService.getById( content.getId() );
+        assertNotNull( storedContent.getWorkflowInfo() );
+        assertNotNull( storedContent.getWorkflowInfo().getState() );
+        assertNotNull( storedContent.getWorkflowInfo().getChecks() );
+        assertEquals( WorkflowState.PENDING_APPROVAL, storedContent.getWorkflowInfo().getState() );
+        assertEquals( ImmutableMap.of( "Laywer review", WorkflowCheckState.PENDING ), storedContent.getWorkflowInfo().getChecks() );
+    }
+
+    @Test
+    public void audit_data()
+    {
+        final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+
+        final PropertyTree data = new PropertyTree();
+        data.setString( "testString", "value" );
+        data.setString( "testString2", "value" );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( data ).
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final UpdateContentParams updateContentParams = new UpdateContentParams();
+        updateContentParams.
+            contentId( content.getId() ).
+            editor( edit -> {
+                final PropertyTree editData = edit.data;
+                editData.setString( "testString", "value-updated" );
+            } );
+
+        this.contentService.update( updateContentParams );
+
+        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).times( 2 ) ).log( captor.capture() );
+
+        final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
+
+        assertEquals( content.getId().toString(), logResultSet.getString( "id" ) );
+        assertEquals( content.getPath().toString(), logResultSet.getString( "path" ) );
     }
 }

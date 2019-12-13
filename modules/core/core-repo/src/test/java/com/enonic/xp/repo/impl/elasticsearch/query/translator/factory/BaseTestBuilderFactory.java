@@ -1,14 +1,14 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
+import java.nio.charset.StandardCharsets;
 import java.util.TimeZone;
 
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 public abstract class BaseTestBuilderFactory
@@ -17,13 +17,13 @@ public abstract class BaseTestBuilderFactory
 
     private static final TimeZone ORIG_DEFAULT = TimeZone.getDefault();
 
-    @Before
+    @BeforeEach
     public final void setup()
     {
         TimeZone.setDefault( TimeZone.getTimeZone( "UTC" ) );
     }
 
-    @Before
+    @BeforeEach
     public final void cleanup()
     {
         TimeZone.setDefault( ORIG_DEFAULT );
@@ -52,7 +52,7 @@ public abstract class BaseTestBuilderFactory
     {
         try
         {
-            return Resources.toString( getClass().getResource( name ), Charsets.UTF_8 );
+            return Resources.toString( getClass().getResource( name ), StandardCharsets.UTF_8 );
         }
         catch ( Exception e )
         {

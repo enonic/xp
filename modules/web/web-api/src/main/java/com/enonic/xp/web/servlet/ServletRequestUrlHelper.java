@@ -5,13 +5,14 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import com.google.common.net.HostAndPort;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.UrlEscapers;
 
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Beta
 public final class ServletRequestUrlHelper
@@ -31,7 +32,7 @@ public final class ServletRequestUrlHelper
     {
         final StringBuilder str = new StringBuilder();
 
-        if ( !Strings.isNullOrEmpty( path ) )
+        if ( !isNullOrEmpty( path ) )
         {
             if ( !path.startsWith( "/" ) )
             {
@@ -160,7 +161,7 @@ public final class ServletRequestUrlHelper
     public static String getFullUrl( final HttpServletRequest req )
     {
         //Appends the server part
-        StringBuffer fullUrl = new StringBuffer( getServerUrl( req ) );
+        StringBuilder fullUrl = new StringBuilder( getServerUrl( req ) );
 
         //Appends the path part
         fullUrl.append( getPath( req ) );
@@ -222,7 +223,7 @@ public final class ServletRequestUrlHelper
 
     private static String normalizePath( final String value )
     {
-        if ( Strings.isNullOrEmpty( value ) )
+        if ( isNullOrEmpty( value ) )
         {
             return "/";
         }

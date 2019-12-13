@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.rendering;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
@@ -24,8 +24,9 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class PartRendererTest
@@ -51,7 +52,7 @@ public class PartRendererTest
         return portalResponse.getAsString();
     }
 
-    @Before
+    @BeforeEach
     public void before()
     {
         this.portalRequest = new PortalRequest();
@@ -99,10 +100,10 @@ public class PartRendererTest
         assertEquals( result, response );
     }
 
-    @Test(expected = DescriptorNotFoundException.class)
+    @Test
     public void emptyComponentNoMode()
     {
-        this.configureEmptyComponent( RenderMode.ADMIN );
+        assertThrows(DescriptorNotFoundException.class, () -> this.configureEmptyComponent( RenderMode.ADMIN ));
     }
 
     @Test
@@ -135,12 +136,14 @@ public class PartRendererTest
             build();
         final ControllerScript controllerScript = new ControllerScript()
         {
+            @Override
             public PortalResponse execute( final PortalRequest portalRequest )
             {
                 return PortalResponse.create().body( "<h1 class=\"important\">My component</h1>" ).contentType(
                     MediaType.HTML_UTF_8 ).status( HttpStatus.OK ).build();
             }
 
+            @Override
             public void onSocketEvent( final WebSocketEvent event )
             {
             }
@@ -175,11 +178,13 @@ public class PartRendererTest
             build();
         final ControllerScript controllerScript = new ControllerScript()
         {
+            @Override
             public PortalResponse execute( final PortalRequest portalRequest )
             {
                 return new PortalResponseSerializer( null, HttpStatus.METHOD_NOT_ALLOWED ).serialize();
             }
 
+            @Override
             public void onSocketEvent( final WebSocketEvent event )
             {
             }
@@ -200,7 +205,7 @@ public class PartRendererTest
         portalResponse = renderer.render( partComponent, portalRequest );
 
         // verify
-        String expected = "<div data-portal-component-type=\"part\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">No method provided to handle request</span></div>";;
+        String expected = "<div data-portal-component-type=\"part\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">No method provided to handle request</span></div>";
         assertEquals( expected, portalResponse.getAsString() );
     }
 
@@ -214,11 +219,13 @@ public class PartRendererTest
             build();
         final ControllerScript controllerScript = new ControllerScript()
         {
+            @Override
             public PortalResponse execute( final PortalRequest portalRequest )
             {
                 return new PortalResponseSerializer( null ).serialize();
             }
 
+            @Override
             public void onSocketEvent( final WebSocketEvent event )
             {
             }

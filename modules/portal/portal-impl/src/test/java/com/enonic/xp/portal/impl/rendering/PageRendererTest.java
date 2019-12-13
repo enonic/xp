@@ -3,8 +3,8 @@ package com.enonic.xp.portal.impl.rendering;
 import java.time.Instant;
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -25,7 +25,7 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PageRendererTest
 {
@@ -37,7 +37,7 @@ public class PageRendererTest
 
     private PageRenderer renderer;
 
-    @Before
+    @BeforeEach
     public void before()
     {
         this.portalRequest = new PortalRequest();

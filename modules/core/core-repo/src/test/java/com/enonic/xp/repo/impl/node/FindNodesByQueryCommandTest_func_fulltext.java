@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Strings;
 
@@ -22,16 +22,16 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.parser.QueryParser;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FindNodesByQueryCommandTest_func_fulltext
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -149,6 +149,35 @@ public class FindNodesByQueryCommandTest_func_fulltext
         final FindNodesByQueryResult result2 = doFindByQuery( query2 );
 
         assertEquals( 1, result2.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node.id() ) );
+    }
+
+    @Test
+    public void ascii_folding_with_wildcard()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "myProperty", "grønnsaker" );
+
+        final Node node = createNode( CreateNodeParams.create().
+            name( "my-node-1" ).
+            parent( NodePath.ROOT ).
+            data( data ).
+            indexConfigDocument( PatternIndexConfigDocument.create().
+                analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
+                defaultConfig( IndexConfig.BY_TYPE ).
+                build() ).
+            build(), true );
+
+        final NodeQuery query = NodeQuery.create().
+            query( QueryExpr.from( new DynamicConstraintExpr(
+                FunctionExpr.from( "fulltext", ValueExpr.string( NodeIndexPath.ALL_TEXT.getPath() ), ValueExpr.string( "grønns*" ),
+                                   ValueExpr.string( "AND" ) ) ) ) ).
+            build();
+
+        final FindNodesByQueryResult result = doFindByQuery( query );
+
+        assertEquals( 1, result.getNodeIds().getSize() );
         assertTrue( result.getNodeIds().contains( node.id() ) );
     }
 

@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
+import java.util.Set;
+
 public class IssueCommentedMailMessageGenerator
     extends IssueMailMessageGenerator<IssueCommentedNotificationParams>
 {
@@ -11,8 +13,13 @@ public class IssueCommentedMailMessageGenerator
     @Override
     protected String generateMessageSubject()
     {
-        return String.format( "%s posted a new comment to \"%s\" (#%d)", params.getModifier().getDisplayName(),
-                              params.getIssue().getTitle(), params.getIssue().getIndex() );
+        return String.format( "Re: %s (#%d)", params.getIssue().getTitle(), params.getIssue().getIndex() );
+    }
+
+    @Override
+    protected String generateMessageTitle()
+    {
+        return params.getLocaleMessageResolver().localizeMessage( "issue.email.commented", "A new comment is posted" );
     }
 
     @Override
@@ -24,13 +31,12 @@ public class IssueCommentedMailMessageGenerator
     @Override
     protected String generateRecipients()
     {
-        return super.getCreatorEmail();
-    }
+        final String creatorEmail = super.getCreatorEmail();
+        final String modifierEmail = params.getModifier().getEmail();
+        final Set<String> emails = getApproverEmails();
+        emails.add( creatorEmail );
+        filterEmail( emails, modifierEmail );
 
-    @Override
-    protected String getCopyRecepients()
-    {
-        return super.getApproverEmails();
+        return String.join( ",", emails );
     }
-
 }

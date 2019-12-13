@@ -1,6 +1,5 @@
 package com.enonic.xp.admin.impl.portal;
 
-import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.content.Content;

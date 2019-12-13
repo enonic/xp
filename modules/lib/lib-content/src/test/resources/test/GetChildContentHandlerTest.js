@@ -2,70 +2,82 @@ var assert = require('/lib/xp/testing.js');
 var content = require('/lib/xp/content.js');
 
 var expectedJson = {
-    "total": 20,
-    "count": 3,
-    "hits": [
+    'total': 20,
+    'count': 3,
+    'hits': [
         {
-            "_id": "id1",
-            "_name": "name1",
-            "_path": "/a/b/name1",
-            "creator": "user:system:admin",
-            "modifier": "user:system:admin",
-            "createdTime": "1970-01-01T00:00:00Z",
-            "modifiedTime": "1970-01-01T00:00:00Z",
-            "type": "base:unstructured",
-            "displayName": "My Content 1",
-            "hasChildren": false,
-            "valid": false,
-            "data": {},
-            "x": {},
-            "page": {},
-            "attachments": {},
-            "publish": {}
+            '_id': 'id1',
+            '_name': 'name1',
+            '_path': '/a/b/name1',
+            'creator': 'user:system:admin',
+            'modifier': 'user:system:admin',
+            'createdTime': '1970-01-01T00:00:00Z',
+            'modifiedTime': '1970-01-01T00:00:00Z',
+            'type': 'base:unstructured',
+            'displayName': 'My Content 1',
+            'hasChildren': false,
+            'valid': false,
+            'data': {},
+            'x': {},
+            'page': {},
+            'attachments': {},
+            'publish': {},
+            'workflow': {
+                'state': 'READY',
+                'checks': {}
+            }
         },
         {
-            "_id": "id2",
-            "_name": "name2",
-            "_path": "/a/b/name2",
-            "creator": "user:system:admin",
-            "modifier": "user:system:admin",
-            "createdTime": "1970-01-01T00:00:00Z",
-            "modifiedTime": "1970-01-01T00:00:00Z",
-            "type": "base:unstructured",
-            "displayName": "My Content 2",
-            "hasChildren": false,
-            "valid": false,
-            "data": {},
-            "x": {},
-            "page": {},
-            "attachments": {},
-            "publish": {}
+            '_id': 'id2',
+            '_name': 'name2',
+            '_path': '/a/b/name2',
+            'creator': 'user:system:admin',
+            'modifier': 'user:system:admin',
+            'createdTime': '1970-01-01T00:00:00Z',
+            'modifiedTime': '1970-01-01T00:00:00Z',
+            'type': 'base:unstructured',
+            'displayName': 'My Content 2',
+            'hasChildren': false,
+            'valid': false,
+            'data': {},
+            'x': {},
+            'page': {},
+            'attachments': {},
+            'publish': {},
+            'workflow': {
+                'state': 'READY',
+                'checks': {}
+            }
         },
         {
-            "_id": "id3",
-            "_name": "name3",
-            "_path": "/a/b/name3",
-            "creator": "user:system:admin",
-            "modifier": "user:system:admin",
-            "createdTime": "1970-01-01T00:00:00Z",
-            "modifiedTime": "1970-01-01T00:00:00Z",
-            "type": "base:unstructured",
-            "displayName": "My Content 3",
-            "hasChildren": false,
-            "valid": false,
-            "data": {},
-            "x": {},
-            "page": {},
-            "attachments": {},
-            "publish": {}
+            '_id': 'id3',
+            '_name': 'name3',
+            '_path': '/a/b/name3',
+            'creator': 'user:system:admin',
+            'modifier': 'user:system:admin',
+            'createdTime': '1970-01-01T00:00:00Z',
+            'modifiedTime': '1970-01-01T00:00:00Z',
+            'type': 'base:unstructured',
+            'displayName': 'My Content 3',
+            'hasChildren': false,
+            'valid': false,
+            'data': {},
+            'x': {},
+            'page': {},
+            'attachments': {},
+            'publish': {},
+            'workflow': {
+                'state': 'READY',
+                'checks': {}
+            }
         }
     ]
 };
 
 var expectedEmptyJson = {
-    "total": 0,
-    "count": 0,
-    "hits": []
+    'total': 0,
+    'count': 0,
+    'hits': []
 };
 
 exports.getChildrenById = function () {

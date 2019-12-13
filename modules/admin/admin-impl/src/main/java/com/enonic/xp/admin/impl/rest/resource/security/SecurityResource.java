@@ -18,11 +18,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateGroupJson;
@@ -81,8 +78,9 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.IdProviderAccessControlList;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.StringUtils.isBlank;
 
 
 @SuppressWarnings("UnusedDeclaration")
@@ -213,7 +211,7 @@ public final class SecurityResource
     private List<PrincipalType> parsePrincipalTypes( final String types )
     {
         final List<PrincipalType> principalTypes = new ArrayList<>();
-        if ( StringUtils.isNotBlank( types ) )
+        if ( !nullToEmpty( types ).isBlank() )
         {
             final String[] typeItems = types.split( "," );
             for ( String typeItem : typeItems )
@@ -245,7 +243,7 @@ public final class SecurityResource
             includeTypes( principalTypes ).
             searchText( query );
 
-        if ( StringUtils.isNotEmpty( idProviderKey ) )
+        if ( !isNullOrEmpty( idProviderKey ) )
         {
             principalQuery.idProvider( IdProviderKey.from( idProviderKey ) );
         }
@@ -280,7 +278,7 @@ public final class SecurityResource
             includeTypes( principalTypes ).
             searchText( query );
 
-        if ( StringUtils.isNotEmpty( idProviderKey ) )
+        if ( !isNullOrEmpty( idProviderKey ) )
         {
             principalQuery.idProvider( IdProviderKey.from( idProviderKey ) );
         }
@@ -295,7 +293,7 @@ public final class SecurityResource
     private FetchPrincipalsWithRolesResult fetchPrincipalsWithRoles( final PrincipalQuery.Builder principalQuery, final String roles,
                                                                      final int from, final int size )
     {
-        final List<Principal> resultingPrincipals = Lists.newArrayList();
+        final List<Principal> resultingPrincipals = new ArrayList<>();
         int totalCount;
         int fromTemp = from;
         final AtomicInteger unfilteredCount = new AtomicInteger( 0 );
@@ -422,12 +420,12 @@ public final class SecurityResource
     public EmailAvailabilityJson isEmailAvailable( @QueryParam("idProviderKey") final String idProviderKeyParam,
                                                    @QueryParam("email") final String email )
     {
-        if ( isBlank( email ) )
+        if ( nullToEmpty( email ).isBlank() )
         {
             throw new WebApplicationException( "Expected email parameter" );
         }
         final IdProviderKey idProviderKey =
-            isBlank( idProviderKeyParam ) ? IdProviderKey.system() : IdProviderKey.from( idProviderKeyParam );
+            nullToEmpty( idProviderKeyParam ).isBlank() ? IdProviderKey.system() : IdProviderKey.from( idProviderKeyParam );
         final PrincipalQuery query = PrincipalQuery.create().email( email ).idProvider( idProviderKey ).build();
         final PrincipalQueryResult queryResult = securityService.query( query );
         return new EmailAvailabilityJson( queryResult.isEmpty() );
@@ -437,7 +435,7 @@ public final class SecurityResource
     @Path("principals/createUser")
     public UserJson createUser( final CreateUserJson params )
     {
-        if ( StringUtils.isEmpty( params.password ) )
+        if ( isNullOrEmpty( params.password ) )
         {
             throw new WebApplicationException( "Password has not been set." );
         }
@@ -519,7 +517,7 @@ public final class SecurityResource
     {
         final PrincipalKey userKey = params.getUserKey();
 
-        if ( StringUtils.isEmpty( params.getPassword() ) )
+        if ( isNullOrEmpty( params.getPassword() ) )
         {
             throw new WebApplicationException( "Password has not been set." );
         }
@@ -642,7 +640,7 @@ public final class SecurityResource
         this.idProviderControllerService = idProviderControllerService;
     }
 
-    private class FetchPrincipalsWithRolesResult
+    private static class FetchPrincipalsWithRolesResult
     {
         private List<Principal> principals;
 

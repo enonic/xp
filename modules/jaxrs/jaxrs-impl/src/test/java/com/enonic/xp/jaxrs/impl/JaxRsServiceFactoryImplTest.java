@@ -1,20 +1,20 @@
 package com.enonic.xp.jaxrs.impl;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.jaxrs.JaxRsService;
 import com.enonic.xp.web.multipart.MultipartService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JaxRsServiceFactoryImplTest
 {
     private JaxRsServiceFactoryImpl factory;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.factory = new JaxRsServiceFactoryImpl();

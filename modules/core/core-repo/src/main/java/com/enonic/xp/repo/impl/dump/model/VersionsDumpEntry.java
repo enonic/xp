@@ -1,8 +1,7 @@
 package com.enonic.xp.repo.impl.dump.model;
 
+import java.util.HashSet;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.node.NodeId;
 
@@ -37,7 +36,7 @@ public class VersionsDumpEntry
     {
         private final NodeId nodeId;
 
-        private Set<VersionMeta> versions = Sets.newHashSet();
+        private Set<VersionMeta> versions = new HashSet<>();
 
         private Builder( final NodeId nodeId )
         {

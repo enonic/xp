@@ -2,13 +2,14 @@ package com.enonic.xp.export;
 
 import java.util.HashMap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.vfs.VirtualFile;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ImportNodesParamsTest
 {

@@ -1,16 +1,17 @@
 package com.enonic.gradle;
 
-import org.dm.gradle.plugins.bundle.BundleExtension;
+import java.util.Collections;
+
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ModuleVersionIdentifier;
 import org.gradle.api.artifacts.ResolvedArtifact;
+import org.gradle.api.java.archives.Manifest;
+import org.gradle.jvm.tasks.Jar;
 
 public final class OsgiConfigurator
 {
     private final Project project;
-
-    private BundleExtension ext;
 
     public OsgiConfigurator( final Project project )
     {
@@ -28,19 +29,12 @@ public final class OsgiConfigurator
 
     private void afterConfigure()
     {
-        this.ext = this.project.getExtensions().getByType( BundleExtension.class );
+        final Jar jar = (Jar) this.project.getProperties().get( "jar" );
+        final Manifest manifest = jar.getManifest();
 
         final Configuration libConfig = this.project.getConfigurations().getByName( "include" );
-        instruction( "Bundle-ClassPath", getBundleClassPath( libConfig ) );
-        instruction( "Include-Resource", getIncludeResource( libConfig ) );
-    }
-
-    private void instruction( final String name, final Object value )
-    {
-        if ( value != null )
-        {
-            this.ext.instruction( name, value.toString() );
-        }
+        manifest.attributes( Collections.singletonMap( "Bundle-ClassPath", getBundleClassPath( libConfig ) ) );
+        manifest.attributes( Collections.singletonMap( "Include-Resource", getIncludeResource( libConfig ) ) );
     }
 
     private String getBundleClassPath( final Configuration config )
@@ -56,7 +50,7 @@ public final class OsgiConfigurator
 
     private String getIncludeResource( final Configuration config )
     {
-        final StringBuilder str = new StringBuilder( "" );
+        final StringBuilder str = new StringBuilder();
         for ( final ResolvedArtifact artifact : config.getResolvedConfiguration().getResolvedArtifacts() )
         {
             final String name = getFileName( artifact );

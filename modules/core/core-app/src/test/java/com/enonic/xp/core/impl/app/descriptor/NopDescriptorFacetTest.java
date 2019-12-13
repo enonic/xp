@@ -1,12 +1,13 @@
 package com.enonic.xp.core.impl.app.descriptor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.page.DescriptorKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class NopDescriptorFacetTest
 {

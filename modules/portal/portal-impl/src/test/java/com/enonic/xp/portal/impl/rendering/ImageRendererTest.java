@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.rendering;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
@@ -14,7 +14,7 @@ import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.url.AbstractPortalUrlServiceImplTest;
 import com.enonic.xp.region.ImageComponent;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ImageRendererTest
     extends AbstractPortalUrlServiceImplTest
@@ -35,7 +35,7 @@ public class ImageRendererTest
         return media;
     }
 
-    @Before
+    @BeforeEach
     public void before()
     {
         portalResponse = PortalResponse.create().build();

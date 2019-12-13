@@ -5,12 +5,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 
 /**
  * Immutable
@@ -63,9 +63,7 @@ public final class PropertyPath
         Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
         Preconditions.checkNotNull( children, "children cannot be null" );
 
-        final List<Element> elements = Lists.newLinkedList();
-
-        elements.addAll( splitPathIntoElements( parentPath ) );
+        final List<Element> elements = new ArrayList<>( splitPathIntoElements( parentPath ) );
 
         for ( final String child : children )
         {
@@ -97,7 +95,7 @@ public final class PropertyPath
         this.relative = this.elements.size() <= 0 || !this.elements.get( 0 ).getName().startsWith( ELEMENT_DIVIDER );
         this.refString = toString( this.elements );
 
-        final List<Element> parentPathElements = Lists.newArrayList();
+        final List<Element> parentPathElements = new ArrayList<>();
         for ( int i = 0; i < this.elements.size(); i++ )
         {
             if ( i < this.elements.size() - 1 )
@@ -274,7 +272,7 @@ public final class PropertyPath
 
     private static ImmutableList<Element> splitPathIntoElements( final String path )
     {
-        List<Element> elements = new ArrayList<Element>();
+        List<Element> elements = new ArrayList<>();
 
         StringTokenizer st = new StringTokenizer( path, ELEMENT_DIVIDER );
         int count = 0;
@@ -323,7 +321,7 @@ public final class PropertyPath
         public Element( final String element )
         {
             Preconditions.checkNotNull( element, "Element cannot be null" );
-            Preconditions.checkArgument( !StringUtils.isEmpty( element ), "Element cannot be empty" );
+            Preconditions.checkArgument( !isNullOrEmpty( element ), "Element cannot be empty" );
 
             int indexStart = element.indexOf( INDEX_START_MARKER );
             int indexStop = element.indexOf( INDEX_STOP_MARKER );
@@ -357,7 +355,7 @@ public final class PropertyPath
         public Element( final String name, final int index )
         {
             Preconditions.checkNotNull( name, "Element name cannot be null" );
-            Preconditions.checkArgument( !StringUtils.isEmpty( name ), "Element name cannot be empty" );
+            Preconditions.checkArgument( !isNullOrEmpty( name ), "Element name cannot be empty" );
             Preconditions.checkArgument( index >= 0, "an index cannot be less than zero" );
 
             this.name = name;

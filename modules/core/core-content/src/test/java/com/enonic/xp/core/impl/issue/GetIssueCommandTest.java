@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.issue;
 
 import java.time.Instant;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -23,14 +23,15 @@ import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATOR;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.INDEX;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.STATUS;
 import static com.enonic.xp.core.impl.issue.IssuePropertyNames.TITLE;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class GetIssueCommandTest
 {
 
     private NodeService nodeService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

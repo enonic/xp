@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -26,7 +26,9 @@ import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ValidateContentDataCommandTest
 {
@@ -36,7 +38,7 @@ public class ValidateContentDataCommandTest
 
     private SiteService siteService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

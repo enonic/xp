@@ -8,8 +8,8 @@ import java.time.ZoneOffset;
 
 import javax.ws.rs.core.Response;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 
@@ -29,8 +29,9 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 
 public class MixinResourceTest
     extends AdminResourceTestSupport
@@ -116,7 +117,7 @@ public class MixinResourceTest
         Mockito.when( mixinService.getByName( any( MixinName.class ) ) ).thenReturn( null );
 
         final MockRestResponse response = request().path( "schema/mixin" ).queryParam( "name", MY_MIXIN_QUALIFIED_NAME_1.toString() ).get();
-        Assert.assertEquals( 404, response.getStatus() );
+        assertEquals( 404, response.getStatus() );
     }
 
     @Test
@@ -173,7 +174,7 @@ public class MixinResourceTest
         final Response response = this.resource.getIcon( "myapplication:icon_svg_test", 20, null );
 
         assertNotNull( response.getEntity() );
-        org.junit.Assert.assertArrayEquals( ByteStreams.toByteArray( in ), (byte[]) response.getEntity() );
+        Assertions.assertArrayEquals( ByteStreams.toByteArray( in ), (byte[]) response.getEntity() );
     }
 
     @Test
@@ -195,7 +196,7 @@ public class MixinResourceTest
 
         assertNotNull( response.getEntity() );
         assertEquals( icon.getMimeType(), response.getMediaType().toString() );
-        org.junit.Assert.assertArrayEquals( data, (byte[]) response.getEntity() );
+        Assertions.assertArrayEquals( data, (byte[]) response.getEntity() );
     }
 
     private void setupMixin( final Mixin mixin )

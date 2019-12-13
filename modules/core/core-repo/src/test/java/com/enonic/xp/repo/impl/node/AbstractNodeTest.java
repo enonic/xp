@@ -1,15 +1,18 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -69,11 +72,16 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
 {
+    protected static final Repository TEST_REPO = Repository.create().
+            id( RepositoryId.from( "com.enonic.cms.default" ) ).
+            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
+            build();
+
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
 
@@ -101,6 +109,9 @@ public abstract class AbstractNodeTest
         repositoryId( TEST_REPO.getId() ).
         authInfo( TEST_DEFAULT_USER_AUTHINFO ).
         build();
+
+    @TempDir
+    public Path temporaryFolder;
 
     public BinaryServiceImpl binaryService;
 
@@ -134,16 +145,16 @@ public abstract class AbstractNodeTest
 
     protected StorageDaoImpl storageDao;
 
-    @Before
-    public void setUp()
+    @BeforeEach
+    void setUpNode()
         throws Exception
     {
-        super.setUp();
+        deleteAllIndices();
 
         final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( repoConfig.getSnapshotsDir() ).thenReturn( new File( this.xpHome.getRoot(), "repo/snapshots" ) );
+        Mockito.when( repoConfig.getSnapshotsDir() ).thenReturn( new File( this.temporaryFolder.toFile(), "repo/snapshots" ) );
 
-        System.setProperty( "xp.home", xpHome.getRoot().getPath() );
+        System.setProperty( "xp.home", temporaryFolder.toFile().getPath() );
         System.setProperty( "mapper.allow_dots_in_name", "true" );
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
@@ -154,13 +165,13 @@ public abstract class AbstractNodeTest
         this.binaryService.setBlobStore( blobStore );
 
         storageDao = new StorageDaoImpl();
-        storageDao.setClient( this.client );
+        storageDao.setClient( client );
 
         this.searchDao = new SearchDaoImpl();
-        this.searchDao.setClient( this.client );
+        this.searchDao.setClient( client );
 
         this.indexServiceInternal = new IndexServiceInternalImpl();
-        this.indexServiceInternal.setClient( this.client );
+        this.indexServiceInternal.setClient( client );
 
         // Branch and version-services
 
@@ -194,7 +205,7 @@ public abstract class AbstractNodeTest
         this.searchService.setSearchDao( this.searchDao );
 
         this.snapshotService = new SnapshotServiceImpl();
-        this.snapshotService.setClient( this.client );
+        this.snapshotService.setClient( client );
         this.snapshotService.setConfiguration( repoConfig );
 
         setUpRepositoryServices();
@@ -328,18 +339,21 @@ public abstract class AbstractNodeTest
 
     protected Node createNode( final CreateNodeParams createNodeParams, final boolean refresh )
     {
-        final CreateNodeParams createParamsWithAnalyzer = CreateNodeParams.create( createNodeParams ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
+        final CreateNodeParams.Builder createParamsWithAnalyzer = CreateNodeParams.create( createNodeParams );
+
+        if ( createNodeParams.getIndexConfigDocument() == null )
+        {
+            createParamsWithAnalyzer.indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                build() ).
-            build();
+                build() );
+        }
 
         final Node createdNode = CreateNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            params( createParamsWithAnalyzer ).
+            params( createParamsWithAnalyzer.build() ).
             build().
             execute();
 

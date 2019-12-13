@@ -26,6 +26,7 @@ SCRIPT="service.sh"
 ###############################
 
 XP_INSTALL="/opt/enonic/xp"
+XP_JAVA_HOME="$XP_INSTALL/jdk"
 RUNUSER="xp"
 
 OUT_LOG="/var/log/xp/xp.log"
@@ -38,9 +39,6 @@ PIDFILE="$PIDFILE_DIR/$NAME.pid"
 XP_CONFIG="/etc/xp.conf"
 SCRIPTNAME="/etc/init.d/$NAME"
 
-
-
-
 do_start()
 {
     echo "Starting $DESC: $NAME...."
@@ -49,7 +47,7 @@ do_start()
         su - "$RUNUSER" -c "mkdir -p ${PIDFILE_DIR}"
     fi
 
-    su - "$RUNUSER" -c "export XP_INSTALL=${XP_INSTALL};${XP_INSTALL}/bin/$SCRIPT $PIDFILE $XP_CONFIG" > ${OUT_LOG} 2>&1
+    su - "$RUNUSER" -c "export XP_INSTALL=${XP_INSTALL} && export XP_JAVA_HOME=${XP_JAVA_HOME} && ${XP_INSTALL}/bin/$SCRIPT $PIDFILE $XP_CONFIG" > ${OUT_LOG} 2>&1
     RETVAL=$?
 
     if [ "$RETVAL" = 0 ]; then

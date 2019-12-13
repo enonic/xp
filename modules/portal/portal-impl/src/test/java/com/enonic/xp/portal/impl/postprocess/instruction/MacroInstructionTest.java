@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.postprocess.instruction;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -27,8 +27,10 @@ import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class MacroInstructionTest
@@ -41,7 +43,7 @@ public class MacroInstructionTest
 
     private PortalRequest portalRequest;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         macroDescriptorService = Mockito.mock( MacroDescriptorService.class );

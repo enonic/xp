@@ -1,7 +1,9 @@
 package com.enonic.xp.xml.parser;
 
-import org.junit.Before;
-import org.junit.Test;
+import java.util.Iterator;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.FieldSet;
@@ -21,7 +23,10 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataNames;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlContentTypeParserTest
     extends XmlModelParserTest
@@ -30,7 +35,7 @@ public class XmlContentTypeParserTest
 
     private ContentType.Builder builder;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.parser = new XmlContentTypeParser();
@@ -65,6 +70,7 @@ public class XmlContentTypeParserTest
         assertEquals( "All the Base Types", result.getDisplayName() );
         assertEquals( "description", result.getDescription() );
         assertEquals( "${firstName} ${lastName}", result.getDisplayNameExpression() );
+        assertEquals( "Display Name Label", result.getDisplayNameLabel() );
         assertEquals( "myapplication:content", result.getSuperType().toString() );
         assertEquals( false, result.isAbstract() );
         assertEquals( true, result.isFinal() );
@@ -137,6 +143,7 @@ public class XmlContentTypeParserTest
 
         assertEquals( "translated.display-name", result.getDisplayNameI18nKey() );
         assertEquals( "translated.description", result.getDescriptionI18nKey() );
+        assertEquals( "translated.displayNameLabel", result.getDisplayNameLabelI18nKey() );
 
     }
 
@@ -188,7 +195,15 @@ public class XmlContentTypeParserTest
         parse( this.parser, "-i18n.xml" );
         final ContentType result = this.builder.build();
 
-        final FormItem item = result.getForm().getFormItem( "fieldSet1" );
+        FormItem item = null;
+        for ( Iterator<FormItem> i = result.getForm().getFormItems().iterator(); i.hasNext(); )
+        {
+            final FormItem next = i.next();
+            if ( next.getName().startsWith( "fieldSet" ) )
+            {
+                item = next;
+            }
+        }
         assertNotNull( item );
 
         final FieldSet fieldSet = (FieldSet) item;
@@ -269,7 +284,15 @@ public class XmlContentTypeParserTest
         assertEquals( "translated.label", radioOption.getLabel() );
 
         // field set
-        final FormItem fieldSetItem = result.getForm().getFormItem( "fieldSet1" );
+        FormItem fieldSetItem = null;
+        for ( Iterator<FormItem> i = result.getForm().getFormItems().iterator(); i.hasNext(); )
+        {
+            final FormItem next = i.next();
+            if ( next.getName().startsWith( "fieldSet" ) )
+            {
+                fieldSetItem = next;
+            }
+        }
         assertNotNull( fieldSetItem );
 
         final FieldSet fieldSet = (FieldSet) fieldSetItem;

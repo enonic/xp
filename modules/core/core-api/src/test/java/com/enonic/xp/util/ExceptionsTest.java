@@ -2,13 +2,15 @@ package com.enonic.xp.util;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ExceptionsTest
 {
-    @Test(expected = IOException.class)
+    @Test
     public void throwUnchecked()
     {
-        throw Exceptions.unchecked( new IOException() );
+        assertThrows(IOException.class, () -> {throw Exceptions.unchecked( new IOException() ); } );
     }
 }

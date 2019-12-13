@@ -1,11 +1,11 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.query.expr.DynamicOrderExpr;
@@ -16,7 +16,7 @@ public class ChildOrderJson
 {
     private ChildOrder childOrder;
 
-    private List<OrderExprJson> orderExpressions = Lists.newLinkedList();
+    private List<OrderExprJson> orderExpressions = new ArrayList<>();
 
     public ChildOrderJson( final ChildOrder childOrder )
     {

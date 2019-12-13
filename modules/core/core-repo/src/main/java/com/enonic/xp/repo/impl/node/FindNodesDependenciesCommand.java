@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeId;
@@ -25,14 +25,17 @@ public class FindNodesDependenciesCommand
 
     private final NodeIds excludedIds;
 
-    private final Set<NodeId> processed = Sets.newHashSet();
+    private final Set<NodeId> processed = new HashSet<>();
 
     private final boolean recursive;
+
+    private final Function<NodeIds, NodeIds> recursionFilter;
 
     private FindNodesDependenciesCommand( final Builder builder )
     {
         super( builder );
         recursive = builder.recursive;
+        recursionFilter = builder.recursionFilter;
         nodeIds = builder.nodeIds.build();
         excludedIds = builder.excludedIds.build();
     }
@@ -78,7 +81,11 @@ public class FindNodesDependenciesCommand
 
         if ( this.recursive )
         {
-            final NodeIds currentLevelDependencies = builder.build();
+            NodeIds currentLevelDependencies = builder.build();
+            if ( recursionFilter != null )
+            {
+                currentLevelDependencies = recursionFilter.apply( currentLevelDependencies );
+            }
             builder.addAll( resolveDependencies( currentLevelDependencies ) );
         }
 
@@ -129,6 +136,8 @@ public class FindNodesDependenciesCommand
 
         private boolean recursive;
 
+        private Function<NodeIds, NodeIds> recursionFilter = null;
+
         private Builder()
         {
         }
@@ -153,6 +162,12 @@ public class FindNodesDependenciesCommand
         public Builder recursive( final boolean val )
         {
             recursive = val;
+            return this;
+        }
+
+        public Builder recursionFilter( final Function<NodeIds, NodeIds> val )
+        {
+            recursionFilter = val;
             return this;
         }
 

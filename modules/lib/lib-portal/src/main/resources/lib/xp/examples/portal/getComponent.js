@@ -9,24 +9,25 @@ log.info('Current component name = %s', result.name);
 // BEGIN
 // Component returned.
 var expected = {
-    "path": "/main/0",
-    "type": "layout",
-    "descriptor": "myapplication:mylayout",
-    "config": {
-        "a": "1"
+    'path': '/main/0',
+    'type': 'layout',
+    'descriptor': 'myapplication:mylayout',
+    'config': {
+        'a': '1'
     },
-    "regions": {
-        "bottom": {
-            "components": [
+    'regions': {
+        'bottom': {
+            'components': [
                 {
-                    "path": "/main/0/bottom/0",
-                    "type": "part",
-                    "descriptor": "myapplication:mypart",
-                    "config": {
-                        "a": "1"
+                    'path': '/main/0/bottom/0',
+                    'type': 'part',
+                    'descriptor': 'myapplication:mypart',
+                    'config': {
+                        'a': '1'
                     }
                 }
-            ]
+            ],
+            'name': 'bottom'
         }
     }
 };

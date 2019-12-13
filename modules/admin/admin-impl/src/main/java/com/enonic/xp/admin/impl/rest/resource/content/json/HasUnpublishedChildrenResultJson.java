@@ -1,9 +1,8 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
 import com.enonic.xp.content.ContentId;
@@ -28,7 +27,7 @@ public class HasUnpublishedChildrenResultJson
     public static final class Builder
     {
 
-        private List<HasUnpublishedChildrenJson> contents = Lists.newArrayList();
+        private List<HasUnpublishedChildrenJson> contents = new ArrayList<>();
 
 
         private Builder()
@@ -97,11 +96,7 @@ public class HasUnpublishedChildrenResultJson
                 return false;
             }
 
-            if( !hasChildren.equals( that.hasChildren )) {
-                return false;
-            }
-
-            return true;
+            return hasChildren.equals( that.hasChildren );
         }
 
         @Override

@@ -13,12 +13,12 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.lib.content.mapper.PushContentResultMapper;
+import com.enonic.xp.lib.content.mapper.PublishContentResultMapper;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -42,7 +42,9 @@ public final class PublishContentHandler
 
     private ContentService contentService;
 
-    public PushContentResultMapper execute()
+    private String message;
+
+    public PublishContentResultMapper execute()
     {
         final Context context = ContextBuilder.
             from( ContextAccessor.current() ).
@@ -52,7 +54,7 @@ public final class PublishContentHandler
         return context.callWith( this::publishContent );
     }
 
-    private PushContentResultMapper publishContent()
+    private PublishContentResultMapper publishContent()
     {
         final List<ContentPath> contentNotFound = new ArrayList<>();
         final List<ContentId> contentIds = new ArrayList<>();
@@ -103,8 +105,10 @@ public final class PublishContentHandler
         {
             builder.includeDependencies( includeDependencies );
         }
+        builder.message( message );
+
         final PublishContentResult result = this.contentService.publish( builder.build() );
-        return result != null ? new PushContentResultMapper( result, contentNotFound ) : null;
+        return result != null ? new PublishContentResultMapper( result, contentNotFound ) : null;
     }
 
     private Content getByPath( final ContentPath contentPath )
@@ -152,6 +156,11 @@ public final class PublishContentHandler
     public void setContentPublishInfo( final ScriptValue contentPublishInfo )
     {
         this.contentPublishInfo = contentPublishInfo != null ? contentPublishInfo.getMap() : null;
+    }
+
+    public void setMessage( final String message )
+    {
+        this.message = message;
     }
 
     @Override

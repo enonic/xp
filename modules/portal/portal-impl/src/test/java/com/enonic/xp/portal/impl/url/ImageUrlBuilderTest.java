@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.url;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.HashMultimap;
@@ -17,7 +17,7 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.url.ImageUrlParams;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class ImageUrlBuilderTest
@@ -28,7 +28,7 @@ public class ImageUrlBuilderTest
 
     private Media media;
 
-    @Before
+    @BeforeEach
     public void init()
     {
         final PortalRequest portalRequest = new PortalRequest();

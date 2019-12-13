@@ -1,8 +1,8 @@
 package com.enonic.xp.server.internal.trace;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.server.internal.trace.event.TraceEventDispatcher;
@@ -10,7 +10,9 @@ import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.TraceEvent;
 import com.enonic.xp.trace.Tracer;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TraceServiceTest
 {
@@ -18,7 +20,7 @@ public class TraceServiceTest
 
     private TraceService service;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         this.dispatcher = Mockito.mock( TraceEventDispatcher.class );
@@ -26,7 +28,7 @@ public class TraceServiceTest
         this.service.setDispatcher( this.dispatcher );
     }
 
-    @After
+    @AfterEach
     public void tearDown()
     {
         Tracer.setManager( null );

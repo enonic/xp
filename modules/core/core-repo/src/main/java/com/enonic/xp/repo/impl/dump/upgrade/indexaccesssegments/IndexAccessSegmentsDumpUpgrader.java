@@ -1,11 +1,11 @@
 package com.enonic.xp.repo.impl.dump.upgrade.indexaccesssegments;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.CharSource;
 
 import com.enonic.xp.blob.BlobKey;
@@ -30,7 +30,9 @@ import com.enonic.xp.util.Version;
 public class IndexAccessSegmentsDumpUpgrader
     extends AbstractMetaDumpUpgrader
 {
-    private static final Version MODEL_VERSION = new Version( 4, 0, 0 );
+    private static final Version MODEL_VERSION = new Version( 4 );
+
+    private static final String NAME = "Index & Access segments";
 
     public IndexAccessSegmentsDumpUpgrader( final Path basePath )
     {
@@ -41,6 +43,12 @@ public class IndexAccessSegmentsDumpUpgrader
     public Version getModelVersion()
     {
         return MODEL_VERSION;
+    }
+
+    @Override
+    public String getName()
+    {
+        return NAME;
     }
 
     @Override
@@ -111,7 +119,7 @@ public class IndexAccessSegmentsDumpUpgrader
 
     private Pre4NodeVersionJson getNodeVersion( final DumpBlobRecord dumpBlobRecord )
     {
-        final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( Charsets.UTF_8 );
+        final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 );
         try
         {
             return deserializeValue( charSource.read(), Pre4NodeVersionJson.class );

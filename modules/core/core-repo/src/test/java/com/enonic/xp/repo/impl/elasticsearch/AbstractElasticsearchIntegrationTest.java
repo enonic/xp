@@ -1,64 +1,41 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
 import org.elasticsearch.action.search.SearchAction;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.branch.Branches;
-import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
-import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryId;
-
+@Tag("elasticsearch")
+@ExtendWith(AbstractElasticsearchIntegrationTest.EmbeddedElasticsearchExtension.class)
 public abstract class AbstractElasticsearchIntegrationTest
 {
-    protected static final Repository TEST_REPO = Repository.create().
-        id( RepositoryId.from( "com.enonic.cms.default" ) ).
-        branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-        build();
-
     private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
 
-    @Rule
-    public TemporaryFolder xpHome = new TemporaryFolder();
-
-    protected IndexServiceInternalImpl elasticsearchIndexService;
-
-    protected Client client;
-
-    private EmbeddedElasticsearchServer server;
-
-    @Before
-    public void setUp()
-        throws Exception
-    {
-        server = new EmbeddedElasticsearchServer( xpHome.getRoot() );
-
-        this.client = server.getClient();
-
-        final StorageDaoImpl storageDao = new StorageDaoImpl();
-        storageDao.setClient( this.client );
-
-        this.elasticsearchIndexService = new IndexServiceInternalImpl();
-        elasticsearchIndexService.setClient( client );
-    }
-
+    protected static Client client;
 
     protected boolean indexExists( String index )
     {
-        IndicesExistsResponse actionGet = this.client.admin().indices().prepareExists( index ).execute().actionGet();
+        IndicesExistsResponse actionGet = client.admin().indices().prepareExists( index ).execute().actionGet();
         return actionGet.isExists();
     }
 
+    protected File getSnapshotsDir() {
+        return ElasticsearchFixture.server.getSnapshotsDir();
+    }
 
     protected void printAllIndexContent( final String indexName, final String indexType )
     {
@@ -66,41 +43,79 @@ public abstract class AbstractElasticsearchIntegrationTest
             "  \"query\": { \"match_all\": {} }\n" +
             "}";
 
-        SearchRequestBuilder searchRequest = new SearchRequestBuilder( this.client, SearchAction.INSTANCE ).
+        SearchRequestBuilder searchRequest = new SearchRequestBuilder( client, SearchAction.INSTANCE ).
             setSize( 100 ).
             setIndices( indexName ).
             setTypes( indexType ).
             setSource( termQuery ).
             addFields( "_source" );
 
-        final SearchResponse searchResponse = this.client.search( searchRequest.request() ).actionGet();
+        final SearchResponse searchResponse = client.search( searchRequest.request() ).actionGet();
 
         System.out.println( "\n\n---------- CONTENT --------------------------------" );
         System.out.println( searchResponse.toString() );
         System.out.println( "\n\n" );
     }
 
-    public void waitForClusterHealth()
+    public static void waitForClusterHealth()
     {
-        elasticsearchIndexService.getClusterHealth( "10s" );
+        ElasticsearchFixture.elasticsearchIndexService.getClusterHealth( "10s" );
     }
 
-    protected final RefreshResponse refresh()
+    protected static final RefreshResponse refresh()
     {
         RefreshResponse actionGet = client.admin().indices().prepareRefresh().execute().actionGet();
         return actionGet;
     }
 
-    public EmbeddedElasticsearchServer getServer()
+    protected static final DeleteIndexResponse deleteAllIndices()
     {
-        return server;
+        DeleteIndexResponse actionGet = client.admin().indices().prepareDelete("_all").execute().actionGet();
+        return actionGet;
     }
 
-    @After
-    public void cleanUp()
+    static class EmbeddedElasticsearchExtension implements BeforeAllCallback
     {
-        LOG.info( "Shutting down" );
-        this.client.close();
-        server.shutdown();
+        @Override
+        public void beforeAll(ExtensionContext context)
+        {
+            context.getRoot().getStore(ExtensionContext.Namespace.GLOBAL).getOrComputeIfAbsent(ElasticsearchFixture.class);
+        }
     }
+
+    static class ElasticsearchFixture implements ExtensionContext.Store.CloseableResource
+    {
+
+        static IndexServiceInternalImpl elasticsearchIndexService;
+
+        static EmbeddedElasticsearchServer server;
+
+        public ElasticsearchFixture()
+            throws IOException
+        {
+            LOG.info( "Starting up Elasticsearch" );
+
+            Path elasticsearchTemporaryFolder = Files.createTempDirectory("elasticsearchFixture");
+
+            server = new EmbeddedElasticsearchServer( elasticsearchTemporaryFolder.toFile() );
+
+            client = server.getClient();
+
+            elasticsearchIndexService = new IndexServiceInternalImpl();
+            elasticsearchIndexService.setClient( client );
+        }
+
+        @Override
+        public void close()
+        {
+            LOG.info( "Shutting down Elasticsearch" );
+            if (client != null) {
+                client.close();
+            }
+            if (server != null) {
+                server.shutdown();
+            }
+        }
+    }
+
 }

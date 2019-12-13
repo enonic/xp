@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content.validate;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
@@ -12,9 +12,11 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeValidationException;
 import com.enonic.xp.inputtype.InputTypes;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class InputValidationVisitorTest
 {
-    @Test(expected = InputTypeValidationException.class)
+    @Test
     public void validateInputTypeInvalid()
         throws Exception
     {
@@ -32,7 +34,7 @@ public class InputValidationVisitorTest
         propertyTree.setLong( "myTextLine", 33L );
 
         final InputValidationVisitor validationVisitor = new InputValidationVisitor( propertyTree, InputTypes.BUILTIN );
-        validationVisitor.traverse( form );
+        assertThrows(InputTypeValidationException.class, () -> validationVisitor.traverse( form ));
     }
 
     @Test
@@ -56,7 +58,7 @@ public class InputValidationVisitorTest
         validationVisitor.traverse( form );
     }
 
-    @Test(expected = InputTypeValidationException.class)
+    @Test
     public void validateItemSetInvalid()
         throws Exception
     {
@@ -79,7 +81,7 @@ public class InputValidationVisitorTest
         propertyTree.setLong( "myFormItemSet.myTextLine", 33L );
 
         final InputValidationVisitor validationVisitor = new InputValidationVisitor( propertyTree, InputTypes.BUILTIN );
-        validationVisitor.traverse( form );
+        assertThrows(InputTypeValidationException.class, () -> validationVisitor.traverse( form ));
     }
 
     @Test
@@ -108,7 +110,7 @@ public class InputValidationVisitorTest
         validationVisitor.traverse( form );
     }
 
-    @Test(expected = InputTypeValidationException.class)
+    @Test
     public void validateOptionSetInvalid()
         throws Exception
     {
@@ -134,7 +136,7 @@ public class InputValidationVisitorTest
         propertyTree.setLong( "myOptionSet.myOptionSetOption1.myTextLine1", 33L );
 
         final InputValidationVisitor validationVisitor = new InputValidationVisitor( propertyTree, InputTypes.BUILTIN );
-        validationVisitor.traverse( form );
+        assertThrows(InputTypeValidationException.class, () -> validationVisitor.traverse( form ));
     }
 
     @Test

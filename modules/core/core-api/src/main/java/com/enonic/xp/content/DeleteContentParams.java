@@ -42,7 +42,7 @@ public final class DeleteContentParams
     public void validate()
     {
         Preconditions.checkNotNull( this.contentPath, "ContentPath cannot be null" );
-        Preconditions.checkNotNull( this.contentPath.isAbsolute(), "ContentPath must be absolute: " + this.contentPath );
+        Preconditions.checkArgument( this.contentPath.isAbsolute(), "ContentPath must be absolute: " + this.contentPath );
     }
 
     @Override
@@ -59,12 +59,7 @@ public final class DeleteContentParams
 
         final DeleteContentParams that = (DeleteContentParams) o;
 
-        if ( !contentPath.equals( that.contentPath ) )
-        {
-            return false;
-        }
-
-        return true;
+        return contentPath.equals( that.contentPath );
     }
 
     @Override

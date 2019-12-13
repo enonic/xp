@@ -1,11 +1,11 @@
 package com.enonic.xp.node;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.data.PropertyTree;
@@ -201,7 +201,7 @@ public class CreateNodeParams
 
         private NodeType nodeType;
 
-        private Set<BinaryAttachment> binaryAttachments = Sets.newHashSet();
+        private Set<BinaryAttachment> binaryAttachments = new HashSet<>();
 
         private Builder()
         {
@@ -303,7 +303,7 @@ public class CreateNodeParams
                 return this;
             }
 
-            this.binaryAttachments = Sets.newHashSet( binaryAttachments );
+            this.binaryAttachments = new HashSet<>( binaryAttachments.getSet() );
             return this;
         }
 

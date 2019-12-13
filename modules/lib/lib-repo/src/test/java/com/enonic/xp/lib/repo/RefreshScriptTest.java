@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.repo;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.node.NodeService;
@@ -8,8 +8,9 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;

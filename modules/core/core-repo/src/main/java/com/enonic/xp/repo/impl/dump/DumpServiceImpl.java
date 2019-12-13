@@ -6,7 +6,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -16,17 +15,21 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.app.ApplicationInstallationParams;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.dump.DumpService;
+import com.enonic.xp.dump.DumpUpgradeResult;
+import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemDumpUpgradeParams;
-import com.enonic.xp.dump.SystemDumpUpgradeResult;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.home.HomeDir;
@@ -59,6 +62,8 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.util.Version;
 
+import static com.google.common.base.Strings.nullToEmpty;
+
 @Component(immediate = true)
 @SuppressWarnings("WeakerAccess")
 public class DumpServiceImpl
@@ -89,7 +94,7 @@ public class DumpServiceImpl
     }
 
     @Override
-    public SystemDumpUpgradeResult upgrade( final SystemDumpUpgradeParams params )
+    public DumpUpgradeResult upgrade( final SystemDumpUpgradeParams params )
     {
         if ( !SecurityHelper.isAdmin() )
         {
@@ -97,7 +102,7 @@ public class DumpServiceImpl
         }
 
         final String dumpName = params.getDumpName();
-        if ( StringUtils.isBlank( dumpName ) )
+        if ( nullToEmpty( dumpName ).isBlank() )
         {
             throw new RepoDumpException( "dump name cannot be empty" );
         }
@@ -105,9 +110,9 @@ public class DumpServiceImpl
         return doUpgrade( params );
     }
 
-    private SystemDumpUpgradeResult doUpgrade( final SystemDumpUpgradeParams params )
+    private DumpUpgradeResult doUpgrade( final SystemDumpUpgradeParams params )
     {
-        final SystemDumpUpgradeResult.Builder result = SystemDumpUpgradeResult.create();
+        final DumpUpgradeResult.Builder result = DumpUpgradeResult.create();
 
         final String dumpName = params.getDumpName();
         Version modelVersion = getDumpModelVersion( dumpName );
@@ -131,9 +136,13 @@ public class DumpServiceImpl
                 final Version targetModelVersion = dumpUpgrader.getModelVersion();
                 if ( modelVersion.lessThan( targetModelVersion ) )
                 {
-                    dumpUpgrader.upgrade( dumpName );
+                    LOG.info( "Running upgrade step [{}]...", dumpUpgrader.getName() );
+                    final DumpUpgradeStepResult stepResult = dumpUpgrader.upgrade( dumpName );
                     modelVersion = targetModelVersion;
                     updateDumpModelVersion( dumpName, modelVersion );
+                    LOG.info( "Finished upgrade step [{}]: processed: {}, errors: {}, warnings: {}", dumpUpgrader.getName(),
+                              stepResult.getProcessed(), stepResult.getErrors(), stepResult.getWarnings() );
+                    result.stepResult( stepResult );
 
                     if ( params.getUpgradeListener() != null )
                     {
@@ -269,6 +278,8 @@ public class DumpServiceImpl
             throw new SystemDumpException( "Cannot load system-dump; dump does not contain system repository" );
         }
 
+        uninstallNonSystemApplications();
+
         if ( params.getListener() != null )
         {
             final long branchesCount = dumpReader.getRepositories().
@@ -298,10 +309,31 @@ public class DumpServiceImpl
         return results.build();
     }
 
+    private void uninstallNonSystemApplications()
+    {
+        LOG.info( "Uninstall global applications" );
+        NodeHelper.runAsAdmin( () -> {
+            final Applications installedApplications = applicationService.getInstalledApplications();
+            installedApplications.forEach( installedApplication -> {
+                if ( !installedApplication.isSystem() )
+                {
+                    final ApplicationKey applicationKey = installedApplication.getKey();
+                    if (applicationService.isLocalApplication( applicationKey )) {
+                        applicationService.publishUninstalledEvent(applicationKey);
+                    } else {
+                        applicationService.uninstallApplication( installedApplication.getKey(), true );
+                    }
+                }
+            } );
+        } );
+    }
+
     private void initApplications()
     {
-        LOG.info( "Install applications" );
-        NodeHelper.runAsAdmin( () -> applicationService.installAllStoredApplications() );
+        LOG.info( "Install global applications" );
+        final ApplicationInstallationParams params = ApplicationInstallationParams.create().
+            build();
+        NodeHelper.runAsAdmin( () -> applicationService.installAllStoredApplications(params) );
     }
 
     private void initializeSystemRepo( final SystemLoadParams params, final FileDumpReader dumpReader,

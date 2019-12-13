@@ -5,21 +5,25 @@ import java.io.StringReader;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.web.impl.serializer.RequestBodyReader;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RequestBodyReaderTest
 {
     private HttpServletRequest req;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.req = Mockito.mock( HttpServletRequest.class );

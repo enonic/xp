@@ -6,6 +6,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
 
 @Beta
@@ -17,11 +18,14 @@ public final class CreateFragmentParams
 
     private final PropertyTree config;
 
+    private final WorkflowInfo workflowInfo;
+
     public CreateFragmentParams( final Builder builder )
     {
         this.parentPath = builder.parentPath;
         this.component = builder.component;
         this.config = builder.config == null ? new PropertyTree() : builder.config;
+        this.workflowInfo = builder.workflowInfo;
     }
 
     public PropertyTree getConfig()
@@ -37,6 +41,11 @@ public final class CreateFragmentParams
     public Component getComponent()
     {
         return component;
+    }
+
+    public WorkflowInfo getWorkflowInfo()
+    {
+        return workflowInfo;
     }
 
     @Override
@@ -80,6 +89,8 @@ public final class CreateFragmentParams
 
         private PropertyTree config;
 
+        private WorkflowInfo workflowInfo;
+
         private Builder()
         {
         }
@@ -89,6 +100,7 @@ public final class CreateFragmentParams
             this.component = source.component;
             this.config = source.config;
             this.parentPath = source.parentPath;
+            this.workflowInfo = source.workflowInfo;
         }
 
         public Builder config( final PropertyTree config )
@@ -109,10 +121,17 @@ public final class CreateFragmentParams
             return this;
         }
 
+        public Builder workflowInfo( final WorkflowInfo workflowInfo )
+        {
+            this.workflowInfo = workflowInfo;
+            return this;
+        }
+
         private void validate()
         {
             Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
             Preconditions.checkNotNull( component, "component cannot be null" );
+            Preconditions.checkNotNull( workflowInfo, "workflowInfo cannot be null" );
         }
 
         public CreateFragmentParams build()

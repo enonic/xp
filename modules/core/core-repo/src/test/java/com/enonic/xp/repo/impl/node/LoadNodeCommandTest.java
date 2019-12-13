@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import java.time.Instant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.LoadNodeParams;
@@ -15,7 +15,10 @@ import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.NodeVersionId;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LoadNodeCommandTest
     extends AbstractNodeTest
@@ -85,7 +88,7 @@ public class LoadNodeCommandTest
         assertNotEquals( originalNode.id(), storedNode.id() );
     }
 
-    @Test(expected = NodeLoadException.class)
+    @Test
     public void parent_does_not_exist()
         throws Exception
     {
@@ -99,7 +102,7 @@ public class LoadNodeCommandTest
                 build() ).
             build();
 
-        doLoadNode( loadParams );
+        assertThrows(NodeLoadException.class, () -> doLoadNode( loadParams ));
     }
 
     private LoadNodeResult doLoadNode( final LoadNodeParams loadParams )

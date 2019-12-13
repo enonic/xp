@@ -1,18 +1,19 @@
 package com.enonic.xp.core.impl.app;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
@@ -22,20 +23,13 @@ final class ApplicationRegistry
 {
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationRegistry.class );
 
-    private final ConcurrentMap<ApplicationKey, Application> applications;
+    private final ConcurrentMap<ApplicationKey, Application> applications = new ConcurrentHashMap<>();
 
     private BundleContext context;
 
-    private final ApplicationFactory factory;
+    private final ApplicationFactory factory = new ApplicationFactory( RunMode.get() );
 
-    private final List<ApplicationInvalidator> invalidators;
-
-    public ApplicationRegistry()
-    {
-        this.applications = Maps.newConcurrentMap();
-        this.factory = new ApplicationFactory( RunMode.get() );
-        this.invalidators = Lists.newCopyOnWriteArrayList();
-    }
+    private final List<ApplicationInvalidator> invalidators = new CopyOnWriteArrayList<>();
 
     public void activate( final BundleContext context )
     {
@@ -49,7 +43,7 @@ final class ApplicationRegistry
 
     private ApplicationKeys findApplicationKeys()
     {
-        final List<ApplicationKey> list = Lists.newArrayList();
+        final List<ApplicationKey> list = new ArrayList<>();
         for ( final Bundle bundle : this.context.getBundles() )
         {
             if ( isApplication( bundle ) )
@@ -63,13 +57,18 @@ final class ApplicationRegistry
 
     public void invalidate( final ApplicationKey key )
     {
+        invalidate( key, ApplicationInvalidationLevel.FULL );
+    }
+
+    public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
+    {
         this.applications.remove( key );
 
         for ( final ApplicationInvalidator invalidator : this.invalidators )
         {
             try
             {
-                invalidator.invalidate( key );
+                invalidator.invalidate( key, level );
             }
             catch ( Exception e )
             {
@@ -85,7 +84,7 @@ final class ApplicationRegistry
 
     public Collection<Application> getAll()
     {
-        final List<Application> list = Lists.newArrayList();
+        final List<Application> list = new ArrayList<>();
 
         for ( final ApplicationKey key : findApplicationKeys() )
         {

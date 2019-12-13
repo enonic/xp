@@ -1,5 +1,6 @@
 package com.enonic.xp.node;
 
+import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.query.QueryExplanation;
 
 public class NodeHit
@@ -10,11 +11,14 @@ public class NodeHit
 
     private final QueryExplanation explanation;
 
+    private final HighlightedProperties highlight;
+
     private NodeHit( final Builder builder )
     {
         nodeId = builder.nodeId;
         score = builder.score;
         explanation = builder.explanation;
+        highlight = builder.highlight.build();
     }
 
     public static Builder create()
@@ -37,6 +41,11 @@ public class NodeHit
         return explanation;
     }
 
+    public HighlightedProperties getHighlight()
+    {
+        return highlight;
+    }
+
     public static final class Builder
     {
         private NodeId nodeId;
@@ -44,6 +53,8 @@ public class NodeHit
         private float score;
 
         private QueryExplanation explanation;
+
+        private HighlightedProperties.Builder highlight = HighlightedProperties.create();
 
         private Builder()
         {
@@ -66,6 +77,13 @@ public class NodeHit
             explanation = val;
             return this;
         }
+
+        public Builder highlight( final HighlightedProperties val )
+        {
+            highlight = HighlightedProperties.create( val );
+            return this;
+        }
+
 
         public NodeHit build()
         {

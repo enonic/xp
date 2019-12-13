@@ -1,19 +1,20 @@
 package com.enonic.xp.jaxrs.impl;
 
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.List;
+
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.Test;
-
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.web.filter.BaseWebFilter;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JaxRsServletTest
     extends JettyTestSupport
@@ -50,25 +51,25 @@ public class JaxRsServletTest
     private void assertNotFound()
         throws Exception
     {
-        final Request request = newRequest( "/test" ).
-            get().
+        final HttpRequest request = newRequest( "/test" ).
+            GET().
             build();
 
-        final Response response = callRequest( request );
-        assertEquals( 404, response.code() );
+        final HttpResponse response = callRequest( request );
+        assertEquals( 404, response.statusCode() );
     }
 
     private void assertFound()
         throws Exception
     {
-        final Request request = newRequest( "/test" ).
-            get().
+        final HttpRequest request = newRequest( "/test" ).
+            GET().
             build();
 
-        final Response response = callRequest( request );
-        assertEquals( 200, response.code() );
-        assertEquals( "text/plain", response.body().contentType().toString() );
-        assertEquals( "Hello World", response.body().string() );
+        final HttpResponse response = callRequest( request );
+        assertEquals( 200, response.statusCode() );
+        assertEquals( List.of( "text/plain" ), response.headers().allValues( "content-type" ) );
+        assertEquals( "Hello World", response.body().toString() );
     }
 
     @Test

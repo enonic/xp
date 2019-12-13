@@ -8,6 +8,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionId;
 
 public final class GetNodeHandler
     extends AbstractNodeHandler
@@ -20,6 +21,7 @@ public final class GetNodeHandler
         keys = builder.keys;
     }
 
+    @Override
     public Object execute()
     {
         if ( keys.singleValue() )
@@ -39,12 +41,15 @@ public final class GetNodeHandler
     {
         if ( key.isId() )
         {
-            return getById( key.getAsNodeId() );
-
+            return key.getVersionId() == null
+                ? getById( key.getAsNodeId() )
+                : getByIdAndVersionId( key.getAsNodeId(), NodeVersionId.from( key.getVersionId() ) );
         }
         else
         {
-            return getByPath( key.getAsPath() );
+            return key.getVersionId() == null
+                ? getByPath( key.getAsPath() )
+                : getByPathAndVersionId( key.getAsPath(), NodeVersionId.from( key.getVersionId() ) );
         }
     }
 
@@ -65,6 +70,30 @@ public final class GetNodeHandler
         try
         {
             return convert( this.nodeService.getById( key ) );
+        }
+        catch ( final NodeNotFoundException e )
+        {
+            return null;
+        }
+    }
+
+    private NodeMapper getByIdAndVersionId( final NodeId id, final NodeVersionId versionId )
+    {
+        try
+        {
+            return convert( this.nodeService.getByIdAndVersionId( id, versionId ) );
+        }
+        catch ( final NodeNotFoundException e )
+        {
+            return null;
+        }
+    }
+
+    private NodeMapper getByPathAndVersionId( final NodePath path, final NodeVersionId versionId )
+    {
+        try
+        {
+            return convert( this.nodeService.getByPathAndVersionId( path, versionId ) );
         }
         catch ( final NodeNotFoundException e )
         {

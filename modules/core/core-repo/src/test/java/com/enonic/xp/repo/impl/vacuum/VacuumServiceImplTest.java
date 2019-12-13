@@ -1,13 +1,13 @@
 package com.enonic.xp.repo.impl.vacuum;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.vacuum.VacuumParameters;
 import com.enonic.xp.vacuum.VacuumResult;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VacuumServiceImplTest
 {
@@ -18,6 +18,7 @@ public class VacuumServiceImplTest
     {
 
         final VacuumServiceImpl service = new VacuumServiceImpl();
+        service.activate( new TestVacuumConfig() );
 
         service.addTask( new VacuumTask()
         {

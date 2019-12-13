@@ -11,22 +11,22 @@
     "properties": {
       "commitid": {
         "type": "string",
-        "store": "true",
+        "store": false,
         "index": "not_analyzed"
       },
       "message": {
         "type": "string",
-        "store": "true",
+        "store": false,
         "index": "not_analyzed"
       },
       "timestamp": {
         "type": "date",
-        "store": "true",
+        "store": false,
         "index": "not_analyzed"
       },
       "committer": {
         "type": "string",
-        "store": "true",
+        "store": false,
         "index": "not_analyzed"
       }
     }

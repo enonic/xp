@@ -2,6 +2,7 @@
 <content-type xmlns="urn:enonic:xp:model:1.0">
   <display-name i18n="translated.display-name">Content display name</display-name>
   <description i18n="translated.description">description</description>
+  <display-name-label i18n="translated.displayNameLabel">Display name label</display-name-label>
   <super-type>base:structured</super-type>
   <form>
     <input type="TextLine" name="textLine">

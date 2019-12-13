@@ -2,6 +2,7 @@ package com.enonic.xp.server.impl.status;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -11,7 +12,6 @@ import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.json.MetricsModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Maps;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.status.StatusContext;
@@ -68,7 +68,7 @@ public final class MetricsReporter
         final MetricFilter metricFilter = ( name, metric ) -> name.toLowerCase().contains( filter.toLowerCase() );
         final MetricRegistry registry = Metrics.registry();
 
-        final Map<String, Object> map = Maps.newHashMap();
+        final Map<String, Object> map = new HashMap<>();
         map.put( "gauges", registry.getGauges( metricFilter ) );
         map.put( "counters", registry.getCounters( metricFilter ) );
         map.put( "histograms", registry.getHistograms( metricFilter ) );

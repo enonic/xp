@@ -6,14 +6,15 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.index.query.SimpleQueryStringBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FunctionExpressionBuilderTest
 {
@@ -65,11 +66,11 @@ public class FunctionExpressionBuilderTest
         assertTrue( stemmed instanceof SimpleQueryStringBuilder );
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void test_unsupported()
     {
-        final QueryBuilder stemmed = FunctionExpressionBuilder.build(
+        assertThrows(UnsupportedOperationException.class, () -> FunctionExpressionBuilder.build(
             FunctionExpr.from( "unsupported", ValueExpr.string( "field" ), ValueExpr.string( "organize" ), ValueExpr.string( "OR" ),
-                               ValueExpr.string( "en" ) ) );
+                               ValueExpr.string( "en" ) ) ));
     }
 }

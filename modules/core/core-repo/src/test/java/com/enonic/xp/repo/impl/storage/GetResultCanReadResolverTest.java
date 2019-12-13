@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.storage;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.repo.impl.ReturnValues;
@@ -10,7 +10,8 @@ import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GetResultCanReadResolverTest
 {

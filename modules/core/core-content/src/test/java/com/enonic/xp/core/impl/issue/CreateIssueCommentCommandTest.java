@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.issue;
 
 import java.time.Instant;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -20,14 +20,16 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.security.PrincipalKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CreateIssueCommentCommandTest
 {
 
     private NodeService nodeService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -62,7 +64,7 @@ public class CreateIssueCommentCommandTest
         assertEquals( "Creator One", comment.getCreatorDisplayName() );
     }
 
-    @Test(expected = NodeNotFoundException.class)
+    @Test
     public void createIssueNotExists()
     {
         final PrincipalKey creator = PrincipalKey.from( "user:store:one" );
@@ -80,23 +82,23 @@ public class CreateIssueCommentCommandTest
 
         Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
 
-        final IssueComment comment = command.execute();
+        assertThrows(NodeNotFoundException.class, () -> command.execute());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNoText()
     {
         final CreateIssueCommentParams params = CreateIssueCommentParams.create().issue( IssueId.create() ).build();
         final CreateIssueCommentCommand command = createIssueCommentCommand( params );
-        command.execute();
+        assertThrows(IllegalArgumentException.class, () -> command.execute());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNoIssueId()
     {
         final CreateIssueCommentParams params = CreateIssueCommentParams.create().text( "text" ).build();
         final CreateIssueCommentCommand command = createIssueCommentCommand( params );
-        command.execute();
+        assertThrows(IllegalArgumentException.class, () -> command.execute());
     }
 
     private CreateIssueCommentCommand createIssueCommentCommand( CreateIssueCommentParams params )

@@ -1,9 +1,13 @@
 package com.enonic.xp.resource;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ResourceKeyTest
 {
@@ -26,14 +30,14 @@ public class ResourceKeyTest
     {
         final ResourceKey key = ResourceKey.from( input );
 
-        Assert.assertNotNull( key );
-        Assert.assertEquals( uri, key.toString() );
-        Assert.assertEquals( uri, key.getUri() );
-        Assert.assertEquals( path, key.getPath() );
-        Assert.assertEquals( ext, key.getExtension() );
-        Assert.assertEquals( application, key.getApplicationKey().toString() );
-        Assert.assertEquals( root, key.isRoot() );
-        Assert.assertEquals( name, key.getName() );
+        assertNotNull( key );
+        assertEquals( uri, key.toString() );
+        assertEquals( uri, key.getUri() );
+        assertEquals( path, key.getPath() );
+        assertEquals( ext, key.getExtension() );
+        assertEquals( application, key.getApplicationKey().toString() );
+        assertEquals( root, key.isRoot() );
+        assertEquals( name, key.getName() );
     }
 
     @Test
@@ -53,19 +57,19 @@ public class ResourceKeyTest
         final ApplicationKey applicationKey = ApplicationKey.from( "myapplication-1.0.0" );
         final ResourceKey key = ResourceKey.from( applicationKey, input );
 
-        Assert.assertNotNull( key );
-        Assert.assertEquals( uri, key.toString() );
-        Assert.assertEquals( uri, key.getUri() );
-        Assert.assertEquals( path, key.getPath() );
-        Assert.assertEquals( ext, key.getExtension() );
-        Assert.assertEquals( applicationKey.toString(), key.getApplicationKey().toString() );
-        Assert.assertEquals( root, key.isRoot() );
+        assertNotNull( key );
+        assertEquals( uri, key.toString() );
+        assertEquals( uri, key.getUri() );
+        assertEquals( path, key.getPath() );
+        assertEquals( ext, key.getExtension() );
+        assertEquals( applicationKey.toString(), key.getApplicationKey().toString() );
+        assertEquals( root, key.isRoot() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void invalidUri()
     {
-        ResourceKey.from( "test" );
+        assertThrows(IllegalArgumentException.class, () -> ResourceKey.from( "test" ));
     }
 
     @Test
@@ -81,7 +85,7 @@ public class ResourceKeyTest
     private void testEquals( final String key1, final String key2, final boolean flag )
     {
         final boolean result = ResourceKey.from( key1 ).equals( ResourceKey.from( key2 ) );
-        Assert.assertEquals( flag, result );
+        assertEquals( flag, result );
     }
 
     @Test
@@ -99,8 +103,8 @@ public class ResourceKeyTest
         final ResourceKey key1 = ResourceKey.from( uri );
         final ResourceKey key2 = key1.resolve( path );
 
-        Assert.assertNotNull( key2 );
-        Assert.assertEquals( resolved, key2.toString() );
+        assertNotNull( key2 );
+        assertEquals( resolved, key2.toString() );
     }
 
     @Test
@@ -110,7 +114,7 @@ public class ResourceKeyTest
         final ResourceKey key2 = ResourceKey.from( "myapplication-1.0.0:/a/b" );
         final ResourceKey key3 = ResourceKey.from( "myapplication-1.0.0:/a" );
 
-        Assert.assertEquals( key1.hashCode(), key2.hashCode() );
-        Assert.assertNotEquals( key1.hashCode(), key3.hashCode() );
+        assertEquals( key1.hashCode(), key2.hashCode() );
+        assertNotEquals( key1.hashCode(), key3.hashCode() );
     }
 }

@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
@@ -16,7 +16,8 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.site.Site;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class GetNearestSiteCommandTest
 {
@@ -28,7 +29,7 @@ public class GetNearestSiteCommandTest
 
     private ContentTypeService contentTypeService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.event;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.event.Event;
@@ -15,7 +15,7 @@ public class EventPublisherImplTest
 {
     private EventPublisherImpl publisher;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         this.publisher = new EventPublisherImpl();

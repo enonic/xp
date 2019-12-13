@@ -8,14 +8,9 @@ dependencies {
     compile 'org.apache.felix:org.apache.felix.shell.remote:1.1.2'
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Server - Shell'
-    instruction 'Export-Package', 'org.apache.felix.service.command'
-    instruction 'Export-Package', 'org.apache.felix.service.threadio'
-    instruction 'Export-Package', 'org.apache.felix.gogo.api'
-    instruction 'Private-Package', 'org.apache.felix.gogo.*'
-    instruction 'Private-Package', 'org.apache.felix.shell.*'
-    instruction 'Private-Package', 'org.ungoverned.osgi.*'
-    instruction 'Import-Package', 'org.apache.felix.bundlerepository.*;resolution:=optional'
-    instruction 'Import-Package', '*'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Server - Shell',
+         'Export-Package': 'org.apache.felix.service.command,org.apache.felix.service.threadio,org.apache.felix.gogo.api',
+         'Private-Package': 'org.apache.felix.gogo.*,org.apache.felix.shell.*,org.ungoverned.osgi.*',
+         'Import-Package': 'org.apache.felix.bundlerepository.*;resolution:=optional,*' )
 }

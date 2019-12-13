@@ -1,7 +1,14 @@
 package com.enonic.xp.core.content;
 
-import org.junit.Test;
+import java.util.Set;
 
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+
+import com.google.common.collect.Sets;
+
+import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
@@ -10,6 +17,7 @@ import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.IdProviderKey;
@@ -20,17 +28,14 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentServiceImplTest_duplicate
     extends AbstractContentServiceTest
 {
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void root_content()
@@ -125,5 +130,26 @@ public class ContentServiceImplTest_duplicate
         final DuplicateContentsResult result = contentService.duplicate( params );
 
         return this.contentService.getById( result.getDuplicatedContents().first() );
+    }
+
+    @Test
+    public void audit_data()
+        throws Exception
+    {
+        final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+
+        final Content rootContent = createContent( ContentPath.ROOT );
+        final Content childContent = createContent( rootContent.getPath() );
+
+        final Content duplicatedContent = doDuplicateContent( rootContent );
+
+        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).times( 3 ) ).log( captor.capture() );
+
+        final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
+
+        final Set<String> ids = Sets.newHashSet( logResultSet.getStrings( "duplicatedContents" ) );
+
+        assertEquals( 2, ids.size() );
+        assertTrue( ids.contains( duplicatedContent.getId().toString() ) );
     }
 }

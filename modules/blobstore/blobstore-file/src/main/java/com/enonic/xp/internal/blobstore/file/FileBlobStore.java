@@ -103,10 +103,10 @@ public final class FileBlobStore
             return java.nio.file.Files.walk( this.baseDir.toPath() ).
                 filter( path -> path.toFile().isFile() ).
                 filter( path -> isBlobFileName( segment, path ) ).
-                map( ( path -> {
+                map( path -> {
                     final BlobKey blobKey = BlobKey.from( path.getFileName().toString() );
                     return doGetRecord( segment, blobKey );
-                } ) );
+                } );
         }
         catch ( IOException e )
         {

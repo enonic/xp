@@ -5,6 +5,6 @@ dependencies {
     testCompile project( path: ':web:web-api', configuration: 'testOutput' )
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Web - DoS Filter'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Web - DoS Filter' )
 }

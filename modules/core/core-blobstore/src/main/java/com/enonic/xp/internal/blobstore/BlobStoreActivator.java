@@ -20,7 +20,9 @@ import com.enonic.xp.internal.blobstore.config.BlobStoreConfig;
 @Component(immediate = true)
 public class BlobStoreActivator
 {
-    private final BlobStoreProviders providers;
+    private final BlobStoreProviders providers = new BlobStoreProviders();
+
+    ;
 
     private ServiceRegistration<BlobStore> blobStoreReg;
 
@@ -29,11 +31,6 @@ public class BlobStoreActivator
     private BundleContext context;
 
     private final static Logger LOG = LoggerFactory.getLogger( BlobStoreActivator.class );
-
-    public BlobStoreActivator()
-    {
-        this.providers = new BlobStoreProviders();
-    }
 
     @Activate
     public void activate( final BundleContext context )
@@ -100,11 +97,7 @@ public class BlobStoreActivator
 
     private boolean activatorHasBeenInitialized()
     {
-        if ( this.context == null )
-        {
-            return false;
-        }
-        return true;
+        return this.context != null;
     }
 
     @Deactivate

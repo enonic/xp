@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.util.Reference;
@@ -34,7 +34,7 @@ final class NodeReferenceUpdatesHolder
 
     static class Builder
     {
-        private final Map<NodeId, NodeId> references = Maps.newHashMap();
+        private final Map<NodeId, NodeId> references = new HashMap<>();
 
         Builder add( final NodeId from, final NodeId to )
         {

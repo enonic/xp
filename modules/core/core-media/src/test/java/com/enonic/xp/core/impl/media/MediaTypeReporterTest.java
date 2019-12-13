@@ -1,15 +1,16 @@
 package com.enonic.xp.core.impl.media;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MediaTypeReporterTest
 {
     private MediaTypeReporter reporter;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.reporter = new MediaTypeReporter();

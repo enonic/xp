@@ -1,19 +1,21 @@
 package com.enonic.xp.schema.mixin;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MixinNamesTest
 {
     @Test
     public void test_immutable_MixinNames()
     {
-        List<MixinName> names = Lists.newArrayList();
+        List<MixinName> names = new ArrayList<>();
         MixinName mixinName = MixinName.from( "myapplication:my" );
         MixinNames mixinNames = MixinNames.from( names );
         try

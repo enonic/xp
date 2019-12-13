@@ -1,9 +1,8 @@
 package com.enonic.xp.admin.impl.json.content;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
@@ -13,7 +12,7 @@ import com.enonic.xp.content.GetPublishStatusesResult;
 
 public class CompareContentResultsJson
 {
-    private final Set<CompareContentResultJson> compareContentResults = Sets.newHashSet();
+    private final Set<CompareContentResultJson> compareContentResults = new HashSet<>();
 
     public CompareContentResultsJson( final CompareContentResults compareContentResults,
                                       final GetPublishStatusesResult getPublishStatusesResult )

@@ -2,7 +2,7 @@ package com.enonic.xp.core.impl.app;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Constants;
@@ -10,7 +10,9 @@ import org.osgi.framework.Constants;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ApplicationNameResolverTest
     extends BundleBasedTest
@@ -26,24 +28,25 @@ public class ApplicationNameResolverTest
         assertEquals( "myBundle", bundleName );
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void invalid_bundle()
         throws Exception
     {
         final ByteSource source = ByteSource.wrap( "abc".getBytes() );
-        final String appName = ApplicationNameResolver.resolve( source );
+        assertThrows(IOException.class, () -> {
+                final String appName = ApplicationNameResolver.resolve( source );
+                assertNull( appName );
+        } );
 
-        assertNull( appName );
     }
 
-    @Test(expected = ApplicationInvalidException.class)
+    @Test
     public void not_application()
         throws Exception
     {
         final ByteSource source = wrapBundle( newBundle( "myBundle", false ) );
-        final String appName = ApplicationNameResolver.resolve( source );
-
-        assertNull( appName );
+        assertThrows(ApplicationInvalidException.class, () -> {final String appName = ApplicationNameResolver.resolve( source );
+            assertNull( appName );});
     }
 
 

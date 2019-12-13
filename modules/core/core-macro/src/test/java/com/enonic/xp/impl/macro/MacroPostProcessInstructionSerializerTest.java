@@ -1,10 +1,10 @@
 package com.enonic.xp.impl.macro;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.macro.Macro;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MacroPostProcessInstructionSerializerTest
 {

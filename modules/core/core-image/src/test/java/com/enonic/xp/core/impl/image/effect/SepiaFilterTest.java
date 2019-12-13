@@ -2,13 +2,13 @@ package com.enonic.xp.core.impl.image.effect;
 
 import java.awt.image.BufferedImage;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.impl.image.AwtImageFilter;
 import com.enonic.xp.core.impl.image.AwtImageFilterTest;
 import com.enonic.xp.core.impl.image.ImageFilter;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SepiaFilterTest
     extends AwtImageFilterTest

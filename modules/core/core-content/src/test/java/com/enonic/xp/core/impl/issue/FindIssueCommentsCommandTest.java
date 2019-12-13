@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.issue;
 
 import java.time.Instant;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.issue.FindIssueCommentsResult;
@@ -19,13 +19,14 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.security.PrincipalKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FindIssueCommentsCommandTest
 {
     private NodeService nodeService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -66,7 +67,7 @@ public class FindIssueCommentsCommandTest
         assertEquals( 1, result.getIssueComments().size() );
     }
 
-    @Test(expected = NodeNotFoundException.class)
+    @Test
     public void testFindIssuesIssueNotExists()
         throws Exception
     {
@@ -83,10 +84,10 @@ public class FindIssueCommentsCommandTest
 
         Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
 
-        FindIssueCommentsResult result = command.execute();
+        assertThrows(NodeNotFoundException.class, () -> command.execute());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFindIssuesNoIssue()
         throws Exception
     {
@@ -98,7 +99,7 @@ public class FindIssueCommentsCommandTest
             build();
         final FindIssueCommentsCommand command = createCommand( commentQuery );
 
-        FindIssueCommentsResult result = command.execute();
+        assertThrows(IllegalArgumentException.class, () -> command.execute());
     }
 
     private FindIssueCommentsCommand createCommand( final IssueCommentQuery query )

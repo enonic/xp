@@ -6,7 +6,7 @@ import java.util.StringTokenizer;
 public class Version
     implements Comparable<Version>
 {
-    public static final Version emptyVersion = new Version( 0, 0, 0 );
+    public static final Version emptyVersion = new Version( 0 );
 
     private static final String SEPARATOR = ".";
 
@@ -21,6 +21,16 @@ public class Version
     private transient String versionString /* default to null */;
 
     private transient int hash /* default to 0 */;
+
+    public Version( int major )
+    {
+        this( major, 0, 0, null );
+    }
+
+    public Version( int major, int minor )
+    {
+        this( major, minor, 0, null );
+    }
 
     public Version( int major, int minor, int micro )
     {
@@ -78,8 +88,7 @@ public class Version
         }
         catch ( NoSuchElementException e )
         {
-            IllegalArgumentException iae = new IllegalArgumentException( "invalid version \"" + version + "\": invalid format" );
-            iae.initCause( e );
+            IllegalArgumentException iae = new IllegalArgumentException( "invalid version \"" + version + "\": invalid format", e );
             throw iae;
         }
 
@@ -99,8 +108,7 @@ public class Version
         catch ( NumberFormatException e )
         {
             IllegalArgumentException iae =
-                new IllegalArgumentException( "invalid version \"" + version + "\": non-numeric \"" + value + "\"" );
-            iae.initCause( e );
+                new IllegalArgumentException( "invalid version \"" + version + "\": non-numeric \"" + value + "\"", e );
             throw iae;
         }
     }
@@ -202,7 +210,7 @@ public class Version
             return s;
         }
         int q = qualifier.length();
-        StringBuffer result = new StringBuffer( 20 + q );
+        StringBuilder result = new StringBuilder( 20 + q );
         result.append( major );
         result.append( SEPARATOR );
         result.append( minor );
@@ -219,7 +227,7 @@ public class Version
     public String toShortestString()
     {
         int q = qualifier.length();
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append( major );
         if ( minor > 0 || micro > 0 || q > 0 )
         {
@@ -272,6 +280,7 @@ public class Version
         return ( major == other.major ) && ( minor == other.minor ) && ( micro == other.micro ) && qualifier.equals( other.qualifier );
     }
 
+    @Override
     public int compareTo( Version other )
     {
         if ( other == this )

@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.content.index.processor;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.data.PropertyPath;
@@ -22,7 +22,8 @@ import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcesso
 import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.COMPONENTS;
 import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.CONFIG;
 import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.DESCRIPTOR;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PageConfigProcessorTest
 {
@@ -30,7 +31,7 @@ public class PageConfigProcessorTest
 
     private DescriptorKey descriptorKey;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

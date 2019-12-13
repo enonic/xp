@@ -2,13 +2,13 @@ package com.enonic.xp.content;
 
 import java.time.Instant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.UnmodifiableIterator;
 
 import com.enonic.xp.branch.Branch;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GetActiveContentVersionsResultTest
 {

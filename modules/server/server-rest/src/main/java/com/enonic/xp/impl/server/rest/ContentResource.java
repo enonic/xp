@@ -23,8 +23,11 @@ import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.impl.server.rest.model.ReprocessContentRequestJson;
 import com.enonic.xp.impl.server.rest.model.ReprocessContentResultJson;
+import com.enonic.xp.impl.server.rest.task.ReprocessRunnableTask;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.task.TaskResultJson;
+import com.enonic.xp.task.TaskService;
 
 @Path("/content")
 @Produces(MediaType.APPLICATION_JSON)
@@ -36,10 +39,13 @@ public final class ContentResource
 {
     private ContentService contentService;
 
+    private TaskService taskService;
+
     private final static Logger LOG = LoggerFactory.getLogger( ContentResource.class );
 
     @POST
     @Path("reprocess")
+    @Deprecated
     public ReprocessContentResultJson reprocess( final ReprocessContentRequestJson request )
     {
         final List<ContentPath> updated = new ArrayList<>();
@@ -60,6 +66,7 @@ public final class ContentResource
         return new ReprocessContentResultJson( ContentPaths.from( updated ), errors );
     }
 
+    @Deprecated
     private void reprocessContent( final Content content, final boolean skipChildren, final List<ContentPath> updated,
                                    final List<String> errors )
     {
@@ -100,10 +107,30 @@ public final class ContentResource
         while ( resultCount > 0 );
     }
 
+    @POST
+    @Path("reprocessTask")
+    public TaskResultJson reprocessTask( final ReprocessContentRequestJson request )
+    {
+        return ReprocessRunnableTask.create().
+            description( "reprocess" ).
+            contentService( contentService ).
+            taskService( taskService ).
+            params( request ).
+            build().
+            createTaskResult();
+    }
+
     @SuppressWarnings("UnusedDeclaration")
     @Reference
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    @Reference
+    public void setTaskService( final TaskService taskService )
+    {
+        this.taskService = taskService;
     }
 }

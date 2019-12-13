@@ -2,8 +2,8 @@ package com.enonic.xp.portal.impl.rendering;
 
 import java.util.function.Function;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
@@ -19,7 +19,8 @@ import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TextRendererTest
 {
@@ -33,7 +34,7 @@ public class TextRendererTest
 
     private PortalUrlService service;
 
-    @Before
+    @BeforeEach
     public void before()
     {
         portalRequest = new PortalRequest();
@@ -157,7 +158,7 @@ public class TextRendererTest
         assertEquals( "<div data-portal-component-type=\"text\"><section>" + text + "</section></div>", portalResponse.getAsString() );
     }
 
-    private class MockMacroService
+    private static class MockMacroService
         implements MacroService
     {
         @Override
@@ -179,7 +180,7 @@ public class TextRendererTest
         }
     }
 
-    private class MockStyleDescriptorService
+    private static class MockStyleDescriptorService
         implements StyleDescriptorService
     {
         @Override

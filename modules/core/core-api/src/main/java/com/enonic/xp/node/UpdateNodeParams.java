@@ -1,11 +1,11 @@
 package com.enonic.xp.node;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.util.BinaryReference;
@@ -70,7 +70,7 @@ public class UpdateNodeParams
 
         private NodeEditor editor;
 
-        private Set<BinaryAttachment> binaryAttachments = Sets.newHashSet();
+        private Set<BinaryAttachment> binaryAttachments = new HashSet<>();
 
         private boolean dryRun = false;
 
@@ -104,7 +104,7 @@ public class UpdateNodeParams
 
         public Builder setBinaryAttachments( final BinaryAttachments binaryAttachments )
         {
-            this.binaryAttachments = binaryAttachments != null ? binaryAttachments.getSet() : Sets.newHashSet();
+            this.binaryAttachments = binaryAttachments != null ? binaryAttachments.getSet() : new HashSet<>();
             return this;
         }
 

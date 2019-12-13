@@ -3,16 +3,16 @@ package com.enonic.xp.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.media.MediaTypeProvider;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MediaTypesTest
 {
@@ -21,10 +21,22 @@ public class MediaTypesTest
     {
         final MediaTypes mediaTypes = MediaTypes.instance();
 
-        Assert.assertNotNull( mediaTypes.fromExt( "html" ) );
+        assertNotNull( mediaTypes.fromExt( "html" ) );
         assertEquals( "text/html", mediaTypes.fromExt( "html" ).toString() );
 
-        Assert.assertNotNull( mediaTypes.fromExt( "any" ) );
+        assertNotNull( mediaTypes.fromExt( "js" ) );
+        assertEquals( "application/javascript", mediaTypes.fromExt( "js" ).toString() );
+
+        assertNotNull( mediaTypes.fromExt( "es" ) );
+        assertEquals( "application/javascript", mediaTypes.fromExt( "es" ).toString() );
+
+        assertNotNull( mediaTypes.fromExt( "es6" ) );
+        assertEquals( "application/javascript", mediaTypes.fromExt( "es6" ).toString() );
+
+        assertNotNull( mediaTypes.fromExt( "mjs" ) );
+        assertEquals( "application/javascript", mediaTypes.fromExt( "mjs" ).toString() );
+
+        assertNotNull( mediaTypes.fromExt( "any" ) );
         assertEquals( "application/octet-stream", mediaTypes.fromExt( "any" ).toString() );
     }
 
@@ -33,10 +45,10 @@ public class MediaTypesTest
     {
         final MediaTypes mediaTypes = MediaTypes.instance();
 
-        Assert.assertNotNull( mediaTypes.fromFile( "index.html" ) );
+        assertNotNull( mediaTypes.fromFile( "index.html" ) );
         assertEquals( "text/html", mediaTypes.fromFile( "index.html" ).toString() );
 
-        Assert.assertNotNull( mediaTypes.fromFile( "file" ) );
+        assertNotNull( mediaTypes.fromFile( "file" ) );
         assertEquals( "application/octet-stream", mediaTypes.fromFile( "file" ).toString() );
     }
 
@@ -66,7 +78,7 @@ public class MediaTypesTest
             @Override
             public Map<String, MediaType> asMap()
             {
-                final HashMap<String, MediaType> map = Maps.newHashMap();
+                final HashMap<String, MediaType> map = new HashMap<>();
                 map.put( "test", unknown );
                 return map;
             }

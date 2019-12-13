@@ -1,15 +1,15 @@
 package com.enonic.xp.core.impl.export.xml;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import org.w3c.dom.Document;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.xml.DomHelper;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class BaseXmlSerializerTest
 {
@@ -22,7 +22,7 @@ public abstract class BaseXmlSerializerTest
             throw new IllegalArgumentException( "Resource file [" + fileName + "] not found" );
         }
 
-        final String xml = Resources.toString( url, Charsets.UTF_8 );
+        final String xml = Resources.toString( url, StandardCharsets.UTF_8 );
         return normalizeXml( xml );
     }
 

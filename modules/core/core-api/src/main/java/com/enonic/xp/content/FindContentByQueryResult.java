@@ -1,8 +1,13 @@
 package com.enonic.xp.content;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.aggregation.Aggregations;
+import com.enonic.xp.highlight.HighlightedProperties;
 
 @Beta
 public final class FindContentByQueryResult
@@ -10,6 +15,8 @@ public final class FindContentByQueryResult
     private final Aggregations aggregations;
 
     private Contents contents;
+
+    private final ImmutableMap<ContentId, HighlightedProperties> highlight;
 
     private long totalHits;
 
@@ -21,6 +28,7 @@ public final class FindContentByQueryResult
         this.totalHits = builder.totalHits;
         this.hits = builder.hits;
         this.aggregations = builder.aggregations;
+        this.highlight = ImmutableMap.copyOf( builder.highlight );
     }
 
     public static Builder create()
@@ -38,6 +46,11 @@ public final class FindContentByQueryResult
         return aggregations;
     }
 
+    public ImmutableMap<ContentId, HighlightedProperties> getHighlight()
+    {
+        return highlight;
+    }
+
     public long getTotalHits()
     {
         return totalHits;
@@ -53,6 +66,8 @@ public final class FindContentByQueryResult
         private Contents contents;
 
         private Aggregations aggregations;
+
+        private Map<ContentId, HighlightedProperties> highlight = new HashMap<>();
 
         private long totalHits;
 
@@ -83,6 +98,12 @@ public final class FindContentByQueryResult
         public Builder hits( long hits )
         {
             this.hits = hits;
+            return this;
+        }
+
+        public Builder highlight( final Map<ContentId, HighlightedProperties> highlight )
+        {
+            this.highlight = highlight;
             return this;
         }
 

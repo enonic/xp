@@ -7,12 +7,12 @@ var multiRepoConnection = nodeLib.multiRepoConnect({
         {
             repoId: 'my-repo',
             branch: 'master',
-            principals: ["role:system.admin"]
+            principals: ['role:system.admin']
         },
         {
             repoId: 'com.enonic.cms.default',
             branch: 'draft',
-            principals: ["role:system.admin"]
+            principals: ['role:system.admin']
         }
     ]
 });
@@ -22,55 +22,55 @@ var multiRepoConnection = nodeLib.multiRepoConnect({
 var result = multiRepoConnection.query({
     start: 0,
     count: 2,
-    query: "startTime > instant('2016-10-11T14:38:54.454Z')",
+    query: 'startTime > instant(\'2016-10-11T14:38:54.454Z\')',
     filters: {
         boolean: {
             must: {
                 exists: {
-                    field: "modifiedTime"
+                    field: 'modifiedTime'
                 }
             },
             mustNot: {
                 hasValue: {
-                    field: "myField",
+                    field: 'myField',
                     values: [
-                        "cheese",
-                        "fish",
-                        "onion"
+                        'cheese',
+                        'fish',
+                        'onion'
                     ]
                 }
             }
         },
         notExists: {
-            field: "unwantedField"
+            field: 'unwantedField'
         },
         ids: {
-            values: ["id1", "id2"]
+            values: ['id1', 'id2']
         }
     }
 });
 
-log.info("result %s", JSON.stringify(result, null, 4));
+log.info('result %s', JSON.stringify(result, null, 4));
 // END
 
 
 // BEGIN
 // Result set returned.
 var expected = {
-    "total": 12902,
-    "count": 2,
-    "hits": [
+    'total': 12902,
+    'count': 2,
+    'hits': [
         {
-            "id": "b186d24f-ac38-42ca-a6db-1c1bda6c6c26",
-            "score": 1.2300000190734863,
-            "repoId": "my-repo",
-            "branch": "master"
+            'id': 'b186d24f-ac38-42ca-a6db-1c1bda6c6c26',
+            'score': 1.2300000190734863,
+            'repoId': 'my-repo',
+            'branch': 'master'
         },
         {
-            "id": "350ba4a6-589c-498b-8af0-f183850e1120",
-            "score": 1.399999976158142,
-            "repoId": "com.enonic.cms.default",
-            "branch": "draft"
+            'id': '350ba4a6-589c-498b-8af0-f183850e1120',
+            'score': 1.399999976158142,
+            'repoId': 'com.enonic.cms.default',
+            'branch': 'draft'
         }
     ]
 };

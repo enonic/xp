@@ -1,12 +1,12 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
 import java.lang.reflect.Field;
-import java.util.Collections;
 
 import org.elasticsearch.index.query.QueryBuilder;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.ValueExpr;
@@ -14,10 +14,12 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.BaseTestBu
 import com.enonic.xp.repo.impl.index.IndexStemmedController;
 import com.enonic.xp.repo.impl.index.StemmedIndexValueType;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class StemmedFunctionTest
     extends BaseTestBuilderFactory
 {
-    @Before
+    @BeforeEach
     public void init()
         throws Exception
     {
@@ -27,8 +29,8 @@ public class StemmedFunctionTest
         analyzers.setAccessible( true );
         indexValueTypes.setAccessible( true );
 
-        analyzers.set( null, Collections.singletonMap( "en", "language_analyzer_en" ) );
-        indexValueTypes.set( null, Collections.singletonMap( "en", new StemmedIndexValueType( "en" ) ) );
+        analyzers.set( null, ImmutableMap.of( "en", "language_analyzer_en" ) );
+        indexValueTypes.set( null, ImmutableMap.of( "en", new StemmedIndexValueType( "en" ) ) );
     }
 
     @Test
@@ -41,6 +43,6 @@ public class StemmedFunctionTest
             FunctionExpr.from( "stemmed", ValueExpr.string( "field" ), ValueExpr.string( "organize" ), ValueExpr.string( "OR" ),
                                ValueExpr.string( "en" ) ) );
 
-        Assert.assertEquals( cleanString( expected ), cleanString( query.toString() ) );
+        assertEquals( cleanString( expected ), cleanString( query.toString() ) );
     }
 }

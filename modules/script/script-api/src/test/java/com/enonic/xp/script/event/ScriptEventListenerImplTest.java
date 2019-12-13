@@ -2,15 +2,18 @@ package com.enonic.xp.script.event;
 
 import java.util.function.Consumer;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ScriptEventListenerImplTest
 {
@@ -18,7 +21,7 @@ public class ScriptEventListenerImplTest
 
     private ScriptEventListener listener;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.event = null;

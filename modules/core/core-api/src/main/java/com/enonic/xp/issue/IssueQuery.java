@@ -14,6 +14,8 @@ public final class IssueQuery
 
     private final IssueStatus status;
 
+    private final IssueType type;
+
     private final ContentIds items;
 
     private final int from;
@@ -28,6 +30,7 @@ public final class IssueQuery
         this.approvers = builder.approvers;
         this.items = builder.items;
         this.status = builder.status;
+        this.type = builder.type;
         this.from = builder.from;
         this.size = builder.size;
         this.count = builder.count;
@@ -46,6 +49,11 @@ public final class IssueQuery
     public IssueStatus getStatus()
     {
         return status;
+    }
+
+    public IssueType getType()
+    {
+        return type;
     }
 
     public int getFrom()
@@ -84,6 +92,8 @@ public final class IssueQuery
 
         private IssueStatus status;
 
+        private IssueType type;
+
         private int from = 0;
 
         private int size = DEFAULT_FETCH_SIZE;
@@ -105,6 +115,12 @@ public final class IssueQuery
         public Builder status( final IssueStatus status )
         {
             this.status = status;
+            return this;
+        }
+
+        public Builder type( final IssueType type )
+        {
+            this.type = type;
             return this;
         }
 

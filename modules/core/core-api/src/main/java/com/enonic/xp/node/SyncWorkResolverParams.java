@@ -1,10 +1,12 @@
 package com.enonic.xp.node;
 
+import java.util.Set;
 import java.util.function.Function;
 
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.CompareStatus;
 
 @Beta
 public class SyncWorkResolverParams
@@ -21,6 +23,8 @@ public class SyncWorkResolverParams
 
     private final Function<NodeIds, NodeIds> initialDiffFilter;
 
+    private final Set<CompareStatus> statusesToStopDependenciesSearch;
+
     private SyncWorkResolverParams( Builder builder )
     {
         branch = builder.branch;
@@ -29,6 +33,7 @@ public class SyncWorkResolverParams
         includeChildren = builder.includeChildren;
         this.includeDependencies = builder.includeDependencies;
         this.initialDiffFilter = builder.initialDiffFilter;
+        this.statusesToStopDependenciesSearch = builder.statusesToStopDependenciesSearch;
     }
 
     public Branch getBranch()
@@ -61,6 +66,11 @@ public class SyncWorkResolverParams
         return initialDiffFilter;
     }
 
+    public Set<CompareStatus> getStatusesToStopDependenciesSearch()
+    {
+        return statusesToStopDependenciesSearch;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -77,6 +87,8 @@ public class SyncWorkResolverParams
         private boolean includeChildren;
 
         private boolean includeDependencies = true;
+
+        private Set<CompareStatus> statusesToStopDependenciesSearch;
 
         private Function<NodeIds, NodeIds> initialDiffFilter;
 
@@ -117,6 +129,12 @@ public class SyncWorkResolverParams
         public Builder initialDiffFilter( final Function<NodeIds, NodeIds> initialDiffFilter )
         {
             this.initialDiffFilter = initialDiffFilter;
+            return this;
+        }
+
+        public Builder statusesToStopDependenciesSearch( final Set<CompareStatus> statusesToStopDependenciesSearch )
+        {
+            this.statusesToStopDependenciesSearch = statusesToStopDependenciesSearch;
             return this;
         }
 

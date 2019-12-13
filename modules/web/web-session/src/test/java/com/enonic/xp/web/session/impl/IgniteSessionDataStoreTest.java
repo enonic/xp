@@ -1,6 +1,7 @@
 package com.enonic.xp.web.session.impl;
 
 import java.lang.annotation.Annotation;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.ignite.Ignite;
@@ -11,17 +12,18 @@ import org.apache.ignite.lang.IgniteFuture;
 import org.eclipse.jetty.server.session.SessionContext;
 import org.eclipse.jetty.server.session.SessionData;
 import org.eclipse.jetty.server.session.UnreadableSessionDataException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Sets;
-
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,7 +38,7 @@ public class IgniteSessionDataStoreTest
 
     private Ignite ignite;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {
@@ -52,6 +54,7 @@ public class IgniteSessionDataStoreTest
         when( ignite.getOrCreateCache( any( CacheConfiguration.class ) ) ).thenReturn( cache );
         store.addIgnite( ignite );
         store.activate( getWebSessionConfig() );
+        store.start();
     }
 
     @Test
@@ -61,7 +64,7 @@ public class IgniteSessionDataStoreTest
         final SessionData sessionData = new SessionData( "123", null, null, 0, 0, 0, 0 );
         when( cache.get( anyString() ) ).thenReturn( new SessionDataWrapper( sessionData ) );
 
-        Assert.assertEquals( sessionData, store.load( "123" ) );
+        assertEquals( sessionData, store.load( "123" ) );
     }
 
     @Test
@@ -74,11 +77,11 @@ public class IgniteSessionDataStoreTest
         try
         {
             store.load( "123" );
-            Assert.fail( "Expected exception" );
+            fail( "Expected exception" );
         }
         catch ( UnreadableSessionDataException e )
         {
-            Assert.assertEquals( "123", e.getId() );
+            assertEquals( "123", e.getId() );
             // Expected exception here
         }
     }
@@ -161,12 +164,12 @@ public class IgniteSessionDataStoreTest
         sessionData2.setLastNode( "OTHER" );
         when( cache.get( eq( getCacheKey( "456" ) ) ) ).thenReturn( new SessionDataWrapper( sessionData2 ) );
 
-        final Set<String> expiredSessionIds = store.doGetExpired( Sets.newHashSet( "123", "456", "789" ) );
-        assertEquals( Sets.newHashSet( "123", "456", "789" ), expiredSessionIds );
+        final Set<String> expiredSessionIds = store.doGetExpired( Set.of( "123", "456", "789" ) );
+        assertEquals( Set.of( "123", "456", "789" ), expiredSessionIds );
 
-        store.getExpired( Sets.newHashSet() );
-        final Set<String> expiredSessionIds2 = store.doGetExpired( Sets.newHashSet( "123", "456", "789" ) );
-        assertEquals( Sets.newHashSet( "123", "456", "789" ), expiredSessionIds2 );
+        store.getExpired( new HashSet<>() );
+        final Set<String> expiredSessionIds2 = store.doGetExpired( Set.of( "123", "456", "789" ) );
+        assertEquals( Set.of( "123", "456", "789" ), expiredSessionIds2 );
     }
 
 
@@ -174,8 +177,8 @@ public class IgniteSessionDataStoreTest
     public void doGetExpiredEmpty()
         throws Exception
     {
-        final Set<String> expiredSessionIds = store.doGetExpired( Sets.newHashSet() );
-        assertEquals( Sets.newHashSet(), expiredSessionIds );
+        final Set<String> expiredSessionIds = store.doGetExpired( new HashSet<>() );
+        assertEquals( new HashSet<>(), expiredSessionIds );
     }
 
     @Test
@@ -190,15 +193,15 @@ public class IgniteSessionDataStoreTest
         when( cache.putAsync( anyString(), any( SessionDataWrapper.class ) ) ).thenReturn( putFuture );
 
         store.removeIgnite( ignite );
-        Assert.assertNull( store.load( "123" ) );
-        Assert.assertFalse( store.delete( "123" ) );
+        assertNull( store.load( "123" ) );
+        assertFalse( store.delete( "123" ) );
         store.doStore( "123", sessionData, 0 );
-        Assert.assertEquals( sessionData, store.load( "123" ) );
-        Assert.assertTrue( store.delete( "123" ) );
+        assertEquals( sessionData, store.load( "123" ) );
+        assertTrue( store.delete( "123" ) );
 
         store.addIgnite( ignite );
-        Assert.assertEquals( sessionData, store.load( "123" ) );
-        Assert.assertTrue( store.delete( "123" ) );
+        assertEquals( sessionData, store.load( "123" ) );
+        assertTrue( store.delete( "123" ) );
         store.store( "123", sessionData );
         verify( cache, Mockito.times( 1 ) ).putAsync( eq( "cpath_vhost_123" ), any( SessionDataWrapper.class ) );
     }
@@ -269,7 +272,8 @@ public class IgniteSessionDataStoreTest
             {
                 return 10;
             }
-            
+
+            @Override
             public int write_timeout()
             {
                 return 1000;

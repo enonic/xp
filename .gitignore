@@ -9,7 +9,8 @@ node_modules/
 *.ids
 *.iml
 *.ipr
-.idea
+.idea/*
+!.idea/codeStyles/
 .sass-cache
 npm-debug.log
 .tscache
@@ -19,6 +20,3 @@ generated-java
 classes/
 out/
 .xp/
-
-
-

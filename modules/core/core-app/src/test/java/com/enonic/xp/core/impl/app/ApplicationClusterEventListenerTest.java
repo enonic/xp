@@ -1,10 +1,11 @@
 package com.enonic.xp.core.impl.app;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationInstallationParams;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEventListener;
@@ -22,7 +23,7 @@ public class ApplicationClusterEventListenerTest
 
     private ApplicationService applicationService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -54,6 +55,7 @@ public class ApplicationClusterEventListenerTest
             value( ApplicationClusterEvents.EVENT_TYPE_KEY, ApplicationClusterEvents.INSTALLED ).
             build() );
 
-        Mockito.verify( this.applicationService, Mockito.times( 1 ) ).installStoredApplication( node.id() );
+        Mockito.verify( this.applicationService, Mockito.times( 1 ) ).
+            installStoredApplication( node.id(), ApplicationInstallationParams.create().start( false ).triggerEvent( false ).build() );
     }
 }

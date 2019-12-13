@@ -30,7 +30,7 @@ import com.enonic.xp.data.ValueTypes;
         final String unescapedHtml = StringEscapeUtils.unescapeHtml( strippedHtml );
 
         final ValueType valueType = value.getType();
-        if ( valueType == ValueTypes.XML )
+        if ( valueType.equals( ValueTypes.XML ) )
         {
             return ValueFactory.newXml( unescapedHtml );
         }

@@ -1,7 +1,7 @@
 package com.enonic.xp.admin.impl.tool;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.app.ApplicationKey;
@@ -10,7 +10,9 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.xml.parser.XmlModelParserTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XmlAdminToolDescriptorParserTest
     extends XmlModelParserTest
@@ -19,7 +21,7 @@ public class XmlAdminToolDescriptorParserTest
 
     private AdminToolDescriptor.Builder builder;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.parser = new XmlAdminToolDescriptorParser();

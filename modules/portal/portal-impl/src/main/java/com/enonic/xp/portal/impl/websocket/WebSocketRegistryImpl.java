@@ -1,9 +1,8 @@
 package com.enonic.xp.portal.impl.websocket;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
-
-import com.google.common.collect.Maps;
 
 final class WebSocketRegistryImpl
     implements WebSocketRegistry
@@ -12,7 +11,7 @@ final class WebSocketRegistryImpl
 
     public WebSocketRegistryImpl()
     {
-        this.map = Maps.newConcurrentMap();
+        this.map = new ConcurrentHashMap<>();
     }
 
     @Override

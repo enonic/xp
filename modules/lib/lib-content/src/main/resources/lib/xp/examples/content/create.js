@@ -18,17 +18,36 @@ var result1 = contentLib.create({
                 f: 3.6,
                 g: true
             }
-        }
+        },
+        siteConfig: [
+            {
+                applicationKey: 'appKey1',
+                config: {
+                    a: 'a', b: true
+                }
+            }, {
+                applicationKey: 'appKey2',
+                config: {
+                    c: 4, d: null
+                }
+            }]
     },
     x: {
-        "com-enonic-myapplication": {
+        'com-enonic-myapplication': {
             myschema: {
-                a: 1
+                a: 1,
+                b: true
             }
         }
     },
-    "attachments": {},
-    "publish": {}
+    'attachments': {},
+    'publish': {},
+    'workflow': {
+        'state': 'PENDING_APPROVAL',
+        'checks': {
+            'Review by lawyer': 'PENDING'
+        }
+    }
 });
 
 log.info('Content created with id ' + result1._id);
@@ -59,58 +78,81 @@ try {
 // BEGIN
 // Content created.
 var expected = {
-    "_id": "123456",
-    "_name": "mycontent",
-    "_path": "/a/b/mycontent",
-    "creator": "user:system:anonymous",
-    "createdTime": "1975-01-08T00:00:00Z",
-    "type": "test:myContentType",
-    "displayName": "My Content",
-    "hasChildren": false,
-    "language": "es",
-    "valid": false,
-    "data": {
-        "a": 1,
-        "b": 2,
-        "c": [
-            "1",
-            "2"
+    '_id': '123456',
+    '_name': 'mycontent',
+    '_path': '/a/b/mycontent',
+    'creator': 'user:system:anonymous',
+    'createdTime': '1975-01-08T00:00:00Z',
+    'type': 'test:myContentType',
+    'displayName': 'My Content',
+    'hasChildren': false,
+    'language': 'es',
+    'valid': false,
+    'data': {
+        'a': 1,
+        'b': 2,
+        'c': [
+            '1',
+            '2'
         ],
-        "d": {
-            "e": {
-                "f": 3.6,
-                "g": true
+        'd': {
+            'e': {
+                'f': 3.6,
+                'g': true
+            }
+        },
+        'siteConfig': [
+            {
+                'applicationKey': 'appKey1',
+                'config': {
+                    'a': 'a', 'b': true
+                }
+            }, {
+                'applicationKey': 'appKey2',
+                'config': {
+                    'c': 4
+                }
+            }]
+    },
+    'x': {
+        'com-enonic-myapplication': {
+            'myschema': {
+                'a': 1,
+                'b': true
             }
         }
     },
-    "x": {
-        "com-enonic-myapplication": {
-            "myschema": {
-                "a": 1
-            }
+    'page': {},
+    'attachments': {},
+    'publish': {},
+    'workflow': {
+        'state': 'PENDING_APPROVAL',
+        'checks': {
+            'Review by lawyer': 'PENDING'
         }
-    },
-    "page": {},
-    "attachments": {},
-    "publish": {}
+    }
 };
 // END
 
 assert.assertJsonEquals(expected, result1);
 
 assert.assertJsonEquals({
-    "_id": "123456",
-    "_name": "mycontent",
-    "_path": "/a/b/mycontent",
-    "creator": "user:system:anonymous",
-    "createdTime": "1975-01-08T00:00:00Z",
-    "type": "test:myContentType",
-    "displayName": "My Content",
-    "hasChildren": false,
-    "valid": false,
-    "data": {},
-    "x": {},
-    "page": {},
-    "attachments": {},
-    "publish": {}
+    '_id': '123456',
+    '_name': 'mycontent',
+    '_path': '/a/b/mycontent',
+    'creator': 'user:system:anonymous',
+    'createdTime': '1975-01-08T00:00:00Z',
+    'type': 'test:myContentType',
+    'displayName': 'My Content',
+    'hasChildren': false,
+    'valid': false,
+    'data': {},
+    'x': {},
+    'page': {},
+    'attachments': {},
+    'publish': {},
+    'workflow': {
+        'state': 'READY',
+        'checks': {}
+    }
 }, result2);

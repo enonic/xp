@@ -17,25 +17,25 @@ fi
 check_java()
 {
 
-    if [ -n "$JAVA_HOME" ] ; then
-        if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
-            JAVACMD="$JAVA_HOME/jre/sh/java"
+    if [ -n "$XP_JAVA_HOME" ] ; then
+        if [ -x "$XP_JAVA_HOME/jre/sh/java" ] ; then
+            JAVACMD="$XP_JAVA_HOME/jre/sh/java"
         else
-            JAVACMD="$JAVA_HOME/bin/java"
+            JAVACMD="$XP_JAVA_HOME/bin/java"
         fi
         if [ ! -x "$JAVACMD" ] ; then
-            die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME."
+            die "ERROR: XP_JAVA_HOME is set to an invalid directory: $XP_JAVA_HOME."
         fi
     else
         JAVACMD="java"
-        which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH."
+        which java >/dev/null 2>&1 || die "ERROR: XP_JAVA_HOME is not set and no 'java' command could be found in your PATH."
     fi
 
     if [[ "$JAVACMD" ]]; then
         version=$(${JAVACMD} -version 2>&1 | awk -F '"' '/version/ {print $2}')
         echo "Java JDK version: $version"
-        if [[ "$version" < "1.8" ]]; then
-            echo "Needs Java JDK 1.8+ to run"
+        if [[ "$version" < "11.0" ]]; then
+            echo "Needs Java JDK 11.0+ to run"
             exit 1
         fi
     fi

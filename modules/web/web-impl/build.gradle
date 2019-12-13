@@ -5,10 +5,9 @@ dependencies {
     testCompile project( ':portal:portal-impl' )
     testCompile project( path: ':web:web-api', configuration: 'testOutput' )
     testCompile project( path: ':web:web-jetty', configuration: 'testOutput' )
-    testCompile 'org.eclipse.jetty:jetty-servlet:9.0.7.v20131107'
-    testCompile 'com.squareup.okhttp:okhttp:2.5.0'
+    testCompile "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Web - Impl'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Web - Impl' )
 }

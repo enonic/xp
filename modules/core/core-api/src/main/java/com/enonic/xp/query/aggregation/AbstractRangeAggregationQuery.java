@@ -1,10 +1,10 @@
 package com.enonic.xp.query.aggregation;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 @Beta
 public abstract class AbstractRangeAggregationQuery<R extends Range>
@@ -36,7 +36,7 @@ public abstract class AbstractRangeAggregationQuery<R extends Range>
     {
         private String fieldName;
 
-        public Collection<R> ranges = Sets.newHashSet();
+        public Collection<R> ranges = new HashSet<>();
 
         public Builder( final String name )
         {

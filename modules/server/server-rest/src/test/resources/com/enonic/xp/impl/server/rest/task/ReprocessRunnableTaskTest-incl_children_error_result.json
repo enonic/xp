@@ -1,0 +1,8 @@
+{
+  "updatedContent": [
+    "/path/to/content"
+  ],
+  "errors": [
+    "Content '/path/to/content/child' - java.lang.RuntimeException: childException"
+  ]
+}

@@ -15,7 +15,7 @@ var multiRepoConnectfactory = __.newBean('com.enonic.xp.lib.node.MultiRepoNodeHa
 function required(params, name) {
     var value = params[name];
     if (value === undefined) {
-        throw "Parameter '" + name + "' is required";
+        throw 'Parameter \'' + name + '\' is required';
     }
     return value;
 }
@@ -51,12 +51,34 @@ function argsToStringArray(argsArray) {
     return array;
 }
 
+function isString(value) {
+    return typeof value === 'string' || value instanceof String;
+}
+
+function isObject(value) {
+    return value && typeof value === 'object' && value.constructor === Object;
+}
+
+function prepareGetParams(params, bean) {
+    for (let i = 0; i < params.length; i++) {
+        let param = params[i];
+        if (isString(param)) {
+            bean.add(param);
+        } else if (isObject(param)) {
+            bean.add(required(param, 'key'), nullOrValue(param.versionId));
+        } else if (Array.isArray(param)) {
+            prepareGetParams(param, bean);
+        } else {
+            throw 'Unsupported type';
+        }
+    }
+}
+
 /**
  * Creates a new repo-connection.
  *
  * @returns {*} native Native repo-connection object.
  * @constructor
- * @private
  */
 function RepoConnection(repoConnection) {
     this.repoConnection = repoConnection;
@@ -67,7 +89,6 @@ function RepoConnection(repoConnection) {
  *
  * @returns {*} native Native multirepo-connection object.
  * @constructor
- * @private
  */
 function MultiRepoConnection(multiRepoConnection) {
     this.multiRepoConnection = multiRepoConnection;
@@ -122,12 +143,14 @@ RepoConnection.prototype.modify = function (params) {
  * @example-ref examples/node/get-1.js
  * @example-ref examples/node/get-2.js
  *
- * @param {...(string|string[])} keys to fetch. Each argument could be an id, a path or an array of the two.
+ * @param {...(string|string[]|object|object[])} keys to fetch. Each argument could be an id, a path, an object with key and versionId properties or an array of them.
  *
  * @returns {object} The node or node array (as JSON) fetched from the repository.
  */
 RepoConnection.prototype.get = function (keys) {
-    return __.toNativeObject(this.repoConnection.get(argsToStringArray(arguments)));
+    let handlerParams = __.newBean('com.enonic.xp.lib.node.GetNodeHandlerParams');
+    prepareGetParams(arguments, handlerParams);
+    return __.toNativeObject(this.repoConnection.get(handlerParams));
 };
 
 /**
@@ -164,7 +187,7 @@ RepoConnection.prototype.push = function (params) {
     var handlerParams = __.newBean('com.enonic.xp.lib.node.PushNodeHandlerParams');
     params = params || {};
     if (params.key === undefined && params.keys === undefined) {
-        throw "Parameter 'key' or 'keys' is required";
+        throw 'Parameter \'key\' or \'keys\' is required';
     }
     handlerParams.key = params.key ? params.key : null;
     handlerParams.keys = params.keys ? params.keys : [];
@@ -261,6 +284,7 @@ RepoConnection.prototype.setChildOrder = function (params) {
  * @param {object} [params.filters] Query filters
  * @param {string} [params.sort='_score DESC'] Sorting expression.
  * @param {string} [params.aggregations] Aggregations expression.
+ * @param {string} [params.highlight] Highlighting parameters.
  * @param {boolean} [params.explain=false] Return score calculation explanation.
  * @returns {object} Result of query.
  */
@@ -269,8 +293,10 @@ RepoConnection.prototype.query = function (params) {
     handlerParams.start = params.start;
     handlerParams.count = params.count;
     handlerParams.query = nullOrValue(params.query);
-    handlerParams.sort = valueOrDefault(params.sort, "_score DESC");
+    handlerParams.sort = valueOrDefault(params.sort, '_score DESC');
     handlerParams.aggregations = __.toScriptValue(params.aggregations);
+    handlerParams.suggestions = __.toScriptValue(params.suggestions);
+    handlerParams.highlight = __.toScriptValue(params.highlight);
     handlerParams.filters = __.toScriptValue(params.filters);
     handlerParams.explain = valueOrDefault(params.explain, false);
     return __.toNativeObject(this.repoConnection.query(handlerParams));
@@ -297,12 +323,29 @@ MultiRepoConnection.prototype.query = function (params) {
     handlerParams.start = params.start;
     handlerParams.count = params.count;
     handlerParams.query = nullOrValue(params.query);
-    handlerParams.sort = valueOrDefault(params.sort, "_score DESC");
+    handlerParams.sort = valueOrDefault(params.sort, '_score DESC');
     handlerParams.aggregations = __.toScriptValue(params.aggregations);
+    handlerParams.suggestions = __.toScriptValue(params.suggestions);
+    handlerParams.highlight = __.toScriptValue(params.highlight);
     handlerParams.filters = __.toScriptValue(params.filters);
     handlerParams.explain = valueOrDefault(params.explain, false);
     return __.toNativeObject(this.multiRepoConnection.query(handlerParams));
 };
+
+
+/**
+ * Check if node exists.
+ *
+ * @example-ref examples/node/exists.js
+ *
+ * @param {string} [key] node path or id.
+ *
+ * @returns {boolean} True if exist, false otherwise.
+ */
+RepoConnection.prototype.exists = function (key) {
+    return __.toNativeObject(this.repoConnection.exist(key));
+};
+
 
 /**
  * This function returns node versions.
@@ -386,7 +429,7 @@ RepoConnection.prototype.findChildren = function (params) {
  * @param {string} [mode]=ALL Refresh all (ALL) data, or just the search-index (SEARCH) or the storage-index (STORAGE)
  */
 RepoConnection.prototype.refresh = function (mode) {
-    this.repoConnection.refresh(valueOrDefault(mode, "ALL"));
+    this.repoConnection.refresh(valueOrDefault(mode, 'ALL'));
 };
 
 
@@ -402,7 +445,7 @@ RepoConnection.prototype.refresh = function (mode) {
  * @returns {object} Updated root-node as JSON.
  */
 RepoConnection.prototype.setRootPermissions = function (params) {
-    required(params, "_permissions");
+    required(params, '_permissions');
     return __.toNativeObject(this.repoConnection.setRootPermissions(__.toScriptValue(params)));
 };
 
@@ -480,7 +523,7 @@ exports.multiRepoConnect = function (params) {
     var multiRepoNodeHandleContext = __.newBean('com.enonic.xp.lib.node.MultiRepoNodeHandleContext');
 
     params.sources.forEach(function (source) {
-        multiRepoNodeHandleContext.addSource(required(source, "repoId"), required(source, "branch"), required(source, "principals"));
+        multiRepoNodeHandleContext.addSource(required(source, 'repoId'), required(source, 'branch'), required(source, 'principals'));
     });
 
     return new MultiRepoConnection(multiRepoConnectfactory.create(multiRepoNodeHandleContext));

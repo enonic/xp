@@ -5,7 +5,7 @@ dependencies {
     testCompile project( path: ':core:core-api', configuration: 'testOutput' )
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Script - Api'
-    instruction 'Export-Package', 'com.enonic.xp.script.*'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Script - Api',
+         'Export-Package': 'com.enonic.xp.script.*' )
 }

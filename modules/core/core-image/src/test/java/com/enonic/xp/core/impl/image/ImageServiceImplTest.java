@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.image;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -18,8 +18,15 @@ import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.util.BinaryReference;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class ImageServiceImplTest
 {
+    @TempDir
+    public Path temporaryFolder;
+
     private ContentService contentService;
 
     private ImageFilter imageFilter;
@@ -32,13 +39,11 @@ public class ImageServiceImplTest
 
     private byte[] imageDataOriginal;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws IOException
     {
-        final TemporaryFolder temporaryFolder = new TemporaryFolder();
-        temporaryFolder.create();
-        System.setProperty( "xp.home", temporaryFolder.getRoot().getPath() );
+        System.setProperty( "xp.home", temporaryFolder.toFile().getPath() );
 
         contentId = ContentId.from( "contentId" );
         binaryReference = BinaryReference.from( "binaryRef" );
@@ -62,7 +67,7 @@ public class ImageServiceImplTest
         throws IOException
     {
         final String format = imageService.getFormatByMimeType( "image/jpeg" );
-        Assert.assertEquals( "JPEG", format );
+        assertEquals( "JPEG", format );
 
         boolean ioExceptionCaught = false;
         try
@@ -73,7 +78,7 @@ public class ImageServiceImplTest
         {
             ioExceptionCaught = true;
         }
-        Assert.assertTrue( ioExceptionCaught );
+        assertTrue( ioExceptionCaught );
     }
 
     @Test
@@ -84,7 +89,7 @@ public class ImageServiceImplTest
             ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference ).format( "png" ).build();
         final ByteSource imageData = imageService.readImage( readImageParams );
 
-        Assert.assertArrayEquals( imageDataOriginal, imageData.read() );
+        assertArrayEquals( imageDataOriginal, imageData.read() );
     }
 
     @Test
@@ -106,11 +111,11 @@ public class ImageServiceImplTest
             build();
 
         ByteSource imageData = imageService.readImage( readImageParams );
-        Assert.assertArrayEquals( ByteStreams.toByteArray( getClass().getResourceAsStream( "processed.jpg" ) ), imageData.read() );
+        assertArrayEquals( ByteStreams.toByteArray( getClass().getResourceAsStream( "processed.jpg" ) ), imageData.read() );
         Mockito.verify( imageFilter ).filter( Mockito.any() );
 
         imageData = imageService.readImage( readImageParams );
-        Assert.assertArrayEquals( ByteStreams.toByteArray( getClass().getResourceAsStream( "processed.jpg" ) ), imageData.read() );
+        assertArrayEquals( ByteStreams.toByteArray( getClass().getResourceAsStream( "processed.jpg" ) ), imageData.read() );
         Mockito.verify( imageFilter ).filter( Mockito.any() );
     }
 

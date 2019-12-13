@@ -1,15 +1,17 @@
 package com.enonic.xp.core.impl.security;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PBKDF2EncoderTest
 {
     private PBKDF2Encoder encoder;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -28,17 +30,17 @@ public class PBKDF2EncoderTest
         assertFalse( encoder.validate( "fiskepudding ", encodedPwd ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void unknown_format()
         throws Exception
     {
-        assertTrue( encoder.validate( "fiskepudding", this.encoder.getType() + ":fisk" ) );
+        assertThrows(IllegalArgumentException.class, () -> assertTrue( encoder.validate( "fiskepudding", this.encoder.getType() + ":fisk" ) ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void unknown_type()
         throws Exception
     {
-        assertTrue( encoder.validate( "fiskepudding", "fisk" + ":ost:bolle" ) );
+        assertThrows(IllegalArgumentException.class, () -> assertTrue( encoder.validate( "fiskepudding", "fisk" + ":ost:bolle" ) ));
     }
 }

@@ -1,11 +1,13 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareContentResults;
+import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.node.NodeId;
@@ -68,7 +70,7 @@ public class ResolveContentsToBePublishedCommand
             map( id -> NodeId.from( id.toString() ) ).
             collect( Collectors.toList() ) ) : NodeIds.empty();
 
-        final boolean includeChildren = excludeChildrenIds != null ? !this.excludeChildrenIds.contains( contentId ) : true;
+        final boolean includeChildren = excludeChildrenIds == null || !this.excludeChildrenIds.contains( contentId );
 
         return nodeService.resolveSyncWork( SyncWorkResolverParams.create().
             includeChildren( includeChildren ).
@@ -76,6 +78,7 @@ public class ResolveContentsToBePublishedCommand
             nodeId( NodeId.from( contentId.toString() ) ).
             excludedNodeIds( nodeIds ).
             branch( this.target ).
+            statusesToStopDependenciesSearch( Set.of( CompareStatus.EQUAL ) ).
             build() );
     }
 

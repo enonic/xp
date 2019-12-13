@@ -9,8 +9,8 @@ exports.testReadText = function () {
 exports.testReadLines = function () {
     var lines = io.readLines(io.newStream('line1\nline2\n'));
     t.assertJsonEquals([
-        "line1",
-        "line2"
+        'line1',
+        'line2'
     ], lines);
 };
 

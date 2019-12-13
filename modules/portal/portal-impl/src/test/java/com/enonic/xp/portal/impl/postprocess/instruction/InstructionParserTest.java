@@ -1,10 +1,10 @@
 package com.enonic.xp.portal.impl.postprocess.instruction;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Iterables;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InstructionParserTest
 {

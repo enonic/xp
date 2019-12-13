@@ -1,29 +1,23 @@
 package com.enonic.xp.core.impl.image;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.io.ByteSource;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class ImmutableFilesHelperTest
 {
-    private TemporaryFolder temporaryFolder;
+    @TempDir
+    public Path temporaryFolder;
 
     private int supplierCall;
 
-    @Before
-    public void setUp()
-        throws IOException
-    {
-        temporaryFolder = new TemporaryFolder();
-        temporaryFolder.create();
-    }
 
     @Test
     public void test_computeIfAbsent()
@@ -33,7 +27,7 @@ public class ImmutableFilesHelperTest
 
         final byte[] bytes = new byte[]{2, 3, 5, 7, 13};
         final ByteSource source = ByteSource.wrap( bytes );
-        Path path = Paths.get( temporaryFolder.getRoot().toString(), "file.txt" );
+        Path path = Paths.get( temporaryFolder.toString(), "file.txt" );
 
         SupplierWithException<ByteSource, Exception> supplier = () -> {
             supplierCall++;
@@ -41,22 +35,22 @@ public class ImmutableFilesHelperTest
         };
 
         ByteSource byteSource = ImmutableFilesHelper.computeIfAbsent( path, supplier );
-        Assert.assertTrue( supplierCall == 1 );
-        Assert.assertTrue( source.contentEquals( byteSource ) );
+        assertTrue( supplierCall == 1 );
+        assertTrue( source.contentEquals( byteSource ) );
 
         byteSource = ImmutableFilesHelper.computeIfAbsent( path, supplier );
-        Assert.assertTrue( supplierCall == 1 );
-        Assert.assertTrue( source.contentEquals( byteSource ) );
+        assertTrue( supplierCall == 1 );
+        assertTrue( source.contentEquals( byteSource ) );
     }
 
     @Test
     public void test_incorrect_computeIfAbsent()
         throws Exception
     {
-        Path path = Paths.get( temporaryFolder.getRoot().toString(), "unknown_file.txt" );
+        Path path = Paths.get( temporaryFolder.toString(), "unknown_file.txt" );
         SupplierWithException<ByteSource, Exception> supplier = () -> null;
 
         ByteSource byteSource = ImmutableFilesHelper.computeIfAbsent( path, supplier );
-        Assert.assertNull( byteSource );
+        assertNull( byteSource );
     }
 }

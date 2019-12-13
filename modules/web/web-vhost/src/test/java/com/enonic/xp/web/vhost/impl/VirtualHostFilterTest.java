@@ -2,9 +2,8 @@ package com.enonic.xp.web.vhost.impl;
 
 import javax.servlet.FilterChain;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -14,6 +13,11 @@ import com.enonic.xp.web.vhost.VirtualHostHelper;
 import com.enonic.xp.web.vhost.impl.config.VirtualHostConfig;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMappings;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VirtualHostFilterTest
 {
@@ -29,7 +33,7 @@ public class VirtualHostFilterTest
 
     private FilterChain chain;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.req = Mockito.spy( new MockHttpServletRequest() );
@@ -62,8 +66,8 @@ public class VirtualHostFilterTest
         this.filter.doFilter( this.req, this.res, this.chain );
 
         Mockito.verify( this.chain, Mockito.times( 0 ) ).doFilter( this.req, this.res );
-        Assert.assertFalse( VirtualHostHelper.hasVirtualHost( this.req ) );
-        Assert.assertEquals( 404, this.res.getStatus() );
+        assertFalse( VirtualHostHelper.hasVirtualHost( this.req ) );
+        assertEquals( 404, this.res.getStatus() );
     }
 
     @Test
@@ -76,8 +80,8 @@ public class VirtualHostFilterTest
         this.filter.doFilter( this.req, this.res, this.chain );
 
         Mockito.verify( this.chain, Mockito.times( 0 ) ).doFilter( this.req, this.res );
-        Assert.assertFalse( VirtualHostHelper.hasVirtualHost( this.req ) );
-        Assert.assertEquals( 404, this.res.getStatus() );
+        assertFalse( VirtualHostHelper.hasVirtualHost( this.req ) );
+        assertEquals( 404, this.res.getStatus() );
     }
 
     @Test
@@ -94,11 +98,11 @@ public class VirtualHostFilterTest
 
         Mockito.verify( this.chain, Mockito.times( 0 ) ).doFilter( this.req, this.res );
         Mockito.verify( this.req, Mockito.times( 1 ) ).getRequestDispatcher( "/admin/rest/status" );
-        Assert.assertTrue( VirtualHostHelper.hasVirtualHost( this.req ) );
+        assertTrue( VirtualHostHelper.hasVirtualHost( this.req ) );
 
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( this.req );
-        Assert.assertNotNull( virtualHost );
-        Assert.assertEquals( "test", virtualHost.getName() );
+        assertNotNull( virtualHost );
+        assertEquals( "test", virtualHost.getName() );
     }
 
     private void addMapping()

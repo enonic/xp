@@ -5,9 +5,7 @@ import java.util.Locale;
 
 import javax.ws.rs.core.MediaType;
 
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
@@ -43,6 +41,8 @@ import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PageTemplateResourceTest
     extends AdminResourceTestSupport
@@ -232,11 +232,8 @@ public class PageTemplateResourceTest
         Mockito.when( contentService.contentExists( Mockito.eq( templatePath1 ) ) ).thenReturn( true );
         Mockito.when( contentService.contentExists( Mockito.eq( templatePath2 ) ) ).thenReturn( false );
 
-        Matcher<CreatePageTemplateParams> paramsMatcher =
-            Matchers.hasProperty( "name", Matchers.equalTo( ContentName.from( "template-myapplication-2" ) ) );
-
         PageTemplate template = createPageTemplate( "template-id", "template-myapplication-2", "myapplication:content-type" );
-        Mockito.when( pageTemplateService.create( Mockito.argThat( paramsMatcher ) ) ).thenReturn( template );
+        Mockito.when( pageTemplateService.create( Mockito.argThat( (CreatePageTemplateParams params) -> ContentName.from( "template-myapplication-2" ).equals(params.getName())) ) ).thenReturn( template );
 
         String response = request().path( "content/page/template/create" ).
             entity( readFromFile( "create_template_params.json" ), MediaType.APPLICATION_JSON_TYPE ).

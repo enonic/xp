@@ -1,12 +1,11 @@
 package com.enonic.xp.admin.impl.rest.resource.status;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.content.ContentConstants;
@@ -51,7 +50,7 @@ public class StatusResourceTest
     {
         initServerInfo();
 
-        final Map<String, Object> indexes = Maps.newHashMap();
+        final Map<String, Object> indexes = new HashMap<>();
         indexes.put( "index.blocks.write", true );
 
         Mockito.when( this.indexService.getIndexSettings( ContentConstants.CONTENT_REPO.getId(), IndexType.SEARCH ) ).thenReturn(

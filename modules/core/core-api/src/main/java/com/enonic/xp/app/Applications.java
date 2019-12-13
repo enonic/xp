@@ -1,12 +1,11 @@
 package com.enonic.xp.app;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
@@ -19,7 +18,7 @@ public final class Applications
     private Applications( final ImmutableList<Application> list )
     {
         super( list );
-        this.map = Maps.uniqueIndex( list, new ToKeyFunction() );
+        this.map = list.stream().collect( ImmutableMap.toImmutableMap( Application::getKey, Function.identity() ) );
     }
 
     public ApplicationKeys getApplicationKeys()
@@ -27,9 +26,9 @@ public final class Applications
         return ApplicationKeys.from( map.keySet() );
     }
 
-    public Application getApplication( final ApplicationKey ApplicationKey )
+    public Application getApplication( final ApplicationKey applicationKey )
     {
-        return map.get( ApplicationKey );
+        return map.get( applicationKey );
     }
 
     @Override
@@ -57,15 +56,5 @@ public final class Applications
     public static Applications from( final Collection<? extends Application> applications )
     {
         return new Applications( ImmutableList.copyOf( applications ) );
-    }
-
-    private final static class ToKeyFunction
-        implements Function<Application, ApplicationKey>
-    {
-        @Override
-        public ApplicationKey apply( final Application value )
-        {
-            return value.getKey();
-        }
     }
 }

@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.handler.render;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
@@ -22,19 +22,19 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class PageHandlerTest
     extends RenderBaseHandlerTest
 {
     private PageHandler handler;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {
-        super.setup();
-
         this.handler = new PageHandler();
         this.handler.setContentService( this.contentService );
         this.handler.setPageDescriptorService( this.pageDescriptorService );
@@ -112,7 +112,7 @@ public class PageHandlerTest
     public void getContentNotFound()
         throws Exception
     {
-        Mockito.when( this.contentService.getByPath( Mockito.anyObject() ) ).thenReturn( null );
+        Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( null );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
 
         try
@@ -176,7 +176,7 @@ public class PageHandlerTest
     public void getContentNotEnoughPermissions()
         throws Exception
     {
-        Mockito.when( this.contentService.getByPath( Mockito.anyObject() ) ).thenReturn( null );
+        Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( null );
         Mockito.when( this.contentService.contentExists( Mockito.any( ContentPath.class ) ) ).thenReturn( true );
 
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );

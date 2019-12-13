@@ -1,10 +1,10 @@
 package com.enonic.xp.admin.impl.market;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import java.util.ArrayList;
 
-import com.google.common.collect.Lists;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 public class MarketServiceImplTest
 {
@@ -12,7 +12,7 @@ public class MarketServiceImplTest
 
     private MarketDataHttpProvider provider;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -25,7 +25,7 @@ public class MarketServiceImplTest
     public void test_provider_search_is_called()
         throws Exception
     {
-        this.service.get( Lists.newArrayList(), "newest", 0, 10 );
-        Mockito.verify( provider, Mockito.times( 1 ) ).search( Lists.newArrayList(), "newest", 0, 10 );
+        this.service.get( new ArrayList<>(), "newest", 0, 10 );
+        Mockito.verify( provider, Mockito.times( 1 ) ).search( new ArrayList<>(), "newest", 0, 10 );
     }
 }

@@ -1,6 +1,8 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -16,6 +18,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -35,7 +38,8 @@ import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.security.RoleKeys;
 
 import static com.enonic.xp.web.servlet.ServletRequestUrlHelper.contentDispositionAttachment;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content/media")
@@ -93,6 +97,7 @@ public final class ContentMediaResource
     private Response doServeMedia( final ContentId contentId, final String identifier, final Boolean download )
         throws IOException
     {
+
         final Attachment attachment = resolveAttachment( identifier, contentId );
         if ( attachment == null )
         {
@@ -109,7 +114,7 @@ public final class ContentMediaResource
         if ( download )
         {
             final String fileName = attachment.getName();
-            if ( isNotEmpty( fileName ) )
+            if ( !isNullOrEmpty( fileName ) )
             {
                 response = response.header( "Content-Disposition", contentDispositionAttachment( fileName ) );
             }
@@ -137,13 +142,16 @@ public final class ContentMediaResource
             throw JaxRsExceptions.notFound( String.format( "Content [%s] was not found", contentId ) );
         }
 
-        return resolveAttachment( identifier, content );
+        final String decodedIdentifier =
+            nullToEmpty( identifier ).isBlank() ? identifier : URLDecoder.decode( identifier, StandardCharsets.UTF_8 );
+
+        return resolveAttachment( decodedIdentifier, content );
     }
 
     private Attachment resolveAttachment( final String identifier, final Content content )
     {
         Attachment attachment = null;
-        if ( isNotEmpty( identifier ) )
+        if ( !isNullOrEmpty( identifier ) )
         {
             attachment = content.getAttachments().byName( identifier );
             if ( attachment == null )

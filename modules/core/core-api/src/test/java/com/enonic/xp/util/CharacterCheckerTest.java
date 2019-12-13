@@ -1,34 +1,36 @@
 package com.enonic.xp.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CharacterCheckerTest
 {
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testLessThanSign()
         throws Exception
     {
-        CharacterChecker.check( "myID<do", "id" );
+        assertThrows(IllegalArgumentException.class, () -> CharacterChecker.check( "myID<do", "id" ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGreaterThanSign()
         throws Exception
     {
-        CharacterChecker.check( "lookAtMyMoreThanSign>", "errorMessage" );
+        assertThrows(IllegalArgumentException.class, () -> CharacterChecker.check( "lookAtMyMoreThanSign>", "errorMessage" ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testDoubleQuoteSign()
         throws Exception
     {
-        CharacterChecker.check( "Quoting makes\"your text look smarter", "errorMessage" );
+        assertThrows(IllegalArgumentException.class, () -> CharacterChecker.check( "Quoting makes\"your text look smarter", "errorMessage" ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testSingleQuoteSign()
         throws Exception
     {
-        CharacterChecker.check( "Lone quote looks ' like a typo ", "errorMessage" );
+        assertThrows(IllegalArgumentException.class, () -> CharacterChecker.check( "Lone quote looks ' like a typo ", "errorMessage" ));
     }
 }

@@ -8,7 +8,7 @@ dependencies {
     testCompile project( path: ':web:web-api', configuration: 'testOutput' )
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP JaxRs - Api'
-    instruction 'Export-Package', 'com.enonic.xp.jaxrs.*'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP JaxRs - Api',
+         'Export-Package': 'com.enonic.xp.jaxrs.*' )
 }

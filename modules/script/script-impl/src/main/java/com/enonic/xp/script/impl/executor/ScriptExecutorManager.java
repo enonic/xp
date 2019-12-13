@@ -1,8 +1,7 @@
 package com.enonic.xp.script.impl.executor;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -25,7 +24,7 @@ public final class ScriptExecutorManager
 
     public ScriptExecutorManager()
     {
-        this.executors = Maps.newConcurrentMap();
+        this.executors = new ConcurrentHashMap<>();
     }
 
     public ScriptExecutor getExecutor( final ApplicationKey key )

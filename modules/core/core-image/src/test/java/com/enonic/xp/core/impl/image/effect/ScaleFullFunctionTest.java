@@ -2,12 +2,12 @@ package com.enonic.xp.core.impl.image.effect;
 
 import java.awt.image.BufferedImage;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.impl.image.ImageScaleFunction;
 import com.enonic.xp.core.impl.image.ScaleFullFunction;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ScaleFullFunctionTest
     extends BaseImageFilterTest

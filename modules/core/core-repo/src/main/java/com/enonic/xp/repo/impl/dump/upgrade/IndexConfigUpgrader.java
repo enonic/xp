@@ -1,13 +1,13 @@
 package com.enonic.xp.repo.impl.dump.upgrade;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
@@ -38,6 +38,10 @@ import static com.enonic.xp.content.ContentPropertyNames.LANGUAGE;
 public class IndexConfigUpgrader
     extends AbstractMetaDumpUpgrader
 {
+    private static final Version MODEL_VERSION = new Version( 7 );
+
+    private static final String NAME = "Index config";
+
     private static final Segment INDEX_CONFIG_SEGMENT =
         RepositorySegmentUtils.toSegment( ContentConstants.CONTENT_REPO_ID, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
 
@@ -53,9 +57,16 @@ public class IndexConfigUpgrader
     @Override
     public Version getModelVersion()
     {
-        return new Version( 7, 0, 0 );
+        return MODEL_VERSION;
     }
 
+    @Override
+    public String getName()
+    {
+        return NAME;
+    }
+
+    @Override
     protected void upgradeRepository( final RepositoryId repositoryId )
     {
         if ( ContentConstants.CONTENT_REPO_ID.equals( repositoryId ) )
@@ -123,7 +134,7 @@ public class IndexConfigUpgrader
 
     private NodeVersionDataJson getNode( final BlobRecord nodeBlobRecord )
     {
-        final CharSource charSource = nodeBlobRecord.getBytes().asCharSource( Charsets.UTF_8 );
+        final CharSource charSource = nodeBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 );
         try
         {
             return deserializeValue( charSource.read(), NodeVersionDataJson.class );
@@ -136,7 +147,7 @@ public class IndexConfigUpgrader
 
     private PatternIndexConfigDocument getIndexConfigDocument( final BlobRecord indexConfigBlobRecord )
     {
-        final CharSource charSource = indexConfigBlobRecord.getBytes().asCharSource( Charsets.UTF_8 );
+        final CharSource charSource = indexConfigBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 );
         try
         {
             final IndexConfigDocumentJson indexConfigDocumentJson = deserializeValue( charSource.read(), IndexConfigDocumentJson.class );

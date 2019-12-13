@@ -100,7 +100,7 @@ final class RenameContentCommand
             build().
             execute();
 
-        return validationErrors.hasErrors() ? false : true;
+        return !validationErrors.hasErrors();
     }
 
     private Content updateValidState( final Content content, final boolean isValid )

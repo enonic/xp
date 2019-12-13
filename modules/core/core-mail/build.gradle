@@ -6,6 +6,6 @@ dependencies {
     testCompile 'org.jvnet.mock-javamail:mock-javamail:1.9'
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Core - Mail'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Core - Mail' )
 }

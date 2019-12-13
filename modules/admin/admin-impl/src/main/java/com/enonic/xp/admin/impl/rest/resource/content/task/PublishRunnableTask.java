@@ -7,8 +7,8 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
@@ -25,6 +25,11 @@ public class PublishRunnableTask
         this.params = builder.params;
     }
 
+
+    public PublishContentJson getParams() {
+        return params;
+    }
+
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
@@ -35,6 +40,7 @@ public class PublishRunnableTask
             from( params.getSchedule().getPublishFrom() ).
             to( params.getSchedule().getPublishTo() ).
             build();
+        final String message = params.getMessage();
         progressReporter.info( "Publishing content" );
 
         PublishRunnableTaskResult.Builder resultBuilder = PublishRunnableTaskResult.create();
@@ -50,6 +56,7 @@ public class PublishRunnableTask
                 includeDependencies( true ).
                 pushListener( new PublishContentProgressListener( progressReporter ) ).
                 deleteContentListener( new DeleteContentProgressListener( progressReporter ) ).
+                message( message ).
                 build() );
 
             ContentIds pushed = result.getPushedContents();
@@ -125,6 +132,7 @@ public class PublishRunnableTask
             return this;
         }
 
+        @Override
         public PublishRunnableTask build()
         {
             return new PublishRunnableTask( this );

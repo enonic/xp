@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.handler.render;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
@@ -14,7 +14,7 @@ import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EffectivePageResolverTest
 {
@@ -26,7 +26,7 @@ public class EffectivePageResolverTest
 
     private PageRegions regionsB;
 
-    @Before
+    @BeforeEach
     public void before()
     {
         configA = new PropertyTree();

@@ -1,9 +1,10 @@
 package com.enonic.xp.admin.event.impl.json;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
@@ -11,13 +12,13 @@ import org.osgi.framework.BundleEvent;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.json.ObjectMapperHelper;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class EventJsonSerializerTest
 {
@@ -25,7 +26,7 @@ public class EventJsonSerializerTest
 
     private BundleEvent bundleEvent;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.serializer = new EventJsonSerializer();
@@ -87,7 +88,7 @@ public class EventJsonSerializerTest
             throw new IllegalArgumentException( "Resource file [" + fileName + "] not found" );
         }
 
-        return Resources.toString( url, Charsets.UTF_8 );
+        return Resources.toString( url, StandardCharsets.UTF_8 );
     }
 
     private String toJson( final Object value )

@@ -26,7 +26,6 @@ public final class Attachment
     {
         Preconditions.checkNotNull( builder.name, "name is mandatory for an Attachment" );
         Preconditions.checkNotNull( builder.mimeType, "mimeType is mandatory for an Attachment" );
-        Preconditions.checkNotNull( builder.size, "size is mandatory for an Attachment" );
 
         this.mimeType = builder.mimeType;
         this.name = builder.name;

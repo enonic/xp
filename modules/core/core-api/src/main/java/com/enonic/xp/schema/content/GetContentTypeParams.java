@@ -50,12 +50,7 @@ public class GetContentTypeParams
 
         final GetContentTypeParams that = (GetContentTypeParams) o;
 
-        if ( !contentTypeName.equals( that.contentTypeName ) )
-        {
-            return false;
-        }
-
-        return true;
+        return contentTypeName.equals( that.contentTypeName );
     }
 
     @Override

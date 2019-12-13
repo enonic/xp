@@ -1,10 +1,9 @@
 package com.enonic.xp.site;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-
-import com.google.common.collect.Lists;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
@@ -12,7 +11,8 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SiteDescriptorTest
 {
@@ -41,7 +41,7 @@ public class SiteDescriptorTest
             build();
 
         //Builds MixinNames
-        List<XDataMapping> xDataMappingList = Lists.newArrayList();
+        List<XDataMapping> xDataMappingList = new ArrayList<>();
         xDataMappingList.add( XDataMapping.create().xDataName( XDataName.from( "myapplication:my" ) ).build() );
         XDataMappings xDataMappings = XDataMappings.from( xDataMappingList );
 

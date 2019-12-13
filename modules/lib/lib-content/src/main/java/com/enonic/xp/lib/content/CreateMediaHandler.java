@@ -1,7 +1,6 @@
 package com.enonic.xp.lib.content;
 
-import java.security.SecureRandom;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,8 +16,6 @@ import com.enonic.xp.lib.content.mapper.ContentMapper;
 public final class CreateMediaHandler
     extends BaseContextHandler
 {
-    private final static Random RANDOM = new SecureRandom();
-
     private String name;
 
     private String parentPath;
@@ -31,7 +28,7 @@ public final class CreateMediaHandler
 
     private double focalY = 0.5;
 
-    private Supplier<String> idGenerator = () -> Long.toString( Math.abs( RANDOM.nextLong() ) );
+    private Supplier<String> idGenerator = () -> Long.toString( ThreadLocalRandom.current().nextLong( Long.MAX_VALUE ) );
 
     @Override
     protected Object doExecute()

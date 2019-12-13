@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.node.event;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentConstants;
@@ -25,7 +25,7 @@ public class NodeEventListenerTest
 
     private NodeStorageService nodeStorageService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

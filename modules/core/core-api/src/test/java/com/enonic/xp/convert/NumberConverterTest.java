@@ -1,8 +1,9 @@
 package com.enonic.xp.convert;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public abstract class NumberConverterTest<T extends Number>
 {
@@ -22,10 +23,10 @@ public abstract class NumberConverterTest<T extends Number>
         assertEquals( this.num, Converters.convert( this.num.toString(), this.type ) );
     }
 
-    @Test(expected = ConvertException.class)
+    @Test
     public void testParseError()
     {
-        Converters.convert( "abc", this.type );
+        assertThrows(ConvertException.class, () -> Converters.convert( "abc", this.type ) );
     }
 
     @Test

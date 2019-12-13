@@ -2,9 +2,11 @@ package com.enonic.xp.config;
 
 import java.util.Properties;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ConfigLoaderTest
 {
@@ -20,11 +22,11 @@ public class ConfigLoaderTest
         assertEquals( "value2", config.get( "key2" ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void loadConfig_notFound()
         throws Exception
     {
         final ConfigLoader loader = new ConfigLoader( getClass() );
-        loader.load( "unknown.properties" );
+        assertThrows(IllegalArgumentException.class, () ->  loader.load( "unknown.properties" ) );
     }
 }

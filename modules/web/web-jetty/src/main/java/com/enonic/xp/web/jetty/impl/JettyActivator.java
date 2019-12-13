@@ -1,5 +1,6 @@
 package com.enonic.xp.web.jetty.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -18,8 +19,6 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.status.StatusReporter;
@@ -48,7 +47,7 @@ public final class JettyActivator
 
     public JettyActivator()
     {
-        this.dispatchServlets = Lists.newArrayList();
+        this.dispatchServlets = new ArrayList<>();
     }
 
     @Activate

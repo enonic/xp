@@ -1,7 +1,6 @@
 package com.enonic.xp.admin.impl.tool;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptors;
@@ -11,7 +10,9 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class AdminToolDescriptorServiceImplTest
     extends ApplicationTestSupport
@@ -36,12 +37,12 @@ public class AdminToolDescriptorServiceImplTest
     {
         final PrincipalKeys principalKeys = PrincipalKeys.from( PrincipalKey.from( "role:system.user.admin" ) );
         AdminToolDescriptors result = this.service.getAllowedAdminToolDescriptors( principalKeys );
-        Assert.assertNotNull( result );
-        Assert.assertEquals( 1, result.getSize() );
+        assertNotNull( result );
+        assertEquals( 1, result.getSize() );
 
         result = this.service.getAllowedAdminToolDescriptors( PrincipalKeys.empty() );
-        Assert.assertNotNull( result );
-        Assert.assertEquals( 0, result.getSize() );
+        assertNotNull( result );
+        assertEquals( 0, result.getSize() );
     }
 
     @Test
@@ -67,9 +68,9 @@ public class AdminToolDescriptorServiceImplTest
 
         final AdminToolDescriptor adminToolDescriptor = result.get( 0 );
 
-        Assert.assertEquals( "My admin tool", adminToolDescriptor.getDisplayName() );
-        Assert.assertEquals( "My admin tool description", adminToolDescriptor.getDescription() );
-        Assert.assertEquals( 1, adminToolDescriptor.getAllowedPrincipals().getSize() );
+        assertEquals( "My admin tool", adminToolDescriptor.getDisplayName() );
+        assertEquals( "My admin tool description", adminToolDescriptor.getDescription() );
+        assertEquals( 1, adminToolDescriptor.getAllowedPrincipals().getSize() );
     }
 
 
@@ -79,10 +80,10 @@ public class AdminToolDescriptorServiceImplTest
         final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp1" ), "myadmintool" );
         final AdminToolDescriptor result = this.service.getByKey( descriptorKey );
 
-        Assert.assertNotNull( result );
-        Assert.assertEquals( "My admin tool", result.getDisplayName() );
-        Assert.assertEquals( "My admin tool description", result.getDescription() );
-        Assert.assertEquals( 1, result.getAllowedPrincipals().getSize() );
+        assertNotNull( result );
+        assertEquals( "My admin tool", result.getDisplayName() );
+        assertEquals( "My admin tool description", result.getDescription() );
+        assertEquals( 1, result.getAllowedPrincipals().getSize() );
     }
 
     @Test
@@ -91,11 +92,11 @@ public class AdminToolDescriptorServiceImplTest
         final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp1" ), "myadmintool" );
         final String icon = this.service.getIconByKey( descriptorKey );
 
-        Assert.assertNull( icon );
+        assertNull( icon );
 
         final DescriptorKey descriptorKey2 = DescriptorKey.from( ApplicationKey.from( "myapp2" ), "myadmintool" );
         final String icon2 = this.service.getIconByKey( descriptorKey2 );
 
-        Assert.assertEquals( "<svg>SVG content</svg>", icon2 );
+        assertEquals( "<svg>SVG content</svg>", icon2 );
     }
 }

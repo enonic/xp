@@ -1,10 +1,10 @@
 package com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTreeJson;
@@ -135,7 +135,7 @@ public final class Pre4NodeVersionJson
             return null;
         }
 
-        final List<AccessControlEntryJson> entryJsonList = Lists.newArrayList();
+        final List<AccessControlEntryJson> entryJsonList = new ArrayList<>();
         for ( final AccessControlEntry entry : acl )
         {
             entryJsonList.add( AccessControlEntryJson.toJson( entry ) );
@@ -150,7 +150,7 @@ public final class Pre4NodeVersionJson
             return null;
         }
 
-        final List<AttachedBinaryJson> attachedBinaryJsons = Lists.newArrayList();
+        final List<AttachedBinaryJson> attachedBinaryJsons = new ArrayList<>();
 
         for ( final AttachedBinary attachedBinary : attachedBinaries )
         {

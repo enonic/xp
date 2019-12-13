@@ -4,13 +4,14 @@ import java.io.File;
 import java.net.URL;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Sets;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MultiApplicationUrlResolverTest
 {
@@ -20,7 +21,7 @@ public class MultiApplicationUrlResolverTest
 
     private MultiApplicationUrlResolver resolver;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.delegate1 = Mockito.mock( ApplicationUrlResolver.class );
@@ -32,8 +33,8 @@ public class MultiApplicationUrlResolverTest
     @Test
     public void testFindFiles()
     {
-        Mockito.when( this.delegate1.findFiles() ).thenReturn( Sets.newHashSet( "a/b/c.txt", "a/other.txt" ) );
-        Mockito.when( this.delegate2.findFiles() ).thenReturn( Sets.newHashSet( "a/other.txt", "a/b/other.txt" ) );
+        Mockito.when( this.delegate1.findFiles() ).thenReturn( Set.of( "a/b/c.txt", "a/other.txt" ) );
+        Mockito.when( this.delegate2.findFiles() ).thenReturn( Set.of( "a/other.txt", "a/b/other.txt" ) );
 
         final Set<String> files = this.resolver.findFiles();
         assertEquals( 3, files.size() );

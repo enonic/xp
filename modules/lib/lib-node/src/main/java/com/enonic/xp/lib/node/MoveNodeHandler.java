@@ -29,6 +29,7 @@ public final class MoveNodeHandler
         return new Builder();
     }
 
+    @Override
     public Object execute()
     {
         return convert( executeMove() );

@@ -1,8 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
@@ -24,6 +23,11 @@ import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class ContentNodeTranslatorTest
 {
     private ContentNodeTranslator contentNodeTranslator;
@@ -44,7 +48,7 @@ public class ContentNodeTranslatorTest
 
     public static final NodeId ID_3 = NodeId.from( "id3" );
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -76,13 +80,13 @@ public class ContentNodeTranslatorTest
 
         final Contents contents = this.contentNodeTranslator.fromNodes( nodes, true );
 
-        Assert.assertEquals( 3, contents.getSize() );
+        assertEquals( 3, contents.getSize() );
         final Content content1 = contents.getContentById( ContentId.from( ID_1.toString() ) );
         final Content content3 = contents.getContentById( ContentId.from( ID_3.toString() ) );
         final Content content2 = contents.getContentById( ContentId.from( ID_2.toString() ) );
-        Assert.assertTrue( content1.hasChildren() );
-        Assert.assertTrue( content2.hasChildren() );
-        Assert.assertFalse( content3.hasChildren() );
+        assertTrue( content1.hasChildren() );
+        assertTrue( content2.hasChildren() );
+        assertFalse( content3.hasChildren() );
     }
 
     @Test
@@ -93,13 +97,13 @@ public class ContentNodeTranslatorTest
 
         final Contents contents = this.contentNodeTranslator.fromNodes( nodes, false );
 
-        Assert.assertEquals( 3, contents.getSize() );
+        assertEquals( 3, contents.getSize() );
         final Content content1 = contents.getContentById( ContentId.from( ID_1.toString() ) );
         final Content content3 = contents.getContentById( ContentId.from( ID_3.toString() ) );
         final Content content2 = contents.getContentById( ContentId.from( ID_2.toString() ) );
-        Assert.assertFalse( content1.hasChildren() );
-        Assert.assertFalse( content2.hasChildren() );
-        Assert.assertFalse( content3.hasChildren() );
+        assertFalse( content1.hasChildren() );
+        assertFalse( content2.hasChildren() );
+        assertFalse( content3.hasChildren() );
     }
 
     @Test
@@ -111,8 +115,8 @@ public class ContentNodeTranslatorTest
 
         final Content content = this.contentNodeTranslator.fromNode( node, true );
 
-        Assert.assertNotNull( content );
-        Assert.assertTrue( content.hasChildren() );
+        assertNotNull( content );
+        assertTrue( content.hasChildren() );
     }
 
     @Test
@@ -123,8 +127,8 @@ public class ContentNodeTranslatorTest
 
         final Content content = this.contentNodeTranslator.fromNode( node, false );
 
-        Assert.assertNotNull( content );
-        Assert.assertFalse( content.hasChildren() );
+        assertNotNull( content );
+        assertFalse( content.hasChildren() );
     }
 
     private Node createNode()

@@ -3,7 +3,7 @@ package com.enonic.xp.site.mapping;
 import java.time.Instant;
 import java.util.Locale;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
@@ -24,16 +24,20 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentMappingConstraintTest
 {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidExpression()
         throws Exception
     {
-        ContentMappingConstraint.parse( "_path='/'" );
+        assertThrows(IllegalArgumentException.class, () -> ContentMappingConstraint.parse( "_path='/'" ));
     }
 
     @Test

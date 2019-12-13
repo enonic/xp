@@ -4,19 +4,20 @@ import java.awt.image.BufferedImage;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
@@ -47,9 +48,12 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 
 public class ContentTypeResourceTest
     extends AdminResourceTestSupport
@@ -275,6 +279,8 @@ public class ContentTypeResourceTest
             displayNameI18nKey( "key.display-name" ).
             description( "My description" ).
             descriptionI18nKey( "key.description" ).
+            displayNameLabel( "My Display Name Label" ).
+            displayNameLabelI18nKey( "key.displayNameLabel" ).
             icon( Icon.from( new byte[]{123}, "image/gif", SOME_DATE ) ).
             addFormItem( Input.create().
                 name( "myTextLine" ).
@@ -293,6 +299,7 @@ public class ContentTypeResourceTest
         Mockito.when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
         Mockito.when( messageBundle.localize( "key.display-name" ) ).thenReturn( "translated.displayName" );
         Mockito.when( messageBundle.localize( "key.description" ) ).thenReturn( "translated.description" );
+        Mockito.when( messageBundle.localize( "key.displayNameLabel" ) ).thenReturn( "translated.displayNameLabel" );
 
         Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
         Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
@@ -495,7 +502,7 @@ public class ContentTypeResourceTest
 
         assertNotNull( response.getEntity() );
         assertEquals( schemaIcon.getMimeType(), response.getMediaType().toString() );
-        org.junit.Assert.assertArrayEquals( data, (byte[]) response.getEntity() );
+        Assertions.assertArrayEquals( data, (byte[]) response.getEntity() );
     }
 
     @Test
@@ -528,29 +535,28 @@ public class ContentTypeResourceTest
         assertImage( contentTypeIcon, 20 );
     }
 
-    @Test(expected = javax.ws.rs.WebApplicationException.class)
+    @Test
     public void testContentTypeIcon_notFound()
         throws Exception
     {
         Mockito.when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn( null );
 
-        try
-        {
-            // exercise
-            this.resource.getIcon( "myapplication:my_content_type", 10, null );
-        }
-        catch ( WebApplicationException e )
-        {
-            // verify
-            assertEquals( 404, e.getResponse().getStatus() ); // HTTP Not Found
-            throw e;
-        }
+        assertThrows(WebApplicationException.class, () -> {
+            try {
+                // exercise
+                this.resource.getIcon("myapplication:my_content_type", 10, null);
+            } catch (WebApplicationException e) {
+                // verify
+                assertEquals(404, e.getResponse().getStatus()); // HTTP Not Found
+                throw e;
+            }
+        } );
     }
 
     @Test
     public void getMimeTypes()
     {
-        final Set<String> mimeTypes = Sets.newHashSet();
+        final Set<String> mimeTypes = new HashSet<>();
         mimeTypes.add( "mimeType1" );
         mimeTypes.add( "mimeType2" );
 
@@ -568,7 +574,7 @@ public class ContentTypeResourceTest
 
     private void setupContentType( final ContentType contentType )
     {
-        final List<ContentType> list = Lists.newArrayList();
+        final List<ContentType> list = new ArrayList<>();
         list.add( contentType );
         final GetContentTypeParams params = new GetContentTypeParams().contentTypeName( contentType.getName() );
         Mockito.when( contentTypeService.getByName( params ) ).thenReturn( contentType );

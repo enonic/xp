@@ -2,7 +2,7 @@ package com.enonic.xp.lib.node;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableSortedSet;
@@ -18,7 +18,9 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.lib.common.JsonToPropertyTreeTranslator;
 import com.enonic.xp.util.JsonHelper;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IndexConfigFactoryTest
 {
@@ -96,11 +98,11 @@ public class IndexConfigFactoryTest
         assertEquals( IndexConfig.BY_TYPE, config.getConfigForPath( PropertyPath.from( "my.random.path" ) ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void unknown_alias()
         throws Exception
     {
-        create( "{ \"default\" : \"fisk\" }" );
+        assertThrows(IllegalArgumentException.class, () -> create( "{ \"default\" : \"fisk\" }" ));
     }
 
     private IndexConfigDocument create( final String json )

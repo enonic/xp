@@ -1,15 +1,16 @@
 package com.enonic.xp.config;
 
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Maps;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConfigBuilderTest
 {
@@ -42,7 +43,7 @@ public class ConfigBuilderTest
     @Test
     public void testAddAll_map()
     {
-        final Map<String, String> source = Maps.newHashMap();
+        final Map<String, String> source = new HashMap<>();
         source.put( "key1", "value1" );
         source.put( "key2", "value2" );
 

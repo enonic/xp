@@ -54,6 +54,8 @@ public class CreateContentTranslatorParams
 
     private final ContentIds processedIds;
 
+    private final WorkflowInfo workflowInfo;
+
     private CreateContentTranslatorParams( Builder builder )
     {
         final Instant now = Instant.now();
@@ -77,6 +79,7 @@ public class CreateContentTranslatorParams
         this.language = builder.language;
         this.contentPublishInfo = builder.contentPublishInfo;
         this.processedIds = builder.processedIds;
+        this.workflowInfo = builder.workflowInfo;
     }
 
     public static Builder create( final CreateContentParams source )
@@ -184,6 +187,11 @@ public class CreateContentTranslatorParams
         return processedIds;
     }
 
+    public WorkflowInfo getWorkflowInfo()
+    {
+        return workflowInfo;
+    }
+
     public static final class Builder
     {
         private PropertyTree data;
@@ -218,6 +226,8 @@ public class CreateContentTranslatorParams
 
         private ContentIds processedIds;
 
+        private WorkflowInfo workflowInfo;
+
         private Builder()
         {
         }
@@ -238,6 +248,7 @@ public class CreateContentTranslatorParams
             this.language = params.getLanguage();
             this.contentPublishInfo = params.getContentPublishInfo();
             this.processedIds = params.getProcessedIds();
+            this.workflowInfo = params.getWorkflowInfo();
         }
 
         public Builder contentData( final PropertyTree data )
@@ -342,6 +353,12 @@ public class CreateContentTranslatorParams
             return this;
         }
 
+        public Builder workflowInfo( final WorkflowInfo workflowInfo )
+        {
+            this.workflowInfo = workflowInfo;
+            return this;
+        }
+
         public PropertyTree getData()
         {
             return data;
@@ -369,15 +386,14 @@ public class CreateContentTranslatorParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( parent, "parentContentPath cannot be null" );
-            Preconditions.checkArgument( parent.isAbsolute(), "parentContentPath must be absolute: " + parent );
+            Preconditions.checkNotNull( parent, "parentPath cannot be null" );
+            Preconditions.checkArgument( parent.isAbsolute(), "parentPath must be absolute: " + parent );
             Preconditions.checkNotNull( data, "data cannot be null" );
             Preconditions.checkNotNull( displayName, "displayName cannot be null" );
             Preconditions.checkNotNull( createAttachments, "createAttachments cannot be null" );
             Preconditions.checkNotNull( type, "type cannot be null" );
             Preconditions.checkNotNull( creator, "creator cannot be null" );
-            Preconditions.checkNotNull( name, "name cannom be null" );
-            Preconditions.checkNotNull( valid, "valid cannot be null" );
+            Preconditions.checkNotNull( name, "name cannot be null" );
             Preconditions.checkNotNull( childOrder, "childOrder cannot be null" );
         }
 

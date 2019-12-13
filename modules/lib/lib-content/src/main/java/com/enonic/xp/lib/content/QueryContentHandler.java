@@ -1,10 +1,9 @@
 package com.enonic.xp.lib.content;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentQuery;
@@ -19,6 +18,7 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
+import com.enonic.xp.query.highlight.HighlightQuery;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.script.ScriptValue;
@@ -36,6 +36,8 @@ public final class QueryContentHandler
     private String sort;
 
     private Map<String, Object> aggregations;
+
+    private Map<String, Object> highlight;
 
     private List<String> contentTypes;
 
@@ -57,10 +59,13 @@ public final class QueryContentHandler
 
         final Set<AggregationQuery> aggregations = new QueryAggregationParams().getAggregations( this.aggregations );
 
+        final HighlightQuery highlight = new QueryHighlightParams().getHighlightQuery( this.highlight );
+
         final ContentQuery.Builder queryBuilder = ContentQuery.create().
             from( start ).
             size( count ).
             aggregationQueries( aggregations ).
+            highlight( highlight ).
             addContentTypeNames( contentTypeNames ).
             queryExpr( queryExpr );
 
@@ -96,7 +101,8 @@ public final class QueryContentHandler
             contents = this.contentService.getByIds( new GetContentByIdsParams( contentIds ) );
         }
 
-        return new ContentsResultMapper( contents, findQueryResult.getTotalHits(), findQueryResult.getAggregations() );
+        return new ContentsResultMapper( contents, findQueryResult.getTotalHits(), findQueryResult.getAggregations(),
+                                         findQueryResult.getHighlight() );
     }
 
     public void setStart( final Integer start )
@@ -134,9 +140,14 @@ public final class QueryContentHandler
         this.filters = doSetFilters( filters );
     }
 
+    public void setHighlight( final ScriptValue value )
+    {
+        this.highlight = value != null ? value.getMap() : null;
+    }
+
     private List<Map<String, Object>> doSetFilters( final ScriptValue filters )
     {
-        List<Map<String, Object>> filterList = Lists.newArrayList();
+        List<Map<String, Object>> filterList = new ArrayList<>();
 
         if ( filters == null )
         {

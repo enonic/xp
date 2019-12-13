@@ -1,5 +1,18 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.relationship;
 
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
+import java.time.Instant;
+
+import javax.ws.rs.core.Response;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Resources;
+
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
@@ -8,18 +21,9 @@ import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.schema.relationship.RelationshipTypes;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Resources;
-import org.junit.Assert;
-import org.junit.Test;
-import org.mockito.Mockito;
 
-import javax.ws.rs.core.Response;
-import java.awt.image.BufferedImage;
-import java.io.InputStream;
-import java.time.Instant;
-
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RelationshipTypeResourceTest
     extends AdminResourceTestSupport
@@ -66,7 +70,7 @@ public class RelationshipTypeResourceTest
 
         final MockRestResponse response =
             request().path( "schema/relationship" ).queryParam( "name", "myapplication:relationship_type" ).get();
-        Assert.assertEquals( 404, response.getStatus() );
+        assertEquals( 404, response.getStatus() );
     }
 
     @Test
@@ -136,7 +140,7 @@ public class RelationshipTypeResourceTest
 
         assertNotNull( response.getEntity() );
         assertEquals( icon.getMimeType(), response.getMediaType().toString() );
-        org.junit.Assert.assertArrayEquals( data, ( byte[] )response.getEntity() );
+        Assertions.assertArrayEquals( data, ( byte[] )response.getEntity() );
     }
 
     @Test
@@ -147,7 +151,7 @@ public class RelationshipTypeResourceTest
         final Response response = this.resource.getIcon( "myapplication:icon_svg_test", 20, null );
 
         assertNotNull( response.getEntity() );
-        org.junit.Assert.assertArrayEquals( ByteStreams.toByteArray( in ), ( byte[] )response.getEntity() );
+        Assertions.assertArrayEquals( ByteStreams.toByteArray( in ), ( byte[] )response.getEntity() );
     }
 
 

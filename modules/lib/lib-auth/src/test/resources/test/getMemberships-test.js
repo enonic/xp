@@ -7,11 +7,11 @@ exports.getUserMemberships = function () {
 
     var expectedJson = [
         {
-            "type": "group",
-            "key": "group:system:group-a",
-            "displayName": "Group A",
-            "modifiedTime": "1970-01-01T00:00:00Z",
-            "description": "description"
+            'type': 'group',
+            'key': 'group:system:group-a',
+            'displayName': 'Group A',
+            'modifiedTime': '1970-01-01T00:00:00Z',
+            'description': 'description'
         }
     ];
 
@@ -25,11 +25,11 @@ exports.getTransitiveUserMemberships = function () {
 
     var expectedJson = [
         {
-            "type": "group",
-            "key": "group:system:group-a",
-            "displayName": "Group A",
-            "modifiedTime": "1970-01-01T00:00:00Z",
-            "description": "description"
+            'type': 'group',
+            'key': 'group:system:group-a',
+            'displayName': 'Group A',
+            'modifiedTime': '1970-01-01T00:00:00Z',
+            'description': 'description'
         }
     ];
 
@@ -43,18 +43,18 @@ exports.getUserMembershipsWithRoleAndGroup = function () {
 
     var expectedJson = [
         {
-            "type": "role",
-            "key": "role:aRole",
-            "displayName": "Role Display Name",
-            "modifiedTime": "1970-01-01T00:00:00Z",
-            "description": "description"
+            'type': 'role',
+            'key': 'role:aRole',
+            'displayName': 'Role Display Name',
+            'modifiedTime': '1970-01-01T00:00:00Z',
+            'description': 'description'
         },
         {
-            "type": "group",
-            "key": "group:system:group-a",
-            "displayName": "Group A",
-            "modifiedTime": "1970-01-01T00:00:00Z",
-            "description": "description"
+            'type': 'group',
+            'key': 'group:system:group-a',
+            'displayName': 'Group A',
+            'modifiedTime': '1970-01-01T00:00:00Z',
+            'description': 'description'
         }
     ];
 

@@ -13,9 +13,9 @@ dependencies {
     testCompile project( path: ':portal:portal-api', configuration: 'testOutput' )
     testCompile project( path: ':script:script-impl', configuration: 'testOutput' )
     testCompile project( path: ':web:web-jetty', configuration: 'testOutput' )
-    testCompile 'com.squareup.okhttp:okhttp:2.5.0'
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Portal - Impl'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Portal - Impl',
+         'Private-Package': 'org.attoparser.*')
 }

@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.handler.error;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -11,7 +11,9 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ErrorHandlerTest
     extends BaseHandlerTest
@@ -20,7 +22,7 @@ public class ErrorHandlerTest
 
     private PortalRequest request;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {

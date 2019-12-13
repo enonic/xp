@@ -4,9 +4,8 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
@@ -27,17 +26,17 @@ import com.enonic.xp.task.AbstractRunnableTaskTest;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class UnpublishRunnableTaskTest
     extends AbstractRunnableTaskTest
 {
     private UnpublishContentJson params;
 
-    @Before
-    @Override
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.params = Mockito.mock( UnpublishContentJson.class );
     }
 
@@ -89,8 +88,8 @@ public class UnpublishRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( 4, progressArgumentCaptor.getValue().intValue() );
-        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"3 items are unpublished\"}", resultMessage );
+        assertEquals( 4, progressArgumentCaptor.getValue().intValue() );
+        assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"3 items are unpublished\"}", resultMessage );
     }
 
     @Test
@@ -118,7 +117,7 @@ public class UnpublishRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" is unpublished.\"}", resultMessage );
+        assertEquals( "{\"state\":\"SUCCESS\",\"message\":\"Item \\\"content1\\\" is unpublished.\"}", resultMessage );
     }
 
     @Test
@@ -143,7 +142,7 @@ public class UnpublishRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 1 );
 
-        Assert.assertEquals( "{\"state\":\"WARNING\",\"message\":\"Nothing to unpublish.\"}", resultMessage );
+        assertEquals( "{\"state\":\"WARNING\",\"message\":\"Nothing to unpublish.\"}", resultMessage );
     }
 
 }

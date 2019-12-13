@@ -1,11 +1,11 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
@@ -91,9 +91,9 @@ public class RunnableTaskResult
 
     public static class Builder<B extends Builder>
     {
-        protected List<ContentPath> succeeded = Lists.newArrayList();
+        protected List<ContentPath> succeeded = new ArrayList<>();
 
-        protected List<ContentPath> failed = Lists.newArrayList();
+        protected List<ContentPath> failed = new ArrayList<>();
 
         Builder()
         {

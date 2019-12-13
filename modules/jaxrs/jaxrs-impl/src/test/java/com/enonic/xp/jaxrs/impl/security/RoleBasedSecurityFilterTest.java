@@ -4,15 +4,17 @@ import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.SecurityContext;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RoleBasedSecurityFilterTest
 {
     private ContainerRequestContext request;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.request = Mockito.mock( ContainerRequestContext.class );
@@ -31,11 +33,11 @@ public class RoleBasedSecurityFilterTest
         Mockito.when( this.request.getSecurityContext() ).thenReturn( context );
     }
 
-    @Test(expected = ForbiddenException.class)
+    @Test
     public void denyAll()
         throws Exception
     {
-        newFilter( true, false ).filter( this.request );
+        assertThrows(ForbiddenException.class, () -> newFilter( true, false ).filter( this.request ));
     }
 
     @Test
@@ -59,12 +61,12 @@ public class RoleBasedSecurityFilterTest
         newFilter( false, false, "admin" ).filter( this.request );
     }
 
-    @Test(expected = ForbiddenException.class)
+    @Test
     public void roles_not_in_roles()
         throws Exception
     {
         mockSecurityContext( "other" );
-        newFilter( false, false, "admin" ).filter( this.request );
+        assertThrows(ForbiddenException.class, () -> newFilter( false, false, "admin" ).filter( this.request ));
     }
 
     @Test

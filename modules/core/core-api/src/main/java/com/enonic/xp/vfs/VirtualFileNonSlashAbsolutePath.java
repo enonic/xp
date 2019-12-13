@@ -4,7 +4,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 
-import com.google.common.collect.Lists;
 
 final class VirtualFileNonSlashAbsolutePath
     extends VirtualFilePathImpl
@@ -60,7 +59,7 @@ final class VirtualFileNonSlashAbsolutePath
 
     private static class Builder
     {
-        private final LinkedList<String> elements = Lists.newLinkedList();
+        private final LinkedList<String> elements = new LinkedList<>();
 
         private boolean absolute;
 

@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -15,16 +15,18 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DeleteNodeByIdCommandTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -127,7 +129,7 @@ public class DeleteNodeByIdCommandTest
         assertNull( getNodeById( childChildNode2.id() ) );
     }
 
-    @Test(expected = NodeAccessException.class)
+    @Test
     public void delete_with_children_require_permission()
         throws Exception
     {
@@ -157,7 +159,7 @@ public class DeleteNodeByIdCommandTest
             build() );
         refresh();
 
-        doDeleteNode( parentNode.id() );
+        assertThrows(NodeAccessException.class, () -> doDeleteNode( parentNode.id() ));
     }
 
     @Test
@@ -182,10 +184,10 @@ public class DeleteNodeByIdCommandTest
         assertNull( getNode( childNode.id() ) );
     }
 
-    @Test(expected = OperationNotPermittedException.class)
+    @Test
     public void cannot_delete_root_node()
         throws Exception
     {
-        doDeleteNode( Node.ROOT_UUID );
+        assertThrows(OperationNotPermittedException.class, () -> doDeleteNode( Node.ROOT_UUID ));
     }
 }

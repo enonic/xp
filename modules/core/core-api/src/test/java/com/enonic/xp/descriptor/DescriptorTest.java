@@ -1,14 +1,14 @@
 package com.enonic.xp.descriptor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.page.DescriptorKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DescriptorTest
 {
-    private final class MyDescriptor
+    private static final class MyDescriptor
         extends Descriptor
     {
         MyDescriptor( final String key )

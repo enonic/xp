@@ -6,11 +6,12 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DosFilterWrapperTest
 {
@@ -26,7 +27,7 @@ public class DosFilterWrapperTest
 
     private FilterChain filterChain;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.filter = new DosFilterWrapper();

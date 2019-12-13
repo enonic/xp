@@ -2,18 +2,17 @@ package com.enonic.xp.resource;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
 public class AbstractResourceTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public Path temporaryFolder;
 
     protected File applicationsDir;
 
@@ -22,14 +21,19 @@ public class AbstractResourceTest
     {
         final File file = new File( dir, path );
         file.getParentFile().mkdirs();
-        ByteSource.wrap( value.getBytes( Charsets.UTF_8 ) ).copyTo( new FileOutputStream( file ) );
+        try (final FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+            ByteSource.wrap( value.getBytes( StandardCharsets.UTF_8 ) ).copyTo( fileOutputStream );
+        }
     }
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {
-        applicationsDir = this.temporaryFolder.newFolder( "applications" );
+        //TODO @TempDir JUnit5 suits better, but tests fail due to https://bugs.openjdk.java.net/browse/JDK-6956385
+        temporaryFolder = Files.createTempDirectory("abstractResourceTest");
+
+        applicationsDir = Files.createDirectory(this.temporaryFolder.resolve( "applications" ) ).toFile();
 
         writeFile( applicationsDir, "myapplication/a/b.txt", "a/b.txt" );
     }

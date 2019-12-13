@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.postprocess;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -8,7 +9,6 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalRequest;
@@ -25,20 +25,16 @@ public final class PostProcessorImpl
     private final static ImmutableList<MediaType> HTML_CONTENT_TYPES =
         ImmutableList.of( MediaType.create( "text", "html" ), MediaType.create( "application", "xhtml+xml" ) );
 
-    private final List<PostProcessInstruction> instructions;
+    private final static ImmutableList<HttpMethod> METHODS_ALLOWED_TO_PROCESS = ImmutableList.of( HttpMethod.GET, HttpMethod.POST );
 
-    private final List<PostProcessInjection> injections;
+    private final List<PostProcessInstruction> instructions = new CopyOnWriteArrayList<>();
 
-    public PostProcessorImpl()
-    {
-        this.instructions = Lists.newCopyOnWriteArrayList();
-        this.injections = Lists.newCopyOnWriteArrayList();
-    }
+    private final List<PostProcessInjection> injections = new CopyOnWriteArrayList<>();
 
     @Override
     public PortalResponse processResponse( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        if ( !portalResponse.isPostProcess() || portalRequest.getMethod() != HttpMethod.GET )
+        if ( !portalResponse.isPostProcess() || !METHODS_ALLOWED_TO_PROCESS.contains( portalRequest.getMethod() ) )
         {
             return portalResponse;
         }
@@ -55,7 +51,7 @@ public final class PostProcessorImpl
     @Override
     public PortalResponse processResponseInstructions( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        if ( !portalResponse.isPostProcess() || portalRequest.getMethod() != HttpMethod.GET )
+        if ( !portalResponse.isPostProcess() || !METHODS_ALLOWED_TO_PROCESS.contains( portalRequest.getMethod() ) )
         {
             return portalResponse;
         }
@@ -72,7 +68,7 @@ public final class PostProcessorImpl
     @Override
     public PortalResponse processResponseContributions( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        if ( !portalResponse.isPostProcess() || portalRequest.getMethod() != HttpMethod.GET )
+        if ( !portalResponse.isPostProcess() || !METHODS_ALLOWED_TO_PROCESS.contains( portalRequest.getMethod() ) )
         {
             return portalResponse;
         }

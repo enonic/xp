@@ -1,8 +1,10 @@
 package com.enonic.xp.security;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PrincipalRelationshipTest
 {
@@ -18,11 +20,11 @@ public class PrincipalRelationshipTest
 
     private final static PrincipalKey ROLE_2 = PrincipalKey.ofRole( "role2" );
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFromToSamePrincipal()
         throws Exception
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( GROUP ).to( GROUP );
+        assertThrows(IllegalArgumentException.class, () ->  PrincipalRelationship.from( GROUP ).to( GROUP )) ;
     }
 
     // from Role
@@ -46,11 +48,11 @@ public class PrincipalRelationshipTest
         assertEquals( "role:role -> group:system:group", rel.toString() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFromRoleToRole()
         throws Exception
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( ROLE ).to( ROLE_2 );
+        assertThrows(IllegalArgumentException.class, () ->  PrincipalRelationship.from( ROLE ).to( ROLE_2 ));
     }
 
     // from Group
@@ -74,33 +76,33 @@ public class PrincipalRelationshipTest
         assertEquals( "group:system:group -> group:system:group2", rel.toString() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFromGroupToRole()
         throws Exception
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( GROUP ).to( ROLE );
+        assertThrows(IllegalArgumentException.class, () -> PrincipalRelationship.from( GROUP ).to( ROLE ));
     }
 
     // from User
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFromUserToUser()
         throws Exception
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( USER ).to( USER_2 );
+        assertThrows(IllegalArgumentException.class, () ->  PrincipalRelationship.from( USER ).to( USER_2 ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFromUserToGroup()
         throws Exception
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( USER ).to( GROUP );
+        assertThrows(IllegalArgumentException.class, () ->  PrincipalRelationship.from( USER ).to( GROUP ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFromUserToRole()
         throws Exception
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( USER ).to( ROLE );
+        assertThrows(IllegalArgumentException.class, () ->  PrincipalRelationship.from( USER ).to( ROLE ));
     }
 
     @Test

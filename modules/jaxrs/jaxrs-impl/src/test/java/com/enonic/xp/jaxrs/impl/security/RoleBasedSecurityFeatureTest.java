@@ -9,13 +9,13 @@ import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class RoleBasedSecurityFeatureTest
 {
-    public final class Resource1
+    public static final class Resource1
     {
         public void method()
         {
@@ -24,7 +24,7 @@ public class RoleBasedSecurityFeatureTest
     }
 
     @RolesAllowed("admin")
-    public final class Resource2
+    public static final class Resource2
     {
         public void method()
         {
@@ -32,7 +32,7 @@ public class RoleBasedSecurityFeatureTest
         }
     }
 
-    public final class Resource3
+    public static final class Resource3
     {
         @RolesAllowed("admin")
         public void method()
@@ -43,7 +43,7 @@ public class RoleBasedSecurityFeatureTest
 
     @RolesAllowed("admin")
     @PermitAll
-    public final class Resource4
+    public static final class Resource4
     {
         @PermitAll
         public void method()
@@ -54,7 +54,7 @@ public class RoleBasedSecurityFeatureTest
 
     @RolesAllowed("admin")
     @DenyAll
-    public final class Resource5
+    public static final class Resource5
     {
         @DenyAll
         public void method()
@@ -69,7 +69,7 @@ public class RoleBasedSecurityFeatureTest
 
     private RoleBasedSecurityFeature feature;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.info = Mockito.mock( ResourceInfo.class );

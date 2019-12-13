@@ -8,18 +8,19 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public final class ImageFilterBuilderImplTest
 {
 
     private BufferedImage source;
 
-    @Before
+    @BeforeEach
     public final void setUp()
         throws Exception
     {

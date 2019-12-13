@@ -1,10 +1,10 @@
 package com.enonic.xp.aggregation;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -24,7 +24,7 @@ public class Buckets
 
     public static class Builder
     {
-        private final Set<Bucket> buckets = Sets.newLinkedHashSet();
+        private final Set<Bucket> buckets = new LinkedHashSet<>();
 
         public Builder add( final Bucket bucket )
         {

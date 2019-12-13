@@ -7,6 +7,8 @@ import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.Filters;
+import com.enonic.xp.query.highlight.HighlightQuery;
+import com.enonic.xp.query.suggester.SuggestionQueries;
 
 public interface Query
 {
@@ -19,6 +21,10 @@ public interface Query
     Filters getQueryFilters();
 
     AggregationQueries getAggregationQueries();
+
+    SuggestionQueries getSuggestionQueries();
+
+    HighlightQuery getHighlight();
 
     int getFrom();
 

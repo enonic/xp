@@ -27,15 +27,9 @@ public interface ContentService
 
     Content rename( RenameContentParams params );
 
-    @Deprecated
-    Contents delete( DeleteContentParams params );
-
     DeleteContentsResult deleteWithoutFetch( DeleteContentParams params );
 
     int undoPendingDelete( UndoPendingDeleteContentParams params );
-
-    @Deprecated
-    PushContentsResult push( PushContentParams params );
 
     PublishContentResult publish( PushContentParams params );
 
@@ -45,9 +39,13 @@ public interface ContentService
 
     ContentIds resolveRequiredDependencies( ResolveRequiredDependenciesParams params );
 
+    @Deprecated
     boolean isValidContent( ContentIds contentIds );
 
+    @Deprecated
     ContentIds getInvalidContent( ContentIds contentIds );
+
+    ContentValidityResult getContentValidity( ContentValidityParams params );
 
     DuplicateContentsResult duplicate( DuplicateContentParams params );
 
@@ -97,9 +95,13 @@ public interface ContentService
 
     GetActiveContentVersionsResult getActiveVersions( GetActiveContentVersionsParams params );
 
+    ContentVersion getActiveVersion(GetActiveContentVersionParams params);
+
     SetActiveContentVersionResult setActiveContentVersion( ContentId contentId, ContentVersionId versionId );
 
     ByteSource getBinary( ContentId contentId, BinaryReference binaryReference );
+
+    ByteSource getBinary( ContentId contentId, ContentVersionId contentVersionId, BinaryReference binaryReference );
 
     @Deprecated
     InputStream getBinaryInputStream( ContentId contentId, BinaryReference binaryReference );
@@ -117,5 +119,9 @@ public interface ContentService
     boolean contentExists( ContentPath contentPath );
 
     Content reprocess( ContentId contentId );
+
+    Content getByIdAndVersionId( final ContentId contentId, final ContentVersionId versionId );
+
+    Content getByPathAndVersionId( final ContentPath contentPath, final ContentVersionId versionId );
 
 }

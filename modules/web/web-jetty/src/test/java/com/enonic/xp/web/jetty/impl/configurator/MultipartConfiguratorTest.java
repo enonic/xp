@@ -4,10 +4,10 @@ import javax.servlet.MultipartConfigElement;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MultipartConfiguratorTest
     extends JettyConfiguratorTest<ServletHolder>

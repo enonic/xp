@@ -5,6 +5,6 @@ dependencies {
     testCompile project( path: ':core:core-api', configuration: 'testOutput' )
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Core - BlobStore'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Core - BlobStore' )
 }

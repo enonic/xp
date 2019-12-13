@@ -1,10 +1,10 @@
 package com.enonic.xp.lib.io;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Function;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 import com.google.common.io.LineProcessor;
@@ -40,13 +40,15 @@ public final class IOHandlerBean
         throws Exception
     {
         final CharSource source = toCharSource( value );
-        source.readLines( new LineProcessor<Object>()
+        source.readLines( new LineProcessor<>()
         {
             @Override
             public boolean processLine( final String line )
                 throws IOException
             {
-                callback.apply( line );
+                // callback is JS function for which according to contract return value is ignored.
+                // Suppress Error Prone warning about unused Function return value.
+                @SuppressWarnings("unused") final Object ignore = callback.apply( line );
                 return true;
             }
 
@@ -66,7 +68,7 @@ public final class IOHandlerBean
 
     public ByteSource newStream( final String value )
     {
-        return ByteSource.wrap( value.getBytes( Charsets.UTF_8 ) );
+        return ByteSource.wrap( value.getBytes( StandardCharsets.UTF_8 ) );
     }
 
     public String getMimeType( final Object key )
@@ -89,7 +91,7 @@ public final class IOHandlerBean
 
     private CharSource toCharSource( final Object value )
     {
-        return toByteSource( value ).asCharSource( Charsets.UTF_8 );
+        return toByteSource( value ).asCharSource( StandardCharsets.UTF_8 );
     }
 
     private ByteSource toByteSource( final Object value )

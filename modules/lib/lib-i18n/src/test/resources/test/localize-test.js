@@ -6,7 +6,7 @@ exports.testLocalize = function () {
         key: 'myKey'
     });
 
-    t.assertEquals("[myKey]", result);
+    t.assertEquals('[myKey]', result);
 };
 
 exports.testLocalizeWithLocale = function () {
@@ -15,7 +15,7 @@ exports.testLocalizeWithLocale = function () {
         locale: 'en_US'
     });
 
-    t.assertEquals("[myKey]", result);
+    t.assertEquals('[myKey]', result);
 };
 
 exports.testLocalizeWithMultipleLocale = function () {
@@ -24,7 +24,7 @@ exports.testLocalizeWithMultipleLocale = function () {
         locale: ['es', 'en_US']
     });
 
-    t.assertEquals("[myKey]", result);
+    t.assertEquals('[myKey]', result);
 };
 
 exports.testLcalizeWithPlaceholders = function () {
@@ -33,13 +33,13 @@ exports.testLcalizeWithPlaceholders = function () {
         values: ['a', 1, 'b']
     });
 
-    t.assertEquals("[myKey, a, 1, b]", result);
+    t.assertEquals('[myKey, a, 1, b]', result);
 };
 
 exports.testGetPhrases = function () {
     var actual = {
-        "a": "1",
-        "b": "2"
+        'a': '1',
+        'b': '2'
     };
 
     var result = i18n.getPhrases('en', null);

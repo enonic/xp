@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.export;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,8 +8,6 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.common.io.CharSource;
 
 import com.enonic.xp.core.impl.export.reader.ExportReader;
@@ -60,10 +59,10 @@ public final class NodeImporter
 
     private final boolean importPermissions;
 
-    private final Set<ImportValidator> importValidators = Sets.newHashSet( new ContentImportValidator() );
+    private final Set<ImportValidator> importValidators = Set.of( new ContentImportValidator() );
 
     private final XsltTransformer transformer;
-    
+
     private final NodeImportListener nodeImportListener;
 
     private NodeImporter( final Builder builder )
@@ -90,7 +89,7 @@ public final class NodeImporter
         if (nodeImportListener != null) {
             nodeImportListener.nodeResolved( exportReader.getNodeFileCount(exportRoot) );
         }
-        
+
         if ( !isNodeFolder( this.exportRoot ) )
         {
             importFromDirectoryLayout( this.exportRoot );
@@ -153,7 +152,7 @@ public final class NodeImporter
 
     private List<String> getChildrenAbsolutePaths( final VirtualFile parent, final List<String> childNames )
     {
-        final List<String> children = Lists.newLinkedList();
+        final List<String> children = new ArrayList<>();
 
         for ( final String childName : childNames )
         {
@@ -378,7 +377,7 @@ public final class NodeImporter
         private VirtualFile xslt;
 
         private Map<String, Object> xsltParams;
-        
+
         private NodeImportListener nodeImportListener;
 
         private Builder()

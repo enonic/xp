@@ -110,7 +110,7 @@ public class ScriptValueTranslator
         }
         else if ( value instanceof Number )
         {
-            parent.addDouble( name, ( ( (Number) value ).doubleValue() ) );
+            parent.addDouble( name, ( (Number) value ).doubleValue() );
         }
         else if ( value instanceof Boolean )
         {

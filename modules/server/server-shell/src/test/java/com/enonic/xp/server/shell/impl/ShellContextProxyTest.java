@@ -1,11 +1,11 @@
 package com.enonic.xp.server.shell.impl;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ShellContextProxyTest
 {
@@ -13,7 +13,7 @@ public class ShellContextProxyTest
 
     private ShellContextProxy builder;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.context = Mockito.mock( BundleContext.class );

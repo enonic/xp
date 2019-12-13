@@ -3,21 +3,22 @@ package com.enonic.xp.index;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HtmlStripperTest
 {
     private HtmlStripper htmlStripper;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         this.htmlStripper = new HtmlStripper();

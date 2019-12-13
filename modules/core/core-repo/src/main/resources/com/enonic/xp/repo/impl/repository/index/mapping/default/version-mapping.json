@@ -11,48 +11,48 @@
     "properties": {
       "nodeid": {
         "type": "string",
-        "store": "true",
+        "store": false,
         "index": "not_analyzed"
       },
       "versionid": {
         "type": "string",
-        "store": "true",
+        "store": false,
         "index": "not_analyzed"
       },
       "nodeblobkey": {
         "type": "string",
-        "store": "true",
+        "store": false,
         "index": "not_analyzed"
       },
       "indexconfigblobkey": {
         "type": "string",
-        "store": "true",
+        "store": false,
         "index": "not_analyzed"
       },
       "accesscontrolblobkey": {
         "type": "string",
-        "store": "true",
+        "store": false,
         "index": "not_analyzed"
       },
       "binaryblobkeys": {
         "type": "string",
-        "store": "true",
+        "store": false,
         "index": "not_analyzed"
       },
       "timestamp": {
         "type": "date",
-        "store": "true",
+        "store": false,
         "index": "not_analyzed"
       },
       "nodepath": {
         "type": "string",
-        "store": "true",
+        "store": false,
         "index": "analyzed",
         "analyzer": "keywordlowercase"
       },
       "commitid": {
         "type": "string",
-        "store": "true",
+        "store": false,
         "index": "not_analyzed"
       }
     }

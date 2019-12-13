@@ -32,4 +32,5 @@ configure( javaProjects ) {
 configure( rootProject ) {
     apply from: "$rootDir/gradle/coverage.gradle"
     apply from: "$rootDir/gradle/ci.gradle"
+    apply from: "$rootDir/gradle/tools.gradle"
 }

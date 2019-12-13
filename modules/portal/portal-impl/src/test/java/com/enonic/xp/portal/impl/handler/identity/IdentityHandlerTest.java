@@ -2,8 +2,8 @@ package com.enonic.xp.portal.impl.handler.identity;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -22,7 +22,9 @@ import com.enonic.xp.web.handler.BaseHandlerTest;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class IdentityHandlerTest
     extends BaseHandlerTest
@@ -33,7 +35,7 @@ public class IdentityHandlerTest
 
     private String virtualHostKey;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {

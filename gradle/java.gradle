@@ -1,12 +1,5 @@
 apply plugin: 'java'
-apply plugin: 'groovy'
 apply plugin: 'jacoco'
-apply plugin: 'optional-base'
-apply plugin: 'provided-base'
-
-jacoco {
-    toolVersion = "0.8.2"
-}
 
 def defaultEncoding = 'UTF-8'
 
@@ -24,12 +17,20 @@ configurations {
     testOutput.extendsFrom testRuntime
 }
 
+ext {
+    slf4jVersion = '1.7.29'
+    felixVersion = '6.0.3'
+    jettyVersion = '9.4.22.v20191022'
+}
+
 dependencies {
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.10.19'
-    testCompile 'org.hamcrest:hamcrest-library:1.3'
-    testCompile 'org.springframework:spring-test:4.1.6.RELEASE'
-    testCompile 'org.slf4j:slf4j-simple:1.7.25'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.5.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.1'
+    testImplementation 'org.mockito:mockito-core:2.28.2'
+    testImplementation 'org.mockito:mockito-junit-jupiter:2.28.2'
+    testImplementation 'org.springframework:spring-test:4.1.6.RELEASE'
+    testRuntimeOnly "org.slf4j:slf4j-simple:${slf4jVersion}"
     testOutput sourceSets.test.output
 }
 
@@ -37,25 +38,43 @@ task testJar( type: Jar ) {
     group 'build'
     description 'Creates a jar file with all test sources.'
     from sourceSets.test.output
-    classifier = 'test'
+    archiveClassifier.set('test')
 }
 
 task sourcesJar( type: Jar ) {
     from sourceSets.main.allJava
-    classifier = 'sources'
+    archiveClassifier.set('sources')
 }
 
-sourceCompatibility = '1.8'
+sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = sourceCompatibility
 
 test {
+    useJUnitPlatform {
+        excludeTags 'elasticsearch'
+    }
+    systemProperty 'java.awt.headless', 'true'
+    jvmArgs '-Xmx2048m', '-noverify', '-XX:TieredStopAtLevel=1'
+}
+
+task integrationTest(type: Test) {
+    description = 'Runs integration tests.'
+    group = 'verification'
+
+    useJUnitPlatform {
+        includeTags 'elasticsearch'
+    }
+
     systemProperty 'java.awt.headless', 'true'
     jvmArgs '-Xmx2048m'
 
-    testLogging {
-        events "skipped", "failed"
-        exceptionFormat "full"
-    }
+    shouldRunAfter test
+}
+
+check.dependsOn integrationTest
+
+jacocoTestReport {
+    executionData.from = files( "$buildDir/jacoco/test.exec", "$buildDir/jacoco/integrationTest.exec" )
 }
 
 jar {
@@ -69,3 +88,7 @@ publishing.publications {
         artifact sourcesJar
     }
 }
+
+task allDependencies(type: DependencyReportTask) {}
+
+task allDependencyInsight(type: DependencyInsightReportTask) {}

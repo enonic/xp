@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -19,9 +21,6 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.admin.impl.json.issue.DeleteIssueCommentResultJson;
@@ -32,6 +31,7 @@ import com.enonic.xp.admin.impl.json.issue.IssueListJson;
 import com.enonic.xp.admin.impl.json.issue.IssueStatsJson;
 import com.enonic.xp.admin.impl.json.issue.IssuesJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.issue.json.CountStatsJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.CreateIssueJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.DeleteIssueCommentJson;
@@ -43,10 +43,13 @@ import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueCommentJson;
 import com.enonic.xp.admin.impl.rest.resource.issue.json.UpdateIssueJson;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
+import com.enonic.xp.issue.CreatePublishRequestIssueParams;
 import com.enonic.xp.issue.DeleteIssueCommentParams;
 import com.enonic.xp.issue.DeleteIssueCommentResult;
+import com.enonic.xp.issue.EditablePublishRequestIssue;
 import com.enonic.xp.issue.FindIssueCommentsResult;
 import com.enonic.xp.issue.FindIssuesParams;
 import com.enonic.xp.issue.FindIssuesResult;
@@ -57,6 +60,7 @@ import com.enonic.xp.issue.IssueId;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueService;
 import com.enonic.xp.issue.IssueStatus;
+import com.enonic.xp.issue.IssueType;
 import com.enonic.xp.issue.UpdateIssueCommentParams;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.jaxrs.JaxRsComponent;
@@ -70,6 +74,8 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "issue")
@@ -89,14 +95,16 @@ public final class IssueResource
 
     private ContentTypeService contentTypeService;
 
+    private LocaleService localeService;
+
     @POST
     @Path("create")
     public IssueJson create( final CreateIssueJson json, @Context HttpServletRequest request )
     {
         final Issue issue = issueService.create( generateCreateIssueParams( json ) );
-        final List<IssueComment> comments = Lists.newArrayList();
+        final List<IssueComment> comments = new ArrayList<>();
 
-        if ( !Strings.isNullOrEmpty( json.description ) )
+        if ( !isNullOrEmpty( json.description ) )
         {
             Optional<User> creator = securityService.getUser( issue.getCreator() );
             if ( creator.isPresent() )
@@ -116,6 +124,7 @@ public final class IssueResource
             securityService( securityService ).
             contentService( contentService ).
             contentTypeService( contentTypeService ).
+            localeService( localeService ).
             issue( issue ).
             comments( comments ).
             url( request.getHeader( HttpHeaders.REFERER ) ).
@@ -184,6 +193,7 @@ public final class IssueResource
                 securityService( securityService ).
                 contentService( contentService ).
                 contentTypeService( contentTypeService ).
+                localeService( localeService ).
                 issue( issue ).
                 comments( comments ).
                 url( request.getHeader( HttpHeaders.REFERER ) ).
@@ -200,6 +210,7 @@ public final class IssueResource
                 securityService( securityService ).
                 contentService( contentService ).
                 contentTypeService( contentTypeService ).
+                localeService( localeService ).
                 issue( issue ).
                 comments( comments ).
                 url( request.getHeader( HttpHeaders.REFERER ) );
@@ -219,9 +230,17 @@ public final class IssueResource
 
     @GET
     @Path("stats")
+    @Deprecated
     public IssueStatsJson getStats()
     {
-        return countIssues();
+        return countIssues( null );
+    }
+
+    @POST
+    @Path("stats")
+    public IssueStatsJson getStatsByType( final CountStatsJson json )
+    {
+        return countIssues( json.getIssueType() );
     }
 
     @POST
@@ -245,20 +264,24 @@ public final class IssueResource
 
         final IssueComment comment = issueService.createComment( params );
 
-        final IssueCommentQuery commentsQuery = IssueCommentQuery.create().issue( issue.getId() ).build();
-        final FindIssueCommentsResult results = issueService.findComments( commentsQuery );
+        if ( !json.silent )
+        {
+            final IssueCommentQuery commentsQuery = IssueCommentQuery.create().issue( issue.getId() ).build();
+            final FindIssueCommentsResult results = issueService.findComments( commentsQuery );
 
-        IssueCommentedNotificationParams notificationParams = IssueNotificationParamsFactory.create().
-            securityService( securityService ).
-            contentService( contentService ).
-            contentTypeService( contentTypeService ).
-            issue( issue ).
-            comments( results.getIssueComments() ).
-            url( request.getHeader( HttpHeaders.REFERER ) ).
-            build().
-            commentedParams();
+            IssueCommentedNotificationParams notificationParams = IssueNotificationParamsFactory.create().
+                securityService( securityService ).
+                contentService( contentService ).
+                contentTypeService( contentTypeService ).
+                localeService( localeService ).
+                issue( issue ).
+                comments( results.getIssueComments() ).
+                url( request.getHeader( HttpHeaders.REFERER ) ).
+                build().
+                commentedParams();
 
-        issueNotificationsSender.notifyIssueCommented( notificationParams );
+            issueNotificationsSender.notifyIssueCommented( notificationParams );
+        }
 
         return new IssueCommentJson( comment );
     }
@@ -335,6 +358,7 @@ public final class IssueResource
         final IssueQuery.Builder builder = IssueQuery.create();
 
         builder.status( params.getStatus() );
+        builder.type( params.getType() );
         builder.from( params.getFrom() );
         builder.size( params.getSize() );
         builder.items( params.getItems() );
@@ -354,25 +378,28 @@ public final class IssueResource
         return builder.build();
     }
 
-    private IssueStatsJson countIssues()
+    private IssueStatsJson countIssues( final IssueType issueType )
     {
         final long open = this.issueService.findIssues(
-            createIssueQuery( FindIssuesParams.create().status( IssueStatus.OPEN ).size( 0 ).build() ) ).getTotalHits();
+            createIssueQuery( FindIssuesParams.create().status( IssueStatus.OPEN ).type( issueType ).size( 0 ).build() ) ).getTotalHits();
 
         final long openAssignedToMe = this.issueService.findIssues( createIssueQuery(
-            FindIssuesParams.create().status( IssueStatus.OPEN ).assignedToMe( true ).size( 0 ).build() ) ).getTotalHits();
+            FindIssuesParams.create().status( IssueStatus.OPEN ).assignedToMe( true ).type( issueType ).size(
+                0 ).build() ) ).getTotalHits();
 
-        final long openCreatedByMe = this.issueService.findIssues(
-            createIssueQuery( FindIssuesParams.create().status( IssueStatus.OPEN ).createdByMe( true ).size( 0 ).build() ) ).getTotalHits();
+        final long openCreatedByMe = this.issueService.findIssues( createIssueQuery(
+            FindIssuesParams.create().status( IssueStatus.OPEN ).type( issueType ).createdByMe( true ).size( 0 ).build() ) ).getTotalHits();
 
         final long closed = this.issueService.findIssues(
-            createIssueQuery( FindIssuesParams.create().status( IssueStatus.CLOSED ).size( 0 ).build() ) ).getTotalHits();
+            createIssueQuery( FindIssuesParams.create().status( IssueStatus.CLOSED ).type( issueType ).size( 0 ).build() ) ).getTotalHits();
 
         final long closedAssignedToMe = this.issueService.findIssues( createIssueQuery(
-            FindIssuesParams.create().status( IssueStatus.CLOSED ).size( 0 ).assignedToMe( true ).build() ) ).getTotalHits();
+            FindIssuesParams.create().status( IssueStatus.CLOSED ).type( issueType ).size( 0 ).assignedToMe(
+                true ).build() ) ).getTotalHits();
 
         final long closedCreatedByMe = this.issueService.findIssues( createIssueQuery(
-            FindIssuesParams.create().status( IssueStatus.CLOSED ).size( 0 ).createdByMe( true ).build() ) ).getTotalHits();
+            FindIssuesParams.create().status( IssueStatus.CLOSED ).type( issueType ).size( 0 ).createdByMe(
+                true ).build() ) ).getTotalHits();
 
         return IssueStatsJson.create().open( open ).openAssignedToMe( openAssignedToMe ).openCreatedByMe( openCreatedByMe ).closed(
             closed ).closedAssignedToMe( closedAssignedToMe ).closedCreatedByMe( closedCreatedByMe ).build();
@@ -381,7 +408,7 @@ public final class IssueResource
 
     private Map<Issue, List<User>> fetchAssigneesForIssues( final List<Issue> issues )
     {
-        final Map<Issue, List<User>> issuesWithAssignees = Maps.newHashMap();
+        final Map<Issue, List<User>> issuesWithAssignees = new HashMap<>();
 
         issues.stream().forEach( issue -> issuesWithAssignees.put( issue, doFetchAssignees( issue ) ) );
 
@@ -396,7 +423,17 @@ public final class IssueResource
 
     private CreateIssueParams generateCreateIssueParams( final CreateIssueJson json )
     {
-        final CreateIssueParams.Builder builder = CreateIssueParams.create();
+        final CreateIssueParams.Builder builder;
+
+        if ( IssueType.PUBLISH_REQUEST == json.type )
+        {
+            builder = CreatePublishRequestIssueParams.create().
+                schedule( json.schedule );
+        }
+        else
+        {
+            builder = CreateIssueParams.create();
+        }
 
         builder.title( json.title );
         builder.description( json.description );
@@ -430,6 +467,10 @@ public final class IssueResource
                 if ( json.publishRequest != null )
                 {
                     editMe.publishRequest = json.publishRequest;
+                }
+                if ( editMe instanceof EditablePublishRequestIssue )
+                {
+                    ( (EditablePublishRequestIssue) editMe ).schedule = json.publishSchedule;
                 }
             } ).
             build();
@@ -484,12 +525,7 @@ public final class IssueResource
             return true;
         }
 
-        if ( principal.getKey().equals( RoleKeys.CONTENT_MANAGER_APP ) )
-        {
-            return true;
-        }
-
-        return false;
+        return principal.getKey().equals( RoleKeys.CONTENT_MANAGER_APP );
     }
 
     @Reference
@@ -521,4 +557,11 @@ public final class IssueResource
     {
         this.contentTypeService = contentTypeService;
     }
+
+    @Reference
+    public void setLocaleService( final LocaleService localeService )
+    {
+        this.localeService = localeService;
+    }
+
 }

@@ -3,10 +3,10 @@ package com.enonic.xp.web.jetty.impl.configurator;
 
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SessionConfiguratorTest
     extends JettyConfiguratorTest<SessionHandler>

@@ -23,9 +23,11 @@ public class PushContentParams
 
     private final boolean includeDependencies;
 
-    private final PushContentListener pushContentListener;
+    private final PushContentListener publishContentListener;
 
     private final DeleteContentListener deleteContentListener;
+
+    private final String message;
 
     private PushContentParams( Builder builder )
     {
@@ -36,8 +38,9 @@ public class PushContentParams
         includeDependencies = builder.includeDependencies;
         excludeChildrenIds = builder.excludeChildrenIds;
         includeChildren = builder.includeChildren;
-        pushContentListener = builder.pushContentListener;
+        publishContentListener = builder.publishContentListener;
         deleteContentListener = builder.deleteContentListener;
+        message = builder.message;
     }
 
     public static Builder create()
@@ -81,14 +84,19 @@ public class PushContentParams
         return includeDependencies;
     }
 
-    public PushContentListener getPushContentListener()
+    public PushContentListener getPublishContentListener()
     {
-        return pushContentListener;
+        return publishContentListener;
     }
 
     public DeleteContentListener getDeleteContentListener()
     {
         return deleteContentListener;
+    }
+
+    public String getMessage()
+    {
+        return message;
     }
 
     @Override
@@ -106,15 +114,15 @@ public class PushContentParams
         return includeChildren == that.includeChildren && includeDependencies == that.includeDependencies &&
             Objects.equals( excludeChildrenIds, that.excludeChildrenIds ) && Objects.equals( contentIds, that.contentIds ) &&
             Objects.equals( excludedContentIds, that.excludedContentIds ) && Objects.equals( target, that.target ) &&
-            Objects.equals( pushContentListener, that.pushContentListener ) &&
-            Objects.equals( deleteContentListener, that.deleteContentListener );
+            Objects.equals( publishContentListener, that.publishContentListener ) &&
+            Objects.equals( deleteContentListener, that.deleteContentListener ) && Objects.equals( message, that.message );
     }
 
     @Override
     public int hashCode()
     {
         return Objects.hash( contentIds, excludedContentIds, includeChildren, excludeChildrenIds, target, includeDependencies,
-                             pushContentListener, deleteContentListener );
+                             publishContentListener, deleteContentListener, message );
     }
 
     public static final class Builder
@@ -133,9 +141,11 @@ public class PushContentParams
 
         private boolean includeDependencies = true;
 
-        private PushContentListener pushContentListener;
+        private PushContentListener publishContentListener;
 
         private DeleteContentListener deleteContentListener;
+
+        private String message;
 
         private Builder()
         {
@@ -185,15 +195,21 @@ public class PushContentParams
             return this;
         }
 
-        public Builder pushListener( final PushContentListener pushContentListener )
+        public Builder pushListener( final PushContentListener publishContentListener )
         {
-            this.pushContentListener = pushContentListener;
+            this.publishContentListener = publishContentListener;
             return this;
         }
 
         public Builder deleteContentListener( final DeleteContentListener deleteContentListener )
         {
             this.deleteContentListener = deleteContentListener;
+            return this;
+        }
+
+        public Builder message( final String message )
+        {
+            this.message = message;
             return this;
         }
 

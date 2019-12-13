@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.elasticsearch.ElasticsearchException;
@@ -7,10 +8,8 @@ import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.client.Client;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.common.collect.Lists;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.CreateNodeParams;
@@ -21,20 +20,21 @@ import com.enonic.xp.node.NodeStorageException;
 import com.enonic.xp.repo.impl.branch.storage.BranchDocumentId;
 import com.enonic.xp.repo.impl.elasticsearch.ClientProxy;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DeleteNodeByIdCommandTest_error_handling
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
-    @Test(expected = NodeStorageException.class)
+    @Test
     public void delete_fails()
         throws Exception
     {
@@ -44,9 +44,9 @@ public class DeleteNodeByIdCommandTest_error_handling
             build() );
         refresh();
 
-        this.storageDao.setClient( new FailDeleteOnIdsProxy( this.client, NodeIds.from( createdNode.id() ) ) );
+        this.storageDao.setClient( new FailDeleteOnIdsProxy( client, NodeIds.from( createdNode.id() ) ) );
 
-        doDeleteNode( createdNode.id() );
+        assertThrows(NodeStorageException.class, () -> doDeleteNode( createdNode.id() ));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class DeleteNodeByIdCommandTest_error_handling
 
         refresh();
 
-        this.storageDao.setClient( new FailDeleteOnIdsProxy( this.client, NodeIds.from( n1_1.id() ) ) );
+        this.storageDao.setClient( new FailDeleteOnIdsProxy( client, NodeIds.from( n1_1.id() ) ) );
 
         try
         {
@@ -82,7 +82,7 @@ public class DeleteNodeByIdCommandTest_error_handling
     private class FailDeleteOnIdsProxy
         extends ClientProxy
     {
-        private final List<String> failOn = Lists.newArrayList();
+        private final List<String> failOn = new ArrayList<>();
 
         private FailDeleteOnIdsProxy( final Client client, final NodeIds failOnIds )
         {

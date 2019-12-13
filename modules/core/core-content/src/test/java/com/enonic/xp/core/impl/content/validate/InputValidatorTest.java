@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -24,13 +24,13 @@ import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InputValidatorTest
 {
     private InputValidator inputValidator;
 
-    @Before
+    @BeforeEach
     public void before()
     {
         final ContentType contentType = createContentTypeForAllInputTypes( ContentTypeName.audioMedia() );

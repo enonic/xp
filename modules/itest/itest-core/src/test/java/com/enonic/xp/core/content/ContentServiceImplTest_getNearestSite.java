@@ -3,7 +3,7 @@ package com.enonic.xp.core.content;
 import java.time.Duration;
 import java.time.Instant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -13,17 +13,14 @@ import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ContentServiceImplTest_getNearestSite
     extends AbstractContentServiceTest
 {
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void child_of_site()
@@ -79,11 +76,11 @@ public class ContentServiceImplTest_getNearestSite
         assertEquals( site.getId(), fetchedSite.getId() );
     }
 
-    @Test(expected = ContentNotFoundException.class)
+    @Test
     public void child_of_site_pending_publish_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+        assertThrows(ContentNotFoundException.class, () -> AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
             final Content site = createSite();
 
             final Content child = createContent( site.getPath(), ContentPublishInfo.create().
@@ -91,14 +88,14 @@ public class ContentServiceImplTest_getNearestSite
                 build() );
 
             return this.contentService.getNearestSite( child.getId() );
-        } );
+        } ));
     }
 
-    @Test(expected = ContentNotFoundException.class)
+    @Test
     public void deep_child_of_site_pending_publish_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+        assertThrows(ContentNotFoundException.class, () -> AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
             final Content site = createSite();
 
             final Content childLevel1 = createContent( site.getPath() );
@@ -110,14 +107,14 @@ public class ContentServiceImplTest_getNearestSite
 
             return this.contentService.getNearestSite( childLevel3.getId() );
 
-        } );
+        } ));
     }
 
-    @Test(expected = ContentNotFoundException.class)
+    @Test
     public void child_of_site_published_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+        assertThrows(ContentNotFoundException.class, () -> AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
             final Content site = createSite();
 
             final Content child = createContent( site.getPath(), ContentPublishInfo.create().
@@ -130,7 +127,7 @@ public class ContentServiceImplTest_getNearestSite
             assertEquals( site, nearestSite );
 
             return null;
-        } );
+        } ));
     }
 
     private Content createSite()

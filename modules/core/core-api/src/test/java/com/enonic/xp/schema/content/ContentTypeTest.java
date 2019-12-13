@@ -2,10 +2,10 @@ package com.enonic.xp.schema.content;
 
 
 import java.time.Instant;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.form.FieldSet;
@@ -15,7 +15,10 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.security.PrincipalKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentTypeTest
 {
@@ -127,6 +130,8 @@ public class ContentTypeTest
                 setBuiltIn().
                 displayNameExpression( "displayNameExpression" ).
                 displayName( "displayName" ).
+                displayNameLabel( "displayNameLabel" ).
+                displayNameLabelI18nKey( "displayNameLabelI18nKey" ).
                 description( "description" ).
                 modifiedTime( Instant.now() ).
                 createdTime( Instant.now() ).
@@ -142,6 +147,8 @@ public class ContentTypeTest
         assertEquals( contentType1.isBuiltIn(), contentType2.isBuiltIn() );
         assertEquals( contentType1.getDisplayNameExpression(), contentType2.getDisplayNameExpression() );
         assertEquals( contentType1.getDisplayName(), contentType2.getDisplayName() );
+        assertEquals( contentType1.getDisplayNameLabel(), contentType2.getDisplayNameLabel() );
+        assertEquals( contentType1.getDisplayNameLabelI18nKey(), contentType2.getDisplayNameLabelI18nKey() );
         assertEquals( contentType1.getDescription(), contentType2.getDescription() );
         assertEquals( contentType1.getModifiedTime(), contentType2.getModifiedTime() );
         assertEquals( contentType1.getCreatedTime(), contentType2.getCreatedTime() );
@@ -165,8 +172,8 @@ public class ContentTypeTest
         assertFalse( ctFilter.isContentTypeAllowed( ContentTypeName.from( "myapplication:my_type2" ) ) );
         assertFalse( ctFilter.isContentTypeAllowed( ContentTypeName.audioMedia() ) );
         assertFalse( ctFilter.isContentTypeAllowed( ContentTypeName.documentMedia() ) );
-        assertTrue( ctFilter.equals( ( ctFilter1 ) ) );
-        assertFalse( ctFilter.equals( ( builder ) ) );
+        assertTrue( ctFilter.equals( ctFilter1 ) );
+        assertFalse( ctFilter.equals( builder ) );
     }
 
     @Test
@@ -195,10 +202,7 @@ public class ContentTypeTest
     @Test
     public void getContentTypesParams()
     {
-        List<ContentTypeName> list = new ArrayList<ContentTypeName>()
-        {{
-                add( ContentTypeName.audioMedia() );
-            }};
+        List<ContentTypeName> list = Collections.singletonList( ContentTypeName.audioMedia() );
         GetContentTypesParams params1 = new GetContentTypesParams();
         params1.contentTypeNames( ContentTypeNames.create().add( ContentTypeName.archiveMedia() ).addAll( list ).build() );
         GetContentTypesParams params2 = new GetContentTypesParams();

@@ -1,8 +1,7 @@
 package com.enonic.xp.impl.server.rest.model;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,7 +57,7 @@ public class SystemDumpResultJson
 
     public static final class Builder
     {
-        private final List<RepoDumpResultJson> repositories = Lists.newArrayList();
+        private final List<RepoDumpResultJson> repositories = new ArrayList<>();
 
         private Builder()
         {

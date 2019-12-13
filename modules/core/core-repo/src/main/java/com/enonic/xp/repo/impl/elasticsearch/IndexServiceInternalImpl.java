@@ -154,8 +154,7 @@ public class IndexServiceInternalImpl
                 create( createIndexRequest ).
                 actionGet( CREATE_INDEX_TIMEOUT );
 
-            LOG.info( "Index {} created with status {}, settings {}", indexName, createIndexResponse.isAcknowledged(),
-                      indexSettings.getAsString() );
+            LOG.info( "Index {} created with status {}", indexName, createIndexResponse.isAcknowledged() );
         }
         catch ( ElasticsearchException e )
         {

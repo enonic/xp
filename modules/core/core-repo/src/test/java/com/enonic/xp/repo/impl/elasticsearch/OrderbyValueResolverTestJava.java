@@ -1,17 +1,16 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.junit.Test;
-
-import com.google.common.collect.Lists;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.repo.impl.node.NodeManualOrderValueResolver;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OrderbyValueResolverTestJava
 {
@@ -21,7 +20,7 @@ public class OrderbyValueResolverTestJava
         throws Exception
     {
 
-        List<String> orderStrings = Lists.newArrayList();
+        List<String> orderStrings = new ArrayList<>();
         final String third = OrderbyValueResolver.getOrderbyValue(
             ValueFactory.newDouble( (double) NodeManualOrderValueResolver.START_ORDER_VALUE + NodeManualOrderValueResolver.ORDER_SPACE ) );
         orderStrings.add( third );

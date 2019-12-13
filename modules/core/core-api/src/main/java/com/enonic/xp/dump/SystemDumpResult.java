@@ -1,10 +1,9 @@
 package com.enonic.xp.dump;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.repository.RepositoryId;
 
@@ -49,7 +48,7 @@ public class SystemDumpResult
 
     public static class Builder
     {
-        private final List<RepoDumpResult> repoDumpResults = Lists.newArrayList();
+        private final List<RepoDumpResult> repoDumpResults = new ArrayList<>();
 
         private Builder()
         {

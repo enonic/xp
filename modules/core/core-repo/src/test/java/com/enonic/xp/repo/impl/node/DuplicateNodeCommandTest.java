@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
@@ -30,16 +30,19 @@ import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DuplicateNodeCommandTest
     extends AbstractNodeTest
 {
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -298,11 +301,11 @@ public class DuplicateNodeCommandTest
         assertDuplicatedTree( a.path(), a, duplicatedNode );
     }
 
-    @Test(expected = OperationNotPermittedException.class)
+    @Test
     public void cannot_duplicate_root_node()
         throws Exception
     {
-        duplicateNode( getNode( Node.ROOT_UUID ) );
+        assertThrows(OperationNotPermittedException.class, () -> duplicateNode( getNode( Node.ROOT_UUID ) ));
     }
 
     @Test
@@ -400,7 +403,7 @@ public class DuplicateNodeCommandTest
     {
         if ( duplicateReferences.size() > 0 )
         {
-            assertTrue( "Ref outside duplicate-tree updated", duplicateReferences.containsAll( referencesOutsideTree ) );
+            assertTrue( duplicateReferences.containsAll( referencesOutsideTree ), "Ref outside duplicate-tree updated" );
         }
     }
 
@@ -416,8 +419,9 @@ public class DuplicateNodeCommandTest
                 if ( ref.getName().equals( dup.getName() ) )
                 {
                     found = true;
-                    assertNotEquals( "Reference within duplicated tree should be moved to duplicated child", ref.getReference().getNodeId(),
-                                     dup.getReference().getNodeId() );
+                    assertNotEquals( ref.getReference().getNodeId(),
+                                     dup.getReference().getNodeId() ,
+                            "Reference within duplicated tree should be moved to duplicated child");
                 }
             }
 

@@ -1,15 +1,16 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.query;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.ValueExpr;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.BaseTestBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CompareExpressionBuilderTest
     extends BaseTestBuilderFactory
@@ -38,6 +39,6 @@ public class CompareExpressionBuilderTest
         final String expected = load( fileName );
         final String expression = CompareExpressionBuilder.build( expr, new SearchQueryFieldNameResolver() ).toString();
 
-        Assert.assertEquals( cleanString( expected ), cleanString( expression ) );
+        assertEquals( cleanString( expected ), cleanString( expression ) );
     }
 }

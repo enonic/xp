@@ -1,10 +1,9 @@
 package com.enonic.xp.lib.common;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.query.filter.BooleanFilter;
@@ -190,7 +189,7 @@ public class JsonToFilterMapper
 
     private static Collection<Value> getValues( final Object values )
     {
-        List<Value> valueList = Lists.newArrayList();
+        List<Value> valueList = new ArrayList<>();
 
         if ( values instanceof Collection )
         {
@@ -209,7 +208,7 @@ public class JsonToFilterMapper
 
     private static Collection<String> getStringValues( final Object values )
     {
-        List<String> valueList = Lists.newArrayList();
+        List<String> valueList = new ArrayList<>();
 
         if ( values instanceof Collection )
         {

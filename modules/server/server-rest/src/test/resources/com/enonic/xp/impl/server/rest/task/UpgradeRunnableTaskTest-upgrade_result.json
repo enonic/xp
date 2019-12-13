@@ -1,4 +1,12 @@
 {
   "initialVersion": "0.0.0",
-  "upgradedVersion": "1.0.0"
+  "upgradedVersion": "1.0.0",
+  "stepResults" : [ {
+    "initialVersion" : "0",
+    "upgradedVersion" : "1",
+    "stepName" : "Step1",
+    "processed" : 0,
+    "errors" : 0,
+    "warnings" : 0
+  } ]
 }

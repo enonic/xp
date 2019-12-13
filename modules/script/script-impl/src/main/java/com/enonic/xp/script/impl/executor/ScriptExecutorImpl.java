@@ -1,5 +1,6 @@
 package com.enonic.xp.script.impl.executor;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -9,14 +10,13 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.SimpleBindings;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.Striped;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceError;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptExports;
@@ -32,6 +32,8 @@ import com.enonic.xp.script.impl.value.ScriptValueFactory;
 import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
 import com.enonic.xp.server.RunMode;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public final class ScriptExecutorImpl
     implements ScriptExecutor
@@ -64,7 +66,7 @@ public final class ScriptExecutorImpl
 
     private JavascriptHelper javascriptHelper;
 
-    private final static Striped<Lock> requireLocks = Striped.lazyWeakLock( 1000 );
+    private final static Striped<Lock> REQUIRE_LOCKS = Striped.lazyWeakLock( 1000 );
 
     public void setScriptSettings( final ScriptSettings scriptSettings )
     {
@@ -99,8 +101,8 @@ public final class ScriptExecutorImpl
     public void initialize()
     {
         this.engine = NashornHelper.getScriptEngine( this.classLoader );
-        this.mocks = Maps.newHashMap();
-        this.disposers = Maps.newHashMap();
+        this.mocks = new HashMap<>();
+        this.disposers = new HashMap<>();
         this.exportsCache = new ScriptExportsCache();
 
         final JavascriptHelperFactory javascriptHelperFactory = new JavascriptHelperFactory( this.engine );
@@ -160,7 +162,7 @@ public final class ScriptExecutorImpl
             return cached;
         }
 
-        final Lock lock = requireLocks.get( key );
+        final Lock lock = REQUIRE_LOCKS.get( key );
         try
         {
             if ( lock.tryLock( 5, TimeUnit.MINUTES ) )
@@ -222,6 +224,10 @@ public final class ScriptExecutorImpl
         {
             throw ErrorHelper.handleError( e );
         }
+        catch ( final StackOverflowError e )
+        {
+            throw new ResourceError( key, "Script require failed: [" + key + "]", e );
+        }
     }
 
     @Override
@@ -241,6 +247,10 @@ public final class ScriptExecutorImpl
         catch ( final Exception e )
         {
             throw ErrorHelper.handleError( e );
+        }
+        catch ( final StackOverflowError e )
+        {
+            throw new ResourceError( script.getKey(), "Script execute failed: [" + script.getKey() + "]", e );
         }
     }
 
@@ -273,7 +283,7 @@ public final class ScriptExecutorImpl
 
     private Object requireJsOrJson( final Resource resource )
     {
-        final String ext = Strings.nullToEmpty( resource.getKey().getExtension() );
+        final String ext = nullToEmpty( resource.getKey().getExtension() );
         if ( ext.equals( "json" ) )
         {
             return requireJson( resource );

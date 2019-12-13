@@ -2,9 +2,9 @@ package com.enonic.xp.portal.impl.view;
 
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Matchers;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -15,7 +15,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.site.Site;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LocalizeFunctionTest
     extends AbstractUrlViewFunctionTest
@@ -24,7 +24,7 @@ public class LocalizeFunctionTest
 
     private final MessageBundle messageBundle = Mockito.mock( MessageBundle.class );
 
-    @Before
+    @BeforeEach
     public final void setupTest()
     {
         Site site = Site.create().
@@ -66,7 +66,7 @@ public class LocalizeFunctionTest
             localeService.getBundle( Mockito.eq( this.portalRequest.getApplicationKey() ), Mockito.eq( new Locale( "en", "US" ) ) ) ).
             thenReturn( messageBundle );
 
-        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Mockito.anyVararg() ) ).
+        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Mockito.any() ) ).
             thenReturn( "localizedString" );
 
         final Object result = execute( "i18n.localize", "_key=myPhrase", "_locale=en-US", "_values={a,1,date('2015-10-10T10:00Z')}" );
@@ -81,7 +81,7 @@ public class LocalizeFunctionTest
             localeService.getBundle( Mockito.eq( this.portalRequest.getApplicationKey() ), Mockito.eq( new Locale( "en", "US" ) ) ) ).
             thenReturn( messageBundle );
 
-        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Matchers.<String>anyVararg() ) ).thenReturn( "localizedString" );
+        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), ArgumentMatchers.<String>any() ) ).thenReturn( "localizedString" );
 
         final Object result = execute( "i18n.localize", "_key=myPhrase", "_locale=en-US  ", "a=5", "b=2" );
         assertEquals( "localizedString", result );
@@ -94,7 +94,7 @@ public class LocalizeFunctionTest
         Mockito.when( localeService.getBundle( Mockito.eq( this.portalRequest.getApplicationKey() ), Mockito.eq( new Locale( "en" ) ) ) ).
             thenReturn( messageBundle );
 
-        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Matchers.<String>anyVararg() ) ).thenReturn( "localizedString" );
+        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), ArgumentMatchers.<String>any() ) ).thenReturn( "localizedString" );
 
         final Object result = execute( "i18n.localize", "_key=myPhrase", "a=5", "b=2" );
         assertEquals( "localizedString", result );
@@ -107,7 +107,7 @@ public class LocalizeFunctionTest
         Mockito.when( localeService.getBundle( Mockito.eq( this.portalRequest.getApplicationKey() ), Mockito.eq( new Locale( "en" ) ) ) ).
             thenReturn( messageBundle );
 
-        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Matchers.<String>anyVararg() ) ).thenReturn( "localizedString" );
+        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), ArgumentMatchers.<String>any() ) ).thenReturn( "localizedString" );
 
         final Object result = execute( "i18n.localize", "_key=myPhrase" );
         assertEquals( "localizedString", result );
@@ -126,7 +126,7 @@ public class LocalizeFunctionTest
                                                    Mockito.eq( new Locale( "en", "US" ) ) ) ).
                 thenReturn( messageBundle );
 
-            Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Matchers.<String>anyVararg() ) ).thenReturn(
+            Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), ArgumentMatchers.<String>any() ) ).thenReturn(
                 "localizedString" );
 
             final Object result =

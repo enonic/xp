@@ -109,7 +109,7 @@ public final class LoginHandler
         for ( IdProvider idProvider : idProviders )
         {
             final AuthenticationInfo authInfo = authenticate( idProvider.getKey() );
-            if ( ( authInfo != null ) && ( authInfo.isAuthenticated() ) )
+            if ( ( authInfo != null ) && authInfo.isAuthenticated() )
             {
                 return authInfo;
             }
@@ -132,7 +132,7 @@ public final class LoginHandler
         for ( String uStore : idProvider )
         {
             final AuthenticationInfo authInfo = authenticate( IdProviderKey.from( uStore ) );
-            if ( ( authInfo != null ) && ( authInfo.isAuthenticated() ) )
+            if ( ( authInfo != null ) && authInfo.isAuthenticated() )
             {
                 return authInfo;
             }

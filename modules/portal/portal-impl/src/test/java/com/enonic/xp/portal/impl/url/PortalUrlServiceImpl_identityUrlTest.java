@@ -1,9 +1,10 @@
 package com.enonic.xp.portal.impl.url;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
@@ -12,7 +13,7 @@ import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PortalUrlServiceImpl_identityUrlTest
     extends AbstractPortalUrlServiceImplTest
@@ -41,6 +42,21 @@ public class PortalUrlServiceImpl_identityUrlTest
         final String url = this.service.identityUrl( params );
         assertEquals( "/site/default/draft/context/path/_/idprovider/system/login", url );
     }
+
+    @Test
+    public void createUrl_normalizedCharacters()
+    {
+        this.portalRequest.setContentPath( ContentPath.from( ContentPath.ROOT, "feåtures" ) );
+
+        final IdentityUrlParams params = new IdentityUrlParams().
+            portalRequest( this.portalRequest ).
+            idProviderKey( IdProviderKey.system() ).
+            idProviderFunction( "login" );
+
+        final String url = this.service.identityUrl( params );
+        assertEquals( "/site/default/draft/_/idprovider/system/login", url );
+    }
+
 
     @Test
     public void createUrl_withoutFunction()

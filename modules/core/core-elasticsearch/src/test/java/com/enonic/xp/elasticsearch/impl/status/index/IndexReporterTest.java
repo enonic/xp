@@ -1,6 +1,7 @@
 package com.enonic.xp.elasticsearch.impl.status.index;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import org.elasticsearch.action.ActionListener;
@@ -16,9 +17,8 @@ import org.elasticsearch.cluster.routing.ShardRouting;
 import org.elasticsearch.cluster.routing.ShardRoutingState;
 import org.elasticsearch.cluster.routing.UnassignedInfo;
 import org.elasticsearch.common.transport.TransportAddress;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -26,9 +26,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IndexReporterTest
 {
@@ -36,7 +36,7 @@ public class IndexReporterTest
 
     private IndexReporter indexReporter;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
 
@@ -93,9 +93,9 @@ public class IndexReporterTest
         } ).when( clusterAdminClient ).
             execute( Mockito.any(), Mockito.any(), Mockito.any() );
 
-        Assert.assertEquals( "index", indexReporter.getName() );
+        assertEquals( "index", indexReporter.getName() );
         final JsonNode report = indexReporter.getReport();
-        Assert.assertEquals( parseJson( readFromFile( "index_report.json" ) ), report );
+        assertEquals( parseJson( readFromFile( "index_report.json" ) ), report );
     }
 
     @Test
@@ -105,9 +105,9 @@ public class IndexReporterTest
         Mockito.doAnswer( invocation -> null ).
             when( clusterAdminClient ).
             state( Mockito.any(), Mockito.any() );
-        Assert.assertEquals( "index", indexReporter.getName() );
+        assertEquals( "index", indexReporter.getName() );
         final JsonNode report = indexReporter.getReport();
-        Assert.assertEquals( parseJson( readFromFile( "index_report_failed.json" ) ), report );
+        assertEquals( parseJson( readFromFile( "index_report_failed.json" ) ), report );
     }
 
     private String readFromFile( final String fileName )
@@ -119,7 +119,7 @@ public class IndexReporterTest
             throw new IllegalArgumentException( "Resource file [" + fileName + "] not found" );
         }
 
-        return Resources.toString( url, Charsets.UTF_8 );
+        return Resources.toString( url, StandardCharsets.UTF_8 );
     }
 
     private JsonNode parseJson( final String json )

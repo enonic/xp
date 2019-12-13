@@ -14,16 +14,19 @@ class DuplicateTaskMessageGenerator
         return "Nothing to duplicate.";
     }
 
+    @Override
     void appendMessageForSingleFailure( final StringBuilder builder, final DuplicateRunnableTaskResult result )
     {
         builder.append( String.format( "Item \"%s\" could not be duplicated.", result.getFailed().get( 0 ).getName() ) );
     }
 
+    @Override
     void appendMessageForMultipleFailure( final StringBuilder builder, final DuplicateRunnableTaskResult result )
     {
         builder.append( String.format( "Failed to duplicate %s items.", result.getFailureCount() ) );
     }
 
+    @Override
     void appendMessageForSingleSuccess( final StringBuilder builder, final DuplicateRunnableTaskResult result )
     {
         final List<ContentPath> alreadyDuplicated = result.getAlreadyDuplicated();
@@ -46,6 +49,7 @@ class DuplicateTaskMessageGenerator
         }
     }
 
+    @Override
     void appendMessageForMultipleSuccess( final StringBuilder builder, final DuplicateRunnableTaskResult result )
     {
         final List<ContentPath> alreadyDuplicated = result.getAlreadyDuplicated();

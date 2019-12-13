@@ -1,26 +1,29 @@
 package com.enonic.xp.internal.blobstore.file;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.enonic.xp.blob.BlobKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class FileBlobRecordTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     @Test
     public void testAccessors()
         throws Exception
     {
         final BlobKey key = BlobKey.from( "test" );
-        final File file = this.temporaryFolder.newFile( "test" );
+        final File file = Files.createFile(this.temporaryFolder.resolve( "test" ) ).toFile();
 
         final FileBlobRecord record = new FileBlobRecord( key, file );
         assertSame( key, record.getKey() );
@@ -33,7 +36,7 @@ public class FileBlobRecordTest
         throws Exception
     {
         final BlobKey key = BlobKey.from( "test" );
-        final File file = this.temporaryFolder.newFile( "test" );
+        final File file = Files.createFile(this.temporaryFolder.resolve( "test" ) ).toFile();
 
         final FileBlobRecord record = new FileBlobRecord( key, file );
 

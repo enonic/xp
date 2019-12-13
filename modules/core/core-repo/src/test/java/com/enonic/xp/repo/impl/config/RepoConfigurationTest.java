@@ -1,28 +1,28 @@
 package com.enonic.xp.repo.impl.config;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import com.google.common.collect.Maps;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RepoConfigurationTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private Map<String, String> map;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
-        this.map = Maps.newHashMap();
-        System.setProperty( "xp.home", this.temporaryFolder.getRoot().getAbsolutePath() );
+        this.map = new HashMap<>();
+        System.setProperty( "xp.home", this.temporaryFolder.toFile().getAbsolutePath() );
     }
 
     private RepoConfiguration createConfig()
@@ -38,7 +38,7 @@ public class RepoConfigurationTest
         this.map.put( "snapshots.dir", "/a/b" );
 
         final RepoConfiguration config = createConfig();
-        Assert.assertEquals( new File( "/a/b" ), config.getSnapshotsDir() );
+        assertEquals( new File( "/a/b" ), config.getSnapshotsDir() );
     }
 
 }

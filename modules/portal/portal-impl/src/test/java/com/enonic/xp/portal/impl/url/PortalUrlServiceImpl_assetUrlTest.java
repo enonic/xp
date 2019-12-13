@@ -2,12 +2,13 @@ package com.enonic.xp.portal.impl.url;
 
 import java.time.Instant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.UrlTypeConstants;
@@ -15,7 +16,7 @@ import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PortalUrlServiceImpl_assetUrlTest
     extends AbstractPortalUrlServiceImplTest
@@ -29,7 +30,24 @@ public class PortalUrlServiceImpl_assetUrlTest
 
         final String url = this.service.assetUrl( params );
         assertEquals( "/site/default/draft/_/asset/myapplication:31556889864403199/css/my.css", url );
-    }    
+    }
+
+    @Test
+    public void createUrlWithLongContentPath()
+    {
+        final StringBuilder longContentPath = new StringBuilder();
+        for ( int i = 0; i < 10000; i++ )
+        {
+            longContentPath.append( "/a" );
+        }
+        this.portalRequest.setContentPath( ContentPath.from( longContentPath.toString() ) );
+        final AssetUrlParams params = new AssetUrlParams().
+            portalRequest( this.portalRequest ).
+            path( "css/my.css" );
+
+        final String url = this.service.assetUrl( params );
+        assertEquals( "/site/default/draft/_/asset/myapplication:31556889864403199/css/my.css", url );
+    }
     
     @Test
     public void createUrl_withContentPath()

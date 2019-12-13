@@ -2,8 +2,7 @@ package com.enonic.xp.lib.auth;
 
 import java.util.Optional;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.security.EditableRole;
@@ -14,6 +13,8 @@ import com.enonic.xp.security.RoleEditor;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateRoleParams;
 import com.enonic.xp.testing.ScriptTestSupport;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ModifyRoleHandlerTest
     extends ScriptTestSupport
@@ -57,7 +58,7 @@ public class ModifyRoleHandlerTest
     private Role invokeUpdate( final UpdateRoleParams params )
     {
         final RoleEditor editor = params.getEditor();
-        Assert.assertNotNull( editor );
+        assertNotNull( editor );
 
         final Role role = TestDataFixtures.getTestRole();
         final EditableRole editable = new EditableRole( role );

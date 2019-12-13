@@ -1,8 +1,10 @@
 package com.enonic.xp.content;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RenameContentParamsTest
 {
@@ -38,7 +40,7 @@ public class RenameContentParamsTest
 
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testValidateWithNullId()
     {
 
@@ -47,10 +49,10 @@ public class RenameContentParamsTest
             newName( contentName ).
             build();
 
-        params.validate();
+        assertThrows(NullPointerException.class, () ->  params.validate() );
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testValidateWithNullName()
     {
 
@@ -59,7 +61,7 @@ public class RenameContentParamsTest
             newName( null ).
             build();
 
-        params.validate();
+        assertThrows(NullPointerException.class, () ->  params.validate() );
     }
 
     @Test

@@ -2,10 +2,11 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Strings;
 
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class TermsAggregationQueryJson
     extends AggregationQueryJson
@@ -24,12 +25,12 @@ public class TermsAggregationQueryJson
             fieldName( fieldName ).
             size( size );
 
-        if ( !Strings.isNullOrEmpty( orderByDirection ) )
+        if ( !isNullOrEmpty( orderByDirection ) )
         {
             builder.orderDirection( TermsAggregationQuery.Direction.valueOf( orderByDirection.toUpperCase() ) );
         }
 
-        if ( !Strings.isNullOrEmpty( orderByType ) )
+        if ( !isNullOrEmpty( orderByType ) )
         {
             builder.orderType( TermsAggregationQuery.Type.valueOf( orderByType.toUpperCase() ) );
         }

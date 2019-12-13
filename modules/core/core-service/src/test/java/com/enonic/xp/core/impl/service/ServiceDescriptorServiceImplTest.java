@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.service;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.content.page.AbstractDescriptorServiceTest;
@@ -8,7 +8,8 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ServiceDescriptorServiceImplTest
     extends AbstractDescriptorServiceTest

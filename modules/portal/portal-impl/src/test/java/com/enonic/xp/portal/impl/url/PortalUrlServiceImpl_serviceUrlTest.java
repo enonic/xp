@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.enonic.xp.portal.url.ContextPathType;
@@ -8,7 +8,7 @@ import com.enonic.xp.portal.url.ServiceUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PortalUrlServiceImpl_serviceUrlTest
     extends AbstractPortalUrlServiceImplTest

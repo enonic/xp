@@ -15,7 +15,7 @@ public final class DiffBranchesHandler
 
     private Branch targetBranch;
 
-    private boolean includeChildren = true;
+    private boolean includeChildren;
 
     private DiffBranchesHandler( final Builder builder )
     {
@@ -30,6 +30,7 @@ public final class DiffBranchesHandler
         return new Builder();
     }
 
+    @Override
     public Object execute()
     {
         final NodeId nodeId = getNodeId( this.nodeKey );

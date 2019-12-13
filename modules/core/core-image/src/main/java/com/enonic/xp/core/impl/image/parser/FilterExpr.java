@@ -29,7 +29,7 @@ public final class FilterExpr
     @Override
     public String toString()
     {
-        StringBuffer str = new StringBuffer();
+        StringBuilder str = new StringBuilder();
         str.append( this.name ).append( "(" );
 
         for ( int i = 0; i < this.args.length; i++ )

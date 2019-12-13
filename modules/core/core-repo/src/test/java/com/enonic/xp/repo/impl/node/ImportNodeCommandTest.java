@@ -2,8 +2,8 @@ package com.enonic.xp.repo.impl.node;
 
 import java.time.Instant;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.data.PropertyTree;
@@ -17,17 +17,18 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ImportNodeCommandTest
     extends AbstractNodeTest
 {
-    @Override
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         CTX_DEFAULT.callWith( this::createDefaultRootNode );
         CTX_OTHER.callWith( this::createDefaultRootNode );
     }

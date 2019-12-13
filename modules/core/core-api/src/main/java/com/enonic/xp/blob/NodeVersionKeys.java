@@ -1,11 +1,11 @@
 package com.enonic.xp.blob;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -20,7 +20,7 @@ public class NodeVersionKeys
 
     public static NodeVersionKeys empty()
     {
-        return new NodeVersionKeys( ImmutableSet.<NodeVersionKey>of() );
+        return new NodeVersionKeys( ImmutableSet.of() );
     }
 
     public static NodeVersionKeys from( final NodeVersionKey... keys )
@@ -41,7 +41,7 @@ public class NodeVersionKeys
 
     public static class Builder
     {
-        final Set<NodeVersionKey> keys = Sets.newLinkedHashSet();
+        final Set<NodeVersionKey> keys = new LinkedHashSet<>();
 
         public Builder add( final NodeVersionKey key )
         {

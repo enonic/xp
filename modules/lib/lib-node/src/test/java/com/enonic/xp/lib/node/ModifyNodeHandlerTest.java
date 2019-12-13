@@ -4,20 +4,18 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.branch.Branches;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -33,8 +31,6 @@ import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -43,9 +39,12 @@ import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ModifyNodeHandlerTest
     extends BaseNodeHandlerTest
 {
@@ -108,12 +107,6 @@ public class ModifyNodeHandlerTest
         mockGetNode( node );
         mockUpdateNode( node );
 
-        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
-            thenReturn( Repository.create().
-                id( RepositoryId.from( "com.enonic.cms.default" ) ).
-                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-                build() );
-
         runScript( "/lib/xp/examples/node/modify.js" );
 
         Mockito.verify( this.nodeService ).update( updateCaptor.capture() );
@@ -163,12 +156,6 @@ public class ModifyNodeHandlerTest
 
         mockGetNode( node );
         mockUpdateNode( node );
-
-        Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).
-            thenReturn( Repository.create().
-                id( RepositoryId.from( "com.enonic.cms.default" ) ).
-                branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-                build() );
 
         runScript( "/lib/xp/examples/node/modify-keep-types.js" );
 

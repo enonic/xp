@@ -86,7 +86,6 @@ exports.newStream = function (text) {
  *
  * @param {*} native Native resource object.
  * @constructor
- * @private
  */
 function Resource(native) {
     this.res = native;

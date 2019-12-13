@@ -1,22 +1,21 @@
 package com.enonic.xp.web.jetty.impl.websocket;
 
+import java.net.URI;
+import java.net.http.WebSocket;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.ws.WebSocketCall;
-import com.squareup.okhttp.ws.WebSocketListener;
 
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.jetty.impl.JettyController;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WebSocketServiceImplTest
     extends JettyTestSupport
@@ -63,13 +62,10 @@ public class WebSocketServiceImplTest
         this.service.deactivate();
     }
 
-    private void newWebSocketRequest( final WebSocketListener listener )
+    private WebSocket newWebSocketRequest( final WebSocket.Listener listener )
+        throws ExecutionException, InterruptedException
     {
-        final Request request = new Request.Builder().
-            url( "ws://localhost:" + this.server.getPort() + "/ws" ).
-            build();
-
-        WebSocketCall.create( this.client, request ).enqueue( listener );
+        return client.newWebSocketBuilder().buildAsync( URI.create( "ws://localhost:" + this.server.getPort() + "/ws" ), listener ).get();
     }
 
     @Test
@@ -82,7 +78,6 @@ public class WebSocketServiceImplTest
     }
 
     @Test
-    @Ignore("failing on travis-ci all the time")
     public void sendFromServer()
         throws Exception
     {
@@ -94,23 +89,13 @@ public class WebSocketServiceImplTest
         newWebSocketRequest( listener1 );
         newWebSocketRequest( listener2 );
 
-        listener1.waitForConnect();
-        listener2.waitForConnect();
-
         this.endpoint.sendToAll( "Hello from server" );
 
-        listener1.waitForMessage();
-        listener2.waitForMessage();
-
-        assertEquals( "TEXT", listener1.type );
-        assertEquals( "Hello from server", listener1.message );
-
-        assertEquals( "TEXT", listener2.type );
-        assertEquals( "Hello from server", listener2.message );
+        assertAll( () -> assertEquals( "Hello from server", listener1.waitForMessage() ),
+                   () -> assertEquals( "Hello from server", listener2.waitForMessage() ) );
     }
 
     @Test
-    @Ignore("failing on travis-ci all the time")
     public void sendFromClient()
         throws Exception
     {
@@ -119,14 +104,11 @@ public class WebSocketServiceImplTest
 
         this.endpoint.expectMessages( 2 );
 
-        newWebSocketRequest( listener1 );
-        newWebSocketRequest( listener2 );
+        final WebSocket webSocket1 = newWebSocketRequest( listener1 );
+        final WebSocket webSocket2 = newWebSocketRequest( listener2 );
 
-        listener1.waitForConnect();
-        listener2.waitForConnect();
-
-        listener1.sendMessage( "Hello from client" );
-        listener2.sendMessage( "Hello from client" );
+        webSocket1.sendText( "Hello from client", true );
+        webSocket2.sendText( "Hello from client", true );
 
         this.endpoint.waitForMessages();
 

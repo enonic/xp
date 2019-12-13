@@ -8,6 +8,6 @@ dependencies {
     compile project( ':admin:admin-api' )
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Server - Deploy'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Server - Deploy' )
 }

@@ -1,8 +1,10 @@
 package com.enonic.xp.script.runtime;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ScriptSettingsTest
 {
@@ -25,7 +27,7 @@ public class ScriptSettingsTest
         assertEquals( "hello", settings.getBinding( String.class ).get() );
 
         assertNotNull( settings.getBinding( Integer.class ) );
-        assertEquals( new Integer( 2 ), settings.getBinding( Integer.class ).get() );
+        assertEquals( 2, settings.getBinding( Integer.class ).get() );
     }
 
     @Test

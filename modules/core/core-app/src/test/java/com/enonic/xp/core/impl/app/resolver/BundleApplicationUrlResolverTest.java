@@ -3,21 +3,24 @@ package com.enonic.xp.core.impl.app.resolver;
 import java.net.URL;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.osgi.framework.Bundle;
 
 import com.enonic.xp.core.impl.app.BundleBasedTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BundleApplicationUrlResolverTest
     extends BundleBasedTest
 {
     private BundleApplicationUrlResolver resolver;
 
-    @Before
+    @BeforeEach
     public void initResolver()
         throws Exception
     {

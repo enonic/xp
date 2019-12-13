@@ -44,18 +44,18 @@ public abstract class Value
 
     public boolean isSet()
     {
-        return this.type == ValueTypes.PROPERTY_SET;
+        return this.type.equals( ValueTypes.PROPERTY_SET );
     }
 
     public boolean isString()
     {
-        return this.type == ValueTypes.STRING;
+        return this.type.equals( ValueTypes.STRING );
     }
 
     public boolean isDateType()
     {
-        return ( this.type == ValueTypes.DATE_TIME ) || ( this.type == ValueTypes.LOCAL_DATE ) ||
-            ( this.type == ValueTypes.LOCAL_DATE_TIME );
+        return this.type.equals( ValueTypes.DATE_TIME ) || this.type.equals( ValueTypes.LOCAL_DATE ) ||
+            this.type.equals( ValueTypes.LOCAL_DATE_TIME );
     }
 
     public boolean isNumericType()
@@ -65,12 +65,17 @@ public abstract class Value
 
     public boolean isGeoPoint()
     {
-        return this.type == ValueTypes.GEO_POINT;
+        return this.type.equals( ValueTypes.GEO_POINT );
     }
 
     public boolean isText()
     {
-        return type == ValueTypes.STRING || type == ValueTypes.XML;
+        return type.equals( ValueTypes.STRING ) || type.equals( ValueTypes.XML );
+    }
+
+    public boolean isBoolean()
+    {
+        return type.equals( ValueTypes.BOOLEAN );
     }
 
     public boolean isJavaType( final Class javaType )
@@ -250,6 +255,6 @@ public abstract class Value
 
     public boolean isPropertySet()
     {
-        return type == ValueTypes.PROPERTY_SET;
+        return type.equals( ValueTypes.PROPERTY_SET );
     }
 }

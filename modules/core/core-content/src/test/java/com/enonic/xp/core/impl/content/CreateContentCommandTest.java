@@ -2,9 +2,8 @@ package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -43,7 +42,11 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.SiteService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class CreateContentCommandTest
 {
@@ -69,7 +72,7 @@ public class CreateContentCommandTest
 
     private ContentDataSerializer contentDataSerializer;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -96,16 +99,16 @@ public class CreateContentCommandTest
         Mockito.when( this.nodeService.create( Mockito.any( CreateNodeParams.class ) ) ).thenAnswer( this::mockNodeServiceCreate );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void contentTypeNull()
     {
         CreateContentCommand command = createContentCommand( createContentParams().build() );
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( null );
         // exercise
-        command.execute();
+        assertThrows(IllegalArgumentException.class, () -> command.execute());
     }
 
-    @Test(expected = ContentNotFoundException.class)
+    @Test
     public void badParentContentPath()
     {
         PropertyTree existingContentData = new PropertyTree();
@@ -123,7 +126,7 @@ public class CreateContentCommandTest
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
             ContentType.create().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build() );
 
-        command.execute();
+        assertThrows(ContentNotFoundException.class, () -> command.execute());
     }
 
     @Test
@@ -172,7 +175,7 @@ public class CreateContentCommandTest
         assertEquals( content.getParentPath(), ContentPath.from( ContentPath.ROOT, "site" ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createContentInInvalidPageTemplate()
     {
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
@@ -194,10 +197,10 @@ public class CreateContentCommandTest
 
         CreateContentCommand command = createContentCommand( params );
 
-        command.execute();
+        assertThrows(IllegalArgumentException.class, () -> command.execute());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createContentForDisallowedContentType()
     {
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
@@ -218,7 +221,7 @@ public class CreateContentCommandTest
             build();
 
         CreateContentCommand command = createContentCommand( params );
-        command.execute();
+        assertThrows(IllegalArgumentException.class, () -> command.execute());
     }
 
     @Test
@@ -295,7 +298,7 @@ public class CreateContentCommandTest
         try
         {
             command.execute();
-            Assert.fail( "Expected exception" );
+            fail( "Expected exception" );
         }
         catch ( IllegalArgumentException e )
         {
@@ -405,7 +408,7 @@ public class CreateContentCommandTest
         try
         {
             command.execute();
-            Assert.fail( "Expected exception" );
+            fail( "Expected exception" );
         }
         catch ( RuntimeException e )
         {

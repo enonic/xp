@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.core.impl.content.page.AbstractDataSerializerTest;
@@ -30,7 +30,8 @@ import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.region.TextComponent;
 
 import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.COMPONENTS;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PageDataSerializerTest
     extends AbstractDataSerializerTest
@@ -39,11 +40,9 @@ public class PageDataSerializerTest
 
     private PageDescriptorService pageDescriptorService;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
-        super.setUp();
-
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
 
         this.pageDataSerializer = PageDataSerializer.create().

@@ -3,13 +3,13 @@ package com.enonic.xp.repo.impl.elasticsearch.aggregation.query;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.range.RangeBuilder;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.query.aggregation.NumericRange;
 import com.enonic.xp.query.aggregation.NumericRangeAggregationQuery;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AbstractBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.index.IndexValueType;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 class NumericRangeAggregationQueryFactory
     extends AbstractBuilderFactory
@@ -41,7 +41,7 @@ class NumericRangeAggregationQueryFactory
                 rangeBuilder.addRange( range.getKey(), range.getFrom(), range.getTo() );
             }
 
-            if ( Strings.isNullOrEmpty( range.getKey() ) )
+            if ( isNullOrEmpty( range.getKey() ) )
             {
                 rangeBuilder.format( range.getKey() );
             }

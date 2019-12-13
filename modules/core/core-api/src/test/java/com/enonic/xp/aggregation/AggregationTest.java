@@ -3,17 +3,18 @@ package com.enonic.xp.aggregation;
 
 import java.util.ArrayList;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 public class AggregationTest
 {
     private static ArrayList<Aggregation> list = new ArrayList();
 
-    @BeforeClass
+    @BeforeAll
     public static void initApplicationKeys()
     {
         AggregationTest.list.add( Aggregation.bucketAggregation( "aaa" ).build() );

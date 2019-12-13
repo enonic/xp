@@ -3,8 +3,8 @@ package com.enonic.xp.web.session.impl.reporter;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.cache.CacheMetrics;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.enonic.xp.support.JsonTestHelper;
 import com.enonic.xp.web.session.impl.IgniteSessionDataStore;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WebSessionReporterTest
 {
@@ -24,7 +24,7 @@ public class WebSessionReporterTest
 
 
     @SuppressWarnings("unchecked")
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

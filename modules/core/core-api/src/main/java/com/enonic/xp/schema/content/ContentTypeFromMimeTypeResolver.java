@@ -5,11 +5,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Maps;
-
 public final class ContentTypeFromMimeTypeResolver
 {
-    private final static Map<String, ContentTypeName> MAP = Maps.newHashMap();
+    private final static Map<String, ContentTypeName> MAP = new HashMap<>();
 
     static
     {
@@ -36,6 +34,7 @@ public final class ContentTypeFromMimeTypeResolver
         MAP.put( "audio/vnd.rn-realaudio", ContentTypeName.audioMedia() );
         MAP.put( "audio/vnd.wave", ContentTypeName.audioMedia() );
         MAP.put( "audio/webm", ContentTypeName.audioMedia() );
+        MAP.put( "audio/wav", ContentTypeName.audioMedia() );
 
         // Video
         MAP.put( "video/avi", ContentTypeName.videoMedia() );

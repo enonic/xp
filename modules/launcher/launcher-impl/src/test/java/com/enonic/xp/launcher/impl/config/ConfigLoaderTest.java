@@ -2,31 +2,35 @@ package com.enonic.xp.launcher.impl.config;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.enonic.xp.launcher.impl.env.Environment;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class ConfigLoaderTest
 {
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private File homeDir;
 
     private ConfigLoader configLoader;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        this.homeDir = this.folder.newFolder( "home" );
+        this.homeDir = Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
 
         final Environment env = Mockito.mock( Environment.class );
         Mockito.when( env.getHomeDir() ).thenReturn( this.homeDir );
@@ -44,9 +48,9 @@ public class ConfigLoaderTest
         final File file = new File( this.homeDir, "config/system.properties" );
         file.getParentFile().mkdirs();
 
-        final FileOutputStream out = new FileOutputStream( file );
-        props.store( out, "" );
-        out.close();
+        try (final FileOutputStream out = new FileOutputStream( file )) {
+            props.store(out, "");
+        }
     }
 
     @Test
@@ -54,8 +58,8 @@ public class ConfigLoaderTest
         throws Exception
     {
         final ConfigProperties props = this.configLoader.load();
-        Assert.assertNotNull( props );
-        Assert.assertTrue( !props.isEmpty() );
+        assertNotNull( props );
+        assertTrue( !props.isEmpty() );
     }
 
     @Test
@@ -65,9 +69,9 @@ public class ConfigLoaderTest
         setupHomeProperties();
 
         final ConfigProperties props = this.configLoader.load();
-        Assert.assertNotNull( props );
-        Assert.assertTrue( props.size() > 2 );
-        Assert.assertEquals( "home.value", props.get( "home.param" ) );
-        Assert.assertEquals( "home.other.value", props.get( "home.other.param" ) );
+        assertNotNull( props );
+        assertTrue( props.size() > 2 );
+        assertEquals( "home.value", props.get( "home.param" ) );
+        assertEquals( "home.other.value", props.get( "home.other.param" ) );
     }
 }

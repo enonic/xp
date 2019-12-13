@@ -21,7 +21,7 @@ public final class ScriptBeanFactoryImpl
         throws Exception
     {
         final Class<?> clz = Class.forName( type, true, this.classLoader );
-        final Object instance = clz.newInstance();
+        final Object instance = clz.getDeclaredConstructor().newInstance();
 
         injectBean( instance );
         return instance;

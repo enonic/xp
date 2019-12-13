@@ -9,13 +9,15 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
+import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.DeleteContentListener;
-import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentListener;
+import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -32,8 +34,6 @@ import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
-import com.enonic.xp.security.User;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class PublishContentCommand
     extends AbstractContentCommand
@@ -51,13 +51,13 @@ public class PublishContentCommand
 
     private final boolean includeDependencies;
 
-    private final boolean resolveSyncWork = true;
-
     private final PublishContentResult.Builder resultBuilder;
 
-    private final PushContentListener pushContentListener;
+    private final PushContentListener publishContentListener;
 
     private final DeleteContentListener deleteNodeListener;
+
+    private final String message;
 
     private PublishContentCommand( final Builder builder )
     {
@@ -69,8 +69,9 @@ public class PublishContentCommand
         this.includeDependencies = builder.includeDependencies;
         this.excludeChildrenIds = builder.excludeChildrenIds;
         this.resultBuilder = PublishContentResult.create();
-        this.pushContentListener = builder.pushContentListener;
+        this.publishContentListener = builder.publishContentListener;
         this.deleteNodeListener = builder.deleteNodeListener;
+        this.message = builder.message;
     }
 
     public static Builder create()
@@ -82,24 +83,11 @@ public class PublishContentCommand
     {
         this.nodeService.refresh( RefreshMode.ALL );
 
-        final CompareContentResults results;
+        final CompareContentResults results = getSyncWork();
 
-        if ( resolveSyncWork )
+        if ( publishContentListener != null )
         {
-            results = getSyncWork();
-        }
-        else
-        {
-            results = CompareContentsCommand.create().
-                contentIds( this.contentIds ).
-                nodeService( this.nodeService ).
-                target( this.target ).
-                build().
-                execute();
-        }
-        if ( pushContentListener != null )
-        {
-            pushContentListener.contentResolved( results.size() );
+            publishContentListener.contentResolved( results.size() );
         }
         pushAndDelete( results );
 
@@ -161,7 +149,7 @@ public class PublishContentCommand
 
     private boolean checkIfAllContentsValid( final ContentIds pushContentsIds )
     {
-        final ContentIds invalidContentIds = CheckContentsValidCommand.create().
+        final ContentValidityResult result = CheckContentValidityCommand.create().
             translator( this.translator ).
             nodeService( this.nodeService ).
             eventPublisher( this.eventPublisher ).
@@ -170,7 +158,7 @@ public class PublishContentCommand
             build().
             execute();
 
-        return invalidContentIds.isEmpty();
+        return result.allValid();
     }
 
     private void doPushNodes( final NodeIds nodesToPush )
@@ -183,7 +171,7 @@ public class PublishContentCommand
         SetPublishInfoCommand.create( this ).
             nodeIds( nodesToPush ).
             contentPublishInfo( contentPublishInfo ).
-            pushListener( pushContentListener ).
+            pushListener( publishContentListener ).
             build().
             execute();
 
@@ -198,8 +186,12 @@ public class PublishContentCommand
 
     private void commitPushedNodes( final NodeBranchEntries branchEntries )
     {
+        final String commitEntryMessage = message == null
+            ? ContentConstants.PUBLISH_COMMIT_PREFIX
+            : String.join( ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER, ContentConstants.PUBLISH_COMMIT_PREFIX, message );
+
         final NodeCommitEntry commitEntry = NodeCommitEntry.create().
-            message( "Publish" ).
+            message( commitEntryMessage ).
             build();
         final RoutableNodeVersionIds.Builder routableNodeVersionIds = RoutableNodeVersionIds.create();
         for ( NodeBranchEntry branchEntry : branchEntries )
@@ -239,9 +231,9 @@ public class PublishContentCommand
             // node to delete doesn't exist
         }
 
-        if ( pushContentListener != null )
+        if ( publishContentListener != null )
         {
-            pushContentListener.contentPushed( contentIdsToDelete.getSize() );
+            publishContentListener.contentPushed( contentIdsToDelete.getSize() );
         }
     }
 
@@ -256,9 +248,9 @@ public class PublishContentCommand
     @Override
     public void nodesPushed( final int count )
     {
-        if ( pushContentListener != null )
+        if ( publishContentListener != null )
         {
-            pushContentListener.contentPushed( count );
+            publishContentListener.contentPushed( count );
         }
     }
 
@@ -295,9 +287,11 @@ public class PublishContentCommand
 
         private boolean includeDependencies = true;
 
-        private PushContentListener pushContentListener;
+        private PushContentListener publishContentListener;
 
         private DeleteContentListener deleteNodeListener;
+
+        private String message;
 
         public Builder contentIds( final ContentIds contentIds )
         {
@@ -345,15 +339,21 @@ public class PublishContentCommand
             return this;
         }
 
-        public Builder pushListener( final PushContentListener pushContentListener )
+        public Builder pushListener( final PushContentListener publishContentListener )
         {
-            this.pushContentListener = pushContentListener;
+            this.publishContentListener = publishContentListener;
             return this;
         }
 
         public Builder deleteListener( final DeleteContentListener deleteNodeListener )
         {
             this.deleteNodeListener = deleteNodeListener;
+            return this;
+        }
+
+        public Builder message( final String message )
+        {
+            this.message = message;
             return this;
         }
 

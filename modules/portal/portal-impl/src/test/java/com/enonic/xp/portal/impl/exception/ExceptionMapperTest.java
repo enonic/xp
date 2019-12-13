@@ -1,7 +1,7 @@
 package com.enonic.xp.portal.impl.exception;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.PortalResponse;
@@ -9,13 +9,15 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.impl.exception.ExceptionMapperImpl;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ExceptionMapperTest
 {
     private ExceptionMapperImpl mapper;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.mapper = new ExceptionMapperImpl();

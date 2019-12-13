@@ -31,11 +31,13 @@ public abstract class InputTypeBase
         return this.name.toString();
     }
 
+    @Override
     public Value createValue( final String value, final InputTypeConfig config )
     {
         return createValue( ValueFactory.newString( value ), config );
     }
 
+    @Override
     public abstract Value createValue( final Value value, final InputTypeConfig config );
 
     @Override
@@ -47,7 +49,7 @@ public abstract class InputTypeBase
     protected final void validateType( final Property property, final ValueType expectedType )
     {
         final ValueType actualType = property.getType();
-        if ( actualType != expectedType )
+        if ( !actualType.equals( expectedType ) )
         {
             throw InputTypeValidationException.invalidType( property, actualType, expectedType );
         }
@@ -74,7 +76,7 @@ public abstract class InputTypeBase
     {
         for ( final ValueType type : types )
         {
-            if ( type == check )
+            if ( type.equals( check ) )
             {
                 return true;
             }
@@ -83,5 +85,6 @@ public abstract class InputTypeBase
         return false;
     }
 
+    @Override
     public abstract void validate( Property property, InputTypeConfig config );
 }

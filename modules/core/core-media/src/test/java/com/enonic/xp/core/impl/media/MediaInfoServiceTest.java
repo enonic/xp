@@ -1,23 +1,23 @@
 package com.enonic.xp.core.impl.media;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.Media;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.extractor.ExtractedData;
@@ -25,19 +25,19 @@ import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MediaInfoServiceTest
 {
     private MediaInfoServiceImpl service;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.service = new MediaInfoServiceImpl();
         service.setBinaryExtractor( source ->
                                     {
-                                        Map<String, List<String>> data = Maps.newHashMap();
+                                        Map<String, List<String>> data = new HashMap<>();
                                         data.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( "image/jpeg" ) );
                                         data.put( "myExtractedValue", Lists.newArrayList( "fisk" ) );
 

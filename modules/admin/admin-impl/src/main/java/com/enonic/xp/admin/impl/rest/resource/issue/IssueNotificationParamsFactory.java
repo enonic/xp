@@ -1,14 +1,15 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Maps;
-
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
+import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.ContentConstants;
@@ -19,24 +20,28 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.issue.Issue;
 import com.enonic.xp.issue.IssueComment;
 import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 
 public class IssueNotificationParamsFactory
 {
-    private final SchemaImageHelper HELPER = new SchemaImageHelper();
+    private static final SchemaImageHelper HELPER = new SchemaImageHelper();
 
     private SecurityService securityService;
 
     private ContentService contentService;
 
     private ContentTypeIconResolver contentTypeIconResolver;
+
+    private LocaleMessageResolver localeMessageResolver;
 
     private Issue issue;
 
@@ -51,6 +56,7 @@ public class IssueNotificationParamsFactory
         this.securityService = builder.securityService;
         this.contentService = builder.contentService;
         this.contentTypeIconResolver = new ContentTypeIconResolver( builder.contentTypeService );
+        this.localeMessageResolver = new LocaleMessageResolver( builder.localeService, ApplicationKey.SYSTEM );
         this.issue = builder.issue;
         this.comments = builder.comments;
         this.recipients = builder.recipients;
@@ -79,7 +85,7 @@ public class IssueNotificationParamsFactory
 
     public IssueNotificationParams createdParams()
     {
-        return createMessageParams();
+        return createMessageParams( true );
     }
 
     public IssueUpdatedNotificationParams updatedParams()
@@ -99,7 +105,14 @@ public class IssueNotificationParamsFactory
 
     private IssueNotificationParams createMessageParams()
     {
-        final User creator = securityService.getUser( issue.getCreator() ).orElse( null );
+        return createMessageParams( false );
+    }
+
+    private IssueNotificationParams createMessageParams( boolean preferModifierOverCreator )
+    {
+        PrincipalKey creatorOrModifierKey =
+            preferModifierOverCreator && issue.getModifier() != null ? issue.getModifier() : issue.getCreator();
+        final User creatorOrModifier = securityService.getUser( creatorOrModifierKey ).orElse( null );
         final ContentIds contentIds = ContentIds.from(
             issue.getPublishRequest().getItems().stream().map( PublishRequestItem::getId ).collect( Collectors.toList() ) );
         final Contents contents = contentService.getByIds( new GetContentByIdsParams( contentIds ) );
@@ -114,9 +127,10 @@ public class IssueNotificationParamsFactory
 
         return IssueNotificationParams.create().
             issue( issue ).
-            creator( creator ).
+            creator( creatorOrModifier ).
             approvers( approvers ).
             items( contents ).
+            localeMessageResolver( localeMessageResolver ).
             url( url ).
             icons( icons ).
             compareResults( compareResults ).
@@ -126,7 +140,7 @@ public class IssueNotificationParamsFactory
 
     private Map<ContentId, String> getIcons( final Contents contents )
     {
-        final Map<ContentId, String> icons = Maps.newHashMap();
+        final Map<ContentId, String> icons = new HashMap<>();
 
         contents.stream().forEach( content -> {
             final Icon icon = contentTypeIconResolver.resolveIcon( content.getType() );
@@ -161,6 +175,8 @@ public class IssueNotificationParamsFactory
         private PrincipalKeys recipients;
 
         private String url;
+
+        private LocaleService localeService;
 
         private Builder()
         {
@@ -205,6 +221,12 @@ public class IssueNotificationParamsFactory
         public Builder contentTypeService( final ContentTypeService contentTypeService )
         {
             this.contentTypeService = contentTypeService;
+            return this;
+        }
+
+        public Builder localeService( final LocaleService localeService )
+        {
+            this.localeService = localeService;
             return this;
         }
 

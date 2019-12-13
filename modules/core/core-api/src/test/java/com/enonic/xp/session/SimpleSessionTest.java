@@ -1,19 +1,22 @@
 package com.enonic.xp.session;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class SimpleSessionTest
 {
-    private final class SampleValue
+    private static final class SampleValue
     {
     }
 
     private Session session;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         this.session = new SimpleSession( SessionKey.from( "123" ) );

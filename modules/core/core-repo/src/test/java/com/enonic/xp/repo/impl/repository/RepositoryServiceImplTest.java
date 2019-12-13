@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.repository;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
@@ -27,7 +27,9 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class RepositoryServiceImplTest
     extends AbstractNodeTest
@@ -35,13 +37,10 @@ public class RepositoryServiceImplTest
 
     private NodeServiceImpl nodeService;
 
-    @Override
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
-
         this.nodeService = new NodeServiceImpl();
         this.nodeService.setIndexServiceInternal( this.indexServiceInternal );
         this.nodeService.setBinaryService( this.binaryService );

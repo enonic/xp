@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -16,7 +17,6 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
-import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
@@ -113,7 +113,7 @@ public class FileDumpReader
 
         final String[] repoIds = repoRootPath.toFile().list();
 
-        final List<RepositoryId> repositories = Lists.newArrayList();
+        final List<RepositoryId> repositories = new ArrayList<>();
 
         for ( final String repoId : repoIds )
         {
@@ -140,7 +140,7 @@ public class FileDumpReader
 
         final String[] branchFiles = branchRootPath.toFile().list();
 
-        final List<Branch> branches = Lists.newArrayList();
+        final List<Branch> branches = new ArrayList<>();
 
         for ( final String branch : branchFiles )
         {

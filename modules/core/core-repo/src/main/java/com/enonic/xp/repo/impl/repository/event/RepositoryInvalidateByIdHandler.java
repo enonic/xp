@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.RepositoryEvents;
+import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 
@@ -13,9 +14,12 @@ public class RepositoryInvalidateByIdHandler
 {
     private final RepositoryService repositoryService;
 
-    public RepositoryInvalidateByIdHandler( final RepositoryService repositoryService )
+    private final NodeStorageService nodeStorageService;
+
+    public RepositoryInvalidateByIdHandler( final RepositoryService repositoryService, final NodeStorageService nodeStorageService )
     {
         this.repositoryService = repositoryService;
+        this.nodeStorageService = nodeStorageService;
     }
 
     @Override
@@ -25,6 +29,7 @@ public class RepositoryInvalidateByIdHandler
 
         if ( repositoryIdOptional.isPresent() )
         {
+            this.nodeStorageService.invalidate();
             this.repositoryService.invalidate( RepositoryId.from( repositoryIdOptional.get() ) );
         }
     }

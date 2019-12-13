@@ -1,8 +1,7 @@
 package com.enonic.xp.impl.server.rest.model;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
@@ -15,7 +14,7 @@ public final class RepositoriesJson
     {
         final RepositoriesJson json = new RepositoriesJson();
 
-        json.repositories = Lists.newArrayList();
+        json.repositories = new ArrayList<>();
         for ( final Repository repo : repositories )
         {
             json.repositories.add( RepositoryJson.create( repo ) );

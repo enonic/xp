@@ -1,7 +1,7 @@
 package com.enonic.xp.impl.task;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
@@ -10,7 +10,8 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.xml.parser.XmlModelParserTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class XmlTaskDescriptorParserTest
     extends XmlModelParserTest
@@ -19,7 +20,7 @@ public class XmlTaskDescriptorParserTest
 
     private TaskDescriptor.Builder builder;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.parser = new XmlTaskDescriptorParser();

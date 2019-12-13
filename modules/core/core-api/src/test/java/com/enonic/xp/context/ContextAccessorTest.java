@@ -1,9 +1,10 @@
 package com.enonic.xp.context;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class ContextAccessorTest
 {
@@ -16,5 +17,6 @@ public class ContextAccessorTest
         final Context context = Mockito.mock( Context.class );
         ContextAccessor.INSTANCE.set( context );
         assertSame( context, ContextAccessor.current() );
+        ContextAccessor.INSTANCE.remove();
     }
 }

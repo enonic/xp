@@ -10,7 +10,7 @@
 function required(params, name) {
     var value = params[name];
     if (value === undefined) {
-        throw "Parameter '" + name + "' is required";
+        throw 'Parameter \'' + name + '\' is required';
     }
 
     return value;
@@ -224,6 +224,7 @@ exports.getChildren = function (params) {
  * @param {string} [params.childOrder] Default ordering of children when doing getChildren if no order is given in query
  * @param {object} params.data Actual content data.
  * @param {object} [params.x] eXtra data to use.
+ * @param {object} [params.workflow] Workflow information to use. Default has state READY and empty check list.
  *
  * @returns {object} Content created as JSON.
  */
@@ -242,6 +243,7 @@ exports.create = function (params) {
     bean.x = __.toScriptValue(params.x);
 
     bean.idGenerator = nullOrValue(params.idGenerator);
+    bean.workflow = __.toScriptValue(params.workflow);
 
     return __.toNativeObject(bean.execute());
 };
@@ -271,6 +273,7 @@ exports.query = function (params) {
     bean.aggregations = __.toScriptValue(params.aggregations);
     bean.contentTypes = __.toScriptValue(params.contentTypes);
     bean.filters = __.toScriptValue(params.filters);
+    bean.highlight = __.toScriptValue(params.highlight);
     return __.toNativeObject(bean.execute());
 };
 
@@ -309,6 +312,7 @@ exports.modify = function (params) {
  * @param {string} [params.schedule.to] Time until which the content is considered published.
  * @param {string[]} [params.excludeChildrenIds] List of all content keys which children should be excluded from publishing content.
  * @param {boolean} [params.includeDependencies=true] Whether all related content should be included when publishing content.
+ * @param {string} params.message Publish message.
  *
  * @returns {object} Status of the publish operation in JSON.
  */
@@ -328,6 +332,7 @@ exports.publish = function (params) {
     if (!nullOrValue(params.includeDependencies)) {
         bean.includeDependencies = params.includeDependencies;
     }
+    bean.message = nullOrValue(params.message);
     return __.toNativeObject(bean.execute());
 };
 
@@ -344,6 +349,24 @@ exports.publish = function (params) {
 exports.unpublish = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.UnpublishContentHandler');
     bean.keys = required(params, 'keys');
+    return __.toNativeObject(bean.execute());
+};
+
+
+/**
+ * Check if content exists.
+ *
+ * @example-ref examples/content/exists.js
+ *
+ * @param {string} [params.key] content id.
+ *
+ * @returns {boolean} True if exist, false otherwise.
+ */
+exports.exists = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.ContentExistsHandler');
+
+    bean.key = required(params, 'key');
+
     return __.toNativeObject(bean.execute());
 };
 
@@ -471,4 +494,19 @@ exports.getType = function (name) {
 exports.getTypes = function () {
     var bean = __.newBean('com.enonic.xp.lib.content.ContentTypeHandler');
     return __.toNativeObject(bean.getAllContentTypes());
+};
+
+/**
+ * Returns outbound dependencies on a content.
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Path or id of the content.
+ * @returns {object} Content Ids.
+ */
+exports.getOutboundDependencies = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.GetOutboundDependenciesHandler');
+
+    bean.key = required(params, 'key');
+
+    return __.toNativeObject(bean.execute());
 };

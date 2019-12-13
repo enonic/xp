@@ -8,6 +8,6 @@ dependencies {
     testCompile project( path: ':core:core-api', configuration: 'testOutput' )
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Server - Status'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Server - Status' )
 }

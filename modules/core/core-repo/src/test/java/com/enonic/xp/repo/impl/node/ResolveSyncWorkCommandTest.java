@@ -1,13 +1,13 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.jparsec.internal.util.Strings;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.common.collect.Sets;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -25,7 +25,8 @@ import com.enonic.xp.node.SetNodeStateParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ResolveSyncWorkCommandTest
     extends AbstractNodeTest
@@ -35,11 +36,10 @@ public class ResolveSyncWorkCommandTest
 
     private final static NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -203,13 +203,16 @@ public class ResolveSyncWorkCommandTest
     }
 
     /**
-     * node1                                   (Moved)
+     * node2
      * .....|
-     * .....node1_1                            (New)
-     * ............|
-     * .............node1_1_1                  (New)
-     * ......................|
-     * .......................node1_1_1_1      (New)
+     * .....node1                                   (Moved)
+     * ..........|
+     * ..........node1_1                            (Moved)
+     * .................|
+     * ..................node1_1_1                  (Moved)
+     * ...........................|
+     * ............................node1_1_1_1      (Moved)
+     *
      * <p>
      * Contents created below look like pic above.
      * ResolveSyncWorkCommand will return all four when called both with includeChildren=true and with includeChildren=false
@@ -263,13 +266,15 @@ public class ResolveSyncWorkCommandTest
     }
 
     /**
-     * node1                                   (Moved)
+     * node2
      * .....|
-     * .....node1_1                            (New)
-     * ............|
-     * .............node1_1_1                  (New)
-     * ......................|
-     * .......................node1_1_1_1      (New)
+     * .....node1                                   (Moved)
+     * ..........|
+     * ..........node1_1                            (Moved)
+     * .................|
+     * ..................node1_1_1                  (Moved)
+     * ...........................|
+     * ............................node1_1_1_1      (Moved)
      * <p>
      * Contents created below look like pic above.
      * ResolveSyncWorkCommand will return node1_1_1 and two of its parents when called both with includeChildren=true and with includeChildren=false
@@ -318,19 +323,22 @@ public class ResolveSyncWorkCommandTest
         final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1_1.id(), true );
         final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1.id(), false );
 
-        assertEquals( resultChildrenIncluded.getSize(), 3 );
-        assertEquals( resultChildrenNotIncluded.getSize(), 3 );
+        assertEquals( 4, resultChildrenIncluded.getSize() );
+
+        //Should be 4 IMO. Has been discussed internally and left as it is for now
+        assertEquals( 3, resultChildrenNotIncluded.getSize() );
 
     }
 
     /**
-     * node1                                   (New)
+     * node1                          (Equal)
      * .....|
-     * .....node1_1                            (New)
-     * ............|
-     * .............node1_1_1                  (Moved)
-     * ......................|
-     * .......................node1_1_1_1      (New)
+     * .....node1_1                   (Equal)
+     * node2                          (Equal)
+     * .....|
+     * .....node1_1_1                 (Moved)
+     * ..............|
+     * ..............node1_1_1_1      (Moved)
      * <p>
      * Contents created below look like pic above.
      * ResolveSyncWorkCommand will return node1_1_1 for node1_1_1.id() when called both with includeChildren=true and with includeChildren=false
@@ -381,8 +389,10 @@ public class ResolveSyncWorkCommandTest
         final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1_1.id(), true );
         final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1.id(), false );
 
-        assertEquals( resultChildrenIncluded.getSize(), 1 );
-        assertEquals( resultChildrenNotIncluded.getSize(), 1 );
+        assertEquals( 2, resultChildrenIncluded.getSize() );
+
+        //Should be 2 IMO. Has been discussed internally and left as it is for now
+        assertEquals( 1, resultChildrenNotIncluded.getSize() );
     }
 
     private void moveNode( Node moveMe, NodePath to )
@@ -1270,16 +1280,16 @@ public class ResolveSyncWorkCommandTest
 
 
     /*
-      * s1
-      ** a1
-      ** a2
-      *** a2_1 -> b2_1
-      **** a2_1_1
-      * s2
-      ** b1
-      ** b2
-      *** b2_1
-   */
+     * s1
+     ** a1
+     ** a2
+     *** a2_1 -> b2_1
+     **** a2_1_1
+     * s2
+     ** b1
+     ** b2
+     *** b2_1
+     */
     @Test
     public void not_include_dependencies()
     {
@@ -1335,15 +1345,15 @@ public class ResolveSyncWorkCommandTest
     }
 
     /*
-        * s1
-        ** a1
-        ** a2
-        *** a2_1 -> b2_1
-        **** a2_1_1
-        * s2
-        ** b1
-        ** b2
-        *** b2_1
+     * s1
+     ** a1
+     ** a2
+     *** a2_1 -> b2_1
+     **** a2_1_1
+     * s2
+     ** b1
+     ** b2
+     *** b2_1
      */
     private void createS1S2Tree()
     {
@@ -1573,23 +1583,20 @@ public class ResolveSyncWorkCommandTest
             fail( builder.toString() );
         }
 
-        assertEquals( createAssertFailMessage( result, expectedNodes ), expectedNodes
+        assertEquals( expectedNodes
 
-            .nodes.size(), result.getSize() );
+                          .nodes.size(), result.getSize(), createAssertFailMessage( result, expectedNodes ) );
     }
 
     private enum Reason
     {
-        PARENT,
-        CHILD,
-        REFERRED,
-        IMPLICIT
+        PARENT, CHILD, REFERRED, IMPLICIT
     }
 
     private static class ExpectedNodes
         implements Iterable<ExpectedNode>
     {
-        final Set<ExpectedNode> nodes = Sets.newHashSet();
+        final Set<ExpectedNode> nodes = new HashSet<>();
 
         public static ExpectedNodes create()
         {
@@ -1698,7 +1705,9 @@ public class ResolveSyncWorkCommandTest
         @Override
         public String toString()
         {
-            return Strings.join( ", ", this.nodes.toArray() );
+            return this.nodes.stream().
+                map( Objects::toString ).
+                collect( Collectors.joining( ", " ) );
         }
     }
 

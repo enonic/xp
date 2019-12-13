@@ -2,35 +2,36 @@ package com.enonic.xp.elasticsearch.impl;
 
 import java.io.File;
 import java.net.InetAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.elasticsearch.common.settings.Settings;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterNodeId;
 import com.enonic.xp.cluster.NodeDiscovery;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Ignore
+@Disabled
 public class NodeSettingsBuilderTest
 {
     private NodeSettingsBuilder builder;
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {
@@ -78,14 +79,14 @@ public class NodeSettingsBuilderTest
             }
         } );
 
-        final File homeDir = this.temporaryFolder.newFolder( "home" );
+        final File homeDir = Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
         System.setProperty( "xp.home", homeDir.getAbsolutePath() );
     }
 
     @Test
     public void settings_default()
     {
-        final Map<String, String> map = Maps.newHashMap();
+        final Map<String, String> map = new HashMap<>();
         final Settings settings = this.builder.buildSettings( map );
 
         assertNotNull( settings );
@@ -95,7 +96,7 @@ public class NodeSettingsBuilderTest
     @Test
     public void settings_override()
     {
-        final Map<String, String> map = Maps.newHashMap();
+        final Map<String, String> map = new HashMap<>();
         map.put( "path", "/to/some/other/path" );
 
         final Settings settings = this.builder.buildSettings( map );

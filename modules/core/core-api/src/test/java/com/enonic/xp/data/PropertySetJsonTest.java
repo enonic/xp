@@ -4,11 +4,11 @@ package com.enonic.xp.data;
 import java.io.IOException;
 import java.time.LocalDate;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.support.JsonTestHelper;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PropertySetJsonTest
 {

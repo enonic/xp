@@ -2,13 +2,13 @@ package com.enonic.xp.inputtype;
 
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Input;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class TextLineType
     extends TextInputTypeBase
@@ -35,7 +35,7 @@ final class TextLineType
     public Value createDefaultValue( final Input input )
     {
         final String defaultValue = input.getDefaultValue().getRootValue();
-        if ( StringUtils.isNotEmpty( defaultValue ) )
+        if ( !isNullOrEmpty( defaultValue ) )
         {
             return ValueFactory.newString( defaultValue );
         }

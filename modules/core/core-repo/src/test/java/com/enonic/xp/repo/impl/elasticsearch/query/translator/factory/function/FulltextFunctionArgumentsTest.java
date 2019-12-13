@@ -3,21 +3,18 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 import java.util.List;
 
 import org.elasticsearch.index.query.SimpleQueryStringBuilder;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class FulltextFunctionArgumentsTest
 {
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
     @Test
     public void fullText3Arguments()
     {
@@ -26,9 +23,9 @@ public class FulltextFunctionArgumentsTest
 
         final FulltextFunctionArguments functionArguments = new FulltextFunctionArguments( arguments );
 
-        Assert.assertEquals( "myField", functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() );
-        Assert.assertEquals( "SearchString", functionArguments.getSearchString() );
-        Assert.assertEquals( SimpleQueryStringBuilder.Operator.AND, functionArguments.getOperator() );
+        assertEquals( "myField", functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() );
+        assertEquals( "SearchString", functionArguments.getSearchString() );
+        assertEquals( SimpleQueryStringBuilder.Operator.AND, functionArguments.getOperator() );
     }
 
     @Test
@@ -38,20 +35,21 @@ public class FulltextFunctionArgumentsTest
 
         final FulltextFunctionArguments functionArguments = new FulltextFunctionArguments( arguments );
 
-        Assert.assertEquals( "myField", functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() );
-        Assert.assertEquals( "SearchString", functionArguments.getSearchString() );
-        Assert.assertEquals( SimpleQueryStringBuilder.Operator.OR, functionArguments.getOperator() );
-        Assert.assertEquals( NodeConstants.DEFAULT_FULLTEXT_SEARCH_ANALYZER, functionArguments.getAnalyzer() );
+        assertEquals( "myField", functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() );
+        assertEquals( "SearchString", functionArguments.getSearchString() );
+        assertEquals( SimpleQueryStringBuilder.Operator.OR, functionArguments.getOperator() );
+        assertEquals( NodeConstants.DEFAULT_FULLTEXT_SEARCH_ANALYZER, functionArguments.getAnalyzer() );
     }
 
     @Test
     public void fullText1Argument()
     {
-        this.exception.expect( FunctionQueryBuilderException.class );
-        this.exception.expectMessage( "Wrong number of arguments (1) for function 'fulltext' (expected 2 to 4)" );
-
         final List<ValueExpr> arguments = Lists.newArrayList( ValueExpr.string( "myField" ) );
-        new FulltextFunctionArguments( arguments );
+
+        final FunctionQueryBuilderException ex = assertThrows(FunctionQueryBuilderException.class, () -> {
+            new FulltextFunctionArguments( arguments );
+        });
+        assertEquals( "Wrong number of arguments (1) for function 'fulltext' (expected 2 to 4)", ex.getMessage());
     }
 
     @Test
@@ -63,21 +61,22 @@ public class FulltextFunctionArgumentsTest
 
         final FulltextFunctionArguments functionArguments = new FulltextFunctionArguments( arguments );
 
-        Assert.assertEquals( "myField", functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() );
-        Assert.assertEquals( "SearchString", functionArguments.getSearchString() );
-        Assert.assertEquals( SimpleQueryStringBuilder.Operator.OR, functionArguments.getOperator() );
-        Assert.assertEquals( "myAnalyzer", functionArguments.getAnalyzer() );
+        assertEquals( "myField", functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() );
+        assertEquals( "SearchString", functionArguments.getSearchString() );
+        assertEquals( SimpleQueryStringBuilder.Operator.OR, functionArguments.getOperator() );
+        assertEquals( "myAnalyzer", functionArguments.getAnalyzer() );
     }
 
 
     @Test
     public void fullIllegalOperatorArgument()
     {
-        this.exception.expect( FunctionQueryBuilderException.class );
-        this.exception.expectMessage( "Illegal argument 'DUMMY' in function 'fulltext', position 3" );
-
         final List<ValueExpr> arguments =
-            Lists.newArrayList( ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ), ValueExpr.string( "dummy" ) );
-        new FulltextFunctionArguments( arguments );
+                Lists.newArrayList( ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ), ValueExpr.string( "dummy" ) );
+
+        final FunctionQueryBuilderException ex = assertThrows(FunctionQueryBuilderException.class, () -> {
+            new FulltextFunctionArguments( arguments );
+        });
+        assertEquals( "Illegal argument 'DUMMY' in function 'fulltext', position 3", ex.getMessage());
     }
 }

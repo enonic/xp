@@ -1,13 +1,15 @@
 package com.enonic.xp.lib.auth;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
 import com.enonic.xp.testing.ScriptTestSupport;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LogoutHandlerTest
     extends ScriptTestSupport
@@ -29,11 +31,11 @@ public class LogoutHandlerTest
         final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
         this.session.setAttribute( authInfo );
 
-        Assert.assertTrue( ContextAccessor.current().getAuthInfo().isAuthenticated() );
+        assertTrue( ContextAccessor.current().getAuthInfo().isAuthenticated() );
 
         runScript( "/lib/xp/examples/auth/logout.js" );
 
-        Assert.assertFalse( ContextAccessor.current().getAuthInfo().isAuthenticated() );
+        assertFalse( ContextAccessor.current().getAuthInfo().isAuthenticated() );
     }
 
     @Test
@@ -42,20 +44,20 @@ public class LogoutHandlerTest
         final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
         this.session.setAttribute( authInfo );
 
-        Assert.assertTrue( ContextAccessor.current().getAuthInfo().isAuthenticated() );
+        assertTrue( ContextAccessor.current().getAuthInfo().isAuthenticated() );
 
         runFunction( "/test/logout-test.js", "logout" );
 
-        Assert.assertFalse( ContextAccessor.current().getAuthInfo().isAuthenticated() );
+        assertFalse( ContextAccessor.current().getAuthInfo().isAuthenticated() );
     }
 
     @Test
     public void testLogoutWithoutSession()
     {
-        Assert.assertFalse( ContextAccessor.current().getAuthInfo().isAuthenticated() );
+        assertFalse( ContextAccessor.current().getAuthInfo().isAuthenticated() );
 
         runFunction( "/test/logout-test.js", "alreadyLoggedOut" );
 
-        Assert.assertFalse( ContextAccessor.current().getAuthInfo().isAuthenticated() );
+        assertFalse( ContextAccessor.current().getAuthInfo().isAuthenticated() );
     }
 }

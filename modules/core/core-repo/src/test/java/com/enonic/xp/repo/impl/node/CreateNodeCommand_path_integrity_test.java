@@ -1,15 +1,14 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.IntStream;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.google.common.collect.Lists;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -22,18 +21,17 @@ import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CreateNodeCommand_path_integrity_test
     extends AbstractNodeTest
 {
 
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -41,7 +39,7 @@ public class CreateNodeCommand_path_integrity_test
     public void create()
         throws Exception
     {
-        List<Future> threads = Lists.newArrayList();
+        List<Future> threads = new ArrayList<>();
 
         final ExecutorService executor = Executors.newFixedThreadPool( 5 );
 

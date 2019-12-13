@@ -3,24 +3,19 @@ package com.enonic.xp.core.content;
 import java.time.Duration;
 import java.time.Instant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ContentServiceImplTest_getById
     extends AbstractContentServiceTest
 {
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void test_pending_publish_draft()
@@ -33,17 +28,17 @@ public class ContentServiceImplTest_getById
         assertNotNull( this.contentService.getById( content.getId() ) );
     }
 
-    @Test(expected = ContentNotFoundException.class)
+    @Test
     public void test_pending_publish_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+        assertThrows(ContentNotFoundException.class, () -> AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
             final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
                 from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
                 build() );
 
             return this.contentService.getById( content.getId() );
-        } );
+        } ));
     }
 
     @Test
@@ -58,18 +53,18 @@ public class ContentServiceImplTest_getById
         assertNotNull( this.contentService.getById( content.getId() ) );
     }
 
-    @Test(expected = ContentNotFoundException.class)
+    @Test
     public void test_publish_expired_master()
         throws Exception
     {
-        AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+        assertThrows(ContentNotFoundException.class, () -> AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
             final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
                 from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
                 to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
                 build() );
 
             return this.contentService.getById( content.getId() );
-        } );
+        } ));
     }
 
     @Test

@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.security;
 
 import java.util.concurrent.Callable;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.context.Context;
@@ -62,7 +62,13 @@ import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.IdProviderAccess.CREATE_USERS;
 import static com.enonic.xp.security.acl.IdProviderAccess.WRITE_USERS;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SecurityServiceImplTest
     extends AbstractElasticsearchIntegrationTest
@@ -79,12 +85,11 @@ public class SecurityServiceImplTest
 
     private RepositoryServiceImpl repositoryService;
 
-    @Override
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
+        deleteAllIndices();
 
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 
@@ -92,10 +97,10 @@ public class SecurityServiceImplTest
         binaryService.setBlobStore( blobStore );
 
         final StorageDaoImpl storageDao = new StorageDaoImpl();
-        storageDao.setClient( this.client );
+        storageDao.setClient( client );
 
         final SearchDaoImpl searchDao = new SearchDaoImpl();
-        searchDao.setClient( this.client );
+        searchDao.setClient( client );
 
         final BranchServiceImpl branchService = new BranchServiceImpl();
         branchService.setStorageDao( storageDao );
@@ -206,11 +211,11 @@ public class SecurityServiceImplTest
         } );
     }
 
-    @Test(expected = PrincipalAlreadyExistsException.class)
+    @Test
     public void testCreateUserThrowsExceptionWhenNameIsOccupied()
         throws Exception
     {
-        runAsAdmin( () -> {
+        assertThrows(PrincipalAlreadyExistsException.class, () -> runAsAdmin( () -> {
             final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
             final CreateUserParams createUser1 = CreateUserParams.create().
                 userKey( userKey1 ).
@@ -222,7 +227,7 @@ public class SecurityServiceImplTest
 
             securityService.createUser( createUser1 );
             securityService.createUser( createUser1 );
-        } );
+        } ));
     }
 
     @Test
@@ -411,11 +416,11 @@ public class SecurityServiceImplTest
         } );
     }
 
-    @Test(expected = PrincipalAlreadyExistsException.class)
+    @Test
     public void testCreateGroupThrowsExceptionWhenNameIsOccupied()
         throws Exception
     {
-        runAsAdmin( () -> {
+        assertThrows(PrincipalAlreadyExistsException.class, () -> runAsAdmin( () -> {
             final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "Group-a" );
             final CreateGroupParams createGroup = CreateGroupParams.create().
                 groupKey( groupKey1 ).
@@ -425,7 +430,7 @@ public class SecurityServiceImplTest
 
             securityService.createGroup( createGroup );
             securityService.createGroup( createGroup );
-        } );
+        } ) );
     }
 
     @Test
@@ -492,11 +497,11 @@ public class SecurityServiceImplTest
         } );
     }
 
-    @Test(expected = PrincipalAlreadyExistsException.class)
+    @Test
     public void testCreateRoleThrowsExceptionWhenNameIsOccupied()
         throws Exception
     {
-        runAsAdmin( () -> {
+        assertThrows(PrincipalAlreadyExistsException.class, () -> runAsAdmin( () -> {
             final PrincipalKey roleKey1 = PrincipalKey.ofRole( "Role-a" );
             final CreateRoleParams createRole = CreateRoleParams.create().
                 roleKey( roleKey1 ).
@@ -506,7 +511,7 @@ public class SecurityServiceImplTest
 
             securityService.createRole( createRole );
             securityService.createRole( createRole );
-        } );
+        } ) );
     }
 
     @Test
@@ -815,11 +820,11 @@ public class SecurityServiceImplTest
         } );
     }
 
-    @Test(expected = AuthenticationException.class)
+    @Test
     public void testAuthenticateUnsupportedToken()
         throws Exception
     {
-        runAsAdmin( () -> {
+        assertThrows(AuthenticationException.class, () -> runAsAdmin( () -> {
             final CreateUserParams createUser = CreateUserParams.create().
                 userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) ).
                 displayName( "User 1" ).
@@ -835,7 +840,7 @@ public class SecurityServiceImplTest
 
             final AuthenticationInfo authInfo = securityService.authenticate( authToken );
             assertEquals( user.getKey(), authInfo.getUser().getKey() );
-        } );
+        } ) );
     }
 
     @Test
@@ -969,11 +974,11 @@ public class SecurityServiceImplTest
         } );
     }
 
-    @Test(expected = IdProviderAlreadyExistsException.class)
+    @Test
     public void testCreateIdProviderThrowsExceptionWhenNameIsOccupied()
         throws Exception
     {
-        runAsAdmin( () -> {
+        assertThrows(IdProviderAlreadyExistsException.class, () -> runAsAdmin( () -> {
             final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "User1" );
 
             final IdProviderAccessControlList permissions =
@@ -989,7 +994,7 @@ public class SecurityServiceImplTest
             securityService.createIdProvider( createIdProvider );
             securityService.createIdProvider( createIdProvider );
 
-        } );
+        } ) );
     }
 
     @Test
@@ -1166,7 +1171,7 @@ public class SecurityServiceImplTest
             build();
     }
 
-    private class CustomAuthenticationToken
+    private static class CustomAuthenticationToken
         extends AuthenticationToken
     {
     }

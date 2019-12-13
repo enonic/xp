@@ -1,9 +1,5 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
-ext {
-    jettyVersion = '9.4.8.v20171121'
-}
-
 dependencies {
     compile project( ':web:web-api' )
     compile "org.eclipse.jetty:jetty-server:${jettyVersion}"
@@ -14,6 +10,6 @@ dependencies {
     testCompile project( path: ':web:web-api', configuration: 'testOutput' )
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Web - Websession'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Web - Websession' )
 }

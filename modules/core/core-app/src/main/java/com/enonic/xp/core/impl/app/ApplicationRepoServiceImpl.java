@@ -44,6 +44,7 @@ public class ApplicationRepoServiceImpl
             initialize();
     }
 
+    @Override
     public Node createApplicationNode( final Application application, final ByteSource source )
     {
         final CreateNodeParams createNodeParams = ApplicationNodeTransformer.toCreateNodeParams( application, source );

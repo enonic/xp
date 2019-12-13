@@ -1,10 +1,8 @@
 package com.enonic.xp.dump;
 
-import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 abstract class AbstractLoadResult
 {
@@ -33,7 +31,7 @@ abstract class AbstractLoadResult
     {
         private Long successful = 0L;
 
-        private final List<LoadError> errors = Lists.newArrayList();
+        private final List<LoadError> errors = new ArrayList<>();
 
         protected Builder()
         {

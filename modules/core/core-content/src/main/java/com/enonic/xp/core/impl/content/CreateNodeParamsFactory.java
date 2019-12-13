@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.attachment.CreateAttachment;
@@ -26,6 +24,8 @@ import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public class CreateNodeParamsFactory
 {
@@ -95,7 +95,7 @@ public class CreateNodeParamsFactory
             indexConfigFactoryBuilder.extraDatas( extraData );
         }
 
-        if ( StringUtils.isNotBlank( language ) )
+        if ( !nullToEmpty( language ).isBlank() )
         {
             indexConfigFactoryBuilder.language( language );
         }

@@ -2,17 +2,18 @@ package com.enonic.xp.app;
 
 import java.util.ArrayList;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ApplicationsTest
 {
     private static ArrayList<Application> list = new ArrayList();
 
-    @BeforeClass
+    @BeforeAll
     public static void initList()
     {
         final Application application1 = Mockito.mock( Application.class );

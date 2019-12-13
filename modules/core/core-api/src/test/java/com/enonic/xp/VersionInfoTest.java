@@ -1,9 +1,12 @@
 package com.enonic.xp;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.server.VersionInfo;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VersionInfoTest
 {
@@ -12,9 +15,9 @@ public class VersionInfoTest
     {
         VersionInfo.setDefault();
         final VersionInfo info = VersionInfo.get();
-        Assert.assertEquals( "0.0.0-SNAPSHOT", info.getVersion() );
-        Assert.assertEquals( "0.0.0-SNAPSHOT", info.toString() );
-        Assert.assertTrue( info.isSnapshot() );
+        assertEquals( "0.0.0-SNAPSHOT", info.getVersion() );
+        assertEquals( "0.0.0-SNAPSHOT", info.toString() );
+        assertTrue( info.isSnapshot() );
     }
 
     @Test
@@ -22,9 +25,9 @@ public class VersionInfoTest
     {
         VersionInfo.set( "1.1.1-SNAPSHOT" );
         final VersionInfo info = VersionInfo.get();
-        Assert.assertEquals( "1.1.1-SNAPSHOT", info.getVersion() );
-        Assert.assertEquals( "1.1.1-SNAPSHOT", info.toString() );
-        Assert.assertTrue( info.isSnapshot() );
+        assertEquals( "1.1.1-SNAPSHOT", info.getVersion() );
+        assertEquals( "1.1.1-SNAPSHOT", info.toString() );
+        assertTrue( info.isSnapshot() );
     }
 
     @Test
@@ -32,8 +35,8 @@ public class VersionInfoTest
     {
         VersionInfo.set( "1.1.1" );
         final VersionInfo info = VersionInfo.get();
-        Assert.assertEquals( "1.1.1", info.getVersion() );
-        Assert.assertEquals( "1.1.1", info.toString() );
-        Assert.assertFalse( info.isSnapshot() );
+        assertEquals( "1.1.1", info.getVersion() );
+        assertEquals( "1.1.1", info.toString() );
+        assertFalse( info.isSnapshot() );
     }
 }

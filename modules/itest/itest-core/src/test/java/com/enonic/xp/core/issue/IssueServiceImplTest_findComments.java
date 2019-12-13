@@ -1,7 +1,7 @@
 package com.enonic.xp.core.issue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
@@ -12,14 +12,16 @@ import com.enonic.xp.issue.IssueCommentQuery;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IssueServiceImplTest_findComments
     extends AbstractIssueServiceTest
 {
     private Issue issue;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.issue = this.createIssue( CreateIssueParams.create().title( "issue-1" ) );

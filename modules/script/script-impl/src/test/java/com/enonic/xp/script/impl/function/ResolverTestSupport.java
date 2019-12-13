@@ -1,14 +1,12 @@
 package com.enonic.xp.script.impl.function;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-
-import com.google.common.io.Files;
 
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -17,14 +15,16 @@ import com.enonic.xp.resource.UrlResource;
 
 public class ResolverTestSupport
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public Path temporaryFolder;
 
     protected ResourceService resourceService;
 
-    @Before
+    @BeforeEach
     public final void setup()
+        throws Exception
     {
+        //TODO @TempDir JUnit5 suits better, but tests fail due to https://bugs.openjdk.java.net/browse/JDK-6956385
+        temporaryFolder = Files.createTempDirectory("resolverTestSupport");
         this.resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( this.resourceService.getResource( Mockito.any() ) ).then( this::loadResource );
     }
@@ -38,15 +38,15 @@ public class ResolverTestSupport
     private Resource loadResource( final ResourceKey key )
         throws Exception
     {
-        final File file = new File( this.temporaryFolder.getRoot(), key.getPath() );
+        final File file = new File( this.temporaryFolder.toFile(), key.getPath() );
         return new UrlResource( key, file.toURI().toURL() );
     }
 
     final void touchFile( final String path )
         throws Exception
     {
-        final File file = new File( this.temporaryFolder.getRoot(), path );
+        final File file = new File( this.temporaryFolder.toFile(), path );
         file.getParentFile().mkdirs();
-        Files.touch( file );
+        com.google.common.io.Files.touch( file );
     }
 }

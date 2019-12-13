@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.node;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -14,7 +14,7 @@ import static com.enonic.xp.lib.node.NodePropertyConstants.MANUAL_ORDER_VALUE;
 import static com.enonic.xp.lib.node.NodePropertyConstants.NODE_NAME;
 import static com.enonic.xp.lib.node.NodePropertyConstants.NODE_TYPE;
 import static com.enonic.xp.lib.node.NodePropertyConstants.PARENT_PATH;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CreateNodeParamsFactoryTest
 {

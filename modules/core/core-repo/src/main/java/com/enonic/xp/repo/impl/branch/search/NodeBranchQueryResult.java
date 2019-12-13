@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.branch.search;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.support.AbstractImmutableEntityList;
@@ -28,7 +28,7 @@ public class NodeBranchQueryResult
 
     public static class Builder
     {
-        private final List<NodeBranchEntry> entries = Lists.newArrayList();
+        private final List<NodeBranchEntry> entries = new ArrayList<>();
 
 
         public Builder add( final NodeBranchEntry nodeBranchEntry )

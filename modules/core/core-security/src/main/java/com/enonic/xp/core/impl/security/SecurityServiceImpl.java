@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,7 +24,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.primitives.Ints;
@@ -102,6 +102,7 @@ import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 
 import static com.enonic.xp.core.impl.security.SecurityInitializer.DEFAULT_ID_PROVIDER_ACL;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Component(immediate = true)
 public final class SecurityServiceImpl
@@ -296,15 +297,15 @@ public final class SecurityServiceImpl
 
     private PrincipalKeys resolveMemberships( final PrincipalKey userKey )
     {
-        final Set<PrincipalKey> resolvedMemberships = Sets.newHashSet();
+        final Set<PrincipalKey> resolvedMemberships = new LinkedHashSet<>();
         final PrincipalKeys directMemberships = queryDirectMemberships( userKey );
         resolvedMemberships.addAll( directMemberships.getSet() );
 
-        final Set<PrincipalKey> queriedMemberships = Sets.newHashSet();
+        final Set<PrincipalKey> queriedMemberships = new LinkedHashSet<>();
 
         do
         {
-            final Set<PrincipalKey> newMemberships = Sets.newHashSet();
+            final Set<PrincipalKey> newMemberships = new LinkedHashSet<>();
             resolvedMemberships.stream().filter( principal -> !queriedMemberships.contains( principal ) ).forEach( principal -> {
                 final PrincipalKeys indirectMemberships = queryDirectMemberships( principal );
                 newMemberships.addAll( indirectMemberships.getSet() );
@@ -406,12 +407,9 @@ public final class SecurityServiceImpl
         if ( this.suPasswordValue != null && token instanceof UsernamePasswordAuthToken )
         {
             UsernamePasswordAuthToken usernamePasswordAuthToken = (UsernamePasswordAuthToken) token;
-            if ( ( usernamePasswordAuthToken.getIdProvider() == null ||
-                IdProviderKey.system().equals( usernamePasswordAuthToken.getIdProvider() ) ) &&
-                SecurityInitializer.SUPER_USER.getId().equals( usernamePasswordAuthToken.getUsername() ) )
-            {
-                return true;
-            }
+            return (usernamePasswordAuthToken.getIdProvider() == null ||
+                IdProviderKey.system().equals( usernamePasswordAuthToken.getIdProvider() )) &&
+                SecurityInitializer.SUPER_USER.getId().equals( usernamePasswordAuthToken.getUsername() );
         }
         return false;
     }
@@ -569,7 +567,7 @@ public final class SecurityServiceImpl
 
     private boolean passwordMatch( final User user, final String password )
     {
-        if ( Strings.isNullOrEmpty( password ) )
+        if ( isNullOrEmpty( password ) )
         {
             return false;
         }

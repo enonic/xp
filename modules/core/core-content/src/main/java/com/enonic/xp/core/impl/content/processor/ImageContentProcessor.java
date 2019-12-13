@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
@@ -135,9 +136,17 @@ public final class ImageContentProcessor
         if ( mediaInfo != null )
         {
             editor = editable -> {
-                final XDatas contentXDatas = getXDatas( params.getContentType().getName() );
-                editable.extraDatas = extractMetadata( mediaInfo, contentXDatas, sourceAttachment );
 
+                final Map<XDataName, ExtraData> extraDatas =
+                    editable.extraDatas.stream().collect( Collectors.toMap( ExtraData::getName, o -> o ) );
+
+                final XDatas contentXDatas = getXDatas( params.getContentType().getName() );
+
+                extractMetadata( mediaInfo, contentXDatas, sourceAttachment ).forEach( extraData -> {
+                    extraDatas.put( extraData.getName(), extraData );
+                } );
+
+                editable.extraDatas = ExtraDatas.create().addAll( extraDatas.values() ).build();
             };
         }
         else

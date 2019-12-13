@@ -27,36 +27,39 @@ public abstract class Initializer
 
     public void initialize()
     {
-        if ( isMaster() )
+        while ( true )
         {
-            if ( !isInitialized() )
+            if ( isMaster() )
             {
-                LOG.info( "Initializing " + getInitializationSubject() );
-                doInitialize();
-                LOG.info( getInitializationSubject() + " successfully initialized" );
+                if ( !isInitialized() )
+                {
+                    LOG.info( "Initializing " + getInitializationSubject() );
+                    doInitialize();
+                    LOG.info( getInitializationSubject() + " successfully initialized" );
+                }
+                return;
             }
-        }
-        else
-        {
-            for ( int i = 0; i < initializationCheckMaxCount; i++ )
+            else
             {
-                final boolean initialized = isInitialized();
-                if ( initialized )
+                for ( int i = 0; i < initializationCheckMaxCount; i++ )
                 {
-                    return;
-                }
-                try
-                {
-                    LOG.info( "Waiting [" + ( initializationCheckPeriod / 1000 ) + "s] for " + getInitializationSubject() +
-                                  " to be initialized" );
-                    Thread.sleep( initializationCheckPeriod );
-                }
-                catch ( InterruptedException e )
-                {
-                    throw new InitializationException( getInitializationSubject() + " initialization check thread interrupted", e );
+                    final boolean initialized = isInitialized();
+                    if ( initialized )
+                    {
+                        return;
+                    }
+                    try
+                    {
+                        LOG.info( "Waiting [" + ( initializationCheckPeriod / 1000 ) + "s] for " + getInitializationSubject() +
+                                      " to be initialized" );
+                        Thread.sleep( initializationCheckPeriod );
+                    }
+                    catch ( InterruptedException e )
+                    {
+                        throw new InitializationException( getInitializationSubject() + " initialization check thread interrupted", e );
+                    }
                 }
             }
-            throw new InitializationException( getInitializationSubject() + " not initialized by master node" );
         }
     }
 

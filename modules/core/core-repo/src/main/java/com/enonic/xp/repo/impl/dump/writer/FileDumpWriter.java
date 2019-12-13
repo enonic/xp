@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.zip.GZIPOutputStream;
@@ -14,7 +15,6 @@ import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 import com.enonic.xp.blob.BlobKey;
@@ -206,7 +206,7 @@ public class FileDumpWriter
     {
         try
         {
-            final byte[] data = serializedEntry.getBytes( Charsets.UTF_8 );
+            final byte[] data = serializedEntry.getBytes( StandardCharsets.UTF_8 );
             final TarArchiveEntry entry = new TarArchiveEntry( entryName );
             entry.setSize( data.length );
             tarOutputStream.putArchiveEntry( entry );

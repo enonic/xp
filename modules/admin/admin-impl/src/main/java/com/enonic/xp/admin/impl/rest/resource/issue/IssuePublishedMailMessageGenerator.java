@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
+import java.util.Set;
+
 public class IssuePublishedMailMessageGenerator
     extends IssueMailMessageGenerator<IssuePublishedNotificationParams>
 {
@@ -11,25 +13,38 @@ public class IssuePublishedMailMessageGenerator
     @Override
     protected String generateMessageSubject()
     {
-        return String.format( "Issue \"%s\" (#%d) was published by %s", params.getIssue().getTitle(), params.getIssue().getIndex(),
-                              params.getPublisher().getDisplayName() );
+        return String.format( "Re: %s (#%d)", params.getIssue().getTitle(), params.getIssue().getIndex() );
     }
 
     @Override
-    protected String getSender() {
+    protected boolean shouldShowComments()
+    {
+        return false;
+    }
+
+    @Override
+    protected String generateMessageTitle()
+    {
+        final String message =
+            params.getLocaleMessageResolver().localizeMessage( "issue.email.published", "%s published and closed the %s" );
+        return String.format( message, params.getPublisher().getDisplayName(), getIssueTypeText() );
+    }
+
+    @Override
+    protected String getSender()
+    {
         return params.getPublisher().getEmail();
     }
 
     @Override
     protected String generateRecipients()
     {
-        return super.getCreatorEmail();
-    }
+        final String creatorEmail = super.getCreatorEmail();
+        final String publisherEmail = params.getPublisher().getEmail();
+        final Set<String> emails = getApproverEmails();
+        emails.add( creatorEmail );
+        filterEmail( emails, publisherEmail );
 
-    @Override
-    protected String getCopyRecepients()
-    {
-        return super.getApproverEmails();
+        return String.join( ",", emails );
     }
-
 }

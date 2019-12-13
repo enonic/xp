@@ -1,14 +1,12 @@
 package com.enonic.xp.core.impl.app.resource;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import com.google.common.io.Files;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -18,12 +16,12 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceProcessor;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ResourceServiceImplTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public Path temporaryFolder;
 
     private ApplicationKey appKey;
 
@@ -31,11 +29,14 @@ public class ResourceServiceImplTest
 
     private File appDir;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {
-        this.appDir = this.temporaryFolder.newFolder( "myapp" );
+        //TODO @TempDir JUnit5 suits better, but tests fail due to https://bugs.openjdk.java.net/browse/JDK-6956385
+        temporaryFolder = Files.createTempDirectory("resourceServiceImplTest");
+
+        this.appDir = Files.createDirectory(this.temporaryFolder.resolve( "myapp" ) ).toFile();
 
         this.appKey = ApplicationKey.from( "myapp" );
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
@@ -55,8 +56,8 @@ public class ResourceServiceImplTest
     {
         final File file = new File( this.appDir, name );
 
-        Files.createParentDirs( file );
-        Files.touch( file );
+        com.google.common.io.Files.createParentDirs( file );
+        com.google.common.io.Files.touch( file );
     }
 
     @Test

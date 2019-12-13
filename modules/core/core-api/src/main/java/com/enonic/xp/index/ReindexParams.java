@@ -1,9 +1,9 @@
 package com.enonic.xp.index;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -18,11 +18,14 @@ public class ReindexParams
 
     private final Branches branches;
 
+    private final ReindexListener listener;
+
     private ReindexParams( Builder builder )
     {
         initialize = builder.initialize;
         repositoryId = builder.repositoryId;
         branches = Branches.from( builder.branches );
+        listener = builder.listener;
     }
 
     public static Builder create()
@@ -45,14 +48,21 @@ public class ReindexParams
         return branches;
     }
 
+    public ReindexListener getListener()
+    {
+        return this.listener;
+    }
+
 
     public static final class Builder
     {
-        private final Set<Branch> branches = Sets.newHashSet();
+        private final Set<Branch> branches = new HashSet<>();
 
         private boolean initialize;
 
         private RepositoryId repositoryId;
+
+        private ReindexListener listener;
 
         private Builder()
         {
@@ -79,6 +89,12 @@ public class ReindexParams
         public Builder setBranches( final Branches branches )
         {
             this.branches.addAll( branches.getSet() );
+            return this;
+        }
+
+        public Builder listener( final ReindexListener listener )
+        {
+            this.listener = listener;
             return this;
         }
 

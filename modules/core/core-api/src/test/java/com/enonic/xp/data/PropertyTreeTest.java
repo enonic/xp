@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
 
@@ -20,7 +20,13 @@ import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PropertyTreeTest
 {
@@ -143,12 +149,13 @@ public class PropertyTreeTest
         assertSame( myValue, myProp.getValue() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void given_set_with_existing_property_when_addProperty_with_same_name_but_different_ValueType_then_exception_is_thrown()
     {
         PropertyTree tree = new PropertyTree();
         tree.addProperty( "myProp", ValueFactory.newString( "otherType" ) );
-        tree.addProperty( "myProp", ValueFactory.newBoolean( true ) );
+
+        assertThrows(IllegalArgumentException.class, () -> tree.addProperty( "myProp", ValueFactory.newBoolean( true ) ) );
     }
 
     @Test
@@ -204,18 +211,18 @@ public class PropertyTreeTest
         assertEquals( "myString", newTree.getString( "mySet.myProp" ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void adding_root_PropertySet_must_throw_IllegalArgumentException()
     {
         PropertyTree tree = new PropertyTree();
-        tree.addSet( "myProp", tree.getRoot() );
+        assertThrows(IllegalArgumentException.class, () -> tree.addSet( "myProp", tree.getRoot() ) );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void setting_root_PropertySet_must_throw_IllegalArgumentException()
     {
         PropertyTree tree = new PropertyTree();
-        tree.setSet( "myProp", tree.getRoot() );
+        assertThrows(IllegalArgumentException.class, () -> tree.setSet( "myProp", tree.getRoot() ) );
     }
 
     @Test
@@ -428,7 +435,7 @@ public class PropertyTreeTest
 
         assertEquals( "d", tree.getString( PropertyPath.from( "mySet.strings" ) ) );
         Property p = tree.getProperty( PropertyPath.from( "longs" ) );
-        assertEquals( new Long( 1 ), p.getLong() );
+        assertEquals( 1, p.getLong() );
     }
 
     @Test
@@ -625,17 +632,17 @@ public class PropertyTreeTest
 
         tree.setLong( "Long1", 1L );
         assertEquals( 1, tree.getTotalSize() );
-        assertEquals( new Long( 1 ), tree.getLong( "Long1" ) );
+        assertEquals( 1, tree.getLong( "Long1" ) );
 
         tree.setLong( PropertyPath.from( "Long2" ), 2L );
         assertEquals( 2, tree.getTotalSize() );
-        assertEquals( new Long( 2 ), tree.getLong( PropertyPath.from( "Long2" ) ) );
+        assertEquals( 2, tree.getLong( PropertyPath.from( "Long2" ) ) );
 
         tree.setLong( "Long3", 0, 3L );
         assertEquals( 3, tree.getTotalSize() );
-        assertEquals( new Long( 3 ), tree.getLong( "Long3", 0 ) );
+        assertEquals( 3, tree.getLong( "Long3", 0 ) );
 
-        assertEquals( new Long( 3 ), tree.getLongs( "Long3" ).iterator().next() );
+        assertEquals( 3, tree.getLongs( "Long3" ).iterator().next() );
     }
 
     @Test
@@ -645,17 +652,17 @@ public class PropertyTreeTest
 
         tree.setDouble( "Double1", 1.0 );
         assertEquals( 1, tree.getTotalSize() );
-        assertEquals( new Double( 1 ), tree.getDouble( "Double1" ) );
+        assertEquals( 1, tree.getDouble( "Double1" ) );
 
         tree.setDouble( PropertyPath.from( "Double2" ), 2.0 );
         assertEquals( 2, tree.getTotalSize() );
-        assertEquals( new Double( 2 ), tree.getDouble( PropertyPath.from( "Double2" ) ) );
+        assertEquals( 2, tree.getDouble( PropertyPath.from( "Double2" ) ) );
 
         tree.setDouble( "Double3", 0, 3.0 );
         assertEquals( 3, tree.getTotalSize() );
-        assertEquals( new Double( 3 ), tree.getDouble( "Double3", 0 ) );
+        assertEquals( 3, tree.getDouble( "Double3", 0 ) );
 
-        assertEquals( new Double( 3 ), tree.getDoubles( "Double3" ).iterator().next() );
+        assertEquals( 3, tree.getDoubles( "Double3" ).iterator().next() );
     }
 
     @Test

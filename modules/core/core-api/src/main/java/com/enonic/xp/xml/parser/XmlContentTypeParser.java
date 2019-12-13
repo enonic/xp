@@ -1,9 +1,9 @@
 package com.enonic.xp.xml.parser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.schema.content.ContentType;
@@ -48,13 +48,17 @@ public final class XmlContentTypeParser
 
         this.builder.xData( buildMetaData( root ) );
 
+        this.builder.displayNameLabel( root.getChildValue( "display-name-label" ) );
+        this.builder.displayNameLabelI18nKey(
+            root.getChild( "display-name-label" ) != null ? root.getChild( "display-name-label" ).getAttribute( "i18n" ) : null );
+
         final XmlFormMapper mapper = new XmlFormMapper( this.currentApplication );
         this.builder.form( mapper.buildForm( root.getChild( "form" ) ) );
     }
 
     private XDataNames buildMetaData( final DomElement root )
     {
-        final List<XDataName> names = Lists.newArrayList();
+        final List<XDataName> names = new ArrayList<>();
         for ( final DomElement child : root.getChildren( "x-data" ) )
         {
             String name = child.getAttribute( "name" );

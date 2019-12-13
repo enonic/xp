@@ -4,13 +4,14 @@ import java.io.File;
 import java.net.URL;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Sets;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PrefixApplicationUrlResolverTest
 {
@@ -18,7 +19,7 @@ public class PrefixApplicationUrlResolverTest
 
     private PrefixApplicationUrlResolver resolver;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.delegate = Mockito.mock( ApplicationUrlResolver.class );
@@ -28,7 +29,7 @@ public class PrefixApplicationUrlResolverTest
     @Test
     public void testFindFiles()
     {
-        Mockito.when( this.delegate.findFiles() ).thenReturn( Sets.newHashSet( "a/b/c.txt", "a/b/c/d.txt", "a/other.txt" ) );
+        Mockito.when( this.delegate.findFiles() ).thenReturn( Set.of( "a/b/c.txt", "a/b/c/d.txt", "a/other.txt" ) );
 
         final Set<String> files = this.resolver.findFiles();
         assertEquals( 2, files.size() );

@@ -10,8 +10,9 @@ import java.util.stream.Collectors;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Beta
 public final class NodePath
@@ -394,7 +395,7 @@ public final class NodePath
 
         public Builder addElement( final String value )
         {
-            if ( Strings.isNullOrEmpty( value ) )
+            if ( isNullOrEmpty( value ) )
             {
                 return this;
             }
@@ -402,7 +403,7 @@ public final class NodePath
             if ( this.elements != null )
             {
                 final ImmutableList.Builder<Element> newList = new ImmutableList.Builder<>();
-                this.elements.forEach( newList::add );
+                newList.addAll( this.elements );
                 newList.add( newElement( value ) );
                 this.elementListBuilder = newList;
                 this.elements = null;

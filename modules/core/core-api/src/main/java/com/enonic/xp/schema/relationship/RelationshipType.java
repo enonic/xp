@@ -1,6 +1,7 @@
 package com.enonic.xp.schema.relationship;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.annotations.Beta;
@@ -99,9 +100,9 @@ public final class RelationshipType
 
         private String toSemantic;
 
-        private List<ContentTypeName> allowedFromTypes = Lists.newArrayList();
+        private List<ContentTypeName> allowedFromTypes = new ArrayList<>();
 
-        private List<ContentTypeName> allowedToTypes = Lists.newArrayList();
+        private List<ContentTypeName> allowedToTypes = new ArrayList<>();
 
         private Builder()
         {

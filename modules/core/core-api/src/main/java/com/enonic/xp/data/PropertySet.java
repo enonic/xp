@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -15,7 +16,6 @@ import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
@@ -76,7 +76,7 @@ public final class PropertySet
                 final Value value = property.getValue();
                 if ( value.isPropertySet() )
                 {
-                    setMapValue( map, name, value.asData() == null ? Maps.newHashMap() : value.asData().toMap() );
+                    setMapValue( map, name, value.asData() == null ? new HashMap<>() : value.asData().toMap() );
                 }
                 else
                 {
@@ -523,7 +523,7 @@ public final class PropertySet
             {
                 if ( property.getValue() instanceof PropertySetValue )
                 {
-                    propertySize += ( ( (PropertySet) property.getValue().getObject() ).getPropertySize() );
+                    propertySize += ( (PropertySet) property.getValue().getObject() ).getPropertySize();
                 }
             }
         }
@@ -531,7 +531,7 @@ public final class PropertySet
 
     }
 
-    public Iterable<PropertyArray> getPropertyArrays()
+    public Collection<PropertyArray> getPropertyArrays()
     {
         return this.propertyArrayByName.values();
     }
@@ -1361,4 +1361,60 @@ public final class PropertySet
     {
         return getFilteredValues( name, Property::getInstant );
     }
+
+    // getting / setting enums
+
+    public <T extends Enum<T>> T getEnum( final String name, final int index, Class<T> enumClass )
+    {
+        return stringToEnum( getString( name, index ), enumClass );
+    }
+
+    public <T extends Enum<T>> T getEnum( final PropertyPath path, Class<T> enumClass )
+    {
+        return stringToEnum( getString( path ), enumClass );
+    }
+
+    public <T extends Enum<T>> T getEnum( final String path, Class<T> enumClass )
+    {
+        return stringToEnum( getString( path ), enumClass );
+    }
+
+    public Property setEnum( final String path, final Enum value )
+    {
+        return this.setString( path, enumToString( value ) );
+    }
+
+    public Property setEnum( final PropertyPath path, final Enum value )
+    {
+        return this.setString( path, enumToString( value ) );
+    }
+
+    public Property setEnum( final String name, final int index, final Enum value )
+    {
+        return this.setString( name, index, enumToString( value ) );
+    }
+
+    public Property addEnum( final String name, final Enum value )
+    {
+        return this.addString( name, enumToString( value ) );
+    }
+
+    private <T extends Enum<T>> T stringToEnum( final String value, Class<T> enumClass )
+    {
+        if ( value == null )
+        {
+            return null;
+        }
+        return Enum.valueOf( enumClass, value );
+    }
+
+    private String enumToString( final Enum e )
+    {
+        if ( e == null )
+        {
+            return null;
+        }
+        return e.toString();
+    }
+
 }

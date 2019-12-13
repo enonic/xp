@@ -1,17 +1,18 @@
 package com.enonic.xp.core.impl.export;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.core.impl.export.writer.ExportWriter;
 import com.enonic.xp.core.impl.export.writer.FileExportWriter;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.export.NodeExportListener;
@@ -24,16 +25,18 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.util.BinaryReference;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NodeExporterTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public Path temporaryFolder;
 
     private NodeService nodeService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -51,7 +54,7 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
             build().
             execute();
 
@@ -80,7 +83,7 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
             nodeExportListener( nodeExportListener ).
             build().
             execute();
@@ -125,7 +128,7 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
             build().
             execute();
 
@@ -152,7 +155,7 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.create( "/mynode/child1/child1_1" ).build() ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
             build().
             execute();
 
@@ -180,7 +183,7 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.create( "/mynode/child1" ).build() ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
             build().
             execute();
 
@@ -192,7 +195,7 @@ public class NodeExporterTest
         assertFileExists( "/myExport/child1/child1_1/child1_1_2/_/node.xml" );
     }
 
-    @Ignore // Wait with this until decided how to handle versions. Only in dump, or in export too?
+    @Disabled // Wait with this until decided how to handle versions. Only in dump, or in export too?
     @Test
     public void create_binary_files()
         throws Exception
@@ -215,7 +218,7 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
             build().
             execute();
 
@@ -236,7 +239,7 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myExport" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
             build().
             execute();
 
@@ -247,12 +250,34 @@ public class NodeExporterTest
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
             xpVersion( "X.Y.Z-SNAPSHOT" ).
-            rootDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myRoot" ) ).
-            targetDirectory( Paths.get( this.temporaryFolder.getRoot().toString(), "myRoot/myExport" ) ).
+            rootDirectory( Paths.get( this.temporaryFolder.toString(), "myRoot" ) ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myRoot/myExport" ) ).
             build().
             execute();
 
         assertFileExists( "/myRoot/export.properties" );
+    }
+
+    @Test
+    public void one_node_error()
+        throws Exception
+    {
+        createNode( "mynode", NodePath.ROOT );
+
+        final ExportWriter exportWriter = Mockito.mock( ExportWriter.class );
+        Mockito.doThrow( new RuntimeException( "exception message" ) ).when( exportWriter ).writeElement( Mockito.isA( Path.class ),
+                                                                                                          Mockito.anyString() );
+
+        final NodeExportResult result = NodeExporter.create().
+            nodeService( this.nodeService ).
+            nodeExportWriter( exportWriter ).
+            sourceNodePath( NodePath.ROOT ).
+            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
+            build().
+            execute();
+
+        assertEquals( 1, result.getExportErrors().size() );
+        assertEquals( "java.lang.RuntimeException: exception message", result.getExportErrors().get( 0 ).toString() );
     }
 
 
@@ -268,17 +293,17 @@ public class NodeExporterTest
 
     private void assertFileExists( final String path )
     {
-        assertTrue( "file " + path + " not found", new File( this.temporaryFolder.getRoot().getPath() + path ).exists() );
+        assertTrue( new File( this.temporaryFolder.toFile().getPath() + path ).exists(), "file " + path + " not found" );
     }
 
     private void assertFileDoesNotExist( final String path )
     {
-        assertFalse( "file " + path + " found", new File( this.temporaryFolder.getRoot().getPath() + path ).exists() );
+        assertFalse( new File( this.temporaryFolder.toFile().getPath() + path ).exists(), "file " + path + " found" );
     }
 
     private void printPaths()
     {
-        final File file = this.temporaryFolder.getRoot();
+        final File file = this.temporaryFolder.toFile();
 
         doPrintPaths( file );
     }

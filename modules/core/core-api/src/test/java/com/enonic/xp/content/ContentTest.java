@@ -3,7 +3,9 @@ package com.enonic.xp.content;
 
 import java.time.LocalDate;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
@@ -11,16 +13,19 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ContentTest
 {
     private static final ContentPath MY_CONTENT_PATH = ContentPath.from( "/mycontent" );
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void given_path_isRoot_then_IllegalArgumentException_is_thrown()
     {
-        Content.create().path( ContentPath.ROOT ).build();
+        assertThrows(IllegalArgumentException.class, () ->  Content.create().path( ContentPath.ROOT ).build() );
     }
 
     @Test
@@ -57,16 +62,26 @@ public class ContentTest
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void given_a_controller_and_a_pageTemplate_when_build_then_IllegalArgumentException_is_thrown()
     {
-        Content.create().
-            path( MY_CONTENT_PATH ).
-            page( Page.create().
-                descriptor( DescriptorKey.from( "abc:abc" ) ).
-                template( PageTemplateKey.from( "123" ) ).
-                config( new PropertyTree() ).
-                regions( PageRegions.create().build() ).
-                build() ).build();
+        assertThrows(IllegalArgumentException.class, () -> {
+            Content.create().
+                    path(MY_CONTENT_PATH).
+                    page(Page.create().
+                            descriptor(DescriptorKey.from("abc:abc")).
+                            template(PageTemplateKey.from("123")).
+                            config(new PropertyTree()).
+                            regions(PageRegions.create().build()).
+                            build()).build();
+        } );
+    }
+
+    @Test
+    public void given_no_workflow_info_default_state_should_be_ready_with_no_checks()
+    {
+        Content content = Content.create().path( MY_CONTENT_PATH ).build();
+        assertEquals( WorkflowState.READY, content.getWorkflowInfo().getState() );
+        assertEquals( ImmutableMap.of(), content.getWorkflowInfo().getChecks() );
     }
 }

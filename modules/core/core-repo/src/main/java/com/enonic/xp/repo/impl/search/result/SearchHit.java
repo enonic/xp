@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.search.result;
 
+import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.query.QueryExplanation;
 import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.ReturnValues;
@@ -19,6 +20,8 @@ public class SearchHit
 
     private final QueryExplanation explanation;
 
+    private final HighlightedProperties highlightedProperties;
+
     private SearchHit( final Builder builder )
     {
         this.score = builder.score;
@@ -27,6 +30,7 @@ public class SearchHit
         this.indexName = builder.indexName;
         this.indexType = builder.indexType;
         this.explanation = builder.explanation;
+        this.highlightedProperties = builder.highlightedProperties;
     }
 
     public static Builder create()
@@ -74,6 +78,11 @@ public class SearchHit
         return returnValues;
     }
 
+    public HighlightedProperties getHighlightedProperties()
+    {
+        return highlightedProperties;
+    }
+
     private ReturnValue doGetField( final String fieldName, final boolean failOnMissing )
     {
         final String normalizedFieldName = IndexFieldNameNormalizer.normalize( fieldName );
@@ -102,12 +111,7 @@ public class SearchHit
 
         final SearchHit that = (SearchHit) o;
 
-        if ( id != null ? !id.equals( that.id ) : that.id != null )
-        {
-            return false;
-        }
-
-        return true;
+        return id != null ? id.equals( that.id ) : that.id == null;
     }
 
     @Override
@@ -129,6 +133,8 @@ public class SearchHit
         private ReturnValues returnValues;
 
         private QueryExplanation explanation;
+
+        private HighlightedProperties highlightedProperties;
 
         public Builder score( final float score )
         {
@@ -163,6 +169,12 @@ public class SearchHit
         public Builder explanation( final QueryExplanation explanation )
         {
             this.explanation = explanation;
+            return this;
+        }
+
+        public Builder highlightedFields( final HighlightedProperties highlightedProperties )
+        {
+            this.highlightedProperties = highlightedProperties;
             return this;
         }
 

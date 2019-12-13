@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
@@ -17,18 +17,17 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SetActiveVersionCommandTest
     extends AbstractNodeTest
 {
 
-    @Override
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.createDefaultRootNode();
     }
 
@@ -111,7 +110,7 @@ public class SetActiveVersionCommandTest
     }
 
 
-    @Test(expected = NodeAccessException.class)
+    @Test
     public void require_modify_access()
         throws Exception
     {
@@ -130,17 +129,17 @@ public class SetActiveVersionCommandTest
                 build() ) ).
             build() );
 
-        SetActiveVersionCommand.create().
+        assertThrows(NodeAccessException.class, () -> SetActiveVersionCommand.create().
             nodeId( node1.id() ).
             nodeVersionId( node1.getNodeVersionId() ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             indexServiceInternal( this.indexServiceInternal ).
             build().
-            execute();
+            execute());
     }
 
-    @Test(expected = NodeNotFoundException.class)
+    @Test
     public void must_be_version_of_node()
         throws Exception
     {
@@ -156,14 +155,14 @@ public class SetActiveVersionCommandTest
             name( "node2" ).
             build() );
 
-        SetActiveVersionCommand.create().
+        assertThrows(NodeNotFoundException.class, () -> SetActiveVersionCommand.create().
             nodeId( node1.id() ).
             nodeVersionId( node2.getNodeVersionId() ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             indexServiceInternal( this.indexServiceInternal ).
             build().
-            execute();
+            execute());
     }
 
 

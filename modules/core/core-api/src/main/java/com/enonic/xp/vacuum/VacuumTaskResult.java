@@ -49,7 +49,7 @@ public class VacuumTaskResult
     @Override
     public String toString()
     {
-        return "VacuumTaskResult{" + "processed=" + processed + ", deleted=" + deleted + ", found=" + inUse + ", failed=" + failed + '}';
+        return "VacuumTaskResult{" + "processed=" + processed + ", deleted=" + deleted + ", failed=" + failed + '}';
     }
 
     public static Builder create()

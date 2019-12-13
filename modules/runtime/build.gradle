@@ -4,12 +4,10 @@ apply plugin: 'java-base'
 
 configurations {
     lib
-    toolbox
 }
 
 dependencies {
     lib project( ':launcher:launcher-main' )
-    toolbox project( ':tools:toolbox' )
 }
 
 ext {
@@ -19,23 +17,17 @@ ext {
     bundleCopySpecs = []
 }
 
-addBundle( 'com.sun.activation:javax.activation:1.2.0', 4)
 addBundle( 'javax.xml.bind:jaxb-api:2.2.11', 4 )
 addBundle( 'com.sun.xml.bind:jaxb-core:2.2.11', 4 )
 addBundle( 'com.sun.xml.bind:jaxb-impl:2.2.11', 4 )
 
 // Core bundles
-addBundle( 'org.apache.felix:org.apache.felix.metatype:1.1.2', 5 )
-addBundle( 'org.apache.felix:org.apache.felix.eventadmin:1.4.4', 5 )
-addBundle( 'org.apache.felix:org.apache.felix.configadmin:1.8.8', 5 )
-addBundle( 'org.apache.felix:org.apache.felix.scr:2.0.2', 5 )
-
-addBundle( 'org.slf4j:slf4j-api:1.7.25', 5 )
-addBundle( 'ch.qos.logback:logback-core:1.2.3', 5 )
-addBundle( 'ch.qos.logback:logback-classic:1.2.3', 5 )
-addBundle( 'org.slf4j:jul-to-slf4j:1.7.25', 5 )
-addBundle( 'org.slf4j:jcl-over-slf4j:1.7.25', 5 )
-addBundle( 'org.slf4j:log4j-over-slf4j:1.7.25', 5 )
+addBundle( 'org.apache.felix:org.apache.felix.metatype:1.2.2', 5 )
+addBundle( 'org.apache.felix:org.apache.felix.eventadmin:1.5.0', 5 )
+addBundle( 'org.apache.felix:org.apache.felix.configadmin:1.9.16', 5 )
+addBundle( 'org.apache.felix:org.apache.felix.scr:2.1.16', 5 )
+addBundle( 'org.osgi:org.osgi.util.promise:1.1.1', 5 )
+addBundle( 'org.osgi:org.osgi.util.function:1.1.0', 5 )
 
 addBundle( 'javax.mail:mail:1.4.7', 5 )
 
@@ -49,7 +41,6 @@ addBundle( 'net.java.dev.jna:jna:4.1.0', 6)
 addBundle( 'com.google.guava:guava:26.0-jre', 8 )
 addBundle( 'commons-lang:commons-lang:2.4', 8 )
 addBundle( 'commons-io:commons-io:2.4', 8 )
-addBundle( 'commons-io:commons-io:2.4', 8 )
 addBundle( 'org.apache.commons:commons-compress:1.14', 8 )
 addBundle( 'com.fasterxml.jackson.core:jackson-core:2.9.6', 8 )
 addBundle( 'com.fasterxml.jackson.core:jackson-annotations:2.9.6', 8 )
@@ -57,19 +48,16 @@ addBundle( 'com.fasterxml.jackson.core:jackson-databind:2.9.6', 8 )
 addBundle( 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.6', 8 )
 addBundle( 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.9.6', 8 )
 addBundle( 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.9.6', 8 )
-addBundle( 'org.apache.tika:tika-core:1.13', 8 )
-addBundle( 'org.apache.tika:tika-bundle:1.13', 8 )
+addBundle( 'org.apache.tika:tika-core:1.22', 8 )
+addBundle( 'org.apache.tika:tika-bundle:1.22', 8 )
 addBundle( 'io.dropwizard.metrics:metrics-core:3.1.2', 8 )
 addBundle( 'io.dropwizard.metrics:metrics-json:3.1.2', 8 )
 addBundle( 'io.dropwizard.metrics:metrics-jvm:3.1.2', 8 )
 addBundle( 'io.dropwizard.metrics:metrics-jetty9:3.1.2', 8 )
-addBundle( project( ':repack:repack-jparsec' ), 8 )
+addBundle( 'org.jparsec:jparsec:3.1', 8 )
 addBundle( project( ':repack:repack-elasticsearch' ), 8 )
 addBundle( project( ':repack:repack-resteasy' ), 8 )
-addBundle( project( ':repack:repack-attoparser' ), 8 )
-addBundle( project( ':repack:repack-okhttp' ), 8 )
 addBundle( project( ':repack:repack-javax-cache-api' ), 8 )
-addBundle( project( ':repack:repack-saxon' ), 8 )
 addBundle( 'org.apache.ignite:ignite-core:2.3.0', 8 )
 addBundle( 'org.apache.ignite:ignite-osgi:2.3.0', 8 )
 addBundle( 'org.apache.ignite:ignite-web:2.3.0', 8 )
@@ -104,6 +92,7 @@ addBundle( project( ':core:core-extractor' ), 22 )
 addBundle( project( ':core:core-auth' ), 22 )
 addBundle( project( ':core:core-macro' ), 22 )
 addBundle( project( ':core:core-task' ), 22 )
+addBundle( project( ':core:core-audit' ), 22 )
 addBundle( project( ':core:core-cluster' ), 23 )
 
 // Server bundles
@@ -125,6 +114,7 @@ addBundle( project( ':web:web-vhost' ), 26 )
 addBundle( project( ':web:web-dos' ), 26 )
 addBundle( project( ':web:web-dispatch' ), 26 )
 addBundle( project( ':web:web-session' ), 26 )
+addBundle( project( ':web:web-header' ), 26 )
 
 // JaxRs app
 addBundle( project( ':jaxrs:jaxrs-impl' ), 28 )
@@ -202,15 +192,6 @@ task copyResources( type: Copy ) {
     }
     into( 'lib' ) {
         from( configurations.lib )
-    }
-    into( 'toolbox' ) {
-        from( 'src/toolbox' ) {
-            include '*.sh'
-            fileMode 0755
-        }
-    }
-    into( 'toolbox/lib' ) {
-        from( configurations.toolbox )
     }
     from( 'src' ) {
         include 'README.txt'

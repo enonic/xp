@@ -3,11 +3,11 @@ package com.enonic.xp.repo.impl.node;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
-import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.repo.impl.version.search.NodeVersionQueryResultFactory;
 
 public class FindNodeVersionsCommand

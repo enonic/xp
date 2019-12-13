@@ -74,7 +74,7 @@ public final class IgniteSessionDataStore
                 {
                     LOG.trace( "Loading session {} from Ignite", id );
                 }
-                SessionData sd = doGet( getCacheKey( id ) );
+                SessionData sd = doLoad( getCacheKey( id ) );
 
                 reference.set( sd );
             }
@@ -91,7 +91,8 @@ public final class IgniteSessionDataStore
         return reference.get();
     }
 
-    private SessionData doGet( final String cacheKey )
+    @Override
+    public SessionData doLoad( final String cacheKey )
     {
         final IgniteCache<String, SessionDataWrapper> igniteCache = this.igniteCache;
         if ( igniteCache == null )

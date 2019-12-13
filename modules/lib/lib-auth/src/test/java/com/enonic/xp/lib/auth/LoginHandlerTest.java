@@ -3,8 +3,7 @@ package com.enonic.xp.lib.auth;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
@@ -21,6 +20,9 @@ import com.enonic.xp.session.Session;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
 import com.enonic.xp.testing.ScriptTestSupport;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class LoginHandlerTest
     extends ScriptTestSupport
@@ -65,7 +67,7 @@ public class LoginHandlerTest
 
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
-        Assert.assertEquals( authInfo, sessionAuthInfo );
+        assertEquals( authInfo, sessionAuthInfo );
     }
 
     @Test
@@ -83,7 +85,7 @@ public class LoginHandlerTest
 
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
-        Assert.assertEquals( authInfo, sessionAuthInfo );
+        assertEquals( authInfo, sessionAuthInfo );
     }
 
     @Test
@@ -97,7 +99,7 @@ public class LoginHandlerTest
 
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
-        Assert.assertEquals( authInfo, sessionAuthInfo );
+        assertEquals( authInfo, sessionAuthInfo );
     }
 
     @Test
@@ -111,7 +113,7 @@ public class LoginHandlerTest
 
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
-        Assert.assertNull( sessionAuthInfo );
+        assertNull( sessionAuthInfo );
     }
 
     @Test
@@ -140,15 +142,15 @@ public class LoginHandlerTest
 
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
-        Assert.assertEquals( authInfo, sessionAuthInfo );
-        Assert.assertEquals( 3, matcher.loginIdProviderAttempts.size() );
-        Assert.assertEquals( "idprovider1", matcher.loginIdProviderAttempts.get( 0 ).toString() );
-        Assert.assertEquals( "idprovider2", matcher.loginIdProviderAttempts.get( 1 ).toString() );
-        Assert.assertEquals( "idprovider3", matcher.loginIdProviderAttempts.get( 2 ).toString() );
+        assertEquals( authInfo, sessionAuthInfo );
+        assertEquals( 3, matcher.loginIdProviderAttempts.size() );
+        assertEquals( "idprovider1", matcher.loginIdProviderAttempts.get( 0 ).toString() );
+        assertEquals( "idprovider2", matcher.loginIdProviderAttempts.get( 1 ).toString() );
+        assertEquals( "idprovider3", matcher.loginIdProviderAttempts.get( 2 ).toString() );
     }
 
-    private class AuthTokenMatcher
-        extends ArgumentMatcher<AuthenticationToken>
+    private static class AuthTokenMatcher
+        implements ArgumentMatcher<AuthenticationToken>
     {
         EmailPasswordAuthToken thisObject;
 
@@ -160,7 +162,7 @@ public class LoginHandlerTest
         List<IdProviderKey> loginIdProviderAttempts = new ArrayList<>();
 
         @Override
-        public boolean matches( Object argument )
+        public boolean matches( AuthenticationToken argument )
         {
             if ( !( argument instanceof EmailPasswordAuthToken ) )
             {

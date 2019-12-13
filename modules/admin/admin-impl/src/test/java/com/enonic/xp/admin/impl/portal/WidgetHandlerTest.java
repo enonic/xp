@@ -2,8 +2,8 @@ package com.enonic.xp.admin.impl.portal;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
@@ -35,7 +35,11 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class WidgetHandlerTest
     extends BaseHandlerTest
@@ -53,7 +57,7 @@ public class WidgetHandlerTest
 
     private HttpServletRequest rawRequest;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {
@@ -140,27 +144,29 @@ public class WidgetHandlerTest
         }
     }
 
-    @Test(expected = WebException.class)
+    @Test
     public void executeFailsWithWrongMode()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/widgets/demo/test" );
-        this.request.setMode( RenderMode.EDIT );
+        assertThrows(WebException.class, () -> {
+            this.request.setEndpointPath("/_/widgets/demo/test");
+            this.request.setMode(RenderMode.EDIT);
 
-        final WebResponse response = this.handler.handle( this.request, WebResponse.create().build(), null );
-        assertEquals( HttpStatus.OK, response.getStatus() );
+            final WebResponse response = this.handler.handle(this.request, WebResponse.create().build(), null);
+            assertEquals(HttpStatus.OK, response.getStatus());
 
-        Mockito.verify( this.controllerScript ).execute( this.request );
+            Mockito.verify(this.controllerScript).execute(this.request);
+        });
     }
 
-    @Test(expected = WebException.class)
+    @Test
     public void testForbidden()
         throws Exception
     {
         this.mockDescriptor( false );
         this.request.setEndpointPath( "/_/widgets/demo/test" );
         this.request.setMode( RenderMode.ADMIN );
-        this.handler.handle( this.request, WebResponse.create().build(), null );
+        assertThrows(WebException.class, () -> this.handler.handle( this.request, WebResponse.create().build(), null ) );
     }
 
     @Test

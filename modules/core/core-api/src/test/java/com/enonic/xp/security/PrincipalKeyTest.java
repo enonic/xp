@@ -1,10 +1,15 @@
 package com.enonic.xp.security;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.NodePath;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PrincipalKeyTest
 {
@@ -108,45 +113,45 @@ public class PrincipalKeyTest
         assertEquals( new NodePath( "/identity/myIdProvider/users/myUser" ), user.toPath() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidIdentityKey()
         throws Exception
     {
-        PrincipalKey.from( "user:myUser" );
+        assertThrows(IllegalArgumentException.class, () -> PrincipalKey.from( "user:myUser" ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidIdentityType()
         throws Exception
     {
-        PrincipalKey.from( "anonymous:myIdProvider:anonymous" );
+        assertThrows(IllegalArgumentException.class, () -> PrincipalKey.from( "anonymous:myIdProvider:anonymous" ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidCharactersInKey1()
         throws Exception
     {
-        PrincipalKey.from( "user:my<User" );
+        assertThrows(IllegalArgumentException.class, () -> PrincipalKey.from( "user:my<User" ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidCharactersInKey2()
         throws Exception
     {
-        PrincipalKey.from( "user:my>User" );
+        assertThrows(IllegalArgumentException.class, () -> PrincipalKey.from( "user:my>User" ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidCharactersInKey3()
         throws Exception
     {
-        PrincipalKey.from( "user:my\"User" );
+        assertThrows(IllegalArgumentException.class, () -> PrincipalKey.from( "user:my\"User" ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidCharactersInKey4()
         throws Exception
     {
-        PrincipalKey.from( "user:my'<User" );
+        assertThrows(IllegalArgumentException.class, () -> PrincipalKey.from( "user:my'<User" ));
     }
 }

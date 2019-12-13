@@ -1,9 +1,10 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function.WeightedQueryFieldName;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WeightedNodeIndexPathTest
 {
@@ -20,7 +21,7 @@ public class WeightedNodeIndexPathTest
     {
         final WeightedQueryFieldName weightedQueryFieldName = WeightedQueryFieldName.from( value );
 
-        Assert.assertEquals( baseFieldName, weightedQueryFieldName.getBaseFieldName() );
-        Assert.assertEquals( weight, weightedQueryFieldName.getWeight() );
+        assertEquals( baseFieldName, weightedQueryFieldName.getBaseFieldName() );
+        assertEquals( weight, weightedQueryFieldName.getWeight() );
     }
 }

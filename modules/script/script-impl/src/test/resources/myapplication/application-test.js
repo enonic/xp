@@ -1,4 +1,4 @@
-var assert = Java.type('org.junit.Assert');
+var assert = Java.type('org.junit.jupiter.api.Assertions');
 
 assert.assertEquals('myapplication:/application-test.js', module.id);
 assert.assertEquals(true, exports == module.exports);

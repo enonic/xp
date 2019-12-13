@@ -1,15 +1,15 @@
 package com.enonic.xp.lib.portal.url;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.testing.ScriptTestSupport;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UrlServiceScriptTest
     extends ScriptTestSupport
@@ -19,7 +19,7 @@ public class UrlServiceScriptTest
         throws Exception
     {
         super.initialize();
-        addService( PortalUrlService.class, Mockito.mock( PortalUrlService.class, (Answer) this::urlAnswer ) );
+        addService( PortalUrlService.class, Mockito.mock( PortalUrlService.class, this::urlAnswer ) );
     }
 
     private Object urlAnswer( final InvocationOnMock invocation )
@@ -38,97 +38,97 @@ public class UrlServiceScriptTest
     @Test
     public void assertUrlTest()
     {
-        Assert.assertTrue( execute( "assetUrlTest" ) );
+        assertTrue( execute( "assetUrlTest" ) );
     }
 
     @Test
     public void assertUrlTest_unknownProperty()
     {
-        Assert.assertTrue( execute( "assetUrlTest_unknownProperty" ) );
+        assertTrue( execute( "assetUrlTest_unknownProperty" ) );
     }
 
     @Test
     public void assertUrlTest_invalidProperty()
     {
-        Assert.assertTrue( execute( "assetUrlTest_invalidProperty" ) );
+        assertTrue( execute( "assetUrlTest_invalidProperty" ) );
     }
 
     @Test
     public void attachmentUrlTest()
     {
-        Assert.assertTrue( execute( "attachmentUrlTest" ) );
+        assertTrue( execute( "attachmentUrlTest" ) );
     }
 
     @Test
     public void attachmentUrlTest_unknownProperty()
     {
-        Assert.assertTrue( execute( "attachmentUrlTest_unknownProperty" ) );
+        assertTrue( execute( "attachmentUrlTest_unknownProperty" ) );
     }
 
     @Test
     public void componentUrlTest()
     {
-        Assert.assertTrue( execute( "componentUrlTest" ) );
+        assertTrue( execute( "componentUrlTest" ) );
     }
 
     @Test
     public void componentUrlTest_unknownProperty()
     {
-        Assert.assertTrue( execute( "componentUrlTest_unknownProperty" ) );
+        assertTrue( execute( "componentUrlTest_unknownProperty" ) );
     }
 
     @Test
     public void imageUrlTest()
     {
-        Assert.assertTrue( execute( "imageUrlTest" ) );
+        assertTrue( execute( "imageUrlTest" ) );
     }
 
     @Test
     public void imageUrlTest_unknownProperty()
     {
-        Assert.assertTrue( execute( "imageUrlTest_unknownProperty" ) );
+        assertTrue( execute( "imageUrlTest_unknownProperty" ) );
     }
 
     @Test
     public void pageUrlTest()
     {
-        Assert.assertTrue( execute( "pageUrlTest" ) );
+        assertTrue( execute( "pageUrlTest" ) );
     }
 
     @Test
     public void pageUrlTest_unknownProperty()
     {
-        Assert.assertTrue( execute( "pageUrlTest_unknownProperty" ) );
+        assertTrue( execute( "pageUrlTest_unknownProperty" ) );
     }
 
     @Test
     public void serviceUrlTest()
     {
-        Assert.assertTrue( execute( "serviceUrlTest" ) );
+        assertTrue( execute( "serviceUrlTest" ) );
     }
 
     @Test
     public void serviceUrlTest_unknownProperty()
     {
-        Assert.assertTrue( execute( "serviceUrlTest_unknownProperty" ) );
+        assertTrue( execute( "serviceUrlTest_unknownProperty" ) );
     }
 
     @Test
     public void processHtmlTest()
     {
-        Assert.assertTrue( execute( "processHtmlTest" ) );
+        assertTrue( execute( "processHtmlTest" ) );
     }
 
     @Test
     public void processHtmlTest_unknownProperty()
     {
-        Assert.assertTrue( execute( "processHtmlTest_unknownProperty" ) );
+        assertTrue( execute( "processHtmlTest_unknownProperty" ) );
     }
 
     @Test
     public void imagePlaceholderTest()
     {
-        Assert.assertTrue( execute( "imagePlaceholderTest" ) );
+        assertTrue( execute( "imagePlaceholderTest" ) );
     }
 
     @Test

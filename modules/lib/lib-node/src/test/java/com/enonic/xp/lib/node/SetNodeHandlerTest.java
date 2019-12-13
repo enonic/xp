@@ -1,12 +1,12 @@
 package com.enonic.xp.lib.node;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.enonic.xp.node.SetNodeChildOrderParams;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SetNodeHandlerTest
     extends BaseNodeHandlerTest

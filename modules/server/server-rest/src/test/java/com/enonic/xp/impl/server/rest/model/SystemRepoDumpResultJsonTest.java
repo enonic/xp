@@ -1,7 +1,7 @@
 package com.enonic.xp.impl.server.rest.model;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -13,13 +13,13 @@ import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.repository.RepositoryId;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SystemRepoDumpResultJsonTest
 {
     private ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

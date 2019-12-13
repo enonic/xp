@@ -1,11 +1,17 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
+import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
@@ -36,6 +42,10 @@ final class FindContentByQueryCommand
 
         final NodeIds nodeIds = result.getNodeIds();
 
+        final Map<ContentId, HighlightedProperties> highlight = result.getNodeHits().stream().
+            filter( nodeHit -> nodeHit.getHighlight() != null && nodeHit.getHighlight().size() > 0 ).
+            collect( Collectors.toMap( hit -> ContentId.from( hit.getNodeId().toString() ), NodeHit::getHighlight ) );
+
         final Nodes foundNodes = this.nodeService.getByIds( nodeIds );
 
         Contents contents = this.translator.fromNodes( foundNodes, true );
@@ -45,6 +55,7 @@ final class FindContentByQueryCommand
             aggregations( result.getAggregations() ).
             hits( result.getHits() ).
             totalHits( result.getTotalHits() ).
+            highlight( highlight ).
             build();
     }
 

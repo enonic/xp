@@ -35,39 +35,55 @@ public class IssueNotificationsSenderImpl
         this.sendMailExecutor = Executors.newCachedThreadPool( threadFactory );
     }
 
+    @Override
     public void notifyIssueCreated( final IssueNotificationParams params )
     {
         if ( isRecipientsPresent( params ) )
         {
             final MailMessage mailMessage = new IssueCreatedMailMessageGenerator( params ).generateMessage();
-            sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+            if ( mailMessage != null )
+            {
+                sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+            }
         }
     }
 
+    @Override
     public void notifyIssuePublished( final IssuePublishedNotificationParams params )
     {
         if ( isRecipientsPresent( params ) )
         {
             final MailMessage mailMessage = new IssuePublishedMailMessageGenerator( params ).generateMessage();
-            sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+            if ( mailMessage != null )
+            {
+                sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+            }
         }
     }
 
+    @Override
     public void notifyIssueUpdated( final IssueUpdatedNotificationParams params )
     {
         if ( isRecipientsPresent( params ) )
         {
             final MailMessage mailMessage = new IssueUpdatedMailMessageGenerator( params ).generateMessage();
-            sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+            if ( mailMessage != null )
+            {
+                sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+            }
         }
     }
 
+    @Override
     public void notifyIssueCommented( final IssueCommentedNotificationParams params )
     {
         if ( isRecipientsPresent( params ) )
         {
             final MailMessage mailMessage = new IssueCommentedMailMessageGenerator( params ).generateMessage();
-            sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+            if ( mailMessage != null )
+            {
+                sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+            }
         }
     }
 

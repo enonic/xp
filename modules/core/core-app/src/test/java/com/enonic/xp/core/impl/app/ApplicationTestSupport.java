@@ -2,12 +2,11 @@ package com.enonic.xp.core.impl.app;
 
 import java.io.File;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -27,17 +26,17 @@ public abstract class ApplicationTestSupport
 
     private URL rootTestUrl;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {
         this.rootTestUrl = new File( "./src/test/resources" ).toURI().toURL();
 
-        this.apps = Maps.newHashMap();
+        this.apps = new HashMap<>();
 
         this.applicationService = Mockito.mock( ApplicationService.class );
         Mockito.when( this.applicationService.getInstalledApplication( Mockito.any() ) ).then(
-            invocationOnMock -> apps.get( (ApplicationKey) invocationOnMock.getArguments()[0] ) );
+            invocationOnMock -> apps.get( invocationOnMock.getArguments()[0] ) );
         Mockito.when( this.applicationService.getInstalledApplications() ).then( invocationOnMock -> Applications.from( apps.values() ) );
         Mockito.when( this.applicationService.getInstalledApplicationKeys() ).then(
             invocationOnMock -> ApplicationKeys.from( apps.keySet() ) );

@@ -6,7 +6,8 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class BaseHandlerTest
 {
@@ -20,7 +21,7 @@ public abstract class BaseHandlerTest
         }
         catch ( final WebException e )
         {
-            assertEquals( "Method " + method + " should not be allowed", e.getStatus(), HttpStatus.METHOD_NOT_ALLOWED );
+            assertEquals( e.getStatus(), HttpStatus.METHOD_NOT_ALLOWED, "Method " + method + " should not be allowed" );
             return;
         }
 

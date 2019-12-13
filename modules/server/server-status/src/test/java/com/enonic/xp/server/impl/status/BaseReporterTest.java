@@ -2,21 +2,21 @@ package com.enonic.xp.server.impl.status;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Maps;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.status.StatusContext;
 import com.enonic.xp.status.StatusReporter;
 import com.enonic.xp.support.JsonTestHelper;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class BaseReporterTest<T extends StatusReporter>
 {
@@ -37,12 +37,12 @@ public abstract class BaseReporterTest<T extends StatusReporter>
         this.helper = new JsonTestHelper( this );
     }
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {
         this.reporter = newReporter();
-        this.params = Maps.newHashMap();
+        this.params = new HashMap<>();
     }
 
     protected abstract T newReporter()

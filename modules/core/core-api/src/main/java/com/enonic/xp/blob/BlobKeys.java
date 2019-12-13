@@ -1,11 +1,11 @@
 package com.enonic.xp.blob;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -20,7 +20,7 @@ public class BlobKeys
 
     public static BlobKeys empty()
     {
-        return new BlobKeys( ImmutableSet.<BlobKey>of() );
+        return new BlobKeys( ImmutableSet.of() );
     }
 
     public static BlobKeys from( final BlobKey... blobKeys )
@@ -41,7 +41,7 @@ public class BlobKeys
 
     public static class Builder
     {
-        final Set<BlobKey> blobKeys = Sets.newLinkedHashSet();
+        final Set<BlobKey> blobKeys = new LinkedHashSet<>();
 
         public Builder add( final BlobKey blobKey )
         {

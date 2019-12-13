@@ -1,19 +1,19 @@
 package com.enonic.xp.web.jetty.impl;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpThreadPoolStatusReporterTest
 {
@@ -42,7 +42,7 @@ public class HttpThreadPoolStatusReporterTest
             throw new IllegalArgumentException( "Resource file [" + fileName + "] not found" );
         }
 
-        return Resources.toString( url, Charsets.UTF_8 );
+        return Resources.toString( url, StandardCharsets.UTF_8 );
     }
 
     private JsonNode parseJson( final String json )

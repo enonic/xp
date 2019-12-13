@@ -129,6 +129,24 @@ public class NodeServiceImpl
         } );
     }
 
+    @Override
+    public Node getByIdAndVersionId( final NodeId id, final NodeVersionId versionId )
+    {
+        final Trace trace = Tracer.newTrace( "node.getByIdAndVersionId" );
+        if ( trace == null )
+        {
+            return executeGetByIdAndVersionId( id, versionId );
+        }
+
+        return Tracer.trace( trace, () -> {
+            trace.put( "id", id );
+            trace.put( "versionId", versionId );
+            final Node node = executeGetByIdAndVersionId( id, versionId );
+            trace.put( "path", node.path() );
+            return node;
+        } );
+    }
+
     private Node executeGetById( final NodeId id )
     {
         verifyContext();
@@ -143,10 +161,36 @@ public class NodeServiceImpl
         return node;
     }
 
+    private Node executeGetByIdAndVersionId( final NodeId id, final NodeVersionId versionId )
+    {
+        verifyContext();
+        final Node node = doGetByIdAndVersionId( id, versionId );
+
+        if ( node == null )
+        {
+            throw new NodeNotFoundException(
+                "Node with id " + id + " and versionId " + versionId + " not found in branch " + ContextAccessor.current().getBranch().getValue() );
+        }
+
+        return node;
+    }
+
     private Node doGetById( final NodeId id )
     {
         return GetNodeByIdCommand.create().
             id( id ).
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
+            build().
+            execute();
+    }
+
+    private Node doGetByIdAndVersionId( final NodeId id, final NodeVersionId versionId )
+    {
+        return GetNodeByIdAndVersionIdCommand.create().
+            nodeId( id ).
+            versionId( versionId ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
@@ -174,10 +218,37 @@ public class NodeServiceImpl
         } );
     }
 
+    @Override
+    public Node getByPathAndVersionId( final NodePath path, final NodeVersionId versionId )
+    {
+        final Trace trace = Tracer.newTrace( "node.getByPathAndVersionId" );
+        if ( trace == null )
+        {
+            return executeGetByPathAndVersionId( path, versionId );
+        }
+
+        return Tracer.trace( trace, () -> {
+            trace.put( "path", path );
+            trace.put( "versionId", versionId );
+            final Node node = executeGetByPathAndVersionId( path, versionId );
+            if ( node != null )
+            {
+                trace.put( "id", node.id() );
+            }
+            return node;
+        } );
+    }
+
     private Node executeGetByPath( final NodePath path )
     {
         verifyContext();
         return doGetByPath( path );
+    }
+
+    private Node executeGetByPathAndVersionId( final NodePath path, final NodeVersionId versionId )
+    {
+        verifyContext();
+        return doGetByPathAndVersionId( path, versionId );
     }
 
     private Node doGetByPath( final NodePath path )
@@ -189,6 +260,26 @@ public class NodeServiceImpl
             searchService( this.nodeSearchService ).
             build().
             execute();
+    }
+
+    private Node doGetByPathAndVersionId( final NodePath path, final NodeVersionId versionId )
+    {
+        final Node node = GetNodeByPathAndVersionIdCommand.create().
+            nodePath( path ).
+            versionId( versionId ).
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.nodeStorageService ).
+            searchService( this.nodeSearchService ).
+            build().
+            execute();
+
+        if ( node == null )
+        {
+            throw new NodeNotFoundException(
+                "Node with path " + path + " and versionId " + versionId + " not found in branch " + ContextAccessor.current().getBranch().getValue() );
+        }
+
+        return node;
     }
 
     @Override
@@ -689,6 +780,7 @@ public class NodeServiceImpl
             includeChildren( params.isIncludeChildren() ).
             includeDependencies( params.isIncludeDependencies() ).
             initialDiffFilter( params.getInitialDiffFilter() ).
+            statusesToStopDependenciesSearch( params.getStatusesToStopDependenciesSearch() ).
             indexServiceInternal( indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).

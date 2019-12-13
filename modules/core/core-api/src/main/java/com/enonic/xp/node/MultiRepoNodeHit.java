@@ -1,6 +1,7 @@
 package com.enonic.xp.node;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.query.QueryExplanation;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -16,6 +17,8 @@ public class MultiRepoNodeHit
 
     private final QueryExplanation explanation;
 
+    private final HighlightedProperties highlight;
+
     private MultiRepoNodeHit( final Builder builder )
     {
         this.nodeId = builder.nodeId;
@@ -23,6 +26,7 @@ public class MultiRepoNodeHit
         this.branch = builder.branch;
         this.repositoryId = builder.repositoryId;
         this.explanation = builder.explanation;
+        this.highlight = builder.highlight.build();
     }
 
     public RepositoryId getRepositoryId()
@@ -50,6 +54,11 @@ public class MultiRepoNodeHit
         return score;
     }
 
+    public HighlightedProperties getHighlight()
+    {
+        return highlight;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -66,6 +75,8 @@ public class MultiRepoNodeHit
         private float score;
 
         private QueryExplanation explanation;
+
+        private HighlightedProperties.Builder highlight = HighlightedProperties.create();
 
         private Builder()
         {
@@ -98,6 +109,12 @@ public class MultiRepoNodeHit
         public Builder score( final float score )
         {
             this.score = score;
+            return this;
+        }
+
+        public Builder highlight( final HighlightedProperties val )
+        {
+            highlight = HighlightedProperties.create( val );
             return this;
         }
 

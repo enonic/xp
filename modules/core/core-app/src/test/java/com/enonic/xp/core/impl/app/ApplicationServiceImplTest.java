@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.app;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.mockito.verification.VerificationMode;
@@ -15,6 +15,7 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
@@ -28,7 +29,13 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ApplicationServiceImplTest
     extends BundleBasedTest
@@ -39,7 +46,7 @@ public class ApplicationServiceImplTest
 
     private EventPublisher eventPublisher;
 
-    @Before
+    @BeforeEach
     public void initService()
     {
         this.service = new ApplicationServiceImpl();
@@ -114,12 +121,13 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void start_app_exact_version()
+    public void start_app_atleast_version()
         throws Exception
     {
         activateWithNoStoredApplications();
 
-        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "5.2" ) );
+        // At a time of writing Felix version is 6.0.1. All greater versions should work as well.
+        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "6.0" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         this.service.startApplication( ApplicationKey.from( "app1" ), false );
@@ -132,35 +140,38 @@ public class ApplicationServiceImplTest
     {
         activateWithNoStoredApplications();
 
-        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "(5.1,5.2]" ) );
+        // At a time of writing Felix version is 6.0.1. Range covers all future versions as well.
+        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "(6.0,9999.0]" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         this.service.startApplication( ApplicationKey.from( "app1" ), false );
         assertEquals( Bundle.ACTIVE, bundle.getState() );
     }
 
-    @Test(expected = ApplicationInvalidVersionException.class)
+    @Test
     public void start_app_invalid_version_range()
         throws Exception
     {
         activateWithNoStoredApplications();
 
+        // Version upper bound is too low for current and future Felix version (at a time of writing 6.0.1)
         final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "[5.1,5.2)" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
-        this.service.startApplication( ApplicationKey.from( "app1" ), false );
+        assertThrows(ApplicationInvalidVersionException.class, () -> this.service.startApplication( ApplicationKey.from( "app1" ), false ));
     }
 
-    @Test(expected = ApplicationInvalidVersionException.class)
+    @Test
     public void start_ex()
         throws Exception
     {
         activateWithNoStoredApplications();
 
-        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "[5.1,5.1]" ) );
+        // There is no version 0.0 of Felix.
+        final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "[0.0,0.0]" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
-        this.service.startApplication( ApplicationKey.from( "app1" ), false );
+        assertThrows(ApplicationInvalidVersionException.class, () -> this.service.startApplication( ApplicationKey.from( "app1" ), false ));
     }
 
     @Test
@@ -207,7 +218,7 @@ public class ApplicationServiceImplTest
         verifyStartedEvent( application, Mockito.times( 1 ) );
     }
 
-    @Test(expected = GlobalApplicationInstallException.class)
+    @Test
     public void install_global_invalid()
         throws Exception
     {
@@ -226,7 +237,7 @@ public class ApplicationServiceImplTest
 
         final ByteSource byteSource = createBundleSource( bundleName, false );
 
-        this.service.installGlobalApplication( byteSource, bundleName );
+        assertThrows(GlobalApplicationInstallException.class, () -> this.service.installGlobalApplication( byteSource, bundleName ));
     }
 
     @Test
@@ -258,7 +269,7 @@ public class ApplicationServiceImplTest
         verifyStartedEvent( application, Mockito.never() );
     }
 
-    @Test(expected = LocalApplicationInstallException.class)
+    @Test
     public void install_local_invalid()
         throws Exception
     {
@@ -277,7 +288,7 @@ public class ApplicationServiceImplTest
 
         final ByteSource source = createBundleSource( bundleName, false );
 
-        this.service.installLocalApplication( source, bundleName );
+        assertThrows(LocalApplicationInstallException.class, () -> this.service.installLocalApplication( source, bundleName ));
     }
 
     @Test
@@ -354,11 +365,11 @@ public class ApplicationServiceImplTest
         verifyStartedEvent( updatedApplication, Mockito.never() );
     }
 
-    @Test(expected = ApplicationInstallException.class)
+    @Test
     public void install_stored_application_not_found()
         throws Exception
     {
-        this.service.installStoredApplication( NodeId.from( "dummy" ) );
+        assertThrows(ApplicationInstallException.class, () -> this.service.installStoredApplication( NodeId.from( "dummy" ) ));
     }
 
     @Test
@@ -647,19 +658,19 @@ public class ApplicationServiceImplTest
         this.service.addInvalidator( invalidator2 );
         this.service.invalidate( key );
 
-        Mockito.verify( invalidator1, Mockito.times( 1 ) ).invalidate( key );
-        Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key );
+        Mockito.verify( invalidator1, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
+        Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
 
         this.service.removeInvalidator( invalidator1 );
         this.service.removeInvalidator( invalidator2 );
         this.service.invalidate( key );
 
-        Mockito.verify( invalidator1, Mockito.times( 1 ) ).invalidate( key );
-        Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key );
+        Mockito.verify( invalidator1, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
+        Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
     }
 
-    private class ApplicationEventMatcher
-        extends ArgumentMatcher<Event>
+    private static class ApplicationEventMatcher
+        implements ArgumentMatcher<Event>
     {
         Event thisObject;
 
@@ -669,16 +680,14 @@ public class ApplicationServiceImplTest
         }
 
         @Override
-        public boolean matches( Object argument )
+        public boolean matches( Event argument )
         {
             if ( argument == null || thisObject.getClass() != argument.getClass() )
             {
                 return false;
             }
 
-            final Event event = (Event) argument;
-
-            return thisObject.getType().equals( event.getType() ) && this.thisObject.getData().equals( event.getData() );
+            return thisObject.getType().equals( argument.getType() ) && this.thisObject.getData().equals( argument.getData() );
         }
     }
 }

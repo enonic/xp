@@ -94,7 +94,7 @@ public class ContentRelativePathResolver
     {
         if ( path.startsWith( "../" ) )
         {
-            return getNumberOfLevelsToAscend( path.substring( 3, path.length() ) ) + 1;
+            return getNumberOfLevelsToAscend( path.substring( 3 ) ) + 1;
         }
         return 0;
     }

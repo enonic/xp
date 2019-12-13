@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.app.ApplicationInstallationParams;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.core.impl.app.ApplicationHelper;
@@ -61,7 +62,11 @@ public class ApplicationClusterEventListener
 
         if ( valueAs.isPresent() )
         {
-            ApplicationHelper.runAsAdmin( () -> this.applicationService.installStoredApplication( NodeId.from( valueAs.get() ) ) );
+            final ApplicationInstallationParams params = ApplicationInstallationParams.create().
+                start( false ).
+                triggerEvent( false ).
+                build();
+            ApplicationHelper.runAsAdmin( () -> this.applicationService.installStoredApplication( NodeId.from( valueAs.get() ), params ) );
         }
     }
 
@@ -72,7 +77,7 @@ public class ApplicationClusterEventListener
         if ( appKey.isPresent() )
         {
             final ApplicationKey applicationKey = ApplicationKey.from( appKey.get() );
-            if ( !( this.applicationService.isLocalApplication( applicationKey ) ) )
+            if ( !this.applicationService.isLocalApplication( applicationKey ) )
             {
                 ApplicationHelper.runAsAdmin(
                     () -> this.applicationService.uninstallApplication( ApplicationKey.from( appKey.get() ), false ) );
@@ -88,7 +93,7 @@ public class ApplicationClusterEventListener
         if ( appKey.isPresent() && started.isPresent() )
         {
             final ApplicationKey applicationKey = ApplicationKey.from( appKey.get() );
-            if ( !( this.applicationService.isLocalApplication( applicationKey ) ) )
+            if ( !this.applicationService.isLocalApplication( applicationKey ) )
             {
                 if ( started.get() )
                 {

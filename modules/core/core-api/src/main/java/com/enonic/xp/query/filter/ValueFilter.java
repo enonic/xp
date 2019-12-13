@@ -2,13 +2,13 @@ package com.enonic.xp.query.filter;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
@@ -48,7 +48,7 @@ public class ValueFilter
     public static class Builder
         extends FieldFilter.Builder<Builder>
     {
-        private final Set<Value> values = Sets.newHashSet();
+        private final Set<Value> values = new HashSet<>();
 
         public Builder addValue( final Value value )
         {

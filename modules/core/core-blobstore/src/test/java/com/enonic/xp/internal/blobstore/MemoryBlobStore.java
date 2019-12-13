@@ -1,10 +1,10 @@
 package com.enonic.xp.internal.blobstore;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
@@ -20,7 +20,7 @@ public class MemoryBlobStore
 
     public MemoryBlobStore()
     {
-        this.store = Maps.newHashMap();
+        this.store = new HashMap<>();
     }
 
     @Override
@@ -49,7 +49,7 @@ public class MemoryBlobStore
 
     private BlobRecord doStoreRecord( final Segment segment, final BlobKey key, final BlobRecord record )
     {
-        this.store.computeIfAbsent( segment, k -> Maps.newHashMap() ).put( key, record );
+        this.store.computeIfAbsent( segment, k -> new HashMap<>() ).put( key, record );
 
         return record;
     }
@@ -72,7 +72,7 @@ public class MemoryBlobStore
     @Override
     public Stream<BlobRecord> list( final Segment segment )
     {
-        final Map<BlobKey, BlobRecord> map = this.store.computeIfAbsent( segment, k -> Maps.newHashMap() );
+        final Map<BlobKey, BlobRecord> map = this.store.computeIfAbsent( segment, k -> new HashMap<>() );
         final Collection<BlobRecord> values = map.values();
         return values.stream();
     }
@@ -92,7 +92,7 @@ public class MemoryBlobStore
 
     public void clear()
     {
-        this.store = Maps.newHashMap();
+        this.store = new HashMap<>();
     }
 }
 

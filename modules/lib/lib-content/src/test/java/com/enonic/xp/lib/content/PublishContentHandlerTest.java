@@ -3,7 +3,7 @@ package com.enonic.xp.lib.content;
 import java.time.Instant;
 import java.util.Locale;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.branch.Branch;
@@ -12,8 +12,8 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -77,6 +77,7 @@ public class PublishContentHandlerTest
             contentIds( ids ).
             target( Branch.from( "master" ) ).
             includeDependencies( false ).
+            message( "My first publish" ).
             build();
 
         Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult() );
@@ -140,5 +141,21 @@ public class PublishContentHandlerTest
         Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult );
 
         runFunction( "/test/PublishContentHandlerTest.js", "publishWithoutChildrenOrDependencies" );
+    }
+
+    @Test
+    public void publishWithMessage()
+    {
+        ContentIds ids = ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID );
+
+        PushContentParams pushParams = PushContentParams.create().
+            contentIds( ids ).
+            target( Branch.from( "draft" ) ).
+            message( "My first publish" ).
+            build();
+
+        Mockito.when( this.contentService.publish( pushParams ) ).thenReturn( exampleResult() );
+
+        runFunction( "/test/PublishContentHandlerTest.js", "publishWithMessage" );
     }
 }

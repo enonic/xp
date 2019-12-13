@@ -1,5 +1,6 @@
 package com.enonic.xp.config;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -7,8 +8,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrLookup;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.osgi.framework.BundleContext;
-
-import com.google.common.collect.Maps;
 
 public final class ConfigInterpolator
 {
@@ -46,7 +45,7 @@ public final class ConfigInterpolator
 
     public Configuration interpolate( final Configuration source )
     {
-        final Map<String, String> target = Maps.newHashMap();
+        final Map<String, String> target = new HashMap<>();
         target.putAll( source.asMap() );
 
         doInterpolate( target );

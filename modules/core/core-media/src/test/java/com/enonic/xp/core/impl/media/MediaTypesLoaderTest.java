@@ -1,19 +1,18 @@
 package com.enonic.xp.core.impl.media;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Maps;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MediaTypesLoaderTest
 {
     private MediaTypesLoader loader;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.loader = new MediaTypesLoader();
@@ -22,7 +21,7 @@ public class MediaTypesLoaderTest
     @Test
     public void testActivate()
     {
-        final Map<String, String> config = Maps.newHashMap();
+        final Map<String, String> config = new HashMap<>();
         config.put( "a", "b" );
         config.put( "ext.test", "other/unknown" );
         config.put( "ext.txt", "text/plain" );

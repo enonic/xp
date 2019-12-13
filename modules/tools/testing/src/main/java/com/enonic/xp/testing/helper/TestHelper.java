@@ -1,33 +1,33 @@
 package com.enonic.xp.testing.helper;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 public final class TestHelper
 {
     public static void assertFalse( final boolean flag, final String message )
     {
-        Assert.assertFalse( message, flag );
+        Assertions.assertFalse( flag, message );
     }
 
     public static void assertTrue( final boolean flag, final String message )
     {
-        Assert.assertTrue( message, flag );
+        Assertions.assertTrue( flag, message );
     }
 
     public static void assertEquals( final Object expected, final Object actual, final String message )
     {
         if ( ( expected instanceof Number ) && ( actual instanceof Number ) )
         {
-            Assert.assertEquals( message, ( (Number) expected ).doubleValue(), ( (Number) actual ).doubleValue(), 0 );
+            Assertions.assertEquals( ( (Number) expected ).doubleValue(), ( (Number) actual ).doubleValue(), message );
         }
         else
         {
-            Assert.assertEquals( message, expected, actual );
+            Assertions.assertEquals( expected, actual, message );
         }
     }
 
@@ -35,11 +35,11 @@ public final class TestHelper
     {
         if ( ( expected instanceof Number ) && ( actual instanceof Number ) )
         {
-            Assert.assertNotEquals( message, ( (Number) expected ).doubleValue(), ( (Number) actual ).doubleValue(), 0 );
+            Assertions.assertNotEquals( ( (Number) expected ).doubleValue(), ( (Number) actual ).doubleValue(), message );
         }
         else
         {
-            Assert.assertNotEquals( message, expected, actual );
+            Assertions.assertNotEquals( expected, actual, message );
         }
     }
 
@@ -52,6 +52,6 @@ public final class TestHelper
             return null;
         }
 
-        return Resources.toString( url, Charsets.UTF_8 );
+        return Resources.toString( url, StandardCharsets.UTF_8 );
     }
 }

@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.app;
 
 import java.time.Instant;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationInfo;
@@ -53,7 +53,8 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskDescriptorService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ApplicationInfoServiceImplTest
 {
@@ -83,7 +84,7 @@ public class ApplicationInfoServiceImplTest
 
     private ApplicationKey applicationKey;
 
-    @Before
+    @BeforeEach
     public void initService()
     {
         this.service = new ApplicationInfoServiceImpl();
@@ -114,7 +115,7 @@ public class ApplicationInfoServiceImplTest
 
     }
 
-    @Before
+    @BeforeEach
     public void initKey()
     {
         this.applicationKey = ApplicationKey.from( "testapplication" );

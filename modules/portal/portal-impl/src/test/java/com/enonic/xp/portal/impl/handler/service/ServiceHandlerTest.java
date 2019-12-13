@@ -3,8 +3,8 @@ package com.enonic.xp.portal.impl.handler.service;
 import java.util.Collections;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -39,7 +39,12 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ServiceHandlerTest
     extends BaseHandlerTest
@@ -56,17 +61,17 @@ public class ServiceHandlerTest
 
     private ControllerScript controllerScript;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {
         this.request = new PortalRequest();
         final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
         this.controllerScript = Mockito.mock( ControllerScript.class );
-        Mockito.when( controllerScriptFactory.fromDir( Mockito.anyObject() ) ).thenReturn( this.controllerScript );
+        Mockito.when( controllerScriptFactory.fromDir( Mockito.any() ) ).thenReturn( this.controllerScript );
 
         final PortalResponse portalResponse = PortalResponse.create().build();
-        Mockito.when( this.controllerScript.execute( Mockito.anyObject() ) ).thenReturn( portalResponse );
+        Mockito.when( this.controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
 
         this.resourceService = Mockito.mock( ResourceService.class );
         final Resource resourceNotFound = Mockito.mock( Resource.class );
@@ -124,7 +129,7 @@ public class ServiceHandlerTest
     {
         this.request.setMethod( HttpMethod.OPTIONS );
         final PortalResponse portalResponse = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
-        Mockito.when( this.controllerScript.execute( Mockito.anyObject() ) ).thenReturn( portalResponse );
+        Mockito.when( this.controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
@@ -215,13 +220,13 @@ public class ServiceHandlerTest
         assertEquals( "/site/draft/site/somepath/content/_/service/demo/test", this.request.getContextPath() );
     }
 
-    @Test(expected = com.enonic.xp.web.WebException.class)
+    @Test
     public void executeScript_invalidSite()
         throws Exception
     {
         setupContentAndSite();
         this.request.setEndpointPath( "/_/service/forbidden/test" );
-        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertThrows(WebException.class, () ->  this.handler.handle( this.request, PortalResponse.create().build(), null ));
     }
 
     @Test
@@ -237,17 +242,19 @@ public class ServiceHandlerTest
         assertNotNull( this.request.getApplicationKey() );
     }
 
-    @Test(expected = com.enonic.xp.web.WebException.class)
+    @Test
     public void executeScript_invalidApplication()
         throws Exception
     {
         this.request.setRawPath( "/webapp/forbidden/_/service/demo/test" );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
-        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
-        assertEquals( HttpStatus.OK, response.getStatus() );
-        Mockito.verify( this.controllerScript ).execute( this.request );
-        assertNotNull( this.request.getApplicationKey() );
+        assertThrows(WebException.class, () ->  {
+            final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+            assertEquals( HttpStatus.OK, response.getStatus() );
+            Mockito.verify( this.controllerScript ).execute( this.request );
+            assertNotNull( this.request.getApplicationKey() );
+        });
     }
 
     private void setupContentAndSite()

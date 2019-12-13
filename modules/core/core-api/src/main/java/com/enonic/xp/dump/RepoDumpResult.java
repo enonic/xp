@@ -1,5 +1,6 @@
 package com.enonic.xp.dump;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -18,11 +19,14 @@ public class RepoDumpResult
 
     private final Long versions;
 
+    private final List<DumpError> versionsErrors;
+
     private RepoDumpResult( final Builder builder )
     {
         this.branchResults = builder.branchResults;
         this.repositoryId = builder.repositoryId;
         this.versions = builder.versions;
+        this.versionsErrors = builder.versionsErrors;
     }
 
     public List<BranchDumpResult> getBranchResults()
@@ -40,12 +44,17 @@ public class RepoDumpResult
         return versions;
     }
 
+    public List<DumpError> getVersionsErrors()
+    {
+        return versionsErrors;
+    }
+
     public BranchDumpResult get( final Branch branch )
     {
         final Optional<BranchDumpResult> branchDumpEntry =
             this.branchResults.stream().filter( ( entry ) -> entry.getBranch().equals( branch ) ).findFirst();
 
-        return branchDumpEntry.isPresent() ? branchDumpEntry.get() : null;
+        return branchDumpEntry.orElse( null );
     }
 
     @Override
@@ -66,7 +75,9 @@ public class RepoDumpResult
 
     public static final class Builder
     {
-        private List<BranchDumpResult> branchResults = Lists.newArrayList();
+        private List<BranchDumpResult> branchResults = new ArrayList<>();
+
+        private List<DumpError> versionsErrors = new ArrayList<>();
 
         private RepositoryId repositoryId;
 
@@ -102,9 +113,15 @@ public class RepoDumpResult
             return this;
         }
 
-        public Builder versions( final Long versions)
+        public Builder versions( final Long versions )
         {
             this.versions = versions;
+            return this;
+        }
+
+        public Builder error( final DumpError error )
+        {
+            this.versionsErrors.add( error );
             return this;
         }
 

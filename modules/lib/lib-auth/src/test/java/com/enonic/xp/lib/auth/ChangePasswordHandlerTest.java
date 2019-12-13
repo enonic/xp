@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.auth;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.context.ContextAccessor;
@@ -12,7 +12,7 @@ import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class ChangePasswordHandlerTest
     extends ScriptTestSupport

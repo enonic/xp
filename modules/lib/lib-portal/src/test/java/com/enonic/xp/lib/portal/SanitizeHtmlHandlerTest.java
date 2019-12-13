@@ -1,7 +1,7 @@
 package com.enonic.xp.lib.portal;
 
-import org.junit.Test;
-import org.mockito.Matchers;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 import com.enonic.xp.portal.owasp.HtmlSanitizer;
@@ -27,7 +27,7 @@ public class SanitizeHtmlHandlerTest
         throws Exception
     {
         final String cleanHtml = "<p><a href=\"http://example.com/\">Link</a></p>";
-        Mockito.when( this.htmlSanitizer.sanitizeHtml( Matchers.anyString() ) ).thenReturn( cleanHtml );
+        Mockito.when( this.htmlSanitizer.sanitizeHtml( ArgumentMatchers.anyString() ) ).thenReturn( cleanHtml );
         runFunction( "/test/htmlSanitizer-test.js", "sanitizeHtml" );
     }
 
@@ -35,7 +35,7 @@ public class SanitizeHtmlHandlerTest
     public void testExample_SanitizeHtml()
     {
         final String cleanHtml = "<p><a href=\"http://example.com/\">Link</a></p>";
-        Mockito.when( this.htmlSanitizer.sanitizeHtml( Matchers.anyString() ) ).thenReturn( cleanHtml );
+        Mockito.when( this.htmlSanitizer.sanitizeHtml( ArgumentMatchers.anyString() ) ).thenReturn( cleanHtml );
 
         runScript( "/lib/xp/examples/portal/sanitizeHtml.js" );
     }

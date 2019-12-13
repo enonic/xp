@@ -8,6 +8,9 @@ install: true
 script:
   - ./gradlew ci --stacktrace --no-daemon
 
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
     - $HOME/.gradle/caches/
@@ -16,3 +19,10 @@ cache:
 after_success:
   - bash <(curl -s https://codecov.io/bash)
   - ./misc/upload.sh
+
+notifications:
+  email:
+    recipients:
+      - gri@enonic.com
+    on_success: change
+    on_failure: always

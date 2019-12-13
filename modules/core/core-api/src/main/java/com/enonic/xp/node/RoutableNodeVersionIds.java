@@ -1,11 +1,11 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -20,7 +20,7 @@ public class RoutableNodeVersionIds
 
     public static RoutableNodeVersionIds empty()
     {
-        return new RoutableNodeVersionIds( ImmutableSet.<RoutableNodeVersionId>of() );
+        return new RoutableNodeVersionIds( ImmutableSet.of() );
     }
 
     public static RoutableNodeVersionIds from( final RoutableNodeVersionId... routableNodeVersionIds )
@@ -41,7 +41,7 @@ public class RoutableNodeVersionIds
 
     public static class Builder
     {
-        final Set<RoutableNodeVersionId> routableNodeVersionIds = Sets.newLinkedHashSet();
+        final Set<RoutableNodeVersionId> routableNodeVersionIds = new LinkedHashSet<>();
 
         public Builder add( final RoutableNodeVersionId routableNodeVersionId )
         {

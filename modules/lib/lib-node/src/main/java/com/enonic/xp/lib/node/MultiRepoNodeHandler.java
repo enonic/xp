@@ -34,10 +34,13 @@ public class MultiRepoNodeHandler
             searchTargets( this.searchTargets ).
             query( params.getQuery() ).
             aggregations( params.getAggregations() ).
+            suggestions( params.getSuggestions() ).
+            highlight( params.getHighlight() ).
             count( params.getCount() ).
             start( params.getStart() ).
             sort( params.getSort() ).
             filters( params.getFilters() ).
+            explain( params.isExplain() ).
             nodeService( this.nodeService ).
             build() );
     }

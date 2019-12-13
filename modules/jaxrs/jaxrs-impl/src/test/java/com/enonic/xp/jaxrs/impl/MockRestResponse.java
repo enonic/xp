@@ -1,8 +1,8 @@
 package com.enonic.xp.jaxrs.impl;
 
-import javax.ws.rs.core.MultivaluedMap;
+import java.nio.charset.StandardCharsets;
 
-import com.google.common.base.Charsets;
+import javax.ws.rs.core.MultivaluedMap;
 
 public final class MockRestResponse
 {
@@ -19,7 +19,7 @@ public final class MockRestResponse
 
     public String getDataAsString()
     {
-        return new String( this.data, Charsets.UTF_8 );
+        return new String( this.data, StandardCharsets.UTF_8 );
     }
 
     public void setData( final byte[] data )
@@ -39,7 +39,7 @@ public final class MockRestResponse
 
     public String getAsString()
     {
-        return new String( this.data, Charsets.UTF_8 );
+        return new String( this.data, StandardCharsets.UTF_8 );
     }
 
     public String getHeader( final String name )

@@ -1,6 +1,7 @@
 package com.enonic.xp.content;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 
@@ -20,6 +21,10 @@ public class ContentVersion
 
     private final String comment;
 
+    private final ContentVersionPublishInfo publishInfo;
+
+    private final WorkflowInfo workflowInfo;
+
     private ContentVersion( Builder builder )
     {
         this.modifier = builder.modifier;
@@ -27,6 +32,8 @@ public class ContentVersion
         this.modified = builder.modified;
         this.comment = builder.comment;
         this.id = builder.id;
+        this.publishInfo = builder.publishInfo;
+        this.workflowInfo = builder.workflowInfo;
     }
 
     public PrincipalKey getModifier()
@@ -54,6 +61,16 @@ public class ContentVersion
         return id;
     }
 
+    public ContentVersionPublishInfo getPublishInfo()
+    {
+        return publishInfo;
+    }
+
+    public WorkflowInfo getWorkflowInfo()
+    {
+        return workflowInfo;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -62,7 +79,7 @@ public class ContentVersion
     @Override
     public int compareTo( final ContentVersion o )
     {
-        if ( this.modified == o.modified )
+        if ( Objects.equals( this.modified, o.modified ) )
         {
             return 0;
         }
@@ -89,34 +106,34 @@ public class ContentVersion
 
         final ContentVersion that = (ContentVersion) o;
 
-        if ( comment != null ? !comment.equals( that.comment ) : that.comment != null )
+        if ( !Objects.equals( comment, that.comment ) )
         {
             return false;
         }
-        if ( displayName != null ? !displayName.equals( that.displayName ) : that.displayName != null )
+        if ( !Objects.equals( displayName, that.displayName ) )
         {
             return false;
         }
-        if ( modified != null ? !modified.equals( that.modified ) : that.modified != null )
+        if ( !Objects.equals( modified, that.modified ) )
         {
             return false;
         }
-        if ( modifier != null ? !modifier.equals( that.modifier ) : that.modifier != null )
+        if ( !Objects.equals( modifier, that.modifier ) )
+        {
+            return false;
+        }
+        if ( !Objects.equals( publishInfo, that.publishInfo ) )
         {
             return false;
         }
 
-        return true;
+        return Objects.equals( workflowInfo, that.workflowInfo );
     }
 
     @Override
     public int hashCode()
     {
-        int result = modifier != null ? modifier.hashCode() : 0;
-        result = 31 * result + ( displayName != null ? displayName.hashCode() : 0 );
-        result = 31 * result + ( modified != null ? modified.hashCode() : 0 );
-        result = 31 * result + ( comment != null ? comment.hashCode() : 0 );
-        return result;
+        return Objects.hash( modifier, displayName, modified, comment, publishInfo, workflowInfo );
     }
 
     public static final class Builder
@@ -130,6 +147,10 @@ public class ContentVersion
         private String comment;
 
         private ContentVersionId id;
+
+        private ContentVersionPublishInfo publishInfo;
+
+        private WorkflowInfo workflowInfo;
 
         private Builder()
         {
@@ -162,6 +183,18 @@ public class ContentVersion
         public Builder comment( String comment )
         {
             this.comment = comment;
+            return this;
+        }
+
+        public Builder publishInfo( ContentVersionPublishInfo publishInfo )
+        {
+            this.publishInfo = publishInfo;
+            return this;
+        }
+
+        public Builder workflowInfo( WorkflowInfo workflowInfo )
+        {
+            this.workflowInfo = workflowInfo;
             return this;
         }
 

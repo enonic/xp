@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
@@ -23,6 +23,8 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class MoveContentCommandTest
 {
     private final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
@@ -35,7 +37,7 @@ public class MoveContentCommandTest
 
     private final EventPublisher eventPublisher = Mockito.mock( EventPublisher.class );
 
-    @Test(expected = NodeNotFoundException.class)
+    @Test
     public void move_non_existing_content()
         throws Exception
     {
@@ -60,7 +62,7 @@ public class MoveContentCommandTest
         Mockito.when( nodeService.getById( Mockito.isA( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
 
         // exercise
-        command.execute();
+        assertThrows(NodeNotFoundException.class, () -> command.execute());
     }
 
     @Test
@@ -113,7 +115,7 @@ public class MoveContentCommandTest
 
     }
 
-    @Test(expected = ContentAlreadyMovedException.class)
+    @Test
     public void move_to_the_same_parent()
         throws Exception
     {
@@ -143,7 +145,7 @@ public class MoveContentCommandTest
         Mockito.when( translator.fromNode( mockNode, false ) ).thenReturn( existingContent );
 
         // exercise
-        command.execute();
+        assertThrows(ContentAlreadyMovedException.class, () -> command.execute());
     }
 
     private Site createSite( final PropertyTree contentData, final ContentPath parentPath )

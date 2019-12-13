@@ -2,8 +2,8 @@ package com.enonic.xp.portal.impl.postprocess.injection;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Joiner;
 
@@ -11,7 +11,8 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.HtmlTag;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ContributionInjectionTest
 {
@@ -21,7 +22,7 @@ public class ContributionInjectionTest
 
     private PortalResponse.Builder responseBuilder;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.injection = new ContributionInjection();

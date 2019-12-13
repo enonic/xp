@@ -2,16 +2,17 @@ package com.enonic.xp.app;
 
 import java.util.ArrayList;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ApplicationKeysTest
 {
     private static ArrayList<ApplicationKey> list = new ArrayList();
 
-    @BeforeClass
+    @BeforeAll
     public static void initApplicationKeys()
     {
         ApplicationKeysTest.list.add( ApplicationKey.from( "aaa" ) );

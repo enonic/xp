@@ -1,14 +1,12 @@
 package com.enonic.xp.impl.server.rest.task;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 
-import org.apache.commons.io.Charsets;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.google.common.io.Files;
@@ -35,14 +33,15 @@ import com.enonic.xp.task.AbstractRunnableTaskTest;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class LoadRunnableTaskTest
     extends AbstractRunnableTaskTest
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+    @TempDir
+    public Path temporaryFolder;
 
     private DumpService dumpService;
 
@@ -54,24 +53,23 @@ public class LoadRunnableTaskTest
 
     private File nameDir, dumpDir, dataDir;
 
-    @Before
-    @Override
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.dumpService = Mockito.mock( DumpService.class );
         this.exportService = Mockito.mock( ExportService.class );
         this.repositoryService = Mockito.mock( RepositoryService.class );
         this.nodeRepositoryService = Mockito.mock( NodeRepositoryService.class );
 
-        final File homeDir = this.temporaryFolder.newFolder( "home" );
+        final File homeDir = java.nio.file.Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
         System.setProperty( "xp.home", homeDir.getAbsolutePath() );
 
         this.dataDir = createDir( homeDir, "data" );
         this.dumpDir = createDir( dataDir, "dump" );
     }
 
+    @Override
     protected LoadRunnableTask createAndRunTask()
     {
         return null;
@@ -114,7 +112,7 @@ public class LoadRunnableTaskTest
             build() ) );
 
         final File file = new File( this.nameDir, "export.properties" );
-        Files.write( "a=b", file, Charsets.UTF_8 );
+        Files.write( "a=b", file, StandardCharsets.UTF_8 );
 
         SystemLoadParams params = SystemLoadParams.create().dumpName( "name" ).includeVersions( true ).build();
 
@@ -169,18 +167,14 @@ public class LoadRunnableTaskTest
     public void load_no_dump()
         throws Exception
     {
-        expectedException.expect( IllegalArgumentException.class );
-        expectedException.expectMessage( "No dump with name 'name' found in " + dataDir.getPath() );
-
-        final LoadRunnableTask task = createAndRunTask( new SystemLoadRequestJson( "name", false ) );
-
-        task.createTaskResult();
+        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> createAndRunTask( new SystemLoadRequestJson( "name", false ) ) );
+        assertEquals( "No dump with name 'name' found in " + dataDir.getPath(), ex.getMessage());
     }
 
     private File createDir( final File dir, final String name )
     {
         final File file = new File( dir, name );
-        Assert.assertTrue( "Failed to create directory " + name + " under " + dir.getAbsolutePath(), file.mkdirs() );
+        assertTrue( file.mkdirs(), "Failed to create directory " + name + " under " + dir.getAbsolutePath() );
         return file;
     }
 }

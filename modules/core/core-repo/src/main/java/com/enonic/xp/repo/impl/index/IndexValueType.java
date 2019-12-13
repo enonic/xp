@@ -21,11 +21,12 @@ public enum IndexValueType
 
     private final String postfix;
 
-    private IndexValueType( final String postfix )
+    IndexValueType( final String postfix )
     {
         this.postfix = postfix;
     }
 
+    @Override
     public String getPostfix()
     {
         return postfix;

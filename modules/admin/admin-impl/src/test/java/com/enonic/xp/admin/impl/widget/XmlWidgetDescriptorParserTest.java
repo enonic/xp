@@ -3,15 +3,16 @@ package com.enonic.xp.admin.impl.widget;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.xml.parser.XmlModelParserTest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class XmlWidgetDescriptorParserTest
     extends XmlModelParserTest
@@ -20,7 +21,7 @@ public class XmlWidgetDescriptorParserTest
 
     private WidgetDescriptor.Builder builder;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.parser = new XmlWidgetDescriptorParser();

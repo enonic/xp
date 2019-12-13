@@ -1,11 +1,11 @@
 package com.enonic.xp.impl.server.rest.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.export.ExportError;
 import com.enonic.xp.export.NodeExportResult;
@@ -39,7 +39,7 @@ public class NodeExportResultJson
 
     private static List<String> exportErrors( final List<ExportError> exportErrors )
     {
-        List<String> exportErrorList = Lists.newArrayList();
+        List<String> exportErrorList = new ArrayList<>();
 
         exportErrorList.addAll( exportErrors.stream().map( ExportError::toString ).collect( Collectors.toList() ) );
         return exportErrorList;
@@ -47,7 +47,7 @@ public class NodeExportResultJson
 
     private static List<String> exportedNodes( final NodePaths nodePaths )
     {
-        List<String> exportedNodes = Lists.newArrayList();
+        List<String> exportedNodes = new ArrayList<>();
 
         for ( final NodePath nodePath : nodePaths )
         {

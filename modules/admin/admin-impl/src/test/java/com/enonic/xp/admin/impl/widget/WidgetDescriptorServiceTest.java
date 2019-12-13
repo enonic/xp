@@ -2,8 +2,8 @@ package com.enonic.xp.admin.impl.widget;
 
 import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
@@ -20,7 +20,9 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WidgetDescriptorServiceTest
 {
@@ -40,7 +42,7 @@ public class WidgetDescriptorServiceTest
 
     private WidgetDescriptor widgetDescriptor5;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.descriptorService = Mockito.mock( DescriptorService.class );

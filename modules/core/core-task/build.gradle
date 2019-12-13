@@ -10,6 +10,6 @@ dependencies {
     testCompile project( path: ':portal:portal-impl', configuration: 'testOutput' )
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Core - Task'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Core - Task' )
 }

@@ -7,15 +7,17 @@ import java.util.List;
 
 import javax.servlet.http.Part;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
 
 import com.enonic.xp.web.multipart.MultipartItem;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MultipartFormImplTest
 {
@@ -27,7 +29,7 @@ public class MultipartFormImplTest
 
     private Part part2;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {

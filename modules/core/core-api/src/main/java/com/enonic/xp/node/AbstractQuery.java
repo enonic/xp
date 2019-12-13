@@ -1,12 +1,12 @@
 package com.enonic.xp.node;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.query.Query;
 import com.enonic.xp.query.aggregation.AggregationQueries;
@@ -16,6 +16,9 @@ import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
+import com.enonic.xp.query.highlight.HighlightQuery;
+import com.enonic.xp.query.suggester.SuggestionQueries;
+import com.enonic.xp.query.suggester.SuggestionQuery;
 
 public class AbstractQuery
     implements Query
@@ -29,6 +32,10 @@ public class AbstractQuery
     private final Filters queryFilters;
 
     private final AggregationQueries aggregationQueries;
+
+    private final SuggestionQueries suggestionQueries;
+
+    private final HighlightQuery highlight;
 
     private final int from;
 
@@ -44,8 +51,7 @@ public class AbstractQuery
 
     private final boolean explain;
 
-    @SuppressWarnings("unchecked")
-    protected AbstractQuery( Builder builder )
+    protected AbstractQuery( Builder<?> builder )
     {
         this.query = builder.query;
         this.from = builder.from;
@@ -53,6 +59,8 @@ public class AbstractQuery
         this.batchSize = builder.batchSize;
         this.searchMode = builder.searchMode;
         this.aggregationQueries = AggregationQueries.fromCollection( ImmutableSet.copyOf( builder.aggregationQueries ) );
+        this.suggestionQueries = SuggestionQueries.fromCollection( ImmutableSet.copyOf( builder.suggestionQueries ) );
+        this.highlight = builder.highlight;
         this.orderBys = setOrderExpressions( builder );
         this.postFilters = builder.postFilters.build();
         this.queryFilters = builder.queryFilters.build();
@@ -60,9 +68,9 @@ public class AbstractQuery
         this.explain = builder.explain;
     }
 
-    private ImmutableList<OrderExpr> setOrderExpressions( final Builder builder )
+    private ImmutableList<OrderExpr> setOrderExpressions( final Builder<?> builder )
     {
-        final List<OrderExpr> orderBys = Lists.newLinkedList();
+        final List<OrderExpr> orderBys = new ArrayList<>();
 
         if ( query != null )
         {
@@ -74,41 +82,61 @@ public class AbstractQuery
         return ImmutableList.copyOf( orderBys );
     }
 
+    @Override
     public ImmutableList<OrderExpr> getOrderBys()
     {
         return orderBys;
     }
 
+    @Override
     public QueryExpr getQuery()
     {
         return query;
     }
 
+    @Override
     public Filters getPostFilters()
     {
         return postFilters;
     }
 
+    @Override
     public Filters getQueryFilters()
     {
         return queryFilters;
     }
 
+    @Override
     public AggregationQueries getAggregationQueries()
     {
         return aggregationQueries;
     }
 
+    @Override
+    public SuggestionQueries getSuggestionQueries()
+    {
+        return suggestionQueries;
+    }
+
+    @Override
+    public HighlightQuery getHighlight()
+    {
+        return highlight;
+    }
+
+    @Override
     public int getFrom()
     {
         return from;
     }
 
+    @Override
     public int getSize()
     {
         return size;
     }
 
+    @Override
     public boolean isExplain()
     {
         return explain;
@@ -119,6 +147,7 @@ public class AbstractQuery
         return batchSize;
     }
 
+    @Override
     public SearchMode getSearchMode()
     {
         return searchMode;
@@ -135,7 +164,11 @@ public class AbstractQuery
 
         private final Filters.Builder queryFilters = Filters.create();
 
-        private Set<AggregationQuery> aggregationQueries = Sets.newHashSet();
+        private Set<AggregationQuery> aggregationQueries = new HashSet<>();
+
+        private Set<SuggestionQuery> suggestionQueries = new HashSet<>();
+
+        private HighlightQuery highlight;
 
         private QueryExpr query;
 
@@ -145,7 +178,7 @@ public class AbstractQuery
 
         private int batchSize = 5_000;
 
-        private final List<OrderExpr> orderBys = Lists.newLinkedList();
+        private final List<OrderExpr> orderBys = new ArrayList<>();
 
         private SearchMode searchMode = SearchMode.SEARCH;
 
@@ -204,6 +237,33 @@ public class AbstractQuery
         public B addAggregationQuery( final AggregationQuery aggregationQuery )
         {
             this.aggregationQueries.add( aggregationQuery );
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B addSuggestionQueries( final SuggestionQueries suggestionQueries )
+        {
+            this.suggestionQueries.addAll( suggestionQueries.getSet() );
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B suggestionQueries( final Set<SuggestionQuery> suggestionQueries )
+        {
+            this.suggestionQueries = suggestionQueries;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B addSuggestionQuery( final SuggestionQuery suggestionQuery )
+        {
+            this.suggestionQueries.add( suggestionQuery );
+            return (B) this;
+        }
+
+        public B highlight( final HighlightQuery highlight )
+        {
+            this.highlight = highlight;
             return (B) this;
         }
 

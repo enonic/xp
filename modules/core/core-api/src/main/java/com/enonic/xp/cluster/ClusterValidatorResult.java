@@ -1,8 +1,7 @@
 package com.enonic.xp.cluster;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 public class ClusterValidatorResult
 {
@@ -49,9 +48,9 @@ public class ClusterValidatorResult
 
     public static final class Builder
     {
-        private List<ClusterValidationError> errors = Lists.newArrayList();
-        
-        private List<ClusterValidationWarning> warnings = Lists.newArrayList();
+        private List<ClusterValidationError> errors = new ArrayList<>();
+
+        private List<ClusterValidationWarning> warnings = new ArrayList<>();
 
         private Builder()
         {

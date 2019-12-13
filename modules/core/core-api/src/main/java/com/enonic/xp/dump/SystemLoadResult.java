@@ -1,9 +1,8 @@
 package com.enonic.xp.dump;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 public class SystemLoadResult
     implements Iterable<RepoLoadResult>
@@ -28,7 +27,7 @@ public class SystemLoadResult
 
     public static final class Builder
     {
-        private final List<RepoLoadResult> repoLoadResults = Lists.newArrayList();
+        private final List<RepoLoadResult> repoLoadResults = new ArrayList<>();
 
         private Builder()
         {

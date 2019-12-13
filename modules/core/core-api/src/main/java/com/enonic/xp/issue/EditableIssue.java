@@ -2,7 +2,7 @@ package com.enonic.xp.issue;
 
 import com.enonic.xp.security.PrincipalKeys;
 
-public final class EditableIssue
+public class EditableIssue
 {
     public final Issue source;
 
@@ -29,7 +29,7 @@ public final class EditableIssue
         this.publishRequest = source.getPublishRequest();
     }
 
-    public Issue build()
+    public Issue.Builder builder()
     {
         return Issue.create().
             id( source.getId() ).
@@ -43,7 +43,6 @@ public final class EditableIssue
             createdTime( source.getCreatedTime() ).
             creator( source.getCreator() ).
             addApproverIds( approverIds ).
-            setPublishRequest( publishRequest ).
-            build();
+            setPublishRequest( publishRequest );
     }
 }

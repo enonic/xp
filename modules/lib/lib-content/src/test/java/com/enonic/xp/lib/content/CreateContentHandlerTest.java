@@ -2,9 +2,10 @@ package com.enonic.xp.lib.content;
 
 import java.time.Instant;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentId;
@@ -22,9 +23,10 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.site.SiteDescriptor;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class CreateContentHandlerTest
@@ -81,6 +83,7 @@ public class CreateContentHandlerTest
 
         final PropertyTree extraData = new PropertyTree();
         extraData.addDouble( "a", 1.0 );
+        extraData.addBoolean( "b", true );
 
         final XData xData = XData.create().
             name( XDataName.from( "com.enonic.myapplication:myschema" ) ).
@@ -89,7 +92,41 @@ public class CreateContentHandlerTest
                 name( "a" ).
                 inputType( InputTypeName.DOUBLE ).
                 build() ).
+            addFormItem( Input.create().
+                label( "b" ).
+                name( "b" ).
+                inputType( InputTypeName.CHECK_BOX ).
+                build() ).
             build();
+
+        final SiteDescriptor siteDescriptor1 = SiteDescriptor.create().
+            form( Form.create().
+                addFormItem( Input.create().
+                    label( "a" ).
+                    name( "a" ).
+                    inputType( InputTypeName.TEXT_LINE ).
+                    build() ).
+                addFormItem( Input.create().
+                    label( "b" ).
+                    name( "b" ).
+                    inputType( InputTypeName.CHECK_BOX ).
+                    build() ).
+                build() ).
+            build();
+
+        final SiteDescriptor siteDescriptor2 = SiteDescriptor.create().
+            form( Form.create().
+                addFormItem( Input.create().
+                    label( "c" ).
+                    name( "c" ).
+                    inputType( InputTypeName.LONG ).
+                    build() ).
+                build() ).
+            build();
+
+        when( this.siteService.getDescriptor( ApplicationKey.from( "appKey1" ) ) ).thenReturn( siteDescriptor1 );
+        when( this.siteService.getDescriptor( ApplicationKey.from( "appKey2" ) ) ).thenReturn( siteDescriptor2 );
+
         when( this.xDataService.getByName( Mockito.eq( XDataName.from( "com.enonic.myapplication:myschema" ) ) ) ).thenReturn( xData );
         when( this.mixinService.inlineFormItems( any( Form.class ) ) ).then( returnsFirstArg() );
     }
@@ -175,6 +212,24 @@ public class CreateContentHandlerTest
         runFunction( "/test/CreateContentHandlerTest.js", "createContentAutoGenerateNameWithExistingName" );
     }
 
+    @Test
+    public void createContentWithWorkflow()
+        throws Exception
+    {
+        when( this.contentService.create( any( CreateContentParams.class ) ) ).thenAnswer(
+            mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
+
+        final ContentType contentType = ContentType.create().
+            name( "test:myContentType" ).
+            superType( ContentTypeName.structured() ).
+            build();
+
+        GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
+        when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
+
+        runFunction( "/test/CreateContentHandlerTest.js", "createContentWithWorkflow" );
+    }
+
     private Content createContent( final CreateContentParams params )
     {
         final Content.Builder builder = Content.create();
@@ -189,6 +244,7 @@ public class CreateContentHandlerTest
         builder.createdTime( Instant.parse( "1975-01-08T00:00:00Z" ) );
         builder.language( params.getLanguage() );
         builder.childOrder( params.getChildOrder() );
+        builder.workflowInfo( params.getWorkflowInfo() );
 
         if ( params.getExtraDatas() != null )
         {

@@ -1,8 +1,8 @@
 package com.enonic.xp.query.aggregation;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HistogramAggregationQueryTest
 {
@@ -19,11 +19,11 @@ public class HistogramAggregationQueryTest
             build();
 
         assertEquals( "histogram", query.getName() );
-        assertEquals( new Long( 100 ), query.getExtendedBoundMax() );
-        assertEquals( new Long( 10 ), query.getExtendedBoundMin() );
+        assertEquals( 100, query.getExtendedBoundMax() );
+        assertEquals( 10, query.getExtendedBoundMin() );
         assertEquals( HistogramAggregationQuery.Order.COUNT_ASC, query.getOrder() );
-        assertEquals( new Long( 10 ), query.getInterval() );
+        assertEquals( 10, query.getInterval() );
         assertEquals( "fieldName", query.getFieldName() );
-        assertEquals( new Long( 10 ), query.getMinDocCount() );
+        assertEquals( 10, query.getMinDocCount() );
     }
 }

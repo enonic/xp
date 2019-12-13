@@ -1,12 +1,12 @@
 package com.enonic.xp.server.shell.impl;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ShellActivatorTest
 {
@@ -18,7 +18,7 @@ public class ShellActivatorTest
 
     private BundleActivator subActivator;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.activator = new ShellActivator();

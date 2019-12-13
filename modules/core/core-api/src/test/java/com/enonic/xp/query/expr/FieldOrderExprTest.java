@@ -1,10 +1,12 @@
 package com.enonic.xp.query.expr;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.support.AbstractEqualsTest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class FieldOrderExprTest
 {
@@ -14,9 +16,9 @@ public class FieldOrderExprTest
         final FieldExpr field = FieldExpr.from( "name" );
         final FieldOrderExpr expr = new FieldOrderExpr( field, OrderExpr.Direction.DESC );
 
-        Assert.assertSame( field, expr.getField() );
-        Assert.assertEquals( OrderExpr.Direction.DESC, expr.getDirection() );
-        Assert.assertEquals( "name DESC", expr.toString() );
+        assertSame( field, expr.getField() );
+        assertEquals( OrderExpr.Direction.DESC, expr.getDirection() );
+        assertEquals( "name DESC", expr.toString() );
     }
 
     @Test

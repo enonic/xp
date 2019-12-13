@@ -1,32 +1,44 @@
 package com.enonic.xp.extractor.impl;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.tika.detect.DefaultDetector;
 import org.apache.tika.parser.DefaultParser;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.extractor.ExtractedData;
+import com.enonic.xp.extractor.impl.config.ExtractorConfigImpl;
 
-import static org.junit.Assert.*;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BinaryExtractorImplTest
 {
     private BinaryExtractorImpl extractor;
 
-    @Before
+    @BeforeEach
     public void setup()
         throws Exception
     {
         this.extractor = new BinaryExtractorImpl();
         extractor.setParser( new DefaultParser() );
         extractor.setDetector( new DefaultDetector() );
+
+        final ExtractorConfigImpl extractorConfig = new ExtractorConfigImpl();
+        loadConfig( extractorConfig );
+
+        extractor.setExtractorConfig( extractorConfig );
     }
 
     @Test
@@ -42,6 +54,7 @@ public class BinaryExtractorImplTest
     }
 
     @Test
+    @Disabled("Requires PDFBox Tika Parser in classpath. But tika-parsers 1.x heavily pollutes classpath with other jars")
     public void extract_pdf()
         throws Exception
     {
@@ -52,7 +65,21 @@ public class BinaryExtractorImplTest
 
         assertEquals( "application/pdf", metadata.get( HttpHeaders.CONTENT_TYPE ).iterator().next() );
         final String extractedText = extractedData.getText();
-        assertFalse( Strings.isNullOrEmpty( extractedText ) );
+        assertFalse( isNullOrEmpty( extractedText ) );
         assertTrue( extractedText.contains( "Velkommen" ) );
     }
+
+    private void loadConfig( final ExtractorConfigImpl extractorConfig )
+        throws Exception
+    {
+        try (InputStream in = getClass().getResourceAsStream( "./config/extractor-complete.properties" ))
+        {
+            Properties props = new Properties();
+            props.load( in );
+
+            Map<String, String> map = Maps.fromProperties( props );
+            extractorConfig.configure( map );
+        }
+    }
+
 }

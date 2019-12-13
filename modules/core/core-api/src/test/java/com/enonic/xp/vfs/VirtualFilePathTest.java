@@ -2,9 +2,10 @@ package com.enonic.xp.vfs;
 
 import java.nio.file.Paths;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class VirtualFilePathTest
 {
@@ -64,22 +65,22 @@ public class VirtualFilePathTest
         assertEquals( "my/test", path.subtractPath( subtract ).getPath() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void subtract_not_part_of()
         throws Exception
     {
         final VirtualFilePath path = VirtualFilePaths.from( "this/is/my/test", "/" );
         final VirtualFilePath subtract = VirtualFilePaths.from( "dummy/path", "/" );
-        path.subtractPath( subtract ).getPath();
+        assertThrows(IllegalArgumentException.class, () -> path.subtractPath( subtract ).getPath());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void subtract_longer_than()
         throws Exception
     {
         final VirtualFilePath path = VirtualFilePaths.from( "this/is/my/test", "/" );
         final VirtualFilePath subtract = VirtualFilePaths.from( "this/is/my/test/longer", "/" );
-        path.subtractPath( subtract ).getPath();
+        assertThrows(IllegalArgumentException.class, () -> path.subtractPath( subtract ).getPath());
     }
 
     @Test

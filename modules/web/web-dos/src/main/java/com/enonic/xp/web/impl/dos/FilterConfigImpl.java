@@ -2,12 +2,11 @@ package com.enonic.xp.web.impl.dos;
 
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
-
-import com.google.common.collect.Maps;
 
 final class FilterConfigImpl
     implements FilterConfig
@@ -19,7 +18,7 @@ final class FilterConfigImpl
     public FilterConfigImpl( final FilterConfig delegate )
     {
         this.delegate = delegate;
-        this.config = Maps.newHashMap();
+        this.config = new HashMap<>();
     }
 
     @Override
@@ -58,6 +57,6 @@ final class FilterConfigImpl
         this.config.put( "insertHeaders", String.valueOf( config.insertHeaders() ) );
         this.config.put( "trackSessions", String.valueOf( config.trackSessions() ) );
         this.config.put( "remotePort", String.valueOf( config.remotePort() ) );
-        this.config.put( "ipWhitelist", String.valueOf( config.ipWhitelist() ) );
+        this.config.put( "ipWhitelist", config.ipWhitelist() );
     }
 }

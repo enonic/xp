@@ -3,7 +3,7 @@ var taskLib = require('/lib/xp/task.js');
 
 exports.sleep = function () {
 
-    var System = Java.type("java.lang.System");
+    var System = Java.type('java.lang.System');
     var t1 = System.currentTimeMillis();
 
     taskLib.sleep(200);

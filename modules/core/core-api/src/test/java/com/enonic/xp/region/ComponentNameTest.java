@@ -1,15 +1,16 @@
 package com.enonic.xp.region;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ComponentNameTest
 {
-    @Test(expected = NullPointerException.class)
+    @Test
     public void constructor_throws_NullPointerException_when_given_value_is_null()
     {
-        new ComponentName( null );
+        assertThrows(NullPointerException.class, () -> new ComponentName( null ));
     }
 
     @Test

@@ -5,7 +5,7 @@ public class TestInitializer
 {
     private final boolean isMaster;
 
-    private final boolean initialized;
+    private transient boolean initialized;
 
     private final Runnable initialization;
 
@@ -27,6 +27,11 @@ public class TestInitializer
     protected boolean isInitialized()
     {
         return initialized;
+    }
+
+    protected void setInitialized( final boolean initialized )
+    {
+        this.initialized = initialized;
     }
 
     @Override

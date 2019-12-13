@@ -4,8 +4,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.HashSet;
 
-import com.google.common.collect.Sets;
-
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.repo.impl.dump.serializer.json.BranchDumpEntryJson;
@@ -23,11 +21,13 @@ import com.enonic.xp.util.Version;
 public class CommitDumpUpgrader
     extends AbstractMetaDumpUpgrader
 {
-    private static final Version MODEL_VERSION = new Version( 6, 0, 0 );
+    private static final Version MODEL_VERSION = new Version( 6 );
 
-    final HashSet<String> commitedNodeIds = Sets.newHashSet();
+    private static final String NAME = "Version commit";
 
-    final HashSet<String> commitedVersionIds = Sets.newHashSet();
+    final HashSet<String> commitedNodeIds = new HashSet<>();
+
+    final HashSet<String> commitedVersionIds = new HashSet<>();
 
     boolean processingMaster = false;
 
@@ -38,6 +38,7 @@ public class CommitDumpUpgrader
         super( basePath );
     }
 
+    @Override
     protected void upgradeRepository( final RepositoryId repositoryId )
     {
         commitedNodeIds.clear();
@@ -152,5 +153,11 @@ public class CommitDumpUpgrader
     public Version getModelVersion()
     {
         return MODEL_VERSION;
+    }
+
+    @Override
+    public String getName()
+    {
+        return NAME;
     }
 }

@@ -5,13 +5,13 @@ import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.ServiceReference;
 
 import com.enonic.xp.annotation.Order;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ServletStatusReporterTest
     extends ResourceReporterTest
@@ -39,14 +39,14 @@ public class ServletStatusReporterTest
 
     @Order(10)
     @WebServlet(name = "test1", value = "/321", urlPatterns = "/*", initParams = @WebInitParam(name = "a", value = "1"))
-    final class MyServlet1
+    static final class MyServlet1
         extends HttpServlet
     {
     }
 
     @Order(20)
     @WebServlet(name = "test2", value = "/123", urlPatterns = "/*/", initParams = @WebInitParam(name = "b", value = "2"))
-    final class MyServlet2
+    static final class MyServlet2
         extends HttpServlet
     {
     }

@@ -2,11 +2,14 @@ package com.enonic.xp.repo.impl.dump.upgrade.flattenedpage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
@@ -32,6 +35,12 @@ import com.enonic.xp.util.Version;
 public class FlattenedPageDumpUpgrader
     extends AbstractDumpUpgrader
 {
+    private static final Logger LOG = LoggerFactory.getLogger( FlattenedPageDumpUpgrader.class );
+
+    private static final Version MODEL_VERSION = new Version( 3 );
+
+    private static final String NAME = "Flattened page";
+
     private static final RepositoryId REPOSITORY_ID = Pre5ContentConstants.CONTENT_REPO_ID;
 
     private static final Segment SEGMENT =
@@ -45,13 +54,19 @@ public class FlattenedPageDumpUpgrader
     @Override
     public Version getModelVersion()
     {
-        return new Version( 3, 0, 0 );
+        return MODEL_VERSION;
     }
 
     @Override
-    public void upgrade( final String dumpName )
+    public String getName()
     {
-        super.upgrade( dumpName );
+        return NAME;
+    }
+
+    @Override
+    public void doUpgrade( final String dumpName )
+    {
+        super.doUpgrade( dumpName );
 
         final File versionsFile = dumpReader.getVersionsFile( REPOSITORY_ID );
         if ( versionsFile != null )
@@ -74,9 +89,18 @@ public class FlattenedPageDumpUpgrader
                 templateControllerMap( templateControllerMap ).
                 build();
             dumpReader.processEntries( ( entryContent, entryName ) -> {
-                final Pre4VersionsDumpEntryJson sourceEntry = deserializeValue( entryContent, Pre4VersionsDumpEntryJson.class );
-                sourceEntry.getVersions().
-                    forEach( version -> upgradeVersionMeta( version, dataUpgrader ) );
+                result.processed();
+                try
+                {
+                    final Pre4VersionsDumpEntryJson sourceEntry = deserializeValue( entryContent, Pre4VersionsDumpEntryJson.class );
+                    sourceEntry.getVersions().
+                        forEach( version -> upgradeVersionMeta( version, dataUpgrader ) );
+                }
+                catch ( Exception e )
+                {
+                    result.error();
+                    LOG.error( "Error while upgrading version entry [" + entryName + "]", e );
+                }
             }, versionsFile );
         }
         else
@@ -127,8 +151,17 @@ public class FlattenedPageDumpUpgrader
                 templateControllerMap( templateControllerMap ).
                 build();
             dumpReader.processEntries( ( entryContent, entryName ) -> {
-                final Pre4BranchDumpEntryJson sourceEntry = deserializeValue( entryContent, Pre4BranchDumpEntryJson.class );
-                upgradeVersionMeta( sourceEntry.getMeta(), dataUpgrader );
+                result.processed();
+                try
+                {
+                    final Pre4BranchDumpEntryJson sourceEntry = deserializeValue( entryContent, Pre4BranchDumpEntryJson.class );
+                    upgradeVersionMeta( sourceEntry.getMeta(), dataUpgrader );
+                }
+                catch ( Exception e )
+                {
+                    result.error();
+                    LOG.error( "Error while upgrading branch entry [" + entryName + "]", e );
+                }
             }, branchEntriesFile );
         }
         else
@@ -158,7 +191,7 @@ public class FlattenedPageDumpUpgrader
 
     private NodeVersion getNodeVersion( final DumpBlobRecord dumpBlobRecord )
     {
-        final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( Charsets.UTF_8 );
+        final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 );
         try
         {
             final Pre4NodeVersionJson nodeVersionJson = deserializeValue( charSource.read(), Pre4NodeVersionJson.class );
@@ -173,7 +206,7 @@ public class FlattenedPageDumpUpgrader
     private void writeNodeVersion( final NodeVersion nodeVersion, final DumpBlobRecord dumpBlobRecord )
     {
         final String serializedUpgradedNodeVersion = serializeValue( nodeVersion );
-        final ByteSource byteSource = ByteSource.wrap( serializedUpgradedNodeVersion.getBytes( Charsets.UTF_8 ) );
+        final ByteSource byteSource = ByteSource.wrap( serializedUpgradedNodeVersion.getBytes( StandardCharsets.UTF_8 ) );
         try
         {
 

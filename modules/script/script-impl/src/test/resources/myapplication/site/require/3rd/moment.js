@@ -101,8 +101,7 @@
         var m = create_utc__createUTC(NaN);
         if (flags != null) {
             extend(m._pf, flags);
-        }
-        else {
+        } else {
             m._pf.userInvalidated = true;
         }
 
@@ -268,8 +267,7 @@
         if (key) {
             if (typeof values === 'undefined') {
                 data = locale_locales__getLocale(key);
-            }
-            else {
+            } else {
                 data = defineLocale(key, values);
             }
 
@@ -701,13 +699,13 @@
 
         if (a && m._pf.overflow === -2) {
             overflow =
-            a[MONTH] < 0 || a[MONTH] > 11 ? MONTH :
-            a[DATE] < 1 || a[DATE] > daysInMonth(a[YEAR], a[MONTH]) ? DATE :
-            a[HOUR] < 0 || a[HOUR] > 24 || (a[HOUR] === 24 && (a[MINUTE] !== 0 || a[SECOND] !== 0 || a[MILLISECOND] !== 0)) ? HOUR :
-            a[MINUTE] < 0 || a[MINUTE] > 59 ? MINUTE :
-            a[SECOND] < 0 || a[SECOND] > 59 ? SECOND :
-            a[MILLISECOND] < 0 || a[MILLISECOND] > 999 ? MILLISECOND :
-            -1;
+                a[MONTH] < 0 || a[MONTH] > 11 ? MONTH :
+                a[DATE] < 1 || a[DATE] > daysInMonth(a[YEAR], a[MONTH]) ? DATE :
+                a[HOUR] < 0 || a[HOUR] > 24 || (a[HOUR] === 24 && (a[MINUTE] !== 0 || a[SECOND] !== 0 || a[MILLISECOND] !== 0)) ? HOUR :
+                a[MINUTE] < 0 || a[MINUTE] > 59 ? MINUTE :
+                a[SECOND] < 0 || a[SECOND] > 59 ? SECOND :
+                a[MILLISECOND] < 0 || a[MILLISECOND] > 999 ? MILLISECOND :
+                -1;
 
             if (m._pf._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
                 overflow = DATE;
@@ -1176,13 +1174,11 @@
             if (formatTokenFunctions[token]) {
                 if (parsedInput) {
                     config._pf.empty = false;
-                }
-                else {
+                } else {
                     config._pf.unusedTokens.push(token);
                 }
                 addTimeToArrayFromToken(token, parsedInput, config);
-            }
-            else if (config._strict && !parsedInput) {
+            } else if (config._strict && !parsedInput) {
                 config._pf.unusedTokens.push(token);
             }
         }
@@ -1334,9 +1330,9 @@
                 return parseInt(obj, 10);
             });
             configFromArray(config);
-        } else if (typeof(input) === 'object') {
+        } else if (typeof (input) === 'object') {
             configFromObject(config);
-        } else if (typeof(input) === 'number') {
+        } else if (typeof (input) === 'number') {
             // from milliseconds
             config._d = new Date(input);
         } else {
@@ -1347,7 +1343,7 @@
     function createLocalOrUTC(input, format, locale, strict, isUTC) {
         var c = {};
 
-        if (typeof(locale) === 'boolean') {
+        if (typeof (locale) === 'boolean') {
             strict = locale;
             locale = undefined;
         }
@@ -1614,8 +1610,7 @@
     function hasAlignedHourOffset(input) {
         if (!input) {
             input = 0;
-        }
-        else {
+        } else {
             input = local__createLocal(input).utcOffset();
         }
 
@@ -1624,8 +1619,8 @@
 
     function isDaylightSavingTime() {
         return (
-        this.utcOffset() > this.clone().month(0).utcOffset() ||
-        this.utcOffset() > this.clone().month(5).utcOffset()
+            this.utcOffset() > this.clone().month(0).utcOffset() ||
+            this.utcOffset() > this.clone().month(5).utcOffset()
         );
     }
 
@@ -1658,7 +1653,7 @@
 
     function create__createDuration(input, key) {
         var duration = input,
-        // matching against regexp is expensive, do it on demand
+            // matching against regexp is expensive, do it on demand
             match = null,
             sign,
             ret,
@@ -1681,10 +1676,10 @@
             sign = (match[1] === '-') ? -1 : 1;
             duration = {
                 y: 0,
-                d:  toInt(match[DATE]) * sign,
-                h:  toInt(match[HOUR]) * sign,
-                m:  toInt(match[MINUTE]) * sign,
-                s:  toInt(match[SECOND]) * sign,
+                d: toInt(match[DATE]) * sign,
+                h: toInt(match[HOUR]) * sign,
+                m: toInt(match[MINUTE]) * sign,
+                s: toInt(match[SECOND]) * sign,
                 ms: toInt(match[MILLISECOND]) * sign
             };
         } else if (!!(match = create__isoRegex.exec(input))) {
@@ -1894,7 +1889,7 @@
     function monthDiff(a, b) {
         // difference in months
         var wholeMonthDiff = ((b.year() - a.year()) * 12) + (b.month() - a.month()),
-        // b is in (anchor - 1 month, anchor + 1 month)
+            // b is in (anchor - 1 month, anchor + 1 month)
             anchor = a.clone().add(wholeMonthDiff, 'months'),
             anchor2, adjust;
 
@@ -2215,8 +2210,7 @@
         if (typeof input === 'string') {
             if (!isNaN(input)) {
                 input = parseInt(input, 10);
-            }
-            else {
+            } else {
                 input = locale.weekdaysParse(input);
                 if (typeof input !== 'number') {
                     return null;
@@ -2533,7 +2527,7 @@
     momentPrototype__proto.months = deprecate('months accessor is deprecated. Use month instead', getSetMonth);
     momentPrototype__proto.years = deprecate('years accessor is deprecated. Use year instead', getSetYear);
     momentPrototype__proto.zone =
-    deprecate('moment().zone is deprecated, use moment().utcOffset instead. https://github.com/moment/moment/issues/1779', getSetZone);
+        deprecate('moment().zone is deprecated, use moment().utcOffset instead. https://github.com/moment/moment/issues/1779', getSetZone);
 
     var momentPrototype = momentPrototype__proto;
 
@@ -2875,10 +2869,10 @@
     // TODO: Use this.as('ms')?
     function duration_as__valueOf() {
         return (
-        this._milliseconds +
-        this._days * 864e5 +
-        (this._months % 12) * 2592e6 +
-        toInt(this._months / 12) * 31536e6
+            this._milliseconds +
+            this._days * 864e5 +
+            (this._months % 12) * 2592e6 +
+            toInt(this._months / 12) * 31536e6
         );
     }
 
@@ -3046,7 +3040,7 @@
 
     // Deprecations
     duration_prototype__proto.toIsoString =
-    deprecate('toIsoString() is deprecated. Please use toISOString() instead (notice the capitals)', iso_string__toISOString);
+        deprecate('toIsoString() is deprecated. Please use toISOString() instead (notice the capitals)', iso_string__toISOString);
     duration_prototype__proto.lang = lang;
 
     // Side effect imports

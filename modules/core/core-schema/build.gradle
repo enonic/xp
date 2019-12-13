@@ -6,6 +6,6 @@ dependencies {
     testCompile project( path: ':core:core-app', configuration: 'testOutput' )
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Core - Schema'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Core - Schema' )
 }

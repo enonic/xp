@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.issue;
 
 import java.time.Instant;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -18,14 +18,16 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CreateIssueCommandTest
 {
 
     private NodeService nodeService;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
@@ -50,12 +52,12 @@ public class CreateIssueCommandTest
         assertEquals( IssueNameFactory.create( issue.getIndex() ), issue.getName() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNoTitle()
     {
         final CreateIssueParams params = CreateIssueParams.create().build();
         final CreateIssueCommand command = createIssueCommand( params );
-        command.execute();
+        assertThrows(IllegalArgumentException.class, () -> command.execute() );
     }
 
 

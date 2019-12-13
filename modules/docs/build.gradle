@@ -3,7 +3,7 @@ apply plugin: 'com.moowork.grunt'
 
 node {
     download = true
-    version = '4.2.1'
+    version = '8.12.0'
 }
 
 ext {
@@ -35,7 +35,7 @@ task javadocZip( type: Zip ) {
 
 task gruntAll( type: GruntTask, dependsOn: npmInstall ) {
     description = 'Build JSDoc for libraries.'
-    inputs.files fileTree( dir: "${projectDir}/../lib", include: '**/site/lib/xp/*.js' )
+    inputs.files fileTree( dir: "${projectDir}/../lib", include: '**/lib/xp/*.js' )
     inputs.dir "${projectDir}/src/jsdoc"
     outputs.dir jsDocOutput
     args = ['all']

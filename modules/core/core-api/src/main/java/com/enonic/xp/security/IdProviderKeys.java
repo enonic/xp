@@ -29,14 +29,14 @@ public final class IdProviderKeys
         return new IdProviderKeys( ImmutableList.copyOf( idProviderKeys ) );
     }
 
-    public static IdProviderKeys from( final String... IdProviderKeys )
+    public static IdProviderKeys from( final String... idProviderKeys )
     {
-        return new IdProviderKeys( parseIdProviderKeys( IdProviderKeys ) );
+        return new IdProviderKeys( parseIdProviderKeys( idProviderKeys ) );
     }
 
     public static IdProviderKeys empty()
     {
-        return new IdProviderKeys( ImmutableList.<IdProviderKey>of() );
+        return new IdProviderKeys( ImmutableList.of() );
     }
 
     private static ImmutableList<IdProviderKey> parseIdProviderKeys( final String... idProviderKeys )

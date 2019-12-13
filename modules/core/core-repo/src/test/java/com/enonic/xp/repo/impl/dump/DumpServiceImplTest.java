@@ -2,25 +2,23 @@ package com.enonic.xp.repo.impl.dump;
 
 import java.io.File;
 import java.net.URI;
+import java.nio.file.Files;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
@@ -31,13 +29,13 @@ import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchDumpResult;
+import com.enonic.xp.dump.DumpUpgradeResult;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.RepoLoadResult;
 import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemDumpUpgradeParams;
-import com.enonic.xp.dump.SystemDumpUpgradeResult;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
@@ -90,37 +88,42 @@ import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 import com.enonic.xp.util.Version;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DumpServiceImplTest
     extends AbstractNodeTest
 {
-    @Rule
-    public final TemporaryFolder tempFolder = new TemporaryFolder();
-
     private DumpServiceImpl dumpService;
 
-    @Override
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {
-        super.setUp();
         this.dumpService = new DumpServiceImpl();
         this.dumpService.setBlobStore( this.blobStore );
         this.dumpService.setNodeService( this.nodeService );
         this.dumpService.setRepositoryService( this.repositoryService );
-        this.dumpService.setBasePath( tempFolder.getRoot().toPath() );
-        this.dumpService.setApplicationService( Mockito.mock( ApplicationService.class ) );
+        this.dumpService.setBasePath( temporaryFolder.toFile().toPath() );
+        final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
+        Mockito.when( applicationService.getInstalledApplications() ).thenReturn( Applications.empty() );
+        this.dumpService.setApplicationService( applicationService );
     }
 
-    @Test(expected = RepoDumpException.class)
+    @Test
     public void admin_role_required()
         throws Exception
     {
-        doDump( SystemDumpParams.create().
-            dumpName( "testDump" ).
-            build() );
+        assertThrows(RepoDumpException.class, () -> {
+            doDump(SystemDumpParams.create().
+                    dumpName("testDump").
+                    build());
+
+        } );
     }
 
     @Test
@@ -213,7 +216,7 @@ public class DumpServiceImplTest
 
         final BranchDumpResult result = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
         assertNotNull( result );
-        assertEquals( new Long( 2 ), result.getSuccessful() );
+        assertEquals( 2, result.getSuccessful() );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
 
@@ -243,7 +246,7 @@ public class DumpServiceImplTest
 
         final BranchDumpResult result = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
         assertNotNull( result );
-        assertEquals( new Long( 2 ), result.getSuccessful() );
+        assertEquals( 2, result.getSuccessful() );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
 
@@ -266,10 +269,10 @@ public class DumpServiceImplTest
             build() ) );
 
         // 4 of node, 1 of root
-        assertEquals( new Long( 5 ), systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).getVersions() );
+        assertEquals( 5, systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).getVersions() );
         final BranchDumpResult branchDumpResult = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
 
-        assertEquals( new Long( 2 ), branchDumpResult.getSuccessful() );
+        assertEquals( 2, branchDumpResult.getSuccessful() );
     }
 
     @Test
@@ -502,7 +505,7 @@ public class DumpServiceImplTest
 
     private TreeSet<Instant> getOrderedTimestamps( final NodeVersionQueryResult result )
     {
-        TreeSet<Instant> timestamps = Sets.newTreeSet();
+        TreeSet<Instant> timestamps = new TreeSet<>();
         result.getNodeVersionsMetadata().forEach( version -> timestamps.add( version.getTimestamp() ) );
         return timestamps;
     }
@@ -584,7 +587,7 @@ public class DumpServiceImplTest
         final VersionsLoadResult versionsLoadResult = repoLoadResult.getVersionsLoadResult();
         assertNotNull( versionsLoadResult );
         // One for root, 4 for myNode
-        assertEquals( new Long( 5 ), versionsLoadResult.getSuccessful() );
+        assertEquals( 5, versionsLoadResult.getSuccessful() );
     }
 
     private RepoLoadResult getRepoLoadResult( final SystemLoadResult result, final RepositoryId repositoryId )
@@ -701,7 +704,7 @@ public class DumpServiceImplTest
             final SystemDumpUpgradeParams params = SystemDumpUpgradeParams.create().
                 dumpName( "testDump" ).
                 build();
-            final SystemDumpUpgradeResult result = this.dumpService.upgrade( params );
+            final DumpUpgradeResult result = this.dumpService.upgrade( params );
             assertEquals( DumpConstants.MODEL_VERSION, result.getInitialVersion() );
             assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
         } );
@@ -722,14 +725,14 @@ public class DumpServiceImplTest
                 upgradeListener( upgradeListener ).
                 build();
 
-            final SystemDumpUpgradeResult result = this.dumpService.upgrade( params );
+            final DumpUpgradeResult result = this.dumpService.upgrade( params );
             assertEquals( new Version( 0, 0, 0 ), result.getInitialVersion() );
             assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
 
             Mockito.verify( upgradeListener, Mockito.times( 8 ) ).upgraded();
             Mockito.verify( upgradeListener, Mockito.times( 1 ) ).total( 8 );
 
-            FileDumpReader reader = new FileDumpReader( tempFolder.getRoot().toPath(), dumpName, null );
+            FileDumpReader reader = new FileDumpReader( temporaryFolder.toFile().toPath(), dumpName, null );
             final DumpMeta updatedMeta = reader.getDumpMeta();
             assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
         } );
@@ -749,7 +752,7 @@ public class DumpServiceImplTest
                 includeVersions( true ).
                 build() );
 
-            FileDumpReader reader = new FileDumpReader( tempFolder.getRoot().toPath(), dumpName, null );
+            FileDumpReader reader = new FileDumpReader( temporaryFolder.toFile().toPath(), dumpName, null );
             final DumpMeta updatedMeta = reader.getDumpMeta();
             assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
 
@@ -910,9 +913,9 @@ public class DumpServiceImplTest
         assertEquals( 2, Iterables.size( postProcessedReferences ) );
 
         final String postValue = postNode.data().getString( "data.post" );
-        Assert.assertTrue( postValue.contains( "<figure class=\"editor-align-justify\">" ) );
-        Assert.assertTrue( postValue.contains( "<figure class=\"editor-align-justify editor-style-original\">" ) );
-        Assert.assertTrue( postValue.contains( "src=\"media://cf09fe7a-1be9-46bb-ad84-87ba69630cb7\"" ) );
+        assertTrue( postValue.contains( "<figure class=\"editor-align-justify\">" ) );
+        assertTrue( postValue.contains( "<figure class=\"editor-align-justify editor-style-original\">" ) );
+        assertTrue( postValue.contains( "src=\"media://cf09fe7a-1be9-46bb-ad84-87ba69630cb7\"" ) );
     }
 
     private void checkLanguageUpgrade( final Node draftNode )
@@ -948,7 +951,7 @@ public class DumpServiceImplTest
             getResource( "/dumps/dump-6-15-5" ).
             toURI();
         final File oldDumpFile = new File( oldDumpUri );
-        final File tmpDumpFile = tempFolder.newFolder( dumpName );
+        final File tmpDumpFile = Files.createDirectory( this.temporaryFolder.resolve( dumpName ) ).toFile();
         FileUtils.copyDirectory( oldDumpFile, tmpDumpFile );
         return tmpDumpFile;
     }

@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -9,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
@@ -51,6 +51,8 @@ public class ResolveSyncWorkCommand
 
     private final Function<NodeIds, NodeIds> initialDiffFilter;
 
+    private final Set<CompareStatus> statusesToStopDependenciesSearch;
+
     private static final Logger LOG = LoggerFactory.getLogger( ResolveSyncWorkCommand.class );
 
     private ResolveSyncWorkCommand( final Builder builder )
@@ -59,10 +61,11 @@ public class ResolveSyncWorkCommand
         this.target = builder.target;
         this.includeChildren = builder.includeChildren;
         this.result = ResolveSyncWorkResult.create();
-        this.processedIds = Sets.newHashSet();
+        this.processedIds = new HashSet<>();
         this.excludedIds = builder.excludedIds;
         this.includeDependencies = builder.includeDependencies;
         this.initialDiffFilter = builder.initialDiffFilter;
+        this.statusesToStopDependenciesSearch = builder.statusesToStopDependenciesSearch;
 
         final Node publishRootNode = doGetById( builder.nodeId );
 
@@ -109,7 +112,7 @@ public class ResolveSyncWorkCommand
 
         addNewAndMovedParents( comparisons );
 
-        comparisons.forEach( ( this::addToResult ) );
+        comparisons.forEach( this::addToResult );
 
         markPendingDeleteChildrenForDeletion( comparisons );
     }
@@ -170,10 +173,28 @@ public class ResolveSyncWorkCommand
 
     private NodeIds getNodeDependencies( final NodeIds initialDiff )
     {
+
         return FindNodesDependenciesCommand.create( this ).
             nodeIds( initialDiff ).
             excludedIds( excludedIds ).
             recursive( true ).
+            recursionFilter( statusesToStopDependenciesSearch == null ? null : nodeIds -> {
+                final NodeIds.Builder filteredNodeIds = NodeIds.create();
+
+                final NodeComparisons currentLevelNodeComparisons = CompareNodesCommand.create().
+                    nodeIds( nodeIds ).
+                    target( target ).
+                    storageService( this.nodeStorageService ).
+                    build().
+                    execute();
+
+                currentLevelNodeComparisons.getComparisons().stream().
+                    filter( nodeComparison -> !statusesToStopDependenciesSearch.contains( nodeComparison.getCompareStatus() ) ).
+                    map( NodeComparison::getNodeId ).
+                    forEach( filteredNodeIds::add );
+
+                return filteredNodeIds.build();
+            } ).
             build().
             execute();
     }
@@ -216,8 +237,8 @@ public class ResolveSyncWorkCommand
     private Set<NodeComparison> getNewAndMoved( final NodeComparisons parentComparisons )
     {
         return parentComparisons.getComparisons().stream().
-            filter( ( comparison -> comparison.getCompareStatus().equals( CompareStatus.NEW ) ||
-                comparison.getCompareStatus().equals( CompareStatus.MOVED ) ) ).
+            filter( comparison -> comparison.getCompareStatus().equals( CompareStatus.NEW ) ||
+                comparison.getCompareStatus().equals( CompareStatus.MOVED ) ).
             filter( comparison -> !this.processedIds.contains( comparison.getNodeId() ) ).
             collect( Collectors.toSet() );
     }
@@ -377,6 +398,8 @@ public class ResolveSyncWorkCommand
 
         private Function<NodeIds, NodeIds> initialDiffFilter;
 
+        private Set<CompareStatus> statusesToStopDependenciesSearch;
+
         private Builder()
         {
         }
@@ -420,6 +443,13 @@ public class ResolveSyncWorkCommand
             return this;
         }
 
+        public Builder statusesToStopDependenciesSearch( final Set<CompareStatus> statusesToStopDependenciesSearch )
+        {
+            this.statusesToStopDependenciesSearch = statusesToStopDependenciesSearch;
+            return this;
+        }
+
+        @Override
         void validate()
         {
             super.validate();

@@ -4,11 +4,13 @@ dependencies {
     compile project( ':core:core-api' )
     compile 'org.elasticsearch:elasticsearch:2.4.6'
     compile 'org.apache.commons:commons-compress:1.14'
-    compile 'net.sf.saxon:Saxon-HE:9.5.1-8'
     testCompile project( path: ':core:core-blobstore', configuration: 'testOutput' )
     testCompile project( path: ':core:core-api', configuration: 'testOutput' )
 }
 
-bundle {
-    instruction 'Bundle-Name', 'Enonic XP Core - Repo'
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Core - Repo' )
+
+    //Temporary export until refactoring
+    bnd( 'Export-Package': 'com.enonic.xp.repo.impl.branch;-split-package:=first' )
 }

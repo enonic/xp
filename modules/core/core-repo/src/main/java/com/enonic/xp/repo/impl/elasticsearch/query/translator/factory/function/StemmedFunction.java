@@ -10,11 +10,12 @@ class StemmedFunction
 {
     public static QueryBuilder create( final FunctionExpr functionExpr )
     {
-        StemmedFunctionArguments arguments = new StemmedFunctionArguments( functionExpr.getArguments() );
+        final StemmedFunctionArguments arguments = new StemmedFunctionArguments( functionExpr.getArguments() );
 
-        SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
+        final SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
             defaultOperator( arguments.getOperator() ).
-            analyzer( arguments.getAnalyzer() );
+            analyzer( arguments.getAnalyzer() ).
+            analyzeWildcard( true );
 
         appendQueryFieldNames( arguments, builder );
 

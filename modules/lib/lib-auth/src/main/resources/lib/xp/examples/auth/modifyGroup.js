@@ -19,11 +19,11 @@ var group = authLib.modifyGroup({
 // BEGIN
 // Information about the modified group.
 var expected = {
-    "type": "group",
-    "key": "group:system:group-a",
-    "displayName": "Modified display name",
-    "modifiedTime": "1970-01-01T00:00:00Z",
-    "description": "descriptionX"
+    'type': 'group',
+    'key': 'group:system:group-a',
+    'displayName': 'Modified display name',
+    'modifiedTime': '1970-01-01T00:00:00Z',
+    'description': 'descriptionX'
 };
 // END
 

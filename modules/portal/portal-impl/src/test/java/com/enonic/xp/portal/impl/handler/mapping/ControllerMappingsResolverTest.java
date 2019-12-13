@@ -4,8 +4,8 @@ import java.time.Instant;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -27,7 +27,11 @@ import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ControllerMappingsResolverTest
 {
@@ -37,7 +41,7 @@ public class ControllerMappingsResolverTest
 
     private PortalRequest request;
 
-    @Before
+    @BeforeEach
     public final void setup()
         throws Exception
     {
@@ -101,6 +105,7 @@ public class ControllerMappingsResolverTest
         this.request.setContentPath( ContentPath.from( content.getPath(), "api" ) );
         this.request.getParams().put( "key", "123" );
         this.request.getParams().put( "category", "foo" );
+        Mockito.when( this.contentService.getByPath( content.getParentPath() ) ).thenReturn( site );
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
         Mockito.when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( site );
         final SiteDescriptor siteDescriptor = newSiteDescriptor3();

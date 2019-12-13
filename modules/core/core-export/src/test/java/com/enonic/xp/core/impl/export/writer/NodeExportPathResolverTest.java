@@ -3,11 +3,12 @@ package com.enonic.xp.core.impl.export.writer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.NodePath;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NodeExportPathResolverTest
 {
@@ -51,7 +52,7 @@ public class NodeExportPathResolverTest
         assertEquals( Paths.get( "/exports", "image-archive" ), relativePath );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void node_root_not_contain()
         throws Exception
     {
@@ -59,7 +60,7 @@ public class NodeExportPathResolverTest
         final NodePath nodePath = createNodePath( "/content/my-article/image-archive" );
         final NodePath exportRootPath = createNodePath( "my-article/image-archive" );
 
-        NodeExportPathResolver.resolveNodeBasePath( rootPath, nodePath, exportRootPath );
+        assertThrows(IllegalArgumentException.class, () -> NodeExportPathResolver.resolveNodeBasePath( rootPath, nodePath, exportRootPath ));
     }
 
     private NodePath createNodePath( final String value )

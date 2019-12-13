@@ -1,7 +1,7 @@
 package com.enonic.xp.xml.parser;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.FormItem;
@@ -11,7 +11,8 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroKey;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class XmlMacroDescriptorParserTest
     extends XmlModelParserTest
@@ -20,7 +21,7 @@ public class XmlMacroDescriptorParserTest
 
     private MacroDescriptor.Builder builder;
 
-    @Before
+    @BeforeEach
     public void setup()
     {
         this.parser = new XmlMacroDescriptorParser();

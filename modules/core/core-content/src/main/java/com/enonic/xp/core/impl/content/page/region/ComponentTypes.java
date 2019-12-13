@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.content.page.region;
 
 import java.util.LinkedHashMap;
 
-import com.google.common.collect.Maps;
-
 import com.enonic.xp.region.ComponentType;
 import com.enonic.xp.region.FragmentComponentType;
 import com.enonic.xp.region.ImageComponentType;
@@ -19,7 +17,7 @@ public final class ComponentTypes
 
     private ComponentTypes()
     {
-        this.byShortName = Maps.newLinkedHashMap();
+        this.byShortName = new LinkedHashMap<>();
         register( LayoutComponentType.INSTANCE );
         register( ImageComponentType.INSTANCE );
         register( PartComponentType.INSTANCE );

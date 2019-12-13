@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.NodeVersionKey;
@@ -86,7 +85,7 @@ class NodeServiceMock
 
     private final MockNodeTree<NodePath> nodeTree = new MockNodeTree<>( NodePath.ROOT );
 
-    private final Map<BinaryReference, ByteSource> blobStore = Maps.newHashMap();
+    private final Map<BinaryReference, ByteSource> blobStore = new HashMap<>();
 
     public NodeServiceMock()
     {
@@ -140,7 +139,7 @@ class NodeServiceMock
             id( params.getNodeId() != null ? params.getNodeId() : NodeId.from( System.nanoTime() ) ).
             name( NodeName.from( params.getName() ) ).
             parentPath( params.getParent() ).
-            timestamp( timestamp != null ? timestamp : null ).
+            timestamp( timestamp ).
             manualOrderValue( params.getManualOrderValue() ).
             childOrder( params.getChildOrder() );
 
@@ -253,6 +252,12 @@ class NodeServiceMock
     }
 
     @Override
+    public Node getByIdAndVersionId( final NodeId id, final NodeVersionId versionId )
+    {
+        return nodeIdMap.get( id );
+    }
+
+    @Override
     public Nodes getByIds( final NodeIds ids )
     {
         final Nodes.Builder builder = Nodes.create();
@@ -264,6 +269,12 @@ class NodeServiceMock
 
     @Override
     public Node getByPath( final NodePath path )
+    {
+        return nodePathMap.get( path );
+    }
+
+    @Override
+    public Node getByPathAndVersionId( final NodePath path, final NodeVersionId versionId )
     {
         return nodePathMap.get( path );
     }

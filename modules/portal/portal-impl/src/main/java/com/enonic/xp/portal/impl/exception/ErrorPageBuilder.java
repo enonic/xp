@@ -1,8 +1,7 @@
 package com.enonic.xp.portal.impl.exception;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -287,7 +286,7 @@ final class ErrorPageBuilder
 
     private static List<LineInfo> findTrace( final Throwable cause )
     {
-        final List<LineInfo> list = Lists.newArrayList();
+        final List<LineInfo> list = new ArrayList<>();
         final StackTraceElement[] trace = cause.getStackTrace();
 
         for ( int i = 0; i < Math.min( trace.length, NUM_STACK_ELEMENTS ); i++ )
@@ -311,7 +310,7 @@ final class ErrorPageBuilder
 
         int currentLine = Math.max( 0, errorLine - NUM_DELTA_LINES ) + 1;
 
-        final List<LineInfo> list = Lists.newArrayList();
+        final List<LineInfo> list = new ArrayList<>();
         for ( final String line : subList )
         {
             final String str = line.replaceAll( "\t", "    " );
@@ -327,7 +326,7 @@ final class ErrorPageBuilder
         final ResourceKey resourceKey = cause.getResource();
         if ( resourceKey == null || this.resourceService == null )
         {
-            return Lists.newArrayList();
+            return new ArrayList<>();
         }
         final Resource resource = resourceService.getResource( resourceKey );
         return resource.readLines();
@@ -342,7 +341,7 @@ final class ErrorPageBuilder
 
     private static List<LineInfo> getCallStack( final ResourceProblemException cause )
     {
-        final List<LineInfo> list = Lists.newArrayList();
+        final List<LineInfo> list = new ArrayList<>();
         final List<String> callStack = cause.getCallStack();
 
         for ( int i = 0; i < callStack.size(); i++ )

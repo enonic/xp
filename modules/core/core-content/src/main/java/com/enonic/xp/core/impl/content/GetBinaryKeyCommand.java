@@ -61,8 +61,8 @@ final class GetBinaryKeyCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( contentId != null, "contentId must be set" );
-            Preconditions.checkNotNull( binaryReference != null, "binaryReference must be set" );
+            Preconditions.checkNotNull( contentId, "contentId must be set" );
+            Preconditions.checkNotNull( binaryReference, "binaryReference must be set" );
         }
 
         public GetBinaryKeyCommand build()

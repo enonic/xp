@@ -2,7 +2,7 @@ package com.enonic.xp.context;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -10,11 +10,15 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContextImplTest
 {
-    private final class SampleValue
+    private static final class SampleValue
     {
     }
 
@@ -89,22 +93,26 @@ public class ContextImplTest
         assertTrue( result );
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testRunWith_runtimeException()
     {
         final ContextImpl context = createContext();
+
+        assertThrows(RuntimeException.class, () ->
         context.callWith( () -> {
             throw new RuntimeException();
-        } );
+        } ) );
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void testRunWith_checkedException()
     {
         final ContextImpl context = createContext();
+
+        assertThrows(IOException.class, () ->
         context.callWith( () -> {
             throw new IOException();
-        } );
+        } ) );
     }
 
     @Test

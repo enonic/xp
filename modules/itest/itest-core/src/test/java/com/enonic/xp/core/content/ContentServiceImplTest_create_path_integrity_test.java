@@ -1,16 +1,13 @@
 package com.enonic.xp.core.content;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.IntStream;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
-import com.google.common.collect.Lists;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
@@ -23,26 +20,17 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ContentServiceImplTest_create_path_integrity_test
     extends AbstractContentServiceTest
 {
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
-    @Override
-    public void setUp()
-        throws Exception
-    {
-        super.setUp();
-    }
 
     @Test
     public void create()
         throws Exception
     {
-        List<Future> threads = Lists.newArrayList();
+        List<Future> threads = new ArrayList<>();
 
         final ExecutorService executor = Executors.newFixedThreadPool( 5 );
 

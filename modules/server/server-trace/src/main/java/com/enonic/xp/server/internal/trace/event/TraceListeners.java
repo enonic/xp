@@ -1,8 +1,7 @@
 package com.enonic.xp.server.internal.trace.event;
 
 import java.util.List;
-
-import com.google.common.collect.Lists;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.enonic.xp.trace.TraceEvent;
 import com.enonic.xp.trace.TraceListener;
@@ -10,12 +9,7 @@ import com.enonic.xp.trace.TraceListener;
 final class TraceListeners
     implements TraceListener
 {
-    private final List<TraceListener> list;
-
-    TraceListeners()
-    {
-        this.list = Lists.newArrayList();
-    }
+    private final List<TraceListener> list = new CopyOnWriteArrayList<>();
 
     void add( final TraceListener listener )
     {

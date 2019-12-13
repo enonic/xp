@@ -1,5 +1,7 @@
 package com.enonic.xp.launcher.impl.framework;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,15 +13,14 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.enonic.xp.launcher.LauncherListener;
 import com.enonic.xp.launcher.impl.SharedConstants;
 import com.enonic.xp.launcher.impl.config.ConfigProperties;
 import com.enonic.xp.launcher.impl.util.OsgiExportsBuilder;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class FrameworkService
     implements SharedConstants
@@ -38,7 +39,7 @@ public final class FrameworkService
 
     public FrameworkService()
     {
-        this.activators = Lists.newArrayList();
+        this.activators = new ArrayList<>();
     }
 
     public FrameworkService config( final ConfigProperties config )
@@ -63,12 +64,19 @@ public final class FrameworkService
     {
         updateBootDelegation();
         updateSystemPackagesExtra();
+        setupLogging();
 
-        final Map<String, Object> map = Maps.newHashMap();
+        final Map<String, Object> map = new HashMap<>();
         map.put( LOG_LOGGER_PROP, new FrameworkLogger() );
         map.putAll( this.config );
 
         this.felix = new Felix( map );
+    }
+
+    private void setupLogging()
+    {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
     }
 
     private void updateBootDelegation()
@@ -90,12 +98,12 @@ public final class FrameworkService
 
     private String joinPackages( final String v1, final String v2 )
     {
-        if ( Strings.isNullOrEmpty( v2 ) )
+        if ( isNullOrEmpty( v2 ) )
         {
             return v1;
         }
 
-        if ( Strings.isNullOrEmpty( v1 ) )
+        if ( isNullOrEmpty( v1 ) )
         {
             return v2;
         }

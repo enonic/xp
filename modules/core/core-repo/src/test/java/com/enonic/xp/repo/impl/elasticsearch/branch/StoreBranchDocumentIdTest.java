@@ -1,10 +1,11 @@
 package com.enonic.xp.repo.impl.elasticsearch.branch;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.repo.impl.branch.storage.BranchDocumentId;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class StoreBranchDocumentIdTest
 {
@@ -28,25 +29,25 @@ public class StoreBranchDocumentIdTest
         assertEquals( "myBranch", branchDocumentId.getBranch().getValue() );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void from_missing_ws()
         throws Exception
     {
-        BranchDocumentId.from( "myBlobKey_" );
+        assertThrows(IllegalArgumentException.class, () -> BranchDocumentId.from( "myBlobKey_" ));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void from_missing_nodeId()
         throws Exception
     {
-        BranchDocumentId.from( "_myBranch" );
+        assertThrows(IllegalArgumentException.class, () -> BranchDocumentId.from( "_myBranch" ));
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void from_missing_separator()
         throws Exception
     {
-        BranchDocumentId.from( "myBlobKeymyBranch" );
+        assertThrows(IllegalArgumentException.class, () -> BranchDocumentId.from( "myBlobKeymyBranch" ));
     }
 }
