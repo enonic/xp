@@ -3,7 +3,7 @@ package com.enonic.xp.vfs;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 
 import org.osgi.framework.Bundle;
@@ -75,15 +75,12 @@ class BundleResource
     @Override
     public List<VirtualFile> getChildren()
     {
-        final Enumeration<URL> entries = bundle.findEntries( path, PATTERN, false );
-
-        List<VirtualFile> files = new ArrayList<>();
-
-        while ( entries.hasMoreElements() )
+        final List<VirtualFile> files = new ArrayList<>();
+        final Iterator<URL> entries = bundle.findEntries( path, PATTERN, false ).asIterator();
+        while ( entries.hasNext() )
         {
-            files.add( new BundleResource( this.bundle, entries.nextElement().getPath() ) );
+            files.add( new BundleResource( this.bundle, entries.next().getPath() ) );
         }
-
         return files;
     }
 

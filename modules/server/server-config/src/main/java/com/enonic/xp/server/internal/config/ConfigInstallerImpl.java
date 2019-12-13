@@ -2,8 +2,8 @@ package com.enonic.xp.server.internal.config;
 
 import java.io.File;
 import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -146,10 +146,10 @@ public final class ConfigInstallerImpl
             return result;
         }
 
-        final Enumeration<String> keys = dict.keys();
-        while ( keys.hasMoreElements() )
+        final Iterator<String> keys = dict.keys().asIterator();
+        while ( keys.hasNext() )
         {
-            final String key = keys.nextElement();
+            final String key = keys.next();
             result.put( key, dict.get( key ) );
         }
 
