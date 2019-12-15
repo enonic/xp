@@ -4,10 +4,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.data.Value;
@@ -80,7 +80,7 @@ public class ValueFilter
 
         private Builder doAddValues( final Collection<String> values )
         {
-            this.values.addAll( Collections2.transform( values, ValueFactory::newString ) );
+            this.values.addAll( values.stream().map( ValueFactory::newString ).collect( Collectors.toList() ) );
             return this;
         }
 
