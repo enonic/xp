@@ -3,7 +3,7 @@ package com.enonic.xp.server.internal.config;
 import java.io.File;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
 
 import org.osgi.framework.BundleContext;
@@ -24,19 +24,19 @@ final class ConfigLoader
         this.interpolator.systemProperties( System.getProperties() );
     }
 
-    Hashtable<String, Object> load( final File file )
+    Map<String, String> load( final File file )
         throws Exception
     {
         final Properties props = new Properties();
         try (FileReader reader = new FileReader( file, StandardCharsets.UTF_8 ))
         {
-            props.load(reader);
+            props.load( reader );
         }
 
         final ConfigBuilder builder = ConfigBuilder.create();
         builder.addAll( props );
 
         final Configuration config = this.interpolator.interpolate( builder.build() );
-        return new Hashtable<>( config.asMap() );
+        return config.asMap();
     }
 }

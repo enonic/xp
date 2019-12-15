@@ -1,8 +1,6 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
-import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Hashtable;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -11,8 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.ServiceReference;
 
 import com.google.common.collect.Lists;
 
@@ -78,51 +74,5 @@ public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, 
 
         this.pipeline.destroy();
         Mockito.verify( def, Mockito.times( 1 ) ).destroy();
-    }
-
-    protected static final class MyServiceReference<T>
-        implements ServiceReference<T>
-    {
-        @Override
-        public Object getProperty( final String key )
-        {
-            return null;
-        }
-
-        @Override
-        public String[] getPropertyKeys()
-        {
-            return new String[0];
-        }
-
-        @Override
-        public Bundle getBundle()
-        {
-            return null;
-        }
-
-        @Override
-        public Bundle[] getUsingBundles()
-        {
-            return new Bundle[0];
-        }
-
-        @Override
-        public boolean isAssignableTo( final Bundle bundle, final String className )
-        {
-            return false;
-        }
-
-        @Override
-        public int compareTo( final Object reference )
-        {
-            return 0;
-        }
-
-        @Override
-        public Dictionary<String, Object> getProperties()
-        {
-            return new Hashtable<>();
-        }
     }
 }

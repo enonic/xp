@@ -62,6 +62,8 @@ addBundle( 'org.apache.ignite:ignite-core:2.3.0', 8 )
 addBundle( 'org.apache.ignite:ignite-osgi:2.3.0', 8 )
 addBundle( 'org.apache.ignite:ignite-web:2.3.0', 8 )
 
+addBundle( project( ':core:core-internal' ), 9 )
+
 // API bundles
 addBundle( project( ':core:core-api' ), 10 )
 addBundle( project( ':script:script-api' ), 10 )
