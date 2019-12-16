@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.server.rest;
 
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
@@ -13,7 +14,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -98,7 +98,8 @@ public final class IndexResource
     private static Branches parseBranches( final String branches )
     {
         final Iterable<String> split = Splitter.on( "," ).split( branches );
-        final Iterable<Branch> parsed = Lists.newArrayList( split ).stream().map( Branch::from ).collect( Collectors.toList() );
+        final Iterable<Branch> parsed = StreamSupport.stream( split.spliterator(), false ).
+            map( Branch::from ).collect( Collectors.toList() );
         return Branches.from( parsed );
     }
 

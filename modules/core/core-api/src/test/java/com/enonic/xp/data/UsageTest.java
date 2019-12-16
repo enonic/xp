@@ -1,10 +1,11 @@
 package com.enonic.xp.data;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class UsageTest
@@ -44,7 +45,7 @@ public class UsageTest
         assertEquals( "a", tree.getValue( "myProp", 0 ).asString() );
         assertEquals( "a", tree.getString( "myProp", 0 ) );
         assertEquals( "b", tree.getString( "myProp[1]" ) );
-        assertEquals( Lists.newArrayList( "a", "b" ), tree.getStrings( "myProp" ) );
+        assertIterableEquals( List.of( "a", "b" ), tree.getStrings( "myProp" ) );
     }
 
     @Test
@@ -73,7 +74,7 @@ public class UsageTest
         set1.setString( "myProp", "myValue" );
         tree.addProperty( "mySet", ValueFactory.newPropertySet( set2 ) );
 
-        assertEquals( Lists.newArrayList( set1, set2 ), tree.getSets( "mySet" ) );
+        assertIterableEquals( List.of( set1, set2 ), tree.getSets( "mySet" ) );
         assertSame( set1, tree.getSets( "mySet" ).iterator().next() );
     }
 

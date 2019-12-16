@@ -3,6 +3,8 @@ package com.enonic.xp.web.impl.handler;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -18,8 +20,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.web.HttpMethod;
@@ -124,7 +124,7 @@ public final class WebDispatcherServlet
     {
         for ( final Map.Entry<String, String[]> entry : from.getParameterMap().entrySet() )
         {
-            to.getParams().putAll( entry.getKey(), Lists.newArrayList( entry.getValue() ) );
+            to.getParams().putAll( entry.getKey(), new ArrayList<>( Arrays.asList( entry.getValue() ) ) );
         }
     }
 

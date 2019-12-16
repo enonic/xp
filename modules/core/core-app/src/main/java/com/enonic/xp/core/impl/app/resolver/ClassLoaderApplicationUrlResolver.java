@@ -2,11 +2,11 @@ package com.enonic.xp.core.impl.app.resolver;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.reflect.ClassPath;
 
 import com.enonic.xp.util.Exceptions;
@@ -50,7 +50,7 @@ public final class ClassLoaderApplicationUrlResolver
 
     public static ClassLoaderApplicationUrlResolver create( final URL... urls )
     {
-        return create( Lists.newArrayList( urls ) );
+        return create( Arrays.asList( urls ) );
     }
 
     public static ClassLoaderApplicationUrlResolver create( final Iterable<URL> urls )

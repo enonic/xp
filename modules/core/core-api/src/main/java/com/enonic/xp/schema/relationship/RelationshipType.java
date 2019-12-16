@@ -7,7 +7,6 @@ import java.util.List;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -114,8 +113,8 @@ public final class RelationshipType
             super( relationshipType );
             this.fromSemantic = relationshipType.fromSemantic;
             this.toSemantic = relationshipType.toSemantic;
-            this.allowedFromTypes = Lists.newArrayList( relationshipType.allowedFromTypes );
-            this.allowedToTypes = Lists.newArrayList( relationshipType.allowedToTypes );
+            this.allowedFromTypes = new ArrayList<>( relationshipType.allowedFromTypes.getSet() );
+            this.allowedToTypes = new ArrayList<>( relationshipType.allowedToTypes.getSet() );
         }
 
         public Builder name( final String value )

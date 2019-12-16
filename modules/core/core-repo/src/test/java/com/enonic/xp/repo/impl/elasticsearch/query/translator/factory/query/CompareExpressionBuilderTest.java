@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.query;
 
-import org.junit.jupiter.api.Test;
+import java.util.List;
 
-import com.google.common.collect.Lists;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -29,8 +29,8 @@ public class CompareExpressionBuilderTest
         buildCompareExpr( "compare_not_like_string.json",
                           CompareExpr.notLike( FieldExpr.from( "myField" ), ValueExpr.string( "myValue" ) ) );
         buildCompareExpr( "compare_not_in_string.json", CompareExpr.notIn( FieldExpr.from( "myField" ),
-                                                                           Lists.newArrayList( ValueExpr.string( "myFirstValue" ),
-                                                                                               ValueExpr.string( "mySecondValue" ) ) ) );
+                                                                           List.of( ValueExpr.string( "myFirstValue" ),
+                                                                                    ValueExpr.string( "mySecondValue" ) ) ) );
     }
 
     private void buildCompareExpr( final String fileName, final CompareExpr expr )

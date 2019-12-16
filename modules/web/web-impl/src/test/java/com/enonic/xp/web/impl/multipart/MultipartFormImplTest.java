@@ -45,7 +45,7 @@ public class MultipartFormImplTest
         Mockito.when( this.part2.getName() ).thenReturn( "upload2" );
         Mockito.when( this.part2.getInputStream() ).thenReturn( newStream( "hello2" ) );
 
-        this.form = new MultipartFormImpl( Lists.newArrayList( this.part1, this.part1B, this.part2 ) );
+        this.form = new MultipartFormImpl( List.of( this.part1, this.part1B, this.part2 ) );
     }
 
     private InputStream newStream( final String text )

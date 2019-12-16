@@ -11,8 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
@@ -332,7 +330,7 @@ public class IssueNotificationsSenderImplTest
             creator( creator ).
             creatorDisplayName( "Creator" ).
             build();
-        return Lists.newArrayList( comment );
+        return List.of( comment );
     }
 
     private User generateUser()

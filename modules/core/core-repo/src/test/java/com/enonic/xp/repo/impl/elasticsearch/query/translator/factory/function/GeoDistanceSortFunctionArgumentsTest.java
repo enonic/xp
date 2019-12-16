@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
-import org.junit.jupiter.api.Test;
+import java.util.List;
 
-import com.google.common.collect.Lists;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.query.expr.ValueExpr;
 
@@ -15,7 +15,7 @@ public class GeoDistanceSortFunctionArgumentsTest
     public void argumentsRead()
     {
         final GeoDistanceSortFunctionArguments arguments =
-            new GeoDistanceSortFunctionArguments( Lists.newArrayList( ValueExpr.string( "myField" ), ValueExpr.string( "79,80" ) ) );
+            new GeoDistanceSortFunctionArguments( List.of( ValueExpr.string( "myField" ), ValueExpr.string( "79,80" ) ) );
 
         assertEquals( "myField", arguments.getFieldName() );
         assertEquals( "geoDistance", arguments.getFunctionName() );
@@ -26,8 +26,10 @@ public class GeoDistanceSortFunctionArgumentsTest
     @Test
     public void illegalGeoPosition()
     {
-        final FunctionQueryBuilderException ex = assertThrows(FunctionQueryBuilderException.class,
-                () -> new GeoDistanceSortFunctionArguments(Lists.newArrayList(ValueExpr.string("myField"), ValueExpr.string("179, 80"))));
+        final FunctionQueryBuilderException ex = assertThrows( FunctionQueryBuilderException.class,
+                                                               () -> new GeoDistanceSortFunctionArguments(
+                                                                   List.of( ValueExpr.string( "myField" ),
+                                                                            ValueExpr.string( "179, 80" ) ) ) );
         assertEquals( "Illegal argument '179, 80' in function 'geoDistance', position 2", ex.getMessage() );
     }
 }

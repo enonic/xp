@@ -1,10 +1,9 @@
 package com.enonic.xp.repo.impl.dump.serializer.json;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.node.NodeCommitId;
@@ -34,7 +33,7 @@ public class BranchDumpEntryJsonDumpSerializerTest
                 nodeVersionKey( NodeVersionKey.from( "fiskKey", "fiskKey2", "fiskKey3" ) ).
                 nodeCommitId( NodeCommitId.from( "commitId" ) ).
                 build() ).
-            setBinaryReferences( Lists.newArrayList( "1" ) ).
+            setBinaryReferences( List.of( "1" ) ).
             nodeId( NodeId.from( "myOtherId" ) ).
             build();
 

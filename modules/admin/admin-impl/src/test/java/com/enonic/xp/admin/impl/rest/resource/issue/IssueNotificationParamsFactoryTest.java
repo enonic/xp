@@ -10,8 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
@@ -92,7 +90,7 @@ public class IssueNotificationParamsFactoryTest
             build().
             createdParams();
 
-        assertEquals( Lists.newArrayList( approver ), params.getApprovers() );
+        assertEquals( List.of( approver ), params.getApprovers() );
         assertEquals( creator, params.getCreator() );
         assertEquals( issue, params.getIssue() );
         assertEquals( comments, params.getComments() );
@@ -223,7 +221,7 @@ public class IssueNotificationParamsFactoryTest
             creator( creator ).
             creatorDisplayName( "Creator" ).
             build();
-        return Lists.newArrayList( comment );
+        return List.of( comment );
     }
 
     private User generateUser()

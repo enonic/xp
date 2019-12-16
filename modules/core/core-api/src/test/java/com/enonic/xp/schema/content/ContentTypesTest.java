@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -48,8 +46,8 @@ public class ContentTypesTest
         ContentTypes contentTypes = ContentTypes.empty();
 
         List<ContentType> contentTypeList =
-            Lists.newArrayList( ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test1" ).build(),
-                                ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test2" ).build() );
+            List.of( ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test1" ).build(),
+                     ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test2" ).build() );
 
         ContentTypes newContentTypes = contentTypes.add( contentTypeList );
 
@@ -92,9 +90,9 @@ public class ContentTypesTest
                                ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test2" ).build() );
 
         List<ContentType> contentTypeList =
-            Lists.newArrayList( ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test1" ).build(),
-                                ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test2" ).build(),
-                                ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test3" ).build() );
+            List.of( ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test1" ).build(),
+                     ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test2" ).build(),
+                     ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test3" ).build() );
 
         assertEquals( 2, contentTypes.getSize() );
         assertEquals( 2, ContentTypes.from( contentTypes ).getSize() );

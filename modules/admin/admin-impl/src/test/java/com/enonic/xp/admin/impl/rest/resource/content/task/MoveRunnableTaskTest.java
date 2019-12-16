@@ -8,8 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentAccessException;
@@ -183,7 +181,7 @@ public class MoveRunnableTaskTest
         throws Exception
     {
         List<String> ids = contents.stream().map( content -> content.getId().toString() ).collect( Collectors.toList() );
-        ids.addAll( Lists.newArrayList( "id4", "id5", "id6", "id7", "id8", "id9" ) );
+        ids.addAll( List.of( "id4", "id5", "id6", "id7", "id8", "id9" ) );
         Mockito.when( params.getContentIds() ).thenReturn( ids );
 
         contents.addAll( contents.subList( 0, 3 ) );

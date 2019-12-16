@@ -8,7 +8,6 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
@@ -38,8 +37,8 @@ public class MediaInfoServiceTest
         service.setBinaryExtractor( source ->
                                     {
                                         Map<String, List<String>> data = new HashMap<>();
-                                        data.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( "image/jpeg" ) );
-                                        data.put( "myExtractedValue", Lists.newArrayList( "fisk" ) );
+                                        data.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpeg" ) );
+                                        data.put( "myExtractedValue", List.of( "fisk" ) );
 
                                         return ExtractedData.create().
                                             metadata( data ).

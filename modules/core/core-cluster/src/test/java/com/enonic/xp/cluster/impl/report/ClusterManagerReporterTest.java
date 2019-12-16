@@ -1,11 +1,12 @@
 package com.enonic.xp.cluster.impl.report;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.cluster.Cluster;
 import com.enonic.xp.cluster.ClusterHealth;
@@ -33,7 +34,7 @@ public class ClusterManagerReporterTest
         final Cluster cluster1 = createCluster( ClusterId.from( "cluster1" ) );
         final Cluster cluster2 = createCluster( ClusterId.from( "cluster2" ) );
 
-        final Clusters clusters = new Clusters( Lists.newArrayList( cluster1.getId(), cluster2.getId() ) );
+        final Clusters clusters = new Clusters( List.of( cluster1.getId(), cluster2.getId() ) );
         clusters.add( cluster1 );
         clusters.add( cluster2 );
 

@@ -16,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import com.google.common.net.HttpHeaders;
@@ -256,7 +255,7 @@ public class AbstractContentServiceTest
         xDataService = Mockito.mock( XDataService.class );
 
         Map<String, List<String>> metadata = new HashMap<>();
-        metadata.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( "image/jpg" ) );
+        metadata.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpg" ) );
 
         final ExtractedData extractedData = ExtractedData.create().
             metadata( metadata ).
