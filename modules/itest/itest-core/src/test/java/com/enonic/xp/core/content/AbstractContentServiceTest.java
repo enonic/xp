@@ -298,7 +298,9 @@ public class AbstractContentServiceTest
         contentService.setIndexService( indexService );
         contentService.setNodeService( nodeService );
         contentService.setRepositoryService( repositoryService );
-        contentService.initialize( Mockito.mock( ContentConfig.class ) );
+        final ContentConfig contentConfig = Mockito.mock( ContentConfig.class );
+        Mockito.when( contentConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
+        contentService.initialize( contentConfig );
 
         waitForClusterHealth();
     }
