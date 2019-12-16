@@ -3,6 +3,9 @@ package com.enonic.xp.region;
 
 import com.google.common.annotations.Beta;
 
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.page.DescriptorKey;
+
 @Beta
 public final class PartComponent
     extends DescriptorBasedComponent
@@ -14,12 +17,12 @@ public final class PartComponent
         super( builder );
     }
 
-    public static <T extends Builder<T>> Builder<T> create()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static <T extends Builder<T>> Builder<T> create( final PartComponent source )
+    public static Builder create( final PartComponent source )
     {
         return new Builder( source );
     }
@@ -36,8 +39,9 @@ public final class PartComponent
         return PartComponentType.INSTANCE;
     }
 
+    @Deprecated
     @Override
-    public ComponentName getName()
+    public ComponentName doGetName()
     {
         return NAME;
     }
@@ -57,8 +61,8 @@ public final class PartComponent
         return super.equals( o );
     }
 
-    public static class Builder<T extends Builder<T>>
-        extends DescriptorBasedComponent.Builder<T>
+    public static class Builder
+        extends DescriptorBasedComponent.Builder
     {
         private Builder()
         {
@@ -67,6 +71,39 @@ public final class PartComponent
         private Builder( final PartComponent source )
         {
             super( source );
+        }
+
+        @Deprecated
+        @Override
+        public Builder name( ComponentName value )
+        {
+            return this;
+        }
+
+        @Deprecated
+        public Builder name( String value )
+        {
+            return this;
+        }
+
+        @Override
+        public Builder descriptor( DescriptorKey value )
+        {
+            this.descriptor = value;
+            return this;
+        }
+
+        public Builder descriptor( String value )
+        {
+            this.descriptor = DescriptorKey.from( value );
+            return this;
+        }
+
+        @Override
+        public Builder config( final PropertyTree config )
+        {
+            this.config = config;
+            return this;
         }
 
         public PartComponent build()

@@ -42,8 +42,9 @@ public class FragmentComponent
         return FragmentComponentType.INSTANCE;
     }
 
+    @Deprecated
     @Override
-    public ComponentName getName()
+    public ComponentName doGetName()
     {
         return NAME;
     }
@@ -79,7 +80,7 @@ public class FragmentComponent
     }
 
     public static class Builder
-        extends Component.Builder<Builder>
+        extends Component.Builder
     {
         private ContentId fragment;
 
@@ -97,6 +98,19 @@ public class FragmentComponent
         public Builder fragment( final ContentId value )
         {
             this.fragment = value;
+            return this;
+        }
+
+        @Deprecated
+        @Override
+        public Builder name( ComponentName value )
+        {
+            return this;
+        }
+
+        @Deprecated
+        public Builder name( String value )
+        {
             return this;
         }
 

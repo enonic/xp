@@ -28,12 +28,12 @@ public class ImageComponent
         this.config = builder.config != null ? builder.config : new PropertyTree();
     }
 
-    public static <T extends Builder<T>> Builder<T> create()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static <T extends Builder<T>> Builder<T> create( final ImageComponent source )
+    public static Builder create( final ImageComponent source )
     {
         return new Builder( source );
     }
@@ -50,8 +50,9 @@ public class ImageComponent
         return ImageComponentType.INSTANCE;
     }
 
+    @Deprecated
     @Override
-    public ComponentName getName()
+    public ComponentName doGetName()
     {
         return NAME;
     }
@@ -114,8 +115,8 @@ public class ImageComponent
         return Objects.hash( super.hashCode(), image, config );
     }
 
-    public static class Builder<T extends Builder<T>>
-        extends Component.Builder<T>
+    public static class Builder
+        extends Component.Builder
     {
         private ContentId image;
 
@@ -133,16 +134,29 @@ public class ImageComponent
             config = source.config != null ? source.config.copy() : null;
         }
 
-        public T image( final ContentId value )
+        @Deprecated
+        @Override
+        public Builder name( ComponentName value )
         {
-            this.image = value;
-            return (T) this;
+            return this;
         }
 
-        public T config( final PropertyTree config )
+        @Deprecated
+        public Builder name( String value )
+        {
+            return this;
+        }
+
+        public Builder image( final ContentId value )
+        {
+            this.image = value;
+            return this;
+        }
+
+        public Builder config( final PropertyTree config )
         {
             this.config = config;
-            return (T) this;
+            return this;
         }
 
         public ImageComponent build()

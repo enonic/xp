@@ -16,7 +16,13 @@ public abstract class Component
 
     public abstract ComponentType getType();
 
-    public abstract ComponentName getName();
+    public ComponentName getName()
+    {
+        return doGetName();
+    }
+
+    @Deprecated
+    abstract protected ComponentName doGetName();
 
     public ComponentPath getPath()
     {
@@ -58,14 +64,13 @@ public abstract class Component
     {
         return MoreObjects.toStringHelper( this ).
             add( "type", getType() ).
+            add( "name", this.getName() ).
             add( "path", getPath() ).
             toString();
     }
 
-    public static class Builder<T extends Builder<T>>
+    public static class Builder
     {
-        protected ComponentName name;
-
         protected Builder()
         {
             // Default
@@ -73,6 +78,12 @@ public abstract class Component
 
         protected Builder( Component source )
         {
+        }
+
+        @Deprecated
+        public Builder name( ComponentName value )
+        {
+            return this;
         }
 
     }

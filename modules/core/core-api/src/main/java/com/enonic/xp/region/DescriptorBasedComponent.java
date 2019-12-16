@@ -69,8 +69,8 @@ public abstract class DescriptorBasedComponent
         return Objects.hash( super.hashCode(), config, descriptor );
     }
 
-    public static class Builder<T extends Builder<T>>
-        extends Component.Builder<T>
+    public static class Builder
+        extends Component.Builder
     {
         protected DescriptorKey descriptor;
 
@@ -88,22 +88,23 @@ public abstract class DescriptorBasedComponent
             this.descriptor = source.getDescriptor();
         }
 
-        public T descriptor( DescriptorKey value )
+        @Deprecated
+        @Override
+        public Builder name( ComponentName value )
+        {
+            return this;
+        }
+
+        public Builder descriptor( DescriptorKey value )
         {
             this.descriptor = value;
-            return (T) this;
+            return this;
         }
 
-        public T descriptor( String value )
-        {
-            this.descriptor = DescriptorKey.from( value );
-            return (T) this;
-        }
-
-        public T config( final PropertyTree config )
+        public Builder config( final PropertyTree config )
         {
             this.config = config;
-            return (T) this;
+            return this;
         }
     }
 }

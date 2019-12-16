@@ -18,12 +18,12 @@ public class TextComponent
         this.text = builder.text != null ? builder.text : "";
     }
 
-    public static <T extends Builder<T>> Builder<T> create()
+    public static Builder create()
     {
         return new Builder();
     }
 
-    public static <T extends Builder<T>> Builder<T> create( final TextComponent source )
+    public static Builder create( final TextComponent source )
     {
         return new Builder( source );
     }
@@ -38,6 +38,13 @@ public class TextComponent
     public ComponentType getType()
     {
         return TextComponentType.INSTANCE;
+    }
+
+    @Deprecated
+    @Override
+    protected ComponentName doGetName()
+    {
+        return NAME;
     }
 
     @Override
@@ -78,8 +85,8 @@ public class TextComponent
         return Objects.hash( super.hashCode(), text );
     }
 
-    public static class Builder<T extends Builder<T>>
-        extends Component.Builder<T>
+    public static class Builder
+        extends Component.Builder
 
     {
         private String text;
@@ -95,10 +102,23 @@ public class TextComponent
             text = source.text;
         }
 
-        public T text( String value )
+        @Deprecated
+        @Override
+        public Builder name( ComponentName value )
+        {
+            return this;
+        }
+
+        @Deprecated
+        public Builder name( String value )
+        {
+            return this;
+        }
+
+        public Builder text( String value )
         {
             this.text = value;
-            return (T) this;
+            return this;
         }
 
         public TextComponent build()
