@@ -168,12 +168,6 @@ public class FilterBuilderFactory
         Arrays.stream( createBooleanFilterChildren( booleanFilter.getMustNot() ) ).forEach( builder::mustNot );
         Arrays.stream( createBooleanFilterChildren( booleanFilter.getShould() ) ).forEach( builder::should );
 
-        //TODO Java10
-//        if ( booleanFilter.isCache() != null )
-//        {
-//            builder.cache( booleanFilter.isCache() );
-//        }
-
         return builder;
     }
 
@@ -205,12 +199,6 @@ public class FilterBuilderFactory
             includeLower( true ).
             includeUpper( true );
 
-        //TODO Java10
-//        if ( filter.isCache() != null )
-//        {
-//            builder.cache( filter.isCache() );
-//        }
-
         return builder;
     }
 
@@ -228,12 +216,6 @@ public class FilterBuilderFactory
         values.addAll( filter.getValues().stream().map( ValueHelper::getValueAsType ).collect( Collectors.toList() ) );
 
         final TermsQueryBuilder builder = new TermsQueryBuilder( queryFieldName, values );
-
-        //TODO Java10
-//        if ( filter.isCache() != null )
-//        {
-//            builder.cache( filter.isCache() );
-//        }
 
         return builder;
     }
