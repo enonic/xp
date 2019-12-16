@@ -1,5 +1,6 @@
 ext {
     slf4jVersion = '1.7.29'
+    log4jToSlf4jVersion = '2.13.0'
     felixVersion = '6.0.3'
     jettyVersion = '9.4.24.v20191120'
     jacksonVersion = '2.9.10'
