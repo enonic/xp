@@ -41,7 +41,7 @@ import static com.enonic.xp.web.servlet.ServletRequestUrlHelper.contentDispositi
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 @SuppressWarnings("UnusedDeclaration")
-@Path(ResourceConstants.REST_ROOT + "content/media")
+@Path(ResourceConstants.REST_ROOT + "{content:(content|cms/[^/]+/[^/]+)}/media")
 @Produces(MediaType.APPLICATION_OCTET_STREAM)
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")

@@ -37,7 +37,7 @@ import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Exceptions;
 
 
-@Path(ResourceConstants.REST_ROOT + "content/icon")
+@Path(ResourceConstants.REST_ROOT + "{content:(content|cms/[^/]+/[^/]+)}/icon")
 @Produces("image/*")
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")

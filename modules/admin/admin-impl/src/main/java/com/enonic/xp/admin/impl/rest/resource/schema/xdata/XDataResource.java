@@ -51,7 +51,7 @@ import com.enonic.xp.site.XDataMappings;
 
 import static java.util.stream.Collectors.toList;
 
-@Path(ResourceConstants.REST_ROOT + "schema/xdata")
+@Path(ResourceConstants.REST_ROOT + "{content:(schema|cms/[^/]+/[^/]+/schema)}/xdata")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
