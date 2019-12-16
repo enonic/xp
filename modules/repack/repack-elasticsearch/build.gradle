@@ -1,7 +1,7 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
-    compile ('org.elasticsearch.client:elasticsearch-rest-high-level-client:7.4.0') {
+    compile ("org.elasticsearch.client:elasticsearch-rest-high-level-client:${elasticsearchVersion}") {
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-cbor'
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-yaml'
         exclude group: 'org.yaml', module: 'snakeyaml'

@@ -4,7 +4,7 @@ dependencies {
     compile project( ':core:core-api' )
     compile project( ':script:script-api' )
     compile project( ':portal:portal-api' )
-    compile ('org.elasticsearch.client:elasticsearch-rest-high-level-client:7.4.0') {
+    compile ("org.elasticsearch.client:elasticsearch-rest-high-level-client:${elasticsearchVersion}") {
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-cbor'
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-yaml'
         exclude group: 'org.yaml', module: 'snakeyaml'

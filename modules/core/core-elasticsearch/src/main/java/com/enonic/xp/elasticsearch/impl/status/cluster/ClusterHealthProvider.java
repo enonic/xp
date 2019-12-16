@@ -1,11 +1,11 @@
 package com.enonic.xp.elasticsearch.impl.status.cluster;
 
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthAction;
+import java.io.IOException;
+
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequestBuilder;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.client.ClusterAdminClient;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -13,7 +13,7 @@ import org.osgi.service.component.annotations.Reference;
 public final class ClusterHealthProvider
     implements ClusterInfoProvider<ClusterHealth>
 {
-    private ClusterAdminClient clusterAdminClient;
+    private RestHighLevelClient restHighLevelClient;
 
     @Override
     public ClusterHealth getInfo()
@@ -24,7 +24,7 @@ public final class ClusterHealthProvider
             ClusterHealthResponse clusterHealthResponse = this.getClusterHealthResponse();
             builder.clusterHealthStatus( clusterHealthResponse.getStatus().toString() );
         }
-        catch ( ElasticsearchException ex )
+        catch ( Exception ex )
         {
             builder.errorMessage( ex.getClass().getSimpleName() + "[" + ex.getMessage() + "]" );
         }
@@ -33,20 +33,20 @@ public final class ClusterHealthProvider
     }
 
     private ClusterHealthResponse getClusterHealthResponse()
+        throws IOException
     {
         String[] indices = new String[]{};
 
-        final ClusterHealthRequest request = new ClusterHealthRequestBuilder( clusterAdminClient, ClusterHealthAction.INSTANCE ).
-            setTimeout( CLUSTER_HEALTH_TIMEOUT ).
-            setIndices( indices ).
-            request();
+        final ClusterHealthRequest request = new ClusterHealthRequest().
+            timeout( CLUSTER_HEALTH_TIMEOUT ).
+            indices( indices );
 
-        return clusterAdminClient.health( request ).actionGet();
+        return restHighLevelClient.cluster().health( request, RequestOptions.DEFAULT );
     }
 
     @Reference
-    public void setClusterAdminClient( ClusterAdminClient clusterAdminClient )
+    public void setClusterAdminClient( RestHighLevelClient restHighLevelClient )
     {
-        this.clusterAdminClient = clusterAdminClient;
+        this.restHighLevelClient = restHighLevelClient;
     }
 }

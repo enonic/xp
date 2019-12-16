@@ -3,10 +3,9 @@ package com.enonic.xp.elasticsearch.impl.status.index;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.elasticsearch.action.admin.cluster.state.ClusterStateAction;
-import org.elasticsearch.action.admin.cluster.state.ClusterStateRequestBuilder;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
-import org.elasticsearch.client.AdminClient;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.elasticsearch.cluster.routing.RoutingTable;
@@ -20,7 +19,7 @@ public class IndexReportProvider
 {
     private static final String TIMEOUT = "3s";
 
-    private AdminClient adminClient;
+    private RestHighLevelClient restHighLevelClient;
 
     public IndexReport getInfo()
     {
@@ -95,16 +94,16 @@ public class IndexReportProvider
 
     private ClusterStateResponse getClusterState()
     {
-        return new ClusterStateRequestBuilder( adminClient.cluster(), ClusterStateAction.INSTANCE ).
+        new ClusterStateRequest().
             clear().
-            setRoutingTable( true ).
-            setNodes( true ).
-            get( TIMEOUT );
+            routingTable( true ).
+            nodes( true );
+        return null;
     }
 
     @Reference
-    public void setAdminClient( AdminClient adminClient )
+    public void setClusterAdminClient( RestHighLevelClient restHighLevelClient )
     {
-        this.adminClient = adminClient;
+        this.restHighLevelClient = restHighLevelClient;
     }
 }

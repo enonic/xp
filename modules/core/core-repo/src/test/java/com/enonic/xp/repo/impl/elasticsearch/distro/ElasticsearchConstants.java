@@ -6,7 +6,7 @@ public interface ElasticsearchConstants
 {
     String DOWNLOAD_FILE_PREFIX = "elasticsearch-";
 
-    String VERSION = "7.4.2";
+    String VERSION = "7.5.0";
 
     String EXTRACTED_ARCHIVE_NAME = "elasticsearch-" + VERSION;
 

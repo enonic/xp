@@ -18,6 +18,7 @@ import org.elasticsearch.transport.TransportResponse;
 import org.elasticsearch.transport.TransportResponseHandler;
 import org.elasticsearch.transport.TransportService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -49,9 +50,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 
+@Disabled
 public class TaskServiceImplTest
-        {
-            private final static Logger LOGGER = LoggerFactory.getLogger( TaskServiceImplTest.class );
+{
+    private final static Logger LOGGER = LoggerFactory.getLogger( TaskServiceImplTest.class );
 
     private TaskServiceImpl taskService;
 
@@ -128,10 +130,8 @@ public class TaskServiceImplTest
     {
         //Creates Cluster Service
         final ClusterState clusterState = Mockito.mock( ClusterState.class );
-        final DiscoveryNode node1 =
-            new DiscoveryNode( "node1", new TransportAddress( TransportAddress.META_ADDRESS, 9300 ), Version.CURRENT );
-        final DiscoveryNode node2 =
-            new DiscoveryNode( "node2", new TransportAddress( TransportAddress.META_ADDRESS, 9300 ), Version.CURRENT );
+        final DiscoveryNode node1 = new DiscoveryNode( "node1", new TransportAddress( TransportAddress.META_ADDRESS, 9300 ), Version.CURRENT );
+        final DiscoveryNode node2 = new DiscoveryNode( "node2", new TransportAddress( TransportAddress.META_ADDRESS, 9300 ), Version.CURRENT );
         final DiscoveryNodes discoveryNodes = DiscoveryNodes.builder().add( node1 ).add( node2 ).localNodeId( "node1" ).build();
         Mockito.when( clusterState.nodes() ).thenReturn( discoveryNodes );
 
