@@ -7,6 +7,9 @@ import javax.ws.rs.core.MediaType;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.google.common.collect.Lists;
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.project.CreateProjectParams;
@@ -15,6 +18,8 @@ import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
+import com.enonic.xp.web.multipart.MultipartForm;
+import com.enonic.xp.web.multipart.MultipartItem;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -84,9 +89,11 @@ public class ProjectResourceTest
 
         Mockito.when( projectService.create( Mockito.isA( CreateProjectParams.class ) ) ).thenThrow( e );
 
+        createForm();
+
         assertThrows( IllegalArgumentException.class, () -> {
             request().path( "project/create" ).
-                entity( readFromFile( "create_project_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+                entity( readFromFile( "create_project_params.json" ), MediaType.MULTIPART_FORM_DATA_TYPE ).
                 post().getAsString();
         } );
     }
@@ -103,8 +110,10 @@ public class ProjectResourceTest
 
         Mockito.when( projectService.create( Mockito.isA( CreateProjectParams.class ) ) ).thenReturn( project1 );
 
+        createForm();
+
         String jsonString = request().path( "project/create" ).
-            entity( readFromFile( "create_project_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            multipart( "icon", "logo.png", readFromFile( "create_project_params.json" ).getBytes(), MediaType.MULTIPART_FORM_DATA_TYPE ).
             post().getAsString();
 
         assertJson( "create_project_success.json", jsonString );
@@ -122,8 +131,10 @@ public class ProjectResourceTest
 
         Mockito.when( projectService.modify( Mockito.isA( ModifyProjectParams.class ) ) ).thenReturn( project1 );
 
+        createForm();
+
         String jsonString = request().path( "project/modify" ).
-            entity( readFromFile( "create_project_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            entity( readFromFile( "create_project_params.json" ), MediaType.MULTIPART_FORM_DATA_TYPE ).
             post().getAsString();
 
         assertJson( "create_project_success.json", jsonString );
@@ -152,5 +163,33 @@ public class ProjectResourceTest
             description( description ).
             icon( icon ).
             build();
+    }
+
+    private MultipartForm createForm()
+    {
+        final MultipartForm form = Mockito.mock( MultipartForm.class );
+
+        final MultipartItem file = createItem( "icon", "logo.png", 10, "png", "image/png" );
+
+        Mockito.when( form.iterator() ).thenReturn( Lists.newArrayList( file ).iterator() );
+        Mockito.when( form.get( "icon" ) ).thenReturn( file );
+        Mockito.when( form.getAsString( "name" ) ).thenReturn( "com.enonic.cms.projname" );
+        Mockito.when( form.getAsString( "displayName" ) ).thenReturn( "Project Display Name" );
+        Mockito.when( form.getAsString( "description" ) ).thenReturn( "project Description" );
+
+        Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
+
+        return form;
+    }
+
+    private MultipartItem createItem( final String name, final String fileName, final long size, final String ext, final String type )
+    {
+        final MultipartItem item = Mockito.mock( MultipartItem.class );
+        Mockito.when( item.getName() ).thenReturn( name );
+        Mockito.when( item.getFileName() ).thenReturn( fileName + "." + ext );
+        Mockito.when( item.getContentType() ).thenReturn( com.google.common.net.MediaType.parse( type ) );
+        Mockito.when( item.getSize() ).thenReturn( size );
+        Mockito.when( item.getBytes() ).thenReturn( ByteSource.wrap( name.getBytes() ) );
+        return item;
     }
 }
