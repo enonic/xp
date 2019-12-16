@@ -426,16 +426,5 @@
         }
       }
     }
-  ],
-  "properties": {
-    "_ts": {
-      "type": "date"
-    },
-    "_manualordervalue": {
-      "type": "long"
-    },
-    "branch": {
-      "type": "keyword"
-    }
-  }
+  ]
 }

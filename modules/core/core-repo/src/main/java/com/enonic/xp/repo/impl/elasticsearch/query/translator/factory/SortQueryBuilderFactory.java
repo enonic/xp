@@ -22,8 +22,6 @@ public class SortQueryBuilderFactory
         super( fieldNameResolver );
     }
 
-    private static final boolean IGNORE_UNMAPPED = true;
-
     public List<SortBuilder> create( final Collection<OrderExpr> orderExpressions )
     {
         return doCreate( orderExpressions );
@@ -55,10 +53,14 @@ public class SortQueryBuilderFactory
 
     private SortBuilder createFieldSortBuilder( final FieldOrderExpr fieldOrderExpr )
     {
-        final FieldSortBuilder fieldSortBuilder =
-            new FieldSortBuilder( fieldNameResolver.resolveOrderByFieldName( fieldOrderExpr.getField().getFieldPath() ) );
+        final String fieldName = fieldNameResolver.resolveOrderByFieldName( fieldOrderExpr.getField().getFieldPath() );
+        final FieldSortBuilder fieldSortBuilder = new FieldSortBuilder( fieldName );
         fieldSortBuilder.order( SortOrder.valueOf( fieldOrderExpr.getDirection().name() ) );
-        fieldSortBuilder.unmappedType( "long" );
+
+        if ( !"_score".equals( fieldName ) )
+        {
+            fieldSortBuilder.unmappedType( "long" );
+        }
 
         return fieldSortBuilder;
     }

@@ -13,7 +13,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public class SearchQueryFieldNameResolver
     extends AbstractQueryFieldNameResolver
 {
-    private final static List<String> BUILT_IN_FIELDS = Lists.newArrayList( "_score", "_id", "_ts", "_manualordervalue" );
+    private final static List<String> BUILT_IN_FIELDS = Lists.newArrayList( "_score", "_id" );
 
 
     @Override
