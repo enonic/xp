@@ -34,9 +34,6 @@ addBundle( 'javax.mail:mail:1.4.7', 5 )
 // Java Cryptography Extension
 addBundle( 'org.bouncycastle:bcprov-jdk15on:1.54', 6 )
 
-// JNA required for ElasticSearch
-addBundle( 'net.java.dev.jna:jna:4.1.0', 6)
-
 // Library dependencies
 addBundle( 'com.google.guava:guava:26.0-jre', 8 )
 addBundle( 'commons-lang:commons-lang:2.4', 8 )
