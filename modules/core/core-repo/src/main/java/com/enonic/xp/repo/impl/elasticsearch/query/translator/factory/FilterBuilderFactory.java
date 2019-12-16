@@ -129,18 +129,7 @@ public class FilterBuilderFactory
             boolQueryBuilder.mustNot( doCreateFilterBuilder( indicesFilter.getNoMatchFilter() ) );
         }
 
-        return boolQueryBuilder; // TODO ES:
-
-//        boolQueryBuilder.filter( doCreateFilterBuilder( indicesFilter.getFilter() ), indicesFilter.getIndices() );
-//        final IndicesQueryBuilder builder =
-//            new IndicesQueryBuilder( doCreateFilterBuilder( indicesFilter.getFilter() ), indicesFilter.getIndices() );
-//
-//        if ( indicesFilter.getNoMatchFilter() != null )
-//        {
-//            builder.noMatchQuery( doCreateFilterBuilder( indicesFilter.getNoMatchFilter() ) );
-//        }
-//
-//        return builder;
+        return boolQueryBuilder;
     }
 
     private QueryBuilder createIdFilter( final IdFilter idFilter )
