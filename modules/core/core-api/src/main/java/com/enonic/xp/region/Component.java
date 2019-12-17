@@ -16,6 +16,7 @@ public abstract class Component
 
     public abstract ComponentType getType();
 
+    @Deprecated
     public ComponentName getName()
     {
         return doGetName();

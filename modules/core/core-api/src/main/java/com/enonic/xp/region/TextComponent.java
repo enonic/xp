@@ -47,6 +47,7 @@ public class TextComponent
         return NAME;
     }
 
+    @Deprecated
     @Override
     public ComponentName getName()
     {
