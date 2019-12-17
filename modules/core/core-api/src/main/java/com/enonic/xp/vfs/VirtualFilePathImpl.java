@@ -5,7 +5,6 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -98,7 +97,7 @@ class VirtualFilePathImpl
 
     String join()
     {
-        return Joiner.on( SEPARATOR ).join( elements );
+        return String.join( SEPARATOR, elements );
     }
 
     @Override

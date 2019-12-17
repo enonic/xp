@@ -3,7 +3,6 @@ package com.enonic.xp.web.servlet;
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.net.HostAndPort;
 import com.google.common.net.HttpHeaders;
@@ -229,7 +228,7 @@ public final class ServletRequestUrlHelper
         }
 
         final Iterable<String> parts = Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value );
-        return "/" + Joiner.on( '/' ).join( parts );
+        return "/" + String.join( "/", parts );
     }
 
     public static String contentDispositionAttachment( final String fileName )

@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.controller;
 
 import java.net.URL;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,8 +12,6 @@ import org.osgi.framework.BundleContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -124,11 +121,5 @@ public abstract class AbstractControllerTest
         final String actualStr = this.mapper.writeValueAsString( actualJson );
 
         assertEquals( expectedStr, actualStr );
-    }
-
-    private String normalizeHTMLString( final String text )
-    {
-        final Iterable<String> lines = Splitter.on( Pattern.compile( "(\r\n|\n|\r)" ) ).trimResults().split( text );
-        return Joiner.on( "" ).join( lines );
     }
 }
