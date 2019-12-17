@@ -1,7 +1,9 @@
 package com.enonic.xp.impl.task.cluster;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.elasticsearch.common.io.stream.StreamInput;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportException;
 import org.elasticsearch.transport.TransportResponseHandler;
@@ -30,7 +32,6 @@ public class TaskTransportResponseHandler
     }
 
 
-    @Override
     public TaskTransportResponse newInstance()
     {
         return new TaskTransportResponse();
@@ -86,5 +87,12 @@ public class TaskTransportResponseHandler
         return taskInfos.build();
 
 
+    }
+
+    @Override
+    public TaskTransportResponse read( final StreamInput in )
+        throws IOException
+    {
+        return null;
     }
 }

@@ -28,9 +28,13 @@ abstract class AbstractXContentBuilderFactory
         if ( value instanceof String )
         {
             value = IndexValueNormalizer.normalize( (String) value );
+            result.field( name, value );
         }
 
-        result.field( name, value );
+        if ( value instanceof Iterable )
+        {
+            result.field( name, (Iterable<?>) value );
+        }
     }
 
 

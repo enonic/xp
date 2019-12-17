@@ -1,11 +1,11 @@
 package com.enonic.xp.repo.impl.node.json;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -45,7 +45,7 @@ public final class AccessControlJson
             return null;
         }
 
-        final List<AccessControlEntryJson> entryJsonList = Lists.newArrayList();
+        final List<AccessControlEntryJson> entryJsonList = new ArrayList<>();
         for ( final AccessControlEntry entry : acl )
         {
             entryJsonList.add( AccessControlEntryJson.toJson( entry ) );

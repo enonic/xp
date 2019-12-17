@@ -45,7 +45,6 @@
       "ngram_index_front": {
         "type": "custom",
         "filter": [
-          "standard",
           "lowercase",
           "asciifolding",
           "word_delimiter",
@@ -56,7 +55,6 @@
       "ngram_index": {
         "type": "custom",
         "filter": [
-          "standard",
           "lowercase",
           "asciifolding",
           "word_delimiter",
@@ -67,7 +65,6 @@
       "ngram_search_default": {
         "type": "custom",
         "filter": [
-          "standard",
           "lowercase",
           "asciifolding",
           "word_delimiter"
@@ -77,7 +74,6 @@
       "fulltext_search_default": {
         "type": "custom",
         "filter": [
-          "standard",
           "lowercase",
           "asciifolding",
           "word_delimiter"
@@ -87,7 +83,6 @@
       "document_index_default": {
         "type": "custom",
         "filter": [
-          "standard",
           "lowercase",
           "asciifolding",
           "word_delimiter"
@@ -97,7 +92,6 @@
       "all_field_analyzer": {
         "type": "custom",
         "filter": [
-          "standard",
           "lowercase",
           "asciifolding",
           "front_ngram"

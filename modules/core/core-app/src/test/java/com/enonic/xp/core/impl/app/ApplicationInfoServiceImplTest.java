@@ -53,7 +53,8 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskDescriptorService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ApplicationInfoServiceImplTest
 {

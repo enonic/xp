@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -14,9 +15,7 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 
-import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
@@ -113,7 +112,7 @@ public class FileDumpReader
 
         final String[] repoIds = repoRootPath.toFile().list();
 
-        final List<RepositoryId> repositories = Lists.newArrayList();
+        final List<RepositoryId> repositories = new ArrayList<>();
 
         for ( final String repoId : repoIds )
         {
@@ -140,7 +139,7 @@ public class FileDumpReader
 
         final String[] branchFiles = branchRootPath.toFile().list();
 
-        final List<Branch> branches = Lists.newArrayList();
+        final List<Branch> branches = new ArrayList<>();
 
         for ( final String branch : branchFiles )
         {
@@ -359,16 +358,7 @@ public class FileDumpReader
     private String readEntry( final TarArchiveInputStream tarInputStream )
         throws IOException
     {
-        byte[] bytesToRead = new byte[1024];
-        ByteArrayOutputStream entryAsByteStream = new ByteArrayOutputStream();
-        int length;
-        while ( ( length = tarInputStream.read( bytesToRead ) ) != -1 )
-        {
-            entryAsByteStream.write( bytesToRead, 0, length );
-        }
-        entryAsByteStream.close();
-
-        return entryAsByteStream.toString( StandardCharsets.UTF_8.name() );
+        return new String( tarInputStream.readAllBytes(), StandardCharsets.UTF_8 );
     }
 
     @Override

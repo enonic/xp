@@ -20,8 +20,8 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
-import com.enonic.xp.highlight.HighlightedProperty;
 import com.enonic.xp.highlight.HighlightedProperties;
+import com.enonic.xp.highlight.HighlightedProperty;
 
 public class QueryContentHandlerTest
     extends BaseContentHandlerTest

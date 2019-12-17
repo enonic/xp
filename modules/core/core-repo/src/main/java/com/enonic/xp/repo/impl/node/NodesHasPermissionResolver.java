@@ -131,6 +131,7 @@ public class NodesHasPermissionResolver
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

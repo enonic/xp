@@ -18,7 +18,7 @@ class TermsAggregationFactory
             build();
     }
 
-    private static Buckets createBuckets( final Collection<Terms.Bucket> buckets )
+    private static Buckets createBuckets( final Collection<? extends Terms.Bucket> buckets )
     {
         final Buckets.Builder bucketsBuilder = new Buckets.Builder();
 

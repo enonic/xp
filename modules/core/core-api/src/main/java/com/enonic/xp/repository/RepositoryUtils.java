@@ -3,9 +3,9 @@ package com.enonic.xp.repository;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.enonic.xp.content.ContentConstants;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public final class RepositoryUtils
 {
@@ -16,7 +16,7 @@ public final class RepositoryUtils
 
     public static RepositoryId fromContentRepoName( final String name )
     {
-        if ( StringUtils.isBlank( name ) )
+        if ( nullToEmpty( name ).isBlank() )
         {
             return null;
         }
@@ -36,7 +36,7 @@ public final class RepositoryUtils
 
     private static String extractContentRepoName( final RepositoryId repositoryId )
     {
-        if ( repositoryId == null || StringUtils.isBlank( repositoryId.toString() ) )
+        if ( repositoryId == null || nullToEmpty( repositoryId.toString() ).isBlank() )
         {
             return null;
         }

@@ -10,7 +10,7 @@ import org.osgi.framework.Bundle;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.support.ResourceTestHelper;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ApplicationDescriptorBuilderTest
 {

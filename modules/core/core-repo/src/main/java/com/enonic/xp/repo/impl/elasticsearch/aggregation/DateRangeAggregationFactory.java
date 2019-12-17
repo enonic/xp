@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.aggregation;
 
 import java.util.Collection;
 
-import org.elasticsearch.search.aggregations.bucket.range.date.InternalDateRange;
+import org.elasticsearch.search.aggregations.bucket.range.InternalDateRange;
 import org.joda.time.DateTime;
 
 import com.enonic.xp.aggregation.BucketAggregation;

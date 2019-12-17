@@ -1,8 +1,7 @@
 package com.enonic.xp.portal.impl.processor;
 
+import java.util.HashSet;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.form.Input;
@@ -13,7 +12,7 @@ public class HtmlAreaVisitor
     extends InputVisitor
 {
 
-    private Set<FormItemPath> paths = Sets.newHashSet();
+    private Set<FormItemPath> paths = new HashSet<>();
 
     @Override
     public void visit( final Input input )

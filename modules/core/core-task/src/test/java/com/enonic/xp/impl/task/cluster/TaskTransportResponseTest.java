@@ -17,7 +17,7 @@ import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskState;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TaskTransportResponseTest
 {
@@ -49,7 +49,7 @@ public class TaskTransportResponseTest
         oldResponse.writeTo( streamOutput );
 
         final TaskTransportResponse newResponse = new TaskTransportResponse();
-        final StreamInput bytesStreamInput = new ByteBufferStreamInput( ByteBuffer.wrap( streamOutput.bytes().array() ) );
+        final StreamInput bytesStreamInput = new ByteBufferStreamInput( ByteBuffer.wrap( streamOutput.bytes().toBytesRef().bytes ) );
         newResponse.readFrom( bytesStreamInput );
 
         assertEquals( oldResponse.getTaskInfos(), newResponse.getTaskInfos() );

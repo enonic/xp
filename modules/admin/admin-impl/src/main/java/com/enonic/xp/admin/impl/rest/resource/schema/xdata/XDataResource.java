@@ -1,6 +1,8 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.xdata;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -12,12 +14,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.admin.impl.json.schema.xdata.XDataJson;
 import com.enonic.xp.admin.impl.json.schema.xdata.XDataListJson;
@@ -50,6 +48,7 @@ import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.XDataMappings;
 
+import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.stream.Collectors.toList;
 
 @Path(ResourceConstants.REST_ROOT + "schema/xdata")
@@ -82,7 +81,7 @@ public final class XDataResource
 
         final XDataListJson result = new XDataListJson();
 
-        final Map<XData, Boolean> resultXData = Maps.newLinkedHashMap();
+        final Map<XData, Boolean> resultXData = new LinkedHashMap<>();
 
         getContentTypeXData( content ).
             forEach( xData -> resultXData.putIfAbsent( xData, false ) );
@@ -132,7 +131,7 @@ public final class XDataResource
 
     private Map<XData, Boolean> getSiteXData( final Content content )
     {
-        final Map<XData, Boolean> result = Maps.newLinkedHashMap();
+        final Map<XData, Boolean> result = new LinkedHashMap<>();
 
         final Site nearestSite = this.contentService.getNearestSite( content.getId() );
 
@@ -159,7 +158,7 @@ public final class XDataResource
 
     private Map<XData, Boolean> getXDatasByContentType( final XDataMappings xDataMappings, final ContentTypeName contentTypeName )
     {
-        final Map<XData, Boolean> result = Maps.newLinkedHashMap();
+        final Map<XData, Boolean> result = new LinkedHashMap<>();
 
         filterXDataMappingsByContentType( xDataMappings, contentTypeName ).
             forEach( xDataMapping -> {
@@ -176,7 +175,7 @@ public final class XDataResource
     private Boolean isXDataAllowed( final XDataName xDataName, final String allowContentType, final ContentTypeName contentTypeName )
     {
 
-        if ( StringUtils.isBlank( allowContentType ) )
+        if ( nullToEmpty( allowContentType ).isBlank() )
         {
             return true;
         }
@@ -190,7 +189,7 @@ public final class XDataResource
             new ContentTypeNameWildcardResolver( this.contentTypeService );
 
         final List<String> allowContentTypes =
-            StringUtils.isNotBlank( allowContentType ) ? Collections.singletonList( allowContentType ) : Lists.newArrayList();
+            nullToEmpty( allowContentType ).isBlank() ? new ArrayList<>() : Collections.singletonList( allowContentType );
 
         if ( contentTypeNameWildcardResolver.anyTypeHasWildcard( allowContentTypes ) )
         {

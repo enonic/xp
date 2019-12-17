@@ -6,7 +6,7 @@ import java.util.Set;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.suggest.SuggestBuilder;
+import org.elasticsearch.search.suggest.SuggestionBuilder;
 
 import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeQuery;
@@ -69,7 +69,7 @@ public class ESQueryTranslator
         final Set<AbstractAggregationBuilder> aggregations =
             new AggregationQueryBuilderFactory( queryTypeTranslator.getFieldNameResolver() ).create( query.getAggregationQueries() );
 
-        final Set<SuggestBuilder.SuggestionBuilder> suggestions =
+        final Set<SuggestionBuilder> suggestions =
             new SuggestionQueryBuilderFactory( queryTypeTranslator.getFieldNameResolver() ).create( query.getSuggestionQueries() );
 
         final ElasticHighlightQuery highlight = new ElasticHighlightQueryBuilderFactory().create( query.getHighlight() );
@@ -82,7 +82,6 @@ public class ESQueryTranslator
 
         return ElasticsearchQuery.create().
             addIndexNames( esSource.getIndexNames() ).
-            addIndexTypes( esSource.getIndexTypes() ).
             query( queryBuilder ).
             from( query.getFrom() ).
             size( query.getSize() ).

@@ -1,9 +1,8 @@
 package com.enonic.xp.impl.server.rest.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.dump.BranchDumpResult;
 import com.enonic.xp.dump.RepoDumpResult;
@@ -72,9 +71,9 @@ public class RepoDumpResultJson
 
     public static final class Builder
     {
-        private final List<BranchDumpResultJson> branches = Lists.newArrayList();
+        private final List<BranchDumpResultJson> branches = new ArrayList<>();
 
-        private List<DumpErrorJson> versionsErrors = Lists.newArrayList();
+        private List<DumpErrorJson> versionsErrors = new ArrayList<>();
 
         private String repository;
 

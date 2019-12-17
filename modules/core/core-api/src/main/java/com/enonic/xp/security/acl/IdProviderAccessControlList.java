@@ -1,12 +1,12 @@
 package com.enonic.xp.security.acl;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -109,12 +109,12 @@ public final class IdProviderAccessControlList
 
         private Builder()
         {
-            this.entries = Maps.newHashMap();
+            this.entries = new HashMap<>();
         }
 
         private Builder( final IdProviderAccessControlList acl )
         {
-            this.entries = Maps.newHashMap();
+            this.entries = new HashMap<>();
             this.entries.putAll( acl.entries );
         }
 

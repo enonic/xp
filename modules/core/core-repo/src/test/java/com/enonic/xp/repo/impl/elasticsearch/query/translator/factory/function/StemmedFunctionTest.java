@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
 import java.lang.reflect.Field;
-import java.util.Collections;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +14,7 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.BaseTestBu
 import com.enonic.xp.repo.impl.index.IndexStemmedController;
 import com.enonic.xp.repo.impl.index.StemmedIndexValueType;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StemmedFunctionTest
     extends BaseTestBuilderFactory

@@ -1,26 +1,19 @@
 package com.enonic.xp.core.impl.i18n;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.collect.Maps;
-
 import com.enonic.xp.i18n.MessageBundle;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class MessageBundleImpl
     implements MessageBundle
 {
-    private static final String UTF_8_ENCODING = "UTF-8";
-
-    private static final String LATIN_1_ENCODING = "ISO-8859-1";
-
     private final Properties properties;
 
     MessageBundleImpl( final Properties properties )
@@ -38,7 +31,7 @@ final class MessageBundleImpl
     public String localize( final String key, final Object... args )
     {
         final String message = doGetMessage( key );
-        return StringUtils.isNotEmpty( message ) ? format( message, args ) : null;
+        return isNullOrEmpty( message ) ? null : format( message, args );
     }
 
     @Override
@@ -54,35 +47,13 @@ final class MessageBundleImpl
 
     private String doGetMessage( final String key )
     {
-        return handleGetObject( key ).toString();
-    }
-
-    private Object handleGetObject( String key )
-    {
-        return createUTF8EncodedPhrase( (String) this.properties.get( key ) );
-    }
-
-    private String createUTF8EncodedPhrase( String localizedPhrase )
-    {
-        if ( StringUtils.isBlank( localizedPhrase ) )
-        {
-            return "";
-        }
-
-        try
-        {
-            return new String( localizedPhrase.getBytes( LATIN_1_ENCODING ), StandardCharsets.UTF_8 );
-        }
-        catch ( final UnsupportedEncodingException e )
-        {
-            return localizedPhrase;
-        }
+        return this.properties.getProperty( key, "" );
     }
 
     @Override
     public Map<String, String> asMap()
     {
-        final Map<String, String> map = Maps.newHashMap();
+        final Map<String, String> map = new HashMap<>();
         for ( final Object key : this.properties.keySet() )
         {
             map.put( key.toString(), doGetMessage( key.toString() ) );

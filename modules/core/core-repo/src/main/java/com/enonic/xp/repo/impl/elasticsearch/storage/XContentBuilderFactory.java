@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.storage;
 
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
@@ -36,7 +37,18 @@ class XContentBuilderFactory
     private static XContentBuilder startBuilder()
         throws Exception
     {
-        final XContentBuilder result = XContentFactory.jsonBuilder();
+        Thread thread = Thread.currentThread();
+        ClassLoader contextClassLoader = thread.getContextClassLoader();
+        thread.setContextClassLoader( RestHighLevelClient.class.getClassLoader() );
+        final XContentBuilder result;
+        try
+        {
+            result = XContentFactory.jsonBuilder();
+        }
+        finally
+        {
+            thread.setContextClassLoader( contextClassLoader );
+        }
         result.startObject();
 
         return result;

@@ -2,26 +2,26 @@ package com.enonic.xp.aggregation;
 
 
 import java.time.Instant;
-import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class DateRangeBucketTest
+class DateRangeBucketTest
 {
     @Test
-    public void builder()
+    void builder()
     {
         DateRangeBucket.Builder builder = DateRangeBucket.create();
 
-        long timeFrom = System.currentTimeMillis();
-        Instant instantFrom = new Date( timeFrom ).toInstant();
+        final long now = System.currentTimeMillis();
+        long timeFrom = now - 1;
+        Instant instantFrom = Instant.ofEpochMilli( timeFrom );
         builder.from( instantFrom );
 
-        long timeTo = System.currentTimeMillis();
-        Instant instantTo = new Date( timeTo ).toInstant();
+        long timeTo = now + 1;
+        Instant instantTo = Instant.ofEpochMilli( timeTo );
         builder.to( instantTo );
 
         DateRangeBucket dateRangeBucket = builder.build();

@@ -9,7 +9,7 @@ import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QueryBuilderFactoryTest
     extends BaseTestBuilderFactory

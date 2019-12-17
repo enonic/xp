@@ -1,10 +1,8 @@
 package com.enonic.xp.audit;
 
-import java.net.URI;
 import java.time.Instant;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
@@ -23,8 +21,6 @@ public class AuditLog
 
     private final PrincipalKey user;
 
-    private final String message;
-
     private final AuditLogUris objectUris;
 
     private final PropertyTree data;
@@ -36,7 +32,6 @@ public class AuditLog
         time = requireNonNull( builder.time, "time is required for AuditLog" );
         source = requireNonNull( builder.source, "source is required for AuditLog" );
         user = requireNonNull( builder.user, "user is required for AuditLog" );
-        message = requireNonNull( builder.message, "message is required for AuditLog" );
         objectUris = requireNonNull( builder.objectUris, "objectUris is required for AuditLog" );
         data = requireNonNull( builder.data, "data is required for AuditLog" );
     }
@@ -66,11 +61,6 @@ public class AuditLog
         return user;
     }
 
-    public String getMessage()
-    {
-        return message;
-    }
-
     public AuditLogUris getObjectUris()
     {
         return objectUris;
@@ -95,14 +85,14 @@ public class AuditLog
         final AuditLog auditLog = (AuditLog) o;
         return Objects.equal( id, auditLog.id ) && Objects.equal( type, auditLog.type ) && Objects.equal( time, auditLog.time ) &&
             Objects.equal( source, auditLog.source ) && Objects.equal( user, auditLog.user ) &&
-            Objects.equal( message, auditLog.message ) && Objects.equal( objectUris, auditLog.objectUris ) &&
+            Objects.equal( objectUris, auditLog.objectUris ) &&
             Objects.equal( data, auditLog.data );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( id, type, time, source, user, message, objectUris, data );
+        return Objects.hashCode( id, type, time, source, user, objectUris, data );
     }
 
     public static Builder create()
@@ -121,8 +111,6 @@ public class AuditLog
         private String source;
 
         private PrincipalKey user;
-
-        private String message;
 
         private AuditLogUris objectUris;
 
@@ -155,12 +143,6 @@ public class AuditLog
         public Builder user( final PrincipalKey val )
         {
             user = val;
-            return this;
-        }
-
-        public Builder message( final String val )
-        {
-            message = val;
             return this;
         }
 

@@ -1,11 +1,10 @@
 package com.enonic.xp.node;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 @Beta
 public class PushNodesResult
@@ -41,7 +40,7 @@ public class PushNodesResult
 
         private final ImmutableSet.Builder<Failed> failed = ImmutableSet.builder();
 
-        private final Set<NodePath> addedParentPaths = Sets.newHashSet();
+        private final Set<NodePath> addedParentPaths = new HashSet<>();
 
         protected Builder()
         {

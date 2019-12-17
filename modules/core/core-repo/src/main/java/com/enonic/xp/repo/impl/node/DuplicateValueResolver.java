@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.node.NodeName;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 abstract class DuplicateValueResolver
 {
@@ -123,7 +123,7 @@ abstract class DuplicateValueResolver
                 }
                 else if ( hasCopyCountNumber( counterToken, separator ) )
                 {
-                    duplicateName.copyCounter = new Integer( counterToken.substring( 1 ) );
+                    duplicateName.copyCounter = Integer.valueOf( counterToken.substring( 1 ) );
                 }
                 else
                 {
@@ -146,7 +146,7 @@ abstract class DuplicateValueResolver
 
         static boolean isFirstCopy( final String counterToken )
         {
-            return Strings.isNullOrEmpty( counterToken );
+            return isNullOrEmpty( counterToken );
         }
 
         @Override

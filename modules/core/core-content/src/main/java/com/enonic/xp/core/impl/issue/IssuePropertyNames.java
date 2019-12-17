@@ -1,6 +1,8 @@
 package com.enonic.xp.core.impl.issue;
 
 
+import com.enonic.xp.index.IndexPath;
+
 public final class IssuePropertyNames
 {
     public static final String CREATOR = "creator";
@@ -23,7 +25,7 @@ public final class IssuePropertyNames
 
     public static final String PUBLISH_REQUEST = "publishRequest";
 
-    public static final String PUBLISH_REQUEST_ITEM_ID = PUBLISH_REQUEST + ".items.itemId";
+    public static final String PUBLISH_REQUEST_ITEM_ID = String.join( IndexPath.DIVIDER, PUBLISH_REQUEST, "items", "itemId" );
 
     public static final String TYPE = "type";
 }

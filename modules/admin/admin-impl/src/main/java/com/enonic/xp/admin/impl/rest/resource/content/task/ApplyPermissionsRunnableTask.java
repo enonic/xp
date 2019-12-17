@@ -9,10 +9,6 @@ import com.enonic.xp.content.ApplyPermissionsListener;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentIdsByParentResult;
-import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
@@ -93,6 +89,7 @@ public class ApplyPermissionsRunnableTask
             return this;
         }
 
+        @Override
         public ApplyPermissionsRunnableTask build()
         {
             return new ApplyPermissionsRunnableTask( this );

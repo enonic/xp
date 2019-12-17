@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.suggestion;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.elasticsearch.common.text.Text;
@@ -16,7 +17,10 @@ import com.enonic.xp.suggester.Suggestions;
 import com.enonic.xp.suggester.TermSuggestionEntry;
 import com.enonic.xp.suggester.TermSuggestionOption;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SuggestionsFactoryTest
 {
@@ -31,7 +35,7 @@ public class SuggestionsFactoryTest
     @Test
     public void testEmpty()
     {
-        final Suggest suggest = new Suggest();
+        final Suggest suggest = new Suggest( Collections.emptyList() );
         final Suggestions suggestions = SuggestionsFactory.create( suggest );
 
         assertNotNull( suggestions );
@@ -56,7 +60,7 @@ public class SuggestionsFactoryTest
         Mockito.when( termSuggestion1.getName() ).thenReturn( "suggestion1" );
         Mockito.when( termSuggestion1.getEntries() ).thenReturn( List.of( entry1 ) );
 
-        final Suggest suggest = new Suggest( List.of( termSuggestion1 ) );
+        final Suggest suggest = new Suggest( Collections.singletonList( termSuggestion1 ) );
         final Suggestions suggestions = SuggestionsFactory.create( suggest );
 
         assertNotNull( suggestions );

@@ -2,7 +2,9 @@ package com.enonic.xp.convert;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ConvertersTest
 {
@@ -29,7 +31,7 @@ public class ConvertersTest
     public void testConvertOrNull()
     {
         final Integer value1 = Converters.convertOrNull( "123", Integer.class );
-        assertEquals( new Integer( 123 ), value1 );
+        assertEquals( 123, value1 );
 
         final Integer value2 = Converters.convertOrNull( "abc", Integer.class );
         assertNull( value2 );

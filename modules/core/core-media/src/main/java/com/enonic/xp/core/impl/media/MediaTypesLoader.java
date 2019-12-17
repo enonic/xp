@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.media;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
@@ -7,7 +8,6 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Maps;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.config.ConfigBuilder;
@@ -23,7 +23,7 @@ public final class MediaTypesLoader
 
     public MediaTypesLoader()
     {
-        this.types = Maps.newHashMap();
+        this.types = new HashMap<>();
     }
 
     @Activate

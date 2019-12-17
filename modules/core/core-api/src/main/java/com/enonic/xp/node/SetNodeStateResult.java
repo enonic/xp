@@ -1,8 +1,7 @@
 package com.enonic.xp.node;
 
+import java.util.HashSet;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 public class SetNodeStateResult
 {
@@ -25,7 +24,7 @@ public class SetNodeStateResult
 
     public static final class Builder
     {
-        private final Set<Node> updatedNodes = Sets.newHashSet();
+        private final Set<Node> updatedNodes = new HashSet<>();
 
         private Builder()
         {

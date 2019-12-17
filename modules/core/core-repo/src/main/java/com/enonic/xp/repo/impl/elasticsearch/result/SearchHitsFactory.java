@@ -12,12 +12,11 @@ public class SearchHitsFactory
         for ( final org.elasticsearch.search.SearchHit hit : searchHits )
         {
             final SearchHit.Builder hitBuilder = SearchHit.create().
-                id( hit.id() ).
-                score( hit.score() ).
+                id( hit.getId() ).
+                score( hit.getScore() ).
                 indexName( hit.getIndex() ).
-                indexType( hit.getType() ).
                 returnValues( ReturnValuesFactory.create( hit ) ).
-                highlightedFields( HighlightedPropertiesFactory.create( hit.highlightFields() ) );
+                highlightedFields( HighlightedPropertiesFactory.create( hit.getHighlightFields() ) );
 
             if ( hit.getExplanation() != null )
             {

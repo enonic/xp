@@ -1,10 +1,10 @@
 package com.enonic.xp.session;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 @Beta
 public final class SimpleSession
@@ -17,7 +17,7 @@ public final class SimpleSession
     public SimpleSession( final SessionKey key )
     {
         this.key = key;
-        this.attributes = Maps.newHashMap();
+        this.attributes = new HashMap<>();
     }
 
     @Override

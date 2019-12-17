@@ -1,14 +1,16 @@
 package com.enonic.xp.schema.mixin;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MixinsTest
 {
@@ -30,10 +32,7 @@ public class MixinsTest
         {
             assertTrue( e instanceof UnsupportedOperationException );
         }
-        mixins = Mixins.from( new ArrayList<Mixin>()
-        {{
-                add( mixin );
-            }} );
+        mixins = Mixins.from( Collections.singleton( mixin ) );
         try
         {
             mixins.getList().add( null );

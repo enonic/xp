@@ -2,19 +2,22 @@ package com.enonic.xp.repo.impl.elasticsearch.aggregation;
 
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
 
 import org.elasticsearch.search.aggregations.HasAggregations;
 import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
 import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram;
+import org.elasticsearch.search.aggregations.bucket.range.InternalDateRange;
+import org.elasticsearch.search.aggregations.bucket.range.InternalGeoDistance;
+import org.elasticsearch.search.aggregations.bucket.range.ParsedDateRange;
+import org.elasticsearch.search.aggregations.bucket.range.ParsedGeoDistance;
 import org.elasticsearch.search.aggregations.bucket.range.Range;
-import org.elasticsearch.search.aggregations.bucket.range.date.InternalDateRange;
-import org.elasticsearch.search.aggregations.bucket.range.geodistance.InternalGeoDistance;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.elasticsearch.search.aggregations.metrics.max.Max;
-import org.elasticsearch.search.aggregations.metrics.min.Min;
-import org.elasticsearch.search.aggregations.metrics.stats.Stats;
-import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
+import org.elasticsearch.search.aggregations.metrics.Max;
+import org.elasticsearch.search.aggregations.metrics.Min;
+import org.elasticsearch.search.aggregations.metrics.Stats;
+import org.elasticsearch.search.aggregations.metrics.ValueCount;
 import org.joda.time.DateTime;
 
 import com.enonic.xp.aggregation.Aggregations;
@@ -54,7 +57,18 @@ public class AggregationsFactory
             }
             else if ( aggregation instanceof Range )
             {
-                aggregationsBuilder.add( NumericRangeAggregationFactory.create( (Range) aggregation ) );
+                if ( aggregation instanceof ParsedGeoDistance )
+                {
+                    aggregationsBuilder.add( ParsedGeoDistanceAggregationFactory.create( (ParsedGeoDistance) aggregation ) );
+                }
+                else if ( aggregation instanceof ParsedDateRange )
+                {
+                    aggregationsBuilder.add( ParsedDateRangeAggregationFactory.create( (ParsedDateRange) aggregation ) );
+                }
+                else
+                {
+                    aggregationsBuilder.add( NumericRangeAggregationFactory.create( (Range) aggregation ) );
+                }
             }
             else if ( aggregation instanceof InternalHistogram )
             {
@@ -111,6 +125,12 @@ public class AggregationsFactory
     {
         return dateTime == null ? null : java.time.Instant.ofEpochMilli( dateTime.getMillis() );
     }
+
+    static Instant toInstant( final ZonedDateTime dateTime )
+    {
+        return dateTime == null ? null : dateTime.toInstant();
+    }
+
 }
 
 

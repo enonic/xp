@@ -1,25 +1,27 @@
 package com.enonic.xp.web.dispatch;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class MappingBuilder
 {
     private List<String> connectors;
 
-    private final class FilterMappingImpl
+    private static final class FilterMappingImpl
         extends AbstractMapping<Filter>
         implements FilterMapping
     {
@@ -29,7 +31,7 @@ public final class MappingBuilder
         }
     }
 
-    private final class ServletMappingImpl
+    private static final class ServletMappingImpl
         extends AbstractMapping<Servlet>
         implements ServletMapping
     {
@@ -46,9 +48,9 @@ public final class MappingBuilder
     private MappingBuilder()
     {
         this.order = 0;
-        this.initParams = Maps.newHashMap();
-        this.urlPatterns = Sets.newTreeSet();
-        this.connectors = Lists.newArrayList();
+        this.initParams = new HashMap<>();
+        this.urlPatterns = new TreeSet<>();
+        this.connectors = new ArrayList<>();
     }
 
     private final Map<String, String> initParams;
@@ -79,7 +81,7 @@ public final class MappingBuilder
         return this;
     }
 
-    private abstract class AbstractMapping<T>
+    private abstract static class AbstractMapping<T>
         implements ResourceMapping<T>
     {
         private int order;
@@ -98,7 +100,7 @@ public final class MappingBuilder
         {
             this.resource = resource;
             this.order = builder.order;
-            this.name = Strings.isNullOrEmpty( builder.name ) ? this.resource.getClass().getSimpleName() : builder.name;
+            this.name = isNullOrEmpty( builder.name ) ? this.resource.getClass().getSimpleName() : builder.name;
             this.connectors = builder.connectors;
             this.initParams = ImmutableMap.copyOf( builder.initParams );
             this.urlPatterns = ImmutableSet.copyOf( builder.urlPatterns );

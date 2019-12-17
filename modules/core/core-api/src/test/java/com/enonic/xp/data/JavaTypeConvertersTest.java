@@ -9,7 +9,11 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentId;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JavaTypeConvertersTest
 {
@@ -23,7 +27,7 @@ public class JavaTypeConvertersTest
     @Test
     public void convertToDouble()
     {
-        assertEquals( new Double( 1.5 ), JavaTypeConverters.DOUBLE.convertFrom( "1.5" ) );
+        assertEquals( 1.5, JavaTypeConverters.DOUBLE.convertFrom( "1.5" ) );
         assertNull( JavaTypeConverters.DOUBLE.convertFrom( "test" ) );
         assertNull( JavaTypeConverters.DOUBLE.convertFrom( new Object() ) );
     }
@@ -41,9 +45,9 @@ public class JavaTypeConvertersTest
     @Test
     public void convertToLong()
     {
-        assertEquals( new Long( 1000 ), JavaTypeConverters.LONG.convertFrom( 1000 ) );
-        assertEquals( new Long( 1001 ), JavaTypeConverters.LONG.convertFrom( "1001" ) );
-        assertEquals( new Long( 1001 ), JavaTypeConverters.LONG.convertFrom( "1001.0" ) );
+        assertEquals( 1000, JavaTypeConverters.LONG.convertFrom( 1000 ) );
+        assertEquals( 1001, JavaTypeConverters.LONG.convertFrom( "1001" ) );
+        assertEquals( 1001, JavaTypeConverters.LONG.convertFrom( "1001.0" ) );
         assertNull( JavaTypeConverters.LONG.convertFrom( "1001test" ) );
         assertNull( JavaTypeConverters.LONG.convertFrom( new Object() ) );
     }

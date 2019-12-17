@@ -1,11 +1,9 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import com.enonic.xp.branch.Branches;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
@@ -13,6 +11,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -29,10 +28,12 @@ import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -47,6 +48,7 @@ import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
 import com.enonic.xp.repo.impl.elasticsearch.snapshot.SnapshotServiceImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
+import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
@@ -72,15 +74,15 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Reference;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
 {
     protected static final Repository TEST_REPO = Repository.create().
-            id( RepositoryId.from( "com.enonic.cms.default" ) ).
-            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-            build();
+        id( RepositoryId.from( "com.enonic.cms.default" ) ).
+        branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
+        build();
 
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
@@ -152,10 +154,9 @@ public abstract class AbstractNodeTest
         deleteAllIndices();
 
         final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( repoConfig.getSnapshotsDir() ).thenReturn( new File( this.temporaryFolder.toFile(), "repo/snapshots" ) );
+        Mockito.when( repoConfig.getSnapshotsDir() ).thenReturn( this.temporaryFolder.resolve( "repo" ).resolve( "snapshots" ) );
 
         System.setProperty( "xp.home", temporaryFolder.toFile().getPath() );
-        System.setProperty( "mapper.allow_dots_in_name", "true" );
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
 
@@ -240,12 +241,18 @@ public abstract class AbstractNodeTest
         this.repositoryEntryService.setNodeSearchService( this.searchService );
         this.repositoryEntryService.setBinaryService( this.binaryService );
 
+        final IndexServiceImpl indexService = new IndexServiceImpl();
+        indexService.setIndexDataService( indexedDataService );
+        indexService.setIndexServiceInternal( indexServiceInternal );
+        indexService.setRepositoryEntryService( repositoryEntryService );
+
         this.repositoryService = new RepositoryServiceImpl();
         this.repositoryService.setRepositoryEntryService( this.repositoryEntryService );
         this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
         this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
         this.repositoryService.setNodeStorageService( this.storageService );
         this.repositoryService.setNodeSearchService( this.searchService );
+        this.repositoryService.setIndexService( indexService );
 
         this.nodeService.setRepositoryService( this.repositoryService );
     }
@@ -266,6 +273,7 @@ public abstract class AbstractNodeTest
             callWith( () -> {
                 this.repositoryService.createRepository( CreateRepositoryParams.create().
                     repositoryId( repository.getId() ).
+//                    setBranches( repository.getBranches() ).
                     rootPermissions( rootPermissions ).
                     build() );
 
@@ -297,6 +305,23 @@ public abstract class AbstractNodeTest
 
     protected Node createDefaultRootNode()
     {
+        if ( this.nodeService.getById( Node.ROOT_UUID ) != null )
+        {
+            final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
+            final NodeBranchEntry nodeBranchEntry = branchService.get( Node.ROOT_UUID, internalContext );
+
+            if ( nodeBranchEntry != null )
+            {
+                final NodeVersionMetadata nodeVersionMetadata =
+                    this.versionService.getVersion( nodeBranchEntry.getNodeId(), nodeBranchEntry.getVersionId(), internalContext );
+
+                this.versionService.store( NodeVersionMetadata.
+                    create( nodeVersionMetadata ).
+                    setBranches( Branches.empty() ).
+                    build(), internalContext );
+            }
+        }
+
         final AccessControlList rootPermissions = AccessControlList.of( AccessControlEntry.create().
             principal( TEST_DEFAULT_USER.getKey() ).
             allowAll().
@@ -336,21 +361,33 @@ public abstract class AbstractNodeTest
             build() );
     }
 
+    protected Node createNode( final NodePath parent, final String name, final Branch branch )
+    {
+        return createNode( CreateNodeParams.create().
+            parent( parent ).
+            name( name ).
+            setNodeId( NodeId.from( name + "_" + branch.getValue() ) ).
+            build() );
+    }
+
 
     protected Node createNode( final CreateNodeParams createNodeParams, final boolean refresh )
     {
-        final CreateNodeParams createParamsWithAnalyzer = CreateNodeParams.create( createNodeParams ).
-            indexConfigDocument( PatternIndexConfigDocument.create().
+        final CreateNodeParams.Builder createParamsWithAnalyzer = CreateNodeParams.create( createNodeParams );
+
+        if ( createNodeParams.getIndexConfigDocument() == null )
+        {
+            createParamsWithAnalyzer.indexConfigDocument( PatternIndexConfigDocument.create().
                 analyzer( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
-                build() ).
-            build();
+                build() );
+        }
 
         final Node createdNode = CreateNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
             binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            params( createParamsWithAnalyzer ).
+            params( createParamsWithAnalyzer.build() ).
             build().
             execute();
 
@@ -415,28 +452,28 @@ public abstract class AbstractNodeTest
 
     protected void printContentRepoIndex()
     {
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), WS_DEFAULT.getValue() );
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId(), WS_DEFAULT ), WS_DEFAULT.getValue() );
     }
 
     protected void printSearchIndex( final RepositoryId repositoryId, final Branch branch )
     {
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( repositoryId ), branch.getValue() );
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( repositoryId, branch ), branch.getValue() );
     }
 
     protected void printBranchIndex()
     {
-        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( ContextAccessor.current().getRepositoryId() ),
+        printAllIndexContent( IndexNameResolver.resolveBranchIndexName( ContextAccessor.current().getRepositoryId() ),
                               IndexType.BRANCH.getName() );
     }
 
     protected void printVersionIndex()
     {
-        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
+        printAllIndexContent( IndexNameResolver.resolveVersionIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
     }
 
     protected void printCommitIndex()
     {
-        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.COMMIT.getName() );
+        printAllIndexContent( IndexNameResolver.resolveCommitIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.COMMIT.getName() );
     }
 
     protected PushNodesResult pushNodes( final Branch target, final NodeId... nodeIds )

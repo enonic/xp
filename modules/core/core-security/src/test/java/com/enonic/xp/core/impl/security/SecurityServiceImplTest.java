@@ -62,7 +62,13 @@ import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.IdProviderAccess.CREATE_USERS;
 import static com.enonic.xp.security.acl.IdProviderAccess.WRITE_USERS;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SecurityServiceImplTest
     extends AbstractElasticsearchIntegrationTest
@@ -130,12 +136,18 @@ public class SecurityServiceImplTest
         repositoryEntryService.setNodeStorageService( storageService );
         repositoryEntryService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 
+        final IndexServiceImpl indexService = new IndexServiceImpl();
+        indexService.setNodeSearchService( searchService );
+        indexService.setRepositoryEntryService( repositoryEntryService );
+        indexService.setIndexServiceInternal( this.indexServiceInternal );
+
         this.repositoryService = new RepositoryServiceImpl();
         this.repositoryService.setRepositoryEntryService( repositoryEntryService );
         this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
         this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
         this.repositoryService.setNodeStorageService( storageService );
         this.repositoryService.setNodeSearchService( searchService );
+        this.repositoryService.setIndexService( indexService );
         this.repositoryService.initialize();
 
         this.eventPublisher = Mockito.mock( EventPublisher.class );
@@ -147,10 +159,6 @@ public class SecurityServiceImplTest
         this.nodeService.setRepositoryService( repositoryService );
         this.nodeService.setEventPublisher( this.eventPublisher );
         this.nodeService.initialize();
-
-        IndexServiceImpl indexService = new IndexServiceImpl();
-        indexService.setNodeSearchService( searchService );
-        indexService.setIndexServiceInternal( this.indexServiceInternal );
 
         securityService = new SecurityServiceImpl();
         securityService.setNodeService( this.nodeService );
@@ -1165,7 +1173,7 @@ public class SecurityServiceImplTest
             build();
     }
 
-    private class CustomAuthenticationToken
+    private static class CustomAuthenticationToken
         extends AuthenticationToken
     {
     }

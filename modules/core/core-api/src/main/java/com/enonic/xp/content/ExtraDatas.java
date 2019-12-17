@@ -1,17 +1,15 @@
 package com.enonic.xp.content;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataNames;
@@ -26,13 +24,12 @@ public final class ExtraDatas
     private ExtraDatas( final Set<ExtraData> set )
     {
         super( ImmutableSet.copyOf( set ) );
-        this.map = Maps.uniqueIndex( set, new ToNameFunction() );
+        this.map = set.stream().collect( ImmutableMap.toImmutableMap( ExtraData::getName, Function.identity() ) );
     }
 
     public XDataNames getNames()
     {
-        final Collection<XDataName> names = Collections2.transform( this.set, new ToNameFunction() );
-        return XDataNames.from( names );
+        return XDataNames.from( map.keySet() );
     }
 
     public ExtraData getMetadata( final XDataName name )
@@ -69,16 +66,6 @@ public final class ExtraDatas
         return new ExtraDatas( builder.build() );
     }
 
-    private final static class ToNameFunction
-        implements Function<ExtraData, XDataName>
-    {
-        @Override
-        public XDataName apply( final ExtraData value )
-        {
-            return value.getName();
-        }
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -86,7 +73,7 @@ public final class ExtraDatas
 
     public static class Builder
     {
-        private Set<ExtraData> set = Sets.newLinkedHashSet();
+        private Set<ExtraData> set = new LinkedHashSet<>();
 
         public Builder add( final ExtraData value )
         {

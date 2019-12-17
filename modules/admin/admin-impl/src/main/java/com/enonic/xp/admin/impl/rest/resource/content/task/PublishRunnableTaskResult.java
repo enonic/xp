@@ -1,9 +1,8 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
@@ -33,6 +32,7 @@ public class PublishRunnableTaskResult
         return new PublishTaskMessageGenerator().generate( this );
     }
 
+    @Override
     public int getSuccessCount()
     {
         return deleted.size() + super.getSuccessCount();
@@ -46,7 +46,7 @@ public class PublishRunnableTaskResult
     public static class Builder
         extends RunnableTaskResult.Builder<Builder>
     {
-        private List<ContentPath> deleted = Lists.newArrayList();
+        private List<ContentPath> deleted = new ArrayList<>();
 
         private Builder()
         {
@@ -65,6 +65,7 @@ public class PublishRunnableTaskResult
             return this;
         }
 
+        @Override
         public PublishRunnableTaskResult build()
         {
             return new PublishRunnableTaskResult( this );

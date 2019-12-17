@@ -17,6 +17,7 @@ public class EditableSite
         this.siteConfigs = source.getSiteConfigs();
     }
 
+    @Override
     public Site build()
     {
         return (Site) super.build();

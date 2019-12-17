@@ -1,12 +1,17 @@
 {
   "bool": {
-    "must_not": {
-      "term": {
-        "fisk": {
-          "value": "ost",
-          "_name": "fisk"
+    "must_not": [
+      {
+        "term": {
+          "fisk": {
+            "value": "ost",
+            "boost": 1.0,
+            "_name": "fisk"
+          }
         }
       }
-    }
+    ],
+    "adjust_pure_negative": true,
+    "boost": 1.0
   }
 }

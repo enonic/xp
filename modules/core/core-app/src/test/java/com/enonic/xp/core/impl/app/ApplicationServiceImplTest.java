@@ -28,7 +28,13 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ApplicationServiceImplTest
     extends BundleBasedTest
@@ -662,7 +668,7 @@ public class ApplicationServiceImplTest
         Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key );
     }
 
-    private class ApplicationEventMatcher
+    private static class ApplicationEventMatcher
         implements ArgumentMatcher<Event>
     {
         Event thisObject;

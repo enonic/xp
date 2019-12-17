@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.xcontent;
 
+import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +34,7 @@ public class StoreDocumentXContentBuilderFactoryTest
 
         final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( indexDocument );
 
-        System.out.println( xContentBuilder.string() );
+        System.out.println( Strings.toString(xContentBuilder) );
 
     }
 

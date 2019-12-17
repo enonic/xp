@@ -1,9 +1,7 @@
 package com.enonic.xp.repo.impl;
 
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 public class ReturnValues
 {
@@ -48,23 +46,13 @@ public class ReturnValues
 
     public static final class Builder
     {
-        final Map<String, ReturnValue> returnValues = Maps.newHashMap();
+        final Map<String, ReturnValue> returnValues = new HashMap<>();
 
         private Builder()
         {
         }
 
-        public Builder add( final String key, final String value )
-        {
-            return doAdd( key, value );
-        }
-
-        public Builder add( final String key, final Collection<Object> value )
-        {
-            return doAdd( key, value );
-        }
-
-        private Builder doAdd( final String key, final Object value )
+        public Builder add( final String key, final Object value )
         {
             final ReturnValue entry = returnValues.get( key );
 

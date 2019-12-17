@@ -41,6 +41,7 @@ include 'web:web-jetty'
 include 'web:web-dos'
 include 'web:web-dispatch'
 include 'web:web-session'
+include 'web:web-header'
 
 include 'jaxrs:jaxrs-api'
 include 'jaxrs:jaxrs-impl'
@@ -84,10 +85,7 @@ include 'blobstore:blobstore-file'
 
 include 'app:app-system'
 
-include 'repack:repack-attoparser'
 include 'repack:repack-elasticsearch'
-include 'repack:repack-jparsec'
-include 'repack:repack-okhttp'
 include 'repack:repack-resteasy'
 include 'repack:repack-javax-cache-api'
 

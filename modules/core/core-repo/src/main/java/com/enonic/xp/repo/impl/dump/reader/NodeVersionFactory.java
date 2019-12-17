@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.dump.reader;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
@@ -16,9 +16,9 @@ class NodeVersionFactory
 
     NodeVersion create( final ByteSource dataByteSource, final ByteSource indexConfigByteSource, final ByteSource accessControlByteSource )
     {
-        final CharSource dataCharSource = dataByteSource.asCharSource( Charsets.UTF_8 );
-        final CharSource indexConfigCharSource = indexConfigByteSource.asCharSource( Charsets.UTF_8 );
-        final CharSource accessControlCharSource = accessControlByteSource.asCharSource( Charsets.UTF_8 );
+        final CharSource dataCharSource = dataByteSource.asCharSource( StandardCharsets.UTF_8 );
+        final CharSource indexConfigCharSource = indexConfigByteSource.asCharSource( StandardCharsets.UTF_8 );
+        final CharSource accessControlCharSource = accessControlByteSource.asCharSource( StandardCharsets.UTF_8 );
 
         try
         {

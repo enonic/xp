@@ -1,10 +1,10 @@
 package com.enonic.xp.issue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -41,7 +41,7 @@ public final class PublishRequestItems
 
     public static class Builder
     {
-        private List<PublishRequestItem> items = Lists.newArrayList();
+        private List<PublishRequestItem> items = new ArrayList<>();
 
         public Builder add( final PublishRequestItem item )
         {

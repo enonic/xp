@@ -15,7 +15,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ContentTypeNameWildcardResolverTest
 {
@@ -48,7 +48,7 @@ public class ContentTypeNameWildcardResolverTest
     public void no_wildcards()
     {
         List<String> toResolve = Lists.newArrayList( "myapp:foo", "myapp:bar" );
-        List<String> resolved = resolver.resolveWildcards( toResolve, ( ApplicationKey.from( "myapp" ) ) );
+        List<String> resolved = resolver.resolveWildcards( toResolve, ApplicationKey.from( "myapp" ) );
 
         assertEquals( toResolve, resolved );
     }

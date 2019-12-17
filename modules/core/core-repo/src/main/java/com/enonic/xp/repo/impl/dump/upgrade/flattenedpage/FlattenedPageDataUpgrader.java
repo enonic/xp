@@ -39,7 +39,7 @@ import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTa
 
 public class FlattenedPageDataUpgrader
 {
-    private final Logger LOG = LoggerFactory.getLogger( FlattenedPageDataUpgrader.class );
+    private static final Logger LOG = LoggerFactory.getLogger( FlattenedPageDataUpgrader.class );
 
     private final Map<String, String> templateControllerMap;
 

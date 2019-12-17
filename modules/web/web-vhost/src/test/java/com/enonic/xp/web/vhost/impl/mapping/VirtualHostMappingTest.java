@@ -6,7 +6,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.enonic.xp.security.IdProviderKey;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class VirtualHostMappingTest
 {

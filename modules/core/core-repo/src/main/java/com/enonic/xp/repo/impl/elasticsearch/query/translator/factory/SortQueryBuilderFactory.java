@@ -8,13 +8,11 @@ import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.query.expr.DynamicOrderExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function.DynamicSortBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 
 public class SortQueryBuilderFactory
     extends AbstractBuilderFactory
@@ -23,8 +21,6 @@ public class SortQueryBuilderFactory
     {
         super( fieldNameResolver );
     }
-
-    private static final boolean IGNORE_UNMAPPED = true;
 
     public List<SortBuilder> create( final Collection<OrderExpr> orderExpressions )
     {
@@ -38,7 +34,7 @@ public class SortQueryBuilderFactory
             return new ArrayList<>();
         }
 
-        List<SortBuilder> sortBuilders = Lists.newArrayList();
+        List<SortBuilder> sortBuilders = new ArrayList<>();
 
         for ( final OrderExpr orderExpr : orderExpressions )
         {
@@ -57,10 +53,14 @@ public class SortQueryBuilderFactory
 
     private SortBuilder createFieldSortBuilder( final FieldOrderExpr fieldOrderExpr )
     {
-        final FieldSortBuilder fieldSortBuilder =
-            new FieldSortBuilder( fieldNameResolver.resolveOrderByFieldName( fieldOrderExpr.getField().getFieldPath() ) );
+        final String fieldName = fieldNameResolver.resolveOrderByFieldName( fieldOrderExpr.getField().getFieldPath() );
+        final FieldSortBuilder fieldSortBuilder = new FieldSortBuilder( fieldName );
         fieldSortBuilder.order( SortOrder.valueOf( fieldOrderExpr.getDirection().name() ) );
-        fieldSortBuilder.ignoreUnmapped( IGNORE_UNMAPPED );
+
+        if ( !"_score".equals( fieldName ) )
+        {
+            fieldSortBuilder.unmappedType( "long" );
+        }
 
         return fieldSortBuilder;
     }

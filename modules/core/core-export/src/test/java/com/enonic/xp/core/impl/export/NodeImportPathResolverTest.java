@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.vfs.VirtualFiles;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NodeImportPathResolverTest
 {

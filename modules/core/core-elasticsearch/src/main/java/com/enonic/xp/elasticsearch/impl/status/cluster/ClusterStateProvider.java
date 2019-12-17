@@ -1,5 +1,6 @@
 package com.enonic.xp.elasticsearch.impl.status.cluster;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.elasticsearch.ElasticsearchException;
@@ -7,23 +8,16 @@ import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.client.Requests;
-import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import com.google.common.collect.Lists;
 
 @Component(service = ClusterStateProvider.class)
 public final class ClusterStateProvider
     implements ClusterInfoProvider<ClusterState>
 {
     private ClusterAdminClient clusterAdminClient;
-
-    // Needed to workaround bug in cluster state report
-    // where localNodeId = null for non-master nodes
-    private ClusterService clusterService;
 
     @Override
     public ClusterState getInfo()
@@ -47,48 +41,32 @@ public final class ClusterStateProvider
     {
         ClusterStateResponse clusterStateResponse = this.getClusterStateResponse();
 
-        // This should be fetched from custerState.getLocalNodeId() instead
-        // when es-bug is fixed
-        final DiscoveryNode localNode = clusterService.localNode();
-
         builder.clusterName( clusterStateResponse.getClusterName().value() );
 
         final org.elasticsearch.cluster.ClusterState clusterState = clusterStateResponse.getState();
 
         final DiscoveryNodes clusterMembers = clusterState.getNodes();
 
-        builder.localNodeState( createLocalNodeState( clusterMembers, localNode ) );
         List<MemberNodeState> memberNodeStates = this.getMembersState( clusterMembers );
         builder.addMemberNodeStates( memberNodeStates );
     }
 
-    private LocalNodeState createLocalNodeState( final DiscoveryNodes clusterMembers, final DiscoveryNode localNode )
-    {
-        return LocalNodeState.create().
-            numberOfNodesSeen( clusterMembers.size() ).
-            id( localNode.id() ).
-            hostName( localNode.getHostName() ).
-            master( localNode.id().equals( clusterMembers.masterNodeId() ) ).
-            version( localNode.getVersion().toString() ).
-            build();
-    }
-
     private List<MemberNodeState> getMembersState( DiscoveryNodes members )
     {
-        final List<MemberNodeState> results = Lists.newArrayList();
+        final List<MemberNodeState> results = new ArrayList<>();
 
         for ( DiscoveryNode node : members )
         {
             final MemberNodeState memberNodeState = MemberNodeState.create().
                 address( node.getAddress().toString() ).
                 hostName( node.getHostName() ).
-                id( node.id() ).
+                id( node.getId() ).
                 hostName( node.getHostName() ).
                 version( node.getVersion().toString() ).
                 name( node.getName() ).
                 master( node.getId().equals( members.getMasterNodeId() ) ).
                 isDataNode( node.isDataNode() ).
-                isClientNode( node.isClientNode() ).
+                isClientNode( false ).
                 build();
 
             results.add( memberNodeState );
@@ -112,11 +90,5 @@ public final class ClusterStateProvider
     public void setClusterAdminClient( ClusterAdminClient clusterAdminClient )
     {
         this.clusterAdminClient = clusterAdminClient;
-    }
-
-    @Reference
-    public void setClusterService( final ClusterService clusterService )
-    {
-        this.clusterService = clusterService;
     }
 }

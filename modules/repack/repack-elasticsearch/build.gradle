@@ -1,18 +1,36 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
-    compile( 'org.elasticsearch:elasticsearch:2.4.6' ) {
-        exclude group: 'org.antlr'
-        exclude group: 'org.ow2.asm'
-        exclude group: 'com.google.guava'
+    compile ("org.elasticsearch.client:elasticsearch-rest-high-level-client:${elasticsearchVersion}") {
+        exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-cbor'
+        exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-yaml'
+        exclude group: 'org.yaml', module: 'snakeyaml'
+        exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-smile'
     }
+
+    compile "org.apache.logging.log4j:log4j-to-slf4j:${log4jToSlf4jVersion}"
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-smile:${jacksonVersion}"
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jacksonVersion}"
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
 }
 
 jar {
     bnd( 'Bundle-Name': 'Elasticsearch Library',
-         'Export-Package': 'org.elasticsearch.*' + ',' + 'com.spatial4j.*,org.apache.lucene.*;-split-package:=merge-first' + ',' +
-             'org.tartarus.*' + ',' + 'org.joda.time.*' + ',' + 'com.twitter.jsr166e.*' + ',' + 'com.tdunning.math.stats.*' + ',' +
-             'com.carrotsearch.hppc.*' + ',' + 'org.jboss.netty.*' + ',' + 'com.ning.compress.*',
+         'Export-Package':
+             'org.elasticsearch.*;-split-package:=merge-first' + ',' +
+             'org.apache.lucene.*;-split-package:=merge-first' + ',' +
+             'org.joda.time.*;-split-package:=merge-first' + ',' +
+             'org.apache.http.*'+ ',' +
+             'org.tartarus.*' + ',' +
+             'com.carrotsearch.hppc.*' + ',' +
+             'com.tdunning.math.stats.*',
          'Import-Package': '*;resolution:=optional',
-         'Private-Package': 'config.*,META-INF.services.*,com.fasterxml.jackson.dataformat.smile.*;-split-package:=merge-first' )
+         'Private-Package': 'config.*' + ',' +
+             'META-INF.services.*;-split-package:=merge-first' + ',' +
+             'com.fasterxml.jackson.dataformat.smile.*' + ',' +
+             'com.fasterxml.jackson.dataformat.cbor.*' + ',' +
+             'com.fasterxml.jackson.dataformat.yaml.*' + ',' +
+             'org.yaml.snakeyaml.*' + ',' +
+             ''
+    )
 }

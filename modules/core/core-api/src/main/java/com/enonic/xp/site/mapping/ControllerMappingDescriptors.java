@@ -20,14 +20,14 @@ public final class ControllerMappingDescriptors
         return new ControllerMappingDescriptors( list );
     }
 
-    public static ControllerMappingDescriptors from( final ControllerMappingDescriptor... ControllerMappingDescriptors )
+    public static ControllerMappingDescriptors from( final ControllerMappingDescriptor... controllerMappingDescriptors )
     {
-        return new ControllerMappingDescriptors( ImmutableList.copyOf( ControllerMappingDescriptors ) );
+        return new ControllerMappingDescriptors( ImmutableList.copyOf( controllerMappingDescriptors ) );
     }
 
-    public static ControllerMappingDescriptors from( final Iterable<? extends ControllerMappingDescriptor> ControllerMappingDescriptors )
+    public static ControllerMappingDescriptors from( final Iterable<? extends ControllerMappingDescriptor> controllerMappingDescriptors )
     {
-        return new ControllerMappingDescriptors( ImmutableList.copyOf( ControllerMappingDescriptors ) );
+        return new ControllerMappingDescriptors( ImmutableList.copyOf( controllerMappingDescriptors ) );
     }
 
 }

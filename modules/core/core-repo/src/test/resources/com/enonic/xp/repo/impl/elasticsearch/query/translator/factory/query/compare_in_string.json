@@ -5,6 +5,7 @@
         "term": {
           "myfield": {
             "value": "myfirstvalue",
+            "boost": 1.0,
             "_name": "myfield"
           }
         }
@@ -13,10 +14,13 @@
         "term": {
           "myfield": {
             "value": "mysecondvalue",
+            "boost": 1.0,
             "_name": "myfield"
           }
         }
       }
-    ]
+    ],
+    "adjust_pure_negative": true,
+    "boost": 1.0
   }
 }

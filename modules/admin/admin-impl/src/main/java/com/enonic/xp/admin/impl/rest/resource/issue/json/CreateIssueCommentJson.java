@@ -14,13 +14,16 @@ public class CreateIssueCommentJson
 
     public final PrincipalKey creator;
 
+    public final boolean silent;
+
     @JsonCreator
     public CreateIssueCommentJson( @JsonProperty("issue") final String issueId, @JsonProperty("text") final String text,
-                                   @JsonProperty("creator") final String creator )
+                                   @JsonProperty("creator") final String creator, @JsonProperty("silent") final boolean silent )
     {
         this.text = text;
         this.creator = PrincipalKey.from( creator );
         this.issueId = IssueId.from( issueId );
+        this.silent = silent;
     }
 
 }

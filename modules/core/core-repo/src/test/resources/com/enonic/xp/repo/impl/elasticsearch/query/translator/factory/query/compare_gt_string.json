@@ -4,7 +4,8 @@
       "from": "mystring",
       "to": null,
       "include_lower": false,
-      "include_upper": true
+      "include_upper": true,
+      "boost": 1.0
     }
   }
 }

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.repo.impl.SearchSource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ESSourceFactoryTest
 {

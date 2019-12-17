@@ -3,9 +3,9 @@ package com.enonic.xp.core.audit;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
-import com.enonic.xp.core.impl.audit.AuditLogConfig;
 import com.enonic.xp.core.impl.audit.AuditLogRepoInitializer;
 import com.enonic.xp.core.impl.audit.AuditLogServiceImpl;
+import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
@@ -86,13 +86,8 @@ public class AbstractAuditLogServiceTest
         this.nodeDao = new NodeVersionServiceImpl();
         this.nodeDao.setBlobStore( blobStore );
 
-        this.auditLogService = new AuditLogServiceImpl();
-
         this.indexedDataService = new IndexDataServiceImpl();
         this.indexedDataService.setStorageDao( storageDao );
-
-        this.indexService = new IndexServiceImpl();
-        this.indexService.setIndexServiceInternal( this.indexServiceInternal );
 
         this.storageService = new NodeStorageServiceImpl();
         this.storageService.setBranchService( this.branchService );
@@ -117,11 +112,16 @@ public class AbstractAuditLogServiceTest
         repositoryEntryService.setEventPublisher( eventPublisher );
         repositoryEntryService.setBinaryService( this.binaryService );
 
+        this.indexService = new IndexServiceImpl();
+        this.indexService.setIndexServiceInternal( this.indexServiceInternal );
+        this.indexService.setRepositoryEntryService( repositoryEntryService );
+
         this.repositoryService = new RepositoryServiceImpl();
         this.repositoryService.setRepositoryEntryService( repositoryEntryService );
         this.repositoryService.setIndexServiceInternal( elasticsearchIndexService );
         this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
         this.repositoryService.setNodeStorageService( this.storageService );
+        this.repositoryService.setIndexService( this.indexService );
         this.repositoryService.initialize();
 
         this.nodeService = new NodeServiceImpl();
@@ -133,14 +133,16 @@ public class AbstractAuditLogServiceTest
         this.nodeService.setRepositoryService( this.repositoryService );
         this.nodeService.initialize();
 
+        this.auditLogService = new AuditLogServiceImpl();
         this.auditLogService.setNodeService( this.nodeService );
         this.auditLogService.setIndexService( this.indexService );
         this.auditLogService.setRepositoryService( this.repositoryService );
 
         AuditLogConfig config = Mockito.mock( AuditLogConfig.class );
-        Mockito.when( config.enabled() ).thenReturn( true );
-        Mockito.when( config.outputLogs() ).thenReturn( true );
-        this.auditLogService.initialize( config );
+        Mockito.when( config.isEnabled() ).thenReturn( true );
+        Mockito.when( config.isOutputLogs() ).thenReturn( true );
+        this.auditLogService.setConfig( config );
+        this.auditLogService.initialize();
 
         initializeRepository();
     }

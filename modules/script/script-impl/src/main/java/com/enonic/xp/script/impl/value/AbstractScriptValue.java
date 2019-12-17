@@ -1,11 +1,10 @@
 package com.enonic.xp.script.impl.value;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.script.ScriptValue;
 
@@ -51,7 +50,7 @@ abstract class AbstractScriptValue
     @Override
     public Set<String> getKeys()
     {
-        return Sets.newHashSet();
+        return new HashSet<>();
     }
 
     @Override

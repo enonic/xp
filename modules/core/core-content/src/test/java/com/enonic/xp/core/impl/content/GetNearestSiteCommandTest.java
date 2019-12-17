@@ -16,7 +16,8 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.site.Site;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class GetNearestSiteCommandTest
 {

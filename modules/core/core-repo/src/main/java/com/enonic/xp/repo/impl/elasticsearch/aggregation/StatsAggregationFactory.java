@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.aggregation;
 
-import org.elasticsearch.search.aggregations.metrics.stats.Stats;
+import org.elasticsearch.search.aggregations.metrics.Stats;
 
 import com.enonic.xp.aggregation.StatsAggregation;
 

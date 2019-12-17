@@ -1,7 +1,10 @@
 package com.enonic.xp.core.content;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
+import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ExtraData;
@@ -13,7 +16,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ContentServiceImplTest_move
     extends AbstractContentServiceTest
@@ -69,6 +72,28 @@ public class ContentServiceImplTest_move
 
         assertEquals( movedContent.getAllExtraData().getSize(), 1 );
 
+    }
+
+    @Test
+    public void audit_data()
+        throws Exception
+    {
+        final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+
+        final Content site = createContent( ContentPath.ROOT, "site" );
+        final Content child1 = createContent( site.getPath(), "child1" );
+
+        final MoveContentParams params = MoveContentParams.create().
+            contentId( child1.getId() ).
+            parentContentPath( ContentPath.ROOT ).
+            build();
+
+        final MoveContentsResult result = this.contentService.move( params );
+
+        Mockito.verify( auditLogService, Mockito.timeout( 5000 ).times( 3 ) ).log( captor.capture() );
+
+        final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
+        assertEquals( child1.getId().toString(), logResultSet.getStrings( "movedContents" ).iterator().next() );
     }
 
     private ExtraDatas createExtraDatas()

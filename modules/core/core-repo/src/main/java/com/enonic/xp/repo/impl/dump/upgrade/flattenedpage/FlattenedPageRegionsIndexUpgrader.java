@@ -43,7 +43,7 @@ public class FlattenedPageRegionsIndexUpgrader
             addIndexValueProcessor( IndexValueProcessors.HTML_STRIPPER ).
             build() ).build() );
 
-    private final Pattern HTML_AREA_CONFIG_PATH_PATTERN =
+    private static final Pattern HTML_AREA_CONFIG_PATH_PATTERN =
         Pattern.compile( "(?i)^page\\.(region\\.component\\.(layoutcomponent|partcomponent)\\.)+config\\.(\\S+)$" );
 
     private final List<PropertySet> components;

@@ -2,16 +2,14 @@ package com.enonic.xp.repo.impl.dump.upgrade;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.FileUtils;
-
-import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
-import com.google.common.io.Files;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.Segment;
@@ -22,6 +20,7 @@ import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.dump.DumpBlobRecord;
+import com.enonic.xp.repo.impl.dump.FileUtils;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre5.Pre5ContentConstants;
@@ -143,10 +142,11 @@ public class RepositoryIdDumpUpgrader
 
         if ( oldRepoDirectory != null )
         {
-            final File newRepoDirectory = new File( oldRepoDirectory.getParent(), NEW_REPOSITORY_ID.toString() );
+            final Path newRepoDirectory = Path.of( oldRepoDirectory.getParent(), NEW_REPOSITORY_ID.toString() );
+
             try
             {
-                FileUtils.moveDirectory( oldRepoDirectory, newRepoDirectory );
+                FileUtils.moveDirectory( oldRepoDirectory.toPath(), newRepoDirectory );
             }
             catch ( IOException e )
             {
@@ -168,7 +168,7 @@ public class RepositoryIdDumpUpgrader
 
         try
         {
-            Files.write( new DumpMetaJsonSerializer().serialize( upgradedDumpMeta ).getBytes(), dumpMetaFile );
+            Files.write( dumpMetaFile.toPath(), new DumpMetaJsonSerializer().serialize( upgradedDumpMeta ).getBytes() );
         }
         catch ( IOException e )
         {
@@ -196,6 +196,7 @@ public class RepositoryIdDumpUpgrader
     }
 
 
+    @Override
     protected void upgradeRepository( final RepositoryId repositoryId )
     {
         if ( SystemConstants.SYSTEM_REPO_ID.equals( repositoryId ) )
@@ -204,6 +205,7 @@ public class RepositoryIdDumpUpgrader
         }
     }
 
+    @Override
     protected void upgradeBranch( final RepositoryId repositoryId, final Branch branch )
     {
         if ( ContentConstants.BRANCH_MASTER.equals( branch ) )
@@ -212,16 +214,19 @@ public class RepositoryIdDumpUpgrader
         }
     }
 
+    @Override
     protected void upgradeBranchEntries( final RepositoryId repositoryId, final Branch branch, final File entriesFile )
     {
         super.upgradeBranchEntries( repositoryId, branch, entriesFile );
     }
 
+    @Override
     protected boolean hasToUpgradeEntry( final RepositoryId repositoryId, final String entryContent, final String entryName )
     {
         return OLD_REPOSITORY_FILE_NAME.equals( entryName );
     }
 
+    @Override
     protected String upgradeEntryName( final RepositoryId repositoryId, final String entryName )
     {
         return upgradeString( entryName );
@@ -239,7 +244,7 @@ public class RepositoryIdDumpUpgrader
 
     private NodeVersionDataJson getNodeVersion( final DumpBlobRecord dumpBlobRecord )
     {
-        final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( Charsets.UTF_8 );
+        final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 );
         try
         {
             return deserializeValue( charSource.read(), NodeVersionDataJson.class );
@@ -253,7 +258,7 @@ public class RepositoryIdDumpUpgrader
     private void writeNodeVersion( final NodeVersion nodeVersion, final DumpBlobRecord dumpBlobRecord )
     {
         final String serializedUpgradedNodeVersion = NodeVersionJsonSerializer.create( false ).toNodeString( nodeVersion );
-        final ByteSource byteSource = ByteSource.wrap( serializedUpgradedNodeVersion.getBytes( Charsets.UTF_8 ) );
+        final ByteSource byteSource = ByteSource.wrap( serializedUpgradedNodeVersion.getBytes( StandardCharsets.UTF_8 ) );
         try
         {
             byteSource.copyTo( dumpBlobRecord.getByteSink() );

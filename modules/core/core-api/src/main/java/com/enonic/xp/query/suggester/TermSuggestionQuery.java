@@ -1,5 +1,7 @@
 package com.enonic.xp.query.suggester;
 
+import java.util.Map;
+
 public final class TermSuggestionQuery
     extends SuggestionQuery
 {
@@ -213,10 +215,14 @@ public final class TermSuggestionQuery
 
     public enum StringDistance
     {
-        INTERNAL( "internal" ), DAMERAU_LEVENSHTEIN( "damerau_levenshtein" ), LEVENSHTEIN( "levenshtein" ), JAROWINKLER(
-        "jarowinkler" ), NGRAM( "ngram" );
+        INTERNAL( "internal" ), DAMERAU_LEVENSHTEIN( "damerau_levenshtein" ), LEVENSHTEIN( "levenshtein" ), @Deprecated JAROWINKLER(
+        "jaro_winkler" ), NGRAM( "ngram" ), JARO_WINKLER( "jaro_winkler" );
 
         private final String value;
+
+        private static final Map<String, StringDistance> MAPPING =
+            Map.of( "internal", INTERNAL, "damerau_levenshtein", DAMERAU_LEVENSHTEIN, "levenshtein", LEVENSHTEIN, "jarowinkler",
+                    JARO_WINKLER, "jaro_winkler", JARO_WINKLER, "ngram", NGRAM );
 
         StringDistance( final String value )
         {
@@ -230,29 +236,14 @@ public final class TermSuggestionQuery
 
         public static StringDistance from( final String state )
         {
-
-            if ( INTERNAL.value().equals( state ) )
+            if ( state == null )
             {
-                return INTERNAL;
+                return null;
             }
-            if ( DAMERAU_LEVENSHTEIN.value().equals( state ) )
+            else
             {
-                return DAMERAU_LEVENSHTEIN;
+                return MAPPING.get( state );
             }
-            if ( LEVENSHTEIN.value().equals( state ) )
-            {
-                return LEVENSHTEIN;
-            }
-            if ( JAROWINKLER.value().equals( state ) )
-            {
-                return JAROWINKLER;
-            }
-            if ( NGRAM.value().equals( state ) )
-            {
-                return NGRAM;
-            }
-
-            return null;
         }
     }
 

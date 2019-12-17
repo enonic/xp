@@ -1,13 +1,12 @@
 package com.enonic.xp.core.impl.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
@@ -48,7 +47,7 @@ public final class ServiceDescriptorServiceImpl
     @Override
     public ServiceDescriptors getByApplication( final ApplicationKey key )
     {
-        final List<ServiceDescriptor> list = Lists.newArrayList();
+        final List<ServiceDescriptor> list = new ArrayList<>();
         for ( final DescriptorKey descriptorKey : findDescriptorKeys( key ) )
         {
             try

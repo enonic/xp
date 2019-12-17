@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.postprocess;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Stream;
@@ -9,7 +10,6 @@ import javax.servlet.http.Cookie;
 import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 
@@ -19,7 +19,7 @@ import com.enonic.xp.portal.postprocess.PostProcessInjection;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 
 import static java.util.stream.Collectors.joining;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PostProcessEvaluatorTest
 {
@@ -319,7 +319,7 @@ public class PostProcessEvaluatorTest
     private String readResource( final String resourceName )
         throws Exception
     {
-        return Resources.toString( getClass().getResource( resourceName ), Charsets.UTF_8 );
+        return Resources.toString( getClass().getResource( resourceName ), StandardCharsets.UTF_8 );
     }
 
 }

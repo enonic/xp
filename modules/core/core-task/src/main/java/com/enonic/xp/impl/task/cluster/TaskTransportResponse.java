@@ -37,7 +37,6 @@ public final class TaskTransportResponse
         return taskInfos;
     }
 
-    @Override
     public void readFrom( final StreamInput streamInput )
         throws IOException
     {

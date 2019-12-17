@@ -171,59 +171,59 @@ public final class XmlNodeSerializer
         final ValueType type = value.getType();
         final String name = value.getName();
 
-        if ( type == ValueTypes.BOOLEAN )
+        if ( type.equals( ValueTypes.BOOLEAN ) )
         {
             serializeProperty( "boolean", name, value.getBoolean() );
         }
-        else if ( type == ValueTypes.STRING )
+        else if ( type.equals( ValueTypes.STRING ) )
         {
             serializeProperty( "string", name, value.getString() );
         }
-        else if ( type == ValueTypes.DOUBLE )
+        else if ( type.equals( ValueTypes.DOUBLE ) )
         {
             serializeProperty( "double", name, value.getDouble() );
         }
-        else if ( type == ValueTypes.LONG )
+        else if ( type.equals( ValueTypes.LONG ) )
         {
             serializeProperty( "long", name, value.getLong() );
         }
-        else if ( type == ValueTypes.XML )
+        else if ( type.equals( ValueTypes.XML ) )
         {
             serializeProperty( "xml", name, value.getString() );
         }
-        else if ( type == ValueTypes.GEO_POINT )
+        else if ( type.equals( ValueTypes.GEO_POINT ) )
         {
             serializeProperty( "geoPoint", name, value.getString() );
         }
-        else if ( type == ValueTypes.DATE_TIME )
+        else if ( type.equals( ValueTypes.DATE_TIME ) )
         {
             serializeProperty( "dateTime", name, toStringValue( value.getInstant() ) );
         }
-        else if ( type == ValueTypes.LOCAL_DATE_TIME )
+        else if ( type.equals( ValueTypes.LOCAL_DATE_TIME ) )
         {
             serializeProperty( "localDateTime", name, toStringValue( value.getLocalDateTime() ) );
         }
-        else if ( type == ValueTypes.LOCAL_TIME )
+        else if ( type.equals( ValueTypes.LOCAL_TIME ) )
         {
             serializeProperty( "localTime", name, toStringValue( value.getLocalTime() ) );
         }
-        else if ( type == ValueTypes.LOCAL_DATE )
+        else if ( type.equals( ValueTypes.LOCAL_DATE ) )
         {
             serializeProperty( "localDate", name, toStringValue( value.getLocalDate() ) );
         }
-        else if ( type == ValueTypes.REFERENCE )
+        else if ( type.equals( ValueTypes.REFERENCE ) )
         {
             serializeProperty( "reference", name, value.getReference() );
         }
-        else if ( type == ValueTypes.LINK )
+        else if ( type.equals( ValueTypes.LINK ) )
         {
             serializeProperty( "link", name, value.getLink() );
         }
-        else if ( type == ValueTypes.BINARY_REFERENCE )
+        else if ( type.equals( ValueTypes.BINARY_REFERENCE ) )
         {
             serializeProperty( "binaryReference", name, value.getBinaryReference() );
         }
-        else if ( type == ValueTypes.PROPERTY_SET )
+        else if ( type.equals( ValueTypes.PROPERTY_SET ) )
         {
             serializePropertySet( value );
         }

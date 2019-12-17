@@ -1,11 +1,11 @@
 package com.enonic.xp.util;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.apache.commons.lang.text.StrSubstitutor;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 public final class StringTemplate
@@ -33,7 +33,7 @@ public final class StringTemplate
 
         try
         {
-            final String value = Resources.toString( url, Charsets.UTF_8 );
+            final String value = Resources.toString( url, StandardCharsets.UTF_8 );
             return new StringTemplate( value );
         }
         catch ( final Exception e )

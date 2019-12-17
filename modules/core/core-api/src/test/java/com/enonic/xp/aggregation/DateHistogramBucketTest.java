@@ -2,22 +2,20 @@ package com.enonic.xp.aggregation;
 
 
 import java.time.Instant;
-import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
-public class DateHistogramBucketTest
+class DateHistogramBucketTest
 {
     @Test
-    public void builder()
+    void builder()
     {
         DateHistogramBucket.Builder builder = DateHistogramBucket.create();
 
         long time = System.currentTimeMillis();
-        Instant instant = new Date( time ).toInstant();
+        Instant instant = Instant.ofEpochMilli( time );
         builder.keyAsInstant( instant );
         DateHistogramBucket dateHistogramBucket = builder.build();
 

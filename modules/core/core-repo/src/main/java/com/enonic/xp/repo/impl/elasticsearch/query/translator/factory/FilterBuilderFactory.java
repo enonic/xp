@@ -1,20 +1,19 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.ExistsQueryBuilder;
-import org.elasticsearch.index.query.IndicesQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.index.query.TermsQueryBuilder;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.query.filter.BooleanFilter;
@@ -22,6 +21,7 @@ import com.enonic.xp.query.filter.ExistsFilter;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.IdFilter;
+import com.enonic.xp.query.filter.IndexFilter;
 import com.enonic.xp.query.filter.IndicesFilter;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.query.filter.ValueFilter;
@@ -49,7 +49,7 @@ public class FilterBuilderFactory
 
     private QueryBuilder doCreate( final ImmutableSet<Filter> queryFilters )
     {
-        List<QueryBuilder> filtersToApply = Lists.newArrayList();
+        List<QueryBuilder> filtersToApply = new ArrayList<>();
 
         appendFilters( queryFilters, filtersToApply );
 
@@ -108,6 +108,10 @@ public class FilterBuilderFactory
         {
             return createIndicesFilter( (IndicesFilter) filter );
         }
+        else if ( filter instanceof IndexFilter )
+        {
+            return createIndexFilter( (IndexFilter) filter );
+        }
         else
         {
             throw new IllegalArgumentException( String.format( "Filter of type %s not supported", filter.getClass() ) );
@@ -116,26 +120,34 @@ public class FilterBuilderFactory
 
     private QueryBuilder createIndicesFilter( final IndicesFilter indicesFilter )
     {
-        final IndicesQueryBuilder builder =
-            new IndicesQueryBuilder( doCreateFilterBuilder( indicesFilter.getFilter() ), indicesFilter.getIndices() );
+        final BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
+
+        boolQueryBuilder.filter( doCreateFilterBuilder( indicesFilter.getFilter() ) );
 
         if ( indicesFilter.getNoMatchFilter() != null )
         {
-            builder.noMatchQuery( doCreateFilterBuilder( indicesFilter.getNoMatchFilter() ) );
+            boolQueryBuilder.mustNot( doCreateFilterBuilder( indicesFilter.getNoMatchFilter() ) );
         }
 
-        return builder;
+        return boolQueryBuilder;
     }
 
     private QueryBuilder createIdFilter( final IdFilter idFilter )
     {
         final String queryFieldName = IndexFieldNameNormalizer.normalize( idFilter.getFieldName() );
 
-        final Set<Object> values = Sets.newHashSet();
+        final Set<Object> values = new HashSet<>();
 
         values.addAll( idFilter.getValues() );
 
         return new TermsQueryBuilder( queryFieldName, values );
+    }
+
+    private QueryBuilder createIndexFilter( final IndexFilter indexFilter )
+    {
+        final String filedName = IndexFieldNameNormalizer.normalize( indexFilter.getFieldName() );
+
+        return new TermsQueryBuilder( filedName, new HashSet<>( indexFilter.getValues() ) );
     }
 
     private QueryBuilder createBooleanFilter( final BooleanFilter booleanFilter )
@@ -145,18 +157,12 @@ public class FilterBuilderFactory
         Arrays.stream( createBooleanFilterChildren( booleanFilter.getMustNot() ) ).forEach( builder::mustNot );
         Arrays.stream( createBooleanFilterChildren( booleanFilter.getShould() ) ).forEach( builder::should );
 
-        //TODO Java10
-//        if ( booleanFilter.isCache() != null )
-//        {
-//            builder.cache( booleanFilter.isCache() );
-//        }
-
         return builder;
     }
 
     private QueryBuilder[] createBooleanFilterChildren( final ImmutableSet<Filter> queryFilters )
     {
-        List<QueryBuilder> filtersToApply = Lists.newArrayList();
+        List<QueryBuilder> filtersToApply = new ArrayList<>();
 
         appendFilters( queryFilters, filtersToApply );
 
@@ -177,16 +183,10 @@ public class FilterBuilderFactory
         final String queryFieldName = this.fieldNameResolver.resolve( filter.getFieldName(), from != null ? from : to );
 
         RangeQueryBuilder builder = new RangeQueryBuilder( queryFieldName ).
-            from( from ).
-            to( to ).
+            from( from != null ? from.getObject() : null ).
+            to( to != null ? to.getObject() : null).
             includeLower( true ).
             includeUpper( true );
-
-        //TODO Java10
-//        if ( filter.isCache() != null )
-//        {
-//            builder.cache( filter.isCache() );
-//        }
 
         return builder;
     }
@@ -200,17 +200,11 @@ public class FilterBuilderFactory
 
         final String queryFieldName = this.fieldNameResolver.resolve( filter );
 
-        final Set<Object> values = Sets.newHashSet();
+        final Set<Object> values = new HashSet<>();
 
         values.addAll( filter.getValues().stream().map( ValueHelper::getValueAsType ).collect( Collectors.toList() ) );
 
         final TermsQueryBuilder builder = new TermsQueryBuilder( queryFieldName, values );
-
-        //TODO Java10
-//        if ( filter.isCache() != null )
-//        {
-//            builder.cache( filter.isCache() );
-//        }
 
         return builder;
     }

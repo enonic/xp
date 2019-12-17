@@ -1,14 +1,13 @@
 package com.enonic.xp.web.impl.handler;
 
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import com.google.common.base.Joiner;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
 
 import com.enonic.xp.portal.impl.exception.ExceptionRendererImpl;
 import com.enonic.xp.web.HttpMethod;
@@ -19,7 +18,7 @@ import com.enonic.xp.web.impl.serializer.ResponseSerializationServiceImpl;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WebDispatcherServletTest
     extends JettyTestSupport
@@ -59,8 +58,8 @@ public class WebDispatcherServletTest
             body( "Hello World" ).
             build();
 
-        final Request request = newRequest( "/site/master/a/b" ).
-            get().
+        final HttpRequest request = newRequest( "/site/master/a/b" ).
+            GET().
             build();
 
         this.handler.verifier = req -> {
@@ -72,12 +71,12 @@ public class WebDispatcherServletTest
             assertEquals( HttpMethod.GET, req.getMethod() );
         };
 
-        final Response response = callRequest( request );
+        final HttpResponse response = callRequest( request );
 
-        assertEquals( 200, response.code() );
-        assertEquals( "text/plain", response.body().contentType().toString() );
-        assertEquals( "Hello World", response.body().string() );
-        assertEquals( 11, response.body().contentLength() );
+        assertEquals( 200, response.statusCode() );
+        assertEquals( List.of( "text/plain" ), response.headers().allValues( "content-type" ) );
+        assertEquals( "Hello World", response.body().toString() );
+        assertEquals( List.of( "11" ), response.headers().allValues( "content-length" ) );
     }
 
     @Test
@@ -89,39 +88,38 @@ public class WebDispatcherServletTest
             header( "X-Header", "Value" ).
             build();
 
-        final Request request = newRequest( "/site/master/a/b" ).
-            get().
+        final HttpRequest request = newRequest( "/site/master/a/b" ).
+            GET().
             build();
 
-        final Response response = callRequest( request );
-        assertEquals( 200, response.code() );
-        assertEquals( "Value", response.header( "X-Header" ) );
+        final HttpResponse response = callRequest( request );
+        assertEquals( 200, response.statusCode() );
+        assertEquals( List.of( "Value" ), response.headers().allValues( "X-Header" ) );
     }
 
     @Test
     public void testRequestHeaders()
         throws Exception
     {
-        final Request request = newRequest( "/site/master/a/b" ).
-            get().
+        final HttpRequest request = newRequest( "/site/master/a/b" ).
+            GET().
             header( "X-Header", "Value" ).
             build();
 
         this.handler.verifier = req -> {
-            assertEquals( 5, req.getHeaders().size() );
             assertEquals( "Value", req.getHeaders().get( "X-Header" ) );
         };
 
-        final Response response = callRequest( request );
-        assertEquals( 200, response.code() );
+        final HttpResponse response = callRequest( request );
+        assertEquals( 200, response.statusCode() );
     }
 
     @Test
     public void testReadCookies()
         throws Exception
     {
-        final Request request = newRequest( "/site/master/a/b" ).
-            get().
+        final HttpRequest request = newRequest( "/site/master/a/b" ).
+            GET().
             header( "Cookie", "theme=light; sessionToken=abc123" ).
             build();
 
@@ -130,59 +128,60 @@ public class WebDispatcherServletTest
             assertEquals( "abc123", req.getCookies().get( "sessionToken" ) );
         };
 
-        final Response response = callRequest( request );
-        assertEquals( 200, response.code() );
+        final HttpResponse response = callRequest( request );
+        assertEquals( 200, response.statusCode() );
     }
 
     @Test
     public void testParameters()
         throws Exception
     {
-        final Request request = newRequest( "/site/master/a/b?a=1&b=2&b=3" ).
-            get().
+        final HttpRequest request = newRequest( "/site/master/a/b?a=1&b=2&b=3" ).
+            GET().
             build();
 
         this.handler.verifier = req -> {
-            assertEquals( "1", Joiner.on( "," ).join( req.getParams().get( "a" ) ) );
-            assertEquals( "2,3", Joiner.on( "," ).join( req.getParams().get( "b" ) ) );
+            assertEquals( "1", String.join( ",", req.getParams().get( "a" ) ) );
+            assertEquals( "2,3", String.join( ",", req.getParams().get( "b" ) ) );
         };
 
-        final Response response = callRequest( request );
-        assertEquals( 200, response.code() );
+        final HttpResponse response = callRequest( request );
+        assertEquals( 200, response.statusCode() );
     }
 
     @Test
     public void testPost_formEncoded()
         throws Exception
     {
-        final RequestBody formBody = new FormEncodingBuilder().
-            add( "search", "Jurassic Park" ).
-            add( "expand", "true" ).
-            build();
-
-        final Request request = newRequest( "/site/master/a/b" ).
-            post( formBody ).
+        HttpRequest.BodyPublisher formBody = HttpRequest.BodyPublishers.ofString( Map.of( "search", "Jurassic Park", "expand", "true" ).
+            entrySet().
+            stream().
+            map( e -> e.getKey() + "=" + e.getValue() ).collect( Collectors.joining( "&" ) ) );
+        final HttpRequest request = newRequest( "/site/master/a/b" ).
+            header( "Content-Type", "application/x-www-form-urlencoded" ).
+            POST( formBody ).
             build();
 
         this.handler.verifier = req -> {
             assertEquals( HttpMethod.POST, req.getMethod() );
             assertEquals( "application/x-www-form-urlencoded", req.getContentType() );
-            assertEquals( "Jurassic Park", Joiner.on( "," ).join( req.getParams().get( "search" ) ) );
-            assertEquals( "true", Joiner.on( "," ).join( req.getParams().get( "expand" ) ) );
+            assertEquals( "Jurassic Park", String.join( ",", req.getParams().get( "search" ) ) );
+            assertEquals( "true", String.join( ",", req.getParams().get( "expand" ) ) );
         };
 
-        final Response response = callRequest( request );
-        assertEquals( 200, response.code() );
+        final HttpResponse response = callRequest( request );
+        assertEquals( 200, response.statusCode() );
     }
 
     @Test
     public void testPost_plainText()
         throws Exception
     {
-        final RequestBody formBody = RequestBody.create( MediaType.parse( "text/plain" ), "Hello World" );
+        HttpRequest.BodyPublisher formBody = HttpRequest.BodyPublishers.ofString( "Hello World" );
 
-        final Request request = newRequest( "/site/master/a/b" ).
-            post( formBody ).
+        final HttpRequest request = newRequest( "/site/master/a/b" ).
+            header( "content-type", "text/plain; charset=utf-8" ).
+            POST( formBody ).
             build();
 
         this.handler.verifier = req -> {
@@ -191,18 +190,19 @@ public class WebDispatcherServletTest
             assertEquals( "Hello World", req.getBodyAsString() );
         };
 
-        final Response response = callRequest( request );
-        assertEquals( 200, response.code() );
+        final HttpResponse response = callRequest( request );
+        assertEquals( 200, response.statusCode() );
     }
 
     @Test
     public void testPost_json()
         throws Exception
     {
-        final RequestBody formBody = RequestBody.create( MediaType.parse( "application/json" ), "{}" );
+        HttpRequest.BodyPublisher formBody = HttpRequest.BodyPublishers.ofString( "{}" );
 
-        final Request request = newRequest( "/site/master/a/b" ).
-            post( formBody ).
+        final HttpRequest request = newRequest( "/site/master/a/b" ).
+            header( "content-type", "application/json; charset=utf-8" ).
+            POST( formBody ).
             build();
 
         this.handler.verifier = req -> {
@@ -211,8 +211,8 @@ public class WebDispatcherServletTest
             assertEquals( "{}", req.getBodyAsString() );
         };
 
-        final Response response = callRequest( request );
-        assertEquals( 200, response.code() );
+        final HttpResponse response = callRequest( request );
+        assertEquals( 200, response.statusCode() );
     }
 
     @Test
@@ -221,11 +221,11 @@ public class WebDispatcherServletTest
     {
         this.servlet.removeWebHandler( this.handler );
 
-        final Request request = newRequest( "/site/master/a/b" ).
-            get().
+        final HttpRequest request = newRequest( "/site/master/a/b" ).
+            GET().
             build();
 
-        final Response response = callRequest( request );
-        assertEquals( 404, response.code() );
+        final HttpResponse response = callRequest( request );
+        assertEquals( 404, response.statusCode() );
     }
 }

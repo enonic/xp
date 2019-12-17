@@ -1,10 +1,10 @@
 package com.enonic.xp.lib.node.mapper;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.json.ObjectMapperHelper;
@@ -14,7 +14,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class BaseMapperTest
 {
@@ -52,7 +52,7 @@ public abstract class BaseMapperTest
             throw new IllegalArgumentException( "Resource file [" + fileName + "] not found" );
         }
 
-        return Resources.toString( url, Charsets.UTF_8 );
+        return Resources.toString( url, StandardCharsets.UTF_8 );
     }
 
 }

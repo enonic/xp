@@ -3,13 +3,13 @@ package com.enonic.xp.launcher.impl.config;
 import java.io.File;
 import java.io.Reader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.google.common.io.CharSource;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
@@ -46,7 +46,7 @@ public final class ConfigLoader
     {
         final URL url = getClass().getResource( DEFAULT_CONFIG );
         Preconditions.checkNotNull( url, "Could not find " + DEFAULT_CONFIG );
-        return loadProperties( Resources.asCharSource( url, Charsets.UTF_8 ) );
+        return loadProperties( Resources.asCharSource( url, StandardCharsets.UTF_8 ) );
     }
 
     private Map<String, String> loadFileProperties()
@@ -56,10 +56,10 @@ public final class ConfigLoader
         final File file = new File( configDir, CONFIG_FILE );
         if ( !file.isFile() )
         {
-            return Maps.newHashMap();
+            return new HashMap<>();
         }
 
-        return loadProperties( Files.asCharSource( file, Charsets.UTF_8 ) );
+        return loadProperties( Files.asCharSource( file, StandardCharsets.UTF_8 ) );
     }
 
     private Map<String, String> loadProperties( final CharSource source )

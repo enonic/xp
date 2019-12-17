@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.media.MediaTypeProvider;
 import com.enonic.xp.util.MediaTypes;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MediaTypeProviderRegisterTest
 {

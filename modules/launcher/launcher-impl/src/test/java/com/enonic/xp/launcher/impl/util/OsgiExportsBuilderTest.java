@@ -1,13 +1,12 @@
 package com.enonic.xp.launcher.impl.util;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Sets;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OsgiExportsBuilderTest
 {
@@ -43,6 +42,6 @@ public class OsgiExportsBuilderTest
 
     private String sort( final String str )
     {
-        return Joiner.on( ',' ).join( Sets.newTreeSet( Splitter.on( ',' ).split( str ) ) );
+        return Stream.of( str.split( ",", -1 ) ).sorted().distinct().collect( Collectors.joining( "," ) );
     }
 }

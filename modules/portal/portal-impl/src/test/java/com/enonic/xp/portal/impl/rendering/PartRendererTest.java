@@ -24,7 +24,8 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -135,12 +136,14 @@ public class PartRendererTest
             build();
         final ControllerScript controllerScript = new ControllerScript()
         {
+            @Override
             public PortalResponse execute( final PortalRequest portalRequest )
             {
                 return PortalResponse.create().body( "<h1 class=\"important\">My component</h1>" ).contentType(
                     MediaType.HTML_UTF_8 ).status( HttpStatus.OK ).build();
             }
 
+            @Override
             public void onSocketEvent( final WebSocketEvent event )
             {
             }
@@ -175,11 +178,13 @@ public class PartRendererTest
             build();
         final ControllerScript controllerScript = new ControllerScript()
         {
+            @Override
             public PortalResponse execute( final PortalRequest portalRequest )
             {
                 return new PortalResponseSerializer( null, HttpStatus.METHOD_NOT_ALLOWED ).serialize();
             }
 
+            @Override
             public void onSocketEvent( final WebSocketEvent event )
             {
             }
@@ -214,11 +219,13 @@ public class PartRendererTest
             build();
         final ControllerScript controllerScript = new ControllerScript()
         {
+            @Override
             public PortalResponse execute( final PortalRequest portalRequest )
             {
                 return new PortalResponseSerializer( null ).serialize();
             }
 
+            @Override
             public void onSocketEvent( final WebSocketEvent event )
             {
             }

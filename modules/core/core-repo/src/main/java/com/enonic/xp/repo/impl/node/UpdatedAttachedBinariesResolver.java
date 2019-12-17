@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -7,7 +8,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.context.ContextAccessor;
@@ -58,14 +58,14 @@ class UpdatedAttachedBinariesResolver
 
         final Set<BinaryReference> referencesInPersistedNode = new ReferenceResolver().resolve( this.persistedNode.data() );
 
-        final Sets.SetView<BinaryReference> changedBinaryReferences = Sets.difference( referencesInEditedNode, referencesInPersistedNode );
+        final Set<BinaryReference> changedBinaryReferences = Sets.difference( referencesInEditedNode, referencesInPersistedNode );
 
         if ( changedBinaryReferences.isEmpty() && this.binaryAttachments.isEmpty() )
         {
             return persistedNode.getAttachedBinaries();
         }
 
-        final Map<BinaryReference, AttachedBinary> resolvedAttachedBinaries = Maps.newLinkedHashMap();
+        final Map<BinaryReference, AttachedBinary> resolvedAttachedBinaries = new LinkedHashMap<>();
 
         processExistingBinaries( resolvedAttachedBinaries, referencesInEditedNode, referencesInPersistedNode );
 
@@ -76,7 +76,7 @@ class UpdatedAttachedBinariesResolver
         return AttachedBinaries.fromCollection( resolvedAttachedBinaries.values() );
     }
 
-    private void verifyAllNewGivenAsBinaryAttachment( final Sets.SetView<BinaryReference> changedBinaryReferences )
+    private void verifyAllNewGivenAsBinaryAttachment( final Set<BinaryReference> changedBinaryReferences )
     {
         for ( final BinaryReference binaryReference : changedBinaryReferences )
         {
@@ -109,7 +109,7 @@ class UpdatedAttachedBinariesResolver
                                           final Set<BinaryReference> referencesInEditedNode,
                                           final Set<BinaryReference> referencesInPersistedNode )
     {
-        final Sets.SetView<BinaryReference> unchangedReferences = Sets.intersection( referencesInPersistedNode, referencesInEditedNode );
+        final Set<BinaryReference> unchangedReferences = Sets.intersection( referencesInPersistedNode, referencesInEditedNode );
 
         final AttachedBinaries attachedBinaries = persistedNode.getAttachedBinaries();
 
@@ -180,7 +180,7 @@ class UpdatedAttachedBinariesResolver
         }
     }
 
-    private class ReferenceResolver
+    private static class ReferenceResolver
         extends PropertyVisitor
     {
         private final Set<BinaryReference> binaryReferences = new LinkedHashSet<>();

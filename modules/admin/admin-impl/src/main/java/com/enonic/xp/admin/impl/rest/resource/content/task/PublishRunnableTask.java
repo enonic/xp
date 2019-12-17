@@ -7,8 +7,8 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
@@ -132,6 +132,7 @@ public class PublishRunnableTask
             return this;
         }
 
+        @Override
         public PublishRunnableTask build()
         {
             return new PublishRunnableTask( this );

@@ -1,6 +1,7 @@
 package com.enonic.xp.web.impl.serializer;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +9,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 
@@ -116,7 +116,7 @@ public final class ResponseSerializer
     private void serializeBody( final HttpServletResponse response, final String body )
         throws IOException
     {
-        writeToStream( response, body.getBytes( Charsets.UTF_8 ) );
+        writeToStream( response, body.getBytes( StandardCharsets.UTF_8 ) );
     }
 
     private void writeToStream( final HttpServletResponse response, final byte[] data )

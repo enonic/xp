@@ -15,7 +15,9 @@ import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 
 import static com.enonic.xp.repo.impl.TestContext.TEST_BRANCH;
 import static com.enonic.xp.repo.impl.TestContext.TEST_REPOSITORY;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class NodeIndexDocumentFactoryTest
 {
@@ -133,7 +135,7 @@ public class NodeIndexDocumentFactoryTest
         final IndexDocument indexDocument = getIndexDocumentOfType( indexDocuments, "test" );
 
         assertEquals( myAnalyzerName, indexDocument.getAnalyzer() );
-        assertEquals( IndexNameResolver.resolveSearchIndexName( TEST_REPOSITORY.getId() ), indexDocument.getIndexName() );
+        assertEquals( IndexNameResolver.resolveSearchIndexName( TEST_REPOSITORY.getId(), TEST_BRANCH ), indexDocument.getIndexName() );
         assertEquals( "test", indexDocument.getIndexTypeName() );
     }
 
@@ -148,8 +150,4 @@ public class NodeIndexDocumentFactoryTest
         }
         return null;
     }
-
-
-
-
 }

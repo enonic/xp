@@ -1,60 +1,37 @@
 {
-  "version": {
-    "_all": {
-      "enabled": false
+  "date_detection": false,
+  "numeric_detection": false,
+  "properties": {
+    "nodeid": {
+      "type": "keyword"
     },
-    "_source": {
-      "enabled": true
+    "versionid": {
+      "type": "keyword"
     },
-    "date_detection": false,
-    "numeric_detection": false,
-    "properties": {
-      "nodeid": {
-        "type": "string",
-        "store": false,
-        "index": "not_analyzed"
-      },
-      "versionid": {
-        "type": "string",
-        "store": false,
-        "index": "not_analyzed"
-      },
-      "nodeblobkey": {
-        "type": "string",
-        "store": false,
-        "index": "not_analyzed"
-      },
-      "indexconfigblobkey": {
-        "type": "string",
-        "store": false,
-        "index": "not_analyzed"
-      },
-      "accesscontrolblobkey": {
-        "type": "string",
-        "store": false,
-        "index": "not_analyzed"
-      },
-      "binaryblobkeys": {
-        "type": "string",
-        "store": false,
-        "index": "not_analyzed"
-      },
-      "timestamp": {
-        "type": "date",
-        "store": false,
-        "index": "not_analyzed"
-      },
-      "nodepath": {
-        "type": "string",
-        "store": false,
-        "index": "analyzed",
-        "analyzer": "keywordlowercase"
-      },
-      "commitid": {
-        "type": "string",
-        "store": false,
-        "index": "not_analyzed"
-      }
+    "nodeblobkey": {
+      "type": "keyword"
+    },
+    "indexconfigblobkey": {
+      "type": "keyword"
+    },
+    "accesscontrolblobkey": {
+      "type": "keyword"
+    },
+    "binaryblobkeys": {
+      "type": "keyword"
+    },
+    "timestamp": {
+      "type": "date"
+    },
+    "nodepath": {
+      "type": "keyword",
+      "normalizer": "lowercase"
+    },
+    "commitid": {
+      "type": "keyword"
+    },
+    "branches": {
+      "type": "keyword"
     }
   }
 }

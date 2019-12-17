@@ -1,12 +1,11 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.mixin;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationWildcardResolver;
@@ -49,7 +48,7 @@ public class ContentTypeNameWildcardResolver
 
     public List<String> resolveWildcards( final List<String> namesToResolve, final ApplicationKey currentApplicationKey )
     {
-        final List<String> resolvedNames = Lists.newArrayList();
+        final List<String> resolvedNames = new ArrayList<>();
 
         namesToResolve.forEach( name -> {
             if ( this.applicationWildcardResolver.hasAnyWildcard( name ) || this.applicationWildcardResolver.startWithAppWildcard( name ) )

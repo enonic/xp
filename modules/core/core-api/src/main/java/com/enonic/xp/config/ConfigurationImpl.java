@@ -1,6 +1,7 @@
 package com.enonic.xp.config;
 
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -65,20 +66,31 @@ final class ConfigurationImpl
         return new ConfigurationImpl( builder.build() );
     }
 
+    @Override
     public Map<String, String> asMap()
     {
         return this.map;
     }
 
     @Override
-    public boolean equals( final Object other )
+    public boolean equals( final Object o )
     {
-        return ( other instanceof Configuration ) && equals( (Configuration) other );
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof Configuration ) )
+        {
+            return false;
+        }
+        final Configuration that = (Configuration) o;
+        return map.equals( that.asMap() );
     }
 
-    private boolean equals( final Configuration other )
+    @Override
+    public int hashCode()
     {
-        return this.map.equals( other.asMap() );
+        return Objects.hash( map );
     }
 
     public static ConfigurationImpl create( final Map<String, String> map )

@@ -32,7 +32,9 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static com.enonic.xp.repository.RepositoryConstants.MASTER_BRANCH;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FindNodesByMultiRepoQueryCommandTest
     extends AbstractNodeTest
@@ -124,11 +126,11 @@ public class FindNodesByMultiRepoQueryCommandTest
         final Branch otherBranch = callInContext( REPO_USER_1, repo1.getId(), MASTER_BRANCH, () -> createBranch( "otherBranch" ) );
 
         final Node repo1MasterNode1 =
-            callInContext( REPO_USER_1, repo1.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo1Node" ) );
+            callInContext( REPO_USER_1, repo1.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo1Node", MASTER_BRANCH ) );
         final Node repo1OtherNode1 =
-            callInContext( REPO_USER_1, repo1.getId(), otherBranch, () -> createNode( NodePath.ROOT, "repo1Node" ) );
+            callInContext( REPO_USER_1, repo1.getId(), otherBranch, () -> createNode( NodePath.ROOT, "repo1Node", otherBranch ) );
         final Node repo2MasterNode1 =
-            callInContext( REPO_USER_2, repo2.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo2Node" ) );
+            callInContext( REPO_USER_2, repo2.getId(), MASTER_BRANCH, () -> createNode( NodePath.ROOT, "repo2Node", MASTER_BRANCH ) );
 
         final SearchTargets targets = SearchTargets.create().
             add( createTarget( otherBranch, REPO_USER_1, repo1.getId() ) ).
@@ -207,10 +209,10 @@ public class FindNodesByMultiRepoQueryCommandTest
     {
         final MultiRepoNodeHits nodeHits = result.getNodeHits();
         final Set<RepositoryId> repositories = nodeHits.stream().map( MultiRepoNodeHit::getRepositoryId ).collect( Collectors.toSet() );
-        assertEquals( repositoryIds.length, repositories.size(), "Wrong number of repositories" );
+        org.junit.jupiter.api.Assertions.assertEquals( repositoryIds.length, repositories.size(), "Wrong number of repositories" );
         for ( final RepositoryId repoId : repositoryIds )
         {
-            assertTrue( repositories.contains( repoId ), "missing repo '" + repoId + "' in result set" );
+            org.junit.jupiter.api.Assertions.assertTrue( repositories.contains( repoId ), "missing repo '" + repoId + "' in result set" );
         }
     }
 
@@ -218,10 +220,10 @@ public class FindNodesByMultiRepoQueryCommandTest
     {
         final MultiRepoNodeHits nodeHits = result.getNodeHits();
         final Set<Branch> resultBranches = nodeHits.stream().map( MultiRepoNodeHit::getBranch ).collect( Collectors.toSet() );
-        assertEquals( branches.length, resultBranches.size(), "Wrong number of branches in result" );
+        org.junit.jupiter.api.Assertions.assertEquals( branches.length, resultBranches.size(), "Wrong number of branches in result" );
         for ( final Branch branch : resultBranches )
         {
-            assertTrue( resultBranches.contains( branch ) , "missing repo '" + branch + "' in result set");
+            org.junit.jupiter.api.Assertions.assertTrue( resultBranches.contains( branch ) , "missing repo '" + branch + "' in result set");
         }
     }
 

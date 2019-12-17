@@ -1,10 +1,9 @@
 package com.enonic.xp.repo.impl.elasticsearch.suggistion.query;
 
+import java.util.HashSet;
 import java.util.Set;
 
-import org.elasticsearch.search.suggest.SuggestBuilder;
-
-import com.google.common.collect.Sets;
+import org.elasticsearch.search.suggest.SuggestionBuilder;
 
 import com.enonic.xp.query.suggester.SuggestionQueries;
 import com.enonic.xp.query.suggester.SuggestionQuery;
@@ -20,18 +19,18 @@ public class SuggestionQueryBuilderFactory
         this.fieldNameResolver = fieldNameResolver;
     }
 
-    public Set<SuggestBuilder.SuggestionBuilder> create( final SuggestionQueries suggestionQueries )
+    public Set<SuggestionBuilder> create( final SuggestionQueries suggestionQueries )
     {
         return doCreate( suggestionQueries );
     }
 
-    private Set<SuggestBuilder.SuggestionBuilder> doCreate( final SuggestionQueries suggestionQueries )
+    private Set<SuggestionBuilder> doCreate( final SuggestionQueries suggestionQueries )
     {
-        Set<SuggestBuilder.SuggestionBuilder> suggestionBuilders = Sets.newHashSet();
+        Set<SuggestionBuilder> suggestionBuilders = new HashSet<>();
 
         for ( final SuggestionQuery suggestionQuery : suggestionQueries )
         {
-            final SuggestBuilder.SuggestionBuilder suggestionBuilder;
+            final SuggestionBuilder suggestionBuilder;
 
             if ( suggestionQuery instanceof TermSuggestionQuery )
             {

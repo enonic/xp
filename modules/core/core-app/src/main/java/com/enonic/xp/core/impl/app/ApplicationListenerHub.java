@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -16,8 +17,6 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.util.tracker.BundleTracker;
 import org.osgi.util.tracker.BundleTrackerCustomizer;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationListener;
 import com.enonic.xp.server.RunMode;
@@ -26,20 +25,13 @@ import com.enonic.xp.server.RunMode;
 public final class ApplicationListenerHub
     implements BundleTrackerCustomizer<Application>
 {
-    private final ExecutorService executor;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    private final ApplicationFactory factory;
+    private final ApplicationFactory factory = new ApplicationFactory( RunMode.get() );
 
-    private final List<ApplicationListener> listeners;
+    private final List<ApplicationListener> listeners = new CopyOnWriteArrayList<>();
 
     private BundleTracker<Application> tracker;
-
-    public ApplicationListenerHub()
-    {
-        this.factory = new ApplicationFactory( RunMode.get() );
-        this.listeners = Lists.newCopyOnWriteArrayList();
-        this.executor = Executors.newSingleThreadExecutor();
-    }
 
     @Activate
     public void activate( final BundleContext context )

@@ -1,12 +1,17 @@
 {
   "bool": {
-    "must_not": {
-      "term": {
-        "myfield": {
-          "value": "myvalue",
-          "_name": "myfield"
+    "must_not": [
+      {
+        "term": {
+          "myfield": {
+            "value": "myvalue",
+            "boost": 1.0,
+            "_name": "myfield"
+          }
         }
       }
-    }
+    ],
+    "adjust_pure_negative": true,
+    "boost": 1.0
   }
 }

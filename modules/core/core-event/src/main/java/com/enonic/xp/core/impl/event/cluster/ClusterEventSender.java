@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.event.cluster;
 
-import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.EmptyTransportResponseHandler;
@@ -18,7 +17,6 @@ public final class ClusterEventSender
 {
     public static final String ACTION = "xp/event";
 
-    private ClusterService clusterService;
 
     private TransportService transportService;
 
@@ -34,26 +32,12 @@ public final class ClusterEventSender
 
     private void send( final TransportRequest transportRequest )
     {
-        final DiscoveryNode localNode = this.clusterService.localNode();
-        for ( final DiscoveryNode node : this.clusterService.state().nodes() )
-        {
-            if ( !node.equals( localNode ) )
-            {
-                send( transportRequest, node );
-            }
-        }
     }
 
     private void send( final TransportRequest transportRequest, final DiscoveryNode node )
     {
         final EmptyTransportResponseHandler responseHandler = new EmptyTransportResponseHandler( ThreadPool.Names.MANAGEMENT );
         this.transportService.sendRequest( node, ACTION, transportRequest, responseHandler );
-    }
-
-    @Reference
-    public void setClusterService( final ClusterService clusterService )
-    {
-        this.clusterService = clusterService;
     }
 
     @Reference

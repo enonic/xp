@@ -2,11 +2,11 @@ package com.enonic.xp.repo.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
@@ -21,7 +21,7 @@ public class ReturnFields
 
     public static ReturnFields empty()
     {
-        final Set<ReturnField> returnFields = Sets.newHashSet();
+        final Set<ReturnField> returnFields = new HashSet<>();
         return new ReturnFields( returnFields );
     }
 

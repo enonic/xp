@@ -9,7 +9,7 @@ import com.enonic.xp.region.TextComponentType;
 
 import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.COMPONENTS;
 import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.TYPE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TextComponentDataSerializerTest
 {

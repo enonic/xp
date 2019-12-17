@@ -2,20 +2,14 @@ package com.enonic.xp.internal.blobstore;
 
 import java.util.Iterator;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.enonic.xp.blob.BlobStoreProvider;
 
 final class BlobStoreProviders
     implements Iterable<BlobStoreProvider>
 {
-    private final Map<String, BlobStoreProvider> providers;
-
-    BlobStoreProviders()
-    {
-        this.providers = Maps.newHashMap();
-    }
+    private final Map<String, BlobStoreProvider> providers = new ConcurrentHashMap<>();
 
     void add( final BlobStoreProvider provider )
     {

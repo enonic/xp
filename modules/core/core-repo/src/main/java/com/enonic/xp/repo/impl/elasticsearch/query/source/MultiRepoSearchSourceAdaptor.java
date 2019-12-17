@@ -7,6 +7,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.IdFilter;
+import com.enonic.xp.query.filter.IndexFilter;
 import com.enonic.xp.query.filter.IndicesFilter;
 import com.enonic.xp.repo.impl.MultiRepoSearchSource;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AclFilterBuilderFactory;
@@ -18,9 +19,10 @@ class MultiRepoSearchSourceAdaptor
     static ESSource adapt( final MultiRepoSearchSource source )
     {
         final ESSource.Builder esSourceBuilder = ESSource.create().
-            indexNames(
-                source.getRepositoryIds().stream().map( AbstractSourceAdapter::createSearchIndexName ).collect( Collectors.toSet() ) ).
-            indexTypes( source.getAllBranches().stream().map( AbstractSourceAdapter::createSearchTypeName ).collect( Collectors.toSet() ) ).
+            indexNames( source.getSources().stream().map(
+                singleRepoSource -> AbstractSourceAdapter.createSearchIndexName( singleRepoSource.getRepositoryId(),
+                                                                                 singleRepoSource.getBranch() ) ).
+                collect( Collectors.toSet() ) ).
             addFilter( createSourceFilters( source ) );
 
         return esSourceBuilder.build();
@@ -34,7 +36,7 @@ class MultiRepoSearchSourceAdaptor
 
         for ( final RepositoryId repoId : repoBranchAclMap )
         {
-            sourceFilters.must( createRepoFilter( repoId, repoBranchAclMap.getBranchAclEntries( repoId ) ) );
+            sourceFilters.should( createRepoFilter( repoId, repoBranchAclMap.getBranchAclEntries( repoId ) ) );
         }
 
         return sourceFilters.build();
@@ -75,8 +77,12 @@ class MultiRepoSearchSourceAdaptor
             filters.must( aclFilter );
         }
 
+        filters.must( IndexFilter.create().
+            value( createSearchIndexName( repoId, entry.getBranch() ) ).
+            build() );
+
         return IndicesFilter.create().
-            addIndex( createSearchIndexName( repoId ) ).
+            addIndex( createSearchIndexName( repoId, entry.getBranch() ) ).
             filter( filters.
                 build() ).
             build();
@@ -86,7 +92,7 @@ class MultiRepoSearchSourceAdaptor
     {
         // USE ID-FILTER TO KEEP CASE
         return IdFilter.create().
-            fieldName( "_type" ).
+            fieldName( "branch" ).
             value( createSearchTypeName( branch ) ).
             build();
     }

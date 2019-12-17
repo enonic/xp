@@ -21,8 +21,7 @@ class GeoDistanceSortFunction
 
         final String queryFieldName = new SearchQueryFieldNameResolver().resolve( baseFieldName, IndexValueType.GEO_POINT );
 
-        GeoDistanceSortBuilder builder = new GeoDistanceSortBuilder( queryFieldName );
-        builder.point( arguments.getLatitude(), arguments.getLongitude() );
+        final GeoDistanceSortBuilder builder = new GeoDistanceSortBuilder( queryFieldName, arguments.getLatitude(), arguments.getLongitude() );
         builder.order( SortOrder.valueOf( orderExpr.getDirection().toString() ) );
 
         return builder;

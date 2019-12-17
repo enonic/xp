@@ -4,7 +4,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.xp.node.SearchOptimizer;
 import com.enonic.xp.query.filter.Filters;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.DiffQueryFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.NewDiffQueryFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.StoreQueryFieldNameResolver;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
@@ -25,7 +25,7 @@ class NodeVersionDiffQueryTranslator
     @Override
     public QueryBuilder createQueryBuilder( final Filters additionalFilters )
     {
-        return DiffQueryFactory.create().
+        return NewDiffQueryFactory.create().
             query( query ).
             childStorageType( StaticStorageType.BRANCH ).
             build().

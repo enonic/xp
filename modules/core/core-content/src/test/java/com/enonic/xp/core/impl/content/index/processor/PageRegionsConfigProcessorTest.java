@@ -40,7 +40,8 @@ import static com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigP
 import static com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigProcessor.TEXT_COMPONENT_INDEX_CONFIG;
 import static com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigProcessor.VALUE;
 import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PageRegionsConfigProcessorTest
 {
@@ -221,7 +222,7 @@ public class PageRegionsConfigProcessorTest
                     {
                         final PartComponent partComponent = (PartComponent) component;
 
-                        Mockito.when( partDescriptorService.getByKey( ( partComponent.getDescriptor() ) ) ).thenReturn(
+                        Mockito.when( partDescriptorService.getByKey( partComponent.getDescriptor() ) ).thenReturn(
                             PartDescriptor.create().key( partComponent.getDescriptor() ).config( partForms.next() ).build() );
                     }
                 }
@@ -231,7 +232,7 @@ public class PageRegionsConfigProcessorTest
                     {
                         final LayoutComponent layoutComponent = (LayoutComponent) component;
 
-                        Mockito.when( layoutDescriptorService.getByKey( ( layoutComponent.getDescriptor() ) ) ).thenReturn(
+                        Mockito.when( layoutDescriptorService.getByKey( layoutComponent.getDescriptor() ) ).thenReturn(
                             LayoutDescriptor.create().key( layoutComponent.getDescriptor() ).config( layoutForms.next() ).regions(
                                 RegionDescriptors.create().build() ).build() );
 
@@ -263,7 +264,7 @@ public class PageRegionsConfigProcessorTest
                     {
                         final PartComponent partComponent = (PartComponent) component;
 
-                        Mockito.when( partDescriptorService.getByKey( ( partComponent.getDescriptor() ) ) ).thenReturn(
+                        Mockito.when( partDescriptorService.getByKey( partComponent.getDescriptor() ) ).thenReturn(
                             PartDescriptor.create().key( partComponent.getDescriptor() ).config( partForms.next() ).build() );
                     }
                 }

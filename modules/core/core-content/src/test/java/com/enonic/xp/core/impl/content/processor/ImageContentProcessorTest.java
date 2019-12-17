@@ -43,7 +43,11 @@ import com.enonic.xp.util.GeoPoint;
 
 import static com.enonic.xp.media.MediaInfo.GPS_INFO_GEO_POINT;
 import static com.enonic.xp.media.MediaInfo.GPS_INFO_METADATA_NAME;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ImageContentProcessorTest
 {
@@ -156,7 +160,7 @@ public class ImageContentProcessorTest
         assertEquals( xDataInfo.getName(), extraData.getName() );
         assertEquals( extraData.getData().getString( "shutterTime", 0 ), "1" );
         assertEquals( extraData.getData().getString( "altitude", 0 ), "2" );
-        assertEquals( extraData.getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ), new Long( 13 ) );
+        assertEquals( 13, extraData.getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ) );
     }
 
     @Test
@@ -226,7 +230,7 @@ public class ImageContentProcessorTest
         result.getEditor().edit( editableContent );
         assertEquals( editableContent.extraDatas.first().getData().getString( "shutterTime", 0 ), "1" );
         assertEquals( editableContent.extraDatas.first().getData().getString( "altitude", 0 ), "2" );
-        assertEquals( editableContent.extraDatas.first().getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ), new Long( 13 ) );
+        assertEquals( 13, editableContent.extraDatas.first().getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ) );
     }
 
     private static Form createGpsInfoMixinForm()

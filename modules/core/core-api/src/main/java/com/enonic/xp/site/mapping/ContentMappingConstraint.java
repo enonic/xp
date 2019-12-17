@@ -4,8 +4,6 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -13,6 +11,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
@@ -20,6 +19,7 @@ import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.schema.xdata.XDataName;
 
+import static com.google.common.base.Strings.nullToEmpty;
 import static org.apache.commons.lang.StringUtils.substringAfter;
 import static org.apache.commons.lang.StringUtils.substringBefore;
 
@@ -44,9 +44,9 @@ public final class ContentMappingConstraint
 
     private static final String VALID_PROPERTY = "valid";
 
-    private static final String DATA_PROPERTY_PREFIX = "data.";
+    private static final String DATA_PROPERTY_PREFIX = "data" + PropertyPath.ELEMENT_DIVIDER;
 
-    private static final String XDATA_PROPERTY_PREFIX = "x.";
+    private static final String XDATA_PROPERTY_PREFIX = "x" + PropertyPath.ELEMENT_DIVIDER;
 
     private final String id;
 
@@ -108,10 +108,10 @@ public final class ContentMappingConstraint
         else if ( this.id.startsWith( XDATA_PROPERTY_PREFIX ) )
         {
             String dataPath = substringAfter( id, XDATA_PROPERTY_PREFIX );
-            final String appPrefix = substringBefore( dataPath, "." );
-            dataPath = substringAfter( dataPath, "." );
-            final String mixinName = substringBefore( dataPath, "." );
-            dataPath = substringAfter( dataPath, "." );
+            final String appPrefix = substringBefore( dataPath, PropertyPath.ELEMENT_DIVIDER );
+            dataPath = substringAfter( dataPath, PropertyPath.ELEMENT_DIVIDER );
+            final String mixinName = substringBefore( dataPath, PropertyPath.ELEMENT_DIVIDER );
+            dataPath = substringAfter( dataPath, PropertyPath.ELEMENT_DIVIDER );
             final PropertyTree xData = getXData( content.getAllExtraData(), appPrefix, mixinName );
             if ( xData == null )
             {
@@ -173,51 +173,51 @@ public final class ContentMappingConstraint
 
     private Value convert( final String value, final ValueType type )
     {
-        if ( type == ValueTypes.XML )
+        if ( type.equals( ValueTypes.XML ) )
         {
             return ValueFactory.newXml( ValueTypes.XML.convert( value ) );
         }
-        if ( type == ValueTypes.LOCAL_DATE )
+        if ( type.equals( ValueTypes.LOCAL_DATE ) )
         {
             return ValueFactory.newLocalDate( ValueTypes.LOCAL_DATE.convert( value ) );
         }
-        if ( type == ValueTypes.LOCAL_TIME )
+        if ( type.equals( ValueTypes.LOCAL_TIME ) )
         {
             return ValueFactory.newLocalTime( ValueTypes.LOCAL_TIME.convert( value ) );
         }
-        if ( type == ValueTypes.LOCAL_DATE_TIME )
+        if ( type.equals( ValueTypes.LOCAL_DATE_TIME ) )
         {
             return ValueFactory.newLocalDateTime( ValueTypes.LOCAL_DATE_TIME.convert( value ) );
         }
-        if ( type == ValueTypes.DATE_TIME )
+        if ( type.equals( ValueTypes.DATE_TIME ) )
         {
             return ValueFactory.newDateTime( ValueTypes.DATE_TIME.convert( value ) );
         }
-        if ( type == ValueTypes.LONG )
+        if ( type.equals( ValueTypes.LONG ) )
         {
             return ValueFactory.newLong( ValueTypes.LONG.convert( value ) );
         }
-        if ( type == ValueTypes.DOUBLE )
+        if ( type.equals( ValueTypes.DOUBLE ) )
         {
             return ValueFactory.newDouble( ValueTypes.DOUBLE.convert( value ) );
         }
-        if ( type == ValueTypes.GEO_POINT )
+        if ( type.equals( ValueTypes.GEO_POINT ) )
         {
             return ValueFactory.newGeoPoint( ValueTypes.GEO_POINT.convert( value ) );
         }
-        if ( type == ValueTypes.BOOLEAN )
+        if ( type.equals( ValueTypes.BOOLEAN ) )
         {
             return ValueFactory.newBoolean( ValueTypes.BOOLEAN.convert( value ) );
         }
-        if ( type == ValueTypes.REFERENCE )
+        if ( type.equals( ValueTypes.REFERENCE ) )
         {
             return ValueFactory.newReference( ValueTypes.REFERENCE.convert( value ) );
         }
-        if ( type == ValueTypes.LINK )
+        if ( type.equals( ValueTypes.LINK ) )
         {
             return ValueFactory.newLink( ValueTypes.LINK.convert( value ) );
         }
-        if ( type == ValueTypes.BINARY_REFERENCE )
+        if ( type.equals( ValueTypes.BINARY_REFERENCE ) )
         {
             return ValueFactory.newBinaryReference( ValueTypes.BINARY_REFERENCE.convert( value ) );
         }
@@ -245,7 +245,7 @@ public final class ContentMappingConstraint
         }
         final String id = substringBefore( expression, SEPARATOR ).trim();
         final String value = substringAfter( expression, SEPARATOR ).trim();
-        if ( StringUtils.isBlank( id ) )
+        if ( nullToEmpty( id ).isBlank() )
         {
             throw new IllegalArgumentException( "Invalid match expression: " + expression );
         }

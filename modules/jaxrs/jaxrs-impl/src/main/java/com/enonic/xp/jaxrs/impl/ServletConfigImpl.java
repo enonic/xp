@@ -2,12 +2,11 @@ package com.enonic.xp.jaxrs.impl;
 
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
-
-import com.google.common.collect.Maps;
 
 final class ServletConfigImpl
     implements ServletConfig
@@ -22,7 +21,7 @@ final class ServletConfigImpl
     {
         this.name = name;
         this.context = context;
-        this.params = Maps.newHashMap();
+        this.params = new HashMap<>();
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.enonic.xp.impl.task.cluster;
 
 import java.util.List;
 
-import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.elasticsearch.transport.TransportRequest;
@@ -22,22 +21,23 @@ public final class TaskTransportRequestSenderImpl
 
     public static final String ACTION = "xp/task";
 
-    private ClusterService clusterService;
-
     private TransportService transportService;
 
+    @Override
     public List<TaskInfo> getByTaskId( final TaskId taskId )
     {
         final TransportRequest transportRequest = new TaskTransportRequest( TaskTransportRequest.Type.BY_ID, taskId );
         return send( transportRequest );
     }
 
+    @Override
     public List<TaskInfo> getRunningTasks()
     {
         final TransportRequest transportRequest = new TaskTransportRequest( TaskTransportRequest.Type.RUNNING, null );
         return send( transportRequest );
     }
 
+    @Override
     public List<TaskInfo> getAllTasks()
     {
         final TransportRequest transportRequest = new TaskTransportRequest( TaskTransportRequest.Type.ALL, null );
@@ -46,20 +46,14 @@ public final class TaskTransportRequestSenderImpl
 
     private List<TaskInfo> send( final TransportRequest transportRequest )
     {
-        final DiscoveryNodes discoveryNodes = this.clusterService.state().nodes();
-        final TaskTransportResponseHandler responseHandler = new TaskTransportResponseHandler( discoveryNodes.size() );
+        final DiscoveryNodes discoveryNodes = DiscoveryNodes.EMPTY_NODES;
+        final TaskTransportResponseHandler responseHandler = new TaskTransportResponseHandler( discoveryNodes.getSize() );
         for ( final DiscoveryNode discoveryNode : discoveryNodes )
         {
             final TransportRequestOptions options = TransportRequestOptions.builder().withTimeout( TRANSPORT_REQUEST_TIMEOUT ).build();
             this.transportService.sendRequest( discoveryNode, ACTION, transportRequest, options, responseHandler );
         }
         return responseHandler.getTaskInfos();
-    }
-
-    @Reference
-    public void setClusterService( final ClusterService clusterService )
-    {
-        this.clusterService = clusterService;
     }
 
     @Reference

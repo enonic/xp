@@ -3,7 +3,6 @@ package com.enonic.xp.server.internal.config;
 import java.io.File;
 import java.io.FileFilter;
 
-import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
@@ -12,21 +11,27 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.annotations.VisibleForTesting;
-
 @Component(immediate = true)
 public final class ConfigWatcher
     extends FileAlterationListenerAdaptor
 {
-    private final static FileFilter FILTER =
-        FileFilterUtils.and( FileFilterUtils.fileFileFilter(), FileFilterUtils.suffixFileFilter( ".cfg" ) );
+    private static final FileFilter FILTER = ( file ) -> file.getName().endsWith( ".cfg" ) && file.isFile();
 
     private FileAlterationMonitor monitor;
 
     private ConfigInstaller installer;
 
-    @VisibleForTesting
-    ConfigPaths configPaths = ConfigPaths.get();
+    private final ConfigPaths configPaths;
+
+    public ConfigWatcher()
+    {
+        this( ConfigPaths.get() );
+    }
+
+    public ConfigWatcher( final ConfigPaths configPaths )
+    {
+        this.configPaths = configPaths;
+    }
 
     @Activate
     public void activate()

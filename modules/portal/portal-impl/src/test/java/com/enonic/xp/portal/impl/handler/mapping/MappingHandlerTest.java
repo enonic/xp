@@ -41,7 +41,8 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
@@ -74,14 +75,14 @@ public class MappingHandlerTest
         this.request = new PortalRequest();
         final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
         this.controllerScript = Mockito.mock( ControllerScript.class );
-        when( controllerScriptFactory.fromDir( Mockito.anyObject() ) ).thenReturn( this.controllerScript );
+        when( controllerScriptFactory.fromDir( Mockito.any() ) ).thenReturn( this.controllerScript );
         final PortalResponse portalResponse = PortalResponse.create().build();
-        when( this.controllerScript.execute( Mockito.anyObject() ) ).thenReturn( portalResponse );
+        when( this.controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
 
         this.filterScriptFactory = Mockito.mock( FilterScriptFactory.class );
         this.filterScript = Mockito.mock( FilterScript.class );
-        when( filterScriptFactory.fromScript( Mockito.anyObject() ) ).thenReturn( this.filterScript );
-        when( this.filterScript.execute( Mockito.anyObject(), Mockito.anyObject(), Mockito.anyObject() ) ).thenReturn( portalResponse );
+        when( filterScriptFactory.fromScript( Mockito.any() ) ).thenReturn( this.filterScript );
+        when( this.filterScript.execute( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
         this.resourceService = Mockito.mock( ResourceService.class );
         final Resource resourceNotFound = Mockito.mock( Resource.class );
@@ -153,7 +154,7 @@ public class MappingHandlerTest
         this.request.setEndpointPath( "" );
         this.request.setContent( this.contentService.getById( ContentId.from( "id" ) ) );
 
-        Renderer<ControllerMappingDescriptor> renderer = new Renderer<ControllerMappingDescriptor>()
+        Renderer<ControllerMappingDescriptor> renderer = new Renderer<>()
         {
             @Override
             public Class<ControllerMappingDescriptor> getType()

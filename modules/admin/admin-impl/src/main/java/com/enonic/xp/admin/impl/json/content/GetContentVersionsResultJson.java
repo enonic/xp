@@ -1,8 +1,7 @@
 package com.enonic.xp.admin.impl.json.content;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.content.ContentVersion;
@@ -10,7 +9,7 @@ import com.enonic.xp.content.FindContentVersionsResult;
 
 public class GetContentVersionsResultJson
 {
-    private Set<ContentVersionJson> contentVersions = Sets.newLinkedHashSet();
+    private Set<ContentVersionJson> contentVersions = new LinkedHashSet<>();
 
     private final long totalHits;
 

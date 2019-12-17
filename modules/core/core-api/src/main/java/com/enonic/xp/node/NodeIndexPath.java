@@ -48,4 +48,6 @@ public class NodeIndexPath
     public static final IndexPath PERMISSIONS_READ_PERMISSION = IndexPath.from( PERMISSIONS_ROOT + DIVIDER + "readpermissions" );
 
     public static final IndexPath PERMISSIONS_WRITE_PERMISSION = IndexPath.from( PERMISSIONS_ROOT + DIVIDER + "writepermissions" );
+
+    public static final IndexPath BRANCH = IndexPath.from( "branch" );
 }

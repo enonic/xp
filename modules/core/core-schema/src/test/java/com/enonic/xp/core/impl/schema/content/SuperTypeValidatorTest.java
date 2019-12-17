@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.schema.content;
 
-import java.util.ArrayList;
+import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -12,7 +12,9 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.content.validator.ContentTypeValidationError;
 import com.enonic.xp.schema.content.validator.ContentTypeValidationResult;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SuperTypeValidatorTest
 {
@@ -53,8 +55,10 @@ public class SuperTypeValidatorTest
     @Test
     public void validationResult()
     {
-        ContentTypeValidationResult validationResult1 = ContentTypeValidationResult.from(new ContentTypeValidationError("superType not found: superTypeName", ContentTypeName.media()));
-        ContentTypeValidationResult validationResult2 = ContentTypeValidationResult.from(new ArrayList<ContentTypeValidationError>() {{ add(new ContentTypeValidationError("superType not found: superTypeName", ContentTypeName.media())); }});
+        ContentTypeValidationResult validationResult1 = ContentTypeValidationResult.from(
+            new ContentTypeValidationError( "superType not found: superTypeName", ContentTypeName.media() ) );
+        ContentTypeValidationResult validationResult2 = ContentTypeValidationResult.from(
+            Collections.singleton( new ContentTypeValidationError( "superType not found: superTypeName", ContentTypeName.media() ) ) );
         ContentTypeValidationResult validationResult3 = ContentTypeValidationResult.empty();
         assertNotEquals( validationResult1, validationResult2 );
         assertNotEquals( validationResult1.hashCode(), validationResult2.hashCode() );

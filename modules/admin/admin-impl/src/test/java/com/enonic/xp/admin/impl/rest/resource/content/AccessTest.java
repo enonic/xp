@@ -10,7 +10,7 @@ import static com.enonic.xp.security.acl.Permission.READ;
 import static com.enonic.xp.security.acl.Permission.READ_PERMISSIONS;
 import static com.enonic.xp.security.acl.Permission.WRITE_PERMISSIONS;
 import static java.util.Arrays.asList;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AccessTest
 {

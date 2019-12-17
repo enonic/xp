@@ -39,7 +39,12 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ServiceHandlerTest
     extends BaseHandlerTest
@@ -63,10 +68,10 @@ public class ServiceHandlerTest
         this.request = new PortalRequest();
         final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
         this.controllerScript = Mockito.mock( ControllerScript.class );
-        Mockito.when( controllerScriptFactory.fromDir( Mockito.anyObject() ) ).thenReturn( this.controllerScript );
+        Mockito.when( controllerScriptFactory.fromDir( Mockito.any() ) ).thenReturn( this.controllerScript );
 
         final PortalResponse portalResponse = PortalResponse.create().build();
-        Mockito.when( this.controllerScript.execute( Mockito.anyObject() ) ).thenReturn( portalResponse );
+        Mockito.when( this.controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
 
         this.resourceService = Mockito.mock( ResourceService.class );
         final Resource resourceNotFound = Mockito.mock( Resource.class );
@@ -124,7 +129,7 @@ public class ServiceHandlerTest
     {
         this.request.setMethod( HttpMethod.OPTIONS );
         final PortalResponse portalResponse = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
-        Mockito.when( this.controllerScript.execute( Mockito.anyObject() ) ).thenReturn( portalResponse );
+        Mockito.when( this.controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );

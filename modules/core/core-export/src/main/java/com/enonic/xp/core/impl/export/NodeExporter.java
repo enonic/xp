@@ -141,8 +141,6 @@ public class NodeExporter
 
         // TODO: Batch this?
         final NodeVersionQueryResult versions = this.nodeService.findVersions( GetNodeVersionsParams.create().
-            from( 0 ).
-            size( -1 ).
             nodeId( node.id() ).
             build() );
 

@@ -1,10 +1,10 @@
 package com.enonic.xp.aggregation;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 @Beta
 public class Bucket
@@ -49,7 +49,7 @@ public class Bucket
 
         long docCount;
 
-        final Set<Aggregation> aggregations = Sets.newHashSet();
+        final Set<Aggregation> aggregations = new HashSet<>();
 
         @SuppressWarnings("unchecked")
         public T key( final String key )

@@ -1,5 +1,6 @@
 package com.enonic.xp.server.shell.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.osgi.framework.BundleActivator;
@@ -9,8 +10,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.server.shell")
 public final class ShellActivator
@@ -25,7 +24,7 @@ public final class ShellActivator
 
     public ShellActivator()
     {
-        this.activators = Lists.newArrayList();
+        this.activators = new ArrayList<>();
         this.activators.add( new org.apache.felix.shell.impl.Activator() );
         this.activators.add( new org.apache.felix.gogo.command.Activator() );
         this.activators.add( new org.apache.felix.gogo.runtime.activator.Activator() );

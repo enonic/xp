@@ -5,8 +5,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,12 +18,13 @@ import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyTreeJson;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class UpdateContentJson
 {
@@ -54,8 +53,8 @@ public final class UpdateContentJson
                        @JsonProperty("workflow") final ContentWorkflowInfoJson workflowInfo )
     {
         this.contentName = ContentName.from( contentName );
-        this.publishFromInstant = StringUtils.isNotEmpty( publishFrom ) ? Instant.parse( publishFrom ) : null;
-        this.publishToInstant = StringUtils.isNotEmpty( publishTo ) ? Instant.parse( publishTo ) : null;
+        this.publishFromInstant = isNullOrEmpty( publishFrom ) ? null : Instant.parse( publishFrom );
+        this.publishToInstant = isNullOrEmpty( publishTo ) ? null : Instant.parse( publishTo );
 
         final PropertyTree contentData = PropertyTreeJson.fromJson( propertyArrayJsonList );
         final ExtraDatas extraDatas = parseExtradata( extraDataJsonList );
@@ -68,15 +67,15 @@ public final class UpdateContentJson
                 edit.data = contentData;
                 edit.extraDatas = extraDatas;
                 edit.displayName = displayName;
-                edit.owner = StringUtils.isNotEmpty( owner ) ? PrincipalKey.from( owner ) : null;
-                edit.language = StringUtils.isNotEmpty( language ) ? Locale.forLanguageTag( language ) : null;
+                edit.owner = isNullOrEmpty( owner ) ? null : PrincipalKey.from( owner );
+                edit.language = isNullOrEmpty( language ) ? null : Locale.forLanguageTag( language );
 
                 edit.publishInfo = ContentPublishInfo.create().
                     first( edit.publishInfo == null ? null : edit.publishInfo.getFirst() ).
                     from( publishFromInstant ).
                     to( publishToInstant ).
                     build();
-                edit.language = StringUtils.isNotEmpty( language ) ? Locale.forLanguageTag( language ) : null;
+                edit.language = isNullOrEmpty( language ) ? null : Locale.forLanguageTag( language );
                 edit.inheritPermissions = inheritPermissions;
                 edit.permissions = parseAcl( permissions );
                 edit.workflowInfo = workflowInfo == null ? null : workflowInfo.getWorkflowInfo();

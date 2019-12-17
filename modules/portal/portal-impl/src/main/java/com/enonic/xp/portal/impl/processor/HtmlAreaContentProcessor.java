@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -51,6 +50,8 @@ import com.enonic.xp.schema.xdata.XDatas;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 @Component
 public class HtmlAreaContentProcessor
@@ -237,7 +238,7 @@ public class HtmlAreaContentProcessor
     {
         properties.stream().
             map( Property::getString ).
-            forEach( ( value -> processString( value, processedIds ) ) );
+            forEach( value -> processString( value, processedIds ) );
     }
 
     private void processComponent( final DescriptorBasedComponent component, final ContentIds.Builder processedIds )
@@ -275,7 +276,7 @@ public class HtmlAreaContentProcessor
 
     private void processString( final String value, final ContentIds.Builder processedIds )
     {
-        if ( StringUtils.isBlank( value ) )
+        if ( nullToEmpty( value ).isBlank() )
         {
             return;
         }

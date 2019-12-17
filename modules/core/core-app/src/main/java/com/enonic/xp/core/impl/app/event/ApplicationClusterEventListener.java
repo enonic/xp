@@ -77,7 +77,7 @@ public class ApplicationClusterEventListener
         if ( appKey.isPresent() )
         {
             final ApplicationKey applicationKey = ApplicationKey.from( appKey.get() );
-            if ( !( this.applicationService.isLocalApplication( applicationKey ) ) )
+            if ( !this.applicationService.isLocalApplication( applicationKey ) )
             {
                 ApplicationHelper.runAsAdmin(
                     () -> this.applicationService.uninstallApplication( ApplicationKey.from( appKey.get() ), false ) );
@@ -93,7 +93,7 @@ public class ApplicationClusterEventListener
         if ( appKey.isPresent() && started.isPresent() )
         {
             final ApplicationKey applicationKey = ApplicationKey.from( appKey.get() );
-            if ( !( this.applicationService.isLocalApplication( applicationKey ) ) )
+            if ( !this.applicationService.isLocalApplication( applicationKey ) )
             {
                 if ( started.get() )
                 {

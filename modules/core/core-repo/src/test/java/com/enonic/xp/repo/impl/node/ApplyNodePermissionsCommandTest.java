@@ -34,7 +34,8 @@ import static com.enonic.xp.security.acl.Permission.MODIFY;
 import static com.enonic.xp.security.acl.Permission.PUBLISH;
 import static com.enonic.xp.security.acl.Permission.READ;
 import static com.enonic.xp.security.acl.Permission.WRITE_PERMISSIONS;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class ApplyNodePermissionsCommandTest

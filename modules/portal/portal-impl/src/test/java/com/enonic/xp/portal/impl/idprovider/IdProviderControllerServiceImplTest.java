@@ -2,7 +2,7 @@ package com.enonic.xp.portal.impl.idprovider;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Vector;
+import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,7 +35,9 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class IdProviderControllerServiceImplTest
 {
@@ -210,7 +212,7 @@ public class IdProviderControllerServiceImplTest
         Mockito.when( httpServletRequest.getServerName() ).thenReturn( "localhost" );
         Mockito.when( httpServletRequest.getLocalPort() ).thenReturn( 80 );
         Mockito.when( httpServletRequest.getRequestURI() ).thenReturn( "/admin/tool" );
-        Mockito.when( httpServletRequest.getHeaderNames() ).thenReturn( new Vector<String>().elements() );
+        Mockito.when( httpServletRequest.getHeaderNames() ).thenReturn( Collections.emptyEnumeration() );
         return httpServletRequest;
     }
 }

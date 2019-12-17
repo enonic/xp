@@ -1,10 +1,10 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.repository.RepositoryId;
 
@@ -57,7 +57,7 @@ public class RestoreResult
 
     public static final class Builder
     {
-        private Set<String> indices = Sets.newHashSet();
+        private Set<String> indices = new HashSet<>();
 
         private String name;
 

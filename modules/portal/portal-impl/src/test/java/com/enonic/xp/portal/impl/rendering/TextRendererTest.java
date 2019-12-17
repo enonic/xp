@@ -19,7 +19,8 @@ import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TextRendererTest
 {
@@ -157,7 +158,7 @@ public class TextRendererTest
         assertEquals( "<div data-portal-component-type=\"text\"><section>" + text + "</section></div>", portalResponse.getAsString() );
     }
 
-    private class MockMacroService
+    private static class MockMacroService
         implements MacroService
     {
         @Override
@@ -179,7 +180,7 @@ public class TextRendererTest
         }
     }
 
-    private class MockStyleDescriptorService
+    private static class MockStyleDescriptorService
         implements StyleDescriptorService
     {
         @Override

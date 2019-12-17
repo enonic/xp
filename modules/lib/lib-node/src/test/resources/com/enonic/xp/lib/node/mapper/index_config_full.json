@@ -12,7 +12,33 @@
   },
   "configs": [
     {
-      "path": "property1.*.property3",
+      "path": "property1@x",
+      "config": {
+        "decideByType": true,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": false,
+        "indexValueProcessors": [],
+        "languages": []
+      }
+    },
+    {
+      "path": "property1@property2",
+      "config": {
+        "decideByType": true,
+        "enabled": true,
+        "nGram": false,
+        "fulltext": false,
+        "includeInAllText": false,
+        "path": false,
+        "indexValueProcessors": [],
+        "languages": []
+      }
+    },
+    {
+      "path": "property1@*@property3",
       "config": {
         "decideByType": true,
         "enabled": true,
@@ -27,33 +53,7 @@
       }
     },
     {
-      "path": "property1.x",
-      "config": {
-        "decideByType": true,
-        "enabled": true,
-        "nGram": false,
-        "fulltext": false,
-        "includeInAllText": false,
-        "path": false,
-        "indexValueProcessors": [],
-        "languages": []
-      }
-    },
-    {
-      "path": "property1.property2",
-      "config": {
-        "decideByType": true,
-        "enabled": true,
-        "nGram": false,
-        "fulltext": false,
-        "includeInAllText": false,
-        "path": false,
-        "indexValueProcessors": [],
-        "languages": []
-      }
-    },
-    {
-      "path": "property1.*",
+      "path": "property1@*",
       "config": {
         "decideByType": true,
         "enabled": true,

@@ -1,20 +1,25 @@
 package com.enonic.xp.config;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConfigurationTest
 {
     @Test
     public void testEmpty()
     {
-        final Map<String, String> source = Maps.newHashMap();
+        final Map<String, String> source = new HashMap<>();
         final Configuration config = ConfigurationImpl.create( source );
 
         assertNotNull( config );
@@ -22,7 +27,7 @@ public class ConfigurationTest
         assertNull( config.get( "key1" ) );
         assertEquals( "value1", config.getOrDefault( "key1", "value1" ) );
         assertNull( config.get( "key1", Integer.class ) );
-        assertEquals( new Integer( 11 ), config.getOrDefault( "key1", Integer.class, 11 ) );
+        assertEquals( 11, config.getOrDefault( "key1", Integer.class, 11 ) );
 
         final Map<String, String> map = config.asMap();
         assertTrue( map.isEmpty() );
@@ -41,8 +46,8 @@ public class ConfigurationTest
         assertEquals( "value1", config.getOrDefault( "key1", "value3" ) );
         assertEquals( "value3", config.getOrDefault( "key3", "value3" ) );
         assertNull( config.get( "key1", Integer.class ) );
-        assertEquals( new Integer( 11 ), config.getOrDefault( "key1", Integer.class, 11 ) );
-        assertEquals( new Integer( 33 ), config.getOrDefault( "key2", Integer.class, 11 ) );
+        assertEquals( 11, config.getOrDefault( "key1", Integer.class, 11 ) );
+        assertEquals( 33, config.getOrDefault( "key2", Integer.class, 11 ) );
 
         final Map<String, String> map = config.asMap();
         assertEquals( 2, map.size() );

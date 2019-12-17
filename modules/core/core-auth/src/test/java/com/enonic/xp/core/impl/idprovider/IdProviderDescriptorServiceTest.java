@@ -10,7 +10,8 @@ import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.idprovider.IdProviderDescriptorMode;
 import com.enonic.xp.inputtype.InputTypeName;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class IdProviderDescriptorServiceTest
     extends ApplicationTestSupport

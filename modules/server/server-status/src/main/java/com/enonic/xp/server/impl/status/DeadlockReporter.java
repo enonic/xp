@@ -2,12 +2,12 @@ package com.enonic.xp.server.impl.status;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 
 import com.codahale.metrics.jvm.ThreadDeadlockDetector;
-import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.net.MediaType;
 
@@ -35,6 +35,6 @@ public final class DeadlockReporter
     {
         final Set<String> deadlocks = new ThreadDeadlockDetector().getDeadlockedThreads();
         final String text = deadlocks.isEmpty() ? "No deadlocks detected!" : Joiner.on( "\n\n" ).join( deadlocks );
-        outputStream.write( text.getBytes( Charsets.UTF_8 ) );
+        outputStream.write( text.getBytes( StandardCharsets.UTF_8 ) );
     }
 }

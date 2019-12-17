@@ -20,7 +20,10 @@ import org.osgi.framework.ServiceRegistration;
 
 import com.enonic.xp.cluster.ClusterHealth;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class ElasticsearchClusterTest
 {
@@ -98,7 +101,7 @@ public class ElasticsearchClusterTest
         throws Exception
     {
         setClusterHealth( ClusterHealthStatus.RED );
-        assertEquals( ClusterHealth.red(), this.activator.getHealth() );
+        assertEquals( ClusterHealth.red().getStatus(), this.activator.getHealth().getStatus() );
     }
 
     @Test

@@ -4,7 +4,8 @@
       "from": "5.1.0",
       "to": "5.3.0",
       "include_lower": true,
-      "include_upper": false
+      "include_upper": false,
+      "boost": 1.0
     }
   }
 }

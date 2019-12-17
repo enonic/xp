@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.handler.image;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
 
@@ -30,6 +29,7 @@ import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.apache.commons.lang.StringUtils.substringBeforeLast;
 
 final class ImageHandlerWorker
@@ -148,7 +148,7 @@ final class ImageHandlerWorker
         throws Exception
     {
         String format = StringUtils.substringAfterLast( fileName, "." ).toLowerCase();
-        if ( Strings.isNullOrEmpty( format ) )
+        if ( isNullOrEmpty( format ) )
         {
             format = this.imageService.getFormatByMimeType( mimeType );
         }
@@ -176,7 +176,7 @@ final class ImageHandlerWorker
 
     private int getBackgroundColor()
     {
-        if ( Strings.isNullOrEmpty( this.backgroundParam ) )
+        if ( isNullOrEmpty( this.backgroundParam ) )
         {
             return DEFAULT_BACKGROUND;
         }

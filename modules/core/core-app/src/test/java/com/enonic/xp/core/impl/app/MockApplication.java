@@ -8,8 +8,6 @@ import java.util.Set;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
-import com.google.common.collect.Sets;
-
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.ConfigBuilder;
@@ -179,6 +177,6 @@ public class MockApplication
     @Override
     public Set<String> getCapabilities()
     {
-        return Sets.newHashSet();
+        return Set.of();
     }
 }

@@ -1,8 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentPath;
 
@@ -42,13 +41,14 @@ public class DuplicateRunnableTaskResult
     public static class Builder
         extends RunnableTaskResult.Builder<Builder>
     {
-        private List<ContentPath> alreadyDuplicated = Lists.newArrayList();
+        private List<ContentPath> alreadyDuplicated = new ArrayList<>();
 
         private Builder()
         {
             super();
         }
 
+        @Override
         public Builder succeeded( ContentPath item )
         {
             super.succeeded( item );
@@ -61,6 +61,7 @@ public class DuplicateRunnableTaskResult
             return this;
         }
 
+        @Override
         public DuplicateRunnableTaskResult build()
         {
             return new DuplicateRunnableTaskResult( this );

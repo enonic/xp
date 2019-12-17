@@ -10,7 +10,7 @@ public interface StorageDao
 
     void store( final Collection<IndexDocument> indexDocuments );
 
-    boolean delete( final DeleteRequest request );
+    void delete( final DeleteRequest request );
 
     void delete( final DeleteRequests request );
 

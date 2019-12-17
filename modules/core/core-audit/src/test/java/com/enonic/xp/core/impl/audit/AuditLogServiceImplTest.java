@@ -10,6 +10,7 @@ import com.enonic.xp.audit.AuditLogUris;
 import com.enonic.xp.audit.FindAuditLogParams;
 import com.enonic.xp.audit.FindAuditLogResult;
 import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
 import com.enonic.xp.core.impl.audit.serializer.AuditLogSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexService;
@@ -46,7 +47,6 @@ public class AuditLogServiceImplTest
         auditLogParams = LogAuditLogParams.create().
             type( "testType" ).
             source( "testSource" ).
-            message( "testMessage" ).
             objectUris( AuditLogUris.from( "a:b:c", "d:e:f" ) ).
             data( data ).
             build();
@@ -76,15 +76,16 @@ public class AuditLogServiceImplTest
         Mockito.when( indexService.isMaster() ).thenReturn( true );
         RepositoryService repositoryService = Mockito.mock( RepositoryService.class );
 
+        AuditLogConfig config = Mockito.mock( AuditLogConfig.class );
+        Mockito.when( config.isEnabled() ).thenReturn( true );
+        Mockito.when( config.isOutputLogs() ).thenReturn( true );
+
         auditLogService = new AuditLogServiceImpl();
         auditLogService.setNodeService( nodeService );
         auditLogService.setIndexService( indexService );
         auditLogService.setRepositoryService( repositoryService );
-
-        AuditLogConfig config = Mockito.mock( AuditLogConfig.class );
-        Mockito.when( config.enabled() ).thenReturn( true );
-        Mockito.when( config.outputLogs() ).thenReturn( true );
-        auditLogService.initialize( config );
+        auditLogService.setConfig( config );
+        auditLogService.initialize();
     }
 
     @Test
@@ -140,8 +141,6 @@ public class AuditLogServiceImplTest
         assertEquals( auditLogParams.getSource(), log.getSource() );
         assertNotNull( log.getUser() );
         assertEquals( auditLogParams.getUser(), log.getUser() );
-        assertNotNull( log.getMessage() );
-        assertEquals( auditLogParams.getMessage(), log.getMessage() );
         assertNotNull( log.getObjectUris() );
         assertEquals( 2, log.getObjectUris().getSize() );
         assertEquals( auditLogParams.getObjectUris(), log.getObjectUris() );

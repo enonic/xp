@@ -1,10 +1,10 @@
 package com.enonic.xp.suggester;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -52,7 +52,7 @@ public class Suggestions
 
     public static class Builder
     {
-        private final Set<Suggestion> suggestions = Sets.newLinkedHashSet();
+        private final Set<Suggestion> suggestions = new LinkedHashSet<>();
 
         public Builder add( final Suggestion suggestion )
         {

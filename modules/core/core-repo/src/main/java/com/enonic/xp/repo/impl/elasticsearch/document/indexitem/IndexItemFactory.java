@@ -1,8 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
@@ -47,7 +46,7 @@ class IndexItemFactory
     private static List<IndexItem> createItems( final IndexPath indexPath, final IndexConfigDocument indexConfigDocument,
                                                 final Value processedPropertyValue )
     {
-        final List<IndexItem> items = Lists.newArrayList();
+        final List<IndexItem> items = new ArrayList<>();
 
         final IndexConfig indexConfig = indexConfigDocument.getConfigForPath( indexPath );
 

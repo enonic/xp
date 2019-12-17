@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.branch.Branches;
+import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
@@ -18,7 +20,7 @@ import com.enonic.xp.repo.impl.storage.GetResult;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
-import com.enonic.xp.repo.impl.storage.StoreStorageName;
+import com.enonic.xp.repo.impl.storage.VersionStorageName;
 import com.enonic.xp.repo.impl.version.storage.VersionStorageDocFactory;
 
 @Component
@@ -28,9 +30,29 @@ public class VersionServiceImpl
     private static final ReturnFields VERSION_RETURN_FIELDS =
         ReturnFields.from( VersionIndexPath.VERSION_ID, VersionIndexPath.NODE_BLOB_KEY, VersionIndexPath.INDEX_CONFIG_BLOB_KEY,
                            VersionIndexPath.ACCESS_CONTROL_BLOB_KEY, VersionIndexPath.BINARY_BLOB_KEYS, VersionIndexPath.TIMESTAMP,
-                           VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID, VersionIndexPath.COMMIT_ID );
+                           VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID, VersionIndexPath.COMMIT_ID, VersionIndexPath.BRANCHES );
 
     private StorageDao storageDao;
+
+    @Override
+    public void deleteBranches( final NodeBranchEntries branchEntries, final InternalContext context, final Boolean all )
+    {
+        branchEntries.forEach( nodeBranchEntry -> {
+            final NodeVersionMetadata nodeVersionMetadata =
+                this.getVersion( nodeBranchEntry.getNodeId(), nodeBranchEntry.getVersionId(), context );
+
+            final Branches branches = all
+                ? Branches.empty()
+                : Branches.from(
+                    nodeVersionMetadata.getBranches().stream().filter( branch -> !branch.equals( context.getBranch() ) ).collect(
+                        Collectors.toSet() ) );
+
+            this.store( NodeVersionMetadata.
+                create( nodeVersionMetadata ).
+                setBranches( branches ).
+                build(), context );
+        } );
+    }
 
     @Override
     public void store( final NodeVersionMetadata nodeVersionMetadata, final InternalContext context )
@@ -46,7 +68,7 @@ public class VersionServiceImpl
         storageDao.delete( DeleteRequests.create().
             forceRefresh( false ).
             ids( nodeVersionIds.stream().map( NodeVersionId::toString ).collect( Collectors.toList() ) ).
-            settings( createStorageSettings( context ) ).
+            settings( createVersionStorageSettings( context ) ).
             build() );
     }
 
@@ -61,7 +83,7 @@ public class VersionServiceImpl
         final GetByIdRequest getByIdRequest = GetByIdRequest.create().
             id( nodeVersionId.toString() ).
             returnFields( VERSION_RETURN_FIELDS ).
-            storageSettings( createStorageSettings( context ) ).
+            storageSettings( createVersionStorageSettings( context ) ).
             routing( nodeId.toString() ).
             build();
 
@@ -75,10 +97,10 @@ public class VersionServiceImpl
         return NodeVersionFactory.create( getResult );
     }
 
-    private StorageSource createStorageSettings( final InternalContext context )
+    private StorageSource createVersionStorageSettings( final InternalContext context )
     {
         return StorageSource.create().
-            storageName( StoreStorageName.from( context.getRepositoryId() ) ).
+            storageName( VersionStorageName.from( context.getRepositoryId() ) ).
             storageType( StaticStorageType.VERSION ).
             build();
     }

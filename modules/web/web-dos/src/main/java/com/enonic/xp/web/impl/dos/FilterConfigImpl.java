@@ -2,12 +2,11 @@ package com.enonic.xp.web.impl.dos;
 
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
-
-import com.google.common.collect.Maps;
 
 final class FilterConfigImpl
     implements FilterConfig
@@ -19,7 +18,7 @@ final class FilterConfigImpl
     public FilterConfigImpl( final FilterConfig delegate )
     {
         this.delegate = delegate;
-        this.config = Maps.newHashMap();
+        this.config = new HashMap<>();
     }
 
     @Override

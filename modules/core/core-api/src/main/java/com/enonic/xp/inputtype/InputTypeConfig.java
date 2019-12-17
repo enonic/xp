@@ -90,7 +90,22 @@ public final class InputTypeConfig
     @Override
     public boolean equals( final Object o )
     {
-        return ( o instanceof InputTypeConfig ) && ( (InputTypeConfig) o ).map.equals( this.map );
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof InputTypeConfig ) )
+        {
+            return false;
+        }
+        final InputTypeConfig that = (InputTypeConfig) o;
+        return map.equals( that.map );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( map );
     }
 
     public static InputTypeConfig empty()

@@ -15,7 +15,7 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 
 public class SystemResourceTest
@@ -64,7 +64,7 @@ public class SystemResourceTest
         Mockito.when( taskService.submitTask( Mockito.isA( VacuumRunnableTask.class ), eq( "vacuum" ) ) ).thenReturn(
             TaskId.from( "task-id" ) );
 
-        final TaskResultJson result = resource.vacuum();
+        final TaskResultJson result = resource.vacuum( null );
         assertEquals( "task-id", result.getTaskId() );
     }
 

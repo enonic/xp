@@ -1,9 +1,8 @@
 package com.enonic.xp.elasticsearch.impl.status.cluster;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 final class ClusterState
 {
@@ -58,7 +57,7 @@ final class ClusterState
 
         private LocalNodeState localNodeState;
 
-        private final List<MemberNodeState> memberNodeStateList = Lists.newArrayList();
+        private final List<MemberNodeState> memberNodeStateList = new ArrayList<>();
 
         private Builder()
         {

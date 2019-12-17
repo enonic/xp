@@ -3,8 +3,9 @@ package com.enonic.xp.repo.impl.elasticsearch.executor;
 import java.util.Collection;
 
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.Requests;
+import org.elasticsearch.action.support.WriteRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ public class StoreExecutor
         super( builder );
     }
 
-    public static Builder create( final Client client )
+    public static Builder create( final RestHighLevelClient client )
     {
         return new Builder( client );
     }
@@ -36,16 +37,17 @@ public class StoreExecutor
 
             final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( indexDocument );
 
-            final IndexRequest req = Requests.indexRequest().
+            final IndexRequest req = new IndexRequest().
                 id( id ).
                 index( indexDocument.getIndexName() ).
-                type( indexDocument.getIndexTypeName() ).
                 source( xContentBuilder ).
-                refresh( indexDocument.isRefreshAfterOperation() );
+                setRefreshPolicy(
+                    indexDocument.isRefreshAfterOperation() ? WriteRequest.RefreshPolicy.IMMEDIATE : WriteRequest.RefreshPolicy.NONE ).
+                timeout( storeTimeout );
 
             try
             {
-                this.client.index( req ).actionGet( storeTimeout );
+                this.client.index( req, RequestOptions.DEFAULT );
             }
             catch ( Exception e )
             {
@@ -62,7 +64,7 @@ public class StoreExecutor
     public static final class Builder
         extends AbstractExecutor.Builder<Builder>
     {
-        private Builder( final Client client )
+        private Builder( final RestHighLevelClient client )
         {
             super( client );
         }

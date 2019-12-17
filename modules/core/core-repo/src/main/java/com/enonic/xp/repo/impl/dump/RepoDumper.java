@@ -2,13 +2,12 @@ package com.enonic.xp.repo.impl.dump;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -51,7 +50,7 @@ class RepoDumper
 {
     private static final int DEFAULT_BATCH_SIZE = 5000;
 
-    private final Logger LOG = LoggerFactory.getLogger( RepoDumper.class );
+    private static final Logger LOG = LoggerFactory.getLogger( RepoDumper.class );
 
     private final RepositoryId repositoryId;
 
@@ -89,7 +88,7 @@ class RepoDumper
 
     public RepoDumpResult execute()
     {
-        final Set<NodeId> dumpedNodes = Sets.newHashSet();
+        final Set<NodeId> dumpedNodes = new HashSet<>();
 
         getBranches().forEach( ( branch ) -> dumpedNodes.addAll( setContext( branch ).callWith( this::doExecute ) ) );
 
@@ -107,7 +106,7 @@ class RepoDumper
     {
         this.nodeService.refresh( RefreshMode.ALL );
 
-        Set<NodeId> dumpedNodes = Sets.newHashSet();
+        Set<NodeId> dumpedNodes = new HashSet<>();
 
         final Branch branch = ContextAccessor.current().getBranch();
 
@@ -133,7 +132,7 @@ class RepoDumper
 
     private Set<NodeId> dumpBranch( final BranchDumpResult.Builder dumpResult )
     {
-        Set<NodeId> dumpedNodes = Sets.newHashSet();
+        Set<NodeId> dumpedNodes = new HashSet<>();
 
         final Node rootNode = this.nodeService.getRoot();
         final BatchedGetChildrenExecutor executor = BatchedGetChildrenExecutor.create().
@@ -366,8 +365,12 @@ class RepoDumper
     private NodeVersionQueryResult getVersions( final NodeId nodeId )
     {
         final NodeVersionQuery.Builder queryBuilder = NodeVersionQuery.create().
-            nodeId( nodeId ).
-            size( this.maxVersions != null ? this.maxVersions : -1 );
+            nodeId( nodeId );
+
+        if ( this.maxVersions != null )
+        {
+            queryBuilder.size( this.maxVersions );
+        }
 
         if ( this.maxAge != null )
         {

@@ -12,8 +12,8 @@ public class SearchResultFactory
     {
         return SearchResult.create().
             hits( SearchHitsFactory.create( searchResponse.getHits() ) ).
-            totalHits( searchResponse.getHits().getTotalHits() ).
-            maxScore( searchResponse.getHits().maxScore() ).
+            totalHits( searchResponse.getHits().getTotalHits().value ).
+            maxScore( searchResponse.getHits().getMaxScore() ).
             aggregations( AggregationsFactory.create( searchResponse.getAggregations() ) ).
             suggestions( SuggestionsFactory.create( searchResponse.getSuggest() ) ).
             build();

@@ -1,8 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeIndexPath;
@@ -17,7 +16,7 @@ class AccessControlListStoreDocumentFactory
 {
     static List<IndexItem> create( final AccessControlList accessControlList )
     {
-        final List<IndexItem> aclStoreDocumentItems = Lists.newArrayList();
+        final List<IndexItem> aclStoreDocumentItems = new ArrayList<>();
 
         for ( final AccessControlEntry entry : accessControlList )
         {

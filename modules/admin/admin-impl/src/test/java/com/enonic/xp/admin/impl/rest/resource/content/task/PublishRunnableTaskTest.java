@@ -10,13 +10,13 @@ import org.mockito.Mockito;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.task.AbstractRunnableTaskTest;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PublishRunnableTaskTest
     extends AbstractRunnableTaskTest

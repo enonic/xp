@@ -1,8 +1,7 @@
 package com.enonic.xp.core.impl.issue;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.core.impl.issue.serializer.IssueCommentDataSerializer;
 import com.enonic.xp.issue.IssueComment;
@@ -20,7 +19,7 @@ public class IssueCommentNodeTranslator
 
     public static List<IssueComment> fromNodes( final Nodes nodes )
     {
-        final List<IssueComment> issues = Lists.newArrayList();
+        final List<IssueComment> issues = new ArrayList<>();
 
         for ( final Node node : nodes )
         {

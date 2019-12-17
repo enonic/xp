@@ -26,6 +26,7 @@ public class UpgradeRunnableTaskTest
         this.dumpService = Mockito.mock( DumpService.class );
     }
 
+    @Override
     protected UpgradeRunnableTask createAndRunTask()
     {
         return null;

@@ -1,11 +1,11 @@
 package com.enonic.xp.util;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -27,7 +27,7 @@ public class BinaryReferences
 
     public static BinaryReferences empty()
     {
-        final Set<BinaryReference> returnFields = Sets.newHashSet();
+        final Set<BinaryReference> returnFields = new HashSet<>();
         return new BinaryReferences( returnFields );
     }
 

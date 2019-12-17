@@ -8,21 +8,18 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.StorageSource;
-import com.enonic.xp.repo.impl.cache.PathCache;
+import com.enonic.xp.repo.impl.storage.BranchStorageName;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetByIdsRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
 import com.enonic.xp.repo.impl.storage.GetResults;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageDao;
-import com.enonic.xp.repo.impl.storage.StoreStorageName;
 
 class GetBranchEntriesMethod
     implements BranchEntriesExecutorMethod
 {
     private final InternalContext context;
-
-    private final PathCache pathCache;
 
     private final ReturnFields returnFields;
 
@@ -31,7 +28,6 @@ class GetBranchEntriesMethod
     private GetBranchEntriesMethod( final Builder builder )
     {
         context = builder.context;
-        pathCache = builder.pathCache;
         returnFields = builder.returnFields;
         storageDao = builder.storageDao;
     }
@@ -51,7 +47,7 @@ class GetBranchEntriesMethod
             getByIdsRequest.add( GetByIdRequest.create().
                 id( new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
                 storageSettings( StorageSource.create().
-                    storageName( StoreStorageName.from( context.getRepositoryId() ) ).
+                    storageName( BranchStorageName.from( context.getRepositoryId() ) ).
                     storageType( StaticStorageType.BRANCH ).
                     build() ).
                 returnFields( returnFields ).
@@ -75,8 +71,6 @@ class GetBranchEntriesMethod
     {
         private InternalContext context;
 
-        private PathCache pathCache;
-
         private ReturnFields returnFields;
 
         private StorageDao storageDao;
@@ -88,12 +82,6 @@ class GetBranchEntriesMethod
         public Builder context( final InternalContext val )
         {
             context = val;
-            return this;
-        }
-
-        public Builder pathCache( final PathCache val )
-        {
-            pathCache = val;
             return this;
         }
 

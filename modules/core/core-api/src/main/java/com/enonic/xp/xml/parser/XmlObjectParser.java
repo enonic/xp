@@ -3,6 +3,7 @@ package com.enonic.xp.xml.parser;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -15,7 +16,6 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
@@ -24,8 +24,6 @@ import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.schema.SchemaValidator;
-
-import static com.enonic.xp.xml.parser.ByteOrderMarkHelper.openStreamSkippingBOM;
 
 @Beta
 public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
@@ -51,7 +49,7 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
     public final P source( final URL url )
     {
         systemId( url.toString() );
-        source( Resources.asCharSource( url, Charsets.UTF_8 ) );
+        source( Resources.asCharSource( url, StandardCharsets.UTF_8 ) );
         return typecastThis();
     }
 
@@ -101,7 +99,7 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
 
         final InputSource source = new InputSource();
         source.setSystemId( this.systemId );
-        source.setCharacterStream( openStreamSkippingBOM( this.source ) );
+        source.setCharacterStream( ByteOrderMarkHelper.openStreamSkippingBOM( this.source ) );
 
         final Document doc = builder.parse( source );
         return doParse( doc );

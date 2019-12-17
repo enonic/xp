@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.dump.upgrade.flattenedpage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -9,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
@@ -35,7 +35,7 @@ import com.enonic.xp.util.Version;
 public class FlattenedPageDumpUpgrader
     extends AbstractDumpUpgrader
 {
-    private final Logger LOG = LoggerFactory.getLogger( FlattenedPageDumpUpgrader.class );
+    private static final Logger LOG = LoggerFactory.getLogger( FlattenedPageDumpUpgrader.class );
 
     private static final Version MODEL_VERSION = new Version( 3 );
 
@@ -191,7 +191,7 @@ public class FlattenedPageDumpUpgrader
 
     private NodeVersion getNodeVersion( final DumpBlobRecord dumpBlobRecord )
     {
-        final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( Charsets.UTF_8 );
+        final CharSource charSource = dumpBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 );
         try
         {
             final Pre4NodeVersionJson nodeVersionJson = deserializeValue( charSource.read(), Pre4NodeVersionJson.class );
@@ -206,7 +206,7 @@ public class FlattenedPageDumpUpgrader
     private void writeNodeVersion( final NodeVersion nodeVersion, final DumpBlobRecord dumpBlobRecord )
     {
         final String serializedUpgradedNodeVersion = serializeValue( nodeVersion );
-        final ByteSource byteSource = ByteSource.wrap( serializedUpgradedNodeVersion.getBytes( Charsets.UTF_8 ) );
+        final ByteSource byteSource = ByteSource.wrap( serializedUpgradedNodeVersion.getBytes( StandardCharsets.UTF_8 ) );
         try
         {
 

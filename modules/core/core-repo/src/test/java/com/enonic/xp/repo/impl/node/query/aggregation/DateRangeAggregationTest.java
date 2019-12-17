@@ -20,7 +20,8 @@ import com.enonic.xp.query.aggregation.DateRange;
 import com.enonic.xp.query.aggregation.DateRangeAggregationQuery;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DateRangeAggregationTest
     extends AbstractNodeTest

@@ -1,8 +1,7 @@
 package com.enonic.xp.core.impl.schema.xdata;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.SchemaHelper;
@@ -137,7 +136,7 @@ final class BuiltinXDataTypes
 
     private List<XData> generateSystemXDatas( Iterable<XData> systemXDatas )
     {
-        final List<XData> generatedSystemXDatas = Lists.newArrayList();
+        final List<XData> generatedSystemXDatas = new ArrayList<>();
         for ( XData mixin : systemXDatas )
         {
             mixin = XData.create( mixin ).

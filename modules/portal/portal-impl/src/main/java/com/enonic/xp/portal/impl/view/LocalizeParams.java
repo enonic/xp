@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.view;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -7,11 +8,12 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 class LocalizeParams
 {
@@ -23,7 +25,7 @@ class LocalizeParams
 
     private Object[] params;
 
-    private final Pattern VALUES_PATTERN = Pattern.compile( "^\\{.*\\}$" );
+    private static final Pattern VALUES_PATTERN = Pattern.compile( "^\\{.*\\}$" );
 
     private final PortalRequest request;
 
@@ -52,7 +54,7 @@ class LocalizeParams
 
     private void locale( final String locale )
     {
-        this.locale = Strings.isNullOrEmpty( locale ) ? resolveLocale() : Locale.forLanguageTag( locale );
+        this.locale = isNullOrEmpty( locale ) ? resolveLocale() : Locale.forLanguageTag( locale );
     }
 
     private Locale resolveLocale()
@@ -79,7 +81,7 @@ class LocalizeParams
 
     private void handleArray( final Collection<String> values )
     {
-        final List<Object> params = Lists.newArrayList();
+        final List<Object> params = new ArrayList<>();
 
         for ( final String value : values )
         {
@@ -91,9 +93,9 @@ class LocalizeParams
 
     private void parseValues( final String valuesAsString )
     {
-        if ( Strings.isNullOrEmpty( valuesAsString ) )
+        if ( isNullOrEmpty( valuesAsString ) )
         {
-            this.params = Lists.newArrayList().toArray();
+            this.params = new ArrayList<>().toArray();
             return;
         }
 

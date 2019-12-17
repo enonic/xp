@@ -6,12 +6,13 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
+import com.google.common.io.MoreFiles;
+import com.google.common.io.RecursiveDeleteOption;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
@@ -103,10 +104,10 @@ public final class FileBlobStore
             return java.nio.file.Files.walk( this.baseDir.toPath() ).
                 filter( path -> path.toFile().isFile() ).
                 filter( path -> isBlobFileName( segment, path ) ).
-                map( ( path -> {
+                map( path -> {
                     final BlobKey blobKey = BlobKey.from( path.getFileName().toString() );
                     return doGetRecord( segment, blobKey );
-                } ) );
+                } );
         }
         catch ( IOException e )
         {
@@ -139,7 +140,7 @@ public final class FileBlobStore
 
             if ( segmentDirectory.exists() )
             {
-                FileUtils.deleteDirectory( segmentDirectory );
+                MoreFiles.deleteRecursively( segmentDirectory.toPath(), RecursiveDeleteOption.ALLOW_INSECURE );
             }
 
             if ( segmentParentDirectory.exists() && segmentParentDirectory.list().length == 0 )

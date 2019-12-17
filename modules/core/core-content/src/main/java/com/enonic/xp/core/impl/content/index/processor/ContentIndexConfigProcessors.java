@@ -1,9 +1,8 @@
 package com.enonic.xp.core.impl.content.index.processor;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 public class ContentIndexConfigProcessors
     implements Iterable<ContentIndexConfigProcessor>
@@ -12,7 +11,7 @@ public class ContentIndexConfigProcessors
 
     public ContentIndexConfigProcessors()
     {
-        this.processors = Sets.newHashSet();
+        this.processors = new HashSet<>();
     }
 
     @Override

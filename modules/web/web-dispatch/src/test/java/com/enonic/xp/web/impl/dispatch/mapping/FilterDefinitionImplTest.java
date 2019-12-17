@@ -1,5 +1,7 @@
 package com.enonic.xp.web.impl.dispatch.mapping;
 
+import java.util.ArrayList;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -9,11 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.web.dispatch.MappingBuilder;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FilterDefinitionImplTest
     extends ResourceDefinitionImplTest<Filter, FilterDefinition>
@@ -36,7 +38,7 @@ public class FilterDefinitionImplTest
     @Test
     public void create_noAnnotations()
     {
-        assertNull( ResourceDefinitionFactory.create( this.resource, Lists.newArrayList() ) );
+        assertNull( ResourceDefinitionFactory.create( this.resource, new ArrayList<>() ) );
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.enonic.xp.audit;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -83,17 +84,17 @@ public final class AuditLogIds
 
     public static class Builder
     {
-        private List<AuditLogId> contents = Lists.newArrayList();
+        private List<AuditLogId> contents = new ArrayList<>();
 
-        public Builder add( final AuditLogId AuditLogId )
+        public Builder add( final AuditLogId auditLogId )
         {
-            this.contents.add( AuditLogId );
+            this.contents.add( auditLogId );
             return this;
         }
 
-        public Builder addAll( final AuditLogIds AuditLogIds )
+        public Builder addAll( final AuditLogIds auditLogIds )
         {
-            this.contents.addAll( AuditLogIds.getSet() );
+            this.contents.addAll( auditLogIds.getSet() );
             return this;
         }
 

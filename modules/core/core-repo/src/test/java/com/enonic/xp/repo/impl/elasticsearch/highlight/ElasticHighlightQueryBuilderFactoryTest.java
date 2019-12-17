@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.highlight;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.elasticsearch.search.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +16,9 @@ import com.enonic.xp.query.highlight.constants.Order;
 import com.enonic.xp.query.highlight.constants.TagsSchema;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticHighlightQuery;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ElasticHighlightQueryBuilderFactoryTest
 {
@@ -42,7 +44,7 @@ public class ElasticHighlightQueryBuilderFactoryTest
 
         final List<String> names =
             elasticHighlightQuery.getFields().stream().map( HighlightBuilder.Field::name ).collect( Collectors.toList() );
-        assertTrue( names.containsAll( List.of( "propertytohighlight._*", "propertytohighlight" ) ) );
+        assertTrue( names.containsAll( List.of( "propertytohighlight@_*", "propertytohighlight" ) ) );
     }
 
     @Test

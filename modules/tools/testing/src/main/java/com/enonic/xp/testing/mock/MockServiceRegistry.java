@@ -1,8 +1,7 @@
 package com.enonic.xp.testing.mock;
 
+import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.script.impl.service.ServiceRef;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
@@ -14,7 +13,7 @@ public final class MockServiceRegistry
 
     public MockServiceRegistry()
     {
-        this.map = Maps.newHashMap();
+        this.map = new HashMap<>();
     }
 
     @Override

@@ -19,6 +19,7 @@ allprojects {
     }
 
     apply plugin: 'com.enonic.defaults'
+    apply from: "$rootDir/gradle/versions.gradle"
 }
 
 configure( mavenPublishProjects ) {
@@ -32,4 +33,5 @@ configure( javaProjects ) {
 configure( rootProject ) {
     apply from: "$rootDir/gradle/coverage.gradle"
     apply from: "$rootDir/gradle/ci.gradle"
+    apply from: "$rootDir/gradle/tools.gradle"
 }

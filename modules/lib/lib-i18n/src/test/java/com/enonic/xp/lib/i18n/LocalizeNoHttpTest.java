@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.i18n;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -9,9 +10,6 @@ import org.junit.After;
 import org.junit.Ignore;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
@@ -70,7 +68,7 @@ public class LocalizeNoHttpTest
         final Object[] arguments = invocation.getArguments();
         if ( invocation.getMethod().getName().equals( "localize" ) )
         {
-            final Map<String, String> map = Maps.newHashMap();
+            final Map<String, String> map = new HashMap<>();
             map.put( "myKey", "value-1" );
             map.put( "myKey2", "value-2" );
             return map.get( arguments[0] );

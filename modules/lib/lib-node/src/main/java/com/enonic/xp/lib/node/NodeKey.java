@@ -1,9 +1,9 @@
 package com.enonic.xp.lib.node;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class NodeKey
 {
@@ -15,7 +15,7 @@ public class NodeKey
 
     public static NodeKey from( final String value )
     {
-        if ( Strings.isNullOrEmpty( value ) )
+        if ( isNullOrEmpty( value ) )
         {
             return null;
         }
@@ -25,7 +25,7 @@ public class NodeKey
 
     public static NodeKey from( final String value, final String versionId)
     {
-        if ( Strings.isNullOrEmpty( value ) )
+        if ( isNullOrEmpty( value ) )
         {
             return null;
         }
@@ -88,7 +88,7 @@ public class NodeKey
     @Override
     public String toString()
     {
-        if ( Strings.isNullOrEmpty( versionId ) )
+        if ( isNullOrEmpty( versionId ) )
         {
             return value;
         }

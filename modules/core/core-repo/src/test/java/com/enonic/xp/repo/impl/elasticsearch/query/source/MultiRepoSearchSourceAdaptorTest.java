@@ -17,7 +17,8 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MultiRepoSearchSourceAdaptorTest
 {
@@ -33,8 +34,7 @@ public class MultiRepoSearchSourceAdaptorTest
                 build() ).
             build() );
 
-        assertEquals( "search-repo1", source.getIndexNames().iterator().next() );
-        assertEquals( "branch1", source.getIndexTypes().iterator().next() );
+        assertEquals( "search-repo1-branch1", source.getIndexNames().iterator().next() );
     }
 
 
@@ -51,8 +51,7 @@ public class MultiRepoSearchSourceAdaptorTest
             build() );
 
         assertEquals( 1, source.getFilters().getSize() );
-        assertEquals( "search-repo1", source.getIndexNames().iterator().next() );
-        assertEquals( "branch1", source.getIndexTypes().iterator().next() );
+        assertEquals( "search-repo1-branch1", source.getIndexNames().iterator().next() );
     }
 
     @Test
@@ -72,15 +71,14 @@ public class MultiRepoSearchSourceAdaptorTest
                 build() ).
             build() );
 
-        assertTrue( source.getIndexNames().containsAll( Arrays.asList( "search-repo1", "search-repo2" ) ) );
-        assertTrue( source.getIndexTypes().containsAll( Arrays.asList( "branch1", "branch2" ) ) );
+        assertTrue( source.getIndexNames().containsAll( Arrays.asList( "search-repo1-branch1", "search-repo2-branch2" ) ) );
 
         final Filters filters = source.getFilters();
 
         assertEquals( 1, filters.getSize() );
         final Filter allFilters = filters.get( 0 );
         assert ( allFilters instanceof BooleanFilter );
-        final ImmutableSet<Filter> shouldFilters = ( (BooleanFilter) allFilters ).getMust();
+        final ImmutableSet<Filter> shouldFilters = ( (BooleanFilter) allFilters ).getShould();
         assertEquals( 2, shouldFilters.size() );
     }
 }

@@ -1,5 +1,6 @@
 package com.enonic.xp.config;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -7,9 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
 
-import com.google.common.collect.Maps;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ConfigInterpolatorTest
 {
@@ -28,7 +28,7 @@ public class ConfigInterpolatorTest
 
     private Map<String, String> newEnvironment()
     {
-        final Map<String, String> map = Maps.newHashMap();
+        final Map<String, String> map = new HashMap<>();
         map.put( "MYENV", "fromEnv" );
         return map;
     }

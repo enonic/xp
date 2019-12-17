@@ -1,10 +1,10 @@
 package com.enonic.xp.impl.server.rest.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.node.NodePath;
@@ -13,13 +13,13 @@ public class NodeImportResultJson
 {
     private boolean dryRun;
 
-    private List<String> addedNodes = Lists.newArrayList();
+    private List<String> addedNodes = new ArrayList<>();
 
-    private List<String> updateNodes = Lists.newArrayList();
+    private List<String> updateNodes = new ArrayList<>();
 
-    private List<String> importErrors = Lists.newArrayList();
+    private List<String> importErrors = new ArrayList<>();
 
-    private List<String> importedBinaries = Lists.newArrayList();
+    private List<String> importedBinaries = new ArrayList<>();
 
     public static NodeImportResultJson from( final NodeImportResult result )
     {

@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.macro;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -21,12 +22,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.html.HtmlEscapers;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
@@ -70,6 +68,9 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
+
 @Path(ResourceConstants.REST_ROOT + "macro")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
@@ -105,7 +106,7 @@ public final class MacroResource
         final Set<ApplicationKey> keys = appKeys.getKeys();
         keys.add( ApplicationKey.SYSTEM );
 
-        final List<MacroDescriptorJson> macroDescriptorJsons = Lists.newArrayList();
+        final List<MacroDescriptorJson> macroDescriptorJsons = new ArrayList<>();
 
         ApplicationKeys.from( keys ).forEach( applicationKey -> {
             macroDescriptorJsons.addAll( this.macroDescriptorService.getByApplication( applicationKey ).
@@ -143,7 +144,7 @@ public final class MacroResource
         {
             final Object image = HELPER.isSvg( icon ) ? icon.toByteArray() : HELPER.resizeImage( icon.asInputStream(), size );
             responseBuilder = Response.ok( image, icon.getMimeType() );
-            if ( StringUtils.isNotEmpty( hash ) )
+            if ( !isNullOrEmpty( hash ) )
             {
                 applyMaxAge( Integer.MAX_VALUE, responseBuilder );
             }
@@ -234,7 +235,7 @@ public final class MacroResource
                                              final PortalRequest portalRequest )
     {
         final MacroContext.Builder context = MacroContext.create().name( macroDescriptor.getName() );
-        String body = Strings.nullToEmpty( formData.getString( "body" ) );
+        String body = nullToEmpty( formData.getString( "body" ) );
         body = HtmlEscapers.htmlEscaper().escape( body );
         context.body( body );
         for ( Property prop : formData.getProperties() )
@@ -252,7 +253,7 @@ public final class MacroResource
     private Macro createMacro( final MacroDescriptor macroDescriptor, final PropertyTree formData )
     {
         final Macro.Builder context = Macro.create().name( macroDescriptor.getName() );
-        final String body = Strings.nullToEmpty( formData.getString( "body" ) );
+        final String body = nullToEmpty( formData.getString( "body" ) );
         context.body( body );
         for ( Property prop : formData.getProperties() )
         {

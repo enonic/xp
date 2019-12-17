@@ -1,15 +1,14 @@
 package com.enonic.xp.repo.impl.node.executor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BatchedExecutorTest
 {
@@ -64,7 +63,7 @@ public class BatchedExecutorTest
 
         private List<NodeId> createNodeIds( int count )
         {
-            List<NodeId> values = Lists.newArrayList();
+            List<NodeId> values = new ArrayList<>();
 
             for ( int i = 0; i < count; i++ )
             {

@@ -1,5 +1,7 @@
 package com.enonic.xp.server.impl.status;
 
+import java.util.HashMap;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Constants;
@@ -10,7 +12,6 @@ import org.osgi.service.component.runtime.dto.ComponentDescriptionDTO;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class OsgiComponentReporterTest
     extends BaseOsgiReporterTest<OsgiComponentReporter>
@@ -55,7 +56,7 @@ public class OsgiComponentReporterTest
         final ComponentConfigurationDTO result = new ComponentConfigurationDTO();
         result.id = id;
         result.state = ComponentConfigurationDTO.ACTIVE;
-        result.properties = Maps.newHashMap();
+        result.properties = new HashMap<>();
         result.properties.put( Constants.SERVICE_PID, pid );
         return result;
     }

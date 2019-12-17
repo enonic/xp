@@ -1,5 +1,6 @@
 package com.enonic.xp.web.impl.dispatch.mapping;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -7,12 +8,12 @@ import javax.servlet.ServletContext;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.internal.util.collections.Iterables;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class ResourceConfigTest
 {
@@ -34,7 +35,7 @@ public class ResourceConfigTest
         assertEquals( "2", config.getInitParameter( "b" ) );
         assertNull( config.getInitParameter( "c" ) );
 
-        final List<String> paramNames = Lists.newArrayList( Iterables.toIterable( config.getInitParameterNames() ) );
+        final List<String> paramNames = Collections.list( config.getInitParameterNames() );
         assertEquals( "[a, b]", paramNames.toString() );
     }
 }

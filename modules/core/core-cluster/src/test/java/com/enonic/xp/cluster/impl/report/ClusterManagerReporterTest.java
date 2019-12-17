@@ -18,7 +18,7 @@ import com.enonic.xp.cluster.Clusters;
 import com.enonic.xp.cluster.impl.TestCluster;
 import com.enonic.xp.support.JsonTestHelper;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ClusterManagerReporterTest
 {

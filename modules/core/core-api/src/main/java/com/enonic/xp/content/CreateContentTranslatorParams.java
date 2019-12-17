@@ -386,15 +386,14 @@ public class CreateContentTranslatorParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( parent, "parentContentPath cannot be null" );
-            Preconditions.checkArgument( parent.isAbsolute(), "parentContentPath must be absolute: " + parent );
+            Preconditions.checkNotNull( parent, "parentPath cannot be null" );
+            Preconditions.checkArgument( parent.isAbsolute(), "parentPath must be absolute: " + parent );
             Preconditions.checkNotNull( data, "data cannot be null" );
             Preconditions.checkNotNull( displayName, "displayName cannot be null" );
             Preconditions.checkNotNull( createAttachments, "createAttachments cannot be null" );
             Preconditions.checkNotNull( type, "type cannot be null" );
             Preconditions.checkNotNull( creator, "creator cannot be null" );
-            Preconditions.checkNotNull( name, "name cannom be null" );
-            Preconditions.checkNotNull( valid, "valid cannot be null" );
+            Preconditions.checkNotNull( name, "name cannot be null" );
             Preconditions.checkNotNull( childOrder, "childOrder cannot be null" );
         }
 

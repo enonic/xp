@@ -26,7 +26,8 @@ import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -141,6 +142,7 @@ public class LayoutRendererTest
             build();
         final ControllerScript controllerScript = new ControllerScript()
         {
+            @Override
             public PortalResponse execute( final PortalRequest portalRequest )
             {
                 return PortalResponse.create().body(
@@ -148,6 +150,7 @@ public class LayoutRendererTest
                     MediaType.HTML_UTF_8 ).status( HttpStatus.OK ).build();
             }
 
+            @Override
             public void onSocketEvent( final WebSocketEvent event )
             {
             }
@@ -187,11 +190,13 @@ public class LayoutRendererTest
             build();
         final ControllerScript controllerScript = new ControllerScript()
         {
+            @Override
             public PortalResponse execute( final PortalRequest portalRequest )
             {
                 return new PortalResponseSerializer( null ).serialize();
             }
 
+            @Override
             public void onSocketEvent( final WebSocketEvent event )
             {
             }

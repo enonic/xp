@@ -1,10 +1,10 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.Property;
@@ -49,7 +49,7 @@ public class NodeStoreDocumentFactory
     {
         this.node.validateForIndexing();
 
-        Set<IndexDocument> indexDocuments = Sets.newHashSet();
+        Set<IndexDocument> indexDocuments = new HashSet<>();
 
         indexDocuments.add( createDataDocument() );
 
@@ -62,7 +62,7 @@ public class NodeStoreDocumentFactory
 
         final IndexDocument.Builder builder = IndexDocument.create().
             id( this.node.id().toString() ).
-            indexName( IndexNameResolver.resolveSearchIndexName( this.repositoryId ) ).
+            indexName( IndexNameResolver.resolveSearchIndexName( this.repositoryId, this.branch ) ).
             indexTypeName( this.branch.getValue() ).
             analyzer( indexConfigDocument.getAnalyzer() ).
             indexItems( createIndexItems() ).
@@ -105,6 +105,8 @@ public class NodeStoreDocumentFactory
         addTimestamp( builder );
 
         addNodeState( builder );
+
+        addNodeBranch( builder );
     }
 
     private void addNodeState( final IndexItems.Builder builder )
@@ -114,6 +116,11 @@ public class NodeStoreDocumentFactory
             builder.add( NodeIndexPath.STATE, ValueFactory.newString( this.node.getNodeState().value() ),
                          createDefaultDocument( IndexConfig.MINIMAL ) );
         }
+    }
+
+    private void addNodeBranch( final IndexItems.Builder builder )
+    {
+        builder.add( NodeIndexPath.BRANCH, ValueFactory.newString( branch.getValue() ), createDefaultDocument( IndexConfig.MINIMAL ) );
     }
 
     private void addTimestamp( final IndexItems.Builder builder )

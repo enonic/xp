@@ -2,9 +2,16 @@
   "simple_query_string": {
     "query": "organize",
     "fields": [
-      "field._stemmed_en"
+      "field@_stemmed_en^1.0"
     ],
     "analyzer": "language_analyzer_en",
-    "default_operator": "or"
+    "flags": -1,
+    "default_operator": "or",
+    "analyze_wildcard": true,
+    "auto_generate_synonyms_phrase_query": true,
+    "fuzzy_prefix_length": 0,
+    "fuzzy_max_expansions": 50,
+    "fuzzy_transpositions": true,
+    "boost": 1.0
   }
 }

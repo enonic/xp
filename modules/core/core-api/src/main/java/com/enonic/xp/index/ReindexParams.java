@@ -1,9 +1,9 @@
 package com.enonic.xp.index;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -48,7 +48,7 @@ public class ReindexParams
 
     public static final class Builder
     {
-        private final Set<Branch> branches = Sets.newHashSet();
+        private final Set<Branch> branches = new HashSet<>();
 
         private boolean initialize;
 

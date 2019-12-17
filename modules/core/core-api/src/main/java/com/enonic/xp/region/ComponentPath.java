@@ -2,6 +2,7 @@ package com.enonic.xp.region;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
@@ -107,7 +108,22 @@ public final class ComponentPath
     @Override
     public boolean equals( final Object o )
     {
-        return ( o instanceof ComponentPath ) && ( (ComponentPath) o ).refString.equals( this.refString );
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( !( o instanceof ComponentPath ) )
+        {
+            return false;
+        }
+        final ComponentPath that = (ComponentPath) o;
+        return refString.equals( that.refString );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( refString );
     }
 
     private String toString( final ComponentPath componentPath )

@@ -6,7 +6,7 @@ import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.support.XmlTestHelper;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XmlApplicationParserTest
 {

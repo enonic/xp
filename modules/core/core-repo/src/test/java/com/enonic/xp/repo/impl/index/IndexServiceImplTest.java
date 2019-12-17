@@ -28,7 +28,9 @@ import com.enonic.xp.repo.impl.node.PushNodesCommand;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.security.SystemConstants;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class IndexServiceImplTest
     extends AbstractNodeTest
@@ -159,6 +161,7 @@ public class IndexServiceImplTest
         refresh();
 
         assertNull( queryForNode( node.id() ) );
+        assertNull( CTX_OTHER.callWith( () -> queryForNode( node.id() ) ) );
 
         this.indexService.reindex( ReindexParams.create().
             addBranch( CTX_DEFAULT.getBranch() ).
@@ -179,7 +182,7 @@ public class IndexServiceImplTest
 
         refresh();
 
-        assertNull( queryForNode( node.id() ) );
+        assertNotNull( queryForNode( node.id() ) );
         assertNotNull( CTX_OTHER.callWith( () -> queryForNode( node.id() ) ) );
     }
 
@@ -303,7 +306,7 @@ public class IndexServiceImplTest
             settings( "{\"index\": {\"number_of_replicas\": 2}}" ).
             build() );
 
-        assertEquals( 2, result.getUpdatedIndexes().size() );
+        assertEquals( 5, result.getUpdatedIndexes().size() );
     }
 
     @Test

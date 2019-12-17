@@ -1,9 +1,8 @@
 package com.enonic.xp.lib.content;
 
-import java.security.SecureRandom;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
 import com.enonic.xp.content.Content;
@@ -15,14 +14,11 @@ import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.script.ScriptValue;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static com.google.common.base.Strings.nullToEmpty;
 
 public final class CreateContentHandler
     extends BaseContentHandler
 {
-    private final static Random RANDOM = new SecureRandom();
-
     private String name;
 
     private String parentPath;
@@ -43,18 +39,18 @@ public final class CreateContentHandler
 
     private String childOrder;
 
-    private Supplier<String> idGenerator = () -> Long.toString( Math.abs( RANDOM.nextLong() ) );
+    private Supplier<String> idGenerator = () -> Long.toString( ThreadLocalRandom.current().nextLong( Long.MAX_VALUE ) );
 
     private Map<String, Object> workflow;
 
     @Override
     protected Object doExecute()
     {
-        if ( isBlank( this.name ) && isNotBlank( this.displayName ) && isNotBlank( this.parentPath ) )
+        if ( nullToEmpty( this.name ).isBlank() && !nullToEmpty( this.displayName ).isBlank() && !nullToEmpty( this.parentPath ).isBlank() )
         {
             this.name = generateUniqueContentName( ContentPath.from( this.parentPath ), this.displayName );
         }
-        if ( isBlank( this.displayName ) && isNotBlank( this.name ) )
+        if ( nullToEmpty( this.displayName ).isBlank() && !nullToEmpty( this.name ).isBlank() )
         {
             this.displayName = this.name;
         }

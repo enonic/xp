@@ -16,7 +16,7 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 
 import static com.enonic.xp.content.ContentPropertyNames.DATA;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DataConfigProcessorTest
 {

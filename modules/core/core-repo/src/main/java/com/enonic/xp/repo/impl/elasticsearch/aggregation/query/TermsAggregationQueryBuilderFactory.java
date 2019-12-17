@@ -1,12 +1,13 @@
 package com.enonic.xp.repo.impl.elasticsearch.aggregation.query;
 
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
+import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
+import org.elasticsearch.search.aggregations.BucketOrder;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+import org.elasticsearch.search.aggregations.support.ValueType;
 
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
-import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AbstractBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
 class TermsAggregationQueryBuilderFactory
@@ -17,23 +18,20 @@ class TermsAggregationQueryBuilderFactory
         super( fieldNameResolver );
     }
 
-    AggregationBuilder create( final TermsAggregationQuery aggregationQuery )
+    AbstractAggregationBuilder create( final TermsAggregationQuery aggregationQuery )
     {
         final String fieldName = fieldNameResolver.resolve( aggregationQuery.getFieldName(), IndexValueType.STRING );
 
-        final TermsBuilder termsBuilder = new TermsBuilder( aggregationQuery.getName() ).
+        final TermsAggregationBuilder termsBuilder = new TermsAggregationBuilder( aggregationQuery.getName(), ValueType.STRING ).
             minDocCount( aggregationQuery.getMinDocCount() ).
             field( fieldName ).
             size( aggregationQuery.getSize() );
 
-        if ( aggregationQuery.getOrderType() == TermsAggregationQuery.Type.TERM )
-        {
-            termsBuilder.order( Terms.Order.term( aggregationQuery.getOrderDirection().equals( TermsAggregationQuery.Direction.ASC ) ) );
-        }
-        else
-        {
-            termsBuilder.order( Terms.Order.count( aggregationQuery.getOrderDirection().equals( TermsAggregationQuery.Direction.ASC ) ) );
-        }
+        final boolean ascendingDirection = aggregationQuery.getOrderDirection().equals( TermsAggregationQuery.Direction.ASC );
+
+        termsBuilder.order( aggregationQuery.getOrderType() == TermsAggregationQuery.Type.TERM
+                                ? BucketOrder.key( ascendingDirection )
+                                : BucketOrder.count( ascendingDirection ) );
 
         return termsBuilder;
     }

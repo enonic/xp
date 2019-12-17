@@ -15,7 +15,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.site.Site;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LocalizeFunctionTest
     extends AbstractUrlViewFunctionTest
@@ -66,7 +66,7 @@ public class LocalizeFunctionTest
             localeService.getBundle( Mockito.eq( this.portalRequest.getApplicationKey() ), Mockito.eq( new Locale( "en", "US" ) ) ) ).
             thenReturn( messageBundle );
 
-        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Mockito.anyVararg() ) ).
+        Mockito.when( messageBundle.localize( Mockito.eq( "myPhrase" ), Mockito.any() ) ).
             thenReturn( "localizedString" );
 
         final Object result = execute( "i18n.localize", "_key=myPhrase", "_locale=en-US", "_values={a,1,date('2015-10-10T10:00Z')}" );

@@ -1,8 +1,7 @@
 {
   "index": {
     "number_of_shards": 1,
-    "number_of_replicas": 1
-  },
-  "analysis": {
+    "number_of_replicas": 1,
+    "translog.durability": "async"
   }
 }

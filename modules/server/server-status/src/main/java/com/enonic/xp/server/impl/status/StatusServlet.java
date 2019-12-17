@@ -5,6 +5,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -22,8 +24,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.annotation.Order;
@@ -37,17 +37,12 @@ public final class StatusServlet
 {
     private final static String PATH_PREFIX = "/";
 
-    private final Map<String, StatusReporter> reporters;
-
-    public StatusServlet()
-    {
-        this.reporters = Maps.newConcurrentMap();
-    }
+    private final Map<String, StatusReporter> reporters = new ConcurrentHashMap<>();
 
     private JsonNode getRootInfo()
     {
         final ArrayNode json = JsonNodeFactory.instance.arrayNode();
-        final Set<String> names = Sets.newTreeSet( this.reporters.keySet() );
+        final Set<String> names = new TreeSet<>( this.reporters.keySet() );
         names.forEach( json::add );
         return json;
     }

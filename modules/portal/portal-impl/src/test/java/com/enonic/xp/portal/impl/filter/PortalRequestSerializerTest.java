@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.filter;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,8 +10,6 @@ import javax.script.ScriptEngine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.branch.Branch;
@@ -23,8 +22,8 @@ import com.enonic.xp.script.impl.value.ScriptValueFactory;
 import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.web.HttpMethod;
 
-import static com.google.common.collect.ImmutableMap.of;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PortalRequestSerializerTest
 {
@@ -142,13 +141,13 @@ public class PortalRequestSerializerTest
         final PortalRequest portalRequest = reqSerializer.serialize();
 
         assertNotNull( portalRequest );
-        assertTrue( Maps.difference( of( "key1", "value1", "key2", 42 ), (Map<String, Object>) portalRequest.getBody() ).areEqual() );
+        assertEquals( Map.of( "key1", "value1", "key2", 42 ), portalRequest.getBody() );
 
         assertEquals( 0, portalRequest.getHeaders().size() );
         assertEquals( 0, portalRequest.getCookies().size() );
         assertEquals( 4, portalRequest.getParams().size() );
         assertEquals( "param-value", portalRequest.getParams().get( "param" ).iterator().next() );
-        final List<String> param2Values = new ArrayList( portalRequest.getParams().get( "param2" ) );
+        final List<String> param2Values = new ArrayList<>( portalRequest.getParams().get( "param2" ) );
         assertEquals( "param-value2-a", param2Values.get( 0 ) );
         assertEquals( "param-value2-b", param2Values.get( 1 ) );
         assertEquals( "param-value2-c", param2Values.get( 2 ) );
@@ -163,6 +162,6 @@ public class PortalRequestSerializerTest
     private String readResource( final String resourceName )
         throws Exception
     {
-        return Resources.toString( getClass().getResource( resourceName ), Charsets.UTF_8 );
+        return Resources.toString( getClass().getResource( resourceName ), StandardCharsets.UTF_8 );
     }
 }

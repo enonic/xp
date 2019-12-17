@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -9,11 +10,11 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContentPathsTest
+class ContentPathsTest
 {
-
     private static final String STRING_PATH1 = "/content/string/path1";
 
     private static final String STRING_PATH2 = "/content/string/path2";
@@ -27,8 +28,7 @@ public class ContentPathsTest
     private static final ContentPath CONTENT_PATH3 = ContentPath.from( "/content/path3" );
 
     @Test
-    public void addAndRemoveString()
-        throws Exception
+    void addAndRemoveString()
     {
         Set set = ImmutableSet.of( STRING_PATH2, STRING_PATH3 );
         String[] array = {STRING_PATH2, STRING_PATH3};
@@ -49,8 +49,7 @@ public class ContentPathsTest
     }
 
     @Test
-    public void addAndRemoveContentPath()
-        throws Exception
+    void addAndRemoveContentPath()
     {
 
         Set set = ImmutableSet.of( CONTENT_PATH2, CONTENT_PATH3 );
@@ -70,7 +69,7 @@ public class ContentPathsTest
     }
 
     @Test
-    public void empty()
+    void empty()
     {
         ContentPaths pathsFromSet = ContentPaths.from( CONTENT_PATH1 );
         assertTrue( pathsFromSet.isNotEmpty() );
@@ -84,4 +83,33 @@ public class ContentPathsTest
         assertEquals( pathsEmpty, pathsFromSet );
     }
 
+    @Test
+    void builder()
+    {
+        final ContentPaths contentPaths = ContentPaths.create()
+            .add( CONTENT_PATH1 )
+            .addAll( ContentPaths.from( CONTENT_PATH2, CONTENT_PATH3 ) ).build();
+
+        assertEquals( Set.of( CONTENT_PATH1, CONTENT_PATH2, CONTENT_PATH3 ), contentPaths.getSet() );
+    }
+
+    @Test
+    void from()
+    {
+        final ContentPaths contentPaths = ContentPaths.from(
+            Arrays.asList( CONTENT_PATH1, CONTENT_PATH2, CONTENT_PATH3 ) );
+
+        assertEquals( Set.of( CONTENT_PATH1, CONTENT_PATH2, CONTENT_PATH3 ), contentPaths.getSet() );
+    }
+
+    @Test
+    void from_strings()
+    {
+        final ContentPaths contentPaths = ContentPaths.from(
+            Arrays.asList( STRING_PATH1, STRING_PATH2, STRING_PATH3 ) );
+
+        assertEquals( Set.of( ContentPath.from( STRING_PATH1 ),
+            ContentPath.from( STRING_PATH2 ),
+            ContentPath.from( STRING_PATH3 ) ), contentPaths.getSet() );
+    }
 }

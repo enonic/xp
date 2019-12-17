@@ -14,7 +14,7 @@ import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.repository.RepositoryId;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SystemRepoLoadResultJsonTest
 {

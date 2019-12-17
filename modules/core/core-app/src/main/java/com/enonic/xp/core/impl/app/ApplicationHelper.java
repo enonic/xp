@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -11,14 +12,15 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.VersionRange;
 
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class ApplicationHelper
 {
@@ -89,21 +91,21 @@ public final class ApplicationHelper
     static String getHeader( final Bundle bundle, final String name, final String defValue )
     {
         final String value = bundle.getHeaders().get( name );
-        return Strings.isNullOrEmpty( value ) ? defValue : value;
+        return isNullOrEmpty( value ) ? defValue : value;
     }
 
     static Set<String> getCapabilities( final Bundle bundle )
     {
         final String value = getHeader( bundle, X_CAPABILITY, "" );
-        return Sets.newHashSet( Splitter.on( ',' ).omitEmptyStrings().trimResults().split( value ) );
+        return ImmutableSet.copyOf( Splitter.on( ',' ).omitEmptyStrings().trimResults().split( value ) );
     }
 
     static List<String> getSourcePaths( final Bundle bundle )
     {
         final String value = getHeader( bundle, X_SOURCE_PATHS, "" );
-        if ( Strings.isNullOrEmpty( value ) )
+        if ( isNullOrEmpty( value ) )
         {
-            return Lists.newArrayList();
+            return new ArrayList<>();
         }
         return Lists.newArrayList( Splitter.on( ',' ).trimResults().split( value ) );
     }

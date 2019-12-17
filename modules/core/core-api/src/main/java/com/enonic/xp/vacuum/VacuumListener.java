@@ -1,15 +1,12 @@
 package com.enonic.xp.vacuum;
 
-import com.enonic.xp.blob.Segment;
-import com.enonic.xp.repository.RepositoryId;
-
 public interface VacuumListener
 {
-    void vacuumingBlobSegment( Segment segment );
+    void vacuumBegin( long taskCount );
 
-    void vacuumingBlob( long count );
+    void taskBegin( String task, Long stepCount );
 
-    void vacuumingVersionRepository( RepositoryId repository, long total );
+    void stepBegin( String stepName, Long toProcessCount );
 
-    void vacuumingVersion( long count );
+    void processed( long count );
 }

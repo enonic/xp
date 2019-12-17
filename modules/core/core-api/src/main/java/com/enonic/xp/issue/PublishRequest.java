@@ -1,9 +1,8 @@
 package com.enonic.xp.issue;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -37,9 +36,9 @@ public final class PublishRequest
 
     public static class Builder
     {
-        private Set<PublishRequestItem> items = Sets.newLinkedHashSet();
+        private Set<PublishRequestItem> items = new LinkedHashSet<>();
 
-        private Set<ContentId> exclude = Sets.newLinkedHashSet();
+        private Set<ContentId> exclude = new LinkedHashSet<>();
 
         public Builder addItems( final Collection<PublishRequestItem> items )
         {

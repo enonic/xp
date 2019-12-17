@@ -1,5 +1,6 @@
 {
   "exists": {
-    "field": "myfield"
+    "field": "myfield",
+    "boost":1.0
   }
 }

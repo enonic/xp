@@ -1,12 +1,23 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
-import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import org.apache.http.HttpHost;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
-import org.elasticsearch.action.search.SearchAction;
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,106 +25,137 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import com.enonic.xp.repo.impl.elasticsearch.distro.ElasticsearchInstance;
 
 @Tag("elasticsearch")
-@ExtendWith(AbstractElasticsearchIntegrationTest.EmbeddedElasticsearchExtension.class)
+@ExtendWith(AbstractElasticsearchIntegrationTest.ElasticsearchExtension.class)
 public abstract class AbstractElasticsearchIntegrationTest
 {
     private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
 
-    protected static Client client;
+    protected static RestHighLevelClient client;
+
+    private static IndexServiceInternalImpl indexService;
+
+    private static Path snapshotsDir;
 
     protected boolean indexExists( String index )
     {
-        IndicesExistsResponse actionGet = client.admin().indices().prepareExists( index ).execute().actionGet();
-        return actionGet.isExists();
+        try
+        {
+            final GetResponse response = client.get( new GetRequest().index( index ), RequestOptions.DEFAULT );
+            return response.isExists();
+        }
+        catch ( IOException e )
+        {
+            return false;
+        }
     }
 
-    protected File getSnapshotsDir() {
-        return ElasticsearchFixture.server.getSnapshotsDir();
+    protected Path getSnapshotsDir()
+    {
+        return snapshotsDir;
     }
 
     protected void printAllIndexContent( final String indexName, final String indexType )
     {
-        String termQuery = "{\n" +
-            "  \"query\": { \"match_all\": {} }\n" +
-            "}";
+        final org.elasticsearch.action.search.SearchRequest searchRequest = new org.elasticsearch.action.search.SearchRequest().
+            indices( indexName ).
+            source( new SearchSourceBuilder().
+                size( 100 ).
+                storedField( "_source" ).
+                query( QueryBuilders.matchAllQuery() ) );
 
-        SearchRequestBuilder searchRequest = new SearchRequestBuilder( client, SearchAction.INSTANCE ).
-            setSize( 100 ).
-            setIndices( indexName ).
-            setTypes( indexType ).
-            setSource( termQuery ).
-            addFields( "_source" );
+        try
+        {
+            final SearchResponse searchResponse = client.search( searchRequest, RequestOptions.DEFAULT );
 
-        final SearchResponse searchResponse = client.search( searchRequest.request() ).actionGet();
-
-        System.out.println( "\n\n---------- CONTENT --------------------------------" );
-        System.out.println( searchResponse.toString() );
-        System.out.println( "\n\n" );
+            System.out.println( "\n\n---------- CONTENT --------------------------------" );
+            System.out.println( searchResponse.toString() );
+            System.out.println( "\n\n" );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     public static void waitForClusterHealth()
     {
-        ElasticsearchFixture.elasticsearchIndexService.getClusterHealth( "10s" );
+        indexService.getClusterHealth( "10s" );
     }
 
-    protected static final RefreshResponse refresh()
+    protected static RefreshResponse refresh()
     {
-        RefreshResponse actionGet = client.admin().indices().prepareRefresh().execute().actionGet();
-        return actionGet;
-    }
-
-    protected static final DeleteIndexResponse deleteAllIndices()
-    {
-        DeleteIndexResponse actionGet = client.admin().indices().prepareDelete("_all").execute().actionGet();
-        return actionGet;
-    }
-
-    static class EmbeddedElasticsearchExtension implements BeforeAllCallback
-    {
-        @Override
-        public void beforeAll(ExtensionContext context)
+        try
         {
-            context.getRoot().getStore(ExtensionContext.Namespace.GLOBAL).getOrComputeIfAbsent(ElasticsearchFixture.class);
+            return client.indices().refresh( new RefreshRequest(), RequestOptions.DEFAULT );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
         }
     }
 
-    static class ElasticsearchFixture implements ExtensionContext.Store.CloseableResource
+    protected static AcknowledgedResponse deleteAllIndices()
     {
-
-        static IndexServiceInternalImpl elasticsearchIndexService;
-
-        static EmbeddedElasticsearchServer server;
-
-        public ElasticsearchFixture()
-            throws IOException
+        try
         {
-            LOG.info( "Starting up Elasticsearch" );
-
-            Path elasticsearchTemporaryFolder = Files.createTempDirectory("elasticsearchFixture");
-
-            server = new EmbeddedElasticsearchServer( elasticsearchTemporaryFolder.toFile() );
-
-            client = server.getClient();
-
-            elasticsearchIndexService = new IndexServiceInternalImpl();
-            elasticsearchIndexService.setClient( client );
+            return client.indices().delete( new DeleteIndexRequest( "search-*", "branch-*", "version-*", "commit-*" ),
+                                            RequestOptions.DEFAULT );
         }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+    }
+
+    static class ElasticsearchExtension
+        implements BeforeAllCallback
+    {
+        static ElasticsearchInstance elasticsearchInstance;
 
         @Override
-        public void close()
+        public void beforeAll( ExtensionContext context )
         {
-            LOG.info( "Shutting down Elasticsearch" );
-            if (client != null) {
-                client.close();
-            }
-            if (server != null) {
-                server.shutdown();
+            ExtensionContext.Store rootStore = context.getRoot().getStore( ExtensionContext.Namespace.GLOBAL );
+            rootStore.getOrComputeIfAbsent( "elasticsearch-fixture", key -> {
+                try
+                {
+                    Path rootDirectory = Files.createTempDirectory( "elasticsearch-fixture" );
+
+                    elasticsearchInstance = new ElasticsearchInstance( rootDirectory );
+                    elasticsearchInstance.start();
+                }
+                catch ( IOException e )
+                {
+                    throw new UncheckedIOException( e );
+                }
+                snapshotsDir = elasticsearchInstance.getSnapshotsDir();
+
+                client = new RestHighLevelClient( RestClient.builder( new HttpHost( "localhost", 9200, "http" ) ) );
+
+                indexService = new IndexServiceInternalImpl();
+                indexService.setClient( client );
+                return new ElasticsearchResource();
+            } );
+
+        }
+
+        static class ElasticsearchResource
+            implements ExtensionContext.Store.CloseableResource
+        {
+            @Override
+            public void close()
+                throws Throwable
+            {
+                elasticsearchInstance.stop();
+
+                if ( client != null )
+                {
+                    LOG.info( "Disconnect from Elasticsearch Client" );
+                    client.close();
+                }
             }
         }
     }

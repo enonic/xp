@@ -3,7 +3,7 @@ package com.enonic.xp.impl.task.cluster;
 import java.util.Collections;
 import java.util.List;
 
-import org.elasticsearch.threadpool.ThreadPool;
+import org.elasticsearch.tasks.Task;
 import org.elasticsearch.transport.TransportChannel;
 import org.elasticsearch.transport.TransportRequestHandler;
 import org.elasticsearch.transport.TransportService;
@@ -19,7 +19,7 @@ import com.enonic.xp.task.TaskInfo;
 
 @Component(immediate = true, service = TransportRequestHandler.class)
 public final class TaskTransportRequestHandler
-    extends TransportRequestHandler<TaskTransportRequest>
+    implements TransportRequestHandler<TaskTransportRequest>
 {
     private final static Logger LOG = LoggerFactory.getLogger( TaskTransportRequestHandler.class );
 
@@ -30,18 +30,16 @@ public final class TaskTransportRequestHandler
     @Activate
     public void activate()
     {
-        this.transportService.registerRequestHandler( TaskTransportRequestSenderImpl.ACTION, TaskTransportRequest.class,
-                                                      ThreadPool.Names.MANAGEMENT, this );
     }
 
     @Deactivate
     public void deactivate()
     {
-        this.transportService.removeHandler( TaskTransportRequestSenderImpl.ACTION );
+
     }
 
     @Override
-    public void messageReceived( final TaskTransportRequest request, final TransportChannel channel )
+    public void messageReceived( final TaskTransportRequest request, final TransportChannel channel, Task task )
     {
         try
         {

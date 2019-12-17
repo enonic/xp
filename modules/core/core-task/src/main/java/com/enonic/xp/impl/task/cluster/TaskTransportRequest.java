@@ -42,7 +42,6 @@ public final class TaskTransportRequest
         return taskId;
     }
 
-    @Override
     public void readFrom( final StreamInput streamInput )
         throws IOException
     {

@@ -188,24 +188,28 @@ public class ResolvedContent
                 return this;
             }
 
+            @Override
             public Builder content( final Content content )
             {
                 this.content = content;
                 return this;
             }
 
+            @Override
             public Builder compareStatus( final String compareStatus )
             {
                 this.compareStatus = compareStatus;
                 return this;
             }
 
+            @Override
             public Builder iconUrl( final String iconUrl )
             {
                 this.iconUrl = iconUrl;
                 return this;
             }
 
+            @Override
             public ResolvedRequestedContent build()
             {
                 this.id = content.getId().toString();
@@ -254,24 +258,28 @@ public class ResolvedContent
                 return this;
             }
 
+            @Override
             public Builder content( final Content content )
             {
                 this.content = content;
                 return this;
             }
 
+            @Override
             public Builder compareStatus( final String compareStatus )
             {
                 this.compareStatus = compareStatus;
                 return this;
             }
 
+            @Override
             public Builder iconUrl( final String iconUrl )
             {
                 this.iconUrl = iconUrl;
                 return this;
             }
 
+            @Override
             public ResolvedDependencyContent build()
             {
                 this.id = content.getId().toString();

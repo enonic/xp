@@ -8,7 +8,8 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -67,6 +68,30 @@ public class RefreshScriptTest
     {
         runFunction( "/test/refresh-test.js", "refreshStorage" );
         verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.STORAGE );
+    }
+
+    @Test
+    public void testRefreshVersion()
+        throws Exception
+    {
+        runFunction( "/test/refresh-test.js", "refreshVersion" );
+        verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.VERSION );
+    }
+
+    @Test
+    public void testRefreshBranch()
+        throws Exception
+    {
+        runFunction( "/test/refresh-test.js", "refreshBranch" );
+        verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.BRANCH );
+    }
+
+    @Test
+    public void testRefreshCommit()
+        throws Exception
+    {
+        runFunction( "/test/refresh-test.js", "refreshCommit" );
+        verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.COMMIT );
     }
 
     @Test

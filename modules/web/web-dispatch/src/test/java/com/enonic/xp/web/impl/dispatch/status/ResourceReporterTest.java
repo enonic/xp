@@ -1,13 +1,13 @@
 package com.enonic.xp.web.impl.dispatch.status;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 public abstract class ResourceReporterTest
@@ -21,7 +21,7 @@ public abstract class ResourceReporterTest
             throw new IllegalArgumentException( "Resource file [" + fileName + "] not found" );
         }
 
-        return Resources.toString( url, Charsets.UTF_8 );
+        return Resources.toString( url, StandardCharsets.UTF_8 );
     }
 
     protected JsonNode parseJson( final String json )

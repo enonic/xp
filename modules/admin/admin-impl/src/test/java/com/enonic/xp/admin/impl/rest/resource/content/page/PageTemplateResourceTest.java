@@ -6,9 +6,7 @@ import java.util.Locale;
 import javax.ws.rs.core.MediaType;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
-import org.mockito.ArgumentMatchers;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.app.ApplicationKey;
@@ -44,7 +42,7 @@ import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PageTemplateResourceTest
     extends AdminResourceTestSupport

@@ -1,17 +1,16 @@
 package com.enonic.xp.core.impl.export;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.core.impl.export.writer.NodeExportPathResolver;
@@ -27,7 +26,10 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.vfs.VirtualFiles;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NodeImporterTest
 {
@@ -375,7 +377,6 @@ public class NodeImporterTest
         assertNotNull( attachedBinary.getBlobKey() );
     }
 
-    @Disabled
     @Test
     public void import_special_characters()
         throws Exception
@@ -518,7 +519,7 @@ public class NodeImporterTest
             throw new IllegalArgumentException( "Resource file [" + fileName + "] not found" );
         }
 
-        return Resources.toString( url, Charsets.UTF_8 );
+        return Resources.toString( url, StandardCharsets.UTF_8 );
 
     }
 

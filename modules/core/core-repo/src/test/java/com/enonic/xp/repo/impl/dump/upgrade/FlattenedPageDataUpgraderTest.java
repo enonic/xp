@@ -7,13 +7,13 @@ import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.json.JsonToPropertyTreeTranslator;
 import com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageDataUpgrader;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FlattenedPageDataUpgraderTest
 {
@@ -56,7 +56,7 @@ public class FlattenedPageDataUpgraderTest
         final PropertyTree oldData = new JsonToPropertyTreeTranslator().translate( oldPageComponents );
         final PropertyTree newData = new JsonToPropertyTreeTranslator().translate( newPageComponents );
 
-        final HashMap<String, String> templateControllerMap = Maps.newHashMap();
+        final HashMap<String, String> templateControllerMap = new HashMap<>();
         templateControllerMap.put( "templateId", "com.enonic.app.features:main" );
         FlattenedPageDataUpgrader.create().
             templateControllerMap( templateControllerMap ).

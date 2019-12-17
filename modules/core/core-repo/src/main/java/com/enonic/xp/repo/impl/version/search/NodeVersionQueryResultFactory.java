@@ -1,12 +1,13 @@
 package com.enonic.xp.repo.impl.version.search;
 
 import java.time.Instant;
-
-import com.google.common.base.Strings;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
@@ -20,6 +21,8 @@ import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class NodeVersionQueryResultFactory
 {
@@ -71,17 +74,21 @@ public class NodeVersionQueryResultFactory
 
         final String commitId = getStringValue( hit, VersionIndexPath.COMMIT_ID, false );
 
+        final ReturnValue branchesNamesReturnValue = hit.getField( VersionIndexPath.BRANCHES.getPath() );
+
         final NodeVersionKey nodeVersionKey = NodeVersionKey.from( nodeBlobKey, indexConfigBlobKey, accessControlBlobKey );
         final BlobKeys binaryBlobKeys = toBlobKeys( binaryBlobKeyReturnValue );
+        final Branches branches = toBranches( branchesNamesReturnValue );
 
         return NodeVersionMetadata.create().
             nodeVersionId( NodeVersionId.from( versionId ) ).
             nodeVersionKey( nodeVersionKey ).
             binaryBlobKeys( binaryBlobKeys ).
-            timestamp( Strings.isNullOrEmpty( timestamp ) ? null : Instant.parse( timestamp ) ).
+            timestamp( isNullOrEmpty( timestamp ) ? null : Instant.parse( timestamp ) ).
             nodePath( NodePath.create( nodePath ).build() ).
             nodeId( NodeId.from( nodeId ) ).
-            nodeCommitId( Strings.isNullOrEmpty( commitId ) ? null : NodeCommitId.from( commitId ) ).
+            nodeCommitId( isNullOrEmpty( commitId ) ? null : NodeCommitId.from( commitId ) ).
+            setBranches( branches ).
             build();
     }
 
@@ -110,5 +117,15 @@ public class NodeVersionQueryResultFactory
         return field.getSingleValue().toString();
     }
 
-
+    private static Branches toBranches( final ReturnValue returnValue )
+    {
+        if ( returnValue != null )
+        {
+            return Branches.from( returnValue.getValues().
+                stream().
+                map( value -> Branch.from( value.toString() ) ).
+                collect( Collectors.toSet() ) );
+        }
+        return Branches.empty();
+    }
 }

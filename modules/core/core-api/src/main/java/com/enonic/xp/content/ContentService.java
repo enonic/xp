@@ -27,15 +27,9 @@ public interface ContentService
 
     Content rename( RenameContentParams params );
 
-    @Deprecated
-    Contents delete( DeleteContentParams params );
-
     DeleteContentsResult deleteWithoutFetch( DeleteContentParams params );
 
     int undoPendingDelete( UndoPendingDeleteContentParams params );
-
-    @Deprecated
-    PushContentsResult push( PushContentParams params );
 
     PublishContentResult publish( PushContentParams params );
 
@@ -101,9 +95,13 @@ public interface ContentService
 
     GetActiveContentVersionsResult getActiveVersions( GetActiveContentVersionsParams params );
 
+    ContentVersion getActiveVersion(GetActiveContentVersionParams params);
+
     SetActiveContentVersionResult setActiveContentVersion( ContentId contentId, ContentVersionId versionId );
 
     ByteSource getBinary( ContentId contentId, BinaryReference binaryReference );
+
+    ByteSource getBinary( ContentId contentId, ContentVersionId contentVersionId, BinaryReference binaryReference );
 
     @Deprecated
     InputStream getBinaryInputStream( ContentId contentId, BinaryReference binaryReference );

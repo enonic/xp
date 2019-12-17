@@ -1,15 +1,13 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Function;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
@@ -22,13 +20,12 @@ public final class Nodes
     private Nodes( final Set<Node> set )
     {
         super( ImmutableSet.copyOf( set ) );
-        this.map = Maps.uniqueIndex( set, new ToIdFunction() );
+        this.map = set.stream().collect( ImmutableMap.toImmutableMap( Node::id, Function.identity() ) );
     }
 
     public static Nodes empty()
     {
-        final ImmutableSet<Node> set = ImmutableSet.of();
-        return new Nodes( set );
+        return new Nodes( ImmutableSet.of() );
     }
 
     public static Nodes from( final Node... nodes )
@@ -58,39 +55,17 @@ public final class Nodes
 
     public NodePaths getPaths()
     {
-        final Collection<NodePath> paths = Collections2.transform( this.set, new ToKeyFunction() );
-        return NodePaths.from( paths );
+        return NodePaths.from( set.stream().map( Node::path ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
     public NodeIds getIds()
     {
-        final Collection<NodeId> ids = Collections2.transform( this.set, new ToIdFunction() );
-        return NodeIds.from( ids );
-    }
-
-    private final static class ToIdFunction
-        implements Function<Node, NodeId>
-    {
-        @Override
-        public NodeId apply( final Node value )
-        {
-            return value.id();
-        }
-    }
-
-    private final static class ToKeyFunction
-        implements Function<Node, NodePath>
-    {
-        @Override
-        public NodePath apply( final Node value )
-        {
-            return value.path();
-        }
+        return NodeIds.from( map.keySet() );
     }
 
     public static class Builder
     {
-        private final Set<Node> nodes = Sets.newLinkedHashSet();
+        private final Set<Node> nodes = new LinkedHashSet<>();
 
         public Builder add( Node node )
         {

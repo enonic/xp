@@ -1,29 +1,29 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotAction;
-import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequestBuilder;
+import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
+import org.elasticsearch.client.RequestOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.cluster.ClusterManager;
 import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
-import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.util.Exceptions;
 
 public class SnapshotRestoreExecutor
     extends AbstractSnapshotExecutor
 {
-    private final Logger LOG = LoggerFactory.getLogger( SnapshotRestoreExecutor.class );
+    private static final Logger LOG = LoggerFactory.getLogger( SnapshotRestoreExecutor.class );
 
     private final ClusterManager clusterManager;
 
@@ -60,7 +60,7 @@ public class SnapshotRestoreExecutor
             builder.failed( true );
         }
 
-        final List<String> indices = Lists.newArrayList();
+        final List<String> indices = new ArrayList<>();
         indices.addAll( tempResults.getIndices() );
         indices.addAll( result.getIndices() );
 
@@ -148,17 +148,22 @@ public class SnapshotRestoreExecutor
 
     private RestoreSnapshotResponse executeRestoreRequest( final Set<String> indices )
     {
-        final RestoreSnapshotResponse response;
-        final RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder =
-            new RestoreSnapshotRequestBuilder( this.client.admin().cluster(), RestoreSnapshotAction.INSTANCE ).
-                setRestoreGlobalState( false ).
-                setIndices( indices.toArray( new String[indices.size()] ) ).
-                setRepository( this.snapshotRepositoryName ).
-                setSnapshot( this.snapshotName ).
-                setWaitForCompletion( true );
+        final RestoreSnapshotRequest request = new RestoreSnapshotRequest().
+            includeGlobalState( false ).
+            indices( indices.toArray( new String[indices.size()] ) ).
+            repository( snapshotRepositoryName ).
+            snapshot( snapshotName ).
+            waitForCompletion( true );
 
-        response = this.client.admin().cluster().restoreSnapshot( restoreSnapshotRequestBuilder.request() ).actionGet();
-        return response;
+        try
+        {
+            final RestoreSnapshotResponse response = client.snapshot().restore( request, RequestOptions.DEFAULT );
+            return response;
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     public static Builder create()

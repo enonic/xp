@@ -1,13 +1,12 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
@@ -20,7 +19,7 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.parser.QueryParser;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FindNodesByQueryCommandTest_order
     extends AbstractNodeTest
@@ -154,7 +153,7 @@ public class FindNodesByQueryCommandTest_order
 
     private Map<String, Object> createPropertyMap( Long longValue, String stringValue, Boolean booleanValue )
     {
-        Map<String, Object> properties = Maps.newHashMap();
+        Map<String, Object> properties = new HashMap<>();
         properties.put( FIELD_LONG, longValue );
         properties.put( FIELD_STRING, stringValue );
         properties.put( FIELD_BOOL, booleanValue );

@@ -17,6 +17,7 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.NodeRepositoryService;
+import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.util.JsonHelper;
@@ -50,12 +51,20 @@ public class NodeRepositoryServiceImpl
     {
         delete( repositoryId, IndexType.SEARCH );
         delete( repositoryId, IndexType.VERSION );
+        delete( repositoryId, IndexType.BRANCH );
+        delete( repositoryId, IndexType.COMMIT );
     }
 
     private void delete( final RepositoryId repositoryId, final IndexType indexType )
     {
-        final String indexName = resolveIndexName( repositoryId, indexType );
-        indexServiceInternal.deleteIndices( indexName );
+        if ( IndexType.SEARCH == indexType )
+        {
+            indexServiceInternal.deleteIndices( IndexNameResolver.resolveSearchIndexPrefix( repositoryId ) );
+        }
+        else
+        {
+            indexServiceInternal.deleteIndices( resolveStorageIndexName( repositoryId, indexType ) );
+        }
     }
 
     @Override
@@ -66,16 +75,19 @@ public class NodeRepositoryServiceImpl
             throw new RepositoryException( "Unable to initialize repositories" );
         }
 
-        final String storageIndexName = IndexNameResolver.resolveStorageIndexName( repositoryId );
-        final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
+        final String versionIndexName = IndexNameResolver.resolveVersionIndexName( repositoryId );
+        final String branchIndexName = IndexNameResolver.resolveBranchIndexName( repositoryId );
+        final String commitIndexName = IndexNameResolver.resolveCommitIndexName( repositoryId );
+        final String masterSearchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId, RepositoryConstants.MASTER_BRANCH );
 
-        return indexServiceInternal.indicesExists( storageIndexName, searchIndexName );
+        return indexServiceInternal.indicesExists( versionIndexName, branchIndexName, commitIndexName, masterSearchIndexName );
     }
 
     private void createIndexes( final CreateRepositoryParams params )
     {
-        doCreateIndex( params, IndexType.SEARCH );
         doCreateIndex( params, IndexType.VERSION );
+        doCreateIndex( params, IndexType.BRANCH );
+        doCreateIndex( params, IndexType.COMMIT );
     }
 
 
@@ -85,7 +97,7 @@ public class NodeRepositoryServiceImpl
         final IndexSettings mergedSettings = mergeWithDefaultSettings( params, indexType );
 
         indexServiceInternal.createIndex( CreateIndexRequest.create().
-            indexName( resolveIndexName( repositoryId, indexType ) ).
+            indexName( resolveStorageIndexName( repositoryId, indexType ) ).
             indexSettings( mergedSettings ).
             build() );
     }
@@ -125,7 +137,7 @@ public class NodeRepositoryServiceImpl
         catch ( Exception e )
         {
             LOG.warn( "Failed to retrieve number of replicas from [" +
-                          resolveIndexName( SystemConstants.SYSTEM_REPO.getId(), IndexType.VERSION ) + "]" );
+                          resolveStorageIndexName( SystemConstants.SYSTEM_REPO.getId(), IndexType.VERSION ) + "]" );
         }
 
         return defaultSettings;
@@ -133,7 +145,6 @@ public class NodeRepositoryServiceImpl
 
     private void applyMappings( final CreateRepositoryParams params )
     {
-        applyMapping( params, IndexType.SEARCH );
         applyMapping( params, IndexType.BRANCH );
         applyMapping( params, IndexType.VERSION );
         applyMapping( params, IndexType.COMMIT );
@@ -145,7 +156,7 @@ public class NodeRepositoryServiceImpl
         final IndexMapping mergedMapping = mergeWithDefaultMapping( params, indexType );
 
         this.indexServiceInternal.applyMapping( ApplyMappingRequest.create().
-            indexName( resolveIndexName( repositoryId, indexType ) ).
+            indexName( resolveStorageIndexName( repositoryId, indexType ) ).
             indexType( indexType ).
             mapping( mergedMapping ).
             build() );
@@ -164,29 +175,18 @@ public class NodeRepositoryServiceImpl
         return defaultMapping;
     }
 
-    private String resolveIndexName( final RepositoryId repositoryId, final IndexType indexType )
+    private String resolveStorageIndexName( final RepositoryId repositoryId, final IndexType indexType )
     {
-        switch ( indexType )
+        final String indexName = IndexNameResolver.resolveStorageIndexName( repositoryId, indexType );
+
+        if ( indexName != null )
         {
-            case SEARCH:
-            {
-                return IndexNameResolver.resolveSearchIndexName( repositoryId );
-            }
-            case VERSION:
-            {
-                return IndexNameResolver.resolveStorageIndexName( repositoryId );
-            }
-            case BRANCH:
-            {
-                return IndexNameResolver.resolveStorageIndexName( repositoryId );
-            }
-            case COMMIT:
-            {
-                return IndexNameResolver.resolveStorageIndexName( repositoryId );
-            }
+            return indexName;
         }
 
-        throw new IllegalArgumentException( "Cannot resolve index name for indexType [" + indexType.getName() + "]" );
+        throw new IllegalArgumentException( indexType != null
+                                                ? ( "Cannot resolve index name for indexType [" + indexType.getName() + "]" )
+                                                : "Cannot resolve index name for empty index type." );
     }
 
     private boolean checkClusterHealth()

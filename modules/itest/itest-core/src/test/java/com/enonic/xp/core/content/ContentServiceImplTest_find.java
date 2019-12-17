@@ -17,7 +17,7 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.query.parser.QueryParser;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ContentServiceImplTest_find
     extends AbstractContentServiceTest
