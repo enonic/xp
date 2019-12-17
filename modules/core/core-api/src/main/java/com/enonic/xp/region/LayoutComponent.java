@@ -77,6 +77,7 @@ public final class LayoutComponent
         return regions.getComponent( path );
     }
 
+    @Deprecated
     @Override
     protected ComponentName doGetName()
     {
