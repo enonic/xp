@@ -1,22 +1,21 @@
-package com.enonic.xp.core.impl.content.page.layout;
+package com.enonic.xp.core.impl.content.page.region;
 
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.core.impl.content.page.AbstractDescriptorServiceTest;
-import com.enonic.xp.core.impl.content.page.region.LayoutDescriptorServiceImpl;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.region.LayoutDescriptor;
-import com.enonic.xp.region.LayoutDescriptors;
+import com.enonic.xp.region.PartDescriptor;
+import com.enonic.xp.region.PartDescriptors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class LayoutDescriptorServiceTest
+public class PartDescriptorServiceTest
     extends AbstractDescriptorServiceTest
 {
-    protected LayoutDescriptorServiceImpl service;
+    protected PartDescriptorServiceImpl service;
 
     @Override
     protected void initialize()
@@ -24,7 +23,7 @@ public class LayoutDescriptorServiceTest
     {
         super.initialize();
 
-        this.service = new LayoutDescriptorServiceImpl();
+        this.service = new PartDescriptorServiceImpl();
         this.service.setResourceService( this.resourceService );
         this.service.setMixinService( this.mixinService );
     }
@@ -33,8 +32,8 @@ public class LayoutDescriptorServiceTest
     public void testGetByKey()
         throws Exception
     {
-        final DescriptorKey key = DescriptorKey.from( "myapp1:mylayout" );
-        final LayoutDescriptor descriptor = this.service.getByKey( key );
+        final DescriptorKey key = DescriptorKey.from( "myapp1:mypart" );
+        final PartDescriptor descriptor = this.service.getByKey( key );
         assertNotNull( descriptor );
     }
 
@@ -42,7 +41,7 @@ public class LayoutDescriptorServiceTest
     public void testGetByApplication()
         throws Exception
     {
-        final LayoutDescriptors result = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
+        final PartDescriptors result = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
 
         assertNotNull( result );
         assertEquals( 1, result.getSize() );
@@ -52,7 +51,7 @@ public class LayoutDescriptorServiceTest
     public void testGetByApplications()
         throws Exception
     {
-        final LayoutDescriptors result = this.service.getByApplications( ApplicationKeys.from( "myapp1", "myapp2" ) );
+        final PartDescriptors result = this.service.getByApplications( ApplicationKeys.from( "myapp1", "myapp2" ) );
 
         assertNotNull( result );
         assertEquals( 2, result.getSize() );
