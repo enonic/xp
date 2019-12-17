@@ -16,8 +16,7 @@ public final class ControllerMappingDescriptors
 
     public static ControllerMappingDescriptors empty()
     {
-        final ImmutableList<ControllerMappingDescriptor> list = ImmutableList.of();
-        return new ControllerMappingDescriptors( list );
+        return new ControllerMappingDescriptors( ImmutableList.of() );
     }
 
     public static ControllerMappingDescriptors from( final ControllerMappingDescriptor... controllerMappingDescriptors )

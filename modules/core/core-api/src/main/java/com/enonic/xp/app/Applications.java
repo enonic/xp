@@ -39,8 +39,7 @@ public final class Applications
 
     public static Applications empty()
     {
-        final ImmutableList<Application> list = ImmutableList.of();
-        return new Applications( list );
+        return new Applications( ImmutableList.of() );
     }
 
     public static Applications from( final Application... applications )

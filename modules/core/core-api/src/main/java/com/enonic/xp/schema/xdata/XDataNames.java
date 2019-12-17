@@ -19,8 +19,7 @@ public final class XDataNames
 
     public static XDataNames empty()
     {
-        final ImmutableList<XDataName> list = ImmutableList.of();
-        return new XDataNames( list );
+        return new XDataNames( ImmutableList.of() );
     }
 
     public static XDataNames from( final String... xdataNames )

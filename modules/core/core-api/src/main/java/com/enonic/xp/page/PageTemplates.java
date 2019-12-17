@@ -58,8 +58,7 @@ public final class PageTemplates
 
     public static PageTemplates empty()
     {
-        final ImmutableList<PageTemplate> list = ImmutableList.of();
-        return new PageTemplates( list );
+        return new PageTemplates( ImmutableList.of() );
     }
 
     public static PageTemplates from( final PageTemplate... templates )

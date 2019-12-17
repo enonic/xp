@@ -24,14 +24,12 @@ public class ContextImplTest
 
     private ContextImpl createContext()
     {
-        final ImmutableMap<String, Object> map = ImmutableMap.of();
-        return new ContextImpl( map, new LocalScopeImpl() );
+        return new ContextImpl( ImmutableMap.of(), new LocalScopeImpl() );
     }
 
     private ContextImpl createContext( final String key, final Object value )
     {
-        final ImmutableMap<String, Object> map = ImmutableMap.of( key, value );
-        return new ContextImpl( map, new LocalScopeImpl() );
+        return new ContextImpl( ImmutableMap.of( key, value ), new LocalScopeImpl() );
     }
 
     @Test
