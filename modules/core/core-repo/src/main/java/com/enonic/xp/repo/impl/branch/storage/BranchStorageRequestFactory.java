@@ -42,7 +42,6 @@ class BranchStorageRequestFactory
                 build() ).
             data( data ).
             parent( nodeBranchEntry.getVersionId().toString() ).
-            routing( nodeId.toString() ).
             build();
     }
 

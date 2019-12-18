@@ -22,10 +22,15 @@ class TermsAggregationQueryBuilderFactory
     {
         final String fieldName = fieldNameResolver.resolve( aggregationQuery.getFieldName(), IndexValueType.STRING );
 
+        int size = aggregationQuery.getSize();
+        if ( size == 0 )
+        {
+            size = Integer.MAX_VALUE; //mimic deprecated ES2.4 behaviour
+        }
         final TermsAggregationBuilder termsBuilder = new TermsAggregationBuilder( aggregationQuery.getName(), ValueType.STRING ).
             minDocCount( aggregationQuery.getMinDocCount() ).
             field( fieldName ).
-            size( aggregationQuery.getSize() );
+            size( size );
 
         final boolean ascendingDirection = aggregationQuery.getOrderDirection().equals( TermsAggregationQuery.Direction.ASC );
 
