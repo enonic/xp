@@ -1,8 +1,8 @@
 package com.enonic.xp.attachment;
 
-import org.junit.jupiter.api.Test;
+import java.util.List;
 
-import com.google.common.collect.ImmutableList;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -52,7 +52,7 @@ public class AttachmentsTest
             name( "MyImage.something.gif" ).
             build();
 
-        Attachments attachments = Attachments.from( ImmutableList.of( a1, a2 ) );
+        Attachments attachments = Attachments.from( List.of( a1, a2 ) );
 
         assertFalse( attachments.isEmpty() );
 
@@ -124,7 +124,7 @@ public class AttachmentsTest
         assertEquals( 1, newAttachments.getSize() );
         assertEquals( a1, newAttachments.get( 0 ) );
 
-        Attachments newestAttachments = newAttachments.add( ImmutableList.of( a2, a3 ) );
+        Attachments newestAttachments = newAttachments.add( List.of( a2, a3 ) );
 
         assertEquals( 1, newAttachments.getSize() );
         assertEquals( 3, newestAttachments.getSize() );

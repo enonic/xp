@@ -3,8 +3,8 @@ package com.enonic.xp.repo.impl.elasticsearch.query;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 
 import com.google.common.collect.ImmutableList;
@@ -101,7 +101,8 @@ public class ElasticHighlightQuery
     @Override
     public String toString()
     {
-        return "ElasticHighlightQuery{" + "fields=[ " + StringUtils.join( fields.toArray(), "," ) + " ]}";
+        return "ElasticHighlightQuery{" + "fields=[ " + fields.stream().map( Objects::toString ).
+            collect( Collectors.joining( "," ) ) + " ]}";
     }
 
     @Override

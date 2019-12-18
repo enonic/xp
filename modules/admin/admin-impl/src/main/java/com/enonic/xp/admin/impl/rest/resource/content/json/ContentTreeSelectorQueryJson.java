@@ -32,12 +32,13 @@ public class ContentTreeSelectorQueryJson
     {
         super( queryExprString, from, size, expand, contentId, inputName, contentTypeNamesString, allowedContentPaths, relationshipType );
 
-        if(parentPath != null)
+        if ( parentPath != null )
         {
             this.parentPath = ContentPath.from( parentPath );
         }
 
-        if( !nullToEmpty( childOrder ).isBlank() ) {
+        if ( !nullToEmpty( childOrder ).isBlank() )
+        {
             this.childOrder = ChildOrder.from( childOrder );
         }
     }

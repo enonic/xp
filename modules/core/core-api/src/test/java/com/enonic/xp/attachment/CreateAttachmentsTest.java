@@ -1,10 +1,10 @@
 package com.enonic.xp.attachment;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -100,14 +100,14 @@ public class CreateAttachmentsTest
             name( "MyImage2.png" ).
             build();
 
-        CreateAttachments attachments = CreateAttachments.from( ImmutableList.of( a1, a2 ) );
+        CreateAttachments attachments = CreateAttachments.from( List.of( a1, a2 ) );
 
         assertEquals( 2, attachments.getSize() );
-        Iterator it = attachments.iterator();
+        Iterator<CreateAttachment> it = attachments.iterator();
         assertEquals( a1, it.next() );
         assertEquals( a2, it.next() );
 
-        CreateAttachments newAttachments = CreateAttachments.from( (Iterable<CreateAttachment>) ImmutableList.of( a2, a3 ) );
+        CreateAttachments newAttachments = CreateAttachments.from( (Iterable<CreateAttachment>) List.of( a2, a3 ) );
 
         assertEquals( 2, newAttachments.getSize() );
         it = newAttachments.iterator();

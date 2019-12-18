@@ -5,8 +5,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableSet;
-
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 
@@ -30,7 +28,7 @@ class ContentPathsTest
     @Test
     void addAndRemoveString()
     {
-        Set set = ImmutableSet.of( STRING_PATH2, STRING_PATH3 );
+        Set<String> set = Set.of( STRING_PATH2, STRING_PATH3 );
         String[] array = {STRING_PATH2, STRING_PATH3};
 
         ContentPaths pathsFromSet = ContentPaths.from( STRING_PATH1 ).
@@ -52,7 +50,7 @@ class ContentPathsTest
     void addAndRemoveContentPath()
     {
 
-        Set set = ImmutableSet.of( CONTENT_PATH2, CONTENT_PATH3 );
+        Set<ContentPath> set = Set.of( CONTENT_PATH2, CONTENT_PATH3 );
         ContentPath[] array = {CONTENT_PATH2, CONTENT_PATH3};
 
         ContentPaths pathsFromSet = ContentPaths.from( CONTENT_PATH1 ).add( set );

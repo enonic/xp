@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Base64;
 import java.util.Iterator;
 
 import javax.imageio.IIOImage;
@@ -19,7 +20,6 @@ import javax.imageio.ImageWriter;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 
 import com.google.common.annotations.Beta;
-import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.util.Exceptions;
@@ -38,8 +38,7 @@ public final class ImageHelper
             final BufferedImage image = createImage( width, height, true );
             final byte[] bytes = writeImage( image, "png", 0 );
 
-            final BaseEncoding encoding = BaseEncoding.base64();
-            return "data:image/png;base64," + encoding.encode( bytes );
+            return "data:image/png;base64," + Base64.getEncoder().encodeToString( bytes );
         }
         catch ( final IOException e )
         {

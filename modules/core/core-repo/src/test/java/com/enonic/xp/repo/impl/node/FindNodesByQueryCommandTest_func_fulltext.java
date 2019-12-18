@@ -4,8 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfig;
@@ -23,6 +21,7 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.parser.QueryParser;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -421,7 +420,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "title", title );
-        if ( !Strings.isNullOrEmpty( description ) )
+        if ( !isNullOrEmpty( description ) )
         {
             data.addString( "description", description );
         }

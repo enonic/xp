@@ -17,7 +17,7 @@ public abstract class BaseSiteHandler
     {
         final int index = baseSubPath.indexOf( '/' );
         final String result = baseSubPath.substring( 0, index > 0 ? index : baseSubPath.length() );
-        if ( isNullOrEmpty( result ) )
+        if ( result.isEmpty() )
         {
             throw WebException.notFound( "Repository needs to be specified" );
         }

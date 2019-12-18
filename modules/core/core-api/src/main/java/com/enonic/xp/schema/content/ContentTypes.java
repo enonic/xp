@@ -62,8 +62,7 @@ public final class ContentTypes
 
     public static ContentTypes empty()
     {
-        final ImmutableList<ContentType> list = ImmutableList.of();
-        return new ContentTypes( list );
+        return new ContentTypes( ImmutableList.of() );
     }
 
     public static ContentTypes from( final ContentType... contentTypes )

@@ -1,12 +1,14 @@
 package com.enonic.xp.xml.parser;
 
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
 import com.google.common.base.CaseFormat;
-import com.google.common.base.Joiner;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.inputtype.InputTypeConfig;
@@ -153,8 +155,8 @@ public class XmlInputTypeConfigMapperTest
         assertEquals( "other=[contentType=]", toString( config.getProperties( "other" ) ) );
     }
 
-    private String toString( final Iterable<InputTypeProperty> properties )
+    private String toString( final Collection<InputTypeProperty> properties )
     {
-        return Joiner.on( "," ).join( properties );
+        return properties.stream().map( Objects::toString ).collect( Collectors.joining( "," ) );
     }
 }

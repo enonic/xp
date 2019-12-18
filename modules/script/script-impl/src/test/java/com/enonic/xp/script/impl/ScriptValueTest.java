@@ -1,8 +1,8 @@
 package com.enonic.xp.script.impl;
 
-import org.junit.jupiter.api.Test;
+import java.util.stream.Collectors;
 
-import com.google.common.base.Joiner;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.script.ScriptExports;
@@ -91,7 +91,8 @@ public class ScriptValueTest
         assertEquals( null, obj.call( "a" ) );
         assertEquals( null, obj.getValue( String.class ) );
         assertEquals( 0, obj.getArray( String.class ).size() );
-        assertEquals( "a=1,b=2", Joiner.on( "," ).withKeyValueSeparator( "=" ).join( obj.getMap() ) );
+        assertEquals( "a=1,b=2",
+                      obj.getMap().entrySet().stream().map( e -> e.getKey() + "=" + e.getValue() ).collect( Collectors.joining( "," ) ) );
     }
 
     @Test

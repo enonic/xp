@@ -15,8 +15,7 @@ public final class ResponseProcessorDescriptors
 
     public static ResponseProcessorDescriptors empty()
     {
-        final ImmutableList<ResponseProcessorDescriptor> list = ImmutableList.of();
-        return new ResponseProcessorDescriptors( list );
+        return new ResponseProcessorDescriptors( ImmutableList.of() );
     }
 
     public static ResponseProcessorDescriptors from( final ResponseProcessorDescriptor... processorDescriptors )

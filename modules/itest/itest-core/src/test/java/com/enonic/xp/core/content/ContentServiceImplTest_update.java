@@ -3,12 +3,12 @@ package com.enonic.xp.core.content;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
@@ -486,7 +486,7 @@ public class ContentServiceImplTest_update
             contentId( content.getId() ).
             editor( edit -> {
                 edit.workflowInfo = WorkflowInfo.create().state( WorkflowState.PENDING_APPROVAL ).checks(
-                    ImmutableMap.of( "Laywer review", WorkflowCheckState.PENDING ) ).build();
+                    Map.of( "Laywer review", WorkflowCheckState.PENDING ) ).build();
             } );
 
         this.contentService.update( updateContentParams );
@@ -496,7 +496,7 @@ public class ContentServiceImplTest_update
         assertNotNull( storedContent.getWorkflowInfo().getState() );
         assertNotNull( storedContent.getWorkflowInfo().getChecks() );
         assertEquals( WorkflowState.PENDING_APPROVAL, storedContent.getWorkflowInfo().getState() );
-        assertEquals( ImmutableMap.of( "Laywer review", WorkflowCheckState.PENDING ), storedContent.getWorkflowInfo().getChecks() );
+        assertEquals( Map.of( "Laywer review", WorkflowCheckState.PENDING ), storedContent.getWorkflowInfo().getChecks() );
     }
 
     @Test

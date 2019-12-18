@@ -3,9 +3,8 @@ package com.enonic.xp.lib.content;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
@@ -110,8 +109,8 @@ public final class CreateMediaHandler
             final String randomId = idGenerator.get();
             if ( baseName.contains( "." ) )
             {
-                final String fileName = StringUtils.substringBeforeLast( baseName, "." );
-                final String ext = StringUtils.substringAfterLast( baseName, "." );
+                final String fileName = Files.getNameWithoutExtension( baseName );
+                final String ext = Files.getFileExtension( baseName );
                 name = fileName + "-" + randomId + "." + ext;
             }
             else

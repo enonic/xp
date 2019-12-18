@@ -1,10 +1,11 @@
 package com.enonic.xp.repo.impl.branch.storage;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeId;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class BranchDocumentId
 {
@@ -49,8 +50,8 @@ public class BranchDocumentId
         final String nodeIdAsString = value.substring( 0, separator );
         final String branchName = value.substring( separator + 1 );
 
-        Preconditions.checkArgument( !Strings.isNullOrEmpty( nodeIdAsString ) );
-        Preconditions.checkArgument( !Strings.isNullOrEmpty( branchName ) );
+        Preconditions.checkArgument( !isNullOrEmpty( nodeIdAsString ) );
+        Preconditions.checkArgument( !isNullOrEmpty( branchName ) );
 
         return new BranchDocumentId( value, nodeIdAsString, branchName );
     }

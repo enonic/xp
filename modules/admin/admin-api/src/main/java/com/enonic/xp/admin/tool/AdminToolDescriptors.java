@@ -19,8 +19,7 @@ public final class AdminToolDescriptors
 
     public static AdminToolDescriptors empty()
     {
-        final ImmutableList<AdminToolDescriptor> list = ImmutableList.of();
-        return new AdminToolDescriptors( list );
+        return new AdminToolDescriptors( ImmutableList.of() );
     }
 
     public static AdminToolDescriptors from( final AdminToolDescriptor... adminToolDescriptors )

@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyVisitor;
@@ -20,6 +18,8 @@ import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItems;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repository.RepositoryId;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 
 public class NodeStoreDocumentFactory
@@ -193,7 +193,7 @@ public class NodeStoreDocumentFactory
             @Override
             public void visit( final Property property )
             {
-                if ( !Strings.isNullOrEmpty( property.getString() ) )
+                if ( !isNullOrEmpty( property.getString() ) )
                 {
                     final IndexConfig configForData = node.getIndexConfigDocument().getConfigForPath( property.getPath() );
 

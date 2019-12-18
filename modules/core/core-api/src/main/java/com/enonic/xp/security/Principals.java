@@ -64,8 +64,7 @@ public final class Principals
 
     public static Principals empty()
     {
-        final ImmutableList<Principal> list = ImmutableList.of();
-        return new Principals( list );
+        return new Principals( ImmutableList.of() );
     }
 
     public static Principals from( final Principal... principals )

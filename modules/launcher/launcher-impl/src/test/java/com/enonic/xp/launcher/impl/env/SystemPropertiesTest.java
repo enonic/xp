@@ -31,7 +31,7 @@ public class SystemPropertiesTest
         final SystemProperties props = new SystemProperties();
         assertNull( props.getEnv( "MY_ENV" ) );
 
-        final Map<String, String> env = ImmutableMap.of( "MY_ENV", "myvalue" );
+        final Map<String, String> env = Map.of( "MY_ENV", "myvalue" );
         props.putAllEnv( env );
 
         assertEquals( "myvalue", props.getEnv( "MY_ENV" ) );

@@ -1,5 +1,7 @@
 package com.enonic.xp.web.impl.auth;
 
+import java.util.Base64;
+
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletResponse;
 
@@ -8,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import com.google.common.io.BaseEncoding;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.security.IdProvider;
@@ -78,7 +79,7 @@ public class BasicAuthFilterTest
 
     private String base64( final String value )
     {
-        return BaseEncoding.base64().encode( value.getBytes() );
+        return Base64.getEncoder().encodeToString( value.getBytes() );
     }
 
     @Test

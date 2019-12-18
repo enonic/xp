@@ -6,8 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.aggregation.Bucket;
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.aggregation.Buckets;
@@ -23,6 +21,7 @@ import com.enonic.xp.query.aggregation.GeoDistanceAggregationQuery;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.util.GeoPoint;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -112,7 +111,7 @@ public class GeoDistanceAggregationTest
 
         assertEquals( count, buck.getDocCount() );
 
-        if ( !Strings.isNullOrEmpty( key ) )
+        if ( !isNullOrEmpty( key ) )
         {
             assertEquals( buck.getKey(), key );
         }

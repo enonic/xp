@@ -54,7 +54,7 @@ class StaticIpFinderFactory
     private Stream<String> getDiscoveryAddresses( final String portPrefix )
     {
         final String discoveryUnicastSockets = igniteConfig.discovery_unicast_sockets();
-        if ( !Strings.isNullOrEmpty( discoveryUnicastSockets ) )
+        if ( !isNullOrEmpty( discoveryUnicastSockets ) )
         {
             return Arrays.stream( discoveryUnicastSockets.split( "," ) );
         }

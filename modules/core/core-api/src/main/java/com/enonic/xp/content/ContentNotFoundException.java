@@ -1,9 +1,10 @@
 package com.enonic.xp.content;
 
 import java.text.MessageFormat;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.exception.NotFoundException;
@@ -22,8 +23,8 @@ public final class ContentNotFoundException
 
     public ContentNotFoundException( final ContentPaths contentPaths, final Branch branch )
     {
-        super( MessageFormat.format( "Contents with paths [{0}] were not found in branch [{1}]", Joiner.on( ", " ).join( contentPaths ),
-                                     branch ) );
+        super( MessageFormat.format( "Contents with paths [{0}] were not found in branch [{1}]",
+                                     contentPaths.stream().map( Objects::toString ).collect( Collectors.joining( ", " ) ), branch ) );
     }
 
     public ContentNotFoundException( final ContentId contentId, final Branch branch )
@@ -33,8 +34,8 @@ public final class ContentNotFoundException
 
     public ContentNotFoundException( final ContentIds contentIds, final Branch branch )
     {
-        super( MessageFormat.format( "Contents with ids [{0}] were not found in branch [{1}]", Joiner.on( ", " ).join( contentIds ),
-                                     branch ) );
+        super( MessageFormat.format( "Contents with ids [{0}] were not found in branch [{1}]",
+                                     contentIds.stream().map( Objects::toString ).collect( Collectors.joining( ", " ) ), branch ) );
     }
 
     public ContentNotFoundException( final ContentId contentId, final ContentVersionId versionId, final Branch branch )
