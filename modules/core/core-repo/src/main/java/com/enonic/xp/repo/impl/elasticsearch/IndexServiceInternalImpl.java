@@ -175,8 +175,7 @@ public class IndexServiceInternalImpl
             final CreateIndexResponse createIndexResponse;
             try
             {
-                createIndexResponse = client.indices().
-                    create( createIndexRequest, RequestOptions.DEFAULT );
+                createIndexResponse = client.indices().create( createIndexRequest, RequestOptions.DEFAULT );
             }
             finally
             {

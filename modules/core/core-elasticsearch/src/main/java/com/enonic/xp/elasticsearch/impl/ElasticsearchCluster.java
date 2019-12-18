@@ -1,17 +1,12 @@
 package com.enonic.xp.elasticsearch.impl;
 
-import java.util.Hashtable;
-import java.util.Iterator;
+import java.io.IOException;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
-import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.client.Requests;
-import org.elasticsearch.cluster.metadata.IndexMetaData;
-import org.elasticsearch.cluster.node.DiscoveryNodes;
-import org.elasticsearch.node.Node;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
@@ -25,6 +20,7 @@ import com.enonic.xp.cluster.Cluster;
 import com.enonic.xp.cluster.ClusterHealth;
 import com.enonic.xp.cluster.ClusterHealthStatus;
 import com.enonic.xp.cluster.ClusterId;
+import com.enonic.xp.cluster.ClusterNode;
 import com.enonic.xp.cluster.ClusterNodes;
 
 @Component(immediate = true)
@@ -35,7 +31,7 @@ public final class ElasticsearchCluster
 
     private static final String CLUSTER_HEALTH_TIMEOUT = "5s";
 
-    private Node node;
+    private RestHighLevelClient client;
 
     private BundleContext context;
 
@@ -99,27 +95,6 @@ public final class ElasticsearchCluster
 
     private boolean checkAllIndicesOpened()
     {
-        final ClusterStateRequest clusterStateRequest = Requests.clusterStateRequest().
-            clear().
-            metaData( true ).
-            masterNodeTimeout( CLUSTER_HEALTH_TIMEOUT );
-        final ClusterStateResponse clusterStateResponse = this.node.client().
-            admin().
-            cluster().
-            state( clusterStateRequest ).
-            actionGet();
-        final Iterator<IndexMetaData> indiceIterator = clusterStateResponse.getState().
-            getMetaData().
-            getIndices().
-            valuesIt();
-        while ( indiceIterator.hasNext() )
-        {
-            final IndexMetaData indexMetaData = indiceIterator.next();
-            if ( IndexMetaData.State.CLOSE == indexMetaData.getState() )
-            {
-                return false;
-            }
-        }
         return true;
     }
 
@@ -128,8 +103,7 @@ public final class ElasticsearchCluster
     {
         try
         {
-            final DiscoveryNodes members = getMembers();
-            return ClusterNodesFactory.create( members );
+            return ClusterNodes.create().add( ClusterNode.from( "local" ) ).build();
         }
         catch ( Exception e )
         {
@@ -156,8 +130,8 @@ public final class ElasticsearchCluster
             return;
         }
 
-        LOG.info( "Cluster operational, register elasticsearch-client" );
-        this.reg = this.context.registerService( Client.class, this.node.client(), new Hashtable<>() );
+        // LOG.info( "Cluster operational, register elasticsearch-client" );
+        //this.reg = this.context.registerService( Client.class, this.node.client(), new Hashtable<>() );
     }
 
     private void unregisterClient()
@@ -179,24 +153,11 @@ public final class ElasticsearchCluster
     }
 
     private ClusterHealthResponse doGetHealth()
+        throws IOException
     {
-        return this.node.client().admin().cluster().health( new ClusterHealthRequest().
+        return client.cluster().health( new ClusterHealthRequest().
             timeout( CLUSTER_HEALTH_TIMEOUT ).
-            waitForYellowStatus() ).
-            actionGet();
-    }
-
-    private DiscoveryNodes getMembers()
-    {
-        final ClusterStateRequest clusterStateRequest = Requests.clusterStateRequest().
-            clear().
-            nodes( true ).
-            indices( "" ).
-            masterNodeTimeout( CLUSTER_HEALTH_TIMEOUT );
-
-        final ClusterStateResponse response = this.node.client().admin().cluster().state( clusterStateRequest ).actionGet();
-
-        return response.getState().getNodes();
+            waitForYellowStatus(), RequestOptions.DEFAULT );
     }
 
     private ClusterHealth toClusterHealth( final ClusterHealthResponse healthResponse )
@@ -219,8 +180,8 @@ public final class ElasticsearchCluster
 
 
     @Reference
-    public void setNode( final Node node )
+    public void setClient( final RestHighLevelClient client )
     {
-        this.node = node;
+        this.client = client;
     }
 }

@@ -6,8 +6,8 @@ import java.util.List;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
-import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.osgi.service.component.annotations.Component;
@@ -17,7 +17,7 @@ import org.osgi.service.component.annotations.Reference;
 public final class ClusterStateProvider
     implements ClusterInfoProvider<ClusterState>
 {
-    private ClusterAdminClient clusterAdminClient;
+    private RestHighLevelClient client;
 
     @Override
     public ClusterState getInfo()
@@ -26,7 +26,7 @@ public final class ClusterStateProvider
 
         try
         {
-            doPopulateClusterState( builder );
+            //doPopulateClusterState( builder );
         }
         catch ( ElasticsearchException ex )
         {
@@ -83,12 +83,13 @@ public final class ClusterStateProvider
             indices( "" ).
             masterNodeTimeout( CLUSTER_HEALTH_TIMEOUT );
 
-        return clusterAdminClient.state( clusterStateRequest ).actionGet();
+        //return restHighLevelClient.state( clusterStateRequest ).actionGet();
+        return null;
     }
 
     @Reference
-    public void setClusterAdminClient( ClusterAdminClient clusterAdminClient )
+    public void setClient( RestHighLevelClient client )
     {
-        this.clusterAdminClient = clusterAdminClient;
+        this.client = client;
     }
 }

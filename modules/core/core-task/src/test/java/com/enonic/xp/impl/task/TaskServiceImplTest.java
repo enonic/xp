@@ -151,7 +151,7 @@ public class TaskServiceImplTest
 
         //Creates Transport Request Sender
         final TaskTransportRequestSenderImpl transportRequestSender = new TaskTransportRequestSenderImpl();
-        transportRequestSender.setTransportService( transportService );
+        //transportRequestSender.setTransportService( transportService );
         return transportRequestSender;
     }
 
