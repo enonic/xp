@@ -41,8 +41,7 @@ public class SiteConfigs
 
     public static SiteConfigs empty()
     {
-        final ImmutableList<SiteConfig> list = ImmutableList.of();
-        return new SiteConfigs( list );
+        return new SiteConfigs( ImmutableList.of() );
     }
 
     public static SiteConfigs from( final SiteConfig... siteConfigs )

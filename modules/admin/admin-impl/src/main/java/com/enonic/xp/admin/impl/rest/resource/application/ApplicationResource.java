@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -23,7 +24,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -92,7 +92,6 @@ import com.enonic.xp.web.multipart.MultipartItem;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
-import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 
 @Path(ResourceConstants.REST_ROOT + "application")
 @Produces(MediaType.APPLICATION_JSON)
@@ -101,7 +100,7 @@ import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 public final class ApplicationResource
     implements JaxRsComponent
 {
-    private final static String[] ALLOWED_PROTOCOLS = {"http", "https"};
+    private final static Set<String> ALLOWED_PROTOCOLS = Set.of( "http", "https" );
 
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
 
@@ -355,7 +354,7 @@ public final class ApplicationResource
         {
             final URL url = new URL( urlString );
 
-            if ( ArrayUtils.contains( ALLOWED_PROTOCOLS, url.getProtocol() ) )
+            if ( ALLOWED_PROTOCOLS.contains( url.getProtocol() ) )
             {
                 return lock( url, () -> installApplication( url ) );
             }
@@ -579,12 +578,15 @@ public final class ApplicationResource
     {
         if ( !nullToEmpty( query ).isBlank() )
         {
+            final String queryLowercase = query.toLowerCase();
             return Applications.from( applications.stream().
-                filter( ( application ) -> containsIgnoreCase( application.getDisplayName(), query ) ||
-                    containsIgnoreCase( application.getMaxSystemVersion(), query ) ||
-                    containsIgnoreCase( application.getMinSystemVersion(), query ) ||
-                    containsIgnoreCase( application.getSystemVersion(), query ) || containsIgnoreCase( application.getUrl(), query ) ||
-                    containsIgnoreCase( application.getVendorName(), query ) || containsIgnoreCase( application.getVendorUrl(), query ) ).
+                filter( application -> nullToEmpty( application.getDisplayName() ).toLowerCase().contains( queryLowercase ) ||
+                    nullToEmpty( application.getMaxSystemVersion() ).toLowerCase().contains( queryLowercase ) ||
+                    nullToEmpty( application.getMinSystemVersion() ).toLowerCase().contains( queryLowercase ) ||
+                    nullToEmpty( application.getSystemVersion() ).toLowerCase().contains( queryLowercase ) ||
+                    nullToEmpty( application.getUrl() ).toLowerCase().contains( queryLowercase ) ||
+                    nullToEmpty( application.getVendorName() ).toLowerCase().contains( queryLowercase ) ||
+                    nullToEmpty( application.getVendorUrl() ).toLowerCase().contains( queryLowercase ) ).
                 collect( Collectors.toList() ) );
         }
 

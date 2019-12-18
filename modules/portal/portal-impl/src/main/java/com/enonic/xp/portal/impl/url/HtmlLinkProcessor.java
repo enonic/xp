@@ -30,9 +30,6 @@ import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
 
-import static org.apache.commons.lang.StringUtils.substringAfter;
-import static org.apache.commons.lang.StringUtils.substringBefore;
-
 public class HtmlLinkProcessor
 {
     private static final ApplicationKey SYSTEM_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
@@ -103,6 +100,8 @@ public class HtmlLinkProcessor
     public static final Pattern CONTENT_PATTERN = Pattern.compile(
         "(?:href|src)=(\"((" + CONTENT_TYPE + "|" + MEDIA_TYPE + "|" + IMAGE_TYPE + ")://(?:(" + DOWNLOAD_MODE + "|" + INLINE_MODE +
             ")/)?([0-9a-z-/]+)(\\?[^\"]+)?)\")", Pattern.MULTILINE | Pattern.UNIX_LINES );
+
+    private static final Pattern ASPECT_RATIO_PATTEN = Pattern.compile( "^(?<horizontalProportion>\\d+):(?<verticalProportion>\\d+)$" );
 
     public String process( final String text, final String urlType, final PortalRequest portalRequest )
     {
@@ -209,12 +208,13 @@ public class HtmlLinkProcessor
 
         if ( aspectRatio != null )
         {
-            if ( !aspectRatio.contains( ":" ) )
+            final Matcher matcher = ASPECT_RATIO_PATTEN.matcher( aspectRatio );
+            if ( !matcher.matches() )
             {
                 throw new IllegalArgumentException( "Invalid aspect ratio: " + aspectRatio );
             }
-            final String horizontalProportion = substringBefore( aspectRatio, ":" );
-            final String verticalProportion = substringAfter( aspectRatio, ":" );
+            final String horizontalProportion = matcher.group( "horizontalProportion" );
+            final String verticalProportion = matcher.group( "verticalProportion" );
 
             final int width = keepSize ? getImageOriginalWidth( id ) : DEFAULT_WIDTH;
             final int height = width / Integer.parseInt( horizontalProportion ) * Integer.parseInt( verticalProportion );
@@ -283,11 +283,11 @@ public class HtmlLinkProcessor
 
     private Map<String, String> extractUrlParams( final String urlQuery )
     {
-        final String query = substringAfter( urlQuery, "?" );
-        if ( query == null )
+        if ( urlQuery == null )
         {
             return Collections.emptyMap();
         }
+        final String query = urlQuery.startsWith( "?" ) ? urlQuery.substring( 1 ) : urlQuery;
         return Splitter.on( '&' ).
             trimResults().
             withKeyValueSeparator( "=" ).

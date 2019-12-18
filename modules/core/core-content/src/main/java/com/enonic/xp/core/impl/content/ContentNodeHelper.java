@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -43,7 +41,7 @@ class ContentNodeHelper
 
     public static ContentPath translateNodePathToContentPath( final NodePath nodePath )
     {
-        final String contentPath = StringUtils.substringAfter( nodePath.asAbsolute().toString(), CONTENT_ROOT_NODE_NAME + "/" );
+        final String contentPath = nodePath.asAbsolute().toString().substring( ( CONTENT_ROOT_NODE_NAME + "/" ).length() );
         return ContentPath.from( contentPath ).asAbsolute();
     }
 

@@ -21,8 +21,7 @@ public final class MixinNames
 
     public static MixinNames empty()
     {
-        final ImmutableList<MixinName> list = ImmutableList.of();
-        return new MixinNames( list );
+        return new MixinNames( ImmutableList.of() );
     }
 
     public static MixinNames from( final String... mixinNames )

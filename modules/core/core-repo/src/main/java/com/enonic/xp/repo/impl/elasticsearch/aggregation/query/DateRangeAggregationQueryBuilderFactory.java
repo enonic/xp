@@ -3,13 +3,13 @@ package com.enonic.xp.repo.impl.elasticsearch.aggregation.query;
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.range.DateRangeAggregationBuilder;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.query.aggregation.DateRange;
 import com.enonic.xp.query.aggregation.DateRangeAggregationQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AbstractBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.index.IndexValueType;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 class DateRangeAggregationQueryBuilderFactory
     extends AbstractBuilderFactory
@@ -26,7 +26,7 @@ class DateRangeAggregationQueryBuilderFactory
         final DateRangeAggregationBuilder dateRangeBuilder = new DateRangeAggregationBuilder( query.getName() ).
             field( fieldName );
 
-        if ( !Strings.isNullOrEmpty( query.getFormat() ) )
+        if ( !isNullOrEmpty( query.getFormat() ) )
         {
             dateRangeBuilder.format( query.getFormat() );
         }

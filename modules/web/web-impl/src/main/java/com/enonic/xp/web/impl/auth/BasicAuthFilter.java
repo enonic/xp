@@ -1,6 +1,7 @@
 package com.enonic.xp.web.impl.auth;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -11,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.io.BaseEncoding;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.annotation.Order;
@@ -72,9 +72,8 @@ public final class BasicAuthFilter
         }
 
         final String val = header.substring( 6 );
-        final BaseEncoding encoding = BaseEncoding.base64();
 
-        final String decoded = new String( encoding.decode( val ), StandardCharsets.UTF_8 );
+        final String decoded = new String( Base64.getDecoder().decode( val ), StandardCharsets.UTF_8 );
         final String[] parts = decoded.split( ":" );
 
         if ( parts.length != 2 )

@@ -2,9 +2,8 @@ package com.enonic.xp.page;
 
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.util.CharacterChecker;
@@ -68,8 +67,10 @@ public final class DescriptorKey
 
     public static DescriptorKey from( final String key )
     {
-        final String applicationKey = StringUtils.substringBefore( key, SEPARATOR );
-        final String descriptorName = StringUtils.substringAfter( key, SEPARATOR );
+        Preconditions.checkNotNull( key, "DescriptorKey can't be null" );
+        final int index = key.indexOf( SEPARATOR );
+        final String applicationKey = index == -1 ? key : key.substring( 0, index );
+        final String descriptorName = index == -1 ? "" : key.substring( index + 1 );
         return new DescriptorKey( ApplicationKey.from( applicationKey ), descriptorName );
     }
 

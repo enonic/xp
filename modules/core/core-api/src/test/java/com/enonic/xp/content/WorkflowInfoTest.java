@@ -2,10 +2,8 @@ package com.enonic.xp.content;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableMap;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WorkflowInfoTest
 {
@@ -21,6 +19,6 @@ public class WorkflowInfoTest
         WorkflowInfo workflowInfo = WorkflowInfo.create().
             state( WorkflowState.READY ).
             build();
-        assertEquals( ImmutableMap.<String, WorkflowCheckState>of(), workflowInfo.getChecks() );
+        assertTrue( workflowInfo.getChecks().isEmpty() );
     }
 }

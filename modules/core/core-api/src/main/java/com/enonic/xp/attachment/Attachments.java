@@ -67,8 +67,7 @@ public final class Attachments
 
     public static Attachments empty()
     {
-        final ImmutableList<Attachment> list = ImmutableList.of();
-        return new Attachments( list );
+        return new Attachments( ImmutableList.of() );
     }
 
     public static Attachments from( final Attachment... contents )

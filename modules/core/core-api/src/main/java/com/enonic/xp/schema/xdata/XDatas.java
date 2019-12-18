@@ -64,8 +64,7 @@ public final class XDatas
 
     public static XDatas empty()
     {
-        final ImmutableList<XData> list = ImmutableList.of();
-        return new XDatas( list );
+        return new XDatas( ImmutableList.of() );
     }
 
     public static XDatas from( final XData... xDatas )

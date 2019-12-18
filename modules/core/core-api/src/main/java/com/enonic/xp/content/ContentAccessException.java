@@ -2,8 +2,6 @@ package com.enonic.xp.content;
 
 import java.text.MessageFormat;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.exception.BaseException;
@@ -62,7 +60,7 @@ public final class ContentAccessException
 
     private static ContentPath translateNodePathToContentPath( final NodePath nodePath )
     {
-        final String contentPath = StringUtils.substringAfter( nodePath.asAbsolute().toString(), CONTENT_ROOT_NODE_NAME + "/" );
+        final String contentPath = nodePath.asAbsolute().toString().substring( ( CONTENT_ROOT_NODE_NAME + "/" ).length() );
         return ContentPath.from( contentPath ).asAbsolute();
     }
 }

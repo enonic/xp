@@ -1,12 +1,15 @@
 package com.enonic.xp.support;
 
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -16,20 +19,20 @@ public class AbstractImmutableEntityListTest
     @Test
     public void isNotEmpty()
     {
-        assertEquals( true, new MyList( ImmutableList.of( "a", "b", "c" ) ).isNotEmpty() );
+        assertTrue( new MyList( List.of( "a", "b", "c" ) ).isNotEmpty() );
     }
 
     @Test
     public void isEmpty()
     {
-        assertEquals( false, new MyList( ImmutableList.of( "a", "b", "c" ) ).isEmpty() );
+        assertFalse( new MyList( List.of( "a", "b", "c" ) ).isEmpty() );
     }
 
     @Test
     public void testAccessors()
     {
-        MyList list = new MyList( ImmutableList.of( "a", "b", "c" ) );
-        MyList emptyList = new MyList( ImmutableList.of() );
+        MyList list = new MyList( List.of( "a", "b", "c" ) );
+        MyList emptyList = new MyList( List.of() );
 
         assertEquals( "a", list.get( 0 ) );
         assertEquals( "b", list.get( 1 ) );
@@ -48,19 +51,19 @@ public class AbstractImmutableEntityListTest
     @Test
     public void testEquals()
     {
-        MyList list1 = new MyList( ImmutableList.of( "a", "b", "c" ) );
-        MyList list2 = new MyList( ImmutableList.of( "a", "c", "b" ) );
+        MyList list1 = new MyList( List.of( "a", "b", "c" ) );
+        MyList list2 = new MyList( List.of( "a", "c", "b" ) );
 
-        assertFalse( list1.equals( list2 ) );
+        assertNotEquals( list1, list2 );
     }
 
     private static class MyList
         extends AbstractImmutableEntityList<String>
     {
 
-        protected MyList( final ImmutableList<String> set )
+        protected MyList( final List<String> set )
         {
-            super( set );
+            super( ImmutableList.copyOf( set ) );
         }
     }
 }

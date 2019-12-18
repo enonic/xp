@@ -81,7 +81,7 @@ public class ElasticsearchClusterReporterTest
         //clusterHealthProvider.setClusterAdminClient( clusterAdminClient );
 
         final ClusterStateProvider clusterStateProvider = new ClusterStateProvider();
-        clusterStateProvider.setClusterAdminClient( clusterAdminClient );
+        //clusterStateProvider.setClient( clusterAdminClient );
 
         clusterReporter.setClusterHealthProvider( clusterHealthProvider );
         clusterReporter.setClusterStateProvider( clusterStateProvider );

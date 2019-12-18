@@ -3,8 +3,6 @@ package com.enonic.xp.suggester;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.NotImplementedException;
-
 import com.google.common.collect.ImmutableList;
 
 public abstract class SuggestionEntry<OPTION extends SuggestionOption>
@@ -47,7 +45,7 @@ public abstract class SuggestionEntry<OPTION extends SuggestionOption>
 
     public static Builder create()
     {
-        throw new NotImplementedException( "Must be implemented in inheritors" );
+        throw new UnsupportedOperationException( "Must be implemented in inheritors" );
     }
 
     public static abstract class Builder<T extends Builder, OPTION extends SuggestionOption>

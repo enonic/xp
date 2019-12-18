@@ -29,7 +29,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -198,7 +197,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static java.lang.Math.toIntExact;
 import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "content")
@@ -1327,18 +1325,18 @@ public final class ContentResource
         Locale[] locales = Locale.getAvailableLocales();
         if ( !nullToEmpty( query ).isBlank() )
         {
-            String trimmedQuery = query.trim();
+            String trimmedQuery = query.trim().toLowerCase();
             locales = Arrays.stream( locales ).
-                filter( ( locale ) -> containsIgnoreCase( locale.toLanguageTag(), trimmedQuery ) ||
-                    containsIgnoreCase( locale.getDisplayName( locale ), trimmedQuery ) ||
-                    containsIgnoreCase( locale.getLanguage(), trimmedQuery ) ||
-                    containsIgnoreCase( locale.getDisplayLanguage( locale ), trimmedQuery ) ||
-                    containsIgnoreCase( locale.getVariant(), trimmedQuery ) ||
-                    containsIgnoreCase( locale.getDisplayVariant( locale ), trimmedQuery ) ||
-                    containsIgnoreCase( locale.getCountry(), trimmedQuery ) ||
-                    containsIgnoreCase( locale.getDisplayCountry( locale ), trimmedQuery ) ||
-                    containsIgnoreCase( getFormattedDisplayName( locale ), trimmedQuery ) && !isNullOrEmpty( locale.toLanguageTag() ) &&
-                        !isNullOrEmpty( locale.getDisplayName() ) ).
+                filter( locale -> nullToEmpty( locale.toLanguageTag() ).toLowerCase().contains( trimmedQuery ) ||
+                    nullToEmpty( locale.getDisplayName( locale ) ).toLowerCase().contains( trimmedQuery ) ||
+                    nullToEmpty( locale.getLanguage() ).toLowerCase().contains( trimmedQuery ) ||
+                    nullToEmpty( locale.getDisplayLanguage( locale ) ).toLowerCase().contains( trimmedQuery ) ||
+                    nullToEmpty( locale.getVariant() ).toLowerCase().contains( trimmedQuery ) ||
+                    nullToEmpty( locale.getDisplayVariant( locale ) ).toLowerCase().contains( trimmedQuery ) ||
+                    nullToEmpty( locale.getCountry() ).toLowerCase().contains( trimmedQuery ) ||
+                    nullToEmpty( locale.getDisplayCountry( locale ) ).toLowerCase().contains( trimmedQuery ) ||
+                    nullToEmpty( getFormattedDisplayName( locale ) ).toLowerCase().contains( trimmedQuery ) &&
+                        !isNullOrEmpty( locale.toLanguageTag() ) && !isNullOrEmpty( locale.getDisplayName() ) ).
                 toArray( Locale[]::new );
         }
         else

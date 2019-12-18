@@ -69,8 +69,7 @@ public class ContentTypeValidationResult
 
     public static ContentTypeValidationResult empty()
     {
-        final ImmutableList<ContentTypeValidationError> list = ImmutableList.of();
-        return new ContentTypeValidationResult( list );
+        return new ContentTypeValidationResult( ImmutableList.of() );
     }
 
     public static Builder create()

@@ -13,10 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.commons.lang.StringUtils.substringAfter;
-import static org.apache.commons.lang.StringUtils.substringBefore;
-import static org.apache.commons.lang.StringUtils.substringBetween;
-
 final class NetworkInterfaceResolver
 {
     private enum IPVersion
@@ -37,7 +33,7 @@ final class NetworkInterfaceResolver
      * <p>
      * An optional suffix may be added to specify protocol version: ipv4, ipv6
      * <p>
-     * Examples: "192.168.0.1", "lo0:ipv6", "en0", "en4:ipv4", "local"
+     * Examples: "192.168.0.1", "_lo0:ipv6_", "_en0_", "_en4:ipv4_", "_local_"
      *
      * @param addressOrInterfaceName name of the network interface
      * @return ip address resolved if it was an interface expression, null otherwise
@@ -50,24 +46,26 @@ final class NetworkInterfaceResolver
             return addressOrInterfaceName;
         }
 
-        final String interfaceName = substringBetween( addressOrInterfaceName, "_" );
+        final String interfaceName = addressOrInterfaceName.substring( 1, addressOrInterfaceName.length() - 1 );
 
         final String ifaceName;
         final IPVersion ipVersion;
-        if ( interfaceName.contains( ":" ) )
+
+        final int index = interfaceName.indexOf( ":" );
+        if ( index == -1 )
         {
-            ifaceName = substringBefore( interfaceName, ":" );
-            String ipProto = substringAfter( interfaceName, ":" );
+            ifaceName = interfaceName;
+            ipVersion = null;
+        }
+        else
+        {
+            ifaceName = interfaceName.substring( 0, index );
+            final String ipProto = interfaceName.substring( index + 1 );
             ipVersion = parseIPVersion( ipProto );
             if ( ipVersion == null )
             {
                 throw new IllegalArgumentException( "Invalid IP version: " + ipProto );
             }
-        }
-        else
-        {
-            ifaceName = interfaceName;
-            ipVersion = null;
         }
 
         try
@@ -91,8 +89,15 @@ final class NetworkInterfaceResolver
         final InetAddress address;
         if ( "local".equals( ifaceName ) )
         {
-            address = getLocalhost( IPVersion.IPv4 );
-
+            if ( ipVersion == null )
+            {
+                // for backwards compatibility with previous XP versions use ipv4 address.
+                address = getLocalhost( IPVersion.IPv4 );
+            }
+            else
+            {
+                address = getLocalhost( ipVersion );
+            }
         }
         else
         {

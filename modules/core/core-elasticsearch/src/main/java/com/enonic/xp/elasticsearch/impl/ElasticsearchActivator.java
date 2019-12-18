@@ -49,17 +49,7 @@ public final class ElasticsearchActivator
     @SuppressWarnings("WeakerAccess")
     public void activate( final BundleContext context, final Map<String, String> map )
     {
-        Thread thread = Thread.currentThread();
-        ClassLoader contextClassLoader = thread.getContextClassLoader();
-        thread.setContextClassLoader( getClass().getClassLoader() );
-        try
-        {
-            client = new RestHighLevelClient( RestClient.builder( new HttpHost( "localhost", 9200, "http" ) ) );
-        }
-        finally
-        {
-            thread.setContextClassLoader( contextClassLoader );
-        }
+        client = new RestHighLevelClient( RestClient.builder( new HttpHost( "localhost", 9200, "http" ) ) );
         clientReg = context.registerService( RestHighLevelClient.class, client, null );
     /*final Settings settings = new NodeSettingsBuilder( context, this.clusterConfig ).
             buildSettings( map );

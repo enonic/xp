@@ -1,14 +1,11 @@
 package com.enonic.xp.impl.task.cluster;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.elasticsearch.cluster.node.DiscoveryNode;
-import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.elasticsearch.transport.TransportRequest;
-import org.elasticsearch.transport.TransportRequestOptions;
 import org.elasticsearch.transport.TransportService;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
@@ -46,19 +43,15 @@ public final class TaskTransportRequestSenderImpl
 
     private List<TaskInfo> send( final TransportRequest transportRequest )
     {
-        final DiscoveryNodes discoveryNodes = DiscoveryNodes.EMPTY_NODES;
+        /*final DiscoveryNodes discoveryNodes = DiscoveryNodes.EMPTY_NODES;
         final TaskTransportResponseHandler responseHandler = new TaskTransportResponseHandler( discoveryNodes.getSize() );
         for ( final DiscoveryNode discoveryNode : discoveryNodes )
         {
             final TransportRequestOptions options = TransportRequestOptions.builder().withTimeout( TRANSPORT_REQUEST_TIMEOUT ).build();
-            this.transportService.sendRequest( discoveryNode, ACTION, transportRequest, options, responseHandler );
+           // this.transportService.sendRequest( discoveryNode, ACTION, transportRequest, options, responseHandler );
         }
-        return responseHandler.getTaskInfos();
+        return responseHandler.getTaskInfos();*/
+        return new ArrayList<>();
     }
 
-    @Reference
-    public void setTransportService( final TransportService transportService )
-    {
-        this.transportService = transportService;
-    }
 }

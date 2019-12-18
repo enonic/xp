@@ -7,8 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
@@ -202,7 +200,7 @@ public final class LoginHandler
 
     private boolean isValidEmail( final String value )
     {
-        return StringUtils.countMatches( value, "@" ) == 1;
+        return value != null && value.chars().filter( ch -> ch == '@' ).count() == 1;
     }
 
     private void setSessionTimeout()

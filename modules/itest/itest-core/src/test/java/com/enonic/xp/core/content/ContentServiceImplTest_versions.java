@@ -1,8 +1,9 @@
 package com.enonic.xp.core.content;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.UnmodifiableIterator;
 
@@ -109,8 +110,8 @@ public class ContentServiceImplTest_versions
     public void version_workflow_info()
         throws Exception
     {
-        final ImmutableMap<String, WorkflowCheckState> checks =
-            ImmutableMap.of( "checkName1", WorkflowCheckState.APPROVED, "checkName2", WorkflowCheckState.PENDING );
+        final Map<String, WorkflowCheckState> checks =
+            Map.of( "checkName1", WorkflowCheckState.APPROVED, "checkName2", WorkflowCheckState.PENDING );
 
         final WorkflowInfo workflowInfo = WorkflowInfo.create().
             state( WorkflowState.IN_PROGRESS ).

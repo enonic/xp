@@ -19,10 +19,6 @@ import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.schema.xdata.XDataName;
 
-import static com.google.common.base.Strings.nullToEmpty;
-import static org.apache.commons.lang.StringUtils.substringAfter;
-import static org.apache.commons.lang.StringUtils.substringBefore;
-
 @Beta
 public final class ContentMappingConstraint
 {
@@ -95,7 +91,7 @@ public final class ContentMappingConstraint
         }
         else if ( this.id.startsWith( DATA_PROPERTY_PREFIX ) )
         {
-            final String dataPath = substringAfter( id, DATA_PROPERTY_PREFIX );
+            final String dataPath = id.substring( DATA_PROPERTY_PREFIX.length() );
             final Property prop = content.getData().getProperty( dataPath );
             if ( prop == null || prop.getValue() == null )
             {
@@ -107,18 +103,34 @@ public final class ContentMappingConstraint
         }
         else if ( this.id.startsWith( XDATA_PROPERTY_PREFIX ) )
         {
-            String dataPath = substringAfter( id, XDATA_PROPERTY_PREFIX );
-            final String appPrefix = substringBefore( dataPath, PropertyPath.ELEMENT_DIVIDER );
-            dataPath = substringAfter( dataPath, PropertyPath.ELEMENT_DIVIDER );
-            final String mixinName = substringBefore( dataPath, PropertyPath.ELEMENT_DIVIDER );
-            dataPath = substringAfter( dataPath, PropertyPath.ELEMENT_DIVIDER );
+            final String dataPath = id.substring( XDATA_PROPERTY_PREFIX.length() );
+
+            final String appPrefix;
+            final String mixinName;
+            final String propertyName;
+
+            final int firstIndex = dataPath.indexOf( PropertyPath.ELEMENT_DIVIDER );
+            if ( firstIndex == -1 )
+            {
+                appPrefix = dataPath;
+                mixinName = "";
+                propertyName = "";
+            }
+            else
+            {
+                appPrefix = dataPath.substring( 0, firstIndex );
+                final int secondIndex = dataPath.indexOf( PropertyPath.ELEMENT_DIVIDER, firstIndex + 1 );
+                mixinName = secondIndex == -1 ? dataPath.substring( firstIndex + 1 ) : dataPath.substring( firstIndex + 1, secondIndex );
+                propertyName = secondIndex == -1 ? "" : dataPath.substring( secondIndex + 1 );
+            }
+
             final PropertyTree xData = getXData( content.getAllExtraData(), appPrefix, mixinName );
             if ( xData == null )
             {
                 return false;
             }
 
-            final Property prop = xData.getProperty( dataPath );
+            final Property prop = xData.getProperty( propertyName );
             if ( prop == null || prop.getValue() == null )
             {
                 return false;
@@ -239,13 +251,15 @@ public final class ContentMappingConstraint
 
     public static ContentMappingConstraint parse( final String expression )
     {
-        if ( !expression.contains( SEPARATOR ) )
+        int index = expression.indexOf( SEPARATOR );
+        if ( index == -1 )
         {
             throw new IllegalArgumentException( "Invalid match expression: " + expression );
         }
-        final String id = substringBefore( expression, SEPARATOR ).trim();
-        final String value = substringAfter( expression, SEPARATOR ).trim();
-        if ( nullToEmpty( id ).isBlank() )
+        final String id = expression.substring( 0, index ).trim();
+        final String value = expression.substring( index + 1 ).trim();
+
+        if ( id.isBlank() )
         {
             throw new IllegalArgumentException( "Invalid match expression: " + expression );
         }
