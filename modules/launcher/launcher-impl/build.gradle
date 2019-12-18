@@ -11,6 +11,10 @@ dependencies {
     implementation "org.slf4j:jul-to-slf4j:${slf4jVersion}"
     runtimeOnly "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
     runtimeOnly "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
+    runtimeOnly "org.jboss.logging:jboss-logging:3.3.2.Final"
     compile 'org.fusesource.jansi:jansi:1.11'
-    compile 'javax.mail:mail:1.4.7'
+    compile ( 'javax.mail:mail:1.4.7' ) {
+        exclude group: 'javax.activation'
+    }
+    compile 'javax.activation:activation:1.1.1'
 }
