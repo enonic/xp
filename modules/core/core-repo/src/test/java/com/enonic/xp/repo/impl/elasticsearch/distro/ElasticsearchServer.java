@@ -24,6 +24,8 @@ public class ElasticsearchServer
 
     private Thread outStreamReader;
 
+    private Thread errorStreamReader;
+
     private final CountDownLatch startedLatch = new CountDownLatch( 1 );
 
     private final AtomicBoolean statedSuccessfully = new AtomicBoolean();
@@ -98,14 +100,43 @@ public class ElasticsearchServer
     public void startElasticProcess()
         throws IOException
     {
-        final ProcessBuilder processBuilder = new ProcessBuilder( ElasticsearchConstants.ES_EXECUTABLE_PATH.toString() ).
-            redirectErrorStream( true );
+        final ProcessBuilder processBuilder = new ProcessBuilder( ElasticsearchConstants.ES_EXECUTABLE_PATH.toString() );
         final Map<String, String> environment = processBuilder.environment();
         environment.put( "ES_PATH_CONF", esPathConf.toAbsolutePath().toString() );
         environment.put( "ES_TMPDIR", esPathTmp.toAbsolutePath().toString() );
 
         process = processBuilder.start();
 
+        readOutput();
+        readError();
+    }
+
+    private void readError()
+    {
+        errorStreamReader = new Thread( () -> {
+
+            try (final BufferedReader in = new BufferedReader( new InputStreamReader( process.getErrorStream() ) ))
+            {
+                String line;
+                while ( ( line = in.readLine() ) != null )
+                {
+                    LOGGER.error( line );
+                    if ( Thread.interrupted() )
+                    {
+                        return;
+                    }
+                }
+            }
+            catch ( IOException e )
+            {
+                throw new UncheckedIOException( e );
+            }
+        } );
+        errorStreamReader.start();
+    }
+
+    private void readOutput()
+    {
         outStreamReader = new Thread( () -> {
 
             try (final BufferedReader in = new BufferedReader( new InputStreamReader( process.getInputStream() ) ))
@@ -114,7 +145,7 @@ public class ElasticsearchServer
                 while ( ( line = in.readLine() ) != null )
                 {
                     LOGGER.info( line );
-                    if ( line.endsWith( "] started" ) )
+                    if ( !statedSuccessfully.get() && line.endsWith( "] started" ) )
                     {
                         statedSuccessfully.set( true );
                         startedLatch.countDown();
@@ -124,7 +155,6 @@ public class ElasticsearchServer
                         return;
                     }
                 }
-
             }
             catch ( IOException e )
             {
@@ -187,6 +217,7 @@ public class ElasticsearchServer
     {
         startedLatch.await();
         outStreamReader.interrupt();
+        errorStreamReader.interrupt();
         process.children().forEach( ProcessHandle::destroy );
         process.destroy();
         process.waitFor( 1, TimeUnit.MINUTES );
