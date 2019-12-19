@@ -3,7 +3,15 @@ apply from: "$rootDir/gradle/osgi.gradle"
 dependencies {
     compile project( ':jaxrs:jaxrs-api' )
     compile "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:${jacksonVersion}"
-    compile 'org.jboss.resteasy:resteasy-jaxrs:3.0.8.Final'
+    implementation ( "org.jboss.resteasy:resteasy-jaxrs:${resteasyVersion}" ) {
+        exclude group: 'org.jboss.spec.javax.annotation'
+        exclude group: 'org.jboss.spec.javax.xml.bind'
+        exclude group: 'org.jboss.spec.javax.ws.rs'
+        exclude group: 'org.apache.httpcomponents'
+        exclude group: 'com.github.stephenc.jcip'
+        exclude group: 'javax.validation'
+    }
+
     testCompile project( path: ':jaxrs:jaxrs-api', configuration: 'testOutput' )
     testCompile project( path: ':web:web-jetty', configuration: 'testOutput' )
 }

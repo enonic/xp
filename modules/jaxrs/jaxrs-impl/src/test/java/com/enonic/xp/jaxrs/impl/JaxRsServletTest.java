@@ -68,7 +68,7 @@ public class JaxRsServletTest
 
         final HttpResponse response = callRequest( request );
         assertEquals( 200, response.statusCode() );
-        assertEquals( List.of( "text/plain" ), response.headers().allValues( "content-type" ) );
+        assertEquals( List.of( "text/plain;charset=utf-8" ), response.headers().allValues( "content-type" ) );
         assertEquals( "Hello World", response.body().toString() );
     }
 
