@@ -9,6 +9,7 @@ import com.enonic.xp.query.aggregation.AggregationQuery;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes({                                                                                                   //
     @JsonSubTypes.Type(value = TermsAggregationQueryJson.class, name = "TermsAggregationQuery"),    //
+    @JsonSubTypes.Type(value = RareTermsAggregationQueryJson.class, name = "RareTermsAggregationQuery"), //
     @JsonSubTypes.Type(value = DateHistogramAggregationQueryJson.class, name = "DateHistogramAggregationQuery"),    //
     @JsonSubTypes.Type(value = DateRangeAggregationQueryJson.class, name = "DateRangeAggregationQuery"), //
     @JsonSubTypes.Type(value = HistogramAggregationQueryJson.class, name = "HistogramAggregationQuery") //

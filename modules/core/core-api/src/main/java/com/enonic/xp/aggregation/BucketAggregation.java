@@ -8,7 +8,7 @@ public class BucketAggregation
 {
     private final Buckets buckets;
 
-    private BucketAggregation( final Builder builder )
+    protected BucketAggregation( final Builder builder )
     {
         super( builder );
         this.buckets = builder.buckets;

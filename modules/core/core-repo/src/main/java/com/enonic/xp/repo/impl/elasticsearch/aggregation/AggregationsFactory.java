@@ -6,6 +6,7 @@ import java.time.ZonedDateTime;
 
 import org.elasticsearch.search.aggregations.HasAggregations;
 import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
+import org.elasticsearch.search.aggregations.bucket.composite.ParsedComposite;
 import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram;
 import org.elasticsearch.search.aggregations.bucket.range.InternalDateRange;
@@ -13,9 +14,11 @@ import org.elasticsearch.search.aggregations.bucket.range.InternalGeoDistance;
 import org.elasticsearch.search.aggregations.bucket.range.ParsedDateRange;
 import org.elasticsearch.search.aggregations.bucket.range.ParsedGeoDistance;
 import org.elasticsearch.search.aggregations.bucket.range.Range;
+import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.Max;
 import org.elasticsearch.search.aggregations.metrics.Min;
+import org.elasticsearch.search.aggregations.metrics.ParsedCardinality;
 import org.elasticsearch.search.aggregations.metrics.Stats;
 import org.elasticsearch.search.aggregations.metrics.ValueCount;
 import org.joda.time.DateTime;
@@ -46,6 +49,14 @@ public class AggregationsFactory
             if ( aggregation instanceof Terms )
             {
                 aggregationsBuilder.add( TermsAggregationFactory.create( (Terms) aggregation ) );
+            }
+            else if ( aggregation instanceof ParsedComposite )
+            {
+                aggregationsBuilder.add( CompositeAggregationFactory.create( (ParsedComposite) aggregation ) );
+            }
+            else if ( aggregation instanceof ParsedStringTerms )
+            {
+                aggregationsBuilder.add( TermsAggregationFactory.create( (ParsedStringTerms) aggregation ) );
             }
             else if ( aggregation instanceof InternalGeoDistance )
             {
@@ -93,6 +104,10 @@ public class AggregationsFactory
             else if ( aggregation instanceof Max )
             {
                 aggregationsBuilder.add( MaxAggregationFactory.create( (Max) aggregation ) );
+            }
+            else if ( aggregation instanceof ParsedCardinality )
+            {
+                aggregationsBuilder.add( CardinalityAggregationFactory.create( (ParsedCardinality) aggregation ) );
             }
             else
             {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class ReturnValue
 {
@@ -41,5 +42,26 @@ public class ReturnValue
         {
             this.values.add( values );
         }
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final ReturnValue that = (ReturnValue) o;
+        return Objects.equals( values, that.values );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( values );
     }
 }

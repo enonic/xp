@@ -44,7 +44,7 @@ public class SearchExecutor
                 execute( query );
         }
 
-        if ( size == NodeSearchService.GET_ALL_SIZE_FLAG )
+        if ( size == NodeSearchService.GET_ALL_SIZE_FLAG || size > 10000 )
         {
             if ( anyAggregations )
             {

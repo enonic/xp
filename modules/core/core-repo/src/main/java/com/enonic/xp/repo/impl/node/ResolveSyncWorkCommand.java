@@ -31,6 +31,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repo.impl.version.TestQueryType;
 
 public class ResolveSyncWorkCommand
     extends AbstractNodeCommand
@@ -53,6 +54,8 @@ public class ResolveSyncWorkCommand
 
     private final Set<CompareStatus> statusesToStopDependenciesSearch;
 
+    private final TestQueryType testQueryType;
+
     private static final Logger LOG = LoggerFactory.getLogger( ResolveSyncWorkCommand.class );
 
     private ResolveSyncWorkCommand( final Builder builder )
@@ -66,6 +69,7 @@ public class ResolveSyncWorkCommand
         this.includeDependencies = builder.includeDependencies;
         this.initialDiffFilter = builder.initialDiffFilter;
         this.statusesToStopDependenciesSearch = builder.statusesToStopDependenciesSearch;
+        this.testQueryType = builder.testQueryType;
 
         final Node publishRootNode = doGetById( builder.nodeId );
 
@@ -167,6 +171,7 @@ public class ResolveSyncWorkCommand
             size( NodeSearchService.GET_ALL_SIZE_FLAG ).
             searchService( this.nodeSearchService ).
             storageService( this.nodeStorageService ).
+            testQueryType( this.testQueryType ).
             build().
             execute();
     }
@@ -400,6 +405,8 @@ public class ResolveSyncWorkCommand
 
         private Set<CompareStatus> statusesToStopDependenciesSearch;
 
+        private TestQueryType testQueryType;
+
         private Builder()
         {
         }
@@ -446,6 +453,12 @@ public class ResolveSyncWorkCommand
         public Builder statusesToStopDependenciesSearch( final Set<CompareStatus> statusesToStopDependenciesSearch )
         {
             this.statusesToStopDependenciesSearch = statusesToStopDependenciesSearch;
+            return this;
+        }
+
+        public Builder testQueryType( final TestQueryType testQueryType )
+        {
+            this.testQueryType = testQueryType;
             return this;
         }
 

@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.search.result;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -55,6 +56,12 @@ public class SearchHits
         public Builder addAll( final SearchHits entries )
         {
             this.hits.addAll( entries.hits );
+            return this;
+        }
+
+        public Builder addAll( final Collection<SearchHit> entries )
+        {
+            this.hits.addAll( entries );
             return this;
         }
 

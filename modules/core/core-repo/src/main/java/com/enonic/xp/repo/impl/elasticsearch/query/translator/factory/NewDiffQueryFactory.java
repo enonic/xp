@@ -146,7 +146,7 @@ public class NewDiffQueryFactory
         private void validate()
         {
             Preconditions.checkNotNull( this.query );
-            Preconditions.checkNotNull( this.childStorageType );
+//            Preconditions.checkNotNull( this.childStorageType );
         }
 
         public NewDiffQueryFactory build()

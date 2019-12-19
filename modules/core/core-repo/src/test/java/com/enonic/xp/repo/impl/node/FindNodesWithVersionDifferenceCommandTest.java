@@ -258,6 +258,7 @@ public class FindNodesWithVersionDifferenceCommandTest
         NodeVersionDiffResult result = getDiff( WS_DEFAULT, WS_OTHER, node1.path() );
 
         assertEquals( 4, result.getNodesWithDifferences().getSize() );
+
         assertTrue( result.getNodesWithDifferences().contains( NodeId.from( "dddd" ) ) );
         assertTrue( result.getNodesWithDifferences().contains( NodeId.from( "ccc" ) ) );
         assertTrue( result.getNodesWithDifferences().contains( NodeId.from( "11" ) ) );

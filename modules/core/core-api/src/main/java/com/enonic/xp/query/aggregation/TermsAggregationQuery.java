@@ -19,6 +19,10 @@ public class TermsAggregationQuery
 
     private final long minDocCount;
 
+    private final int numOfPartitions;
+
+    private final int partition;
+
     private TermsAggregationQuery( final Builder builder )
     {
         super( builder );
@@ -27,6 +31,8 @@ public class TermsAggregationQuery
         this.orderDirection = builder.direction;
         this.orderType = builder.type;
         this.minDocCount = builder.minDocCount;
+        this.numOfPartitions = builder.numOfPartitions;
+        this.partition = builder.partition;
     }
 
     public String getFieldName()
@@ -52,6 +58,16 @@ public class TermsAggregationQuery
     public long getMinDocCount()
     {
         return minDocCount;
+    }
+
+    public int getNumOfPartitions()
+    {
+        return numOfPartitions;
+    }
+
+    public int getPartition()
+    {
+        return partition;
     }
 
     @Override
@@ -82,6 +98,10 @@ public class TermsAggregationQuery
         private String fieldName;
 
         private long minDocCount = 1;
+
+        private int numOfPartitions = 1;
+
+        private int partition = 0;
 
         public Builder( final String name )
         {
@@ -122,6 +142,18 @@ public class TermsAggregationQuery
         public Builder orderType( final Type type )
         {
             this.type = type;
+            return this;
+        }
+
+        public Builder partition( final int partition )
+        {
+            this.partition = partition;
+            return this;
+        }
+
+        public Builder numOfPartitions( final int num )
+        {
+            this.numOfPartitions = num;
             return this;
         }
     }

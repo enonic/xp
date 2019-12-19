@@ -101,8 +101,9 @@ public abstract class AbstractElasticsearchIntegrationTest
     {
         try
         {
-            return client.indices().delete( new DeleteIndexRequest( "search-*", "branch-*", "version-*", "commit-*" ),
-                                            RequestOptions.DEFAULT );
+            return client.indices().delete(
+                new DeleteIndexRequest( "search-com*", "branch-com*", "version-com*", "commit-com*", "search-system*", "branch-system*",
+                                        "version-system*", "commit-system*" ), RequestOptions.DEFAULT );
         }
         catch ( IOException e )
         {
@@ -133,7 +134,7 @@ public abstract class AbstractElasticsearchIntegrationTest
                 }
                 snapshotsDir = elasticsearchInstance.getSnapshotsDir();
 
-                client = new RestHighLevelClient( RestClient.builder( new HttpHost( "localhost", 9200, "http" ) ) );
+                client = new TestRestHighLevelClient( RestClient.builder( new HttpHost( "localhost", 9200, "http" ) ) );
 
                 indexService = new IndexServiceInternalImpl();
                 indexService.setClient( client );

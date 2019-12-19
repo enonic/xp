@@ -142,4 +142,17 @@ public class DumpBlobStore
 
         return flag;
     }
+
+    public void clear()
+    {
+        this.baseDir.delete();
+        try
+        {
+            this.baseDir.createNewFile();
+        }
+        catch ( IOException e )
+        {
+            e.printStackTrace();
+        }
+    }
 }

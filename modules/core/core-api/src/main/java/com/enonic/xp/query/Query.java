@@ -34,4 +34,8 @@ public interface Query
 
     boolean isExplain();
 
+    void setSize( int size );
+
+    void setAggregations( AggregationQueries aggregations );
+
 }

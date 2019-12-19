@@ -17,6 +17,7 @@ import com.enonic.xp.query.aggregation.GeoDistanceAggregationQuery;
 import com.enonic.xp.query.aggregation.HistogramAggregationQuery;
 import com.enonic.xp.query.aggregation.NumericRange;
 import com.enonic.xp.query.aggregation.NumericRangeAggregationQuery;
+import com.enonic.xp.query.aggregation.RareTermsAggregationQuery;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.StatsAggregationQuery;
 import com.enonic.xp.util.GeoPoint;
@@ -68,6 +69,14 @@ final class QueryAggregationParams
             return termsAggregationQuery.build();
 
         }
+        if ( aggregationQueryMap.containsKey( "rareTerms" ) )
+        {
+            final Map<String, Object> termsParamsMap = (Map<String, Object>) aggregationQueryMap.get( "rareTerms" );
+            final RareTermsAggregationQuery.Builder rareTermsAggregationQuery = rareTermsAggregationFromParams( name, termsParamsMap );
+            addSubAggregations( rareTermsAggregationQuery, aggregationQueryMap );
+            return rareTermsAggregationQuery.build();
+
+        }
         else if ( aggregationQueryMap.containsKey( "histogram" ) )
         {
             final Map<String, Object> histogramParamsMap = (Map<String, Object>) aggregationQueryMap.get( "histogram" );
@@ -86,8 +95,7 @@ final class QueryAggregationParams
         else if ( aggregationQueryMap.containsKey( "range" ) )
         {
             final Map<String, Object> numericRangeParamsMap = (Map<String, Object>) aggregationQueryMap.get( "range" );
-            final NumericRangeAggregationQuery.Builder rangeAggregationQuery =
-                numericRangeAggregationFromParams( name, numericRangeParamsMap );
+            final NumericRangeAggregationQuery.Builder rangeAggregationQuery = numericRangeAggregationFromParams( name, numericRangeParamsMap );
             addSubAggregations( rangeAggregationQuery, aggregationQueryMap );
             return rangeAggregationQuery.build();
         }
@@ -107,8 +115,7 @@ final class QueryAggregationParams
         else if ( aggregationQueryMap.containsKey( "geoDistance" ) )
         {
             final Map<String, Object> geoDistanceParamsMap = (Map<String, Object>) aggregationQueryMap.get( "geoDistance" );
-            final GeoDistanceAggregationQuery.Builder geoDistanceAggregationQuery =
-                geoDistanceAggregationFromParams( name, geoDistanceParamsMap );
+            final GeoDistanceAggregationQuery.Builder geoDistanceAggregationQuery = geoDistanceAggregationFromParams( name, geoDistanceParamsMap );
             return geoDistanceAggregationQuery.build();
         }
 
@@ -154,6 +161,39 @@ final class QueryAggregationParams
             size( size ).
             orderType( orderType ).
             orderDirection( orderDirection );
+    }
+
+    private RareTermsAggregationQuery.Builder rareTermsAggregationFromParams( final String name, final Map<String, Object> paramsMap )
+    {
+        final String fieldName = (String) paramsMap.get( "field" );
+        final String orderExpr = ( (String) paramsMap.getOrDefault( "order", "" ) ).trim();
+        final int size = (int) paramsMap.getOrDefault( "size", 10 );
+        final int maxDocCount = (int) paramsMap.get( "maxDocCount" );
+
+        final String orderTypeStr = StringUtils.substringBefore( orderExpr, " " );
+        final String orderDir = StringUtils.substringAfter( orderExpr, " " );
+//        final RareTermsAggregationQuery.Direction orderDirection =
+//            "desc".equalsIgnoreCase( orderDir ) ? RareTermsAggregationQuery.Direction.DESC : RareTermsAggregationQuery.Direction.ASC;
+//        final RareTermsAggregationQuery.Type orderType;
+//        if ( "_term".equals( orderTypeStr ) )
+//        {
+//            orderType = RareTermsAggregationQuery.Type.TERM;
+//        }
+//        else if ( "_count".equals( orderTypeStr ) )
+//        {
+//            orderType = RareTermsAggregationQuery.Type.DOC_COUNT;
+//        }
+//        else
+//        {
+//            orderType = null;
+//        }
+
+        return RareTermsAggregationQuery.create( name ).
+            fieldName( fieldName ).
+//            size( size ).
+    maxDocCount( maxDocCount );
+//            orderType( orderType ).
+//            orderDirection( orderDirection );
     }
 
     private HistogramAggregationQuery.Builder histogramAggregationFromParams( final String name, final Map<String, Object> paramsMap )

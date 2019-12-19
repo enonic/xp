@@ -30,9 +30,9 @@ public abstract class Aggregation
         return name;
     }
 
-    public static BucketAggregation.Builder bucketAggregation( final String name )
+    public static CompositeBucketAggregation.Builder bucketAggregation( final String name )
     {
-        return new BucketAggregation.Builder( name );
+        return new CompositeBucketAggregation.Builder( name );
     }
 
     public static abstract class Builder<T extends Builder>

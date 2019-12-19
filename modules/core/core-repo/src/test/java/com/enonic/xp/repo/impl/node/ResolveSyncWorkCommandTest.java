@@ -318,7 +318,7 @@ public class ResolveSyncWorkCommandTest
         final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1_1.id(), true );
         final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1.id(), false );
 
-        assertEquals( resultChildrenIncluded.getSize(), 3 );
+        assertEquals( resultChildrenIncluded.getSize(), 4 );
         assertEquals( resultChildrenNotIncluded.getSize(), 3 );
 
     }
@@ -381,7 +381,7 @@ public class ResolveSyncWorkCommandTest
         final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1_1.id(), true );
         final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1.id(), false );
 
-        assertEquals( resultChildrenIncluded.getSize(), 1 );
+        assertEquals( resultChildrenIncluded.getSize(), 2 );
         assertEquals( resultChildrenNotIncluded.getSize(), 1 );
     }
 

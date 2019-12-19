@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.aggregation.query;
 
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.aggregations.BucketOrder;
+import org.elasticsearch.search.aggregations.bucket.terms.IncludeExclude;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.aggregations.support.ValueType;
 
@@ -30,6 +31,7 @@ class TermsAggregationQueryBuilderFactory
         final TermsAggregationBuilder termsBuilder = new TermsAggregationBuilder( aggregationQuery.getName(), ValueType.STRING ).
             minDocCount( aggregationQuery.getMinDocCount() ).
             field( fieldName ).
+            includeExclude( new IncludeExclude( aggregationQuery.getPartition(), aggregationQuery.getNumOfPartitions() ) ).
             size( size );
 
         final boolean ascendingDirection = aggregationQuery.getOrderDirection().equals( TermsAggregationQuery.Direction.ASC );

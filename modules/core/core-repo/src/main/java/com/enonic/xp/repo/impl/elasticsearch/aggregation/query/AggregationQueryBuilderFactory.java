@@ -11,7 +11,9 @@ import com.enonic.xp.query.aggregation.AbstractRangeAggregationQuery;
 import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.aggregation.BucketAggregationQuery;
+import com.enonic.xp.query.aggregation.CompositeAggregationQuery;
 import com.enonic.xp.query.aggregation.MetricAggregationQuery;
+import com.enonic.xp.query.aggregation.RareTermsAggregationQuery;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 
@@ -42,6 +44,16 @@ public class AggregationQueryBuilderFactory
                 aggregationBuilder =
                     new TermsAggregationQueryBuilderFactory( fieldNameResolver ).create( (TermsAggregationQuery) aggregationQuery );
             }
+            else if ( aggregationQuery instanceof RareTermsAggregationQuery )
+            {
+                aggregationBuilder =
+                    new RareTermsAggregationQueryBuilderFactory( fieldNameResolver ).create( (RareTermsAggregationQuery) aggregationQuery );
+            }
+            else if ( aggregationQuery instanceof CompositeAggregationQuery )
+            {
+                aggregationBuilder =
+                    new CompositeAggregationQueryBuilderFactory( fieldNameResolver ).create( (CompositeAggregationQuery) aggregationQuery );
+            }
             else if ( aggregationQuery instanceof AbstractRangeAggregationQuery )
             {
                 aggregationBuilder =
@@ -54,8 +66,7 @@ public class AggregationQueryBuilderFactory
             }
             else if ( aggregationQuery instanceof MetricAggregationQuery )
             {
-                aggregationBuilder =
-                    new MetricAggregationQueryBuilderFactory( fieldNameResolver ).create( (MetricAggregationQuery) aggregationQuery );
+                aggregationBuilder = new MetricAggregationQueryBuilderFactory( fieldNameResolver ).create( (MetricAggregationQuery) aggregationQuery );
             }
             else
             {

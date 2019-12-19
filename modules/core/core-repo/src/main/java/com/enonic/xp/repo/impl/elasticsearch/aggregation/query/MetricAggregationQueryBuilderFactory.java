@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.aggregation.query;
 
 import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 
+import com.enonic.xp.query.aggregation.CardinalityAggregationQuery;
 import com.enonic.xp.query.aggregation.MetricAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.MaxAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.MinAggregationQuery;
@@ -36,6 +37,11 @@ class MetricAggregationQueryBuilderFactory
         else if ( metricAggregationQuery instanceof MaxAggregationQuery )
         {
             return new MaxAggregationQueryBuilderFactory( fieldNameResolver ).create( (MaxAggregationQuery) metricAggregationQuery );
+        }
+        else if ( metricAggregationQuery instanceof CardinalityAggregationQuery )
+        {
+            return new CardinalityAggregationQueryBuilderFactory( fieldNameResolver ).create(
+                (CardinalityAggregationQuery) metricAggregationQuery );
         }
         else
         {

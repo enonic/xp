@@ -12,6 +12,7 @@ import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repo.impl.version.TestQueryType;
 import com.enonic.xp.repo.impl.version.search.ExcludeEntries;
 import com.enonic.xp.repo.impl.version.search.ExcludeEntry;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
@@ -34,6 +35,8 @@ public class FindNodesWithVersionDifferenceCommand
 
     private final int batchSize = 10_000;
 
+    private TestQueryType testQueryType;
+
     private FindNodesWithVersionDifferenceCommand( final Builder builder )
     {
         nodePath = builder.nodePath;
@@ -43,6 +46,7 @@ public class FindNodesWithVersionDifferenceCommand
         nodeSearchService = builder.nodeSearchService;
         this.nodeStorageService = builder.nodeStorageService;
         this.excludes = builder.excludes;
+        this.testQueryType = builder.testQueryType;
     }
 
     public static Builder create()
@@ -61,9 +65,14 @@ public class FindNodesWithVersionDifferenceCommand
             target( target ).
             nodePath( nodePath ).
             excludes( excludeEntries ).
-            size( this.size ).
+            size( 0 ).
+            versionsSize( -1 ).
             batchSize( batchSize ).
-            build(), SingleRepoStorageSource.create( ContextAccessor.current().getRepositoryId(), SingleRepoStorageSource.Type.VERSION ) );
+            testQueryType( this.testQueryType ).
+            build(), SingleRepoStorageSource.create( ContextAccessor.current().getRepositoryId(),
+                                                     this.testQueryType == TestQueryType.BRANCHES_IN_VERSIONS
+                                                         ? SingleRepoStorageSource.Type.VERSION
+                                                         : SingleRepoStorageSource.Type.BRANCH ) );
 
         return NodeVersionDiffResultFactory.create( result );
     }
@@ -102,6 +111,8 @@ public class FindNodesWithVersionDifferenceCommand
         private NodeIds excludes = NodeIds.empty();
 
         private int size = NodeSearchService.GET_ALL_SIZE_FLAG;
+
+        private TestQueryType testQueryType;
 
         private Builder()
         {
@@ -152,6 +163,12 @@ public class FindNodesWithVersionDifferenceCommand
         public Builder size( final int val )
         {
             size = val;
+            return this;
+        }
+
+        public Builder testQueryType( final TestQueryType testQueryType )
+        {
+            this.testQueryType = testQueryType;
             return this;
         }
     }

@@ -56,6 +56,11 @@ import com.enonic.xp.repo.impl.repository.RepositoryEntryServiceImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
 import com.enonic.xp.repo.impl.repository.SystemRepoInitializer;
 import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
+import com.enonic.xp.repo.impl.search.NodeVersionBranchesInVersionsSearcher;
+import com.enonic.xp.repo.impl.search.NodeVersionDiffCompositeSearcher;
+import com.enonic.xp.repo.impl.search.NodeVersionDiffInMemorySearcher;
+import com.enonic.xp.repo.impl.search.NodeVersionDiffRareSearcher;
+import com.enonic.xp.repo.impl.search.NodeVersionDiffSortedTermsSearcher;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
@@ -72,7 +77,6 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.util.Reference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -87,7 +91,7 @@ public abstract class AbstractNodeTest
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
 
-    private static final AuthenticationInfo TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create().
+    protected static final AuthenticationInfo TEST_DEFAULT_USER_AUTHINFO = AuthenticationInfo.create().
         principals( RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE ).
         user( TEST_DEFAULT_USER ).
         build();
@@ -204,12 +208,30 @@ public abstract class AbstractNodeTest
 
         this.searchService = new NodeSearchServiceImpl();
         this.searchService.setSearchDao( this.searchDao );
+        this.searchService.setNodeVersionDiffRareSearcher( new NodeVersionDiffRareSearcher( this.searchDao ) );
+        this.searchService.setNodeVersionDiffSortedTermsSearcher( new NodeVersionDiffSortedTermsSearcher( this.searchDao ) );
+        this.searchService.setNodeVersionDiffCompositeSearcher( new NodeVersionDiffCompositeSearcher( this.searchDao ) );
+        this.searchService.setNodeVersionDiffInMemorySearcher( new NodeVersionDiffInMemorySearcher( this.searchDao ) );
+        this.searchService.setNodeVersionBranchesInVersionsSearcher( new NodeVersionBranchesInVersionsSearcher( this.searchDao ) );
 
         this.snapshotService = new SnapshotServiceImpl();
         this.snapshotService.setClient( client );
         this.snapshotService.setConfiguration( repoConfig );
 
+        IndexServiceImpl indexService = new IndexServiceImpl();
+        indexService.setIndexDataService( indexedDataService );
+        indexService.setIndexServiceInternal( indexServiceInternal );
+        indexService.setNodeSearchService( this.searchService );
+        indexService.setRepositoryEntryService( this.repositoryEntryService );
+
         setUpRepositoryServices();
+
+       /* createAdminContext().callWith( () -> {
+            indexService.reindex( ReindexParams.create().addBranch( SystemConstants.SYSTEM_REPO.getBranches().first() ).
+                repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+                initialize( false ).build() );
+            return this.repositoryService.list();
+        } );*/
 
         SystemRepoInitializer.create().
             setIndexServiceInternal( indexServiceInternal ).
@@ -220,6 +242,13 @@ public abstract class AbstractNodeTest
         createRepository( TEST_REPO );
         waitForClusterHealth();
     }
+
+  /*  private Context createAdminContext()
+    {
+        final User admin = User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build();
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( admin ).build();
+        return ContextBuilder.from( SecurityConstants.CONTEXT_SECURITY ).authInfo( authInfo ).build();
+    }*/
 
     private void setUpRepositoryServices()
     {
@@ -257,7 +286,7 @@ public abstract class AbstractNodeTest
         this.nodeService.setRepositoryService( this.repositoryService );
     }
 
-    private void createRepository( final Repository repository )
+    protected void createRepository( final Repository repository )
     {
         final AccessControlList rootPermissions = AccessControlList.of( AccessControlEntry.create().
             principal( TEST_DEFAULT_USER.getKey() ).
@@ -553,10 +582,10 @@ public abstract class AbstractNodeTest
 
     protected final void createNodes( final Node parent, final int numberOfNodes, final int maxLevels, final int level )
     {
+        final PropertyTree data = new PropertyTree();
         for ( int i = 0; i < numberOfNodes; i++ )
         {
-            final PropertyTree data = new PropertyTree();
-            data.addReference( "myRef", new Reference( parent.id() ) );
+//            data.addReference( "myRef", new Reference( parent.id() ) );
 
             final Node node = createNode( CreateNodeParams.create().
                 name( "nodeName_" + level + "-" + i ).

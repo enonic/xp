@@ -31,7 +31,7 @@ public class AbstractQuery
 
     private final Filters queryFilters;
 
-    private final AggregationQueries aggregationQueries;
+    private AggregationQueries aggregationQueries;
 
     private final SuggestionQueries suggestionQueries;
 
@@ -39,7 +39,7 @@ public class AbstractQuery
 
     private final int from;
 
-    private final int size;
+    private int size;
 
     private final int batchSize;
 
@@ -151,6 +151,18 @@ public class AbstractQuery
     public SearchMode getSearchMode()
     {
         return searchMode;
+    }
+
+
+    public void setSize( int size )
+    {
+        this.size = size;
+    }
+
+    //TODO: dirty hack
+    public void setAggregations( AggregationQueries aggregationQueries )
+    {
+        this.aggregationQueries = aggregationQueries;
     }
 
     public SearchOptimizer getSearchOptimizer()
