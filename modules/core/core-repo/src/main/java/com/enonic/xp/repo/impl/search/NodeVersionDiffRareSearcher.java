@@ -11,6 +11,7 @@ import com.enonic.xp.aggregation.Bucket;
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeVersionsQuery;
+import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.aggregation.RareTermsAggregationQuery;
 import com.enonic.xp.repo.impl.ReturnFields;
@@ -35,8 +36,6 @@ public class NodeVersionDiffRareSearcher
 
     public SearchResult find( final NodeVersionDiffQuery query, final SearchSource source )
     {
-        query.setSize( 0 );
-
         final Set<String> versionIds = new HashSet<>();
 
         versionIds.addAll( fetchVersionIds( query, source, true ) );
@@ -56,7 +55,7 @@ public class NodeVersionDiffRareSearcher
                     returnFields( ReturnFields.from( VersionIndexPath.NODE_ID ) ).
                     query( NodeVersionsQuery.create().
                         addIds( versionIds ).
-                        size( Math.max( query.getVersionsSize(), query.getBatchSize() ) ).
+                        size( versionIds.size() ).
                         batchSize( query.getBatchSize() ).
                         build() ).
                     build() );
@@ -78,13 +77,18 @@ public class NodeVersionDiffRareSearcher
             query( query ).
             build();
 
+        query.setSearchMode( SearchMode.COUNT );
+
         SearchResult result = searchDao.search( searchRequest );
+
+        query.setSearchMode( SearchMode.SEARCH );
+        query.setSize( 0 );
 
         final Set<String> versionIds = new HashSet<>();
 
         final long branchesSize = result.getTotalHits();
 
-        final int partitionsCount = (int) Math.ceil( branchesSize / 10000f );
+        final int partitionsCount = (int) Math.ceil( branchesSize / 9000f );
 
         for ( int currPartition = 0; currPartition < partitionsCount; currPartition++ )
         {

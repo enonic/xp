@@ -33,7 +33,7 @@ public class FindNodesWithVersionDifferenceCommand
 
     private final NodeStorageService nodeStorageService;
 
-    private final int batchSize = 10_000;
+    private final int batchSize = 5000;
 
     private TestQueryType testQueryType;
 

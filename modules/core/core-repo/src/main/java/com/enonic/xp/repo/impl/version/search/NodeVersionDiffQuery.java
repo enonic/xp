@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.version.search;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.AbstractQuery;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.repo.impl.version.TestQueryType;
 
 public class NodeVersionDiffQuery
@@ -67,6 +68,11 @@ public class NodeVersionDiffQuery
     public void setDeleted( final boolean deleted )
     {
         this.deleted = deleted;
+    }
+
+    public void setSearchMode( final SearchMode mode )
+    {
+        this.searchMode = mode;
     }
 
     public TestQueryType getTestQueryType()

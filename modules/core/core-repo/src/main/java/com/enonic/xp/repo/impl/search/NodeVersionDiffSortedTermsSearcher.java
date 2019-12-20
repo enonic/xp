@@ -11,6 +11,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.aggregation.Bucket;
 import com.enonic.xp.aggregation.BucketAggregation;
+import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.repo.impl.ReturnFields;
@@ -36,8 +37,6 @@ public class NodeVersionDiffSortedTermsSearcher
 
     public SearchResult find( final NodeVersionDiffQuery query, final SearchSource source )
     {
-        query.setSize( 0 );
-
         final Set<String> nodeIds = new HashSet<>();
 
         nodeIds.addAll( fetchNodeIds( query, source, true ) );
@@ -85,13 +84,18 @@ public class NodeVersionDiffSortedTermsSearcher
             query( query ).
             build();
 
+        query.setSearchMode( SearchMode.COUNT );
+
         SearchResult result = searchDao.search( searchRequest );
+
+        query.setSearchMode( SearchMode.SEARCH );
+        query.setSize( 0 );
 
         final Set<String> nodeIds = new HashSet<>();
 
         final long branchesSize = result.getTotalHits();
 
-        final int partitionsCount = (int) Math.ceil( branchesSize / 10000f );
+        final int partitionsCount = (int) Math.ceil( branchesSize / 4000f );
 
         boolean done = false;
 
@@ -99,7 +103,7 @@ public class NodeVersionDiffSortedTermsSearcher
         {
             query.setAggregations( AggregationQueries.create().
                 add( TermsAggregationQuery.create( "versions" ).
-                    size( 10000 ).
+                    size( 4000 ).
                     orderType( TermsAggregationQuery.Type.DOC_COUNT ).
                     orderDirection( TermsAggregationQuery.Direction.ASC ).
                     numOfPartitions( partitionsCount ).
@@ -131,10 +135,6 @@ public class NodeVersionDiffSortedTermsSearcher
 
             nodeIds.addAll( currNodeIds );
 
-            if ( versionAgg.getBuckets().getSize() < 10000 || currNodeIds.size() < versionAgg.getBuckets().getSize() )
-            {
-                break;
-            }
         }
 
         return nodeIds;

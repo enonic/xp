@@ -112,11 +112,11 @@ public class ResolveSyncWorkPerformanceTest
             int expected = NODE_SIZE + 1;
 
             //warm up
-            run( command, TestQueryType.BRANCHES_IN_VERSIONS, 50, expected );
+//            run( command, TestQueryType.BRANCHES_IN_VERSIONS, 50, expected );
             run( command, TestQueryType.IN_MEMORY, 50, expected );
-            run( command, TestQueryType.SORTED_TERMS, 50, expected );
             run( command, TestQueryType.COMPOSITE, 50, expected );
             run( command, TestQueryType.SORTED_TERMS, 50, expected );
+            run( command, TestQueryType.RARE, 50, expected );
 
             Thread.sleep( 15000 );
 
@@ -134,7 +134,7 @@ public class ResolveSyncWorkPerformanceTest
 
             System.out.println( "============================================" );
             System.out.println( "------------------RARE TERMS-----------------" );
-            run( command, TestQueryType.SORTED_TERMS, 50, expected );
+            run( command, TestQueryType.RARE, 50, expected );
 
             Thread.sleep( 5000 );
 
@@ -144,9 +144,9 @@ public class ResolveSyncWorkPerformanceTest
 
             Thread.sleep( 5000 );
 
-            System.out.println( "============================================" );
+        /*    System.out.println( "============================================" );
             System.out.println( "------------------BRANCHES IN VERSIONS-----------------" );
-            run( command, TestQueryType.BRANCHES_IN_VERSIONS, 50, expected );
+            run( command, TestQueryType.BRANCHES_IN_VERSIONS, 50, expected );*/
 
             publish( NODE_SIZE / 2 );
 
@@ -168,7 +168,7 @@ public class ResolveSyncWorkPerformanceTest
 
             System.out.println( "============================================" );
             System.out.println( "------------------RARE TERMS-----------------" );
-            run( command, TestQueryType.SORTED_TERMS, 50, expected );
+            run( command, TestQueryType.RARE, 50, expected );
 
             Thread.sleep( 5000 );
 
@@ -178,10 +178,10 @@ public class ResolveSyncWorkPerformanceTest
 
             Thread.sleep( 5000 );
 
-            System.out.println( "============================================" );
+        /*    System.out.println( "============================================" );
             System.out.println( "------------------BRANCHES IN VERSIONS-----------------" );
             run( command, TestQueryType.BRANCHES_IN_VERSIONS, 50, expected );
-
+*/
             publish( NODE_SIZE );
 
             expected = 0;
@@ -202,7 +202,7 @@ public class ResolveSyncWorkPerformanceTest
 
             System.out.println( "============================================" );
             System.out.println( "------------------RARE TERMS-----------------" );
-            run( command, TestQueryType.SORTED_TERMS, 50, expected );
+            run( command, TestQueryType.RARE, 50, expected );
 
             Thread.sleep( 5000 );
 
@@ -212,9 +212,9 @@ public class ResolveSyncWorkPerformanceTest
 
             Thread.sleep( 5000 );
 
-            System.out.println( "============================================" );
+           /* System.out.println( "============================================" );
             System.out.println( "------------------BRANCHES IN VERSIONS-----------------" );
-            run( command, TestQueryType.BRANCHES_IN_VERSIONS, 50, expected );
+            run( command, TestQueryType.BRANCHES_IN_VERSIONS, 50, expected );*/
 
             return 1;
         } );

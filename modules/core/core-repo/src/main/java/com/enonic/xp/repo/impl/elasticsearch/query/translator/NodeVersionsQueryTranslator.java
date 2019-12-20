@@ -35,7 +35,7 @@ class NodeVersionsQueryTranslator
     @Override
     public int getBatchSize()
     {
-        return query.getSize();
+        return query.getBatchSize();
     }
 
     @Override

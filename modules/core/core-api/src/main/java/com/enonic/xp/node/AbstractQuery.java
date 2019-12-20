@@ -43,7 +43,7 @@ public class AbstractQuery
 
     private final int batchSize;
 
-    private final SearchMode searchMode;
+    protected SearchMode searchMode;
 
     private final SearchOptimizer searchOptimizer;
 
