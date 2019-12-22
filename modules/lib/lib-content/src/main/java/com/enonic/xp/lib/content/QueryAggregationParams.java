@@ -170,8 +170,8 @@ final class QueryAggregationParams
         final int size = (int) paramsMap.getOrDefault( "size", 10 );
         final int maxDocCount = (int) paramsMap.get( "maxDocCount" );
 
-        final String orderTypeStr = StringUtils.substringBefore( orderExpr, " " );
-        final String orderDir = StringUtils.substringAfter( orderExpr, " " );
+//        final String orderTypeStr = StringUtils.substringBefore( orderExpr, " " );
+//        final String orderDir = StringUtils.substringAfter( orderExpr, " " );
 //        final RareTermsAggregationQuery.Direction orderDirection =
 //            "desc".equalsIgnoreCase( orderDir ) ? RareTermsAggregationQuery.Direction.DESC : RareTermsAggregationQuery.Direction.ASC;
 //        final RareTermsAggregationQuery.Type orderType;

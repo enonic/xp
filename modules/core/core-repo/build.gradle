@@ -16,6 +16,9 @@ dependencies {
     compile 'org.apache.commons:commons-compress:1.19'
 
     testCompile 'org.rauschig:jarchivelib:1.0.0'
+    testCompile 'org.openjdk.jmh:jmh-core:1.22'
+    testAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.22'
+    testCompile project(  ':blobstore:blobstore-file' )
     testCompile project( path: ':core:core-blobstore', configuration: 'testOutput' )
     testCompile project( path: ':core:core-api', configuration: 'testOutput' )
 }
