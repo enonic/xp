@@ -77,7 +77,7 @@ public class ResolveSyncWorkPerformanceTest
         bh.consume( ResolveSyncWorkPerformanceBootstrap.CONTEXT_DRAFT.callWith( () -> run( state.command, TestQueryType.SORTED_TERMS ) ) );
     }
 
-    //@Benchmark
+    @Benchmark
     public void branches( BenchmarkState state, Blackhole bh )
     {
         bh.consume(
@@ -87,6 +87,8 @@ public class ResolveSyncWorkPerformanceTest
     int run( ResolveSyncWorkCommand.Builder command, TestQueryType type )
     {
         final ResolveSyncWorkResult resolvedNodes = command.testQueryType( type ).build().execute();
+
+//        Assertions.assertEquals(22000, resolvedNodes.getSize() );
 
         return resolvedNodes.getSize();
     }

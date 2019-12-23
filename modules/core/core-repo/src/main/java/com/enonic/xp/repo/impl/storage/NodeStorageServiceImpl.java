@@ -1,5 +1,8 @@
 package com.enonic.xp.repo.impl.storage;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -8,6 +11,7 @@ import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.blob.NodeVersionKeys;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
@@ -21,6 +25,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
+import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
@@ -262,7 +267,7 @@ public class NodeStorageServiceImpl
             }
 
             final InternalContext internalContext = InternalContext.create( context ).branch( entries.getTargetBranch() ).build();
-//            this.addBranchToNewVersion( nodeBranchEntry, internalContext );
+            this.addBranchToNewVersion( nodeBranchEntry, internalContext );
         }
 
         this.indexDataService.push( IndexPushNodeParams.create().
@@ -283,7 +288,7 @@ public class NodeStorageServiceImpl
             build() );
 
         final InternalContext internalContext = InternalContext.create( context ).branch( target ).build();
-//        this.addBranchToNewVersion( node, entry.getVersionId(), internalContext );
+        this.addBranchToNewVersion( node, entry.getVersionId(), internalContext );
 
         this.indexDataService.push( IndexPushNodeParams.create().
             nodeIds( NodeIds.from( node.id() ) ).
@@ -518,12 +523,15 @@ public class NodeStorageServiceImpl
     private void storeVersionMetadata( final Node node, final NodeVersionId nodeVersionId, final NodeVersionKey nodeVersionKey,
                                        final InternalContext context )
     {
+        final Branches newBranches = Branches.from( context.getBranch() );
+
         this.versionService.store( NodeVersionMetadata.create().
             nodeId( node.id() ).
             nodeVersionId( nodeVersionId ).
             nodeVersionKey( nodeVersionKey ).
             binaryBlobKeys( getBinaryBlobKeys( node.getAttachedBinaries() ) ).
             nodePath( node.path() ).
+            setBranches( newBranches ).
             timestamp( node.getTimestamp() ).
             build(), context );
     }
@@ -615,7 +623,7 @@ public class NodeStorageServiceImpl
         }
     }*/
 
-   /* private void addBranchToNewVersion( final NodeBranchEntry node, final InternalContext internalContext )
+    private void addBranchToNewVersion( final NodeBranchEntry node, final InternalContext internalContext )
     {
         this.doAddBranchToNewVersion( node.getNodeId(), node.getNodeState(), node.getVersionId(), internalContext );
     }
@@ -638,7 +646,7 @@ public class NodeStorageServiceImpl
         this.versionService.store( NodeVersionMetadata.create( nodeVersionMetadata ).
             setBranches( newBranches ).
             build(), internalContext );
-    }*/
+    }
 
     private Node moveInBranchAndReIndex( final Node node, final NodeVersionId nodeVersionId, final NodeVersionKey nodeVersionKey,
                                          final NodePath previousPath, final InternalContext context )

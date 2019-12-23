@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 
 import org.apache.http.HttpHost;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -463,10 +465,24 @@ public class ResolveSyncWorkPerformanceBootstrap
     {
         final ResolveSyncWorkPerformanceBootstrap beforeTestSetup = new ResolveSyncWorkPerformanceBootstrap();
         beforeTestSetup.startClient();
+//        beforeTestSetup.deleteAllIndices();
         beforeTestSetup.setupServices();
         beforeTestSetup.initTestData();
-        // beforeTestSetup.publish( NODE_SIZE );
+//         beforeTestSetup.publish( NODE_SIZE);
         beforeTestSetup.stopClient();
+    }
+
+    private AcknowledgedResponse deleteAllIndices()
+    {
+        try
+        {
+            return client.indices().delete( new DeleteIndexRequest( "search-*", "branch-*", "version-*", "commit-*" ),
+                                            RequestOptions.DEFAULT );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     public static void main( String[] args )

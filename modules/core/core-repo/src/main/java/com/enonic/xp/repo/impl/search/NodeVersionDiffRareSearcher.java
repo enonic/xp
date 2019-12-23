@@ -88,7 +88,7 @@ public class NodeVersionDiffRareSearcher
 
         final long branchesSize = result.getTotalHits();
 
-        final int partitionsCount = (int) Math.ceil( branchesSize / 9000f );
+        final int partitionsCount = (int) Math.ceil( branchesSize / 4000f );
 
         for ( int currPartition = 0; currPartition < partitionsCount; currPartition++ )
         {
