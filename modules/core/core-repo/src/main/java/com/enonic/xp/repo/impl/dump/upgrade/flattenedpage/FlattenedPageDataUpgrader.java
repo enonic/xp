@@ -5,8 +5,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Iterables;
-
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.util.Reference;
@@ -94,7 +92,7 @@ public class FlattenedPageDataUpgrader
         final Reference sourceTemplateKey = sourcePageSet.getReference( SRC_TEMPLATE_KEY );
         if ( sourceTemplateKey != null && descriptorKey == null )
         {
-            if ( Iterables.isEmpty( sourcePageSet.getSets( SRC_REGION_KEY ) ) )
+            if ( !sourcePageSet.getSets( SRC_REGION_KEY ).iterator().hasNext() )
             {
                 pageComponentDataSet.setReference( TGT_TEMPLATE_KEY, sourceTemplateKey );
             }

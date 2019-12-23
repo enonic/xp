@@ -1,6 +1,7 @@
 package com.enonic.xp.query.aggregation;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ public class BucketAggregationQueryTest
         assertEquals( 4, query.getSubQueries().getSize() );
     }
 
-    private Iterable<AggregationQuery> generateSubQueries()
+    private List<AggregationQuery> generateSubQueries()
     {
         final MaxAggregationQuery query1 = MaxAggregationQuery.create( "query1" ).build();
         final MinAggregationQuery query2 = MinAggregationQuery.create( "query2" ).build();

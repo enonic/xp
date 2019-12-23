@@ -7,13 +7,13 @@ import java.time.Instant;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationService;
@@ -89,6 +89,7 @@ import com.enonic.xp.util.Version;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -117,10 +118,10 @@ public class DumpServiceImplTest
     public void admin_role_required()
         throws Exception
     {
-        assertThrows(RepoDumpException.class, () -> {
-            doDump(SystemDumpParams.create().
-                    dumpName("testDump").
-                    build());
+        assertThrows( RepoDumpException.class, () -> {
+            doDump( SystemDumpParams.create().
+                dumpName( "testDump" ).
+                build() );
 
         } );
     }
@@ -865,39 +866,39 @@ public class DumpServiceImplTest
         assertNotNull( pageConfig.getSet( "com-enonic-app-superhero" ).getSet( "default" ) );
 
         //Checks layout component
-        final PropertySet layoutComponent =
-            Iterables.filter( components, component -> "/main/0".equals( component.getString( "path" ) ) ).iterator().next();
+        final PropertySet layoutComponent = StreamSupport.stream( components.spliterator(), false ).
+            filter( component -> "/main/0".equals( component.getString( "path" ) ) ).findFirst().orElseThrow();
         assertEquals( "layout", layoutComponent.getString( "type" ) );
         final PropertySet layoutComponentData = layoutComponent.getSet( "layout" );
         assertEquals( "com.enonic.app.superhero:two-column", layoutComponentData.getString( "descriptor" ) );
         assertNotNull( layoutComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ).getSet( "two-column" ) );
 
         //Checks image component
-        final PropertySet imageComponent =
-            Iterables.filter( components, component -> "/main/0/left/0".equals( component.getString( "path" ) ) ).iterator().next();
+        final PropertySet imageComponent = StreamSupport.stream( components.spliterator(), false ).
+            filter( component -> "/main/0/left/0".equals( component.getString( "path" ) ) ).findFirst().orElseThrow();
         assertEquals( "image", imageComponent.getString( "type" ) );
         final PropertySet imageComponentData = imageComponent.getSet( "image" );
         assertEquals( "cf09fe7a-1be9-46bb-ad84-87ba69630cb7", imageComponentData.getString( "id" ) );
         assertEquals( "A caption", imageComponentData.getString( "caption" ) );
 
         //Checks part component
-        final PropertySet partComponent =
-            Iterables.filter( components, component -> "/main/0/right/0".equals( component.getString( "path" ) ) ).iterator().next();
+        final PropertySet partComponent = StreamSupport.stream( components.spliterator(), false ).
+            filter( component -> "/main/0/right/0".equals( component.getString( "path" ) ) ).findFirst().orElseThrow();
         assertEquals( "part", partComponent.getString( "type" ) );
         final PropertySet partComponentData = partComponent.getSet( "part" );
         assertEquals( "com.enonic.app.superhero:tag-cloud", partComponentData.getString( "descriptor" ) );
         assertNotNull( partComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ).getSet( "tag-cloud" ) );
 
         //Checks fragment component
-        final PropertySet fragmentComponent =
-            Iterables.filter( components, component -> "/main/0/right/1".equals( component.getString( "path" ) ) ).iterator().next();
+        final PropertySet fragmentComponent = StreamSupport.stream( components.spliterator(), false ).
+            filter( component -> "/main/0/right/1".equals( component.getString( "path" ) ) ).findFirst().orElseThrow();
         assertEquals( "fragment", fragmentComponent.getString( "type" ) );
         final PropertySet fragmentComponentData = fragmentComponent.getSet( "fragment" );
         assertEquals( "7ee16649-85c6-4a76-8788-74be03be6c7a", fragmentComponentData.getString( "id" ) );
 
         //Checks text component
-        final PropertySet textComponent =
-            Iterables.filter( components, component -> "/main/1".equals( component.getString( "path" ) ) ).iterator().next();
+        final PropertySet textComponent = StreamSupport.stream( components.spliterator(), false ).
+            filter( component -> "/main/1".equals( component.getString( "path" ) ) ).findFirst().orElseThrow();
         assertEquals( "text", textComponent.getString( "type" ) );
         final PropertySet textComponentData = textComponent.getSet( "text" );
         assertEquals( "<p>text1</p>\n" + "\n" + "<p>&nbsp;</p>\n", textComponentData.getString( "value" ) );
@@ -906,10 +907,12 @@ public class DumpServiceImplTest
     private void checkHtmlAreaUpgrade( final Node siteNode, final Node postNode )
     {
         final Iterable<Reference> siteProcessedReferences = siteNode.data().getReferences( "processedReferences" );
-        assertEquals( 1, Iterables.size( siteProcessedReferences ) );
+        assertIterableEquals( List.of( Reference.from( "5343c381-d2b2-4257-871c-4479c486cfdc" ) ), siteProcessedReferences );
 
         final Iterable<Reference> postProcessedReferences = postNode.data().getReferences( "processedReferences" );
-        assertEquals( 2, Iterables.size( postProcessedReferences ) );
+        assertIterableEquals(
+            List.of( Reference.from( "20df93a4-db5c-431e-8ed0-5c6946322bc7" ), Reference.from( "cf09fe7a-1be9-46bb-ad84-87ba69630cb7" ) ),
+            postProcessedReferences );
 
         final String postValue = postNode.data().getString( "data.post" );
         assertTrue( postValue.contains( "<figure class=\"editor-align-justify\">" ) );

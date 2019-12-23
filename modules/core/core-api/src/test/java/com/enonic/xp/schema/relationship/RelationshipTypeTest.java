@@ -42,8 +42,8 @@ public class RelationshipTypeTest
         builder.name( "myapplication:like" );
         builder.fromSemantic( "likes" );
         builder.toSemantic( "liked by" );
-        builder.setAllowedFromTypes( ContentTypeNames.from( ContentTypeName.from( "myapplication:person" ) ) );
-        builder.setAllowedToTypes( ContentTypeNames.from( ContentTypeName.from( "myapplication:person" ) ) );
+        builder.setAllowedFromTypes( ContentTypeNames.from( ContentTypeName.from( "myapplication:person" ) ).getSet() );
+        builder.setAllowedToTypes( ContentTypeNames.from( ContentTypeName.from( "myapplication:person" ) ).getSet() );
 
         RelationshipType relationshipType1 = builder.build();
         builder = RelationshipType.create( relationshipType1 );

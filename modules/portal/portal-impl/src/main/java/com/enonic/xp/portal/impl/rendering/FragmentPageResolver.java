@@ -1,11 +1,6 @@
 package com.enonic.xp.portal.impl.rendering;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
@@ -20,24 +15,26 @@ public final class FragmentPageResolver
 
     public Page inlineFragmentInPage( final Page page, final Component fragmentComponent, final ComponentPath path )
     {
+        ImmutableList<ComponentPath.RegionAndComponent> pathItems = ImmutableList.copyOf( path );
         if ( page.getRegions() != null )
         {
-            final PageRegions regions = this.replaceComponentInPage( page.getRegions(), path, fragmentComponent );
+            final PageRegions regions = this.replaceComponentInPage( page.getRegions(), pathItems, fragmentComponent );
             return Page.create( page ).regions( regions ).build();
         }
         else if ( page.getFragment() != null && page.getFragment() instanceof LayoutComponent )
         {
             final LayoutComponent layoutComponent = (LayoutComponent) page.getFragment();
-            final LayoutRegions layoutRegions = this.replaceComponentInLayout( layoutComponent.getRegions(), path, fragmentComponent );
+            final LayoutRegions layoutRegions = this.replaceComponentInLayout( layoutComponent.getRegions(), pathItems, fragmentComponent );
             final LayoutComponent updatedLayout = LayoutComponent.create( layoutComponent ).regions( layoutRegions ).build();
             return Page.create( page ).fragment( updatedLayout ).build();
         }
         return page;
     }
 
-    private PageRegions replaceComponentInPage( final PageRegions pageRegions, final ComponentPath path, final Component component )
+    private PageRegions replaceComponentInPage( final PageRegions pageRegions,
+                                                final ImmutableList<ComponentPath.RegionAndComponent> pathItems, final Component component )
     {
-        final ComponentPath.RegionAndComponent regionCmp = Iterables.getFirst( path, null );
+        final ComponentPath.RegionAndComponent regionCmp = pathItems.isEmpty() ? null : pathItems.get( 0 );
         final Region region = regionCmp == null ? null : pageRegions.getRegion( regionCmp.getRegionName() );
         if ( region == null )
         {
@@ -51,7 +48,7 @@ public final class FragmentPageResolver
             return pageRegions;
         }
 
-        final int numberOfLevels = Iterables.size( path );
+        final int numberOfLevels = pathItems.size();
         if ( numberOfLevels == 1 )
         {
             final Region updatedRegion = Region.create( region ).set( componentIndex, component ).build();
@@ -65,7 +62,7 @@ public final class FragmentPageResolver
             }
             final LayoutComponent layoutComponent = (LayoutComponent) existingCmp;
             final LayoutRegions layoutRegions =
-                replaceComponentInLayout( layoutComponent.getRegions(), removeFirstLevel( path ), component );
+                replaceComponentInLayout( layoutComponent.getRegions(), removeFirstLevel( pathItems ), component );
             final LayoutComponent updatedLayout = LayoutComponent.create( layoutComponent ).regions( layoutRegions ).build();
 
             final Region updatedRegion = Region.create( region ).set( componentIndex, updatedLayout ).build();
@@ -73,9 +70,11 @@ public final class FragmentPageResolver
         }
     }
 
-    private LayoutRegions replaceComponentInLayout( final LayoutRegions layoutRegions, final ComponentPath path, final Component component )
+    private LayoutRegions replaceComponentInLayout( final LayoutRegions layoutRegions,
+                                                    final ImmutableList<ComponentPath.RegionAndComponent> pathItems,
+                                                    final Component component )
     {
-        final ComponentPath.RegionAndComponent regionCmp = Iterables.getFirst( path, null );
+        final ComponentPath.RegionAndComponent regionCmp = pathItems.isEmpty() ? null : pathItems.get( 0 );
         final Region region = regionCmp == null ? null : layoutRegions.getRegion( regionCmp.getRegionName() );
         if ( region == null )
         {
@@ -126,15 +125,16 @@ public final class FragmentPageResolver
         return result.build();
     }
 
-    private ComponentPath removeFirstLevel( final ComponentPath path )
+    private ImmutableList<ComponentPath.RegionAndComponent> removeFirstLevel(
+        final ImmutableList<ComponentPath.RegionAndComponent> pathElements )
     {
-        if ( Iterables.size( path ) <= 1 )
+        if ( pathElements.size() <= 1 )
         {
-            return null;
+            return ImmutableList.of();
         }
-        final List<ComponentPath.RegionAndComponent> pathItems = StreamSupport.stream( path.spliterator(), false ).
-            skip( 1 ).
-            collect( Collectors.toList() );
-        return new ComponentPath( ImmutableList.copyOf( pathItems ) );
+        else
+        {
+            return pathElements.subList( 1, pathElements.size() );
+        }
     }
 }
