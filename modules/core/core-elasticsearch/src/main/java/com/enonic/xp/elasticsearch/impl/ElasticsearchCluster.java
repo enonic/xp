@@ -5,8 +5,6 @@ import java.io.IOException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
@@ -22,6 +20,7 @@ import com.enonic.xp.cluster.ClusterHealthStatus;
 import com.enonic.xp.cluster.ClusterId;
 import com.enonic.xp.cluster.ClusterNode;
 import com.enonic.xp.cluster.ClusterNodes;
+import com.enonic.xp.elasticsearch.client.impl.EsClient;
 
 @Component(immediate = true)
 public final class ElasticsearchCluster
@@ -31,7 +30,7 @@ public final class ElasticsearchCluster
 
     private static final String CLUSTER_HEALTH_TIMEOUT = "5s";
 
-    private RestHighLevelClient client;
+    private EsClient client;
 
     private BundleContext context;
 
@@ -155,9 +154,9 @@ public final class ElasticsearchCluster
     private ClusterHealthResponse doGetHealth()
         throws IOException
     {
-        return client.cluster().health( new ClusterHealthRequest().
+        return client.clusterHealth( new ClusterHealthRequest().
             timeout( CLUSTER_HEALTH_TIMEOUT ).
-            waitForYellowStatus(), RequestOptions.DEFAULT );
+            waitForYellowStatus() );
     }
 
     private ClusterHealth toClusterHealth( final ClusterHealthResponse healthResponse )
@@ -180,7 +179,7 @@ public final class ElasticsearchCluster
 
 
     @Reference
-    public void setClient( final RestHighLevelClient client )
+    public void setClient( final EsClient client )
     {
         this.client = client;
     }

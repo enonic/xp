@@ -2,11 +2,8 @@ package com.enonic.xp.elasticsearch.impl;
 
 import java.util.Map;
 
-import org.apache.http.HttpHost;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.ClusterAdminClient;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.cluster.ClusterInfoService;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.transport.TransportService;
@@ -18,17 +15,18 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.cluster.ClusterConfig;
+import com.enonic.xp.elasticsearch.client.impl.EsClient;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.elasticsearch")
 public final class ElasticsearchActivator
 {
     private Node node;
 
-    private RestHighLevelClient client;
+    private EsClient client;
 
     private ServiceRegistration<Node> nodeReg;
 
-    private ServiceRegistration<RestHighLevelClient> clientReg;
+    private ServiceRegistration<EsClient> clientReg;
 
     private ServiceRegistration<AdminClient> adminClientReg;
 
@@ -49,8 +47,8 @@ public final class ElasticsearchActivator
     @SuppressWarnings("WeakerAccess")
     public void activate( final BundleContext context, final Map<String, String> map )
     {
-        client = new RestHighLevelClient( RestClient.builder( new HttpHost( "localhost", 9200, "http" ) ) );
-        clientReg = context.registerService( RestHighLevelClient.class, client, null );
+        client = new EsClient( "localhost", 9200 );
+        clientReg = context.registerService( EsClient.class, client, null );
     /*final Settings settings = new NodeSettingsBuilder( context, this.clusterConfig ).
             buildSettings( map );
 

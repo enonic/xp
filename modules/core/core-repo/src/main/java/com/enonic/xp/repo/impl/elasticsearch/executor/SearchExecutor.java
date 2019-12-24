@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.elasticsearch.executor;
 
-import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.elasticsearch.client.impl.EsClient;
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.repo.impl.elasticsearch.SearchRequestBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
@@ -24,7 +24,7 @@ public class SearchExecutor
         super( builder );
     }
 
-    public static Builder create( final RestHighLevelClient client )
+    public static Builder create( final EsClient client )
     {
         return new Builder( client );
     }
@@ -92,7 +92,7 @@ public class SearchExecutor
     public static class Builder
         extends AbstractExecutor.Builder<Builder>
     {
-        private Builder( final RestHighLevelClient client )
+        private Builder( final EsClient client )
         {
             super( client );
         }

@@ -1,14 +1,11 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.settings.Settings;
 
 import com.enonic.xp.node.SnapshotResult;
@@ -62,16 +59,9 @@ public class SnapshotExecutor
             settings( Settings.builder().
                 put( "ignore_unavailable", true ) );
 
-        try
-        {
-            final CreateSnapshotResponse response = client.snapshot().create( request, RequestOptions.DEFAULT );
+        final CreateSnapshotResponse response = client.snapshotCreate( request );
 
-            return SnapshotResultFactory.create( response );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        return SnapshotResultFactory.create( response );
     }
 
     public static Builder create()

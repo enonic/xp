@@ -1,17 +1,12 @@
 package com.enonic.xp.repo.impl.elasticsearch.executor;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.action.support.WriteRequest;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Requests;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
@@ -19,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Stopwatch;
 
+import com.enonic.xp.elasticsearch.client.impl.EsClient;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.IdFilter;
@@ -65,7 +61,7 @@ public class CopyExecutor
             build();
     }
 
-    public static Builder create( final RestHighLevelClient client )
+    public static Builder create( final EsClient client )
     {
         return new Builder( client );
     }
@@ -74,33 +70,26 @@ public class CopyExecutor
     {
         final SearchRequest searchRequest = createScrollRequest( createQuery() );
 
-        try
-        {
-            SearchResponse scrollResp = client.search( searchRequest, RequestOptions.DEFAULT );
+        SearchResponse scrollResp = client.search( searchRequest );
 
-            while ( true )
+        while ( true )
+        {
+            LOG.debug( "Copy: Fetched [" + scrollResp.getHits().getHits().length + "] hits, processing" );
+
+            if ( scrollResp.getHits().getHits().length > 0 )
             {
-                LOG.debug( "Copy: Fetched [" + scrollResp.getHits().getHits().length + "] hits, processing" );
-
-                if ( scrollResp.getHits().getHits().length > 0 )
-                {
-                    doCopy( scrollResp );
-                }
-
-                final SearchScrollRequest searchScrollRequest = new SearchScrollRequest( scrollResp.getScrollId() ).
-                    scroll( DEFAULT_SCROLL_TIME );
-
-                scrollResp = client.scroll( searchScrollRequest, RequestOptions.DEFAULT );
-                if ( scrollResp.getHits().getHits().length == 0 )
-                {
-                    clearScroll( scrollResp );
-                    break;
-                }
+                doCopy( scrollResp );
             }
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
+
+            final SearchScrollRequest searchScrollRequest = new SearchScrollRequest( scrollResp.getScrollId() ).
+                scroll( DEFAULT_SCROLL_TIME );
+
+            scrollResp = client.scroll( searchScrollRequest );
+            if ( scrollResp.getHits().getHits().length == 0 )
+            {
+                clearScroll( scrollResp );
+                break;
+            }
         }
     }
 
@@ -120,16 +109,9 @@ public class CopyExecutor
         }
 
         final Stopwatch timer = Stopwatch.createStarted();
-        try
-        {
-            final BulkResponse response = client.bulk( bulkRequest, RequestOptions.DEFAULT );
-            LOG.debug( "Copied [" + response.getItems().length + "] in " + timer.stop() );
-            reportProgress( response.getItems().length );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        final BulkResponse response = client.bulk( bulkRequest );
+        LOG.debug( "Copied [" + response.getItems().length + "] in " + timer.stop() );
+        reportProgress( response.getItems().length );
     }
 
 
@@ -138,7 +120,7 @@ public class CopyExecutor
     {
         private CopyRequest request;
 
-        private Builder( final RestHighLevelClient client )
+        private Builder( final EsClient client )
         {
             super( client );
         }
