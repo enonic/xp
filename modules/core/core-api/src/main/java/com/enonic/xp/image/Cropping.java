@@ -1,7 +1,8 @@
 package com.enonic.xp.image;
 
+import java.util.Objects;
+
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.util.DoubleHelper;
@@ -89,17 +90,14 @@ public final class Cropping
             return false;
         }
         final Cropping cropping = (Cropping) o;
-        return Objects.equal( left, cropping.left ) &&
-            Objects.equal( top, cropping.top ) &&
-            Objects.equal( right, cropping.right ) &&
-            Objects.equal( bottom, cropping.bottom ) &&
-            Objects.equal( zoom, cropping.zoom );
+        return Objects.equals( left, cropping.left ) && Objects.equals( top, cropping.top ) && Objects.equals( right, cropping.right ) &&
+            Objects.equals( bottom, cropping.bottom ) && Objects.equals( zoom, cropping.zoom );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( left, top, right, bottom, zoom );
+        return Objects.hash( left, top, right, bottom, zoom );
     }
 
     @Override

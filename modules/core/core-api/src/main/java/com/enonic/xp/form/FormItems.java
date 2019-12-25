@@ -3,9 +3,9 @@ package com.enonic.xp.form;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 /**
@@ -188,13 +188,13 @@ public final class FormItems
         }
 
         final FormItems that = (FormItems) o;
-        return Objects.equal( this.formItemByName, that.formItemByName );
+        return Objects.equals( this.formItemByName, that.formItemByName );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.formItemByName );
+        return Objects.hash( this.formItemByName );
     }
 
     @Override

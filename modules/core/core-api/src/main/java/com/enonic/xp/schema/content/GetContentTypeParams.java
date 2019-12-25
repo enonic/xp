@@ -1,7 +1,8 @@
 package com.enonic.xp.schema.content;
 
+import java.util.Objects;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 @Beta
@@ -56,6 +57,6 @@ public class GetContentTypeParams
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( contentTypeName );
+        return Objects.hash( contentTypeName );
     }
 }

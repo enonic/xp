@@ -3,9 +3,9 @@ package com.enonic.xp.schema.relationship;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -67,20 +67,16 @@ public final class RelationshipType
             return false;
         }
         final RelationshipType that = (RelationshipType) o;
-        return Objects.equal( this.getName(), that.getName() ) &&
-            Objects.equal( this.getDisplayName(), that.getDisplayName() ) &&
-            Objects.equal( this.getDescription(), that.getDescription() ) &&
-            Objects.equal( this.fromSemantic, that.fromSemantic ) &&
-            Objects.equal( this.toSemantic, that.toSemantic ) &&
-            Objects.equal( this.allowedFromTypes, that.allowedFromTypes ) &&
-            Objects.equal( this.allowedToTypes, that.allowedToTypes );
+        return Objects.equals( this.getName(), that.getName() ) && Objects.equals( this.getDisplayName(), that.getDisplayName() ) &&
+            Objects.equals( this.getDescription(), that.getDescription() ) && Objects.equals( this.fromSemantic, that.fromSemantic ) &&
+            Objects.equals( this.toSemantic, that.toSemantic ) && Objects.equals( this.allowedFromTypes, that.allowedFromTypes ) &&
+            Objects.equals( this.allowedToTypes, that.allowedToTypes );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( getName(), getDisplayName(), getDescription(), fromSemantic, toSemantic, allowedFromTypes,
-                                 allowedToTypes );
+        return Objects.hash( getName(), getDisplayName(), getDescription(), fromSemantic, toSemantic, allowedFromTypes, allowedToTypes );
     }
 
     public static Builder create()
