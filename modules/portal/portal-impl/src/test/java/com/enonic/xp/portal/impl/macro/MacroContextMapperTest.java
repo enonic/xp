@@ -22,17 +22,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MacroContextMapperTest
 {
+    private static final ObjectMapper MAPPER = new ObjectMapper().
+        enable( SerializationFeature.INDENT_OUTPUT ).
+        enable( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS );
+
     private MacroContext macroContext;
-
-    private final ObjectMapper mapper;
-
-    public MacroContextMapperTest()
-    {
-        this.mapper = new ObjectMapper();
-        this.mapper.enable( SerializationFeature.INDENT_OUTPUT );
-        this.mapper.enable( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS );
-        this.mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
-    }
 
     private void assertJson( final String name, final MapSerializable value )
         throws Exception
@@ -41,14 +35,14 @@ public class MacroContextMapperTest
         final URL url = getClass().getResource( resource );
 
         assertNotNull( url, "File [" + resource + "] not found" );
-        final JsonNode expectedJson = this.mapper.readTree( url );
+        final JsonNode expectedJson = MAPPER.readTree( url );
 
         final JsonMapGenerator generator = new JsonMapGenerator();
         value.serialize( generator );
         final JsonNode actualJson = (JsonNode) generator.getRoot();
 
-        final String expectedStr = this.mapper.writeValueAsString( expectedJson );
-        final String actualStr = this.mapper.writeValueAsString( actualJson );
+        final String expectedStr = MAPPER.writeValueAsString( expectedJson );
+        final String actualStr = MAPPER.writeValueAsString( actualJson );
 
         assertEquals( expectedStr, actualStr );
     }

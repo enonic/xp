@@ -88,7 +88,7 @@ public class PropertyTreeJsonTest
         System.out.println( expectedSerialization );
 
         // de-serialize
-        List<?> parsedData = jsonTestHelper.objectMapper().readValue( expectedSerialization, List.class );
+        List<?> parsedData = jsonTestHelper.objectReader().forType( List.class ).readValue( expectedSerialization );
 
         // serialize from json
         String serializationOfDeSerialization = jsonTestHelper.objectToString( parsedData );
@@ -112,7 +112,7 @@ public class PropertyTreeJsonTest
         System.out.println( expectedSerialization );
 
         // de-serialize
-        List<?> parsedData = jsonTestHelper.objectMapper().readValue( expectedSerialization, List.class );
+        List<?> parsedData = jsonTestHelper.objectReader().forType( List.class ).readValue( expectedSerialization );
 
         // serialize from json
         String serializationOfDeSerialization = jsonTestHelper.objectToString( parsedData );
@@ -179,7 +179,7 @@ public class PropertyTreeJsonTest
         String expectedSerialization = jsonTestHelper.objectToString( PropertyTreeJson.toJson( tree ) );
 
         // de-serialize
-        List<?> parsedData = jsonTestHelper.objectMapper().readValue( expectedSerialization, List.class );
+        List<?> parsedData = jsonTestHelper.objectReader().forType( List.class ).readValue( expectedSerialization );
 
         // verify de-serialization against static file
         jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "all-types.json" ), jsonTestHelper.objectToJson( parsedData ) );

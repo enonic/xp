@@ -3,10 +3,8 @@ package com.enonic.xp.impl.server.rest.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.enonic.xp.export.NodeImportResult;
+import com.enonic.xp.impl.server.rest.ModelToStringHelper;
 import com.enonic.xp.node.NodePath;
 
 public class NodeImportResultJson
@@ -80,14 +78,6 @@ public class NodeImportResultJson
     @Override
     public String toString()
     {
-        final ObjectMapper mapper = new ObjectMapper();
-        try
-        {
-            return mapper.writeValueAsString( this );
-        }
-        catch ( JsonProcessingException e )
-        {
-            throw new RuntimeException( e );
-        }
+        return ModelToStringHelper.convertToString( this );
     }
 }

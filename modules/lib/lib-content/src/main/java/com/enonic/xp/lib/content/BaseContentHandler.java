@@ -34,6 +34,8 @@ import com.enonic.xp.site.SiteService;
 public abstract class BaseContentHandler
     extends BaseContextHandler
 {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
     private ContentTypeService contentTypeService;
 
     private MixinService mixinService;
@@ -237,8 +239,7 @@ public abstract class BaseContentHandler
 
     ObjectNode createJson( final Map<?, ?> value )
     {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.valueToTree( value );
+        return MAPPER.valueToTree( value );
     }
 
     protected WorkflowInfo createWorkflowInfo( Map<String, Object> value )

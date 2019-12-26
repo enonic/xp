@@ -10,11 +10,12 @@ import org.mockito.Mockito;
 import org.osgi.framework.ServiceReference;
 
 import com.enonic.xp.annotation.Order;
+import com.enonic.xp.status.JsonStatusReporterTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ServletStatusReporterTest
-    extends ResourceReporterTest
+    extends JsonStatusReporterTest
 {
     @Test
     public void testReport()

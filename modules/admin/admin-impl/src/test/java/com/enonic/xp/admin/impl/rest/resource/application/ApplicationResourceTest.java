@@ -70,6 +70,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ApplicationResourceTest
     extends AdminResourceTestSupport
 {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
     private ApplicationService applicationService;
 
     private ApplicationDescriptorService applicationDescriptorService;
@@ -158,7 +160,7 @@ public class ApplicationResourceTest
 
         assertJson( "get_application_info.json", response );
 
-        final String deploymentUrl = new ObjectMapper().readTree( response ).findPath( "deployment" ).findPath( "url" ).asText();
+        final String deploymentUrl = MAPPER.readTree( response ).findPath( "deployment" ).findPath( "url" ).asText();
         assertEquals( "http://localhost:80/webapp/testapplication", deploymentUrl );
     }
 

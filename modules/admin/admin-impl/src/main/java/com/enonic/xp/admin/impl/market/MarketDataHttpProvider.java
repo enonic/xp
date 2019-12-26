@@ -14,6 +14,7 @@ import java.util.zip.GZIPInputStream;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.google.common.io.CharStreams;
 
 import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationsJson;
@@ -26,6 +27,8 @@ public class MarketDataHttpProvider
     implements MarketDataProvider
 {
     private static final Duration CONNECTION_TIMEOUT = Duration.ofSeconds( 10 );
+
+    private static final ObjectReader JSON_READER = ObjectMapperHelper.create().readerFor( MarketApplicationsJson.class );
 
     private String marketUrl;
 
@@ -109,25 +112,19 @@ public class MarketDataHttpProvider
         {
             try (final InputStream src = response.body())
             {
-                return parseJson( src );
+                return JSON_READER.readValue( src );
             }
         }
         else if ( contentEncoding.equals( List.of( "gzip" ) ) )
         {
             try (final InputStream body = response.body(); final InputStream is = new GZIPInputStream( body ))
             {
-                return parseJson( is );
+                return JSON_READER.readValue( is );
             }
         }
         else
         {
             throw new IOException( "Unsupported Content-Encoding " + contentEncoding );
         }
-    }
-
-    private MarketApplicationsJson parseJson( final InputStream src )
-        throws IOException
-    {
-        return ObjectMapperHelper.create().readValue( src, MarketApplicationsJson.class );
     }
 }

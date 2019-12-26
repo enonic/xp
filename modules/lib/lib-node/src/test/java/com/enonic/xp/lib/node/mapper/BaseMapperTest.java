@@ -18,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class BaseMapperTest
 {
+    private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
+
     NodeBranchEntry createEntry( final String a )
     {
         return NodeBranchEntry.create().
@@ -31,16 +33,9 @@ public abstract class BaseMapperTest
     void assertJson( final String fileName, final JsonMapGenerator actualNode )
         throws Exception
     {
-        final JsonNode expectedNode = parseJson( readFromFile( fileName ) );
+        final JsonNode expectedNode = MAPPER.readTree( readFromFile( fileName ) );
 
         assertEquals( expectedNode, actualNode.getRoot() );
-    }
-
-    private JsonNode parseJson( final String json )
-        throws Exception
-    {
-        final ObjectMapper mapper = ObjectMapperHelper.create();
-        return mapper.readTree( json );
     }
 
     private String readFromFile( final String fileName )

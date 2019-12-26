@@ -15,8 +15,8 @@ import com.enonic.xp.json.ObjectMapperHelper;
 
 public class JsonHelper
 {
-    private final static ObjectMapper MAPPER = ObjectMapperHelper.create().
-        configure( SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true );
+    private static final ObjectMapper MAPPER = ObjectMapperHelper.create().
+        enable( SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED );
 
     public static JsonNode merge( JsonNode mainNode, JsonNode updateNode )
     {

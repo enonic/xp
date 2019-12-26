@@ -32,6 +32,8 @@ import com.enonic.xp.security.acl.Permission;
 public class CreateRepositoryHandler
     implements ScriptBean
 {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
     private RepositoryId repositoryId;
 
     private IndexDefinitions indexDefinitions;
@@ -143,8 +145,7 @@ public class CreateRepositoryHandler
 
     private JsonNode createJson( final Map<?, ?> value )
     {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.valueToTree( value );
+        return MAPPER.valueToTree( value );
     }
 
     @Override

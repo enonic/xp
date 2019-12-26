@@ -82,9 +82,4 @@ public final class EventJsonSerializer
             return null;
         }
     }
-
-    private ObjectNode newObjectNode()
-    {
-        return JsonNodeFactory.instance.objectNode();
-    }
 }

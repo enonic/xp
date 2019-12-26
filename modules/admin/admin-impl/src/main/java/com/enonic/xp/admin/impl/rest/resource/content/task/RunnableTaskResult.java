@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.content.ContentIds;
@@ -75,8 +75,7 @@ public class RunnableTaskResult
 
     public String toJson()
     {
-        final ObjectMapper mapper = new ObjectMapper();
-        final ObjectNode map = mapper.createObjectNode();
+        final ObjectNode map = JsonNodeFactory.instance.objectNode();
 
         map.put( "state", getState().toString() );
         map.put( "message", getMessage() );

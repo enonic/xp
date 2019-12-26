@@ -1,9 +1,6 @@
 package com.enonic.xp.elasticsearch.impl.status.index;
 
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Objects;
 
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
@@ -22,15 +19,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+
+import com.enonic.xp.status.JsonStatusReporterTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IndexReporterTest
+    extends JsonStatusReporterTest
 {
     private ClusterAdminClient clusterAdminClient;
 
@@ -109,33 +105,4 @@ public class IndexReporterTest
         final JsonNode report = indexReporter.getReport();
         assertEquals( parseJson( readFromFile( "index_report_failed.json" ) ), report );
     }
-
-    private String readFromFile( final String fileName )
-        throws Exception
-    {
-        final InputStream stream =
-            Objects.requireNonNull( getClass().getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
-        try (stream)
-        {
-            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
-        }
-    }
-
-    private JsonNode parseJson( final String json )
-        throws Exception
-    {
-        final ObjectMapper mapper = createObjectMapper();
-        return mapper.readTree( json );
-    }
-
-    private ObjectMapper createObjectMapper()
-    {
-        final ObjectMapper mapper = new ObjectMapper();
-        mapper.disable( SerializationFeature.FAIL_ON_EMPTY_BEANS );
-        mapper.enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY );
-        mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
-        mapper.setSerializationInclusion( JsonInclude.Include.ALWAYS );
-        return mapper;
-    }
-
 }
