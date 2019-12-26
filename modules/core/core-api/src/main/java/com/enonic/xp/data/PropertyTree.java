@@ -12,16 +12,16 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
-@Beta
+@PublicApi
 public final class PropertyTree
     implements Serializable
 {

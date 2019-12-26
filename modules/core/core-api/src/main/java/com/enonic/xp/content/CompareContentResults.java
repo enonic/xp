@@ -7,11 +7,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public class CompareContentResults
     implements Iterable<CompareContentResult>
 {

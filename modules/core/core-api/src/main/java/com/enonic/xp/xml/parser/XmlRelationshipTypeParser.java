@@ -4,14 +4,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.xml.DomElement;
 
-@Beta
+@PublicApi
 public final class XmlRelationshipTypeParser
     extends XmlModelParser<XmlRelationshipTypeParser>
 {

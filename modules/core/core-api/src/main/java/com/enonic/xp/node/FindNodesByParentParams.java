@@ -1,12 +1,12 @@
 package com.enonic.xp.node;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.query.filter.Filters;
 
-@Beta
+@PublicApi
 public class FindNodesByParentParams
 {
     private final NodePath parentPath;

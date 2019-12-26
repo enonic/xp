@@ -3,15 +3,15 @@ package com.enonic.xp.site;
 import java.util.Collection;
 import java.util.function.Function;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-@Beta
+@PublicApi
 public class SiteConfigs
     extends AbstractImmutableEntityList<SiteConfig>
 {

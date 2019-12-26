@@ -8,11 +8,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.CompareStatus;
 
-@Beta
+@PublicApi
 public class NodeComparisons
     implements Iterable<NodeComparison>
 {

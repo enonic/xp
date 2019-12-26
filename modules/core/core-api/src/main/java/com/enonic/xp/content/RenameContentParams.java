@@ -1,11 +1,12 @@
 package com.enonic.xp.content;
 
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class RenameContentParams
 {
     private ContentId contentId;

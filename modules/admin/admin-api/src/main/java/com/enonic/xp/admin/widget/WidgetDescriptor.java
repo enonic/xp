@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.page.DescriptorKey;
@@ -17,7 +17,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 
-@Beta
+@PublicApi
 public class WidgetDescriptor
     extends Descriptor
 {

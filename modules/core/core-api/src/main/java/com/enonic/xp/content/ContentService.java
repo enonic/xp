@@ -2,16 +2,16 @@ package com.enonic.xp.content;
 
 import java.io.InputStream;
 
-import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.util.BinaryReference;
 
-@Beta
+@PublicApi
 public interface ContentService
 {
 

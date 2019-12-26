@@ -1,11 +1,12 @@
 package com.enonic.xp.portal.url;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class AssetUrlParams
     extends AbstractUrlParams<AssetUrlParams>
 {

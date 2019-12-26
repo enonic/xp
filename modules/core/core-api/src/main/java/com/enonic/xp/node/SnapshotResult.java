@@ -5,9 +5,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public class SnapshotResult
 {
     private final Set<String> indices;

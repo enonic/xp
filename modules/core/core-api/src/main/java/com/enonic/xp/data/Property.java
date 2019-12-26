@@ -6,8 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
@@ -15,7 +14,7 @@ import com.enonic.xp.util.Reference;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
-@Beta
+@PublicApi
 public final class Property
 {
     private final PropertySet parent;

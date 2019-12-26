@@ -2,11 +2,10 @@ package com.enonic.xp.content;
 
 import java.util.UUID;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.name.Name;
 
-@Beta
+@PublicApi
 public final class ContentName
     extends Name
 {

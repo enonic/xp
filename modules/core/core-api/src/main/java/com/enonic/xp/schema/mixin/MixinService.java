@@ -1,11 +1,10 @@
 package com.enonic.xp.schema.mixin;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 
-@Beta
+@PublicApi
 public interface MixinService
 {
     Mixin getByName( MixinName name );

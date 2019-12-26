@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-@Beta
+@PublicApi
 public final class AuditLogUris
     extends AbstractImmutableEntitySet<AuditLogUri>
     implements Iterable<AuditLogUri>

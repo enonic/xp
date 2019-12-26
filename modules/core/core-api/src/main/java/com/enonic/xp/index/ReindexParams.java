@@ -3,13 +3,12 @@ package com.enonic.xp.index;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.repository.RepositoryId;
 
-@Beta
+@PublicApi
 public class ReindexParams
 {
     private final boolean initialize;

@@ -1,11 +1,11 @@
 package com.enonic.xp.content;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 
-@Beta
+@PublicApi
 public final class DuplicateContentParams
 {
     private ContentId contentId;

@@ -3,12 +3,12 @@ package com.enonic.xp.issue;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-@Beta
+@PublicApi
 public final class PublishRequestItems
     extends AbstractImmutableEntitySet<PublishRequestItem>
     implements Iterable<PublishRequestItem>

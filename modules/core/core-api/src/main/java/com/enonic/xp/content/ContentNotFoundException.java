@@ -4,12 +4,11 @@ import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.exception.NotFoundException;
 
-@Beta
+@PublicApi
 public final class ContentNotFoundException
     extends NotFoundException
 {

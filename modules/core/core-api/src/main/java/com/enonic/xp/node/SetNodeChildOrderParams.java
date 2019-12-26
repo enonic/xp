@@ -1,10 +1,9 @@
 package com.enonic.xp.node;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.ChildOrder;
 
-@Beta
+@PublicApi
 public class SetNodeChildOrderParams
 {
     private final NodeId nodeId;

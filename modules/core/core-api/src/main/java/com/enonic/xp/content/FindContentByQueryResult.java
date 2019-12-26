@@ -3,13 +3,13 @@ package com.enonic.xp.content;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.aggregation.Aggregations;
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.highlight.HighlightedProperties;
 
-@Beta
+@PublicApi
 public final class FindContentByQueryResult
 {
     private final Aggregations aggregations;

@@ -1,7 +1,6 @@
 package com.enonic.xp.content;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
@@ -19,7 +18,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-@Beta
+@PublicApi
 public class ContentConstants
 {
     private static final PrincipalKey CONTENT_SUPER_USER_KEY = PrincipalKey.ofUser( IdProviderKey.system(), "content-su" );

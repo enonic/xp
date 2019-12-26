@@ -1,10 +1,9 @@
 package com.enonic.xp.node;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.CompareStatus;
 
-@Beta
+@PublicApi
 public class NodeComparison
 {
     private final NodePath sourcePath;

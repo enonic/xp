@@ -1,7 +1,6 @@
 package com.enonic.xp.app;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.idprovider.IdProviderDescriptor;
@@ -14,7 +13,7 @@ import com.enonic.xp.schema.relationship.RelationshipTypes;
 import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.task.TaskDescriptor;
 
-@Beta
+@PublicApi
 public interface ApplicationInfoService
 {
     ContentTypes getContentTypes( final ApplicationKey applicationKey );

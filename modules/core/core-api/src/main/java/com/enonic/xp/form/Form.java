@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+
+@PublicApi
 public final class Form
     implements Iterable<FormItem>
 {

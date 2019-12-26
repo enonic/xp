@@ -3,11 +3,10 @@ package com.enonic.xp.xml.parser;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.inputtype.InputTypeName;
 
-@Beta
+@PublicApi
 final class InputTypeAliasConverters
 {
     public static InputTypeAliasConverter DEFAULT_CONVERTER = ( s ) -> s;

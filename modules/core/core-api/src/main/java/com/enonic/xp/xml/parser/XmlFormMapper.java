@@ -5,8 +5,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.form.FieldSet;
@@ -22,7 +21,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.XmlException;
 
-@Beta
+@PublicApi
 public final class XmlFormMapper
 {
     private static final AtomicInteger FIELD_SET_COUNTER = new AtomicInteger( 1 );

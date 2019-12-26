@@ -1,8 +1,8 @@
 package com.enonic.xp.query.filter;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public abstract class Filter
 {
     private Boolean cache;

@@ -4,8 +4,7 @@ package com.enonic.xp.page;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertyTree;
@@ -13,7 +12,7 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
-@Beta
+@PublicApi
 public final class PageTemplate
     extends Content
 {

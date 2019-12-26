@@ -3,9 +3,9 @@ package com.enonic.xp.node;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public class NodeVersionDiffResult
 {
     private final NodeIds nodesWithDifferences;

@@ -3,10 +3,10 @@ package com.enonic.xp.content;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -16,7 +16,7 @@ import com.enonic.xp.query.highlight.HighlightQuery;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
-@Beta
+@PublicApi
 public class ContentQuery
 {
     public static final int DEFAULT_FETCH_SIZE = 10;

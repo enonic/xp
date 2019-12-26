@@ -3,11 +3,10 @@ package com.enonic.xp.content;
 import java.time.Instant;
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 
-@Beta
+@PublicApi
 public class ContentVersion
     implements Comparable<ContentVersion>
 {

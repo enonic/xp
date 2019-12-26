@@ -3,10 +3,11 @@ package com.enonic.xp.index;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public class UpdateIndexSettingsResult
 {
     private final ImmutableSet<String> updatedIndexes;

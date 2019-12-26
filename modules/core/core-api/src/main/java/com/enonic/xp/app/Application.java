@@ -7,11 +7,10 @@ import java.util.Set;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.config.Configuration;
 
-@Beta
+@PublicApi
 public interface Application
 {
     ApplicationKey getKey();

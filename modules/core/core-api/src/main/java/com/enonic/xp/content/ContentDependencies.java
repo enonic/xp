@@ -2,9 +2,9 @@ package com.enonic.xp.content;
 
 import java.util.Collection;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public class ContentDependencies
 {
     private final Collection<ContentDependenciesAggregation> inbound;

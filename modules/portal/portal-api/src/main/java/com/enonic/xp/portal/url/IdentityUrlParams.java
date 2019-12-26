@@ -1,13 +1,13 @@
 package com.enonic.xp.portal.url;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.IdProviderKey;
 
-@Beta
+@PublicApi
 public final class IdentityUrlParams
     extends AbstractUrlParams<IdentityUrlParams>
 {

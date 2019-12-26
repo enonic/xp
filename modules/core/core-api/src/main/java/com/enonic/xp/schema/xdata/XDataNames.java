@@ -3,12 +3,12 @@ package com.enonic.xp.schema.xdata;
 import java.util.Arrays;
 import java.util.Collection;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-@Beta
+@PublicApi
 public final class XDataNames
     extends AbstractImmutableEntityList<XDataName>
 {

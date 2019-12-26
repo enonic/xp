@@ -1,8 +1,8 @@
 package com.enonic.xp.task;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public final class TaskProgressReporterContext
 {
     private final static ThreadLocal<ProgressReporter> CURRENT = new ThreadLocal<>();

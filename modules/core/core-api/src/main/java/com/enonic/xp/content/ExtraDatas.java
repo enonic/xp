@@ -7,15 +7,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataNames;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-@Beta
+@PublicApi
 public final class ExtraDatas
     extends AbstractImmutableEntitySet<ExtraData>
 {

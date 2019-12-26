@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.annotations.Beta;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.data.Value;
@@ -19,7 +18,6 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
-@Beta
 public class InputJson
     extends FormItemJson<Input>
 {

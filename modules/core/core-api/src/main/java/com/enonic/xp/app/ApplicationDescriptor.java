@@ -2,12 +2,12 @@ package com.enonic.xp.app;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.icon.Icon;
 
-@Beta
+@PublicApi
 public final class ApplicationDescriptor
 {
     private final ApplicationKey key;

@@ -1,11 +1,10 @@
 package com.enonic.xp.node;
 
-import com.google.common.annotations.Beta;
-
 import com.enonic.xp.aggregation.Aggregations;
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.suggester.Suggestions;
 
-@Beta
+@PublicApi
 public class FindNodesByQueryResult
 {
     private final NodeHits nodeHits;
