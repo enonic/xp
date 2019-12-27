@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.elasticsearch.storage;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.Collection;
 
 import org.elasticsearch.ElasticsearchException;
@@ -12,14 +10,13 @@ import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.support.WriteRequest;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.cluster.block.ClusterBlockException;
 import org.elasticsearch.common.Strings;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.elasticsearch.client.impl.EsClient;
 import com.enonic.xp.node.NodeStorageException;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
@@ -41,7 +38,7 @@ import com.enonic.xp.repo.impl.storage.StoreRequest;
 public class StorageDaoImpl
     implements StorageDao
 {
-    private RestHighLevelClient client;
+    private EsClient client;
 
     @Override
     public String store( final StoreRequest request )
@@ -96,15 +93,11 @@ public class StorageDaoImpl
 
         try
         {
-            client.delete( deleteRequest, RequestOptions.DEFAULT );
+            client.delete( deleteRequest );
         }
         catch ( ClusterBlockException e )
         {
             throw new NodeStorageException( "Cannot delete node " + id + ", Repository in 'READ-ONLY mode'" );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
         }
         catch ( Exception e )
         {
@@ -131,15 +124,11 @@ public class StorageDaoImpl
                     deleteRequest.setRefreshPolicy( WriteRequest.RefreshPolicy.IMMEDIATE );
                 }
 
-                client.delete( deleteRequest, RequestOptions.DEFAULT );
+                client.delete( deleteRequest );
             }
             catch ( ClusterBlockException e )
             {
                 throw new NodeStorageException( "Cannot delete node " + id + ", Repository in 'READ-ONLY mode'" );
-            }
-            catch ( IOException e )
-            {
-                throw new UncheckedIOException( e );
             }
             catch ( Exception e )
             {
@@ -152,7 +141,7 @@ public class StorageDaoImpl
     {
         try
         {
-            final IndexResponse indexResponse = this.client.index( request, RequestOptions.DEFAULT );
+            final IndexResponse indexResponse = this.client.index( request );
             return indexResponse.getId();
         }
         catch ( ClusterBlockException e )
@@ -162,10 +151,6 @@ public class StorageDaoImpl
         catch ( ElasticsearchException e )
         {
             throw new NodeStorageException( "Cannot store node " + request.toString(), e );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
         }
     }
 
@@ -190,22 +175,7 @@ public class StorageDaoImpl
             getRequest.routing( request.getRouting() );
         }
 
-        Thread thread = Thread.currentThread();
-        ClassLoader contextClassLoader = thread.getContextClassLoader();
-        thread.setContextClassLoader( RestHighLevelClient.class.getClassLoader() );
-        final GetResponse response;
-        try
-        {
-            response = client.get( getRequest, RequestOptions.DEFAULT );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
-        finally
-        {
-            thread.setContextClassLoader( contextClassLoader );
-        }
+        GetResponse response = client.get( getRequest );
         return GetResultFactory.create( response );
     }
 
@@ -239,15 +209,8 @@ public class StorageDaoImpl
             multiGetRequest.add( item );
         }
 
-        try
-        {
-            final MultiGetResponse response = client.mget( multiGetRequest, RequestOptions.DEFAULT );
-            return GetResultsFactory.create( response );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        final MultiGetResponse response = client.mget( multiGetRequest );
+        return GetResultsFactory.create( response );
     }
 
     @Override
@@ -265,7 +228,7 @@ public class StorageDaoImpl
     }
 
     @Reference
-    public void setClient( final RestHighLevelClient client )
+    public void setClient( final EsClient client )
     {
         this.client = client;
     }

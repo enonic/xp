@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,9 +17,7 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Requests;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CloseIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
@@ -44,6 +40,7 @@ import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.elasticsearch.client.impl.EsClient;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.index.ApplyMappingRequest;
@@ -77,7 +74,7 @@ public class IndexServiceInternalImpl
 
     private final static String GET_SETTINGS_TIMEOUT = "5s";
 
-    private RestHighLevelClient client;
+    private EsClient client;
 
     @Override
     public ClusterHealthStatus getClusterHealth( final String timeout, final String... indexNames )
@@ -88,14 +85,7 @@ public class IndexServiceInternalImpl
     @Override
     public void refresh( final String... indexNames )
     {
-        try
-        {
-            client.indices().refresh( new RefreshRequest( indexNames ), RequestOptions.DEFAULT );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        client.indicesRefresh( new RefreshRequest( indexNames ) );
     }
 
     @Override
@@ -128,33 +118,26 @@ public class IndexServiceInternalImpl
     @Override
     public void copy( final NodeId nodeId, final RepositoryId repositoryId, final Branch source, final Branch target )
     {
-        try
+        final GetRequest request = new GetRequest().
+            id( nodeId.toString() ).
+            index( IndexNameResolver.resolveSearchIndexName( repositoryId, source ) );
+
+        final GetResponse response = this.client.get( request );
+
+        if ( !response.isExists() )
         {
-            final GetRequest request = new GetRequest().
-                id( nodeId.toString() ).
-                index( IndexNameResolver.resolveSearchIndexName( repositoryId, source ) );
-
-            final GetResponse response = this.client.get( request, RequestOptions.DEFAULT );
-
-            if ( !response.isExists() )
-            {
-                throw new IndexException( "Could not copy entry with id [" + nodeId + "], does not exist" );
-            }
-
-            final Map<String, Object> sourceValues = response.getSource();
-
-            final IndexRequest req = Requests.indexRequest().
-                id( nodeId.toString() ).
-                index( IndexNameResolver.resolveSearchIndexName( repositoryId, target ) ).
-                source( sourceValues ).
-                setRefreshPolicy( WriteRequest.RefreshPolicy.NONE );
-
-            this.client.index( req, RequestOptions.DEFAULT );
+            throw new IndexException( "Could not copy entry with id [" + nodeId + "], does not exist" );
         }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+
+        final Map<String, Object> sourceValues = response.getSource();
+
+        final IndexRequest req = Requests.indexRequest().
+            id( nodeId.toString() ).
+            index( IndexNameResolver.resolveSearchIndexName( repositoryId, target ) ).
+            source( sourceValues ).
+            setRefreshPolicy( WriteRequest.RefreshPolicy.NONE );
+
+        this.client.index( req );
     }
 
     @Override
@@ -169,28 +152,13 @@ public class IndexServiceInternalImpl
 
         try
         {
-            Thread thread = Thread.currentThread();
-            ClassLoader contextClassLoader = thread.getContextClassLoader();
-            thread.setContextClassLoader( RestHighLevelClient.class.getClassLoader() );
-            final CreateIndexResponse createIndexResponse;
-            try
-            {
-                createIndexResponse = client.indices().create( createIndexRequest, RequestOptions.DEFAULT );
-            }
-            finally
-            {
-                thread.setContextClassLoader( contextClassLoader );
-            }
+            final CreateIndexResponse createIndexResponse = client.indicesCreate( createIndexRequest );
 
             LOG.info( "Index {} created with status {}", indexName, createIndexResponse.isAcknowledged() );
         }
         catch ( ElasticsearchException e )
         {
             throw new IndexException( "Failed to create index: " + indexName, e );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
         }
     }
 
@@ -208,17 +176,13 @@ public class IndexServiceInternalImpl
         try
         {
             final AcknowledgedResponse updateSettingsResponse = client.
-                indices().putSettings( updateSettingsRequest, RequestOptions.DEFAULT );
+                indicesPutSettings( updateSettingsRequest );
 
             LOG.info( "Index {} updated with status {}", indexName, updateSettingsResponse.isAcknowledged() );
         }
         catch ( ElasticsearchException e )
         {
             throw new IndexException( "Failed to update index: " + indexName, e );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
         }
     }
 
@@ -239,27 +203,20 @@ public class IndexServiceInternalImpl
             return null;
         }
 
-        try
-        {
-            final GetSettingsRequest request = new GetSettingsRequest().indices( indexName );
-            request.masterNodeTimeout( GET_SETTINGS_TIMEOUT );
+        final GetSettingsRequest request = new GetSettingsRequest().indices( indexName );
+        request.masterNodeTimeout( GET_SETTINGS_TIMEOUT );
 
-            final GetSettingsResponse response = client.indices().getSettings( request, RequestOptions.DEFAULT );
-            final ImmutableOpenMap<String, Settings> settingsMap = response.getIndexToSettings();
+        final GetSettingsResponse response = client.indicesGetSettings( request );
+        final ImmutableOpenMap<String, Settings> settingsMap = response.getIndexToSettings();
 
-            final Settings settings = settingsMap.get( indexName );
+        final Settings settings = settingsMap.get( indexName );
 
-            final Map<String, Object> settingsAsMap = new HashMap<>();
-            settings.keySet().stream().
-                filter( settings::hasValue ).
-                forEach( key -> settingsAsMap.put( key, settings.get( key ) ) );
+        final Map<String, Object> settingsAsMap = new HashMap<>();
+        settings.keySet().stream().
+            filter( settings::hasValue ).
+            forEach( key -> settingsAsMap.put( key, settings.get( key ) ) );
 
-            return IndexSettings.from( settingsAsMap );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        return IndexSettings.from( settingsAsMap );
     }
 
     @Override
@@ -280,22 +237,15 @@ public class IndexServiceInternalImpl
             return null;
         }
 
-        try
-        {
-            final GetMappingsRequest request = new GetMappingsRequest();
-            request.indices( indexName );
-            request.setTimeout( TimeValue.timeValueSeconds( 5 ) );
+        final GetMappingsRequest request = new GetMappingsRequest();
+        request.indices( indexName );
+        request.setTimeout( TimeValue.timeValueSeconds( 5 ) );
 
-            final GetMappingsResponse response = client.indices().getMapping( request, RequestOptions.DEFAULT );
+        final GetMappingsResponse response = client.indicesGetMapping( request );
 
-            final MappingMetaData mappingMetaData = response.mappings().get( branch.getValue() );
+        final MappingMetaData mappingMetaData = response.mappings().get( branch.getValue() );
 
-            return mappingMetaData.getSourceAsMap();
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        return mappingMetaData.getSourceAsMap();
     }
 
     @Override
@@ -310,17 +260,13 @@ public class IndexServiceInternalImpl
 
         try
         {
-            client.indices().putMapping( mappingRequest, RequestOptions.DEFAULT );
+            client.indicesPutMapping( mappingRequest );
 
             LOG.info( "Mapping for index {} applied", indexName );
         }
         catch ( ElasticsearchException e )
         {
             throw new IndexException( "Failed to apply mapping to index: " + indexName, e );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
         }
     }
 
@@ -339,14 +285,7 @@ public class IndexServiceInternalImpl
         final GetIndexRequest request = new GetIndexRequest( indices );
         request.setTimeout( TimeValue.timeValueSeconds( 5 ) );
 
-        try
-        {
-            return client.indices().exists( request, RequestOptions.DEFAULT );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        return client.indicesExists( request );
     }
 
     private ClusterHealthStatus doGetClusterHealth( final String timeout, final String... indexNames )
@@ -357,22 +296,15 @@ public class IndexServiceInternalImpl
 
         final Stopwatch timer = Stopwatch.createStarted();
 
-        try
-        {
-            final ClusterHealthResponse response = client.cluster().health( request, RequestOptions.DEFAULT );
-            timer.stop();
+        final ClusterHealthResponse response = client.clusterHealth( request );
+        timer.stop();
 
-            LOG.debug(
-                "ElasticSearch cluster '{}' health (timedOut={}, timeOutValue={}, used={}): Status={}, nodes={}, active shards={}, indices={}",
-                response.getClusterName(), response.isTimedOut(), timeout, timer.toString(), response.getStatus(),
-                response.getNumberOfNodes(), response.getActiveShards(), response.getIndices().keySet() );
+        LOG.debug(
+            "ElasticSearch cluster '{}' health (timedOut={}, timeOutValue={}, used={}): Status={}, nodes={}, active shards={}, indices={}",
+            response.getClusterName(), response.isTimedOut(), timeout, timer.toString(), response.getStatus(), response.getNumberOfNodes(),
+            response.getActiveShards(), response.getIndices().keySet() );
 
-            return new ClusterHealthStatus( ClusterStatusCode.valueOf( response.getStatus().name() ), response.isTimedOut() );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        return new ClusterHealthStatus( ClusterStatusCode.valueOf( response.getStatus().name() ), response.isTimedOut() );
     }
 
     @Override
@@ -384,17 +316,13 @@ public class IndexServiceInternalImpl
             {
                 final CloseIndexRequest closeIndexRequest = new CloseIndexRequest( indexName );
 
-                client.indices().close( closeIndexRequest, RequestOptions.DEFAULT );
+                client.indicesClose( closeIndexRequest );
 
                 LOG.info( "Closed index " + indexName );
             }
             catch ( IndexNotFoundException e )
             {
                 LOG.warn( "Could not close index [" + indexName + "], not found" );
-            }
-            catch ( IOException e )
-            {
-                throw new UncheckedIOException( e );
             }
         }
     }
@@ -408,7 +336,7 @@ public class IndexServiceInternalImpl
             {
                 final OpenIndexRequest openIndexRequest = new OpenIndexRequest( indexName );
 
-                client.indices().open( openIndexRequest, RequestOptions.DEFAULT );
+                client.indicesOpen( openIndexRequest );
 
                 LOG.info( "Opened index " + indexName );
             }
@@ -416,10 +344,6 @@ public class IndexServiceInternalImpl
             {
                 LOG.error( "Could not open index [" + indexName + "]", e );
                 throw new IndexException( "Cannot open index [" + indexName + "]", e );
-            }
-            catch ( IOException e )
-            {
-                throw new UncheckedIOException( e );
             }
         }
     }
@@ -431,7 +355,7 @@ public class IndexServiceInternalImpl
 
         try
         {
-            client.indices().delete( req, RequestOptions.DEFAULT );
+            client.indicesDelete( req );
 
             LOG.info( "Deleted index {}", indexName );
         }
@@ -439,14 +363,10 @@ public class IndexServiceInternalImpl
         {
             LOG.warn( "Failed to delete index {}", indexName );
         }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
     }
 
     @Reference
-    public void setClient( final RestHighLevelClient client )
+    public void setClient( final EsClient client )
     {
         this.client = client;
     }

@@ -4,16 +4,16 @@ import java.io.IOException;
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import com.enonic.xp.elasticsearch.client.impl.EsClient;
 
 @Component(service = ClusterHealthProvider.class)
 public final class ClusterHealthProvider
     implements ClusterInfoProvider<ClusterHealth>
 {
-    private RestHighLevelClient restHighLevelClient;
+    private EsClient client;
 
     @Override
     public ClusterHealth getInfo()
@@ -41,12 +41,12 @@ public final class ClusterHealthProvider
             timeout( CLUSTER_HEALTH_TIMEOUT ).
             indices( indices );
 
-        return restHighLevelClient.cluster().health( request, RequestOptions.DEFAULT );
+        return client.clusterHealth( request );
     }
 
     @Reference
-    public void setClusterAdminClient( RestHighLevelClient restHighLevelClient )
+    public void setClient( EsClient client )
     {
-        this.restHighLevelClient = restHighLevelClient;
+        this.client = client;
     }
 }

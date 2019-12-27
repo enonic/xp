@@ -4,12 +4,11 @@ import java.util.Collection;
 
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.support.WriteRequest;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.elasticsearch.client.impl.EsClient;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.xcontent.StoreDocumentXContentBuilderFactory;
 import com.enonic.xp.repository.IndexException;
@@ -24,7 +23,7 @@ public class StoreExecutor
         super( builder );
     }
 
-    public static Builder create( final RestHighLevelClient client )
+    public static Builder create( final EsClient client )
     {
         return new Builder( client );
     }
@@ -47,7 +46,7 @@ public class StoreExecutor
 
             try
             {
-                this.client.index( req, RequestOptions.DEFAULT );
+                this.client.index( req );
             }
             catch ( Exception e )
             {
@@ -64,7 +63,7 @@ public class StoreExecutor
     public static final class Builder
         extends AbstractExecutor.Builder<Builder>
     {
-        private Builder( final RestHighLevelClient client )
+        private Builder( final EsClient client )
         {
             super( client );
         }

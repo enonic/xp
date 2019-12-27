@@ -1,14 +1,10 @@
 package com.enonic.xp.repo.impl.elasticsearch.executor;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.core.CountRequest;
 import org.elasticsearch.client.core.CountResponse;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
+import com.enonic.xp.elasticsearch.client.impl.EsClient;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.search.result.SearchHits;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
@@ -22,7 +18,7 @@ class CountExecutor
         super( builder );
     }
 
-    public static Builder create( final RestHighLevelClient client )
+    public static Builder create( final EsClient client )
     {
         return new Builder( client );
     }
@@ -40,24 +36,17 @@ class CountExecutor
             preference( searchPreference ).
             source( sourceBuilder );
 
-        try
-        {
-            final CountResponse countResponse = client.count( countRequest, RequestOptions.DEFAULT );
+        final CountResponse countResponse = client.count( countRequest );
 
-            return SearchResult.create().
-                hits( SearchHits.create().build() ).
-                totalHits( countResponse.getCount() ).build();
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        return SearchResult.create().
+            hits( SearchHits.create().build() ).
+            totalHits( countResponse.getCount() ).build();
     }
 
     public static class Builder
         extends AbstractExecutor.Builder<Builder>
     {
-        private Builder( final RestHighLevelClient client )
+        private Builder( final EsClient client )
         {
             super( client );
         }

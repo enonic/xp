@@ -2,16 +2,7 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':core:core-api' )
-    compile ("org.elasticsearch.client:elasticsearch-rest-high-level-client:${elasticsearchVersion}") {
-        exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-cbor'
-        exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-yaml'
-        exclude group: 'org.yaml', module: 'snakeyaml'
-        exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-smile'
-    }
-    runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-smile:${jacksonVersion}"
-    runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jacksonVersion}"
-    runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
-    runtimeOnly "org.apache.logging.log4j:log4j-to-slf4j:${log4jToSlf4jVersion}"
+    compile project( ':core:core-elasticsearch-client' )
 
     testCompile project( path: ':core:core-api', configuration: 'testOutput' )
 }

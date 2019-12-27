@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch.xcontent;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
 
+import com.enonic.xp.elasticsearch.client.impl.EsClient;
 import com.enonic.xp.repo.impl.index.IndexValueNormalizer;
 
 abstract class AbstractXContentBuilderFactory
@@ -11,7 +11,7 @@ abstract class AbstractXContentBuilderFactory
     static XContentBuilder startBuilder()
         throws Exception
     {
-        final XContentBuilder result = XContentFactory.jsonBuilder();
+        final XContentBuilder result = EsClient.jsonBuilder();
         result.startObject();
 
         return result;

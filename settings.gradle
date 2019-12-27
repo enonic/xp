@@ -8,6 +8,7 @@ include 'core:core-image'
 include 'core:core-export'
 include 'core:core-mail'
 include 'core:core-elasticsearch'
+include 'core:core-elasticsearch-client'
 include 'core:core-content'
 include 'core:core-site'
 include 'core:core-i18n'
@@ -84,7 +85,6 @@ include 'blobstore:blobstore-file'
 
 include 'app:app-system'
 
-include 'repack:repack-elasticsearch'
 include 'repack:repack-resteasy'
 include 'repack:repack-javax-cache-api'
 

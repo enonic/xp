@@ -1,17 +1,14 @@
 package com.enonic.xp.repo.impl.elasticsearch.executor;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.concurrent.TimeUnit;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
 
+import com.enonic.xp.elasticsearch.client.impl.EsClient;
 import com.enonic.xp.repo.impl.elasticsearch.SearchRequestBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.result.SearchResultFactory;
@@ -26,7 +23,7 @@ abstract class AbstractExecutor
 
     final String deleteTimeout = "5s";
 
-    final RestHighLevelClient client;
+    final EsClient client;
 
     private final ExecutorProgressListener progressReporter;
 
@@ -53,7 +50,7 @@ abstract class AbstractExecutor
     {
         try
         {
-            final SearchResponse searchResponse = client.search( searchRequest, RequestOptions.DEFAULT );
+            final SearchResponse searchResponse = client.search( searchRequest );
 
             return SearchResultFactory.create( searchResponse );
         }
@@ -61,10 +58,6 @@ abstract class AbstractExecutor
         {
             throw new IndexException(
                 "Search request failed after [" + this.searchTimeout + "], query: [" + createQueryString( searchRequest ) + "]", e );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
         }
     }
 
@@ -95,14 +88,7 @@ abstract class AbstractExecutor
         final ClearScrollRequest clearScrollRequest = new ClearScrollRequest();
         clearScrollRequest.addScrollId( scrollResp.getScrollId() );
 
-        try
-        {
-            client.clearScroll( clearScrollRequest, RequestOptions.DEFAULT );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        client.clearScroll( clearScrollRequest );
     }
 
     void reportProgress( final int count )
@@ -115,7 +101,7 @@ abstract class AbstractExecutor
 
     public static class Builder<B extends Builder>
     {
-        private final RestHighLevelClient client;
+        private final EsClient client;
 
         private ExecutorProgressListener progressReporter;
 
@@ -131,7 +117,7 @@ abstract class AbstractExecutor
             return (B) this;
         }
 
-        Builder( final RestHighLevelClient client )
+        Builder( final EsClient client )
         {
             this.client = client;
         }

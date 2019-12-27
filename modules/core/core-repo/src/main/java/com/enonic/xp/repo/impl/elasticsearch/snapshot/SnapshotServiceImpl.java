@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.HashSet;
@@ -15,8 +13,6 @@ import org.elasticsearch.action.admin.cluster.repositories.put.PutRepositoryRequ
 import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.cluster.metadata.RepositoryMetaData;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.repositories.RepositoryMissingException;
@@ -30,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.cluster.ClusterManager;
+import com.enonic.xp.elasticsearch.client.impl.EsClient;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
@@ -52,7 +49,7 @@ public class SnapshotServiceImpl
 
     private final static String SNAPSHOT_REPOSITORY_NAME = "enonic-xp-snapshot-repo";
 
-    private RestHighLevelClient client;
+    private EsClient client;
 
     private RepoConfiguration configuration;
 
@@ -122,15 +119,8 @@ public class SnapshotServiceImpl
 
         final GetSnapshotsRequest getSnapshotsRequest = new GetSnapshotsRequest( SNAPSHOT_REPOSITORY_NAME );
 
-        try
-        {
-            final GetSnapshotsResponse response = this.client.snapshot().get( getSnapshotsRequest, RequestOptions.DEFAULT );
-            return SnapshotResultsFactory.create( response );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        final GetSnapshotsResponse response = this.client.snapshotGet( getSnapshotsRequest );
+        return SnapshotResultsFactory.create( response );
     }
 
     @Override
@@ -193,7 +183,7 @@ public class SnapshotServiceImpl
         {
             final GetRepositoriesRequest getRepositoriesRequest = new GetRepositoriesRequest( new String[]{SNAPSHOT_REPOSITORY_NAME} );
 
-            final GetRepositoriesResponse response = this.client.snapshot().getRepository( getRepositoriesRequest, RequestOptions.DEFAULT );
+            final GetRepositoriesResponse response = this.client.snapshotGetRepository( getRepositoriesRequest );
 
             for ( final RepositoryMetaData repo : response.repositories() )
             {
@@ -202,10 +192,6 @@ public class SnapshotServiceImpl
                     return repo;
                 }
             }
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
         }
         catch ( Exception e )
         {
@@ -224,21 +210,14 @@ public class SnapshotServiceImpl
 
     private void registerRepository()
     {
-        try
-        {
-            final PutRepositoryRequest request = new PutRepositoryRequest( SNAPSHOT_REPOSITORY_NAME ).
-                type( FsRepository.TYPE ).
-                settings( Settings.builder().
-                    put( FsRepository.COMPRESS_SETTING.getKey(), true ).
-                    put( FsRepository.LOCATION_SETTING.getKey(), getSnapshotsDir() ).
-                    build() );
+        final PutRepositoryRequest request = new PutRepositoryRequest( SNAPSHOT_REPOSITORY_NAME ).
+            type( FsRepository.TYPE ).
+            settings( Settings.builder().
+                put( FsRepository.COMPRESS_SETTING.getKey(), true ).
+                put( FsRepository.LOCATION_SETTING.getKey(), getSnapshotsDir() ).
+                build() );
 
-            this.client.snapshot().createRepository( request, RequestOptions.DEFAULT );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        this.client.snapshotCreateRepository( request );
     }
 
     private Path getSnapshotsDir()
@@ -248,28 +227,21 @@ public class SnapshotServiceImpl
 
     private SnapshotInfo getSnapshot( final String snapshotName )
     {
-        try
+        final String[] snapshotNames = new String[]{snapshotName};
+
+        final GetSnapshotsRequest request = new GetSnapshotsRequest().
+            repository( SNAPSHOT_REPOSITORY_NAME ).
+            snapshots( snapshotNames );
+
+        final GetSnapshotsResponse response = this.client.snapshotGet( request );
+
+        final List<SnapshotInfo> snapshots = response.getSnapshots();
+
+        if ( snapshots.size() == 0 )
         {
-            final String[] snapshotNames = new String[]{snapshotName};
-
-            final GetSnapshotsRequest request = new GetSnapshotsRequest().
-                repository( SNAPSHOT_REPOSITORY_NAME ).
-                snapshots( snapshotNames );
-
-            final GetSnapshotsResponse response = this.client.snapshot().get( request, RequestOptions.DEFAULT );
-
-            final List<SnapshotInfo> snapshots = response.getSnapshots();
-
-            if ( snapshots.size() == 0 )
-            {
-                return null;
-            }
-            return snapshots.get( 0 );
+            return null;
         }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        return snapshots.get( 0 );
     }
 
     private DeleteSnapshotsResult doDelete( final DeleteSnapshotParams params )
@@ -326,14 +298,7 @@ public class SnapshotServiceImpl
 
         final DeleteSnapshotRequest deleteSnapshotRequest = new DeleteSnapshotRequest( SNAPSHOT_REPOSITORY_NAME, snapshotName );
 
-        try
-        {
-            this.client.snapshot().delete( deleteSnapshotRequest, RequestOptions.DEFAULT );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        this.client.snapshotDelete( deleteSnapshotRequest );
     }
 
     @Reference
@@ -343,7 +308,7 @@ public class SnapshotServiceImpl
     }
 
     @Reference
-    public void setClient( final RestHighLevelClient client )
+    public void setClient( final EsClient client )
     {
         this.client = client;
     }

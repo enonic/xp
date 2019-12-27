@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.elasticsearch.cluster.routing.RoutingTable;
@@ -14,12 +13,14 @@ import org.elasticsearch.cluster.routing.ShardRoutingState;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.elasticsearch.client.impl.EsClient;
+
 @Component(service = IndexReportProvider.class)
 public class IndexReportProvider
 {
     private static final String TIMEOUT = "3s";
 
-    private RestHighLevelClient restHighLevelClient;
+    private EsClient client;
 
     public IndexReport getInfo()
     {
@@ -102,8 +103,8 @@ public class IndexReportProvider
     }
 
     @Reference
-    public void setClusterAdminClient( RestHighLevelClient restHighLevelClient )
+    public void setClient( EsClient client )
     {
-        this.restHighLevelClient = restHighLevelClient;
+        this.client = client;
     }
 }

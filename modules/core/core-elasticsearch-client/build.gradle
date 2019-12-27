@@ -17,20 +17,27 @@ dependencies {
 jar {
     bnd( 'Bundle-Name': 'Elasticsearch Library',
          'Export-Package':
+             'com.enonic.xp.elasticsearch.client.impl.*' + ',' +
              'org.elasticsearch.*;-split-package:=merge-first' + ',' +
-             'org.apache.lucene.*;-split-package:=merge-first' + ',' +
-             'org.joda.time.*;-split-package:=merge-first' + ',' +
-             'org.apache.http.*'+ ',' +
-             'org.tartarus.*' + ',' +
-             'com.carrotsearch.hppc.*' + ',' +
-             'com.tdunning.math.stats.*',
+                 'org.apache.lucene.*;-split-package:=merge-first' + ',' +
+                 'org.joda.time.*;-split-package:=merge-first' + ',' +
+                 'org.apache.http.*'+ ',' +
+                 'org.tartarus.*' + ',' +
+                 'com.carrotsearch.hppc.*' + ',' +
+                 'com.github.mustachejava.*' + ',' +
+                 'com.tdunning.math.stats.*',
          'Import-Package': '*;resolution:=optional',
          'Private-Package': 'config.*' + ',' +
              'META-INF.services.*;-split-package:=merge-first' + ',' +
              'com.fasterxml.jackson.dataformat.smile.*' + ',' +
              'com.fasterxml.jackson.dataformat.cbor.*' + ',' +
              'com.fasterxml.jackson.dataformat.yaml.*' + ',' +
+             'org.apache.commons.codec.*' + ',' +
              'org.yaml.snakeyaml.*' + ',' +
              ''
     )
+}
+
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Core - ElasticSearch Client' )
 }
