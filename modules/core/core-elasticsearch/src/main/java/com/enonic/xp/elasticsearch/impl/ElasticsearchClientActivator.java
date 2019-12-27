@@ -1,6 +1,7 @@
 package com.enonic.xp.elasticsearch.impl;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.ConnectException;
 import java.util.Hashtable;
 import java.util.concurrent.CountDownLatch;
@@ -8,12 +9,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.HttpHost;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -23,15 +20,17 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.elasticsearch.client.impl.EsClient;
+
 @Component(immediate = true, configurationPid = "com.enonic.xp.elasticsearch")
 public final class ElasticsearchClientActivator
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( ElasticsearchClientActivator.class );
 
-    private RestHighLevelClient client;
+    private EsClient client;
 
-    private ServiceRegistration<RestHighLevelClient> clientReg;
+    private ServiceRegistration<EsClient> clientReg;
 
     private BundleContext context;
 
@@ -45,7 +44,7 @@ public final class ElasticsearchClientActivator
         throws InterruptedException
     {
         this.context = context;
-        this.client = new RestHighLevelClient( RestClient.builder( new HttpHost( "localhost", 9200, "http" ) ) );
+        this.client = new EsClient( "localhost", 9200 );
 
         doActivate();
     }
@@ -92,9 +91,9 @@ public final class ElasticsearchClientActivator
     private void doRegisterElasticsearchClient()
         throws IOException
     {
-        client.ping( RequestOptions.DEFAULT );
+        client.ping();
 
-        final ClusterHealthResponse healthResponse = client.cluster().health( new ClusterHealthRequest(), RequestOptions.DEFAULT );
+        final ClusterHealthResponse healthResponse = client.clusterHealth( new ClusterHealthRequest() );
 
         if ( healthResponse.getStatus() != ClusterHealthStatus.RED )
         {
@@ -105,25 +104,21 @@ public final class ElasticsearchClientActivator
     }
 
     private void doMonitorElasticsearchHealth()
-        throws IOException
     {
         try
         {
-            boolean pingSucceeded = client.ping( RequestOptions.DEFAULT );
+            boolean pingSucceeded = client.ping();
 
-            final ClusterHealthResponse healthResponse = client.cluster().health( new ClusterHealthRequest(), RequestOptions.DEFAULT );
+            final ClusterHealthResponse healthResponse = client.clusterHealth( new ClusterHealthRequest() );
 
             if ( !pingSucceeded || healthResponse.getStatus() == ClusterHealthStatus.RED )
             {
                 unregister();
             }
         }
-        catch ( final IOException e )
+        catch ( final Exception e )
         {
-            if ( e instanceof ConnectException )
-            {
-                unregister();
-            }
+            unregister();
 
             throw e;
         }
@@ -151,7 +146,7 @@ public final class ElasticsearchClientActivator
             return;
         }
 
-        this.clientReg = context.registerService( RestHighLevelClient.class, client, new Hashtable<>() );
+        this.clientReg = context.registerService( EsClient.class, client, new Hashtable<>() );
         this.isRegistered = true;
     }
 
@@ -175,7 +170,7 @@ public final class ElasticsearchClientActivator
 
     private void handleException( final Exception e )
     {
-        if ( e instanceof ConnectException )
+        if ( e instanceof UncheckedIOException )
         {
             LOG.error( "Error while checking Elasticsearch healthy. Connection refused for RestHighLevelClient." );
         }

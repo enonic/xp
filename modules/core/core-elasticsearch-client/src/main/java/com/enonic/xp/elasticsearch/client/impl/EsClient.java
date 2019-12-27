@@ -209,6 +209,11 @@ public final class EsClient
         return wrap( () -> client.search( searchRequest, RequestOptions.DEFAULT ) );
     }
 
+    public boolean ping()
+    {
+        return wrap( () -> client.ping( RequestOptions.DEFAULT ) );
+    }
+
     public static XContentBuilder jsonBuilder()
     {
         return wrap( XContentFactory::jsonBuilder );
