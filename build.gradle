@@ -1,6 +1,6 @@
 apply plugin: 'java-base'
 apply plugin: 'build-dashboard'
-apply plugin: "com.github.jk1.dependency-license-report"
+apply plugin: 'com.github.jk1.dependency-license-report'
 
 ext {
     leafProjects = subprojects.findAll { p -> p.subprojects.empty }
@@ -20,17 +20,6 @@ allprojects {
     }
 
     apply plugin: 'com.enonic.defaults'
-}
-
-buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath "com.github.jk1:gradle-license-report:1.12"
-    }
 }
 
 configure( mavenPublishProjects ) {
