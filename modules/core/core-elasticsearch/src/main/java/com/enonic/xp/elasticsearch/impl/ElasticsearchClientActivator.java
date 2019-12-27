@@ -1,7 +1,12 @@
 package com.enonic.xp.elasticsearch.impl;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.Hashtable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
@@ -20,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.elasticsearch")
 public final class ElasticsearchClientActivator
-    implements ClientActivator
 {
 
     private static final Logger LOG = LoggerFactory.getLogger( ElasticsearchClientActivator.class );
@@ -31,55 +35,97 @@ public final class ElasticsearchClientActivator
 
     private BundleContext context;
 
-    @SuppressWarnings("WeakerAccess")
-    public ElasticsearchClientActivator()
-    {
-    }
+    private ScheduledExecutorService activateExecutorService;
+
+    private volatile boolean isRegistered = false;
 
     @Activate
     @SuppressWarnings("WeakerAccess")
     public void activate( final BundleContext context )
+        throws InterruptedException
     {
         this.context = context;
-
         this.client = new RestHighLevelClient( RestClient.builder( new HttpHost( "localhost", 9200, "http" ) ) );
 
-        while ( true )
-        {
-            try
-            {
-                if ( client.ping( RequestOptions.DEFAULT ) )
-                {
-                    final ClusterHealthResponse healthResponse =
-                        client.cluster().health( new ClusterHealthRequest(), RequestOptions.DEFAULT );
+        doActivate();
+    }
 
-                    if ( healthResponse.getStatus() == ClusterHealthStatus.RED )
+    private void doActivate()
+        throws InterruptedException
+    {
+        final CountDownLatch activateLatch = new CountDownLatch( 1 );
+        this.activateExecutorService = Executors.newSingleThreadScheduledExecutor();
+
+        try
+        {
+            activateExecutorService.scheduleWithFixedDelay( () -> {
+                try
+                {
+                    if ( !isRegistered )
                     {
-                        LOG.info( "Elasticsearch health status is RED." );
+                        doRegisterElasticsearchClient();
                     }
                     else
                     {
-                        register();
-
-                        LOG.info( "Elasticsearch is up." );
-
-                        break;
+                        doMonitorElasticsearchHealth();
                     }
                 }
-            }
-            catch ( final IOException e )
-            {
-                LOG.info( "Checking if Elasticsearch is up." );
+                catch ( Exception e )
+                {
+                    handleException( e );
+                }
+                finally
+                {
+                    activateLatch.countDown();
+                }
+            }, 0, 1, TimeUnit.SECONDS );
 
-                try
-                {
-                    Thread.sleep( 1000 );
-                }
-                catch ( InterruptedException ex )
-                {
-                    // do nothing
-                }
+            activateLatch.await();
+        }
+        catch ( Exception e )
+        {
+            activateExecutorService.shutdown();
+            throw e;
+        }
+    }
+
+    private void doRegisterElasticsearchClient()
+        throws IOException
+    {
+        client.ping( RequestOptions.DEFAULT );
+
+        final ClusterHealthResponse healthResponse = client.cluster().health( new ClusterHealthRequest(), RequestOptions.DEFAULT );
+
+        if ( healthResponse.getStatus() != ClusterHealthStatus.RED )
+        {
+            register();
+
+            LOG.info( "Elasticsearch is up." );
+        }
+    }
+
+    private void doMonitorElasticsearchHealth()
+        throws IOException
+    {
+        try
+        {
+            boolean pingSucceeded = client.ping( RequestOptions.DEFAULT );
+
+            final ClusterHealthResponse healthResponse = client.cluster().health( new ClusterHealthRequest(), RequestOptions.DEFAULT );
+
+            if ( !pingSucceeded || healthResponse.getStatus() == ClusterHealthStatus.RED )
+            {
+                unregister();
             }
+        }
+        catch ( final IOException e )
+        {
+            if ( e instanceof ConnectException )
+            {
+                unregister();
+            }
+
+            throw e;
         }
     }
 
@@ -88,6 +134,8 @@ public final class ElasticsearchClientActivator
     public void deactivate()
         throws IOException
     {
+        activateExecutorService.shutdown();
+
         unregister();
 
         if ( client != null )
@@ -96,8 +144,7 @@ public final class ElasticsearchClientActivator
         }
     }
 
-    @Override
-    public void register()
+    private void register()
     {
         if ( this.clientReg != null )
         {
@@ -105,10 +152,10 @@ public final class ElasticsearchClientActivator
         }
 
         this.clientReg = context.registerService( RestHighLevelClient.class, client, new Hashtable<>() );
+        this.isRegistered = true;
     }
 
-    @Override
-    public void unregister()
+    private void unregister()
     {
         if ( this.clientReg == null )
         {
@@ -121,8 +168,22 @@ public final class ElasticsearchClientActivator
         }
         finally
         {
+            this.isRegistered = false;
             this.clientReg = null;
         }
     }
+
+    private void handleException( final Exception e )
+    {
+        if ( e instanceof ConnectException )
+        {
+            LOG.error( "Error while checking Elasticsearch healthy. Connection refused for RestHighLevelClient." );
+        }
+        else
+        {
+            LOG.error( "Error while checking Elasticsearch healthy", e );
+        }
+    }
+
 }
 
