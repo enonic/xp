@@ -91,7 +91,8 @@ public class ClusterManagerImpl
     @Override
     public boolean isHealthy()
     {
-        return isHealthy;
+//        return isHealthy;
+        return true;
     }
 
     private void activateProviders()
@@ -119,33 +120,33 @@ public class ClusterManagerImpl
     private void waitForProviders()
         throws InterruptedException
     {
-        while ( true )
-        {
-            final ClusterState clusterState = doGetClusterState();
-            if ( ClusterState.OK == clusterState )
-            {
-                activateProviders();
-                break;
-            }
-            else
-            {
-                LOG.warn( "Waiting for cluster providers" );
-                Thread.sleep( checkIntervalMs );
-            }
-        }
+//        while ( true )
+//        {
+//            final ClusterState clusterState = doGetClusterState();
+//            if ( ClusterState.OK == clusterState )
+//            {
+//                activateProviders();
+//                break;
+//            }
+//            else
+//            {
+//                LOG.warn( "Waiting for cluster providers" );
+//                Thread.sleep( checkIntervalMs );
+//            }
+//        }
     }
 
     private void checkProviders()
     {
-        final ClusterState clusterState = doGetClusterState();
-        if ( ClusterState.OK == clusterState )
-        {
-            activateProviders();
-        }
-        else
-        {
-            deactivateProviders();
-        }
+//        final ClusterState clusterState = doGetClusterState();
+//        if ( ClusterState.OK == clusterState )
+//        {
+//            activateProviders();
+//        }
+//        else
+//        {
+//            deactivateProviders();
+//        }
     }
 
     private ClusterState doGetClusterState()
