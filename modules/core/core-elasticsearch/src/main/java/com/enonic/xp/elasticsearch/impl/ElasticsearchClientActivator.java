@@ -2,8 +2,6 @@ package com.enonic.xp.elasticsearch.impl;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.Hashtable;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -35,12 +33,9 @@ public final class ElasticsearchClientActivator
 
     private ScheduledExecutorService activateExecutorService;
 
-    private volatile boolean isRegistered = false;
-
     @Activate
     @SuppressWarnings("WeakerAccess")
     public void activate( final BundleContext context )
-        throws InterruptedException
     {
         this.context = context;
         this.client = new EsClient( "localhost", 9200 );
@@ -49,9 +44,7 @@ public final class ElasticsearchClientActivator
     }
 
     private void doActivate()
-        throws InterruptedException
     {
-        final CountDownLatch activateLatch = new CountDownLatch( 1 );
         this.activateExecutorService = Executors.newSingleThreadScheduledExecutor();
 
         try
@@ -59,26 +52,13 @@ public final class ElasticsearchClientActivator
             activateExecutorService.scheduleWithFixedDelay( () -> {
                 try
                 {
-                    if ( !isRegistered )
-                    {
-                        doRegisterElasticsearchClient();
-                    }
-                    else
-                    {
-                        doMonitorElasticsearchHealth();
-                    }
+                    doRegisterElasticsearchClient();
                 }
                 catch ( Exception e )
                 {
                     handleException( e );
                 }
-                finally
-                {
-                    activateLatch.countDown();
-                }
             }, 0, 1, TimeUnit.SECONDS );
-
-            activateLatch.await();
         }
         catch ( Exception e )
         {
@@ -89,36 +69,15 @@ public final class ElasticsearchClientActivator
 
     private void doRegisterElasticsearchClient()
     {
-        client.ping();
-
         final ClusterHealthResponse healthResponse = client.clusterHealth( new ClusterHealthRequest() );
 
-        if ( healthResponse.getStatus() != ClusterHealthStatus.RED )
-        {
-            register();
-
-            LOG.info( "Elasticsearch is up." );
-        }
-    }
-
-    private void doMonitorElasticsearchHealth()
-    {
-        try
-        {
-            boolean pingSucceeded = client.ping();
-
-            final ClusterHealthResponse healthResponse = client.clusterHealth( new ClusterHealthRequest() );
-
-            if ( !pingSucceeded || healthResponse.getStatus() == ClusterHealthStatus.RED )
-            {
-                unregister();
-            }
-        }
-        catch ( Exception e )
+        if ( healthResponse.getStatus() == ClusterHealthStatus.RED )
         {
             unregister();
-
-            throw e;
+        }
+        else
+        {
+            register();
         }
     }
 
@@ -137,18 +96,17 @@ public final class ElasticsearchClientActivator
         }
     }
 
-    private void register()
+    private synchronized void register()
     {
         if ( this.clientReg != null )
         {
             return;
         }
 
-        this.clientReg = context.registerService( EsClient.class, client, new Hashtable<>() );
-        this.isRegistered = true;
+        this.clientReg = context.registerService( EsClient.class, client, null );
     }
 
-    private void unregister()
+    private synchronized void unregister()
     {
         if ( this.clientReg == null )
         {
@@ -161,7 +119,6 @@ public final class ElasticsearchClientActivator
         }
         finally
         {
-            this.isRegistered = false;
             this.clientReg = null;
         }
     }
@@ -179,4 +136,3 @@ public final class ElasticsearchClientActivator
     }
 
 }
-
