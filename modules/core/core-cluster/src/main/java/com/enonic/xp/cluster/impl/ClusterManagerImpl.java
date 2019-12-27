@@ -91,6 +91,7 @@ public class ClusterManagerImpl
     @Override
     public boolean isHealthy()
     {
+//        return isHealthy;
         return true;
     }
 

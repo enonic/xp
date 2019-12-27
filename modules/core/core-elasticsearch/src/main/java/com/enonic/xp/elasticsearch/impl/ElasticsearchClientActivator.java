@@ -2,7 +2,6 @@ package com.enonic.xp.elasticsearch.impl;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.net.ConnectException;
 import java.util.Hashtable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
@@ -89,7 +88,6 @@ public final class ElasticsearchClientActivator
     }
 
     private void doRegisterElasticsearchClient()
-        throws IOException
     {
         client.ping();
 
@@ -116,7 +114,7 @@ public final class ElasticsearchClientActivator
                 unregister();
             }
         }
-        catch ( final Exception e )
+        catch ( Exception e )
         {
             unregister();
 
