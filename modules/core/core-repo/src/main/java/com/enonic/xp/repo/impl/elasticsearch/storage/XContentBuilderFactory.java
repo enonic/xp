@@ -1,11 +1,10 @@
 package com.enonic.xp.repo.impl.elasticsearch.storage;
 
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
 
 import com.google.common.collect.Multimap;
 
+import com.enonic.xp.elasticsearch.client.impl.EsClient;
 import com.enonic.xp.repo.impl.index.IndexValueNormalizer;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repository.IndexException;
@@ -37,18 +36,7 @@ class XContentBuilderFactory
     private static XContentBuilder startBuilder()
         throws Exception
     {
-        Thread thread = Thread.currentThread();
-        ClassLoader contextClassLoader = thread.getContextClassLoader();
-        thread.setContextClassLoader( RestHighLevelClient.class.getClassLoader() );
-        final XContentBuilder result;
-        try
-        {
-            result = XContentFactory.jsonBuilder();
-        }
-        finally
-        {
-            thread.setContextClassLoader( contextClassLoader );
-        }
+        final XContentBuilder result = EsClient.jsonBuilder();
         result.startObject();
 
         return result;

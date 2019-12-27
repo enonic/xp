@@ -7,7 +7,6 @@ import org.elasticsearch.action.admin.cluster.repositories.delete.DeleteReposito
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.delete.DeleteSnapshotRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsRequest;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.cluster.metadata.RepositoryMetaData;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -227,19 +226,18 @@ public class SnapshotServiceImplTest
     private static void cleanRepositories()
         throws IOException
     {
-        for ( String repository : client.snapshot().getRepository( new GetRepositoriesRequest(),
-                                                                   RequestOptions.DEFAULT ).repositories().stream().map(
+        for ( String repository : client.snapshotGetRepository( new GetRepositoriesRequest() ).repositories().stream().map(
             RepositoryMetaData::name ).collect( Collectors.toList() ) )
         {
-            for ( String snapshot : client.snapshot().get( new GetSnapshotsRequest().
-                repository( repository ), RequestOptions.DEFAULT ).
+            for ( String snapshot : client.snapshotGet( new GetSnapshotsRequest().
+                repository( repository ) ).
                 getSnapshots().stream().map( snapshotInfo -> snapshotInfo.snapshotId().getName() ).collect( Collectors.toList() ) )
             {
-                client.snapshot().delete( new DeleteSnapshotRequest().
+                client.snapshotDelete( new DeleteSnapshotRequest().
                     snapshot( snapshot ).
-                    repository( repository ), RequestOptions.DEFAULT );
+                    repository( repository ) );
             }
-            client.snapshot().deleteRepository( new DeleteRepositoryRequest( repository ), RequestOptions.DEFAULT );
+            client.snapshotDeleteRepository( new DeleteRepositoryRequest( repository ) );
         }
     }
 

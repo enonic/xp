@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.elasticsearch.search;
 
-import org.elasticsearch.client.RestHighLevelClient;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.elasticsearch.client.impl.EsClient;
 import com.enonic.xp.repo.impl.elasticsearch.executor.SearchExecutor;
 import com.enonic.xp.repo.impl.search.SearchDao;
 import com.enonic.xp.repo.impl.search.SearchRequest;
@@ -13,7 +13,7 @@ import com.enonic.xp.repo.impl.search.result.SearchResult;
 public class SearchDaoImpl
     implements SearchDao
 {
-    private RestHighLevelClient client;
+    private EsClient client;
 
     @Override
     public SearchResult search( final SearchRequest searchRequest )
@@ -24,7 +24,7 @@ public class SearchDaoImpl
     }
 
     @Reference
-    public void setClient( final RestHighLevelClient client )
+    public void setClient( final EsClient client )
     {
         this.client = client;
     }

@@ -7,17 +7,18 @@ import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.client.Requests;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.elasticsearch.client.impl.EsClient;
+
 @Component(service = ClusterStateProvider.class)
 public final class ClusterStateProvider
     implements ClusterInfoProvider<ClusterState>
 {
-    private RestHighLevelClient client;
+    private EsClient client;
 
     @Override
     public ClusterState getInfo()
@@ -88,7 +89,7 @@ public final class ClusterStateProvider
     }
 
     @Reference
-    public void setClient( RestHighLevelClient client )
+    public void setClient( EsClient client )
     {
         this.client = client;
     }

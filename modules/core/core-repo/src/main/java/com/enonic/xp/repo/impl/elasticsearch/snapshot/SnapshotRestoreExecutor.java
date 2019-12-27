@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,7 +8,6 @@ import java.util.Set;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
-import org.elasticsearch.client.RequestOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -155,15 +152,8 @@ public class SnapshotRestoreExecutor
             snapshot( snapshotName ).
             waitForCompletion( true );
 
-        try
-        {
-            final RestoreSnapshotResponse response = client.snapshot().restore( request, RequestOptions.DEFAULT );
-            return response;
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+        final RestoreSnapshotResponse response = client.snapshotRestore( request );
+        return response;
     }
 
     public static Builder create()
