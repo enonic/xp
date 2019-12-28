@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.dump;
 
-import java.io.File;
 import java.net.URI;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -943,7 +942,7 @@ public class DumpServiceImplTest
         assertNotNull( partComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ).getSet( "meta" ) );
     }
 
-    private File createIncompatibleDump( final String dumpName )
+    private Path createIncompatibleDump( final String dumpName )
         throws Exception
     {
         final URI oldDumpUri = getClass().
@@ -952,7 +951,7 @@ public class DumpServiceImplTest
         final Path oldDumpFile = Path.of( oldDumpUri );
         final Path tmpDumpFile = this.temporaryFolder.resolve( dumpName );
         FileUtils.copyDirectoryRecursively( oldDumpFile, tmpDumpFile );
-        return tmpDumpFile.toFile();
+        return tmpDumpFile;
     }
 
     private void verifyBinaries( final Node node, final Node updatedNode, final NodeVersionQueryResult versions )

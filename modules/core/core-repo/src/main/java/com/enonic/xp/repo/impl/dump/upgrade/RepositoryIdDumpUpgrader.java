@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.dump.upgrade;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -138,15 +137,15 @@ public class RepositoryIdDumpUpgrader
 
     private void upgradeRepositoryDir()
     {
-        final File oldRepoDirectory = this.dumpReader.getRepositoryDir( OLD_REPOSITORY_ID );
+        final Path oldRepoDirectory = this.dumpReader.getRepositoryDir( OLD_REPOSITORY_ID );
 
         if ( oldRepoDirectory != null )
         {
-            final Path newRepoDirectory = Path.of( oldRepoDirectory.getParent(), NEW_REPOSITORY_ID.toString() );
+            final Path newRepoDirectory = oldRepoDirectory.getParent().resolve( NEW_REPOSITORY_ID.toString() );
 
             try
             {
-                FileUtils.moveDirectory( oldRepoDirectory.toPath(), newRepoDirectory );
+                FileUtils.moveDirectory( oldRepoDirectory, newRepoDirectory );
             }
             catch ( IOException e )
             {
@@ -164,15 +163,15 @@ public class RepositoryIdDumpUpgrader
             systemDumpResult( upgradeSystemDumpResult( sourceDumpMeta.getSystemDumpResult() ) ).
             build();
 
-        final File dumpMetaFile = dumpReader.getMetaDataFile();
+        final Path dumpMetaFile = dumpReader.getMetaDataFile();
 
         try
         {
-            Files.write( dumpMetaFile.toPath(), new DumpMetaJsonSerializer().serialize( upgradedDumpMeta ).getBytes() );
+            Files.writeString( dumpMetaFile, new DumpMetaJsonSerializer().serialize( upgradedDumpMeta ) );
         }
         catch ( IOException e )
         {
-            throw new DumpUpgradeException( "Unable to upgrade dump meta file: " + dumpMetaFile.getName(), e );
+            throw new DumpUpgradeException( "Unable to upgrade dump meta file: " + dumpMetaFile.getFileName(), e );
         }
     }
 
@@ -215,7 +214,7 @@ public class RepositoryIdDumpUpgrader
     }
 
     @Override
-    protected void upgradeBranchEntries( final RepositoryId repositoryId, final Branch branch, final File entriesFile )
+    protected void upgradeBranchEntries( final RepositoryId repositoryId, final Branch branch, final Path entriesFile )
     {
         super.upgradeBranchEntries( repositoryId, branch, entriesFile );
     }

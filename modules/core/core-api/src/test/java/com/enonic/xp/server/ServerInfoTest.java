@@ -20,8 +20,8 @@ public class ServerInfoTest
     public void testInfo()
         throws Exception
     {
-        final File homeDir = Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
-        final File installDir = Files.createDirectory(this.temporaryFolder.resolve( "install" ) ).toFile();
+        final File homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) ).toFile();
+        final File installDir = Files.createDirectory( this.temporaryFolder.resolve( "install" ) ).toFile();
 
         final Properties props = new Properties();
         props.put( "xp.home", homeDir.getAbsolutePath() );

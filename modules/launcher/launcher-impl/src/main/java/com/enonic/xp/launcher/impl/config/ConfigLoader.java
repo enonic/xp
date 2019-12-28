@@ -1,18 +1,16 @@
 package com.enonic.xp.launcher.impl.config;
 
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.CharSource;
-import com.google.common.io.Files;
-import com.google.common.io.Resources;
 
 import com.enonic.xp.launcher.impl.SharedConstants;
 import com.enonic.xp.launcher.impl.env.Environment;
@@ -44,37 +42,41 @@ public final class ConfigLoader
     private Map<String, String> loadDefaultProperties()
         throws Exception
     {
-        final URL url = getClass().getResource( DEFAULT_CONFIG );
-        Preconditions.checkNotNull( url, "Could not find " + DEFAULT_CONFIG );
-        return loadProperties( Resources.asCharSource( url, StandardCharsets.UTF_8 ) );
+        final InputStream stream = getClass().getResourceAsStream( DEFAULT_CONFIG );
+        Objects.requireNonNull( stream, "Could not find " + DEFAULT_CONFIG );
+
+        try (stream; final Reader reader = new BufferedReader( new InputStreamReader( stream, StandardCharsets.UTF_8 ) ))
+        {
+            return loadProperties( reader );
+        }
     }
 
     private Map<String, String> loadFileProperties()
         throws Exception
     {
-        final File configDir = new File( this.env.getHomeDir(), "config" );
-        final File file = new File( configDir, CONFIG_FILE );
-        if ( !file.isFile() )
+        final Path file = this.env.getHomeDir().toPath().resolve( "config" ).resolve( CONFIG_FILE );
+        if ( !Files.isRegularFile( file ) )
         {
             return new HashMap<>();
         }
 
-        return loadProperties( Files.asCharSource( file, StandardCharsets.UTF_8 ) );
+        try (final Reader reader = Files.newBufferedReader( file, StandardCharsets.UTF_8 ))
+        {
+            return loadProperties( reader );
+        }
     }
 
-    private Map<String, String> loadProperties( final CharSource source )
+    private Map<String, String> loadProperties( final Reader reader )
         throws Exception
     {
         final Properties props = new Properties();
-        try (Reader reader = source.openStream()) {
-            props.load(reader);
-        }
+        props.load( reader );
 
-        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
+        Map<String, String> map = new HashMap<>();
         for ( String propertyName : props.stringPropertyNames() )
         {
-            builder.put( propertyName.trim(), props.getProperty( propertyName ).trim() );
+            map.put( propertyName.trim(), props.getProperty( propertyName ).trim() );
         }
-        return builder.build();
+        return map;
     }
 }

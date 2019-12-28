@@ -300,29 +300,4 @@ public class NodeExporterTest
     {
         assertFalse( new File( this.temporaryFolder.toFile().getPath() + path ).exists(), "file " + path + " found" );
     }
-
-    private void printPaths()
-    {
-        final File file = this.temporaryFolder.toFile();
-
-        doPrintPaths( file );
-    }
-
-    private void doPrintPaths( final File file )
-    {
-        if ( file.isDirectory() )
-        {
-            final File[] children = file.listFiles();
-
-            for ( final File child : children )
-            {
-                doPrintPaths( child );
-            }
-        }
-        else
-        {
-            System.out.println( file.toPath() );
-        }
-    }
-
 }

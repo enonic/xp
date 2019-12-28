@@ -1,6 +1,5 @@
 package com.enonic.xp.elasticsearch.impl;
 
-import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
@@ -105,8 +104,8 @@ public class ElasticsearchActivatorTest
             }
         } );
 
-        final File homeDir = Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
-        System.setProperty( "xp.home", homeDir.getAbsolutePath() );
+        final Path homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) ).toAbsolutePath();
+        System.setProperty( "xp.home", homeDir.toString() );
 
         this.nodeReg = mockRegisterService( Node.class );
         this.adminClientReg = mockRegisterService( AdminClient.class );
