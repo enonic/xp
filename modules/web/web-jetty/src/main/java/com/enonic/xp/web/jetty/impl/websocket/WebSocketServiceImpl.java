@@ -2,7 +2,6 @@ package com.enonic.xp.web.jetty.impl.websocket;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -29,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.web.dispatch.DispatchConstants;
-import com.enonic.xp.web.jetty.impl.JettyController;
 import com.enonic.xp.web.websocket.EndpointFactory;
 import com.enonic.xp.web.websocket.WebSocketService;
 
@@ -37,30 +35,24 @@ import com.enonic.xp.web.websocket.WebSocketService;
 public final class WebSocketServiceImpl
     implements WebSocketService
 {
-    private JettyController controller;
+    private static final Logger LOG = LoggerFactory.getLogger( WebSocketServiceImpl.class );
 
-    private WebSocketServerFactory serverFactory;
+    private static final String SERVLET_CONTEXT_TARGET =
+        "(" + DispatchConstants.CONNECTOR_PROPERTY + "=" + DispatchConstants.XP_CONNECTOR + ")";
 
-    private final static Logger LOG = LoggerFactory.getLogger( WebSocketServiceImpl.class );
+    private final WebSocketServerFactory serverFactory;
+
+    @Activate
+    public WebSocketServiceImpl( @Reference(target = SERVLET_CONTEXT_TARGET) final ServletContext servletContext )
+    {
+        this.serverFactory = new WebSocketServerFactory( servletContext, WebSocketPolicy.newServerPolicy() );
+    }
 
     @SuppressWarnings("WeakerAccess")
     @Activate
     public void activate()
         throws Exception
     {
-        final WebSocketPolicy policy = WebSocketPolicy.newServerPolicy();
-
-        final Optional<ServletContext> xpServletContext = this.controller.getServletContexts().stream().
-            filter( servletContext -> ( DispatchConstants.VIRTUAL_HOST_PREFIX + DispatchConstants.XP_CONNECTOR ).equals(
-                servletContext.getVirtualServerName() ) ).
-            findFirst();
-
-        if ( xpServletContext.isEmpty() )
-        {
-            throw new ServletException( "Servlet context not found: " + DispatchConstants.XP_CONNECTOR );
-        }
-
-        this.serverFactory = new WebSocketServerFactory( xpServletContext.get(), policy );
         final ServerContainerImpl serverContainer = new ServerContainerImpl( this.serverFactory );
 
         try
@@ -103,12 +95,6 @@ public final class WebSocketServiceImpl
         throws IOException
     {
         return this.serverFactory.acceptWebSocket( newCreator( factory ), req, res );
-    }
-
-    @Reference
-    public void setController( final JettyController controller )
-    {
-        this.controller = controller;
     }
 
     private WebSocketCreator newCreator( final EndpointFactory factory )
