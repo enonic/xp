@@ -1,6 +1,7 @@
 package com.enonic.xp.content;
 
-import com.google.common.base.Objects;
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -47,13 +48,13 @@ public final class GetContentByIdsParams
         }
 
         final GetContentByIdsParams that = (GetContentByIdsParams) o;
-        return Objects.equal( this.ids, that.ids );
+        return Objects.equals( this.ids, that.ids );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.ids );
+        return Objects.hash( this.ids );
     }
 
     public void validate()

@@ -1,6 +1,6 @@
 package com.enonic.xp.content;
 
-import com.google.common.base.Objects;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -38,13 +38,13 @@ public final class ReprocessContentParams
             return false;
         }
         final ReprocessContentParams that = (ReprocessContentParams) o;
-        return Objects.equal( this.contentId, that.contentId );
+        return Objects.equals( this.contentId, that.contentId );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.contentId );
+        return Objects.hash( this.contentId );
     }
 
     public static final class Builder
