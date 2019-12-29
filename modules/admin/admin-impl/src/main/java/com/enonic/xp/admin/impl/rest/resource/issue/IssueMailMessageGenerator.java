@@ -7,6 +7,7 @@ import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.mail.Message;
@@ -14,14 +15,13 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.text.StrSubstitutor;
 
+import com.google.common.base.Strings;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.issue.IssueComment;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.IssueType;
 import com.enonic.xp.mail.MailMessage;
-
-import static com.google.common.base.Strings.nullToEmpty;
 
 public abstract class IssueMailMessageGenerator<P extends IssueNotificationParams>
 {
@@ -35,15 +35,18 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
     public MailMessage generateMessage()
     {
         final String sender = getSender();
-        final String recipients = generateRecipients();
-        final String copyRecipients = getCopyRecepients();
         final String messageSubject = generateMessageSubject();
         final String messageBody = generateMessageBody();
+        final String recipients = generateRecipients();
+
+        if ( recipients.isBlank() )
+        {
+            return null;
+        }
 
         return msg -> {
             msg.setFrom( new InternetAddress( sender, "Content Studio" ) );
             msg.addRecipients( Message.RecipientType.TO, recipients );
-            msg.addRecipients( Message.RecipientType.CC, copyRecipients );
             msg.setSubject( messageSubject );
             msg.setContent( messageBody, "text/html; charset=UTF-8" );
         };
@@ -53,11 +56,12 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
 
     protected abstract String generateMessageTitle();
 
-    protected abstract String generateRecipients();
-
     protected abstract String getSender();
 
-    protected abstract String getCopyRecepients();
+    protected String generateRecipients()
+    {
+        return String.join( ",", this.getApproverEmails() );
+    }
 
     protected boolean shouldShowComments()
     {
@@ -82,12 +86,17 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
         return params.getIssue().getIssueType() == IssueType.PUBLISH_REQUEST;
     }
 
-    protected String getApproverEmails()
+    protected Set<String> getApproverEmails()
     {
         return params.getApprovers().stream().
-            filter( approver -> !nullToEmpty( approver.getEmail() ).isBlank() ).
+            filter( approver -> !Strings.nullToEmpty( approver.getEmail() ).isBlank() ).
             map( approver -> approver.getEmail() ).
-            collect( Collectors.joining( "," ) );
+            collect( Collectors.toSet() );
+    }
+
+    protected void filterEmail( final Set<String> emails, final String email )
+    {
+        emails.removeIf( eml -> eml.equals( email ) );
     }
 
     protected String getCreatorEmail()
@@ -108,8 +117,10 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
         final boolean isRequest = this.isPublishRequest();
         final boolean isOpen = isIssueOpen();
         final String idString = params.getIssue().getId().toString();
-        final String showDetailsCaption = params.getLocaleMessageResolver().localizeMessage( "issue.email.showDetailsCaption", "Show Details..." );
-        final String latestCommentTitle = params.getLocaleMessageResolver().localizeMessage( "issue.email.latestCommentTitle", "Latest comment" );
+        final String showDetailsCaption =
+            params.getLocaleMessageResolver().localizeMessage( "issue.email.showDetailsCaption", "Show Details..." );
+        final String latestCommentTitle =
+            params.getLocaleMessageResolver().localizeMessage( "issue.email.latestCommentTitle", "Latest comment" );
 
         messageParams.put( "id", idString );
         messageParams.put( "index", params.getIssue().getIndex() );
