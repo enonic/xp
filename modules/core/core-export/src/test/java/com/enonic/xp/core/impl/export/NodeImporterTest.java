@@ -54,9 +54,9 @@ public class NodeImporterTest
         final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.toFile().getPath(), "myExport", "mynode", "_" ) );
         assert nodeFileDir != null;
 
-        final byte[] nodeXmlFile = readFromFile( "node_unordered.xml" ).getBytes();
+        final String nodeXmlFile = readFromFile( "node_unordered.xml" );
 
-        Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ), nodeXmlFile );
+        Files.writeString( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ), nodeXmlFile );
 
         final NodeImportResult result = NodeImporter.create().
             nodeService( importNodeService ).
@@ -76,9 +76,9 @@ public class NodeImporterTest
         final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.toFile().getPath(), "myExport", "mynode", "_" ) );
         assert nodeFileDir != null;
 
-        final byte[] nodeXmlFile = readFromFile( "node_timestamp.xml" ).getBytes();
+        final String nodeXmlFile = readFromFile( "node_timestamp.xml" );
 
-        Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ), nodeXmlFile );
+        Files.writeString( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ), nodeXmlFile );
 
         final NodeImportResult result = NodeImporter.create().
             nodeService( importNodeService ).
@@ -98,9 +98,9 @@ public class NodeImporterTest
         final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.toFile().getPath(), "myExport", "mynode", "_" ) );
         assert nodeFileDir != null;
 
-        final byte[] nodeXmlFile = readFromFile( "node_with_id_1234.xml" ).getBytes();
+        final String nodeXmlFile = readFromFile( "node_with_id_1234.xml" );
 
-        Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ), nodeXmlFile );
+        Files.writeString( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ), nodeXmlFile );
 
         final NodeImportResult result = NodeImporter.create().
             nodeService( importNodeService ).
@@ -123,9 +123,9 @@ public class NodeImporterTest
         final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.toFile().getPath(), "myExport", "mynode", "_" ) );
         assert nodeFileDir != null;
 
-        final byte[] nodeXmlFile = readFromFile( "node_unordered.xml" ).getBytes();
+        final String nodeXmlFile = readFromFile( "node_unordered.xml" );
 
-        Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ), nodeXmlFile );
+        Files.writeString( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ), nodeXmlFile );
 
         final NodeServiceMock importNodeService = new NodeServiceMock();
         final NodeImportResult result = NodeImporter.create().
@@ -419,11 +419,11 @@ public class NodeImporterTest
         final Path nodeFileDir = Files.createDirectories( Paths.get( temporaryFolder.toFile().getPath(), "myExport", "mynode", "_" ) );
         final Path xsltFilePath = nodeFileDir.resolve( "transform.xsl" );
 
-        final byte[] nodeXmlFile = readFromFile( "node_with_appref.xml" ).getBytes();
-        final byte[] xsltFile = readFromFile( "transform.xsl" ).getBytes();
+        final String nodeXmlFile = readFromFile( "node_with_appref.xml" );
+        final String xsltFile = readFromFile( "transform.xsl" );
 
-        Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ), nodeXmlFile );
-        Files.write( xsltFilePath, xsltFile );
+        Files.writeString( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ), nodeXmlFile );
+        Files.writeString( xsltFilePath, xsltFile );
 
         final NodeImportResult result = NodeImporter.create().
             nodeService( importNodeService ).
@@ -457,7 +457,7 @@ public class NodeImporterTest
         }
 
         assert nodeFileDir != null;
-        Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.ORDER_EXPORT_NAME ), builder.toString().getBytes() );
+        Files.writeString( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.ORDER_EXPORT_NAME ), builder.toString() );
     }
 
     private void createBinaryFile( final Path exportPath, final String fileName, final byte[] bytes )
@@ -478,8 +478,8 @@ public class NodeImporterTest
             Paths.get( temporaryFolder.toFile().getPath(), exportPath.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
 
         assert nodeFileDir != null;
-        Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ),
-                     readFromFile( "root-node.xml" ).getBytes() );
+        Files.writeString( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ),
+                           readFromFile( "root-node.xml" ) );
     }
 
     private void createNodeXmlFile( final Path exportPath, boolean ordered )
@@ -489,8 +489,8 @@ public class NodeImporterTest
             Paths.get( temporaryFolder.toFile().getPath(), exportPath.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
 
         assert nodeFileDir != null;
-        Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ),
-                     readFromFile( ordered ? "node_manual_ordered.xml" : "node_unordered.xml" ).getBytes() );
+        Files.writeString( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ),
+                           readFromFile( ordered ? "node_manual_ordered.xml" : "node_unordered.xml" ) );
     }
 
     private void createNodeXmlFileWithBinaries( final Path path )
@@ -500,8 +500,8 @@ public class NodeImporterTest
             Paths.get( temporaryFolder.toFile().getPath(), path.toString(), NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
 
         assert nodeFileDir != null;
-        Files.write( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ),
-                     readFromFile( "node_with_binary.xml" ).getBytes() );
+        Files.writeString( Paths.get( nodeFileDir.toString(), NodeExportPathResolver.NODE_XML_EXPORT_NAME ),
+                           readFromFile( "node_with_binary.xml" ) );
     }
 
 

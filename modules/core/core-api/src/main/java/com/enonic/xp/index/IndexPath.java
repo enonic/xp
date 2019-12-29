@@ -2,7 +2,6 @@ package com.enonic.xp.index;
 
 import java.util.Collection;
 
-import com.google.common.collect.Collections2;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Property;
@@ -84,7 +83,7 @@ public class IndexPath
 
         public static String[] normalize( final Collection<String> paths )
         {
-            return Collections2.transform( paths, str -> doNormalize( str ) ).toArray( new String[paths.size()] );
+            return paths.stream().map( IndexFieldNameNormalizer::doNormalize ).toArray( String[]::new );
         }
     }
 }

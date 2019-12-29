@@ -34,10 +34,7 @@ public final class ComponentPath
         final ImmutableList.Builder<RegionAndComponent> builder = new ImmutableList.Builder<>();
         if ( parentPath.getParentComponentPath() != null )
         {
-            for ( final RegionAndComponent regionAndComponent : parentPath.getParentComponentPath() )
-            {
-                builder.add( regionAndComponent );
-            }
+            builder.addAll( parentPath.getParentComponentPath().regionAndComponentList );
         }
         builder.add( RegionAndComponent.from( parentPath.getRegionName(), componentIndex ) );
         return new ComponentPath( builder.build() );

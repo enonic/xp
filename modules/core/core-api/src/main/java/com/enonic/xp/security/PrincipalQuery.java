@@ -7,7 +7,6 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -196,7 +195,10 @@ public final class PrincipalQuery
 
         public Builder includeTypes( final Iterable<PrincipalType> principalTypes )
         {
-            Iterables.addAll( this.principalTypes, principalTypes );
+            for ( PrincipalType principalType : principalTypes )
+            {
+                this.principalTypes.add( principalType );
+            }
             return this;
         }
 

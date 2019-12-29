@@ -1,6 +1,6 @@
 package com.enonic.xp.web.impl.context;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -105,11 +105,11 @@ final class SessionWrapper
             return builder.build();
         }
 
-        final Enumeration<String> names = this.session.getAttributeNames();
+        final Iterator<String> names = this.session.getAttributeNames().asIterator();
 
-        while ( names.hasMoreElements() )
+        while ( names.hasNext() )
         {
-            final String key = names.nextElement();
+            final String key = names.next();
             builder.put( key, this.session.getAttribute( key ) );
         }
 

@@ -1,11 +1,9 @@
 package com.enonic.xp.repo.impl.dump.writer;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.zip.GZIPOutputStream;
@@ -14,8 +12,6 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.io.Files;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
@@ -54,7 +50,7 @@ public class FileDumpWriter
 
     private GZIPOutputStream gzipOut;
 
-    private FileOutputStream fileOut;
+    private OutputStream fileOut;
 
     private TarArchiveOutputStream tarOutputStream;
 
@@ -80,7 +76,7 @@ public class FileDumpWriter
 
         try
         {
-            Files.write( serialized, dumpMetaFile.toFile(), Charset.defaultCharset() );
+            Files.writeString( dumpMetaFile, serialized );
         }
         catch ( IOException e )
         {
@@ -93,7 +89,7 @@ public class FileDumpWriter
     {
         try
         {
-            final File metaFile = createBranchMeta( repositoryId, branch );
+            final Path metaFile = createBranchMeta( repositoryId, branch );
             doOpenFile( metaFile );
         }
         catch ( Exception e )
@@ -107,7 +103,7 @@ public class FileDumpWriter
     {
         try
         {
-            final File metaFile = createVersionsMeta( repositoryId );
+            final Path metaFile = createVersionsMeta( repositoryId );
             doOpenFile( metaFile );
         }
         catch ( Exception e )
@@ -121,7 +117,7 @@ public class FileDumpWriter
     {
         try
         {
-            final File metaFile = createCommitsMeta( repositoryId );
+            final Path metaFile = createCommitsMeta( repositoryId );
             doOpenFile( metaFile );
         }
         catch ( Exception e )
@@ -130,48 +126,50 @@ public class FileDumpWriter
         }
     }
 
-    private void doOpenFile( final File metaFile )
+    private void doOpenFile( final Path metaFile )
         throws IOException
     {
-        this.fileOut = new FileOutputStream( metaFile );
+        this.fileOut = Files.newOutputStream( metaFile );
         this.gzipOut = new GZIPOutputStream( fileOut );
         this.tarOutputStream = new TarArchiveOutputStream( gzipOut );
         this.tarOutputStream.setLongFileMode( TarArchiveOutputStream.LONGFILE_POSIX );
     }
 
-    private File createBranchMeta( final RepositoryId repositoryId, final Branch branch )
+    private Path createBranchMeta( final RepositoryId repositoryId, final Branch branch )
     {
-        final File metaFile = createBranchMetaPath( this.dumpDirectory, repositoryId, branch ).toFile();
+        final Path metaFile = createBranchMetaPath( this.dumpDirectory, repositoryId, branch );
 
         return doCreateMetaFile( metaFile );
     }
 
-    private File createVersionsMeta( final RepositoryId repositoryId )
+    private Path createVersionsMeta( final RepositoryId repositoryId )
     {
-        final File metaFile = createVersionMetaPath( this.dumpDirectory, repositoryId ).toFile();
+        final Path metaFile = createVersionMetaPath( this.dumpDirectory, repositoryId );
 
         return doCreateMetaFile( metaFile );
     }
 
-    private File createCommitsMeta( final RepositoryId repositoryId )
+    private Path createCommitsMeta( final RepositoryId repositoryId )
     {
-        final File metaFile = createCommitMetaPath( this.dumpDirectory, repositoryId ).toFile();
+        final Path metaFile = createCommitMetaPath( this.dumpDirectory, repositoryId );
 
         return doCreateMetaFile( metaFile );
     }
 
-    private File doCreateMetaFile( final File metaFile )
+    private Path doCreateMetaFile( final Path metaFile )
     {
-        if ( metaFile.exists() )
+        if ( Files.exists( metaFile ) )
         {
-            throw new RepoDumpException( "Meta-file with path [" + metaFile.getPath() + "] already exists" );
+            throw new RepoDumpException( "Meta-file with path [" + metaFile + "] already exists" );
         }
 
-        metaFile.getParentFile().mkdirs();
-
-        if ( !metaFile.getParentFile().exists() )
+        try
         {
-            throw new RepoDumpException( "Not able to create parent-directory [" + metaFile.getParentFile().getPath() + "]" );
+            Files.createDirectories( metaFile.getParent() );
+        }
+        catch ( IOException e )
+        {
+            throw new RepoDumpException( "Not able to create parent-directory [" + metaFile.getParent() + "]" );
         }
 
         return metaFile;

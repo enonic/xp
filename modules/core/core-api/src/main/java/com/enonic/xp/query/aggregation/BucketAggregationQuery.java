@@ -1,9 +1,6 @@
 package com.enonic.xp.query.aggregation;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -13,10 +10,10 @@ public abstract class BucketAggregationQuery
 {
     private final AggregationQueries subQueries;
 
-    public BucketAggregationQuery( final Builder builder )
+    public BucketAggregationQuery( final Builder<?> builder )
     {
         super( builder );
-        this.subQueries = AggregationQueries.fromCollection( builder.aggregationQueries );
+        this.subQueries = AggregationQueries.fromCollection( builder.aggregationQueries.build() );
     }
 
     public AggregationQueries getSubQueries()
@@ -32,7 +29,7 @@ public abstract class BucketAggregationQuery
             super( name );
         }
 
-        private Set<AggregationQuery> aggregationQueries = new HashSet<>();
+        private ImmutableSet.Builder<AggregationQuery> aggregationQueries = ImmutableSet.builder();
 
         @SuppressWarnings("unchecked")
         public T addSubQuery( final AggregationQuery aggregationQuery )
@@ -43,7 +40,7 @@ public abstract class BucketAggregationQuery
 
         public T addSubQueries( final Iterable<AggregationQuery> aggregationQueries )
         {
-            Iterables.addAll( this.aggregationQueries, aggregationQueries );
+            this.aggregationQueries.addAll( aggregationQueries );
             return (T) this;
         }
     }
