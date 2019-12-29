@@ -2,11 +2,10 @@ package com.enonic.xp.repository;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.IndexType;
 
-@Beta
+@PublicApi
 public class RepositorySettings
 {
     private final IndexDefinitions indexDefinitions;

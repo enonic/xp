@@ -19,12 +19,12 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 
-import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.Exceptions;
 
-@Beta
+@PublicApi
 public final class ImageHelper
 {
     private ImageHelper()

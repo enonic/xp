@@ -1,13 +1,12 @@
 package com.enonic.xp.inputtype;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 
-@Beta
+@PublicApi
 final class ContentTypeFilterType
     extends InputTypeBase
 {

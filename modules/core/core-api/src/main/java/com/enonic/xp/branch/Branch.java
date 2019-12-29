@@ -1,11 +1,12 @@
 package com.enonic.xp.branch;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+
+import com.enonic.xp.annotation.PublicApi;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-@Beta
+@PublicApi
 public final class Branch
 {
     private static final String VALID_REPOSITORY_ID_REGEX = "([a-zA-Z0-9\\-:])([a-zA-Z0-9_\\-\\.:])*";

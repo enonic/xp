@@ -1,10 +1,9 @@
 package com.enonic.xp.node;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.IndexPath;
 
-@Beta
+@PublicApi
 public class NodeIndexPath
 {
     private static final String DIVIDER = ".";

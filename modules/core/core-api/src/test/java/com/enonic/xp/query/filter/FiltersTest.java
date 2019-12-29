@@ -1,8 +1,8 @@
 package com.enonic.xp.query.filter;
 
-import org.junit.jupiter.api.Test;
+import java.util.List;
 
-import com.google.common.collect.Lists;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,7 +14,7 @@ public class FiltersTest
     {
         final Filters filters = Filters.create().
             add( ExistsFilter.create().build() ).
-            addAll( Lists.newArrayList( ExistsFilter.create().build(), ExistsFilter.create().build() ) ).
+            addAll( List.of( ExistsFilter.create().build(), ExistsFilter.create().build() ) ).
             build();
 
         assertNotNull( filters );

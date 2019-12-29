@@ -1,10 +1,9 @@
 package com.enonic.xp.security.auth;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.exception.BaseException;
 
-@Beta
+@PublicApi
 public class AuthenticationException
     extends BaseException
 {

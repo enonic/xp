@@ -1,8 +1,8 @@
 package com.enonic.xp.descriptor;
 
-import org.junit.jupiter.api.Test;
+import java.util.List;
 
-import com.google.common.collect.Lists;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
@@ -49,7 +49,7 @@ public class DescriptorsTest
         final MyDescriptor desc1 = new MyDescriptor( "app1:abc" );
         final MyDescriptor desc2 = new MyDescriptor( "app2:abc" );
 
-        final Descriptors<MyDescriptor> list = Descriptors.from( Lists.newArrayList( desc1, desc2 ) );
+        final Descriptors<MyDescriptor> list = Descriptors.from( List.of( desc1, desc2 ) );
         assertEquals( "[app1:abc, app2:abc]", list.toString() );
     }
 

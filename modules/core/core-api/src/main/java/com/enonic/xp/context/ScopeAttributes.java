@@ -2,9 +2,9 @@ package com.enonic.xp.context;
 
 import java.util.Map;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public interface ScopeAttributes
 {
     Object getAttribute( String key );

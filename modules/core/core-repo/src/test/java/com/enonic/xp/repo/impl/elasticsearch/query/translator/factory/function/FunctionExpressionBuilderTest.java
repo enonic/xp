@@ -8,8 +8,6 @@ import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 
@@ -22,7 +20,7 @@ public class FunctionExpressionBuilderTest
     public void test_fulltext()
     {
         List<ValueExpr> arguments =
-            Lists.newArrayList( ValueExpr.string( "myField" ), ValueExpr.string( "mySearchString" ), ValueExpr.string( "OR" ) );
+            List.of( ValueExpr.string( "myField" ), ValueExpr.string( "mySearchString" ), ValueExpr.string( "OR" ) );
 
         final QueryBuilder fulltext = FunctionExpressionBuilder.build( new FunctionExpr( "fulltext", arguments ) );
 

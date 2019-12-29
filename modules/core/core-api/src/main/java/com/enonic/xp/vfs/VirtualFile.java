@@ -3,11 +3,12 @@ package com.enonic.xp.vfs;
 import java.net.URL;
 import java.util.List;
 
-import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public interface VirtualFile
 {
     String getName();

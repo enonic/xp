@@ -1,11 +1,11 @@
 package com.enonic.xp.schema;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 
-@Beta
+@PublicApi
 public abstract class BaseSchemaName
 {
     private final static String SEPARATOR = ":";

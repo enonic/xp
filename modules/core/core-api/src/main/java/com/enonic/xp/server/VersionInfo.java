@@ -1,10 +1,10 @@
 package com.enonic.xp.server;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-@Beta
+@PublicApi
 public final class VersionInfo
 {
     private static VersionInfo INSTANCE;

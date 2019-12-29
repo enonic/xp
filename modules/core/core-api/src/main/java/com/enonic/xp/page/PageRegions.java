@@ -1,11 +1,10 @@
 package com.enonic.xp.page;
 
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.region.AbstractRegions;
 
-@Beta
+@PublicApi
 public final class PageRegions
     extends AbstractRegions
 {

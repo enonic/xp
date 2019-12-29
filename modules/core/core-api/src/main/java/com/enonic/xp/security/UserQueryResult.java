@@ -1,9 +1,10 @@
 package com.enonic.xp.security;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class UserQueryResult
 {
     private final int totalSize;

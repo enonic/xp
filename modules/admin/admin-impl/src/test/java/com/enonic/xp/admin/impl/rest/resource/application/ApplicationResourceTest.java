@@ -4,6 +4,7 @@ import java.net.URL;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
@@ -17,7 +18,6 @@ import org.osgi.framework.Version;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.admin.impl.market.MarketService;
@@ -560,7 +560,7 @@ public class ApplicationResourceTest
 
         final MultipartItem file = createItem( "file", 10, "jar", "image/png" );
 
-        Mockito.when( form.iterator() ).thenReturn( Lists.newArrayList( file ).iterator() );
+        Mockito.when( form.iterator() ).thenReturn( List.of( file ).iterator() );
         Mockito.when( form.get( "file" ) ).thenReturn( file );
         Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
 
@@ -582,7 +582,7 @@ public class ApplicationResourceTest
 
         final MultipartItem file = createItem( "file", 10, "jar", "image/png" );
 
-        Mockito.when( form.iterator() ).thenReturn( Lists.newArrayList( file ).iterator() );
+        Mockito.when( form.iterator() ).thenReturn( List.of( file ).iterator() );
         Mockito.when( form.get( "file" ) ).thenReturn( file );
         Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
 

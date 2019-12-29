@@ -2,12 +2,13 @@ package com.enonic.xp.content;
 
 import java.util.List;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ContentPath
 {
     public static final ContentPath ROOT = create().absolute( true ).build();

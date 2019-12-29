@@ -2,12 +2,12 @@ package com.enonic.xp.security;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Beta
+@PublicApi
 public final class PrincipalRelationship
 {
     private final PrincipalKey from;

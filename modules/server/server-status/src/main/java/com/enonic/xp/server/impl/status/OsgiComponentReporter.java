@@ -1,5 +1,6 @@
 package com.enonic.xp.server.impl.status;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.osgi.framework.Constants;
@@ -13,7 +14,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.status.StatusReporter;
@@ -39,7 +39,7 @@ public final class OsgiComponentReporter
     @Override
     public JsonNode getReport()
     {
-        final List<ComponentDescriptionDTO> list = Lists.newArrayList( this.runtime.getComponentDescriptionDTOs() );
+        final List<ComponentDescriptionDTO> list = new ArrayList<>( this.runtime.getComponentDescriptionDTOs() );
         list.sort( this::compareDescription );
 
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
@@ -63,7 +63,7 @@ public final class OsgiComponentReporter
 
         final ArrayNode configJson = json.putArray( "instances" );
 
-        final List<ComponentConfigurationDTO> instances = Lists.newArrayList( this.runtime.getComponentConfigurationDTOs( desc ) );
+        final List<ComponentConfigurationDTO> instances = new ArrayList<>( this.runtime.getComponentConfigurationDTOs( desc ) );
         instances.sort( this::compareConfig );
 
         for ( final ComponentConfigurationDTO instance : instances )

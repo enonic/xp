@@ -1,11 +1,11 @@
 package com.enonic.xp.media;
 
-import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.Media;
 
-@Beta
+@PublicApi
 public interface MediaInfoService
 {
     MediaInfo parseMediaInfo( ByteSource byteSource );

@@ -1,11 +1,10 @@
 package com.enonic.xp.task;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.exception.BaseException;
 import com.enonic.xp.page.DescriptorKey;
 
-@Beta
+@PublicApi
 public class TaskNotFoundException
     extends BaseException
 {

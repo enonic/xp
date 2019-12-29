@@ -1,10 +1,9 @@
 package com.enonic.xp.content;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
-@Beta
+@PublicApi
 public class ResolveRequiredDependenciesParams
 {
     private final ContentIds contentIds;

@@ -2,11 +2,10 @@ package com.enonic.xp.security;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.query.expr.QueryExpr;
 
-@Beta
+@PublicApi
 public final class UserQuery
 {
     private static final int DEFAULT_SIZE = 10;

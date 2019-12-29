@@ -2,9 +2,10 @@ package com.enonic.xp.web.impl.dispatch.status;
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.osgi.framework.ServiceReference;
 
@@ -12,7 +13,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.web.dispatch.DispatchConstants;
@@ -23,15 +23,13 @@ public abstract class ResourceStatusReporter<T extends ResourceDefinition>
 {
     private final String name;
 
-    private final Map<Object, T> map;
+    private final Map<Object, T> map = new ConcurrentHashMap<>();
 
-    private final List<T> list;
+    private final List<T> list = new CopyOnWriteArrayList<>();
 
     ResourceStatusReporter( final String name )
     {
         this.name = name;
-        this.map = new HashMap<>();
-        this.list = Lists.newCopyOnWriteArrayList();
     }
 
     @Override

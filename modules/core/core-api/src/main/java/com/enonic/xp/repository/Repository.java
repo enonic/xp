@@ -1,12 +1,12 @@
 package com.enonic.xp.repository;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 
-@Beta
+@PublicApi
 public final class Repository
 {
     private final RepositoryId id;

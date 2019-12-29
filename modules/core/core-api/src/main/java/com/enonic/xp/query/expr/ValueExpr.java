@@ -3,14 +3,13 @@ package com.enonic.xp.query.expr;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 
-@Beta
+@PublicApi
 public final class ValueExpr
     implements Expression
 {

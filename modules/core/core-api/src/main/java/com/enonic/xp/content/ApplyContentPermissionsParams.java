@@ -2,13 +2,12 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.acl.AccessControlList;
 
 import static java.util.Objects.requireNonNull;
 
-@Beta
+@PublicApi
 public final class ApplyContentPermissionsParams
 {
     private final ContentId contentId;

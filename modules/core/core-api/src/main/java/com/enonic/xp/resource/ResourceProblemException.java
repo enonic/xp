@@ -4,12 +4,12 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.exception.BaseException;
 
-@Beta
+@PublicApi
 public final class ResourceProblemException
     extends BaseException
 {

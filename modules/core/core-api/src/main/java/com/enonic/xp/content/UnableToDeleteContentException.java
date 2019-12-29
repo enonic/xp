@@ -2,9 +2,9 @@ package com.enonic.xp.content;
 
 import java.text.MessageFormat;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public final class UnableToDeleteContentException
     extends RuntimeException
 {

@@ -1,8 +1,8 @@
 package com.enonic.xp.audit;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public interface AuditLogService
 {
     AuditLog log( LogAuditLogParams params );

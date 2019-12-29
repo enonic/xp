@@ -1,7 +1,6 @@
 package com.enonic.xp.security;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.repository.Repository;
@@ -10,7 +9,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
-@Beta
+@PublicApi
 public final class SystemConstants
 {
     public static final Branch BRANCH_SYSTEM = Branch.create().

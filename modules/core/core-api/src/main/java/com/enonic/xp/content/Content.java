@@ -4,9 +4,9 @@ import java.time.Instant;
 import java.util.Locale;
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.Attachments;
@@ -20,7 +20,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
 
-@Beta
+@PublicApi
 public class Content
 {
     private final boolean valid;

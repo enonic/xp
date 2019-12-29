@@ -4,13 +4,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 import com.enonic.xp.util.BinaryReference;
 
-@Beta
+@PublicApi
 public class AttachedBinaries
     extends AbstractImmutableEntitySet<AttachedBinary>
 {

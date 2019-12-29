@@ -3,11 +3,11 @@ package com.enonic.xp.home;
 
 import java.io.File;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-@Beta
+@PublicApi
 public final class HomeDir
 {
     private final File dir;

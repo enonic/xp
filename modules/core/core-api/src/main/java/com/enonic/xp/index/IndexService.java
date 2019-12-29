@@ -2,13 +2,12 @@ package com.enonic.xp.index;
 
 import java.util.Map;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
 
-@Beta
+@PublicApi
 public interface IndexService
 {
     // Check if node is master

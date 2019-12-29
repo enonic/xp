@@ -4,12 +4,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSortedSet;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-@Beta
+@PublicApi
 public final class ContentTypeNames
     extends AbstractImmutableEntitySet<ContentTypeName>
 {

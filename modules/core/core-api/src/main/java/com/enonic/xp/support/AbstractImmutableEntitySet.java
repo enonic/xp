@@ -4,10 +4,11 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public abstract class AbstractImmutableEntitySet<T>
     implements Iterable<T>
 {

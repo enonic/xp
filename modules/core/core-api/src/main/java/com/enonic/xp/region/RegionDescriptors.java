@@ -3,10 +3,11 @@ package com.enonic.xp.region;
 
 import java.util.Iterator;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class RegionDescriptors
     implements Iterable<RegionDescriptor>
 {

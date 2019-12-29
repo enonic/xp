@@ -8,9 +8,9 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -19,7 +19,7 @@ import com.enonic.xp.security.User;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Beta
+@PublicApi
 public final class AuthenticationInfo
     implements Serializable
 {

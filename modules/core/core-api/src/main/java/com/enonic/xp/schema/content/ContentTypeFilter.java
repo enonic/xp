@@ -3,10 +3,11 @@ package com.enonic.xp.schema.content;
 import java.util.Iterator;
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ContentTypeFilter
     implements Iterable<ContentTypeName>
 {

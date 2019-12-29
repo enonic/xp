@@ -1,14 +1,13 @@
 package com.enonic.xp.launcher.impl.provision;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.common.collect.Lists;
 
 final class BundleInfoFinder
 {
@@ -28,7 +27,7 @@ final class BundleInfoFinder
             findBundles( set, entry.getValue(), entry.getKey() );
         }
 
-        final List<BundleInfo> list = Lists.newArrayList( set );
+        final List<BundleInfo> list = new ArrayList<>( set );
         Collections.sort( list );
         return list;
     }

@@ -5,12 +5,13 @@ import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class PrincipalQuery
 {
     public static final int DEFAULT_SIZE = 10;
