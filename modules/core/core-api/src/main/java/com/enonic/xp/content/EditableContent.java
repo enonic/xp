@@ -4,15 +4,14 @@ package com.enonic.xp.content;
 import java.time.Instant;
 import java.util.Locale;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 
-@Beta
+@PublicApi
 public class EditableContent
 {
     public final Content source;

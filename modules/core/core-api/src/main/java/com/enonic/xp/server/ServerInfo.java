@@ -3,9 +3,9 @@ package com.enonic.xp.server;
 import java.io.File;
 import java.util.Properties;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public final class ServerInfo
 {
     private final Properties props;

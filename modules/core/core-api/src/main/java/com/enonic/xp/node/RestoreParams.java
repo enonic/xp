@@ -1,13 +1,13 @@
 package com.enonic.xp.node;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.repository.RepositoryId;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-@Beta
+@PublicApi
 public class RestoreParams
 {
     private final String snapshotName;

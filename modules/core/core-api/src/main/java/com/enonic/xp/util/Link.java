@@ -1,8 +1,8 @@
 package com.enonic.xp.util;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public class Link
 {
     private final String path;

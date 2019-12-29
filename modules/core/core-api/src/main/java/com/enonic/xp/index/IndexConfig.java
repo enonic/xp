@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public class IndexConfig
     implements Comparable<IndexConfig>
 {

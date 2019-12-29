@@ -3,15 +3,15 @@ package com.enonic.xp.portal.view;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.convert.Converters;
 import com.enonic.xp.portal.PortalRequest;
 
-@Beta
+@PublicApi
 public final class ViewFunctionParams
 {
     private String name;

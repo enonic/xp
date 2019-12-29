@@ -1,12 +1,11 @@
 package com.enonic.xp.admin.widget;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.page.DescriptorKey;
 
-@Beta
+@PublicApi
 public interface WidgetDescriptorService
 {
     Descriptors<WidgetDescriptor> getByInterfaces( final String... interfaceName );

@@ -1,8 +1,8 @@
 package com.enonic.xp.context;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public interface MutableAttributes
     extends ScopeAttributes
 {

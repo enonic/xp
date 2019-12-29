@@ -1,11 +1,10 @@
 package com.enonic.xp.content;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
 
-@Beta
+@PublicApi
 public class EditableSite
     extends EditableContent
 {

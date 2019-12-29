@@ -1,15 +1,14 @@
 package com.enonic.xp.site;
 
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
 
-@Beta
+@PublicApi
 public final class SiteDescriptor
 {
     private static final String SITE_DESCRIPTOR_PATH = "site/site.xml";

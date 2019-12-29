@@ -1,10 +1,9 @@
 package com.enonic.xp.xml.parser;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 
-@Beta
+@PublicApi
 public abstract class XmlModelParser<P extends XmlModelParser<P>>
     extends XmlObjectParser<P>
 {

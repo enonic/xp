@@ -2,13 +2,12 @@ package com.enonic.xp.context;
 
 import java.util.concurrent.Callable;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-@Beta
+@PublicApi
 public interface Context
     extends ScopeAttributes
 {

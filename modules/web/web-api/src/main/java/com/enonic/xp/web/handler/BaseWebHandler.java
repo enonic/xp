@@ -5,10 +5,10 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 import com.google.common.primitives.Longs;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.web.HttpMethod;
@@ -17,7 +17,7 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
-@Beta
+@PublicApi
 public abstract class BaseWebHandler
     implements WebHandler
 {

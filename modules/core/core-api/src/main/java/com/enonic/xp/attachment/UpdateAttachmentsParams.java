@@ -3,11 +3,10 @@ package com.enonic.xp.attachment;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentId;
 
-@Beta
+@PublicApi
 public class UpdateAttachmentsParams
 {
     private final ContentId contentId;

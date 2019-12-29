@@ -3,11 +3,12 @@ package com.enonic.xp.query.filter;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public class BooleanFilter
     extends Filter
 {

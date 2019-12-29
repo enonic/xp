@@ -3,10 +3,11 @@ package com.enonic.xp.node;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public class NodeVersionsMetadata
     implements Iterable<NodeVersionMetadata>
 {

@@ -2,9 +2,9 @@ package com.enonic.xp.vfs;
 
 import java.nio.file.Path;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public final class VirtualFilePaths
 {
     public static VirtualFilePath from( final String path, final String separator )

@@ -2,10 +2,11 @@ package com.enonic.xp.resource;
 
 import java.net.URL;
 
-import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class BytesResource
     extends ResourceBase
 {

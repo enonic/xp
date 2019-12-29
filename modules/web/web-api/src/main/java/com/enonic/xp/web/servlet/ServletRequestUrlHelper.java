@@ -2,18 +2,18 @@ package com.enonic.xp.web.servlet;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Splitter;
 import com.google.common.net.HostAndPort;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.UrlEscapers;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-@Beta
+@PublicApi
 public final class ServletRequestUrlHelper
 {
     static final String X_FORWARDED_PROTO = HttpHeaders.X_FORWARDED_PROTO;

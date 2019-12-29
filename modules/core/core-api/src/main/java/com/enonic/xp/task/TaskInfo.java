@@ -3,14 +3,14 @@ package com.enonic.xp.task;
 import java.time.Instant;
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.security.PrincipalKey;
 
-@Beta
+@PublicApi
 public final class TaskInfo
 {
     private final TaskId id;

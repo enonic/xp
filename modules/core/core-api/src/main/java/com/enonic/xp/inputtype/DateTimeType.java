@@ -5,8 +5,7 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
@@ -14,7 +13,7 @@ import com.enonic.xp.data.ValueTypeException;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Input;
 
-@Beta
+@PublicApi
 final class DateTimeType
     extends InputTypeBase
 {

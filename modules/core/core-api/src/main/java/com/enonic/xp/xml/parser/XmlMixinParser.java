@@ -1,12 +1,11 @@
 package com.enonic.xp.xml.parser;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.xml.DomElement;
 
-@Beta
+@PublicApi
 public final class XmlMixinParser
     extends XmlModelParser<XmlMixinParser>
 {

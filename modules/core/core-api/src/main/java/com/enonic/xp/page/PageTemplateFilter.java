@@ -2,11 +2,10 @@ package com.enonic.xp.page;
 
 import java.util.function.Predicate;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-@Beta
+@PublicApi
 public final class PageTemplateFilter
     implements Predicate<PageTemplate>
 {

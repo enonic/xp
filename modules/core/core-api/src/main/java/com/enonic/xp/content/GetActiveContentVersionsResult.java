@@ -3,10 +3,11 @@ package com.enonic.xp.content;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSortedSet;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public class GetActiveContentVersionsResult
 {
     private final ImmutableSortedSet<ActiveContentVersionEntry> activeContentVersions;

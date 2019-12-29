@@ -2,11 +2,10 @@ package com.enonic.xp.security;
 
 import java.time.Instant;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 
-@Beta
+@PublicApi
 public final class EditableUser
 {
     public final User source;

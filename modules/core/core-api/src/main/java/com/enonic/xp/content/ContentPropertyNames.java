@@ -1,8 +1,8 @@
 package com.enonic.xp.content;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public class ContentPropertyNames
 {
     public static final String PAGE = "page";

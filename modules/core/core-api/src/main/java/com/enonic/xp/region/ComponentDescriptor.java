@@ -1,14 +1,14 @@
 package com.enonic.xp.region;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
 
-@Beta
+@PublicApi
 public abstract class ComponentDescriptor
     extends Descriptor
 {

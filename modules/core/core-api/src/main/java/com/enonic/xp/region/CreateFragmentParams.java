@@ -2,14 +2,14 @@ package com.enonic.xp.region;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
 
-@Beta
+@PublicApi
 public final class CreateFragmentParams
 {
     private final ContentPath parentPath;

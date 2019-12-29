@@ -3,11 +3,10 @@ package com.enonic.xp.repository;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.IndexType;
 
-@Beta
+@PublicApi
 public class IndexDefinitions
 {
     private final Map<IndexType, IndexDefinition> configs;

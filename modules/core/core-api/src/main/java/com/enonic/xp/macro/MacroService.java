@@ -2,9 +2,9 @@ package com.enonic.xp.macro;
 
 import java.util.function.Function;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public interface MacroService
 {
     Macro parse( String text );

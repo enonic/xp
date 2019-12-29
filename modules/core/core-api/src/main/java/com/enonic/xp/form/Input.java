@@ -3,9 +3,9 @@ package com.enonic.xp.form;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -13,7 +13,7 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
-@Beta
+@PublicApi
 public final class Input
     extends FormItem
 {

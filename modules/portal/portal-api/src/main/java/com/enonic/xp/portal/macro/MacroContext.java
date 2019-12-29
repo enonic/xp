@@ -3,16 +3,16 @@ package com.enonic.xp.portal.macro;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Ascii;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.portal.PortalRequest;
 
-@Beta
+@PublicApi
 public final class MacroContext
 {
     private final String name;

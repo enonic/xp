@@ -3,13 +3,13 @@ package com.enonic.xp.site;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
 
-@Beta
+@PublicApi
 public final class SiteConfig
 {
     private final ApplicationKey applicationKey;

@@ -1,15 +1,15 @@
 package com.enonic.xp.schema.relationship;
 
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
-@Beta
+@PublicApi
 public final class RelationshipType
     extends BaseSchema<RelationshipTypeName>
 {

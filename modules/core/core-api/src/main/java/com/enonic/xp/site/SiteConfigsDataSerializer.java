@@ -1,12 +1,11 @@
 package com.enonic.xp.site;
 
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 
-@Beta
+@PublicApi
 public class SiteConfigsDataSerializer
 {
     private final SiteConfigDataSerializer siteConfigSerializer = new SiteConfigDataSerializer();

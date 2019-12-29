@@ -5,11 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public abstract class MapGeneratorBase
     implements MapGenerator
 {

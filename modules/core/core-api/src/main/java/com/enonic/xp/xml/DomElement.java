@@ -13,13 +13,12 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.convert.Converters;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
-@Beta
+@PublicApi
 public final class DomElement
 {
     private final Element elem;

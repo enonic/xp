@@ -2,11 +2,10 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branches;
 
-@Beta
+@PublicApi
 public class GetActiveContentVersionsParams
 {
     private final ContentId contentId;

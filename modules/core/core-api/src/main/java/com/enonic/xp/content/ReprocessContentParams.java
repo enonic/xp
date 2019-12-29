@@ -1,11 +1,12 @@
 package com.enonic.xp.content;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
+
+import com.enonic.xp.annotation.PublicApi;
 
 import static java.util.Objects.requireNonNull;
 
-@Beta
+@PublicApi
 public final class ReprocessContentParams
 {
     private final ContentId contentId;

@@ -9,9 +9,9 @@ import javax.xml.transform.dom.DOMSource;
 
 import org.xml.sax.SAXException;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public final class SchemaValidator
     implements SchemaNamespaces
 {

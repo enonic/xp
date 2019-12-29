@@ -2,10 +2,11 @@ package com.enonic.xp.region;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public abstract class Component
 {
     private ComponentName name;
