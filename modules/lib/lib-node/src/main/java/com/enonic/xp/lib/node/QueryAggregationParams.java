@@ -119,7 +119,7 @@ final class QueryAggregationParams
         {
             final Map<String, Object> aggregationsMap = (Map<String, Object>) aggregationQueryMap.get( "aggregations" );
             final AggregationQueries aggregation = getAggregations( aggregationsMap );
-            aggregationQuery.addSubQueries( aggregation );
+            aggregationQuery.addSubQueries( aggregation.getSet() );
         }
     }
 
