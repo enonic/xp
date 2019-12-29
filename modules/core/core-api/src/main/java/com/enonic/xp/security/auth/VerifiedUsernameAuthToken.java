@@ -1,7 +1,5 @@
 package com.enonic.xp.security.auth;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.annotations.Beta;
 
 import com.enonic.xp.security.IdProviderKey;
@@ -19,7 +17,7 @@ public final class VerifiedUsernameAuthToken
 
     public void setUsername( final String username )
     {
-        if ( StringUtils.countMatches( username, "\\" ) == 1 )
+        if ( username.chars().filter( c -> c == '\\' ).count() == 1 )
         {
             final String[] userParts = username.split( "\\\\" );
             if ( userParts.length != 2 )

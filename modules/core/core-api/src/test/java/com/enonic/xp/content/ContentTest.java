@@ -82,6 +82,6 @@ public class ContentTest
     {
         Content content = Content.create().path( MY_CONTENT_PATH ).build();
         assertEquals( WorkflowState.READY, content.getWorkflowInfo().getState() );
-        assertEquals( ImmutableMap.of(), content.getWorkflowInfo().getChecks() );
+        assertTrue( content.getWorkflowInfo().getChecks().isEmpty() );
     }
 }

@@ -1,13 +1,11 @@
 package com.enonic.xp.server.internal.deploy;
 
 import java.io.File;
-import java.io.FilenameFilter;
+import java.io.FileFilter;
 import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
@@ -26,14 +24,13 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.server.ServerInfo;
 
-@Component(configurationPid = "com.enonic.xp.server.deploy", service = {DeployDirectoryWatcher.class, FileAlterationListener.class})
+@Component(configurationPid = "com.enonic.xp.server.deploy", service = {DeployDirectoryWatcher.class})
 public final class DeployDirectoryWatcher
     implements FileAlterationListener
 {
     private final static Logger LOGGER = LoggerFactory.getLogger( DeployDirectoryWatcher.class );
 
-    private static final IOFileFilter FILTER =
-        FileFilterUtils.and( FileFilterUtils.fileFileFilter(), FileFilterUtils.suffixFileFilter( ".jar" ) );
+    private static final FileFilter FILTER = ( file ) -> file.getName().endsWith( ".jar" ) && file.isFile();
 
     private Map<String, ApplicationKey> applicationKeyByPath = new ConcurrentHashMap<>();
 
@@ -78,7 +75,7 @@ public final class DeployDirectoryWatcher
             return;
         }
 
-        final File[] files = dir.listFiles( (FilenameFilter) FILTER );
+        final File[] files = dir.listFiles( FILTER );
         if ( files == null )
         {
             return;

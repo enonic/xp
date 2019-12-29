@@ -4,13 +4,13 @@ import java.util.stream.Collectors;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.repo.impl.elasticsearch.IndexConstants;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItems;
 import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexValue;
 import com.enonic.xp.repository.IndexException;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class StoreDocumentXContentBuilderFactory
     extends AbstractXContentBuilderFactory
@@ -42,7 +42,7 @@ public class StoreDocumentXContentBuilderFactory
     {
         final String analyzer = indexDocument.getAnalyzer();
 
-        if ( !Strings.isNullOrEmpty( analyzer ) )
+        if ( !isNullOrEmpty( analyzer ) )
         {
             addField( builder, IndexConstants.ANALYZER_VALUE_FIELD, analyzer );
         }

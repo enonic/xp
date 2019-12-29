@@ -1,9 +1,10 @@
 package com.enonic.xp.query.expr;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 
 @Beta
@@ -92,7 +93,7 @@ public final class CompareExpr
 
         if ( this.operator.allowMultipleValues() )
         {
-            str.append( "(" ).append( Joiner.on( ", " ).join( this.values ) ).append( ")" );
+            str.append( values.stream().map( Objects::toString ).collect( Collectors.joining( ", ", "(", ")" ) ) );
         }
         else
         {

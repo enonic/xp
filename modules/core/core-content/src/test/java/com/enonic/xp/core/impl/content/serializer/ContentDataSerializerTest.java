@@ -1,9 +1,10 @@
 package com.enonic.xp.core.impl.content.serializer;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -257,7 +258,7 @@ public class ContentDataSerializerTest
 
         final WorkflowInfo workflowInfo = WorkflowInfo.create().
             state( WorkflowState.PENDING_APPROVAL ).
-            checks( ImmutableMap.of( check1Name, check1State, check2Name, check2State ) ).
+            checks( Map.of( check1Name, check1State, check2Name, check2State ) ).
             build();
 
         final ContentDataSerializer contentDataSerializer = createContentDataSerializer();

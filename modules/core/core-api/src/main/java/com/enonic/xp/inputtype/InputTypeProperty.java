@@ -2,8 +2,8 @@ package com.enonic.xp.inputtype;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 
 public final class InputTypeProperty
@@ -65,7 +65,8 @@ public final class InputTypeProperty
     @Override
     public String toString()
     {
-        return this.name + "=" + this.value + "[" + Joiner.on( "," ).withKeyValueSeparator( "=" ).join( this.attributes ) + "]";
+        return this.name + "=" + this.value +
+            this.attributes.entrySet().stream().map( e -> e.getKey() + "=" + e.getValue() ).collect( Collectors.joining( ",", "[", "]" ) );
     }
 
     public static Builder create( final String name, final String value )

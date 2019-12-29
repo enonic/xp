@@ -1,5 +1,11 @@
 package com.enonic.xp.data;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -9,7 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.SerializationUtils;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -782,11 +787,12 @@ public class PropertyTreeTest
 
     @Test
     public void setSerialization()
+        throws Exception
     {
         PropertyTree source = createTreeWithAllTypes();
 
-        final byte[] serializedObject = SerializationUtils.serialize( source );
-        final PropertyTree deserializedObject = (PropertyTree) SerializationUtils.deserialize( serializedObject );
+        final byte[] serializedObject = serialize( source );
+        final PropertyTree deserializedObject = (PropertyTree) deserialize( serializedObject );
 
         assertEquals( source, deserializedObject );
     }
@@ -836,6 +842,25 @@ public class PropertyTreeTest
         tree.addSet( "nullSet", null );
 
         return tree;
+    }
+
+    private static byte[] serialize( Serializable serializable )
+        throws IOException
+    {
+        try (final ByteArrayOutputStream baos = new ByteArrayOutputStream(); final ObjectOutputStream oos = new ObjectOutputStream( baos ))
+        {
+            oos.writeObject( serializable );
+            return baos.toByteArray();
+        }
+    }
+
+    private static Object deserialize( byte[] bytes )
+        throws IOException, ClassNotFoundException
+    {
+        try (final ByteArrayInputStream bais = new ByteArrayInputStream( bytes ); ObjectInputStream ois = new ObjectInputStream( bais ))
+        {
+            return ois.readObject();
+        }
     }
 
 }

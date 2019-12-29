@@ -12,8 +12,6 @@ import javax.servlet.ServletException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Joiner;
-
 import com.enonic.xp.web.dispatch.ResourceMapping;
 
 abstract class ResourceDefinitionImpl<T>
@@ -121,7 +119,7 @@ abstract class ResourceDefinitionImpl<T>
     private void initPattern()
     {
         final List<String> list = getUrlPatterns().stream().map( this::toRegExp ).collect( Collectors.toList() );
-        this.pattern = Pattern.compile( "(" + Joiner.on( '|' ).join( list ) + ")" );
+        this.pattern = Pattern.compile( "(" + String.join( "|", list ) + ")" );
     }
 
     private String toRegExp( final String glob )

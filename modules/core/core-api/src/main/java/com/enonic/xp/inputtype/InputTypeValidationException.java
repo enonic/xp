@@ -1,6 +1,8 @@
 package com.enonic.xp.inputtype;
 
-import com.google.common.base.Joiner;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.ValueType;
@@ -15,7 +17,8 @@ public final class InputTypeValidationException
 
     public static InputTypeValidationException invalidType( final Property property, final ValueType... expectedTypes )
     {
-        final String strList = Joiner.on( "," ).join( expectedTypes );
+        final String strList = Arrays.stream( expectedTypes ).map( Objects::toString ).
+            collect( Collectors.joining( "," ) );
         throw new InputTypeValidationException( "Invalid type in [%s]: [%s] instead of |%s]", property, property.getType(), strList );
     }
 

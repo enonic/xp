@@ -26,8 +26,6 @@ import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 
-import static org.apache.commons.lang.StringUtils.substringAfter;
-
 @org.osgi.service.component.annotations.Component(immediate = true)
 public final class ComponentInstruction
     implements PostProcessInstruction
@@ -86,7 +84,7 @@ public final class ComponentInstruction
         }
         else
         {
-            final String name = substringAfter( componentSelector, APPLICATION_COMPONENT_PREFIX );
+            final String name = componentSelector.substring( APPLICATION_COMPONENT_PREFIX.length() );
             final ComponentName componentName = new ComponentName( name );
             final ApplicationKey currentApplication;
             if ( portalRequest.getPageTemplate() != null && portalRequest.getPageTemplate().getController() != null )

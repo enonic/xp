@@ -9,7 +9,7 @@ dependencies {
     compile "org.eclipse.jetty.websocket:websocket-server:${jettyVersion}"
     compile "org.eclipse.jetty.websocket:websocket-servlet:${jettyVersion}"
     compile "org.eclipse.jetty.websocket:javax-websocket-server-impl:${jettyVersion}"
-    compile 'io.dropwizard.metrics:metrics-jetty9:3.1.2'
+    implementation "io.dropwizard.metrics:metrics-jetty9:${dropwizardMetricsVersion}"
 }
 
 jar {

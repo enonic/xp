@@ -64,8 +64,7 @@ public final class Mixins
 
     public static Mixins empty()
     {
-        final ImmutableList<Mixin> list = ImmutableList.of();
-        return new Mixins( list );
+        return new Mixins( ImmutableList.of() );
     }
 
     public static Mixins from( final Mixin... mixins )

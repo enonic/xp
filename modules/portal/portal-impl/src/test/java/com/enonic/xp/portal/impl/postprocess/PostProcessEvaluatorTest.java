@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.Cookie;
 
-import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
@@ -181,19 +180,19 @@ public class PostProcessEvaluatorTest
         throws Exception
     {
         final PostProcessInstruction uppercaseInstruction = ( portalRequest, instruction ) -> {
-            if ( instruction.startsWith( "UPPERCASE" ) )
+            if ( instruction.startsWith( "UPPERCASE " ) )
             {
                 return PortalResponse.create().
-                    body( StringUtils.substringAfter( instruction, "UPPERCASE " ).toUpperCase() ).
+                    body( instruction.substring( "UPPERCASE ".length() ).toUpperCase() ).
                     build();
             }
             return null;
         };
         final PostProcessInstruction expandInstruction = ( portalRequest, instruction ) -> {
-            if ( instruction.startsWith( "EXPAND" ) )
+            if ( instruction.startsWith( "EXPAND " ) )
             {
                 return PortalResponse.create().
-                    body( "<!--#UPPERCASE " + StringUtils.substringAfter( instruction, "EXPAND " ) + "-->" ).
+                    body( "<!--#UPPERCASE " + instruction.substring( "EXPAND ".length() ) + "-->" ).
                     build();
             }
             return null;

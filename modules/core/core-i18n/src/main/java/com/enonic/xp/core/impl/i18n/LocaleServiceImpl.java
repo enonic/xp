@@ -16,6 +16,8 @@ import java.util.regex.Pattern;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.io.Files;
+
 import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
@@ -28,8 +30,6 @@ import com.enonic.xp.resource.ResourceService;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.toSet;
-import static org.apache.commons.lang.StringUtils.substringBefore;
-import static org.apache.commons.lang.StringUtils.substringBetween;
 
 @Component(immediate = true)
 public final class LocaleServiceImpl
@@ -103,9 +103,10 @@ public final class LocaleServiceImpl
             {
                 return locale;
             }
-            if ( localeTag.contains( "-" ) )
+            final int index = localeTag.indexOf( "-" );
+            if ( index != -1 )
             {
-                final String language = substringBefore( localeTag, "-" );
+                final String language = localeTag.substring( 0, index );
                 if ( supportedLocales.contains( language ) )
                 {
                     return new Locale( language ); // language locale supported, e.g. locale=="en-us" && supportedLocales.contains("en")
@@ -139,7 +140,7 @@ public final class LocaleServiceImpl
         {
             return Locale.ENGLISH;
         }
-        final String localeStr = substringBetween( resourceName, "_", ".properties" );
+        final String localeStr = Files.getNameWithoutExtension( resourceName ).substring( resourceName.indexOf( '_' ) + 1 );
         final String[] localeParts = localeStr.split( "_" );
         final int partCount = localeParts.length;
         switch ( partCount )

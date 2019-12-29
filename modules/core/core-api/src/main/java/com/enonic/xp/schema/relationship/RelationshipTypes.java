@@ -61,8 +61,7 @@ public final class RelationshipTypes
 
     public static RelationshipTypes empty()
     {
-        final ImmutableList<RelationshipType> list = ImmutableList.of();
-        return new RelationshipTypes( list );
+        return new RelationshipTypes( ImmutableList.of() );
     }
 
     public static RelationshipTypes from( final RelationshipType... relationshipTypes )

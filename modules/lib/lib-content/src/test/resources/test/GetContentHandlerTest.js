@@ -271,3 +271,35 @@ exports.getByPath_notFound = function () {
 
     assert.assertNull(result);
 };
+
+exports.getByIdAndVersionId = function () {
+    var result = content.get({
+        key: 'mycontentId',
+        versionId: 'versionId'
+    });
+};
+
+exports.getByPathAndVersionId = function () {
+    var result = content.get({
+        key: '/a/b/mycontent',
+        versionId: 'versionId'
+    });
+};
+
+exports.getByPathAndVersionId_notFound = function () {
+    var result = content.get({
+        key: '/a/b/mycontent',
+        versionId: 'versionId'
+    });
+
+    assert.assertNull(result);
+};
+
+exports.getByIdAndVersionId_notFound = function () {
+    var result = content.get({
+        key: 'mycontentId',
+        versionId: 'versionId'
+    });
+
+    assert.assertNull(result);
+};

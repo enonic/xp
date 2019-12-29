@@ -10,8 +10,6 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.impl.server.rest.model.ReindexRequestJson;
 import com.enonic.xp.impl.server.rest.model.ReindexResultJson;
 import com.enonic.xp.impl.server.rest.model.UpdateIndexSettingsRequestJson;
@@ -30,6 +28,8 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Path("/repo/index")
 @Produces(MediaType.APPLICATION_JSON)
@@ -78,7 +78,7 @@ public final class IndexResource
     {
         final RepositoryIds.Builder repositoryIds = RepositoryIds.create();
 
-        if ( !Strings.isNullOrEmpty( request.repositoryId ) )
+        if ( !isNullOrEmpty( request.repositoryId ) )
         {
             repositoryIds.add( RepositoryId.from( request.repositoryId ) );
         }

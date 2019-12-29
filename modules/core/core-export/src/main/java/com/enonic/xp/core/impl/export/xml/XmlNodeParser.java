@@ -8,8 +8,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -189,12 +187,7 @@ public final class XmlNodeParser
 
     private void addXmlProperty( final PropertySet set, final String name, final String value )
     {
-        set.addXml( name, xmlDecodeString( value ) );
-    }
-
-    private String xmlDecodeString( final String value )
-    {
-        return StringEscapeUtils.unescapeXml( value );
+        set.addXml( name, value );
     }
 
     private void addGeoPointProperty( final PropertySet set, final String name, final String value )
