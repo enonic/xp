@@ -266,8 +266,8 @@ public class MoveNodeCommandTest
         refresh();
 
         assertEquals( 2, getVersions( child1 ).getHits() );
-        assertEquals( 1, getVersions( child1_1 ).getHits() );
-        assertEquals( 1, getVersions( child1_2 ).getHits() );
+        assertEquals( 2, getVersions( child1_1 ).getHits() );
+        assertEquals( 2, getVersions( child1_2 ).getHits() );
 
         final NodePath previousChild1Path = child1_1.path();
         assertNull( getNodeByPath( previousChild1Path ) );

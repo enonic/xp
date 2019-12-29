@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.app.config;
 
-import java.util.Hashtable;
-
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -17,6 +15,7 @@ import org.osgi.util.tracker.BundleTrackerCustomizer;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.core.impl.app.ApplicationHelper;
+import com.enonic.xp.core.internal.Dictionaries;
 
 @Component(immediate = true)
 public final class ApplicationConfigInvalidator
@@ -63,10 +62,9 @@ public final class ApplicationConfigInvalidator
         final ApplicationConfigReloader reloader = new ApplicationConfigReloader( key, this.service );
 
         final BundleContext context = bundle.getBundleContext();
-        final Hashtable<String, Object> props = new Hashtable<>();
-        props.put( Constants.SERVICE_PID, bundle.getSymbolicName() );
 
-        return context.registerService( ManagedService.class, reloader, props );
+        return context.registerService( ManagedService.class, reloader,
+                                        Dictionaries.of( Constants.SERVICE_PID, bundle.getSymbolicName() ) );
     }
 
     @Reference

@@ -1,7 +1,5 @@
 package com.enonic.xp.web.jetty.impl;
 
-import java.util.Hashtable;
-
 import org.eclipse.jetty.server.session.SessionDataStore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +14,7 @@ import org.osgi.framework.ServiceRegistration;
 
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterNodeId;
+import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.web.dispatch.DispatchServlet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,9 +41,7 @@ public class JettyActivatorTest
         System.getProperties().remove( "jetty.version" );
 
         final Bundle bundle = Mockito.mock( Bundle.class );
-        final Hashtable<String, String> headers = new Hashtable<>();
-        headers.put( "X-Jetty-Version", "9.x" );
-        Mockito.when( bundle.getHeaders() ).thenReturn( headers );
+        Mockito.when( bundle.getHeaders() ).thenReturn( Dictionaries.of( "X-Jetty-Version", "9.x" ) );
 
         this.bundleContext = Mockito.mock( BundleContext.class, this::defaultAnswer );
         Mockito.when( this.bundleContext.createFilter( Mockito.anyString() ) ).thenReturn( Mockito.mock( Filter.class ) );

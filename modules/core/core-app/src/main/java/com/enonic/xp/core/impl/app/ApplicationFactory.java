@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
-import java.io.File;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.List;
@@ -95,8 +95,8 @@ final class ApplicationFactory
     {
         try
         {
-            final File file = new File( path );
-            return file.toURI().toURL();
+            final Path file = Path.of( path );
+            return file.toUri().toURL();
         }
         catch ( final Exception e )
         {

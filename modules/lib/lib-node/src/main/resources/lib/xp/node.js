@@ -142,6 +142,7 @@ RepoConnection.prototype.modify = function (params) {
  *
  * @example-ref examples/node/get-1.js
  * @example-ref examples/node/get-2.js
+ * @example-ref examples/node/get-3.js
  *
  * @param {...(string|string[]|object|object[])} keys to fetch. Each argument could be an id, a path, an object with key and versionId properties or an array of them.
  *

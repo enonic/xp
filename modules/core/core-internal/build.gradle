@@ -1,0 +1,9 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+}
+
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Core - Internal',
+         'Export-Package': 'com.enonic.xp.core.internal.*')
+}

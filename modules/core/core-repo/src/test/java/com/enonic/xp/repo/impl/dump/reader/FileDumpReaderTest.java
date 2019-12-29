@@ -1,17 +1,13 @@
 package com.enonic.xp.repo.impl.dump.reader;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import com.google.common.io.Files;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.repository.RepositoryId;
@@ -26,13 +22,13 @@ public class FileDumpReaderTest
 
     private FileDumpReader fileDumpReader;
 
-    private File dumpFolder;
+    private Path dumpFolder;
 
     @BeforeEach
     public void setUp()
         throws Exception
     {
-        this.dumpFolder = java.nio.file.Files.createDirectory( this.temporaryFolder.resolve( "myDump" ) ).toFile();
+        this.dumpFolder = Files.createDirectory( this.temporaryFolder.resolve( "myDump" ) );
         createMetaDataFile( dumpFolder );
         this.fileDumpReader = new FileDumpReader( temporaryFolder.toFile().toPath(), "myDump", null );
     }
@@ -41,7 +37,7 @@ public class FileDumpReaderTest
     public void repositories()
         throws Exception
     {
-        final File meta = createFolder( this.dumpFolder, "meta" );
+        final Path meta = createFolder( this.dumpFolder, "meta" );
         createFolder( meta, "repo1" );
         createFolder( meta, "repo2" );
 
@@ -53,7 +49,7 @@ public class FileDumpReaderTest
     public void ignore_file_in_repo_dir()
         throws Exception
     {
-        final File meta = createFolder( this.dumpFolder, "meta" );
+        final Path meta = createFolder( this.dumpFolder, "meta" );
         createFolder( meta, "repo1" );
         createFolder( meta, "repo2" );
         createFile( meta, "fisk" );
@@ -66,8 +62,8 @@ public class FileDumpReaderTest
     public void branches()
         throws Exception
     {
-        final File meta = createFolder( this.dumpFolder, "meta" );
-        final File repo1 = createFolder( meta, "repo1" );
+        final Path meta = createFolder( this.dumpFolder, "meta" );
+        final Path repo1 = createFolder( meta, "repo1" );
         createFolder( repo1, "master" );
         createFolder( repo1, "draft" );
 
@@ -79,8 +75,8 @@ public class FileDumpReaderTest
     public void ignore_file_in_branch_folder()
         throws Exception
     {
-        final File meta = createFolder( this.dumpFolder, "meta" );
-        final File repo1 = createFolder( meta, "repo1" );
+        final Path meta = createFolder( this.dumpFolder, "meta" );
+        final Path repo1 = createFolder( meta, "repo1" );
         createFolder( repo1, "master" );
         createFolder( repo1, "draft" );
         createFile( meta, "fisk" );
@@ -93,9 +89,9 @@ public class FileDumpReaderTest
     public void hidden_folder()
         throws Exception
     {
-        final File meta = createFolder( this.dumpFolder, "meta" );
-        final File repo1 = createFolder( meta, "repo1" );
-        final File hiddenFolder = createFolder( repo1, ".myBranch" );
+        final Path meta = createFolder( this.dumpFolder, "meta" );
+        final Path repo1 = createFolder( meta, "repo1" );
+        final Path hiddenFolder = createFolder( repo1, ".myBranch" );
 
         if ( isWindows() )
         {
@@ -108,10 +104,10 @@ public class FileDumpReaderTest
         assertEquals( 1, branches.getSize() );
     }
 
-    private void hideTheFileWindowsWay( final File hiddenFolder )
+    private void hideTheFileWindowsWay( final Path hiddenFolder )
         throws IOException
     {
-        java.nio.file.Files.setAttribute( hiddenFolder.toPath(), "dos:hidden", Boolean.TRUE, LinkOption.NOFOLLOW_LINKS );
+        Files.setAttribute( hiddenFolder, "dos:hidden", Boolean.TRUE, LinkOption.NOFOLLOW_LINKS );
     }
 
     private boolean isWindows()
@@ -119,38 +115,23 @@ public class FileDumpReaderTest
         return System.getProperty( "os.name" ).toLowerCase().startsWith( "windows" );
     }
 
-    private void createMetaDataFile( final File parent )
+    private void createMetaDataFile( final Path parent )
         throws IOException
     {
         final String content = "{\"xpVersion\":\"X.Y.Z.SNAPSHOT\",\"timestamp\":\"1970-01-01T00:00:00.000Z\",\"modelVersion\":\"1.0.0\"}";
-        Files.write( content, new File( parent, "dump.json" ), Charset.defaultCharset() );
+        Files.writeString( parent.resolve( "dump.json" ), content );
     }
 
-    private File createFolder( final File parent, final String name )
+    private Path createFolder( final Path parent, final String name )
+        throws IOException
     {
-        final File newFolder = Paths.get( parent.toString(), name ).toFile();
-        final boolean ok = newFolder.mkdirs();
-
-        if ( !ok )
-        {
-            throw new RuntimeException( "Cannot create folder " + name + " in " + parent.toString() );
-        }
-
-        return newFolder;
+        return Files.createDirectory( parent.resolve( name ) );
     }
 
-    private File createFile( final File parent, final String name )
+    private Path createFile( final Path parent, final String name )
+        throws IOException
     {
-        final File file = Paths.get( parent.toString(), name ).toFile();
-        try
-        {
-            file.createNewFile();
-        }
-        catch ( IOException e )
-        {
-            e.printStackTrace();
-        }
-        return file;
+        return Files.createFile( parent.resolve( name ) );
     }
 
 }

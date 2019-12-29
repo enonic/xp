@@ -14,7 +14,6 @@ import java.util.Objects;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
@@ -935,8 +934,8 @@ public final class PropertyTree
     private void writeObject( ObjectOutputStream oos )
         throws IOException
     {
-        final Iterable<PropertyArray> propertyArrays = this.getRoot().getPropertyArrays();
-        oos.writeInt( Iterables.size( propertyArrays ) );
+        final Collection<PropertyArray> propertyArrays = this.getRoot().getPropertyArrays();
+        oos.writeInt( propertyArrays.size() );
 
         for ( final PropertyArray propertyArray : propertyArrays )
         {
@@ -966,7 +965,7 @@ public final class PropertyTree
             final PropertySet propertySet = property.getSet();
             if ( propertySet != null )
             {
-                oos.writeInt( Iterables.size( propertySet.getPropertyArrays() ) );
+                oos.writeInt( propertySet.getPropertyArrays().size() );
                 for ( final PropertyArray propertyArray : propertySet.getPropertyArrays() )
                 {
                     writeArray( propertyArray, oos );

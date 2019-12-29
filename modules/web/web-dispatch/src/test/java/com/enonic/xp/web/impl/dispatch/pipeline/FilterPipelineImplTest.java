@@ -2,6 +2,7 @@ package com.enonic.xp.web.impl.dispatch.pipeline;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -69,7 +70,7 @@ public class FilterPipelineImplTest
         final MyFilter filter = new MyFilter();
 
         assertEquals( 0, Lists.newArrayList( this.pipeline ).size() );
-        this.pipeline.addFilter( filter, new MyServiceReference<>() );
+        this.pipeline.addFilter( filter, Map.of() );
 
         this.pipeline.activate( new HashMap<>() );
 

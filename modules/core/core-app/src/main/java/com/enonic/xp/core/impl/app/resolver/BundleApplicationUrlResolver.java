@@ -1,10 +1,11 @@
 package com.enonic.xp.core.impl.app.resolver;
 
 import java.net.URL;
-import java.util.Collections;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.StreamSupport;
 
 import org.osgi.framework.Bundle;
 
@@ -35,11 +36,11 @@ public final class BundleApplicationUrlResolver
 
     private ImmutableSet<String> doFindFiles()
     {
-        final Enumeration<URL> urls = this.bundle.findEntries( "/", "*", true );
-        return ImmutableSet.copyOf( Collections.list( urls ).stream().
+        final Iterator<URL> urls = this.bundle.findEntries( "/", "*", true ).asIterator();
+        return StreamSupport.stream( Spliterators.spliteratorUnknownSize( urls, Spliterator.ORDERED ), false ).
             map( url -> url.getFile().substring( 1 ) ).
             filter( name -> !name.endsWith( "/" ) ).
-            collect( Collectors.toSet() ) );
+            collect( ImmutableSet.toImmutableSet() );
     }
 
     @Override

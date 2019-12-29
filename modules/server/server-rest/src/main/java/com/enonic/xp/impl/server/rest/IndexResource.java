@@ -1,7 +1,5 @@
 package com.enonic.xp.impl.server.rest;
 
-import java.util.stream.Collectors;
-
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -12,15 +10,12 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
-
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.impl.server.rest.model.ReindexRequestJson;
 import com.enonic.xp.impl.server.rest.model.ReindexResultJson;
 import com.enonic.xp.impl.server.rest.model.UpdateIndexSettingsRequestJson;
 import com.enonic.xp.impl.server.rest.model.UpdateIndexSettingsResultJson;
+import com.enonic.xp.impl.server.rest.task.ReindexRunnableTask;
+import com.enonic.xp.impl.server.rest.task.listener.ReindexListenerImpl;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
@@ -31,6 +26,8 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.task.TaskResultJson;
+import com.enonic.xp.task.TaskService;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -46,17 +43,33 @@ public final class IndexResource
 
     private RepositoryService repositoryService;
 
+    private TaskService taskService;
+
     @POST
     @Path("reindex")
     public ReindexResultJson reindex( final ReindexRequestJson request )
     {
         final ReindexResult result = this.indexService.reindex( ReindexParams.create().
-            setBranches( parseBranches( request.branches ) ).
+            setBranches( ReindexRunnableTask.parseBranches( request.branches ) ).
             initialize( request.initialize ).
-            repositoryId( parseRepositoryId( request.repository ) ).
+            repositoryId( ReindexRunnableTask.parseRepositoryId( request.repository ) ).
+            listener( new ReindexListenerImpl() ).
             build() );
 
         return ReindexResultJson.create( result );
+    }
+
+    @POST
+    @Path("reindexTask")
+    public TaskResultJson reindexTask( final ReindexRequestJson request )
+    {
+        return ReindexRunnableTask.create().
+            description( "reindex" ).
+            indexService( indexService ).
+            taskService( taskService ).
+            params( request ).
+            build().
+            createTaskResult();
     }
 
     @POST
@@ -95,15 +108,10 @@ public final class IndexResource
         this.repositoryService = repositoryService;
     }
 
-    private static Branches parseBranches( final String branches )
+    @Reference
+    public void setTaskService( final TaskService taskService )
     {
-        final Iterable<String> split = Splitter.on( "," ).split( branches );
-        final Iterable<Branch> parsed = Lists.newArrayList( split ).stream().map( Branch::from ).collect( Collectors.toList() );
-        return Branches.from( parsed );
+        this.taskService = taskService;
     }
 
-    private static RepositoryId parseRepositoryId( final String repository )
-    {
-        return RepositoryId.from( repository );
-    }
 }
