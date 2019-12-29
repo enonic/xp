@@ -1,7 +1,9 @@
 package com.enonic.xp.repo.impl.repository;
 
+import java.net.URL;
+import java.util.Objects;
+
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.io.Resources;
 
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repository.IndexException;
@@ -44,7 +46,8 @@ public class DefaultIndexResourceProvider
 
         try
         {
-            return JsonHelper.from( Resources.getResource( DefaultIndexResourceProvider.class, fileName ) );
+            final URL resource = DefaultIndexResourceProvider.class.getResource( fileName );
+            return JsonHelper.from( Objects.requireNonNull( resource ) );
         }
         catch ( Exception e )
         {

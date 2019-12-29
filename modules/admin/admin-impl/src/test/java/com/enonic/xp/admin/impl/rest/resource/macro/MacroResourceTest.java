@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.macro;
 
+import java.io.InputStream;
 import java.time.Instant;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,8 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.app.ApplicationKey;
@@ -100,7 +99,11 @@ public class MacroResourceTest
     public void testMacroIcon()
         throws Exception
     {
-        byte[] data = Resources.toByteArray( getClass().getResource( "macro1.svg" ) );
+        final byte[] data;
+        try (InputStream stream = getClass().getResourceAsStream( "macro1.svg" ))
+        {
+            data = stream.readAllBytes();
+        }
         final Icon icon = Icon.from( data, "image/svg+xml", Instant.now() );
 
         final MacroDescriptor macroDescriptor = MacroDescriptor.create().

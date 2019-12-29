@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.content;
 
 import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -17,8 +18,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
-
-import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.app.ApplicationKey;
@@ -463,7 +462,11 @@ public class ContentTypeResourceTest
     public void testContentTypeIcon()
         throws Exception
     {
-        byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
+        final byte[] data;
+        try (InputStream stream = getClass().getResourceAsStream( "contenttypeicon.png" ))
+        {
+            data = stream.readAllBytes();
+        }
         Icon schemaIcon = Icon.from( data, "image/png", Instant.now() );
 
         final ContentType contentType = ContentType.create().
@@ -486,7 +489,11 @@ public class ContentTypeResourceTest
     public void testContentTypeIconSvg()
         throws Exception
     {
-        byte[] data = Resources.toByteArray( getClass().getResource( "archive.svg" ) );
+        final byte[] data;
+        try (InputStream stream = getClass().getResourceAsStream( "archive.svg" ))
+        {
+            data = stream.readAllBytes();
+        }
         Icon schemaIcon = Icon.from( data, "image/svg+xml", Instant.now() );
 
         final ContentType contentType = ContentType.create().
@@ -509,7 +516,11 @@ public class ContentTypeResourceTest
     public void testContentTypeIcon_fromSuperType()
         throws Exception
     {
-        byte[] data = Resources.toByteArray( getClass().getResource( "contenttypeicon.png" ) );
+        final byte[] data;
+        try (InputStream stream = getClass().getResourceAsStream( "contenttypeicon.png" ))
+        {
+            data = stream.readAllBytes();
+        }
         Icon schemaIcon = Icon.from( data, "image/png", Instant.now() );
 
         final ContentType systemContentType = ContentType.create().

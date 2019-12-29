@@ -1,5 +1,8 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -7,6 +10,7 @@ import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -15,13 +19,12 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.text.StrSubstitutor;
 
-import com.google.common.base.Strings;
-import com.google.common.io.Resources;
-
 import com.enonic.xp.issue.IssueComment;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.IssueType;
 import com.enonic.xp.mail.MailMessage;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public abstract class IssueMailMessageGenerator<P extends IssueNotificationParams>
 {
@@ -89,7 +92,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
     protected Set<String> getApproverEmails()
     {
         return params.getApprovers().stream().
-            filter( approver -> !Strings.nullToEmpty( approver.getEmail() ).isBlank() ).
+            filter( approver -> !nullToEmpty( approver.getEmail() ).isBlank() ).
             map( approver -> approver.getEmail() ).
             collect( Collectors.toSet() );
     }
@@ -145,14 +148,16 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
 
     private String load( final String name )
     {
-        try
+        final InputStream stream =
+            Objects.requireNonNull( IssueMailMessageGenerator.class.getResourceAsStream( name ), "Resource file [" + name + "] not found" );
+        try (stream)
         {
-            return Resources.toString( IssueMailMessageGenerator.class.getResource( name ), StandardCharsets.UTF_8 );
+            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }
-        catch ( Exception e )
+        catch ( IOException e )
         {
-            throw new RuntimeException(
-                "Cannot load resource with name [" + name + "] in [" + IssueMailMessageGenerator.class.getPackage() + "]" );
+            throw new UncheckedIOException(
+                "Cannot load resource with name [" + name + "] in [" + IssueMailMessageGenerator.class.getPackage() + "]", e );
         }
     }
 

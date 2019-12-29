@@ -1,11 +1,11 @@
 package com.enonic.xp.lib.node.mapper;
 
-import java.net.URL;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
 
 import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.node.NodeBranchEntry;
@@ -46,13 +46,11 @@ public abstract class BaseMapperTest
     private String readFromFile( final String fileName )
         throws Exception
     {
-        final URL url = getClass().getResource( fileName );
-        if ( url == null )
+        final InputStream stream =
+            Objects.requireNonNull( getClass().getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
+        try (stream)
         {
-            throw new IllegalArgumentException( "Resource file [" + fileName + "] not found" );
+            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }
-
-        return Resources.toString( url, StandardCharsets.UTF_8 );
     }
-
 }

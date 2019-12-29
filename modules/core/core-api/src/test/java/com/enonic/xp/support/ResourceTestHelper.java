@@ -1,9 +1,8 @@
 package com.enonic.xp.support;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-
-import com.google.common.io.Resources;
 
 public class ResourceTestHelper
 {
@@ -17,9 +16,9 @@ public class ResourceTestHelper
     public String loadTestFile( final String fileName )
     {
         final URL url = getResource( testInstance.getClass().getSimpleName() + "-" + fileName );
-        try
+        try (final InputStream stream = url.openStream())
         {
-            return Resources.toString( url, StandardCharsets.UTF_8 );
+            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }
         catch ( final Exception e )
         {

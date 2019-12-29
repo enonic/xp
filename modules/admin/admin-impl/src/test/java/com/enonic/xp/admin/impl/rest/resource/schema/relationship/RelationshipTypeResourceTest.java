@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteStreams;
-import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.icon.Icon;
@@ -98,7 +97,11 @@ public class RelationshipTypeResourceTest
     public void testRelationshipTypeIcon()
         throws Exception
     {
-        byte[] data = Resources.toByteArray( getClass().getResource( "relationshipicon.png" ) );
+        final byte[] data;
+        try (InputStream stream = getClass().getResourceAsStream( "relationshipicon.png" ))
+        {
+            data = stream.readAllBytes();
+        }
         final Icon icon = Icon.from( data, "image/png", Instant.now() );
 
         RelationshipType relationshipType = RelationshipType.create().
@@ -123,17 +126,21 @@ public class RelationshipTypeResourceTest
     public void testRelationshipTypeIconSvg()
             throws Exception
     {
-        byte[] data = Resources.toByteArray( getClass().getResource( "relationshiptype.svg" ) );
+        final byte[] data;
+        try (InputStream stream = getClass().getResourceAsStream( "relationshiptype.svg" ))
+        {
+            data = stream.readAllBytes();
+        }
         final Icon icon = Icon.from( data, "image/svg+xml", Instant.now() );
 
         RelationshipType relationshipType = RelationshipType.create().
-                name( "myapplication:like" ).
-                fromSemantic( "likes" ).
-                toSemantic( "liked by" ).
-                addAllowedFromType( ContentTypeName.from( "myapplication:person" ) ).
-                addAllowedToType( ContentTypeName.from( "myapplication:person" ) ).
-                icon( icon ).
-                build();
+            name( "myapplication:like" ).
+            fromSemantic( "likes" ).
+            toSemantic( "liked by" ).
+            addAllowedFromType( ContentTypeName.from( "myapplication:person" ) ).
+            addAllowedToType( ContentTypeName.from( "myapplication:person" ) ).
+            icon( icon ).
+            build();
         setupRelationshipType( relationshipType );
 
         final Response response = this.resource.getIcon( "myapplication:like", 20, null );

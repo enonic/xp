@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.postprocess;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -9,8 +10,6 @@ import java.util.stream.Stream;
 import javax.servlet.http.Cookie;
 
 import org.junit.jupiter.api.Test;
-
-import com.google.common.io.Resources;
 
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.HtmlTag;
@@ -318,7 +317,10 @@ public class PostProcessEvaluatorTest
     private String readResource( final String resourceName )
         throws Exception
     {
-        return Resources.toString( getClass().getResource( resourceName ), StandardCharsets.UTF_8 );
+        try (final InputStream stream = getClass().getResourceAsStream( resourceName ))
+        {
+            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
+        }
     }
 
 }

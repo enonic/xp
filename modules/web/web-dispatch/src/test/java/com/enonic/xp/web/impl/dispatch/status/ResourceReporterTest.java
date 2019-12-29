@@ -1,27 +1,26 @@
 package com.enonic.xp.web.impl.dispatch.status;
 
-import java.net.URL;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.io.Resources;
 
 public abstract class ResourceReporterTest
 {
     protected String readFromFile( final String fileName )
         throws Exception
     {
-        final URL url = getClass().getResource( fileName );
-        if ( url == null )
+        final InputStream stream =
+            Objects.requireNonNull( getClass().getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
+        try (stream)
         {
-            throw new IllegalArgumentException( "Resource file [" + fileName + "] not found" );
+            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }
-
-        return Resources.toString( url, StandardCharsets.UTF_8 );
     }
 
     protected JsonNode parseJson( final String json )

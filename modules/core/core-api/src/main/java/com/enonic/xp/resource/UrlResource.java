@@ -5,6 +5,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import com.google.common.io.ByteSource;
+import com.google.common.io.Resources;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -94,6 +95,6 @@ public final class UrlResource
     public ByteSource getBytes()
     {
         requireExists();
-        return com.google.common.io.Resources.asByteSource( this.url );
+        return Resources.asByteSource( this.url );
     }
 }

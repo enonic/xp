@@ -1,16 +1,11 @@
 package com.enonic.xp.core.impl.export.xml;
 
+import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
-import com.google.common.io.CharSource;
-import com.google.common.io.Resources;
-
-import com.enonic.xp.node.Node;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -29,14 +24,10 @@ public class XmlPermissionsParserTest
     public void testParse()
         throws Exception
     {
-        final Node.Builder builder = Node.create();
-
-        final XmlPermissionsParser parser = new XmlPermissionsParser();
-        final URL resource = getClass().getResource( "permissions.xml" );
-        final CharSource charSource = Resources.asCharSource( resource, StandardCharsets.UTF_8 );
         final Document doc;
-        try (Reader reader = charSource.openStream()) {
-            doc = DomHelper.parse(reader);
+        try (Reader reader = new InputStreamReader( getClass().getResourceAsStream( "permissions.xml" ) ))
+        {
+            doc = DomHelper.parse( reader );
         }
 
         final AccessControlList accessControlList = XmlPermissionsParser.parse( DomElement.from( doc.getDocumentElement() ) );

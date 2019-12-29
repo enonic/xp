@@ -1,9 +1,7 @@
 package com.enonic.xp.launcher.impl.util;
 
-import java.net.URL;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-
-import com.google.common.io.Resources;
 
 import com.enonic.xp.launcher.VersionInfo;
 import com.enonic.xp.launcher.impl.SharedConstants;
@@ -78,10 +76,9 @@ public final class BannerPrinter
 
     private String loadBanner()
     {
-        try
+        try (InputStream stream = getClass().getResourceAsStream( "banner.txt" ))
         {
-            final URL url = getClass().getResource( "banner.txt" );
-            return Resources.toString( url, StandardCharsets.UTF_8 );
+            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }
         catch ( final Exception e )
         {
