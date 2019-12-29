@@ -1,6 +1,5 @@
 package com.enonic.xp.elasticsearch.impl;
 
-import java.util.Hashtable;
 import java.util.Map;
 
 import org.elasticsearch.client.AdminClient;
@@ -59,12 +58,11 @@ public final class ElasticsearchActivator
         final ClusterService clusterService = injector.getInstance( ClusterService.class );
         final TransportService transportService = injector.getInstance( TransportService.class );
 
-        this.nodeReg = context.registerService( Node.class, this.node, new Hashtable<>() );
-        this.clusterServiceReg = context.registerService( ClusterService.class, clusterService, new Hashtable<>() );
-        this.transportServiceReg = context.registerService( TransportService.class, transportService, new Hashtable<>() );
-        this.adminClientReg = context.registerService( AdminClient.class, this.node.client().admin(), new Hashtable<>() );
-        this.clusterAdminClientReg =
-            context.registerService( ClusterAdminClient.class, this.node.client().admin().cluster(), new Hashtable<>() );
+        this.nodeReg = context.registerService( Node.class, this.node, null );
+        this.clusterServiceReg = context.registerService( ClusterService.class, clusterService, null );
+        this.transportServiceReg = context.registerService( TransportService.class, transportService, null );
+        this.adminClientReg = context.registerService( AdminClient.class, this.node.client().admin(), null );
+        this.clusterAdminClientReg = context.registerService( ClusterAdminClient.class, this.node.client().admin().cluster(), null );
     }
 
     @Deactivate

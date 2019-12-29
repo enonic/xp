@@ -1,7 +1,5 @@
 package com.enonic.xp.ignite.impl;
 
-import java.util.Hashtable;
-
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.configuration.IgniteConfiguration;
@@ -65,7 +63,7 @@ public class IgniteCluster
         this.ignite = Ignition.start( igniteConfig );
 
         // Register admin-client to use in e.g reporting
-        context.registerService( IgniteAdminClient.class, new IgniteAdminClientImpl( this.ignite ), new Hashtable<>() );
+        context.registerService( IgniteAdminClient.class, new IgniteAdminClientImpl( this.ignite ), null );
     }
 
     private void adjustLoggingVerbosity()
@@ -150,7 +148,7 @@ public class IgniteCluster
 
         LOG.info( "Cluster operational, register " + this.getId() );
 
-        this.reg = context.registerService( Ignite.class, ignite, new Hashtable<>() );
+        this.reg = context.registerService( Ignite.class, ignite, null );
     }
 
     private void unregisterClient()

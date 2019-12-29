@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Optional;
 
 import org.osgi.framework.Bundle;
 
@@ -34,7 +35,6 @@ final class BundleClassLoader
     protected Enumeration<URL> findResources( final String name )
         throws IOException
     {
-        final Enumeration<URL> urls = this.bundle.getResources( name );
-        return urls != null ? urls : Collections.enumeration( Collections.emptyList() );
+        return Optional.ofNullable( this.bundle.getResources( name ) ).orElse( Collections.emptyEnumeration() );
     }
 }
