@@ -133,7 +133,7 @@ public class IssueNotificationParamsFactoryTest
             build().
             createdParams();
 
-        assertEquals( Lists.newArrayList( approver ), params.getApprovers() );
+        assertEquals( List.of( approver ), params.getApprovers() );
         assertEquals( modifier, params.getCreator() );
         assertEquals( issue, params.getIssue() );
         assertEquals( comments, params.getComments() );
