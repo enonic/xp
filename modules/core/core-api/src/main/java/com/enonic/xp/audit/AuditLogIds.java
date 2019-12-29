@@ -7,8 +7,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
@@ -58,8 +56,7 @@ public final class AuditLogIds
 
     private static ImmutableSet<AuditLogId> doParseIds( final Collection<String> list )
     {
-        final Collection<AuditLogId> pathList = Collections2.transform( list, new ParseFunction() );
-        return ImmutableSet.copyOf( pathList );
+        return list.stream().map( AuditLogId::from ).collect( ImmutableSet.toImmutableSet() );
     }
 
     public Set<String> asStrings()
@@ -70,16 +67,6 @@ public final class AuditLogIds
     public static Builder create()
     {
         return new Builder();
-    }
-
-    private final static class ParseFunction
-        implements Function<String, AuditLogId>
-    {
-        @Override
-        public AuditLogId apply( final String value )
-        {
-            return AuditLogId.from( value );
-        }
     }
 
     public static class Builder
