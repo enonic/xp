@@ -26,7 +26,6 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.net.HttpHeaders;
 
@@ -1466,7 +1465,7 @@ public class ContentResourceTest
                 ContentConstants.BRANCH_MASTER ).build() ) ).thenReturn( 1 );
 
         UndoPendingDeleteContentJson params = new UndoPendingDeleteContentJson();
-        params.setContentIds( Lists.newArrayList( ContentIds.from( content.getId() ).asStrings() ) );
+        params.setContentIds( List.copyOf( ContentIds.from( content.getId() ).asStrings() ) );
 
         UndoPendingDeleteContentResultJson result = contentResource.undoPendingDelete( params );
 
@@ -1488,8 +1487,8 @@ public class ContentResourceTest
         Mockito.when( contentService.getDependencies( content2.getId() ) ).thenReturn(
             ContentDependencies.create().inboundDependencies( new HashSet<>() ).outboundDependencies( new HashSet<>() ).build() );
 
-        GetDependenciesResultJson result = contentResource.getDependencies(
-            new ContentIdsJson( Lists.asList( content1.getId().toString(), content2.getId().toString(), new String[]{} ) ) );
+        GetDependenciesResultJson result =
+            contentResource.getDependencies( new ContentIdsJson( List.of( content1.getId().toString(), content2.getId().toString() ) ) );
 
         assertEquals( 1, result.getDependencies().get( content1.getId().toString() ).getInbound().size() );
         assertEquals( 2L, result.getDependencies().get( content1.getId().toString() ).getInbound().get( 0 ).getCount() );
@@ -1570,8 +1569,7 @@ public class ContentResourceTest
         ContentResource contentResource = getResourceInstance();
 
         final WebApplicationException ex = assertThrows( WebApplicationException.class, () -> {
-            ContentSummaryListJson result =
-                contentResource.getByIds( new ContentIdsJson( Lists.asList( "content-id1", "content-id2", new String[]{} ) ) );
+            ContentSummaryListJson result = contentResource.getByIds( new ContentIdsJson( List.of( "content-id1", "content-id2" ) ) );
         } );
         assertEquals( "Contents [[content-id1, content-id2]] was not found", ex.getMessage() );
     }
@@ -1588,8 +1586,8 @@ public class ContentResourceTest
         Mockito.when( contentService.getByIds( new GetContentByIdsParams( ContentIds.from( content1.getId(), content2.getId() ) ) ) ).
             thenReturn( Contents.from( content1, content2 ) );
 
-        ContentSummaryListJson result = contentResource.getByIds(
-            new ContentIdsJson( Lists.asList( content1.getId().toString(), content2.getId().toString(), new String[]{} ) ) );
+        ContentSummaryListJson result =
+            contentResource.getByIds( new ContentIdsJson( List.of( content1.getId().toString(), content2.getId().toString() ) ) );
 
         assertEquals( 2L, result.getMetadata().getHits() );
         assertEquals( 2L, result.getMetadata().getTotalHits() );
@@ -1614,7 +1612,7 @@ public class ContentResourceTest
             thenReturn( Contents.from( content1, content2 ) );
 
         List<String> result = contentResource.checkContentsReadOnly(
-            new ContentIdsJson( Lists.asList( content1.getId().toString(), content2.getId().toString(), new String[]{} ) ) );
+            new ContentIdsJson( List.of( content1.getId().toString(), content2.getId().toString() ) ) );
 
         assertEquals( 1, result.size() );
         assertEquals( content2.getId().toString(), result.get( 0 ) );
@@ -1630,8 +1628,8 @@ public class ContentResourceTest
 
         Mockito.when( contentService.contentExists( content2.getId() ) ).thenReturn( true );
 
-        ContentsExistJson result = contentResource.contentsExist(
-            new ContentIdsJson( Lists.asList( content1.getId().toString(), content2.getId().toString(), new String[]{} ) ) );
+        ContentsExistJson result =
+            contentResource.contentsExist( new ContentIdsJson( List.of( content1.getId().toString(), content2.getId().toString() ) ) );
 
         assertFalse( result.getContentsExistJson().get( 0 ).exists() );
         assertTrue( result.getContentsExistJson().get( 1 ).exists() );
@@ -1648,7 +1646,7 @@ public class ContentResourceTest
         Mockito.when( contentService.contentExists( content2.getPath() ) ).thenReturn( true );
 
         ContentsExistByPathJson result = contentResource.contentsExistByPath(
-            new ContentPathsJson( Lists.asList( content1.getPath().toString(), content2.getPath().toString(), new String[]{} ) ) );
+            new ContentPathsJson( List.of( content1.getPath().toString(), content2.getPath().toString() ) ) );
 
         assertFalse( result.getContentsExistJson().get( 0 ).exists() );
         assertTrue( result.getContentsExistJson().get( 1 ).exists() );
@@ -1879,7 +1877,7 @@ public class ContentResourceTest
         Mockito.when( multipartForm.get( "file" ) ).thenReturn( multipartItem );
 
         Map<String, List<String>> data = new HashMap<>();
-        data.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( com.google.common.net.MediaType.JPEG.toString() ) );
+        data.put( HttpHeaders.CONTENT_TYPE, List.of( com.google.common.net.MediaType.JPEG.toString() ) );
 
         ExtractedData extractedData = ExtractedData.create().
             metadata( data ).
@@ -1923,7 +1921,7 @@ public class ContentResourceTest
         Mockito.when( multipartForm.get( "file" ) ).thenReturn( multipartItem );
 
         Map<String, List<String>> data = new HashMap<>();
-        data.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( com.google.common.net.MediaType.JPEG.toString() ) );
+        data.put( HttpHeaders.CONTENT_TYPE, List.of( com.google.common.net.MediaType.JPEG.toString() ) );
 
         ExtractedData extractedData = ExtractedData.create().
             metadata( data ).

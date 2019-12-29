@@ -7,8 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.content.ContentType;
@@ -47,7 +45,7 @@ public class ContentTypeNameWildcardResolverTest
     @Test
     public void no_wildcards()
     {
-        List<String> toResolve = Lists.newArrayList( "myapp:foo", "myapp:bar" );
+        List<String> toResolve = List.of( "myapp:foo", "myapp:bar" );
         List<String> resolved = resolver.resolveWildcards( toResolve, ApplicationKey.from( "myapp" ) );
 
         assertEquals( toResolve, resolved );
@@ -56,7 +54,7 @@ public class ContentTypeNameWildcardResolverTest
     @Test
     public void appWildcards()
     {
-        List<String> toResolve = Lists.newArrayList( "${app}:test1", "myapp:bar" );
+        List<String> toResolve = List.of( "${app}:test1", "myapp:bar" );
         List<String> resolved = resolver.resolveWildcards( toResolve, ApplicationKey.from( "myapp" ) );
 
         assertEquals( 2, resolved.size() );
@@ -67,7 +65,7 @@ public class ContentTypeNameWildcardResolverTest
     @Test
     public void anyWildcards()
     {
-        List<String> toResolve = Lists.newArrayList( "*:test1", "myapp:bar" );
+        List<String> toResolve = List.of( "*:test1", "myapp:bar" );
         List<String> resolved = resolver.resolveWildcards( toResolve, ApplicationKey.from( "myapp" ) );
 
         assertEquals( 3, resolved.size() );
@@ -79,7 +77,7 @@ public class ContentTypeNameWildcardResolverTest
     @Test
     public void anyAndAppWildcards()
     {
-        List<String> toResolve = Lists.newArrayList( "${app}:test*", "myapp:bar" );
+        List<String> toResolve = List.of( "${app}:test*", "myapp:bar" );
         List<String> resolved = resolver.resolveWildcards( toResolve, ApplicationKey.from( "myapp" ) );
 
         assertEquals( 3, resolved.size() );

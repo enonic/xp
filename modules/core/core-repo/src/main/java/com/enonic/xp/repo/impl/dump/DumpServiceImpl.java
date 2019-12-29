@@ -13,8 +13,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.app.ApplicationInstallationParams;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -157,10 +155,10 @@ public class DumpServiceImpl
 
     private List<DumpUpgrader> createDumpUpgraders()
     {
-        return Lists.newArrayList( new MissingModelVersionDumpUpgrader(), new VersionIdDumpUpgrader( basePath ),
-                                   new FlattenedPageDumpUpgrader( basePath ), new IndexAccessSegmentsDumpUpgrader( basePath ),
-                                   new RepositoryIdDumpUpgrader( basePath ), new CommitDumpUpgrader( basePath ),
-                                   new IndexConfigUpgrader( basePath ), new HtmlAreaDumpUpgrader( basePath ) );
+        return List.of( new MissingModelVersionDumpUpgrader(), new VersionIdDumpUpgrader( basePath ),
+                        new FlattenedPageDumpUpgrader( basePath ), new IndexAccessSegmentsDumpUpgrader( basePath ),
+                        new RepositoryIdDumpUpgrader( basePath ), new CommitDumpUpgrader( basePath ), new IndexConfigUpgrader( basePath ),
+                        new HtmlAreaDumpUpgrader( basePath ) );
     }
 
     private Version getDumpModelVersion( final String dumpName )

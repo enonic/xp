@@ -1,11 +1,10 @@
 package com.enonic.xp.script.impl.standard;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -19,16 +18,11 @@ import com.enonic.xp.script.runtime.ScriptSettings;
 public final class ScriptRuntimeFactoryImpl
     implements ScriptRuntimeProvider, ScriptRuntimeFactory
 {
-    private final List<ScriptRuntime> list;
+    private final List<ScriptRuntime> list = new CopyOnWriteArrayList<>();
 
     private ApplicationService applicationService;
 
     private ResourceService resourceService;
-
-    public ScriptRuntimeFactoryImpl()
-    {
-        this.list = Lists.newCopyOnWriteArrayList();
-    }
 
     @Override
     public ScriptRuntime create( final ScriptSettings settings )

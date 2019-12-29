@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.client.AdminClient;
@@ -19,8 +20,6 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterNodeId;
@@ -69,7 +68,7 @@ public class ElasticsearchActivatorTest
                     {
                         throw new RuntimeException( e );
                     }
-                    return Lists.newArrayList( local1, local2 );
+                    return List.of( local1, local2 );
                 };
             }
 

@@ -8,7 +8,6 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.ExistsFilter;
@@ -65,9 +64,9 @@ public class JsonToFilterMapperTest
         Map<String, Object> filter = new HashMap<>();
 
         final Map<String, Object> boolFilter = new HashMap<>();
-        boolFilter.put( "must", Lists.newArrayList( createExistsFilter(), createExistsFilter() ) );
-        boolFilter.put( "mustNot", Lists.newArrayList( createExistsFilter() ) );
-        boolFilter.put( "should", Lists.newArrayList( createExistsFilter(), createExistsFilter(), createExistsFilter() ) );
+        boolFilter.put( "must", List.of( createExistsFilter(), createExistsFilter() ) );
+        boolFilter.put( "mustNot", List.of( createExistsFilter() ) );
+        boolFilter.put( "should", List.of( createExistsFilter(), createExistsFilter(), createExistsFilter() ) );
 
         filter.put( "boolean", boolFilter );
 
@@ -94,7 +93,7 @@ public class JsonToFilterMapperTest
     {
         Map<String, Object> value = new HashMap<>();
 
-        List<String> values = Lists.newArrayList( "fisk", "ost", "løk" );
+        List<String> values = List.of( "fisk", "ost", "løk" );
         final HashMap<String, Object> valueFilter = new HashMap<>();
         valueFilter.put( "field", "myField" );
         valueFilter.put( "values", values );
@@ -114,7 +113,7 @@ public class JsonToFilterMapperTest
     {
         Map<String, Object> value = new HashMap<>();
 
-        List<String> values = Lists.newArrayList( "fisk", "ost", "løk" );
+        List<String> values = List.of( "fisk", "ost", "løk" );
         final HashMap<String, Object> valueFilter = new HashMap<>();
         valueFilter.put( "values", values );
 

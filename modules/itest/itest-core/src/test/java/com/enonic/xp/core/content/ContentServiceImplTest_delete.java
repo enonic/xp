@@ -1,10 +1,10 @@
 package com.enonic.xp.core.content;
 
+import java.util.stream.StreamSupport;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
@@ -18,8 +18,8 @@ import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.MoveContentParams;
-import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PublishContentResult;
+import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeId;
@@ -391,6 +391,7 @@ public class ContentServiceImplTest_delete
 
         final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
 
-        assertEquals( 2, Sets.newHashSet( logResultSet.getStrings( "deletedContents" ) ).size() );
+        final Iterable<String> deletedContents = logResultSet.getStrings( "deletedContents" );
+        assertEquals( 2, StreamSupport.stream( deletedContents.spliterator(), false ).count() );
     }
 }

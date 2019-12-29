@@ -5,7 +5,6 @@ import java.util.EnumSet;
 import java.util.Objects;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -164,7 +163,7 @@ public final class AccessControlEntry
 
         public Builder allow( final Permission... permissions )
         {
-            return allow( Lists.newArrayList( permissions ) );
+            return allow( Arrays.asList( permissions ) );
         }
 
         public Builder allow( final Iterable<Permission> permissions )
@@ -179,7 +178,7 @@ public final class AccessControlEntry
 
         public Builder deny( final Permission... permissions )
         {
-            return deny( Lists.newArrayList( permissions ) );
+            return deny( Arrays.asList( permissions ) );
         }
 
         public Builder deny( final Iterable<Permission> permissions )

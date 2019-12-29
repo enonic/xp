@@ -1,6 +1,7 @@
 package com.enonic.xp.server.impl.status;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -11,7 +12,6 @@ import org.osgi.service.component.runtime.dto.ComponentConfigurationDTO;
 import org.osgi.service.component.runtime.dto.ComponentDescriptionDTO;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Lists;
 
 public class OsgiComponentReporterTest
     extends BaseOsgiReporterTest<OsgiComponentReporter>
@@ -29,13 +29,13 @@ public class OsgiComponentReporterTest
         final ComponentDescriptionDTO comp2 = newComponent( "comp2" );
 
         final ServiceComponentRuntime runtime = Mockito.mock( ServiceComponentRuntime.class );
-        Mockito.when( runtime.getComponentDescriptionDTOs() ).thenReturn( Lists.newArrayList( comp1, comp2 ) );
+        Mockito.when( runtime.getComponentDescriptionDTOs() ).thenReturn( List.of( comp1, comp2 ) );
 
         final ComponentConfigurationDTO config1 = newConfig( 1, null );
         final ComponentConfigurationDTO config2 = newConfig( 2, "mypid" );
 
-        Mockito.when( runtime.getComponentConfigurationDTOs( comp1 ) ).thenReturn( Lists.newArrayList( config1 ) );
-        Mockito.when( runtime.getComponentConfigurationDTOs( comp2 ) ).thenReturn( Lists.newArrayList( config2 ) );
+        Mockito.when( runtime.getComponentConfigurationDTOs( comp1 ) ).thenReturn( List.of( config1 ) );
+        Mockito.when( runtime.getComponentConfigurationDTOs( comp2 ) ).thenReturn( List.of( config2 ) );
 
         final OsgiComponentReporter reporter = new OsgiComponentReporter();
         reporter.setRuntime( runtime );

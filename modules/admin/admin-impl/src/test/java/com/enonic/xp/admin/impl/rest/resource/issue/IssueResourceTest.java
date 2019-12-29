@@ -18,8 +18,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.admin.impl.json.issue.DeleteIssueCommentResultJson;
 import com.enonic.xp.admin.impl.json.issue.IssueCommentJson;
 import com.enonic.xp.admin.impl.json.issue.IssueStatsJson;
@@ -327,7 +325,7 @@ public class IssueResourceTest
         createLocalSession();
 
         final Issue issue = createIssue();
-        final List<Issue> issues = Lists.newArrayList( issue );
+        final List<Issue> issues = List.of( issue );
         final IssueResource issueResource = getResourceInstance();
         final FindIssuesResult result = FindIssuesResult.create().hits( 2 ).totalHits( 4 ).issues( issues ).build();
         Mockito.when( issueService.findIssues( Mockito.any( IssueQuery.class ) ) ).thenReturn( result );
@@ -344,8 +342,7 @@ public class IssueResourceTest
     {
         createLocalSession();
 
-        final FindIssuesResult result =
-            FindIssuesResult.create().hits( 2 ).totalHits( 4 ).issues( Lists.newArrayList( createIssue() ) ).build();
+        final FindIssuesResult result = FindIssuesResult.create().hits( 2 ).totalHits( 4 ).issues( List.of( createIssue() ) ).build();
 
         Mockito.when( issueService.findIssues( Mockito.any( IssueQuery.class ) ) ).thenReturn( result );
         Mockito.when( securityService.getUser( Mockito.any( PrincipalKey.class ) ) ).thenReturn( Optional.empty() );
@@ -363,7 +360,7 @@ public class IssueResourceTest
         final Issue issue = createIssue();
 
         Mockito.when( this.issueService.getIssue( issue.getId() ) ).thenReturn( issue );
-        List<IssueComment> comments = Lists.newArrayList( this.createIssueComment( createdTime ) );
+        List<IssueComment> comments = List.of( this.createIssueComment( createdTime ) );
         FindIssueCommentsResult result = FindIssueCommentsResult.create().hits( 1 ).totalHits( 3 ).comments( comments ).build();
         Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn( result );
 
@@ -388,7 +385,7 @@ public class IssueResourceTest
         final Issue issue = createPublishRequestIssue();
 
         Mockito.when( this.issueService.getIssue( issue.getId() ) ).thenReturn( issue );
-        List<IssueComment> comments = Lists.newArrayList( this.createIssueComment( createdTime ) );
+        List<IssueComment> comments = List.of( this.createIssueComment( createdTime ) );
         FindIssueCommentsResult result = FindIssueCommentsResult.create().hits( 1 ).totalHits( 3 ).comments( comments ).build();
         Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn( result );
 
@@ -584,8 +581,7 @@ public class IssueResourceTest
         final Issue issue = createIssue();
         final IssueComment comment = createIssueComment( Instant.now() );
 
-        FindIssueCommentsResult result =
-            FindIssueCommentsResult.create().comments( Lists.newArrayList( comment ) ).hits( 1 ).totalHits( 10 ).build();
+        FindIssueCommentsResult result = FindIssueCommentsResult.create().comments( List.of( comment ) ).hits( 1 ).totalHits( 10 ).build();
 
         Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn( result );
 
