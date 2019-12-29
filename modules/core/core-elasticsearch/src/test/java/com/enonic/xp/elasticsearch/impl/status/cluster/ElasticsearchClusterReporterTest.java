@@ -3,6 +3,7 @@ package com.enonic.xp.elasticsearch.impl.status.cluster;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.Version;
@@ -27,11 +28,10 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class ElasticsearchClusterReporterTest
 {
@@ -171,9 +171,7 @@ public class ElasticsearchClusterReporterTest
 
         final ArrayNode expectedMembers = (ArrayNode) expectedReport.get( "members" );
         final ArrayNode members = (ArrayNode) report.get( "members" );
-        assertEquals( 2, members.size() );
-        assertTrue( Iterables.contains( expectedMembers, members.get( 0 ) ) );
-        assertTrue( Iterables.contains( expectedMembers, members.get( 1 ) ) );
+        assertIterableEquals( List.of( members.get( 0 ), members.get( 1 ) ), expectedMembers );
     }
 
 

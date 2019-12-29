@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.app;
 
-import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,10 +29,10 @@ public abstract class BundleBasedTest
     public final void setup()
         throws Exception
     {
-        final File cacheDir = Files.createDirectory(this.temporaryFolder.resolve( "cache" ) ).toFile();
+        final Path cacheDir = Files.createDirectory( this.temporaryFolder.resolve( "cache" ) ).toAbsolutePath();
 
         final Map<String, Object> config = new HashMap<>();
-        config.put( Constants.FRAMEWORK_STORAGE, cacheDir.getAbsolutePath() );
+        config.put( Constants.FRAMEWORK_STORAGE, cacheDir.toString() );
         config.put( Constants.FRAMEWORK_STORAGE_CLEAN, Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT );
 
         this.felix = new Felix( config );

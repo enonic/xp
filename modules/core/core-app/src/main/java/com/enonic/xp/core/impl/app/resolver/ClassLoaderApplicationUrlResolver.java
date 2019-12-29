@@ -4,9 +4,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.reflect.ClassPath;
 
 import com.enonic.xp.util.Exceptions;
@@ -50,13 +49,12 @@ public final class ClassLoaderApplicationUrlResolver
 
     public static ClassLoaderApplicationUrlResolver create( final URL... urls )
     {
-        return create( Lists.newArrayList( urls ) );
+        final URLClassLoader loader = new URLClassLoader( urls, null );
+        return new ClassLoaderApplicationUrlResolver( loader );
     }
 
     public static ClassLoaderApplicationUrlResolver create( final Iterable<URL> urls )
     {
-        final URL[] array = Iterables.toArray( urls, URL.class );
-        final URLClassLoader loader = new URLClassLoader( array, null );
-        return new ClassLoaderApplicationUrlResolver( loader );
+        return create( StreamSupport.stream( urls.spliterator(), false ).toArray( URL[]::new ) );
     }
 }

@@ -21,7 +21,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
-import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.ContentService;
@@ -36,6 +35,7 @@ import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
+import com.enonic.xp.util.HexEncoder;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -174,7 +174,7 @@ public class ImageServiceImpl
         final String key = String.join( "/", binaryKey, cropping, scale, filter, format, background, orientation, quality,
                                         readImageParams.getBinaryReference().toString() );
         final HashCode hashCode = Hashing.sha1().hashString( key, StandardCharsets.UTF_8 );
-        final String hash = BaseEncoding.base16().encode( hashCode.asBytes() ).toLowerCase();
+        final String hash = HexEncoder.toHex( hashCode.asBytes() );
         return Paths.get( homeDir, "work", "cache", "img", hash.substring( 0, 2 ), hash.substring( 2, 4 ), hash.substring( 4, 6 ),
                           hash ).toAbsolutePath();
     }

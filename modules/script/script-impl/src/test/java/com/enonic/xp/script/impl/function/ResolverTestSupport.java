@@ -45,8 +45,8 @@ public class ResolverTestSupport
     final void touchFile( final String path )
         throws Exception
     {
-        final File file = new File( this.temporaryFolder.toFile(), path );
-        file.getParentFile().mkdirs();
-        com.google.common.io.Files.touch( file );
+        final Path filePath = Path.of( this.temporaryFolder.toString(), path );
+        Files.createDirectories( filePath.getParent() );
+        Files.createFile( filePath );
     }
 }

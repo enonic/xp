@@ -15,8 +15,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Iterables;
-
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.security.json.CreateUserJson;
 import com.enonic.xp.admin.impl.rest.resource.security.json.UpdatePasswordJson;
@@ -58,6 +56,7 @@ import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.IdProviderAccess.READ;
 import static com.google.common.base.Strings.nullToEmpty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -363,7 +362,7 @@ public class SecurityResourceTest
         throws Exception
     {
         final Principals principals = createPrincipalsFromUsers();
-        assertArrayEquals( principals.getList().toArray(), Iterables.toArray( principals.getUsers(), User.class ) );
+        assertIterableEquals( principals.getList(), principals.getUsers() );
     }
 
     @Test
@@ -371,7 +370,7 @@ public class SecurityResourceTest
         throws Exception
     {
         final Principals principals = createPrincipalsFromRoles();
-        assertArrayEquals( principals.getList().toArray(), Iterables.toArray( principals.getRoles(), Role.class ) );
+        assertIterableEquals( principals.getList(), principals.getRoles() );
     }
 
     @Test
@@ -379,7 +378,7 @@ public class SecurityResourceTest
         throws Exception
     {
         final Principals principals = createPrincipalsFromGroups();
-        assertArrayEquals( principals.getList().toArray(), Iterables.toArray( principals.getGroups(), Group.class ) );
+        assertIterableEquals( principals.getList(), principals.getGroups() );
     }
 
     @Test
@@ -548,10 +547,10 @@ public class SecurityResourceTest
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.from( "role:superuser" ) ) ).thenReturn(
             userRes );
 
-        final WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
+        final WebApplicationException ex = assertThrows( WebApplicationException.class, () -> {
             securityResource.getPrincipalByKey( "role:superuser", null );
-        });
-        assertEquals( "Principal [role:superuser] was not found", ex.getMessage());
+        } );
+        assertEquals( "Principal [role:superuser] was not found", ex.getMessage() );
     }
 
     @Test
@@ -641,10 +640,10 @@ public class SecurityResourceTest
     {
         SecurityResource resource = getResourceInstance();
 
-        final WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
+        final WebApplicationException ex = assertThrows( WebApplicationException.class, () -> {
             resource.isEmailAvailable( "idProviderKey", "" );
-        });
-        assertEquals( "Expected email parameter", ex.getMessage());
+        } );
+        assertEquals( "Expected email parameter", ex.getMessage() );
     }
 
     @Test
@@ -808,9 +807,9 @@ public class SecurityResourceTest
         final SecurityResource resource = getResourceInstance();
         final UpdatePasswordJson params = new UpdatePasswordJson( "user:system:user1", null );
 
-        final WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
+        final WebApplicationException ex = assertThrows( WebApplicationException.class, () -> {
             resource.setPassword( params );
-        });
+        } );
     }
 
     @Test
@@ -820,9 +819,9 @@ public class SecurityResourceTest
         final SecurityResource resource = getResourceInstance();
         final UpdatePasswordJson params = new UpdatePasswordJson( "user:system:user1", "" );
 
-        final WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
+        final WebApplicationException ex = assertThrows( WebApplicationException.class, () -> {
             resource.setPassword( params );
-        });
+        } );
     }
 
     @Test
@@ -859,9 +858,9 @@ public class SecurityResourceTest
         params.login = "test";
         params.password = null;
 
-        final WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
+        final WebApplicationException ex = assertThrows( WebApplicationException.class, () -> {
             resource.createUser( params );
-        });
+        } );
     }
 
     @Test
@@ -876,9 +875,9 @@ public class SecurityResourceTest
         params.login = "test";
         params.password = "";
 
-        final WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
+        final WebApplicationException ex = assertThrows( WebApplicationException.class, () -> {
             resource.createUser( params );
-        });
+        } );
     }
 
     private IdProviders createIdProviders()
