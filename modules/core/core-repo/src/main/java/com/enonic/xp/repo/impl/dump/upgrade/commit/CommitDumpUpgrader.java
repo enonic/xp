@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.dump.upgrade.commit;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.HashSet;
 
@@ -56,7 +55,7 @@ public class CommitDumpUpgrader
                 filter( branch -> !RepositoryConstants.MASTER_BRANCH.equals( branch ) ).
                 forEach( branch -> upgradeBranch( repositoryId, branch ) );
 
-            final File versionsFile = dumpReader.getVersionsFile( repositoryId );
+            final Path versionsFile = dumpReader.getVersionsFile( repositoryId );
             if ( versionsFile != null )
             {
                 upgradeVersionEntries( repositoryId, versionsFile );

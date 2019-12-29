@@ -1,13 +1,12 @@
 package com.enonic.xp.repo.impl.dump.upgrade;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.io.Files;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
@@ -60,7 +59,7 @@ public abstract class AbstractMetaDumpUpgrader
 
     protected void upgradeRepository( final RepositoryId repositoryId )
     {
-        final File versionsFile = dumpReader.getVersionsFile( repositoryId );
+        final Path versionsFile = dumpReader.getVersionsFile( repositoryId );
         if ( versionsFile != null )
         {
             upgradeVersionEntries( repositoryId, versionsFile );
@@ -71,7 +70,7 @@ public abstract class AbstractMetaDumpUpgrader
 
     protected void upgradeBranch( final RepositoryId repositoryId, final Branch branch )
     {
-        final File entriesFile = dumpReader.getBranchEntriesFile( repositoryId, branch );
+        final Path entriesFile = dumpReader.getBranchEntriesFile( repositoryId, branch );
         if ( entriesFile != null )
         {
             upgradeBranchEntries( repositoryId, branch, entriesFile );
@@ -83,7 +82,7 @@ public abstract class AbstractMetaDumpUpgrader
         }
     }
 
-    protected void upgradeVersionEntries( final RepositoryId repositoryId, final File entriesFile )
+    protected void upgradeVersionEntries( final RepositoryId repositoryId, final Path entriesFile )
     {
         tmpDumpWriter.openVersionsMeta( repositoryId );
         try
@@ -114,7 +113,7 @@ public abstract class AbstractMetaDumpUpgrader
         }
     }
 
-    protected void upgradeBranchEntries( final RepositoryId repositoryId, final Branch branch, final File entriesFile )
+    protected void upgradeBranchEntries( final RepositoryId repositoryId, final Branch branch, final Path entriesFile )
     {
         tmpDumpWriter.openBranchMeta( repositoryId, branch );
         try
@@ -151,21 +150,22 @@ public abstract class AbstractMetaDumpUpgrader
     {
         for ( RepositoryId repositoryId : dumpReader.getRepositories() )
         {
-            final File newVersions = tmpDumpReader.getVersionsFile( repositoryId );
+            final Path newVersions = tmpDumpReader.getVersionsFile( repositoryId );
 
             if ( newVersions != null )
             {
-                Files.move( tmpDumpReader.getVersionsFile( repositoryId ), dumpReader.getVersionsFile( repositoryId ) );
+                Files.move( tmpDumpReader.getVersionsFile( repositoryId ), dumpReader.getVersionsFile( repositoryId ),
+                            StandardCopyOption.REPLACE_EXISTING );
             }
 
             for ( Branch branch : dumpReader.getBranches( repositoryId ) )
             {
-                final File newBranch = tmpDumpReader.getBranchEntriesFile( repositoryId, branch );
+                final Path newBranch = tmpDumpReader.getBranchEntriesFile( repositoryId, branch );
 
                 if ( newBranch != null )
                 {
                     Files.move( tmpDumpReader.getBranchEntriesFile( repositoryId, branch ),
-                                dumpReader.getBranchEntriesFile( repositoryId, branch ) );
+                                dumpReader.getBranchEntriesFile( repositoryId, branch ), StandardCopyOption.REPLACE_EXISTING );
                 }
 
             }
@@ -173,23 +173,18 @@ public abstract class AbstractMetaDumpUpgrader
     }
 
     private void deleteBufferFiles()
+        throws IOException
     {
-        File bufferFile;
+        Path bufferFile;
         for ( RepositoryId repositoryId : dumpReader.getRepositories() )
         {
             bufferFile = tmpDumpReader.getVersionsFile( repositoryId );
-            if ( bufferFile.exists() )
-            {
-                bufferFile.delete();
-            }
+            Files.deleteIfExists( bufferFile );
 
             for ( Branch branch : dumpReader.getBranches( repositoryId ) )
             {
                 bufferFile = tmpDumpReader.getBranchEntriesFile( repositoryId, branch );
-                if ( bufferFile.exists() )
-                {
-                    bufferFile.delete();
-                }
+                Files.deleteIfExists( bufferFile );
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.enonic.xp.launcher.impl.config;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
@@ -22,7 +21,7 @@ public class ConfigLoaderTest
     @TempDir
     public Path temporaryFolder;
 
-    private File homeDir;
+    private Path homeDir;
 
     private ConfigLoader configLoader;
 
@@ -30,10 +29,10 @@ public class ConfigLoaderTest
     public void setUp()
         throws Exception
     {
-        this.homeDir = Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
+        this.homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) );
 
         final Environment env = Mockito.mock( Environment.class );
-        Mockito.when( env.getHomeDir() ).thenReturn( this.homeDir );
+        Mockito.when( env.getHomeDir() ).thenReturn( this.homeDir.toFile() );
 
         this.configLoader = new ConfigLoader( env );
     }
@@ -45,11 +44,12 @@ public class ConfigLoaderTest
         props.setProperty( "home.param", "home.value" );
         props.setProperty( "home.other.param ", " home.other.value " );
 
-        final File file = new File( this.homeDir, "config/system.properties" );
-        file.getParentFile().mkdirs();
+        final Path file = this.homeDir.resolve( "config/system.properties" );
+        Files.createDirectories( file.getParent() );
 
-        try (final FileOutputStream out = new FileOutputStream( file )) {
-            props.store(out, "");
+        try (final Writer out = Files.newBufferedWriter( file ))
+        {
+            props.store( out, "" );
         }
     }
 

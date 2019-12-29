@@ -1,6 +1,5 @@
 package com.enonic.xp.launcher.impl.provision;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -18,14 +17,14 @@ public class BundleInfoFinderTest
 
     private BundleInfoFinder finder;
 
-    private File systemDir;
+    private Path systemDir;
 
     @BeforeEach
     public void setup()
         throws Exception
     {
-        this.systemDir = Files.createDirectory(this.temporaryFolder.resolve( "system" ) ).toFile();
-        this.finder = new BundleInfoFinder( this.systemDir );
+        this.systemDir = Files.createDirectory( this.temporaryFolder.resolve( "system" ) );
+        this.finder = new BundleInfoFinder( this.systemDir.toFile() );
     }
 
     @Test
@@ -51,14 +50,11 @@ public class BundleInfoFinderTest
         assertEquals( "commons-lang-2.4.jar@11", bundles.get( 1 ).toString() );
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void newFile( final String level, final String name )
         throws Exception
     {
-        final File levelFolder = new File( this.systemDir, level );
-        levelFolder.mkdirs();
-
-        final File file = new File( levelFolder, name );
-        com.google.common.io.Files.touch( file );
+        final Path levelFolder = systemDir.resolve( level );
+        Files.createDirectories( levelFolder );
+        Files.createFile( levelFolder.resolve( name ) );
     }
 }
