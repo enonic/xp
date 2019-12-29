@@ -1,6 +1,5 @@
 package com.enonic.xp.resource;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -19,7 +18,7 @@ public class UrlResourceTest
         throws Exception
     {
         final ResourceKey key = ResourceKey.from( "myapplication:/a/b.txt" );
-        final URL resourceUrl = new File( applicationsDir, "myapplication/a/b.txt" ).toURI().toURL();
+        final URL resourceUrl = applicationsDir.resolve( "myapplication/a/b.txt" ).toUri().toURL();
 
         final Resource resource = new UrlResource( key, resourceUrl );
         assertNotNull( resource );
@@ -41,7 +40,7 @@ public class UrlResourceTest
         throws MalformedURLException
     {
         final ResourceKey key = ResourceKey.from( "myapplication:/not/exists.txt" );
-        final URL resourceUrl = new File( applicationsDir, "myapplication/not/exists.txt" ).toURI().toURL();
+        final URL resourceUrl = applicationsDir.resolve( "myapplication/not/exists.txt" ).toUri().toURL();
 
         final Resource resource = new UrlResource( key, resourceUrl );
         assertNotNull( resource );

@@ -2,7 +2,6 @@ package com.enonic.xp.web.vhost.impl.mapping;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
 import com.enonic.xp.security.IdProviderKey;
@@ -158,6 +157,6 @@ public final class VirtualHostMapping
         }
 
         final Iterable<String> parts = Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value );
-        return "/" + Joiner.on( '/' ).join( parts );
+        return "/" + String.join( "/", parts );
     }
 }

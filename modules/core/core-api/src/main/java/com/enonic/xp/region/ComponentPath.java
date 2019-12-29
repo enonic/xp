@@ -3,9 +3,9 @@ package com.enonic.xp.region;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
@@ -24,7 +24,8 @@ public final class ComponentPath
     public ComponentPath( final ImmutableList<RegionAndComponent> regionAndComponentList )
     {
         this.regionAndComponentList = regionAndComponentList;
-        this.refString = toString( this );
+        this.refString =
+            this.regionAndComponentList.stream().map( Objects::toString ).collect( Collectors.joining( DIVIDER, DIVIDER, "" ) );
     }
 
     public static ComponentPath from( final RegionPath parentPath, final int componentIndex )
@@ -32,10 +33,7 @@ public final class ComponentPath
         final ImmutableList.Builder<RegionAndComponent> builder = new ImmutableList.Builder<>();
         if ( parentPath.getParentComponentPath() != null )
         {
-            for ( final RegionAndComponent regionAndComponent : parentPath.getParentComponentPath() )
-            {
-                builder.add( regionAndComponent );
-            }
+            builder.addAll( parentPath.getParentComponentPath().regionAndComponentList );
         }
         builder.add( RegionAndComponent.from( parentPath.getRegionName(), componentIndex ) );
         return new ComponentPath( builder.build() );
@@ -123,12 +121,7 @@ public final class ComponentPath
     @Override
     public int hashCode()
     {
-        return Objects.hash( refString );
-    }
-
-    private String toString( final ComponentPath componentPath )
-    {
-        return Joiner.on( DIVIDER ).appendTo( new StringBuilder( "/" ), componentPath.regionAndComponentList ).toString();
+        return refString.hashCode();
     }
 
     @Override

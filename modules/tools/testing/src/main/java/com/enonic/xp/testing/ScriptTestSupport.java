@@ -3,7 +3,6 @@ package com.enonic.xp.testing;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Hashtable;
 
 import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +22,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.app.ApplicationBuilder;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
+import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
@@ -52,7 +52,7 @@ public abstract class ScriptTestSupport
     private String appVersion;
 
     protected PortalRequest portalRequest;
-    
+
     protected ContentService contentService;
 
     private ResourceService resourceService;
@@ -96,7 +96,6 @@ public abstract class ScriptTestSupport
 
         this.portalRequest = createPortalRequest();
         PortalRequestAccessor.set( this.portalRequest );
-
 
         this.bundleContext = createBundleContext();
         this.contentService = Mockito.mock( ContentService.class );
@@ -226,8 +225,7 @@ public abstract class ScriptTestSupport
         Mockito.when( bundle.getVersion() ).thenReturn( Version.valueOf( this.appVersion ) );
         Mockito.lenient().when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
 
-        final Hashtable<String, String> headers = new Hashtable<>();
-        Mockito.when( bundle.getHeaders() ).thenReturn( headers );
+        Mockito.when( bundle.getHeaders() ).thenReturn( Dictionaries.of() );
 
         return bundle;
     }

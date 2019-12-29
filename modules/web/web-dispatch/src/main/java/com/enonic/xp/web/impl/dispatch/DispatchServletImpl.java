@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -55,9 +54,9 @@ public final class DispatchServletImpl
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addFilterPipeline( final FilterPipeline filterPipeline, final ServiceReference<FilterPipeline> pipelineServiceReference )
+    public void addFilterPipeline( final FilterPipeline filterPipeline, final Map<String, ?> props )
     {
-        if ( sameConnector( pipelineServiceReference ) )
+        if ( sameConnector( props ) )
         {
             this.filterPipeline = filterPipeline;
         }
@@ -72,9 +71,9 @@ public final class DispatchServletImpl
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addServletPipeline( final ServletPipeline servletPipeline, final ServiceReference<ServletPipeline> servletServiceReference )
+    public void addServletPipeline( final ServletPipeline servletPipeline, final Map<String, ?> props )
     {
-        if ( sameConnector( servletServiceReference ) )
+        if ( sameConnector( props ) )
         {
             this.servletPipeline = servletPipeline;
         }
@@ -109,9 +108,9 @@ public final class DispatchServletImpl
         return connector;
     }
 
-    private boolean sameConnector( final ServiceReference reference )
+    private boolean sameConnector( final Map<String, ?> props )
     {
-        final Object value = reference.getProperty( DispatchConstants.CONNECTOR_PROPERTY );
+        final Object value = props.get( DispatchConstants.CONNECTOR_PROPERTY );
 
         if ( value == null )
         {

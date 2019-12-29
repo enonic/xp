@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -73,6 +72,6 @@ public class StringTemplateTest
     private String normalizeString( final String text )
     {
         final Iterable<String> lines = Splitter.on( Pattern.compile( "(\r\n|\n|\r)" ) ).trimResults().split( text );
-        return Joiner.on( "\n" ).join( lines );
+        return String.join( "\n", lines );
     }
 }

@@ -22,8 +22,7 @@ public final class PrincipalRelationships
 
     public static PrincipalRelationships empty()
     {
-        final ImmutableList<PrincipalRelationship> list = ImmutableList.of();
-        return new PrincipalRelationships( list );
+        return new PrincipalRelationships( ImmutableList.of() );
     }
 
     public static PrincipalRelationships from( final PrincipalRelationship... principalRelationships )

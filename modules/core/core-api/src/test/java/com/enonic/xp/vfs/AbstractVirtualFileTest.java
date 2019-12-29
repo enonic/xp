@@ -1,21 +1,18 @@
 package com.enonic.xp.vfs;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public abstract class AbstractVirtualFileTest
 {
     @TempDir
     public Path temporaryFolder;
 
-    protected File rootDir;
+    protected Path rootDir;
 
     @BeforeEach
     public final void setup()
@@ -27,11 +24,11 @@ public abstract class AbstractVirtualFileTest
     private void populateTestData()
         throws Exception
     {
-        this.rootDir = Files.createDirectory( this.temporaryFolder.resolve( "root" ) ).toFile();
+        this.rootDir = Files.createDirectory( this.temporaryFolder.resolve( "root" ) );
 
-        final File dir1 = createDir( this.rootDir, "dir1" );
-        final File dir2 = createDir( this.rootDir, "dir2" );
-        final File dir3 = createDir( dir2, "dir3" );
+        final Path dir1 = createDir( this.rootDir, "dir1" );
+        final Path dir2 = createDir( this.rootDir, "dir2" );
+        final Path dir3 = createDir( dir2, "dir3" );
 
         createTestFiles( this.rootDir, "" );
         createTestFiles( dir1, "dir1/" );
@@ -39,24 +36,23 @@ public abstract class AbstractVirtualFileTest
         createTestFiles( dir3, "dir2/dir3/" );
     }
 
-    private void createTestFiles( final File dir, final String prefix )
+    private void createTestFiles( final Path dir, final String prefix )
         throws Exception
     {
         createFile( dir, "file1.txt", "contents of " + prefix + "file1.txt" );
         createFile( dir, "file2.log", "contents of " + prefix + "file1.log" );
     }
 
-    private File createDir( final File dir, final String name )
+    private Path createDir( final Path dir, final String name )
+        throws IOException
     {
-        final File file = new File( dir, name );
-        assertTrue( file.mkdirs(), "Failed to create directory " + name + " under " + dir.getAbsolutePath() );
-        return file;
+        return Files.createDirectory( dir.resolve( name ) );
     }
 
-    private void createFile( final File dir, final String name, final String contents )
+    private void createFile( final Path dir, final String name, final String contents )
         throws Exception
     {
-        final File file = new File( dir, name );
-        com.google.common.io.Files.write( contents, file, StandardCharsets.UTF_8 );
+        final Path file = dir.resolve( name );
+        Files.writeString( file, contents );
     }
 }

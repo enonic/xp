@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.reflect.ClassPath;
 
@@ -26,7 +25,7 @@ public final class OsgiExportsBuilder
     {
         final Iterable<String> list = Splitter.on( ',' ).trimResults().omitEmptyStrings().split( exports );
         final Iterable<String> result = expandExports( list );
-        return Joiner.on( ',' ).join( result );
+        return String.join( ",", result );
     }
 
     private Iterable<String> expandExports( final Iterable<String> list )

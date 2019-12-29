@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.Arrays;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.content.ContentPath;
@@ -82,6 +81,6 @@ abstract class GenericEndpointUrlBuilder<T extends AbstractUrlParams>
         }
 
         final String[] preEndpointPathWithoutContentPath = Arrays.copyOfRange( splitPreEndpointPath, 0, preEndpointPathIndex + 1 );
-        return Joiner.on( ELEMENT_DIVIDER ).join( preEndpointPathWithoutContentPath );
+        return String.join( ELEMENT_DIVIDER, preEndpointPathWithoutContentPath );
     }
 }

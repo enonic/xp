@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.dump.upgrade.flattenedpage;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -68,7 +67,7 @@ public class FlattenedPageDumpUpgrader
     {
         super.doUpgrade( dumpName );
 
-        final File versionsFile = dumpReader.getVersionsFile( REPOSITORY_ID );
+        final Path versionsFile = dumpReader.getVersionsFile( REPOSITORY_ID );
         if ( versionsFile != null )
         {
             //Gathers the template -> controller mappings
@@ -134,7 +133,7 @@ public class FlattenedPageDumpUpgrader
 
     private void upgradeBranch( final Branch branch )
     {
-        final File branchEntriesFile = dumpReader.getBranchEntriesFile( REPOSITORY_ID, branch );
+        final Path branchEntriesFile = dumpReader.getBranchEntriesFile( REPOSITORY_ID, branch );
         if ( branchEntriesFile != null )
         {
             //Gathers the template -> controller mappings

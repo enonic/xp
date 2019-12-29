@@ -4,7 +4,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
 
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.util.CharacterChecker;
@@ -49,11 +48,11 @@ public final class PrincipalKey
         this.principalId = CharacterChecker.check( principalId, "Not a valid principal key [" + principalId + "]" );
         if ( type == PrincipalType.ROLE )
         {
-            this.refString = Joiner.on( SEPARATOR ).join( type.toString().toLowerCase(), principalId );
+            this.refString = String.join( SEPARATOR, type.toString().toLowerCase(), principalId );
         }
         else
         {
-            this.refString = Joiner.on( SEPARATOR ).join( type.toString().toLowerCase(), idProviderKey.toString(), principalId );
+            this.refString = String.join( SEPARATOR, type.toString().toLowerCase(), idProviderKey.toString(), principalId );
         }
     }
 
@@ -62,7 +61,7 @@ public final class PrincipalKey
         this.idProviderKey = IdProviderKey.system();
         this.type = PrincipalType.USER;
         this.principalId = "anonymous";
-        this.refString = Joiner.on( SEPARATOR ).join( type.toString().toLowerCase(), idProviderKey.toString(), principalId );
+        this.refString = String.join( SEPARATOR, type.toString().toLowerCase(), idProviderKey.toString(), principalId );
     }
 
     public static PrincipalKey from( final String principalKey )

@@ -14,8 +14,7 @@ public final class ServiceDescriptors
 
     public static ServiceDescriptors empty()
     {
-        final ImmutableList<ServiceDescriptor> list = ImmutableList.of();
-        return new ServiceDescriptors( list );
+        return new ServiceDescriptors( ImmutableList.of() );
     }
 
     public static ServiceDescriptors from( final ServiceDescriptor... descriptors )

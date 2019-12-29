@@ -25,8 +25,7 @@ public final class ValidationErrors
 
     public static ValidationErrors empty()
     {
-        final ImmutableList<ValidationError> list = ImmutableList.of();
-        return new ValidationErrors( list );
+        return new ValidationErrors( ImmutableList.of() );
     }
 
     public static ValidationErrors from( final ValidationError... validationErrors )

@@ -1,12 +1,10 @@
 package com.enonic.xp.schema.mixin;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
@@ -21,8 +19,7 @@ public final class MixinNames
 
     public static MixinNames empty()
     {
-        final ImmutableList<MixinName> list = ImmutableList.of();
-        return new MixinNames( list );
+        return new MixinNames( ImmutableList.of() );
     }
 
     public static MixinNames from( final String... mixinNames )
@@ -47,19 +44,6 @@ public final class MixinNames
 
     private static ImmutableList<MixinName> parseQualifiedNames( final String... mixinNames )
     {
-        final Collection<String> list = Lists.newArrayList( mixinNames );
-        final Collection<MixinName> mixinNameList = Collections2.transform( list, new ParseFunction() );
-        return ImmutableList.copyOf( mixinNameList );
+        return Arrays.stream( mixinNames ).map( MixinName::from ).collect( ImmutableList.toImmutableList() );
     }
-
-    private final static class ParseFunction
-        implements Function<String, MixinName>
-    {
-        @Override
-        public MixinName apply( final String value )
-        {
-            return MixinName.from( value );
-        }
-    }
-
 }

@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
@@ -1387,7 +1386,7 @@ public final class ContentResource
                 else
                 {
                     final PrincipalKeys members = resolver.getUserMembers( principal );
-                    Iterables.addAll( resolvedMembers, members );
+                    resolvedMembers.addAll( members.getSet() );
                 }
             }
 

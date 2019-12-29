@@ -1,7 +1,5 @@
 package com.enonic.xp.elasticsearch.impl;
 
-import java.util.Hashtable;
-
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
@@ -158,7 +156,7 @@ public final class ElasticsearchCluster
         }
 
         LOG.info( "Cluster operational, register elasticsearch-client" );
-        this.reg = this.context.registerService( Client.class, this.node.client(), new Hashtable<>() );
+        this.reg = this.context.registerService( Client.class, this.node.client(), null );
     }
 
     private void unregisterClient()

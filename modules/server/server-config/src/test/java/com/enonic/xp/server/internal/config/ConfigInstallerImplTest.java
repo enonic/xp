@@ -3,7 +3,6 @@ package com.enonic.xp.server.internal.config;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Hashtable;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +11,9 @@ import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
+
+import com.enonic.xp.core.internal.Dictionaries;
+
 
 public class ConfigInstallerImplTest
 {
@@ -46,7 +48,7 @@ public class ConfigInstallerImplTest
         throws Exception
     {
         final Configuration config = mockGetConfiguration();
-        final File file = Files.createFile(this.temporaryFolder.resolve( "com.foo.bar.cfg" ) ).toFile();
+        final File file = Files.createFile( this.temporaryFolder.resolve( "com.foo.bar.cfg" ) ).toFile();
 
         this.installer.updateConfig( file );
         Mockito.verify( config, Mockito.times( 0 ) ).update( Mockito.any() );
@@ -56,12 +58,9 @@ public class ConfigInstallerImplTest
     public void updateConfig_changed()
         throws Exception
     {
-        final Hashtable<String, Object> oldMap = new Hashtable<>();
-        oldMap.put( "a", 1 );
-
         final Configuration config = mockGetConfiguration();
-        Mockito.when( config.getProperties() ).thenReturn( oldMap );
-        final File file = Files.createFile(this.temporaryFolder.resolve( "com.foo.bar.cfg" ) ).toFile();
+        Mockito.when( config.getProperties() ).thenReturn( Dictionaries.of( "a", 1 ) );
+        final File file = Files.createFile( this.temporaryFolder.resolve( "com.foo.bar.cfg" ) ).toFile();
 
         this.installer.updateConfig( file );
         Mockito.verify( config, Mockito.times( 1 ) ).update( Mockito.any() );
@@ -71,11 +70,9 @@ public class ConfigInstallerImplTest
     public void updateConfig_unchanged()
         throws Exception
     {
-        final Hashtable<String, Object> oldMap = new Hashtable<>();
-
         final Configuration config = mockGetConfiguration();
-        Mockito.when( config.getProperties() ).thenReturn( oldMap );
-        final File file = Files.createFile(this.temporaryFolder.resolve( "com.foo.bar.cfg" ) ).toFile();
+        Mockito.when( config.getProperties() ).thenReturn( Dictionaries.of() );
+        final File file = Files.createFile( this.temporaryFolder.resolve( "com.foo.bar.cfg" ) ).toFile();
 
         this.installer.updateConfig( file );
         Mockito.verify( config, Mockito.times( 0 ) ).update( Mockito.any() );

@@ -12,6 +12,8 @@ dependencies {
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
     compile 'javax.mail:mail:1.4.7'
     compile "io.dropwizard.metrics:metrics-core:${dropwizardMetricsVersion}"
+
+    testImplementation project( ':core:core-internal' )
 }
 
 jar {

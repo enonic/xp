@@ -1,11 +1,7 @@
 package com.enonic.xp.repo.impl;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.index.IndexPath;
@@ -14,30 +10,23 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public class ReturnFields
     extends AbstractImmutableEntitySet<ReturnField>
 {
-    private ReturnFields( final Set<ReturnField> set )
+    private ReturnFields( final ImmutableSet<ReturnField> set )
     {
-        super( ImmutableSet.copyOf( set ) );
+        super( set );
     }
 
     public static ReturnFields empty()
     {
-        final Set<ReturnField> returnFields = new HashSet<>();
-        return new ReturnFields( returnFields );
+        return new ReturnFields( ImmutableSet.of() );
     }
 
     public static ReturnFields from( final IndexPath... indexPath )
     {
-        return ReturnFields.fromCollection( Collections2.transform( Arrays.asList( indexPath ), ReturnField::new ) );
-    }
-
-    private static ReturnFields fromCollection( final Collection<ReturnField> returnFields )
-    {
-        return new ReturnFields( ImmutableSet.copyOf( returnFields ) );
+        return new ReturnFields( Arrays.stream( indexPath ).map( ReturnField::new ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
     public String[] getReturnFieldNames()
     {
-        return Collections2.transform( this.set, ReturnField::getPath ).toArray( new String[this.set.size()] );
+        return this.set.stream().map( ReturnField::getPath ).toArray( String[]::new );
     }
-
 }

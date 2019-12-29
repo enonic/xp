@@ -18,8 +18,7 @@ public final class LayoutDescriptors
 
     public static LayoutDescriptors empty()
     {
-        final ImmutableList<LayoutDescriptor> list = ImmutableList.of();
-        return new LayoutDescriptors( list );
+        return new LayoutDescriptors( ImmutableList.of() );
     }
 
     public static LayoutDescriptors from( final LayoutDescriptor... descriptors )
