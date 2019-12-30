@@ -79,7 +79,7 @@ public final class LayoutComponent
 
     @Deprecated
     @Override
-    protected ComponentName doGetName()
+    public ComponentName getName()
     {
         return NAME;
     }

@@ -42,13 +42,6 @@ public class TextComponent
 
     @Deprecated
     @Override
-    protected ComponentName doGetName()
-    {
-        return NAME;
-    }
-
-    @Deprecated
-    @Override
     public ComponentName getName()
     {
         return NAME;

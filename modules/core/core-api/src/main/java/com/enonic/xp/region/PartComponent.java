@@ -41,7 +41,7 @@ public final class PartComponent
 
     @Deprecated
     @Override
-    public ComponentName doGetName()
+    public ComponentName getName()
     {
         return NAME;
     }

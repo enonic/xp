@@ -44,7 +44,7 @@ public class FragmentComponent
 
     @Deprecated
     @Override
-    public ComponentName doGetName()
+    public ComponentName getName()
     {
         return NAME;
     }

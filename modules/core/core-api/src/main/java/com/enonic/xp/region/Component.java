@@ -19,11 +19,8 @@ public abstract class Component
     @Deprecated
     public ComponentName getName()
     {
-        return doGetName();
+        return null;
     }
-
-    @Deprecated
-    abstract protected ComponentName doGetName();
 
     public ComponentPath getPath()
     {
