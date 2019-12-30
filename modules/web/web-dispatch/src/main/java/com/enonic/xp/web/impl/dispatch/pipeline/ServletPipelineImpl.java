@@ -8,7 +8,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -46,9 +45,9 @@ public final class ServletPipelineImpl
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addServlet( final Servlet servlet, final ServiceReference<Servlet> servletServiceReference )
+    public void addServlet( final Servlet servlet, final Map<String, ?> props )
     {
-        add( ResourceDefinitionFactory.create( servlet, getConnectorsFromProperty( servletServiceReference ) ) );
+        add( ResourceDefinitionFactory.create( servlet, getConnectorsFromProperty( props ) ) );
     }
 
     public void removeServlet( final Servlet servlet )

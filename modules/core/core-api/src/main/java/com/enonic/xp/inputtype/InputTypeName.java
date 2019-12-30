@@ -1,8 +1,8 @@
 package com.enonic.xp.inputtype;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public final class InputTypeName
 {
     public final static InputTypeName CHECK_BOX = InputTypeName.from( "CheckBox" );

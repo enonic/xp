@@ -5,14 +5,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteStreams;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class Icon
 {
     private final byte[] iconData;
@@ -70,14 +71,14 @@ public final class Icon
         }
 
         final Icon that = (Icon) o;
-        return Objects.equal( this.mimeType, that.mimeType ) && Objects.equal( this.modifiedTime, that.modifiedTime ) &&
+        return Objects.equals( this.mimeType, that.mimeType ) && Objects.equals( this.modifiedTime, that.modifiedTime ) &&
             Arrays.equals( this.iconData, that.iconData );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( mimeType, modifiedTime, Arrays.hashCode( iconData ) );
+        return Objects.hash( mimeType, modifiedTime, Arrays.hashCode( iconData ) );
     }
 
     @Override

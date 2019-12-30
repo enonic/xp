@@ -26,9 +26,9 @@ import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.InputSource;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public final class DomHelper
 {
     private static final DocumentBuilderFactory BUILDER_FACTORY = DocumentBuilderFactory.newInstance();

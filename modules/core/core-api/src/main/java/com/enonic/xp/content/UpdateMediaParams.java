@@ -3,11 +3,12 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class UpdateMediaParams
 {
     private ContentId content;

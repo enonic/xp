@@ -8,6 +8,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -113,7 +114,14 @@ public final class ResourceServiceImpl
     }
 
     @Override
+    @Deprecated
     public void invalidate( final ApplicationKey key )
+    {
+        invalidate( key, ApplicationInvalidationLevel.FULL );
+    }
+
+    @Override
+    public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
     {
         this.cache.invalidate( key );
     }

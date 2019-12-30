@@ -1,7 +1,6 @@
 package com.enonic.xp.web.impl.dispatch;
 
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -11,8 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.ServiceReference;
 
 import com.enonic.xp.web.impl.dispatch.pipeline.FilterPipeline;
 import com.enonic.xp.web.impl.dispatch.pipeline.ServletPipeline;
@@ -32,8 +29,8 @@ public class DispatchServletImplTest
         this.servletPipeline = Mockito.mock( ServletPipeline.class );
 
         this.servlet = new DispatchServletImpl();
-        this.servlet.addFilterPipeline( this.filterPipeline, new MyServiceReference<>() );
-        this.servlet.addServletPipeline( this.servletPipeline, new MyServiceReference<>() );
+        this.servlet.addFilterPipeline( this.filterPipeline, Map.of() );
+        this.servlet.addServletPipeline( this.servletPipeline, Map.of() );
     }
 
     @Test
@@ -70,49 +67,4 @@ public class DispatchServletImplTest
         Mockito.verify( this.filterPipeline, Mockito.times( 1 ) ).filter( req, res, this.servletPipeline );
     }
 
-    private static final class MyServiceReference<T>
-        implements ServiceReference<T>
-    {
-        @Override
-        public Object getProperty( final String key )
-        {
-            return null;
-        }
-
-        @Override
-        public String[] getPropertyKeys()
-        {
-            return new String[0];
-        }
-
-        @Override
-        public Bundle getBundle()
-        {
-            return null;
-        }
-
-        @Override
-        public Bundle[] getUsingBundles()
-        {
-            return new Bundle[0];
-        }
-
-        @Override
-        public boolean isAssignableTo( final Bundle bundle, final String className )
-        {
-            return false;
-        }
-
-        @Override
-        public int compareTo( final Object reference )
-        {
-            return 0;
-        }
-
-        @Override
-        public Dictionary<String, Object> getProperties()
-        {
-            return new Hashtable<>();
-        }
-    }
 }

@@ -41,7 +41,10 @@ public class IssueNotificationsSenderImpl
         if ( isRecipientsPresent( params ) )
         {
             final MailMessage mailMessage = new IssueCreatedMailMessageGenerator( params ).generateMessage();
-            sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+            if ( mailMessage != null )
+            {
+                sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+            }
         }
     }
 
@@ -51,7 +54,10 @@ public class IssueNotificationsSenderImpl
         if ( isRecipientsPresent( params ) )
         {
             final MailMessage mailMessage = new IssuePublishedMailMessageGenerator( params ).generateMessage();
-            sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+            if ( mailMessage != null )
+            {
+                sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+            }
         }
     }
 
@@ -61,7 +67,10 @@ public class IssueNotificationsSenderImpl
         if ( isRecipientsPresent( params ) )
         {
             final MailMessage mailMessage = new IssueUpdatedMailMessageGenerator( params ).generateMessage();
-            sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+            if ( mailMessage != null )
+            {
+                sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+            }
         }
     }
 
@@ -71,7 +80,10 @@ public class IssueNotificationsSenderImpl
         if ( isRecipientsPresent( params ) )
         {
             final MailMessage mailMessage = new IssueCommentedMailMessageGenerator( params ).generateMessage();
-            sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+            if ( mailMessage != null )
+            {
+                sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+            }
         }
     }
 

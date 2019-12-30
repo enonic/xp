@@ -5,14 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.annotations.Beta;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 
-@Beta
 @SuppressWarnings("UnusedDeclaration")
 public class FormJson
 {

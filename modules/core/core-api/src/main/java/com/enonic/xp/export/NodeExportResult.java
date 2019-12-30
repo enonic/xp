@@ -6,13 +6,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.util.BinaryReference;
 
-@Beta
+@PublicApi
 public class NodeExportResult
 {
     private final boolean dryRun;

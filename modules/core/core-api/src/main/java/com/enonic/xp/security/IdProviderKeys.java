@@ -3,14 +3,14 @@ package com.enonic.xp.security;
 import java.util.List;
 import java.util.stream.Stream;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 import static java.util.stream.Collectors.toList;
 
-@Beta
+@PublicApi
 public final class IdProviderKeys
     extends AbstractImmutableEntityList<IdProviderKey>
 {

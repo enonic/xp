@@ -1,12 +1,9 @@
 package com.enonic.xp.core.impl.content.serializer;
 
 
-import com.google.common.annotations.Beta;
-
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.region.Component;
 
-@Beta
 abstract class ComponentDataSerializer<DATA extends Component>
     extends AbstractDataSetSerializer<DATA>
 {

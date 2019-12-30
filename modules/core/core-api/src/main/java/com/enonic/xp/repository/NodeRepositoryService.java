@@ -1,8 +1,8 @@
 package com.enonic.xp.repository;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public interface NodeRepositoryService
 {
     void create( final CreateRepositoryParams params );

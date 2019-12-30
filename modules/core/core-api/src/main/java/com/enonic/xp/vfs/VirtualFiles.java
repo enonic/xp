@@ -5,9 +5,9 @@ import java.nio.file.Path;
 
 import org.osgi.framework.Bundle;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public final class VirtualFiles
 {
     public static VirtualFile from( final Path path )

@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -26,7 +24,7 @@ public class QueryExprTest
     public void full_query()
     {
         final CompareExpr constraint = CompareExpr.eq( FieldExpr.from( "a" ), ValueExpr.number( 2 ) );
-        final List<OrderExpr> orderList = Lists.newArrayList( new FieldOrderExpr( FieldExpr.from( "a" ), OrderExpr.Direction.DESC ) );
+        final List<OrderExpr> orderList = List.of( new FieldOrderExpr( FieldExpr.from( "a" ), OrderExpr.Direction.DESC ) );
         final QueryExpr expr = new QueryExpr( constraint, orderList );
 
         assertSame( constraint, expr.getConstraint() );
@@ -48,7 +46,7 @@ public class QueryExprTest
     @Test
     public void only_order_in_query()
     {
-        final List<OrderExpr> orderList = Lists.newArrayList( new FieldOrderExpr( FieldExpr.from( "a" ), OrderExpr.Direction.DESC ) );
+        final List<OrderExpr> orderList = List.of( new FieldOrderExpr( FieldExpr.from( "a" ), OrderExpr.Direction.DESC ) );
         final QueryExpr expr1 = new QueryExpr( null, orderList );
         final QueryExpr expr2 = new QueryExpr( orderList );
         final QueryExpr expr3 = QueryExpr.from( null, orderList );

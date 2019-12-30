@@ -3,13 +3,12 @@ package com.enonic.xp.security;
 import java.util.List;
 import java.util.Optional;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.acl.IdProviderAccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
 
-@Beta
+@PublicApi
 public interface SecurityService
 {
     IdProviders getIdProviders();

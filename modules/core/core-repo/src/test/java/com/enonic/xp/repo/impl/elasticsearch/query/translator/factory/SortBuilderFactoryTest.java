@@ -9,8 +9,6 @@ import org.elasticsearch.search.sort.GeoDistanceSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.query.expr.DynamicOrderExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
@@ -56,7 +54,7 @@ public class SortBuilderFactoryTest
     {
         final Set<OrderExpr> orderExprs = new HashSet<>();
         orderExprs.add( new DynamicOrderExpr(
-            new FunctionExpr( "geoDistance", Lists.newArrayList( ValueExpr.string( "myField" ), ValueExpr.geoPoint( "-50,40" ) ) ),
+            new FunctionExpr( "geoDistance", List.of( ValueExpr.string( "myField" ), ValueExpr.geoPoint( "-50,40" ) ) ),
             OrderExpr.Direction.ASC ) );
 
         final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create( orderExprs );

@@ -6,9 +6,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public class NodePublishRequests
     implements Iterable<NodePublishRequest>
 {

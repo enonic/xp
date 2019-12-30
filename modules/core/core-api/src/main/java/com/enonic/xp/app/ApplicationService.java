@@ -2,12 +2,12 @@ package com.enonic.xp.app;
 
 import java.net.URL;
 
-import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.node.NodeId;
 
-@Beta
+@PublicApi
 public interface ApplicationService
 {
     Application getInstalledApplication( ApplicationKey key )
@@ -38,10 +38,13 @@ public interface ApplicationService
 
     void publishUninstalledEvent( final ApplicationKey key );
 
+    @Deprecated
     void invalidate( ApplicationKey key );
+
+    void invalidate( ApplicationKey key, ApplicationInvalidationLevel level );
 
     @Deprecated
     void installAllStoredApplications();
 
-    void installAllStoredApplications(final ApplicationInstallationParams params);
+    void installAllStoredApplications( final ApplicationInstallationParams params );
 }

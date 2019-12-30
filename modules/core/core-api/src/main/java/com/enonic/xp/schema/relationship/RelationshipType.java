@@ -1,19 +1,16 @@
 package com.enonic.xp.schema.relationship;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Objects;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
-@Beta
+@PublicApi
 public final class RelationshipType
     extends BaseSchema<RelationshipTypeName>
 {
@@ -30,8 +27,8 @@ public final class RelationshipType
         super( builder );
         this.fromSemantic = builder.fromSemantic;
         this.toSemantic = builder.toSemantic;
-        this.allowedFromTypes = ContentTypeNames.from( builder.allowedFromTypes );
-        this.allowedToTypes = ContentTypeNames.from( builder.allowedToTypes );
+        this.allowedFromTypes = ContentTypeNames.from( builder.allowedFromTypes.build() );
+        this.allowedToTypes = ContentTypeNames.from( builder.allowedToTypes.build() );
     }
 
     public String getFromSemantic()
@@ -67,20 +64,16 @@ public final class RelationshipType
             return false;
         }
         final RelationshipType that = (RelationshipType) o;
-        return Objects.equal( this.getName(), that.getName() ) &&
-            Objects.equal( this.getDisplayName(), that.getDisplayName() ) &&
-            Objects.equal( this.getDescription(), that.getDescription() ) &&
-            Objects.equal( this.fromSemantic, that.fromSemantic ) &&
-            Objects.equal( this.toSemantic, that.toSemantic ) &&
-            Objects.equal( this.allowedFromTypes, that.allowedFromTypes ) &&
-            Objects.equal( this.allowedToTypes, that.allowedToTypes );
+        return Objects.equals( this.getName(), that.getName() ) && Objects.equals( this.getDisplayName(), that.getDisplayName() ) &&
+            Objects.equals( this.getDescription(), that.getDescription() ) && Objects.equals( this.fromSemantic, that.fromSemantic ) &&
+            Objects.equals( this.toSemantic, that.toSemantic ) && Objects.equals( this.allowedFromTypes, that.allowedFromTypes ) &&
+            Objects.equals( this.allowedToTypes, that.allowedToTypes );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( getName(), getDisplayName(), getDescription(), fromSemantic, toSemantic, allowedFromTypes,
-                                 allowedToTypes );
+        return Objects.hash( getName(), getDisplayName(), getDescription(), fromSemantic, toSemantic, allowedFromTypes, allowedToTypes );
     }
 
     public static Builder create()
@@ -100,9 +93,9 @@ public final class RelationshipType
 
         private String toSemantic;
 
-        private List<ContentTypeName> allowedFromTypes = new ArrayList<>();
+        private ImmutableList.Builder<ContentTypeName> allowedFromTypes = ImmutableList.builder();
 
-        private List<ContentTypeName> allowedToTypes = new ArrayList<>();
+        private ImmutableList.Builder<ContentTypeName> allowedToTypes = ImmutableList.builder();
 
         private Builder()
         {
@@ -114,8 +107,8 @@ public final class RelationshipType
             super( relationshipType );
             this.fromSemantic = relationshipType.fromSemantic;
             this.toSemantic = relationshipType.toSemantic;
-            this.allowedFromTypes = Lists.newArrayList( relationshipType.allowedFromTypes );
-            this.allowedToTypes = Lists.newArrayList( relationshipType.allowedToTypes );
+            this.allowedFromTypes = ImmutableList.<ContentTypeName>builder().addAll( relationshipType.allowedFromTypes );
+            this.allowedToTypes = ImmutableList.<ContentTypeName>builder().addAll( relationshipType.allowedToTypes );
         }
 
         public Builder name( final String value )
@@ -153,8 +146,7 @@ public final class RelationshipType
 
         public Builder setAllowedFromTypes( Iterable<ContentTypeName> contentTypeNames )
         {
-            allowedFromTypes.clear();
-            Iterables.addAll( allowedFromTypes, contentTypeNames );
+            allowedFromTypes = new ImmutableList.Builder<ContentTypeName>().addAll( contentTypeNames );
             return this;
         }
 
@@ -175,8 +167,7 @@ public final class RelationshipType
 
         public Builder setAllowedToTypes( Iterable<ContentTypeName> contentTypeNames )
         {
-            allowedToTypes.clear();
-            Iterables.addAll( allowedToTypes, contentTypeNames );
+            allowedToTypes = new ImmutableList.Builder<ContentTypeName>().addAll( contentTypeNames );
             return this;
         }
 

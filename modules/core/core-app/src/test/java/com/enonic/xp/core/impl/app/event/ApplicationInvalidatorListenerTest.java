@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.app.event;
 
-import java.util.Hashtable;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -10,6 +8,7 @@ import org.osgi.framework.BundleEvent;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.event.Event;
 
 public class ApplicationInvalidatorListenerTest
@@ -34,9 +33,7 @@ public class ApplicationInvalidatorListenerTest
 
         final Bundle bundle = Mockito.mock( Bundle.class );
         Mockito.when( bundle.getSymbolicName() ).thenReturn( this.appKey.getName() );
-        final Hashtable<String, String> headers = new Hashtable<>();
-        headers.put( "X-Bundle-Type", "application" );
-        Mockito.when( bundle.getHeaders() ).thenReturn( headers );
+        Mockito.when( bundle.getHeaders() ).thenReturn( Dictionaries.of( "X-Bundle-Type", "application" ) );
 
         final BundleEvent bundleEvent = new BundleEvent( BundleEvent.STARTED, bundle );
         this.event = ApplicationEvents.event( bundleEvent );

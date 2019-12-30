@@ -2,9 +2,9 @@ package com.enonic.xp.data;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public abstract class ValueType<T>
 {
     private final String name;

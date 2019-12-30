@@ -3,9 +3,9 @@ package com.enonic.xp.content;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public class DeleteContentsResult
 {
     private final ContentIds deletedContents;

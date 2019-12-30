@@ -5,9 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+
+import com.enonic.xp.annotation.PublicApi;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -15,7 +16,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 /**
  * Immutable
  */
-@Beta
+@PublicApi
 public final class PropertyPath
     implements Iterable<PropertyPath.Element>
 {

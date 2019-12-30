@@ -1,15 +1,12 @@
 package com.enonic.xp.impl.server.rest.task;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
-
-import com.google.common.io.Files;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.dump.BranchLoadResult;
@@ -35,7 +32,6 @@ import com.enonic.xp.task.TaskId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LoadRunnableTaskTest
     extends AbstractRunnableTaskTest
@@ -51,7 +47,9 @@ public class LoadRunnableTaskTest
 
     private NodeRepositoryService nodeRepositoryService;
 
-    private File nameDir, dumpDir, dataDir;
+    private Path dumpDir;
+
+    private Path dataDir;
 
     @BeforeEach
     public void setUp()
@@ -62,11 +60,11 @@ public class LoadRunnableTaskTest
         this.repositoryService = Mockito.mock( RepositoryService.class );
         this.nodeRepositoryService = Mockito.mock( NodeRepositoryService.class );
 
-        final File homeDir = java.nio.file.Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
-        System.setProperty( "xp.home", homeDir.getAbsolutePath() );
+        final Path homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) ).toAbsolutePath();
+        System.setProperty( "xp.home", homeDir.toString() );
 
-        this.dataDir = createDir( homeDir, "data" );
-        this.dumpDir = createDir( dataDir, "dump" );
+        this.dataDir = Files.createDirectory( homeDir.resolve( "data" ) );
+        this.dumpDir = Files.createDirectory( dataDir.resolve( "dump" ) );
     }
 
     @Override
@@ -96,7 +94,7 @@ public class LoadRunnableTaskTest
     public void load()
         throws Exception
     {
-        this.nameDir = createDir( dumpDir, "name" );
+        Path nameDir = Files.createDirectory( dumpDir.resolve( "name" ) );
 
         final NodeImportResult importResult = NodeImportResult.create().
             added( NodePath.create( "/path/to/node1" ).build() ).
@@ -111,8 +109,7 @@ public class LoadRunnableTaskTest
             id( RepositoryId.from( "my-repo" ) ).
             build() ) );
 
-        final File file = new File( this.nameDir, "export.properties" );
-        Files.write( "a=b", file, StandardCharsets.UTF_8 );
+        Files.writeString( nameDir.resolve( "export.properties" ), "a=b" );
 
         SystemLoadParams params = SystemLoadParams.create().dumpName( "name" ).includeVersions( true ).build();
 
@@ -139,7 +136,7 @@ public class LoadRunnableTaskTest
     public void load_system()
         throws Exception
     {
-        this.nameDir = createDir( dumpDir, "name" );
+        Files.createDirectory( dumpDir.resolve( "name" ) );
 
         SystemLoadParams params = SystemLoadParams.create().dumpName( "name" ).includeVersions( true ).build();
 
@@ -167,14 +164,8 @@ public class LoadRunnableTaskTest
     public void load_no_dump()
         throws Exception
     {
-        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> createAndRunTask( new SystemLoadRequestJson( "name", false ) ) );
-        assertEquals( "No dump with name 'name' found in " + dataDir.getPath(), ex.getMessage());
-    }
-
-    private File createDir( final File dir, final String name )
-    {
-        final File file = new File( dir, name );
-        assertTrue( file.mkdirs(), "Failed to create directory " + name + " under " + dir.getAbsolutePath() );
-        return file;
+        final IllegalArgumentException ex =
+            assertThrows( IllegalArgumentException.class, () -> createAndRunTask( new SystemLoadRequestJson( "name", false ) ) );
+        assertEquals( "No dump with name 'name' found in " + dataDir, ex.getMessage() );
     }
 }

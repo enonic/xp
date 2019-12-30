@@ -5,15 +5,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-@Beta
+@PublicApi
 public class NodeIds
     extends AbstractImmutableEntitySet<NodeId>
 {
@@ -62,24 +60,12 @@ public class NodeIds
 
     private static ImmutableSet<NodeId> parseIds( final Collection<String> paths )
     {
-        final Collection<String> list = Lists.newArrayList( paths );
-        final Collection<NodeId> pathList = Collections2.transform( list, new ParseFunction() );
-        return ImmutableSet.copyOf( pathList );
+        return paths.stream().map( NodeId::from ).collect( ImmutableSet.toImmutableSet() );
     }
 
     public List<String> getAsStrings()
     {
         return this.set.stream().map( NodeId::toString ).collect( Collectors.toList() );
-    }
-
-    private final static class ParseFunction
-        implements Function<String, NodeId>
-    {
-        @Override
-        public NodeId apply( final String value )
-        {
-            return NodeId.from( value );
-        }
     }
 
     public static class Builder

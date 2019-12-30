@@ -1,6 +1,7 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.Servlet;
 import javax.servlet.annotation.WebServlet;
@@ -45,7 +46,7 @@ public class ServletPipelineImplTest
         final MyServlet servlet = new MyServlet();
 
         assertEquals( 0, Lists.newArrayList( this.pipeline ).size() );
-        this.pipeline.addServlet( servlet, new MyServiceReference<>() );
+        this.pipeline.addServlet( servlet, Map.of() );
 
         this.pipeline.activate( new HashMap<>() );
 

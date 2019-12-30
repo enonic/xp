@@ -5,8 +5,6 @@ import java.util.List;
 import org.elasticsearch.index.query.Operator;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 
@@ -19,7 +17,7 @@ public class FulltextFunctionArgumentsTest
     public void fullText3Arguments()
     {
         final List<ValueExpr> arguments =
-            Lists.newArrayList( ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ), ValueExpr.string( "and" ) );
+            List.of( ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ), ValueExpr.string( "and" ) );
 
         final FulltextFunctionArguments functionArguments = new FulltextFunctionArguments( arguments );
 
@@ -31,7 +29,7 @@ public class FulltextFunctionArgumentsTest
     @Test
     public void fullText2Arguments()
     {
-        final List<ValueExpr> arguments = Lists.newArrayList( ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ) );
+        final List<ValueExpr> arguments = List.of( ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ) );
 
         final FulltextFunctionArguments functionArguments = new FulltextFunctionArguments( arguments );
 
@@ -44,7 +42,7 @@ public class FulltextFunctionArgumentsTest
     @Test
     public void fullText1Argument()
     {
-        final List<ValueExpr> arguments = Lists.newArrayList( ValueExpr.string( "myField" ) );
+        final List<ValueExpr> arguments = List.of( ValueExpr.string( "myField" ) );
 
         final FunctionQueryBuilderException ex = assertThrows(FunctionQueryBuilderException.class, () -> {
             new FulltextFunctionArguments( arguments );
@@ -56,8 +54,8 @@ public class FulltextFunctionArgumentsTest
     public void analyzer()
     {
         final List<ValueExpr> arguments =
-            Lists.newArrayList( ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ), ValueExpr.string( "OR" ),
-                                ValueExpr.string( "myAnalyzer" ) );
+            List.of( ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ), ValueExpr.string( "OR" ),
+                     ValueExpr.string( "myAnalyzer" ) );
 
         final FulltextFunctionArguments functionArguments = new FulltextFunctionArguments( arguments );
 
@@ -72,7 +70,7 @@ public class FulltextFunctionArgumentsTest
     public void fullIllegalOperatorArgument()
     {
         final List<ValueExpr> arguments =
-                Lists.newArrayList( ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ), ValueExpr.string( "dummy" ) );
+            List.of( ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ), ValueExpr.string( "dummy" ) );
 
         final FunctionQueryBuilderException ex = assertThrows(FunctionQueryBuilderException.class, () -> {
             new FulltextFunctionArguments( arguments );

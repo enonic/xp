@@ -1,9 +1,10 @@
 package com.enonic.xp.node;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public class RenameNodeParams
 {
     private final NodeId nodeId;

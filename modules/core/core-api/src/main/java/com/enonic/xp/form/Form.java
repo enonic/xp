@@ -4,14 +4,15 @@ package com.enonic.xp.form;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+
+@PublicApi
 public final class Form
     implements Iterable<FormItem>
 {
@@ -113,13 +114,13 @@ public final class Form
         }
 
         final Form that = (Form) o;
-        return Objects.equal( this.formItems, that.formItems );
+        return Objects.equals( this.formItems, that.formItems );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.formItems );
+        return Objects.hash( this.formItems );
     }
 
     @Override

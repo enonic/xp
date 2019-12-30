@@ -1,10 +1,12 @@
 package com.enonic.xp.schema.content;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Objects;
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class GetContentTypesParams
 {
     private ContentTypeNames contentTypeNames;
@@ -47,13 +49,13 @@ public final class GetContentTypesParams
         }
 
         final GetContentTypesParams that = (GetContentTypesParams) o;
-        return Objects.equal( this.contentTypeNames, that.contentTypeNames );
+        return Objects.equals( this.contentTypeNames, that.contentTypeNames );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.contentTypeNames );
+        return Objects.hash( this.contentTypeNames );
     }
 
     public void validate()

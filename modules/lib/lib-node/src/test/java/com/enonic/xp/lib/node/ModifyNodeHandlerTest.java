@@ -3,6 +3,7 @@ package com.enonic.xp.lib.node;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -120,7 +121,7 @@ public class ModifyNodeHandlerTest
         assertNotNull( myArray );
         final ArrayList<String> myArrayValues = Lists.newArrayList( myArray );
         assertEquals( 3, myArrayValues.size() );
-        assertTrue( myArrayValues.containsAll( Lists.newArrayList( "modified1", "modified2", "modified3" ) ) );
+        assertTrue( myArrayValues.containsAll( List.of( "modified1", "modified2", "modified3" ) ) );
 
         final AccessControlList permissions = editedNode.permissions;
         assertTrue( permissions.getEntry( PrincipalKey.from( "role:newRole" ) ).isAllowed( Permission.MODIFY ) );

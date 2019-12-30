@@ -1,8 +1,8 @@
 package com.enonic.xp.portal;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public final class PortalAttributes
 {
     private String baseUri;

@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -80,8 +78,8 @@ public class MixinsTest
     {
         Mixins mixins = Mixins.empty();
 
-        List<Mixin> mixinList = Lists.newArrayList( Mixin.create().name( MixinName.from( "myapplication:my1" ) ).build(),
-                                                    Mixin.create().name( MixinName.from( "myapplication:my2" ) ).build() );
+        List<Mixin> mixinList = List.of( Mixin.create().name( MixinName.from( "myapplication:my1" ) ).build(),
+                                         Mixin.create().name( MixinName.from( "myapplication:my2" ) ).build() );
 
         Mixins newMixins = mixins.add( mixinList );
 
@@ -95,8 +93,8 @@ public class MixinsTest
         Mixins mixins = Mixins.from( Mixin.create().name( MixinName.from( "myapplication:my1" ) ).build(),
                                      Mixin.create().name( MixinName.from( "myapplication:my2" ) ).build() );
 
-        List<Mixin> mixinList = Lists.newArrayList( Mixin.create().name( MixinName.from( "myapplication:my1" ) ).build(),
-                                                    Mixin.create().name( MixinName.from( "myapplication:my2" ) ).build() );
+        List<Mixin> mixinList = List.of( Mixin.create().name( MixinName.from( "myapplication:my1" ) ).build(),
+                                         Mixin.create().name( MixinName.from( "myapplication:my2" ) ).build() );
 
         assertEquals( 2, mixins.getSize() );
         assertEquals( 2, Mixins.from( mixins ).getSize() );

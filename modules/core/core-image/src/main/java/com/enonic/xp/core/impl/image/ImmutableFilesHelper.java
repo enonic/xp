@@ -9,7 +9,6 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
@@ -17,7 +16,6 @@ import com.google.common.io.Files;
 
 import com.enonic.xp.util.Exceptions;
 
-@Beta
 public class ImmutableFilesHelper
 {
     private static final Lock LOCK = new ReentrantLock();

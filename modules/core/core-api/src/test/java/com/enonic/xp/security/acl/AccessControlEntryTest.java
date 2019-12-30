@@ -1,13 +1,14 @@
 package com.enonic.xp.security.acl;
 
-import org.junit.jupiter.api.Test;
+import java.util.List;
 
-import com.google.common.collect.Iterables;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AccessControlEntryTest
@@ -42,8 +43,8 @@ public class AccessControlEntryTest
         assertEquals( "user:system:anonymous[]", ace.toString() );
         assertTrue( ace.isDenied( Permission.MODIFY ) );
         assertTrue( ace.isDenied( Permission.CREATE ) );
-        assertEquals( 0, Iterables.size( ace.getAllowedPermissions() ) );
-        assertEquals( 0, Iterables.size( ace.getDeniedPermissions() ) );
+        assertIterableEquals( List.of(), ace.getAllowedPermissions() );
+        assertIterableEquals( List.of(), ace.getDeniedPermissions() );
     }
 
     @Test

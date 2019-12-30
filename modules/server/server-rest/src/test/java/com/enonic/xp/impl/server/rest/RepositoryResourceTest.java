@@ -1,6 +1,5 @@
 package com.enonic.xp.impl.server.rest;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -42,8 +41,8 @@ public class RepositoryResourceTest
     public void setup()
         throws Exception
     {
-        final File homeDir = Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
-        System.setProperty( "xp.home", homeDir.getAbsolutePath() );
+        final Path homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) ).toAbsolutePath();
+        System.setProperty( "xp.home", homeDir.toString() );
     }
 
     @Override

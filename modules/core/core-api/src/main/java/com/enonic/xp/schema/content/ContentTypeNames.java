@@ -1,16 +1,15 @@
 package com.enonic.xp.schema.content;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Lists;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-@Beta
+@PublicApi
 public final class ContentTypeNames
     extends AbstractImmutableEntitySet<ContentTypeName>
 {
@@ -47,19 +46,8 @@ public final class ContentTypeNames
 
     private static ImmutableSortedSet<ContentTypeName> parseQualifiedNames( final String... contentTypeNames )
     {
-        final Collection<String> list = Lists.newArrayList( contentTypeNames );
-        final Collection<ContentTypeName> contentTypeNameList = Collections2.transform( list, new ParseFunction() );
-        return ImmutableSortedSet.copyOf( contentTypeNameList );
-    }
-
-    private final static class ParseFunction
-        implements Function<String, ContentTypeName>
-    {
-        @Override
-        public ContentTypeName apply( final String value )
-        {
-            return ContentTypeName.from( value );
-        }
+        return Arrays.stream( contentTypeNames ).map( ContentTypeName::from ).
+            collect( ImmutableSortedSet.toImmutableSortedSet( Comparator.naturalOrder() ) );
     }
 
     public static Builder create()

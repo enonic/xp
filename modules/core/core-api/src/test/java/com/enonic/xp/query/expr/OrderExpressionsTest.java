@@ -1,8 +1,8 @@
 package com.enonic.xp.query.expr;
 
-import org.junit.jupiter.api.Test;
+import java.util.List;
 
-import com.google.common.collect.Lists;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.index.IndexPath;
 
@@ -45,7 +45,7 @@ public class OrderExpressionsTest
         final FieldOrderExpr expr3 = FieldOrderExpr.create( "time", OrderExpr.Direction.ASC );
 
         final OrderExpressions orderExprs1 = OrderExpressions.from( expr1, expr2 );
-        final OrderExpressions orderExprs2 = OrderExpressions.from( Lists.newArrayList( expr3 ) );
+        final OrderExpressions orderExprs2 = OrderExpressions.from( List.of( expr3 ) );
 
         assertNotNull( orderExprs1 );
         assertNotNull( orderExprs2 );

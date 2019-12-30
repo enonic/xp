@@ -1,10 +1,11 @@
 package com.enonic.xp.name;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSet;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 final class NameCharacterHelper
 {
     private final static ImmutableSet<Character> ADDITIONAL_ALLOWED_CHARACTERS = ImmutableSet.of( ' ', '-' );

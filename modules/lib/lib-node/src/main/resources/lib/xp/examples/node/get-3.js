@@ -29,19 +29,6 @@ var result2 = repo.get([{
 log.info(result2.length + ' nodes found.');
 // END
 
-// BEGIN
-// Fetches nodes.
-var result3 = repo.get([{
-    key: 'nodeId',
-    versionId: 'versionKey'
-}], {
-    key: '/my-name',
-    versionId: 'versionKey'
-}, 'nodeId');
-log.info(result3.length + ' nodes found.');
-// END
-
-// BEGIN
 // Node fetched.
 var expected = {
     '_id': 'nodeId',
@@ -110,5 +97,4 @@ var expected = {
 
 assert.assertJsonEquals(expected, result1);
 assert.assertJsonEquals(3, result2.length);
-assert.assertJsonEquals(3, result3.length);
 

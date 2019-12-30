@@ -1,6 +1,5 @@
 package com.enonic.xp.impl.server.rest.task;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -45,8 +44,8 @@ public class ImportRunnableTaskTest
     public void setUp()
         throws Exception
     {
-        final File homeDir = Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
-        System.setProperty( "xp.home", homeDir.getAbsolutePath() );
+        final Path homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) ).toAbsolutePath();
+        System.setProperty( "xp.home", homeDir.toString() );
 
         this.exportService = Mockito.mock( ExportService.class );
         this.repositoryService = Mockito.mock( RepositoryService.class );

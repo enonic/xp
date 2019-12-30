@@ -1,15 +1,15 @@
 package com.enonic.xp.schema.content;
 
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.xdata.XDataNames;
 
-@Beta
+@PublicApi
 public final class ContentType
     extends BaseSchema<ContentTypeName>
 {

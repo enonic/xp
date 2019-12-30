@@ -1,9 +1,9 @@
 package com.enonic.xp.form;
 
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public enum FormItemType
 {
     INPUT,

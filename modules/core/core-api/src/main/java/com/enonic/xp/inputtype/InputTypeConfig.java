@@ -6,12 +6,12 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.LinkedHashMultimap;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.convert.Converters;
 
-@Beta
+@PublicApi
 public final class InputTypeConfig
     implements Iterable<InputTypeProperty>
 {

@@ -10,4 +10,5 @@ ext {
     commonsLangVersion = '2.6'
     commonsIoVersion = '2.6'
     elasticsearchVersion = '7.5.0'
+    tikaVersion = '1.23'
 }

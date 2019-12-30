@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
@@ -14,7 +13,6 @@ import com.enonic.xp.form.FormItems;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
-@Beta
 @SuppressWarnings("UnusedDeclaration")
 public class FieldSetJson
     extends LayoutJson<FieldSet>

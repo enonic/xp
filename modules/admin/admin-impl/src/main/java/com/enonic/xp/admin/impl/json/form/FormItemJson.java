@@ -3,11 +3,9 @@ package com.enonic.xp.admin.impl.json.form;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.google.common.annotations.Beta;
 
 import com.enonic.xp.form.FormItem;
 
-@Beta
 @SuppressWarnings("UnusedDeclaration")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes({@JsonSubTypes.Type(value = InputJson.class, name = "Input"),

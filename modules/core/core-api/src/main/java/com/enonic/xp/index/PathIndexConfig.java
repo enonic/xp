@@ -2,11 +2,10 @@ package com.enonic.xp.index;
 
 import java.util.Comparator;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyPath;
 
-@Beta
+@PublicApi
 public class PathIndexConfig
     implements Comparable<PathIndexConfig>
 {

@@ -1,8 +1,8 @@
 package com.enonic.xp.aggregation;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public class GeoDistanceRangeBucket
     extends Bucket
 {

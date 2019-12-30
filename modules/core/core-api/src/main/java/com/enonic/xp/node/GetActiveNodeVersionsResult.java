@@ -3,12 +3,12 @@ package com.enonic.xp.node;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
-@Beta
+@PublicApi
 public class GetActiveNodeVersionsResult
 {
     private final ImmutableMap<Branch, NodeVersionMetadata> nodeVersions;

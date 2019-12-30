@@ -1,10 +1,9 @@
 package com.enonic.xp.context;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentConstants;
 
-@Beta
+@PublicApi
 public final class ContextAccessor
     extends ThreadLocal<Context>
 {

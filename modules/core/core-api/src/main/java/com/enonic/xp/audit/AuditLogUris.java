@@ -6,15 +6,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-@Beta
+@PublicApi
 public final class AuditLogUris
     extends AbstractImmutableEntitySet<AuditLogUri>
     implements Iterable<AuditLogUri>
@@ -58,8 +56,7 @@ public final class AuditLogUris
 
     private static ImmutableSet<AuditLogUri> doParseIds( final Collection<String> list )
     {
-        final Collection<AuditLogUri> pathList = Collections2.transform( list, new ParseFunction() );
-        return ImmutableSet.copyOf( pathList );
+        return list.stream().map( AuditLogUri::from ).collect( ImmutableSet.toImmutableSet() );
     }
 
     public Set<String> asStrings()
@@ -70,16 +67,6 @@ public final class AuditLogUris
     public static Builder create()
     {
         return new Builder();
-    }
-
-    private final static class ParseFunction
-        implements Function<String, AuditLogUri>
-    {
-        @Override
-        public AuditLogUri apply( final String value )
-        {
-            return AuditLogUri.from( value );
-        }
     }
 
     public static class Builder

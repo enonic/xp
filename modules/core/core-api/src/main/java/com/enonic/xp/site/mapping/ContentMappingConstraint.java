@@ -4,8 +4,7 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ExtraData;
@@ -19,7 +18,7 @@ import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.schema.xdata.XDataName;
 
-@Beta
+@PublicApi
 public final class ContentMappingConstraint
 {
     private static final String SEPARATOR = ":";

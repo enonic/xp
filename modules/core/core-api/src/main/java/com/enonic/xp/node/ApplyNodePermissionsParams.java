@@ -2,12 +2,11 @@ package com.enonic.xp.node;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ApplyPermissionsListener;
 import com.enonic.xp.security.acl.AccessControlList;
 
-@Beta
+@PublicApi
 public final class ApplyNodePermissionsParams
 {
     private final NodeId nodeId;

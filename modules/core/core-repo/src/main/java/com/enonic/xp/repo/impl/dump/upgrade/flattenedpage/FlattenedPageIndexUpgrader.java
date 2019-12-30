@@ -3,8 +3,6 @@ package com.enonic.xp.repo.impl.dump.upgrade.flattenedpage;
 import java.util.List;
 import java.util.Objects;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.index.IndexConfig;
@@ -24,14 +22,14 @@ import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTa
 
 public class FlattenedPageIndexUpgrader
 {
-    private static final List<PathIndexConfig> BASE_CONFIGS = Lists.newArrayList(
-        PathIndexConfig.create().indexConfig( IndexConfig.NONE ).path( PropertyPath.from( TGT_COMPONENTS_KEY ) ).build(),
-        PathIndexConfig.create().indexConfig( IndexConfig.MINIMAL ).path(
-            PropertyPath.from( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, PAGE, TGT_DESCRIPTOR_KEY ) ) ).build(),
-        PathIndexConfig.create().indexConfig( IndexConfig.MINIMAL ).path(
-            PropertyPath.from( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, PAGE, TGT_TEMPLATE_KEY ) ) ).build(),
-        PathIndexConfig.create().indexConfig( IndexConfig.MINIMAL ).path(
-            PropertyPath.from( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, PAGE, TGT_CUSTOMIZED_KEY ) ) ).build() );
+    private static final List<PathIndexConfig> BASE_CONFIGS =
+        List.of( PathIndexConfig.create().indexConfig( IndexConfig.NONE ).path( PropertyPath.from( TGT_COMPONENTS_KEY ) ).build(),
+                 PathIndexConfig.create().indexConfig( IndexConfig.MINIMAL ).path(
+                     PropertyPath.from( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, PAGE, TGT_DESCRIPTOR_KEY ) ) ).build(),
+                 PathIndexConfig.create().indexConfig( IndexConfig.MINIMAL ).path(
+                     PropertyPath.from( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, PAGE, TGT_TEMPLATE_KEY ) ) ).build(),
+                 PathIndexConfig.create().indexConfig( IndexConfig.MINIMAL ).path(
+                     PropertyPath.from( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, PAGE, TGT_CUSTOMIZED_KEY ) ) ).build() );
 
     private final DescriptorKey descriptorKey;
 

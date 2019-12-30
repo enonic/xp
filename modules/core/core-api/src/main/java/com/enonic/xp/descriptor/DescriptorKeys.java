@@ -4,8 +4,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
@@ -14,9 +12,9 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class DescriptorKeys
     extends AbstractImmutableEntitySet<DescriptorKey>
 {
-    private DescriptorKeys( final Iterable<DescriptorKey> keys )
+    private DescriptorKeys( final ImmutableSet<DescriptorKey> keys )
     {
-        super( ImmutableSet.copyOf( keys ) );
+        super( keys );
     }
 
     public DescriptorKeys filter( final ApplicationKey key )
@@ -31,21 +29,21 @@ public final class DescriptorKeys
 
     public DescriptorKeys concat( final DescriptorKeys keys )
     {
-        return from( Iterables.concat( this, keys ) );
+        return from( ImmutableSet.<DescriptorKey>builder().addAll( this ).addAll( keys ).build() );
     }
 
     public static DescriptorKeys empty()
     {
-        return from();
+        return from( ImmutableSet.of() );
     }
 
     public static DescriptorKeys from( final DescriptorKey... keys )
     {
-        return from( Lists.newArrayList( keys ) );
+        return from( ImmutableSet.copyOf( keys ) );
     }
 
     public static DescriptorKeys from( final Iterable<DescriptorKey> keys )
     {
-        return new DescriptorKeys( keys );
+        return new DescriptorKeys( ImmutableSet.copyOf( keys ) );
     }
 }

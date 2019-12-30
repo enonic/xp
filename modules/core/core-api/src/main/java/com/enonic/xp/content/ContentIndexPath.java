@@ -1,11 +1,10 @@
 package com.enonic.xp.content;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.index.IndexPath;
 
-@Beta
+@PublicApi
 public class ContentIndexPath
 {
     public static final IndexPath MODIFIED_TIME = IndexPath.from( ContentPropertyNames.MODIFIED_TIME );

@@ -6,12 +6,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+
+import com.enonic.xp.annotation.PublicApi;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
-@Beta
+@PublicApi
 public class FormItemSet
     extends FormItem
     implements Iterable<FormItem>

@@ -1,11 +1,11 @@
 package com.enonic.xp.branch;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-@Beta
+@PublicApi
 public final class Branches
     extends AbstractImmutableEntitySet<Branch>
 {

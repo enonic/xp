@@ -1,8 +1,8 @@
 package com.enonic.xp.xml.schema;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public interface SchemaNamespaces
 {
     String MODEL_NS = "urn:enonic:xp:model:1.0";

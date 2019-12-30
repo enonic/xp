@@ -1,5 +1,7 @@
 package com.enonic.xp.extractor.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,8 +10,6 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.sax.BodyContentHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.extractor.ExtractedData;
 
@@ -42,7 +42,7 @@ class ExtractorResultFactory
 
         for ( String name : metadata.names() )
         {
-            values.put( name, Lists.newArrayList( metadata.getValues( name ) ) );
+            values.put( name, new ArrayList<>( Arrays.asList( metadata.getValues( name ) ) ) );
         }
 
         return values;

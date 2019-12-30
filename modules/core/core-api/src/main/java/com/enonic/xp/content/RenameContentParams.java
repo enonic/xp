@@ -1,11 +1,13 @@
 package com.enonic.xp.content;
 
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Objects;
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class RenameContentParams
 {
     private ContentId contentId;
@@ -42,13 +44,13 @@ public final class RenameContentParams
         }
 
         final RenameContentParams that = (RenameContentParams) o;
-        return Objects.equal( this.contentId, that.contentId ) && Objects.equal( this.newName, that.newName );
+        return Objects.equals( this.contentId, that.contentId ) && Objects.equals( this.newName, that.newName );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.contentId, this.newName );
+        return Objects.hash( this.contentId, this.newName );
     }
 
     public void validate()

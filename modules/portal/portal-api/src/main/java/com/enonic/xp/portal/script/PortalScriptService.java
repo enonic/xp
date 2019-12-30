@@ -1,12 +1,11 @@
 package com.enonic.xp.portal.script;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 
-@Beta
+@PublicApi
 public interface PortalScriptService
 {
     boolean hasScript( ResourceKey script );

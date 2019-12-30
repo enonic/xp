@@ -3,13 +3,12 @@ package com.enonic.xp.xml.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.xml.DomElement;
 
-@Beta
+@PublicApi
 public final class XmlServiceDescriptorParser
     extends XmlModelParser<XmlServiceDescriptorParser>
 {

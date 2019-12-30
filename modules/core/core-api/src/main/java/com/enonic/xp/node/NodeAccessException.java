@@ -2,13 +2,12 @@ package com.enonic.xp.node;
 
 import java.text.MessageFormat;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.exception.BaseException;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.Permission;
 
-@Beta
+@PublicApi
 public final class NodeAccessException
     extends BaseException
 {

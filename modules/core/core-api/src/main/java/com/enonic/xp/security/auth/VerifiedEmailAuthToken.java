@@ -1,13 +1,12 @@
 package com.enonic.xp.security.auth;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.mail.EmailValidator;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Beta
+@PublicApi
 public final class VerifiedEmailAuthToken
     extends AuthenticationToken
 {

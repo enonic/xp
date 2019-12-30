@@ -1,11 +1,10 @@
 package com.enonic.xp.content;
 
-import com.google.common.annotations.Beta;
-
 import com.enonic.xp.aggregation.Bucket;
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-@Beta
+@PublicApi
 public class ContentDependenciesAggregation
 {
     private ContentTypeName type;

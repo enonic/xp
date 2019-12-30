@@ -1,8 +1,5 @@
 package com.enonic.xp.core.impl.audit;
 
-import com.google.common.annotations.Beta;
-
-@Beta
 public class AuditLogPropertyNames
 {
     public static final String TYPE = "type";

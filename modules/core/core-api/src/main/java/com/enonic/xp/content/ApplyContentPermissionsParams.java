@@ -1,13 +1,13 @@
 package com.enonic.xp.content;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Objects;
+import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.acl.AccessControlList;
 
 import static java.util.Objects.requireNonNull;
 
-@Beta
+@PublicApi
 public final class ApplyContentPermissionsParams
 {
     private final ContentId contentId;
@@ -71,15 +71,15 @@ public final class ApplyContentPermissionsParams
             return false;
         }
         final ApplyContentPermissionsParams that = (ApplyContentPermissionsParams) o;
-        return Objects.equal( this.contentId, that.contentId ) &&
-            Objects.equal( this.overwriteChildPermissions, that.overwriteChildPermissions ) &&
-            Objects.equal( this.permissions, that.permissions ) && Objects.equal( this.inheritPermissions, that.inheritPermissions );
+        return Objects.equals( this.contentId, that.contentId ) &&
+            Objects.equals( this.overwriteChildPermissions, that.overwriteChildPermissions ) &&
+            Objects.equals( this.permissions, that.permissions ) && Objects.equals( this.inheritPermissions, that.inheritPermissions );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( this.contentId, this.permissions, this.overwriteChildPermissions, this.inheritPermissions );
+        return Objects.hash( this.contentId, this.permissions, this.overwriteChildPermissions, this.inheritPermissions );
     }
 
     public static final class Builder

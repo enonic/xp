@@ -1,8 +1,8 @@
 package com.enonic.xp.style;
 
-import org.junit.jupiter.api.Test;
+import java.util.List;
 
-import com.google.common.collect.Lists;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 
@@ -42,7 +42,7 @@ public class StyleDescriptorsTest
             cssPath( "assets/styles.css" ).
             build();
 
-        final StyleDescriptors styleDescriptors = StyleDescriptors.from( Lists.newArrayList( styleDescriptor, styleDescriptor2 ) );
+        final StyleDescriptors styleDescriptors = StyleDescriptors.from( List.of( styleDescriptor, styleDescriptor2 ) );
 
         assertEquals( 2, styleDescriptors.getSize() );
     }

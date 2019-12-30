@@ -37,7 +37,7 @@ public class ScriptEventManagerImplTest
         this.manager.add( listener );
 
         assertEquals( 1, Lists.newArrayList( this.manager ).size() );
-        assertSame( listener, Lists.newArrayList( this.manager ).get( 0 ) );
+        assertSame( listener, this.manager.iterator().next() );
     }
 
     @Test

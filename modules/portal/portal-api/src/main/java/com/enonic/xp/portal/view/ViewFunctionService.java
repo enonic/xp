@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.view;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public interface ViewFunctionService
 {
     Object execute( ViewFunctionParams params );

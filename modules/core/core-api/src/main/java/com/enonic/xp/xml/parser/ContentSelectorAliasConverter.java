@@ -1,8 +1,8 @@
 package com.enonic.xp.xml.parser;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 final class ContentSelectorAliasConverter
     implements InputTypeAliasConverter
 {

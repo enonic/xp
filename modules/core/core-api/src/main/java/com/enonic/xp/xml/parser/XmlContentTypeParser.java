@@ -3,15 +3,14 @@ package com.enonic.xp.xml.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataNames;
 import com.enonic.xp.xml.DomElement;
 
-@Beta
+@PublicApi
 public final class XmlContentTypeParser
     extends XmlModelParser<XmlContentTypeParser>
 {

@@ -4,10 +4,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class UrlResource
     extends ResourceBase
 {

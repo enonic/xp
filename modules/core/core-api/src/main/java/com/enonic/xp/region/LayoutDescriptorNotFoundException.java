@@ -1,11 +1,10 @@
 package com.enonic.xp.region;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.page.DescriptorKey;
 
-@Beta
+@PublicApi
 public class LayoutDescriptorNotFoundException
     extends NotFoundException
 {

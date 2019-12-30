@@ -1,12 +1,12 @@
 package com.enonic.xp.config;
 
-import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
 import org.junit.jupiter.api.Test;
+
+import com.enonic.xp.core.internal.Dictionaries;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -85,12 +85,10 @@ public class ConfigBuilderTest
     @Test
     public void testAddAll_dictionary()
     {
-        final Dictionary<String, String> dictionary = new Hashtable<>();
-        dictionary.put( "key1", "value1" );
-        dictionary.put( "key2", "value2" );
+        Map<String, String> dictionary = Map.of( "key1", "value1", "key2", "value2" );
 
         final Configuration config = ConfigBuilder.create().
-            addAll( dictionary ).
+            addAll( Dictionaries.copyOf( dictionary ) ).
             add( "key3", "value3" ).
             build();
 

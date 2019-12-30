@@ -1,12 +1,12 @@
 package com.enonic.xp.inputtype;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 
 public final class InputTypes
     implements Iterable<InputType>, InputTypeResolver
@@ -83,7 +83,7 @@ public final class InputTypes
 
         public Builder add( final InputType... types )
         {
-            return add( Lists.newArrayList( types ) );
+            return add( Arrays.asList( types ) );
         }
 
         public Builder add( final Iterable<InputType> types )

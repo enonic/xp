@@ -1,6 +1,7 @@
 dependencies {
     compile project( ':core:core-api' )
     compile project( ':core:core-app' )
+    implementation project( ':core:core-internal' )
     compile project( ':web:web-api' )
     compile project( ':portal:portal-api' )
     compile project( ':script:script-impl' )

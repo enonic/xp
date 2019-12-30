@@ -2,10 +2,11 @@ package com.enonic.xp.repository;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class RepositoryId
 {
     public static final String VALID_REPOSITORY_ID_REGEX = "([a-z0-9\\-:])([a-z0-9_\\-\\.:])*";

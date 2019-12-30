@@ -1,12 +1,8 @@
 package com.enonic.xp.content;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -16,7 +12,7 @@ import com.enonic.xp.query.highlight.HighlightQuery;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
-@Beta
+@PublicApi
 public class ContentQuery
 {
     public static final int DEFAULT_FETCH_SIZE = 10;
@@ -44,7 +40,7 @@ public class ContentQuery
         this.filterContentIds = builder.filterContentIds;
         this.from = builder.from;
         this.size = builder.size;
-        this.aggregationQueries = AggregationQueries.fromCollection( ImmutableSet.copyOf( builder.aggregationQueries ) );
+        this.aggregationQueries = AggregationQueries.fromCollection( builder.aggregationQueries.build() );
         this.queryFilters = builder.queryFilters.build();
         this.highlight = builder.highlight;
     }
@@ -106,7 +102,7 @@ public class ContentQuery
 
         private int size = DEFAULT_FETCH_SIZE;
 
-        private Set<AggregationQuery> aggregationQueries = new HashSet<>();
+        private ImmutableSet.Builder<AggregationQuery> aggregationQueries = ImmutableSet.builder();
 
         private Filters.Builder queryFilters = Filters.create();
 
@@ -156,7 +152,7 @@ public class ContentQuery
 
         public Builder aggregationQueries( final Iterable<AggregationQuery> aggregationQueries )
         {
-            Iterables.addAll( this.aggregationQueries, aggregationQueries );
+            this.aggregationQueries.addAll( aggregationQueries );
             return this;
         }
 

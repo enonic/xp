@@ -2,8 +2,6 @@ package com.enonic.xp.repo.impl.index;
 
 import java.util.Collection;
 
-import com.google.common.collect.Collections2;
-
 public class IndexFieldNameNormalizer
 {
     public static String normalize( final String path )
@@ -22,7 +20,7 @@ public class IndexFieldNameNormalizer
 
     public static String[] normalize( final Collection<String> paths )
     {
-        return Collections2.transform( paths, IndexFieldNameNormalizer::doNormalize ).toArray( new String[paths.size()] );
+        return paths.stream().map( IndexFieldNameNormalizer::doNormalize ).toArray( String[]::new );
     }
 
 }

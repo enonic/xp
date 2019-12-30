@@ -3,10 +3,11 @@ package com.enonic.xp.query.aggregation;
 import java.util.Collection;
 import java.util.HashSet;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public abstract class AbstractRangeAggregationQuery<R extends Range>
     extends BucketAggregationQuery
 {

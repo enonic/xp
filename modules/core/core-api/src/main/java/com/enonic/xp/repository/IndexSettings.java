@@ -4,12 +4,12 @@ import java.net.URL;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.annotations.Beta;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.util.JsonHelper;
 
-@Beta
+@PublicApi
 public class IndexSettings
 {
     private final JsonNode jsonNode;

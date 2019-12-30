@@ -10,8 +10,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-import org.osgi.framework.ServiceReference;
-
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
 
@@ -99,9 +97,9 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
         def.destroy();
     }
 
-    protected List<String> getConnectorsFromProperty( ServiceReference<?> serviceReference )
+    protected List<String> getConnectorsFromProperty( final Map<String, ?> props )
     {
-        final Object connectorProperty = serviceReference.getProperty( DispatchConstants.CONNECTOR_PROPERTY );
+        final Object connectorProperty = props.get( DispatchConstants.CONNECTOR_PROPERTY );
 
         return connectorProperty == null
             ? List.of()

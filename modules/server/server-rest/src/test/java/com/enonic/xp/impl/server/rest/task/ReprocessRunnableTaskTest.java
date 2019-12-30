@@ -90,6 +90,37 @@ public class ReprocessRunnableTaskTest
     }
 
     @Test
+    public void reprocess_root_incl_children()
+        throws Exception
+    {
+        Content content = createContent( "content-id", ContentPath.from( "/content" ) );
+        Content reprocessedContent = Content.create( content ).displayName( "new name" ).build();
+        Content childContent = createContent( "child-id", ContentPath.from( content.getPath(), "child" ) );
+        Content reprocessedChildContent = Content.create( childContent ).displayName( "new name" ).build();
+        FindContentIdsByQueryResult countResult = FindContentIdsByQueryResult.create().totalHits( 1 ).build();
+
+        Mockito.when( this.contentService.getByPath( ContentPath.ROOT ) ).thenReturn( content );
+        Mockito.when( this.contentService.reprocess( content.getId() ) ).thenReturn( reprocessedContent );
+        Mockito.when( this.contentService.reprocess( childContent.getId() ) ).thenReturn( reprocessedChildContent );
+        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( countResult );
+        Mockito.when( this.contentService.findByParent( FindContentByParentParams.create().parentId( content.getId() ).
+            from( 0 ).size( 5 ).build() ) ).thenReturn(
+            FindContentByParentResult.create().contents( Contents.create().add( childContent ).build() ).build() );
+        Mockito.when( this.contentService.findByParent( FindContentByParentParams.create().parentId( childContent.getId() ).
+            from( 0 ).size( 5 ).build() ) ).thenReturn( FindContentByParentResult.create().contents( Contents.create().build() ).build() );
+
+        final ReprocessRunnableTask task = createAndRunTask( new ReprocessContentRequestJson( "branch:/", false ) );
+        task.createTaskResult();
+
+        Mockito.verify( progressReporter, Mockito.times( 1 ) ).info( contentQueryArgumentCaptor.capture() );
+        Mockito.verify( taskService, Mockito.times( 1 ) ).submitTask( Mockito.isA( RunnableTask.class ), Mockito.eq( "reprocess" ) );
+
+        final String result = contentQueryArgumentCaptor.getAllValues().get( 0 );
+        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "root_incl_children_result.json" ),
+                                         jsonTestHelper.stringToJson( result ) );
+    }
+
+    @Test
     public void reprocess_incl_children()
         throws Exception
     {
@@ -117,6 +148,37 @@ public class ReprocessRunnableTaskTest
 
         final String result = contentQueryArgumentCaptor.getAllValues().get( 0 );
         jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "incl_children_result.json" ),
+                                         jsonTestHelper.stringToJson( result ) );
+    }
+
+    @Test
+    public void reprocess_content_incl_children()
+        throws Exception
+    {
+        Content content = createContent( "content-id", ContentPath.from( "/content" ) );
+        Content reprocessedContent = Content.create( content ).displayName( "new name" ).build();
+        Content childContent = createContent( "child-id", ContentPath.from( content.getPath(), "child" ) );
+        Content reprocessedChildContent = Content.create( childContent ).displayName( "new name" ).build();
+        FindContentIdsByQueryResult countResult = FindContentIdsByQueryResult.create().totalHits( 1 ).build();
+
+        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+        Mockito.when( this.contentService.reprocess( content.getId() ) ).thenReturn( reprocessedContent );
+        Mockito.when( this.contentService.reprocess( childContent.getId() ) ).thenReturn( reprocessedChildContent );
+        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( countResult );
+        Mockito.when( this.contentService.findByParent( FindContentByParentParams.create().parentId( content.getId() ).
+            from( 0 ).size( 5 ).build() ) ).thenReturn(
+            FindContentByParentResult.create().contents( Contents.create().add( childContent ).build() ).build() );
+        Mockito.when( this.contentService.findByParent( FindContentByParentParams.create().parentId( childContent.getId() ).
+            from( 0 ).size( 5 ).build() ) ).thenReturn( FindContentByParentResult.create().contents( Contents.create().build() ).build() );
+
+        final ReprocessRunnableTask task = createAndRunTask( new ReprocessContentRequestJson( "branch:/content", false ) );
+        task.createTaskResult();
+
+        Mockito.verify( progressReporter, Mockito.times( 1 ) ).info( contentQueryArgumentCaptor.capture() );
+        Mockito.verify( taskService, Mockito.times( 1 ) ).submitTask( Mockito.isA( RunnableTask.class ), Mockito.eq( "reprocess" ) );
+
+        final String result = contentQueryArgumentCaptor.getAllValues().get( 0 );
+        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "content_incl_children_result.json" ),
                                          jsonTestHelper.stringToJson( result ) );
     }
 

@@ -3,7 +3,7 @@ package com.enonic.xp.node;
 import java.time.Instant;
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.blob.BlobKeys;
@@ -11,7 +11,7 @@ import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 
-@Beta
+@PublicApi
 public class NodeVersionMetadata
     implements Comparable<NodeVersionMetadata>
 {

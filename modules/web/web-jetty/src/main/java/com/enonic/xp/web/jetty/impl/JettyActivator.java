@@ -3,8 +3,8 @@ package com.enonic.xp.web.jetty.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
@@ -21,6 +21,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.enonic.xp.cluster.ClusterConfig;
+import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.status.StatusReporter;
 import com.enonic.xp.web.dispatch.DispatchServlet;
 import com.enonic.xp.web.thread.ThreadPoolInfo;
@@ -103,23 +104,20 @@ public final class JettyActivator
 
     private void publishController()
     {
-        final Hashtable<String, Object> map = new Hashtable<>();
-        map.put( "http.enabled", this.config.http_enabled() );
-        map.put( "http.port", this.config.http_xp_port() );
-
-        this.controllerReg = this.context.registerService( JettyController.class, this, map );
+        final Map<String, Object> map = Map.of( "http.enabled", this.config.http_enabled(), "http.port", this.config.http_xp_port() );
+        this.controllerReg = this.context.registerService( JettyController.class, this, Dictionaries.copyOf( map ) );
     }
 
     private void publishStatusReporter()
     {
         final HttpThreadPoolStatusReporter statusReporter = new HttpThreadPoolStatusReporter( this.service.server.getThreadPool() );
-        this.statusReporterReg = this.context.registerService( StatusReporter.class, statusReporter, new Hashtable<>() );
+        this.statusReporterReg = this.context.registerService( StatusReporter.class, statusReporter, null );
     }
 
     private void publishThreadPoolInfo()
     {
         final ThreadPoolInfoImpl threadPoolInfo = new ThreadPoolInfoImpl( this.service.server.getThreadPool() );
-        this.statusReporterReg = this.context.registerService( ThreadPoolInfo.class, threadPoolInfo, new Hashtable<>() );
+        this.statusReporterReg = this.context.registerService( ThreadPoolInfo.class, threadPoolInfo, null );
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)

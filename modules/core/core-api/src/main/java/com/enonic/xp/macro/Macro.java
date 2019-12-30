@@ -3,12 +3,13 @@ package com.enonic.xp.macro;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class Macro
 {
     private final String name;

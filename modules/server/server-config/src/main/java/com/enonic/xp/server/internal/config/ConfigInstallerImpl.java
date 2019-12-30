@@ -2,8 +2,8 @@ package com.enonic.xp.server.internal.config;
 
 import java.io.File;
 import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
+
+import com.enonic.xp.core.internal.Dictionaries;
 
 @Component
 public final class ConfigInstallerImpl
@@ -54,10 +56,15 @@ public final class ConfigInstallerImpl
         throws Exception
     {
         final String fileName = file.getName();
-        final Hashtable<String, Object> newMap = this.loader.load( file );
+        final Map<String, Object> newMap = new HashMap<>( this.loader.load( file ) );
         final Configuration config = getConfiguration( fileName, pid );
 
-        final Hashtable<String, Object> oldMap = toHashTable( config.getProperties() );
+        final HashMap<String, Object> oldMap = new HashMap<>();
+        final Dictionary<String, Object> currentConfigProps = config.getProperties();
+        if ( currentConfigProps != null )
+        {
+            currentConfigProps.keys().asIterator().forEachRemaining( key -> oldMap.put( key, currentConfigProps.get( key ) ) );
+        }
         oldMap.remove( Constants.SERVICE_PID );
         oldMap.remove( FILENAME_PROP );
 
@@ -67,7 +74,7 @@ public final class ConfigInstallerImpl
         }
 
         newMap.put( FILENAME_PROP, fileName );
-        config.update( newMap );
+        config.update( Dictionaries.copyOf( newMap ) );
 
         LOG.info( "Loaded config for [" + pid + "]" );
     }
@@ -136,24 +143,6 @@ public final class ConfigInstallerImpl
             replaceAll( "[)]", "\\\\)" ).
             replaceAll( "[=]", "\\\\=" ).
             replaceAll( "[*]", "\\\\*" );
-    }
-
-    private Hashtable<String, Object> toHashTable( final Dictionary<String, Object> dict )
-    {
-        final Hashtable<String, Object> result = new Hashtable<>();
-        if ( dict == null )
-        {
-            return result;
-        }
-
-        final Enumeration<String> keys = dict.keys();
-        while ( keys.hasMoreElements() )
-        {
-            final String key = keys.nextElement();
-            result.put( key, dict.get( key ) );
-        }
-
-        return result;
     }
 
     @Reference

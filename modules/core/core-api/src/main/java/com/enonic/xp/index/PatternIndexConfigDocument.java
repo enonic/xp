@@ -6,15 +6,15 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSortedSet;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.util.GlobPatternMatcher;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
-@Beta
+@PublicApi
 public class PatternIndexConfigDocument
     extends AbstractIndexConfigDocument
 {

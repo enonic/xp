@@ -4,9 +4,9 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
@@ -14,7 +14,7 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.security.acl.AccessControlList;
 
-@Beta
+@PublicApi
 public final class Node
 {
     public final static NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );

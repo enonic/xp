@@ -158,15 +158,11 @@ public class NodeStorageServiceImpl
     @Override
     public Node move( final MoveNodeParams params, final InternalContext context )
     {
-        final NodeBranchEntry nodeBranchEntry = this.branchService.get( params.getNode().id(), context );
-
-        final NodeVersionId nodeVersionId;
         final NodeVersionKey nodeVersionKey;
+        final NodeBranchEntry nodeBranchEntry = this.branchService.get( params.getNode().id(), context );
         if ( params.isUpdateMetadataOnly() )
         {
-            nodeVersionId = nodeBranchEntry.getVersionId();
             nodeVersionKey = nodeBranchEntry.getNodeVersionKey();
-
         }
         else
         {
@@ -176,7 +172,11 @@ public class NodeStorageServiceImpl
             nodeVersionKey = nodeVersionService.store( NodeVersion.from( params.getNode() ), context );
         }
 
-        storeVersionMetadata( params.getNode(), nodeVersionId, nodeVersionKey, context );
+        NodeVersionId nodeVersionId = params.getNodeVersionId();
+        if (nodeVersionId == null) {
+            nodeVersionId = new NodeVersionId();
+            storeVersionMetadata( params.getNode(), nodeVersionId, nodeVersionKey, context );
+        }
 
         final Node movedNode =
             moveInBranchAndReIndex( params.getNode(), nodeVersionId, nodeVersionKey, nodeBranchEntry.getNodePath(), context );

@@ -10,8 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
@@ -92,8 +90,51 @@ public class IssueNotificationParamsFactoryTest
             build().
             createdParams();
 
-        assertEquals( Lists.newArrayList( approver ), params.getApprovers() );
+        assertEquals( List.of( approver ), params.getApprovers() );
         assertEquals( creator, params.getCreator() );
+        assertEquals( issue, params.getIssue() );
+        assertEquals( comments, params.getComments() );
+        assertEquals( "url", params.getUrl() );
+        assertEquals( 1, params.getIcons().size() );
+        assertEquals( Contents.from( content ), params.getItems() );
+        assertEquals( compareResults, params.getCompareResults() );
+
+        verify( securityService, times( 2 ) ).getUser( Mockito.any() );
+        verify( contentService, times( 1 ) ).getByIds( Mockito.any() );
+        verify( contentService, times( 1 ) ).compare( Mockito.any( CompareContentsParams.class ) );
+    }
+
+    @Test
+    public void testCreatedParamsForNewAssignee()
+        throws InterruptedException
+    {
+        final User creator = generateUser();
+        final User modifier = generateUser();
+        final User approver = generateUser();
+        final Issue issue = createIssue( creator.getKey(), modifier.getKey(), PrincipalKeys.from( approver.getKey() ) );
+        final Content content = createContent();
+        final List<IssueComment> comments = this.createComments( creator.getKey() );
+        final CompareContentResults compareResults = CompareContentResults.create().add(
+            new CompareContentResult( CompareStatus.CONFLICT_PATH_EXISTS, ContentId.from( "content-id" ) ) ).build();
+        final ContentType contentType =
+            ContentType.create().icon( Icon.from( new byte[]{1, 2, 3}, "image/svg+xml", Instant.now() ) ).setBuiltIn().name(
+                "folder" ).build();
+
+        Mockito.when( securityService.getUser( issue.getModifier() ) ).thenReturn( Optional.of( modifier ) );
+        Mockito.when( securityService.getUser( issue.getApproverIds().first() ) ).thenReturn( Optional.of( approver ) );
+        Mockito.when( contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.from( content ) );
+        Mockito.when( contentService.compare( Mockito.isA( CompareContentsParams.class ) ) ).thenReturn( compareResults );
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+
+        IssueNotificationParams params = notificationFactoryBuilder.
+            issue( issue ).
+            comments( comments ).
+            url( "url" ).
+            build().
+            createdParams();
+
+        assertEquals( List.of( approver ), params.getApprovers() );
+        assertEquals( modifier, params.getCreator() );
         assertEquals( issue, params.getIssue() );
         assertEquals( comments, params.getComments() );
         assertEquals( "url", params.getUrl() );
@@ -207,11 +248,17 @@ public class IssueNotificationParamsFactoryTest
 
     private Issue createIssue( final PrincipalKey creator, final PrincipalKeys approvers )
     {
+        return createIssue( creator, null, approvers );
+    }
+
+    private Issue createIssue( final PrincipalKey creator, final PrincipalKey modifier, final PrincipalKeys approvers )
+    {
         return Issue.create().
             id( IssueId.create() ).
             title( "title" ).
             description( "description" ).
             creator( creator ).
+            modifier( modifier ).
             addApproverIds( approvers ).setPublishRequest( PublishRequest.create().addExcludeId( ContentId.from( "exclude-id" ) ).addItem(
             PublishRequestItem.create().id( ContentId.from( "content-id" ) ).includeChildren( true ).build() ).build() ).build();
     }
@@ -223,7 +270,7 @@ public class IssueNotificationParamsFactoryTest
             creator( creator ).
             creatorDisplayName( "Creator" ).
             build();
-        return Lists.newArrayList( comment );
+        return List.of( comment );
     }
 
     private User generateUser()

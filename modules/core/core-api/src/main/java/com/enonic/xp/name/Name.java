@@ -2,10 +2,11 @@ package com.enonic.xp.name;
 
 import java.util.Arrays;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public abstract class Name
 {
     protected final String value;
