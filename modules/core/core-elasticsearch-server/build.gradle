@@ -1,0 +1,9 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile project( ':core:core-api' )
+}
+
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Core - ElasticSearch Server' )
+}
