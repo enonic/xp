@@ -23,7 +23,7 @@ public class ElasticsearchServerConfigResolverTest
     @Mock
     ElasticsearchServerConfig serverConfig;
 
-    private static String xpHomePath;
+    private static Path xpHomePath;
 
     @BeforeAll
     public static void beforeClass()
@@ -36,7 +36,7 @@ public class ElasticsearchServerConfigResolverTest
         final Path xpHome = rootDirectory.resolve( "xp-home" );
         Files.createDirectories( xpHome );
 
-        xpHomePath = xpHome.toAbsolutePath().toString();
+        xpHomePath = xpHome.toAbsolutePath();
 
         final Path path = xpHome.resolve( "repo" ).resolve( "index" );
         Files.createDirectories( xpHome.resolve( "snapshots" ) );
@@ -74,12 +74,12 @@ public class ElasticsearchServerConfigResolverTest
 
         final ElasticsearchServerSettings result = instance.resolve();
 
-        assertEquals( xpHomePath + "/../elasticsearch", instance.resolveElasticServerDir() );
-        assertEquals( xpHomePath + "/repo/index/conf", result.getPathConf() );
-        assertEquals( xpHomePath + "/repo/index/data", result.getPathData() );
-        assertEquals( xpHomePath + "/repo/index/logs", result.getPathLogs() );
-        assertEquals( xpHomePath + "/snapshots", result.getPathRepo() );
-        assertEquals( xpHomePath + "/repo/index/work", result.getPathWork() );
+        assertEquals( xpHomePath.resolve( "../elasticsearch" ).toString(), instance.resolveElasticServerDir() );
+        assertEquals( xpHomePath.resolve( "repo/index/conf" ).toString(), result.getPathConf() );
+        assertEquals( xpHomePath.resolve( "repo/index/data" ).toString(), result.getPathData() );
+        assertEquals( xpHomePath.resolve( "repo/index/logs" ).toString(), result.getPathLogs() );
+        assertEquals( xpHomePath.resolve( "snapshots" ).toString(), result.getPathRepo() );
+        assertEquals( xpHomePath.resolve( "repo/index/work" ).toString(), result.getPathWork() );
         assertEquals( "cluster_name", result.getClusterName() );
         assertTrue( result.getClusterRoutingAllocationDiskThresholdEnabled() );
         assertEquals( 1, result.getGatewayExpectedNodes() );
