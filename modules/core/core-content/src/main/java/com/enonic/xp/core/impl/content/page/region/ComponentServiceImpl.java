@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content.page.region;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.ComponentService;
@@ -29,6 +30,17 @@ public final class ComponentServiceImpl
             resourceService( this.resourceService ).
             applicationKey( applicationKey ).
             name( name ).
+            execute();
+    }
+
+    @Override
+    public Component getByKey( final DescriptorKey descriptorKey )
+    {
+        return new GetComponentByKeyCommand().
+            partDescriptorService( this.partDescriptorService ).
+            layoutDescriptorService( this.layoutDescriptorService ).
+            resourceService( this.resourceService ).
+            descriptorKey( descriptorKey ).
             execute();
     }
 

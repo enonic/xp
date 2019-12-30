@@ -43,7 +43,7 @@ public class PartRendererTest
     {
         // setup
         portalRequest.setMode( mode );
-        partComponent = PartComponent.create().name( "myPartComponent" ).build();
+        partComponent = PartComponent.create().build();
         renderer = new PartRenderer();
 
         // exercise
@@ -103,7 +103,7 @@ public class PartRendererTest
     @Test
     public void emptyComponentNoMode()
     {
-        assertThrows(DescriptorNotFoundException.class, () -> this.configureEmptyComponent( RenderMode.ADMIN ));
+        assertThrows( DescriptorNotFoundException.class, () -> this.configureEmptyComponent( RenderMode.ADMIN ) );
     }
 
     @Test
@@ -111,7 +111,7 @@ public class PartRendererTest
     {
         // setup
         portalRequest.setMode( RenderMode.EDIT );
-        partComponent = PartComponent.create().name( "myPartComponent" ).
+        partComponent = PartComponent.create().descriptor( "myapp:myPartComponent" ).
             descriptor( "descriptor-x" ).
             config( new PropertyTree() ).
             build();
@@ -158,7 +158,7 @@ public class PartRendererTest
         when( partDescriptorService.getByKey( any() ) ).thenReturn( partDescriptor );
         when( controllerScriptFactory.fromDir( any() ) ).thenReturn( controllerScript );
         portalRequest.setMode( RenderMode.EDIT );
-        partComponent = PartComponent.create().name( "myPartComponent" ).descriptor( partDescriptor.getKey() ).build();
+        partComponent = PartComponent.create().descriptor( "myapp:myPartComponent" ).descriptor( partDescriptor.getKey() ).build();
 
         // exercise
         portalResponse = renderer.render( partComponent, portalRequest );
@@ -199,13 +199,14 @@ public class PartRendererTest
         when( partDescriptorService.getByKey( any() ) ).thenReturn( partDescriptor );
         when( controllerScriptFactory.fromDir( any() ) ).thenReturn( controllerScript );
         portalRequest.setMode( RenderMode.EDIT );
-        partComponent = PartComponent.create().name( "myPartComponent" ).descriptor( partDescriptor.getKey() ).build();
+        partComponent = PartComponent.create().descriptor( "myapp:myPartComponent" ).descriptor( partDescriptor.getKey() ).build();
 
         // exercise
         portalResponse = renderer.render( partComponent, portalRequest );
 
         // verify
-        String expected = "<div data-portal-component-type=\"part\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">No method provided to handle request</span></div>";
+        String expected =
+            "<div data-portal-component-type=\"part\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">No method provided to handle request</span></div>";
         assertEquals( expected, portalResponse.getAsString() );
     }
 
@@ -240,7 +241,7 @@ public class PartRendererTest
         when( partDescriptorService.getByKey( any() ) ).thenReturn( partDescriptor );
         when( controllerScriptFactory.fromDir( any() ) ).thenReturn( controllerScript );
         portalRequest.setMode( RenderMode.EDIT );
-        partComponent = PartComponent.create().name( "myPartComponent" ).descriptor( partDescriptor.getKey() ).build();
+        partComponent = PartComponent.create().descriptor( "myapp:myPartComponent" ).descriptor( partDescriptor.getKey() ).build();
 
         // exercise
         portalResponse = renderer.render( partComponent, portalRequest );

@@ -1,6 +1,5 @@
 package com.enonic.xp.region;
 
-
 import java.util.Objects;
 
 import com.google.common.annotations.Beta;
@@ -9,6 +8,8 @@ import com.google.common.annotations.Beta;
 public class TextComponent
     extends Component
 {
+    private static final ComponentName NAME = ComponentName.from( "Text" );
+
     private String text;
 
     protected TextComponent( final Builder builder )
@@ -37,6 +38,13 @@ public class TextComponent
     public ComponentType getType()
     {
         return TextComponentType.INSTANCE;
+    }
+
+    @Deprecated
+    @Override
+    public ComponentName getName()
+    {
+        return NAME;
     }
 
     public String getText()
@@ -88,16 +96,16 @@ public class TextComponent
             text = source.text;
         }
 
+        @Deprecated
         @Override
         public Builder name( ComponentName value )
         {
-            this.name = value;
             return this;
         }
 
+        @Deprecated
         public Builder name( String value )
         {
-            this.name = value != null ? new ComponentName( value ) : null;
             return this;
         }
 

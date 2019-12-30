@@ -48,8 +48,8 @@ public class RegionDataSerializerTest
         final Region region = Region.create().
             name( "main" ).
             add( createPartComponent( "MyPart", "app-descr:part-name", myPartConfig ) ).
-            add( ImageComponent.create().name( "Image" ).build() ).
-            add( LayoutComponent.create().name( layoutName ).descriptor( layoutDescriptorKey ).build() ).
+            add( ImageComponent.create().build() ).
+            add( LayoutComponent.create().descriptor( layoutDescriptorKey ).build() ).
             build();
 
         Mockito.when( layoutDescriptorService.getByKey( layoutDescriptorKey ) ).thenReturn( LayoutDescriptor.create().

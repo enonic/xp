@@ -8,20 +8,18 @@ import com.google.common.base.MoreObjects;
 @Beta
 public abstract class Component
 {
-    private ComponentName name;
-
     private Region region = null;
 
     protected Component( final Builder properties )
     {
-        this.name = properties.name;
     }
 
     public abstract ComponentType getType();
 
+    @Deprecated
     public ComponentName getName()
     {
-        return name;
+        return null;
     }
 
     public ComponentPath getPath()
@@ -50,13 +48,13 @@ public abstract class Component
 
         final Component that = (Component) o;
 
-        return Objects.equals( name, that.name );
+        return Objects.equals( this.getName(), that.getName() );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( name );
+        return Objects.hash( this.getName() );
     }
 
     @Override
@@ -64,15 +62,13 @@ public abstract class Component
     {
         return MoreObjects.toStringHelper( this ).
             add( "type", getType() ).
-            add( "name", name ).
+            add( "name", this.getName() ).
             add( "path", getPath() ).
             toString();
     }
 
     public static class Builder
     {
-        protected ComponentName name;
-
         protected Builder()
         {
             // Default
@@ -80,13 +76,13 @@ public abstract class Component
 
         protected Builder( Component source )
         {
-            this.name = source.name;
         }
 
+        @Deprecated
         public Builder name( ComponentName value )
         {
-            this.name = value;
             return this;
         }
+
     }
 }

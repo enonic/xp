@@ -3,7 +3,6 @@ package com.enonic.xp.portal.impl.postprocess.instruction;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
@@ -18,7 +17,6 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.rendering.Renderer;
 import com.enonic.xp.portal.impl.rendering.RendererFactory;
 import com.enonic.xp.region.Component;
-import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.ComponentService;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
@@ -62,7 +60,7 @@ public class ComponentInstructionTest
         ComponentService componentService = Mockito.mock( ComponentService.class );
 
         Component component = createPartComponent();
-        doReturn( component ).when( componentService ).getByName( isA( ApplicationKey.class ), isA( ComponentName.class ) );
+        doReturn( component ).when( componentService ).getByKey( isA( DescriptorKey.class ) );
         ComponentInstruction instruction = new ComponentInstruction();
         instruction.setRendererFactory( rendererFactory );
         instruction.setComponentService( componentService );
@@ -87,7 +85,7 @@ public class ComponentInstructionTest
         ComponentService componentService = Mockito.mock( ComponentService.class );
 
         Component component = createPartComponent();
-        doReturn( component ).when( componentService ).getByName( isA( ApplicationKey.class ), isA( ComponentName.class ) );
+        doReturn( component ).when( componentService ).getByKey( isA( DescriptorKey.class ) );
         ComponentInstruction instruction = new ComponentInstruction();
         instruction.setRendererFactory( rendererFactory );
         instruction.setComponentService( componentService );
@@ -117,7 +115,6 @@ public class ComponentInstructionTest
     private Component createPartComponent()
     {
         return PartComponent.create().
-            name( "myPartComponent" ).
             descriptor( DescriptorKey.from( "myapplication:myparttemplate" ) ).
             build();
     }
@@ -130,7 +127,6 @@ public class ComponentInstructionTest
         Region region = Region.create().
             name( "myRegion" ).
             add( PartComponent.create().
-                name( "myPartComponent" ).
                 descriptor( DescriptorKey.from( "myapplication:myparttemplate" ) ).
                 build() ).
             build();
@@ -158,7 +154,6 @@ public class ComponentInstructionTest
         rootDataSet.addString( "property1", "value1" );
 
         PartComponent fragmentComponent = PartComponent.create().
-            name( "myPartComponent" ).
             descriptor( DescriptorKey.from( "myapplication:myparttemplate" ) ).
             build();
 

@@ -88,10 +88,10 @@ public abstract class DescriptorBasedComponent
             this.descriptor = source.getDescriptor();
         }
 
+        @Deprecated
         @Override
         public Builder name( ComponentName value )
         {
-            this.name = value;
             return this;
         }
 
