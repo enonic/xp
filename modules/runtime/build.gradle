@@ -76,6 +76,7 @@ addBundle( project( ':core:core-image' ), 22 )
 addBundle( project( ':core:core-export' ), 22 )
 addBundle( project( ':core:core-mail' ), 22 )
 addBundle( project( ':core:core-elasticsearch' ), 22 )
+addBundle( project( ':core:core-elasticsearch-server' ), 22 )
 //TODO Java10
 //addBundle( project( ':core:core-ignite' ), 22 )
 addBundle( project( ':core:core-content' ), 22 )
