@@ -168,7 +168,6 @@ public class NodeStorageServiceImpl
         {
             this.removeBranchFromCurrentVersion( nodeBranchEntry.getNodeId(), context );
 
-            nodeVersionId = new NodeVersionId();
             nodeVersionKey = nodeVersionService.store( NodeVersion.from( params.getNode() ), context );
         }
 

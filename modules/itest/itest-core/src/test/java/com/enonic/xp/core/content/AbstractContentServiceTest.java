@@ -198,9 +198,6 @@ public class AbstractContentServiceTest
         IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl();
         indexServiceInternal.setClient( client );
 
-        IndexServiceImpl indexService = new IndexServiceImpl();
-        indexService.setIndexServiceInternal( indexServiceInternal );
-
         NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl();
         nodeDao.setBlobStore( blobStore );
 
