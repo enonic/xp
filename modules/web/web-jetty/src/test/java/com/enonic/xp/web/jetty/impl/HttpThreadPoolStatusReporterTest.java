@@ -1,7 +1,8 @@
 package com.enonic.xp.web.jetty.impl;
 
-import java.net.URL;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.io.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -36,13 +36,12 @@ public class HttpThreadPoolStatusReporterTest
     private String readFromFile( final String fileName )
         throws Exception
     {
-        final URL url = getClass().getResource( fileName );
-        if ( url == null )
+        final InputStream stream =
+            Objects.requireNonNull( getClass().getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
+        try (stream)
         {
-            throw new IllegalArgumentException( "Resource file [" + fileName + "] not found" );
+            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }
-
-        return Resources.toString( url, StandardCharsets.UTF_8 );
     }
 
     private JsonNode parseJson( final String json )

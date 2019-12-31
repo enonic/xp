@@ -1,9 +1,10 @@
 package com.enonic.xp.jaxrs.impl;
 
-import java.net.URL;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,7 +16,6 @@ import org.mockito.Mockito;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.jaxrs.impl.json.JsonObjectProvider;
@@ -94,13 +94,12 @@ public abstract class JaxRsResourceTestSupport
     protected String readFromFile( final String fileName )
         throws Exception
     {
-        final URL url = getClass().getResource( fileName );
-        if ( url == null )
+        final InputStream stream =
+            Objects.requireNonNull( getClass().getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
+        try (stream)
         {
-            throw new IllegalArgumentException( "Resource file [" + fileName + "] not found" );
+            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }
-
-        return Resources.toString( url, StandardCharsets.UTF_8 );
     }
 
     private String toJson( final Object value )
