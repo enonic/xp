@@ -172,7 +172,8 @@ public class NodeStorageServiceImpl
         }
 
         NodeVersionId nodeVersionId = params.getNodeVersionId();
-        if (nodeVersionId == null) {
+        if ( nodeVersionId == null )
+        {
             nodeVersionId = new NodeVersionId();
             storeVersionMetadata( params.getNode(), nodeVersionId, nodeVersionKey, context );
         }
@@ -180,10 +181,7 @@ public class NodeStorageServiceImpl
         final Node movedNode =
             moveInBranchAndReIndex( params.getNode(), nodeVersionId, nodeVersionKey, nodeBranchEntry.getNodePath(), context );
 
-        if ( !params.isUpdateMetadataOnly() )
-        {
-            this.addBranchToNewVersion( movedNode, nodeVersionId, context );
-        }
+        this.addBranchToNewVersion( movedNode, nodeVersionId, context );
 
         return movedNode;
     }
