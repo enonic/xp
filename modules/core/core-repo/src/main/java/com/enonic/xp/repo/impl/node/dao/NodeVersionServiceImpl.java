@@ -25,7 +25,7 @@ import com.enonic.xp.repository.RepositorySegmentUtils;
 public class NodeVersionServiceImpl
     implements NodeVersionService
 {
-    private final NodeVersionJsonSerializer nodeVersionJsonSerializer = NodeVersionJsonSerializer.create( false );
+    private final NodeVersionJsonSerializer nodeVersionJsonSerializer = NodeVersionJsonSerializer.create();
 
     private BlobStore blobStore;
 

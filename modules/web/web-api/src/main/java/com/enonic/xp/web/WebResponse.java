@@ -17,6 +17,8 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 @PublicApi
 public class WebResponse
 {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
     private final HttpStatus status;
 
     private final MediaType contentType;
@@ -82,7 +84,7 @@ public class WebResponse
     {
         try
         {
-            return new ObjectMapper().writeValueAsString( value );
+            return MAPPER.writeValueAsString( value );
         }
         catch ( final Exception e )
         {

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JsonToPropertyTreeTranslatorTest
 {
-    private final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void all_input_types()
@@ -85,7 +85,7 @@ public class JsonToPropertyTreeTranslatorTest
         final URL url = getClass().getResource( resource );
 
         assertNotNull( url, "File [" + resource + "] not found" );
-        return this.mapper.readTree( url );
+        return MAPPER.readTree( url );
     }
 
     private Form createFormForAllInputTypes()

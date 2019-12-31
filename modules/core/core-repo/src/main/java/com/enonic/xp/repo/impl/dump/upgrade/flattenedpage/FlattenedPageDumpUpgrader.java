@@ -8,7 +8,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
@@ -113,10 +112,10 @@ public class FlattenedPageDumpUpgrader
     {
         try
         {
-            return this.mapper.writeValueAsString( Pre4NodeVersionJson.toJson( nodeVersion ) );
+            return serialize( Pre4NodeVersionJson.toJson( nodeVersion ) );
 
         }
-        catch ( final JsonProcessingException e )
+        catch ( final RepoDumpException e )
         {
             throw new RepoDumpException( "Cannot serialize node version [" + nodeVersion.toString() + "]", e );
         }

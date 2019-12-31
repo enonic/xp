@@ -17,7 +17,6 @@ public final class ObjectMapperHelper
         mapper.disable( SerializationFeature.WRITE_DATES_AS_TIMESTAMPS );
         mapper.disable( SerializationFeature.FAIL_ON_EMPTY_BEANS );
         mapper.enable( MapperFeature.SORT_PROPERTIES_ALPHABETICALLY );
-        mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
         mapper.setSerializationInclusion( JsonInclude.Include.ALWAYS );
         mapper.registerModule( new JavaTimeModule() );
         return mapper;

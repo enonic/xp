@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.jaxrs.impl.json.JsonObjectProvider;
@@ -28,6 +29,10 @@ import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 public abstract class JaxRsResourceTestSupport
 {
+    private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
+
+    private static final ObjectWriter OBJECT_WRITER = MAPPER.writerWithDefaultPrettyPrinter();
+
     private String basePath = "/";
 
     private Dispatcher dispatcher;
@@ -75,20 +80,13 @@ public abstract class JaxRsResourceTestSupport
     protected final void assertStringJson( final String expectedJson, final String actualJson )
         throws Exception
     {
-        final JsonNode expectedNode = parseJson( expectedJson );
-        final JsonNode actualNode = parseJson( actualJson );
+        final JsonNode expectedNode = MAPPER.readTree( expectedJson );
+        final JsonNode actualNode = MAPPER.readTree( actualJson );
 
-        final String expectedStr = toJson( expectedNode );
-        final String actualStr = toJson( actualNode );
+        final String expectedStr = OBJECT_WRITER.writeValueAsString( expectedNode );
+        final String actualStr = OBJECT_WRITER.writeValueAsString( actualNode );
 
         Assertions.assertEquals( expectedStr, actualStr );
-    }
-
-    protected JsonNode parseJson( final String json )
-        throws Exception
-    {
-        final ObjectMapper mapper = ObjectMapperHelper.create();
-        return mapper.readTree( json );
     }
 
     protected String readFromFile( final String fileName )
@@ -100,13 +98,6 @@ public abstract class JaxRsResourceTestSupport
         {
             return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }
-    }
-
-    private String toJson( final Object value )
-        throws Exception
-    {
-        final ObjectMapper mapper = ObjectMapperHelper.create();
-        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString( value );
     }
 
     protected final void assertArrayEquals( Object[] a1, Object[] a2 )

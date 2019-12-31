@@ -50,6 +50,8 @@ public class RepositoryIdDumpUpgrader
     private static final Segment SEGMENT =
         RepositorySegmentUtils.toSegment( ContentConstants.CONTENT_REPO_ID, NodeConstants.NODE_SEGMENT_LEVEL );
 
+    private static final NodeVersionJsonSerializer NODE_VERSION_JSON_SERIALIZER = NodeVersionJsonSerializer.create();
+
     public RepositoryIdDumpUpgrader( final Path basePath )
     {
         super( basePath );
@@ -256,7 +258,7 @@ public class RepositoryIdDumpUpgrader
 
     private void writeNodeVersion( final NodeVersion nodeVersion, final DumpBlobRecord dumpBlobRecord )
     {
-        final String serializedUpgradedNodeVersion = NodeVersionJsonSerializer.create( false ).toNodeString( nodeVersion );
+        final String serializedUpgradedNodeVersion = NODE_VERSION_JSON_SERIALIZER.toNodeString( nodeVersion );
         final ByteSource byteSource = ByteSource.wrap( serializedUpgradedNodeVersion.getBytes( StandardCharsets.UTF_8 ) );
         try
         {

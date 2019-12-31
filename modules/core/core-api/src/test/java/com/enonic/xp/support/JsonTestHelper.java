@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import com.enonic.xp.json.ObjectMapperHelper;
@@ -15,22 +16,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JsonTestHelper
 {
-    private final ObjectMapper objectMapper;
+    private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
-    private final ObjectWriter objectWriter;
+    private static final ObjectWriter OBJECT_WRITER = MAPPER.writerWithDefaultPrettyPrinter();
+
+    private static final ObjectReader OBJECT_READER = MAPPER.reader();
 
     private final ResourceTestHelper resourceTestHelper;
 
     public JsonTestHelper( final Object testInstance )
     {
         this.resourceTestHelper = new ResourceTestHelper( testInstance );
-        objectMapper = ObjectMapperHelper.create();
-        objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
     }
 
-    public ObjectMapper objectMapper()
+    public ObjectReader objectReader()
     {
-        return objectMapper;
+        return OBJECT_READER;
     }
 
     public JsonNode loadTestJson( final String fileName )
@@ -42,7 +43,7 @@ public class JsonTestHelper
     {
         try
         {
-            return objectWriter.writeValueAsString( value );
+            return OBJECT_WRITER.writeValueAsString( value );
         }
         catch ( Exception e )
         {
@@ -54,7 +55,7 @@ public class JsonTestHelper
     {
         try
         {
-            return objectWriter.writeValueAsString( value );
+            return OBJECT_WRITER.writeValueAsString( value );
         }
         catch ( Exception e )
         {
@@ -66,7 +67,7 @@ public class JsonTestHelper
     {
         try
         {
-            return objectMapper.valueToTree( value );
+            return MAPPER.valueToTree( value );
         }
         catch ( Exception e )
         {
@@ -79,8 +80,7 @@ public class JsonTestHelper
     {
         try
         {
-            final ObjectMapper mapper = objectMapper;
-            final JsonFactory factory = mapper.getFactory();
+            final JsonFactory factory = MAPPER.getFactory();
             final JsonParser parser = factory.createParser( jsonString );
             return parser.readValueAsTree();
         }

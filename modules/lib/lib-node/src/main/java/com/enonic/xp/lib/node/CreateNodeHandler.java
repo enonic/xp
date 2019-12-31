@@ -1,10 +1,5 @@
 package com.enonic.xp.lib.node;
 
-import java.util.Map;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.enonic.xp.lib.node.mapper.NodeMapper;
 import com.enonic.xp.lib.value.ScriptValueTranslator;
 import com.enonic.xp.lib.value.ScriptValueTranslatorResult;
@@ -36,12 +31,6 @@ public class CreateNodeHandler
     private ScriptValueTranslatorResult getParams( final ScriptValue params )
     {
         return new ScriptValueTranslator().create( params );
-    }
-
-    private JsonNode createJson( final Map<?, ?> value )
-    {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.valueToTree( value );
     }
 
     public static Builder create()

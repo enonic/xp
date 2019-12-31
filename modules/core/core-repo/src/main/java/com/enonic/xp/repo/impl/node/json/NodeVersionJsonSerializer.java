@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
@@ -14,19 +13,13 @@ import com.enonic.xp.util.Exceptions;
 
 public final class NodeVersionJsonSerializer
 {
-    final ObjectMapper mapper;
-
-    private NodeVersionJsonSerializer( final ObjectMapper mapper )
-    {
-        this.mapper = mapper;
-    }
+    private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
     public String toNodeString( final NodeVersion nodeVersion )
     {
         try
         {
-            return this.mapper.writeValueAsString( NodeVersionDataJson.toJson( nodeVersion ) );
-
+            return MAPPER.writeValueAsString( NodeVersionDataJson.toJson( nodeVersion ) );
         }
         catch ( final JsonProcessingException e )
         {
@@ -39,7 +32,7 @@ public final class NodeVersionJsonSerializer
         try
         {
             final IndexConfigDocumentJson entityIndexConfig = createEntityIndexConfig( nodeVersion.getIndexConfigDocument() );
-            return this.mapper.writeValueAsString( entityIndexConfig );
+            return MAPPER.writeValueAsString( entityIndexConfig );
 
         }
         catch ( final JsonProcessingException e )
@@ -53,7 +46,7 @@ public final class NodeVersionJsonSerializer
         try
         {
             final AccessControlJson accessControlJson = AccessControlJson.toJson( nodeVersion );
-            return this.mapper.writeValueAsString( accessControlJson );
+            return MAPPER.writeValueAsString( accessControlJson );
 
         }
         catch ( final JsonProcessingException e )
@@ -66,10 +59,9 @@ public final class NodeVersionJsonSerializer
     {
         try
         {
-            final NodeVersionDataJson nodeVersionJson = this.mapper.readValue( data, NodeVersionDataJson.class );
-            final IndexConfigDocumentJson indexConfigDocumentJson =
-                this.mapper.readValue( indexConfigDocument, IndexConfigDocumentJson.class );
-            final AccessControlJson accessControlJson = this.mapper.readValue( accessControl, AccessControlJson.class );
+            final NodeVersionDataJson nodeVersionJson = MAPPER.readValue( data, NodeVersionDataJson.class );
+            final IndexConfigDocumentJson indexConfigDocumentJson = MAPPER.readValue( indexConfigDocument, IndexConfigDocumentJson.class );
+            final AccessControlJson accessControlJson = MAPPER.readValue( accessControl, AccessControlJson.class );
 
             return nodeVersionJson.fromJson().
                 indexConfigDocument( indexConfigDocumentJson.fromJson() ).
@@ -92,14 +84,8 @@ public final class NodeVersionJsonSerializer
         return null;
     }
 
-    public static NodeVersionJsonSerializer create( final boolean indent )
+    public static NodeVersionJsonSerializer create()
     {
-        final ObjectMapper mapper = ObjectMapperHelper.create();
-        if ( indent )
-        {
-            mapper.enable( SerializationFeature.INDENT_OUTPUT );
-        }
-
-        return new NodeVersionJsonSerializer( mapper );
+        return new NodeVersionJsonSerializer();
     }
 }
