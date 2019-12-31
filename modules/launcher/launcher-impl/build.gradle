@@ -13,8 +13,4 @@ dependencies {
     runtimeOnly "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
     runtimeOnly "org.jboss.logging:jboss-logging:3.3.2.Final"
     compile 'org.fusesource.jansi:jansi:1.11'
-    runtimeOnly ( 'javax.mail:mail:1.4.7' ) {
-        exclude group: 'javax.activation'
-    }
-    runtimeOnly 'javax.activation:activation:1.1.1'
 }

@@ -10,10 +10,7 @@ dependencies {
     compile 'org.osgi:osgi.core:7.0.0'
     compile 'org.osgi:osgi.cmpn:7.0.0'
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
-    compile ( 'javax.mail:mail:1.4.7' ) {
-        exclude group: 'javax.activation'
-    }
-    compile 'javax.activation:activation:1.1.1'
+    compile "com.sun.mail:jakarta.mail:${jakartaMailVersion}"
     compile "io.dropwizard.metrics:metrics-core:${dropwizardMetricsVersion}"
 
     testImplementation project( ':core:core-internal' )
