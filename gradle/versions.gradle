@@ -9,4 +9,5 @@ ext {
     commonsLangVersion = '2.6'
     commonsIoVersion = '2.6'
     tikaVersion = '1.23'
+    resteasyVersion = '3.9.3.Final'
 }
