@@ -1,13 +1,13 @@
 package com.enonic.xp.audit;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
@@ -50,8 +50,7 @@ public final class AuditLogUris
 
     private static ImmutableSet<AuditLogUri> parseIds( final String... uris )
     {
-        final Collection<String> list = Lists.newArrayList( uris );
-        return doParseIds( list );
+        return doParseIds( Arrays.asList( uris ) );
     }
 
     private static ImmutableSet<AuditLogUri> doParseIds( final Collection<String> list )

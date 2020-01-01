@@ -8,7 +8,6 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.impl.AbstractScriptTest;
@@ -39,7 +38,7 @@ public class ScriptMapGeneratorTest
             gen.value( "b", 2 );
         };
 
-        final List<Object> list = Lists.newArrayList( obj, 2 );
+        final List<Object> list = List.of( obj, 2 );
         final ScriptExports exports = runTestScript( "serializer/serializer-test.js" );
         exports.executeMethod( "testArray", list );
     }
