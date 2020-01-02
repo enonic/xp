@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.index.AllTextIndexConfig;
 
@@ -20,7 +19,7 @@ final class AllTextIndexConfigJson
         final AllTextIndexConfigJson json = new AllTextIndexConfigJson();
         if ( !config.getLanguages().isEmpty() )
         {
-            json.languages = Lists.newArrayList( config.getLanguages() );
+            json.languages = new ArrayList<>( config.getLanguages() );
         }
         return json;
     }

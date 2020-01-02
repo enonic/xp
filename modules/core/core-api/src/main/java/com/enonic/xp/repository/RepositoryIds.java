@@ -1,13 +1,13 @@
 package com.enonic.xp.repository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
@@ -50,8 +50,7 @@ public final class RepositoryIds
 
     private static ImmutableSet<RepositoryId> parseIds( final String... paths )
     {
-        final Collection<String> list = Lists.newArrayList( paths );
-        return doParseIds( list );
+        return doParseIds( Arrays.asList( paths ) );
     }
 
     private static ImmutableSet<RepositoryId> doParseIds( final Collection<String> list )

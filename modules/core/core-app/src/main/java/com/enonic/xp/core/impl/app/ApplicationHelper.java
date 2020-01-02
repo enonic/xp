@@ -13,7 +13,6 @@ import org.osgi.framework.VersionRange;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -107,7 +106,7 @@ public final class ApplicationHelper
         {
             return new ArrayList<>();
         }
-        return Lists.newArrayList( Splitter.on( ',' ).trimResults().split( value ) );
+        return Splitter.on( ',' ).trimResults().splitToList( value );
     }
 
     static VersionRange parseVersionRange( final String value )
