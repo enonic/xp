@@ -1,10 +1,12 @@
 package com.enonic.xp.branch;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+
+@PublicApi
 public final class Branch
 {
     private static final String VALID_REPOSITORY_ID_REGEX = "([a-zA-Z0-9\\-:])([a-zA-Z0-9_\\-\\.:])*";
@@ -13,7 +15,7 @@ public final class Branch
 
     private Branch( final Builder builder )
     {
-        Preconditions.checkArgument( !Strings.isNullOrEmpty( builder.value ), "Branch name cannot be null or empty" );
+        Preconditions.checkArgument( !isNullOrEmpty( builder.value ), "Branch name cannot be null or empty" );
         Preconditions.checkArgument( builder.value.matches( "^" + VALID_REPOSITORY_ID_REGEX + "$" ),
                                      "Branch name format incorrect: " + builder.value );
         this.value = builder.value;

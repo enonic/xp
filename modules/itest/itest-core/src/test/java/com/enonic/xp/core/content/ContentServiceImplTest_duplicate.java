@@ -1,12 +1,10 @@
 package com.enonic.xp.core.content;
 
-import java.util.Set;
+import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
@@ -147,9 +145,9 @@ public class ContentServiceImplTest_duplicate
 
         final PropertySet logResultSet = captor.getValue().getData().getSet( "result" );
 
-        final Set<String> ids = Sets.newHashSet( logResultSet.getStrings( "duplicatedContents" ) );
+        final Iterable<String> ids = logResultSet.getStrings( "duplicatedContents" );
 
-        assertEquals( 2, ids.size() );
-        assertTrue( ids.contains( duplicatedContent.getId().toString() ) );
+        assertEquals( 2, StreamSupport.stream( ids.spliterator(), false ).count() );
+        assertTrue( StreamSupport.stream( ids.spliterator(), false ).anyMatch( id -> id.equals( duplicatedContent.getId().toString() ) ) );
     }
 }

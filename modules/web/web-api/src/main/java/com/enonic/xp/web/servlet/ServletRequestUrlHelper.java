@@ -2,18 +2,18 @@ package com.enonic.xp.web.servlet;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import com.google.common.net.HostAndPort;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.UrlEscapers;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
-@Beta
+import static com.google.common.base.Strings.isNullOrEmpty;
+
+@PublicApi
 public final class ServletRequestUrlHelper
 {
     static final String X_FORWARDED_PROTO = HttpHeaders.X_FORWARDED_PROTO;
@@ -31,7 +31,7 @@ public final class ServletRequestUrlHelper
     {
         final StringBuilder str = new StringBuilder();
 
-        if ( !Strings.isNullOrEmpty( path ) )
+        if ( !isNullOrEmpty( path ) )
         {
             if ( !path.startsWith( "/" ) )
             {
@@ -222,13 +222,13 @@ public final class ServletRequestUrlHelper
 
     private static String normalizePath( final String value )
     {
-        if ( Strings.isNullOrEmpty( value ) )
+        if ( isNullOrEmpty( value ) )
         {
             return "/";
         }
 
         final Iterable<String> parts = Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value );
-        return "/" + Joiner.on( '/' ).join( parts );
+        return "/" + String.join( "/", parts );
     }
 
     public static String contentDispositionAttachment( final String fileName )

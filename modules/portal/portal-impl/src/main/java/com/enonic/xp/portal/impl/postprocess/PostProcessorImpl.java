@@ -9,6 +9,8 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalRequest;
@@ -25,7 +27,7 @@ public final class PostProcessorImpl
     private final static ImmutableList<MediaType> HTML_CONTENT_TYPES =
         ImmutableList.of( MediaType.create( "text", "html" ), MediaType.create( "application", "xhtml+xml" ) );
 
-    private final static ImmutableList<HttpMethod> METHODS_ALLOWED_TO_PROCESS = ImmutableList.of( HttpMethod.GET, HttpMethod.POST );
+    private final static ImmutableSet<HttpMethod> METHODS_ALLOWED_TO_PROCESS = Sets.immutableEnumSet( HttpMethod.GET, HttpMethod.POST );
 
     private final List<PostProcessInstruction> instructions = new CopyOnWriteArrayList<>();
 

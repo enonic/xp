@@ -1,8 +1,7 @@
 package com.enonic.xp.audit;
 
 import java.time.Instant;
-
-import com.google.common.base.Objects;
+import java.util.Objects;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
@@ -83,16 +82,15 @@ public class AuditLog
             return false;
         }
         final AuditLog auditLog = (AuditLog) o;
-        return Objects.equal( id, auditLog.id ) && Objects.equal( type, auditLog.type ) && Objects.equal( time, auditLog.time ) &&
-            Objects.equal( source, auditLog.source ) && Objects.equal( user, auditLog.user ) &&
-            Objects.equal( objectUris, auditLog.objectUris ) &&
-            Objects.equal( data, auditLog.data );
+        return Objects.equals( id, auditLog.id ) && Objects.equals( type, auditLog.type ) && Objects.equals( time, auditLog.time ) &&
+            Objects.equals( source, auditLog.source ) && Objects.equals( user, auditLog.user ) &&
+            Objects.equals( objectUris, auditLog.objectUris ) && Objects.equals( data, auditLog.data );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( id, type, time, source, user, objectUris, data );
+        return Objects.hash( id, type, time, source, user, objectUris, data );
     }
 
     public static Builder create()

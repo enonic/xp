@@ -3,13 +3,13 @@ package com.enonic.xp.form;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 
-@Beta
+@PublicApi
 public class InlineMixin
     extends FormItem
 {

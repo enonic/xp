@@ -4,11 +4,8 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
-import com.google.common.annotations.Beta;
-
 import com.enonic.xp.image.ImageHelper;
 
-@Beta
 public abstract class BaseImageProcessor
 {
     protected final BufferedImage createImage( BufferedImage src )

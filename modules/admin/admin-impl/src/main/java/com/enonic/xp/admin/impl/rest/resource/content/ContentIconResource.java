@@ -13,7 +13,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -35,6 +34,8 @@ import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Exceptions;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 
 @Path(ResourceConstants.REST_ROOT + "{content:(content|cms/[^/]+/[^/]+)}/icon")
@@ -260,7 +261,7 @@ public final class ContentIconResource
 
     private Response cacheAndReturnResponse( final String timestamp, final ResolvedImage resolvedImage )
     {
-        final boolean cacheForever = StringUtils.isNotEmpty( timestamp );
+        final boolean cacheForever = !isNullOrEmpty( timestamp );
         if ( cacheForever )
         {
             final CacheControl cacheControl = new CacheControl();

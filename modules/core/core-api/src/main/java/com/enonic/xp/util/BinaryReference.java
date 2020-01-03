@@ -1,10 +1,12 @@
 package com.enonic.xp.util;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+
+@PublicApi
 public class BinaryReference
 {
     private final String value;
@@ -16,7 +18,7 @@ public class BinaryReference
 
     public static BinaryReference from( final String value )
     {
-        Preconditions.checkArgument( !Strings.isNullOrEmpty( value ), "BinaryReference must not be null or empty" );
+        Preconditions.checkArgument( !isNullOrEmpty( value ), "BinaryReference must not be null or empty" );
         return new BinaryReference( value );
     }
 

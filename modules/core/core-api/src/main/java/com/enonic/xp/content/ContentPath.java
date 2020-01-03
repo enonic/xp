@@ -2,13 +2,13 @@ package com.enonic.xp.content;
 
 import java.util.List;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ContentPath
 {
     public static final ContentPath ROOT = create().absolute( true ).build();
@@ -26,7 +26,7 @@ public final class ContentPath
         Preconditions.checkNotNull( builder.elements );
         this.absolute = builder.absolute;
         this.elements = builder.elements.build();
-        this.refString = ( this.absolute ? ELEMENT_DIVIDER : "" ) + Joiner.on( ELEMENT_DIVIDER ).join( elements );
+        this.refString = ( this.absolute ? ELEMENT_DIVIDER : "" ) + String.join( ELEMENT_DIVIDER, elements );
     }
 
     public String getElement( final int index )
@@ -46,7 +46,7 @@ public final class ContentPath
 
     public ContentPath getParentPath()
     {
-        return getAncestorPath(1);
+        return getAncestorPath( 1 );
     }
 
     public ContentPath getAncestorPath( final int deep )
@@ -196,7 +196,7 @@ public final class ContentPath
         private Builder( ContentPath source )
         {
             this.elements = ImmutableList.builder();
-            this.elements.addAll(source.elements);
+            this.elements.addAll( source.elements );
             this.absolute = source.absolute;
         }
 

@@ -1,10 +1,9 @@
 package com.enonic.xp.repo.impl.dump.reader;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -15,10 +14,8 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.blob.BlobKey;
@@ -89,10 +86,9 @@ public class FileDumpReader
 
     private DumpMeta readDumpMetaData()
     {
-        final Path dumpMetaFile = Paths.get( getMetaDataFile().toURI() );
         try
         {
-            final String json = Files.toString( dumpMetaFile.toFile(), Charset.defaultCharset() );
+            final String json = Files.readString( getMetaDataFile() );
             return new DumpMetaJsonSerializer().toDumpMeta( json );
         }
         catch ( IOException e )
@@ -158,7 +154,7 @@ public class FileDumpReader
     public BranchLoadResult loadBranch( final RepositoryId repositoryId, final Branch branch,
                                         final LineProcessor<EntryLoadResult> processor )
     {
-        final File tarFile = getBranchEntriesFile( repositoryId, branch );
+        final Path tarFile = getBranchEntriesFile( repositoryId, branch );
 
         if ( this.listener != null )
         {
@@ -176,7 +172,7 @@ public class FileDumpReader
     @Override
     public VersionsLoadResult loadVersions( final RepositoryId repositoryId, final LineProcessor<EntryLoadResult> processor )
     {
-        final File versionsFile = getVersionsFile( repositoryId );
+        final Path versionsFile = getVersionsFile( repositoryId );
 
         if ( this.listener != null )
         {
@@ -199,7 +195,7 @@ public class FileDumpReader
     @Override
     public CommitsLoadResult loadCommits( final RepositoryId repositoryId, final LineProcessor<EntryLoadResult> processor )
     {
-        final File commitsFile = getCommitsFile( repositoryId );
+        final Path commitsFile = getCommitsFile( repositoryId );
 
         if ( this.listener != null )
         {
@@ -237,7 +233,7 @@ public class FileDumpReader
         return null;
     }
 
-    private EntriesLoadResult doLoadEntries( final LineProcessor<EntryLoadResult> processor, final File tarFile )
+    private EntriesLoadResult doLoadEntries( final LineProcessor<EntryLoadResult> processor, final Path tarFile )
     {
         final EntriesLoadResult.Builder result = EntriesLoadResult.create();
 
@@ -259,7 +255,7 @@ public class FileDumpReader
         return result.build();
     }
 
-    public void processEntries( final BiConsumer<String, String> processor, final File tarFile )
+    public void processEntries( final BiConsumer<String, String> processor, final Path tarFile )
     {
         try (final TarArchiveInputStream tarInputStream = openStream( tarFile ))
         {
@@ -277,59 +273,58 @@ public class FileDumpReader
         }
     }
 
-    private TarArchiveInputStream openStream( final File tarFile )
+    private TarArchiveInputStream openStream( final Path tarFile )
         throws IOException
     {
-        final FileInputStream fileInputStream = new FileInputStream( tarFile );
+        final InputStream fileInputStream = Files.newInputStream( tarFile );
         final GZIPInputStream gzipInputStream = new GZIPInputStream( fileInputStream );
         return new TarArchiveInputStream( gzipInputStream );
     }
 
     private boolean isValidDumpDataDirectory( final Path folder )
     {
-        final File file = folder.toFile();
-        return file.exists() && file.isDirectory() && !file.isHidden();
+        return Files.exists( folder ) && Files.isDirectory( folder ) && !folder.toFile().isHidden(); // see JDK-8215467
     }
 
-    public File getBranchEntriesFile( final RepositoryId repositoryId, final Branch branch )
+    public Path getBranchEntriesFile( final RepositoryId repositoryId, final Branch branch )
     {
         final Path metaPath = createBranchMetaPath( this.dumpDirectory, repositoryId, branch );
         return doGetFile( metaPath, false );
     }
 
-    public File getVersionsFile( final RepositoryId repositoryId )
+    public Path getVersionsFile( final RepositoryId repositoryId )
     {
         final Path metaPath = createVersionMetaPath( this.dumpDirectory, repositoryId );
         return doGetFile( metaPath, false );
     }
 
-    public File getCommitsFile( final RepositoryId repositoryId )
+    public Path getCommitsFile( final RepositoryId repositoryId )
     {
         final Path metaPath = createCommitMetaPath( this.dumpDirectory, repositoryId );
         return doGetFile( metaPath, false );
     }
 
-    public File getRepositoryDir( final RepositoryId repositoryId )
+    public Path getRepositoryDir( final RepositoryId repositoryId )
     {
         final Path repoPath = createRepoPath( this.dumpDirectory, repositoryId );
         return doGetFile( repoPath, false );
     }
 
-    public File getMetaDataFile()
+    public Path getMetaDataFile()
     {
-        return new File( this.dumpDirectory.toString(), "dump.json" );
+        return this.dumpDirectory.resolve( "dump.json" );
     }
 
-    private File doGetFile( final Path metaPath )
+    private Path doGetFile( final Path metaPath )
     {
         return doGetFile( metaPath, true );
     }
 
-    private File doGetFile( final Path metaPath, final boolean required )
+    private Path doGetFile( final Path metaPath, final boolean required )
     {
-        final File tarFile = metaPath.toFile();
+        final Path tarFile = metaPath;
 
-        if ( !tarFile.exists() )
+        if ( !Files.exists( tarFile ) )
         {
             if ( !required )
             {
@@ -359,16 +354,7 @@ public class FileDumpReader
     private String readEntry( final TarArchiveInputStream tarInputStream )
         throws IOException
     {
-        byte[] bytesToRead = new byte[1024];
-        ByteArrayOutputStream entryAsByteStream = new ByteArrayOutputStream();
-        int length;
-        while ( ( length = tarInputStream.read( bytesToRead ) ) != -1 )
-        {
-            entryAsByteStream.write( bytesToRead, 0, length );
-        }
-        entryAsByteStream.close();
-
-        return entryAsByteStream.toString( StandardCharsets.UTF_8.name() );
+        return new String( tarInputStream.readAllBytes(), StandardCharsets.UTF_8 );
     }
 
     @Override

@@ -1,11 +1,14 @@
 package com.enonic.xp.portal.url;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+
+@PublicApi
 public final class AttachmentUrlParams
     extends AbstractUrlParams<AttachmentUrlParams>
 {
@@ -70,7 +73,7 @@ public final class AttachmentUrlParams
 
     public AttachmentUrlParams download( final String value )
     {
-        return Strings.isNullOrEmpty( value ) ? this : download( "true".equals( value ) );
+        return isNullOrEmpty( value ) ? this : download( "true".equals( value ) );
     }
 
     public AttachmentUrlParams download( final boolean value )

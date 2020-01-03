@@ -12,7 +12,7 @@ import com.enonic.xp.repo.impl.node.json.NodeVersionJsonSerializer;
 
 class NodeVersionFactory
 {
-    private final NodeVersionJsonSerializer serializer = NodeVersionJsonSerializer.create( false );
+    private final NodeVersionJsonSerializer serializer = NodeVersionJsonSerializer.create();
 
     NodeVersion create( final ByteSource dataByteSource, final ByteSource indexConfigByteSource, final ByteSource accessControlByteSource )
     {

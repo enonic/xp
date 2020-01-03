@@ -1,9 +1,9 @@
 package com.enonic.xp.portal;
 
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public enum RenderMode
 {
     EDIT( "edit" ), PREVIEW( "preview" ), LIVE( "live" ), ADMIN( "admin" ), INLINE( "inline" );

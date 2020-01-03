@@ -4,10 +4,7 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ExtraData;
@@ -20,10 +17,7 @@ import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.schema.xdata.XDataName;
 
-import static org.apache.commons.lang.StringUtils.substringAfter;
-import static org.apache.commons.lang.StringUtils.substringBefore;
-
-@Beta
+@PublicApi
 public final class ContentMappingConstraint
 {
     private static final String SEPARATOR = ":";
@@ -95,7 +89,7 @@ public final class ContentMappingConstraint
         }
         else if ( this.id.startsWith( DATA_PROPERTY_PREFIX ) )
         {
-            final String dataPath = substringAfter( id, DATA_PROPERTY_PREFIX );
+            final String dataPath = id.substring( DATA_PROPERTY_PREFIX.length() );
             final Property prop = content.getData().getProperty( dataPath );
             if ( prop == null || prop.getValue() == null )
             {
@@ -107,18 +101,34 @@ public final class ContentMappingConstraint
         }
         else if ( this.id.startsWith( XDATA_PROPERTY_PREFIX ) )
         {
-            String dataPath = substringAfter( id, XDATA_PROPERTY_PREFIX );
-            final String appPrefix = substringBefore( dataPath, "." );
-            dataPath = substringAfter( dataPath, "." );
-            final String mixinName = substringBefore( dataPath, "." );
-            dataPath = substringAfter( dataPath, "." );
+            final String dataPath = id.substring( XDATA_PROPERTY_PREFIX.length() );
+
+            final String appPrefix;
+            final String mixinName;
+            final String propertyName;
+
+            final int firstIndex = dataPath.indexOf( "." );
+            if ( firstIndex == -1 )
+            {
+                appPrefix = dataPath;
+                mixinName = "";
+                propertyName = "";
+            }
+            else
+            {
+                appPrefix = dataPath.substring( 0, firstIndex );
+                final int secondIndex = dataPath.indexOf( ".", firstIndex + 1 );
+                mixinName = secondIndex == -1 ? dataPath.substring( firstIndex + 1 ) : dataPath.substring( firstIndex + 1, secondIndex );
+                propertyName = secondIndex == -1 ? "" : dataPath.substring( secondIndex + 1 );
+            }
+
             final PropertyTree xData = getXData( content.getAllExtraData(), appPrefix, mixinName );
             if ( xData == null )
             {
                 return false;
             }
 
-            final Property prop = xData.getProperty( dataPath );
+            final Property prop = xData.getProperty( propertyName );
             if ( prop == null || prop.getValue() == null )
             {
                 return false;
@@ -239,13 +249,15 @@ public final class ContentMappingConstraint
 
     public static ContentMappingConstraint parse( final String expression )
     {
-        if ( !expression.contains( SEPARATOR ) )
+        int index = expression.indexOf( SEPARATOR );
+        if ( index == -1 )
         {
             throw new IllegalArgumentException( "Invalid match expression: " + expression );
         }
-        final String id = substringBefore( expression, SEPARATOR ).trim();
-        final String value = substringAfter( expression, SEPARATOR ).trim();
-        if ( StringUtils.isBlank( id ) )
+        final String id = expression.substring( 0, index ).trim();
+        final String value = expression.substring( index + 1 ).trim();
+
+        if ( id.isBlank() )
         {
             throw new IllegalArgumentException( "Invalid match expression: " + expression );
         }

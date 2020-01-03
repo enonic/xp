@@ -2,11 +2,10 @@ package com.enonic.xp.region;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentId;
 
-@Beta
+@PublicApi
 public class FragmentComponent
     extends Component
 {

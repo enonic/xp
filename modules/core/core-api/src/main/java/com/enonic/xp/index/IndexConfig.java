@@ -3,12 +3,13 @@ package com.enonic.xp.index;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public class IndexConfig
     implements Comparable<IndexConfig>
 {
@@ -195,13 +196,13 @@ public class IndexConfig
         {
             return false;
         }
-        return Objects.equal( languages, that.languages );
+        return Objects.equals( languages, that.languages );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( decideByType, enabled, nGram, fulltext, includeInAllText, path, languages );
+        return Objects.hash( decideByType, enabled, nGram, fulltext, includeInAllText, path, languages );
     }
 
     @Override

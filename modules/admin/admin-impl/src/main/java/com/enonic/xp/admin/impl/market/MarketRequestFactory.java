@@ -18,21 +18,22 @@ class MarketRequestFactory
 {
     private static final Duration READ_TIMEOUT = Duration.ofSeconds( 10 );
 
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
     public static HttpRequest create( final String baseUrl, final List<String> ids, final String version, final int start, final int count )
     {
         Map<String, String> getParams = Map.of( "xpVersion", version, "start", String.valueOf( start ), "count", String.valueOf( count ) );
 
-        ObjectMapper mapper = new ObjectMapper();
         String body = null;
         try
         {
-            ObjectNode bodyNode = mapper.createObjectNode();
+            ObjectNode bodyNode = MAPPER.createObjectNode();
             if ( ids != null && ids.size() > 0 )
             {
                 ArrayNode idsNode = bodyNode.putArray( "ids" );
                 ids.forEach( idsNode::add );
             }
-            body = mapper.writeValueAsString( bodyNode );
+            body = MAPPER.writeValueAsString( bodyNode );
         }
         catch ( JsonProcessingException e )
         {

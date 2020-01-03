@@ -6,15 +6,15 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSortedSet;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.util.GlobPatternMatcher;
 
-@Beta
+import static com.google.common.base.Strings.nullToEmpty;
+
+@PublicApi
 public class PatternIndexConfigDocument
     extends AbstractIndexConfigDocument
 {
@@ -197,7 +197,7 @@ public class PatternIndexConfigDocument
 
         public Builder addAllTextConfigLanguage( final String language )
         {
-            if ( StringUtils.isNotBlank( language ) )
+            if ( !nullToEmpty( language ).isBlank() )
             {
                 this.allTextIndexConfig.addLanguage( language );
             }

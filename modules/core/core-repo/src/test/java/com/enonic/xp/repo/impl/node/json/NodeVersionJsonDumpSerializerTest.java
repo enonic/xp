@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
@@ -15,6 +16,7 @@ import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PatternIndexConfigDocument;
+import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.NodeId;
@@ -33,12 +35,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NodeVersionJsonDumpSerializerTest
 {
-    private final NodeVersionJsonSerializer serializer;
+    private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
-    public NodeVersionJsonDumpSerializerTest()
-    {
-        this.serializer = NodeVersionJsonSerializer.create( true );
-    }
+    private final NodeVersionJsonSerializer serializer = NodeVersionJsonSerializer.create();
 
     @Test
     public void serialize_deserialize()
@@ -127,7 +126,7 @@ public class NodeVersionJsonDumpSerializerTest
         throws Exception
     {
         final URL url = getClass().getResource( name );
-        final JsonNode node = this.serializer.mapper.readTree( url );
-        return this.serializer.mapper.writeValueAsString( node );
+        final JsonNode node = MAPPER.readTree( url );
+        return MAPPER.writeValueAsString( node );
     }
 }

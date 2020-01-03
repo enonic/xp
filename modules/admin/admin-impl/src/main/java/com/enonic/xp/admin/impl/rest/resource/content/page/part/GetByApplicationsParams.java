@@ -6,7 +6,6 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Iterables;
 
 import com.enonic.xp.app.ApplicationKeys;
 
@@ -18,7 +17,7 @@ public class GetByApplicationsParams
     @JsonCreator
     public GetByApplicationsParams( @JsonProperty("applicationKeys") List<String> applicationKeysAsStringList )
     {
-        this.applicationKeys = ApplicationKeys.from( Iterables.toArray( applicationKeysAsStringList, String.class ) );
+        this.applicationKeys = ApplicationKeys.from( applicationKeysAsStringList.toArray( new String[0] ) );
     }
 
     @JsonIgnore

@@ -1,8 +1,8 @@
 package com.enonic.xp.export;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public class ExportNodeException
     extends RuntimeException
 {

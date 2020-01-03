@@ -11,10 +11,10 @@ import javax.servlet.Filter;
 import javax.servlet.Servlet;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class MappingBuilder
 {
@@ -99,7 +99,7 @@ public final class MappingBuilder
         {
             this.resource = resource;
             this.order = builder.order;
-            this.name = Strings.isNullOrEmpty( builder.name ) ? this.resource.getClass().getSimpleName() : builder.name;
+            this.name = isNullOrEmpty( builder.name ) ? this.resource.getClass().getSimpleName() : builder.name;
             this.connectors = builder.connectors;
             this.initParams = ImmutableMap.copyOf( builder.initParams );
             this.urlPatterns = ImmutableSet.copyOf( builder.urlPatterns );
@@ -150,7 +150,7 @@ public final class MappingBuilder
 
     public MappingBuilder urlPatterns( final String... patterns )
     {
-        this.urlPatterns.addAll( Lists.newArrayList( patterns ) );
+        this.urlPatterns.addAll( List.of( patterns ) );
         return this;
     }
 

@@ -2,9 +2,9 @@ package com.enonic.xp.security;
 
 import java.time.Instant;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public final class EditableGroup
 {
     public final Group source;

@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Strings;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.query.expr.FieldOrderExpr;
@@ -15,7 +13,9 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.OrderExpressions;
 import com.enonic.xp.query.parser.QueryParser;
 
-@Beta
+import static com.google.common.base.Strings.isNullOrEmpty;
+
+@PublicApi
 public class ChildOrder
 {
     private static final OrderExpr DEFAULT_ORDER = FieldOrderExpr.create( NodeIndexPath.TIMESTAMP, OrderExpr.Direction.DESC );
@@ -97,7 +97,7 @@ public class ChildOrder
     {
         final ChildOrder.Builder builder = ChildOrder.create();
 
-        if ( Strings.isNullOrEmpty( orderExpression ) )
+        if ( isNullOrEmpty( orderExpression ) )
         {
             return null;
         }

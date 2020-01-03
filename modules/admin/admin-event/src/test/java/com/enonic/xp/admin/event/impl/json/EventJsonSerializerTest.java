@@ -1,7 +1,8 @@
 package com.enonic.xp.admin.event.impl.json;
 
-import java.net.URL;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,8 +12,8 @@ import org.osgi.framework.BundleEvent;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.io.Resources;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.json.ObjectMapperHelper;
@@ -22,6 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class EventJsonSerializerTest
 {
+    private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
+
+    private static final ObjectWriter OBJECT_WRITER = MAPPER.writerWithDefaultPrettyPrinter();
+
     private EventJsonSerializer serializer;
 
     private BundleEvent bundleEvent;
@@ -64,37 +69,23 @@ public class EventJsonSerializerTest
     private void assertJson( final String fileName, final JsonNode actualNode )
         throws Exception
     {
-        final JsonNode expectedNode = parseJson( readFromFile( fileName ) );
+        final JsonNode expectedNode = MAPPER.readTree( readFromFile( fileName ) );
 
-        final String expectedStr = toJson( expectedNode );
-        final String actualStr = toJson( actualNode );
+        final String expectedStr = OBJECT_WRITER.writeValueAsString( expectedNode );
+        final String actualStr = OBJECT_WRITER.writeValueAsString( actualNode );
 
         assertEquals( expectedStr, actualStr );
-    }
-
-    protected JsonNode parseJson( final String json )
-        throws Exception
-    {
-        final ObjectMapper mapper = ObjectMapperHelper.create();
-        return mapper.readTree( json );
     }
 
     protected String readFromFile( final String fileName )
         throws Exception
     {
-        final URL url = getClass().getResource( fileName );
-        if ( url == null )
+        final InputStream stream =
+            Objects.requireNonNull( getClass().getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
+        try (stream)
         {
-            throw new IllegalArgumentException( "Resource file [" + fileName + "] not found" );
+            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }
-
-        return Resources.toString( url, StandardCharsets.UTF_8 );
     }
 
-    private String toJson( final Object value )
-        throws Exception
-    {
-        final ObjectMapper mapper = ObjectMapperHelper.create();
-        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString( value );
-    }
 }

@@ -1,12 +1,9 @@
 package com.enonic.xp.admin.impl.json.form;
 
-import com.google.common.annotations.Beta;
-
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Layout;
 
-@Beta
 @SuppressWarnings("UnusedDeclaration")
 public class LayoutJsonFactory
 {

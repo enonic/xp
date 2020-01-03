@@ -1,8 +1,8 @@
 package com.enonic.xp.query;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public enum Direction
 {
     ASC,

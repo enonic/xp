@@ -1,12 +1,13 @@
 package com.enonic.xp.node;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.repository.RepositoryId;
 
-@Beta
+import static com.google.common.base.Strings.isNullOrEmpty;
+
+@PublicApi
 public class SnapshotParams
 {
     final String snapshotName;
@@ -90,7 +91,7 @@ public class SnapshotParams
 
         private void validate()
         {
-            Preconditions.checkArgument( !Strings.isNullOrEmpty( snapshotName ), "Snapshot name has to be given" );
+            Preconditions.checkArgument( !isNullOrEmpty( snapshotName ), "Snapshot name has to be given" );
         }
 
         public SnapshotParams build()

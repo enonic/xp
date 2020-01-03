@@ -3,13 +3,13 @@ package com.enonic.xp.app;
 import java.util.Collection;
 import java.util.function.Function;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-@Beta
+@PublicApi
 public final class Applications
     extends AbstractImmutableEntityList<Application>
 {
@@ -39,8 +39,7 @@ public final class Applications
 
     public static Applications empty()
     {
-        final ImmutableList<Application> list = ImmutableList.of();
-        return new Applications( list );
+        return new Applications( ImmutableList.of() );
     }
 
     public static Applications from( final Application... applications )

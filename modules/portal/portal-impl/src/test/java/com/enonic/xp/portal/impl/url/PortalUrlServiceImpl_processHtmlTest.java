@@ -1,16 +1,13 @@
 package com.enonic.xp.portal.impl.url;
 
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import com.google.common.io.CharSource;
-import com.google.common.io.Resources;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
@@ -348,18 +345,24 @@ public class PortalUrlServiceImpl_processHtmlTest
     private void assertProcessHtml( String inputName, String expectedOutputName )
         throws IOException
     {
+        final String input;
+        final String expected;
         //Reads the input and output files
-        final URL inputUrl = this.getClass().getResource( inputName );
-        final CharSource inputCharSource = Resources.asCharSource( inputUrl, StandardCharsets.UTF_8 );
-        final URL expectedOutputUrl = this.getClass().getResource( expectedOutputName );
-        final CharSource expectedOutputCharSource = Resources.asCharSource( expectedOutputUrl, StandardCharsets.UTF_8 );
+        try (final InputStream is = this.getClass().getResourceAsStream( inputName ))
+        {
+            input = new String( is.readAllBytes(), StandardCharsets.UTF_8 );
+        }
+        try (final InputStream is = this.getClass().getResourceAsStream( expectedOutputName ))
+        {
+            expected = new String( is.readAllBytes(), StandardCharsets.UTF_8 );
+        }
 
         //Processes the input file
         final ProcessHtmlParams processHtmlParams = new ProcessHtmlParams().
-            value( inputCharSource.read() );
+            value( input );
         final String processedHtml = this.service.processHtml( processHtmlParams );
 
         //Checks that the processed text is equal to the expected output
-        assertEquals( expectedOutputCharSource.read(), processedHtml );
+        assertEquals( expected, processedHtml );
     }
 }

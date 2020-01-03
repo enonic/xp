@@ -1,12 +1,11 @@
 package com.enonic.xp.xml.parser;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.idprovider.IdProviderDescriptorMode;
 import com.enonic.xp.xml.DomElement;
 
-@Beta
+@PublicApi
 public final class XmlIdProviderDescriptorParser
     extends XmlModelParser<XmlIdProviderDescriptorParser>
 {

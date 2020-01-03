@@ -3,10 +3,11 @@ package com.enonic.xp.node;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public class UUID
 {
     protected final String value;

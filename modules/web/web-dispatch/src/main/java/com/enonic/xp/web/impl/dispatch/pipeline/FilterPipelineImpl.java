@@ -8,7 +8,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -41,9 +40,9 @@ public class FilterPipelineImpl
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addFilter( final Filter filter, final ServiceReference<Filter> filterServiceReference )
+    public void addFilter( final Filter filter, final Map<String, ?> props )
     {
-        add( ResourceDefinitionFactory.create( filter, getConnectorsFromProperty( filterServiceReference ) ) );
+        add( ResourceDefinitionFactory.create( filter, getConnectorsFromProperty( props ) ) );
     }
 
     public void removeFilter( final Filter filter )

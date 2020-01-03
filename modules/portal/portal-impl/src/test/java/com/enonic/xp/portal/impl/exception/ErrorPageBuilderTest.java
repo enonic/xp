@@ -1,12 +1,11 @@
 package com.enonic.xp.portal.impl.exception;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import com.google.common.io.Resources;
 
 import com.enonic.xp.resource.ResourceService;
 
@@ -94,8 +93,9 @@ public class ErrorPageBuilderTest
     private String readResource( final String resourceName )
         throws Exception
     {
-        return Resources.toString( getClass().getResource( resourceName ), StandardCharsets.UTF_8 );
+        try (final InputStream stream = getClass().getResourceAsStream( resourceName ))
+        {
+            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
+        }
     }
-
-
 }

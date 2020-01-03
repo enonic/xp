@@ -6,16 +6,15 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
-@Beta
+import static com.google.common.base.Strings.nullToEmpty;
+
+@PublicApi
 public final class Property
 {
     private final PropertySet parent;
@@ -204,7 +203,7 @@ public final class Property
         {
             throw new NullPointerException( "Property name cannot be null" );
         }
-        if ( StringUtils.isBlank( name ) )
+        if ( nullToEmpty( name ).isBlank() )
         {
             throw new IllegalArgumentException( "Property name cannot be blank" );
         }

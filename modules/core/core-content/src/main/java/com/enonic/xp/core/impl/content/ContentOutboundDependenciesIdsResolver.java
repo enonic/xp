@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -13,6 +11,8 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public class ContentOutboundDependenciesIdsResolver
 {
@@ -55,7 +55,7 @@ public class ContentOutboundDependenciesIdsResolver
             forEach( property -> {
                 final String value = property.getValue().toString();
 
-                if ( !contentId.toString().equals( value ) && StringUtils.isNotBlank( value ) )
+                if ( !contentId.toString().equals( value ) && !nullToEmpty( value ).isBlank() )
                 {
                     contentIds.add( ContentId.from( value ) );
                 }

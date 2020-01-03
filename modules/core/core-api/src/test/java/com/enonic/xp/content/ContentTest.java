@@ -5,8 +5,6 @@ import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableMap;
-
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
@@ -82,6 +80,6 @@ public class ContentTest
     {
         Content content = Content.create().path( MY_CONTENT_PATH ).build();
         assertEquals( WorkflowState.READY, content.getWorkflowInfo().getState() );
-        assertEquals( ImmutableMap.of(), content.getWorkflowInfo().getChecks() );
+        assertTrue( content.getWorkflowInfo().getChecks().isEmpty() );
     }
 }

@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.dump.upgrade.flattenedpage;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -9,7 +8,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
@@ -68,7 +66,7 @@ public class FlattenedPageDumpUpgrader
     {
         super.doUpgrade( dumpName );
 
-        final File versionsFile = dumpReader.getVersionsFile( REPOSITORY_ID );
+        final Path versionsFile = dumpReader.getVersionsFile( REPOSITORY_ID );
         if ( versionsFile != null )
         {
             //Gathers the template -> controller mappings
@@ -114,10 +112,10 @@ public class FlattenedPageDumpUpgrader
     {
         try
         {
-            return this.mapper.writeValueAsString( Pre4NodeVersionJson.toJson( nodeVersion ) );
+            return serialize( Pre4NodeVersionJson.toJson( nodeVersion ) );
 
         }
-        catch ( final JsonProcessingException e )
+        catch ( final RepoDumpException e )
         {
             throw new RepoDumpException( "Cannot serialize node version [" + nodeVersion.toString() + "]", e );
         }
@@ -134,7 +132,7 @@ public class FlattenedPageDumpUpgrader
 
     private void upgradeBranch( final Branch branch )
     {
-        final File branchEntriesFile = dumpReader.getBranchEntriesFile( REPOSITORY_ID, branch );
+        final Path branchEntriesFile = dumpReader.getBranchEntriesFile( REPOSITORY_ID, branch );
         if ( branchEntriesFile != null )
         {
             //Gathers the template -> controller mappings

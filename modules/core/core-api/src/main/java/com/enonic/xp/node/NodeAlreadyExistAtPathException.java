@@ -1,9 +1,9 @@
 package com.enonic.xp.node;
 
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public class NodeAlreadyExistAtPathException
     extends RuntimeException
 {

@@ -1,14 +1,12 @@
 package com.enonic.xp.repository;
 
-import java.util.Optional;
-
-import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.util.BinaryReference;
 
-@Beta
+@PublicApi
 public interface RepositoryService
 {
     Repository createRepository( final CreateRepositoryParams params );

@@ -1,8 +1,8 @@
 package com.enonic.xp.content;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public enum CompareStatus
 {
     NEW( false, "Offline" ), NEW_TARGET( false, "New in prod" ), NEWER( false, "Modified" ), OLDER( false, "Out-of-date" ), PENDING_DELETE(

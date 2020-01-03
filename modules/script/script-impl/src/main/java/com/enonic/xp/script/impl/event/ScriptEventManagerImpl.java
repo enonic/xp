@@ -5,6 +5,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.osgi.service.component.annotations.Component;
 
+import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
@@ -36,9 +37,19 @@ public final class ScriptEventManagerImpl
     }
 
     @Override
+    @Deprecated
     public void invalidate( final ApplicationKey key )
     {
-        this.listeners.removeIf( ( listener ) -> key.equals( listener.getApplication() ) );
+        invalidate( key, ApplicationInvalidationLevel.FULL );
+    }
+
+    @Override
+    public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
+    {
+        if ( ApplicationInvalidationLevel.FULL == level )
+        {
+            this.listeners.removeIf( ( listener ) -> key.equals( listener.getApplication() ) );
+        }
     }
 
     @Override

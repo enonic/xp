@@ -1,11 +1,10 @@
 package com.enonic.xp.core.impl.export.xml;
 
-import java.net.URL;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import org.w3c.dom.Document;
-
-import com.google.common.io.Resources;
 
 import com.enonic.xp.xml.DomHelper;
 
@@ -16,14 +15,13 @@ public abstract class BaseXmlSerializerTest
     final String readFromFile( final String fileName )
         throws Exception
     {
-        final URL url = getClass().getResource( fileName );
-        if ( url == null )
+        final InputStream stream =
+            Objects.requireNonNull( getClass().getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
+        try (stream)
         {
-            throw new IllegalArgumentException( "Resource file [" + fileName + "] not found" );
+            final String xml = new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
+            return normalizeXml( xml );
         }
-
-        final String xml = Resources.toString( url, StandardCharsets.UTF_8 );
-        return normalizeXml( xml );
     }
 
     final void assertXml( final String expectedFileName, final String actualSerialization )

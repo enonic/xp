@@ -6,15 +6,12 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationInstallationParams;
 import com.enonic.xp.app.ApplicationKey;
@@ -63,6 +60,8 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.util.Version;
 
+import static com.google.common.base.Strings.nullToEmpty;
+
 @Component(immediate = true)
 @SuppressWarnings("WeakerAccess")
 public class DumpServiceImpl
@@ -101,7 +100,7 @@ public class DumpServiceImpl
         }
 
         final String dumpName = params.getDumpName();
-        if ( StringUtils.isBlank( dumpName ) )
+        if ( nullToEmpty( dumpName ).isBlank() )
         {
             throw new RepoDumpException( "dump name cannot be empty" );
         }
@@ -156,10 +155,10 @@ public class DumpServiceImpl
 
     private List<DumpUpgrader> createDumpUpgraders()
     {
-        return Lists.newArrayList( new MissingModelVersionDumpUpgrader(), new VersionIdDumpUpgrader( basePath ),
-                                   new FlattenedPageDumpUpgrader( basePath ), new IndexAccessSegmentsDumpUpgrader( basePath ),
-                                   new RepositoryIdDumpUpgrader( basePath ), new CommitDumpUpgrader( basePath ),
-                                   new IndexConfigUpgrader( basePath ), new HtmlAreaDumpUpgrader( basePath ) );
+        return List.of( new MissingModelVersionDumpUpgrader(), new VersionIdDumpUpgrader( basePath ),
+                        new FlattenedPageDumpUpgrader( basePath ), new IndexAccessSegmentsDumpUpgrader( basePath ),
+                        new RepositoryIdDumpUpgrader( basePath ), new CommitDumpUpgrader( basePath ), new IndexConfigUpgrader( basePath ),
+                        new HtmlAreaDumpUpgrader( basePath ) );
     }
 
     private Version getDumpModelVersion( final String dumpName )

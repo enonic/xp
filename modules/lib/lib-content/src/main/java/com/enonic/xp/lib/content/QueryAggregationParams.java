@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.aggregation.BucketAggregationQuery;
 import com.enonic.xp.query.aggregation.DateHistogramAggregationQuery;
@@ -133,8 +131,9 @@ final class QueryAggregationParams
         final String orderExpr = ( (String) paramsMap.getOrDefault( "order", "" ) ).trim();
         final int size = (int) paramsMap.getOrDefault( "size", 10 );
 
-        final String orderTypeStr = StringUtils.substringBefore( orderExpr, " " );
-        final String orderDir = StringUtils.substringAfter( orderExpr, " " );
+        final int index = orderExpr.indexOf( " " );
+        final String orderTypeStr = index == -1 ? orderExpr : orderExpr.substring( 0, index );
+        final String orderDir = index == -1 ? "" : orderExpr.substring( index + 1 );
         final TermsAggregationQuery.Direction orderDirection = "desc".equalsIgnoreCase( orderDir ) ? DESC : ASC;
         final TermsAggregationQuery.Type orderType;
         if ( "_term".equals( orderTypeStr ) )
@@ -169,8 +168,9 @@ final class QueryAggregationParams
         HistogramAggregationQuery.Order histogramOrder = KEY_ASC;
         if ( !orderExpr.isEmpty() )
         {
-            final String orderTypeStr = StringUtils.substringBefore( orderExpr, " " );
-            final String orderDir = StringUtils.substringAfter( orderExpr, " " );
+            final int index = orderExpr.indexOf( " " );
+            final String orderTypeStr = index == -1 ? orderExpr : orderExpr.substring( 0, index );
+            final String orderDir = index == -1 ? "" : orderExpr.substring( index + 1 );
 
             if ( "_key".equals( orderTypeStr ) )
             {

@@ -3,17 +3,17 @@ package com.enonic.xp.form;
 
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 
-@Beta
+import static com.google.common.base.Strings.nullToEmpty;
+
+@PublicApi
 public final class Input
     extends FormItem
 {
@@ -50,12 +50,12 @@ public final class Input
         super();
 
         Preconditions.checkNotNull( builder.name, "a name is required for a Input" );
-        Preconditions.checkArgument( StringUtils.isNotBlank( builder.name ), "a name is required for a Input" );
+        Preconditions.checkArgument( !nullToEmpty( builder.name ).isBlank(), "a name is required for a Input" );
         Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctuations: " + builder.name );
         Preconditions.checkNotNull( builder.inputType, "inputType cannot be null" );
 
         Preconditions.checkNotNull( builder.label, "a label is required for a Input" );
-        Preconditions.checkArgument( StringUtils.isNotBlank( builder.label ), "a label is required for a Input" );
+        Preconditions.checkArgument( !nullToEmpty( builder.label ).isBlank(), "a label is required for a Input" );
 
         this.name = builder.name;
         this.type = builder.inputType;

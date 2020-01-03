@@ -1,12 +1,9 @@
 package com.enonic.xp.repo.impl.repository;
 
 
-import com.google.common.annotations.Beta;
-
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.exception.BaseException;
 
-@Beta
 class BranchAlreadyExistException
     extends BaseException
 {

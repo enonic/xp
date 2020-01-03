@@ -1,11 +1,14 @@
 package com.enonic.xp.portal.url;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+
+@PublicApi
 public final class ImageUrlParams
     extends AbstractUrlParams<ImageUrlParams>
 {
@@ -78,7 +81,7 @@ public final class ImageUrlParams
 
     public ImageUrlParams quality( final String value )
     {
-        return Strings.isNullOrEmpty( value ) ? this : quality( Integer.valueOf( value ) );
+        return isNullOrEmpty( value ) ? this : quality( Integer.valueOf( value ) );
     }
 
     public ImageUrlParams format( final String value )

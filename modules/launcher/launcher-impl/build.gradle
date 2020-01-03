@@ -5,12 +5,12 @@ dependencies {
     compile "org.apache.felix:org.apache.felix.framework:${felixVersion}"
     runtimeOnly 'org.apache.felix:org.apache.felix.logback:1.0.2'
     compile 'org.apache.felix:org.apache.felix.utils:1.11.2'
-    compile 'commons-io:commons-io:2.4'
+    implementation "commons-io:commons-io:${commonsIoVersion}"
     runtimeOnly 'ch.qos.logback:logback-classic:1.2.3'
+    runtimeOnly 'org.fusesource.jansi:jansi:1.18'
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation "org.slf4j:jul-to-slf4j:${slf4jVersion}"
     runtimeOnly "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
     runtimeOnly "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
-    compile 'org.fusesource.jansi:jansi:1.11'
-    compile 'javax.mail:mail:1.4.7'
+    runtimeOnly "org.jboss.logging:jboss-logging:3.3.2.Final"
 }

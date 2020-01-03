@@ -1,12 +1,11 @@
 package com.enonic.xp.name;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSet;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 final class NameCharacterHelper
 {
     private final static ImmutableSet<Character> ADDITIONAL_ALLOWED_CHARACTERS = ImmutableSet.of( ' ', '-' );
@@ -17,7 +16,9 @@ final class NameCharacterHelper
                          Character.INITIAL_QUOTE_PUNCTUATION, Character.OTHER_PUNCTUATION, Character.CURRENCY_SYMBOL,
                          Character.MODIFIER_SYMBOL, Character.MATH_SYMBOL, Character.OTHER_SYMBOL, Character.DASH_PUNCTUATION );
 
-    private final static char[] EXPLICITLY_ILLEGAL_CHARACTERS = {'/', '\\', '*', '?', '|'};
+    private static final String EXPLICITLY_ILLEGAL_CHARACTERS = "/\\*?|";
+
+    private static final CharMatcher EXPLICITLY_ILLEGAL_CHAR_MATCHER = CharMatcher.anyOf( EXPLICITLY_ILLEGAL_CHARACTERS );
 
     public static boolean isValidCharacter( final char c )
     {
@@ -47,7 +48,7 @@ final class NameCharacterHelper
 
     public static boolean hasNoExplicitIllegal( final String value )
     {
-        return !StringUtils.containsAny( value, EXPLICITLY_ILLEGAL_CHARACTERS );
+        return EXPLICITLY_ILLEGAL_CHAR_MATCHER.matchesNoneOf( value );
     }
 
     static String getUnicodeString( final char c )
@@ -57,6 +58,6 @@ final class NameCharacterHelper
 
     public static char[] getExplicitlyIllegalCharacters()
     {
-        return EXPLICITLY_ILLEGAL_CHARACTERS.clone();
+        return EXPLICITLY_ILLEGAL_CHARACTERS.toCharArray();
     }
 }

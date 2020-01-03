@@ -16,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import com.google.common.net.HttpHeaders;
@@ -43,6 +42,7 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentInitializer;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
@@ -104,9 +104,9 @@ public class AbstractContentServiceTest
     extends AbstractElasticsearchIntegrationTest
 {
     protected static final Repository TEST_REPO = Repository.create().
-            id( RepositoryId.from( "com.enonic.cms.default" ) ).
-            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-            build();
+        id( RepositoryId.from( "com.enonic.cms.default" ) ).
+        branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
+        build();
 
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
@@ -188,7 +188,7 @@ public class AbstractContentServiceTest
 
         BranchServiceImpl branchService = new BranchServiceImpl();
         branchService.setStorageDao( storageDao );
-        branchService.setSearchDao(searchDao);
+        branchService.setSearchDao( searchDao );
 
         VersionServiceImpl versionService = new VersionServiceImpl();
         versionService.setStorageDao( storageDao );
@@ -200,7 +200,7 @@ public class AbstractContentServiceTest
         indexServiceInternal.setClient( client );
 
         IndexServiceImpl indexService = new IndexServiceImpl();
-        indexService.setIndexServiceInternal(indexServiceInternal);
+        indexService.setIndexServiceInternal( indexServiceInternal );
 
         NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl();
         nodeDao.setBlobStore( blobStore );
@@ -211,17 +211,17 @@ public class AbstractContentServiceTest
         indexedDataService.setStorageDao( storageDao );
 
         NodeStorageServiceImpl storageService = new NodeStorageServiceImpl();
-        storageService.setBranchService(branchService);
-        storageService.setVersionService(versionService);
-        storageService.setCommitService(commitService);
-        storageService.setNodeVersionService(nodeDao);
-        storageService.setIndexDataService(indexedDataService);
+        storageService.setBranchService( branchService );
+        storageService.setVersionService( versionService );
+        storageService.setCommitService( commitService );
+        storageService.setNodeVersionService( nodeDao );
+        storageService.setIndexDataService( indexedDataService );
 
         NodeSearchServiceImpl searchService = new NodeSearchServiceImpl();
-        searchService.setSearchDao(searchDao);
+        searchService.setSearchDao( searchDao );
 
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
-        nodeRepositoryService.setIndexServiceInternal(indexServiceInternal);
+        nodeRepositoryService.setIndexServiceInternal( indexServiceInternal );
 
         final IndexServiceInternalImpl elasticsearchIndexService = new IndexServiceInternalImpl();
         elasticsearchIndexService.setClient( client );
@@ -229,8 +229,8 @@ public class AbstractContentServiceTest
         final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
         repositoryEntryService.setIndexServiceInternal( elasticsearchIndexService );
         repositoryEntryService.setNodeRepositoryService( nodeRepositoryService );
-        repositoryEntryService.setNodeStorageService(storageService);
-        repositoryEntryService.setNodeSearchService(searchService);
+        repositoryEntryService.setNodeStorageService( storageService );
+        repositoryEntryService.setNodeSearchService( searchService );
         repositoryEntryService.setEventPublisher( eventPublisher );
         repositoryEntryService.setBinaryService( binaryService );
 
@@ -238,17 +238,17 @@ public class AbstractContentServiceTest
         repositoryService.setRepositoryEntryService( repositoryEntryService );
         repositoryService.setIndexServiceInternal( elasticsearchIndexService );
         repositoryService.setNodeRepositoryService( nodeRepositoryService );
-        repositoryService.setNodeStorageService(storageService);
-        repositoryService.setNodeSearchService(searchService);
+        repositoryService.setNodeStorageService( storageService );
+        repositoryService.setNodeSearchService( searchService );
         repositoryService.initialize();
 
         nodeService = new NodeServiceImpl();
-        nodeService.setIndexServiceInternal(indexServiceInternal);
-        nodeService.setNodeStorageService(storageService);
-        nodeService.setNodeSearchService(searchService);
+        nodeService.setIndexServiceInternal( indexServiceInternal );
+        nodeService.setNodeStorageService( storageService );
+        nodeService.setNodeSearchService( searchService );
         nodeService.setEventPublisher( eventPublisher );
         nodeService.setBinaryService( binaryService );
-        nodeService.setRepositoryService(repositoryService);
+        nodeService.setRepositoryService( repositoryService );
         nodeService.initialize();
 
         mixinService = Mockito.mock( MixinService.class );
@@ -257,7 +257,7 @@ public class AbstractContentServiceTest
         xDataService = Mockito.mock( XDataService.class );
 
         Map<String, List<String>> metadata = new HashMap<>();
-        metadata.put( HttpHeaders.CONTENT_TYPE, Lists.newArrayList( "image/jpg" ) );
+        metadata.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpg" ) );
 
         final ExtractedData extractedData = ExtractedData.create().
             metadata( metadata ).
@@ -278,9 +278,9 @@ public class AbstractContentServiceTest
         contentTypeService = new ContentTypeServiceImpl();
         contentTypeService.setMixinService( mixinService );
 
-        PageDescriptorService pageDescriptorService = Mockito.mock(PageDescriptorService.class);
-        PartDescriptorService partDescriptorService = Mockito.mock(PartDescriptorService.class);
-        LayoutDescriptorService layoutDescriptorService = Mockito.mock(LayoutDescriptorService.class);
+        PageDescriptorService pageDescriptorService = Mockito.mock( PageDescriptorService.class );
+        PartDescriptorService partDescriptorService = Mockito.mock( PartDescriptorService.class );
+        LayoutDescriptorService layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
         auditLogService = Mockito.mock( AuditLogService.class );
 
         final ProjectServiceImpl projectService = new ProjectServiceImpl();
@@ -294,15 +294,17 @@ public class AbstractContentServiceTest
         contentService.setSiteService( siteService );
         contentService.setContentTypeService( contentTypeService );
         contentService.setxDataService( xDataService );
-        contentService.setPageDescriptorService(pageDescriptorService);
-        contentService.setPartDescriptorService(partDescriptorService);
-        contentService.setLayoutDescriptorService(layoutDescriptorService);
+        contentService.setPageDescriptorService( pageDescriptorService );
+        contentService.setPartDescriptorService( partDescriptorService );
+        contentService.setLayoutDescriptorService( layoutDescriptorService );
         contentService.setAuditLogService( auditLogService );
         contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
         contentService.setNodeService( nodeService );
         contentService.setProjectService( projectService );
-        contentService.initialize();
+        final ContentConfig contentConfig = Mockito.mock( ContentConfig.class );
+        Mockito.when( contentConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
+        contentService.initialize( contentConfig );
 
         waitForClusterHealth();
     }
@@ -568,9 +570,8 @@ public class AbstractContentServiceTest
         {
             assertTrue( iterator.hasNext(), "Expected more content, iterator empty" );
             final ContentId next = iterator.next();
-            assertEquals( content.getId(), next,
-                    "Expected content with path [" + content.getPath() + "] in this position, found [" +
-                            this.contentService.getById( next ).getPath() + "]");
+            assertEquals( content.getId(), next, "Expected content with path [" + content.getPath() + "] in this position, found [" +
+                this.contentService.getById( next ).getPath() + "]" );
         }
     }
 

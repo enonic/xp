@@ -5,7 +5,6 @@ import java.util.List;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
@@ -25,8 +24,6 @@ import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
-
-import static org.apache.commons.lang.StringUtils.substringAfter;
 
 @org.osgi.service.component.annotations.Component(immediate = true)
 public final class ComponentInstruction
@@ -62,7 +59,7 @@ public final class ComponentInstruction
             return null;
         }
 
-        final List<String> list = Lists.newArrayList( Splitter.on( ' ' ).omitEmptyStrings().split( instruction ) );
+        final List<String> list = Splitter.on( ' ' ).omitEmptyStrings().splitToList( instruction );
         if ( list.size() != 2 )
         {
             return null;
@@ -86,7 +83,7 @@ public final class ComponentInstruction
         }
         else
         {
-            final String name = substringAfter( componentSelector, APPLICATION_COMPONENT_PREFIX );
+            final String name = componentSelector.substring( APPLICATION_COMPONENT_PREFIX.length() );
             final ComponentName componentName = new ComponentName( name );
             final ApplicationKey currentApplication;
             if ( portalRequest.getPageTemplate() != null && portalRequest.getPageTemplate().getController() != null )

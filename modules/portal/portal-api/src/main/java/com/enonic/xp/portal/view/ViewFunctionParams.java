@@ -1,17 +1,17 @@
 package com.enonic.xp.portal.view;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.convert.Converters;
 import com.enonic.xp.portal.PortalRequest;
 
-@Beta
+@PublicApi
 public final class ViewFunctionParams
 {
     private String name;
@@ -49,7 +49,7 @@ public final class ViewFunctionParams
 
     public ViewFunctionParams args( final String... args )
     {
-        return args( Lists.newArrayList( args ) );
+        return args( Arrays.asList( args ) );
     }
 
     public ViewFunctionParams args( final List<String> args )

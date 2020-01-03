@@ -2,8 +2,6 @@ package com.enonic.xp.script.impl.function;
 
 import java.util.List;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 
 import com.enonic.xp.resource.ResourceKey;
@@ -59,12 +57,12 @@ final class RequireResolver
 
     static List<String> findSearchPaths( final String path )
     {
-        if ( !Strings.isNullOrEmpty( Files.getFileExtension( path ) ) )
+        if ( !Files.getFileExtension( path ).isEmpty() )
         {
-            return Lists.newArrayList( path );
+            return List.of( path );
         }
 
-        return Lists.newArrayList( path + ".js", path + "/index.js", path + ".json", path + "/index.json" );
+        return List.of( path + ".js", path + "/index.js", path + ".json", path + "/index.json" );
     }
 
     private boolean exists( final ResourceKey key )

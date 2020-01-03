@@ -35,7 +35,7 @@ public class PropertySetJsonTest
         System.out.println( expectedSerialization );
 
         // de-serialize
-        PropertyArrayJson parsedData = jsonTestHelper.objectMapper().readValue( expectedSerialization, PropertyArrayJson.class );
+        PropertyArrayJson parsedData = jsonTestHelper.objectReader().forType( PropertyArrayJson.class ).readValue( expectedSerialization );
 
         // serialize from json
         String serializationOfDeSerialization = jsonTestHelper.objectToString( parsedData );
@@ -61,7 +61,7 @@ public class PropertySetJsonTest
         System.out.println( expectedSerialization );
 
         // de-serialize
-        PropertyArrayJson parsedData = jsonTestHelper.objectMapper().readValue( expectedSerialization, PropertyArrayJson.class );
+        PropertyArrayJson parsedData = jsonTestHelper.objectReader().forType( PropertyArrayJson.class ).readValue( expectedSerialization );
 
         // serialize from json
         String serializationOfDeSerialization = jsonTestHelper.objectToString( parsedData );

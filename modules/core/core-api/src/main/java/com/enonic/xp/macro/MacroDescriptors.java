@@ -2,12 +2,12 @@ package com.enonic.xp.macro;
 
 import java.util.Collection;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-@Beta
+@PublicApi
 public final class MacroDescriptors
     extends AbstractImmutableEntitySet<MacroDescriptor>
 {

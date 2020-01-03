@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.index.IndexConfig;
@@ -29,7 +27,7 @@ import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTa
 
 public class FlattenedPageRegionsIndexUpgrader
 {
-    private static final List<PathIndexConfig> BASE_REGIONS_CONFIGS = Lists.newArrayList( PathIndexConfig.create().path(
+    private static final List<PathIndexConfig> BASE_REGIONS_CONFIGS = List.of( PathIndexConfig.create().path(
         PropertyPath.from( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, IMAGE, TGT_ID_KEY ) ) ).indexConfig(
         IndexConfig.MINIMAL ).build(), PathIndexConfig.create().path(
         PropertyPath.from( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, FRAGMENT, TGT_ID_KEY ) ) ).indexConfig(

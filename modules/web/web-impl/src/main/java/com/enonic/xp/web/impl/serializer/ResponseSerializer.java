@@ -19,6 +19,8 @@ import com.enonic.xp.web.WebResponse;
 
 public final class ResponseSerializer
 {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
     private final WebRequest webRequest;
 
     private final WebResponse webResponse;
@@ -93,7 +95,7 @@ public final class ResponseSerializer
     {
         try
         {
-            return new ObjectMapper().writeValueAsString( value );
+            return MAPPER.writeValueAsString( value );
         }
         catch ( final Exception e )
         {

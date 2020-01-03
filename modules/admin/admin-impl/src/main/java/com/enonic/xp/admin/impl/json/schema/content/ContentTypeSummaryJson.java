@@ -3,8 +3,6 @@ package com.enonic.xp.admin.impl.json.schema.content;
 import java.time.Instant;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.admin.impl.json.ChangeTraceableJson;
@@ -13,6 +11,8 @@ import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlR
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.xdata.XDataName;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ContentTypeSummaryJson
@@ -51,7 +51,7 @@ public class ContentTypeSummaryJson
 
     public String getDisplayName()
     {
-        if ( StringUtils.isNotBlank( contentType.getDisplayNameI18nKey() ) )
+        if ( !nullToEmpty( contentType.getDisplayNameI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( contentType.getDisplayNameI18nKey(), contentType.getDisplayName() );
         }
@@ -63,7 +63,7 @@ public class ContentTypeSummaryJson
 
     public String getDescription()
     {
-        if ( StringUtils.isNotBlank( contentType.getDescriptionI18nKey() ) )
+        if ( !nullToEmpty( contentType.getDescriptionI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( contentType.getDescriptionI18nKey(), contentType.getDescription() );
         }
@@ -75,7 +75,7 @@ public class ContentTypeSummaryJson
 
     public String getDisplayNameLabel()
     {
-        if ( StringUtils.isNotBlank( contentType.getDisplayNameLabelI18nKey() ) )
+        if ( !nullToEmpty( contentType.getDisplayNameLabelI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( contentType.getDisplayNameLabelI18nKey(), contentType.getDisplayNameLabel() );
         }

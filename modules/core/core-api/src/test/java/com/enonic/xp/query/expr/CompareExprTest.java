@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -146,7 +144,7 @@ public class CompareExprTest
     public void in_compare()
     {
         final FieldExpr field = FieldExpr.from( "a" );
-        final List<ValueExpr> values = Lists.newArrayList( ValueExpr.string( "1" ), ValueExpr.string( "2" ) );
+        final List<ValueExpr> values = List.of( ValueExpr.string( "1" ), ValueExpr.string( "2" ) );
         final CompareExpr expr = CompareExpr.in( field, values );
 
         assertNotNull( expr );
@@ -162,7 +160,7 @@ public class CompareExprTest
     public void not_in_compare()
     {
         final FieldExpr field = FieldExpr.from( "a" );
-        final List<ValueExpr> values = Lists.newArrayList( ValueExpr.string( "1" ), ValueExpr.string( "2" ) );
+        final List<ValueExpr> values = List.of( ValueExpr.string( "1" ), ValueExpr.string( "2" ) );
         final CompareExpr expr = CompareExpr.notIn( field, values );
 
         assertNotNull( expr );

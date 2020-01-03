@@ -2,14 +2,13 @@ package com.enonic.xp.node;
 
 import java.time.Instant;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-@Beta
+@PublicApi
 public class NodeCommitEntry
     implements Comparable<NodeCommitEntry>
 {

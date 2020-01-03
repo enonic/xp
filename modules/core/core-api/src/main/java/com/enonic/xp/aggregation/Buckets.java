@@ -3,12 +3,12 @@ package com.enonic.xp.aggregation;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-@Beta
+@PublicApi
 public class Buckets
     extends AbstractImmutableEntitySet<Bucket>
 {

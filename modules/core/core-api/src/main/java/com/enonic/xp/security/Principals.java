@@ -2,15 +2,15 @@ package com.enonic.xp.security;
 
 import java.util.function.Function;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 import static java.util.stream.Collectors.toList;
 
-@Beta
+@PublicApi
 public final class Principals
     extends AbstractImmutableEntityList<Principal>
 {
@@ -64,8 +64,7 @@ public final class Principals
 
     public static Principals empty()
     {
-        final ImmutableList<Principal> list = ImmutableList.of();
-        return new Principals( list );
+        return new Principals( ImmutableList.of() );
     }
 
     public static Principals from( final Principal... principals )

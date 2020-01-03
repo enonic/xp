@@ -1,7 +1,8 @@
 package com.enonic.xp.core.impl.content.page.region;
 
+import java.util.stream.IntStream;
+
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Preconditions;
 
@@ -78,8 +79,7 @@ final class CreateFragmentCommand
         final String html = textComponent.getText();
         String text = StringEscapeUtils.unescapeHtml( html.replaceAll( "\\<[^>]*>", "" ) ).trim();
         text = text.replaceAll( "(\\t|\\r?\\n)+", " " ).trim();
-        return text.isEmpty() ? textComponent.getName().toString() : StringUtils.abbreviate( text, 40 );
-
+        return text.isEmpty() ? textComponent.getName().toString() : abbreviate( text, 40 );
     }
 
     private User getCurrentUser()
@@ -101,6 +101,23 @@ final class CreateFragmentCommand
         }
 
         return name;
+    }
+
+    /**
+     * Abbreviates a String using ellipsis.
+     *
+     * @param string    string to abbreviate
+     * @param maxLength maximum code points
+     * @return abbreviated string
+     */
+    private static String abbreviate( String string, int maxLength )
+    {
+        final String ellipsis = "...";
+        final boolean useEllipsis = string.codePointCount( 0, string.length() ) > Math.max( maxLength, ellipsis.length() );
+
+        return IntStream.concat( string.codePoints().limit( useEllipsis ? maxLength - ellipsis.length() : maxLength ),
+                                 useEllipsis ? ellipsis.codePoints() : IntStream.empty() ).
+            collect( StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append ).toString();
     }
 
     public static final class Builder

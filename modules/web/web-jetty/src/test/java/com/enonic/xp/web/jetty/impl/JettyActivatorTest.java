@@ -1,146 +1,82 @@
 package com.enonic.xp.web.jetty.impl;
 
-import java.util.Hashtable;
+import java.util.Collections;
 
-import org.eclipse.jetty.server.session.SessionDataStore;
-import org.junit.jupiter.api.AfterEach;
+import javax.servlet.ServletContext;
+
+import org.eclipse.jetty.server.Server;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Filter;
-import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
-import com.enonic.xp.cluster.ClusterConfig;
-import com.enonic.xp.cluster.ClusterNodeId;
+import com.enonic.xp.core.internal.Dictionaries;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.dispatch.DispatchServlet;
+import com.enonic.xp.web.jetty.impl.session.JettySessionStorageConfigurator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.notNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-public class JettyActivatorTest
+@ExtendWith(MockitoExtension.class)
+class JettyActivatorTest
 {
+    @Mock
     private BundleContext bundleContext;
 
-    private JettyActivator activator;
+    @Mock
+    private ServiceRegistration<Server> serverServiceRegistration;
 
     private JettyConfig config;
 
-    private ClusterConfig clusterConfig;
-
-    private SessionDataStore sessionDataStore;
+    @Mock
+    private ServiceRegistration<ServletContext> xpServletContextReg;
 
     @BeforeEach
-    public void setup()
+    void setup()
         throws Exception
     {
         System.getProperties().remove( "jetty.version" );
 
         final Bundle bundle = Mockito.mock( Bundle.class );
-        final Hashtable<String, String> headers = new Hashtable<>();
-        headers.put( "X-Jetty-Version", "9.x" );
-        Mockito.when( bundle.getHeaders() ).thenReturn( headers );
+        Mockito.when( bundle.getHeaders() ).thenReturn( Dictionaries.of( "X-Jetty-Version", "9.x" ) );
 
-        this.bundleContext = Mockito.mock( BundleContext.class, this::defaultAnswer );
-        Mockito.when( this.bundleContext.createFilter( Mockito.anyString() ) ).thenReturn( Mockito.mock( Filter.class ) );
-        Mockito.when( this.bundleContext.getBundle() ).thenReturn( bundle );
+        when( bundleContext.registerService( eq( Server.class ), any( Server.class ), any() ) ).
+            thenReturn( serverServiceRegistration );
 
-        this.activator = new JettyActivator();
-        this.activator.addDispatchServlet( Mockito.mock( DispatchServlet.class ) );
+        when( bundleContext.registerService( eq( ServletContext.class ), any( ServletContext.class ), notNull() ) ).
+            thenReturn( xpServletContextReg );
 
-        this.sessionDataStore = Mockito.mock( SessionDataStore.class );
-        this.activator.setSessionDataStore( this.sessionDataStore );
-
-        this.clusterConfig = Mockito.mock( ClusterConfig.class );
-        Mockito.when( this.clusterConfig.name() ).thenReturn( ClusterNodeId.from( "localNodeName" ) );
-        this.activator.setClusterConfig( this.clusterConfig );
+        when( this.bundleContext.getBundle() ).thenReturn( bundle );
 
         this.config = new JettyConfigMockFactory().newConfig();
-        Mockito.when( this.config.http_xp_port() ).thenReturn( 0 );
+        when( this.config.http_xp_port() ).thenReturn( 0 );
     }
 
-    @AfterEach
-    public void after()
-        throws Exception
-    {
-        this.activator.deactivate();
-    }
 
     @Test
-    public void testLifecycle()
+    void testLifecycle()
         throws Exception
     {
-        this.activator.activate( this.bundleContext, this.config );
+        final JettySessionStorageConfigurator jettySessionStorageConfigurator = Mockito.mock( JettySessionStorageConfigurator.class );
+        final DispatchServlet xpDispatcherServlet = mock( DispatchServlet.class );
+        when( xpDispatcherServlet.getConnector() ).thenReturn( DispatchConstants.XP_CONNECTOR );
+        JettyActivator activator =
+            new JettyActivator( config, bundleContext, jettySessionStorageConfigurator, Collections.singletonList( xpDispatcherServlet ) );
+
+        activator.activate();
 
         assertEquals( "9.x", System.getProperty( "jetty.version" ) );
-        assertNotNull( this.activator.service );
-        assertTrue( this.activator.service.server.isRunning() );
 
-        this.activator.deactivate();
-    }
-
-    @Test
-    public void testSessionReplicationEnabled()
-        throws Exception
-    {
-        Mockito.when( this.clusterConfig.isSessionReplicationEnabled() ).thenReturn( true );
-        Mockito.when( this.clusterConfig.isEnabled() ).thenReturn( true );
-
-        this.activator.activate( this.bundleContext, this.config );
-
-        assertEquals( this.sessionDataStore, this.activator.service.sessionDataStore );
-    }
-
-    @Test
-    public void testSessionReplicationDisabled()
-        throws Exception
-    {
-        Mockito.when( this.clusterConfig.isSessionReplicationEnabled() ).thenReturn( false );
-        Mockito.when( this.clusterConfig.isEnabled() ).thenReturn( true );
-
-        this.activator.activate( this.bundleContext, this.config );
-
-        assertNull( this.activator.service.sessionDataStore );
-    }
-
-    @Test
-    public void testClusterDisabled()
-        throws Exception
-    {
-        Mockito.when( this.clusterConfig.isEnabled() ).thenReturn( false );
-
-        this.activator.activate( this.bundleContext, this.config );
-
-        assertNull( this.activator.service.sessionDataStore );
-    }
-
-    private Object defaultAnswer( final InvocationOnMock invocation )
-    {
-        if ( invocation.getMethod().getName().equals( "registerService" ) )
-        {
-            return newServiceRegistration();
-        }
-
-        return null;
-    }
-
-    private ServiceRegistration<?> newServiceRegistration()
-    {
-        final ServiceReference ref = newServiceReference();
-        final ServiceRegistration reg = Mockito.mock( ServiceRegistration.class );
-        Mockito.when( reg.getReference() ).thenReturn( ref );
-        return reg;
-    }
-
-    private ServiceReference newServiceReference()
-    {
-        final ServiceReference ref = Mockito.mock( ServiceReference.class );
-        Mockito.when( ref.getProperty( "service.id" ) ).thenReturn( 1L );
-        return ref;
+        activator.deactivate();
     }
 }

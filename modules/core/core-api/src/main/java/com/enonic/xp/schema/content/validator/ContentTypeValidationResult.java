@@ -3,10 +3,11 @@ package com.enonic.xp.schema.content.validator;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public class ContentTypeValidationResult
     implements Iterable<ContentTypeValidationError>
 {
@@ -69,8 +70,7 @@ public class ContentTypeValidationResult
 
     public static ContentTypeValidationResult empty()
     {
-        final ImmutableList<ContentTypeValidationError> list = ImmutableList.of();
-        return new ContentTypeValidationResult( list );
+        return new ContentTypeValidationResult( ImmutableList.of() );
     }
 
     public static Builder create()

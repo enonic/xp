@@ -2,16 +2,17 @@ package com.enonic.xp.portal.url;
 
 import java.util.Collection;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.portal.PortalRequest;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 
-@Beta
+
+@PublicApi
 public abstract class AbstractUrlParams<T extends AbstractUrlParams>
 {
     private PortalRequest portalRequest;
@@ -49,7 +50,7 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
 
     public final T type( final String value )
     {
-        if ( Strings.isNullOrEmpty( value ) )
+        if ( isNullOrEmpty( value ) )
         {
             this.type = UrlTypeConstants.SERVER_RELATIVE;
         }
@@ -62,7 +63,7 @@ public abstract class AbstractUrlParams<T extends AbstractUrlParams>
 
     public final T contextPathType( final String value )
     {
-        this.contextPathType = Strings.isNullOrEmpty( value ) ? null : ContextPathType.from( value );
+        this.contextPathType = isNullOrEmpty( value ) ? null : ContextPathType.from( value );
         return typecastThis();
     }
 

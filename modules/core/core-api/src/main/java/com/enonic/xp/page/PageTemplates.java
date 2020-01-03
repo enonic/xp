@@ -4,15 +4,15 @@ import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-@Beta
+@PublicApi
 public final class PageTemplates
     extends AbstractImmutableEntityList<PageTemplate>
 {
@@ -58,8 +58,7 @@ public final class PageTemplates
 
     public static PageTemplates empty()
     {
-        final ImmutableList<PageTemplate> list = ImmutableList.of();
-        return new PageTemplates( list );
+        return new PageTemplates( ImmutableList.of() );
     }
 
     public static PageTemplates from( final PageTemplate... templates )

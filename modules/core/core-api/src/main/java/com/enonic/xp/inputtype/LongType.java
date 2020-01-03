@@ -1,6 +1,5 @@
 package com.enonic.xp.inputtype;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +9,8 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Input;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class LongType
     extends InputTypeBase
@@ -33,7 +34,7 @@ final class LongType
     public Value createDefaultValue( final Input input )
     {
         final String defaultValue = input.getDefaultValue().getRootValue();
-        if ( StringUtils.isNotEmpty( defaultValue ) )
+        if ( !isNullOrEmpty( defaultValue ) )
         {
             return ValueFactory.newLong( Long.valueOf( defaultValue ) );
         }

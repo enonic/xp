@@ -1,13 +1,13 @@
 package com.enonic.xp.security;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.CharacterChecker;
 
-@Beta
+import static com.google.common.base.Strings.nullToEmpty;
+
+@PublicApi
 public final class IdProviderKey
 {
     private final static IdProviderKey SYSTEM = IdProviderKey.from( "system" );
@@ -20,10 +20,9 @@ public final class IdProviderKey
 
     public IdProviderKey( final String id )
     {
-        Preconditions.checkArgument( !StringUtils.isBlank( id ), "IdProviderKey cannot be blank: %s", id );
+        Preconditions.checkArgument( !nullToEmpty( id ).isBlank(), "IdProviderKey cannot be blank: %s", id );
         Preconditions.checkArgument( !RESERVED_ID_PROVIDER_KEY.equalsIgnoreCase( id ),
-                                     "IdProviderKey id is reserved and cannot be used: %s",
-                                     id );
+                                     "IdProviderKey id is reserved and cannot be used: %s", id );
         this.id = CharacterChecker.check( id, "Invalid IdProviderKey [" + id + "]" );
     }
 

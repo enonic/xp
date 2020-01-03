@@ -11,23 +11,20 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 
-import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.schema.SchemaValidator;
 
-import static com.enonic.xp.xml.parser.ByteOrderMarkHelper.openStreamSkippingBOM;
-
-@Beta
+@PublicApi
 public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
 {
     private final static SchemaValidator VALIDATOR = new SchemaValidator();
@@ -101,7 +98,7 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
 
         final InputSource source = new InputSource();
         source.setSystemId( this.systemId );
-        source.setCharacterStream( openStreamSkippingBOM( this.source ) );
+        source.setCharacterStream( ByteOrderMarkHelper.openStreamSkippingBOM( this.source ) );
 
         final Document doc = builder.parse( source );
         return doParse( doc );
@@ -136,6 +133,6 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
     protected final void assertTagNames( final DomElement elem, final Collection<String> names )
     {
         Preconditions.checkArgument( names.stream().anyMatch( name -> elem.getTagName().equals( name ) ),
-                                     "Any of tag names: [" + StringUtils.join( names, ", " ) + "] is required" );
+                                     "Any of tag names: [" + String.join( ", ", names ) + "] is required" );
     }
 }

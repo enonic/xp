@@ -2,17 +2,16 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver;
 
 import java.util.List;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 public class SearchQueryFieldNameResolver
     extends AbstractQueryFieldNameResolver
 {
-    private final static List<String> BUILT_IN_FIELDS = Lists.newArrayList( "_score", "_id" );
+    private final static List<String> BUILT_IN_FIELDS = List.of( "_score", "_id" );
 
 
     @Override
@@ -24,7 +23,7 @@ public class SearchQueryFieldNameResolver
     @Override
     protected String appendIndexValueType( final String baseFieldName, final IndexValueTypeInterface indexValueType )
     {
-        return IndexFieldNameNormalizer.normalize( baseFieldName + ( Strings.isNullOrEmpty( indexValueType.getPostfix() )
+        return IndexFieldNameNormalizer.normalize( baseFieldName + ( isNullOrEmpty( indexValueType.getPostfix() )
             ? ""
             : IndexValueType.INDEX_VALUE_TYPE_SEPARATOR + indexValueType.getPostfix() ) );
     }

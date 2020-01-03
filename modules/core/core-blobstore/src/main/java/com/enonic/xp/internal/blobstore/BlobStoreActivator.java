@@ -1,7 +1,5 @@
 package com.enonic.xp.internal.blobstore;
 
-import java.util.Hashtable;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
@@ -89,7 +87,7 @@ public class BlobStoreActivator
                 build().
                 execute();
 
-            this.blobStoreReg = this.context.registerService( BlobStore.class, blobStore, new Hashtable<>() );
+            this.blobStoreReg = this.context.registerService( BlobStore.class, blobStore, null );
 
             LOG.info( "Registered blobstore [" + this.config.providerName() + "] successfully" );
         }

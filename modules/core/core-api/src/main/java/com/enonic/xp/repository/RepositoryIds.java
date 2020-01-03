@@ -1,20 +1,18 @@
 package com.enonic.xp.repository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-@Beta
+@PublicApi
 public final class RepositoryIds
     extends AbstractImmutableEntitySet<RepositoryId>
     implements Iterable<RepositoryId>
@@ -52,14 +50,12 @@ public final class RepositoryIds
 
     private static ImmutableSet<RepositoryId> parseIds( final String... paths )
     {
-        final Collection<String> list = Lists.newArrayList( paths );
-        return doParseIds( list );
+        return doParseIds( Arrays.asList( paths ) );
     }
 
     private static ImmutableSet<RepositoryId> doParseIds( final Collection<String> list )
     {
-        final Collection<RepositoryId> pathList = Collections2.transform( list, new ParseFunction() );
-        return ImmutableSet.copyOf( pathList );
+        return list.stream().map( RepositoryId::from ).collect( ImmutableSet.toImmutableSet() );
     }
 
     public Set<String> asStrings()
@@ -70,16 +66,6 @@ public final class RepositoryIds
     public static Builder create()
     {
         return new Builder();
-    }
-
-    private final static class ParseFunction
-        implements Function<String, RepositoryId>
-    {
-        @Override
-        public RepositoryId apply( final String value )
-        {
-            return RepositoryId.from( value );
-        }
     }
 
     public static class Builder

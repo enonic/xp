@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.dump.upgrade.htmlarea;
 
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,8 +10,6 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import com.google.common.io.Resources;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.data.PropertyTree;
@@ -104,7 +102,9 @@ public class HtmlAreaNodeDataUpgraderTest
         throws IOException
     {
         final String resourcePrefix = "/" + getClass().getPackage().getName().replace( '.', '/' ) + "/";
-        final URL resource = getClass().getResource( resourcePrefix + resourceName );
-        return Resources.toString( resource, StandardCharsets.UTF_8 );
+        try (final InputStream stream = getClass().getResourceAsStream( resourcePrefix + resourceName ))
+        {
+            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
+        }
     }
 }

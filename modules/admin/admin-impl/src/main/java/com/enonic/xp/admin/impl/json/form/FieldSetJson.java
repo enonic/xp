@@ -3,10 +3,7 @@ package com.enonic.xp.admin.impl.json.form;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
@@ -14,7 +11,8 @@ import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItems;
 
-@Beta
+import static com.google.common.base.Strings.nullToEmpty;
+
 @SuppressWarnings("UnusedDeclaration")
 public class FieldSetJson
     extends LayoutJson<FieldSet>
@@ -66,7 +64,7 @@ public class FieldSetJson
 
     public String getLabel()
     {
-        if ( localeMessageResolver != null && StringUtils.isNotBlank( fieldSet.getLabelI18nKey() ) )
+        if ( localeMessageResolver != null && !nullToEmpty( fieldSet.getLabelI18nKey() ).isBlank() )
         {
             return localeMessageResolver.localizeMessage( fieldSet.getLabelI18nKey(), fieldSet.getLabel() );
         }

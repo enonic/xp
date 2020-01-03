@@ -3,12 +3,12 @@ package com.enonic.xp.repository;
 import java.net.URL;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.annotations.Beta;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.util.JsonHelper;
 
-@Beta
+@PublicApi
 public class IndexMapping
 {
     private final JsonNode jsonNode;

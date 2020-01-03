@@ -2,12 +2,12 @@ package com.enonic.xp.region;
 
 import java.util.Collection;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-@Beta
+@PublicApi
 public final class LayoutDescriptors
     extends AbstractImmutableEntityList<LayoutDescriptor>
 {
@@ -18,8 +18,7 @@ public final class LayoutDescriptors
 
     public static LayoutDescriptors empty()
     {
-        final ImmutableList<LayoutDescriptor> list = ImmutableList.of();
-        return new LayoutDescriptors( list );
+        return new LayoutDescriptors( ImmutableList.of() );
     }
 
     public static LayoutDescriptors from( final LayoutDescriptor... descriptors )

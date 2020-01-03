@@ -1,5 +1,7 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
+import java.util.List;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -8,8 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.web.impl.dispatch.mapping.FilterDefinition;
 
@@ -32,7 +32,7 @@ public class FilterChainImplTest
         this.request = Mockito.mock( HttpServletRequest.class );
         this.response = Mockito.mock( HttpServletResponse.class );
         this.filter = Mockito.mock( FilterDefinition.class );
-        this.chain = new FilterChainImpl( Lists.newArrayList( this.filter ), this.servletPipeline );
+        this.chain = new FilterChainImpl( List.of( this.filter ), this.servletPipeline );
     }
 
     @Test

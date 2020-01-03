@@ -1,8 +1,7 @@
 package com.enonic.xp.content;
 
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
@@ -14,7 +13,7 @@ import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfo;
 
-@Beta
+@PublicApi
 public class Media
     extends Content
 {

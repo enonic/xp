@@ -1,9 +1,10 @@
 package com.enonic.xp.server;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Strings;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+import static com.google.common.base.Strings.isNullOrEmpty;
+
+@PublicApi
 public final class VersionInfo
 {
     private static VersionInfo INSTANCE;
@@ -54,6 +55,6 @@ public final class VersionInfo
     private static String findVersion()
     {
         final String value = VersionInfo.class.getPackage().getImplementationVersion();
-        return Strings.isNullOrEmpty( value ) ? "0.0.0-SNAPSHOT" : value;
+        return isNullOrEmpty( value ) ? "0.0.0-SNAPSHOT" : value;
     }
 }

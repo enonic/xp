@@ -2,15 +2,14 @@ package com.enonic.xp.attachment;
 
 import java.util.Objects;
 
-import org.apache.commons.io.FilenameUtils;
-
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.BinaryReference;
 
-@Beta
+@PublicApi
 public class CreateAttachment
 {
     private final String mimeType;
@@ -39,12 +38,12 @@ public class CreateAttachment
 
     public String getNameWithoutExtension()
     {
-        return FilenameUtils.getBaseName( name );
+        return Files.getNameWithoutExtension( name );
     }
 
     public String getExtension()
     {
-        return FilenameUtils.getExtension( name );
+        return Files.getFileExtension( name );
     }
 
     public String getLabel()

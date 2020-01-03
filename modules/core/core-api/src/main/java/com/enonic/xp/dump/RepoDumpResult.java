@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -91,7 +89,7 @@ public class RepoDumpResult
         private Builder( final RepoDumpResult source )
         {
             this( source.repositoryId );
-            this.branchResults = Lists.newArrayList( source.branchResults );
+            this.branchResults = new ArrayList<>( source.branchResults );
             this.versions = source.versions;
         }
 

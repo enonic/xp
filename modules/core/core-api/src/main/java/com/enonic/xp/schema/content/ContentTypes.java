@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-@Beta
+@PublicApi
 public final class ContentTypes
     extends AbstractImmutableEntityList<ContentType>
 {
@@ -62,8 +62,7 @@ public final class ContentTypes
 
     public static ContentTypes empty()
     {
-        final ImmutableList<ContentType> list = ImmutableList.of();
-        return new ContentTypes( list );
+        return new ContentTypes( ImmutableList.of() );
     }
 
     public static ContentTypes from( final ContentType... contentTypes )

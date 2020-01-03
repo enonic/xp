@@ -1,11 +1,9 @@
 package com.enonic.xp.admin.impl.json.form;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.annotations.Beta;
 
 import com.enonic.xp.form.Occurrences;
 
-@Beta
 @SuppressWarnings("UnusedDeclaration")
 public class OccurrencesJson
 {

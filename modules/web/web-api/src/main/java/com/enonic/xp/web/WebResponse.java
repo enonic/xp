@@ -6,17 +6,19 @@ import java.util.Map;
 import javax.servlet.http.Cookie;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 
-@Beta
+@PublicApi
 public class WebResponse
 {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
     private final HttpStatus status;
 
     private final MediaType contentType;
@@ -82,7 +84,7 @@ public class WebResponse
     {
         try
         {
-            return new ObjectMapper().writeValueAsString( value );
+            return MAPPER.writeValueAsString( value );
         }
         catch ( final Exception e )
         {

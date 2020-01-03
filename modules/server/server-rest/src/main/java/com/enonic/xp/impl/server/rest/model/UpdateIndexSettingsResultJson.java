@@ -1,8 +1,7 @@
 package com.enonic.xp.impl.server.rest.model;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.index.UpdateIndexSettingsResult;
 
@@ -13,7 +12,7 @@ public final class UpdateIndexSettingsResultJson
     public static UpdateIndexSettingsResultJson create( final UpdateIndexSettingsResult result )
     {
         final UpdateIndexSettingsResultJson json = new UpdateIndexSettingsResultJson();
-        json.updatedIndexes = Lists.newArrayList( result.getUpdatedIndexes() );
+        json.updatedIndexes = new ArrayList<>( result.getUpdatedIndexes() );
         return json;
     }
 }

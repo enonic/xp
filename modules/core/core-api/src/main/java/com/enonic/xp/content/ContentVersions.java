@@ -4,10 +4,11 @@ import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSortedSet;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public class ContentVersions
     implements Iterable<ContentVersion>
 {

@@ -2,12 +2,13 @@ package com.enonic.xp.query.expr;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class QueryExpr
     implements Expression
 {
@@ -82,7 +83,7 @@ public final class QueryExpr
             }
 
             str.append( "ORDER BY " );
-            str.append( Joiner.on( ", " ).join( this.orderList ) );
+            str.append( this.orderList.stream().map( Object::toString ).collect( Collectors.joining( ", " ) ) );
         }
 
         return str.toString();

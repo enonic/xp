@@ -1,12 +1,10 @@
 package com.enonic.xp.util;
 
-import java.net.URL;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.apache.commons.lang.text.StrSubstitutor;
-
-import com.google.common.io.Resources;
 
 public final class StringTemplate
 {
@@ -25,15 +23,14 @@ public final class StringTemplate
 
     public static StringTemplate load( final Class context, final String name )
     {
-        final URL url = context.getResource( name );
-        if ( url == null )
+        final InputStream stream = context.getResourceAsStream( name );
+        if ( stream == null )
         {
             throw new IllegalArgumentException( "Could not find resource [" + name + "]" );
         }
-
-        try
+        try (stream)
         {
-            final String value = Resources.toString( url, StandardCharsets.UTF_8 );
+            final String value = new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
             return new StringTemplate( value );
         }
         catch ( final Exception e )

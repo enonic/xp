@@ -1,7 +1,5 @@
 package com.enonic.xp.admin.impl.security;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.SecurityService;
@@ -71,7 +69,7 @@ public final class AuthHelper
 
     private boolean isValidEmail( final String value )
     {
-        return StringUtils.countMatches( value, "@" ) == 1;
+        return value != null && value.chars().filter( ch -> ch == '@' ).count() == 1;
     }
 
 }

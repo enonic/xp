@@ -1,16 +1,15 @@
 package com.enonic.xp.inputtype;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Input;
 
-@Beta
+import static com.google.common.base.Strings.isNullOrEmpty;
+
+@PublicApi
 final class CheckBoxType
     extends InputTypeBase
 {
@@ -34,7 +33,7 @@ final class CheckBoxType
     {
         final String defaultValue = input.getDefaultValue().getRootValue();
 
-        if ( StringUtils.isNotEmpty( defaultValue ) )
+        if ( !isNullOrEmpty( defaultValue ) )
         {
             if ( VALID_VALUE.equals( defaultValue ) )
             {

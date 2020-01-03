@@ -3,12 +3,12 @@ package com.enonic.xp.web.handler;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
 import com.google.common.io.ByteSource;
 import com.google.common.primitives.Longs;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.web.HttpMethod;
@@ -17,7 +17,7 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
-@Beta
+@PublicApi
 public abstract class BaseWebHandler
     implements WebHandler
 {
@@ -94,7 +94,7 @@ public abstract class BaseWebHandler
     {
         return WebResponse.create().
             status( HttpStatus.OK ).
-            header( "Allow", Joiner.on( "," ).join( this.methodsAllowed ) ).
+            header( "Allow", methodsAllowed.stream().map( Object::toString ).collect( Collectors.joining( "," ) ) ).
             build();
     }
 

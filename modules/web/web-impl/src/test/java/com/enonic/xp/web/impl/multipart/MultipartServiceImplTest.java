@@ -1,13 +1,13 @@
 package com.enonic.xp.web.impl.multipart;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartService;
@@ -47,7 +47,7 @@ public class MultipartServiceImplTest
     {
         final Part part = Mockito.mock( Part.class );
         Mockito.when( part.getName() ).thenReturn( "part" );
-        Mockito.when( this.req.getParts() ).thenReturn( Lists.newArrayList( part ) );
+        Mockito.when( this.req.getParts() ).thenReturn( List.of( part ) );
         Mockito.when( this.req.getContentType() ).thenReturn( "multipart/form-data" );
 
         final MultipartForm form = this.service.parse( this.req );

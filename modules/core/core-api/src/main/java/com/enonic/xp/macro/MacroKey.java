@@ -2,14 +2,13 @@ package com.enonic.xp.macro;
 
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
+import com.google.common.base.Preconditions;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.util.CharacterChecker;
 
-@Beta
+@PublicApi
 public final class MacroKey
 {
     private static final String SEPARATOR = ":";
@@ -66,10 +65,12 @@ public final class MacroKey
         return refString;
     }
 
-    public static MacroKey from( final String s )
+    public static MacroKey from( final String key )
     {
-        final String applicationKey = StringUtils.substringBefore( s, SEPARATOR );
-        final String macroName = StringUtils.substringAfter( s, SEPARATOR );
+        Preconditions.checkNotNull( key, "MacroKey can't be null" );
+        final int index = key.indexOf( SEPARATOR );
+        final String applicationKey = index == -1 ? key : key.substring( 0, index );
+        final String macroName = index == -1 ? "" : key.substring( index + 1 );
         return new MacroKey( ApplicationKey.from( applicationKey ), macroName );
     }
 

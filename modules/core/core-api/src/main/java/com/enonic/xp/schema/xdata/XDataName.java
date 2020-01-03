@@ -1,11 +1,10 @@
 package com.enonic.xp.schema.xdata;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.BaseSchemaName;
 
-@Beta
+@PublicApi
 public final class XDataName
     extends BaseSchemaName
     implements Comparable<XDataName>

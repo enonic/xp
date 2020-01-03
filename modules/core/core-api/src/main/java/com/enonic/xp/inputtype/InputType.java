@@ -1,12 +1,11 @@
 package com.enonic.xp.inputtype;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.form.Input;
 
-@Beta
+@PublicApi
 public interface InputType
 {
     InputTypeName getName();

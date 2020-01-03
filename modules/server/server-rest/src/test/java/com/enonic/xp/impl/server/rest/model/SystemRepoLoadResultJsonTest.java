@@ -1,10 +1,6 @@
 package com.enonic.xp.impl.server.rest.model;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.dump.BranchLoadResult;
@@ -18,19 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SystemRepoLoadResultJsonTest
 {
-    private ObjectMapper mapper;
-
-    @BeforeEach
-    public void setUp()
-        throws Exception
-    {
-        this.mapper = new ObjectMapper();
-        this.mapper.enable( SerializationFeature.INDENT_OUTPUT );
-        this.mapper.enable( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS );
-        this.mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
-
-    }
-
     @Test
     public void create()
         throws Exception
@@ -58,8 +41,6 @@ public class SystemRepoLoadResultJsonTest
             build();
 
         final SystemLoadResultJson json = SystemLoadResultJson.from( results );
-
-        System.out.println( mapper.writeValueAsString( json ) );
 
         assertEquals( 2, json.getRepositories().size() );
         assertEquals( 2, json.getRepositories().get( 0 ).getBranches().size() );

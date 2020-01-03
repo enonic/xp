@@ -1,11 +1,10 @@
 package com.enonic.xp.web.handler;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
-@Beta
+@PublicApi
 public interface WebHandlerChain
 {
     WebResponse handle( WebRequest webRequest, WebResponse webResponse )

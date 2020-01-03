@@ -2,13 +2,13 @@ package com.enonic.xp.web.vhost.impl.mapping;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.web.vhost.VirtualHost;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class VirtualHostMapping
     implements VirtualHost, Comparable<VirtualHostMapping>
@@ -71,7 +71,7 @@ public final class VirtualHostMapping
 
     public void setHost( final String value )
     {
-        this.host = Strings.isNullOrEmpty( value ) ? DEFAULT_HOST : value;
+        this.host = isNullOrEmpty( value ) ? DEFAULT_HOST : value;
     }
 
     public void setSource( final String value )
@@ -151,12 +151,12 @@ public final class VirtualHostMapping
 
     private String normalizePath( final String value )
     {
-        if ( Strings.isNullOrEmpty( value ) )
+        if ( isNullOrEmpty( value ) )
         {
             return "/";
         }
 
         final Iterable<String> parts = Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value );
-        return "/" + Joiner.on( '/' ).join( parts );
+        return "/" + String.join( "/", parts );
     }
 }

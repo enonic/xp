@@ -2,9 +2,9 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public class FindContentVersionsParams
 {
     private final static int DEFAULT_SIZE = 10;

@@ -1,11 +1,12 @@
 package com.enonic.xp.security;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+
+import com.enonic.xp.annotation.PublicApi;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Beta
+@PublicApi
 public final class UpdateRoleParams
 {
     private final PrincipalKey key;

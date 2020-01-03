@@ -50,16 +50,16 @@ public class ConfigPathsTest
     public void testMultiple()
         throws Exception
     {
-        final File dir1 = Files.createDirectory(this.temporaryFolder.resolve( "dir1" ) ).toFile();
-        final File dir2 = Files.createDirectory(this.temporaryFolder.resolve( "dir2" ) ).toFile();
+        final Path dir1 = Files.createDirectory( this.temporaryFolder.resolve( "dir1" ) );
+        final Path dir2 = Files.createDirectory( this.temporaryFolder.resolve( "dir2" ) );
 
-        final ConfigPaths paths = create( dir1.getAbsolutePath() + "," + dir2.getAbsolutePath() );
+        final ConfigPaths paths = create( dir1.toAbsolutePath() + "," + dir2.toAbsolutePath() );
         assertEquals( 2, Lists.newArrayList( paths ).size() );
 
-        final File file = new File( dir2, "test.txt" );
-        com.google.common.io.Files.touch( file );
+        final Path file = dir2.resolve( "test.txt" );
+        Files.createFile( file );
 
-        assertEquals( file, paths.resolve( "test.txt" ) );
+        assertEquals( file.toFile(), paths.resolve( "test.txt" ) );
         assertNull( paths.resolve( "unknown.txt" ) );
     }
 

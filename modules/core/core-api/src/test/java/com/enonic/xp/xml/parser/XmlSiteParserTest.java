@@ -1,12 +1,11 @@
 package com.enonic.xp.xml.parser;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
-
-import com.google.common.io.Resources;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.site.SiteDescriptor;
@@ -211,9 +210,9 @@ public class XmlSiteParserTest
     private String loadTestFile( final String fileName, Charset charset )
     {
         final URL url = new ResourceTestHelper( this ).getTestResource( fileName );
-        try
+        try (final InputStream stream = url.openStream())
         {
-            return Resources.toString( url, charset );
+            return new String( stream.readAllBytes(), charset );
         }
         catch ( final Exception e )
         {

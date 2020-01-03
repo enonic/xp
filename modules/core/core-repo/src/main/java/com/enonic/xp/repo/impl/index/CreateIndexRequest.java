@@ -1,9 +1,10 @@
 package com.enonic.xp.repo.impl.index;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 
 import com.enonic.xp.repository.IndexSettings;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class CreateIndexRequest
 {
@@ -56,7 +57,7 @@ public class CreateIndexRequest
 
         private void validate()
         {
-            Preconditions.checkArgument( !Strings.isNullOrEmpty( indexName ), "IndexName must be set" );
+            Preconditions.checkArgument( !isNullOrEmpty( indexName ), "IndexName must be set" );
             Preconditions.checkArgument( indexSettings != null, "Index settings must be given" );
         }
 

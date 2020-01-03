@@ -3,10 +3,11 @@ package com.enonic.xp.form;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public class FormOptionSetOption
     extends FormItem
@@ -32,7 +33,7 @@ public class FormOptionSetOption
         super();
 
         Preconditions.checkNotNull( builder.name, "a name is required for a FormItemSet" );
-        Preconditions.checkArgument( StringUtils.isNotBlank( builder.name ), "a name is required for a FormItemSet" );
+        Preconditions.checkArgument( !nullToEmpty( builder.name ).isBlank(), "a name is required for a FormItemSet" );
         Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctations: " + builder.name );
 
         this.name = builder.name;
@@ -119,19 +120,16 @@ public class FormOptionSetOption
             return false;
         }
         final FormOptionSetOption formItems1 = (FormOptionSetOption) o;
-        return defaultOption == formItems1.defaultOption && com.google.common.base.Objects.equal( name, formItems1.name ) &&
-            com.google.common.base.Objects.equal( label, formItems1.label ) &&
-            com.google.common.base.Objects.equal( labelI18nKey, formItems1.labelI18nKey ) &&
-            com.google.common.base.Objects.equal( helpText, formItems1.helpText ) &&
-            com.google.common.base.Objects.equal( helpTextI18nKey, formItems1.helpTextI18nKey ) &&
-            com.google.common.base.Objects.equal( formItems, formItems1.formItems );
+        return defaultOption == formItems1.defaultOption && Objects.equals( name, formItems1.name ) &&
+            Objects.equals( label, formItems1.label ) && Objects.equals( labelI18nKey, formItems1.labelI18nKey ) &&
+            Objects.equals( helpText, formItems1.helpText ) && Objects.equals( helpTextI18nKey, formItems1.helpTextI18nKey ) &&
+            Objects.equals( formItems, formItems1.formItems );
     }
 
     @Override
     public int hashCode()
     {
-        return com.google.common.base.Objects.hashCode( super.hashCode(), name, label, labelI18nKey, defaultOption, helpText,
-                                                        helpTextI18nKey, formItems );
+        return Objects.hash( super.hashCode(), name, label, labelI18nKey, defaultOption, helpText, helpTextI18nKey, formItems );
     }
 
     public static Builder create()

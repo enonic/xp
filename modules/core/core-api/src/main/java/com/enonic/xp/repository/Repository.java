@@ -2,15 +2,15 @@ package com.enonic.xp.repository;
 
 import java.util.Optional;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.AttachedBinaries;
 
-@Beta
+@PublicApi
 public final class Repository
 {
     private final RepositoryId id;

@@ -1,6 +1,5 @@
 package com.enonic.xp.jaxrs.impl;
 
-import java.util.Hashtable;
 import java.util.Iterator;
 
 import org.osgi.framework.BundleContext;
@@ -46,14 +45,12 @@ final class JaxRsServiceImpl
     {
         this.tracker.open( true );
 
-        final Hashtable<String, Object> props = new Hashtable<>();
-
         final ServletMapping mapping = MappingBuilder.newBuilder().
             urlPatterns( this.path + ( this.path.endsWith( "/" ) ? "*" : "/*" ) ).
             connector( this.connector ).
             servlet( this.servlet );
 
-        this.registration = this.context.registerService( ServletMapping.class, mapping, props );
+        this.registration = this.context.registerService( ServletMapping.class, mapping, null );
     }
 
     @Override
@@ -90,7 +87,10 @@ final class JaxRsServiceImpl
         }
 
         final JaxRsComponent component = this.context.getService( reference );
-        add( component );
+        if ( component != null )
+        {
+            add( component );
+        }
         return component;
     }
 

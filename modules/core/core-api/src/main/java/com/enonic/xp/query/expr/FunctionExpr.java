@@ -2,12 +2,14 @@ package com.enonic.xp.query.expr;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class FunctionExpr
     implements Expression
 {
@@ -44,10 +46,6 @@ public final class FunctionExpr
     @Override
     public String toString()
     {
-        final StringBuilder str = new StringBuilder( this.name );
-        str.append( "(" );
-        str.append( Joiner.on( ", " ).join( this.arguments ) );
-        str.append( ")" );
-        return str.toString();
+        return this.name + this.arguments.stream().map( Objects::toString ).collect( Collectors.joining( ", ", "(", ")" ) );
     }
 }

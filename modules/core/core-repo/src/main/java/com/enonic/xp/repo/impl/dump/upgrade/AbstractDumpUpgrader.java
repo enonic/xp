@@ -24,7 +24,7 @@ public abstract class AbstractDumpUpgrader
 
     protected FileDumpReader dumpReader;
 
-    protected ObjectMapper mapper = ObjectMapperHelper.create();
+    private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
     protected DumpUpgradeStepResult.Builder result;
 
@@ -47,14 +47,13 @@ public abstract class AbstractDumpUpgrader
     protected void doUpgrade( final String dumpName )
     {
         dumpReader = new FileDumpReader( basePath, dumpName, null );
-        mapper = ObjectMapperHelper.create();
     }
 
     protected <T> T deserializeValue( final String value, final Class<T> clazz )
     {
         try
         {
-            return mapper.readValue( value, clazz );
+            return MAPPER.readValue( value, clazz );
         }
         catch ( IOException e )
         {
@@ -67,7 +66,7 @@ public abstract class AbstractDumpUpgrader
     {
         try
         {
-            return mapper.writeValueAsString( value );
+            return MAPPER.writeValueAsString( value );
         }
         catch ( JsonProcessingException e )
         {

@@ -1,15 +1,15 @@
 package com.enonic.xp.attachment;
 
-import org.apache.commons.io.FilenameUtils;
+import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.io.Files;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.BinaryReference;
 
-@Beta
+@PublicApi
 public final class Attachment
 {
     private final long size;
@@ -51,12 +51,12 @@ public final class Attachment
 
     public String getNameWithoutExtension()
     {
-        return FilenameUtils.getBaseName( name );
+        return Files.getNameWithoutExtension( name );
     }
 
     public String getExtension()
     {
-        return FilenameUtils.getExtension( name );
+        return Files.getFileExtension( name );
     }
 
     public String getLabel()
@@ -86,16 +86,14 @@ public final class Attachment
             return false;
         }
         final Attachment that = (Attachment) o;
-        return Objects.equal( this.name, that.name ) &&
-            Objects.equal( this.mimeType, that.mimeType ) &&
-            Objects.equal( this.label, that.label ) &&
-            Objects.equal( this.size, that.size );
+        return Objects.equals( this.name, that.name ) && Objects.equals( this.mimeType, that.mimeType ) &&
+            Objects.equals( this.label, that.label ) && Objects.equals( this.size, that.size );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( name, mimeType, label, size );
+        return Objects.hash( name, mimeType, label, size );
     }
 
     @Override

@@ -3,12 +3,10 @@ package com.enonic.xp.core.impl.content;
 import java.time.Instant;
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
@@ -49,6 +47,8 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class CreateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -388,9 +388,9 @@ final class CreateContentCommand
 
     private void populateName( final CreateContentTranslatorParams.Builder builder )
     {
-        if ( params.getName() == null || StringUtils.isEmpty( params.getName().toString() ) )
+        if ( params.getName() == null || isNullOrEmpty( params.getName().toString() ) )
         {
-            if ( !Strings.isNullOrEmpty( params.getDisplayName() ) )
+            if ( !isNullOrEmpty( params.getDisplayName() ) )
             {
                 builder.name( NamePrettyfier.create( params.getDisplayName() ) );
             }

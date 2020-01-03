@@ -4,8 +4,9 @@ import java.io.IOException;
 
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
-import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteSource;
+
+import com.enonic.xp.util.HexEncoder;
 
 public final class BlobKey
 {
@@ -41,7 +42,7 @@ public final class BlobKey
 
     private static BlobKey from( final byte... key )
     {
-        return from( BaseEncoding.base16().lowerCase().encode( key ) );
+        return from( HexEncoder.toHex( key ) );
     }
 
     public static BlobKey from( final HashCode key )

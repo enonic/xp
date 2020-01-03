@@ -1,18 +1,16 @@
 package com.enonic.xp.node;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-@Beta
+@PublicApi
 public class NodePaths
     extends AbstractImmutableEntitySet<NodePath>
 {
@@ -66,19 +64,7 @@ public class NodePaths
 
     private static ImmutableSet<NodePath> parsePaths( final String... paths )
     {
-        final Collection<String> list = Lists.newArrayList( paths );
-        final Collection<NodePath> pathList = Collections2.transform( list, new ParseFunction() );
-        return ImmutableSet.copyOf( pathList );
-    }
-
-    private final static class ParseFunction
-        implements Function<String, NodePath>
-    {
-        @Override
-        public NodePath apply( final String value )
-        {
-            return new NodePath( value );
-        }
+        return Arrays.stream( paths ).map( NodePath::new ).collect( ImmutableSet.toImmutableSet() );
     }
 
     public static class Builder

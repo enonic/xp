@@ -2,12 +2,12 @@ package com.enonic.xp.region;
 
 import java.util.Collection;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-@Beta
+@PublicApi
 public final class PartDescriptors
     extends AbstractImmutableEntityList<PartDescriptor>
 {
@@ -18,8 +18,7 @@ public final class PartDescriptors
 
     public static PartDescriptors empty()
     {
-        final ImmutableList<PartDescriptor> list = ImmutableList.of();
-        return new PartDescriptors( list );
+        return new PartDescriptors( ImmutableList.of() );
     }
 
     public static PartDescriptors from( final PartDescriptor... descriptors )

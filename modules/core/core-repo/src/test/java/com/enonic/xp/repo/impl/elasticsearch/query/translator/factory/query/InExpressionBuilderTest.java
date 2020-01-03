@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.query;
 
+import java.util.List;
+
 import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -23,8 +23,8 @@ public class InExpressionBuilderTest
         final String expected = load( "compare_in_string.json" );
 
         final QueryBuilder query = InExpressionBuilder.build( CompareExpr.in( FieldExpr.from( "myField" ),
-                                                                              Lists.newArrayList( ValueExpr.string( "myFirstValue" ),
-                                                                                                  ValueExpr.string( "mySecondValue" ) ) ),
+                                                                              List.of( ValueExpr.string( "myFirstValue" ),
+                                                                                       ValueExpr.string( "mySecondValue" ) ) ),
                                                               new SearchQueryFieldNameResolver() );
 
         assertEquals( cleanString( expected ), cleanString( query.toString() ) );

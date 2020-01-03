@@ -5,16 +5,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+
+import com.enonic.xp.annotation.PublicApi;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 
 /**
  * Immutable
  */
-@Beta
+@PublicApi
 public final class PropertyPath
     implements Iterable<PropertyPath.Element>
 {
@@ -320,7 +322,7 @@ public final class PropertyPath
         public Element( final String element )
         {
             Preconditions.checkNotNull( element, "Element cannot be null" );
-            Preconditions.checkArgument( !StringUtils.isEmpty( element ), "Element cannot be empty" );
+            Preconditions.checkArgument( !isNullOrEmpty( element ), "Element cannot be empty" );
 
             int indexStart = element.indexOf( INDEX_START_MARKER );
             int indexStop = element.indexOf( INDEX_STOP_MARKER );
@@ -354,7 +356,7 @@ public final class PropertyPath
         public Element( final String name, final int index )
         {
             Preconditions.checkNotNull( name, "Element name cannot be null" );
-            Preconditions.checkArgument( !StringUtils.isEmpty( name ), "Element name cannot be empty" );
+            Preconditions.checkArgument( !isNullOrEmpty( name ), "Element name cannot be empty" );
             Preconditions.checkArgument( index >= 0, "an index cannot be less than zero" );
 
             this.name = name;

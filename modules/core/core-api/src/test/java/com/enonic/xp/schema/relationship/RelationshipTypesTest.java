@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Lists;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,9 +29,8 @@ public class RelationshipTypesTest
     {
         RelationshipTypes relationshipTypes = RelationshipTypes.empty();
 
-        List<RelationshipType> relationshipTypesList = Lists.newArrayList( RelationshipType.create().name( "myapplication:like" ).build(),
-                                                                           RelationshipType.create().name(
-                                                                               "myapplication:person" ).build() );
+        List<RelationshipType> relationshipTypesList = List.of( RelationshipType.create().name( "myapplication:like" ).build(),
+                                                                RelationshipType.create().name( "myapplication:person" ).build() );
 
         RelationshipTypes newRelationshipTypes = relationshipTypes.add( relationshipTypesList );
 
@@ -89,9 +86,8 @@ public class RelationshipTypesTest
 
         RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipTypesArray );
 
-        List<RelationshipType> relationshipTypesList = Lists.newArrayList( RelationshipType.create().name( "myapplication:like" ).build(),
-                                                                           RelationshipType.create().name(
-                                                                               "myapplication:person" ).build() );
+        List<RelationshipType> relationshipTypesList = List.of( RelationshipType.create().name( "myapplication:like" ).build(),
+                                                                RelationshipType.create().name( "myapplication:person" ).build() );
 
         assertEquals( 3, relationshipTypes.getSize() );
         assertEquals( 3, RelationshipTypes.from( relationshipTypes ).getSize() );

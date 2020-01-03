@@ -5,14 +5,13 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repository.RepositoryId;
 
-@Beta
+@PublicApi
 public class ReindexResult
 {
     private final Duration duration;

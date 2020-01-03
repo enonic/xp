@@ -1,11 +1,11 @@
 package com.enonic.xp.security;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-@Beta
+@PublicApi
 public final class PrincipalRelationships
     extends AbstractImmutableEntityList<PrincipalRelationship>
 {
@@ -22,8 +22,7 @@ public final class PrincipalRelationships
 
     public static PrincipalRelationships empty()
     {
-        final ImmutableList<PrincipalRelationship> list = ImmutableList.of();
-        return new PrincipalRelationships( list );
+        return new PrincipalRelationships( ImmutableList.of() );
     }
 
     public static PrincipalRelationships from( final PrincipalRelationship... principalRelationships )

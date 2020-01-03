@@ -2,12 +2,11 @@ package com.enonic.xp.node;
 
 import java.time.Instant;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.blob.NodeVersionKey;
 
-@Beta
+@PublicApi
 public class NodeVersionMetadata
     implements Comparable<NodeVersionMetadata>
 {

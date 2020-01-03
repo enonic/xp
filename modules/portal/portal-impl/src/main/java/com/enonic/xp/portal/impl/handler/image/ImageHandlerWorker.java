@@ -1,9 +1,7 @@
 package com.enonic.xp.portal.impl.handler.image;
 
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.base.Strings;
 import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
@@ -30,7 +28,7 @@ import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
-import static org.apache.commons.lang.StringUtils.substringBeforeLast;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class ImageHandlerWorker
     extends PortalHandlerWorker<PortalRequest>
@@ -147,8 +145,8 @@ final class ImageHandlerWorker
     private String getFormat( final String fileName, final String mimeType )
         throws Exception
     {
-        String format = StringUtils.substringAfterLast( fileName, "." ).toLowerCase();
-        if ( Strings.isNullOrEmpty( format ) )
+        String format = Files.getFileExtension( fileName ).toLowerCase();
+        if ( isNullOrEmpty( format ) )
         {
             format = this.imageService.getFormatByMimeType( mimeType );
         }
@@ -176,7 +174,7 @@ final class ImageHandlerWorker
 
     private int getBackgroundColor()
     {
-        if ( Strings.isNullOrEmpty( this.backgroundParam ) )
+        if ( isNullOrEmpty( this.backgroundParam ) )
         {
             return DEFAULT_BACKGROUND;
         }
@@ -241,7 +239,7 @@ final class ImageHandlerWorker
     private boolean contentNameMatch( final ContentName contentName, final String urlName )
     {
         final String contentNameStr = contentName.toString();
-        return contentNameStr.equals( urlName ) || contentNameStr.equals( substringBeforeLast( urlName, "." ) );
+        return contentNameStr.equals( urlName ) || contentNameStr.equals( Files.getNameWithoutExtension( urlName ) );
     }
 
     private String getMimeType( final String fileName, final ContentName contentName, final Attachment attachment )

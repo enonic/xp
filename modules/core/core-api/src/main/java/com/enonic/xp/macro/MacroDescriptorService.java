@@ -1,11 +1,10 @@
 package com.enonic.xp.macro;
 
-import com.google.common.annotations.Beta;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 
-@Beta
+@PublicApi
 public interface MacroDescriptorService
 {
     MacroDescriptor getByKey( final MacroKey key );

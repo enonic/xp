@@ -4,10 +4,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
-@Beta
 public final class ValidationErrors
     implements Iterable<ValidationError>
 {
@@ -25,8 +23,7 @@ public final class ValidationErrors
 
     public static ValidationErrors empty()
     {
-        final ImmutableList<ValidationError> list = ImmutableList.of();
-        return new ValidationErrors( list );
+        return new ValidationErrors( ImmutableList.of() );
     }
 
     public static ValidationErrors from( final ValidationError... validationErrors )

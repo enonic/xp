@@ -3,9 +3,9 @@ package com.enonic.xp.vfs;
 import java.nio.file.Path;
 import java.util.LinkedList;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public interface VirtualFilePath
 {
     VirtualFilePath subtractPath( final VirtualFilePath subtract );

@@ -2,14 +2,14 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReferences;
 
-@Beta
+@PublicApi
 public final class UpdateContentParams
 {
     private ContentId contentId;

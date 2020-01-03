@@ -1,8 +1,11 @@
 package com.enonic.xp.cluster.impl;
 
+import java.time.Duration;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -26,44 +29,43 @@ import com.enonic.xp.cluster.Clusters;
 public class ClusterManagerImpl
     implements ClusterManager
 {
-    private final Long checkIntervalMs;
-
-    private final static List<ClusterId> DEFAULT_REQUIRED_INSTANCES = List.of( ClusterId.from( "elasticsearch" ) );
-
-    private final Clusters instances;
-
     private static final Logger LOG = LoggerFactory.getLogger( ClusterManagerImpl.class );
 
-    private final Timer timer = new Timer();
+    private static final Duration DEFAULT_CHECK_INTERVAL = Duration.ofSeconds( 1 );
+
+    private static final List<ClusterId> DEFAULT_REQUIRED_INSTANCES = List.of( ClusterId.from( "elasticsearch" ) );
+
+    private final Duration checkInterval;
+
+    private final Clusters instances;
 
     private final List<ClusterValidator> validators = List.of( new HealthValidator(), new ClusterMembersValidator() );
 
     private volatile boolean isHealthy;
 
+    private ScheduledExecutorService scheduledExecutorService;
+
     @SuppressWarnings("WeakerAccess")
     public ClusterManagerImpl()
     {
-        this.checkIntervalMs = 1000L;
-        this.instances = new Clusters( DEFAULT_REQUIRED_INSTANCES );
+        this( DEFAULT_CHECK_INTERVAL, new Clusters( DEFAULT_REQUIRED_INSTANCES ) );
     }
 
-    private ClusterManagerImpl( final Builder builder )
+    ClusterManagerImpl( final Duration checkInterval, final Clusters instances )
     {
-        this.checkIntervalMs = builder.checkIntervalMs;
-        this.instances = builder.clusters;
+        this.checkInterval = checkInterval;
+        this.instances = instances;
     }
 
     @Activate
     public void activate()
-        throws Exception
+        throws InterruptedException
     {
-        waitForProviders();
-
-        this.timer.schedule( new TimerTask()
+        final CountDownLatch startupLatch = new CountDownLatch( 1 );
+        scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        try
         {
-            @Override
-            public void run()
-            {
+            scheduledExecutorService.scheduleWithFixedDelay( () -> {
                 try
                 {
                     checkProviders();
@@ -72,8 +74,25 @@ public class ClusterManagerImpl
                 {
                     LOG.error( "Error while checking cluster providers", e );
                 }
-            }
-        }, checkIntervalMs, checkIntervalMs );
+                finally
+                {
+                    startupLatch.countDown();
+                }
+            }, 0, checkInterval.toMillis(), TimeUnit.MILLISECONDS );
+            startupLatch.await();
+        }
+        catch ( Exception e )
+        {
+            scheduledExecutorService.shutdown();
+            throw e;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Deactivate
+    public void deactivate()
+    {
+        scheduledExecutorService.shutdown();
     }
 
     @Override
@@ -114,25 +133,6 @@ public class ClusterManagerImpl
 
         this.instances.forEach( Cluster::disable );
         this.isHealthy = false;
-    }
-
-    private void waitForProviders()
-        throws InterruptedException
-    {
-        while ( true )
-        {
-            final ClusterState clusterState = doGetClusterState();
-            if ( ClusterState.OK == clusterState )
-            {
-                activateProviders();
-                break;
-            }
-            else
-            {
-                LOG.warn( "Waiting for cluster providers" );
-                Thread.sleep( checkIntervalMs );
-            }
-        }
     }
 
     private void checkProviders()
@@ -184,45 +184,5 @@ public class ClusterManagerImpl
     {
         LOG.info( "Removing cluster-provider: " + provider.getId() );
         this.instances.remove( provider );
-    }
-
-    @SuppressWarnings("unused")
-    @Deactivate
-    public void deactivate()
-    {
-        this.timer.cancel();
-    }
-
-    static Builder create()
-    {
-        return new Builder();
-    }
-
-    public static final class Builder
-    {
-        private Long checkIntervalMs = 1000L;
-
-        private Clusters clusters = new Clusters( DEFAULT_REQUIRED_INSTANCES );
-
-        private Builder()
-        {
-        }
-
-        Builder checkIntervalMs( final Long val )
-        {
-            checkIntervalMs = val;
-            return this;
-        }
-
-        Builder requiredInstances( final Clusters val )
-        {
-            clusters = val;
-            return this;
-        }
-
-        ClusterManagerImpl build()
-        {
-            return new ClusterManagerImpl( this );
-        }
     }
 }

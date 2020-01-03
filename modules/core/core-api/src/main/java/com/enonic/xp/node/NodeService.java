@@ -1,14 +1,14 @@
 package com.enonic.xp.node;
 
-import com.google.common.annotations.Beta;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.util.BinaryReference;
 
-@Beta
+@PublicApi
 public interface NodeService
 {
     Node create( CreateNodeParams params );

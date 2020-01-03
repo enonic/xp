@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.app.resource;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -27,7 +26,7 @@ public class ResourceServiceImplTest
 
     private ResourceServiceImpl resourceService;
 
-    private File appDir;
+    private Path appDir;
 
     @BeforeEach
     public void setup()
@@ -36,14 +35,14 @@ public class ResourceServiceImplTest
         //TODO @TempDir JUnit5 suits better, but tests fail due to https://bugs.openjdk.java.net/browse/JDK-6956385
         temporaryFolder = Files.createTempDirectory("resourceServiceImplTest");
 
-        this.appDir = Files.createDirectory(this.temporaryFolder.resolve( "myapp" ) ).toFile();
+        this.appDir = Files.createDirectory( this.temporaryFolder.resolve( "myapp" ) );
 
         this.appKey = ApplicationKey.from( "myapp" );
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
 
         final MockApplication app = new MockApplication();
         app.setStarted( true );
-        app.setUrlResolver( ClassLoaderApplicationUrlResolver.create( this.appDir.toURI().toURL() ) );
+        app.setUrlResolver( ClassLoaderApplicationUrlResolver.create( this.appDir.toUri().toURL() ) );
 
         Mockito.when( applicationService.getInstalledApplication( this.appKey ) ).thenReturn( app );
 
@@ -54,10 +53,9 @@ public class ResourceServiceImplTest
     private void newFile( final String name )
         throws Exception
     {
-        final File file = new File( this.appDir, name );
-
-        com.google.common.io.Files.createParentDirs( file );
-        com.google.common.io.Files.touch( file );
+        final Path file = appDir.resolve( name );
+        Files.createDirectories( file.getParent() );
+        Files.createFile( file );
     }
 
     @Test

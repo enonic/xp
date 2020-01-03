@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.jparsec.error.ParserException;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Strings;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.query.QueryException;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 
-@Beta
+import static com.google.common.base.Strings.isNullOrEmpty;
+
+@PublicApi
 public final class QueryParser
 {
     private final QueryGrammar grammar;
@@ -70,7 +70,7 @@ public final class QueryParser
 
     public static ConstraintExpr parseCostraintExpression( final String constraints )
     {
-        if ( Strings.isNullOrEmpty( constraints ) )
+        if ( isNullOrEmpty( constraints ) )
         {
             return null;
         }

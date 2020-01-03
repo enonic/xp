@@ -1,11 +1,10 @@
 package com.enonic.xp.portal.impl.view;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
@@ -40,7 +39,7 @@ public class LocalizeParamsTest
     {
         final ViewFunctionParams viewParams = new ViewFunctionParams().
             name( "test" ).
-            args( Lists.newArrayList( "_key=fisk", "_values={'a',2,'b'}" ) ).
+            args( List.of( "_key=fisk", "_values={'a',2,'b'}" ) ).
             portalRequest( this.request );
 
         LocalizeParams params = new LocalizeParams( this.request ).setAsMap( viewParams.getArgs() );

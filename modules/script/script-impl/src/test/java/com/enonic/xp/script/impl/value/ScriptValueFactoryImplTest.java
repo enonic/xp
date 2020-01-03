@@ -9,8 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.google.common.base.Joiner;
-
 import jdk.nashorn.api.scripting.JSObject;
 
 import com.enonic.xp.script.ScriptValue;
@@ -157,7 +155,7 @@ public class ScriptValueFactoryImplTest
 
         assertNotNull( value.getKeys() );
         assertEquals( 2, value.getKeys().size() );
-        assertEquals( "a,b", Joiner.on( "," ).join( value.getKeys() ) );
+        assertEquals( "a,b", String.join( ",", value.getKeys() ) );
 
         assertNotNull( value.getMap() );
         assertEquals( 2, value.getMap().size() );

@@ -9,6 +9,7 @@ import com.google.common.base.Stopwatch;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.index.ReindexListener;
 import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
@@ -20,7 +21,6 @@ import com.enonic.xp.repo.impl.node.executor.BatchedExecutor;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.IndexDataService;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.task.ProgressReporter;
 
 public class ReindexExecutor
 {
@@ -36,7 +36,7 @@ public class ReindexExecutor
 
     private final static int BATCH_SIZE = 1000;
 
-    private final ProgressReporter progressReporter;
+    private final ReindexListener listener;
 
     private ReindexExecutor( final Builder builder )
     {
@@ -45,7 +45,7 @@ public class ReindexExecutor
         nodeSearchService = builder.nodeSearchService;
         nodeVersionService = builder.nodeVersionService;
         indexDataService = builder.indexDataService;
-        progressReporter = builder.progressReporter;
+        listener = builder.listener;
     }
 
     public ReindexResult execute()
@@ -56,13 +56,16 @@ public class ReindexExecutor
         builder.branches( this.branches );
         builder.repositoryId( this.repositoryId );
 
+        if ( listener != null )
+        {
+            listener.totalBranches( this.branches.getSize() );
+        }
+
         final Stopwatch started = Stopwatch.createStarted();
         for ( final Branch branch : this.branches )
         {
             doReindexBranchNew( repositoryId, builder, branch );
         }
-
-        progressReporter.info( "Reindexed '" + this.branches.getSize() + "' branches in '" + started.stop() );
 
         final long stop = System.currentTimeMillis();
         builder.endTime( Instant.ofEpochMilli( stop ) );
@@ -79,11 +82,12 @@ public class ReindexExecutor
             nodeSearchService( this.nodeSearchService ).
             build(), BATCH_SIZE );
 
-        long nodeIndex = 1;
         final long total = executor.getTotalHits();
-        final long logStep = total < 10 ? 1 : total < 100 ? 10 : total < 1000 ? 100 : 1000;
 
-        progressReporter.info( "Reindexing '" + branch + "' branch in '" + repositoryId + "' repository" );
+        if ( listener != null )
+        {
+            listener.branch( repositoryId, branch, total );
+        }
 
         while ( executor.hasMore() )
         {
@@ -91,11 +95,6 @@ public class ReindexExecutor
 
             for ( final NodeBranchEntry nodeBranchEntry : result )
             {
-                if ( nodeIndex % logStep == 0 )
-                {
-                    progressReporter.progress( Math.toIntExact( nodeIndex ), Math.toIntExact( total ) );
-                }
-
                 final InternalContext context = InternalContext.create( ContextAccessor.current() ).
                     repositoryId( repositoryId ).
                     branch( branch ).
@@ -109,7 +108,10 @@ public class ReindexExecutor
 
                 builder.add( node.id() );
 
-                nodeIndex++;
+                if ( listener != null )
+                {
+                    listener.branchEntry( nodeBranchEntry );
+                }
             }
 
         }
@@ -132,7 +134,7 @@ public class ReindexExecutor
 
         private IndexDataService indexDataService;
 
-        private ProgressReporter progressReporter;
+        private ReindexListener listener;
 
         private Builder()
         {
@@ -168,9 +170,9 @@ public class ReindexExecutor
             return this;
         }
 
-        public Builder progressReporter( final ProgressReporter val )
+        public Builder listener( final ReindexListener val )
         {
-            progressReporter = val;
+            listener = val;
             return this;
         }
 

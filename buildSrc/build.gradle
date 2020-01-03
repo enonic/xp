@@ -11,6 +11,7 @@ repositories {
 }
 
 dependencies {
+    compile 'com.github.jk1:gradle-license-report:1.12'
     compile 'biz.aQute.bnd:biz.aQute.bnd.gradle:4.3.0'
     compile 'com.moowork.gradle:gradle-node-plugin:1.0.1'
     compile 'org.eclipse.jgit:org.eclipse.jgit:3.7.0.201502260915-r'

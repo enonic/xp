@@ -1,14 +1,12 @@
 package com.enonic.xp.app;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Joiner;
-
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 
-@Beta
+@PublicApi
 public final class ApplicationRelativeResolver
 {
     private final ApplicationKey current;
@@ -42,7 +40,7 @@ public final class ApplicationRelativeResolver
             throw new IllegalArgumentException( "Unable to resolve application for Service [" + name + "]" );
         }
 
-        return Joiner.on( "/" ).join( current.toString(), name );
+        return current + "/" + name;
     }
 
     public ContentTypeName toContentTypeName( final String name )

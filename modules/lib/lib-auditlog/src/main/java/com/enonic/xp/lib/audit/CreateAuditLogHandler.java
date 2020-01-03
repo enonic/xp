@@ -21,6 +21,8 @@ import com.enonic.xp.security.PrincipalKey;
 public class CreateAuditLogHandler
     extends BaseAuditLogHandler
 {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
     private String type;
 
     private Instant time;
@@ -91,7 +93,6 @@ public class CreateAuditLogHandler
 
     private JsonNode createJson( final Map<?, ?> value )
     {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.valueToTree( value );
+        return MAPPER.valueToTree( value );
     }
 }

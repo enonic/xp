@@ -4,13 +4,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Function;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-@Beta
+@PublicApi
 public final class Attachments
     extends AbstractImmutableEntityList<Attachment>
 {
@@ -67,8 +67,7 @@ public final class Attachments
 
     public static Attachments empty()
     {
-        final ImmutableList<Attachment> list = ImmutableList.of();
-        return new Attachments( list );
+        return new Attachments( ImmutableList.of() );
     }
 
     public static Attachments from( final Attachment... contents )

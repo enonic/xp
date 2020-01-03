@@ -2,13 +2,13 @@ package com.enonic.xp.region;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 
-@Beta
+@PublicApi
 @SuppressWarnings("UnusedDeclaration")
 public final class LayoutComponent
     extends DescriptorBasedComponent

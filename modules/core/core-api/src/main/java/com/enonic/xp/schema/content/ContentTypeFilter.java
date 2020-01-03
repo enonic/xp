@@ -1,12 +1,13 @@
 package com.enonic.xp.schema.content;
 
 import java.util.Iterator;
+import java.util.Objects;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class ContentTypeFilter
     implements Iterable<ContentTypeName>
 {
@@ -66,13 +67,13 @@ public final class ContentTypeFilter
             return false;
         }
         final ContentTypeFilter that = (ContentTypeFilter) o;
-        return Objects.equal( this.defaultAccess, that.defaultAccess ) && Objects.equal( this.accessTable, that.accessTable );
+        return Objects.equals( this.defaultAccess, that.defaultAccess ) && Objects.equals( this.accessTable, that.accessTable );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode( defaultAccess, accessTable );
+        return Objects.hash( defaultAccess, accessTable );
     }
 
     public static Builder create()

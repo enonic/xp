@@ -2,10 +2,11 @@ package com.enonic.xp.task;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 
-@Beta
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class TaskProgress
 {
     public final static TaskProgress EMPTY = TaskProgress.create().build();
