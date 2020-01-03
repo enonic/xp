@@ -89,7 +89,7 @@ public @interface JettyConfig
     /**
      * Content will only be compressed if content length is either unknown or greater than value.
      */
-    int gzip_minSize() default 16;
+    int gzip_minSize() default 23;
 
     /**
      * Logging to file enabled.
