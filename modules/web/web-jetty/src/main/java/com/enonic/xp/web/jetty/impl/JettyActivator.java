@@ -1,92 +1,110 @@
 package com.enonic.xp.web.jetty.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
 
-import org.eclipse.jetty.server.session.SessionDataStore;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.cluster.ClusterConfig;
+import com.codahale.metrics.jetty9.InstrumentedHandler;
+
 import com.enonic.xp.core.internal.Dictionaries;
-import com.enonic.xp.status.StatusReporter;
+import com.enonic.xp.util.Metrics;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.dispatch.DispatchServlet;
-import com.enonic.xp.web.thread.ThreadPoolInfo;
+import com.enonic.xp.web.jetty.impl.configurator.GZipConfigurator;
+import com.enonic.xp.web.jetty.impl.configurator.HttpConfigurator;
+import com.enonic.xp.web.jetty.impl.configurator.MultipartConfigurator;
+import com.enonic.xp.web.jetty.impl.configurator.RequestLogConfigurator;
+import com.enonic.xp.web.jetty.impl.configurator.SessionConfigurator;
+import com.enonic.xp.web.jetty.impl.session.JettySessionStorageConfigurator;
 
-@Component(immediate = true, service = JettyController.class, configurationPid = "com.enonic.xp.web.jetty")
+@Component(immediate = true, configurationPid = "com.enonic.xp.web.jetty")
 public final class JettyActivator
-    implements JettyController
 {
-    private BundleContext context;
+    private final static Logger LOG = LoggerFactory.getLogger( JettyActivator.class );
 
-    protected JettyService service;
+    private final BundleContext bundleContext;
 
-    private JettyConfig config;
+    private Server server;
 
-    private ServiceRegistration controllerReg;
+    private ServiceRegistration<Server> serverServiceRegistration;
 
-    private ServiceRegistration statusReporterReg;
+    private ServletContext xpServletContext;
 
-    private List<DispatchServlet> dispatchServlets;
+    private ServiceRegistration<ServletContext> xpServletContextReg;
 
-    private ClusterConfig clusterConfig;
+    private final JettySessionStorageConfigurator jettySessionStorageConfigurator;
 
-    private SessionDataStore sessionDataStore;
+    private final ContextHandlerCollection contexts = new ContextHandlerCollection();
 
-    public JettyActivator()
+    private final JettyConfig config;
+
+    @Activate
+    public JettyActivator( final JettyConfig config, final BundleContext bundleContext,
+                           @Reference final JettySessionStorageConfigurator jettySessionStorageConfigurator,
+                           @Reference final List<DispatchServlet> dispatchServlets )
     {
-        this.dispatchServlets = new ArrayList<>();
+        this.config = config;
+        this.bundleContext = bundleContext;
+        this.jettySessionStorageConfigurator = jettySessionStorageConfigurator;
+        dispatchServlets.stream().map( this::initServletContextHandler ).forEach( contexts::addHandler );
     }
 
     @Activate
-    public void activate( final BundleContext context, final JettyConfig config )
+    public void activate()
         throws Exception
     {
-        this.context = context;
         fixJettyVersion();
 
-        this.config = config;
-        this.service = new JettyService();
-        this.service.config = this.config;
-        this.service.workerName = clusterConfig.name().toString();
-        if ( clusterConfig.isEnabled() && clusterConfig.isSessionReplicationEnabled() )
-        {
-            this.service.sessionDataStore = sessionDataStore;
-        }
-
-        this.service.dispatcherServlets = this.dispatchServlets;
-        this.service.start();
-
-        publishController();
-        publishStatusReporter();
-        publishThreadPoolInfo();
+        start();
+        publishXpServletContext();
     }
+
 
     @Deactivate
     public void deactivate()
         throws Exception
     {
-        this.controllerReg.unregister();
-        this.statusReporterReg.unregister();
-        this.service.stop();
+        unpublishXpServletContext();
+        stop();
+    }
+
+    private void unpublishXpServletContext()
+    {
+        if ( xpServletContextReg != null )
+        {
+            xpServletContextReg.unregister();
+        }
+    }
+
+    private void publishXpServletContext()
+    {
+        if ( xpServletContext != null )
+        {
+            xpServletContextReg = bundleContext.registerService( ServletContext.class, xpServletContext,
+                                                                 Dictionaries.of( DispatchConstants.CONNECTOR_PROPERTY,
+                                                                                  DispatchConstants.XP_CONNECTOR ) );
+        }
     }
 
     private void fixJettyVersion()
     {
-        final Dictionary<String, String> headers = this.context.getBundle().getHeaders();
+        final Dictionary<String, String> headers = this.bundleContext.getBundle().getHeaders();
         final String version = headers.get( "X-Jetty-Version" );
 
         if ( version != null )
@@ -95,51 +113,62 @@ public final class JettyActivator
         }
     }
 
-    @Override
-    public List<ServletContext> getServletContexts()
+    private void start()
+        throws Exception
     {
-        return Arrays.stream( this.service.contexts.getHandlers() ).map(
-            handler -> ( (ServletContextHandler) handler ).getServletHandler().getServletContext() ).collect( Collectors.toList() );
+        final Server server = new Server();
+
+        jettySessionStorageConfigurator.configure( server );
+
+        new HttpConfigurator().configure( this.config, server );
+        new RequestLogConfigurator().configure( this.config, this.server );
+
+        Metrics.removeAll( Handler.class );
+        final InstrumentedHandler instrumentedHandler = new InstrumentedHandler( Metrics.registry(), Handler.class.getName() );
+        instrumentedHandler.setHandler( contexts );
+
+        server.setHandler( instrumentedHandler );
+
+        server.start();
+        this.server = server;
+
+        this.serverServiceRegistration = bundleContext.registerService( Server.class, this.server, null );
+
+        LOG.info( "Started Jetty" );
+        LOG.info( "Listening on ports [{}](xp), [{}](management) and [{}](monitoring)", config.http_xp_port(),
+                  config.http_management_port(), config.http_monitor_port() );
     }
 
-    private void publishController()
+    private void stop()
+        throws Exception
     {
-        final Map<String, Object> map = Map.of( "http.enabled", this.config.http_enabled(), "http.port", this.config.http_xp_port() );
-        this.controllerReg = this.context.registerService( JettyController.class, this, Dictionaries.copyOf( map ) );
+        if ( this.serverServiceRegistration != null )
+        {
+            this.serverServiceRegistration.unregister();
+            this.server.stop();
+            this.server.destroy();
+            LOG.info( "Stopped Jetty" );
+        }
     }
 
-    private void publishStatusReporter()
+    private ServletContextHandler initServletContextHandler( final DispatchServlet servlet )
     {
-        final HttpThreadPoolStatusReporter statusReporter = new HttpThreadPoolStatusReporter( this.service.server.getThreadPool() );
-        this.statusReporterReg = this.context.registerService( StatusReporter.class, statusReporter, null );
-    }
+        final ServletContextHandler context = new ServletContextHandler( null, "/", ServletContextHandler.SESSIONS );
+        final SessionHandler sessionHandler = context.getSessionHandler();
 
-    private void publishThreadPoolInfo()
-    {
-        final ThreadPoolInfoImpl threadPoolInfo = new ThreadPoolInfoImpl( this.service.server.getThreadPool() );
-        this.statusReporterReg = this.context.registerService( ThreadPoolInfo.class, threadPoolInfo, null );
-    }
+        final ServletHolder holder = new ServletHolder( servlet );
+        holder.setAsyncSupported( true );
+        context.addServlet( holder, "/*" );
+        context.setVirtualHosts( new String[]{DispatchConstants.VIRTUAL_HOST_PREFIX + servlet.getConnector()} );
 
-    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addDispatchServlet( final DispatchServlet dispatchServlet )
-    {
-        this.dispatchServlets.add( dispatchServlet );
-    }
+        new SessionConfigurator().configure( config, sessionHandler );
+        new GZipConfigurator().configure( config, context );
+        new MultipartConfigurator().configure( config, holder );
 
-    public void removeDispatchServlet( final DispatchServlet dispatchServlet )
-    {
-        this.dispatchServlets.remove( dispatchServlet );
-    }
-
-    @Reference
-    public void setClusterConfig( final ClusterConfig clusterConfig )
-    {
-        this.clusterConfig = clusterConfig;
-    }
-
-    @Reference
-    public void setSessionDataStore( final SessionDataStore sessionDataStore )
-    {
-        this.sessionDataStore = sessionDataStore;
+        if ( servlet.getConnector().equals( DispatchConstants.XP_CONNECTOR ) )
+        {
+            xpServletContext = context.getServletContext();
+        }
+        return context;
     }
 }

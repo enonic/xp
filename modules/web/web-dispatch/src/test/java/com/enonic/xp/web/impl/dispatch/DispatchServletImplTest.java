@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.impl.dispatch.pipeline.FilterPipeline;
 import com.enonic.xp.web.impl.dispatch.pipeline.ServletPipeline;
 
@@ -28,9 +29,11 @@ public class DispatchServletImplTest
         this.filterPipeline = Mockito.mock( FilterPipeline.class );
         this.servletPipeline = Mockito.mock( ServletPipeline.class );
 
-        this.servlet = new DispatchServletImpl();
-        this.servlet.addFilterPipeline( this.filterPipeline, Map.of() );
-        this.servlet.addServletPipeline( this.servletPipeline, Map.of() );
+        this.servlet = new DispatchServletImpl( Map.of( DispatchConstants.CONNECTOR_PROPERTY, DispatchConstants.XP_CONNECTOR ) );
+        this.servlet.addFilterPipeline( this.filterPipeline,
+                                        Map.of( DispatchConstants.CONNECTOR_PROPERTY, DispatchConstants.XP_CONNECTOR ) );
+        this.servlet.addServletPipeline( this.servletPipeline,
+                                         Map.of( DispatchConstants.CONNECTOR_PROPERTY, DispatchConstants.XP_CONNECTOR ) );
     }
 
     @Test
