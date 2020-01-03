@@ -22,10 +22,9 @@ public final class ProjectName
         this.value = value;
     }
 
-    public static ProjectName from( final String value )
+    public static ProjectName from( final String projectName )
     {
-        final ProjectName name = replacePrefix( value );
-        return name != null ? name : new ProjectName( value );
+        return new ProjectName( projectName );
     }
 
     public static ProjectName from( final RepositoryId repositoryId )
