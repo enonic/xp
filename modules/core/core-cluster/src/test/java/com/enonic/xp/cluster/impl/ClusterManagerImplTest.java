@@ -1,9 +1,9 @@
 package com.enonic.xp.cluster.impl;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.cluster.ClusterHealth;
@@ -17,21 +17,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ClusterManagerImplTest
+class ClusterManagerImplTest
 {
-    private static final long CHECK_INTERVAL_MS = 200l;
+    private static final Duration CHECK_INTERVAL = Duration.ofMillis( 200 );
+
+    private static final long TEST_INTERVAL_MILLS = CHECK_INTERVAL.multipliedBy( 2 ).toMillis();
 
     private ClusterManagerImpl clusterManager;
 
-    @BeforeEach
-    public void setUp()
-        throws Exception
-    {
-
-    }
-
     @Test
-    public void single_provider_life_cycle()
+    void single_provider_life_cycle()
         throws Exception
     {
         createManager( "elasticsearch" );
@@ -46,24 +41,23 @@ public class ClusterManagerImplTest
 
         this.clusterManager.addProvider( provider );
         this.clusterManager.activate();
-        Thread.sleep( CHECK_INTERVAL_MS );
         assertActive( provider );
         this.clusterManager.getClusterState();
         assertActive( provider );
 
         provider.setHealth( ClusterHealth.red() );
-        Thread.sleep( CHECK_INTERVAL_MS );
+        Thread.sleep( TEST_INTERVAL_MILLS );
         assertClusterError();
         assertDeactivated( provider );
 
         provider.setHealth( ClusterHealth.green() );
-        Thread.sleep( CHECK_INTERVAL_MS );
+        Thread.sleep( TEST_INTERVAL_MILLS );
         assertClusterOk();
         assertActive( provider );
     }
 
     @Test
-    public void multiple_providers_life_cycle()
+    void multiple_providers_life_cycle()
         throws Exception
     {
         createManager( "elasticsearch", "another" );
@@ -90,13 +84,13 @@ public class ClusterManagerImplTest
         assertActive( provider1, provider2 );
 
         provider1.setHealth( ClusterHealth.red() );
-        Thread.sleep( CHECK_INTERVAL_MS );
+        Thread.sleep( TEST_INTERVAL_MILLS );
         assertClusterError();
         assertDeactivated( provider1, provider2 );
     }
 
     @Test
-    public void multiple_providers_nodes_mismatch()
+    void multiple_providers_nodes_mismatch()
         throws Exception
     {
         final TestCluster provider1 = TestCluster.create().
@@ -119,7 +113,6 @@ public class ClusterManagerImplTest
         this.clusterManager.addProvider( provider1 );
         this.clusterManager.addProvider( provider2 );
         this.clusterManager.activate();
-        Thread.sleep( CHECK_INTERVAL_MS );
         assertClusterOk();
         assertActive( provider1, provider2 );
 
@@ -127,12 +120,11 @@ public class ClusterManagerImplTest
             add( ClusterNode.from( "a" ) ).
             add( ClusterNode.from( "b" ) ).
             build() );
-        Thread.sleep( CHECK_INTERVAL_MS );
         assertClusterOk();
     }
 
     @Test
-    public void fail_after_register()
+    void fail_after_register()
         throws Exception
     {
         final TestCluster provider1 = TestCluster.create().
@@ -173,7 +165,6 @@ public class ClusterManagerImplTest
     }
 
     private void createManager( final String... required )
-        throws Exception
     {
         List<ClusterId> requiredIds = new ArrayList<>();
 
@@ -182,10 +173,7 @@ public class ClusterManagerImplTest
             requiredIds.add( ClusterId.from( req ) );
         }
 
-        this.clusterManager = ClusterManagerImpl.create().
-            checkIntervalMs( CHECK_INTERVAL_MS / 2 ).
-            requiredInstances( new Clusters( requiredIds ) ).
-            build();
+        this.clusterManager = new ClusterManagerImpl( CHECK_INTERVAL, new Clusters( requiredIds ) );
     }
 
     private void assertActive( final TestCluster... providers )
