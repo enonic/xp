@@ -1,10 +1,11 @@
 package com.enonic.xp.launcher.impl.env;
 
 import java.io.File;
+import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import com.enonic.xp.launcher.impl.SharedConstants;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class EnvironmentResolver
     implements SharedConstants
@@ -27,7 +28,7 @@ public final class EnvironmentResolver
     private File resolveInstallDir()
     {
         final String path = this.properties.get( XP_INSTALL_DIR );
-        if ( isNullOrEmpty( path ) )
+        if ( path == null || path.isEmpty() )
         {
             return null;
         }
@@ -37,25 +38,10 @@ public final class EnvironmentResolver
 
     private File resolveHomeDir( final File installDir )
     {
-        final String propValue = this.properties.get( XP_HOME_DIR );
-        final String envValue = this.properties.getEnv( XP_HOME_DIR_ENV );
+        final String propValue = Objects.requireNonNullElse( this.properties.get( XP_HOME_DIR ), "" );
+        final String envValue = Objects.requireNonNullElse( this.properties.getEnv( XP_HOME_DIR_ENV ), "" );
 
-        final String path = firstOf( propValue, envValue );
-        if ( isNullOrEmpty( path ) )
-        {
-            return installDir != null ? new File( installDir, "home" ) : null;
-        }
-
-        return new File( path );
-    }
-
-    private String firstOf( final String value1, final String value2 )
-    {
-        if ( !isNullOrEmpty( value1 ) )
-        {
-            return value1;
-        }
-
-        return value2;
+        return Stream.of( propValue, envValue ).filter( Predicate.not( String::isEmpty ) ).findFirst().
+            map( File::new ).orElseGet( () -> installDir != null ? new File( installDir, "home" ) : null );
     }
 }

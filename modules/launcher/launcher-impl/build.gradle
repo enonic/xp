@@ -4,7 +4,7 @@ dependencies {
     compile 'org.osgi:osgi.cmpn:7.0.0'
     compile "org.apache.felix:org.apache.felix.framework:${felixVersion}"
     runtimeOnly 'org.apache.felix:org.apache.felix.logback:1.0.2'
-    compile 'org.apache.felix:org.apache.felix.utils:1.11.2'
+    implementation 'org.apache.felix:org.apache.felix.utils:1.11.2'
     implementation "commons-io:commons-io:${commonsIoVersion}"
     runtimeOnly 'ch.qos.logback:logback-classic:1.2.3'
     runtimeOnly 'org.fusesource.jansi:jansi:1.18'
