@@ -11,4 +11,5 @@ ext {
     jakartaMailVersion = '1.6.4'
     tikaVersion = '1.23'
     resteasyVersion = '3.9.3.Final'
+    igniteVersion = '2.7.6'
 }

@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 
 import com.enonic.xp.cluster.NodeDiscovery;
 
-class TestDiscovery
+public class TestDiscovery
     implements NodeDiscovery
 {
     private final List<InetAddress> hosts = Lists.newArrayList();
@@ -28,7 +28,7 @@ class TestDiscovery
         }
     }
 
-    static TestDiscovery from( final String... hosts )
+    public static TestDiscovery from( final String... hosts )
     {
         return new TestDiscovery( hosts );
     }

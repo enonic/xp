@@ -9,10 +9,10 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.NodeDiscovery;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 class StaticIpFinderFactory
 {

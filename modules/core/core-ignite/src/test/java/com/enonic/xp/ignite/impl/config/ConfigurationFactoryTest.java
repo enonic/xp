@@ -12,9 +12,10 @@ import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterNodeId;
 import com.enonic.xp.cluster.NodeDiscovery;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ConfigurationFactoryTest
+class ConfigurationFactoryTest
 {
     private IgniteSettings igniteSettings;
 
@@ -23,7 +24,7 @@ public class ConfigurationFactoryTest
     private BundleContext bundleContext;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
         throws Exception
     {
         System.setProperty( "xp.home", Paths.get( "my", "xp", "home" ).toString() );
@@ -48,7 +49,22 @@ public class ConfigurationFactoryTest
     }
 
     @Test
-    public void name()
+    void client_mode()
+    {
+        Mockito.when( this.igniteSettings.clientMode() ).thenReturn( true );
+
+        final IgniteConfiguration config = com.enonic.xp.ignite.impl.config.ConfigurationFactory.create().
+            clusterConfig( createClusterConfig( "myNode" ) ).
+            igniteConfig( this.igniteSettings ).
+            bundleContext( this.bundleContext ).
+            build().
+            execute();
+
+        assertTrue( config.isClientMode() );
+    }
+
+    @Test
+    void name()
         throws Exception
     {
         final IgniteConfiguration config = com.enonic.xp.ignite.impl.config.ConfigurationFactory.create().
@@ -62,7 +78,7 @@ public class ConfigurationFactoryTest
     }
 
     @Test
-    public void ignite_home()
+    void ignite_home()
         throws Exception
     {
 
@@ -79,7 +95,7 @@ public class ConfigurationFactoryTest
     }
 
     @Test
-    public void ignite_home_default()
+    void ignite_home_default()
         throws Exception
     {
         final IgniteConfiguration config = com.enonic.xp.ignite.impl.config.ConfigurationFactory.create().
