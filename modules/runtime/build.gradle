@@ -65,6 +65,9 @@ addBundle( "org.apache.ignite:ignite-core:${igniteVersion}", 8 )
 addBundle( "org.apache.ignite:ignite-osgi:${igniteVersion}", 8 )
 addBundle( "org.apache.ignite:ignite-slf4j:${igniteVersion}", 8 )
 
+addBundle( 'com.hazelcast:hazelcast:3.12.4' , 8 )
+addBundle( 'com.hazelcast:hazelcast-client:3.12.4' , 8 )
+
 addBundle( project( ':core:core-internal' ), 9 )
 
 // API bundles

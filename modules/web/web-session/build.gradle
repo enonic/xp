@@ -3,10 +3,14 @@ apply from: "$rootDir/gradle/osgi.gradle"
 dependencies {
     compile project( ':web:web-api' )
     compile "org.eclipse.jetty:jetty-server:${jettyVersion}"
+    compile "org.eclipse.jetty:jetty-hazelcast:${jettyVersion}"
     compile "org.apache.ignite:ignite-core:${igniteVersion}"
+    compile "com.hazelcast:hazelcast-client:3.12.4"
+
     testCompile project( path: ':web:web-api', configuration: 'testOutput' )
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Web - Websession' )
+    bnd( 'Bundle-Name': 'Enonic XP Web - Websession',
+         'Export-Package': 'org.eclipse.jetty.hazelcast.*')
 }
