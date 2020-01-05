@@ -12,13 +12,15 @@ dependencies {
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
     compile "com.sun.mail:jakarta.mail:${jakartaMailVersion}"
     compile "io.dropwizard.metrics:metrics-core:${dropwizardMetricsVersion}"
+    implementation 'org.jsoup:jsoup:1.12.1'
 
     testImplementation project( ':core:core-internal' )
 }
 
 jar {
     bnd( 'Bundle-Name': 'Enonic XP Core - Api',
-         'Export-Package': 'com.enonic.xp.*' )
+         'Export-Package': 'com.enonic.xp.*',
+         'Private-Package': 'org.jsoup.*' )
 }
 
 sourceSets {

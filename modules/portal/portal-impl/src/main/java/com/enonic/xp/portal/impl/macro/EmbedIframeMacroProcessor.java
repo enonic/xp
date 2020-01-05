@@ -2,12 +2,12 @@ package com.enonic.xp.portal.impl.macro;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.macro.MacroContext;
+import com.enonic.xp.util.HtmlHelper;
 
 @Component(immediate = true, service = BuiltInMacroProcessor.class)
 public class EmbedIframeMacroProcessor
@@ -29,7 +29,7 @@ public class EmbedIframeMacroProcessor
             return generateNonIframeResponse( macroContext );
         }
 
-        return generateResponse( StringEscapeUtils.unescapeHtml( macroContext.getBody() ) );
+        return generateResponse( HtmlHelper.unescape( macroContext.getBody() ) );
     }
 
     private PortalResponse generateNonIframeResponse( final MacroContext macroContext )

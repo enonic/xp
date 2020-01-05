@@ -2,7 +2,6 @@ package com.enonic.xp.admin.impl.rest.resource.issue;
 
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,6 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.text.StrSubstitutor;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -75,6 +73,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
+import com.enonic.xp.util.StringTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -172,8 +171,8 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( IssueType.PUBLISH_REQUEST.toString(), "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(),
-                                 createPublishRequestSchedule() );
+            new CreateIssueJson( IssueType.PUBLISH_REQUEST.toString(), "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ),
+                                 createPublishRequest(), createPublishRequestSchedule() );
 
         final Issue issue = this.createPublishRequestIssue();
         final IssueComment comment = IssueComment.create().text( issue.getDescription() ).creator( issue.getCreator() ).build();
@@ -364,11 +363,8 @@ public class IssueResourceTest
         FindIssueCommentsResult result = FindIssueCommentsResult.create().hits( 1 ).totalHits( 3 ).comments( comments ).build();
         Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn( result );
 
-        final Map params = new HashMap<>();
-        params.put( "id", issue.getId().toString() );
-        params.put( "createdTime", createdTime );
-
-        final String expected = new StrSubstitutor( params ).replace( readFromFile( "get_issue_result.json" ) );
+        final Map<String, String> params = Map.of( "id", issue.getId().toString() );
+        final String expected = new StringTemplate( readFromFile( "get_issue_result.json" ) ).interpolate( params::get );
 
         String jsonString = request().path( "issue/id" ).
             queryParam( "id", issue.getId().toString() ).
@@ -389,11 +385,8 @@ public class IssueResourceTest
         FindIssueCommentsResult result = FindIssueCommentsResult.create().hits( 1 ).totalHits( 3 ).comments( comments ).build();
         Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn( result );
 
-        final Map params = new HashMap<>();
-        params.put( "id", issue.getId().toString() );
-        params.put( "createdTime", createdTime );
-
-        final String expected = new StrSubstitutor( params ).replace( readFromFile( "get_issue_scheduled_result.json" ) );
+        final Map<String, String> params = Map.of( "id", issue.getId().toString() );
+        final String expected = new StringTemplate( readFromFile( "get_issue_scheduled_result.json" ) ).interpolate( params::get );
 
         String jsonString = request().path( "issue/id" ).
             queryParam( "id", issue.getId().toString() ).
@@ -406,18 +399,14 @@ public class IssueResourceTest
     public void test_getIssues()
         throws Exception
     {
-        final Instant createdTime = Instant.now();
         final Issue issue = createIssue();
 
         Mockito.when( this.issueService.getIssue( issue.getId() ) ).thenReturn( issue );
         Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn(
             FindIssueCommentsResult.create().build() );
 
-        final Map params = new HashMap<>();
-        params.put( "id", issue.getId().toString() );
-        params.put( "createdTime", createdTime );
-
-        final String expected = new StrSubstitutor( params ).replace( readFromFile( "get_issues_result.json" ) );
+        final Map<String, String> params = Map.of( "id", issue.getId().toString() );
+        final String expected = new StringTemplate( readFromFile( "get_issues_result.json" ) ).interpolate( params::get );
 
         String jsonString = request().path( "issue/getIssues" ).
             entity( "{\"ids\":[\"" + issue.getId() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
@@ -555,7 +544,7 @@ public class IssueResourceTest
         Mockito.when( issueService.getIssue( params.issueId ) ).thenReturn( issue );
         Mockito.when( securityService.getUser( params.creator ) ).thenReturn( Optional.empty() );
 
-        assertThrows(PrincipalNotFoundException.class, () -> resource.comment( params, Mockito.mock( HttpServletRequest.class ) ) );
+        assertThrows( PrincipalNotFoundException.class, () -> resource.comment( params, Mockito.mock( HttpServletRequest.class ) ) );
     }
 
     @Test
@@ -571,7 +560,7 @@ public class IssueResourceTest
         Mockito.when( issueService.getIssue( params.issueId ) ).thenThrow( new IssueNotFoundException( issue.getId() ) );
         Mockito.when( securityService.getUser( params.creator ) ).thenReturn( Optional.of( User.ANONYMOUS ) );
 
-        assertThrows(IssueNotFoundException.class, () -> resource.comment( params, Mockito.mock( HttpServletRequest.class ) ) );
+        assertThrows( IssueNotFoundException.class, () -> resource.comment( params, Mockito.mock( HttpServletRequest.class ) ) );
     }
 
     @Test
@@ -585,11 +574,8 @@ public class IssueResourceTest
 
         Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn( result );
 
-        final Map params = new HashMap<>();
-        params.put( "createdTime", comment.getCreated() );
-        params.put( "id", comment.getId() );
-
-        final String expected = new StrSubstitutor( params ).replace( readFromFile( "get_issue_comments_result.json" ) );
+        final Map<String, String> params = Map.of( "createdTime", comment.getCreated().toString(), "id", comment.getId().toString() );
+        final String expected = new StringTemplate( readFromFile( "get_issue_comments_result.json" ) ).interpolate( params::get );
 
         String jsonString = request().path( "issue/comment/list" ).
             entity( "{\"issue\":\"" + issue.getName() + "\"}", MediaType.APPLICATION_JSON_TYPE ).

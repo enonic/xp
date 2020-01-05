@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.content.page.region;
 
 import java.util.stream.IntStream;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
@@ -22,6 +20,7 @@ import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.region.TextComponentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.User;
+import com.enonic.xp.util.HtmlHelper;
 
 final class CreateFragmentCommand
 {
@@ -77,8 +76,7 @@ final class CreateFragmentCommand
     private String generateDisplayName( final TextComponent textComponent )
     {
         final String html = textComponent.getText();
-        String text = StringEscapeUtils.unescapeHtml( html.replaceAll( "\\<[^>]*>", "" ) ).trim();
-        text = text.replaceAll( "(\\t|\\r?\\n)+", " " ).trim();
+        String text = HtmlHelper.htmlToText( html );
         return text.isEmpty() ? textComponent.getName().toString() : abbreviate( text, 40 );
     }
 

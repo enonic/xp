@@ -14,7 +14,7 @@ import com.enonic.xp.util.Reference;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class HtmlStripperTest
+class HtmlStripperTest
 {
     private HtmlStripper htmlStripper;
 
@@ -25,7 +25,7 @@ public class HtmlStripperTest
     }
 
     @Test
-    public void processEmpty()
+    void processEmpty()
     {
         assertNull( this.htmlStripper.process( null ) );
         assertEquals( ValueFactory.newString( "" ), this.htmlStripper.process( ValueFactory.newString( "" ) ) );
@@ -33,7 +33,7 @@ public class HtmlStripperTest
     }
 
     @Test
-    public void process()
+    void process()
     {
         assertEquals( ValueFactory.newString( "ValueWithoutTags" ),
                       this.htmlStripper.process( ValueFactory.newString( "ValueWithoutTags" ) ) );
@@ -43,7 +43,7 @@ public class HtmlStripperTest
     }
 
     @Test
-    public void processDifferentTypes()
+    void processDifferentTypes()
     {
         Value valueToProcess = ValueFactory.newString( "abc<tag>def</tag><secondtag/>" );
         assertEquals( ValueFactory.newString( "abc def " ), this.htmlStripper.process( valueToProcess ) );
@@ -67,11 +67,18 @@ public class HtmlStripperTest
     }
 
     @Test
-    public void processEscapedCharacters()
+    void processEscapedCharacters()
     {
         Value valueToProcess = ValueFactory.newString( "&lt;tag value=\"&aelig;&oslash;&aring;\"/&gt;" );
         assertEquals( ValueFactory.newString( "<tag value=\"æøå\"/>" ), this.htmlStripper.process( valueToProcess ) );
         valueToProcess = ValueFactory.newXml( "&lt;tag value=\"&aelig;&oslash;&aring;\"/&gt;" );
         assertEquals( ValueFactory.newXml( "<tag value=\"æøå\"/>" ), this.htmlStripper.process( valueToProcess ) );
+    }
+
+    @Test
+    void cornerCases()
+    {
+        Value valueToProcess = ValueFactory.newString( "<span>Test</span> <a about=\">\" href=\"#\">valid html</a>" );
+        assertEquals( ValueFactory.newString( " Test   valid html " ), this.htmlStripper.process( valueToProcess ) );
     }
 }

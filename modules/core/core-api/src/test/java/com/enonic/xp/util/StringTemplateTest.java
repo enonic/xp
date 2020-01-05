@@ -29,11 +29,12 @@ public class StringTemplateTest
         final Map<String, String> model = new HashMap<>();
         model.put( "this", "This" );
         model.put( "test", "TEST" );
+        model.put( "testRecursive", "recursive{{test}}" );
 
-        final StringTemplate template = new StringTemplate( "{{this}} is a {{test}}" );
+        final StringTemplate template = new StringTemplate( "{{this}} is a {{testRecursive}}" );
         final String value = template.apply( model );
 
-        assertEquals( "This is a TEST", value );
+        assertEquals( "This is a recursiveTEST", value );
     }
 
     @Test
@@ -42,11 +43,12 @@ public class StringTemplateTest
         final Map<String, String> model = new HashMap<>();
         model.put( "this", "This" );
         model.put( "test", "TEST" );
+        model.put( "test2", "TEST2" );
 
-        final StringTemplate template = new StringTemplate( "{{this}} is a \\{{test}}" );
+        final StringTemplate template = new StringTemplate( "{{this}} is a \\{{test}} \\\\\\{{test2}}" );
         final String value = template.apply( model );
 
-        assertEquals( "This is a {{test}}", value );
+        assertEquals( "This is a {{test}} \\\\{{test2}}", value );
     }
 
     @Test

@@ -17,12 +17,11 @@ import java.util.stream.Collectors;
 import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 
-import org.apache.commons.lang.text.StrSubstitutor;
-
 import com.enonic.xp.issue.IssueComment;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.IssueType;
 import com.enonic.xp.mail.MailMessage;
+import com.enonic.xp.util.StringTemplate;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -114,7 +113,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
 
     private String generateMessageBody()
     {
-        final Map messageParams = new HashMap<>();
+        final Map<String, String> messageParams = new HashMap<>();
         final boolean showComments = this.shouldShowComments();
         final String description = params.getIssue().getDescription();
         final boolean isRequest = this.isPublishRequest();
@@ -126,13 +125,13 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
             params.getLocaleMessageResolver().localizeMessage( "issue.email.latestCommentTitle", "Latest comment" );
 
         messageParams.put( "id", idString );
-        messageParams.put( "index", params.getIssue().getIndex() );
+        messageParams.put( "index", String.valueOf( params.getIssue().getIndex() ) );
         messageParams.put( "display-issue-icon", isRequest ? "none" : "block" );
         messageParams.put( "display-request-icon", isRequest ? "inline-block" : "none" );
         messageParams.put( "icon-color", isOpen ? "#609E24" : "#777" );
         messageParams.put( "idShort", idString.substring( 0, 9 ) );
         messageParams.put( "title", generateMessageTitle() );
-        messageParams.put( "status", params.getIssue().getStatus() );
+        messageParams.put( "status", params.getIssue().getStatus().toString() );
         messageParams.put( "statusBgColor", isOpen ? "#2c76e9" : "#777" );
         messageParams.put( "creator", params.getIssue().getCreator().getId() );
         messageParams.put( "description", description );
@@ -143,7 +142,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
         messageParams.put( "showDetailsCaption", showDetailsCaption );
         messageParams.put( "latestCommentTitle", latestCommentTitle );
 
-        return new StrSubstitutor( messageParams ).replace( load( "email.html" ) );
+        return new StringTemplate( load( "email.html" ) ).interpolate( messageParams::get );
     }
 
     private String load( final String name )
@@ -176,14 +175,14 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
 
     private String generateCommentHtml( final IssueComment item, final String template, final DateTimeFormatter fmt )
     {
-        final Map itemParams = new HashMap<>();
+        final Map<String, String> itemParams = new HashMap<>();
         itemParams.put( "displayName", item.getCreatorDisplayName() );
         itemParams.put( "shortName", makeShortName( item.getCreatorDisplayName() ) );
-        itemParams.put( "icon", item.getCreator() );
+        itemParams.put( "icon", item.getCreator().toString() );
         itemParams.put( "createdTime", fmt.format( item.getCreated().atZone( ZoneId.systemDefault() ) ) );
         itemParams.put( "text", item.getText() );
 
-        return new StrSubstitutor( itemParams ).replace( template );
+        return new StringTemplate( template ).interpolate( itemParams::get );
     }
 
     private String makeShortName( final String displayName )

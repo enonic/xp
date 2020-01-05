@@ -4,10 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.text.StrLookup;
-import org.apache.commons.lang.text.StrSubstitutor;
 import org.osgi.framework.BundleContext;
+
+import com.enonic.xp.util.StringTemplate;
 
 public final class ConfigInterpolator
 {
@@ -92,28 +91,17 @@ public final class ConfigInterpolator
         {
             return null;
         }
-
         final String envKey = key.substring( ENV_PREFIX.length() );
         return this.environment != null ? this.environment.get( envKey ) : null;
     }
 
     private void doInterpolate( final Map<String, String> map )
     {
-        final StrLookup lookup = new StrLookup()
-        {
-            @Override
-            public String lookup( final String key )
-            {
-                return lookupValue( key, map );
-            }
-        };
-
-        final StrSubstitutor substitutor = new StrSubstitutor( lookup );
         for ( final Map.Entry<String, String> entry : map.entrySet() )
         {
             final String key = entry.getKey();
-            final String value = substitutor.replace( entry.getValue() );
-            map.put( key, StringUtils.trim( value ) );
+            final String value = new StringTemplate( entry.getValue() ).interpolate( k -> lookupValue( k, map ) );
+            map.put( key, value.trim() );
         }
     }
 }
