@@ -41,6 +41,8 @@ class ClusterManagerImplTest
 
         this.clusterManager.addProvider( provider );
         this.clusterManager.activate();
+        Thread.sleep( TEST_INTERVAL_MILLS );
+
         assertActive( provider );
         this.clusterManager.getClusterState();
         assertActive( provider );
@@ -81,6 +83,8 @@ class ClusterManagerImplTest
         this.clusterManager.addProvider( provider1 );
         this.clusterManager.addProvider( provider2 );
         this.clusterManager.activate();
+        Thread.sleep( TEST_INTERVAL_MILLS );
+
         assertActive( provider1, provider2 );
 
         provider1.setHealth( ClusterHealth.red() );
@@ -113,6 +117,8 @@ class ClusterManagerImplTest
         this.clusterManager.addProvider( provider1 );
         this.clusterManager.addProvider( provider2 );
         this.clusterManager.activate();
+        Thread.sleep( TEST_INTERVAL_MILLS );
+
         assertClusterOk();
         assertActive( provider1, provider2 );
 
@@ -146,6 +152,7 @@ class ClusterManagerImplTest
         this.clusterManager.addProvider( provider1 );
         this.clusterManager.addProvider( provider2 );
         this.clusterManager.activate();
+        Thread.sleep( TEST_INTERVAL_MILLS );
 
         assertClusterOk();
 
