@@ -9,10 +9,6 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://felix.apache.org/license.html
 
-    Apache Ignite
-    Apache License 2.0
-    https://apacheignite.readme.io/v2.3/docs/license
-
     Apache Tika
     Apache License 2.0
     https://tika.apache.org/license.html
