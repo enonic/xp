@@ -34,6 +34,11 @@ addBundle( 'org.osgi:org.osgi.util.function:1.1.0', 5 )
 
 addBundle( 'javax.annotation:javax.annotation-api:1.3.2', 5 )
 
+//Logging bridges
+addBundle( "org.slf4j:jcl-over-slf4j:${slf4jVersion}", 6 )
+addBundle( "org.slf4j:log4j-over-slf4j:${slf4jVersion}", 6 )
+addBundle( "org.jboss.logging:jboss-logging:3.3.2.Final", 6 )
+
 // Java Cryptography Extension
 addBundle( 'org.bouncycastle:bcprov-jdk15on:1.54', 6 )
 
@@ -222,7 +227,7 @@ task run( type: Exec, dependsOn: 'installDist' ) {
     workingDir "$buildDir/install/bin"
 
     doFirst {
-        if ( System.getProperty( "os.name" ).equalsIgnoreCase( 'windows' ) )
+        if ( System.getProperty( "os.name" ).startsWith( 'Windows' ) )
         {
             commandLine 'cmd', '/c', 'server.bat'
         }
