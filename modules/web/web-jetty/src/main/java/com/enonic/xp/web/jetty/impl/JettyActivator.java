@@ -121,7 +121,7 @@ public final class JettyActivator
         jettySessionStorageConfigurator.configure( server );
 
         new HttpConfigurator().configure( this.config, server );
-        new RequestLogConfigurator().configure( this.config, this.server );
+        new RequestLogConfigurator().configure( this.config, server );
 
         Metrics.removeAll( Handler.class );
         final InstrumentedHandler instrumentedHandler = new InstrumentedHandler( Metrics.registry(), Handler.class.getName() );
