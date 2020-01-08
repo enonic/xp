@@ -2,7 +2,6 @@ package com.enonic.xp.cluster.impl;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -59,9 +58,7 @@ public class ClusterManagerImpl
 
     @Activate
     public void activate()
-        throws InterruptedException
     {
-        final CountDownLatch startupLatch = new CountDownLatch( 1 );
         scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         try
         {
@@ -74,12 +71,7 @@ public class ClusterManagerImpl
                 {
                     LOG.error( "Error while checking cluster providers", e );
                 }
-                finally
-                {
-                    startupLatch.countDown();
-                }
             }, 0, checkInterval.toMillis(), TimeUnit.MILLISECONDS );
-            startupLatch.await();
         }
         catch ( Exception e )
         {
