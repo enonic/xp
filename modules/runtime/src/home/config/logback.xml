@@ -26,4 +26,14 @@
     <appender-ref ref="FILE"/>
   </root>
 
+  <logger name="Events.Service" level="WARN" additivity="false">
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <logger name="Events.Bundle" level="WARN" additivity="false">
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
 </configuration>
