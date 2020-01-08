@@ -2,10 +2,7 @@ package com.enonic.xp.launcher;
 
 import java.util.Map;
 import java.util.Properties;
-
-import com.google.common.collect.Maps;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
+import java.util.stream.Collectors;
 
 public final class VersionInfo
 {
@@ -21,7 +18,7 @@ public final class VersionInfo
     public String getVersion()
     {
         final String value = getClass().getPackage().getImplementationVersion();
-        return isNullOrEmpty( value ) ? "0.0.0-SNAPSHOT" : value;
+        return value == null || value.isEmpty() ? "0.0.0-SNAPSHOT" : value;
     }
 
     public String getBuildHash()
@@ -41,13 +38,13 @@ public final class VersionInfo
 
     public Map<String, String> getAsMap()
     {
-        return Maps.fromProperties( this.props );
+        return this.props.entrySet().stream().collect( Collectors.toMap( e -> (String) e.getKey(), e -> (String) e.getValue() ) );
     }
 
     private String getProperty( final String name, final String defValue )
     {
         final String value = this.props.getProperty( name );
-        return isNullOrEmpty( value ) ? defValue : value.trim();
+        return value == null || value.isEmpty() ? defValue : value.trim();
     }
 
     private static VersionInfo load()

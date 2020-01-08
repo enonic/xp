@@ -2,8 +2,7 @@ package com.enonic.xp.launcher.impl.env;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
+import java.util.stream.Collectors;
 
 public final class SystemProperties
     extends HashMap<String, String>
@@ -31,7 +30,9 @@ public final class SystemProperties
     public static SystemProperties getDefault()
     {
         final SystemProperties properties = new SystemProperties();
-        properties.putAll( Maps.fromProperties( System.getProperties() ) );
+        final Map<String, String> systemPropertiesMap =
+            System.getProperties().entrySet().stream().collect( Collectors.toMap( e -> (String) e.getKey(), e -> (String) e.getValue() ) );
+        properties.putAll( systemPropertiesMap );
         properties.putAllEnv( System.getenv() );
         return properties;
     }

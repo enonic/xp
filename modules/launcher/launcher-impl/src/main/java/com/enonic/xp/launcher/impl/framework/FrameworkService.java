@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.felix.framework.Felix;
 import org.osgi.framework.BundleActivator;
@@ -18,9 +21,8 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import com.enonic.xp.launcher.LauncherListener;
 import com.enonic.xp.launcher.impl.SharedConstants;
 import com.enonic.xp.launcher.impl.config.ConfigProperties;
-import com.enonic.xp.launcher.impl.util.OsgiExportsBuilder;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Objects.requireNonNullElse;
 
 public final class FrameworkService
     implements SharedConstants
@@ -81,34 +83,21 @@ public final class FrameworkService
 
     private void updateBootDelegation()
     {
-        final String internalProp = this.config.get( INTERNAL_OSGI_BOOT_DELEGATION );
-        final String frameworkProp = this.config.get( FRAMEWORK_BOOTDELEGATION );
+        final String internalProp = requireNonNullElse( config.get( INTERNAL_OSGI_BOOT_DELEGATION ), "" );
+        final String frameworkProp = requireNonNullElse( config.get( FRAMEWORK_BOOTDELEGATION ), "" );
         this.config.put( FRAMEWORK_BOOTDELEGATION, joinPackages( internalProp, frameworkProp ) );
     }
 
     private void updateSystemPackagesExtra()
     {
-        final String internalProp = this.config.get( INTERNAL_OSGI_SYSTEM_PACKAGES );
-        final OsgiExportsBuilder builder = new OsgiExportsBuilder( getClass().getClassLoader() );
-        final String internalPackages = builder.expandExports( internalProp );
-
-        final String frameworkProp = this.config.get( FRAMEWORK_SYSTEMPACKAGES_EXTRA );
-        this.config.put( FRAMEWORK_SYSTEMPACKAGES_EXTRA, joinPackages( internalPackages, frameworkProp ) );
+        final String internalProp = requireNonNullElse( this.config.get( INTERNAL_OSGI_SYSTEM_PACKAGES ), "" );
+        final String frameworkProp = requireNonNullElse( this.config.get( FRAMEWORK_SYSTEMPACKAGES_EXTRA ), "" );
+        this.config.put( FRAMEWORK_SYSTEMPACKAGES_EXTRA, joinPackages( internalProp, frameworkProp ) );
     }
 
     private String joinPackages( final String v1, final String v2 )
     {
-        if ( isNullOrEmpty( v2 ) )
-        {
-            return v1;
-        }
-
-        if ( isNullOrEmpty( v1 ) )
-        {
-            return v2;
-        }
-
-        return v1 + "," + v2;
+        return Stream.of( v1, v2 ).filter( Predicate.not( String::isEmpty ) ).collect( Collectors.joining( "," ) );
     }
 
     public void start()

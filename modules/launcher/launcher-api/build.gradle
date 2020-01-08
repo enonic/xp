@@ -1,7 +1,6 @@
 import com.enonic.gradle.BuildInfoHelper
 
 dependencies {
-    compile 'com.google.guava:guava:26.0-jre'
 }
 
 ext {
