@@ -6,6 +6,7 @@ import java.io.UncheckedIOException;
 import java.util.concurrent.Callable;
 
 import org.apache.http.HttpHost;
+import org.apache.http.client.methods.HttpGet;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.cluster.repositories.delete.DeleteRepositoryRequest;
@@ -43,7 +44,9 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.core.CountRequest;
@@ -58,6 +61,8 @@ import org.elasticsearch.client.indices.GetMappingsResponse;
 import org.elasticsearch.client.indices.PutMappingRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+
+import com.enonic.xp.elasticsearch.client.impl.nodes.GetNodesResponse;
 
 public final class EsClient
     implements Closeable
@@ -207,6 +212,15 @@ public final class EsClient
     public SearchResponse search( SearchRequest searchRequest )
     {
         return wrap( () -> client.search( searchRequest, RequestOptions.DEFAULT ) );
+    }
+
+    public GetNodesResponse nodes()
+    {
+        return wrap( () -> {
+            final Response response = client.getLowLevelClient().performRequest( new Request( HttpGet.METHOD_NAME, "_nodes" ) );
+
+            return GetNodesResponse.fromResponse( response );
+        } );
     }
 
     public static XContentBuilder jsonBuilder()

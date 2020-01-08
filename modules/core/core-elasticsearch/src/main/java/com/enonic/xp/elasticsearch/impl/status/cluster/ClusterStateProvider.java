@@ -4,15 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
-import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
-import org.elasticsearch.client.Requests;
-import org.elasticsearch.cluster.node.DiscoveryNode;
-import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.elasticsearch.client.impl.EsClient;
+import com.enonic.xp.elasticsearch.client.impl.nodes.GetNodesResponse;
+import com.enonic.xp.elasticsearch.client.impl.nodes.Node;
 
 @Component(service = ClusterStateProvider.class)
 public final class ClusterStateProvider
@@ -27,7 +24,7 @@ public final class ClusterStateProvider
 
         try
         {
-            //doPopulateClusterState( builder );
+            doPopulateClusterState( builder );
         }
         catch ( ElasticsearchException ex )
         {
@@ -40,32 +37,27 @@ public final class ClusterStateProvider
 
     private void doPopulateClusterState( final ClusterState.Builder builder )
     {
-        ClusterStateResponse clusterStateResponse = this.getClusterStateResponse();
+        final GetNodesResponse response = client.nodes();
 
-        builder.clusterName( clusterStateResponse.getClusterName().value() );
+        builder.clusterName( response.getClusterName() );
 
-        final org.elasticsearch.cluster.ClusterState clusterState = clusterStateResponse.getState();
-
-        final DiscoveryNodes clusterMembers = clusterState.getNodes();
-
-        List<MemberNodeState> memberNodeStates = this.getMembersState( clusterMembers );
+        List<MemberNodeState> memberNodeStates = this.getMembersState( response.getNodes() );
         builder.addMemberNodeStates( memberNodeStates );
     }
 
-    private List<MemberNodeState> getMembersState( DiscoveryNodes members )
+    private List<MemberNodeState> getMembersState( final List<Node> nodes )
     {
         final List<MemberNodeState> results = new ArrayList<>();
 
-        for ( DiscoveryNode node : members )
+        for ( Node node : nodes )
         {
             final MemberNodeState memberNodeState = MemberNodeState.create().
-                address( node.getAddress().toString() ).
-                hostName( node.getHostName() ).
+                address( node.getAddress() ).
                 id( node.getId() ).
                 hostName( node.getHostName() ).
-                version( node.getVersion().toString() ).
+                version( node.getVersion() ).
                 name( node.getName() ).
-                master( node.getId().equals( members.getMasterNodeId() ) ).
+                master( false ).
                 isDataNode( node.isDataNode() ).
                 isClientNode( false ).
                 build();
@@ -74,18 +66,6 @@ public final class ClusterStateProvider
         }
 
         return results;
-    }
-
-    private ClusterStateResponse getClusterStateResponse()
-    {
-        final ClusterStateRequest clusterStateRequest = Requests.clusterStateRequest().
-            clear().
-            nodes( true ).
-            indices( "" ).
-            masterNodeTimeout( CLUSTER_HEALTH_TIMEOUT );
-
-        //return restHighLevelClient.state( clusterStateRequest ).actionGet();
-        return null;
     }
 
     @Reference
