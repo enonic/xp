@@ -120,4 +120,19 @@ public @interface JettyConfig
      * Retain log for number of days.
      */
     int log_retainDays() default 31;
+
+    /**
+     * Maximum number of threads.
+     */
+    int threadPool_maxThreads() default 200;
+
+    /**
+     * Minimum number of threads.
+     */
+    int threadPool_minThreads() default 8;
+
+    /**
+     * Thread Idle Timeout (in milliseconds).
+     */
+    int threadPool_idleTimeout() default 60000;
 }

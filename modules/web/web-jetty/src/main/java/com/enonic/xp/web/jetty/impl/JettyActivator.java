@@ -11,6 +11,7 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
@@ -116,10 +117,9 @@ public final class JettyActivator
     private void start()
         throws Exception
     {
-        final Server server = new Server();
+        final Server server = createServer();
 
         jettySessionStorageConfigurator.configure( server );
-
         new HttpConfigurator().configure( this.config, server );
         new RequestLogConfigurator().configure( this.config, server );
 
@@ -137,6 +137,16 @@ public final class JettyActivator
         LOG.info( "Started Jetty" );
         LOG.info( "Listening on ports [{}](xp), [{}](management) and [{}](monitoring)", config.http_xp_port(),
                   config.http_management_port(), config.http_monitor_port() );
+    }
+
+    private Server createServer()
+    {
+        final int maxThreads = config.threadPool_maxThreads();
+        final int minThreads = config.threadPool_minThreads();
+        final int idleTimeout = config.threadPool_idleTimeout();
+
+        final QueuedThreadPool threadPool = new QueuedThreadPool( maxThreads, minThreads, idleTimeout );
+        return new Server( threadPool );
     }
 
     private void stop()
