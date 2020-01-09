@@ -39,9 +39,10 @@ public final class ElasticsearchCluster
     private volatile ServiceRegistration<Client> clientServiceRegistration;
 
     @Activate
-    public ElasticsearchCluster( final BundleContext bundleContext, @Reference final Node node )
+    public ElasticsearchCluster( final BundleContext bundleContext, @Reference final EsClient client )
     {
         this.bundleContext = bundleContext;
+        this.client = client;
     }
 
     @Deactivate
@@ -173,12 +174,5 @@ public final class ElasticsearchCluster
         }
 
         return ClusterHealth.green();
-    }
-
-
-    @Reference
-    public void setClient( final EsClient client )
-    {
-        this.client = client;
     }
 }
