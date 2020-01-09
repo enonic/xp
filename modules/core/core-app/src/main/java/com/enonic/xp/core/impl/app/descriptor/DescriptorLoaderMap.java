@@ -18,7 +18,6 @@ final class DescriptorLoaderMap
         return this.map.get( type );
     }
 
-    @SuppressWarnings("unchecked")
     void add( final DescriptorLoader loader )
     {
         this.map.put( loader.getType(), loader );

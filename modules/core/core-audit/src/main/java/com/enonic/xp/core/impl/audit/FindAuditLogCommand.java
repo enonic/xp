@@ -34,7 +34,7 @@ public class FindAuditLogCommand
     @Override
     public FindAuditLogResult execute()
     {
-        return AuditLogContext.createContext().callWith( () -> runQuery() );
+        return AuditLogContext.createContext().callWith( this::runQuery );
     }
 
     private FindAuditLogResult runQuery()

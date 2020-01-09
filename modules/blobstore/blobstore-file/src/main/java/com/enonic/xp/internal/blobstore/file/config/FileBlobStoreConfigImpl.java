@@ -45,7 +45,7 @@ public final class FileBlobStoreConfigImpl
     @Override
     public boolean readThroughEnabled()
     {
-        return Boolean.valueOf( this.config.get( "readThrough.enabled" ) );
+        return Boolean.parseBoolean( this.config.get( "readThrough.enabled" ) );
     }
 
     @Override

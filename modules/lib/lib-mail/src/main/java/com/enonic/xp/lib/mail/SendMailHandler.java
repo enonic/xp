@@ -226,7 +226,7 @@ public final class SendMailHandler
     private <T> T getValue( final Map<String, Object> object, final String key, final Class<T> type )
     {
         final Object value = object.get( key );
-        if ( value != null && type.isInstance( value ) )
+        if ( type.isInstance( value ) )
         {
             //noinspection unchecked
             return (T) value;

@@ -53,7 +53,7 @@ public final class RegionPath
         {
             return true;
         }
-        if ( o == null || !( o instanceof RegionPath ) )
+        if ( !( o instanceof RegionPath ) )
         {
             return false;
         }

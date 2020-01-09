@@ -90,22 +90,20 @@ final class ControllerMappingsResolver
 
         return descriptors.stream().
             filter( ( d ) -> matchesUrlPattern( d, request ) ).
-            filter( ( d ) -> matchesContent( d, request ) ).
-            sorted( ( d1, d2 ) -> {
-                if ( d2.compareTo( d1 ) == 0 )
-                {
-                    // if same order, use the apps order
-                    int d1AppIndex = appsOrder.get( d1.getApplication() );
-                    int d2AppIndex = appsOrder.get( d2.getApplication() );
-                    return Integer.compare( d1AppIndex, d2AppIndex );
-                }
-                else
-                {
-                    return d2.compareTo( d1 );
-                }
-            } ).
-            findFirst().
-            orElse( null );
+            filter( ( d ) -> matchesContent( d, request ) ).min( ( d1, d2 ) -> {
+            final int compareTo = d2.compareTo( d1 );
+            if ( compareTo == 0 )
+            {
+                // if same order, use the apps order
+                int d1AppIndex = appsOrder.get( d1.getApplication() );
+                int d2AppIndex = appsOrder.get( d2.getApplication() );
+                return Integer.compare( d1AppIndex, d2AppIndex );
+            }
+            else
+            {
+                return compareTo;
+            }
+        } ).orElse( null );
     }
 
     private List<ControllerMappingDescriptor> getMappingDescriptors( final Site site )

@@ -57,7 +57,7 @@ public class ContentServiceImplTest_create_path_integrity_test
         assertEquals( 1, result.getTotalHits() );
     }
 
-    private class CreateContentTask
+    private static class CreateContentTask
         implements Runnable
     {
         private final ContentService contentService;

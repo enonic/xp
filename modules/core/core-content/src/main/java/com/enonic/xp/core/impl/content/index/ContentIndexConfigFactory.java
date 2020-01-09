@@ -28,6 +28,7 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.schema.xdata.XDatas;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
 public class ContentIndexConfigFactory
@@ -93,7 +94,7 @@ public class ContentIndexConfigFactory
         return siteConfigs.stream().
             map( siteConfig -> siteService.getDescriptor( siteConfig.getApplicationKey() ) ).
             filter( siteDescriptor -> siteDescriptor != null && siteDescriptor.getForm() != null ).
-            map( siteDescriptor -> siteDescriptor.getForm() ).
+            map( SiteDescriptor::getForm ).
             collect( Collectors.toList() );
     }
 

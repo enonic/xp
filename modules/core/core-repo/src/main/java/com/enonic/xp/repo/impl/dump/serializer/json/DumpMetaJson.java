@@ -67,9 +67,7 @@ public class DumpMetaJson
         {
             SystemDumpResult.Builder systemDumpResult = SystemDumpResult.create();
             dumpMetaJson.getResult().
-                entrySet().
-                forEach(
-                    resultEntry -> systemDumpResult.add( RepoDumpResultJson.fromJson( resultEntry.getKey(), resultEntry.getValue() ) ) );
+                forEach( ( key, value ) -> systemDumpResult.add( RepoDumpResultJson.fromJson( key, value ) ) );
             dumpMeta.systemDumpResult( systemDumpResult.build() );
         }
         if ( !isNullOrEmpty( dumpMetaJson.getModelVersion() ) )

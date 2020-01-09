@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.macro.json;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,8 +41,8 @@ public class MacrosJson
 
     private List<MacroDescriptorJson> getSortedMacros( List<MacroDescriptorJson> notSortedMacros )
     {
-        return notSortedMacros.stream().sorted(
-            ( macro1, macro2 ) -> macro1.getDisplayName().compareTo( macro2.getDisplayName() ) ).collect( Collectors.toList() );
+        return notSortedMacros.stream().sorted( Comparator.comparing( MacroDescriptorJson::getDisplayName ) ).collect(
+            Collectors.toList() );
     }
 
     @SuppressWarnings("unused")

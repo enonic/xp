@@ -62,7 +62,7 @@ class ContentAuditLogSupport
 
     private static final int QUEUE_SIZE = 100;
 
-    private static final ThreadPoolExecutor executor =
+    private static final ThreadPoolExecutor EXECUTOR =
         new ThreadPoolExecutor( 0, THREAD_POOL_SIZE, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>( QUEUE_SIZE ),
                                 new ThreadPoolExecutor.CallerRunsPolicy() );
 
@@ -75,7 +75,7 @@ class ContentAuditLogSupport
 
     void createSite( final CreateSiteParams params, final Site site )
     {
-        executor.execute( () -> doCreateSite( params, site ) );
+        EXECUTOR.execute( () -> doCreateSite( params, site ) );
     }
 
     private void doCreateSite( final CreateSiteParams params, final Site site )
@@ -96,7 +96,7 @@ class ContentAuditLogSupport
 
     void createContent( final CreateContentParams params, final Content content )
     {
-        executor.execute( () -> doCreateContent( params, content ) );
+        EXECUTOR.execute( () -> doCreateContent( params, content ) );
     }
 
     private void doCreateContent( final CreateContentParams params, final Content content )
@@ -129,7 +129,7 @@ class ContentAuditLogSupport
 
     void createMedia( final CreateMediaParams params, final Content content )
     {
-        executor.execute( () -> doCreateMedia( params, content ) );
+        EXECUTOR.execute( () -> doCreateMedia( params, content ) );
     }
 
     private void doCreateMedia( final CreateMediaParams params, final Content content )
@@ -155,7 +155,7 @@ class ContentAuditLogSupport
 
     void update( final UpdateContentParams params, final Content content )
     {
-        executor.execute( () -> doUpdate( params, content ) );
+        EXECUTOR.execute( () -> doUpdate( params, content ) );
     }
 
     private void doUpdate( final UpdateContentParams params, final Content content )
@@ -176,7 +176,7 @@ class ContentAuditLogSupport
 
     void update( final UpdateMediaParams params, final Content content )
     {
-        executor.execute( () -> doUpdate( params, content ) );
+        EXECUTOR.execute( () -> doUpdate( params, content ) );
     }
 
     private void doUpdate( final UpdateMediaParams params, final Content content )
@@ -202,7 +202,7 @@ class ContentAuditLogSupport
 
     void delete( final DeleteContentParams params, final DeleteContentsResult contents )
     {
-        executor.execute( () -> doDelete( params, contents ) );
+        EXECUTOR.execute( () -> doDelete( params, contents ) );
     }
 
     private void doDelete( final DeleteContentParams params, final DeleteContentsResult contents )
@@ -225,7 +225,7 @@ class ContentAuditLogSupport
 
     void undoPendingDelete( final UndoPendingDeleteContentParams params, final Contents contents )
     {
-        executor.execute( () -> doUndoPendingDelete( params, contents ) );
+        EXECUTOR.execute( () -> doUndoPendingDelete( params, contents ) );
     }
 
     private void doUndoPendingDelete( final UndoPendingDeleteContentParams params, final Contents contents )
@@ -249,7 +249,7 @@ class ContentAuditLogSupport
 
     void publish( final PushContentParams params, final PublishContentResult result )
     {
-        executor.execute( () -> doPublish( params, result ) );
+        EXECUTOR.execute( () -> doPublish( params, result ) );
     }
 
     private void doPublish( final PushContentParams params, final PublishContentResult result )
@@ -302,7 +302,7 @@ class ContentAuditLogSupport
 
     void unpublishContent( final UnpublishContentParams params, final UnpublishContentsResult result )
     {
-        executor.execute( () -> doUnpublishContent( params, result ) );
+        EXECUTOR.execute( () -> doUnpublishContent( params, result ) );
     }
 
     private void doUnpublishContent( final UnpublishContentParams params, final UnpublishContentsResult result )
@@ -331,7 +331,7 @@ class ContentAuditLogSupport
 
     void duplicate( final DuplicateContentParams params, final DuplicateContentsResult result )
     {
-        executor.execute( () -> doDuplicate( params, result ) );
+        EXECUTOR.execute( () -> doDuplicate( params, result ) );
     }
 
     private void doDuplicate( final DuplicateContentParams params, final DuplicateContentsResult result )
@@ -360,7 +360,7 @@ class ContentAuditLogSupport
 
     void move( final MoveContentParams params, MoveContentsResult result )
     {
-        executor.execute( () -> doMove( params, result ) );
+        EXECUTOR.execute( () -> doMove( params, result ) );
     }
 
     private void doMove( final MoveContentParams params, MoveContentsResult result )
@@ -383,7 +383,7 @@ class ContentAuditLogSupport
 
     void rename( final RenameContentParams params, final Content content )
     {
-        executor.execute( () -> doRename( params, content ) );
+        EXECUTOR.execute( () -> doRename( params, content ) );
 
     }
 
@@ -403,7 +403,7 @@ class ContentAuditLogSupport
 
     void setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
     {
-        executor.execute( () -> doSetActiveContentVersion( contentId, versionId ) );
+        EXECUTOR.execute( () -> doSetActiveContentVersion( contentId, versionId ) );
     }
 
     private void doSetActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
@@ -423,7 +423,7 @@ class ContentAuditLogSupport
 
     void setChildOrder( final SetContentChildOrderParams params, final Content content )
     {
-        executor.execute( () -> doSetChildOrder( params, content ) );
+        EXECUTOR.execute( () -> doSetChildOrder( params, content ) );
 
     }
 
@@ -443,7 +443,7 @@ class ContentAuditLogSupport
 
     void reorderChildren( final ReorderChildContentsParams params, final ReorderChildContentsResult result )
     {
-        executor.execute( () -> doReorderChildren( params, result ) );
+        EXECUTOR.execute( () -> doReorderChildren( params, result ) );
 
     }
 
@@ -463,7 +463,7 @@ class ContentAuditLogSupport
 
     void applyPermissions( final ApplyContentPermissionsParams params, final ApplyContentPermissionsResult result )
     {
-        executor.execute( () -> doApplyPermissions( params, result ) );
+        EXECUTOR.execute( () -> doApplyPermissions( params, result ) );
     }
 
     private void doApplyPermissions( final ApplyContentPermissionsParams params, final ApplyContentPermissionsResult result )
@@ -490,7 +490,7 @@ class ContentAuditLogSupport
 
     void reprocess( final Content content )
     {
-        executor.execute( () -> doReprocess( content ) );
+        EXECUTOR.execute( () -> doReprocess( content ) );
     }
 
     private void doReprocess( final Content content )

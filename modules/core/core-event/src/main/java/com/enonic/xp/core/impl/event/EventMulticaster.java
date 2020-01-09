@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.event;
 
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ final class EventMulticaster
 
     private void sortListeners()
     {
-        Collections.sort( this.listeners, ( o1, o2 ) -> o1.getOrder() - o2.getOrder() );
+        this.listeners.sort( Comparator.comparingInt( EventListener::getOrder ) );
     }
 
     public void publish( final Event event )

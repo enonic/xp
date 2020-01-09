@@ -29,7 +29,7 @@ public class ImmutableFilesHelper
         Preconditions.checkNotNull( path, "path is required" );
         Preconditions.checkNotNull( supplier, "supplier is required" );
 
-        ByteSource byteSource = null;
+        ByteSource byteSource;
 
         lock( path );
 

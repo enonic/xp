@@ -20,8 +20,6 @@ public class BlobStoreActivator
 {
     private final BlobStoreProviders providers = new BlobStoreProviders();
 
-    ;
-
     private ServiceRegistration<BlobStore> blobStoreReg;
 
     private BlobStoreConfig config;

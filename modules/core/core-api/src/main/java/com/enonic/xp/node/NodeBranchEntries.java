@@ -20,7 +20,7 @@ public class NodeBranchEntries
     private NodeBranchEntries( final Collection<NodeBranchEntry> entries )
     {
         branchNodeVersionMap = new LinkedHashMap<>();
-        entries.stream().forEach( entry -> branchNodeVersionMap.put( entry.getNodeId(), entry ) );
+        entries.forEach( entry -> branchNodeVersionMap.put( entry.getNodeId(), entry ) );
     }
 
     public static NodeBranchEntries from( final Collection<NodeBranchEntry> nodeBranchEntries )

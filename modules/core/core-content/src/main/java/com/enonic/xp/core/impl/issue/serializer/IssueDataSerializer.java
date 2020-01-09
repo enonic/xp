@@ -142,7 +142,7 @@ public class IssueDataSerializer
             itemSets.add( itemSet );
         }
 
-        publishRequestSet.addSets( PublishRequestPropertyNames.ITEMS, itemSets.toArray( new PropertySet[itemSets.size()] ) );
+        publishRequestSet.addSets( PublishRequestPropertyNames.ITEMS, itemSets.toArray( new PropertySet[0] ) );
     }
 
     private void extractApprovers( final PropertySet issueProperties, final Issue.Builder builder )

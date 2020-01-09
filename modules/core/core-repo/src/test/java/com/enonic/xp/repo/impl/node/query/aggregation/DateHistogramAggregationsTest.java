@@ -82,7 +82,7 @@ public class DateHistogramAggregationsTest
             addAggregationQuery( DateHistogramAggregationQuery.create( "dateHistogramWithZero" ).
                 fieldName( "instant" ).
                 interval( "1h" ).
-                minDocCount( 0l ).
+                minDocCount( 0L ).
                 build() ).
             addAggregationQuery( DateHistogramAggregationQuery.create( "dateHistogramWithDefault" ).
                 fieldName( "instant" ).

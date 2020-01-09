@@ -251,8 +251,8 @@ final class QueryAggregationParams
         final String fieldName = (String) params.get( "field" );
         final String unit = (String) params.get( "unit" );
         final Map<String, Object> originCoordinates = (Map<String, Object>) params.getOrDefault( "origin", emptyMap() );
-        final Double lat = Double.parseDouble( (String) originCoordinates.get( "lat" ) );
-        final Double lon = Double.parseDouble( (String) originCoordinates.get( "lon" ) );
+        final double lat = Double.parseDouble( (String) originCoordinates.get( "lat" ) );
+        final double lon = Double.parseDouble( (String) originCoordinates.get( "lon" ) );
         final GeoPoint origin = new GeoPoint( lat, lon );
         final List<Map<String, Object>> rangeListParams = (List<Map<String, Object>>) params.getOrDefault( "ranges", emptyList() );
         final List<DistanceRange> ranges = new ArrayList<>();
@@ -298,13 +298,13 @@ final class QueryAggregationParams
     private Long getLong( final Map<String, Object> map, final String key )
     {
         final Object value = map.get( key );
-        return value != null && value instanceof Number ? ( (Number) value ).longValue() : null;
+        return value instanceof Number ? ( (Number) value ).longValue() : null;
     }
 
     private Double getDouble( final Map<String, Object> map, final String key )
     {
         final Object value = map.get( key );
-        return value != null && value instanceof Number ? ( (Number) value ).doubleValue() : null;
+        return value instanceof Number ? ( (Number) value ).doubleValue() : null;
     }
 }
 

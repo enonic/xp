@@ -182,7 +182,7 @@ public final class ContentFixtures
     public static Site newSite()
     {
         final PropertyTree siteConfigConfig = new PropertyTree();
-        siteConfigConfig.setLong( "Field", 42l );
+        siteConfigConfig.setLong( "Field", 42L );
 
         final SiteConfig siteConfig = SiteConfig.create().
             application( ApplicationKey.from( "myapplication" ) ).

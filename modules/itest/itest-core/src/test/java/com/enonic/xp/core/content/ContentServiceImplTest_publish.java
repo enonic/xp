@@ -24,8 +24,8 @@ import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.MoveContentParams;
-import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PublishContentResult;
+import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
@@ -701,7 +701,7 @@ public class ContentServiceImplTest_publish
 
         for ( final ContentId expectedEntry : currentExpected )
         {
-            message.append( LINE_SEPARATOR + "Content: " + getName( expectedEntry ) + " expected: " );
+            message.append( LINE_SEPARATOR ).append( "Content: " ).append( getName( expectedEntry ) ).append( " expected: " );
 
             if ( !currentResult.contains( expectedEntry ) )
             {
@@ -719,7 +719,7 @@ public class ContentServiceImplTest_publish
 
             if ( !currentExpected.contains( found ) )
             {
-                message.append( LINE_SEPARATOR + "Content: " + getName( found ) + " not expected" );
+                message.append( LINE_SEPARATOR ).append( "Content: " ).append( getName( found ) ).append( " not expected" );
                 hasFailed = true;
             }
         }

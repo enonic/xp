@@ -1,8 +1,8 @@
 package com.enonic.xp.impl.macro;
 
 
-import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -39,7 +39,7 @@ public final class BuiltinMacroDescriptors
     private MacroDescriptors generateMacroDescriptors()
     {
         final ImmutableMap.Builder<String, MacroDescriptor> macroDescriptors = ImmutableMap.builder();
-        Arrays.asList( generateDisableMacroDescriptor(), generateEmbedIFrameMacroDescriptor() ).stream().
+        Stream.of( generateDisableMacroDescriptor(), generateEmbedIFrameMacroDescriptor() ).
             forEach( ( md ) -> macroDescriptors.put( md.getName().toLowerCase(), md ) );
 
         macrosByName = macroDescriptors.build();

@@ -81,12 +81,7 @@ class LocalizeParams
 
     private void handleArray( final Collection<String> values )
     {
-        final List<Object> params = new ArrayList<>();
-
-        for ( final String value : values )
-        {
-            params.add( value );
-        }
+        final List<Object> params = new ArrayList<>( values );
 
         this.params = params.toArray();
     }
