@@ -32,6 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public abstract class AbstractControllerTest
 {
+    private static final ObjectMapper MAPPER = new ObjectMapper().
+        enable( SerializationFeature.INDENT_OUTPUT ).
+        enable( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS );
+
     protected PostProcessorImpl postProcessor;
 
     private ControllerScriptFactoryImpl factory;
@@ -40,17 +44,7 @@ public abstract class AbstractControllerTest
 
     protected PortalResponse portalResponse;
 
-    private final ObjectMapper mapper;
-
     protected ResourceService resourceService;
-
-    public AbstractControllerTest()
-    {
-        this.mapper = new ObjectMapper();
-        this.mapper.enable( SerializationFeature.INDENT_OUTPUT );
-        this.mapper.enable( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS );
-        this.mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
-    }
 
     @BeforeEach
     public void setup()
@@ -114,11 +108,11 @@ public abstract class AbstractControllerTest
         final URL url = getClass().getResource( resource );
 
         assertNotNull( url, "File [" + resource + "] not found" );
-        final JsonNode expectedJson = this.mapper.readTree( url );
-        final JsonNode actualJson = this.mapper.readTree( actual );
+        final JsonNode expectedJson = MAPPER.readTree( url );
+        final JsonNode actualJson = MAPPER.readTree( actual );
 
-        final String expectedStr = this.mapper.writeValueAsString( expectedJson );
-        final String actualStr = this.mapper.writeValueAsString( actualJson );
+        final String expectedStr = MAPPER.writeValueAsString( expectedJson );
+        final String actualStr = MAPPER.writeValueAsString( actualJson );
 
         assertEquals( expectedStr, actualStr );
     }

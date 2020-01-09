@@ -1,10 +1,7 @@
 package com.enonic.xp.lib.value;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.data.Property;
@@ -22,18 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ScriptValueTranslatorTest
     extends ScriptTestSupport
 {
-    private ObjectMapper mapper;
-
-    @BeforeEach
-    public void setUp()
-        throws Exception
-    {
-        this.mapper = new ObjectMapper();
-        this.mapper.enable( SerializationFeature.INDENT_OUTPUT );
-        this.mapper.enable( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS );
-        this.mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
-    }
-
     @Test
     public void geoPoint()
         throws Exception

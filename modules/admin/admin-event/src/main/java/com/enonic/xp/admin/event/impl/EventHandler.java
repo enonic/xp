@@ -18,8 +18,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.websocket.EndpointFactory;
@@ -68,7 +66,7 @@ public final class EventHandler
     @Override
     public List<String> getSubProtocols()
     {
-        return Lists.newArrayList( PROTOCOL );
+        return List.of( PROTOCOL );
     }
 
     @Override

@@ -1,10 +1,8 @@
 package com.enonic.xp.descriptor;
 
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.support.AbstractImmutableEntityList;
@@ -24,7 +22,7 @@ public final class Descriptors<T extends Descriptor>
 
     public Descriptors<T> filter( final Predicate<T> predicate )
     {
-        return from( stream().filter( predicate ).collect( Collectors.toList() ) );
+        return from( stream().filter( predicate ).collect( ImmutableList.toImmutableList() ) );
     }
 
     public static <T extends Descriptor> Descriptors<T> empty()
@@ -35,7 +33,7 @@ public final class Descriptors<T extends Descriptor>
     @SafeVarargs
     public static <T extends Descriptor> Descriptors<T> from( final T... descriptors )
     {
-        return from( Lists.newArrayList( descriptors ) );
+        return from( ImmutableList.copyOf( descriptors ) );
     }
 
     public static <T extends Descriptor> Descriptors<T> from( final Iterable<? extends T> descriptors )

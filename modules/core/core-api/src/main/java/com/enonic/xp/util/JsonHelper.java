@@ -2,7 +2,6 @@ package com.enonic.xp.util;
 
 import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -10,15 +9,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.io.Resources;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.json.ObjectMapperHelper;
 
 public class JsonHelper
 {
-    private final static ObjectMapper MAPPER = ObjectMapperHelper.create().
-        configure( SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true );
+    private static final ObjectMapper MAPPER = ObjectMapperHelper.create().
+        enable( SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED );
 
     public static JsonNode merge( JsonNode mainNode, JsonNode updateNode )
     {
@@ -54,7 +52,7 @@ public class JsonHelper
 
         try
         {
-            return MAPPER.readTree( Resources.toString( url, StandardCharsets.UTF_8 ) );
+            return MAPPER.readTree( url );
         }
         catch ( IOException e )
         {

@@ -14,7 +14,6 @@ import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteStreams;
-import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.form.Form;
@@ -147,7 +146,11 @@ public class MixinResourceTest
     public void testMixinIcon()
         throws Exception
     {
-        byte[] data = Resources.toByteArray( getClass().getResource( "mixinicon.png" ) );
+        final byte[] data;
+        try (InputStream stream = getClass().getResourceAsStream( "mixinicon.png" ))
+        {
+            data = stream.readAllBytes();
+        }
         final Icon icon = Icon.from( data, "image/png", Instant.now() );
 
         Mixin mixin = Mixin.create().
@@ -181,7 +184,11 @@ public class MixinResourceTest
     public void getIconIsSvg()
         throws Exception
     {
-        byte[] data = Resources.toByteArray( getClass().getResource( "icon-black.svg" ) );
+        final byte[] data;
+        try (InputStream stream = getClass().getResourceAsStream( "icon-black.svg" ))
+        {
+            data = stream.readAllBytes();
+        }
         final Icon icon = Icon.from( data, "image/svg+xml", Instant.now() );
 
         Mixin mixin = Mixin.create().

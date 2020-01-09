@@ -2,7 +2,6 @@ package com.enonic.xp.impl.task.script;
 
 import java.net.URL;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -21,17 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PropertyTreeMapperTest
 {
-    private ObjectMapper mapper;
-
-    @BeforeEach
-    public void setUp()
-        throws Exception
-    {
-        this.mapper = new ObjectMapper();
-        this.mapper.enable( SerializationFeature.INDENT_OUTPUT );
-        this.mapper.enable( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS );
-        this.mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
-    }
+    private static final ObjectMapper MAPPER = new ObjectMapper().
+        enable( SerializationFeature.INDENT_OUTPUT ).
+        enable( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS );
 
     @Test
     public void numbers()
@@ -125,14 +116,14 @@ public class PropertyTreeMapperTest
         final URL url = getClass().getResource( resource );
 
         assertNotNull( url, "File [" + resource + "] not found" );
-        final JsonNode expectedJson = this.mapper.readTree( url );
+        final JsonNode expectedJson = MAPPER.readTree( url );
 
         final JsonMapGenerator generator = new JsonMapGenerator();
         new PropertyTreeMapper( value ).serialize( generator );
         final JsonNode actualJson = (JsonNode) generator.getRoot();
 
-        final String expectedStr = this.mapper.writeValueAsString( expectedJson );
-        final String actualStr = this.mapper.writeValueAsString( actualJson );
+        final String expectedStr = MAPPER.writeValueAsString( expectedJson );
+        final String actualStr = MAPPER.writeValueAsString( actualJson );
 
         assertEquals( expectedStr, actualStr );
     }

@@ -11,6 +11,7 @@ dependencies {
     compile "org.eclipse.jetty.websocket:websocket-servlet:${jettyVersion}"
     compile "org.eclipse.jetty.websocket:javax-websocket-server-impl:${jettyVersion}"
     implementation "io.dropwizard.metrics:metrics-jetty9:${dropwizardMetricsVersion}"
+    testImplementation project( path: ':core:core-api', configuration: 'testOutput' )
 }
 
 jar {

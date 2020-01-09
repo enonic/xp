@@ -39,7 +39,7 @@ public class GZipConfiguratorTest
 
         final GzipHandler handler = getHandler();
         assertNotNull( handler );
-        assertEquals( 16, handler.getMinGzipSize() );
+        assertEquals( 23, handler.getMinGzipSize() );
     }
 
     @Test

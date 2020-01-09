@@ -1,14 +1,13 @@
 package com.enonic.xp.admin.impl.widget;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.time.Instant;
 
 import org.osgi.framework.Bundle;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-
-import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.app.Application;
@@ -109,9 +108,9 @@ public final class WidgetDescriptorLoader
             if ( this.hasAppIcon( bundle, iconPath ) )
             {
                 final URL iconUrl = bundle.getResource( iconPath );
-                try
+                try (InputStream stream = iconUrl.openStream())
                 {
-                    final byte[] iconData = Resources.toByteArray( iconUrl );
+                    final byte[] iconData = stream.readAllBytes();
                     return Icon.from( iconData, "image/svg+xml", Instant.ofEpochMilli( bundle.getLastModified() ) );
                 }
                 catch ( IOException e )

@@ -1,12 +1,12 @@
 package com.enonic.xp.portal.impl.controller;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.ws.rs.core.Response;
 
-import com.google.common.collect.Lists;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalResponse;
@@ -351,7 +351,7 @@ public final class PortalResponseSerializer
         }
         else
         {
-            config.setSubProtocols( Lists.newArrayList( value.getValue( String.class ) ) );
+            config.setSubProtocols( Collections.singletonList( value.getValue( String.class ) ) );
         }
     }
 }

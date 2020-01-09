@@ -1,15 +1,10 @@
 package com.enonic.xp.lib.auth;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.lib.common.JsonToPropertyTreeTranslator;
 import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.lib.value.ScriptValueTranslator;
 import com.enonic.xp.lib.value.ScriptValueTranslatorResult;
@@ -119,23 +114,6 @@ public final class ModifyProfileHandler
         {
             target.profile.setSet( scope, propertyTree.getRoot() );
         }
-    }
-
-    private PropertyTree createPropertyTree( final Map<String, Object> value )
-    {
-        if ( value == null )
-        {
-            return null;
-        }
-
-        final JsonNode jsonNode = createJsonNode( value );
-        return JsonToPropertyTreeTranslator.translate( jsonNode );
-    }
-
-    private JsonNode createJsonNode( final Map<String, Object> value )
-    {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.valueToTree( value );
     }
 
     @Override

@@ -10,9 +10,6 @@ import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -37,17 +34,7 @@ public class MacroProcessorScriptTest
 
     private MacroContext macroContext;
 
-    private final ObjectMapper mapper;
-
     private ResourceService resourceService;
-
-    public MacroProcessorScriptTest()
-    {
-        this.mapper = new ObjectMapper();
-        this.mapper.enable( SerializationFeature.INDENT_OUTPUT );
-        this.mapper.enable( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS );
-        this.mapper.enable( SerializationFeature.WRITE_NULL_MAP_VALUES );
-    }
 
     @BeforeEach
     public void setup()

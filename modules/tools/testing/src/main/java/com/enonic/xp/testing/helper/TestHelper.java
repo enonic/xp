@@ -1,11 +1,9 @@
 package com.enonic.xp.testing.helper;
 
-import java.net.URL;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Assertions;
-
-import com.google.common.io.Resources;
 
 public final class TestHelper
 {
@@ -46,12 +44,14 @@ public final class TestHelper
     public static String load( final String path )
         throws Exception
     {
-        final URL url = TestHelper.class.getResource( path );
-        if ( url == null )
+        final InputStream stream = TestHelper.class.getResourceAsStream( path );
+        if ( stream == null )
         {
             return null;
         }
-
-        return Resources.toString( url, StandardCharsets.UTF_8 );
+        try (stream)
+        {
+            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
+        }
     }
 }

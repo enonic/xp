@@ -9,6 +9,8 @@ ext {
     dropwizardMetricsVersion = '4.1.2'
     commonsLangVersion = '2.6'
     commonsIoVersion = '2.6'
+    jakartaMailVersion = '1.6.4'
     elasticsearchVersion = '7.5.0'
     tikaVersion = '1.23'
+    resteasyVersion = '3.9.3.Final'
 }

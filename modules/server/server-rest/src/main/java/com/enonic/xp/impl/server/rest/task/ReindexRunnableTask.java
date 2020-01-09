@@ -1,9 +1,10 @@
 package com.enonic.xp.impl.server.rest.task;
 
+import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -52,8 +53,8 @@ public class ReindexRunnableTask
 
     public static Branches parseBranches( final String branches )
     {
-        final Iterable<String> split = Splitter.on( "," ).split( branches );
-        final Iterable<Branch> parsed = Lists.newArrayList( split ).stream().map( Branch::from ).collect( Collectors.toList() );
+        final List<Branch> parsed = StreamSupport.stream( Splitter.on( "," ).split( branches ).spliterator(), false ).
+            map( Branch::from ).collect( Collectors.toList() );
         return Branches.from( parsed );
     }
 

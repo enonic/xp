@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FormJsonToPropertyTreeTranslatorTest
 {
-    private final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void all_input_types()
@@ -162,7 +162,7 @@ public class FormJsonToPropertyTreeTranslatorTest
         final URL url = getClass().getResource( resource );
 
         assertNotNull( url, "File [" + resource + "] not found" );
-        return this.mapper.readTree( url );
+        return MAPPER.readTree( url );
     }
 
     private Form createFormForAllInputTypes()

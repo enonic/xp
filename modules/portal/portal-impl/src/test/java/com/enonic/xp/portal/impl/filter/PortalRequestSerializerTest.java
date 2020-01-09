@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.filter;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +10,6 @@ import javax.script.ScriptEngine;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import com.google.common.io.Resources;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.PortalRequest;
@@ -162,6 +161,9 @@ public class PortalRequestSerializerTest
     private String readResource( final String resourceName )
         throws Exception
     {
-        return Resources.toString( getClass().getResource( resourceName ), StandardCharsets.UTF_8 );
+        try (final InputStream stream = getClass().getResourceAsStream( resourceName ))
+        {
+            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
+        }
     }
 }

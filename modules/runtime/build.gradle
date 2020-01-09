@@ -17,6 +17,9 @@ ext {
     bundleCopySpecs = []
 }
 
+addBundle( 'com.sun.activation:jakarta.activation:1.2.1', 4 )
+addBundle( "com.sun.mail:jakarta.mail:${jakartaMailVersion}", 4 )
+
 addBundle( 'javax.xml.bind:jaxb-api:2.2.11', 4 )
 addBundle( 'com.sun.xml.bind:jaxb-core:2.2.11', 4 )
 addBundle( 'com.sun.xml.bind:jaxb-impl:2.2.11', 4 )
@@ -29,7 +32,12 @@ addBundle( 'org.apache.felix:org.apache.felix.scr:2.1.16', 5 )
 addBundle( 'org.osgi:org.osgi.util.promise:1.1.1', 5 )
 addBundle( 'org.osgi:org.osgi.util.function:1.1.0', 5 )
 
-addBundle( 'javax.mail:mail:1.4.7', 5 )
+addBundle( 'javax.annotation:javax.annotation-api:1.3.2', 5 )
+
+//Logging bridges
+addBundle( "org.slf4j:jcl-over-slf4j:${slf4jVersion}", 6 )
+addBundle( "org.slf4j:log4j-over-slf4j:${slf4jVersion}", 6 )
+addBundle( "org.jboss.logging:jboss-logging:3.3.2.Final", 6 )
 
 // Java Cryptography Extension
 addBundle( 'org.bouncycastle:bcprov-jdk15on:1.54', 6 )
@@ -53,10 +61,6 @@ addBundle( "io.dropwizard.metrics:metrics-jvm:${dropwizardMetricsVersion}", 8 )
 addBundle( "io.dropwizard.metrics:metrics-jetty9:${dropwizardMetricsVersion}", 8 )
 addBundle( 'org.jparsec:jparsec:3.1', 8 )
 addBundle( project( ':repack:repack-resteasy' ), 8 )
-addBundle( project( ':repack:repack-javax-cache-api' ), 8 )
-addBundle( 'org.apache.ignite:ignite-core:2.3.0', 8 )
-addBundle( 'org.apache.ignite:ignite-osgi:2.3.0', 8 )
-addBundle( 'org.apache.ignite:ignite-web:2.3.0', 8 )
 
 addBundle( project( ':core:core-internal' ), 9 )
 
@@ -79,8 +83,6 @@ addBundle( project( ':core:core-export' ), 22 )
 addBundle( project( ':core:core-mail' ), 22 )
 addBundle( project( ':core:core-elasticsearch' ), 22 )
 addBundle( project( ':core:core-elasticsearch-server' ), 22 )
-//TODO Java10
-//addBundle( project( ':core:core-ignite' ), 22 )
 addBundle( project( ':core:core-content' ), 22 )
 addBundle( project( ':core:core-site' ), 22 )
 addBundle( project( ':core:core-i18n' ), 22 )
@@ -223,7 +225,7 @@ task run( type: Exec, dependsOn: 'installDist' ) {
     workingDir "$buildDir/install/bin"
 
     doFirst {
-        if ( System.getProperty( "os.name" ).equalsIgnoreCase( 'windows' ) )
+        if ( System.getProperty( "os.name" ).startsWith( 'Windows' ) )
         {
             commandLine 'cmd', '/c', 'server.bat'
         }

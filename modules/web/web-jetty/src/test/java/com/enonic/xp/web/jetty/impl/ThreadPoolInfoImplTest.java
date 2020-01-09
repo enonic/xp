@@ -1,9 +1,13 @@
 package com.enonic.xp.web.jetty.impl;
 
+import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ThreadPoolInfoImplTest
 {
@@ -11,7 +15,8 @@ public class ThreadPoolInfoImplTest
     @Test
     public void getThreadPoolDetails()
     {
-        final ThreadPoolInfoImpl threadPoolInfo = new ThreadPoolInfoImpl( new ThreadPool()
+        final Server server = mock( Server.class );
+        when( server.getThreadPool() ).thenReturn( new ThreadPool()
         {
             @Override
             public void join()
@@ -43,9 +48,10 @@ public class ThreadPoolInfoImplTest
 
             }
         } );
+        final ThreadPoolInfoImpl threadPoolInfo = new ThreadPoolInfoImpl( server );
 
         assertEquals( 1, threadPoolInfo.getThreads() );
         assertEquals( 2, threadPoolInfo.getIdleThreads() );
-        assertEquals( true, threadPoolInfo.isLowOnThreads() );
+        assertTrue( threadPoolInfo.isLowOnThreads() );
     }
 }

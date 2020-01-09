@@ -1,13 +1,12 @@
 package com.enonic.xp.core.impl.app;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
 import org.osgi.framework.Bundle;
-
-import com.google.common.io.Resources;
 
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
@@ -43,9 +42,9 @@ final class ApplicationDescriptorBuilder
         if ( hasAppIcon( bundle ) )
         {
             final URL iconUrl = bundle.getResource( APP_ICON_FILENAME );
-            try
+            try (final InputStream stream = iconUrl.openStream())
             {
-                final byte[] iconData = Resources.toByteArray( iconUrl );
+                final byte[] iconData = stream.readAllBytes();
                 final Icon icon = Icon.from( iconData, "image/svg+xml", Instant.ofEpochMilli( this.bundle.getLastModified() ) );
                 appDescriptorBuilder.icon( icon );
             }
@@ -60,9 +59,9 @@ final class ApplicationDescriptorBuilder
 
     private String parseAppXml( final URL siteXmlURL )
     {
-        try
+        try (InputStream stream = siteXmlURL.openStream())
         {
-            return Resources.toString( siteXmlURL, StandardCharsets.UTF_8 );
+            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }
         catch ( final Exception e )
         {

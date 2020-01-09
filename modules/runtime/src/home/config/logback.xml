@@ -15,8 +15,9 @@
   </appender>
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <withJansi>true</withJansi>
     <encoder>
-      <pattern>%date{ISO8601} %-5level %logger{36} - %msg%n</pattern>
+      <pattern>%date{ISO8601} %highlight(%-5level) %cyan(%logger{36}) - %msg%n</pattern>
     </encoder>
   </appender>
 
@@ -25,8 +26,12 @@
     <appender-ref ref="FILE"/>
   </root>
 
-  <logger name="org.apache.ignite" additivity="false">
-    <level value="WARN"/>
+  <logger name="Events.Service" level="WARN" additivity="false">
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <logger name="Events.Bundle" level="WARN" additivity="false">
     <appender-ref ref="STDOUT"/>
     <appender-ref ref="FILE"/>
   </logger>

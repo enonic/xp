@@ -9,10 +9,6 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://felix.apache.org/license.html
 
-    Apache Ignite
-    Apache License 2.0
-    https://apacheignite.readme.io/v2.3/docs/license
-
     Apache Tika
     Apache License 2.0
     https://tika.apache.org/license.html
@@ -61,10 +57,18 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://github.com/google/j2objc/blob/master/LICENSE
 
+    Java(TM) Common Annotations
+    Common Development and Distribution License 1.1:
+    https://github.com/javaee/javax.annotation/blob/master/LICENSE
+
     JAXB
     Common Development and Distribution License 1.1:
     https://github.com/javaee/jaxb-v2/blob/master/LICENSE
     Source code: https://github.com/javaee/jaxb-v2
+
+    JBoss Logging
+    Apache License 2.0
+    http://www.apache.org/licenses/LICENSE-2.0.txt
 
     Jackson Annotations
     Apache License 2.0
@@ -103,6 +107,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://github.com/java-native-access/jna/blob/master/LICENSE
 
+    JAX-RS API
+    Common Development and Distribution License 1.1:
+    https://github.com/jax-rs/api/blob/master/LICENSE.txt
+
     JParSec
     Apache License 2.0
     https://github.com/jparsec/jparsec/blob/master/LICENSE
@@ -117,7 +125,7 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     https://www.mvnrepository.com/artifact/org.osgi/org.osgi.core
     https://www.mvnrepository.com/artifact/org.osgi/org.osgi.compendium
 
-    Rest Easy
+    RESTEasy
     Apache License 2.0
     https://github.com/resteasy/Resteasy/blob/master/License.html
 

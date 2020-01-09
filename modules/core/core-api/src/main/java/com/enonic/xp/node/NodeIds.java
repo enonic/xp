@@ -1,12 +1,12 @@
 package com.enonic.xp.node;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
@@ -39,7 +39,7 @@ public class NodeIds
 
     public static NodeIds from( final String... ids )
     {
-        return new NodeIds( parseIds( Lists.newArrayList( ids ) ) );
+        return new NodeIds( parseIds( Arrays.asList( ids ) ) );
     }
 
     public static NodeIds from( final Iterable<NodeId> ids )

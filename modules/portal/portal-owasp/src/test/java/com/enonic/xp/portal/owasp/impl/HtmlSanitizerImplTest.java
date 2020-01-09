@@ -1,10 +1,9 @@
 package com.enonic.xp.portal.owasp.impl;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
-
-import com.google.common.io.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -118,6 +117,9 @@ public class HtmlSanitizerImplTest
     private String readResource( final String resourceName )
         throws Exception
     {
-        return Resources.toString( getClass().getResource( resourceName ), StandardCharsets.UTF_8 );
+        try (final InputStream stream = getClass().getResourceAsStream( resourceName ))
+        {
+            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
+        }
     }
 }

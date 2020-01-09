@@ -3,11 +3,9 @@ package com.enonic.xp.impl.server.rest.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpResult;
+import com.enonic.xp.impl.server.rest.ModelToStringHelper;
 
 public class SystemDumpResultJson
 {
@@ -39,15 +37,7 @@ public class SystemDumpResultJson
     @Override
     public String toString()
     {
-        final ObjectMapper mapper = new ObjectMapper();
-        try
-        {
-            return mapper.writeValueAsString( this );
-        }
-        catch ( JsonProcessingException e )
-        {
-            throw new RuntimeException( e );
-        }
+        return ModelToStringHelper.convertToString( this );
     }
 
     private static Builder create()

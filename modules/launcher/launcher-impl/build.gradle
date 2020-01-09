@@ -1,17 +1,22 @@
 dependencies {
     compile project( ':launcher:launcher-api' )
-    compile 'org.osgi:osgi.core:7.0.0'
-    compile 'org.osgi:osgi.cmpn:7.0.0'
+    implementation 'org.osgi:osgi.core:7.0.0'
+    implementation 'org.osgi:osgi.cmpn:7.0.0'
     compile "org.apache.felix:org.apache.felix.framework:${felixVersion}"
+    implementation 'org.apache.felix:org.apache.felix.utils:1.11.2'
+
+    runtimeOnly ('org.apache.felix:org.apache.felix.log:1.2.2') {
+        exclude group: 'org.osgi'
+    }
     runtimeOnly 'org.apache.felix:org.apache.felix.logback:1.0.2'
-    compile 'org.apache.felix:org.apache.felix.utils:1.11.2'
-    implementation "commons-io:commons-io:${commonsIoVersion}"
+    implementation ('org.apache.felix:org.apache.felix.log.extension:1.0.0') {
+        exclude group: 'org.osgi'
+        exclude group: 'org.apache.felix'
+    }
     runtimeOnly 'ch.qos.logback:logback-classic:1.2.3'
+    runtimeOnly 'org.fusesource.jansi:jansi:1.18'
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation "org.slf4j:jul-to-slf4j:${slf4jVersion}"
-    runtimeOnly "org.apache.logging.log4j:log4j-to-slf4j:${log4jToSlf4jVersion}"
-    runtimeOnly "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
-    runtimeOnly "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
-    compile 'org.fusesource.jansi:jansi:1.11'
-    compile 'javax.mail:mail:1.4.7'
+
+    implementation "commons-io:commons-io:${commonsIoVersion}"
 }

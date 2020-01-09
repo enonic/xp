@@ -14,6 +14,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.dispatch.DispatchServlet;
 import com.enonic.xp.web.impl.dispatch.pipeline.FilterPipeline;
@@ -25,16 +27,18 @@ public final class DispatchServletImpl
     extends HttpServlet
     implements DispatchServlet
 {
-    private FilterPipeline filterPipeline;
+    private volatile FilterPipeline filterPipeline;
 
-    private ServletPipeline servletPipeline;
+    private volatile ServletPipeline servletPipeline;
 
-    private String connector;
+    private final String connector;
 
     @Activate
-    void activate( Map<String, Object> properties )
+    public DispatchServletImpl( final Map<String, ?> properties )
     {
-        connector = (String) properties.get( DispatchConstants.CONNECTOR_PROPERTY );
+        String connectorValue = (String) properties.get( DispatchConstants.CONNECTOR_PROPERTY );
+        Preconditions.checkNotNull( connectorValue, "Connector property must not be null" );
+        this.connector = connectorValue;
     }
 
     @Override
@@ -54,9 +58,9 @@ public final class DispatchServletImpl
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addFilterPipeline( final FilterPipeline filterPipeline, final Map<String, ?> props )
+    public void addFilterPipeline( final FilterPipeline filterPipeline, final Map<String, ?> properties )
     {
-        if ( sameConnector( props ) )
+        if ( sameConnector( properties ) )
         {
             this.filterPipeline = filterPipeline;
         }
@@ -64,16 +68,17 @@ public final class DispatchServletImpl
 
     public void removeFilterPipeline( final FilterPipeline filterPipeline )
     {
-        if ( this.filterPipeline != null && this.filterPipeline.equals( filterPipeline ) )
+        final FilterPipeline currentFilterPipeline = this.filterPipeline;
+        if ( currentFilterPipeline != null && currentFilterPipeline.equals( filterPipeline ) )
         {
             this.filterPipeline = null;
         }
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addServletPipeline( final ServletPipeline servletPipeline, final Map<String, ?> props )
+    public void addServletPipeline( final ServletPipeline servletPipeline, final Map<String, ?> properties )
     {
-        if ( sameConnector( props ) )
+        if ( sameConnector( properties ) )
         {
             this.servletPipeline = servletPipeline;
         }
@@ -81,7 +86,8 @@ public final class DispatchServletImpl
 
     public void removeServletPipeline( final ServletPipeline servletPipeline )
     {
-        if ( this.servletPipeline != null && this.servletPipeline.equals( servletPipeline ) )
+        final ServletPipeline currentServletPipeline = this.servletPipeline;
+        if ( currentServletPipeline != null && currentServletPipeline.equals( servletPipeline ) )
         {
             this.servletPipeline = null;
         }
@@ -108,15 +114,8 @@ public final class DispatchServletImpl
         return connector;
     }
 
-    private boolean sameConnector( final Map<String, ?> props )
+    private boolean sameConnector( final Map<String, ?> properties )
     {
-        final Object value = props.get( DispatchConstants.CONNECTOR_PROPERTY );
-
-        if ( value == null )
-        {
-            return true;
-        }
-
-        return value.equals( this.connector );
+        return this.connector.equals( properties.get( DispatchConstants.CONNECTOR_PROPERTY ) );
     }
 }

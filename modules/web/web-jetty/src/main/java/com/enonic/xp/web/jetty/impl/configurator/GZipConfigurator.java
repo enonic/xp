@@ -1,8 +1,6 @@
 package com.enonic.xp.web.jetty.impl.configurator;
 
-import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
-import org.eclipse.jetty.server.handler.gzip.GzipHttpOutputInterceptor;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
 public final class GZipConfigurator
@@ -16,13 +14,8 @@ public final class GZipConfigurator
             return;
         }
 
-        final GzipHandler handler = new GzipHandler(){
-            @Override
-            protected HttpField getVaryField()
-            {
-                return GzipHttpOutputInterceptor.VARY_ACCEPT_ENCODING;
-            }
-        };
+        final GzipHandler handler = new GzipHandler();
+        handler.setExcludedAgentPatterns();
         handler.setMinGzipSize( this.config.gzip_minSize() );
         handler.addExcludedMimeTypes( "application/octet-stream" );
 

@@ -25,6 +25,8 @@ import com.enonic.xp.task.TaskService;
 public final class SubmitNamedTaskHandler
     implements ScriptBean
 {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
     private Supplier<TaskService> taskServiceSupplier;
 
     private Supplier<MixinService> mixinServiceSupplier;
@@ -90,8 +92,7 @@ public final class SubmitNamedTaskHandler
 
     private JsonNode createJson( final Map<String, Object> value )
     {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.valueToTree( value );
+        return MAPPER.valueToTree( value );
     }
 
     private PropertyTree translateToPropertyTree( final Map<String, Object> configValues, final Form form )

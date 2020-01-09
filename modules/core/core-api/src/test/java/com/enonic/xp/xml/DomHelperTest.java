@@ -2,15 +2,12 @@ package com.enonic.xp.xml;
 
 import java.io.InputStream;
 import java.io.StringReader;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import com.google.common.io.Resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -34,8 +31,11 @@ public class DomHelperTest
     public void parseString()
         throws Exception
     {
-        final URL url = getClass().getResource( "document.xml" );
-        final String xml = Resources.toString( url, StandardCharsets.UTF_8 );
+        final String xml;
+        try (InputStream stream = getClass().getResourceAsStream( "document.xml" ))
+        {
+            xml = new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
+        }
         final Document doc = DomHelper.parse( xml );
         assertNotNull( doc );
     }
@@ -51,8 +51,11 @@ public class DomHelperTest
     public void parseReader()
         throws Exception
     {
-        final URL url = getClass().getResource( "document.xml" );
-        final String xml = Resources.toString( url, StandardCharsets.UTF_8 );
+        final String xml;
+        try (InputStream stream = getClass().getResourceAsStream( "document.xml" ))
+        {
+            xml = new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
+        }
         final Document doc = DomHelper.parse( new StringReader( xml ) );
         assertNotNull( doc );
     }

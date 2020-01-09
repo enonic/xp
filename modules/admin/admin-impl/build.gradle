@@ -2,7 +2,15 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':admin:admin-api' )
-    compile 'org.jboss.resteasy:resteasy-jaxrs:3.0.8.Final'
+    implementation ( "org.jboss.resteasy:resteasy-jaxrs:${resteasyVersion}" ) {
+        exclude group: 'org.jboss.spec.javax.annotation'
+        exclude group: 'org.jboss.spec.javax.xml.bind'
+        exclude group: 'org.jboss.spec.javax.ws.rs'
+        exclude group: 'org.apache.httpcomponents'
+        exclude group: 'com.github.stephenc.jcip'
+        exclude group: 'javax.validation'
+    }
+
     testCompile project( ':jaxrs:jaxrs-impl' )
     testCompile project( path: ':core:core-app', configuration: 'testOutput' )
     testCompile project( path: ':portal:portal-api', configuration: 'testOutput' )

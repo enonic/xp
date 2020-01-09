@@ -1,12 +1,11 @@
 package com.enonic.xp.portal.impl;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-
-import com.google.common.collect.Lists;
 
 import com.enonic.xp.portal.PortalAttributes;
 import com.enonic.xp.portal.PortalRequest;
@@ -110,7 +109,7 @@ public class PortalRequestAdapter
     {
         for ( final Map.Entry<String, String[]> entry : from.getParameterMap().entrySet() )
         {
-            to.getParams().putAll( entry.getKey(), Lists.newArrayList( entry.getValue() ) );
+            to.getParams().putAll( entry.getKey(), Arrays.asList( entry.getValue() ) );
         }
     }
 }
