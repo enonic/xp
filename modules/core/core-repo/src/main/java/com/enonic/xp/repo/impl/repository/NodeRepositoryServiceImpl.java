@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.repository;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -40,8 +42,15 @@ public class NodeRepositoryServiceImpl
     @Override
     public void create( final CreateRepositoryParams params )
     {
-        createIndexes( params );
-        applyMappings( params );
+        final CompletableFuture<Void> versionCf = CompletableFuture.runAsync( () -> doCreateIndex( params, IndexType.VERSION ) ).
+            thenRun( () -> applyMapping( params, IndexType.VERSION ) );
+
+        final CompletableFuture<Void> branchCf = CompletableFuture.runAsync( () -> doCreateIndex( params, IndexType.BRANCH ) ).
+            thenRun( () -> applyMapping( params, IndexType.BRANCH ) );
+
+        final CompletableFuture<Void> commitCf = CompletableFuture.runAsync( () -> doCreateIndex( params, IndexType.COMMIT ) ).
+            thenRun( () -> applyMapping( params, IndexType.COMMIT ) );
+        CompletableFuture.allOf( versionCf, branchCf, commitCf ).join();
 
         checkClusterHealth();
     }
@@ -49,10 +58,11 @@ public class NodeRepositoryServiceImpl
     @Override
     public void delete( final RepositoryId repositoryId )
     {
-        delete( repositoryId, IndexType.SEARCH );
-        delete( repositoryId, IndexType.VERSION );
-        delete( repositoryId, IndexType.BRANCH );
-        delete( repositoryId, IndexType.COMMIT );
+        final CompletableFuture<Void> searchCf = CompletableFuture.runAsync( () -> delete( repositoryId, IndexType.SEARCH ) );
+        final CompletableFuture<Void> versionCf = CompletableFuture.runAsync( () -> delete( repositoryId, IndexType.VERSION ) );
+        final CompletableFuture<Void> branchCf = CompletableFuture.runAsync( () -> delete( repositoryId, IndexType.BRANCH ) );
+        final CompletableFuture<Void> commitCf = CompletableFuture.runAsync( () -> delete( repositoryId, IndexType.COMMIT ) );
+        CompletableFuture.allOf( searchCf, versionCf, branchCf, commitCf ).join();
     }
 
     private void delete( final RepositoryId repositoryId, final IndexType indexType )
@@ -82,14 +92,6 @@ public class NodeRepositoryServiceImpl
 
         return indexServiceInternal.indicesExists( versionIndexName, branchIndexName, commitIndexName, masterSearchIndexName );
     }
-
-    private void createIndexes( final CreateRepositoryParams params )
-    {
-        doCreateIndex( params, IndexType.VERSION );
-        doCreateIndex( params, IndexType.BRANCH );
-        doCreateIndex( params, IndexType.COMMIT );
-    }
-
 
     private void doCreateIndex( final CreateRepositoryParams params, final IndexType indexType )
     {
@@ -141,13 +143,6 @@ public class NodeRepositoryServiceImpl
         }
 
         return defaultSettings;
-    }
-
-    private void applyMappings( final CreateRepositoryParams params )
-    {
-        applyMapping( params, IndexType.BRANCH );
-        applyMapping( params, IndexType.VERSION );
-        applyMapping( params, IndexType.COMMIT );
     }
 
     private void applyMapping( final CreateRepositoryParams params, final IndexType indexType )
