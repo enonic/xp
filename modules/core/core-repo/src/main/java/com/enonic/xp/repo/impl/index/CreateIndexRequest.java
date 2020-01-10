@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.index;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -12,8 +13,11 @@ public class CreateIndexRequest
 
     private final IndexSettings indexSettings;
 
+    private final IndexMapping mapping;
+
     private CreateIndexRequest( final Builder builder )
     {
+        mapping = builder.mapping;
         indexName = builder.indexName;
         indexSettings = builder.indexSettings;
     }
@@ -28,6 +32,11 @@ public class CreateIndexRequest
         return indexSettings;
     }
 
+    public IndexMapping getMapping()
+    {
+        return mapping;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -35,12 +44,20 @@ public class CreateIndexRequest
 
     public static final class Builder
     {
+        private IndexMapping mapping;
+
         private String indexName;
 
         private IndexSettings indexSettings;
 
         private Builder()
         {
+        }
+
+        public Builder mapping( final IndexMapping val )
+        {
+            mapping = val;
+            return this;
         }
 
         public Builder indexName( final String val )

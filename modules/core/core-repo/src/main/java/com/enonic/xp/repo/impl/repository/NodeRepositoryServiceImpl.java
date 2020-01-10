@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.repository;
 
-import java.util.concurrent.CompletableFuture;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -12,7 +10,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repo.impl.elasticsearch.ClusterHealthStatus;
 import com.enonic.xp.repo.impl.elasticsearch.ClusterStatusCode;
-import com.enonic.xp.repo.impl.index.ApplyMappingRequest;
 import com.enonic.xp.repo.impl.index.CreateIndexRequest;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repository.CreateRepositoryParams;
@@ -42,15 +39,9 @@ public class NodeRepositoryServiceImpl
     @Override
     public void create( final CreateRepositoryParams params )
     {
-        final CompletableFuture<Void> versionCf = CompletableFuture.runAsync( () -> doCreateIndex( params, IndexType.VERSION ) ).
-            thenRun( () -> applyMapping( params, IndexType.VERSION ) );
-
-        final CompletableFuture<Void> branchCf = CompletableFuture.runAsync( () -> doCreateIndex( params, IndexType.BRANCH ) ).
-            thenRun( () -> applyMapping( params, IndexType.BRANCH ) );
-
-        final CompletableFuture<Void> commitCf = CompletableFuture.runAsync( () -> doCreateIndex( params, IndexType.COMMIT ) ).
-            thenRun( () -> applyMapping( params, IndexType.COMMIT ) );
-        CompletableFuture.allOf( versionCf, branchCf, commitCf ).join();
+        doCreateIndex( params, IndexType.VERSION );
+        doCreateIndex( params, IndexType.BRANCH );
+        doCreateIndex( params, IndexType.COMMIT );
 
         checkClusterHealth();
     }
@@ -58,11 +49,10 @@ public class NodeRepositoryServiceImpl
     @Override
     public void delete( final RepositoryId repositoryId )
     {
-        final CompletableFuture<Void> searchCf = CompletableFuture.runAsync( () -> delete( repositoryId, IndexType.SEARCH ) );
-        final CompletableFuture<Void> versionCf = CompletableFuture.runAsync( () -> delete( repositoryId, IndexType.VERSION ) );
-        final CompletableFuture<Void> branchCf = CompletableFuture.runAsync( () -> delete( repositoryId, IndexType.BRANCH ) );
-        final CompletableFuture<Void> commitCf = CompletableFuture.runAsync( () -> delete( repositoryId, IndexType.COMMIT ) );
-        CompletableFuture.allOf( searchCf, versionCf, branchCf, commitCf ).join();
+        delete( repositoryId, IndexType.SEARCH );
+        delete( repositoryId, IndexType.VERSION );
+        delete( repositoryId, IndexType.BRANCH );
+        delete( repositoryId, IndexType.COMMIT );
     }
 
     private void delete( final RepositoryId repositoryId, final IndexType indexType )
@@ -98,9 +88,12 @@ public class NodeRepositoryServiceImpl
         final RepositoryId repositoryId = params.getRepositoryId();
         final IndexSettings mergedSettings = mergeWithDefaultSettings( params, indexType );
 
+        final IndexMapping mergedMapping = mergeWithDefaultMapping( params, indexType );
+
         indexServiceInternal.createIndex( CreateIndexRequest.create().
             indexName( resolveStorageIndexName( repositoryId, indexType ) ).
             indexSettings( mergedSettings ).
+            mapping( mergedMapping ).
             build() );
     }
 
@@ -143,18 +136,6 @@ public class NodeRepositoryServiceImpl
         }
 
         return defaultSettings;
-    }
-
-    private void applyMapping( final CreateRepositoryParams params, final IndexType indexType )
-    {
-        final RepositoryId repositoryId = params.getRepositoryId();
-        final IndexMapping mergedMapping = mergeWithDefaultMapping( params, indexType );
-
-        this.indexServiceInternal.applyMapping( ApplyMappingRequest.create().
-            indexName( resolveStorageIndexName( repositoryId, indexType ) ).
-            indexType( indexType ).
-            mapping( mergedMapping ).
-            build() );
     }
 
     private IndexMapping mergeWithDefaultMapping( final CreateRepositoryParams params, final IndexType indexType )

@@ -180,17 +180,11 @@ public class IndexServiceImpl
         indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
 
         final IndexSettings indexSettings = getSearchIndexSettings( repositoryId );
+        final IndexMapping indexMapping = getSearchIndexMapping( repositoryId );
+
         indexServiceInternal.createIndex( CreateIndexRequest.create().
             indexName( searchIndexName ).
             indexSettings( indexSettings ).
-            build() );
-
-        indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
-
-        final IndexMapping indexMapping = getSearchIndexMapping( repositoryId );
-        indexServiceInternal.applyMapping( ApplyMappingRequest.create().
-            indexName( searchIndexName ).
-            indexType( IndexType.SEARCH ).
             mapping( indexMapping ).
             build() );
 

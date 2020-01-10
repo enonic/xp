@@ -48,6 +48,7 @@ import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.index.UpdateIndexSettings;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repository.IndexException;
+import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -145,11 +146,12 @@ public class IndexServiceInternalImpl
     {
         final String indexName = request.getIndexName();
         final IndexSettings indexSettings = request.getIndexSettings();
+        final IndexMapping indexMapping = request.getMapping();
         LOG.info( "creating index {}", indexName );
 
         final CreateIndexRequest createIndexRequest = new CreateIndexRequest( indexName );
         createIndexRequest.settings( indexSettings.getAsString(), XContentType.JSON );
-
+        createIndexRequest.mapping( indexMapping.getAsString(), XContentType.JSON );
         try
         {
             final CreateIndexResponse createIndexResponse = client.indicesCreate( createIndexRequest );
