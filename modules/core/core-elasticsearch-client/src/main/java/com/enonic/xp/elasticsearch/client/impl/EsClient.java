@@ -62,6 +62,8 @@ import org.elasticsearch.client.indices.PutMappingRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
+import com.enonic.xp.elasticsearch.client.impl.cluster.state.GetClusterStateRequest;
+import com.enonic.xp.elasticsearch.client.impl.cluster.state.GetClusterStateResponse;
 import com.enonic.xp.elasticsearch.client.impl.nodes.GetNodesResponse;
 
 public final class EsClient
@@ -220,6 +222,15 @@ public final class EsClient
             final Response response = client.getLowLevelClient().performRequest( new Request( HttpGet.METHOD_NAME, "_nodes" ) );
 
             return GetNodesResponse.fromResponse( response );
+        } );
+    }
+
+    public GetClusterStateResponse clusterState( final GetClusterStateRequest request )
+    {
+        return wrap( () -> {
+            final Response response = client.getLowLevelClient().performRequest( request.getInternalRequest() );
+
+            return GetClusterStateResponse.fromResponse( response );
         } );
     }
 

@@ -1,8 +1,7 @@
-package com.enonic.xp.elasticsearch.client.impl.nodes;
+package com.enonic.xp.elasticsearch.client.impl.cluster.state;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.http.Header;
@@ -19,11 +18,10 @@ import org.mockito.Mockito;
 import com.enonic.xp.elasticsearch.client.impl.EsClientResponseBaseTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class GetNodesResponseTest
+public class GetClusterStateResponseTest
     extends EsClientResponseBaseTest
 {
 
@@ -37,7 +35,7 @@ public class GetNodesResponseTest
         Mockito.when( response.getEntity() ).thenReturn( null );
 
         // test
-        IllegalStateException ex = assertThrows( IllegalStateException.class, () -> GetNodesResponse.fromResponse( response ) );
+        IllegalStateException ex = assertThrows( IllegalStateException.class, () -> GetClusterStateResponse.fromResponse( response ) );
 
         // assert
         assertEquals( "Response body expected but not returned", ex.getMessage() );
@@ -55,7 +53,7 @@ public class GetNodesResponseTest
         Mockito.when( httpEntity.getContentType() ).thenReturn( null );
 
         // test
-        IllegalStateException ex = assertThrows( IllegalStateException.class, () -> GetNodesResponse.fromResponse( response ) );
+        IllegalStateException ex = assertThrows( IllegalStateException.class, () -> GetClusterStateResponse.fromResponse( response ) );
 
         // assert
         assertEquals( "Elasticsearch didn't return the [Content-Type] header, unable to parse response body", ex.getMessage() );
@@ -75,7 +73,7 @@ public class GetNodesResponseTest
         Mockito.when( contentType.getValue() ).thenReturn( "unknown" );
 
         // test
-        IllegalStateException ex = assertThrows( IllegalStateException.class, () -> GetNodesResponse.fromResponse( response ) );
+        IllegalStateException ex = assertThrows( IllegalStateException.class, () -> GetClusterStateResponse.fromResponse( response ) );
 
         // assert
         assertEquals( "Unsupported Content-Type: unknown", ex.getMessage() );
@@ -95,12 +93,12 @@ public class GetNodesResponseTest
         Mockito.when( httpEntity.getContentType() ).thenReturn( contentTypeHeader );
         Mockito.when( contentTypeHeader.getValue() ).thenReturn( "application/*" );
 
-        try (final InputStream stream = getResource( "nodes.json" ))
+        try (final InputStream stream = getResource( "cluster_state.json" ))
         {
             Mockito.when( httpEntity.getContent() ).thenReturn( stream );
 
             // test
-            final GetNodesResponse result = GetNodesResponse.fromResponse( response );
+            final GetClusterStateResponse result = GetClusterStateResponse.fromResponse( response );
 
             // assert
             assertNotNull( result );
@@ -108,42 +106,24 @@ public class GetNodesResponseTest
     }
 
     @Test
-    public void testFromXContent()
+    public void test()
         throws IOException
     {
-        final List<String> roles = Arrays.asList( "ingest", "master", "data", "ml" );
-
         final XContentType xContentType = XContentType.fromMediaTypeOrFormat( "application/json" );
 
-        try (final InputStream stream = getResource( "nodes.json" );
+        try (final InputStream stream = getResource( "cluster_state.json" );
 
              final XContentParser parser = XContentFactory.xContent( xContentType ).
                  createParser( NamedXContentRegistry.EMPTY, DeprecationHandler.THROW_UNSUPPORTED_OPERATION, stream ))
         {
-            final GetNodesResponse result = GetNodesResponse.fromXContent( parser );
+            final GetClusterStateResponse result = GetClusterStateResponse.fromXContent( parser );
 
             assertNotNull( result );
-            assertEquals( "elasticsearch", result.getClusterName() );
-
-            final List<Node> nodes = result.getNodes();
-            assertFalse( nodes.isEmpty() );
-            assertEquals( 2, nodes.size() );
-
-            // assert the first node
-            assertEquals( "gSzRPkbvTva5BJakoxbCeA", nodes.get( 0 ).getId() );
-            assertEquals( "127.0.0.1:9300", nodes.get( 0 ).getAddress() );
-            assertEquals( "7.4.0", nodes.get( 0 ).getVersion() );
-            assertEquals( "127.0.0.1", nodes.get( 0 ).getHostName() );
-            assertEquals( "es01", nodes.get( 0 ).getName() );
-            assertEquals( roles, nodes.get( 0 ).getRoles() );
-
-            // assert the second node
-            assertEquals( "xOOpT6oeQ1WVKm9cYISRIw", nodes.get( 1 ).getId() );
-            assertEquals( "127.0.0.2:9300", nodes.get( 1 ).getAddress() );
-            assertEquals( "7.4.0", nodes.get( 1 ).getVersion() );
-            assertEquals( "127.0.0.2", nodes.get( 1 ).getHostName() );
-            assertEquals( "es02", nodes.get( 1 ).getName() );
-            assertEquals( roles, nodes.get( 1 ).getRoles() );
+            assertEquals( "gSzRPkbvTva5BJakoxbCeA", result.getMasterNodeId() );
+            final List<IndexRoutingTable> indices = result.getRoutingTable().getIndices();
+            assertEquals( 2, indices.size() );
+            assertEquals( 4, indices.get( 0 ).getShards().size() );
+            assertEquals( 2, indices.get( 1 ).getShards().size() );
         }
     }
 

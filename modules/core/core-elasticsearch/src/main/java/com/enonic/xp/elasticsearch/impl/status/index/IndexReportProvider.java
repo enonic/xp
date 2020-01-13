@@ -2,18 +2,20 @@ package com.enonic.xp.elasticsearch.impl.status.index;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
-import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
-import org.elasticsearch.cluster.node.DiscoveryNode;
-import org.elasticsearch.cluster.node.DiscoveryNodes;
-import org.elasticsearch.cluster.routing.RoutingTable;
-import org.elasticsearch.cluster.routing.ShardRouting;
-import org.elasticsearch.cluster.routing.ShardRoutingState;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.elasticsearch.client.impl.EsClient;
+import com.enonic.xp.elasticsearch.client.impl.cluster.state.GetClusterStateRequest;
+import com.enonic.xp.elasticsearch.client.impl.cluster.state.GetClusterStateResponse;
+import com.enonic.xp.elasticsearch.client.impl.cluster.state.IndexShardRoutingState;
+import com.enonic.xp.elasticsearch.client.impl.cluster.state.IndexShardRoutingTable;
+import com.enonic.xp.elasticsearch.client.impl.cluster.state.RoutingTable;
+import com.enonic.xp.elasticsearch.client.impl.nodes.Node;
 
 @Component(service = IndexReportProvider.class)
 public class IndexReportProvider
@@ -27,7 +29,7 @@ public class IndexReportProvider
         final IndexReport.Builder builder = IndexReport.create();
         try
         {
-            final ClusterStateResponse clusterStateResponse = getClusterState();
+            final GetClusterStateResponse clusterStateResponse = getClusterState();
 
             setShardSummary( builder, clusterStateResponse );
 
@@ -40,66 +42,68 @@ public class IndexReportProvider
         return builder.build();
     }
 
-    private void setShardSummary( final IndexReport.Builder builder, final ClusterStateResponse clusterStateResponse )
+    private void setShardSummary( final IndexReport.Builder builder, final GetClusterStateResponse clusterStateResponse )
     {
         final ShardSummary.Builder summaryBuilder = ShardSummary.create();
 
-        final RoutingTable routingTable = clusterStateResponse.getState().getRoutingTable();
+        final RoutingTable routingTable = clusterStateResponse.getRoutingTable();
 
-        summaryBuilder.started( routingTable.shardsWithState( ShardRoutingState.STARTED ).size() );
-        summaryBuilder.unassigned( routingTable.shardsWithState( ShardRoutingState.UNASSIGNED ).size() );
-        summaryBuilder.initializing( routingTable.shardsWithState( ShardRoutingState.INITIALIZING ).size() );
-        summaryBuilder.relocating( routingTable.shardsWithState( ShardRoutingState.RELOCATING ).size() );
+        summaryBuilder.started( routingTable.shardsWithState( IndexShardRoutingState.STARTED ).size() );
+        summaryBuilder.unassigned( routingTable.shardsWithState( IndexShardRoutingState.UNASSIGNED ).size() );
+        summaryBuilder.initializing( routingTable.shardsWithState( IndexShardRoutingState.INITIALIZING ).size() );
+        summaryBuilder.relocating( routingTable.shardsWithState( IndexShardRoutingState.RELOCATING ).size() );
 
         builder.shardSummart( summaryBuilder.build() );
     }
 
-    private void setShardInfo( final IndexReport.Builder builder, final ClusterStateResponse clusterStateResponse )
+    private void setShardInfo( final IndexReport.Builder builder, final GetClusterStateResponse clusterStateResponse )
     {
+        final Map<String, Node> nodes = client.nodes().getNodes().stream().collect( Collectors.toMap( Node::getId, Function.identity() ) );
+
         final ShardInfo.Builder shardInfoBuilder = ShardInfo.create();
 
-        final RoutingTable routingTable = clusterStateResponse.getState().getRoutingTable();
+        final RoutingTable routingTable = clusterStateResponse.getRoutingTable();
 
-        final DiscoveryNodes nodes = clusterStateResponse.getState().getNodes();
-
-        shardInfoBuilder.started( create( routingTable.shardsWithState( ShardRoutingState.STARTED ), nodes ) );
-        shardInfoBuilder.unassigned( create( routingTable.shardsWithState( ShardRoutingState.UNASSIGNED ), nodes ) );
-        shardInfoBuilder.initializing( create( routingTable.shardsWithState( ShardRoutingState.INITIALIZING ), nodes ) );
-        shardInfoBuilder.relocating( create( routingTable.shardsWithState( ShardRoutingState.RELOCATING ), nodes ) );
+        shardInfoBuilder.started( create( routingTable.shardsWithState( IndexShardRoutingState.STARTED ), nodes ) );
+        shardInfoBuilder.unassigned( create( routingTable.shardsWithState( IndexShardRoutingState.UNASSIGNED ), nodes ) );
+        shardInfoBuilder.initializing( create( routingTable.shardsWithState( IndexShardRoutingState.INITIALIZING ), nodes ) );
+        shardInfoBuilder.relocating( create( routingTable.shardsWithState( IndexShardRoutingState.RELOCATING ), nodes ) );
 
         builder.shardInfo( shardInfoBuilder.build() );
     }
 
-
-    private List<ShardDetails> create( final List<ShardRouting> shardRoutingList, final DiscoveryNodes discoveryNodes )
+    private List<ShardDetails> create( final List<IndexShardRoutingTable> shardRoutingList, final Map<String, Node> nodes )
     {
-        List<ShardDetails> list = new ArrayList<>();
+        final List<ShardDetails> list = new ArrayList<>();
 
         shardRoutingList.forEach( ( routing ) -> list.add( ShardDetails.create().
-            id( routing.index() + "(" + routing.getId() + ")" ).
-            nodeId( routing.currentNodeId() ).
-            nodeAddress( getAddress( discoveryNodes, routing ) ).
-            primary( routing.primary() ).
-            relocatingNode( routing.relocatingNodeId() ).
+            id( routing.getIndex() + "(" + routing.getShard() + ")" ).
+            nodeId( routing.getNodeId() ).
+            primary( routing.isPrimary() ).
+            relocatingNode( routing.getRelocatingNodeId() ).
+            nodeAddress( getAddress( nodes, routing ) ).
             build() ) );
 
         return list;
     }
 
-    private String getAddress( final DiscoveryNodes discoveryNodes, final ShardRouting routing )
+    private String getAddress( final Map<String, Node> nodes, final IndexShardRoutingTable indexShardRouting )
     {
-        final DiscoveryNode node = discoveryNodes.get( routing.currentNodeId() );
+        final Node node = nodes.get( indexShardRouting.getNodeId() );
 
-        return node != null ? node.getHostAddress() : "UNKNOWN";
+        if ( node == null )
+        {
+            return "UNKNOWN";
+        }
+
+        final String hostAddress = node.getHostAddress();
+
+        return hostAddress != null ? hostAddress : "UNKNOWN";
     }
 
-    private ClusterStateResponse getClusterState()
+    private GetClusterStateResponse getClusterState()
     {
-        new ClusterStateRequest().
-            clear().
-            routingTable( true ).
-            nodes( true );
-        return null;
+        return client.clusterState( new GetClusterStateRequest( TIMEOUT ) );
     }
 
     @Reference
