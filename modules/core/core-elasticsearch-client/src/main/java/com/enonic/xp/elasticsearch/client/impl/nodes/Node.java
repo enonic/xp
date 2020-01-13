@@ -19,46 +19,76 @@ public class Node
 
     private static final ParseField ROLES_FILED = new ParseField( "roles" );
 
-    private static final ObjectParser<Builder, Void> PARSER = new ObjectParser<>( "get_nodes_response_node", true, Builder::new );
+    private static final ParseField SETTINGS_FILED = new ParseField( "settings" );
+
+    private static final ObjectParser<Node, Void> PARSER = new ObjectParser<>( "get_nodes_response_node", true, Node::new );
 
     static
     {
-        PARSER.declareString( Builder::name, NAME_FILED );
-        PARSER.declareString( Builder::version, VERSION_FILED );
-        PARSER.declareString( Builder::hostName, HOST_FILED );
-        PARSER.declareString( Builder::address, ADDRESS_FILED );
-        PARSER.declareStringArray( Builder::roles, ROLES_FILED );
+        PARSER.declareString( Node::setName, NAME_FILED );
+        PARSER.declareString( Node::setVersion, VERSION_FILED );
+        PARSER.declareString( Node::setHostName, HOST_FILED );
+        PARSER.declareString( Node::setAddress, ADDRESS_FILED );
+        PARSER.declareStringArray( Node::setRoles, ROLES_FILED );
+        PARSER.declareObject( Node::setSettings, ( parser, v ) -> NodeSettings.parse( parser ), SETTINGS_FILED );
     }
 
     public static Node parse( XContentParser parser, String name )
         throws IOException
     {
-        final Builder builder = PARSER.parse( parser, null );
-        builder.id( name );
+        Node node = PARSER.parse( parser, null );
+        node.setId( name );
 
-        return builder.build();
+        return node;
     }
 
-    private final String id;
+    private String id;
 
-    private final String name;
+    private String name;
 
-    private final String version;
+    private String version;
 
-    private final String hostName;
+    private String hostName;
 
-    private final String address;
+    private String address;
 
-    private final List<String> roles;
+    private List<String> roles;
 
-    private Node( final Builder builder )
+    private NodeSettings settings;
+
+    public void setId( final String id )
     {
-        this.id = builder.id;
-        this.name = builder.name;
-        this.version = builder.version;
-        this.hostName = builder.hostName;
-        this.address = builder.address;
-        this.roles = builder.roles;
+        this.id = id;
+    }
+
+    public void setName( final String name )
+    {
+        this.name = name;
+    }
+
+    public void setVersion( final String version )
+    {
+        this.version = version;
+    }
+
+    public void setHostName( final String hostName )
+    {
+        this.hostName = hostName;
+    }
+
+    public void setAddress( final String address )
+    {
+        this.address = address;
+    }
+
+    public void setRoles( final List<String> roles )
+    {
+        this.roles = roles;
+    }
+
+    public void setSettings( final NodeSettings settings )
+    {
+        this.settings = settings;
     }
 
     public String getId()
@@ -91,14 +121,19 @@ public class Node
         return roles;
     }
 
-    public boolean isMasterNode()
+    public NodeSettings getSettings()
     {
-        if ( roles != null )
+        return settings;
+    }
+
+    public String getHostAddress()
+    {
+        if ( settings != null && settings.getNetwork() != null )
         {
-            return roles.contains( "master" ) || roles.contains( "m" );
+            return settings.getNetwork().getHost();
         }
 
-        return false;
+        return null;
     }
 
     public boolean isDataNode()
@@ -109,81 +144,6 @@ public class Node
         }
 
         return false;
-    }
-
-    public static Builder builder()
-    {
-        return new Builder();
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Node{" + "id='" + id + '\'' + ", name='" + name + '\'' + ", version='" + version + '\'' + ", hostName='" + hostName + '\'' +
-            ", address='" + address + '\'' + ", roles=" + roles + '}';
-    }
-
-    public static class Builder
-    {
-
-        private String id;
-
-        private String name;
-
-        private String version;
-
-        private String hostName;
-
-        private String address;
-
-        private List<String> roles;
-
-        public Builder()
-        {
-
-        }
-
-        public Builder id( final String id )
-        {
-            this.id = id;
-            return this;
-        }
-
-        public Builder name( final String name )
-        {
-            this.name = name;
-            return this;
-        }
-
-        public Builder version( final String version )
-        {
-            this.version = version;
-            return this;
-        }
-
-        public Builder hostName( final String hostName )
-        {
-            this.hostName = hostName;
-            return this;
-        }
-
-        public Builder address( final String address )
-        {
-            this.address = address;
-            return this;
-        }
-
-        public Builder roles( final List<String> roles )
-        {
-            this.roles = roles;
-            return this;
-        }
-
-        public Node build()
-        {
-            return new Node( this );
-        }
-
     }
 
 }

@@ -1,0 +1,134 @@
+{
+  "cluster_name": "elasticsearch",
+  "cluster_uuid": "2G-8JjD8Rle7Ei0J7uBiNg",
+  "version": 663789,
+  "state_uuid": "ryuuOq5pQxO37c7NWR_6Yw",
+  "master_node": "gSzRPkbvTva5BJakoxbCeA",
+  "blocks": {},
+  "nodes": {
+    "gSzRPkbvTva5BJakoxbCeA": {
+      "name": "es01",
+      "ephemeral_id": "Hpr07ZhBTPyKnROS41-Lzg",
+      "transport_address": "127.0.0.1:9300",
+      "attributes": {
+        "ml.machine_memory": "16557264896",
+        "xpack.installed": "true",
+        "ml.max_open_jobs": "20"
+      }
+    },
+    "xOOpT6oeQ1WVKm9cYISRIw": {
+      "name": "es02",
+      "ephemeral_id": "Hpr07ZhBTPyKnROS42-Lzg",
+      "transport_address": "127.0.0.2:9300",
+      "attributes": {
+        "ml.machine_memory": "16557264896",
+        "xpack.installed": "true",
+        "ml.max_open_jobs": "20"
+      }
+    }
+  },
+  "routing_table": {
+    "indices": {
+      "index-1": {
+        "shards": {
+          "0": [
+            {
+              "state": "STARTED",
+              "primary": true,
+              "node": "gSzRPkbvTva5BJakoxbCeA",
+              "relocating_node": null,
+              "shard": 0,
+              "index": "index-1",
+              "allocation_id": {
+                "id": "KD0NpiztR7m6bSXUH_Xr-g"
+              }
+            },
+            {
+              "state": "UNASSIGNED",
+              "primary": false,
+              "node": null,
+              "relocating_node": null,
+              "shard": 0,
+              "index": "index-1",
+              "recovery_source": {
+                "type": "PEER"
+              },
+              "unassigned_info": {
+                "reason": "CLUSTER_RECOVERED",
+                "at": "2020-01-09T15:46:54.102Z",
+                "delayed": false,
+                "allocation_status": "no_attempt"
+              }
+            }
+          ],
+          "1": [
+            {
+              "state": "STARTED",
+              "primary": true,
+              "node": "xOOpT6oeQ1WVKm9cYISRIw",
+              "relocating_node": null,
+              "shard": 1,
+              "index": "index-1",
+              "allocation_id": {
+                "id": "OdSTTMqaR6SKQNB_dmPLtw"
+              }
+            },
+            {
+              "state": "UNASSIGNED",
+              "primary": false,
+              "node": null,
+              "relocating_node": null,
+              "shard": 1,
+              "index": "index-1",
+              "recovery_source": {
+                "type": "PEER"
+              },
+              "unassigned_info": {
+                "reason": "CLUSTER_RECOVERED",
+                "at": "2020-01-09T15:46:54.102Z",
+                "delayed": false,
+                "allocation_status": "no_attempt"
+              }
+            }
+          ]
+        }
+      },
+      "index-2": {
+        "shards": {
+          "0": [
+            {
+              "state": "STARTED",
+              "primary": true,
+              "node": "gSzRPkbvTva5BJakoxbCeA",
+              "relocating_node": null,
+              "shard": 0,
+              "index": "index-2",
+              "allocation_id": {
+                "id": "KD0NpiztR7m6bSXUH_Xr-g"
+              }
+            }
+          ],
+          "1": [
+            {
+              "state": "UNASSIGNED",
+              "primary": false,
+              "node": null,
+              "relocating_node": null,
+              "shard": 1,
+              "index": "index-2",
+              "recovery_source": {
+                "type": "PEER"
+              },
+              "unassigned_info": {
+                "reason": "CLUSTER_RECOVERED",
+                "at": "2020-01-09T15:46:54.102Z",
+                "delayed": false,
+                "allocation_status": "no_attempt"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
