@@ -8,7 +8,8 @@ dependencies {
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-smile'
     }
 
-    compile "org.apache.logging.log4j:log4j-to-slf4j:${log4jToSlf4jVersion}"
+    compile "org.apache.logging.log4j:log4j-api:${log4j2Version}"
+    compile "org.apache.logging.log4j:log4j-to-slf4j:${log4j2Version}"
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-smile:${jacksonVersion}"
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jacksonVersion}"
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
