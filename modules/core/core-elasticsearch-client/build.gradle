@@ -14,7 +14,7 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Elasticsearch Library',
+    bnd( 'Bundle-Name': 'Enonic XP Core - ElasticSearch Client',
          'Export-Package':
              'com.enonic.xp.elasticsearch.client.impl.*' + ',' +
              'org.elasticsearch.*;-split-package:=merge-first' + ',' +
@@ -35,8 +35,4 @@ jar {
              'org.yaml.snakeyaml.*' + ',' +
              ''
     )
-}
-
-jar {
-    bnd( 'Bundle-Name': 'Enonic XP Core - ElasticSearch Client' )
 }
