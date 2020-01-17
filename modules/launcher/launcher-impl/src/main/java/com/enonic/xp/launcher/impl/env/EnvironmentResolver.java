@@ -22,6 +22,7 @@ public final class EnvironmentResolver
         final EnvironmentImpl env = new EnvironmentImpl();
         env.installDir = resolveInstallDir();
         env.homeDir = resolveHomeDir( env.installDir );
+        env.esHomeDir = resolveEsHomeDir();
         return env;
     }
 
@@ -43,5 +44,14 @@ public final class EnvironmentResolver
 
         return Stream.of( propValue, envValue ).filter( Predicate.not( String::isEmpty ) ).findFirst().
             map( File::new ).orElseGet( () -> installDir != null ? new File( installDir, "home" ) : null );
+    }
+
+    private File resolveEsHomeDir()
+    {
+        final String propValue = Objects.requireNonNullElse( this.properties.get( ES_HOME_DIR ), "" );
+        final String envValue = Objects.requireNonNullElse( this.properties.getEnv( ES_HOME_DIR_ENV ), "" );
+
+        return Stream.of( propValue, envValue ).filter( Predicate.not( String::isEmpty ) ).findFirst().
+            map( File::new ).orElse( null );
     }
 }

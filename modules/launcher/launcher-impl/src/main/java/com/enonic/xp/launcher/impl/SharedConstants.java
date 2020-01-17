@@ -11,6 +11,10 @@ public interface SharedConstants
 
     String XP_HOME_DIR_ENV = "XP_HOME";
 
+    String ES_HOME_DIR = "es.home";
+
+    String ES_HOME_DIR_ENV = "ES_HOME";
+
     String XP_RUN_MODE = "xp.runMode";
 
     String INTERNAL_OSGI_BOOT_DELEGATION = "internal.osgi.bootdelegation";

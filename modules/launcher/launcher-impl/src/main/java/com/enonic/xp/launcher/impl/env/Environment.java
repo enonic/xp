@@ -9,6 +9,8 @@ public interface Environment
 
     File getInstallDir();
 
+    File getEsHomeDir();
+
     void validate();
 
     Map<String, String> getAsMap();

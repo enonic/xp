@@ -30,6 +30,10 @@ public final class BannerPrinter
         System.out.println( "# " + getFormattedOsInfo() );
         System.out.println( "# Install directory is " + this.env.getInstallDir() );
         System.out.println( "# Home directory is " + this.env.getHomeDir() );
+        if ( this.env.getEsHomeDir() != null )
+        {
+            System.out.println( "# Elasticsearch home directory is " + this.env.getEsHomeDir() );
+        }
         System.out.println();
         printWarnings();
     }
