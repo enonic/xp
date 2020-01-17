@@ -54,7 +54,6 @@ public class ElasticsearchServerConfigResolverTest
     public void testResolve()
     {
         Mockito.when( serverConfig.embeddedMode() ).thenReturn( true );
-        Mockito.when( serverConfig.esServerDir() ).thenReturn( null );
         Mockito.when( serverConfig.cluster_routing_allocation_disk_thresholdEnabled() ).thenReturn( false );
         Mockito.when( serverConfig.cluster_name() ).thenReturn( null );
         Mockito.when( serverConfig.path_conf() ).thenReturn( null );
@@ -74,7 +73,6 @@ public class ElasticsearchServerConfigResolverTest
 
         final ElasticsearchServerSettings result = instance.resolve();
 
-        assertEquals( xpHomePath.resolve( "../elasticsearch" ).toString(), instance.resolveElasticServerDir() );
         assertEquals( xpHomePath.resolve( "repo/index/conf" ).toString(), result.getPathConf() );
         assertEquals( xpHomePath.resolve( "repo/index/data" ).toString(), result.getPathData() );
         assertEquals( xpHomePath.resolve( "repo/index/logs" ).toString(), result.getPathLogs() );

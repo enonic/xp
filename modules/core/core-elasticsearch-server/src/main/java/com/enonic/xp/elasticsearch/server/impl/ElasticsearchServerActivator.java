@@ -49,7 +49,7 @@ public class ElasticsearchServerActivator
         {
             final ElasticsearchServerConfigResolver resolver = new ElasticsearchServerConfigResolver( elasticsearchConfig );
 
-            this.elasticServerDir = Paths.get( resolver.resolveElasticServerDir() );
+            this.elasticServerDir = EsHomeDir.get().getDir();
             this.elasticWorkDir = Paths.get( resolver.resolvePathWorkDir() );
             this.elasticEmbeddedConfigDir = Paths.get( resolver.resolvePathConfDir() );
             this.elasticsearchYaml = elasticEmbeddedConfigDir.resolve( "elasticsearch.yml" );

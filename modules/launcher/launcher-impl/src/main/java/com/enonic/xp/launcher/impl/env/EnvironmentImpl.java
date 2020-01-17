@@ -14,6 +14,8 @@ final class EnvironmentImpl
 
     protected File installDir;
 
+    protected File esHomeDir;
+
     @Override
     public File getHomeDir()
     {
@@ -24,6 +26,12 @@ final class EnvironmentImpl
     public File getInstallDir()
     {
         return this.installDir;
+    }
+
+    @Override
+    public File getEsHomeDir()
+    {
+        return this.esHomeDir;
     }
 
     @Override
@@ -47,6 +55,12 @@ final class EnvironmentImpl
         final Map<String, String> map = new HashMap<>();
         map.put( XP_HOME_DIR, this.homeDir.getAbsolutePath() );
         map.put( XP_INSTALL_DIR, this.installDir.getAbsolutePath() );
+
+        if ( this.esHomeDir != null )
+        {
+            map.put( ES_HOME_DIR, this.esHomeDir.getAbsolutePath() );
+        }
+
         return map;
     }
 }

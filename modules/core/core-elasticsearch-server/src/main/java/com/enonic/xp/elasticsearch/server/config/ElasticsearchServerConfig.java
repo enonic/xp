@@ -2,9 +2,7 @@ package com.enonic.xp.elasticsearch.server.config;
 
 public @interface ElasticsearchServerConfig
 {
-    String esServerDir();
-
-    boolean embeddedMode() default false;
+    boolean embeddedMode() default true;
 
     String path();
 

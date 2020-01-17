@@ -1,8 +1,8 @@
 package com.enonic.xp.elasticsearch.server.config;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import com.enonic.xp.elasticsearch.server.impl.ElasticsearchServerSettings;
 import com.enonic.xp.home.HomeDir;
@@ -49,13 +49,14 @@ public final class ElasticsearchServerConfigResolver
             return value;
         }
 
-        return HomeDir.get().toFile().toPath().resolve( defaultSubPath ).toAbsolutePath().toString();
-    }
-
-    public String resolveElasticServerDir()
-    {
-        final String value = configuration.esServerDir();
-        return getPathOfDirAsString( value, "../elasticsearch" );
+        try
+        {
+            return Files.createDirectories( HomeDir.get().toFile().toPath().resolve( defaultSubPath ) ).toAbsolutePath().toString();
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     public String resolvePathConfDir()
@@ -94,15 +95,7 @@ public final class ElasticsearchServerConfigResolver
         private void validate()
         {
             ensureCorrectSdkMode().
-                ensureCorrectElasticServerDir();
-
-            ensureCorrectPathConfDir().
-                ensureCorrectPathRepoDir().
-                ensureCorrectPathWorkDir().
-                ensureCorrectPathDataDir().
-                ensureCorrectPathLogsDir();
-
-            ensureCorrectHttpPort().
+                ensureCorrectHttpPort().
                 ensureCorrectTransportPort().
                 ensureCorrectClusterName().
                 ensureCorrectGatewayRecoverAfterTime().
@@ -117,48 +110,6 @@ public final class ElasticsearchServerConfigResolver
             {
                 throw new IllegalArgumentException( "The embedded mode is disabled" );
             }
-
-            return this;
-        }
-
-        ElasticsearchConfigValidator ensureCorrectElasticServerDir()
-        {
-            validateCorrectDir( "esServerDir", resolveElasticServerDir() );
-
-            return this;
-        }
-
-        ElasticsearchConfigValidator ensureCorrectPathConfDir()
-        {
-            validateCorrectDir( "path.conf", resolvePathConfDir() );
-
-            return this;
-        }
-
-        ElasticsearchConfigValidator ensureCorrectPathDataDir()
-        {
-            validateCorrectDir( "path.data", resolvePathDataDir() );
-
-            return this;
-        }
-
-        ElasticsearchConfigValidator ensureCorrectPathRepoDir()
-        {
-            validateCorrectDir( "path.repo", resolvePathRepoDir() );
-
-            return this;
-        }
-
-        ElasticsearchConfigValidator ensureCorrectPathWorkDir()
-        {
-            validateCorrectDir( "path.work", resolvePathWorkDir() );
-
-            return this;
-        }
-
-        ElasticsearchConfigValidator ensureCorrectPathLogsDir()
-        {
-            validateCorrectDir( "path.logs", resolvePathLogsDir() );
 
             return this;
         }
@@ -231,21 +182,6 @@ public final class ElasticsearchServerConfigResolver
             }
 
             return this;
-        }
-
-        private void validateCorrectDir( final String parameter, final String value )
-        {
-            final Path directory = Paths.get( value );
-
-            if ( Files.notExists( directory ) )
-            {
-                throw new IllegalArgumentException( String.format( "Directory  \"%s\" not found.", value ) );
-            }
-
-            if ( !Files.isDirectory( directory ) )
-            {
-                throw new IllegalArgumentException( String.format( "The \"%s\" must be pointed to directory.", parameter ) );
-            }
         }
 
     }
