@@ -46,7 +46,7 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-@Path(ResourceConstants.REST_ROOT + "{content:(schema|cms/[^/]+/[^/]+/schema)}/content")
+@Path(ResourceConstants.REST_ROOT + "{content:(schema|cms/[^/]+/schema)}/content")
 @Produces("application/json")
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
