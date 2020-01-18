@@ -6,18 +6,18 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.internal.concurrent.RecurringJob;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.impl.task.event.TaskEvents;
 import com.enonic.xp.impl.task.script.NamedTaskScript;
@@ -42,7 +42,7 @@ public final class TaskManagerImpl
 {
     final static long KEEP_COMPLETED_MAX_TIME_SEC = 60;
 
-    private final ExecutorService executorService;
+    private final Executor executor;
 
     private final ConcurrentMap<TaskId, TaskContext> tasks;
 
@@ -52,20 +52,31 @@ public final class TaskManagerImpl
 
     private Clock clock;
 
-    public TaskManagerImpl()
-    {
-        executorService = Executors.newCachedThreadPool();
-        tasks = new ConcurrentHashMap<>();
-        idGen = this::newId;
-        clock = Clock.systemUTC();
+    private final TaskManagerCleanupScheduler cleanupScheduler;
 
-        scheduleCleanup();
+    private RecurringJob recurringJob;
+
+    @Activate
+    public TaskManagerImpl( @Reference(service = TaskManagerExecutor.class) final Executor executor,
+                            @Reference TaskManagerCleanupScheduler cleanupScheduler )
+    {
+        this.executor = executor;
+        this.tasks = new ConcurrentHashMap<>();
+        this.idGen = this::newId;
+        this.clock = Clock.systemUTC();
+        this.cleanupScheduler = cleanupScheduler;
     }
 
-    private void scheduleCleanup()
+    @Activate
+    public void activate()
     {
-        final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool( 1 );
-        scheduler.scheduleAtFixedRate( this::removeExpiredTasks, 1, 1, TimeUnit.MINUTES );
+        recurringJob = cleanupScheduler.scheduleWithFixedDelay( this::removeExpiredTasks );
+    }
+
+    @Deactivate
+    public void deactivate()
+    {
+        recurringJob.cancel();
     }
 
     @Override
@@ -110,7 +121,7 @@ public final class TaskManagerImpl
         eventPublisher.publish( TaskEvents.submitted( info ) );
 
         final TaskWrapper wrapper = new TaskWrapper( info, runnable, userContext, this );
-        executorService.submit( wrapper );
+        executor.execute( wrapper );
 
         return id;
     }
@@ -220,7 +231,7 @@ public final class TaskManagerImpl
         }
     }
 
-    void removeExpiredTasks()
+    private void removeExpiredTasks()
     {
         final Instant now = Instant.now( clock );
         for ( TaskContext taskCtx : tasks.values() )

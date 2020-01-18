@@ -11,7 +11,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
@@ -164,10 +167,14 @@ public class AbstractContentServiceTest
 
     protected AuditLogService auditLogService;
 
+    private ExecutorService executorService;
+
     @BeforeEach
     public void setUpAbstractContentServiceTest()
         throws Exception
     {
+        executorService = Executors.newSingleThreadExecutor();
+
         deleteAllIndices();
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
@@ -180,7 +187,7 @@ public class AbstractContentServiceTest
         final StorageDaoImpl storageDao = new StorageDaoImpl();
         storageDao.setClient( client );
 
-        final EventPublisherImpl eventPublisher = new EventPublisherImpl();
+        final EventPublisherImpl eventPublisher = new EventPublisherImpl( executorService );
 
         SearchDaoImpl searchDao = new SearchDaoImpl();
         searchDao.setClient( client );
@@ -304,6 +311,11 @@ public class AbstractContentServiceTest
         waitForClusterHealth();
     }
 
+    @AfterEach
+    void tearDown()
+    {
+        executorService.shutdownNow();
+    }
 
     protected ByteSource loadImage( final String name )
         throws IOException

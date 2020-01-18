@@ -2,8 +2,7 @@ package com.enonic.xp.core.impl.app;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Executor;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -25,13 +24,19 @@ import com.enonic.xp.server.RunMode;
 public final class ApplicationListenerHub
     implements BundleTrackerCustomizer<Application>
 {
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Executor executor;
 
     private final ApplicationFactory factory = new ApplicationFactory( RunMode.get() );
 
     private final List<ApplicationListener> listeners = new CopyOnWriteArrayList<>();
 
     private BundleTracker<Application> tracker;
+
+    @Activate
+    public ApplicationListenerHub( @Reference(service = ApplicationListenerHubExecutor.class) final Executor executor )
+    {
+        this.executor = executor;
+    }
 
     @Activate
     public void activate( final BundleContext context )
@@ -74,13 +79,13 @@ public final class ApplicationListenerHub
 
     private Application activated( final Application app )
     {
-        this.executor.submit( () -> notifyActivated( app ) );
+        this.executor.execute( () -> notifyActivated( app ) );
         return app;
     }
 
     private void deactivated( final Application app )
     {
-        this.executor.submit( () -> notifyDeactivated( app ) );
+        this.executor.execute( () -> notifyDeactivated( app ) );
     }
 
     private void notifyActivated( final Application app )

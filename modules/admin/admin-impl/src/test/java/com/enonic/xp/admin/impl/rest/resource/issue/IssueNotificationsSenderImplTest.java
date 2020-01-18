@@ -78,11 +78,9 @@ public class IssueNotificationsSenderImplTest
         mailService = Mockito.mock( MailService.class );
         securityService = Mockito.mock( SecurityService.class );
         contentService = Mockito.mock( ContentService.class );
-        issueNotificationsSender = new IssueNotificationsSenderImpl();
+        issueNotificationsSender = new IssueNotificationsSenderImpl( mailService, Runnable::run );
         contentTypeService = Mockito.mock( ContentTypeService.class );
         localeService = Mockito.mock( LocaleService.class );
-
-        issueNotificationsSender.setMailService( mailService );
 
         notificationFactoryBuilder =
             IssueNotificationParamsFactory.create().contentService( contentService ).securityService( securityService ).localeService(
@@ -113,8 +111,6 @@ public class IssueNotificationsSenderImplTest
 
         issueNotificationsSender.notifyIssueCreated( params );
 
-        Thread.sleep( 1000 ); // giving a chance to run threads that send mails
-
         verifyRecipients( Set.of( approver.getEmail() ) );
         verify( securityService, times( 2 ) ).getUser( any() );
         verify( mailService, times( 1 ) ).send( any() );
@@ -143,8 +139,6 @@ public class IssueNotificationsSenderImplTest
             createdParams();
 
         issueNotificationsSender.notifyIssueCreated( params );
-
-        Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
         verify( securityService, times( 2 ) ).getUser( any() );
         verify( mailService, never() ).send( any() );
@@ -176,8 +170,6 @@ public class IssueNotificationsSenderImplTest
             createdParams();
 
         issueNotificationsSender.notifyIssueCreated( params );
-
-        Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
         verifyRecipients( Set.of( approvers.get( 1 ).getEmail(), approvers.get( 2 ).getEmail() ) );
         verify( securityService, times( 4 ) ).getUser( any() );
@@ -212,8 +204,6 @@ public class IssueNotificationsSenderImplTest
             createdParams();
 
         issueNotificationsSender.notifyIssueCreated( params );
-
-        Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
         verifyRecipients( approvers.stream().map( approver -> approver.getEmail() ).collect( Collectors.toSet() ) );
         verify( securityService, times( 4 ) ).getUser( any() );
@@ -268,8 +258,6 @@ public class IssueNotificationsSenderImplTest
 
         issueNotificationsSender.notifyIssueUpdated( params );
 
-        Thread.sleep( 1000 ); // giving a chance to run threads that send mails
-
         verifyRecipients( Set.of( approver.getEmail(), creator.getEmail() ) );
         verify( mailService, times( 1 ) ).send( any() );
         verify( securityService, times( 2 ) ).getUser( any() );
@@ -310,8 +298,6 @@ public class IssueNotificationsSenderImplTest
             updatedParams();
 
         issueNotificationsSender.notifyIssueUpdated( params );
-
-        Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
         verify( mailService, Mockito.never() ).send( any() );
         verify( securityService, times( 1 ) ).getUser( any() );
@@ -358,8 +344,6 @@ public class IssueNotificationsSenderImplTest
 
         issueNotificationsSender.notifyIssueUpdated( params );
 
-        Thread.sleep( 1000 ); // giving a chance to run threads that send mails
-
         verifyRecipients( Set.of( approvers.get( 1 ).getEmail(), approvers.get( 2 ).getEmail(), creator.getEmail() ) );
         verify( mailService, Mockito.times( 1 ) ).send( any() );
         verify( securityService, times( 4 ) ).getUser( any() );
@@ -403,8 +387,6 @@ public class IssueNotificationsSenderImplTest
 
         issueNotificationsSender.notifyIssueCommented( params );
 
-        Thread.sleep( 1000 ); // giving a chance to run threads that send mails
-
         verifyRecipients( Set.of( creator.getEmail() ) );
         verify( mailService, times( 1 ) ).send( any() );
         verify( securityService, times( 2 ) ).getUser( any() );
@@ -447,8 +429,6 @@ public class IssueNotificationsSenderImplTest
             commentedParams();
 
         issueNotificationsSender.notifyIssueCommented( params );
-
-        Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
         verify( mailService, never() ).send( any() );
         verify( securityService, times( 2 ) ).getUser( any() );
@@ -495,8 +475,6 @@ public class IssueNotificationsSenderImplTest
 
         issueNotificationsSender.notifyIssueCommented( params );
 
-        Thread.sleep( 1000 ); // giving a chance to run threads that send mails
-
         verifyRecipients( Set.of( approvers.get( 1 ).getEmail(), creator.getEmail() ) );
         verify( mailService, times( 1 ) ).send( any() );
         verify( securityService, times( 3 ) ).getUser( any() );
@@ -526,8 +504,6 @@ public class IssueNotificationsSenderImplTest
 
         issueNotificationsSender.notifyIssuePublished( params );
 
-        Thread.sleep( 1000 ); // giving a chance to run threads that send mails
-
         verifyRecipients( Set.of( approver.getEmail(), creator.getEmail() ) );
         verify( mailService, times( 1 ) ).send( any() );
         verify( securityService, times( 2 ) ).getUser( any() );
@@ -556,8 +532,6 @@ public class IssueNotificationsSenderImplTest
             publishedParams();
 
         issueNotificationsSender.notifyIssuePublished( params );
-
-        Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
         verify( mailService, never() ).send( any() );
         verify( securityService, times( 2 ) ).getUser( any() );
@@ -603,8 +577,6 @@ public class IssueNotificationsSenderImplTest
             publishedParams();
 
         issueNotificationsSender.notifyIssuePublished( params );
-
-        Thread.sleep( 1000 ); // giving a chance to run threads that send mails
 
         verifyRecipients( Set.of( approvers.get( 1 ).getEmail(), creator.getEmail() ) );
         verify( mailService, times( 1 ) ).send( any() );
