@@ -53,7 +53,6 @@ public class ElasticsearchServerConfigResolverTest
     @Test
     public void testResolve()
     {
-        Mockito.when( serverConfig.embeddedMode() ).thenReturn( true );
         Mockito.when( serverConfig.cluster_routing_allocation_disk_thresholdEnabled() ).thenReturn( false );
         Mockito.when( serverConfig.cluster_name() ).thenReturn( null );
         Mockito.when( serverConfig.path_conf() ).thenReturn( null );

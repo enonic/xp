@@ -3,6 +3,7 @@ package com.enonic.xp.elasticsearch.server.config;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import com.enonic.xp.elasticsearch.server.impl.ElasticsearchServerSettings;
 import com.enonic.xp.home.HomeDir;
@@ -44,13 +45,18 @@ public final class ElasticsearchServerConfigResolver
 
     private String getPathOfDirAsString( final String value, final String defaultSubPath )
     {
-        if ( !nullToEmpty( value ).isBlank() )
-        {
-            return value;
-        }
-
         try
         {
+            if ( !nullToEmpty( value ).isBlank() )
+            {
+                if ( Files.notExists( Paths.get( value ) ) )
+                {
+                    Files.createDirectories( Paths.get( value ) );
+                }
+
+                return value;
+            }
+
             return Files.createDirectories( HomeDir.get().toFile().toPath().resolve( defaultSubPath ) ).toAbsolutePath().toString();
         }
         catch ( IOException e )
@@ -94,24 +100,13 @@ public final class ElasticsearchServerConfigResolver
 
         private void validate()
         {
-            ensureCorrectSdkMode().
-                ensureCorrectHttpPort().
+            ensureCorrectHttpPort().
                 ensureCorrectTransportPort().
                 ensureCorrectClusterName().
                 ensureCorrectGatewayRecoverAfterTime().
                 ensureCorrectGatewayExpectedNodes().
                 ensureCorrectGatewayRecoverAfterNodes().
                 ensureCorrectIndexMaxResultWindow();
-        }
-
-        ElasticsearchConfigValidator ensureCorrectSdkMode()
-        {
-            if ( !configuration.embeddedMode() )
-            {
-                throw new IllegalArgumentException( "The embedded mode is disabled" );
-            }
-
-            return this;
         }
 
         ElasticsearchConfigValidator ensureCorrectHttpPort()

@@ -2,8 +2,6 @@ package com.enonic.xp.elasticsearch.server.config;
 
 public @interface ElasticsearchServerConfig
 {
-    boolean embeddedMode() default true;
-
     String path();
 
     String http_port() default "9200";

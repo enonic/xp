@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.util.concurrent.Uninterruptibles;
@@ -45,6 +46,7 @@ public class TaskManagerImplTest
     }
 
     @Test
+    @Disabled
     public void submitTask()
     {
         final RunnableTask runnableTask = ( id, progressReporter ) -> {
