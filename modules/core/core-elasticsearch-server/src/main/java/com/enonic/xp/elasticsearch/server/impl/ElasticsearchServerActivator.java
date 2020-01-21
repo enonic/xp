@@ -45,11 +45,13 @@ public class ElasticsearchServerActivator
     @Activate
     public ElasticsearchServerActivator( final ElasticsearchServerConfig elasticsearchConfig )
     {
-        if ( elasticsearchConfig.embeddedMode() )
+        String xBundledEsProp = System.getProperty( "xp.bundled.es" );
+
+        if ( "true".equals( xBundledEsProp ) )
         {
             final ElasticsearchServerConfigResolver resolver = new ElasticsearchServerConfigResolver( elasticsearchConfig );
 
-            this.elasticServerDir = EsHomeDir.get().getDir();
+            this.elasticServerDir = Paths.get( System.getProperty( "es.home" ) );
             this.elasticWorkDir = Paths.get( resolver.resolvePathWorkDir() );
             this.elasticEmbeddedConfigDir = Paths.get( resolver.resolvePathConfDir() );
             this.elasticsearchYaml = elasticEmbeddedConfigDir.resolve( "elasticsearch.yml" );
