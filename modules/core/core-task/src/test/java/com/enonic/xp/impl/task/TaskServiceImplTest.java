@@ -3,6 +3,9 @@ package com.enonic.xp.impl.task;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import org.elasticsearch.Version;
@@ -51,20 +54,16 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 
 public class TaskServiceImplTest
-        {
-            private final static Logger LOGGER = LoggerFactory.getLogger( TaskServiceImplTest.class );
+{
+    private final static Logger LOGGER = LoggerFactory.getLogger( TaskServiceImplTest.class );
 
     private TaskServiceImpl taskService;
 
-    private volatile List<TaskInfo> allTasks;
+    private volatile TaskTransportRequest transportRequest;
 
-    private volatile TransportException transportException;
+    private volatile TaskTransportResponseHandler transportResponseHandler;
 
-    private volatile Object[] sendRequestArguments;
-
-    private TaskTransportRequest transportRequest;
-
-    private TaskTransportResponseHandler transportResponseHandler;
+    private volatile CountDownLatch transportLatch;
 
     private TaskTransportRequestHandler taskTransportRequestHandler1;
 
@@ -79,8 +78,7 @@ public class TaskServiceImplTest
     @BeforeEach
     public void setUp()
     {
-        allTasks = null;
-        transportException = null;
+        transportLatch = new CountDownLatch( 1 );
 
         TaskInfo taskInfo1 = TaskInfo.create().
             id( TaskId.from( "task1" ) ).
@@ -140,10 +138,11 @@ public class TaskServiceImplTest
         final TransportService transportService = Mockito.mock( TransportService.class );
         Mockito.
             doAnswer( invocation -> {
-                sendRequestArguments = invocation.getArguments();
+                Object[] sendRequestArguments = invocation.getArguments();
                 transportRequest = (TaskTransportRequest) sendRequestArguments[2];
                 transportResponseHandler = (TaskTransportResponseHandler) sendRequestArguments[4];
                 LOGGER.info( "Transport service send a " + transportRequest.getType().toString() + " task request" );
+                transportLatch.countDown();
                 return null;
             } ).
             when( transportService ).
@@ -159,12 +158,13 @@ public class TaskServiceImplTest
 
     @Test
     public void getAllTasks()
-        throws InterruptedException, IOException
+        throws Exception
     {
         //Calls TaskService method
-        final Thread senderThread = callServiceMethod( () -> taskService.getAllTasks() );
+        final CompletableFuture<CallServiceMethodResult> cf = callServiceMethod( () -> taskService.getAllTasks() );
 
         //Checks request sent by TaskService
+        transportLatch.await( 1, TimeUnit.MINUTES );
         assertEquals( TaskTransportRequest.Type.ALL, transportRequest.getType() );
         assertNull( transportRequest.getTaskId() );
 
@@ -173,37 +173,38 @@ public class TaskServiceImplTest
         mockReception( taskTransportRequestHandler2, "node2" );
 
         //Checks that the service received back the 3 tasks
-        senderThread.join( 2000 );
-        assertNull( transportException );
-        assertEquals( 3, allTasks.size() );
-        assertEquals( "task1", allTasks.get( 0 ).getId().toString() );
-        assertEquals( "Task1 on node1", allTasks.get( 0 ).getDescription() );
-        assertEquals( TaskState.WAITING, allTasks.get( 0 ).getState() );
+        final CallServiceMethodResult result = cf.get( 1, TimeUnit.MINUTES );
+        assertNull( result.transportException );
+        assertEquals( 3, result.allTasks.size() );
+        assertEquals( "task1", result.allTasks.get( 0 ).getId().toString() );
+        assertEquals( "Task1 on node1", result.allTasks.get( 0 ).getDescription() );
+        assertEquals( TaskState.WAITING, result.allTasks.get( 0 ).getState() );
     }
 
     @Test
     public void getAllTasks_with_exception()
-        throws InterruptedException, IOException
+        throws Exception
     {
         //Calls TaskService method
-        final Thread senderThread = callServiceMethod( () -> taskService.getAllTasks() );
+        final CompletableFuture<CallServiceMethodResult> cf = callServiceMethod( () -> taskService.getAllTasks() );
 
         //Mocks a transport exception
+        transportLatch.await( 1, TimeUnit.MINUTES );
         transportResponseHandler.handleException( new TransportException( "ATransportException" ) );
 
-        //Checks that the service received back the 3 tasks
-        senderThread.join( 2000 );
-        assertNotNull( transportException );
+        final CallServiceMethodResult result = cf.get( 1, TimeUnit.MINUTES );
+        assertNotNull( result.transportException );
     }
 
     @Test
     public void getRunningTasks()
-        throws InterruptedException, IOException
+        throws Exception
     {
         //Calls TaskService method
-        final Thread senderThread = callServiceMethod( () -> taskService.getRunningTasks() );
+        final CompletableFuture<CallServiceMethodResult> cf = callServiceMethod( () -> taskService.getRunningTasks() );
 
         //Checks request sent by TaskService
+        transportLatch.await( 1, TimeUnit.MINUTES );
         assertEquals( TaskTransportRequest.Type.RUNNING, transportRequest.getType() );
         assertNull( transportRequest.getTaskId() );
 
@@ -212,22 +213,24 @@ public class TaskServiceImplTest
         mockReception( taskTransportRequestHandler2, "node2" );
 
         //Checks that the service received back the 3 tasks
-        senderThread.join( 2000 );
-        assertNull( transportException );
-        assertEquals( 1, allTasks.size() );
-        assertEquals( "task3", allTasks.get( 0 ).getId().toString() );
-        assertEquals( "Task3 on node2", allTasks.get( 0 ).getDescription() );
-        assertEquals( TaskState.RUNNING, allTasks.get( 0 ).getState() );
+        final CallServiceMethodResult result = cf.get( 1, TimeUnit.MINUTES );
+        assertNull( result.transportException );
+        assertEquals( 1, result.allTasks.size() );
+        assertEquals( "task3", result.allTasks.get( 0 ).getId().toString() );
+        assertEquals( "Task3 on node2", result.allTasks.get( 0 ).getDescription() );
+        assertEquals( TaskState.RUNNING, result.allTasks.get( 0 ).getState() );
     }
 
     @Test
     public void getTaskInfo()
-        throws InterruptedException, IOException
+        throws Exception
     {
         //Calls TaskService method
-        final Thread senderThread = callServiceMethod( () -> Arrays.asList( taskService.getTaskInfo( TaskId.from( "task2" ) ) ) );
+        final CompletableFuture<CallServiceMethodResult> cf =
+            callServiceMethod( () -> Arrays.asList( taskService.getTaskInfo( TaskId.from( "task2" ) ) ) );
 
         //Checks request sent by TaskService
+        transportLatch.await( 1, TimeUnit.MINUTES );
         assertEquals( TaskTransportRequest.Type.BY_ID, transportRequest.getType() );
         assertEquals( "task2", transportRequest.getTaskId().toString() );
 
@@ -236,12 +239,12 @@ public class TaskServiceImplTest
         mockReception( taskTransportRequestHandler2, "node2" );
 
         //Checks that the service received back the 3 tasks
-        senderThread.join( 2000 );
-        assertNull( transportException );
-        assertEquals( 1, allTasks.size() );
-        assertEquals( "task2", allTasks.get( 0 ).getId().toString() );
-        assertEquals( "Task2 on node1", allTasks.get( 0 ).getDescription() );
-        assertEquals( TaskState.FINISHED, allTasks.get( 0 ).getState() );
+        final CallServiceMethodResult result = cf.get( 1, TimeUnit.MINUTES );
+        assertNull( result.transportException );
+        assertEquals( 1, result.allTasks.size() );
+        assertEquals( "task2", result.allTasks.get( 0 ).getId().toString() );
+        assertEquals( "Task2 on node1", result.allTasks.get( 0 ).getDescription() );
+        assertEquals( TaskState.FINISHED, result.allTasks.get( 0 ).getState() );
     }
 
     @Test
@@ -275,7 +278,8 @@ public class TaskServiceImplTest
         Mockito.when( taskDescriptorService.getTasks( app ) ).thenReturn( Descriptors.empty() );
 
         // submit task by name
-        assertThrows(TaskNotFoundException.class, () -> taskService.submitTask( DescriptorKey.from( "myapplication:task1" ), new PropertyTree() ));
+        assertThrows( TaskNotFoundException.class,
+                      () -> taskService.submitTask( DescriptorKey.from( "myapplication:task1" ), new PropertyTree() ) );
     }
 
     @Test
@@ -292,32 +296,38 @@ public class TaskServiceImplTest
         Mockito.when( namedTaskScriptFactory.create( Mockito.eq( descriptor ), Mockito.any() ) ).thenReturn( null );
 
         // submit task by name
-        assertThrows(TaskNotFoundException.class, () -> taskService.submitTask( DescriptorKey.from( "myapplication:task1" ), new PropertyTree() ));
+        assertThrows( TaskNotFoundException.class,
+                      () -> taskService.submitTask( DescriptorKey.from( "myapplication:task1" ), new PropertyTree() ) );
     }
 
-    private Thread callServiceMethod( Supplier<List<TaskInfo>> serviceMethod )
-        throws InterruptedException
+    private static class CallServiceMethodResult
     {
-        final Thread senderThread = new Thread()
+        final List<TaskInfo> allTasks;
+
+        final TransportException transportException;
+
+        public CallServiceMethodResult( final List<TaskInfo> allTasks, final TransportException transportException )
         {
-            @Override
-            public void run()
+            this.allTasks = allTasks;
+            this.transportException = transportException;
+        }
+    }
+
+    private CompletableFuture<CallServiceMethodResult> callServiceMethod( Supplier<List<TaskInfo>> serviceMethod )
+    {
+        return CompletableFuture.supplyAsync( () -> {
+            try
             {
-                try
-                {
-                    allTasks = serviceMethod.get();
-                    LOGGER.info( "Task service receives back " + allTasks.size() + " task infos" );
-                }
-                catch ( TransportException e )
-                {
-                    transportException = e;
-                    LOGGER.info( "Task service throws a transport exception: " + e.toString() );
-                }
+                final List<TaskInfo> allTasks = serviceMethod.get();
+                LOGGER.info( "Task service receives back " + allTasks.size() + " task infos" );
+                return new CallServiceMethodResult( allTasks, null );
             }
-        };
-        senderThread.start();
-        Thread.sleep( 1000 );
-        return senderThread;
+            catch ( TransportException e )
+            {
+                LOGGER.info( "Task service throws a transport exception: " + e.toString() );
+                return new CallServiceMethodResult( null, e );
+            }
+        } );
     }
 
     private void mockReception( final TaskTransportRequestHandler transportRequestHandler, final String nodeId )

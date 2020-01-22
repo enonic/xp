@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -18,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.io.ByteSource;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.audit.AuditLogService;
@@ -141,8 +137,6 @@ public class ContentServiceImpl
 
     private static final SiteConfigsDataSerializer SITE_CONFIGS_DATA_SERIALIZER = new SiteConfigsDataSerializer();
 
-    private final ExecutorService applyPermissionsExecutor;
-
     private ContentTypeService contentTypeService;
 
     private NodeService nodeService;
@@ -176,15 +170,6 @@ public class ContentServiceImpl
     private AuditLogService auditLogService;
 
     private ContentAuditLogSupport contentAuditLogSupport;
-
-    public ContentServiceImpl()
-    {
-        final ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().
-            setNameFormat( "apply-permissions-thread-%d" ).
-            setUncaughtExceptionHandler( ( t, e ) -> LOG.error( "Apply Permissions failed", e ) ).
-            build();
-        this.applyPermissionsExecutor = Executors.newFixedThreadPool( 5, namedThreadFactory );
-    }
 
     @Activate
     public void initialize( final ContentConfig config )

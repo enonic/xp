@@ -12,7 +12,7 @@ import com.sun.net.httpserver.HttpServer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PingSenderImplTest
+public class PingSenderTest
 {
     private PingSender sender;
 
@@ -26,7 +26,7 @@ public class PingSenderImplTest
         this.server.start();
 
         final UdcInfoGenerator generator = new UdcInfoGenerator();
-        this.sender = new PingSenderImpl( generator, "http://localhost:" + this.server.getAddress().getPort() );
+        this.sender = new PingSender( generator, "http://localhost:" + this.server.getAddress().getPort() );
     }
 
     @AfterEach
@@ -46,7 +46,7 @@ public class PingSenderImplTest
             exchange.sendResponseHeaders( 200, 0 );
             exchange.close();
         } );
-        this.sender.send();
+        this.sender.run();
 
         assertEquals( "POST", requestMethod.get( 1, TimeUnit.MINUTES ) );
     }
