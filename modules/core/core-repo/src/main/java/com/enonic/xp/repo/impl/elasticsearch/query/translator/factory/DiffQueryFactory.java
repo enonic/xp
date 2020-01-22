@@ -13,8 +13,8 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeState;
-import com.enonic.xp.repo.impl.StorageType;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
+import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.version.search.ExcludeEntries;
 import com.enonic.xp.repo.impl.version.search.ExcludeEntry;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
@@ -29,14 +29,11 @@ public class DiffQueryFactory
 
     private final ExcludeEntries excludes;
 
-    private final StorageType childStorageType;
-
     private DiffQueryFactory( Builder builder )
     {
         source = builder.query.getSource();
         target = builder.query.getTarget();
         nodePath = builder.query.getNodePath();
-        childStorageType = builder.childStorageType;
         this.excludes = builder.query.getExcludes();
     }
 
@@ -132,12 +129,12 @@ public class DiffQueryFactory
                                                         queryPath.endsWith( "/" ) ? queryPath + "*" : queryPath + "/*" ) );
         }
 
-        return new HasChildQueryBuilder( childStorageType.getName(), pathQuery, ScoreMode.None );
+        return new HasChildQueryBuilder( StaticStorageType.BRANCH.getName(), pathQuery, ScoreMode.None );
     }
 
     private HasChildQueryBuilder deletedInBranch( final Branch sourceBranch )
     {
-        return new HasChildQueryBuilder( childStorageType.getName(), new BoolQueryBuilder().
+        return new HasChildQueryBuilder( StaticStorageType.BRANCH.getName(), new BoolQueryBuilder().
             must( isDeleted() ).
             must( new TermQueryBuilder( BranchIndexPath.BRANCH_NAME.toString(), sourceBranch.getValue() ) ), ScoreMode.None );
     }
@@ -149,19 +146,17 @@ public class DiffQueryFactory
 
     private HasChildQueryBuilder isInBranch( final Branch source )
     {
-        return new HasChildQueryBuilder( childStorageType.getName(), createWsConstraint( source ), ScoreMode.None );
+        return new HasChildQueryBuilder( StaticStorageType.BRANCH.getName(), createWsConstraint( source ), ScoreMode.None );
     }
 
     private TermQueryBuilder createWsConstraint( final Branch branch )
     {
-        return new TermQueryBuilder( BranchIndexPath.BRANCH_NAME.toString(), branch );
+        return new TermQueryBuilder( BranchIndexPath.BRANCH_NAME.toString(), branch.getValue() );
     }
 
     public static final class Builder
     {
         private NodeVersionDiffQuery query;
-
-        private StorageType childStorageType;
 
         private Builder()
         {
@@ -173,16 +168,9 @@ public class DiffQueryFactory
             return this;
         }
 
-        public Builder childStorageType( final StorageType childStorageType )
-        {
-            this.childStorageType = childStorageType;
-            return this;
-        }
-
         private void validate()
         {
             Preconditions.checkNotNull( this.query );
-            Preconditions.checkNotNull( this.childStorageType );
         }
 
         public DiffQueryFactory build()

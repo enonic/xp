@@ -2,9 +2,6 @@
   "date_detection": false,
   "numeric_detection": false,
   "properties": {
-    "nodeid": {
-      "type": "keyword"
-    },
     "versionid": {
       "type": "keyword"
     },
@@ -21,7 +18,7 @@
       "type": "keyword"
     },
     "timestamp": {
-      "type": "date"
+      "type": "keyword"
     },
     "nodepath": {
       "type": "keyword",
@@ -30,8 +27,27 @@
     "commitid": {
       "type": "keyword"
     },
-    "branches": {
+    "status": {
       "type": "keyword"
+    },
+    "path": {
+      "type": "keyword",
+      "normalizer": "lowercase"
+    },
+    "state": {
+      "type": "keyword"
+    },
+    "branch": {
+      "type": "keyword"
+    },
+    "nodeid": {
+      "type": "keyword"
+    },
+    "joinfield": {
+      "type": "join",
+      "relations": {
+        "version": "branch"
+      }
     }
   }
 }

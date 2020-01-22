@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
@@ -27,8 +26,7 @@ public class RefreshCommand
     {
         final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
 
-        if ( !indexServiceInternal.indicesExists( IndexNameResolver.resolveVersionIndexName( repositoryId ),
-                                                  IndexNameResolver.resolveBranchIndexName( repositoryId ),
+        if ( !indexServiceInternal.indicesExists( IndexNameResolver.resolveStorageIndexName( repositoryId ),
                                                   IndexNameResolver.resolveCommitIndexName( repositoryId ) ) )
         {
             throw new IndexException( "Cannot refresh index, index for repository [" + repositoryId + "] does not exist" );
@@ -43,17 +41,12 @@ public class RefreshCommand
                 indices.add( IndexNameResolver.resolveSearchIndexName( repositoryId, ContextAccessor.current().getBranch() ) );
             }
 
-            indices.add( IndexNameResolver.resolveVersionIndexName( repositoryId ) );
-            indices.add( IndexNameResolver.resolveBranchIndexName( repositoryId ) );
+            indices.add( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
             indices.add( IndexNameResolver.resolveCommitIndexName( repositoryId ) );
         }
         else if ( refreshMode.equals( RefreshMode.SEARCH ) )
         {
             indices.add( IndexNameResolver.resolveSearchIndexName( repositoryId, ContextAccessor.current().getBranch() ) );
-        }
-        else
-        {
-            indices.add( IndexNameResolver.resolveStorageIndexName( repositoryId, IndexType.valueOf( refreshMode.name() ) ) );
         }
 
         this.indexServiceInternal.refresh( indices.toArray( new String[indices.size()] ) );

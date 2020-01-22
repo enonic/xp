@@ -65,20 +65,20 @@ public final class RefreshHandler
 
     private RefreshMode refreshMode()
     {
-        if ( mode == null || RefreshMode.ALL.name().endsWith( mode ) )
+        if ( mode == null || "all".endsWith( mode ) )
         {
             return RefreshMode.ALL;
         }
-        else
+        else if ( "search".equals( mode ) )
         {
-            final RefreshMode refreshMode = RefreshMode.from( mode );
-            if ( refreshMode != null )
-            {
-                return refreshMode;
-            }
-
-            throw new IllegalArgumentException( "Invalid refresh mode: " + mode );
+            return RefreshMode.SEARCH;
         }
+        else if ( "storage".equals( mode ) )
+        {
+            return RefreshMode.STORAGE;
+        }
+
+        throw new IllegalArgumentException( "Invalid refresh mode: " + mode );
     }
 
     @Override

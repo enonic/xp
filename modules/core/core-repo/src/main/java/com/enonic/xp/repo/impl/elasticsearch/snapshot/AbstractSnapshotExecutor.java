@@ -110,8 +110,7 @@ class AbstractSnapshotExecutor
     {
         final Set<String> indices = new HashSet<>();
 
-        indices.add( IndexNameResolver.resolveVersionIndexName( repositoryId ) );
-        indices.add( IndexNameResolver.resolveBranchIndexName( repositoryId ) );
+        indices.add( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
         indices.add( IndexNameResolver.resolveCommitIndexName( repositoryId ) );
 
         final Repository repository = this.repositoryService.get( repositoryId );

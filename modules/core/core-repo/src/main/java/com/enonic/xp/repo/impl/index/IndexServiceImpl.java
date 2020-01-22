@@ -98,13 +98,11 @@ public class IndexServiceImpl
                                       final UpdateIndexSettingsResult.Builder result )
     {
         final Set<String> searchIndexNames = IndexNameResolver.resolveSearchIndexNames( repository.getId(), repository.getBranches() );
-        final String versionIndexName = IndexNameResolver.resolveVersionIndexName( repository.getId() );
-        final String branchIndexName = IndexNameResolver.resolveBranchIndexName( repository.getId() );
+        final String storageIndexName = IndexNameResolver.resolveStorageIndexName( repository.getId() );
         final String commitIndexName = IndexNameResolver.resolveCommitIndexName( repository.getId() );
 
         searchIndexNames.forEach( searchIndexName -> updateIndexSettings( searchIndexName, updateIndexSettings, result, closeIndex ) );
-        updateIndexSettings( versionIndexName, updateIndexSettings, result, closeIndex );
-        updateIndexSettings( branchIndexName, updateIndexSettings, result, closeIndex );
+        updateIndexSettings( storageIndexName, updateIndexSettings, result, closeIndex );
         updateIndexSettings( commitIndexName, updateIndexSettings, result, closeIndex );
     }
 

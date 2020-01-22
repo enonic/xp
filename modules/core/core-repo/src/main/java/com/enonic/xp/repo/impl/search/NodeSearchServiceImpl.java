@@ -22,12 +22,13 @@ public class NodeSearchServiceImpl
     private static final ReturnFields VERSION_RETURN_FIELDS =
         ReturnFields.from( VersionIndexPath.VERSION_ID, VersionIndexPath.NODE_BLOB_KEY, VersionIndexPath.INDEX_CONFIG_BLOB_KEY,
                            VersionIndexPath.ACCESS_CONTROL_BLOB_KEY, VersionIndexPath.BINARY_BLOB_KEYS, VersionIndexPath.TIMESTAMP,
-                           VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID, VersionIndexPath.COMMIT_ID, VersionIndexPath.BRANCHES );
+                           VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID, VersionIndexPath.COMMIT_ID, VersionIndexPath.BRANCHES,
+                           VersionIndexPath.JOIN_FIELD );
 
     private static final ReturnFields BRANCH_RETURN_FIELDS =
         ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.NODE_BLOB_KEY,
                            BranchIndexPath.INDEX_CONFIG_BLOB_KEY, BranchIndexPath.ACCESS_CONTROL_BLOB_KEY, BranchIndexPath.STATE,
-                           BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP );
+                           BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP, BranchIndexPath.JOIN_FIELD );
 
     private static final ReturnFields COMMIT_RETURN_FIELDS =
         ReturnFields.from( CommitIndexPath.COMMIT_ID, CommitIndexPath.MESSAGE, CommitIndexPath.COMMITTER, CommitIndexPath.TIMESTAMP );
@@ -98,7 +99,7 @@ public class NodeSearchServiceImpl
     {
         final SearchRequest searchRequest = SearchRequest.create().
             searchSource( source ).
-            returnFields( VERSION_RETURN_FIELDS ).
+            returnFields( ReturnFields.from( VersionIndexPath.NODE_ID ) ).
             query( query ).
             build();
 

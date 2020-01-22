@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.elasticsearch.client.impl.EsClient;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.NodeId;
@@ -196,9 +195,7 @@ public class IndexServiceInternalImpl
             return null;
         }
 
-        final String indexName = IndexType.SEARCH == indexType
-            ? IndexNameResolver.resolveSearchIndexName( repositoryId, ContextAccessor.current().getBranch() )
-            : IndexNameResolver.resolveStorageIndexName( repositoryId, indexType );
+        final String indexName = IndexNameResolver.resolveIndexName( repositoryId, indexType );
 
         if ( indexName == null )
         {
@@ -230,9 +227,7 @@ public class IndexServiceInternalImpl
             return null;
         }
 
-        final String indexName = IndexType.SEARCH == indexType
-            ? IndexNameResolver.resolveSearchIndexName( repositoryId, branch )
-            : IndexNameResolver.resolveStorageIndexName( repositoryId, indexType );
+        final String indexName = IndexNameResolver.resolveIndexName( repositoryId, indexType );
 
         if ( indexName == null )
         {

@@ -24,4 +24,6 @@ public class VersionIndexPath
 
     public static final IndexPath COMMIT_ID = IndexPath.from( "commitid" );
 
+    public static final IndexPath JOIN_FIELD = IndexPath.from( "joinfield" );
+
 }

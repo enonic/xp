@@ -20,7 +20,7 @@ import com.enonic.xp.repo.impl.storage.GetResult;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
-import com.enonic.xp.repo.impl.storage.VersionStorageName;
+import com.enonic.xp.repo.impl.storage.StoreStorageName;
 import com.enonic.xp.repo.impl.version.storage.VersionStorageDocFactory;
 
 @Component
@@ -100,7 +100,7 @@ public class VersionServiceImpl
     private StorageSource createVersionStorageSettings( final InternalContext context )
     {
         return StorageSource.create().
-            storageName( VersionStorageName.from( context.getRepositoryId() ) ).
+            storageName( StoreStorageName.from( context.getRepositoryId() ) ).
             storageType( StaticStorageType.VERSION ).
             build();
     }

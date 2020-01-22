@@ -18,7 +18,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.CreateNodeParams;
@@ -453,27 +452,6 @@ public abstract class AbstractNodeTest
     protected void printContentRepoIndex()
     {
         printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId(), WS_DEFAULT ), WS_DEFAULT.getValue() );
-    }
-
-    protected void printSearchIndex( final RepositoryId repositoryId, final Branch branch )
-    {
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( repositoryId, branch ), branch.getValue() );
-    }
-
-    protected void printBranchIndex()
-    {
-        printAllIndexContent( IndexNameResolver.resolveBranchIndexName( ContextAccessor.current().getRepositoryId() ),
-                              IndexType.BRANCH.getName() );
-    }
-
-    protected void printVersionIndex()
-    {
-        printAllIndexContent( IndexNameResolver.resolveVersionIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
-    }
-
-    protected void printCommitIndex()
-    {
-        printAllIndexContent( IndexNameResolver.resolveCommitIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.COMMIT.getName() );
     }
 
     protected PushNodesResult pushNodes( final Branch target, final NodeId... nodeIds )

@@ -3,9 +3,8 @@ package com.enonic.xp.repo.impl.elasticsearch.query.source;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.storage.BaseStorageName;
-import com.enonic.xp.repo.impl.storage.BranchStorageName;
 import com.enonic.xp.repo.impl.storage.CommitStorageName;
-import com.enonic.xp.repo.impl.storage.VersionStorageName;
+import com.enonic.xp.repo.impl.storage.StoreStorageName;
 import com.enonic.xp.repository.RepositoryId;
 
 abstract class AbstractSourceAdapter
@@ -24,9 +23,8 @@ abstract class AbstractSourceAdapter
         switch ( type )
         {
             case VERSION:
-                return VersionStorageName.from( repositoryId );
             case BRANCH:
-                return BranchStorageName.from( repositoryId );
+                return StoreStorageName.from( repositoryId );
             case COMMIT:
                 return CommitStorageName.from( repositoryId );
         }

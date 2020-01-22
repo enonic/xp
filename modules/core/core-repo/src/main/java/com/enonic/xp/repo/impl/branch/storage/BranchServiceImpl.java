@@ -37,13 +37,13 @@ import com.enonic.xp.repo.impl.search.SearchDao;
 import com.enonic.xp.repo.impl.search.SearchRequest;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
-import com.enonic.xp.repo.impl.storage.BranchStorageName;
 import com.enonic.xp.repo.impl.storage.DeleteRequests;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
+import com.enonic.xp.repo.impl.storage.StoreStorageName;
 
 @Component
 public class BranchServiceImpl
@@ -52,7 +52,7 @@ public class BranchServiceImpl
     private static final ReturnFields BRANCH_RETURN_FIELDS =
         ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.NODE_BLOB_KEY,
                            BranchIndexPath.INDEX_CONFIG_BLOB_KEY, BranchIndexPath.ACCESS_CONTROL_BLOB_KEY, BranchIndexPath.STATE,
-                           BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP, BranchIndexPath.REFERENCES );
+                           BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP, BranchIndexPath.REFERENCES, BranchIndexPath.JOIN_FIELD );
 
     private static final int BATCHED_EXECUTOR_LIMIT = 1000;
 
@@ -346,7 +346,7 @@ public class BranchServiceImpl
     private StorageSource createBranchStorageSettings( final InternalContext context )
     {
         return StorageSource.create().
-            storageName( BranchStorageName.from( context.getRepositoryId() ) ).
+            storageName( StoreStorageName.from( context.getRepositoryId() ) ).
             storageType( StaticStorageType.BRANCH ).
             build();
     }

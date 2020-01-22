@@ -1,14 +1,8 @@
 package com.enonic.xp.index;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 public enum IndexType
 {
-    SEARCH( true ),
-    VERSION( false ),
-    BRANCH( false ),
-    COMMIT( false );
+    SEARCH( true ), STORAGE( false ), COMMIT( false );
 
     private final boolean dynamicTypes;
 

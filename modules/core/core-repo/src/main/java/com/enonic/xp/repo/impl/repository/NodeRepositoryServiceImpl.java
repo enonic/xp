@@ -39,8 +39,7 @@ public class NodeRepositoryServiceImpl
     @Override
     public void create( final CreateRepositoryParams params )
     {
-        doCreateIndex( params, IndexType.VERSION );
-        doCreateIndex( params, IndexType.BRANCH );
+        doCreateIndex( params, IndexType.STORAGE );
         doCreateIndex( params, IndexType.COMMIT );
 
         checkClusterHealth();
@@ -50,8 +49,7 @@ public class NodeRepositoryServiceImpl
     public void delete( final RepositoryId repositoryId )
     {
         delete( repositoryId, IndexType.SEARCH );
-        delete( repositoryId, IndexType.VERSION );
-        delete( repositoryId, IndexType.BRANCH );
+        delete( repositoryId, IndexType.STORAGE );
         delete( repositoryId, IndexType.COMMIT );
     }
 
@@ -63,7 +61,7 @@ public class NodeRepositoryServiceImpl
         }
         else
         {
-            indexServiceInternal.deleteIndices( resolveStorageIndexName( repositoryId, indexType ) );
+            indexServiceInternal.deleteIndices( resolveIndexName( repositoryId, indexType ) );
         }
     }
 
@@ -75,12 +73,11 @@ public class NodeRepositoryServiceImpl
             throw new RepositoryException( "Unable to initialize repositories" );
         }
 
-        final String versionIndexName = IndexNameResolver.resolveVersionIndexName( repositoryId );
-        final String branchIndexName = IndexNameResolver.resolveBranchIndexName( repositoryId );
+        final String storageIndexName = IndexNameResolver.resolveStorageIndexName( repositoryId );
         final String commitIndexName = IndexNameResolver.resolveCommitIndexName( repositoryId );
         final String masterSearchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId, RepositoryConstants.MASTER_BRANCH );
 
-        return indexServiceInternal.indicesExists( versionIndexName, branchIndexName, commitIndexName, masterSearchIndexName );
+        return indexServiceInternal.indicesExists( storageIndexName, commitIndexName, masterSearchIndexName );
     }
 
     private void doCreateIndex( final CreateRepositoryParams params, final IndexType indexType )
@@ -91,7 +88,7 @@ public class NodeRepositoryServiceImpl
         final IndexMapping mergedMapping = mergeWithDefaultMapping( params, indexType );
 
         indexServiceInternal.createIndex( CreateIndexRequest.create().
-            indexName( resolveStorageIndexName( repositoryId, indexType ) ).
+            indexName( resolveIndexName( repositoryId, indexType ) ).
             indexSettings( mergedSettings ).
             mapping( mergedMapping ).
             build() );
@@ -122,7 +119,7 @@ public class NodeRepositoryServiceImpl
         try
         {
             final String numberOfReplicasString =
-                indexServiceInternal.getIndexSettings( SystemConstants.SYSTEM_REPO.getId(), IndexType.VERSION ).getNode().
+                indexServiceInternal.getIndexSettings( SystemConstants.SYSTEM_REPO.getId(), IndexType.STORAGE ).getNode().
                     get( "index.number_of_replicas" ).
                     textValue();
             final int numberOfReplicas = Integer.parseInt( numberOfReplicasString );
@@ -131,8 +128,8 @@ public class NodeRepositoryServiceImpl
         }
         catch ( Exception e )
         {
-            LOG.warn( "Failed to retrieve number of replicas from [" +
-                          resolveStorageIndexName( SystemConstants.SYSTEM_REPO.getId(), IndexType.VERSION ) + "]" );
+            LOG.warn(
+                "Failed to retrieve number of replicas from [" + resolveIndexName( SystemConstants.SYSTEM_REPO.getId(), indexType ) + "]" );
         }
 
         return defaultSettings;
@@ -151,18 +148,16 @@ public class NodeRepositoryServiceImpl
         return defaultMapping;
     }
 
-    private String resolveStorageIndexName( final RepositoryId repositoryId, final IndexType indexType )
+    private String resolveIndexName( final RepositoryId repositoryId, final IndexType indexType )
     {
-        final String indexName = IndexNameResolver.resolveStorageIndexName( repositoryId, indexType );
+        final String indexName = IndexNameResolver.resolveIndexName( repositoryId, indexType );
 
         if ( indexName != null )
         {
             return indexName;
         }
 
-        throw new IllegalArgumentException( indexType != null
-                                                ? ( "Cannot resolve index name for indexType [" + indexType.getName() + "]" )
-                                                : "Cannot resolve index name for empty index type." );
+        throw new IllegalArgumentException( "Cannot resolve index name." );
     }
 
     private boolean checkClusterHealth()

@@ -1,0 +1,10 @@
+dependencies {
+    compile project( ':core:core-content' )
+    compile project( ':core:core-repo' )
+    compile project( ':core:core-event' )
+
+    testCompile project( path: ':blobstore:blobstore-file', configuration: 'testOutput' )
+    testCompile project( path: ':core:core-repo', configuration: 'testOutput' )
+    testCompile 'org.openjdk.jmh:jmh-core:1.22'
+    testAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.22'
+}

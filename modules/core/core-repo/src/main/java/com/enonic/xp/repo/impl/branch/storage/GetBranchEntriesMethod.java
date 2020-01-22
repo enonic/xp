@@ -8,13 +8,13 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.StorageSource;
-import com.enonic.xp.repo.impl.storage.BranchStorageName;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetByIdsRequest;
 import com.enonic.xp.repo.impl.storage.GetResult;
 import com.enonic.xp.repo.impl.storage.GetResults;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageDao;
+import com.enonic.xp.repo.impl.storage.StoreStorageName;
 
 class GetBranchEntriesMethod
     implements BranchEntriesExecutorMethod
@@ -47,7 +47,7 @@ class GetBranchEntriesMethod
             getByIdsRequest.add( GetByIdRequest.create().
                 id( new BranchDocumentId( nodeId, context.getBranch() ).toString() ).
                 storageSettings( StorageSource.create().
-                    storageName( BranchStorageName.from( context.getRepositoryId() ) ).
+                    storageName( StoreStorageName.from( context.getRepositoryId() ) ).
                     storageType( StaticStorageType.BRANCH ).
                     build() ).
                 returnFields( returnFields ).

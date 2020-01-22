@@ -306,7 +306,7 @@ public class IndexServiceImplTest
             settings( "{\"index\": {\"number_of_replicas\": 2}}" ).
             build() );
 
-        assertEquals( 5, result.getUpdatedIndexes().size() );
+        assertEquals( 4, result.getUpdatedIndexes().size() );
     }
 
     @Test

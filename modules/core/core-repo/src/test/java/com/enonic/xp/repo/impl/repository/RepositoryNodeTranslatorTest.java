@@ -34,11 +34,7 @@ public class RepositoryNodeTranslatorTest
             id( RepositoryId.from( "myrepoid" ) ).
             settings( RepositorySettings.create().
                 indexDefinitions( IndexDefinitions.create().
-                    add( IndexType.VERSION, IndexDefinition.create().
-                        mapping( IndexMapping.from( indexMapping ) ).
-                        settings( IndexSettings.from( indexSettings ) ).
-                        build() ).
-                    add( IndexType.BRANCH, IndexDefinition.create().
+                    add( IndexType.STORAGE, IndexDefinition.create().
                         mapping( IndexMapping.from( indexMapping ) ).
                         settings( IndexSettings.from( indexSettings ) ).
                         build() ).
@@ -54,14 +50,14 @@ public class RepositoryNodeTranslatorTest
 
         final PropertyTree data = node.data();
 
-        assertNotNull( data.getProperty( "indexConfigs.version.mapping.myMapping" ) );
-        assertNull( data.getProperty( "indexConfigs.version.mapping.myMapping[1]" ) );
-        assertNotNull( data.getProperty( "indexConfigs.version.settings.mySetting" ) );
-        assertNull( data.getProperty( "indexConfigs.version.settings.mySetting[1]" ) );
+        assertNotNull( data.getProperty( "indexConfigs.storage.mapping.myMapping" ) );
+        assertNull( data.getProperty( "indexConfigs.storage.mapping.myMapping[1]" ) );
+        assertNotNull( data.getProperty( "indexConfigs.storage.settings.mySetting" ) );
+        assertNull( data.getProperty( "indexConfigs.storage.settings.mySetting[1]" ) );
 
-        assertNotNull( data.getProperty( "indexConfigs.branch.mapping.myMapping" ) );
-        assertNull( data.getProperty( "indexConfigs.branch.mapping.myMapping[1]" ) );
-        assertNotNull( data.getProperty( "indexConfigs.branch.settings.mySetting" ) );
-        assertNull( data.getProperty( "indexConfigs.branch.settings.mySetting[1]" ) );
+        assertNotNull( data.getProperty( "indexConfigs.commit.mapping.myMapping" ) );
+        assertNull( data.getProperty( "indexConfigs.commit.mapping.myMapping[1]" ) );
+        assertNotNull( data.getProperty( "indexConfigs.commit.settings.mySetting" ) );
+        assertNull( data.getProperty( "indexConfigs.commit.settings.mySetting[1]" ) );
     }
 }

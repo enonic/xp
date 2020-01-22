@@ -71,30 +71,6 @@ public class RefreshScriptTest
     }
 
     @Test
-    public void testRefreshVersion()
-        throws Exception
-    {
-        runFunction( "/test/refresh-test.js", "refreshVersion" );
-        verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.VERSION );
-    }
-
-    @Test
-    public void testRefreshBranch()
-        throws Exception
-    {
-        runFunction( "/test/refresh-test.js", "refreshBranch" );
-        verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.BRANCH );
-    }
-
-    @Test
-    public void testRefreshCommit()
-        throws Exception
-    {
-        runFunction( "/test/refresh-test.js", "refreshCommit" );
-        verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.COMMIT );
-    }
-
-    @Test
     public void testRefreshInvalidMode()
         throws Exception
     {

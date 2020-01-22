@@ -75,7 +75,7 @@ public abstract class AbstractElasticsearchIntegrationTest
 
     protected static AcknowledgedResponse deleteAllIndices()
     {
-        return client.indicesDelete( new DeleteIndexRequest( "search-*", "branch-*", "version-*", "commit-*" ) );
+        return client.indicesDelete( new DeleteIndexRequest( "search-*", "storage-*", "commit-*" ) );
     }
 
     static class ElasticsearchExtension
