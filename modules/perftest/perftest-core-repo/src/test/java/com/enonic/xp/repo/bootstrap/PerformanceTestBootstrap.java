@@ -89,17 +89,17 @@ public class PerformanceTestBootstrap
         authInfo( NodeConstants.NODE_SU_AUTH_INFO ).
         build();
 
-    private final int NODE_SIZE = 22000;
+    public final int NODE_SIZE = 22000;
 
     protected Node ROOT_NODE;
 
-    protected Node NON_PUBLISHED_NODES_ROOT;
+    public Node NON_PUBLISHED_NODES_ROOT;
 
-    protected Node HALF_PUBLISHED_NODES_ROOT;
+    public Node HALF_PUBLISHED_NODES_ROOT;
 
-    protected Node PUBLISHED_NODES_ROOT;
+    public Node PUBLISHED_NODES_ROOT;
 
-    protected Node PUBLISHED_DYNAMIC_ROOT;
+    public Node PUBLISHED_DYNAMIC_ROOT;
 
     protected NodeServiceImpl nodeService;
 
