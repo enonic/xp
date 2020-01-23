@@ -14,7 +14,6 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
@@ -232,7 +231,7 @@ public class ComponentHandlerTest
         {
             PageRegions pageRegions = PageRegions.create().
                 add( Region.create().name( "main-region" ).
-                    add( FragmentComponent.create().name( ComponentName.from( "myfragment" ) ).fragment( ContentId.from( "fragmentId" ) ).
+                    add( FragmentComponent.create().fragment( ContentId.from( "fragmentId" ) ).
                         build() ).
                     build() ).
                 build();
@@ -261,7 +260,7 @@ public class ComponentHandlerTest
 
         Page page = Page.create().
             template( PageTemplateKey.from( "my-page" ) ).
-            fragment( PartComponent.create().name( ComponentName.from( "mypart" ) ).build() ).
+            fragment( PartComponent.create().descriptor( "myapp:mypart" ).build() ).
             config( rootDataSet ).
             build();
         content.page( page );

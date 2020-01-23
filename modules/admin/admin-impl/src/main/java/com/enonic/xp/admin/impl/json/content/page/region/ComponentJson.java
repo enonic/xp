@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
 import com.enonic.xp.region.Component;
+import com.enonic.xp.region.ComponentName;
 
 @SuppressWarnings("UnusedDeclaration")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
@@ -18,14 +20,18 @@ public abstract class ComponentJson<COMPONENT extends Component>
 {
     private final COMPONENT component;
 
-    protected ComponentJson( final COMPONENT component )
+    protected final ComponentNameResolver componentNameResolver;
+
+    protected ComponentJson( final COMPONENT component, final ComponentNameResolver componentNameResolver )
     {
         this.component = component;
+        this.componentNameResolver = componentNameResolver;
     }
 
     public String getName()
     {
-        return component.getName() != null ? component.getName().toString() : null;
+        final ComponentName name = componentNameResolver != null ? componentNameResolver.resolve( component ) : null;
+        return name != null ? name.toString() : null;
     }
 
     @JsonIgnore

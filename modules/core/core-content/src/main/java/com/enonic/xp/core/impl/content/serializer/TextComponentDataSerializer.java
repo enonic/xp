@@ -10,8 +10,6 @@ final class TextComponentDataSerializer
 {
     private static final String VALUE = "value";
 
-    private static final String DEFAULT_NAME = "Text";
-
     @Override
     public void applyComponentToData( final TextComponent component, final PropertySet asData )
     {
@@ -26,7 +24,7 @@ final class TextComponentDataSerializer
     @Override
     public TextComponent fromData( final PropertySet data )
     {
-        TextComponent.Builder component = TextComponent.create().name( DEFAULT_NAME );
+        final TextComponent.Builder component = TextComponent.create();
 
         final PropertySet specialBlockSet = data.getSet( TextComponentType.INSTANCE.toString() );
 

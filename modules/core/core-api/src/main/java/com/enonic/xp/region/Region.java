@@ -130,7 +130,7 @@ public final class Region
     {
         return MoreObjects.toStringHelper( this ).
             add( "name", name ).
-            add( "parent", parent == null ? null : parent.getName() ).
+            add( "parent", parent == null ? null : parent.getDescriptor() ).
             add( "components", components ).
             toString();
     }

@@ -11,13 +11,13 @@ public class ContentSummaryListJson
     public ContentSummaryListJson( final Content content, final ContentListMetaData contentListMetaData,
                                    final ContentIconUrlResolver iconUrlResolver )
     {
-        super( content, contentListMetaData, iconUrlResolver, null );
+        super( content, contentListMetaData, iconUrlResolver, null, null );
     }
 
     public ContentSummaryListJson( final Contents contents, final ContentListMetaData contentListMetaData,
                                    final ContentIconUrlResolver iconUrlResolver )
     {
-        super( contents, contentListMetaData, iconUrlResolver, null );
+        super( contents, contentListMetaData, iconUrlResolver, null, null );
     }
 
     @Override

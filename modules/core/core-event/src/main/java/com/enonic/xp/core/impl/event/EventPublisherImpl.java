@@ -1,10 +1,8 @@
 package com.enonic.xp.core.impl.event;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -27,15 +25,14 @@ public final class EventPublisherImpl
 
     private final static Meter EVENT_METRIC = Metrics.meter( EventPublisher.class, "event" );
 
-    private final Queue<Event> queue = new ConcurrentLinkedQueue<>();
-
     private final EventMulticaster multicaster = new EventMulticaster();
 
     private final Executor executor;
 
-    public EventPublisherImpl()
+    @Activate
+    public EventPublisherImpl( @Reference(service = EventPublisherExecutor.class) final Executor executor )
     {
-        this.executor = Executors.newSingleThreadExecutor();
+        this.executor = executor;
     }
 
     @Override
@@ -43,25 +40,8 @@ public final class EventPublisherImpl
     {
         if ( event != null )
         {
-            if ( LOG.isDebugEnabled() )
-            {
-                LOG.debug( "Publishing event: " + event.toString() );
-            }
+            LOG.debug( "Publishing event: {}", event );
             EVENT_METRIC.mark();
-            this.queue.add( event );
-            dispatchEvents();
-        }
-    }
-
-    private void dispatchEvents()
-    {
-        while ( true )
-        {
-            final Event event = this.queue.poll();
-            if ( event == null )
-            {
-                return;
-            }
 
             dispatchEvent( event );
         }
@@ -69,7 +49,7 @@ public final class EventPublisherImpl
 
     private void dispatchEvent( final Event event )
     {
-        this.executor.execute( () -> this.multicaster.publish( event ) );
+        executor.execute( () -> this.multicaster.publish( event ) );
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)

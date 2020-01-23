@@ -14,6 +14,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.content.Content;
@@ -39,6 +40,8 @@ public final class PageResource
 
     private ContentIconUrlResolver contentIconUrlResolver;
 
+    private ComponentNameResolver componentNameResolver;
+
     @POST
     @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -47,7 +50,7 @@ public final class PageResource
         final CreatePageParams command = params.getCreatePage();
         final Content updatedContent = this.pageService.create( command );
 
-        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @POST
@@ -58,7 +61,7 @@ public final class PageResource
         final UpdatePageParams command = params.getUpdatePage();
         final Content updatedContent = this.pageService.update( command );
 
-        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @GET
@@ -69,7 +72,7 @@ public final class PageResource
         final ContentId contentId = ContentId.from( contentIdAsString );
         final Content updatedContent = this.pageService.delete( contentId );
 
-        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @Reference
@@ -88,5 +91,11 @@ public final class PageResource
     public void setSecurityService( final SecurityService securityService )
     {
         this.principalsResolver = new ContentPrincipalsResolver( securityService );
+    }
+
+    @Reference
+    public void setComponentNameResolver( final ComponentNameResolver componentNameResolver )
+    {
+        this.componentNameResolver = componentNameResolver;
     }
 }

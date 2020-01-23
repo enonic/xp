@@ -197,14 +197,14 @@ public class PageDataSerializerTest
             name( regionName1 ).
             add( createPartComponent( "MyPart1", "app-descriptor-x:name-x", myPartConfig ) ).
             add( createLayoutComponent() ).
-            add( LayoutComponent.create().name( "Layout" ).build() ).
+            add( LayoutComponent.create().build() ).
             build();
 
         final Region mainRegion2 = Region.create().
             name( regionName2 ).
             add( createPartComponent( "MyPart2", "app-descriptor-y:name-y", myPartConfig ) ).
             add( createImageComponent( "img-id-x", "Image Component", imageConfig ) ).
-            add( ImageComponent.create().name( "Image" ).build() ).
+            add( ImageComponent.create().build() ).
             build();
 
         final PageRegions regions = PageRegions.create().
@@ -244,14 +244,11 @@ public class PageDataSerializerTest
         final Region region1 = Region.create().
             name( regionName1 ).
             add( PartComponent.create().
-                name( "Part" ).
                 build() ).
             add( TextComponent.create().
-                name( "Text" ).
                 text( "text text text" ).
                 build() ).
             add( TextComponent.create().
-                name( "Text" ).
                 build() ).
             build();
 
@@ -277,6 +274,6 @@ public class PageDataSerializerTest
                 build() ).
             build() );
 
-        return LayoutComponent.create().name( layoutName ).descriptor( layoutDescriptorKey ).regions( layoutRegions ).build();
+        return LayoutComponent.create().descriptor( layoutDescriptorKey ).regions( layoutRegions ).build();
     }
 }

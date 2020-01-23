@@ -24,7 +24,6 @@ public class ImageComponentTest
 
                 return ImageComponent.create().
                     image( ContentId.from( "image" ) ).
-                    name( "imageComponent" ).
                     config( config1 ).
                     build();
             }
@@ -35,8 +34,9 @@ public class ImageComponentTest
 
                 return new Object[]{ImageComponent.create().
                     image( ContentId.from( "image" ) ).
-                    name( "imageComponent" ).
-                    build(), TextComponent.create().text( "image" ).name( "imageComponent" ).build(), ImageComponent.create().
+                    build(), TextComponent.create().
+                    text( "image" ).
+                    build(), ImageComponent.create().
                     image( ContentId.from( "image" ) ).
                     build(), new Object()};
             }
@@ -49,7 +49,6 @@ public class ImageComponentTest
 
                 return ImageComponent.create().
                     image( ContentId.from( "image" ) ).
-                    name( "imageComponent" ).
                     config( config1 ).
                     build();
             }
@@ -62,7 +61,6 @@ public class ImageComponentTest
 
                 return ImageComponent.create().
                     image( ContentId.from( "image" ) ).
-                    name( "imageComponent" ).
                     config( config1 ).
                     build();
             }

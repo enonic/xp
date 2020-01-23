@@ -3,7 +3,10 @@ package com.enonic.xp.core.issue;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import com.google.common.net.HttpHeaders;
@@ -83,10 +86,14 @@ public class AbstractIssueServiceTest
 
     private RepositoryServiceImpl repositoryService;
 
+    private ExecutorService executorService;
+
     @BeforeEach
     public void setUp()
         throws Exception
     {
+        executorService = Executors.newSingleThreadExecutor();
+
         deleteAllIndices();
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
@@ -99,7 +106,7 @@ public class AbstractIssueServiceTest
         final StorageDaoImpl storageDao = new StorageDaoImpl();
         storageDao.setClient( client );
 
-        final EventPublisherImpl eventPublisher = new EventPublisherImpl();
+        final EventPublisherImpl eventPublisher = new EventPublisherImpl( executorService );
 
         SearchDaoImpl searchDao = new SearchDaoImpl();
         searchDao.setClient( client );
@@ -172,6 +179,12 @@ public class AbstractIssueServiceTest
         issueService.setNodeService( nodeService );
 
         initializeRepository();
+    }
+
+    @AfterEach
+    void tearDown()
+    {
+        executorService.shutdownNow();
     }
 
     protected Issue createIssue( CreateIssueParams.Builder builder )

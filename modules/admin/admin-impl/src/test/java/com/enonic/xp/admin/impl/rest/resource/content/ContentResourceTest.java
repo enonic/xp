@@ -146,6 +146,7 @@ import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
@@ -153,7 +154,10 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.PartDescriptor;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -226,6 +230,10 @@ public class ContentResourceTest
 
     private BinaryExtractor binaryExtractor;
 
+    private LayoutDescriptorService layoutDescriptorService;
+
+    private PartDescriptorService partDescriptorService;
+
     @Override
     protected ContentResource getResourceInstance()
     {
@@ -251,6 +259,15 @@ public class ContentResourceTest
 
         relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
         resource.setRelationshipTypeService( relationshipTypeService );
+
+        layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
+        partDescriptorService = Mockito.mock( PartDescriptorService.class );
+
+        final ComponentNameResolverImpl componentNameResolver = new ComponentNameResolverImpl();
+        componentNameResolver.setContentService( contentService );
+        componentNameResolver.setLayoutDescriptorService( layoutDescriptorService );
+        componentNameResolver.setPartDescriptorService( partDescriptorService );
+        resource.setComponentNameResolver( componentNameResolver );
 
         return resource;
     }
@@ -342,6 +359,13 @@ public class ContentResourceTest
 
         Mockito.when( contentService.getPermissionsById( content2.getId() ) ).
             thenReturn( AccessControlList.create().build() );
+
+        Mockito.when( partDescriptorService.getByKey( DescriptorKey.from( "mainapplication:partTemplateName" ) ) ).thenReturn(
+            PartDescriptor.create().
+                key( DescriptorKey.from( "mainapplication:partTemplateName" ) ).
+                displayName( "my-component" ).
+                config( Form.create().build() ).
+                build() );
 
         String jsonString = request().path( "content/contentPermissionsByIds" ).entity( readFromFile( "get_permissions_by_ids.json" ),
                                                                                         MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
@@ -449,7 +473,6 @@ public class ContentResourceTest
         componentConfig.setString( "my-prop", "value" );
 
         PartComponent component = PartComponent.create().
-            name( "my-component" ).
             descriptor( DescriptorKey.from( "mainapplication:partTemplateName" ) ).
             config( componentConfig ).
             build();
@@ -478,6 +501,13 @@ public class ContentResourceTest
         contentData.setString( "myProperty", "myValue" );
 
         Mockito.when( contentService.getById( ContentId.from( "aaa" ) ) ).thenReturn( content );
+
+        Mockito.when( partDescriptorService.getByKey( DescriptorKey.from( "mainapplication:partTemplateName" ) ) ).thenReturn(
+            PartDescriptor.create().
+                key( DescriptorKey.from( "mainapplication:partTemplateName" ) ).
+                displayName( "my-component" ).
+                config( Form.create().build() ).
+                build() );
 
         String jsonString = request().path( "content" ).queryParam( "id", "aaa" ).get().getAsString();
 
@@ -1680,9 +1710,14 @@ public class ContentResourceTest
 
         ContentJson result = contentResource.getNearest( new GetNearestSiteJson( site.getId().toString() ) );
 
+        final ComponentNameResolverImpl componentNameResolver = new ComponentNameResolverImpl();
+        componentNameResolver.setContentService( contentService );
+        componentNameResolver.setLayoutDescriptorService( layoutDescriptorService );
+        componentNameResolver.setPartDescriptorService( partDescriptorService );
+
         assertEquals(
-            new ContentJson( site, new ContentIconUrlResolver( contentTypeService ), new ContentPrincipalsResolver( securityService ) ),
-            result );
+            new ContentJson( site, new ContentIconUrlResolver( contentTypeService ), new ContentPrincipalsResolver( securityService ),
+                             componentNameResolver ), result );
     }
 
     @Test
@@ -2118,8 +2153,7 @@ public class ContentResourceTest
         ContentResource contentResource = getResourceInstance();
 
         Locale[] availableLocales = Stream.of( Locale.getAvailableLocales() ).filter(
-            locale -> !isNullOrEmpty( locale.toLanguageTag() ) && !isNullOrEmpty( locale.getDisplayName() ) ).toArray(
-            Locale[]::new );
+            locale -> !isNullOrEmpty( locale.toLanguageTag() ) && !isNullOrEmpty( locale.getDisplayName() ) ).toArray( Locale[]::new );
 
         if ( availableLocales.length > 0 )
         {

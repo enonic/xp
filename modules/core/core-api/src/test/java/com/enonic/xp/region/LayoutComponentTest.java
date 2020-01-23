@@ -29,9 +29,9 @@ public class LayoutComponentTest
 
                 return new Object[]{ImageComponent.create().
                     image( ContentId.from( "image" ) ).
-                    name( "imageComponent" ).
-                    build(), TextComponent.create().text( "image" ).name( "imageComponent" ).build(), LayoutComponent.create().
-                    name( "name" ).
+                    build(), TextComponent.create().
+                    text( "image" ).
+                    build(), LayoutComponent.create().
                     descriptor( DescriptorKey.from( "descriptor" ) ).
                     regions( null ).
                     build(), new Object()};
@@ -73,14 +73,12 @@ public class LayoutComponentTest
         config1.addString( "some", "config" );
 
         return LayoutComponent.create().
-            name( "name" ).
             config( config1 ).
             descriptor( DescriptorKey.from( "descriptor" ) ).
             regions( LayoutRegions.create().add( Region.create().
                 name( "region" ).
                 add( TextComponent.create().
                     text( "text" ).
-                    name( "textComponent" ).
                     build() ).
                 build() ).
                 build() ).
