@@ -27,12 +27,10 @@ import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -304,23 +302,6 @@ public abstract class AbstractNodeTest
 
     protected Node createDefaultRootNode()
     {
-        if ( this.nodeService.getById( Node.ROOT_UUID ) != null )
-        {
-            final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
-            final NodeBranchEntry nodeBranchEntry = branchService.get( Node.ROOT_UUID, internalContext );
-
-            if ( nodeBranchEntry != null )
-            {
-                final NodeVersionMetadata nodeVersionMetadata =
-                    this.versionService.getVersion( nodeBranchEntry.getNodeId(), nodeBranchEntry.getVersionId(), internalContext );
-
-                this.versionService.store( NodeVersionMetadata.
-                    create( nodeVersionMetadata ).
-                    setBranches( Branches.empty() ).
-                    build(), internalContext );
-            }
-        }
-
         final AccessControlList rootPermissions = AccessControlList.of( AccessControlEntry.create().
             principal( TEST_DEFAULT_USER.getKey() ).
             allowAll().

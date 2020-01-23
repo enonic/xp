@@ -6,8 +6,6 @@ import java.util.stream.Collectors;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.branch.Branches;
-import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
@@ -30,29 +28,9 @@ public class VersionServiceImpl
     private static final ReturnFields VERSION_RETURN_FIELDS =
         ReturnFields.from( VersionIndexPath.VERSION_ID, VersionIndexPath.NODE_BLOB_KEY, VersionIndexPath.INDEX_CONFIG_BLOB_KEY,
                            VersionIndexPath.ACCESS_CONTROL_BLOB_KEY, VersionIndexPath.BINARY_BLOB_KEYS, VersionIndexPath.TIMESTAMP,
-                           VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID, VersionIndexPath.COMMIT_ID, VersionIndexPath.BRANCHES );
+                           VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID, VersionIndexPath.COMMIT_ID );
 
     private StorageDao storageDao;
-
-    @Override
-    public void deleteBranches( final NodeBranchEntries branchEntries, final InternalContext context, final Boolean all )
-    {
-        branchEntries.forEach( nodeBranchEntry -> {
-            final NodeVersionMetadata nodeVersionMetadata =
-                this.getVersion( nodeBranchEntry.getNodeId(), nodeBranchEntry.getVersionId(), context );
-
-            final Branches branches = all
-                ? Branches.empty()
-                : Branches.from(
-                    nodeVersionMetadata.getBranches().stream().filter( branch -> !branch.equals( context.getBranch() ) ).collect(
-                        Collectors.toSet() ) );
-
-            this.store( NodeVersionMetadata.
-                create( nodeVersionMetadata ).
-                setBranches( branches ).
-                build(), context );
-        } );
-    }
 
     @Override
     public void store( final NodeVersionMetadata nodeVersionMetadata, final InternalContext context )

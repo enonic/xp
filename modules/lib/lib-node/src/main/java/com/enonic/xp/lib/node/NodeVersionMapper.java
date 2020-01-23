@@ -1,8 +1,5 @@
 package com.enonic.xp.lib.node;
 
-import java.util.stream.Collectors;
-
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
@@ -25,9 +22,5 @@ public final class NodeVersionMapper
         gen.value( "nodePath", value.getNodePath() );
         gen.value( "timestamp", value.getTimestamp() );
         gen.value( "commitId", value.getNodeCommitId() );
-        gen.value( "branches", value.getBranches().
-            stream().
-            map( Branch::getValue ).
-            collect( Collectors.joining( "," ) ) );
     }
 }

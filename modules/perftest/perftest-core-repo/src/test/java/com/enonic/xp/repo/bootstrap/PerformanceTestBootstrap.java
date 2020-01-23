@@ -89,17 +89,17 @@ public class PerformanceTestBootstrap
         authInfo( NodeConstants.NODE_SU_AUTH_INFO ).
         build();
 
-    public final int NODE_SIZE = 22000;
+    public static final int NODE_SIZE = 22000;
 
-    protected Node ROOT_NODE;
+    public Node nonPublishedNodesRoot;
 
-    public Node NON_PUBLISHED_NODES_ROOT;
+    public Node halfPublishedNodesRoot;
 
-    public Node HALF_PUBLISHED_NODES_ROOT;
+    public Node publishedNodesRoot;
 
-    public Node PUBLISHED_NODES_ROOT;
+    public Node publishedDynamicRoot;
 
-    public Node PUBLISHED_DYNAMIC_ROOT;
+    protected Node rootNode;
 
     protected NodeServiceImpl nodeService;
 
@@ -282,7 +282,6 @@ public class PerformanceTestBootstrap
 
                 this.versionService.store( NodeVersionMetadata.
                     create( nodeVersionMetadata ).
-                    setBranches( Branches.empty() ).
                     build(), internalContext );
             }
         }
@@ -396,45 +395,45 @@ public class PerformanceTestBootstrap
                 createRepository( MY_REPO );
             }
             createDefaultRootNode();
-            ROOT_NODE = createNode( CreateNodeParams.create().
+            rootNode = createNode( CreateNodeParams.create().
                 name( "rootNode" ).
                 parent( NodePath.ROOT ).
                 build() );
 
-            NON_PUBLISHED_NODES_ROOT = createNode( CreateNodeParams.create().
+            nonPublishedNodesRoot = createNode( CreateNodeParams.create().
                 name( "nonPublishedRoot" ).
-                parent( ROOT_NODE.path() ).
+                parent( rootNode.path() ).
                 data( new PropertyTree() ).
                 build() );
 
-            PUBLISHED_NODES_ROOT = createNode( CreateNodeParams.create().
+            publishedNodesRoot = createNode( CreateNodeParams.create().
                 name( "publishedRoot" ).
-                parent( ROOT_NODE.path() ).
+                parent( rootNode.path() ).
                 data( new PropertyTree() ).
                 build() );
 
-            HALF_PUBLISHED_NODES_ROOT = createNode( CreateNodeParams.create().
+            halfPublishedNodesRoot = createNode( CreateNodeParams.create().
                 name( "halfPublishedRoot" ).
-                parent( ROOT_NODE.path() ).
+                parent( rootNode.path() ).
                 data( new PropertyTree() ).
                 build() );
 
-            PUBLISHED_DYNAMIC_ROOT = createNode( CreateNodeParams.create().
+            publishedDynamicRoot = createNode( CreateNodeParams.create().
                 name( "publishedDynamicRoot" ).
-                parent( ROOT_NODE.path() ).
+                parent( rootNode.path() ).
                 data( new PropertyTree() ).
                 build() );
 
-            createNodes( NON_PUBLISHED_NODES_ROOT, NODE_SIZE, 1, 1 );
-            createNodes( PUBLISHED_NODES_ROOT, NODE_SIZE, 1, 1 );
-            createNodes( HALF_PUBLISHED_NODES_ROOT, NODE_SIZE, 1, 1 );
-            createNodes( PUBLISHED_DYNAMIC_ROOT, NODE_SIZE, 1, 1 );
+            createNodes( nonPublishedNodesRoot, NODE_SIZE, 1, 1 );
+            createNodes( publishedNodesRoot, NODE_SIZE, 1, 1 );
+            createNodes( halfPublishedNodesRoot, NODE_SIZE, 1, 1 );
+            createNodes( publishedDynamicRoot, NODE_SIZE, 1, 1 );
 
             nodeService.refresh( RefreshMode.ALL );
 
-            this.publish( 0, this.ROOT_NODE );
-            this.publish( NODE_SIZE, PUBLISHED_NODES_ROOT );
-            this.publish( NODE_SIZE / 2, HALF_PUBLISHED_NODES_ROOT );
+            this.publish( 0, this.rootNode );
+            this.publish( NODE_SIZE, publishedNodesRoot );
+            this.publish( NODE_SIZE / 2, halfPublishedNodesRoot );
 
             return refresh();
         } );
