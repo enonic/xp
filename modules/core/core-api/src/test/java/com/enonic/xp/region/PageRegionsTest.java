@@ -62,11 +62,11 @@ public class PageRegionsTest
     {
         final PageRegions regions = PageRegions.create().
             add( Region.create().name( "a-region" ).
-                add( PartComponent.create().name( ComponentName.from( "part-a-in-a" ) ).build() ).
+                add( PartComponent.create().build() ).
                 build() ).
             add( Region.create().name( "b-region" ).
-                add( PartComponent.create().name( ComponentName.from( "part-a-in-b" ) ).build() ).
-                add( PartComponent.create().name( ComponentName.from( "part-b-in-b" ) ).build() ).
+                add( PartComponent.create().build() ).
+                add( PartComponent.create().build() ).
                 build() ).
             build();
 
@@ -89,10 +89,10 @@ public class PageRegionsTest
     {
         final PageRegions regions = PageRegions.create().
             add( Region.create().name( "region-level-1" ).
-                add( LayoutComponent.create().name( ComponentName.from( "layout-level-1" ) ).
+                add( LayoutComponent.create().
                     regions( LayoutRegions.create().
                         add( Region.create().name( "region-level-2" ).
-                            add( PartComponent.create().name( ComponentName.from( "part-level-2" ) ).build() ).
+                            add( PartComponent.create().build() ).
                             build() ).
                         build() ).
                     build() ).
@@ -117,16 +117,18 @@ public class PageRegionsTest
         final PageRegions regions = PageRegions.create().
             add( Region.create().
                 name( "a-region" ).
-                add( PartComponent.create().name( "part-1-in-region-a" ).build() ).
+                add( PartComponent.create().descriptor( "myapp:part-1-in-region-a" ).build() ).
                 build() ).
             add( Region.create().
                 name( "b-region" ).
-                add( PartComponent.create().name( "part-1-in-region-b" ).build() ).
+                add( PartComponent.create().descriptor( "myapp:part-1-in-region-b" ).build() ).
                 build() ).
             build();
 
-        assertEquals( "part-1-in-region-a", regions.getComponent( ComponentPath.from( "a-region/0" ) ).getName().toString() );
-        assertEquals( "part-1-in-region-b", regions.getComponent( ComponentPath.from( "b-region/0" ) ).getName().toString() );
+        assertEquals( "myapp:part-1-in-region-a",
+                      ( (PartComponent) regions.getComponent( ComponentPath.from( "a-region/0" ) ) ).getDescriptor().toString() );
+        assertEquals( "myapp:part-1-in-region-b",
+                      ( (PartComponent) regions.getComponent( ComponentPath.from( "b-region/0" ) ) ).getDescriptor().toString() );
         assertNull( regions.getComponent( ComponentPath.from( "a-region/1" ) ) );
     }
 
@@ -136,11 +138,11 @@ public class PageRegionsTest
         final PageRegions regions = PageRegions.create().
             add( Region.create().
                 name( "a-region" ).
-                add( PartComponent.create().name( "part-1-in-region-a" ).build() ).
-                add( PartComponent.create().name( "part-1-in-region-b" ).build() ).
+                add( PartComponent.create().build() ).
+                add( PartComponent.create().build() ).
                 build() ).
             build();
 
-        assertThrows(IllegalArgumentException.class, () -> regions.getComponent( ComponentPath.from( "a-region/1/2/3" ) ));
+        assertThrows( IllegalArgumentException.class, () -> regions.getComponent( ComponentPath.from( "a-region/1/2/3" ) ) );
     }
 }

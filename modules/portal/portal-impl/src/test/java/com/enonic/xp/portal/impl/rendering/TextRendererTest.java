@@ -50,7 +50,7 @@ public class TextRendererTest
     public void textComponentWithNoText()
     {
         // setup
-        textComponent = TextComponent.create().name( "myTextComponent" ).build();
+        textComponent = TextComponent.create().build();
         renderer = new TextRenderer();
         renderer.setPortalUrlService( service );
 
@@ -66,7 +66,7 @@ public class TextRendererTest
     {
         // setup
         portalRequest.setMode( RenderMode.EDIT );
-        textComponent = TextComponent.create().name( "myTextComponent" ).build();
+        textComponent = TextComponent.create().build();
         renderer = new TextRenderer();
         renderer.setPortalUrlService( service );
 
@@ -81,7 +81,7 @@ public class TextRendererTest
     {
         // setup
         portalRequest.setMode( RenderMode.PREVIEW );
-        textComponent = TextComponent.create().name( "myTextComponent" ).build();
+        textComponent = TextComponent.create().build();
         renderer = new TextRenderer();
         renderer.setPortalUrlService( service );
 
@@ -97,7 +97,7 @@ public class TextRendererTest
     {
         // setup
         portalRequest.setMode( RenderMode.INLINE );
-        textComponent = TextComponent.create().name( "myTextComponent" ).build();
+        textComponent = TextComponent.create().build();
         renderer = new TextRenderer();
         renderer.setPortalUrlService( service );
 
@@ -114,7 +114,7 @@ public class TextRendererTest
     {
         // setup
         String text = "<h2>hello</h2><p>How are you?</p>";
-        textComponent = TextComponent.create().name( "myTextComponent" ).text( text ).build();
+        textComponent = TextComponent.create().text( text ).build();
         renderer = new TextRenderer();
         renderer.setPortalUrlService( service );
 
@@ -130,7 +130,7 @@ public class TextRendererTest
     {
         // setup
         String text = "<figure><img src=\"src\" />\n" + "<figcaption style=\"text-align: left;\"></figcaption>\n" + "</figure>";
-        textComponent = TextComponent.create().name( "myTextComponent" ).text( text ).build();
+        textComponent = TextComponent.create().text( text ).build();
         renderer = new TextRenderer();
         renderer.setPortalUrlService( service );
 
@@ -147,7 +147,7 @@ public class TextRendererTest
         // setup
         portalRequest.setMode( RenderMode.EDIT );
         String text = "<h2>hello</h2><p>How are you?</p>";
-        textComponent = TextComponent.create().name( "myTextComponent" ).text( text ).build();
+        textComponent = TextComponent.create().text( text ).build();
         renderer = new TextRenderer();
         renderer.setPortalUrlService( service );
 

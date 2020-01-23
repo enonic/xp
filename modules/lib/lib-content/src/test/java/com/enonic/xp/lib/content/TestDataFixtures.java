@@ -227,9 +227,9 @@ public final class TestDataFixtures
     {
         return Region.create().
             name( "top" ).
-            add( createPartComponent( "MyPart1", "app-descriptor-x:name-x", newTinyPropertyTree() ) ).
+            add( createPartComponent( "app-descriptor-x:name-x", newTinyPropertyTree() ) ).
             add( createLayoutComponent() ).
-            add( LayoutComponent.create().name( "Layout" ).build() ).
+            add( LayoutComponent.create().build() ).
             build();
     }
 
@@ -237,9 +237,9 @@ public final class TestDataFixtures
     {
         return Region.create().
             name( "bottom" ).
-            add( createPartComponent( "MyPart2", "app-descriptor-y:name-y", newTinyPropertyTree() ) ).
+            add( createPartComponent( "app-descriptor-y:name-y", newTinyPropertyTree() ) ).
             add( createImageComponent( "img-id-x", "Image Component", newImageComponentPropertyTree() ) ).
-            add( ImageComponent.create().name( "Image" ).build() ).
+            add( ImageComponent.create().build() ).
             build();
     }
 
@@ -277,7 +277,6 @@ public final class TestDataFixtures
             build();
 
         return ImageComponent.create().
-            name( imageDisplayName ).
             image( id ).
             config( imageConfig ).
             build();
@@ -293,17 +292,15 @@ public final class TestDataFixtures
             build();
 
         return FragmentComponent.create().
-            name( fragmentDisplayName ).
             fragment( id ).
             build();
     }
 
-    private static PartComponent createPartComponent( final String partName, final String descriptorKey, final PropertyTree partConfig )
+    private static PartComponent createPartComponent( final String descriptorKey, final PropertyTree partConfig )
     {
         final DescriptorKey descriptor = DescriptorKey.from( descriptorKey );
 
         return PartComponent.create().
-            name( partName ).
             descriptor( descriptor ).
             config( partConfig ).
             build();
@@ -314,14 +311,11 @@ public final class TestDataFixtures
         final Region region1 = Region.create().
             name( "left" ).
             add( PartComponent.create().
-                name( "Part" ).
                 build() ).
             add( TextComponent.create().
-                name( "Text" ).
                 text( "text text text" ).
                 build() ).
             add( TextComponent.create().
-                name( "Text" ).
                 build() ).
             build();
 
@@ -333,6 +327,6 @@ public final class TestDataFixtures
 
         final LayoutRegions layoutRegions = LayoutRegions.create().add( region1 ).add( region2 ).build();
 
-        return LayoutComponent.create().name( "MyLayout" ).descriptor( "layoutDescriptor:name" ).regions( layoutRegions ).build();
+        return LayoutComponent.create().descriptor( "layoutDescriptor:name" ).regions( layoutRegions ).build();
     }
 }

@@ -6,6 +6,7 @@ import com.enonic.xp.admin.impl.json.aggregation.AggregationJson;
 import com.enonic.xp.admin.impl.json.aggregation.BucketAggregationJson;
 import com.enonic.xp.admin.impl.json.content.AbstractContentListJson;
 import com.enonic.xp.admin.impl.json.content.ContentIdJson;
+import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.aggregation.Aggregation;
@@ -23,17 +24,19 @@ public abstract class AbstractAggregationContentListJson<T extends ContentIdJson
 
     public AbstractAggregationContentListJson( final Content content, final ContentListMetaData contentListMetaData,
                                                final Aggregations aggregations, final ContentIconUrlResolver iconUrlResolver,
-                                               final ContentPrincipalsResolver contentPrincipalsResolver )
+                                               final ContentPrincipalsResolver contentPrincipalsResolver,
+                                               final ComponentNameResolver componentNameResolver )
     {
         this( Contents.from( content ), contentListMetaData, ImmutableSet.copyOf( aggregations.getSet() ), iconUrlResolver,
-              contentPrincipalsResolver );
+              contentPrincipalsResolver, componentNameResolver );
     }
 
     public AbstractAggregationContentListJson( final Contents contents, final ContentListMetaData contentListMetaData,
                                                final ImmutableSet<Aggregation> aggregations, final ContentIconUrlResolver iconUrlResolver,
-                                               final ContentPrincipalsResolver contentPrincipalsResolver )
+                                               final ContentPrincipalsResolver contentPrincipalsResolver,
+                                               final ComponentNameResolver componentNameResolver )
     {
-        super( contents, contentListMetaData, iconUrlResolver, contentPrincipalsResolver );
+        super( contents, contentListMetaData, iconUrlResolver, contentPrincipalsResolver, componentNameResolver );
 
         ImmutableSet.Builder<AggregationJson> builder = ImmutableSet.builder();
 

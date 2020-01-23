@@ -281,7 +281,6 @@ public class ContentMappingConstraintTest
     private Component newPartComponent()
     {
         final PartComponent.Builder builder = PartComponent.create();
-        builder.name( "mypart" );
         builder.config( newTinyPropertyTree() );
         builder.descriptor( DescriptorKey.from( "myapplication:mypart" ) );
         return builder.build();
@@ -290,7 +289,6 @@ public class ContentMappingConstraintTest
     private LayoutComponent newLayoutComponent()
     {
         final LayoutComponent.Builder builder = LayoutComponent.create();
-        builder.name( "mylayout" );
         builder.config( newTinyPropertyTree() );
         builder.descriptor( DescriptorKey.from( "myapplication:mylayout" ) );
         builder.regions( newLayoutRegions() );

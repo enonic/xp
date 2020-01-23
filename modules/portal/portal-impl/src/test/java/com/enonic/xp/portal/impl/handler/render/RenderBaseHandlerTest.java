@@ -26,7 +26,6 @@ import com.enonic.xp.portal.impl.rendering.Renderer;
 import com.enonic.xp.portal.impl.rendering.RendererFactory;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.url.PortalUrlService;
-import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -158,7 +157,7 @@ public abstract class RenderBaseHandlerTest
         {
             PageRegions pageRegions = PageRegions.create().
                 add( Region.create().name( "main-region" ).
-                    add( PartComponent.create().name( ComponentName.from( "mypart" ) ).
+                    add( PartComponent.create().descriptor( "myapp:mypart" ).
                         build() ).
                     build() ).
                 build();
@@ -201,7 +200,7 @@ public abstract class RenderBaseHandlerTest
 
         PageRegions pageRegions = PageRegions.create().
             add( Region.create().name( "main-region" ).
-                add( PartComponent.create().name( ComponentName.from( "mypart" ) ).
+                add( PartComponent.create().descriptor( "myapp:mypart" ).
                     build() ).
                 build() ).
             build();
@@ -229,11 +228,8 @@ public abstract class RenderBaseHandlerTest
         final String name = "mypage";
         final DescriptorKey key = DescriptorKey.from( applicationKey, name );
 
-        final String xml = "<?xml version=\"1.0\"?>\n" +
-            "<page>\n" +
-            "  <display-name>Landing page</display-name>\n" +
-            "  <config/>\n" +
-            "</page>";
+        final String xml =
+            "<?xml version=\"1.0\"?>\n" + "<page>\n" + "  <display-name>Landing page</display-name>\n" + "  <config/>\n" + "</page>";
         final PageDescriptor.Builder builder = PageDescriptor.create();
 
         parseXml( applicationKey, builder, xml );
