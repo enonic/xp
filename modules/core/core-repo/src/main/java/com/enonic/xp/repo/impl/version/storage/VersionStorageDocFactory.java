@@ -4,8 +4,6 @@ import java.time.Instant;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeys;
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.storage.JoinIndexPath;
@@ -34,9 +32,7 @@ public class VersionStorageDocFactory
             add( VersionIndexPath.NODE_ID.getPath(), nodeVersion.getNodeId().toString() ).
             add( VersionIndexPath.TIMESTAMP.getPath(), nodeVersion.getTimestamp() != null ? nodeVersion.getTimestamp() : Instant.now() ).
             add( VersionIndexPath.NODE_PATH.getPath(), nodeVersion.getNodePath().toString() ).
-            add( VersionIndexPath.JOIN_FIELD.getPath(), JoinIndexPath.VERSION_JOIN_NAME ).
-            add( VersionIndexPath.BRANCHES.getPath(),
-                 ofNullable( nodeVersion.getBranches() ).orElse( Branches.empty() ).stream().map( Branch::getValue ).collect( toList() ) );
+            add( VersionIndexPath.JOIN_FIELD.getPath(), JoinIndexPath.VERSION_JOIN_NAME );
 
         if ( nodeVersion.getNodeCommitId() != null )
         {

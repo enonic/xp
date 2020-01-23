@@ -39,20 +39,20 @@ public class ResolveSyncWorkPerformanceTest
     public void sortedTerms_none( BenchmarkState state, Blackhole bh )
     {
         bh.consume(
-            PerformanceTestBootstrap.CONTEXT_DRAFT.callWith( () -> run( state, state.NON_PUBLISHED_NODES_ROOT, state.NODE_SIZE + 1 ) ) );
+            PerformanceTestBootstrap.CONTEXT_DRAFT.callWith( () -> run( state, state.nonPublishedNodesRoot, state.NODE_SIZE + 1 ) ) );
     }
 
     @Benchmark
     public void sortedTerms_half( BenchmarkState state, Blackhole bh )
     {
         bh.consume(
-            PerformanceTestBootstrap.CONTEXT_DRAFT.callWith( () -> run( state, state.HALF_PUBLISHED_NODES_ROOT, state.NODE_SIZE / 2 ) ) );
+            PerformanceTestBootstrap.CONTEXT_DRAFT.callWith( () -> run( state, state.halfPublishedNodesRoot, state.NODE_SIZE / 2 ) ) );
     }
 
     @Benchmark
     public void sortedTerms_all( BenchmarkState state, Blackhole bh )
     {
-        bh.consume( PerformanceTestBootstrap.CONTEXT_DRAFT.callWith( () -> run( state, state.PUBLISHED_NODES_ROOT, 0 ) ) );
+        bh.consume( PerformanceTestBootstrap.CONTEXT_DRAFT.callWith( () -> run( state, state.publishedNodesRoot, 0 ) ) );
     }
 
     @Benchmark
@@ -60,7 +60,7 @@ public class ResolveSyncWorkPerformanceTest
     public void sortedTerms_dynamic( DynamicBenchmarkState state, Blackhole bh )
     {
         bh.consume( PerformanceTestBootstrap.CONTEXT_DRAFT.callWith(
-            () -> run( state, state.PUBLISHED_DYNAMIC_ROOT, state.NODE_SIZE - state.publishCount ) ) );
+            () -> run( state, state.publishedDynamicRoot, state.NODE_SIZE - state.publishCount ) ) );
     }
 
 

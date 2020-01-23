@@ -37,26 +37,26 @@ public class HasUnpublishedCommandPerformanceTest
     @Benchmark
     public void nonPublished( BenchmarkState state, Blackhole bh )
     {
-        bh.consume( PerformanceTestBootstrap.CONTEXT_DRAFT.callWith( () -> run( state, state.NON_PUBLISHED_NODES_ROOT, true ) ) );
+        bh.consume( PerformanceTestBootstrap.CONTEXT_DRAFT.callWith( () -> run( state, state.nonPublishedNodesRoot, true ) ) );
     }
 
     @Benchmark
     public void allPublished( BenchmarkState state, Blackhole bh )
     {
-        bh.consume( PerformanceTestBootstrap.CONTEXT_DRAFT.callWith( () -> run( state, state.PUBLISHED_NODES_ROOT, false ) ) );
+        bh.consume( PerformanceTestBootstrap.CONTEXT_DRAFT.callWith( () -> run( state, state.publishedNodesRoot, false ) ) );
     }
 
     @Benchmark
     public void halfPublished( BenchmarkState state, Blackhole bh )
     {
-        bh.consume( PerformanceTestBootstrap.CONTEXT_DRAFT.callWith( () -> run( state, state.HALF_PUBLISHED_NODES_ROOT, true ) ) );
+        bh.consume( PerformanceTestBootstrap.CONTEXT_DRAFT.callWith( () -> run( state, state.halfPublishedNodesRoot, true ) ) );
     }
 
     @Benchmark
     @Group("dynamicPublishing")
     public void dynamicPublished( DynamicBenchmarkState state, Blackhole bh )
     {
-        bh.consume( PerformanceTestBootstrap.CONTEXT_DRAFT.callWith( () -> run( state, state.PUBLISHED_DYNAMIC_ROOT, true ) ) );
+        bh.consume( PerformanceTestBootstrap.CONTEXT_DRAFT.callWith( () -> run( state, state.publishedDynamicRoot, true ) ) );
     }
 
     boolean run( BaseBenchmarkState state, final Node parent, final boolean expectedResult )

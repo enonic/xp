@@ -1,15 +1,10 @@
 package com.enonic.xp.node;
 
 import java.time.Instant;
-import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.google.common.collect.ImmutableSet;
-
 import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.blob.NodeVersionKey;
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
 
 @PublicApi
 public class NodeVersionMetadata
@@ -29,8 +24,6 @@ public class NodeVersionMetadata
 
     private final Instant timestamp;
 
-    private final Branches branches;
-
     private NodeVersionMetadata( Builder builder )
     {
         nodeVersionId = builder.nodeVersionId;
@@ -40,7 +33,6 @@ public class NodeVersionMetadata
         nodePath = builder.nodePath;
         nodeCommitId = builder.nodeCommitId;
         timestamp = builder.timestamp;
-        branches = Branches.from( builder.branches.build() );
     }
 
     public static Builder create()
@@ -86,11 +78,6 @@ public class NodeVersionMetadata
     public Instant getTimestamp()
     {
         return timestamp;
-    }
-
-    public Branches getBranches()
-    {
-        return branches;
     }
 
     // Insert with newest first
@@ -148,10 +135,6 @@ public class NodeVersionMetadata
         {
             return false;
         }
-        if ( !Objects.equals( branches, that.branches ) )
-        {
-            return false;
-        }
 
         return !( timestamp != null ? !timestamp.equals( that.timestamp ) : that.timestamp != null );
 
@@ -167,7 +150,6 @@ public class NodeVersionMetadata
         result = 31 * result + ( nodePath != null ? nodePath.hashCode() : 0 );
         result = 31 * result + ( nodeCommitId != null ? nodeCommitId.hashCode() : 0 );
         result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
-        result = 31 * result + ( branches != null ? branches.hashCode() : 0 );
         return result;
     }
 
@@ -187,8 +169,6 @@ public class NodeVersionMetadata
 
         private Instant timestamp;
 
-        private ImmutableSet.Builder<Branch> branches = ImmutableSet.builder();
-
         private Builder()
         {
         }
@@ -202,7 +182,6 @@ public class NodeVersionMetadata
             nodePath = nodeVersionMetadata.nodePath;
             nodeCommitId = nodeVersionMetadata.nodeCommitId;
             timestamp = nodeVersionMetadata.timestamp;
-            branches = branches.addAll( nodeVersionMetadata.branches );
         }
 
         public Builder nodeVersionId( NodeVersionId nodeVersionId )
@@ -244,15 +223,6 @@ public class NodeVersionMetadata
         public Builder timestamp( Instant timestamp )
         {
             this.timestamp = timestamp;
-            return this;
-        }
-
-        public Builder setBranches( Branches branches )
-        {
-            if ( branches != null )
-            {
-                this.branches = ImmutableSet.<Branch>builder().addAll( branches );
-            }
             return this;
         }
 

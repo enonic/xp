@@ -19,8 +19,8 @@ public class DynamicBenchmarkState
 
         CONTEXT_DRAFT.callWith( () -> {
 
-            this.unpublish( PUBLISHED_DYNAMIC_ROOT, true );
-            publish( 0, PUBLISHED_DYNAMIC_ROOT );
+            this.unpublish( publishedDynamicRoot, true );
+            publish( 0, publishedDynamicRoot );
 
             return 1;
         } );
@@ -30,7 +30,7 @@ public class DynamicBenchmarkState
     @Setup(Level.Iteration)
     public void beforeEach()
     {
-        this.publish( ++this.publishCount, this.PUBLISHED_DYNAMIC_ROOT );
+        this.publish( ++this.publishCount, this.publishedDynamicRoot );
     }
 
     @TearDown

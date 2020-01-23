@@ -13,13 +13,11 @@ public abstract class BaseBenchmarkState
 
         CONTEXT_DRAFT.callWith( () -> {
 
-            this.ROOT_NODE = nodeService.getByPath( NodePath.create( NodePath.ROOT, "rootNode" ).build() );
-            this.NON_PUBLISHED_NODES_ROOT = nodeService.getByPath( NodePath.create( NodePath.ROOT, "rootNode/nonPublishedRoot" ).build() );
-            this.HALF_PUBLISHED_NODES_ROOT =
-                nodeService.getByPath( NodePath.create( NodePath.ROOT, "rootNode/halfPublishedRoot" ).build() );
-            this.PUBLISHED_NODES_ROOT = nodeService.getByPath( NodePath.create( NodePath.ROOT, "rootNode/publishedRoot" ).build() );
-            this.PUBLISHED_DYNAMIC_ROOT =
-                nodeService.getByPath( NodePath.create( NodePath.ROOT, "rootNode/publishedDynamicRoot" ).build() );
+            this.rootNode = nodeService.getByPath( NodePath.create( NodePath.ROOT, "rootNode" ).build() );
+            this.nonPublishedNodesRoot = nodeService.getByPath( NodePath.create( NodePath.ROOT, "rootNode/nonPublishedRoot" ).build() );
+            this.halfPublishedNodesRoot = nodeService.getByPath( NodePath.create( NodePath.ROOT, "rootNode/halfPublishedRoot" ).build() );
+            this.publishedNodesRoot = nodeService.getByPath( NodePath.create( NodePath.ROOT, "rootNode/publishedRoot" ).build() );
+            this.publishedDynamicRoot = nodeService.getByPath( NodePath.create( NodePath.ROOT, "rootNode/publishedDynamicRoot" ).build() );
 
             return 1;
         } );
