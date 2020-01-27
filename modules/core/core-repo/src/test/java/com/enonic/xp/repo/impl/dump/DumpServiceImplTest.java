@@ -9,7 +9,6 @@ import java.util.TreeSet;
 import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -738,7 +737,6 @@ public class DumpServiceImplTest
     }
 
     @Test
-    @Disabled("Needs discuss how upgrade old versions (Currently, no mapping for timestamp)")
     public void loadWithUpgrade()
         throws Exception
     {
