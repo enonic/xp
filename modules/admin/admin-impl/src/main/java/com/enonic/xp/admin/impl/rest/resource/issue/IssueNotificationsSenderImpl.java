@@ -1,15 +1,10 @@
 package com.enonic.xp.admin.impl.rest.resource.issue;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.Executor;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.MailService;
@@ -18,21 +13,16 @@ import com.enonic.xp.mail.MailService;
 public class IssueNotificationsSenderImpl
     implements IssueNotificationsSender
 {
+    private final MailService mailService;
 
-    private MailService mailService;
+    private final Executor executor;
 
-    private ExecutorService sendMailExecutor;
-
-    private final static Logger LOG = LoggerFactory.getLogger( IssueNotificationsSenderImpl.class );
-
-    public IssueNotificationsSenderImpl()
+    @Activate
+    public IssueNotificationsSenderImpl( @Reference final MailService mailService,
+                                         @Reference(service = IssueMailSendExecutor.class) final Executor executor )
     {
-        final ThreadFactory threadFactory = new ThreadFactoryBuilder().
-            setNameFormat( "issue-mail-sender-thread-%d" ).
-            setUncaughtExceptionHandler( ( t, e ) -> LOG.error( "Message sending failed", e ) ).
-            build();
-
-        this.sendMailExecutor = Executors.newCachedThreadPool( threadFactory );
+        this.mailService = mailService;
+        this.executor = executor;
     }
 
     @Override
@@ -43,7 +33,7 @@ public class IssueNotificationsSenderImpl
             final MailMessage mailMessage = new IssueCreatedMailMessageGenerator( params ).generateMessage();
             if ( mailMessage != null )
             {
-                sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+                executor.execute( () -> mailService.send( mailMessage ) );
             }
         }
     }
@@ -56,7 +46,7 @@ public class IssueNotificationsSenderImpl
             final MailMessage mailMessage = new IssuePublishedMailMessageGenerator( params ).generateMessage();
             if ( mailMessage != null )
             {
-                sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+                executor.execute( () -> mailService.send( mailMessage ) );
             }
         }
     }
@@ -69,7 +59,7 @@ public class IssueNotificationsSenderImpl
             final MailMessage mailMessage = new IssueUpdatedMailMessageGenerator( params ).generateMessage();
             if ( mailMessage != null )
             {
-                sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+                executor.execute( () -> mailService.send( mailMessage ) );
             }
         }
     }
@@ -82,7 +72,7 @@ public class IssueNotificationsSenderImpl
             final MailMessage mailMessage = new IssueCommentedMailMessageGenerator( params ).generateMessage();
             if ( mailMessage != null )
             {
-                sendMailExecutor.execute( () -> mailService.send( mailMessage ) );
+                executor.execute( () -> mailService.send( mailMessage ) );
             }
         }
     }
@@ -101,11 +91,4 @@ public class IssueNotificationsSenderImpl
 
         return params.getApprovers().stream().anyMatch( user -> user.getEmail() != null );
     }
-
-    @Reference
-    public void setMailService( final MailService mailService )
-    {
-        this.mailService = mailService;
-    }
-
 }

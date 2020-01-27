@@ -1,10 +1,6 @@
 package com.enonic.xp.cluster.impl;
 
-import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -23,6 +19,7 @@ import com.enonic.xp.cluster.ClusterValidationStatus;
 import com.enonic.xp.cluster.ClusterValidator;
 import com.enonic.xp.cluster.ClusterValidatorResult;
 import com.enonic.xp.cluster.Clusters;
+import com.enonic.xp.core.internal.concurrent.RecurringJob;
 
 @Component(immediate = true)
 public class ClusterManagerImpl
@@ -30,61 +27,40 @@ public class ClusterManagerImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( ClusterManagerImpl.class );
 
-    private static final Duration DEFAULT_CHECK_INTERVAL = Duration.ofSeconds( 1 );
-
     private static final List<ClusterId> DEFAULT_REQUIRED_INSTANCES = List.of( ClusterId.from( "elasticsearch" ) );
 
-    private final Duration checkInterval;
+    private final ClusterCheckScheduler clusterCheckScheduler;
 
     private final Clusters instances;
 
     private final List<ClusterValidator> validators = List.of( new HealthValidator(), new ClusterMembersValidator() );
 
+    private RecurringJob recurringJob;
+
     private volatile boolean isHealthy;
 
-    private ScheduledExecutorService scheduledExecutorService;
-
-    @SuppressWarnings("WeakerAccess")
-    public ClusterManagerImpl()
+    @Activate
+    public ClusterManagerImpl( @Reference final ClusterCheckScheduler clusterCheckScheduler )
     {
-        this( DEFAULT_CHECK_INTERVAL, new Clusters( DEFAULT_REQUIRED_INSTANCES ) );
+        this( clusterCheckScheduler, new Clusters( DEFAULT_REQUIRED_INSTANCES ) );
     }
 
-    ClusterManagerImpl( final Duration checkInterval, final Clusters instances )
+    ClusterManagerImpl( final ClusterCheckScheduler clusterCheckScheduler, final Clusters instances )
     {
-        this.checkInterval = checkInterval;
+        this.clusterCheckScheduler = clusterCheckScheduler;
         this.instances = instances;
     }
 
     @Activate
     public void activate()
     {
-        scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        try
-        {
-            scheduledExecutorService.scheduleWithFixedDelay( () -> {
-                try
-                {
-                    checkProviders();
-                }
-                catch ( Exception e )
-                {
-                    LOG.error( "Error while checking cluster providers", e );
-                }
-            }, 0, checkInterval.toMillis(), TimeUnit.MILLISECONDS );
-        }
-        catch ( Exception e )
-        {
-            scheduledExecutorService.shutdown();
-            throw e;
-        }
+        recurringJob = clusterCheckScheduler.scheduleWithFixedDelay( this::checkProviders );
     }
 
-    @SuppressWarnings("unused")
     @Deactivate
     public void deactivate()
     {
-        scheduledExecutorService.shutdown();
+        recurringJob.cancel();
     }
 
     @Override

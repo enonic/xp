@@ -235,6 +235,8 @@ public final class ContentResource
 
     private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
+    private ComponentNameResolver componentNameResolver;
+
     private BinaryExtractor extractor;
 
     private TaskService taskService;
@@ -246,7 +248,7 @@ public final class ContentResource
     public ContentJson create( final CreateContentJson params )
     {
         final Content persistedContent = contentService.create( params.getCreateContent() );
-        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @POST
@@ -287,7 +289,7 @@ public final class ContentResource
 
         persistedContent = contentService.create( createMediaParams );
 
-        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @POST
@@ -316,7 +318,7 @@ public final class ContentResource
 
         persistedContent = contentService.create( createMediaParams );
 
-        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @POST
@@ -346,7 +348,7 @@ public final class ContentResource
         params.byteSource( getFileItemByteSource( mediaFile ) );
         persistedContent = contentService.update( params );
 
-        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @POST
@@ -356,7 +358,7 @@ public final class ContentResource
     {
         final Content persistedContent = this.doCreateAttachment( AttachmentNames.THUMBNAIL, form );
 
-        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @POST
@@ -381,7 +383,7 @@ public final class ContentResource
             removeAttachments( json.getAttachmentReferences() );
 
         final Content content = contentService.update( params );
-        return new ContentJson( content, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( content, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @POST
@@ -436,7 +438,7 @@ public final class ContentResource
 
         if ( json.getContentName().equals( updatedContent.getName() ) )
         {
-            return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
+            return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
         }
 
         try
@@ -444,7 +446,7 @@ public final class ContentResource
             // in case content with same name and path was created in between content updated and renamed
             final RenameContentParams renameParams = makeRenameParams( json.getRenameContentParams() );
             final Content renamedContent = contentService.rename( renameParams );
-            return new ContentJson( renamedContent, contentIconUrlResolver, principalsResolver );
+            return new ContentJson( renamedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
         }
         catch ( ContentAlreadyExistsException e )
         {
@@ -715,7 +717,7 @@ public final class ContentResource
             silent( params.isSilent() ).
             build() );
 
-        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @POST
@@ -802,7 +804,7 @@ public final class ContentResource
         }
         else
         {
-            return new ContentJson( content, contentIconUrlResolver, principalsResolver );
+            return new ContentJson( content, contentIconUrlResolver, principalsResolver, componentNameResolver );
         }
     }
 
@@ -870,7 +872,7 @@ public final class ContentResource
         }
         else
         {
-            return new ContentJson( content, contentIconUrlResolver, principalsResolver );
+            return new ContentJson( content, contentIconUrlResolver, principalsResolver, componentNameResolver );
         }
     }
 
@@ -972,7 +974,7 @@ public final class ContentResource
         final Content nearestSite = this.contentService.getNearestSite( contentId );
         if ( nearestSite != null )
         {
-            return new ContentJson( nearestSite, contentIconUrlResolver, principalsResolver );
+            return new ContentJson( nearestSite, contentIconUrlResolver, principalsResolver, componentNameResolver );
         }
         else
         {
@@ -1043,7 +1045,7 @@ public final class ContentResource
         }
         else if ( EXPAND_FULL.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentListJson( result.getContents(), metaData, contentIconUrlResolver, principalsResolver );
+            return new ContentListJson( result.getContents(), metaData, contentIconUrlResolver, principalsResolver, componentNameResolver );
         }
         else
         {
@@ -1124,6 +1126,7 @@ public final class ContentResource
             aggregations( findResult.getAggregations() ).
             contentPrincipalsResolver( principalsResolver ).
             iconUrlResolver( contentIconUrlResolver ).
+            componentNameResolver( componentNameResolver ).
             expand( contentQueryJson.getExpand() ).
             hits( findResult.getHits() ).
             totalHits( findResult.getTotalHits() ).
@@ -1152,6 +1155,7 @@ public final class ContentResource
             aggregations( findResult.getAggregations() ).
             contentPrincipalsResolver( principalsResolver ).
             iconUrlResolver( contentIconUrlResolver ).
+            componentNameResolver( componentNameResolver ).
             expand( contentQueryJson.getExpand() ).
             hits( findResult.getHits() ).
             totalHits( findResult.getTotalHits() ).
@@ -1205,10 +1209,10 @@ public final class ContentResource
         final List<ContentTreeSelectorJson> resultItems =
             contentService.getByIds( new GetContentByIdsParams( findLayerContentsResult.getContentIds() ) ).
                 stream().
-                map( content -> new ContentTreeSelectorJson( new ContentJson( content, contentIconUrlResolver, principalsResolver ),
-                                                             relativeTargetContentPaths.contains( content.getPath().asRelative() ),
-                                                             relativeTargetContentPaths.stream().anyMatch(
-                                                                 path -> path.isChildOf( content.getPath().asRelative() ) ) ) ).
+                map( content -> new ContentTreeSelectorJson(
+                    new ContentJson( content, contentIconUrlResolver, principalsResolver, componentNameResolver ),
+                    relativeTargetContentPaths.contains( content.getPath().asRelative() ),
+                    relativeTargetContentPaths.stream().anyMatch( path -> path.isChildOf( content.getPath().asRelative() ) ) ) ).
                 collect( Collectors.toList() );
 
         final ContentListMetaData metaData = ContentListMetaData.create().hits( findLayerContentsResult.getHits() ).totalHits(
@@ -1680,5 +1684,11 @@ public final class ContentResource
     public void setTaskService( final TaskService taskService )
     {
         this.taskService = taskService;
+    }
+
+    @Reference
+    public void setComponentNameResolver( final ComponentNameResolver componentNameResolver )
+    {
+        this.componentNameResolver = componentNameResolver;
     }
 }

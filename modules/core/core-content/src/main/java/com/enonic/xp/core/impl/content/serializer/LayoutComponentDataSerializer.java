@@ -16,8 +16,6 @@ import com.enonic.xp.region.Region;
 final class LayoutComponentDataSerializer
     extends DescriptorBasedComponentDataSerializer<LayoutComponent>
 {
-    private static final String DEFAULT_NAME = "Layout";
-
     private final LayoutDescriptorService layoutDescriptorService;
 
     private final RegionDataSerializer regionDataSerializer;
@@ -51,7 +49,7 @@ final class LayoutComponentDataSerializer
 
     public LayoutComponent fromData( final PropertySet layoutData, final List<PropertySet> componentsAsData )
     {
-        final LayoutComponent.Builder layoutComponent = LayoutComponent.create().name( DEFAULT_NAME );
+        final LayoutComponent.Builder layoutComponent = LayoutComponent.create();
 
         final LayoutRegions.Builder layoutRegionsBuilder = LayoutRegions.create();
 
@@ -74,8 +72,6 @@ final class LayoutComponentDataSerializer
                     layoutRegionsBuilder.add( regionDataSerializer.fromData( regionDescriptor, layoutPath, componentsAsData ) );
                 } );
             }
-
-            layoutComponent.name( layoutDescriptor.getDisplayName() );
         }
 
         layoutComponent.regions( layoutRegionsBuilder.build() );

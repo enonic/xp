@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content.page.region;
 
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.Component;
@@ -16,6 +15,7 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 
+@Deprecated
 class GetComponentByNameCommand
 {
     private ApplicationKey applicationKey;
@@ -36,7 +36,6 @@ class GetComponentByNameCommand
         if ( partDescriptor != null && componentExists( partDescriptor.getComponentPath() ) )
         {
             return PartComponent.create().
-                name( this.name ).
                 descriptor( partDescriptor.getKey() ).
                 build();
         }
@@ -44,7 +43,6 @@ class GetComponentByNameCommand
         if ( layoutDescriptor != null && componentExists( layoutDescriptor.getComponentPath() ) )
         {
             return LayoutComponent.create().
-                name( this.name ).
                 descriptor( layoutDescriptor.getKey() ).
                 build();
         }

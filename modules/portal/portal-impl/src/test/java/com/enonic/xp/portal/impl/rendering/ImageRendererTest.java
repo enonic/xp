@@ -46,7 +46,7 @@ public class ImageRendererTest
     public void imageComponentWithNoImage()
     {
         // setup
-        imageComponent = ImageComponent.create().name( "myImageComponent" ).build();
+        imageComponent = ImageComponent.create().build();
         renderer = new ImageRenderer();
 
         // exercise
@@ -85,7 +85,6 @@ public class ImageRendererTest
         final PropertyTree config = new PropertyTree();
         config.addString( "caption", "Image Title" );
         imageComponent = ImageComponent.create().
-            name( "myImageComponent" ).
             image( ContentId.from( "abcdef1234567890" ) ).
             config( config ).
             build();
@@ -106,7 +105,7 @@ public class ImageRendererTest
     {
         // setup
         portalRequest.setMode( RenderMode.EDIT );
-        imageComponent = ImageComponent.create().name( "myImageComponent" ).build();
+        imageComponent = ImageComponent.create().build();
         renderer = new ImageRenderer();
 
         // exercise
@@ -127,7 +126,6 @@ public class ImageRendererTest
         final PropertyTree config = new PropertyTree();
         config.addString( "caption", "Image Title" );
         imageComponent = ImageComponent.create().
-            name( "myImageComponent" ).
             image( ContentId.from( "abcdef1234567890" ) ).
             config( config ).
             build();
@@ -154,7 +152,6 @@ public class ImageRendererTest
         final PropertyTree config = new PropertyTree();
         config.addString( "caption", "Image Title" );
         imageComponent = ImageComponent.create().
-            name( "myImageComponent" ).
             image( ContentId.from( "abcdef1234567890" ) ).
             config( config ).
             build();

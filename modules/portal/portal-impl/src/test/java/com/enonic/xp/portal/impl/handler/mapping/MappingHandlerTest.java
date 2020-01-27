@@ -21,7 +21,6 @@ import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.impl.rendering.Renderer;
 import com.enonic.xp.portal.impl.rendering.RendererFactory;
-import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.resource.Resource;
@@ -240,7 +239,7 @@ public class MappingHandlerTest
         {
             PageRegions pageRegions = PageRegions.create().
                 add( Region.create().name( "main-region" ).
-                    add( PartComponent.create().name( ComponentName.from( "mypart" ) ).
+                    add( PartComponent.create().descriptor( "myapp:mypart" ).
                         build() ).
                     build() ).
                 build();

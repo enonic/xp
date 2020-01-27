@@ -1,5 +1,7 @@
 package com.enonic.xp.server.internal.trace.event;
 
+import java.util.concurrent.Phaser;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,40 +10,48 @@ import org.mockito.Mockito;
 import com.enonic.xp.trace.TraceEvent;
 import com.enonic.xp.trace.TraceListener;
 
-public class TraceEventDispatcherImplTest
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+class TraceEventDispatcherImplTest
 {
-    private TraceEventDispatcherImpl dispatcher;
+    private TraceEventDispatcherExecutorImpl executor;
 
     @BeforeEach
     public void setUp()
     {
-        this.dispatcher = new TraceEventDispatcherImpl();
-        this.dispatcher.activate();
+        executor = new TraceEventDispatcherExecutorImpl();
     }
 
     @AfterEach
     public void tearDown()
     {
-        this.dispatcher.deactivate();
+        executor.deactivate();
     }
 
     @Test
-    public void testQueue()
-        throws Exception
+    void testQueue()
     {
+        final Phaser phaser = new Phaser( 2 );
+
+        TraceEventDispatcherImpl dispatcher = new TraceEventDispatcherImpl( executor );
+
         final TraceListener listener = Mockito.mock( TraceListener.class );
-        this.dispatcher.addListener( listener );
+        dispatcher.addListener( listener );
+
+        // must be the last listener
+        dispatcher.addListener( event -> phaser.arriveAndAwaitAdvance() );
 
         final TraceEvent event = TraceEvent.start( null );
-        this.dispatcher.queue( event );
+        dispatcher.queue( event );
 
-        Thread.sleep( 100L );
-        Mockito.verify( listener, Mockito.times( 1 ) ).onTrace( event );
+        phaser.arriveAndAwaitAdvance();
 
-        this.dispatcher.removeListener( listener );
-        this.dispatcher.queue( event );
+        dispatcher.removeListener( listener );
+        dispatcher.queue( event );
 
-        Thread.sleep( 100L );
-        Mockito.verify( listener, Mockito.times( 1 ) ).onTrace( event );
+        phaser.arriveAndAwaitAdvance();
+
+        verify( listener, times( 1 ) ).onTrace( event );
     }
 }

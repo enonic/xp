@@ -18,7 +18,7 @@ public class EventPublisherImplTest
     @BeforeEach
     public void setUp()
     {
-        this.publisher = new EventPublisherImpl();
+        this.publisher = new EventPublisherImpl( Runnable::run );
     }
 
     @Test
@@ -40,8 +40,6 @@ public class EventPublisherImplTest
         {
             this.publisher.publish( event );
         }
-
-        Thread.sleep( 200L );
 
         verify( listener, times( 100 ) ).onEvent( Mockito.any() );
     }

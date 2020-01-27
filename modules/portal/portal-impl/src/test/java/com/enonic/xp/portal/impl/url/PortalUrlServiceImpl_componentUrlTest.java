@@ -97,7 +97,7 @@ public class PortalUrlServiceImpl_componentUrlTest
     {
         final PartComponent component = PartComponent.
             create().
-            name( "mycomp" ).
+            descriptor( "myapp:mycomp" ).
             build();
 
         final Region region = Region.

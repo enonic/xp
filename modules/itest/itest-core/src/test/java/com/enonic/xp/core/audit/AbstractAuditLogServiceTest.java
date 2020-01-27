@@ -1,5 +1,9 @@
 package com.enonic.xp.core.audit;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
@@ -54,10 +58,14 @@ public class AbstractAuditLogServiceTest
 
     private SearchDaoImpl searchDao;
 
+    private ExecutorService executorService;
+
     @BeforeEach
     public void setUp()
         throws Exception
     {
+        executorService = Executors.newSingleThreadExecutor();
+
         deleteAllIndices();
 
         final MemoryBlobStore blobStore = new MemoryBlobStore();
@@ -68,7 +76,7 @@ public class AbstractAuditLogServiceTest
         final StorageDaoImpl storageDao = new StorageDaoImpl();
         storageDao.setClient( client );
 
-        final EventPublisherImpl eventPublisher = new EventPublisherImpl();
+        final EventPublisherImpl eventPublisher = new EventPublisherImpl( executorService );
 
         this.searchDao = new SearchDaoImpl();
         this.searchDao.setClient( client );
@@ -145,6 +153,12 @@ public class AbstractAuditLogServiceTest
         this.auditLogService.initialize();
 
         initializeRepository();
+    }
+
+    @AfterEach
+    void tearDown()
+    {
+        executorService.shutdownNow();
     }
 
     private void initializeRepository()

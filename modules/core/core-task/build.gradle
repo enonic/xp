@@ -6,6 +6,8 @@ dependencies {
     compile project( ':portal:portal-api' )
     compile project( ':core:core-elasticsearch-client' )
 
+    implementation project( ':core:core-internal' )
+
     testCompile project( path: ':core:core-api', configuration: 'testOutput' )
     testCompile project( path: ':core:core-app', configuration: 'testOutput' )
     testCompile project( path: ':portal:portal-impl', configuration: 'testOutput' )

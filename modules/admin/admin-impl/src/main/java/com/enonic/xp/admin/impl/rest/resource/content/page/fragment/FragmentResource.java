@@ -12,6 +12,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.content.Content;
@@ -40,6 +41,8 @@ public final class FragmentResource
 
     private ContentIconUrlResolver contentIconUrlResolver;
 
+    private ComponentNameResolver componentNameResolver;
+
     @POST
     @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -53,7 +56,7 @@ public final class FragmentResource
             build();
         final Content fragmentContent = this.fragmentService.create( command );
 
-        return new ContentJson( fragmentContent, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( fragmentContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     private ContentPath getContentPath( final ContentId contentId )
@@ -83,5 +86,11 @@ public final class FragmentResource
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    @Reference
+    public void setComponentNameResolver( final ComponentNameResolver componentNameResolver )
+    {
+        this.componentNameResolver = componentNameResolver;
     }
 }

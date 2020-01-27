@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
 import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;
 
@@ -16,7 +17,7 @@ public class LayoutRegionsJson
 
     private final List<RegionJson> regionsJson;
 
-    public LayoutRegionsJson( final LayoutRegions regions )
+    public LayoutRegionsJson( final LayoutRegions regions, final ComponentNameResolver componentNameResolver )
     {
         this.regions = regions;
 
@@ -25,7 +26,7 @@ public class LayoutRegionsJson
             regionsJson = new ArrayList<>();
             for ( Region region : regions )
             {
-                regionsJson.add( new RegionJson( region ) );
+                regionsJson.add( new RegionJson( region, componentNameResolver ) );
             }
         }
         else
