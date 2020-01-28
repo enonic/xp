@@ -12,9 +12,11 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.jaxrs.impl.MockRestResponse;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
@@ -153,6 +155,18 @@ public class ProjectResourceTest
             getAsString();
 
         assertEquals( "true", jsonString );
+    }
+
+    @Test
+    public void delete_default_project_fails()
+        throws Exception
+    {
+        MockRestResponse mockRestResponse = request().
+            path( "project/delete" ).
+            entity( "{\"name\" : \"" + ProjectConstants.PROJECT_REPO_ID_DEFAULT + "\"}", MediaType.APPLICATION_JSON_TYPE ).
+            post();
+
+        assertEquals( 405, mockRestResponse.getStatus() );
     }
 
     private Project createProject( final String name, final String displayName, final String description, final Attachment icon )

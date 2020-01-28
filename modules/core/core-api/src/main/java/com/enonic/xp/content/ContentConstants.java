@@ -22,6 +22,8 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static com.enonic.xp.project.ProjectConstants.PROJECT_REPO_ID_DEFAULT;
+
 @PublicApi
 public class ContentConstants
 {
@@ -46,7 +48,7 @@ public class ContentConstants
 
     public static final String CONTENT_REPO_ID_PREFIX = ProjectConstants.PROJECT_REPO_ID_PREFIX;
 
-    public static final RepositoryId CONTENT_REPO_ID = RepositoryId.from( CONTENT_REPO_ID_PREFIX + "default" );
+    public static final RepositoryId CONTENT_REPO_ID = RepositoryId.from( CONTENT_REPO_ID_PREFIX + PROJECT_REPO_ID_DEFAULT );
 
     public static final Repository CONTENT_REPO = Repository.create().
         id( CONTENT_REPO_ID ).
