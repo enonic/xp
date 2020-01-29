@@ -10,29 +10,38 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.ManagedService;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.util.tracker.BundleTracker;
 import org.osgi.util.tracker.BundleTrackerCustomizer;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.core.impl.app.ApplicationConfigService;
 import com.enonic.xp.core.impl.app.ApplicationHelper;
 
 @Component(immediate = true)
-public final class ApplicationConfigInvalidator
-    implements BundleTrackerCustomizer<ServiceRegistration<?>>
+public class ApplicationConfigInvalidator
+    implements BundleTrackerCustomizer<ServiceRegistration<ManagedService>>
 {
-    private ApplicationService service;
+    private ApplicationConfigService applicationConfigService;
+
+    private BundleTracker<ServiceRegistration<ManagedService>> tracker;
 
     @Activate
     public void activate( final BundleContext context )
     {
-        final BundleTracker<ServiceRegistration<?>> tracker = new BundleTracker<>( context, Bundle.ACTIVE, this );
+        tracker = new BundleTracker<>( context, Bundle.ACTIVE, this );
         tracker.open();
     }
 
+    @Deactivate
+    public void deactivate()
+    {
+        tracker.close();
+    }
+
     @Override
-    public ServiceRegistration<?> addingBundle( final Bundle bundle, final BundleEvent event )
+    public ServiceRegistration<ManagedService> addingBundle( final Bundle bundle, final BundleEvent event )
     {
         if ( ApplicationHelper.isApplication( bundle ) )
         {
@@ -43,24 +52,21 @@ public final class ApplicationConfigInvalidator
     }
 
     @Override
-    public void modifiedBundle( final Bundle bundle, final BundleEvent event, final ServiceRegistration<?> object )
+    public void modifiedBundle( final Bundle bundle, final BundleEvent event, final ServiceRegistration<ManagedService> object )
     {
         // Do nothing
     }
 
     @Override
-    public void removedBundle( final Bundle bundle, final BundleEvent event, final ServiceRegistration<?> object )
+    public void removedBundle( final Bundle bundle, final BundleEvent event, final ServiceRegistration<ManagedService> object )
     {
         object.unregister();
-
-        final ApplicationKey key = ApplicationKey.from( bundle.getSymbolicName() );
-        ApplicationConfigMap.INSTANCE.remove( key );
     }
 
-    private ServiceRegistration<?> registerReloader( final Bundle bundle )
+    private ServiceRegistration<ManagedService> registerReloader( final Bundle bundle )
     {
         final ApplicationKey key = ApplicationKey.from( bundle.getSymbolicName() );
-        final ApplicationConfigReloader reloader = new ApplicationConfigReloader( key, this.service );
+        final ApplicationConfigReloader reloader = new ApplicationConfigReloader( key, this.applicationConfigService );
 
         final BundleContext context = bundle.getBundleContext();
         final Hashtable<String, Object> props = new Hashtable<>();
@@ -70,8 +76,8 @@ public final class ApplicationConfigInvalidator
     }
 
     @Reference
-    public void setApplicationService( final ApplicationService service )
+    public void setApplicationConfigService( final ApplicationConfigService applicationConfigService )
     {
-        this.service = service;
+        this.applicationConfigService = applicationConfigService;
     }
 }
