@@ -54,7 +54,7 @@ public final class ComponentJsonSerializer
 
     private TextComponentJson toJson( final TextComponent component )
     {
-        return new TextComponentJson( component );
+        return new TextComponentJson( component, componentNameResolver );
     }
 
     private PartComponentJson toJson( final PartComponent component )

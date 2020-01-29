@@ -7,6 +7,8 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.region.CreateFragmentParams;
 import com.enonic.xp.region.FragmentService;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartDescriptorService;
 
 @Component(immediate = true)
 public final class FragmentServiceImpl
@@ -14,11 +16,17 @@ public final class FragmentServiceImpl
 {
     private ContentService contentService;
 
+    private PartDescriptorService partDescriptorService;
+
+    private LayoutDescriptorService layoutDescriptorService;
+
     @Override
     public Content create( final CreateFragmentParams params )
     {
         return CreateFragmentCommand.create().
             contentService( this.contentService ).
+            partDescriptorService( this.partDescriptorService ).
+            layoutDescriptorService( this.layoutDescriptorService ).
             params( params ).
             build().
             execute();
@@ -28,5 +36,17 @@ public final class FragmentServiceImpl
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    @Reference
+    public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
+    {
+        this.layoutDescriptorService = layoutDescriptorService;
+    }
+
+    @Reference
+    public void setPartDescriptorService( final PartDescriptorService partDescriptorService )
+    {
+        this.partDescriptorService = partDescriptorService;
     }
 }
