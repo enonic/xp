@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
@@ -17,7 +18,16 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.region.Component;
+import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.CreateFragmentParams;
+import com.enonic.xp.region.ImageComponent;
+import com.enonic.xp.region.ImageComponentType;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutComponentType;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.PartComponentType;
+import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.region.TextComponentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -29,10 +39,16 @@ final class CreateFragmentCommand
 
     private final ContentService contentService;
 
+    private final PartDescriptorService partDescriptorService;
+
+    private final LayoutDescriptorService layoutDescriptorService;
+
     private CreateFragmentCommand( Builder builder )
     {
         params = builder.params;
         contentService = builder.contentService;
+        partDescriptorService = builder.partDescriptorService;
+        layoutDescriptorService = builder.layoutDescriptorService;
     }
 
     public static Builder create()
@@ -42,15 +58,9 @@ final class CreateFragmentCommand
 
     public Content execute()
     {
-        final Component component = params.getComponent();
-        final String componentName = component.getName().toString();
-        String displayName = componentName;
-        if ( component.getType() instanceof TextComponentType )
-        {
-            displayName = generateDisplayName( (TextComponent) component );
-        }
+        final String displayName = generateDisplayName( params.getComponent() );
+        final String name = generateUniqueContentName( params.getParent(), "fragment-" + displayName );
 
-        final String name = generateUniqueContentName( params.getParent(), "fragment-" + componentName );
         final CreateContentParams createContent = CreateContentParams.create().
             parent( params.getParent() ).
             displayName( displayName ).
@@ -59,6 +69,7 @@ final class CreateFragmentCommand
             contentData( new PropertyTree() ).
             workflowInfo( params.getWorkflowInfo() ).
             build();
+
         final Content content = contentService.create( createContent );
 
         final Page page = Page.create().
@@ -74,12 +85,80 @@ final class CreateFragmentCommand
         return this.contentService.update( params );
     }
 
-    private String generateDisplayName( final TextComponent textComponent )
+    private String generateDisplayName( final Component component )
+    {
+        if ( component.getType() instanceof TextComponentType )
+        {
+            return doGenerateDisplayName( (TextComponent) component );
+        }
+
+        if ( component.getType() instanceof ImageComponentType )
+        {
+            return doGenerateDisplayName( (ImageComponent) component );
+        }
+
+        if ( component.getType() instanceof PartComponentType )
+        {
+            return doGenerateDisplayName( (PartComponent) component );
+        }
+
+        if ( component.getType() instanceof LayoutComponentType )
+        {
+            return doGenerateDisplayName( (LayoutComponent) component );
+        }
+
+        return component.getName().toString();
+    }
+
+    private String doGenerateDisplayName( final TextComponent textComponent )
     {
         final String html = textComponent.getText();
         String text = StringEscapeUtils.unescapeHtml( html.replaceAll( "\\<[^>]*>", "" ) ).trim();
         text = text.replaceAll( "(\\t|\\r?\\n)+", " " ).trim();
         return text.isEmpty() ? textComponent.getName().toString() : abbreviate( text, 40 );
+    }
+
+    private String doGenerateDisplayName( final ImageComponent imageComponent )
+    {
+        if ( imageComponent.getImage() != null )
+        {
+            try
+            {
+                final Content image = this.contentService.getById( imageComponent.getImage() );
+
+                if ( image.getDisplayName() != null )
+                {
+                    return image.getDisplayName();
+                }
+            }
+            catch ( ContentNotFoundException e )
+            {
+            }
+        }
+
+        return imageComponent.getName().toString();
+    }
+
+    private String doGenerateDisplayName( final PartComponent partComponent )
+    {
+        return partComponent.hasDescriptor() ? doGenerateDisplayName( this.partDescriptorService.getByKey( partComponent.getDescriptor() ),
+                                                                      partComponent ) : partComponent.getName().toString();
+    }
+
+    private String doGenerateDisplayName( final LayoutComponent layoutComponent )
+    {
+        return layoutComponent.hasDescriptor()
+            ? doGenerateDisplayName( this.layoutDescriptorService.getByKey( layoutComponent.getDescriptor() ), layoutComponent )
+            : layoutComponent.getName().toString();
+    }
+
+    private String doGenerateDisplayName( final ComponentDescriptor componentDescriptor, final Component component )
+    {
+        if ( componentDescriptor != null && componentDescriptor.getDisplayName() != null )
+        {
+            return componentDescriptor.getDisplayName();
+        }
+        return component.getName().toString();
     }
 
     private User getCurrentUser()
@@ -126,6 +205,10 @@ final class CreateFragmentCommand
 
         private ContentService contentService;
 
+        private PartDescriptorService partDescriptorService;
+
+        private LayoutDescriptorService layoutDescriptorService;
+
         private Builder()
         {
         }
@@ -142,9 +225,23 @@ final class CreateFragmentCommand
             return this;
         }
 
+        public Builder layoutDescriptorService( LayoutDescriptorService layoutDescriptorService )
+        {
+            this.layoutDescriptorService = layoutDescriptorService;
+            return this;
+        }
+
+        public Builder partDescriptorService( PartDescriptorService partDescriptorService )
+        {
+            this.partDescriptorService = partDescriptorService;
+            return this;
+        }
+
         private void validate()
         {
             Preconditions.checkNotNull( contentService );
+            Preconditions.checkNotNull( partDescriptorService );
+            Preconditions.checkNotNull( layoutDescriptorService );
             Preconditions.checkNotNull( params );
         }
 
