@@ -108,7 +108,7 @@ public class ProjectServiceImpl
     @Override
     public Projects list()
     {
-        return callWithContext( this::doList );
+        return callWithReadContext( this::doList );
     }
 
     private Projects doList()
@@ -119,7 +119,7 @@ public class ProjectServiceImpl
     @Override
     public Project get( final ProjectName projectName )
     {
-        return callWithContext( () -> doGet( projectName ) );
+        return callWithReadContext( () -> doGet( projectName ) );
     }
 
     private Project doGet( final ProjectName projectName )
@@ -201,6 +201,34 @@ public class ProjectServiceImpl
     private boolean hasProjectPermissions( final AuthenticationInfo authenticationInfo )
     {
         return authenticationInfo.hasRole( RoleKeys.ADMIN ) || authenticationInfo.hasRole( RoleKeys.CONTENT_MANAGER_ADMIN );
+    }
+
+    private <T> T callWithReadContext( Callable<T> runnable )
+    {
+        return readContext().callWith( runnable );
+    }
+
+    private Context readContext()
+    {
+        final AuthenticationInfo authenticationInfo = ContextAccessor.current().getAuthInfo();
+
+        if ( hasContentPermissions( authenticationInfo ) )
+        {
+            return authenticationInfo.hasRole( RoleKeys.ADMIN ) ? ContextAccessor.current() : ContextBuilder.create().
+                repositoryId( SystemConstants.SYSTEM_REPO_ID ).
+                branch( ContentConstants.BRANCH_MASTER ).
+                authInfo( AuthenticationInfo.copyOf( authenticationInfo ).
+                    principals( RoleKeys.ADMIN ).
+                    build() ).
+                build();
+        }
+
+        throw new RuntimeException( new IllegalAccessException( "User has no project permissions." ) );
+    }
+
+    private boolean hasContentPermissions( final AuthenticationInfo authenticationInfo )
+    {
+        return hasProjectPermissions( authenticationInfo ) || authenticationInfo.hasRole( RoleKeys.CONTENT_MANAGER_APP_ID );
     }
 
     @Reference

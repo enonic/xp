@@ -71,6 +71,7 @@ public final class ProjectResource
     }
 
     @GET
+    @RolesAllowed({RoleKeys.ADMIN_ID, RoleKeys.CONTENT_MANAGER_ADMIN_ID, RoleKeys.CONTENT_MANAGER_APP_ID})
     @Path("list")
     public ProjectsJson list()
     {
@@ -78,6 +79,7 @@ public final class ProjectResource
     }
 
     @GET
+    @RolesAllowed({RoleKeys.ADMIN_ID, RoleKeys.CONTENT_MANAGER_ADMIN_ID, RoleKeys.CONTENT_MANAGER_APP_ID})
     @Path("get")
     public ProjectJson get( final @QueryParam("name") String projectName )
     {
