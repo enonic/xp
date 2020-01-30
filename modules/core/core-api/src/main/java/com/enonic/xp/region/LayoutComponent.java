@@ -13,7 +13,7 @@ import com.enonic.xp.page.DescriptorKey;
 public final class LayoutComponent
     extends DescriptorBasedComponent
 {
-    private static final ComponentName NAME = ComponentName.from( "Fragment" );
+    private static final ComponentName NAME = ComponentName.from( "Layout" );
 
     private LayoutRegions regions;
 

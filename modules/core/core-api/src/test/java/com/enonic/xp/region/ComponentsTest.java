@@ -55,7 +55,7 @@ public class ComponentsTest
             config( layoutConfig ).
             build();
 
-        assertEquals( "Fragment", layoutComponent.getName().toString() );
+        assertEquals( "Layout", layoutComponent.getName().toString() );
         assertEquals( "layoutTemplateName", layoutComponent.getDescriptor().getName() );
         assertEquals( "mainmodule", layoutComponent.getDescriptor().getApplicationKey().toString() );
     }
