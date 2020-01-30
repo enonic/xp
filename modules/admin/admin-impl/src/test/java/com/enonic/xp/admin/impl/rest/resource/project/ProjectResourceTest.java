@@ -187,7 +187,7 @@ public class ProjectResourceTest
 
         Mockito.when( form.iterator() ).thenReturn( Lists.newArrayList( file ).iterator() );
         Mockito.when( form.get( "icon" ) ).thenReturn( file );
-        Mockito.when( form.getAsString( "name" ) ).thenReturn( "com.enonic.cms.projname" );
+        Mockito.when( form.getAsString( "name" ) ).thenReturn( "projname" );
         Mockito.when( form.getAsString( "displayName" ) ).thenReturn( "Project Display Name" );
         Mockito.when( form.getAsString( "description" ) ).thenReturn( "project Description" );
 
