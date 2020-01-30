@@ -63,8 +63,7 @@ public final class XDataServiceImpl
     @Override
     public XDatas getAll()
     {
-        final Set<XData> list = new LinkedHashSet<>();
-        list.addAll( this.builtInTypes.getAll().getList() );
+        final Set<XData> list = new LinkedHashSet<>( this.builtInTypes.getAll().getList() );
 
         for ( final Application application : this.applicationService.getInstalledApplications() )
         {

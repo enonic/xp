@@ -75,9 +75,7 @@ public final class Occurrences
     @Override
     public String toString()
     {
-        StringBuilder s = new StringBuilder();
-        s.append( "min=" ).append( minimum ).append( ", max=" ).append( maximum );
-        return s.toString();
+        return "min=" + minimum + ", max=" + maximum;
     }
 
     public static Occurrences create( final int minimum, final int maximum )

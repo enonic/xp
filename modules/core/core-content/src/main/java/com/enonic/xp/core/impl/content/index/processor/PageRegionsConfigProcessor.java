@@ -96,7 +96,7 @@ public class PageRegionsConfigProcessor
         components.stream().
             filter( component -> component instanceof DescriptorBasedComponent ).
             map( component -> (DescriptorBasedComponent) component ).
-            filter( component -> component.hasDescriptor() ).
+            filter( DescriptorBasedComponent::hasDescriptor ).
             forEach( component -> processDescriptorBasedComponent( component, builder ) );
     }
 

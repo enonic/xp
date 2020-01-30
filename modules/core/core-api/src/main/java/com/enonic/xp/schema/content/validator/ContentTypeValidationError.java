@@ -20,8 +20,6 @@ public final class ContentTypeValidationError
 
     private static String buildMessage( final ContentTypeName contentTypeName, final String message )
     {
-        final StringBuilder s = new StringBuilder();
-        s.append( "Invalid content type: [" ).append( contentTypeName ).append( "]: " ).append( message );
-        return s.toString();
+        return "Invalid content type: [" + contentTypeName + "]: " + message;
     }
 }

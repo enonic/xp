@@ -67,14 +67,10 @@ public class NodeComparisons
 
     public Set<NodeComparison> getWithStatus( final CompareStatus status )
     {
-        Set<NodeComparison> result = new HashSet<>();
-
-        result.addAll( this.comparisonMap.values().
+        return new HashSet<>( this.comparisonMap.values().
             stream().
             filter( nodeComparison -> nodeComparison.getCompareStatus() == status ).
             collect( Collectors.toList() ) );
-
-        return result;
     }
 
     public Collection<NodeComparison> getComparisons()
@@ -98,7 +94,7 @@ public class NodeComparisons
 
         public Builder addAll( final Collection<NodeComparison> nodeComparisons )
         {
-            nodeComparisons.stream().
+            nodeComparisons.
                 forEach( comparison -> this.nodeIdNodeComparisonMap.put( comparison.getNodeId(), comparison ) );
 
             return this;

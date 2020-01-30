@@ -36,9 +36,7 @@ public class PermissionsFactory
 
         final AccessControlList.Builder builder = AccessControlList.create();
 
-        permissions.forEach( ( permission ) -> {
-            builder.add( createEntry( permission ) );
-        } );
+        permissions.forEach( permission -> builder.add( createEntry( permission ) ) );
 
         return builder.build();
     }

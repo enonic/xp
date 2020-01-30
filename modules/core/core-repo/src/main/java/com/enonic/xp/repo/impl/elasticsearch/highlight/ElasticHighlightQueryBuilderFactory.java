@@ -68,10 +68,10 @@ public class ElasticHighlightQueryBuilderFactory
             builder.order( order.value() );
         }
         if (preTags != null && !preTags.isEmpty()) {
-            builder.preTags( preTags.toArray( new String[preTags.size()]) );
+            builder.preTags( preTags.toArray( new String[0] ) );
         }
         if (postTags != null && !postTags.isEmpty()) {
-            builder.postTags( postTags.toArray( new String[postTags.size()]) );
+            builder.postTags( postTags.toArray( new String[0] ) );
         }
         if (requireFieldMatch != null) {
             builder.requireFieldMatch( requireFieldMatch );

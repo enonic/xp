@@ -131,9 +131,7 @@ public class FilterBuilderFactory
     {
         final String queryFieldName = IndexFieldNameNormalizer.normalize( idFilter.getFieldName() );
 
-        final Set<Object> values = new HashSet<>();
-
-        values.addAll( idFilter.getValues() );
+        final Set<Object> values = new HashSet<>( idFilter.getValues() );
 
         return new TermsQueryBuilder( queryFieldName, values );
     }
@@ -160,7 +158,7 @@ public class FilterBuilderFactory
 
         appendFilters( queryFilters, filtersToApply );
 
-        return filtersToApply.toArray( new QueryBuilder[filtersToApply.size()] );
+        return filtersToApply.toArray( new QueryBuilder[0] );
     }
 
 
@@ -200,9 +198,8 @@ public class FilterBuilderFactory
 
         final String queryFieldName = this.fieldNameResolver.resolve( filter );
 
-        final Set<Object> values = new HashSet<>();
-
-        values.addAll( filter.getValues().stream().map( ValueHelper::getValueAsType ).collect( Collectors.toList() ) );
+        final Set<Object> values =
+            new HashSet<>( filter.getValues().stream().map( ValueHelper::getValueAsType ).collect( Collectors.toList() ) );
 
         final TermsQueryBuilder builder = new TermsQueryBuilder( queryFieldName, values );
 

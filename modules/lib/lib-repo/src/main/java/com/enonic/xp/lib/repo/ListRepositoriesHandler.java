@@ -19,7 +19,7 @@ public class ListRepositoriesHandler
         return repositoryServiceSupplier.get().
             list().
             stream().
-            map( repository -> new RepositoryMapper( repository ) ).
+            map( RepositoryMapper::new ).
             collect( Collectors.toList() );
     }
 

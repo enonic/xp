@@ -97,7 +97,7 @@ public final class VirtualHostMapping
     private boolean matchesHost( final HttpServletRequest req )
     {
         final String serverName = req.getServerName();
-        return ( serverName != null ) && this.host.equalsIgnoreCase( serverName );
+        return this.host.equalsIgnoreCase( serverName );
     }
 
     private boolean matchesSource( final HttpServletRequest req )

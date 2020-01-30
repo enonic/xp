@@ -43,15 +43,15 @@ public class HistogramAggregationTest
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( HistogramAggregationQuery.create( "ten" ).
                 fieldName( "value" ).
-                interval( 10l ).
+                interval( 10L ).
                 build() ).
             addAggregationQuery( HistogramAggregationQuery.create( "twenty" ).
                 fieldName( "value" ).
-                interval( 20l ).
+                interval( 20L ).
                 build() ).
             addAggregationQuery( HistogramAggregationQuery.create( "fourty" ).
                 fieldName( "value" ).
-                interval( 40l ).
+                interval( 40L ).
                 build() ).
             build();
 
@@ -82,12 +82,12 @@ public class HistogramAggregationTest
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( HistogramAggregationQuery.create( "count_asc" ).
                 fieldName( "value" ).
-                interval( 10l ).
+                interval( 10L ).
                 order( HistogramAggregationQuery.Order.COUNT_ASC ).
                 build() ).
             addAggregationQuery( HistogramAggregationQuery.create( "key_asc" ).
                 fieldName( "value" ).
-                interval( 20l ).
+                interval( 20L ).
                 order( HistogramAggregationQuery.Order.KEY_ASC ).
                 build() ).
             build();

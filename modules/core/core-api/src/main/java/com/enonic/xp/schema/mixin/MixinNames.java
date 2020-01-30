@@ -29,7 +29,7 @@ public final class MixinNames
 
     public static MixinNames from( final Collection<String> mixinNames )
     {
-        return from( mixinNames.toArray( new String[mixinNames.size()] ) );
+        return from( mixinNames.toArray( new String[0] ) );
     }
 
     public static MixinNames from( final MixinName... mixinNames )

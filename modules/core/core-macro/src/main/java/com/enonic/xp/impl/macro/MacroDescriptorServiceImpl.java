@@ -97,8 +97,7 @@ public final class MacroDescriptorServiceImpl
     @Override
     public MacroDescriptors getAll()
     {
-        final Set<MacroDescriptor> set = new LinkedHashSet<>();
-        set.addAll( builtinMacrosDescriptors.getAll().getSet() );
+        final Set<MacroDescriptor> set = new LinkedHashSet<>( builtinMacrosDescriptors.getAll().getSet() );
 
         for ( final Application application : this.applicationService.getInstalledApplications() )
         {

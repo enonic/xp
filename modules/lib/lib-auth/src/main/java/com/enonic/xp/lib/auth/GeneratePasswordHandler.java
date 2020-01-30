@@ -2,6 +2,7 @@ package com.enonic.xp.lib.auth;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class GeneratePasswordHandler
@@ -38,11 +39,7 @@ public final class GeneratePasswordHandler
 
         StringBuilder result = new StringBuilder();
 
-        List<CharType> types = new ArrayList<>();
-        for ( CharType charType : CharType.values() )
-        {
-            types.add( charType );
-        }
+        List<CharType> types = new ArrayList<>( Arrays.asList( CharType.values() ) );
 
         for ( int i = 0; i < length; i++ )
         {

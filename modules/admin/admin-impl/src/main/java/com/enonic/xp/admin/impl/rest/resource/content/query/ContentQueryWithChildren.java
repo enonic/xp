@@ -21,17 +21,17 @@ import com.enonic.xp.query.expr.ValueExpr;
 
 public class ContentQueryWithChildren
 {
-    private ContentIds contentsIds;
+    private final ContentIds contentsIds;
 
-    private ContentPaths contentsPaths;
+    private final ContentPaths contentsPaths;
 
-    private ChildOrder order;
+    private final ChildOrder order;
 
-    private int size = 0;
+    private final int size;
 
-    private int from = 0;
+    private final int from;
 
-    private ContentService contentService;
+    private final ContentService contentService;
 
     private ContentQueryWithChildren( Builder builder )
     {

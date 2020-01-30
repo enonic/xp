@@ -52,8 +52,7 @@ public final class RelationshipTypeServiceImpl
     @Override
     public RelationshipTypes getAll()
     {
-        final Set<RelationshipType> list = new LinkedHashSet<>();
-        list.addAll( this.builtInTypes.getAll().getList() );
+        final Set<RelationshipType> list = new LinkedHashSet<>( this.builtInTypes.getAll().getList() );
 
         for ( final Application application : this.applicationService.getInstalledApplications() )
         {

@@ -251,9 +251,7 @@ public final class Property
     @Override
     public String toString()
     {
-        final StringBuilder s = new StringBuilder();
-        s.append( name ).append( ": " ).append( value );
-        return s.toString();
+        return name + ": " + value;
     }
 
     public int countAncestors()

@@ -82,12 +82,11 @@ public class BatchedExecutorTest
         @Override
         public ExecutorCommandResult<NodeIds> execute( final int from, final int size )
         {
-            return new NodeIdsResult(
-                NodeIds.from( this.nodeIds.subList( from, ( from + size < nodeIds.size() ? from + size : nodeIds.size() ) ) ) );
+            return new NodeIdsResult( NodeIds.from( this.nodeIds.subList( from, ( Math.min( from + size, nodeIds.size() ) ) ) ) );
         }
     }
 
-    private class NodeIdsResult
+    private static class NodeIdsResult
         implements ExecutorCommandResult<NodeIds>
     {
         private final NodeIds nodeIds;

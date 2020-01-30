@@ -78,7 +78,7 @@ public class SnapshotRestoreExecutor
             while ( clusterManager.isHealthy() )
             {
                 LOG.info( "Waiting for cluster providers to be deactivated to initiate restore" );
-                Thread.sleep( 1000l );
+                Thread.sleep( 1000L );
             }
 
             //Restore indices
@@ -103,7 +103,7 @@ public class SnapshotRestoreExecutor
             closeIndices( repositoryIds );
             while ( clusterManager.isHealthy() )
             {
-                Thread.sleep( 1000l );
+                Thread.sleep( 1000L );
             }
 
             //Restore indice
@@ -150,7 +150,7 @@ public class SnapshotRestoreExecutor
         final RestoreSnapshotRequestBuilder restoreSnapshotRequestBuilder =
             new RestoreSnapshotRequestBuilder( this.client.admin().cluster(), RestoreSnapshotAction.INSTANCE ).
                 setRestoreGlobalState( false ).
-                setIndices( indices.toArray( new String[indices.size()] ) ).
+                setIndices( indices.toArray( new String[0] ) ).
                 setRepository( this.snapshotRepositoryName ).
                 setSnapshot( this.snapshotName ).
                 setWaitForCompletion( true );

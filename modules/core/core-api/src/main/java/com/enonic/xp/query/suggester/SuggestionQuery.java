@@ -15,7 +15,6 @@ public abstract class SuggestionQuery
 
     private final Integer size;
 
-    @SuppressWarnings("unchecked")
     protected SuggestionQuery( final SuggestionQuery.Builder builder )
     {
         Preconditions.checkNotNull( builder.name, "name is required" );

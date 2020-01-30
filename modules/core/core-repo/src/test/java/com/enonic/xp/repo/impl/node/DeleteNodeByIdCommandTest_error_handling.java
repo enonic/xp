@@ -79,7 +79,7 @@ public class DeleteNodeByIdCommandTest_error_handling
         assertNotNull( getNode( n2.id() ) );
     }
 
-    private class FailDeleteOnIdsProxy
+    private static class FailDeleteOnIdsProxy
         extends ClientProxy
     {
         private final List<String> failOn = new ArrayList<>();

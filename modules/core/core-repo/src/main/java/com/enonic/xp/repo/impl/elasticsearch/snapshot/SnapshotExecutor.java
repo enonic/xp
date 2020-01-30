@@ -53,7 +53,7 @@ public class SnapshotExecutor
     {
         final CreateSnapshotRequestBuilder createRequest =
             new CreateSnapshotRequestBuilder( this.client.admin().cluster(), CreateSnapshotAction.INSTANCE ).
-                setIndices( indices.toArray( new String[indices.size()] ) ).
+                setIndices( indices.toArray( new String[0] ) ).
                 setIncludeGlobalState( false ).
                 setWaitForCompletion( true ).
                 setRepository( this.snapshotRepositoryName ).

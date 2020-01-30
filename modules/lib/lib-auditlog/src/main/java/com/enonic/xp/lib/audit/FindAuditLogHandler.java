@@ -71,7 +71,7 @@ public class FindAuditLogHandler
         {
             return;
         }
-        this.ids = AuditLogIds.from( ids.getList().stream().map( o -> o.toString() ).collect( Collectors.toList() ) );
+        this.ids = AuditLogIds.from( ids.getList().stream().map( Object::toString ).collect( Collectors.toList() ) );
     }
 
     public void setFrom( final String from )

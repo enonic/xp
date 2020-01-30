@@ -106,7 +106,7 @@ public final class PortalUrlServiceImpl
         builder.setParams( params );
         builder.contentService = this.contentService;
         builder.applicationService = this.applicationService;
-        return runWithAdminRole( () -> builder.build() );
+        return runWithAdminRole( builder::build );
     }
 
     @Reference
