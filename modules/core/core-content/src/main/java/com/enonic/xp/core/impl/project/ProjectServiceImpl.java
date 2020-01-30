@@ -15,6 +15,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.ContentInitializer;
+import com.enonic.xp.core.impl.issue.IssueInitializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexService;
@@ -71,6 +72,14 @@ public class ProjectServiceImpl
             repositoryId( params.getName().getRepoId() ).
             build().
             initialize();
+
+        IssueInitializer.create().
+            setIndexService( indexService ).
+            setNodeService( nodeService ).
+            repositoryId( params.getName().getRepoId() ).
+            build().
+            initialize();
+
 
         final ModifyProjectParams modifyProjectParams = ModifyProjectParams.create( params ).build();
         return doModify( modifyProjectParams );

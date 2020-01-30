@@ -5,45 +5,32 @@ import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.init.RepoDependentInitializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexPath;
-import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.Direction;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public final class ContentInitializer
-    extends ExternalInitializer
+    extends RepoDependentInitializer
 {
     private final static Logger LOG = LoggerFactory.getLogger( ContentInitializer.class );
-
-    public static final User SUPER_USER = User.create().
-        key( PrincipalKey.ofSuperUser() ).
-        login( PrincipalKey.ofSuperUser().getId() ).
-        build();
 
     private static final AccessControlList CONTENT_ROOT_DEFAULT_ACL = AccessControlList.create().
         add( AccessControlEntry.create().
@@ -64,18 +51,12 @@ public final class ContentInitializer
 
     private static final ChildOrder CONTENT_DEFAULT_CHILD_ORDER = ChildOrder.from( CONTENT_INDEX_PATH_DISPLAY_NAME + " " + Direction.ASC );
 
-    private final NodeService nodeService;
-
     private final RepositoryService repositoryService;
-
-    private final RepositoryId repositoryId;
 
     private ContentInitializer( final Builder builder )
     {
         super( builder );
-        this.nodeService = builder.nodeService;
         this.repositoryService = builder.repositoryService;
-        this.repositoryId = builder.repositoryId;
     }
 
     @Override
@@ -99,7 +80,7 @@ public final class ContentInitializer
     @Override
     protected String getInitializationSubject()
     {
-        return "com.enonic.cms.default repo";
+        return repositoryId + " repo";
     }
 
     private void createDraftBranch()
@@ -152,60 +133,20 @@ public final class ContentInitializer
         }
     }
 
-    private Context createAdminContext()
-    {
-        final AuthenticationInfo authInfo = createAdminAuthInfo();
-        return ContextBuilder.from( ContentConstants.CONTEXT_MASTER ).
-            repositoryId( repositoryId ).
-            authInfo( authInfo ).
-            build();
-    }
-
-    private AuthenticationInfo createAdminAuthInfo()
-    {
-        return AuthenticationInfo.create().
-            principals( RoleKeys.ADMIN ).
-            user( SUPER_USER ).
-            build();
-    }
-
     public static Builder create()
     {
         return new Builder();
     }
 
     public static class Builder
-        extends ExternalInitializer.Builder<Builder>
+        extends RepoDependentInitializer.Builder<Builder>
     {
-        private NodeService nodeService;
-
         private RepositoryService repositoryService;
-
-        private RepositoryId repositoryId = ContentConstants.CONTENT_REPO_ID;
-
-        public Builder setNodeService( final NodeService nodeService )
-        {
-            this.nodeService = nodeService;
-            return this;
-        }
 
         public Builder setRepositoryService( final RepositoryService repositoryService )
         {
             this.repositoryService = repositoryService;
             return this;
-        }
-
-        public Builder repositoryId( final RepositoryId repositoryId )
-        {
-            this.repositoryId = repositoryId;
-            return this;
-        }
-
-        @Override
-        protected void validate()
-        {
-            super.validate();
-            Preconditions.checkNotNull( nodeService );
         }
 
         public ContentInitializer build()

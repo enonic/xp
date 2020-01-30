@@ -10,6 +10,7 @@ import javax.ws.rs.ext.Provider;
 import com.enonic.xp.admin.impl.rest.resource.content.page.PageResource;
 import com.enonic.xp.admin.impl.rest.resource.content.page.PageTemplateResource;
 import com.enonic.xp.admin.impl.rest.resource.content.page.fragment.FragmentResource;
+import com.enonic.xp.admin.impl.rest.resource.issue.IssueResource;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeResource;
 import com.enonic.xp.admin.impl.rest.resource.schema.xdata.XDataResource;
 import com.enonic.xp.jaxrs.JaxRsComponent;
@@ -22,7 +23,7 @@ public final class CmsResourceDynamicFeature
     private final Set<Class<? extends JaxRsComponent>> supportedResources =
         Set.of( ContentResource.class, XDataResource.class, PageTemplateResource.class, ContentImageResource.class,
                 ContentIconResource.class, ContentMediaResource.class, PageResource.class, FragmentResource.class,
-                ContentTypeResource.class );
+                ContentTypeResource.class, IssueResource.class );
 
     @Override
     public void configure( final ResourceInfo resourceInfo, final FeatureContext context )

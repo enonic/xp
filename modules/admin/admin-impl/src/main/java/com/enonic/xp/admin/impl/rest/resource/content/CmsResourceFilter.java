@@ -18,7 +18,7 @@ import com.enonic.xp.project.ProjectConstants;
 public final class CmsResourceFilter
     implements ContainerRequestFilter
 {
-    private static final Pattern PATTERN = Pattern.compile( "^/" + ResourceConstants.REST_ROOT + "cms/([^/]+)/([^/]+)" );
+    private static final Pattern PATTERN = Pattern.compile( "^/" + ResourceConstants.REST_ROOT + "cms/([^/]+)" );
 
     @Override
     public void filter( final ContainerRequestContext requestContext )
