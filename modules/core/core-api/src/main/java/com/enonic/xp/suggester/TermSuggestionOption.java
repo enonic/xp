@@ -26,7 +26,6 @@ public final class TermSuggestionOption
     {
         private Integer freq;
 
-        @SuppressWarnings("unchecked")
         public Builder freq( final Integer freq )
         {
             this.freq = freq;

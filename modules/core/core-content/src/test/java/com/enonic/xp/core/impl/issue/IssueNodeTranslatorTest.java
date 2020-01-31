@@ -74,7 +74,7 @@ public class IssueNodeTranslatorTest
         List<PropertySet> propertySetList = new ArrayList<>();
         propertySetList.add( createItemSet( "content-id1", false ) );
         propertySetList.add( createItemSet( "content-id2", true ) );
-        publishRequestSet.addSets( PublishRequestPropertyNames.ITEMS, propertySetList.toArray( new PropertySet[propertySetList.size()] ) );
+        publishRequestSet.addSets( PublishRequestPropertyNames.ITEMS, propertySetList.toArray( new PropertySet[0] ) );
         issueAsData.addSet( PUBLISH_REQUEST, publishRequestSet );
 
         return Node.create().

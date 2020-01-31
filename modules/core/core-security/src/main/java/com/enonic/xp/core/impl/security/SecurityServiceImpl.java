@@ -297,9 +297,8 @@ public final class SecurityServiceImpl
 
     private PrincipalKeys resolveMemberships( final PrincipalKey userKey )
     {
-        final Set<PrincipalKey> resolvedMemberships = new LinkedHashSet<>();
         final PrincipalKeys directMemberships = queryDirectMemberships( userKey );
-        resolvedMemberships.addAll( directMemberships.getSet() );
+        final Set<PrincipalKey> resolvedMemberships = new LinkedHashSet<>( directMemberships.getSet() );
 
         final Set<PrincipalKey> queriedMemberships = new LinkedHashSet<>();
 

@@ -97,7 +97,7 @@ class RepoDumper
             setContext( RepositoryConstants.MASTER_BRANCH ).runWith( () -> dumpVersions( dumpedNodes ) );
         }
 
-        setContext( RepositoryConstants.MASTER_BRANCH ).runWith( () -> dumpCommits() );
+        setContext( RepositoryConstants.MASTER_BRANCH ).runWith( this::dumpCommits );
 
         return this.dumpResult.build();
     }

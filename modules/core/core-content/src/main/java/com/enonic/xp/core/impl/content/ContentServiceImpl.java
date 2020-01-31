@@ -849,11 +849,9 @@ public class ContentServiceImpl
     public Contents findByApplicationKey( final ApplicationKey key )
     {
         final ContentQuery query = ContentQuery.create().
-            queryExpr( QueryParser.parse( new StringBuilder(
-                String.join( PropertyPath.ELEMENT_DIVIDER, ContentPropertyNames.DATA, ContentPropertyNames.SITECONFIG, ContentPropertyNames.APPLICATION_KEY ) ).
-                append( "=" ).
-                append( "'" ).append( key ).append( "'" ).
-                toString() ) ).
+            queryExpr( QueryParser.parse(
+                String.join( PropertyPath.ELEMENT_DIVIDER, ContentPropertyNames.DATA, ContentPropertyNames.SITECONFIG, ContentPropertyNames.APPLICATION_KEY ) + "=" +
+                    "'" + key + "'" ) ).
             size( -1 ).
             build();
 

@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.branch.storage;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -187,7 +188,7 @@ public class BranchServiceImpl
     {
         final List<NodeBranchEntry> nodeBranchEntries = nodePaths.stream().
             map( nodePath -> doGetByPath( nodePath, context ) ).
-            filter( branchVersion -> branchVersion != null ).collect( Collectors.toList() );
+            filter( Objects::nonNull ).collect( Collectors.toList() );
 
         return NodeBranchEntries.from( nodeBranchEntries );
     }

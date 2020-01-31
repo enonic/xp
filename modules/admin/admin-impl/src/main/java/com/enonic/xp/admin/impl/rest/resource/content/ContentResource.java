@@ -280,11 +280,11 @@ public final class ContentResource
 
         if ( !nullToEmpty( focalX ).isBlank() )
         {
-            createMediaParams.focalX( Double.valueOf( focalX ) );
+            createMediaParams.focalX( Double.parseDouble( focalX ) );
         }
         if ( !nullToEmpty( focalY ).isBlank() )
         {
-            createMediaParams.focalY( Double.valueOf( focalY ) );
+            createMediaParams.focalY( Double.parseDouble( focalY ) );
         }
 
         persistedContent = contentService.create( createMediaParams );
@@ -336,11 +336,11 @@ public final class ContentResource
 
         if ( !nullToEmpty( focalX ).isBlank() )
         {
-            params.focalX( Double.valueOf( focalX ) );
+            params.focalX( Double.parseDouble( focalX ) );
         }
         if ( !nullToEmpty( focalY ).isBlank() )
         {
-            params.focalY( Double.valueOf( focalY ) );
+            params.focalY( Double.parseDouble( focalY ) );
         }
 
         final MultipartItem mediaFile = form.get( "file" );
@@ -555,9 +555,7 @@ public final class ContentResource
         final UpdateContentParams updateParams = new UpdateContentParams().
             contentId( contentId ).
             modifier( PrincipalKey.ofAnonymous() ).
-            editor( edit -> {
-                edit.workflowInfo = WorkflowInfo.ready();
-            } );
+            editor( edit -> edit.workflowInfo = WorkflowInfo.ready() );
 
         contentService.update( updateParams );
     }
@@ -935,7 +933,7 @@ public final class ContentResource
 
         if ( authInfo.hasRole( RoleKeys.ADMIN ) )
         {
-            return permissions.stream().map( p -> p.name() ).collect( Collectors.toList() );
+            return permissions.stream().map( Enum::name ).collect( Collectors.toList() );
         }
 
         final List<AccessControlList> contentsPermissions =
@@ -1066,7 +1064,7 @@ public final class ContentResource
             build().
             find();
 
-        final Boolean isFilterNeeded = json.getFilterStatuses() != null && json.getFilterStatuses().size() > 0;
+        final boolean isFilterNeeded = json.getFilterStatuses() != null && json.getFilterStatuses().size() > 0;
 
         if ( isFilterNeeded )
         {
@@ -1177,7 +1175,7 @@ public final class ContentResource
         final ContentPaths targetContentPaths = findContentPathsBySelectorQuery( contentQueryJson );
 
         final ContentPath parentPath = contentQueryJson.getParentPath();
-        final Integer parentPathSize = parentPath != null ? parentPath.elementCount() : 0;
+        final int parentPathSize = parentPath != null ? parentPath.elementCount() : 0;
 
         final Set<ContentPath> layerPaths = targetContentPaths.stream().
             filter( path -> parentPath == null || path.isChildOf( parentPath ) ).
@@ -1430,7 +1428,7 @@ public final class ContentResource
             build();
 
         final FindContentIdsByParentResult result = this.contentService.findIdsByParent( params );
-        return result.getContentIds().stream().map( contentId -> new ContentIdJson( contentId ) ).collect( Collectors.toList() );
+        return result.getContentIds().stream().map( ContentIdJson::new ).collect( Collectors.toList() );
     }
 
     @POST

@@ -51,7 +51,7 @@ public class SnapshotExecutor
     private SnapshotResult executeSnapshotCommand( final Collection<String> indices )
     {
         final CreateSnapshotRequest request = new CreateSnapshotRequest().
-            indices( indices.toArray( new String[indices.size()] ) ).
+            indices( indices.toArray( new String[0] ) ).
             includeGlobalState( false ).
             waitForCompletion( true ).
             repository( this.snapshotRepositoryName ).

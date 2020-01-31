@@ -14,7 +14,7 @@ import com.enonic.xp.task.TaskInfo;
 public final class TaskTransportRequestSenderImpl
     implements TaskTransportRequestSender
 {
-    static final long TRANSPORT_REQUEST_TIMEOUT = 5_000l; //5s 
+    static final long TRANSPORT_REQUEST_TIMEOUT = 5_000L; //5s
 
     public static final String ACTION = "xp/task";
 

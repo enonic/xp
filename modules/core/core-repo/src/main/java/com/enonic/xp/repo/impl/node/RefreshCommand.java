@@ -49,7 +49,7 @@ public class RefreshCommand
             indices.add( IndexNameResolver.resolveSearchIndexName( repositoryId, ContextAccessor.current().getBranch() ) );
         }
 
-        this.indexServiceInternal.refresh( indices.toArray( new String[indices.size()] ) );
+        this.indexServiceInternal.refresh( indices.toArray( new String[0] ) );
     }
 
     public static Builder create()

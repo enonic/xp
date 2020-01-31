@@ -234,7 +234,7 @@ public class ContentDataSerializer
             workflowInfo.addString( WORKFLOW_INFO_STATE, data.getState().toString() );
 
             final PropertySet workflowInfoChecks = workflowInfo.addSet( WORKFLOW_INFO_CHECKS );
-            data.getChecks().entrySet().forEach( e -> workflowInfoChecks.addString( e.getKey(), e.getValue().toString() ) );
+            data.getChecks().forEach( ( key, value ) -> workflowInfoChecks.addString( key, value.toString() ) );
         }
     }
 

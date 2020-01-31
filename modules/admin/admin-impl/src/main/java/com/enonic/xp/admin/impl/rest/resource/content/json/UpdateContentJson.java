@@ -60,7 +60,7 @@ public final class UpdateContentJson
         final ExtraDatas extraDatas = parseExtradata( extraDataJsonList );
 
         this.updateContentParams = new UpdateContentParams().
-            requireValid( Boolean.valueOf( requireValid ) ).
+            requireValid( Boolean.parseBoolean( requireValid ) ).
             contentId( ContentId.from( contentId ) ).
             modifier( PrincipalKey.ofAnonymous() ).
             editor( edit -> {

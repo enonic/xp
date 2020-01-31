@@ -188,10 +188,10 @@ public class Media
         }
 
         //TODO The values stored in top, left, bottom and right are not the correct values
-        final Double fixedTop = top / zoom;
-        final Double fixedLeft = left / zoom;
-        final Double fixedBottom = bottom / zoom;
-        final Double fixedRight = right / zoom;
+        final double fixedTop = top / zoom;
+        final double fixedLeft = left / zoom;
+        final double fixedBottom = bottom / zoom;
+        final double fixedRight = right / zoom;
 
         return Cropping.create().
             zoom( zoom ).

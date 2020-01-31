@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.dump;
 import java.net.URI;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.StreamSupport;
@@ -590,11 +589,9 @@ public class DumpServiceImplTest
 
     private RepoLoadResult getRepoLoadResult( final SystemLoadResult result, final RepositoryId repositoryId )
     {
-        final Iterator<RepoLoadResult> iterator = result.iterator();
 
-        while ( iterator.hasNext() )
+        for ( final RepoLoadResult next : result )
         {
-            final RepoLoadResult next = iterator.next();
             if ( next.getRepositoryId().equals( repositoryId ) )
             {
                 return next;

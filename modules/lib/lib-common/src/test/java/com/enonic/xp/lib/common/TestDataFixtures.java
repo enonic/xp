@@ -34,7 +34,7 @@ public class TestDataFixtures
     {
         final PropertySet appPropertySet = new PropertySet();
         appPropertySet.setString( "subString", "subStringValue" );
-        appPropertySet.setLong( "subLong", 123l );
+        appPropertySet.setLong( "subLong", 123L );
 
         final PropertyTree profile = new PropertyTree();
         profile.setSet( "myApp", appPropertySet );

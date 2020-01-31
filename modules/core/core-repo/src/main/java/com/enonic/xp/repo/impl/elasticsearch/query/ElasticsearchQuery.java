@@ -99,12 +99,12 @@ public class ElasticsearchQuery
 
     public String[] getIndexTypes()
     {
-        return this.indexTypes.toArray( new String[this.indexTypes.size()] );
+        return this.indexTypes.toArray( new String[0] );
     }
 
     public String[] getIndexNames()
     {
-        return this.indexNames.toArray( new String[this.indexNames.size()] );
+        return this.indexNames.toArray( new String[0] );
     }
 
     public int getFrom()

@@ -150,11 +150,11 @@ public class SearchRequestBuilderFactory
         }
         if ( preTags != null && !preTags.isEmpty() )
         {
-            highlightBuilder.preTags( preTags.toArray( new String[preTags.size()] ) );
+            highlightBuilder.preTags( preTags.toArray( new String[0] ) );
         }
         if ( postTags != null && !postTags.isEmpty() )
         {
-            highlightBuilder.postTags( postTags.toArray( new String[postTags.size()] ) );
+            highlightBuilder.postTags( postTags.toArray( new String[0] ) );
         }
         if ( requireFieldMatch != null )
         {

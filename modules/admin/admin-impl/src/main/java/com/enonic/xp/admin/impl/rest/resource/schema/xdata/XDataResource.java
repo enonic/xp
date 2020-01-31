@@ -87,10 +87,7 @@ public final class XDataResource
             forEach( xData -> resultXData.putIfAbsent( xData, false ) );
 
         getSiteXData( content ).
-            entrySet().
-            forEach( entry -> {
-                resultXData.putIfAbsent( entry.getKey(), entry.getValue() );
-            } );
+            forEach( resultXData::putIfAbsent );
 
         result.addXDatas( createXDataListJson( resultXData ) );
 

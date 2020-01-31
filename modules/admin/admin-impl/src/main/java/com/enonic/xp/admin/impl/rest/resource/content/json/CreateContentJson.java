@@ -35,7 +35,7 @@ public final class CreateContentJson
     {
 
         final CreateContentParams.Builder paramsBuilder = CreateContentParams.create().
-            requireValid( Boolean.valueOf( requireValid ) ).
+            requireValid( Boolean.parseBoolean( requireValid ) ).
             name( ContentName.from( name ) ).
             displayName( displayName ).
             parent( ContentPath.from( parent ) ).

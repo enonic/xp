@@ -54,14 +54,16 @@ public final class ComponentNameResolverImpl
 
     public ComponentName resolve( final PartComponent component )
     {
-        final PartDescriptor partDescriptor = partDescriptorService.getByKey( component.getDescriptor() );
-        return partDescriptor != null ? ComponentName.from( partDescriptor.getDisplayName() ) : null;
+        final PartDescriptor partDescriptor =
+            component.getDescriptor() != null ? partDescriptorService.getByKey( component.getDescriptor() ) : null;
+        return partDescriptor != null ? ComponentName.from( partDescriptor.getDisplayName() ) : component.getName();
     }
 
     public ComponentName resolve( final LayoutComponent component )
     {
-        final LayoutDescriptor layoutDescriptor = layoutDescriptorService.getByKey( component.getDescriptor() );
-        return layoutDescriptor != null ? ComponentName.from( layoutDescriptor.getDisplayName() ) : null;
+        final LayoutDescriptor layoutDescriptor =
+            component.getDescriptor() != null ? layoutDescriptorService.getByKey( component.getDescriptor() ) : null;
+        return layoutDescriptor != null ? ComponentName.from( layoutDescriptor.getDisplayName() ) : component.getName();
     }
 
     public ComponentName resolve( final ImageComponent component )

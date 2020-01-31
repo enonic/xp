@@ -38,7 +38,7 @@ public class NodeCommitQuery
                 aggregationQueries( source.getAggregationQueries().getSet() ).
                 setOrderExpressions( OrderExpressions.from( source.getOrderBys() ) );
 
-            source.getPostFilters().forEach( filter -> this.addPostFilter( filter ) );
+            source.getPostFilters().forEach( this::addPostFilter );
         }
 
         public NodeCommitQuery build()
