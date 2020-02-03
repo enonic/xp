@@ -45,6 +45,8 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.content.ContentAuditLogExecutorImpl;
+import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentInitializer;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
@@ -289,6 +291,12 @@ public class AbstractContentServiceTest
         LayoutDescriptorService layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
         auditLogService = Mockito.mock( AuditLogService.class );
 
+        final ContentConfig contentConfig = Mockito.mock( ContentConfig.class );
+        Mockito.when( contentConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
+
+        final ContentAuditLogSupportImpl contentAuditLogSupport =
+            new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutorImpl(), auditLogService );
+
         contentService.setNodeService( nodeService );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
@@ -298,15 +306,13 @@ public class AbstractContentServiceTest
         contentService.setPageDescriptorService( pageDescriptorService );
         contentService.setPartDescriptorService( partDescriptorService );
         contentService.setLayoutDescriptorService( layoutDescriptorService );
-        contentService.setAuditLogService( auditLogService );
         contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
         contentService.setIndexService( indexService );
         contentService.setNodeService( nodeService );
         contentService.setRepositoryService( repositoryService );
-        final ContentConfig contentConfig = Mockito.mock( ContentConfig.class );
-        Mockito.when( contentConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
-        contentService.initialize( contentConfig );
+        contentService.setContentAuditLogSupport( contentAuditLogSupport );
+        contentService.initialize();
 
         waitForClusterHealth();
     }
