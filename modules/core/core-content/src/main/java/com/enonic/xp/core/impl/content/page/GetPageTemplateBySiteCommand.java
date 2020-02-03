@@ -16,11 +16,17 @@ final class GetPageTemplateBySiteCommand
 
     private ContentId siteId;
 
+    private ContentPath sitePath;
+
     public PageTemplates execute()
     {
         final PageTemplates.Builder pageTemplatesBuilder = PageTemplates.create();
-        final Content site = contentService.getById( siteId );
-        final ContentPath pageTemplatesFolderPath = ContentPath.from( site.getPath(), ContentServiceImpl.TEMPLATES_FOLDER_NAME );
+        if ( sitePath == null )
+        {
+            final Content site = contentService.getById( siteId );
+            sitePath = site.getPath();
+        }
+        final ContentPath pageTemplatesFolderPath = ContentPath.from( sitePath, ContentServiceImpl.TEMPLATES_FOLDER_NAME );
         final FindContentByParentResult result =
             contentService.findByParent( FindContentByParentParams.create().parentPath( pageTemplatesFolderPath ).build() );
         for ( final Content content : result.getContents() )
@@ -36,6 +42,12 @@ final class GetPageTemplateBySiteCommand
     public GetPageTemplateBySiteCommand site( final ContentId siteId )
     {
         this.siteId = siteId;
+        return this;
+    }
+
+    public GetPageTemplateBySiteCommand sitePath( final ContentPath sitePath )
+    {
+        this.sitePath = sitePath;
         return this;
     }
 

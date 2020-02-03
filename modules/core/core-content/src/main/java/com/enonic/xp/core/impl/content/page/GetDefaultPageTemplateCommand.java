@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content.page;
 
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateFilter;
@@ -13,6 +14,8 @@ final class GetDefaultPageTemplateCommand
 
     private ContentId site;
 
+    private ContentPath sitePath;
+
     private ContentService contentService;
 
     public PageTemplate execute()
@@ -20,6 +23,7 @@ final class GetDefaultPageTemplateCommand
 
         final PageTemplates pageTemplates = new GetPageTemplateBySiteCommand().
             site( site ).
+            sitePath( sitePath ).
             contentService( contentService ).
             execute();
         final PageTemplates supportedTemplates = pageTemplates.filter( PageTemplateFilter.canRender( contentType ) );
@@ -35,6 +39,12 @@ final class GetDefaultPageTemplateCommand
     public GetDefaultPageTemplateCommand site( final ContentId site )
     {
         this.site = site;
+        return this;
+    }
+
+    public GetDefaultPageTemplateCommand sitePath( final ContentPath sitePath )
+    {
+        this.sitePath = sitePath;
         return this;
     }
 
