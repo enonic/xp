@@ -12,7 +12,7 @@ import org.osgi.framework.ServiceRegistration;
 import com.enonic.xp.cluster.ClusterConfig;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.notNull;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -85,9 +85,9 @@ class NullSessionDataStoreFactoryActivatorTest
 
     private void verifyEnabledActivateDeactivate()
     {
-        when( bundleContext.registerService( same( SessionDataStoreFactory.class ), notNull(), any() ) ).
+        when( bundleContext.registerService( same( SessionDataStoreFactory.class ), any( SessionDataStoreFactory.class ), isNull() ) ).
             thenReturn( sessionDataStoreFactoryServiceRegistration );
-        when( bundleContext.registerService( same( SessionCacheFactory.class ), notNull(), any() ) ).
+        when( bundleContext.registerService( same( SessionCacheFactory.class ), any( SessionCacheFactory.class ), isNull() ) ).
             thenReturn( sessionCacheFactoryServiceRegistration );
 
         final NullSessionDataStoreFactoryActivator nullSessionDataStoreFactoryActivator =
@@ -96,8 +96,8 @@ class NullSessionDataStoreFactoryActivatorTest
         nullSessionDataStoreFactoryActivator.activate( webSessionConfig );
 
         verify( webSessionConfig ).session_save_period();
-        verify( bundleContext ).registerService( same( SessionDataStoreFactory.class ), notNull(), any() );
-        verify( bundleContext ).registerService( same( SessionCacheFactory.class ), notNull(), any() );
+        verify( bundleContext ).registerService( same( SessionDataStoreFactory.class ), any( SessionDataStoreFactory.class ), isNull() );
+        verify( bundleContext ).registerService( same( SessionCacheFactory.class ), any( SessionCacheFactory.class ), isNull() );
 
         nullSessionDataStoreFactoryActivator.deactivate();
         verify( sessionDataStoreFactoryServiceRegistration, times( 1 ) ).unregister();

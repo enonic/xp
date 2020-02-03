@@ -45,8 +45,7 @@ public final class ConfigInterpolator
 
     public Configuration interpolate( final Configuration source )
     {
-        final Map<String, String> target = new HashMap<>();
-        target.putAll( source.asMap() );
+        final Map<String, String> target = new HashMap<>( source.asMap() );
 
         doInterpolate( target );
 

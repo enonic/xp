@@ -668,7 +668,6 @@ public class Content
             return (BUILDER) this;
         }
 
-        @SuppressWarnings("unchecked")
         public Content build()
         {
             return new Content( this );

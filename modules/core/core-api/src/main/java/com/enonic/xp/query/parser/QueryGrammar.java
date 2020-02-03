@@ -36,7 +36,8 @@ final class QueryGrammar
     public QueryGrammar()
     {
         this.identifierToken = identifierToken();
-        this.terminals = Terminals.caseInsensitive( this.identifierToken.source(), OPERATORS, KEYWORDS );
+        this.terminals =
+            Terminals.operators( OPERATORS ).words( this.identifierToken.source() ).caseInsensitiveKeywords( KEYWORDS ).build();
     }
 
     private Parser<Tokens.Fragment> identifierToken()
@@ -46,7 +47,7 @@ final class QueryGrammar
 
     private Parser<Tokens.Fragment> fragmentToken( final String pattern, final String tag )
     {
-        return Scanners.pattern( Patterns.regex( pattern ), tag ).source().map( QueryMapper.fragment( tag ) );
+        return Patterns.regex( pattern ).toScanner( tag ).source().map( QueryMapper.fragment( tag ) );
     }
 
     private Parser<?> tokenizer()
@@ -223,8 +224,8 @@ final class QueryGrammar
 
     private Parser<QueryExpr> parseQuery()
     {
-        final Parser<ConstraintExpr> constraint = parseConstraint().optional();
-        final Parser<List<OrderExpr>> orderList = parseOrderBy().optional();
+        final Parser<ConstraintExpr> constraint = parseConstraint().optional( null );
+        final Parser<List<OrderExpr>> orderList = parseOrderBy().optional( null );
         return Parsers.sequence( constraint, orderList, QueryMapper.queryExpr() );
     }
 

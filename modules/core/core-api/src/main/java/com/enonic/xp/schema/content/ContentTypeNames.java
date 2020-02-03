@@ -31,7 +31,7 @@ public final class ContentTypeNames
 
     public static ContentTypeNames from( final Collection<String> contentTypeNames )
     {
-        return from( contentTypeNames.toArray( new String[contentTypeNames.size()] ) );
+        return from( contentTypeNames.toArray( new String[0] ) );
     }
 
     public static ContentTypeNames from( final ContentTypeName... contentTypeNames )

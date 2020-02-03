@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.launcher.LauncherException;
 
-import static com.google.common.base.StandardSystemProperty.JAVA_VERSION;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RequirementCheckerTest
@@ -13,7 +12,7 @@ public class RequirementCheckerTest
     public void rightJavaVersion()
     {
         final SystemProperties props = new SystemProperties();
-        props.put( JAVA_VERSION.key(), "11" );
+        props.put( "java.version", "11" );
 
         new RequirementChecker( props ).check();
     }
@@ -22,7 +21,7 @@ public class RequirementCheckerTest
     public void rightJavaVersionWithMinorVersion()
     {
         final SystemProperties props = new SystemProperties();
-        props.put( JAVA_VERSION.key(), "11.0.2" );
+        props.put( "java.version", "11.0.2" );
 
         new RequirementChecker( props ).check();
     }
@@ -31,7 +30,7 @@ public class RequirementCheckerTest
     public void rightJavaVersion_withClassifier()
     {
         final SystemProperties props = new SystemProperties();
-        props.put( JAVA_VERSION.key(), "11.0.2_94-internal" );
+        props.put( "java.version", "11.0.2_94-internal" );
 
         new RequirementChecker( props ).check();
     }
@@ -40,7 +39,7 @@ public class RequirementCheckerTest
     public void wrongJavaVersion()
     {
         final SystemProperties props = new SystemProperties();
-        props.put( JAVA_VERSION.key(), "1.7.0" );
+        props.put( "java.version", "1.7.0" );
 
         RequirementChecker requirementChecker = new RequirementChecker(props);
         assertThrows(LauncherException.class, () -> requirementChecker.check());

@@ -1,10 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -26,8 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CreateNodeCommand_path_integrity_test
     extends AbstractNodeTest
 {
-
-
     @BeforeEach
     public void setUp()
         throws Exception
@@ -37,35 +32,25 @@ public class CreateNodeCommand_path_integrity_test
 
     @Test
     public void create()
-        throws Exception
     {
-        List<Future> threads = new ArrayList<>();
+        final int concurrentAttempts = 5;
+        final int expectedSuccessfulAttempts = 1;
+        final AtomicInteger exceptionCounter = new AtomicInteger();
 
-        final ExecutorService executor = Executors.newFixedThreadPool( 5 );
-
-        IntStream.range( 0, 5 ).forEach( i -> {
-            threads.add( executor.submit( CreateNodeTask.create().
+        CompletableFuture.allOf(
+            IntStream.range( 0, concurrentAttempts ).mapToObj( i -> CompletableFuture.runAsync( CreateNodeTask.create().
                 binaryService( this.binaryService ).
                 storageService( this.storageService ).
                 nodeSearchService( this.searchService ).
                 indexServiceInternal( this.indexServiceInternal ).
                 context( ContextAccessor.current() ).
-                build() ) );
-        } );
+                build() ).
+                exceptionally( throwable -> {
+                    exceptionCounter.incrementAndGet();
+                    return null;
+                } ) ).toArray( CompletableFuture[]::new ) ).join();
 
-        threads.forEach( entry -> {
-            while ( !entry.isDone() )
-            {
-                try
-                {
-                    Thread.sleep( 5 );
-                }
-                catch ( InterruptedException e )
-                {
-                    e.printStackTrace();
-                }
-            }
-        } );
+        assertEquals( concurrentAttempts - expectedSuccessfulAttempts, exceptionCounter.get() );
 
         refresh();
 
@@ -73,7 +58,7 @@ public class CreateNodeCommand_path_integrity_test
             path( NodePath.create( NodePath.ROOT, "myNode" ).build() ).
             build() );
 
-        assertEquals( 1, result.getTotalHits() );
+        assertEquals( expectedSuccessfulAttempts, result.getTotalHits() );
     }
 
     private static class CreateNodeTask

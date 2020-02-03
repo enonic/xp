@@ -45,7 +45,6 @@ public class HighlightQuery
         {
         }
 
-        @SuppressWarnings("unchecked")
         public Builder property( final HighlightQueryProperty value )
         {
             this.properties.add( value );

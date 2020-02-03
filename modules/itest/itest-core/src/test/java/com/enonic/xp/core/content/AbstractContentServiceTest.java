@@ -11,7 +11,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
@@ -42,6 +45,8 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.content.ContentAuditLogExecutorImpl;
+import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentInitializer;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
@@ -165,10 +170,14 @@ public class AbstractContentServiceTest
 
     protected AuditLogService auditLogService;
 
+    private ExecutorService executorService;
+
     @BeforeEach
     public void setUpAbstractContentServiceTest()
         throws Exception
     {
+        executorService = Executors.newSingleThreadExecutor();
+
         deleteAllIndices();
 
         ContextAccessor.INSTANCE.set( CTX_DEFAULT );
@@ -181,7 +190,7 @@ public class AbstractContentServiceTest
         final StorageDaoImpl storageDao = new StorageDaoImpl();
         storageDao.setClient( client );
 
-        final EventPublisherImpl eventPublisher = new EventPublisherImpl();
+        final EventPublisherImpl eventPublisher = new EventPublisherImpl( executorService );
 
         SearchDaoImpl searchDao = new SearchDaoImpl();
         searchDao.setClient( client );
@@ -288,6 +297,12 @@ public class AbstractContentServiceTest
         projectService.setRepositoryService( repositoryService );
         projectService.setNodeService( nodeService );
 
+        final ContentConfig contentConfig = Mockito.mock( ContentConfig.class );
+        Mockito.when( contentConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
+
+        final ContentAuditLogSupportImpl contentAuditLogSupport =
+            new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutorImpl(), auditLogService );
+
         contentService.setNodeService( nodeService );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
@@ -297,18 +312,22 @@ public class AbstractContentServiceTest
         contentService.setPageDescriptorService( pageDescriptorService );
         contentService.setPartDescriptorService( partDescriptorService );
         contentService.setLayoutDescriptorService( layoutDescriptorService );
-        contentService.setAuditLogService( auditLogService );
         contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
-        contentService.setNodeService( nodeService );
+        contentService.setIndexService( indexService );
         contentService.setProjectService( projectService );
-        final ContentConfig contentConfig = Mockito.mock( ContentConfig.class );
-        Mockito.when( contentConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
+        contentService.setRepositoryService( repositoryService );
+        contentService.setContentAuditLogSupport( contentAuditLogSupport );
         contentService.initialize( contentConfig );
 
         waitForClusterHealth();
     }
 
+    @AfterEach
+    void tearDown()
+    {
+        executorService.shutdownNow();
+    }
 
     protected ByteSource loadImage( final String name )
         throws IOException

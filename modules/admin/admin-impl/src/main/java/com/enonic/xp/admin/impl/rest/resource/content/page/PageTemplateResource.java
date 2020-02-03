@@ -16,6 +16,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.json.content.ContentListJson;
+import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.content.Content;
@@ -64,13 +65,15 @@ public final class PageTemplateResource
 
     private ContentIconUrlResolver contentIconUrlResolver;
 
+    private ComponentNameResolver componentNameResolver;
+
     @GET
     public ContentJson getByKey( @QueryParam("key") final String pageTemplateKeyAsString )
         throws IOException
     {
         final PageTemplateKey pageTemplateKey = PageTemplateKey.from( pageTemplateKeyAsString );
         final PageTemplate pageTemplate = pageTemplateService.getByKey( pageTemplateKey );
-        return new ContentJson( pageTemplate, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( pageTemplate, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @GET
@@ -85,7 +88,8 @@ public final class PageTemplateResource
             totalHits( pageTemplates.getSize() ).
             hits( pageTemplates.getSize() ).
             build();
-        return new ContentListJson( pageTemplates.toContents(), metaData, contentIconUrlResolver, principalsResolver );
+        return new ContentListJson( pageTemplates.toContents(), metaData, contentIconUrlResolver, principalsResolver,
+                                    componentNameResolver );
     }
 
     @GET
@@ -101,7 +105,8 @@ public final class PageTemplateResource
             totalHits( filteredPageTemplates.getSize() ).
             hits( filteredPageTemplates.getSize() ).
             build();
-        return new ContentListJson( filteredPageTemplates.toContents(), metaData, contentIconUrlResolver, principalsResolver );
+        return new ContentListJson( filteredPageTemplates.toContents(), metaData, contentIconUrlResolver, principalsResolver,
+                                    componentNameResolver );
     }
 
     @GET
@@ -119,7 +124,7 @@ public final class PageTemplateResource
         {
             return null;
         }
-        return new ContentJson( pageTemplate, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( pageTemplate, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @GET
@@ -181,7 +186,7 @@ public final class PageTemplateResource
         templateParams.name( ensureUniqueName( templateParams.getSite(), templateParams.getName() ) );
 
         PageTemplate template = this.pageTemplateService.create( templateParams );
-        return new ContentJson( template, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( template, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     private ContentName ensureUniqueName( ContentPath parent, ContentName name )
@@ -224,5 +229,12 @@ public final class PageTemplateResource
     public void setSiteService( final SiteService siteService )
     {
         this.siteService = siteService;
+    }
+
+
+    @Reference
+    public void setComponentNameResolver( final ComponentNameResolver componentNameResolver )
+    {
+        this.componentNameResolver = componentNameResolver;
     }
 }

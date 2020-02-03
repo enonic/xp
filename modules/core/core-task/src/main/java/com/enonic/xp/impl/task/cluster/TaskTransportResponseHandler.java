@@ -15,7 +15,7 @@ import com.enonic.xp.util.Exceptions;
 public class TaskTransportResponseHandler
     implements TransportResponseHandler<TaskTransportResponse>
 {
-    private static final long THREAD_TIMEOUT = TaskTransportRequestSenderImpl.TRANSPORT_REQUEST_TIMEOUT + 1_000l;
+    private static final long THREAD_TIMEOUT = TaskTransportRequestSenderImpl.TRANSPORT_REQUEST_TIMEOUT + 1_000L;
 
     private final ImmutableList.Builder<TaskInfo> taskInfos = ImmutableList.builder();
 

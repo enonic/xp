@@ -236,6 +236,8 @@ public final class ContentResource
 
     private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
 
+    private ComponentNameResolver componentNameResolver;
+
     private BinaryExtractor extractor;
 
     private TaskService taskService;
@@ -247,7 +249,7 @@ public final class ContentResource
     public ContentJson create( final CreateContentJson params )
     {
         final Content persistedContent = contentService.create( params.getCreateContent() );
-        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @POST
@@ -279,16 +281,16 @@ public final class ContentResource
 
         if ( !nullToEmpty( focalX ).isBlank() )
         {
-            createMediaParams.focalX( Double.valueOf( focalX ) );
+            createMediaParams.focalX( Double.parseDouble( focalX ) );
         }
         if ( !nullToEmpty( focalY ).isBlank() )
         {
-            createMediaParams.focalY( Double.valueOf( focalY ) );
+            createMediaParams.focalY( Double.parseDouble( focalY ) );
         }
 
         persistedContent = contentService.create( createMediaParams );
 
-        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @POST
@@ -317,7 +319,7 @@ public final class ContentResource
 
         persistedContent = contentService.create( createMediaParams );
 
-        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @POST
@@ -335,11 +337,11 @@ public final class ContentResource
 
         if ( !nullToEmpty( focalX ).isBlank() )
         {
-            params.focalX( Double.valueOf( focalX ) );
+            params.focalX( Double.parseDouble( focalX ) );
         }
         if ( !nullToEmpty( focalY ).isBlank() )
         {
-            params.focalY( Double.valueOf( focalY ) );
+            params.focalY( Double.parseDouble( focalY ) );
         }
 
         final MultipartItem mediaFile = form.get( "file" );
@@ -347,7 +349,7 @@ public final class ContentResource
         params.byteSource( getFileItemByteSource( mediaFile ) );
         persistedContent = contentService.update( params );
 
-        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @POST
@@ -357,7 +359,7 @@ public final class ContentResource
     {
         final Content persistedContent = this.doCreateAttachment( AttachmentNames.THUMBNAIL, form );
 
-        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @POST
@@ -382,7 +384,7 @@ public final class ContentResource
             removeAttachments( json.getAttachmentReferences() );
 
         final Content content = contentService.update( params );
-        return new ContentJson( content, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( content, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @POST
@@ -437,7 +439,7 @@ public final class ContentResource
 
         if ( json.getContentName().equals( updatedContent.getName() ) )
         {
-            return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
+            return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
         }
 
         try
@@ -445,7 +447,7 @@ public final class ContentResource
             // in case content with same name and path was created in between content updated and renamed
             final RenameContentParams renameParams = makeRenameParams( json.getRenameContentParams() );
             final Content renamedContent = contentService.rename( renameParams );
-            return new ContentJson( renamedContent, contentIconUrlResolver, principalsResolver );
+            return new ContentJson( renamedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
         }
         catch ( ContentAlreadyExistsException e )
         {
@@ -554,9 +556,7 @@ public final class ContentResource
         final UpdateContentParams updateParams = new UpdateContentParams().
             contentId( contentId ).
             modifier( PrincipalKey.ofAnonymous() ).
-            editor( edit -> {
-                edit.workflowInfo = WorkflowInfo.ready();
-            } );
+            editor( edit -> edit.workflowInfo = WorkflowInfo.ready() );
 
         contentService.update( updateParams );
     }
@@ -716,7 +716,7 @@ public final class ContentResource
             silent( params.isSilent() ).
             build() );
 
-        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver );
+        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
 
     @POST
@@ -803,7 +803,7 @@ public final class ContentResource
         }
         else
         {
-            return new ContentJson( content, contentIconUrlResolver, principalsResolver );
+            return new ContentJson( content, contentIconUrlResolver, principalsResolver, componentNameResolver );
         }
     }
 
@@ -871,7 +871,7 @@ public final class ContentResource
         }
         else
         {
-            return new ContentJson( content, contentIconUrlResolver, principalsResolver );
+            return new ContentJson( content, contentIconUrlResolver, principalsResolver, componentNameResolver );
         }
     }
 
@@ -934,7 +934,7 @@ public final class ContentResource
 
         if ( authInfo.hasRole( RoleKeys.ADMIN ) )
         {
-            return permissions.stream().map( p -> p.name() ).collect( Collectors.toList() );
+            return permissions.stream().map( Enum::name ).collect( Collectors.toList() );
         }
 
         final List<AccessControlList> contentsPermissions =
@@ -973,7 +973,7 @@ public final class ContentResource
         final Content nearestSite = this.contentService.getNearestSite( contentId );
         if ( nearestSite != null )
         {
-            return new ContentJson( nearestSite, contentIconUrlResolver, principalsResolver );
+            return new ContentJson( nearestSite, contentIconUrlResolver, principalsResolver, componentNameResolver );
         }
         else
         {
@@ -1044,7 +1044,7 @@ public final class ContentResource
         }
         else if ( EXPAND_FULL.equalsIgnoreCase( expandParam ) )
         {
-            return new ContentListJson( result.getContents(), metaData, contentIconUrlResolver, principalsResolver );
+            return new ContentListJson( result.getContents(), metaData, contentIconUrlResolver, principalsResolver, componentNameResolver );
         }
         else
         {
@@ -1065,7 +1065,7 @@ public final class ContentResource
             build().
             find();
 
-        final Boolean isFilterNeeded = json.getFilterStatuses() != null && json.getFilterStatuses().size() > 0;
+        final boolean isFilterNeeded = json.getFilterStatuses() != null && json.getFilterStatuses().size() > 0;
 
         if ( isFilterNeeded )
         {
@@ -1125,6 +1125,7 @@ public final class ContentResource
             aggregations( findResult.getAggregations() ).
             contentPrincipalsResolver( principalsResolver ).
             iconUrlResolver( contentIconUrlResolver ).
+            componentNameResolver( componentNameResolver ).
             expand( contentQueryJson.getExpand() ).
             hits( findResult.getHits() ).
             totalHits( findResult.getTotalHits() ).
@@ -1153,6 +1154,7 @@ public final class ContentResource
             aggregations( findResult.getAggregations() ).
             contentPrincipalsResolver( principalsResolver ).
             iconUrlResolver( contentIconUrlResolver ).
+            componentNameResolver( componentNameResolver ).
             expand( contentQueryJson.getExpand() ).
             hits( findResult.getHits() ).
             totalHits( findResult.getTotalHits() ).
@@ -1174,7 +1176,7 @@ public final class ContentResource
         final ContentPaths targetContentPaths = findContentPathsBySelectorQuery( contentQueryJson );
 
         final ContentPath parentPath = contentQueryJson.getParentPath();
-        final Integer parentPathSize = parentPath != null ? parentPath.elementCount() : 0;
+        final int parentPathSize = parentPath != null ? parentPath.elementCount() : 0;
 
         final Set<ContentPath> layerPaths = targetContentPaths.stream().
             filter( path -> parentPath == null || path.isChildOf( parentPath ) ).
@@ -1206,10 +1208,10 @@ public final class ContentResource
         final List<ContentTreeSelectorJson> resultItems =
             contentService.getByIds( new GetContentByIdsParams( findLayerContentsResult.getContentIds() ) ).
                 stream().
-                map( content -> new ContentTreeSelectorJson( new ContentJson( content, contentIconUrlResolver, principalsResolver ),
-                                                             relativeTargetContentPaths.contains( content.getPath().asRelative() ),
-                                                             relativeTargetContentPaths.stream().anyMatch(
-                                                                 path -> path.isChildOf( content.getPath().asRelative() ) ) ) ).
+                map( content -> new ContentTreeSelectorJson(
+                    new ContentJson( content, contentIconUrlResolver, principalsResolver, componentNameResolver ),
+                    relativeTargetContentPaths.contains( content.getPath().asRelative() ),
+                    relativeTargetContentPaths.stream().anyMatch( path -> path.isChildOf( content.getPath().asRelative() ) ) ) ).
                 collect( Collectors.toList() );
 
         final ContentListMetaData metaData = ContentListMetaData.create().hits( findLayerContentsResult.getHits() ).totalHits(
@@ -1427,7 +1429,7 @@ public final class ContentResource
             build();
 
         final FindContentIdsByParentResult result = this.contentService.findIdsByParent( params );
-        return result.getContentIds().stream().map( contentId -> new ContentIdJson( contentId ) ).collect( Collectors.toList() );
+        return result.getContentIds().stream().map( ContentIdJson::new ).collect( Collectors.toList() );
     }
 
     @POST
@@ -1681,5 +1683,11 @@ public final class ContentResource
     public void setTaskService( final TaskService taskService )
     {
         this.taskService = taskService;
+    }
+
+    @Reference
+    public void setComponentNameResolver( final ComponentNameResolver componentNameResolver )
+    {
+        this.componentNameResolver = componentNameResolver;
     }
 }

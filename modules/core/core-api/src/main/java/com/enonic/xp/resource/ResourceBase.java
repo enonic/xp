@@ -4,10 +4,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import com.google.common.base.Throwables;
 import com.google.common.io.CharSource;
 
 public abstract class ResourceBase
@@ -112,6 +112,6 @@ public abstract class ResourceBase
             throw new ResourceNotFoundException( this.key );
         }
 
-        throw Throwables.propagate( e );
+        throw new UncheckedIOException( e );
     }
 }

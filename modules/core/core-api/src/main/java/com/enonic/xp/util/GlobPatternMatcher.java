@@ -10,7 +10,7 @@ public class GlobPatternMatcher
         return value.matches( pathExpr );
     }
 
-    private static final String convertGlobToRegex( String pattern, final String separator )
+    private static String convertGlobToRegex( String pattern, final String separator )
     {
         pattern = pattern.replace( separator, "\\" + separator );
 

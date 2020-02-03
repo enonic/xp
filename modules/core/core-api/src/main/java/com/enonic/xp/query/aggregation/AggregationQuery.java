@@ -7,7 +7,6 @@ public abstract class AggregationQuery
 {
     private String name;
 
-    @SuppressWarnings("unchecked")
     AggregationQuery( final Builder builder )
     {
         this.name = builder.name;

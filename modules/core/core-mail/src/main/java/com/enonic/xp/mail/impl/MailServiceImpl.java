@@ -70,15 +70,11 @@ public final class MailServiceImpl
     {
         final Address[] to = message.getAllRecipients();
         final Transport transport = this.session.getTransport();
-        transport.connect();
 
-        try
+        try (transport)
         {
+            transport.connect();
             transport.sendMessage( message, to );
-        }
-        finally
-        {
-            transport.close();
         }
     }
 

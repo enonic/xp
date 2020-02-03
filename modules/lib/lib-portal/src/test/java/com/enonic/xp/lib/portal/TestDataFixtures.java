@@ -143,7 +143,6 @@ public final class TestDataFixtures
     public static Component newPartComponent()
     {
         final PartComponent.Builder builder = PartComponent.create();
-        builder.name( "mypart" );
         builder.config( newTinyPropertyTree() );
         builder.descriptor( DescriptorKey.from( "myapplication:mypart" ) );
         return builder.build();
@@ -152,7 +151,6 @@ public final class TestDataFixtures
     public static LayoutComponent newLayoutComponent()
     {
         final LayoutComponent.Builder builder = LayoutComponent.create();
-        builder.name( "mylayout" );
         builder.config( newTinyPropertyTree() );
         builder.descriptor( DescriptorKey.from( "myapplication:mylayout" ) );
         builder.regions( newLayoutRegions() );
@@ -171,7 +169,7 @@ public final class TestDataFixtures
     public static Site newSite()
     {
         final PropertyTree siteConfigConfig = new PropertyTree();
-        siteConfigConfig.setLong( "Field", 42l );
+        siteConfigConfig.setLong( "Field", 42L );
 
         final SiteConfig siteConfig = SiteConfig.create().
             application( ApplicationKey.from( "myapplication" ) ).

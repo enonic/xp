@@ -411,7 +411,7 @@ public final class IssueResource
     {
         final Map<Issue, List<User>> issuesWithAssignees = new HashMap<>();
 
-        issues.stream().forEach( issue -> issuesWithAssignees.put( issue, doFetchAssignees( issue ) ) );
+        issues.forEach( issue -> issuesWithAssignees.put( issue, doFetchAssignees( issue ) ) );
 
         return issuesWithAssignees;
     }

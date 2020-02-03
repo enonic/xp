@@ -171,12 +171,12 @@ public class ContentServiceImplTest_update
 
         //Updates the content with an incorrect value
         PropertyTree invalidData = new PropertyTree();
-        invalidData.addLong( "textLine", 1l );
+        invalidData.addLong( "textLine", 1L );
         update_incorrect_content_data( content, invalidData );
 
         //Updates the content with an incorrect value
         invalidData = new PropertyTree();
-        invalidData.addLong( "double", 1l );
+        invalidData.addLong( "double", 1L );
         update_incorrect_content_data( content, invalidData );
 
         //Updates the content with an incorrect value
@@ -254,7 +254,7 @@ public class ContentServiceImplTest_update
         //Updates the content with an incorrect value
         invalidData = new PropertyTree();
         invalidSet = new PropertySet();
-        invalidSet.addLong( "setDouble", 1l );
+        invalidSet.addLong( "setDouble", 1L );
         invalidData.addSet( "set", invalidSet );
         update_incorrect_content_data( content, invalidData );
     }

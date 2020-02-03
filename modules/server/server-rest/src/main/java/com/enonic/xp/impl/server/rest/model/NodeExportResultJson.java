@@ -37,10 +37,7 @@ public class NodeExportResultJson
 
     private static List<String> exportErrors( final List<ExportError> exportErrors )
     {
-        List<String> exportErrorList = new ArrayList<>();
-
-        exportErrorList.addAll( exportErrors.stream().map( ExportError::toString ).collect( Collectors.toList() ) );
-        return exportErrorList;
+        return exportErrors.stream().map( ExportError::toString ).collect( Collectors.toList() );
     }
 
     private static List<String> exportedNodes( final NodePaths nodePaths )

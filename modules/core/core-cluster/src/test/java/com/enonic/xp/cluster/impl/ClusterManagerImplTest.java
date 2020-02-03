@@ -1,10 +1,10 @@
 package com.enonic.xp.cluster.impl;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import com.enonic.xp.cluster.ClusterHealth;
 import com.enonic.xp.cluster.ClusterId;
@@ -12,22 +12,23 @@ import com.enonic.xp.cluster.ClusterNode;
 import com.enonic.xp.cluster.ClusterNodes;
 import com.enonic.xp.cluster.ClusterState;
 import com.enonic.xp.cluster.Clusters;
+import com.enonic.xp.core.internal.concurrent.RecurringJob;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class ClusterManagerImplTest
 {
-    private static final Duration CHECK_INTERVAL = Duration.ofMillis( 200 );
-
-    private static final long TEST_INTERVAL_MILLS = CHECK_INTERVAL.multipliedBy( 2 ).toMillis();
-
     private ClusterManagerImpl clusterManager;
+
+    private ClusterCheckSchedulerMock clusterCheckSchedulerMock;
 
     @Test
     void single_provider_life_cycle()
-        throws Exception
     {
         createManager( "elasticsearch" );
 
@@ -39,26 +40,26 @@ class ClusterManagerImplTest
                 build() ).
             build();
 
-        this.clusterManager.addProvider( provider );
-        this.clusterManager.activate();
+        clusterManager.addProvider( provider );
+        clusterManager.activate();
+
         assertActive( provider );
-        this.clusterManager.getClusterState();
+        clusterManager.getClusterState();
         assertActive( provider );
 
         provider.setHealth( ClusterHealth.red() );
-        Thread.sleep( TEST_INTERVAL_MILLS );
+        clusterCheckSchedulerMock.rerun();
         assertClusterError();
         assertDeactivated( provider );
 
         provider.setHealth( ClusterHealth.green() );
-        Thread.sleep( TEST_INTERVAL_MILLS );
+        clusterCheckSchedulerMock.rerun();
         assertClusterOk();
         assertActive( provider );
     }
 
     @Test
     void multiple_providers_life_cycle()
-        throws Exception
     {
         createManager( "elasticsearch", "another" );
 
@@ -78,20 +79,20 @@ class ClusterManagerImplTest
                 build() ).
             build();
 
-        this.clusterManager.addProvider( provider1 );
-        this.clusterManager.addProvider( provider2 );
-        this.clusterManager.activate();
+        clusterManager.addProvider( provider1 );
+        clusterManager.addProvider( provider2 );
+        clusterManager.activate();
+
         assertActive( provider1, provider2 );
 
         provider1.setHealth( ClusterHealth.red() );
-        Thread.sleep( TEST_INTERVAL_MILLS );
+        clusterCheckSchedulerMock.rerun();
         assertClusterError();
         assertDeactivated( provider1, provider2 );
     }
 
     @Test
     void multiple_providers_nodes_mismatch()
-        throws Exception
     {
         final TestCluster provider1 = TestCluster.create().
             health( ClusterHealth.green() ).
@@ -110,9 +111,10 @@ class ClusterManagerImplTest
 
         createManager( "elasticsearch", "another" );
 
-        this.clusterManager.addProvider( provider1 );
-        this.clusterManager.addProvider( provider2 );
-        this.clusterManager.activate();
+        clusterManager.addProvider( provider1 );
+        clusterManager.addProvider( provider2 );
+        clusterManager.activate();
+
         assertClusterOk();
         assertActive( provider1, provider2 );
 
@@ -125,7 +127,6 @@ class ClusterManagerImplTest
 
     @Test
     void fail_after_register()
-        throws Exception
     {
         final TestCluster provider1 = TestCluster.create().
             health( ClusterHealth.green() ).
@@ -143,9 +144,9 @@ class ClusterManagerImplTest
             build();
 
         createManager( "elasticsearch", "another" );
-        this.clusterManager.addProvider( provider1 );
-        this.clusterManager.addProvider( provider2 );
-        this.clusterManager.activate();
+        clusterManager.addProvider( provider1 );
+        clusterManager.addProvider( provider2 );
+        clusterManager.activate();
 
         assertClusterOk();
 
@@ -154,41 +155,71 @@ class ClusterManagerImplTest
         assertClusterError();
     }
 
+    @Test
+    void activate_deactivate_task_canceled()
+    {
+        createManager( "elasticsearch" );
+
+        clusterManager.activate();
+        clusterManager.deactivate();
+        clusterCheckSchedulerMock.verifyStopped();
+    }
+
     private void assertClusterError()
     {
-        assertEquals( ClusterState.ERROR, this.clusterManager.getClusterState() );
+        assertEquals( ClusterState.ERROR, clusterManager.getClusterState() );
     }
 
     private void assertClusterOk()
     {
-        assertEquals( ClusterState.OK, this.clusterManager.getClusterState() );
+        assertEquals( ClusterState.OK, clusterManager.getClusterState() );
     }
 
     private void createManager( final String... required )
     {
-        List<ClusterId> requiredIds = new ArrayList<>();
-
-        for ( final String req : required )
-        {
-            requiredIds.add( ClusterId.from( req ) );
-        }
-
-        this.clusterManager = new ClusterManagerImpl( CHECK_INTERVAL, new Clusters( requiredIds ) );
+        final Clusters clusters = new Clusters( Stream.of( required ).map( ClusterId::from ).collect( Collectors.toList() ) );
+        clusterCheckSchedulerMock = new ClusterCheckSchedulerMock();
+        clusterManager = new ClusterManagerImpl( clusterCheckSchedulerMock, clusters );
     }
 
     private void assertActive( final TestCluster... providers )
     {
-        for ( final TestCluster provider : providers )
-        {
-            assertTrue( provider.isEnabled(), String.format( "Provider '%s' not active", provider.getId() ) );
-        }
+        assertAll( Stream.of( providers ).
+            map( provider -> (Executable) () -> assertTrue( provider.isEnabled(),
+                                                            String.format( "Provider '%s' not active", provider.getId() ) ) ) );
     }
 
     private void assertDeactivated( final TestCluster... providers )
     {
-        for ( final TestCluster provider : providers )
+        assertAll( Stream.of( providers ).
+            map( provider -> (Executable) () -> assertFalse( provider.isEnabled(),
+                                                             String.format( "Provider '%s' not deactivated", provider.getId() ) ) ) );
+    }
+
+    private static class ClusterCheckSchedulerMock
+        implements ClusterCheckScheduler
+    {
+        private Runnable command;
+
+        private RecurringJob scheduledFutureMock;
+
+        @Override
+        public RecurringJob scheduleWithFixedDelay( final Runnable command )
         {
-            assertFalse( provider.isEnabled(), String.format( "Provider '%s' not deactivated", provider.getId() ) );
+            this.command = command;
+            command.run();
+            scheduledFutureMock = mock( RecurringJob.class );
+            return scheduledFutureMock;
+        }
+
+        public void rerun()
+        {
+            command.run();
+        }
+
+        public void verifyStopped()
+        {
+            verify( scheduledFutureMock ).cancel();
         }
     }
 }

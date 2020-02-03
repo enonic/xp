@@ -1,8 +1,5 @@
 package com.enonic.xp.web.jetty.impl;
 
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.junit.jupiter.api.Test;

@@ -5,10 +5,10 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTreeJson;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.PartComponent;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -17,21 +17,20 @@ public class PartComponentJson
 {
     private final PartComponent part;
 
-    public PartComponentJson( final PartComponent component )
+    public PartComponentJson( final PartComponent component, final ComponentNameResolver componentNameResolver )
     {
-        super( component );
+        super( component, componentNameResolver );
         this.part = component;
     }
 
     @JsonCreator
-    public PartComponentJson( @JsonProperty("name") final String name, @JsonProperty("descriptor") final String descriptor,
+    public PartComponentJson( @JsonProperty("descriptor") final String descriptor,
                               @JsonProperty("config") final List<PropertyArrayJson> config )
     {
         super( PartComponent.create().
-            name( name != null ? ComponentName.from( name ) : null ).
             descriptor( descriptor != null ? DescriptorKey.from( descriptor ) : null ).
             config( config != null ? PropertyTreeJson.fromJson( config ) : null ).
-            build() );
+            build(), null );
 
         this.part = getComponent();
     }

@@ -53,9 +53,7 @@ public class IndexStemmedController
     {
         final ImmutableMap.Builder<String, StemmedIndexValueType> indexValueTypeMap = ImmutableMap.builder();
         SUPPORTED_ANALYZERS.keySet().
-            forEach( isoCode -> {
-                indexValueTypeMap.put( isoCode, new StemmedIndexValueType( isoCode ) );
-            } );
+            forEach( isoCode -> indexValueTypeMap.put( isoCode, new StemmedIndexValueType( isoCode ) ) );
         SUPPORTED_INDEX_VALUE_TYPES = indexValueTypeMap.build();
     }
 

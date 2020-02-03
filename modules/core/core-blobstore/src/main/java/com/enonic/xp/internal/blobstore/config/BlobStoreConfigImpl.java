@@ -36,8 +36,7 @@ public class BlobStoreConfigImpl
     @Override
     public boolean cache()
     {
-
-        return Boolean.valueOf( this.config.get( "cache.enabled" ) );
+        return Boolean.parseBoolean( this.config.get( "cache.enabled" ) );
     }
 
     @Override

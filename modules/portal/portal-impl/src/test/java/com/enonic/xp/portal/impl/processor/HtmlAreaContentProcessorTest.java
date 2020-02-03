@@ -274,7 +274,7 @@ public class HtmlAreaContentProcessorTest
         Mockito.when( partDescriptorService.getByKey( partDescriptor.getKey() ) ).thenReturn( partDescriptor );
 
         final PartComponent partComponent =
-            PartComponent.create().name( "part" ).descriptor( partDescriptor.getKey() ).config( data ).build();
+            PartComponent.create().descriptor( "myapp:part" ).descriptor( partDescriptor.getKey() ).config( data ).build();
 
         final PageDescriptor pageDescriptor = PageDescriptor.create().regions(
             RegionDescriptors.create().add( RegionDescriptor.create().name( "region" ).build() ).build() ).key(
@@ -316,15 +316,16 @@ public class HtmlAreaContentProcessorTest
         Mockito.when( partDescriptorService.getByKey( partDescriptor.getKey() ) ).thenReturn( partDescriptor );
 
         final PartComponent partComponent =
-            PartComponent.create().name( "partest" ).descriptor( partDescriptor.getKey() ).config( data2 ).build();
+            PartComponent.create().descriptor( "myapp:partest" ).descriptor( partDescriptor.getKey() ).config( data2 ).build();
 
         final LayoutDescriptor layoutDescriptor =
             LayoutDescriptor.create().key( DescriptorKey.from( "app:layout" ) ).config( form ).regions(
                 RegionDescriptors.create().add( RegionDescriptor.create().name( "part" ).build() ).build() ).build();
         Mockito.when( layoutDescriptorService.getByKey( layoutDescriptor.getKey() ) ).thenReturn( layoutDescriptor );
 
-        final LayoutComponent layoutComponent = LayoutComponent.create().name( "layout" ).descriptor( layoutDescriptor.getKey() ).regions(
-            LayoutRegions.create().add( Region.create().name( "part" ).add( partComponent ).build() ).build() ).config( data1 ).build();
+        final LayoutComponent layoutComponent =
+            LayoutComponent.create().descriptor( "myapp:layout" ).descriptor( layoutDescriptor.getKey() ).regions(
+                LayoutRegions.create().add( Region.create().name( "part" ).add( partComponent ).build() ).build() ).config( data1 ).build();
 
         final PageDescriptor pageDescriptor = PageDescriptor.create().regions(
             RegionDescriptors.create().add( RegionDescriptor.create().name( "region" ).build() ).build() ).key(
@@ -363,7 +364,7 @@ public class HtmlAreaContentProcessorTest
 //        final PartDescriptor partDescriptor = PartDescriptor.create().key( DescriptorKey.from( "app:part" ) ).config( form ).build();
 //        Mockito.when( partDescriptorService.getByKey( partDescriptor.getKey() ) ).thenReturn( partDescriptor );
 
-        final TextComponent textComponent = TextComponent.create().name( "part" ).text( "<img data-src=\"image://image-id\"/>" ).build();
+        final TextComponent textComponent = TextComponent.create().text( "<img data-src=\"image://image-id\"/>" ).build();
 
         final PageDescriptor pageDescriptor = PageDescriptor.create().regions(
             RegionDescriptors.create().add( RegionDescriptor.create().name( "region" ).build() ).build() ).key(

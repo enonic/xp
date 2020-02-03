@@ -133,7 +133,7 @@ public final class PartDescriptorServiceImpl
         }
     }
 
-    private final Icon loadIcon( final DescriptorKey key, final String mimeType, final String ext )
+    private Icon loadIcon( final DescriptorKey key, final String mimeType, final String ext )
     {
         final ResourceKey resourceKey = PartDescriptor.toResourceKey( key, ext );
         final Resource resource = this.resourceService.getResource( resourceKey );

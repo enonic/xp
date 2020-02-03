@@ -1,7 +1,5 @@
 package com.enonic.xp.xml.parser;
 
-import java.util.Iterator;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -196,9 +194,8 @@ public class XmlContentTypeParserTest
         final ContentType result = this.builder.build();
 
         FormItem item = null;
-        for ( Iterator<FormItem> i = result.getForm().getFormItems().iterator(); i.hasNext(); )
+        for ( final FormItem next : result.getForm().getFormItems() )
         {
-            final FormItem next = i.next();
             if ( next.getName().startsWith( "fieldSet" ) )
             {
                 item = next;
@@ -285,9 +282,8 @@ public class XmlContentTypeParserTest
 
         // field set
         FormItem fieldSetItem = null;
-        for ( Iterator<FormItem> i = result.getForm().getFormItems().iterator(); i.hasNext(); )
+        for ( final FormItem next : result.getForm().getFormItems() )
         {
-            final FormItem next = i.next();
             if ( next.getName().startsWith( "fieldSet" ) )
             {
                 fieldSetItem = next;

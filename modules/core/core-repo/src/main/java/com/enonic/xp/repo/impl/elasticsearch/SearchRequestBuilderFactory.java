@@ -114,11 +114,11 @@ public class SearchRequestBuilderFactory
         }
         if ( preTags != null && !preTags.isEmpty() )
         {
-            builder.setHighlighterPreTags( preTags.toArray( new String[preTags.size()] ) );
+            builder.setHighlighterPreTags( preTags.toArray( new String[0] ) );
         }
         if ( postTags != null && !postTags.isEmpty() )
         {
-            builder.setHighlighterPostTags( postTags.toArray( new String[postTags.size()] ) );
+            builder.setHighlighterPostTags( postTags.toArray( new String[0] ) );
         }
         if ( requireFieldMatch != null )
         {

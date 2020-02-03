@@ -29,11 +29,11 @@ public final class ComponentDataSerializerProvider
     private ComponentDataSerializerProvider( final Builder builder )
     {
         this.regionDataSerializer = new RegionDataSerializer( this );
-        this.partDataSerializer = new PartComponentDataSerializer( builder.partDescriptorService );
+        this.partDataSerializer = new PartComponentDataSerializer();
         this.textDataSerializer = new TextComponentDataSerializer();
         this.layoutDataSerializer = new LayoutComponentDataSerializer( builder.layoutDescriptorService, this.regionDataSerializer );
-        this.imageDataSerializer = new ImageComponentDataSerializer( builder.contentService );
-        this.fragmentDataSerializer = new FragmentComponentDataSerializer( builder.contentService );
+        this.imageDataSerializer = new ImageComponentDataSerializer();
+        this.fragmentDataSerializer = new FragmentComponentDataSerializer();
     }
 
     public ComponentDataSerializer getDataSerializer( final ComponentType componentType )

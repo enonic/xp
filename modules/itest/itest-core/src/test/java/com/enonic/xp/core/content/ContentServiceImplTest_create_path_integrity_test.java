@@ -1,10 +1,7 @@
 package com.enonic.xp.core.content;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
@@ -28,36 +25,24 @@ public class ContentServiceImplTest_create_path_integrity_test
 
     @Test
     public void create()
-        throws Exception
     {
-        List<Future> threads = new ArrayList<>();
+        final int concurrentAttempts = 5;
+        final int expectedSuccessfulAttempts = 1;
+        final AtomicInteger exceptionCounter = new AtomicInteger();
 
-        final ExecutorService executor = Executors.newFixedThreadPool( 5 );
-
-        IntStream.range( 0, 5 ).forEach( i -> {
-            threads.add( executor.submit( new CreateContentTask( this.contentService, ContextAccessor.current() ) ) );
-        } );
-
-        threads.forEach( entry -> {
-            while ( !entry.isDone() )
-            {
-                try
-                {
-                    Thread.sleep( 5 );
-                }
-                catch ( InterruptedException e )
-                {
-                    e.printStackTrace();
-                }
-            }
-        } );
+        CompletableFuture.allOf( IntStream.range( 0, concurrentAttempts ).mapToObj(
+            i -> CompletableFuture.runAsync( new CreateContentTask( this.contentService, ContextAccessor.current() ) ).
+                exceptionally( throwable -> {
+                    exceptionCounter.incrementAndGet();
+                    return null;
+                } ) ).toArray( CompletableFuture[]::new ) ).join();
 
         final FindContentIdsByQueryResult result =
             this.contentService.find( ContentQuery.create().queryExpr( QueryParser.parse( "_path = '/content/mycontent'" ) ).build() );
-        assertEquals( 1, result.getTotalHits() );
+        assertEquals( expectedSuccessfulAttempts, result.getTotalHits() );
     }
 
-    private class CreateContentTask
+    private static class CreateContentTask
         implements Runnable
     {
         private final ContentService contentService;

@@ -6,6 +6,7 @@ import java.util.List;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentListJson;
 import com.enonic.xp.admin.impl.json.content.page.PageJson;
+import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AccessControlEntryJson;
@@ -34,7 +35,7 @@ public final class ContentJson
     private final boolean inheritPermissions;
 
     public ContentJson( final Content content, final ContentIconUrlResolver iconUrlResolver,
-                        final ContentPrincipalsResolver contentPrincipalsResolver )
+                        final ContentPrincipalsResolver contentPrincipalsResolver, final ComponentNameResolver componentNameResolver )
     {
         super( content, iconUrlResolver );
         this.data = PropertyTreeJson.toJson( content.getData() );
@@ -46,7 +47,7 @@ public final class ContentJson
             this.extraData.add( new ExtraDataJson( item ) );
         }
 
-        this.pageJson = content.hasPage() ? new PageJson( content.getPage() ) : null;
+        this.pageJson = content.hasPage() ? new PageJson( content.getPage(), componentNameResolver ) : null;
 
         final Principals principals = contentPrincipalsResolver.resolveAccessControlListPrincipals( content.getPermissions() );
         this.accessControlList = aclToJson( content.getPermissions(), principals );
