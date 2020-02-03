@@ -314,11 +314,9 @@ public class AbstractContentServiceTest
         contentService.setLayoutDescriptorService( layoutDescriptorService );
         contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
-        contentService.setIndexService( indexService );
         contentService.setProjectService( projectService );
-        contentService.setRepositoryService( repositoryService );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
-        contentService.initialize( contentConfig );
+        contentService.initialize();
 
         waitForClusterHealth();
     }
