@@ -23,6 +23,8 @@ final class GetPageTemplateBySiteCommand
 
     private ContentTypeNames supportedContentTypes;
 
+    private Integer size;
+
     public PageTemplates execute()
     {
         final PageTemplates.Builder pageTemplatesBuilder = PageTemplates.create();
@@ -42,6 +44,10 @@ final class GetPageTemplateBySiteCommand
                 supportsContentTypeFilter.addValue( ValueFactory.newString( supportedContentType.toString() ) );
             } );
             findContentByParentParams.queryFilter( supportsContentTypeFilter.build() );
+        }
+        if ( size != null )
+        {
+            findContentByParentParams.size( size );
         }
         final FindContentByParentResult result = contentService.findByParent( findContentByParentParams.build() );
         for ( final Content content : result.getContents() )
@@ -69,6 +75,12 @@ final class GetPageTemplateBySiteCommand
     public GetPageTemplateBySiteCommand supportedContentTypes( final ContentTypeNames supportedContentTypes )
     {
         this.supportedContentTypes = supportedContentTypes;
+        return this;
+    }
+
+    public GetPageTemplateBySiteCommand size( final Integer size )
+    {
+        this.size = size;
         return this;
     }
 

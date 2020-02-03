@@ -25,6 +25,7 @@ final class GetDefaultPageTemplateCommand
             site( site ).
             sitePath( sitePath ).
             supportedContentTypes( ContentTypeNames.from( contentType ) ).
+            size( 1 ).
             contentService( contentService ).
             execute();
         return pageTemplates.first();
