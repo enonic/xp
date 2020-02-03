@@ -54,7 +54,7 @@ abstract class RenderHandlerWorker
     protected final PageTemplate getDefaultPageTemplate( final ContentTypeName contentType, final Site site )
     {
         final GetDefaultPageTemplateParams getDefPageTemplate = GetDefaultPageTemplateParams.create().
-            site( site.getId() ).
+            sitePath( site.getPath() ).
             contentType( contentType ).
             build();
 
