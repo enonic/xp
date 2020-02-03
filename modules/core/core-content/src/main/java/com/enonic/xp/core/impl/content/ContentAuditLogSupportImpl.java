@@ -71,17 +71,15 @@ public class ContentAuditLogSupportImpl
                                        @Reference(service = ContentAuditLogExecutor.class) final Executor executor,
                                        @Reference AuditLogService auditLogService )
     {
-        this.executor = config.auditlog_enabled() ? executor : null;
+        this.executor = config.auditlog_enabled() ? executor : c -> {
+        };
         this.auditLogService = auditLogService;
     }
 
 
     public void createSite( final CreateSiteParams params, final Site site )
     {
-        if ( executor != null )
-        {
-            executor.execute( () -> doCreateSite( params, site ) );
-        }
+        executor.execute( () -> doCreateSite( params, site ) );
     }
 
     private void doCreateSite( final CreateSiteParams params, final Site site )
@@ -102,10 +100,7 @@ public class ContentAuditLogSupportImpl
 
     public void createContent( final CreateContentParams params, final Content content )
     {
-        if ( executor != null )
-        {
-            executor.execute( () -> doCreateContent( params, content ) );
-        }
+        executor.execute( () -> doCreateContent( params, content ) );
     }
 
     private void doCreateContent( final CreateContentParams params, final Content content )
@@ -138,10 +133,7 @@ public class ContentAuditLogSupportImpl
 
     public void createMedia( final CreateMediaParams params, final Content content )
     {
-        if ( executor != null )
-        {
-            executor.execute( () -> doCreateMedia( params, content ) );
-        }
+        executor.execute( () -> doCreateMedia( params, content ) );
     }
 
     private void doCreateMedia( final CreateMediaParams params, final Content content )
@@ -167,10 +159,7 @@ public class ContentAuditLogSupportImpl
 
     public void update( final UpdateContentParams params, final Content content )
     {
-        if ( executor != null )
-        {
-            executor.execute( () -> doUpdate( params, content ) );
-        }
+        executor.execute( () -> doUpdate( params, content ) );
     }
 
     private void doUpdate( final UpdateContentParams params, final Content content )
@@ -191,10 +180,7 @@ public class ContentAuditLogSupportImpl
 
     public void update( final UpdateMediaParams params, final Content content )
     {
-        if ( executor != null )
-        {
-            executor.execute( () -> doUpdate( params, content ) );
-        }
+        executor.execute( () -> doUpdate( params, content ) );
     }
 
     private void doUpdate( final UpdateMediaParams params, final Content content )
@@ -220,10 +206,7 @@ public class ContentAuditLogSupportImpl
 
     public void delete( final DeleteContentParams params, final DeleteContentsResult contents )
     {
-        if ( executor != null )
-        {
-            executor.execute( () -> doDelete( params, contents ) );
-        }
+        executor.execute( () -> doDelete( params, contents ) );
     }
 
     private void doDelete( final DeleteContentParams params, final DeleteContentsResult contents )
@@ -246,10 +229,7 @@ public class ContentAuditLogSupportImpl
 
     public void undoPendingDelete( final UndoPendingDeleteContentParams params, final Contents contents )
     {
-        if ( executor != null )
-        {
-            executor.execute( () -> doUndoPendingDelete( params, contents ) );
-        }
+        executor.execute( () -> doUndoPendingDelete( params, contents ) );
     }
 
     private void doUndoPendingDelete( final UndoPendingDeleteContentParams params, final Contents contents )
@@ -273,10 +253,7 @@ public class ContentAuditLogSupportImpl
 
     public void publish( final PushContentParams params, final PublishContentResult result )
     {
-        if ( executor != null )
-        {
-            executor.execute( () -> doPublish( params, result ) );
-        }
+        executor.execute( () -> doPublish( params, result ) );
     }
 
     private void doPublish( final PushContentParams params, final PublishContentResult result )
@@ -329,10 +306,7 @@ public class ContentAuditLogSupportImpl
 
     public void unpublishContent( final UnpublishContentParams params, final UnpublishContentsResult result )
     {
-        if ( executor != null )
-        {
-            executor.execute( () -> doUnpublishContent( params, result ) );
-        }
+        executor.execute( () -> doUnpublishContent( params, result ) );
     }
 
     private void doUnpublishContent( final UnpublishContentParams params, final UnpublishContentsResult result )
@@ -361,10 +335,7 @@ public class ContentAuditLogSupportImpl
 
     public void duplicate( final DuplicateContentParams params, final DuplicateContentsResult result )
     {
-        if ( executor != null )
-        {
-            executor.execute( () -> doDuplicate( params, result ) );
-        }
+        executor.execute( () -> doDuplicate( params, result ) );
     }
 
     private void doDuplicate( final DuplicateContentParams params, final DuplicateContentsResult result )
@@ -393,10 +364,7 @@ public class ContentAuditLogSupportImpl
 
     public void move( final MoveContentParams params, MoveContentsResult result )
     {
-        if ( executor != null )
-        {
-            executor.execute( () -> doMove( params, result ) );
-        }
+        executor.execute( () -> doMove( params, result ) );
     }
 
     private void doMove( final MoveContentParams params, MoveContentsResult result )
@@ -419,10 +387,7 @@ public class ContentAuditLogSupportImpl
 
     public void rename( final RenameContentParams params, final Content content )
     {
-        if ( executor != null )
-        {
-            executor.execute( () -> doRename( params, content ) );
-        }
+        executor.execute( () -> doRename( params, content ) );
 
     }
 
@@ -442,10 +407,7 @@ public class ContentAuditLogSupportImpl
 
     public void setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
     {
-        if ( executor != null )
-        {
-            executor.execute( () -> doSetActiveContentVersion( contentId, versionId ) );
-        }
+        executor.execute( () -> doSetActiveContentVersion( contentId, versionId ) );
     }
 
     private void doSetActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
@@ -465,10 +427,7 @@ public class ContentAuditLogSupportImpl
 
     public void setChildOrder( final SetContentChildOrderParams params, final Content content )
     {
-        if ( executor != null )
-        {
-            executor.execute( () -> doSetChildOrder( params, content ) );
-        }
+        executor.execute( () -> doSetChildOrder( params, content ) );
     }
 
     private void doSetChildOrder( final SetContentChildOrderParams params, final Content content )
@@ -487,10 +446,7 @@ public class ContentAuditLogSupportImpl
 
     public void reorderChildren( final ReorderChildContentsParams params, final ReorderChildContentsResult result )
     {
-        if ( executor != null )
-        {
-            executor.execute( () -> doReorderChildren( params, result ) );
-        }
+        executor.execute( () -> doReorderChildren( params, result ) );
 
     }
 
@@ -510,10 +466,7 @@ public class ContentAuditLogSupportImpl
 
     public void applyPermissions( final ApplyContentPermissionsParams params, final ApplyContentPermissionsResult result )
     {
-        if ( executor != null )
-        {
-            executor.execute( () -> doApplyPermissions( params, result ) );
-        }
+        executor.execute( () -> doApplyPermissions( params, result ) );
     }
 
     private void doApplyPermissions( final ApplyContentPermissionsParams params, final ApplyContentPermissionsResult result )
@@ -540,10 +493,7 @@ public class ContentAuditLogSupportImpl
 
     public void reprocess( final Content content )
     {
-        if ( executor != null )
-        {
-            executor.execute( () -> doReprocess( content ) );
-        }
+        executor.execute( () -> doReprocess( content ) );
     }
 
     private void doReprocess( final Content content )

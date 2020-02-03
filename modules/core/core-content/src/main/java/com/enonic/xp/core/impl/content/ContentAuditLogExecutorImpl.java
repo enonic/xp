@@ -29,7 +29,8 @@ public class ContentAuditLogExecutorImpl
     {
         final Function<ThreadFactory, ExecutorService> executorServiceSupplier =
             ( threadFactory ) -> new ThreadPoolExecutor( 0, Runtime.getRuntime().availableProcessors(), 60L, TimeUnit.SECONDS,
-                                                         new LinkedBlockingQueue<>( 100 ) );
+                                                         new LinkedBlockingQueue<>( 100 ), threadFactory,
+                                                         new ThreadPoolExecutor.CallerRunsPolicy() );
 
         this.simpleExecutor =
             new SimpleExecutor( executorServiceSupplier, "content-audit-log-thread-%d", e -> LOG.error( "Audit log failed", e ) );
