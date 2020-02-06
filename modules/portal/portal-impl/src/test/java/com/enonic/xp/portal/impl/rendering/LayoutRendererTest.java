@@ -45,7 +45,7 @@ public class LayoutRendererTest
     {
         // setup
         portalRequest.setMode( mode );
-        layoutComponent = LayoutComponent.create().name( "myLayoutComponent" ).build();
+        layoutComponent = LayoutComponent.create().build();
         renderer = new LayoutRenderer();
 
         // exercise
@@ -113,7 +113,7 @@ public class LayoutRendererTest
     {
         // setup
         portalRequest.setMode( RenderMode.EDIT );
-        layoutComponent = LayoutComponent.create().name( "myLayoutComponent" ).
+        layoutComponent = LayoutComponent.create().descriptor( "myapp:myLayoutComponent" ).
             descriptor( "descriptor-x" ).
             config( new PropertyTree() ).
             build();
@@ -165,7 +165,7 @@ public class LayoutRendererTest
         when( layoutDescriptorService.getByKey( any() ) ).thenReturn( layoutDescriptor );
         when( controllerScriptFactory.fromDir( any() ) ).thenReturn( controllerScript );
         portalRequest.setMode( RenderMode.EDIT );
-        layoutComponent = LayoutComponent.create().name( "myLayoutComponent" ).descriptor( layoutDescriptor.getKey() ).build();
+        layoutComponent = LayoutComponent.create().descriptor( "myapp:myLayoutComponent" ).descriptor( layoutDescriptor.getKey() ).build();
 
         // exercise
         portalResponse = renderer.render( layoutComponent, portalRequest );
@@ -211,7 +211,7 @@ public class LayoutRendererTest
         when( layoutDescriptorService.getByKey( any() ) ).thenReturn( layoutDescriptor );
         when( controllerScriptFactory.fromDir( any() ) ).thenReturn( controllerScript );
         portalRequest.setMode( RenderMode.EDIT );
-        layoutComponent = LayoutComponent.create().name( "myLayoutComponent" ).descriptor( layoutDescriptor.getKey() ).build();
+        layoutComponent = LayoutComponent.create().descriptor( "myapp:myLayoutComponent" ).descriptor( layoutDescriptor.getKey() ).build();
 
         // exercise
         portalResponse = renderer.render( layoutComponent, portalRequest );

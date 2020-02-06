@@ -242,23 +242,20 @@ public abstract class BaseContentHandler
         return MAPPER.valueToTree( value );
     }
 
-    protected WorkflowInfo createWorkflowInfo( Map<String, Object> value )
+    protected WorkflowInfo createWorkflowInfo( Map<String, Object> map )
     {
-        if (value == null) {
+        if ( map == null )
+        {
             return null;
         }
 
-        Object state = value.get( "state" );
-        Object checks = value.get( "checks" );
+        Object state = map.get( "state" );
+        Object checks = map.get( "checks" );
         ImmutableMap.Builder<String, WorkflowCheckState> checkMapBuilder = ImmutableMap.builder();
 
-        if (checks != null) {
-            ((Map<String, String>) checks).entrySet().
-                forEach( e -> checkMapBuilder.put(
-                    e.getKey(),
-                    WorkflowCheckState.valueOf( e.getValue() )
-                         )
-                );
+        if ( checks != null )
+        {
+            ( (Map<String, String>) checks ).forEach( ( key, value ) -> checkMapBuilder.put( key, WorkflowCheckState.valueOf( value ) ) );
         }
 
         return WorkflowInfo.create().

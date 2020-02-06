@@ -187,7 +187,7 @@ public class PropertySetTest
         // exercise
         Property property1 = set.setString( "myProp", 0, "myValue" );
         set.removeProperty( property1.getPath() );
-        Property property2 = set.setLong( "myProp", 0, 42l );
+        Property property2 = set.setLong( "myProp", 0, 42L );
 
         Property addedProperty = set.getProperty( "myProp", 0 );
 
@@ -196,6 +196,6 @@ public class PropertySetTest
         assertEquals( "myProp", addedProperty.getName() );
         assertEquals( 0, addedProperty.getIndex() );
         assertSame( ValueTypes.LONG, addedProperty.getValue().getType() );
-        assertEquals( 42l, addedProperty.getValue().asLong().longValue() );
+        assertEquals( 42L, addedProperty.getValue().asLong().longValue() );
     }
 }

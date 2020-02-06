@@ -3,10 +3,6 @@ apply from: "$rootDir/gradle/osgi.gradle"
 dependencies {
     compile project( ':web:web-api' )
     compile "org.eclipse.jetty:jetty-server:${jettyVersion}"
-    compile 'org.apache.ignite:ignite-core:2.3.0'
-    compile 'org.apache.ignite:ignite-osgi:2.3.0'
-    compile 'org.apache.ignite:ignite-web:2.3.0'
-    compile 'javax.cache:cache-api:1.0.0'
     testCompile project( path: ':web:web-api', configuration: 'testOutput' )
 }
 

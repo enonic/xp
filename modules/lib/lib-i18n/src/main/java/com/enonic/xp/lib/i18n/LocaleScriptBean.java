@@ -129,7 +129,7 @@ public final class LocaleScriptBean
 
     private String[] toArray( final List<String> value )
     {
-        return value.toArray( new String[value.size()] );
+        return value.toArray( new String[0] );
     }
 
     public void setApplication( final String application )

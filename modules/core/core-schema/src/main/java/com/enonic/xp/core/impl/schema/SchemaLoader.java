@@ -73,7 +73,7 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
         }
     }
 
-    private final Icon loadIcon( final N name, final String mimeType, final String ext )
+    private Icon loadIcon( final N name, final String mimeType, final String ext )
     {
         final ResourceKey resourceKey = toResourceKey( name, ext );
         final Resource resource = this.resourceService.getResource( resourceKey );

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ThreadFactory;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -16,10 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.io.ByteSource;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
@@ -129,7 +126,7 @@ import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
-@Component(immediate = true, configurationPid = "com.enonic.xp.content")
+@Component(immediate = true)
 public class ContentServiceImpl
     implements ContentService
 {
@@ -169,12 +166,10 @@ public class ContentServiceImpl
 
     private ContentDataSerializer contentDataSerializer;
 
-    private AuditLogService auditLogService;
-
     private ContentAuditLogSupport contentAuditLogSupport;
 
     @Activate
-    public void initialize( final ContentConfig config )
+    public void initialize()
     {
         callAsContentAdmin( () -> this.projectService.create( CreateProjectParams.create().
             name( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ).
@@ -189,10 +184,6 @@ public class ContentServiceImpl
             build();
 
         this.translator = new ContentNodeTranslator( nodeService, contentDataSerializer );
-
-        this.contentAuditLogSupport = config.auditlog_enabled() ? ContentAuditLogSupport.create().
-            auditLogService( auditLogService ).
-            build() : null;
     }
 
     @Override
@@ -241,10 +232,7 @@ public class ContentServiceImpl
             contentData( new PropertyTree() ).
             build() );
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.createSite( params, site );
-        }
+        contentAuditLogSupport.createSite( params, site );
 
         return site;
     }
@@ -286,10 +274,7 @@ public class ContentServiceImpl
             return this.getById( content.getId() );
         }
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.createContent( params, content );
-        }
+        contentAuditLogSupport.createContent( params, content );
 
         return content;
     }
@@ -315,10 +300,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.createMedia( params, content );
-        }
+        contentAuditLogSupport.createMedia( params, content );
 
         return content;
     }
@@ -341,10 +323,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.update( params, content );
-        }
+        contentAuditLogSupport.update( params, content );
 
         return content;
     }
@@ -368,10 +347,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.update( params, content );
-        }
+        contentAuditLogSupport.update( params, content );
 
         return content;
     }
@@ -388,10 +364,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.delete( params, result );
-        }
+        contentAuditLogSupport.delete( params, result );
 
         return result;
     }
@@ -408,10 +381,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.undoPendingDelete( params, affectedContents );
-        }
+        contentAuditLogSupport.undoPendingDelete( params, affectedContents );
 
         return affectedContents.getSize();
     }
@@ -436,10 +406,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.publish( params, result );
-        }
+        contentAuditLogSupport.publish( params, result );
 
         return result;
     }
@@ -525,10 +492,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.unpublishContent( params, result );
-        }
+        contentAuditLogSupport.unpublishContent( params, result );
 
         return result;
     }
@@ -744,10 +708,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.duplicate( params, result );
-        }
+        contentAuditLogSupport.duplicate( params, result );
 
         return result;
     }
@@ -765,10 +726,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.move( params, result );
-        }
+        contentAuditLogSupport.move( params, result );
 
         return result;
     }
@@ -791,10 +749,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.rename( params, content );
-        }
+        contentAuditLogSupport.rename( params, content );
 
         return content;
     }
@@ -848,11 +803,9 @@ public class ContentServiceImpl
     public Contents findByApplicationKey( final ApplicationKey key )
     {
         final ContentQuery query = ContentQuery.create().
-            queryExpr( QueryParser.parse( new StringBuilder(
-                String.join( ".", ContentPropertyNames.DATA, ContentPropertyNames.SITECONFIG, ContentPropertyNames.APPLICATION_KEY ) ).
-                append( "=" ).
-                append( "'" ).append( key ).append( "'" ).
-                toString() ) ).
+            queryExpr( QueryParser.parse(
+                String.join( ".", ContentPropertyNames.DATA, ContentPropertyNames.SITECONFIG, ContentPropertyNames.APPLICATION_KEY ) + "=" +
+                    "'" + key + "'" ) ).
             size( -1 ).
             build();
 
@@ -979,10 +932,7 @@ public class ContentServiceImpl
     {
         nodeService.setActiveVersion( NodeId.from( contentId.toString() ), NodeVersionId.from( versionId.toString() ) );
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.setActiveContentVersion( contentId, versionId );
-        }
+        contentAuditLogSupport.setActiveContentVersion( contentId, versionId );
 
         return new SetActiveContentVersionResult( contentId, versionId );
     }
@@ -999,10 +949,7 @@ public class ContentServiceImpl
 
             final Content content = translator.fromNode( node, true );
 
-            if ( contentAuditLogSupport != null )
-            {
-                contentAuditLogSupport.setChildOrder( params, content );
-            }
+            contentAuditLogSupport.setChildOrder( params, content );
 
             return content;
         }
@@ -1032,10 +979,7 @@ public class ContentServiceImpl
 
         final ReorderChildContentsResult result = new ReorderChildContentsResult( reorderChildNodesResult.getSize() );
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.reorderChildren( params, result );
-        }
+        contentAuditLogSupport.reorderChildren( params, result );
 
         return result;
     }
@@ -1057,10 +1001,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.applyPermissions( params, result );
-        }
+        contentAuditLogSupport.applyPermissions( params, result );
 
         return result;
     }
@@ -1194,10 +1135,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.reprocess( content );
-        }
+        contentAuditLogSupport.reprocess( content );
 
         return content;
     }
@@ -1364,9 +1302,8 @@ public class ContentServiceImpl
     }
 
     @Reference
-    public void setAuditLogService( final AuditLogService auditLogService )
+    public void setContentAuditLogSupport( final ContentAuditLogSupport contentAuditLogSupport )
     {
-        this.auditLogService = auditLogService;
+        this.contentAuditLogSupport = contentAuditLogSupport;
     }
-
 }

@@ -35,7 +35,7 @@ class ApplicationRepoInitializer
     public final void doInitialize()
     {
         createAdminContext().
-            runWith( () -> initApplicationFolder() );
+            runWith( this::initApplicationFolder );
     }
 
     @Override

@@ -22,7 +22,6 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.region.ComponentName;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -64,10 +63,10 @@ public class WidgetHandlerTest
         this.request = new PortalRequest();
         final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
         this.controllerScript = Mockito.mock( ControllerScript.class );
-        Mockito.when( controllerScriptFactory.fromDir( Mockito.anyObject() ) ).thenReturn( this.controllerScript );
+        Mockito.when( controllerScriptFactory.fromDir( Mockito.any() ) ).thenReturn( this.controllerScript );
 
         final PortalResponse portalResponse = PortalResponse.create().build();
-        Mockito.when( this.controllerScript.execute( Mockito.anyObject() ) ).thenReturn( portalResponse );
+        Mockito.when( this.controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
 
         this.contentService = Mockito.mock( ContentService.class );
         this.widgetDescriptorService = Mockito.mock( WidgetDescriptorService.class );
@@ -115,7 +114,7 @@ public class WidgetHandlerTest
     {
         mockDescriptor( true );
         final PortalResponse portalResponse = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
-        Mockito.when( this.controllerScript.execute( Mockito.anyObject() ) ).thenReturn( portalResponse );
+        Mockito.when( this.controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
 
         this.request.setMethod( HttpMethod.OPTIONS );
         this.request.setMode( RenderMode.ADMIN );
@@ -265,7 +264,7 @@ public class WidgetHandlerTest
         {
             PageRegions pageRegions = PageRegions.create().
                 add( Region.create().name( "main-region" ).
-                    add( PartComponent.create().name( ComponentName.from( "mypart" ) ).
+                    add( PartComponent.create().
                         build() ).
                     build() ).
                 build();

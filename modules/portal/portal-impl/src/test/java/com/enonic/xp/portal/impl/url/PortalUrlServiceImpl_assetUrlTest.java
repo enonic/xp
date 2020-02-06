@@ -36,10 +36,7 @@ public class PortalUrlServiceImpl_assetUrlTest
     public void createUrlWithLongContentPath()
     {
         final StringBuilder longContentPath = new StringBuilder();
-        for ( int i = 0; i < 10000; i++ )
-        {
-            longContentPath.append( "/a" );
-        }
+        longContentPath.append( "/a".repeat( 10000 ) );
         this.portalRequest.setContentPath( ContentPath.from( longContentPath.toString() ) );
         final AssetUrlParams params = new AssetUrlParams().
             portalRequest( this.portalRequest ).

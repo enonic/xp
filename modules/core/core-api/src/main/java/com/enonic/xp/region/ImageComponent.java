@@ -14,6 +14,8 @@ public class ImageComponent
 {
     private static final String CAPTION = "caption";
 
+    private static final ComponentName NAME = ComponentName.from( "Image" );
+
     private ContentId image;
 
     private PropertyTree config;
@@ -45,6 +47,13 @@ public class ImageComponent
     public ComponentType getType()
     {
         return ImageComponentType.INSTANCE;
+    }
+
+    @Deprecated
+    @Override
+    public ComponentName getName()
+    {
+        return NAME;
     }
 
     public ContentId getImage()
@@ -124,22 +133,22 @@ public class ImageComponent
             config = source.config != null ? source.config.copy() : null;
         }
 
-        public Builder image( final ContentId value )
-        {
-            this.image = value;
-            return this;
-        }
-
+        @Deprecated
         @Override
         public Builder name( ComponentName value )
         {
-            this.name = value;
             return this;
         }
 
+        @Deprecated
         public Builder name( String value )
         {
-            this.name = value != null ? new ComponentName( value ) : null;
+            return this;
+        }
+
+        public Builder image( final ContentId value )
+        {
+            this.image = value;
             return this;
         }
 

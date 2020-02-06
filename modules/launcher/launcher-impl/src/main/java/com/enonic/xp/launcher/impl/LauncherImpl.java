@@ -86,6 +86,7 @@ public final class LauncherImpl
         this.framework.listener( this.listener );
         this.framework.config( this.config );
 
+        addLoggingActivator();
         addProvisionActivator();
     }
 
@@ -94,6 +95,11 @@ public final class LauncherImpl
         final File systemDir = new File( this.env.getInstallDir(), "system" );
         final ProvisionActivator activator = new ProvisionActivator( systemDir );
         this.framework.activator( activator );
+    }
+
+    private void addLoggingActivator()
+    {
+        this.framework.activator( new org.apache.felix.log.extension.Activator() );
     }
 
     @Override

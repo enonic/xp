@@ -217,7 +217,7 @@ public final class ComponentPath
 
         public static ComponentIndex fromString( final String str )
         {
-            return new ComponentIndex( Integer.valueOf( str ) );
+            return new ComponentIndex( Integer.parseInt( str ) );
         }
 
         @Override

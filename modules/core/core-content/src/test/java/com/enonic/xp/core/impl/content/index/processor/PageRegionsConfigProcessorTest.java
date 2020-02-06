@@ -103,7 +103,6 @@ public class PageRegionsConfigProcessorTest
                 add( Region.create().
                     name( "region1" ).
                     add( PartComponent.create().
-                        name( "part1" ).
                         descriptor( partDescriptorKey ).
                         build() ).
                     build() ).
@@ -129,7 +128,6 @@ public class PageRegionsConfigProcessorTest
                 add( Region.create().
                     name( "region1" ).
                     add( LayoutComponent.create().
-                        name( "layout1" ).
                         descriptor( layoutDescriptorKey ).
                         regions( LayoutRegions.create().build() ).
                         build() ).
@@ -158,13 +156,11 @@ public class PageRegionsConfigProcessorTest
                 add( Region.create().
                     name( "region1" ).
                     add( LayoutComponent.create().
-                        name( "layout1" ).
                         descriptor( DescriptorKey.from( appKeyLayout ) ).
                         regions( LayoutRegions.create().
                             add( Region.create().
                                 name( "layoutRegion1" ).
                                 add( PartComponent.create().
-                                    name( "part1" ).
                                     descriptor( DescriptorKey.from( appKeyPart ) ).
                                     build() ).
                                 build() ).
@@ -194,7 +190,6 @@ public class PageRegionsConfigProcessorTest
                 add( Region.create().
                     name( "region1" ).
                     add( FragmentComponent.create().
-                        name( "part1" ).
                         fragment( ContentId.from( "content-id" ) ).
                         build() ).
                     build() ).

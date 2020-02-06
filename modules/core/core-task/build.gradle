@@ -4,6 +4,7 @@ dependencies {
     compile project( ':core:core-api' )
     compile project( ':script:script-api' )
     compile project( ':portal:portal-api' )
+    implementation project( ':core:core-internal' )
     compile ('org.elasticsearch:elasticsearch:2.4.6') {
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-cbor'
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-yaml'

@@ -90,8 +90,7 @@ public final class OccurrenceValidator
         for ( PropertySet optionSetOccurrencePropertySet : optionSetOccurrencePropertySets )
         {
 
-            boolean hasSelectionArray =
-                StreamSupport.stream( optionSetOccurrencePropertySet.getPropertyArrays().spliterator(), false ).anyMatch(
+            boolean hasSelectionArray = optionSetOccurrencePropertySet.getPropertyArrays().stream().anyMatch(
                     array -> array.getValueType().equals( ValueTypes.STRING ) );
 
             final List<Property> selectedItems = optionSetOccurrencePropertySet.getProperties( OPTION_SET_SELECTION_ARRAY_NAME );

@@ -7,6 +7,7 @@ import com.enonic.xp.admin.impl.json.content.page.region.ComponentJson;
 import com.enonic.xp.admin.impl.json.content.page.region.ComponentJsonSerializer;
 import com.enonic.xp.admin.impl.json.content.page.region.PageRegionsJson;
 import com.enonic.xp.admin.impl.json.content.page.region.RegionJson;
+import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTreeJson;
 import com.enonic.xp.page.Page;
@@ -20,11 +21,14 @@ public final class PageJson
 
     private final List<PropertyArrayJson> configJson;
 
-    public PageJson( final Page page )
+    private final ComponentJsonSerializer componentJsonSerializer;
+
+    public PageJson( final Page page, final ComponentNameResolver componentNameResolver )
     {
         this.page = page;
-        this.regionsJson = page.hasRegions() ? new PageRegionsJson( page.getRegions() ) : null;
+        this.regionsJson = page.hasRegions() ? new PageRegionsJson( page.getRegions(), componentNameResolver ) : null;
         this.configJson = page.hasConfig() ? PropertyTreeJson.toJson( page.getConfig() ) : null;
+        this.componentJsonSerializer = new ComponentJsonSerializer( componentNameResolver );
     }
 
     public String getController()
@@ -54,6 +58,6 @@ public final class PageJson
 
     public ComponentJson getFragment()
     {
-        return page.isFragment() ? ComponentJsonSerializer.toJson( page.getFragment() ) : null;
+        return page.isFragment() ? componentJsonSerializer.toJson( page.getFragment() ) : null;
     }
 }

@@ -25,8 +25,8 @@ public class ExternalInitializerTest
     private ExternalInitializer createExternalInitializer( final IndexService indexService )
     {
         return TestExternalInitializer.create().
-            setInitializationCheckMaxCount( 2l ).
-            setInitializationCheckPeriod( 1l ).
+            setInitializationCheckMaxCount( 2L ).
+            setInitializationCheckPeriod( 1L ).
             setIndexService( indexService ).
             build();
     }

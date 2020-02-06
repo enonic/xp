@@ -142,9 +142,8 @@ public final class ImageContentProcessor
 
                 final XDatas contentXDatas = getXDatas( params.getContentType().getName() );
 
-                extractMetadata( mediaInfo, contentXDatas, sourceAttachment ).forEach( extraData -> {
-                    extraDatas.put( extraData.getName(), extraData );
-                } );
+                extractMetadata( mediaInfo, contentXDatas, sourceAttachment ).
+                    forEach( extraData -> extraDatas.put( extraData.getName(), extraData ) );
 
                 editable.extraDatas = ExtraDatas.create().addAll( extraDatas.values() ).build();
             };
@@ -347,7 +346,7 @@ public final class ImageContentProcessor
         {
             return null;
         }
-        return FIELD_CONFORMITY_MAP.containsKey( tikaFieldValue ) ? FIELD_CONFORMITY_MAP.get( tikaFieldValue ) : tikaFieldValue;
+        return FIELD_CONFORMITY_MAP.getOrDefault( tikaFieldValue, tikaFieldValue );
     }
 
     private void fillComputedFormItems( Collection<ExtraData> extraDataList, MediaInfo mediaInfo, final CreateAttachment sourceAttachment )
@@ -361,8 +360,8 @@ public final class ImageContentProcessor
                 final Collection<String> tiffImageWidths = mediaInfo.getMetadata().get( "tiffImagewidth" );
                 if ( tiffImageLengths.size() > 0 && tiffImageWidths.size() > 0 )
                 {
-                    final long tiffImageLength = Long.valueOf( tiffImageLengths.toArray()[0].toString() );
-                    final long tiffImageWidth = Long.valueOf( tiffImageWidths.toArray()[0].toString() );
+                    final long tiffImageLength = Long.parseLong( tiffImageLengths.toArray()[0].toString() );
+                    final long tiffImageWidth = Long.parseLong( tiffImageWidths.toArray()[0].toString() );
                     xData.setLong( IMAGE_INFO_PIXEL_SIZE, tiffImageLength * tiffImageWidth );
                     xData.setLong( IMAGE_INFO_IMAGE_HEIGHT, tiffImageLength );
                     xData.setLong( IMAGE_INFO_IMAGE_WIDTH, tiffImageWidth );

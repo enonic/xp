@@ -53,7 +53,7 @@ public class DoubleTypeTest
         final Value value = this.type.createDefaultValue( input );
 
         assertNotNull( value );
-        assertEquals( 1.3D, value.asDouble().doubleValue(), Double.MIN_NORMAL );
+        assertEquals( 1.3D, value.asDouble(), Double.MIN_NORMAL );
     }
 
     @Test

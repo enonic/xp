@@ -61,7 +61,7 @@ public class InputValidatorTest
         data.addString( "contentTypeFilter", "article" );
         data.addString( "siteConfigurator", "my config here" );
         data.addDouble( "double", 1.1d );
-        data.addLong( "long", 12345678910l );
+        data.addLong( "long", 12345678910L );
         data.addStrings( "stringArray", "a", "b", "c" );
         data.addLocalDateTime( "localDateTime", LocalDateTime.parse( "2015-01-14T10:00:00" ) );
         data.addInstant( "dateTime", DateTimeFormatter.ISO_DATE_TIME.parse( "2015-01-15T10:15:00+02:00", Instant::from ) );
@@ -79,12 +79,12 @@ public class InputValidatorTest
     {
         //Validates an incorrect value
         PropertyTree invalidData = new PropertyTree();
-        invalidData.addLong( "textLine", 1l );
+        invalidData.addLong( "textLine", 1L );
         validateIncorrectInputType( invalidData );
 
         //Validates an incorrect value
         invalidData = new PropertyTree();
-        invalidData.addLong( "double", 1l );
+        invalidData.addLong( "double", 1L );
         validateIncorrectInputType( invalidData );
 
         //Validates an incorrect value
@@ -162,7 +162,7 @@ public class InputValidatorTest
         //Validates an incorrect value
         invalidData = new PropertyTree();
         invalidSet = new PropertySet();
-        invalidSet.addLong( "setDouble", 1l );
+        invalidSet.addLong( "setDouble", 1L );
         invalidData.addSet( "set", invalidSet );
         validateIncorrectInputType( invalidData );
     }

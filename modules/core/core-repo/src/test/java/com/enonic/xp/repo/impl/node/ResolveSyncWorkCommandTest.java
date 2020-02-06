@@ -451,9 +451,7 @@ public class ResolveSyncWorkCommandTest
 
     private String createAssertFailMessage( final NodeIds result, final ExpectedNodes expectedNodes )
     {
-        StringBuilder builder = new StringBuilder();
-        builder.append( "Expected in result: [" + expectedNodes + "], got " + result.getAsStrings() );
-        return builder.toString();
+        return "Expected in result: [" + expectedNodes + "], got " + result.getAsStrings();
     }
 
     /*
@@ -1547,7 +1545,8 @@ public class ResolveSyncWorkCommandTest
 
         StringBuilder builder = new StringBuilder();
         builder.append( LINE_SEPARATOR );
-        builder.append( "Asserted size [" + expectedNodes.nodes.size() + "], actual [" + result.getSize() + "]" );
+        builder.append( "Asserted size [" ).append( expectedNodes.nodes.size() ).append( "], actual [" ).append( result.getSize() ).append(
+            "]" );
         builder.append( LINE_SEPARATOR );
 
         for ( final ExpectedNode expectedNode : expectedNodes )
@@ -1559,7 +1558,7 @@ public class ResolveSyncWorkCommandTest
                 fail = true;
             }
 
-            builder.append( "Expected: " + expectedNode + ", " + ( ok ? "<OK>" : "<Missing>" ) );
+            builder.append( "Expected: " ).append( expectedNode ).append( ", " ).append( ok ? "<OK>" : "<Missing>" );
         }
 
         for ( final NodeId resultNode : result )
@@ -1574,7 +1573,7 @@ public class ResolveSyncWorkCommandTest
             if ( !ok )
             {
                 builder.append( LINE_SEPARATOR );
-                builder.append( "Unexpected: " + resultNode );
+                builder.append( "Unexpected: " ).append( resultNode );
             }
         }
 

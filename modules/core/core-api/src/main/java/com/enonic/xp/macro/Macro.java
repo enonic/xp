@@ -1,7 +1,6 @@
 package com.enonic.xp.macro;
 
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
@@ -39,7 +38,7 @@ public final class Macro
     public String getParam( final String name )
     {
         final ImmutableList<String> values = this.params.get( name );
-        return values.isEmpty() ? null : values.stream().collect( Collectors.joining( "," ) );
+        return values.isEmpty() ? null : String.join( ",", values );
     }
 
     @Deprecated
@@ -48,7 +47,7 @@ public final class Macro
         final ImmutableMap.Builder<String, String> mapParams = ImmutableMap.builder();
         for ( String key : this.params.keySet() )
         {
-            final String value = this.params.get( key ).stream().collect( Collectors.joining( "," ) );
+            final String value = String.join( ",", this.params.get( key ) );
             mapParams.put( key, value );
         }
         return mapParams.build();

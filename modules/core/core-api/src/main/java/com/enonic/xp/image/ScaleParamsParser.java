@@ -61,7 +61,7 @@ public final class ScaleParamsParser
             list.add( parseIntegerValue( args[i] ) );
         }
 
-        return list.toArray( new Object[list.size()] );
+        return list.toArray( new Object[0] );
     }
 
     private Integer parseIntegerValue( String str )

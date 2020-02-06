@@ -26,6 +26,8 @@ public class FindContentByQuertResultJsonFactory
 
     private final ContentPrincipalsResolver contentPrincipalsResolver;
 
+    private final ComponentNameResolver componentNameResolver;
+
     private final String expand;
 
     private FindContentByQuertResultJsonFactory( final Builder builder )
@@ -36,6 +38,7 @@ public class FindContentByQuertResultJsonFactory
         aggregations = builder.aggregations;
         iconUrlResolver = builder.iconUrlResolver;
         contentPrincipalsResolver = builder.contentPrincipalsResolver;
+        componentNameResolver = builder.componentNameResolver;
         expand = builder.expand;
     }
 
@@ -84,7 +87,7 @@ public class FindContentByQuertResultJsonFactory
 
         if ( Expand.FULL.matches( expand ) )
         {
-            builder = ContentQueryResultJson.newBuilder( iconUrlResolver, contentPrincipalsResolver );
+            builder = ContentQueryResultJson.newBuilder( iconUrlResolver, contentPrincipalsResolver, componentNameResolver );
         }
         else if ( Expand.SUMMARY.matches( expand ) )
         {
@@ -115,6 +118,8 @@ public class FindContentByQuertResultJsonFactory
         private ContentIconUrlResolver iconUrlResolver;
 
         private ContentPrincipalsResolver contentPrincipalsResolver;
+
+        private ComponentNameResolver componentNameResolver;
 
         private String expand;
 
@@ -157,6 +162,13 @@ public class FindContentByQuertResultJsonFactory
             contentPrincipalsResolver = val;
             return this;
         }
+
+        public Builder componentNameResolver( final ComponentNameResolver val )
+        {
+            componentNameResolver = val;
+            return this;
+        }
+
 
         public Builder expand( final String val )
         {

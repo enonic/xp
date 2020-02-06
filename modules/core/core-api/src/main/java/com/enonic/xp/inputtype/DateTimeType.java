@@ -48,7 +48,7 @@ final class DateTimeType
         final String defaultValue = input.getDefaultValue().getRootValue();
         if ( defaultValue != null )
         {
-            final Boolean withTimezone = useTimeZone( input.getInputTypeConfig() );
+            final boolean withTimezone = useTimeZone( input.getInputTypeConfig() );
 
             Value value = withTimezone ? parseDateTime( defaultValue ) : parseLocalDateTime( defaultValue );
 

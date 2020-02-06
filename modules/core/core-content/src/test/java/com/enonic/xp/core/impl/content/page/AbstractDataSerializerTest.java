@@ -45,7 +45,6 @@ public class AbstractDataSerializerTest
         Mockito.when( contentService.getById( id ) ).thenReturn( imageContent );
 
         return ImageComponent.create().
-            name( imageDisplayName ).
             image( id ).
             config( imageConfig ).
             build();
@@ -63,7 +62,6 @@ public class AbstractDataSerializerTest
         Mockito.when( contentService.getById( id ) ).thenReturn( fragmentContent );
 
         return FragmentComponent.create().
-            name( fragmentDisplayName ).
             fragment( id ).
             build();
     }
@@ -79,7 +77,6 @@ public class AbstractDataSerializerTest
             build() );
 
         return PartComponent.create().
-            name( partName ).
             descriptor( descriptor ).
             config( partConfig ).
             build();

@@ -83,9 +83,7 @@ public class UpdateIssueCommentCommand
 
             final UpdateNodeParams.Builder builder = UpdateNodeParams.create().
                 id( params.getComment() ).
-                editor( e -> {
-                    ISSUE_COMMENT_DATA_SERIALIZER.updateNodeData( e.data, params );
-                } );
+                editor( e -> ISSUE_COMMENT_DATA_SERIALIZER.updateNodeData( e.data, params ) );
 
             return builder.build();
         }

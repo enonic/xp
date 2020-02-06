@@ -36,13 +36,8 @@ final class RelativeTimeParser
             return new RelativeTime( duration, period );
         }
 
-        StringBuilder builder = new StringBuilder( OPERATOR_GROUP ).
-            append( VALUE_GROUP ).
-            append( "\\s*" ).
-            append( getPatternGroup( availableUnits ) ).
-            append( UNIT_ENDING );
-
-        final Matcher m = Pattern.compile( builder.toString(), Pattern.CASE_INSENSITIVE ).matcher( trimedExpression );
+        final String builder = OPERATOR_GROUP + VALUE_GROUP + "\\s*" + getPatternGroup( availableUnits ) + UNIT_ENDING;
+        final Matcher m = Pattern.compile( builder, Pattern.CASE_INSENSITIVE ).matcher( trimedExpression );
         final StringBuilder actualExpression = new StringBuilder();
 
         while ( m.find() )

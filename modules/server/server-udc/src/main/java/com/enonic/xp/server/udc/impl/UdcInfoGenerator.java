@@ -19,7 +19,6 @@ final class UdcInfoGenerator
     }
 
     UdcInfo generate()
-        throws Exception
     {
         final UdcInfo info = new UdcInfo();
         info.uuid = this.uuid;

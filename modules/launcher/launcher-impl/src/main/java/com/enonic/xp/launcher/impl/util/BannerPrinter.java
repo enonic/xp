@@ -7,13 +7,6 @@ import com.enonic.xp.launcher.VersionInfo;
 import com.enonic.xp.launcher.impl.SharedConstants;
 import com.enonic.xp.launcher.impl.env.Environment;
 
-import static com.google.common.base.StandardSystemProperty.JAVA_VERSION;
-import static com.google.common.base.StandardSystemProperty.JAVA_VM_NAME;
-import static com.google.common.base.StandardSystemProperty.JAVA_VM_VENDOR;
-import static com.google.common.base.StandardSystemProperty.OS_ARCH;
-import static com.google.common.base.StandardSystemProperty.OS_NAME;
-import static com.google.common.base.StandardSystemProperty.OS_VERSION;
-
 public final class BannerPrinter
 {
     private final static String PRODUCT = "Enonic XP";
@@ -49,12 +42,14 @@ public final class BannerPrinter
 
     private String getFormattedJvmInfo()
     {
-        return String.format( "%s %s (%s)", JAVA_VM_NAME.value(), JAVA_VERSION.value(), JAVA_VM_VENDOR.value() );
+        return String.format( "%s %s (%s)", System.getProperty( "java.vm.name" ), System.getProperty( "java.version" ),
+                              System.getProperty( "java.vm.vendor" ) );
     }
 
     private String getFormattedOsInfo()
     {
-        return String.format( "%s %s (%s)", OS_NAME.value(), OS_VERSION.value(), OS_ARCH.value() );
+        return String.format( "%s %s (%s)", System.getProperty( "os.name" ), System.getProperty( "os.version" ),
+                              System.getProperty( "os.arch" ) );
     }
 
     private void printWarnings()
@@ -76,7 +71,7 @@ public final class BannerPrinter
 
     private String loadBanner()
     {
-        try (InputStream stream = getClass().getResourceAsStream( "banner.txt" ))
+        try (final InputStream stream = getClass().getResourceAsStream( "banner.txt" ))
         {
             return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }

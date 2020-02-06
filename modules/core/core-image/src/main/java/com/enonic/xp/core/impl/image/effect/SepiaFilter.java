@@ -14,7 +14,7 @@ public final class SepiaFilter
 
     public SepiaFilter( int depth )
     {
-        this.depth = depth < 0 ? 0 : depth;
+        this.depth = Math.max( depth, 0 );
         this.canFilterIndexColorModel = true;
     }
 

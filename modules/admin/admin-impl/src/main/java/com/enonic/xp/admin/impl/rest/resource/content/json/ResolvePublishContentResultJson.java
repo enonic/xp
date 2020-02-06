@@ -24,9 +24,9 @@ public class ResolvePublishContentResultJson
 
     private ResolvePublishContentResultJson( Builder builder )
     {
-        requestedContents = builder.requestedContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
-        dependentContents = builder.dependentContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
-        requiredContents = builder.requiredContents.stream().map( item -> new ContentIdJson( item ) ).collect( Collectors.toList() );
+        requestedContents = builder.requestedContents.stream().map( ContentIdJson::new ).collect( Collectors.toList() );
+        dependentContents = builder.dependentContents.stream().map( ContentIdJson::new ).collect( Collectors.toList() );
+        requiredContents = builder.requiredContents.stream().map( ContentIdJson::new ).collect( Collectors.toList() );
         containsInvalid = builder.containsInvalid;
         allPublishable = builder.allPublishable;
         allPendingDelete = builder.allPendingDelete;

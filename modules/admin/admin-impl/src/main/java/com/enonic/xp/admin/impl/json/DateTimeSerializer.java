@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.Instant;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -38,9 +39,9 @@ public class DateTimeSerializer
     public void serializeWithType( Instant value, JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer )
         throws IOException
     {
-        typeSer.writeTypePrefixForScalar( value, jgen );
+        typeSer.writeTypePrefix( jgen, typeSer.typeId( value, JsonToken.VALUE_STRING ) );
         serialize( value, jgen, provider );
-        typeSer.writeTypeSuffixForScalar( value, jgen );
+        typeSer.writeTypeSuffix( jgen, typeSer.typeId( value, JsonToken.VALUE_STRING ) );
     }
 
     @Override

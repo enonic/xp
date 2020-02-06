@@ -37,13 +37,13 @@ public class EffectivePageResolverTest
 
         regionsA = PageRegions.create().
             add( Region.create().name( "regionA" ).
-                add( PartComponent.create().name( "my-part" ).build() ).
+                add( PartComponent.create().descriptor( "myapp:my-part" ).build() ).
                 build() ).
             build();
 
         regionsB = PageRegions.create().
             add( Region.create().name( "regionB" ).
-                add( PartComponent.create().name( "my-part" ).build() ).
+                add( PartComponent.create().descriptor( "myapp:my-part" ).build() ).
                 build() ).
             build();
     }

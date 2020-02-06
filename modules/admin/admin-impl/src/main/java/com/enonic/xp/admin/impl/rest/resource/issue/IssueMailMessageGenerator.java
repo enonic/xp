@@ -23,6 +23,7 @@ import com.enonic.xp.issue.IssueComment;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.IssueType;
 import com.enonic.xp.mail.MailMessage;
+import com.enonic.xp.security.User;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -93,7 +94,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
     {
         return params.getApprovers().stream().
             filter( approver -> !nullToEmpty( approver.getEmail() ).isBlank() ).
-            map( approver -> approver.getEmail() ).
+            map( User::getEmail ).
             collect( Collectors.toSet() );
     }
 

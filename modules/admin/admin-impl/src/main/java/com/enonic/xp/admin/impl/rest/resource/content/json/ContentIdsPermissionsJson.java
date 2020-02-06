@@ -20,7 +20,7 @@ public class ContentIdsPermissionsJson
                                       @JsonProperty("permissions") final List<String> permissions )
     {
         this.contentIds = ContentIds.from( contentIds );
-        this.permissions = permissions.stream().map( p -> Permission.valueOf( p ) ).collect( Collectors.toList() );
+        this.permissions = permissions.stream().map( Permission::valueOf ).collect( Collectors.toList() );
     }
 
     public ContentIds getContentIds()

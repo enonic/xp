@@ -1,46 +1,37 @@
 package com.enonic.xp.server.udc.impl;
 
-import java.util.Timer;
-import java.util.concurrent.TimeUnit;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 
-@Component(immediate = true, configurationPid = "com.enonic.xp.server.udc")
+import com.enonic.xp.core.internal.concurrent.RecurringJob;
+
+@Component(enabled = false, configurationPid = "com.enonic.xp.server.udc")
 public final class UdcService
 {
-    protected long delay = TimeUnit.MINUTES.toMillis( 10 );
+    private final UdcScheduler scheduler;
 
-    protected long interval = TimeUnit.HOURS.toMillis( 24 );
+    private final PingSender pingSender;
 
-    private Timer timer;
+    private RecurringJob recurringJob;
 
-    private final UdcInfoGenerator generator;
-
-    public UdcService()
+    @Activate
+    public UdcService( @Reference UdcScheduler scheduler, final UdcConfig config )
     {
-        this.generator = new UdcInfoGenerator();
+        this.scheduler = scheduler;
+        this.pingSender = new PingSender( new UdcInfoGenerator(), config.url() );
     }
 
     @Activate
-    public void activate( final UdcConfig config )
+    public void activate()
     {
-        this.timer = new Timer( "udc" );
-        if ( !config.enabled() )
-        {
-            return;
-        }
-
-        final PingSenderImpl sender = new PingSenderImpl( this.generator, config.url() );
-
-        final PingTask task = new PingTask( sender );
-        this.timer.schedule( task, this.delay, this.interval );
+        recurringJob = scheduler.scheduleWithFixedDelay( pingSender );
     }
 
     @Deactivate
     public void deactivate()
     {
-        this.timer.cancel();
+        recurringJob.cancel();
     }
 }

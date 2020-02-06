@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.content.Content;
@@ -20,21 +21,24 @@ public abstract class AbstractContentListJson<T extends ContentIdJson>
 
     protected final ContentPrincipalsResolver contentPrincipalsResolver;
 
+    protected final ComponentNameResolver componentNameResolver;
+
     private ImmutableList<T> contents;
 
     public AbstractContentListJson( final Content content, ContentListMetaData contentListMetaData,
-                                    final ContentIconUrlResolver iconUrlResolver,
-                                    final ContentPrincipalsResolver contentPrincipalsResolver )
+                                    final ContentIconUrlResolver iconUrlResolver, final ContentPrincipalsResolver contentPrincipalsResolver,
+                                    final ComponentNameResolver componentNameResolver )
     {
-        this( Contents.from( content ), contentListMetaData, iconUrlResolver, contentPrincipalsResolver );
+        this( Contents.from( content ), contentListMetaData, iconUrlResolver, contentPrincipalsResolver, componentNameResolver );
     }
 
     public AbstractContentListJson( final Contents contents, final ContentListMetaData contentListMetaData,
-                                    final ContentIconUrlResolver iconUrlResolver,
-                                    final ContentPrincipalsResolver contentPrincipalsResolver )
+                                    final ContentIconUrlResolver iconUrlResolver, final ContentPrincipalsResolver contentPrincipalsResolver,
+                                    final ComponentNameResolver componentNameResolver )
     {
         this.iconUrlResolver = iconUrlResolver;
         this.contentPrincipalsResolver = contentPrincipalsResolver;
+        this.componentNameResolver = componentNameResolver;
         this.metadata = new ContentListMetaDataJson( contentListMetaData );
 
         final ImmutableList.Builder<T> builder = ImmutableList.builder();
