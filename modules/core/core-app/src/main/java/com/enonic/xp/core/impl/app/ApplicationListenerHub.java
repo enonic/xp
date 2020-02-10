@@ -17,8 +17,10 @@ import org.osgi.util.tracker.BundleTracker;
 import org.osgi.util.tracker.BundleTrackerCustomizer;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationInvalidationLevel;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationListener;
-import com.enonic.xp.server.RunMode;
+import com.enonic.xp.app.ApplicationService;
 
 @Component(immediate = true)
 public final class ApplicationListenerHub
@@ -26,16 +28,18 @@ public final class ApplicationListenerHub
 {
     private final Executor executor;
 
-    private final ApplicationFactory factory = new ApplicationFactory( RunMode.get() );
+    private final ApplicationService applicationService;
 
     private final List<ApplicationListener> listeners = new CopyOnWriteArrayList<>();
 
     private BundleTracker<Application> tracker;
 
     @Activate
-    public ApplicationListenerHub( @Reference(service = ApplicationListenerHubExecutor.class) final Executor executor )
+    public ApplicationListenerHub( @Reference(service = ApplicationListenerHubExecutor.class) final Executor executor,
+                                   @Reference final ApplicationService applicationService )
     {
         this.executor = executor;
+        this.applicationService = applicationService;
     }
 
     @Activate
@@ -59,7 +63,7 @@ public final class ApplicationListenerHub
             return null;
         }
 
-        return activated( this.factory.create( bundle ) );
+        return activated( applicationService.getInstalledApplication( ApplicationKey.from( bundle ) ) );
     }
 
     @Override
@@ -74,6 +78,7 @@ public final class ApplicationListenerHub
         if ( app != null )
         {
             deactivated( app );
+            applicationService.invalidate( app.getKey(), ApplicationInvalidationLevel.FULL );
         }
     }
 

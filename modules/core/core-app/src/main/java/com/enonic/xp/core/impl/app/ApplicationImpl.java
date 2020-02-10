@@ -32,7 +32,7 @@ final class ApplicationImpl
 
     private final ClassLoader classLoader;
 
-    private final Configuration config;
+    private volatile Configuration config;
 
     private final Set<String> capabilities;
 
@@ -153,6 +153,11 @@ final class ApplicationImpl
     public Configuration getConfig()
     {
         return this.config;
+    }
+
+    public void setConfig( final Configuration config )
+    {
+        this.config = config;
     }
 
     @Override
