@@ -6,6 +6,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -22,12 +23,15 @@ public final class Project
 
     private final Attachment icon;
 
+    private final ProjectPermissions permissions;
+
     private Project( Builder builder )
     {
         this.name = builder.name;
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.icon = builder.icon;
+        this.permissions = builder.permissions;
     }
 
     public static Builder create()
@@ -37,26 +41,40 @@ public final class Project
 
     public static Project from( final Repository repository )
     {
-        final PropertyTree repositoryData = repository.getData();
-
-        if ( repositoryData == null )
+        if ( repository == null )
         {
             return null;
         }
 
-        final PropertySet projectData = repositoryData.getSet( "com-enonic-cms" );
+        final PropertyTree repositoryData = repository.getData();
+
+        //TODO: remove default project data for XP8
+        if ( repositoryData == null )
+        {
+            return ContentConstants.CONTENT_REPO_ID.equals( repository.getId() ) ? ProjectConstants.DEFAULT_PROJECT : null;
+        }
+
+        final PropertySet projectData = repositoryData.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
 
         if ( projectData == null )
         {
-            return null;
+            return ContentConstants.CONTENT_REPO_ID.equals( repository.getId() ) ? ProjectConstants.DEFAULT_PROJECT : null;
         }
 
         final Project.Builder project = Project.create().
             name( ProjectName.from( repository.getId() ) ).
-            description( projectData.getString( "description" ) ).
-            displayName( projectData.getString( "displayName" ) );
+            description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) ).
+            displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) );
 
-        final PropertySet iconData = projectData.getPropertySet( "icon" );
+        buildIcon( project, projectData );
+        buildPermissions( project, projectData );
+
+        return project.build();
+    }
+
+    private static void buildIcon( final Project.Builder project, final PropertySet projectData )
+    {
+        final PropertySet iconData = projectData.getPropertySet( ProjectConstants.PROJECT_ICON_PROPERTY );
 
         if ( iconData != null )
         {
@@ -68,8 +86,37 @@ public final class Project
                 textContent( iconData.getString( ContentPropertyNames.ATTACHMENT_TEXT ) ).
                 build() );
         }
+    }
 
-        return project.build();
+    private static void buildPermissions( final Project.Builder project, final PropertySet projectData )
+    {
+        final PropertySet permissionsSet = projectData.getPropertySet( ProjectConstants.PROJECT_PERMISSIONS_PROPERTY );
+
+        if ( permissionsSet != null )
+        {
+            final Iterable<String> ownerKeys = permissionsSet.getStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_OWNER_PROPERTY );
+            final Iterable<String> expertKeys = permissionsSet.getStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_EXPERT_PROPERTY );
+            final Iterable<String> contributorKeys =
+                permissionsSet.getStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY );
+
+            final ProjectPermissions.Builder projectPermissions = ProjectPermissions.create();
+            if ( ownerKeys != null )
+            {
+                ownerKeys.forEach( projectPermissions::addOwner );
+            }
+
+            if ( expertKeys != null )
+            {
+                expertKeys.forEach( projectPermissions::addExpert );
+            }
+
+            if ( contributorKeys != null )
+            {
+                contributorKeys.forEach( projectPermissions::addContributor );
+            }
+
+            project.permissions( projectPermissions.build() );
+        }
     }
 
     public ProjectName getName()
@@ -90,6 +137,11 @@ public final class Project
     public Attachment getIcon()
     {
         return icon;
+    }
+
+    public ProjectPermissions getPermissions()
+    {
+        return permissions;
     }
 
     @Override
@@ -125,6 +177,8 @@ public final class Project
 
         private Attachment icon;
 
+        private ProjectPermissions permissions;
+
         private Builder()
         {
         }
@@ -150,6 +204,12 @@ public final class Project
         public Builder icon( final Attachment icon )
         {
             this.icon = icon;
+            return this;
+        }
+
+        public Builder permissions( final ProjectPermissions projectRoles )
+        {
+            this.permissions = projectRoles;
             return this;
         }
 

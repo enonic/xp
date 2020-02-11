@@ -18,12 +18,15 @@ public final class CreateProjectParams
 
     private final CreateAttachment icon;
 
+    private final ProjectPermissions permissions;
+
     private CreateProjectParams( final Builder builder )
     {
         this.name = builder.name;
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.icon = builder.icon;
+        this.permissions = builder.permissions;
     }
 
     public static Builder create()
@@ -51,6 +54,11 @@ public final class CreateProjectParams
         return icon;
     }
 
+    public ProjectPermissions getPermissions()
+    {
+        return permissions;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -64,13 +72,14 @@ public final class CreateProjectParams
         }
         final CreateProjectParams that = (CreateProjectParams) o;
         return Objects.equals( name, that.name ) && Objects.equals( displayName, that.displayName ) &&
-            Objects.equals( description, that.description ) && Objects.equals( icon, that.icon );
+            Objects.equals( description, that.description ) && Objects.equals( icon, that.icon ) &&
+            Objects.equals( permissions, that.permissions );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( name, displayName, description, icon );
+        return Objects.hash( name, displayName, description, icon, permissions );
     }
 
     public static final class Builder
@@ -83,6 +92,8 @@ public final class CreateProjectParams
         private String description;
 
         private CreateAttachment icon;
+
+        private ProjectPermissions permissions;
 
         private Builder()
         {
@@ -109,6 +120,12 @@ public final class CreateProjectParams
         public Builder icon( final CreateAttachment icon )
         {
             this.icon = icon;
+            return this;
+        }
+
+        public Builder permissions( final ProjectPermissions permissions )
+        {
+            this.permissions = permissions;
             return this;
         }
 

@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.project;
 
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -10,10 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.attachment.AttachmentSerializer;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
-import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.ContentInitializer;
 import com.enonic.xp.core.impl.issue.IssueInitializer;
 import com.enonic.xp.data.PropertySet;
@@ -33,8 +31,6 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
@@ -50,19 +46,27 @@ public class ProjectServiceImpl
 
     private NodeService nodeService;
 
+    private ProjectPermissionsContextManager projectPermissionsContextManager;
+
+
     @Override
     public Project create( CreateProjectParams params )
     {
-        return callWithContext( () -> {
+        return callWithCreateContext( ( () -> {
             final Project result = doCreate( params );
             LOG.info( "Project created: " + params.getName() );
 
             return result;
-        } );
+        } ) );
     }
 
     private Project doCreate( final CreateProjectParams params )
     {
+        if ( repositoryService.isInitialized( params.getName().getRepoId() ) )
+        {
+            throw new ProjectAlreadyExistsException( params.getName() );
+        }
+
         final ContentInitializer.Builder contentInitializer = ContentInitializer.create();
 
         contentInitializer.
@@ -80,7 +84,6 @@ public class ProjectServiceImpl
             build().
             initialize();
 
-
         final ModifyProjectParams modifyProjectParams = ModifyProjectParams.create( params ).build();
         return doModify( modifyProjectParams );
     }
@@ -88,12 +91,12 @@ public class ProjectServiceImpl
     @Override
     public Project modify( ModifyProjectParams params )
     {
-        return callWithContext( () -> {
+        return callWithUpdateContext( ( () -> {
             final Project result = doModify( params );
             LOG.info( "Project updated: " + params.getName() );
 
             return result;
-        } );
+        } ), params.getName() );
     }
 
     private Project doModify( final ModifyProjectParams params )
@@ -106,7 +109,7 @@ public class ProjectServiceImpl
                 {
                     editableRepository.binaryAttachments.add( createProjectIcon( params.getIcon() ) );
                 }
-                editableRepository.data = createProjectData( params.getDisplayName(), params.getDescription(), params.getIcon() );
+                editableRepository.data = createProjectData( params );
             } ).
             build();
 
@@ -117,7 +120,18 @@ public class ProjectServiceImpl
     @Override
     public Projects list()
     {
-        return callWithReadContext( this::doList );
+        final AuthenticationInfo authenticationInfo = ContextAccessor.current().getAuthInfo();
+
+        return callWithListContext( () -> {
+            final Projects projects = this.doList();
+
+            return Projects.create().
+                addAll( projects.stream().
+                    filter( project -> projectPermissionsContextManager.hasAdminAccess( authenticationInfo ) ||
+                        projectPermissionsContextManager.hasAnyProjectPermission( project.getName(), authenticationInfo ) ).
+                    collect( Collectors.toSet() ) ).
+                build();
+        } );
     }
 
     private Projects doList()
@@ -128,7 +142,7 @@ public class ProjectServiceImpl
     @Override
     public Project get( final ProjectName projectName )
     {
-        return callWithReadContext( () -> doGet( projectName ) );
+        return callWithGetContext( () -> doGet( projectName ), projectName );
     }
 
     private Project doGet( final ProjectName projectName )
@@ -139,7 +153,7 @@ public class ProjectServiceImpl
     @Override
     public boolean delete( ProjectName projectName )
     {
-        return callWithContext( () -> {
+        return callWithDeleteContext( () -> {
             final boolean result = doDelete( projectName );
             LOG.info( "Project deleted: " + projectName );
 
@@ -155,20 +169,35 @@ public class ProjectServiceImpl
         return deletedRepositoryId != null;
     }
 
-    private PropertyTree createProjectData( final String displayName, final String description, final CreateAttachment icon )
+    private PropertyTree createProjectData( final ModifyProjectParams params )
     {
         final PropertyTree data = new PropertyTree();
 
         final PropertySet set = data.addSet( ProjectConstants.PROJECT_DATA_SET_NAME );
-        set.addString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, description );
-        set.addString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, displayName );
-        if ( icon != null )
+        set.addString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
+        set.addString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
+        if ( params.getIcon() != null )
         {
-            AttachmentSerializer.create( set, CreateAttachments.from( icon ), ProjectConstants.PROJECT_ICON_PROPERTY );
+            AttachmentSerializer.create( set, CreateAttachments.from( params.getIcon() ), ProjectConstants.PROJECT_ICON_PROPERTY );
         }
         else
         {
             set.addSet( ProjectConstants.PROJECT_ICON_PROPERTY, null );
+        }
+
+        if ( params.getPermissions() != null )
+        {
+            final PropertySet permissionsSet = set.addSet( ProjectConstants.PROJECT_PERMISSIONS_PROPERTY );
+            permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_OWNER_PROPERTY,
+                                       params.getPermissions().getOwner().asStrings() );
+            permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_EXPERT_PROPERTY,
+                                       params.getPermissions().getExpert().asStrings() );
+            permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY,
+                                       params.getPermissions().getContributor().asStrings() );
+        }
+        else
+        {
+            set.addSet( ProjectConstants.PROJECT_PERMISSIONS_PROPERTY, null );
         }
 
         return data;
@@ -184,60 +213,29 @@ public class ProjectServiceImpl
         return null;
     }
 
-    private <T> T callWithContext( Callable<T> runnable )
+    private <T> T callWithCreateContext( final Callable<T> runnable )
     {
-        return context().callWith( runnable );
+        return projectPermissionsContextManager.initCreateContext().callWith( runnable );
     }
 
-    private Context context()
+    private <T> T callWithUpdateContext( final Callable<T> runnable, final ProjectName projectName )
     {
-        final AuthenticationInfo authenticationInfo = ContextAccessor.current().getAuthInfo();
-
-        if ( hasProjectPermissions( authenticationInfo ) )
-        {
-            return authenticationInfo.hasRole( RoleKeys.ADMIN ) ? ContextAccessor.current() : ContextBuilder.create().
-                repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-                branch( ContentConstants.BRANCH_MASTER ).
-                authInfo( AuthenticationInfo.copyOf( authenticationInfo ).
-                    principals( RoleKeys.ADMIN ).
-                    build() ).
-                build();
-        }
-
-        throw new RuntimeException( new IllegalAccessException( "User has no project permissions." ) );
+        return projectPermissionsContextManager.initUpdateContext( projectName ).callWith( runnable );
     }
 
-    private boolean hasProjectPermissions( final AuthenticationInfo authenticationInfo )
+    private <T> T callWithGetContext( final Callable<T> runnable, final ProjectName projectName )
     {
-        return authenticationInfo.hasRole( RoleKeys.ADMIN ) || authenticationInfo.hasRole( RoleKeys.CONTENT_MANAGER_ADMIN );
+        return projectPermissionsContextManager.initGetContext( projectName ).callWith( runnable );
     }
 
-    private <T> T callWithReadContext( Callable<T> runnable )
+    private <T> T callWithListContext( final Callable<T> runnable )
     {
-        return readContext().callWith( runnable );
+        return projectPermissionsContextManager.initListContext().callWith( runnable );
     }
 
-    private Context readContext()
+    private <T> T callWithDeleteContext( final Callable<T> runnable )
     {
-        final AuthenticationInfo authenticationInfo = ContextAccessor.current().getAuthInfo();
-
-        if ( hasContentPermissions( authenticationInfo ) )
-        {
-            return authenticationInfo.hasRole( RoleKeys.ADMIN ) ? ContextAccessor.current() : ContextBuilder.create().
-                repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-                branch( ContentConstants.BRANCH_MASTER ).
-                authInfo( AuthenticationInfo.copyOf( authenticationInfo ).
-                    principals( RoleKeys.ADMIN ).
-                    build() ).
-                build();
-        }
-
-        throw new RuntimeException( new IllegalAccessException( "User has no project permissions." ) );
-    }
-
-    private boolean hasContentPermissions( final AuthenticationInfo authenticationInfo )
-    {
-        return hasProjectPermissions( authenticationInfo ) || authenticationInfo.hasRole( RoleKeys.CONTENT_MANAGER_APP_ID );
+        return projectPermissionsContextManager.initDeleteContext().callWith( runnable );
     }
 
     @Reference
@@ -256,5 +254,11 @@ public class ProjectServiceImpl
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
+    }
+
+    @Reference
+    public void setProjectPermissionsContextManager( final ProjectPermissionsContextManager projectPermissionsContextManager )
+    {
+        this.projectPermissionsContextManager = projectPermissionsContextManager;
     }
 }
