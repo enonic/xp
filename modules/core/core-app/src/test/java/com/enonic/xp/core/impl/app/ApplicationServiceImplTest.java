@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.app;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.CompletableFuture;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +21,7 @@ import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
@@ -636,27 +638,79 @@ public class ApplicationServiceImplTest
 
     @Test
     public void testInvalidate()
+        throws Exception
     {
         activateWithNoStoredApplications();
 
         final ApplicationKey key = ApplicationKey.from( "myapp" );
+        deployBundle( "myapp", true );
+
+        this.service.getInstalledApplication( key );
 
         final ApplicationInvalidator invalidator1 = Mockito.mock( ApplicationInvalidator.class );
         final ApplicationInvalidator invalidator2 = Mockito.mock( ApplicationInvalidator.class );
 
         this.service.addInvalidator( invalidator1 );
         this.service.addInvalidator( invalidator2 );
-        this.service.invalidate( key );
+        this.service.invalidate( key, ApplicationInvalidationLevel.FULL );
 
         Mockito.verify( invalidator1, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
         Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
 
         this.service.removeInvalidator( invalidator1 );
         this.service.removeInvalidator( invalidator2 );
-        this.service.invalidate( key );
+        this.service.invalidate( key, ApplicationInvalidationLevel.FULL );
 
         Mockito.verify( invalidator1, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
         Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
+    }
+
+    @Test
+    public void configuration_comes_first()
+        throws Exception
+    {
+        activateWithNoStoredApplications();
+
+        final ApplicationKey key = ApplicationKey.from( "myapp" );
+        deployBundle( "myapp", true );
+
+        service.setConfiguration( key, ConfigBuilder.create().add( "a", "b" ).build() );
+
+        final Application app = service.getInstalledApplication( key );
+
+        assertEquals( ConfigBuilder.create().add( "a", "b" ).build(), app.getConfig() );
+    }
+
+    @Test
+    public void configuration_comes_last()
+        throws Exception
+    {
+        activateWithNoStoredApplications();
+
+        final ApplicationKey key = ApplicationKey.from( "myapp" );
+        deployBundle( "myapp", true );
+
+        final Application app = service.getInstalledApplication( key );
+
+        service.setConfiguration( key, ConfigBuilder.create().add( "a", "b" ).build() );
+
+        assertEquals( ConfigBuilder.create().add( "a", "b" ).build(), app.getConfig() );
+    }
+
+    @Test
+    public void getConfig_awaits_configuration()
+        throws Exception
+    {
+        activateWithNoStoredApplications();
+
+        final ApplicationKey key = ApplicationKey.from( "myapp" );
+        deployBundle( "myapp", true );
+
+        final Application app = service.getInstalledApplication( key );
+
+        CompletableFuture.runAsync( () -> service.setConfiguration( key, ConfigBuilder.create().add( "a", "b" ).build() ) );
+
+        assertEquals( ConfigBuilder.create().add( "a", "b" ).build(), app.getConfig() );
     }
 
     private class ApplicationEventMatcher
