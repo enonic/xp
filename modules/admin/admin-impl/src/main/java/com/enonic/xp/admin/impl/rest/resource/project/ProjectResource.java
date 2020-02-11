@@ -33,7 +33,7 @@ import com.enonic.xp.web.multipart.MultipartItem;
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "project")
 @Produces(MediaType.APPLICATION_JSON)
-@RolesAllowed({RoleKeys.ADMIN_ID, RoleKeys.CONTENT_MANAGER_ADMIN_ID})
+@RolesAllowed({RoleKeys.ADMIN_ID, RoleKeys.ADMIN_LOGIN_ID})
 @Component(immediate = true, property = "group=admin")
 public final class ProjectResource
     implements JaxRsComponent

@@ -30,12 +30,12 @@ public final class ProjectConstants
 
     private static final ProjectPermissions DEFAULT_PROJECT_PERMISSIONS = ProjectPermissions.create().
         addExpert( RoleKeys.CONTENT_MANAGER_EXPERT ).
-        addOwner( RoleKeys.CONTENT_MANAGER_APP ).
+        addContributor( RoleKeys.CONTENT_MANAGER_APP ).
         build();
 
     public static final Project DEFAULT_PROJECT = Project.create().
         name( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ).
-        displayName( "MyProject" ).
+        displayName( "Default" ).
         permissions( DEFAULT_PROJECT_PERMISSIONS ).
         build();
 }
