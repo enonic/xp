@@ -107,6 +107,7 @@ import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.CreateProjectParams;
+import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.query.parser.QueryParser;
@@ -171,10 +172,17 @@ public class ContentServiceImpl
     @Activate
     public void initialize()
     {
-        callAsContentAdmin( () -> this.projectService.create( CreateProjectParams.create().
-            name( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ).
-            displayName( "Default" ).
-            build() ) );
+        runAsContentAdmin( () -> {
+            if ( projectService.get( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ) == null )
+            {
+                this.projectService.create( CreateProjectParams.create().
+                    name( ProjectConstants.DEFAULT_PROJECT.getName() ).
+                    displayName( ProjectConstants.DEFAULT_PROJECT.getDisplayName() ).
+                    description( ProjectConstants.DEFAULT_PROJECT.getDescription() ).
+                    permissions( ProjectConstants.DEFAULT_PROJECT.getPermissions() ).
+                    build() );
+            }
+        } );
 
         this.contentDataSerializer = ContentDataSerializer.create().
             contentService( this ).
@@ -767,7 +775,6 @@ public class ContentServiceImpl
             execute();
     }
 
-
     @Override
     public FindContentIdsByQueryResult find( final ContentQuery query )
     {
@@ -899,7 +906,6 @@ public class ContentServiceImpl
             build().
             execute();
     }
-
 
     @Override
     public GetActiveContentVersionsResult getActiveVersions( final GetActiveContentVersionsParams params )
@@ -1056,15 +1062,14 @@ public class ContentServiceImpl
             execute();
     }
 
+    private void runAsContentAdmin( final Runnable runnable )
+    {
+        adminContext().runWith( runnable );
+    }
+
     private <T> T callAsContentAdmin( final Callable<T> callable )
     {
-        return ContextBuilder.from( ContextAccessor.current() ).
-            authInfo( AuthenticationInfo.
-                copyOf( ContextAccessor.current().getAuthInfo() ).
-                principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ).
-                build() ).
-            build().
-            callWith( callable );
+        return adminContext().callWith( callable );
     }
 
     private <T> T callAuthenticatedAsContentAdmin( final Callable<T> callable )
@@ -1079,6 +1084,15 @@ public class ContentServiceImpl
         return callAsContentAdmin( callable );
     }
 
+    private Context adminContext()
+    {
+        return ContextBuilder.from( ContextAccessor.current() ).
+            authInfo( AuthenticationInfo.
+                copyOf( ContextAccessor.current().getAuthInfo() ).
+                principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ).
+                build() ).
+            build();
+    }
 
     @Override
     public ByteSource getBinary( final ContentId contentId, final BinaryReference binaryReference )

@@ -9,19 +9,40 @@
         "name": "logo.png",
         "size": 0
       },
-      "name": "project1"
+      "name": "project1",
+      "permissions": {
+        "contributor": [],
+        "expert": [],
+        "owner": [
+          "role:system.authenticated"
+        ]
+      }
     },
     {
       "description": null,
       "displayName": "project2",
       "icon": null,
-      "name": "project2"
+      "name": "project2",
+      "permissions": {
+        "contributor": [],
+        "expert": [
+          "role:system.authenticated"
+        ],
+        "owner": []
+      }
     },
     {
       "description": null,
       "displayName": null,
       "icon": null,
-      "name": "project3"
+      "name": "project3",
+      "permissions": {
+        "contributor": [
+          "role:system.authenticated"
+        ],
+        "expert": [],
+        "owner": []
+      }
     }
   ]
 }

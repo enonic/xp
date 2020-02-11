@@ -18,8 +18,10 @@ import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
@@ -71,10 +73,12 @@ public class ProjectResourceTest
             name( "logo.png" ).
             mimeType( "image/png" ).
             label( "small" ).
-            build() );
+            build(), ProjectPermissions.create().addOwner( RoleKeys.AUTHENTICATED ).build() );
 
-        final Project project2 = createProject( "project2", "project2", null, null );
-        final Project project3 = createProject( "project3", null, null, null );
+        final Project project2 =
+            createProject( "project2", "project2", null, null, ProjectPermissions.create().addExpert( RoleKeys.AUTHENTICATED ).build() );
+        final Project project3 =
+            createProject( "project3", null, null, null, ProjectPermissions.create().addContributor( RoleKeys.AUTHENTICATED ).build() );
 
         Mockito.when( projectService.list() ).thenReturn( Projects.create().addAll( List.of( project1, project2, project3 ) ).build() );
 
@@ -171,11 +175,18 @@ public class ProjectResourceTest
 
     private Project createProject( final String name, final String displayName, final String description, final Attachment icon )
     {
+        return createProject( name, displayName, description, icon, null );
+    }
+
+    private Project createProject( final String name, final String displayName, final String description, final Attachment icon,
+                                   final ProjectPermissions projectPermissions )
+    {
         return Project.create().
             name( ProjectName.from( name ) ).
             displayName( displayName ).
             description( description ).
             icon( icon ).
+            permissions( projectPermissions ).
             build();
     }
 

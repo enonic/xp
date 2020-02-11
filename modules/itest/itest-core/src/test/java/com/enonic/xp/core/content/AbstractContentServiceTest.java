@@ -52,6 +52,7 @@ import com.enonic.xp.core.impl.content.ContentInitializer;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
+import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.site.SiteServiceImpl;
@@ -302,6 +303,10 @@ public class AbstractContentServiceTest
 
         final ContentAuditLogSupportImpl contentAuditLogSupport =
             new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutorImpl(), auditLogService );
+
+        final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
+        projectAccessContextManager.setRepositoryService( repositoryService );
+        projectService.setProjectPermissionsContextManager( projectAccessContextManager );
 
         contentService.setNodeService( nodeService );
         contentService.setEventPublisher( eventPublisher );

@@ -1,6 +1,7 @@
 package com.enonic.xp.project;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
@@ -32,8 +33,9 @@ public final class Projects
         }
 
         return create().addAll( repositories.stream().
-            filter( repository -> repository.getData().hasProperty( "com-enonic-cms" ) ).
+            filter( repository -> repository.getData() != null ).
             map( Project::from ).
+            filter( Objects::nonNull ).
             collect( Collectors.toSet() ) ).
             build();
     }
