@@ -31,7 +31,7 @@ public final class Project
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.icon = builder.icon;
-        this.permissions = builder.permissions;
+        this.permissions = builder.permissions.build();
     }
 
     public static Builder create()
@@ -115,7 +115,7 @@ public final class Project
                 contributorKeys.forEach( projectPermissions::addContributor );
             }
 
-            project.permissions( projectPermissions.build() );
+            project.addPermissions( projectPermissions.build() );
         }
     }
 
@@ -177,7 +177,7 @@ public final class Project
 
         private Attachment icon;
 
-        private ProjectPermissions permissions;
+        private ProjectPermissions.Builder permissions = ProjectPermissions.create();
 
         private Builder()
         {
@@ -207,9 +207,14 @@ public final class Project
             return this;
         }
 
-        public Builder permissions( final ProjectPermissions projectRoles )
+        public Builder addPermissions( final ProjectPermissions projectPermissions )
         {
-            this.permissions = projectRoles;
+            if ( projectPermissions != null )
+            {
+                projectPermissions.getOwner().forEach( this.permissions::addOwner );
+                projectPermissions.getExpert().forEach( this.permissions::addExpert );
+                projectPermissions.getContributor().forEach( this.permissions::addContributor );
+            }
             return this;
         }
 

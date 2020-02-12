@@ -36,6 +36,6 @@ public final class ProjectConstants
     public static final Project DEFAULT_PROJECT = Project.create().
         name( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ).
         displayName( "Default" ).
-        permissions( DEFAULT_PROJECT_PERMISSIONS ).
+        addPermissions( DEFAULT_PROJECT_PERMISSIONS ).
         build();
 }

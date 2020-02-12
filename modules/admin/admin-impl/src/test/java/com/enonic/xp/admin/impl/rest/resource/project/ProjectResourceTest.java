@@ -186,7 +186,7 @@ public class ProjectResourceTest
             displayName( displayName ).
             description( description ).
             icon( icon ).
-            permissions( projectPermissions ).
+            addPermissions( projectPermissions ).
             build();
     }
 

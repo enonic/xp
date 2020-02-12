@@ -8,5 +8,9 @@
     "size": 0
   },
   "name": "project1",
-  "permissions": null
+  "permissions": {
+    "contributor": [],
+    "expert": [],
+    "owner": []
+  }
 }
