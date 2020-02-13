@@ -129,13 +129,17 @@ public final class ProjectResource
     private ProjectPermissions getPermissionsFromForm( final MultipartForm form )
         throws IOException
     {
+        final ProjectPermissions.Builder builder = new ProjectPermissions.Builder();
         final String permissionsAsString = form.getAsString( "permissions" );
+        if ( permissionsAsString == null )
+        {
+            return builder.build();
+        }
+
         final ObjectMapper permissionsMapper = new ObjectMapper();
         Map<String, List<String>> map = permissionsMapper.readValue( permissionsAsString, new TypeReference<Map<String, List<String>>>()
         {
         } );
-
-        final ProjectPermissions.Builder builder = new ProjectPermissions.Builder();
 
         if ( map.containsKey( PROJECT_ACCESS_LEVEL_OWNER_PROPERTY ) )
         {
