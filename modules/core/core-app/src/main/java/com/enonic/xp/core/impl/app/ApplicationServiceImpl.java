@@ -49,16 +49,16 @@ public final class ApplicationServiceImpl
 
     private final ConcurrentMap<ApplicationKey, Boolean> localApplicationSet = new ConcurrentHashMap<>();
 
-    private ApplicationRegistry registry;
+    private final ApplicationRegistry registry;
 
-    private BundleContext context;
+    private final BundleContext context;
 
     private ApplicationRepoService repoService;
 
     private EventPublisher eventPublisher;
 
     @Activate
-    public void activate( final BundleContext context )
+    public ApplicationServiceImpl( final BundleContext context )
     {
         this.context = context;
         this.registry = new ApplicationRegistry( context );
