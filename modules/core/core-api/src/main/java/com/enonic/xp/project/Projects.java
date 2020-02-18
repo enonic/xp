@@ -33,7 +33,6 @@ public final class Projects
         }
 
         return create().addAll( repositories.stream().
-            filter( repository -> repository.getData() != null ).
             map( Project::from ).
             filter( Objects::nonNull ).
             collect( Collectors.toSet() ) ).
