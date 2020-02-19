@@ -1,5 +1,5 @@
 ext {
-    slf4jVersion = '1.7.29'
+    slf4jVersion = '1.7.30' // When updated also change version in system.properties 'internal.osgi.system.packages'
     felixVersion = '6.0.3'
     jettyVersion = '9.4.24.v20191120'
     jacksonVersion = '2.9.10'
