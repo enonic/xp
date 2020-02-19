@@ -3,7 +3,7 @@ ext {
     felixVersion = '6.0.3'
     jettyVersion = '9.4.24.v20191120'
     jacksonVersion = '2.9.10'
-    jacksonDatabindVersion = '2.9.10.1'
+    jacksonDatabindVersion = '2.9.10.2' //often slightly different from 'jacksonVersion' due to micro-patches
     junitJupiterVersion = '5.5.2'
     dropwizardMetricsVersion = '4.1.2'
     commonsLangVersion = '2.6'
