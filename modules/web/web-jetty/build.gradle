@@ -9,7 +9,10 @@ dependencies {
     compile "org.eclipse.jetty:jetty-jmx:${jettyVersion}"
     compile "org.eclipse.jetty.websocket:websocket-server:${jettyVersion}"
     compile "org.eclipse.jetty.websocket:websocket-servlet:${jettyVersion}"
-    compile "org.eclipse.jetty.websocket:javax-websocket-server-impl:${jettyVersion}"
+    compile ("org.eclipse.jetty.websocket:javax-websocket-server-impl:${jettyVersion}") {
+        exclude group: 'javax.annotation'
+    }
+    compile "jakarta.annotation:jakarta.annotation-api:${jakartaAnnotationApiVersion}"
     implementation "io.dropwizard.metrics:metrics-jetty9:${dropwizardMetricsVersion}"
     testImplementation project( path: ':core:core-api', configuration: 'testOutput' )
 }
