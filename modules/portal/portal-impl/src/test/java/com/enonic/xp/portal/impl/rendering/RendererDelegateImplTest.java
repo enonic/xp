@@ -4,52 +4,53 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
-public class RendererFactoryImplTest
+public class RendererDelegateImplTest
 {
     @Test
     public void given_Renderable_matching_only_on_superType_when_getRenderer_then_Renderer_for_superType_is_returned()
     {
-        RendererFactoryImpl factory = new RendererFactoryImpl();
-        factory.addRenderer( createRenderer( Content.class ) );
+        RendererDelegateImpl factory = new RendererDelegateImpl( mock( ContentService.class ) );
+        final PortalResponse response = PortalResponse.create().build();
+        factory.addRenderer( createRenderer( Content.class, response ) );
 
         // exercise
-        Renderer renderer = factory.getRenderer( createPageTemplate() );
+        final PortalResponse renderResponse = factory.render( createPageTemplate(), null );
 
         // verify
-        assertNotNull( renderer );
-        assertEquals( Content.class, renderer.getType() );
+        assertSame( response, renderResponse );
     }
 
     @Test
     public void given_Renderable_having_not_matching_Renderer_when_getRenderer_then_Renderer_for_that_type_is_returned()
     {
-        RendererFactoryImpl factory = new RendererFactoryImpl();
-        factory.addRenderer( createRenderer( Content.class ) );
+        RendererDelegateImpl factory = new RendererDelegateImpl( mock( ContentService.class ) );
+        final PortalResponse response = PortalResponse.create().build();
+        factory.addRenderer( createRenderer( Content.class, response ) );
 
         // exercise
-        Renderer renderer = factory.getRenderer( createContent() );
+        final PortalResponse renderResponse = factory.render( createContent(), null );
 
         // verify
-        assertNotNull( renderer );
-        assertEquals( Content.class, renderer.getType() );
+        assertSame( response, renderResponse );
     }
 
     @Test
     public void given_Renderable_matching_no_given_type_when_getRenderer_then_Renderer_for_that_type_is_returned()
     {
-        RendererFactoryImpl factory = new RendererFactoryImpl();
-        factory.addRenderer( createRenderer( RendererFactoryImplTest.class ) );
+        RendererDelegateImpl factory = new RendererDelegateImpl( mock( ContentService.class ) );
+        factory.addRenderer( createRenderer( RendererDelegateImplTest.class, null ) );
 
         // exercise
-        assertThrows(RendererNotFoundException.class, () -> factory.getRenderer( createContent() ));
+        assertThrows( RendererNotFoundException.class, () -> factory.render( createContent(), null ) );
     }
 
     private PageTemplate createPageTemplate()
@@ -62,7 +63,7 @@ public class RendererFactoryImplTest
         return Content.create().name( "my-content" ).parentPath( ContentPath.ROOT ).build();
     }
 
-    private Renderer createRenderer( final Class type )
+    private Renderer createRenderer( final Class type, final PortalResponse response )
     {
         return new Renderer()
         {
@@ -75,7 +76,7 @@ public class RendererFactoryImplTest
             @Override
             public PortalResponse render( final Object component, final PortalRequest portalRequest )
             {
-                return null;
+                return response;
             }
         };
     }

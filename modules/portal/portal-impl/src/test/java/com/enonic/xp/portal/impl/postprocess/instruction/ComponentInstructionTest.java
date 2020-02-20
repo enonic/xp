@@ -14,8 +14,7 @@ import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.impl.rendering.Renderer;
-import com.enonic.xp.portal.impl.rendering.RendererFactory;
+import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentService;
 import com.enonic.xp.region.PartComponent;
@@ -25,6 +24,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -36,10 +36,10 @@ public class ComponentInstructionTest
     public void testInstruction()
         throws Exception
     {
-        RendererFactory rendererFactory = newRendererFactory( "<b>part content</b>" );
+        RendererDelegate rendererDelegate = newRendererFactory( "<b>part content</b>" );
         ComponentService componentService = Mockito.mock( ComponentService.class );
         ComponentInstruction instruction = new ComponentInstruction();
-        instruction.setRendererFactory( rendererFactory );
+        instruction.setRendererDelegate( rendererDelegate );
         instruction.setComponentService( componentService );
 
         PortalRequest portalRequest = new PortalRequest();
@@ -56,13 +56,13 @@ public class ComponentInstructionTest
     public void testInstructionRenderByName()
         throws Exception
     {
-        RendererFactory rendererFactory = newRendererFactory( "<b>part content</b>" );
+        RendererDelegate rendererFactory = newRendererFactory( "<b>part content</b>" );
         ComponentService componentService = Mockito.mock( ComponentService.class );
 
         Component component = createPartComponent();
         doReturn( component ).when( componentService ).getByKey( isA( DescriptorKey.class ) );
         ComponentInstruction instruction = new ComponentInstruction();
-        instruction.setRendererFactory( rendererFactory );
+        instruction.setRendererDelegate( rendererFactory );
         instruction.setComponentService( componentService );
 
         PortalRequest portalRequest = new PortalRequest();
@@ -81,13 +81,13 @@ public class ComponentInstructionTest
     public void testInstructionRenderFragment()
         throws Exception
     {
-        RendererFactory rendererFactory = newRendererFactory( "<b>part content</b>" );
+        RendererDelegate rendererDelegate = newRendererFactory( "<b>part content</b>" );
         ComponentService componentService = Mockito.mock( ComponentService.class );
 
         Component component = createPartComponent();
         doReturn( component ).when( componentService ).getByKey( isA( DescriptorKey.class ) );
         ComponentInstruction instruction = new ComponentInstruction();
-        instruction.setRendererFactory( rendererFactory );
+        instruction.setRendererDelegate( rendererDelegate );
         instruction.setComponentService( componentService );
 
         PortalRequest portalRequest = new PortalRequest();
@@ -194,25 +194,11 @@ public class ComponentInstructionTest
             build();
     }
 
-    private RendererFactory newRendererFactory( final String renderResult )
+    private RendererDelegate newRendererFactory( final String renderResult )
     {
-        RendererFactory rendererFactory = mock( RendererFactory.class );
-        Renderer<Component> renderer = new Renderer<>()
-        {
-            @Override
-            public Class<Component> getType()
-            {
-                return Component.class;
-            }
+        RendererDelegate rendererDelegate = mock( RendererDelegate.class );
 
-            @Override
-            public PortalResponse render( final Component component, final PortalRequest portalRequest )
-            {
-                return PortalResponse.create().body( renderResult ).build();
-            }
-        };
-
-        when( rendererFactory.getRenderer( isA( Component.class ) ) ).thenReturn( renderer );
-        return rendererFactory;
+        when( rendererDelegate.render( any(), any() ) ).thenReturn( PortalResponse.create().body( renderResult ).build() );
+        return rendererDelegate;
     }
 }

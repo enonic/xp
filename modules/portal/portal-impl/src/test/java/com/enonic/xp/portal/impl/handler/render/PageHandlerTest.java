@@ -39,7 +39,7 @@ public class PageHandlerTest
         this.handler.setContentService( this.contentService );
         this.handler.setPageDescriptorService( this.pageDescriptorService );
         this.handler.setPageTemplateService( this.pageTemplateService );
-        this.handler.setRendererFactory( this.rendererFactory );
+        this.handler.setRendererDelegate( this.rendererDelegate );
         this.handler.setPortalUrlService( this.portalUrlService );
 
         this.request.setMethod( HttpMethod.GET );
