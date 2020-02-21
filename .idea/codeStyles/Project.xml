@@ -5,7 +5,7 @@
     <option name="BRACE_STYLE" value="2" />
     <option name="CLASS_BRACE_STYLE" value="2" />
     <option name="METHOD_BRACE_STYLE" value="2" />
-    <JSCodeStyleSettings>
+    <JSCodeStyleSettings version="0">
       <option name="USE_DOUBLE_QUOTES" value="false" />
     </JSCodeStyleSettings>
     <JavaCodeStyleSettings>
@@ -44,7 +44,7 @@
         </value>
       </option>
     </JavaCodeStyleSettings>
-    <TypeScriptCodeStyleSettings>
+    <TypeScriptCodeStyleSettings version="0">
       <option name="USE_DOUBLE_QUOTES" value="false" />
     </TypeScriptCodeStyleSettings>
     <XML>
