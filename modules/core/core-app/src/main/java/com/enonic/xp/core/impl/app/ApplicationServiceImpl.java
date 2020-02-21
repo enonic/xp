@@ -31,6 +31,7 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.core.impl.app.event.ApplicationEvents;
 import com.enonic.xp.data.PropertyTree;
@@ -42,25 +43,25 @@ import com.enonic.xp.util.Exceptions;
 
 @Component
 public final class ApplicationServiceImpl
-    implements ApplicationService
+    implements ApplicationService, ApplicationConfigService
 {
     private final static Logger LOG = LoggerFactory.getLogger( ApplicationServiceImpl.class );
 
     private final ConcurrentMap<ApplicationKey, Boolean> localApplicationSet = new ConcurrentHashMap<>();
 
-    private final ApplicationRegistry registry = new ApplicationRegistry();
+    private final ApplicationRegistry registry;
 
-    private BundleContext context;
+    private final BundleContext context;
 
     private ApplicationRepoService repoService;
 
     private EventPublisher eventPublisher;
 
     @Activate
-    public void activate( final BundleContext context )
+    public ApplicationServiceImpl( final BundleContext context )
     {
         this.context = context;
-        this.registry.activate( context );
+        this.registry = new ApplicationRegistry( context );
     }
 
     @Override
@@ -431,7 +432,7 @@ public final class ApplicationServiceImpl
             throw new ApplicationInstallException( "Cannot uninstall bundle " + application.getKey(), e );
         }
 
-        this.registry.invalidate( application.getKey() );
+        this.registry.invalidate( application.getKey(), ApplicationInvalidationLevel.FULL );
 
         final boolean localApp = this.doIsLocalApplication( application.getKey() );
 
@@ -560,7 +561,7 @@ public final class ApplicationServiceImpl
         {
             uninstallBundle( applicationKey );
 
-            this.registry.invalidate( applicationKey );
+            this.registry.invalidate( applicationKey, ApplicationInvalidationLevel.FULL );
 
             final Bundle bundle = doInstallBundle( source, applicationKey );
 
@@ -621,13 +622,19 @@ public final class ApplicationServiceImpl
     @Override
     public void invalidate( final ApplicationKey key )
     {
-        this.registry.invalidate( key );
+        this.registry.invalidate( key, ApplicationInvalidationLevel.FULL );
     }
 
     @Override
     public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
     {
         this.registry.invalidate( key, level );
+    }
+
+    @Override
+    public void setConfiguration( final ApplicationKey key, final Configuration configuration )
+    {
+        registry.setConfiguration( key, configuration );
     }
 
     @Reference

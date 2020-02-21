@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.app;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.CompletableFuture;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
@@ -27,7 +29,6 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.Nodes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -49,7 +50,7 @@ public class ApplicationServiceImplTest
     @BeforeEach
     public void initService()
     {
-        this.service = new ApplicationServiceImpl();
+        this.service = new ApplicationServiceImpl( getBundleContext() );
         this.service.setRepoService( this.repoService );
         this.eventPublisher = Mockito.mock( EventPublisher.class );
         this.service.setEventPublisher( this.eventPublisher );
@@ -59,8 +60,6 @@ public class ApplicationServiceImplTest
     public void get_application()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         final Bundle bundle = deployBundle( "app1", true );
 
         final Application result = this.service.getInstalledApplication( ApplicationKey.from( "app1" ) );
@@ -71,7 +70,6 @@ public class ApplicationServiceImplTest
     @Test
     public void get_application_not_found()
     {
-        activateWithNoStoredApplications();
         assertNull( this.service.getInstalledApplication( ApplicationKey.from( "app1" ) ) );
     }
 
@@ -79,8 +77,6 @@ public class ApplicationServiceImplTest
     public void get_all_applications()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         deployBundle( "app1", true );
         deployBundle( "app2", true );
         deployBundle( "app3", false );
@@ -94,8 +90,6 @@ public class ApplicationServiceImplTest
     public void get_application_keys()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         deployBundle( "app1", true );
         deployBundle( "app2", true );
         deployBundle( "app3", false );
@@ -111,8 +105,6 @@ public class ApplicationServiceImplTest
     public void start_application()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         final Bundle bundle = deployBundle( "app1", true );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
@@ -124,8 +116,6 @@ public class ApplicationServiceImplTest
     public void start_app_atleast_version()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         // At a time of writing Felix version is 6.0.1. All greater versions should work as well.
         final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "6.0" ) );
 
@@ -138,8 +128,6 @@ public class ApplicationServiceImplTest
     public void start_app_version_range()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         // At a time of writing Felix version is 6.0.1. Range covers all future versions as well.
         final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "(6.0,9999.0]" ) );
 
@@ -152,34 +140,30 @@ public class ApplicationServiceImplTest
     public void start_app_invalid_version_range()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         // Version upper bound is too low for current and future Felix version (at a time of writing 6.0.1)
         final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "[5.1,5.2)" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
-        assertThrows(ApplicationInvalidVersionException.class, () -> this.service.startApplication( ApplicationKey.from( "app1" ), false ));
+        assertThrows( ApplicationInvalidVersionException.class,
+                      () -> this.service.startApplication( ApplicationKey.from( "app1" ), false ) );
     }
 
     @Test
     public void start_ex()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         // There is no version 0.0 of Felix.
         final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "[0.0,0.0]" ) );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
-        assertThrows(ApplicationInvalidVersionException.class, () -> this.service.startApplication( ApplicationKey.from( "app1" ), false ));
+        assertThrows( ApplicationInvalidVersionException.class,
+                      () -> this.service.startApplication( ApplicationKey.from( "app1" ), false ) );
     }
 
     @Test
     public void stop_application()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         final Bundle bundle = deployBundle( "app1", true );
         bundle.start();
 
@@ -192,8 +176,6 @@ public class ApplicationServiceImplTest
     public void install_global()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         final Node applicationNode = Node.create().
             id( NodeId.from( "myNode" ) ).
             parentPath( NodePath.ROOT ).
@@ -222,8 +204,6 @@ public class ApplicationServiceImplTest
     public void install_global_invalid()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         final Node applicationNode = Node.create().
             id( NodeId.from( "myNode" ) ).
             parentPath( NodePath.ROOT ).
@@ -237,15 +217,13 @@ public class ApplicationServiceImplTest
 
         final ByteSource byteSource = createBundleSource( bundleName, false );
 
-        assertThrows(GlobalApplicationInstallException.class, () -> this.service.installGlobalApplication( byteSource, bundleName ));
+        assertThrows( GlobalApplicationInstallException.class, () -> this.service.installGlobalApplication( byteSource, bundleName ) );
     }
 
     @Test
     public void install_local()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         final Node applicationNode = Node.create().
             id( NodeId.from( "myNode" ) ).
             parentPath( NodePath.ROOT ).
@@ -273,8 +251,6 @@ public class ApplicationServiceImplTest
     public void install_local_invalid()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         final Node applicationNode = Node.create().
             id( NodeId.from( "myNode" ) ).
             parentPath( NodePath.ROOT ).
@@ -288,15 +264,13 @@ public class ApplicationServiceImplTest
 
         final ByteSource source = createBundleSource( bundleName, false );
 
-        assertThrows(LocalApplicationInstallException.class, () -> this.service.installLocalApplication( source, bundleName ));
+        assertThrows( LocalApplicationInstallException.class, () -> this.service.installLocalApplication( source, bundleName ) );
     }
 
     @Test
     public void update_installed_application()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         final Node node = Node.create().
             id( NodeId.from( "myNode" ) ).
             parentPath( NodePath.ROOT ).
@@ -331,8 +305,6 @@ public class ApplicationServiceImplTest
     public void update_installed_local_application()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         final Node node = Node.create().
             id( NodeId.from( "myNode" ) ).
             parentPath( NodePath.ROOT ).
@@ -369,15 +341,13 @@ public class ApplicationServiceImplTest
     public void install_stored_application_not_found()
         throws Exception
     {
-        assertThrows(ApplicationInstallException.class, () -> this.service.installStoredApplication( NodeId.from( "dummy" ) ));
+        assertThrows( ApplicationInstallException.class, () -> this.service.installStoredApplication( NodeId.from( "dummy" ) ) );
     }
 
     @Test
     public void install_stored_application()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         final Node node = Node.create().
             id( NodeId.from( "myNodeId" ) ).
             name( "myBundle" ).
@@ -404,8 +374,6 @@ public class ApplicationServiceImplTest
     public void uninstall_global_application()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         final Node node = Node.create().
             id( NodeId.from( "myNodeId" ) ).
             name( "myBundle" ).
@@ -431,8 +399,6 @@ public class ApplicationServiceImplTest
     public void uninstall_local_application()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         final Node applicationNode = Node.create().
             id( NodeId.from( "myNode" ) ).
             parentPath( NodePath.ROOT ).
@@ -458,8 +424,6 @@ public class ApplicationServiceImplTest
     public void install_local_overriding_global()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         final Node node = Node.create().
             id( NodeId.from( "myNode" ) ).
             parentPath( NodePath.ROOT ).
@@ -498,8 +462,6 @@ public class ApplicationServiceImplTest
     public void uninstall_local_reinstall_global()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         PropertyTree data = new PropertyTree();
         data.setBoolean( ApplicationPropertyNames.STARTED, true );
 
@@ -552,8 +514,6 @@ public class ApplicationServiceImplTest
     public void install_global_when_local_installed()
         throws Exception
     {
-        activateWithNoStoredApplications();
-
         final Node applicationNode = Node.create().
             id( NodeId.from( "myNode" ) ).
             parentPath( NodePath.ROOT ).
@@ -578,14 +538,6 @@ public class ApplicationServiceImplTest
         assertTrue( this.service.isLocalApplication( application.getKey() ) );
 
         verifyInstalledEvents( applicationNode, Mockito.times( 1 ) );
-    }
-
-    private void activateWithNoStoredApplications()
-    {
-        Mockito.when( this.repoService.getApplications() ).
-            thenReturn( Nodes.empty() );
-
-        this.service.activate( getBundleContext() );
     }
 
     private void verifyInstalledEvents( final Node node, final VerificationMode never )
@@ -646,27 +598,71 @@ public class ApplicationServiceImplTest
 
     @Test
     public void testInvalidate()
+        throws Exception
     {
-        activateWithNoStoredApplications();
-
         final ApplicationKey key = ApplicationKey.from( "myapp" );
+        deployBundle( "myapp", true );
+
+        this.service.getInstalledApplication( key );
 
         final ApplicationInvalidator invalidator1 = Mockito.mock( ApplicationInvalidator.class );
         final ApplicationInvalidator invalidator2 = Mockito.mock( ApplicationInvalidator.class );
 
         this.service.addInvalidator( invalidator1 );
         this.service.addInvalidator( invalidator2 );
-        this.service.invalidate( key );
+        this.service.invalidate( key, ApplicationInvalidationLevel.FULL );
 
         Mockito.verify( invalidator1, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
         Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
 
         this.service.removeInvalidator( invalidator1 );
         this.service.removeInvalidator( invalidator2 );
-        this.service.invalidate( key );
+        this.service.invalidate( key, ApplicationInvalidationLevel.FULL );
 
         Mockito.verify( invalidator1, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
         Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
+    }
+
+    @Test
+    public void configuration_comes_first()
+        throws Exception
+    {
+        final ApplicationKey key = ApplicationKey.from( "myapp" );
+        deployBundle( "myapp", true );
+
+        service.setConfiguration( key, ConfigBuilder.create().add( "a", "b" ).build() );
+
+        final Application app = service.getInstalledApplication( key );
+
+        assertEquals( ConfigBuilder.create().add( "a", "b" ).build(), app.getConfig() );
+    }
+
+    @Test
+    public void configuration_comes_last()
+        throws Exception
+    {
+        final ApplicationKey key = ApplicationKey.from( "myapp" );
+        deployBundle( "myapp", true );
+
+        final Application app = service.getInstalledApplication( key );
+
+        service.setConfiguration( key, ConfigBuilder.create().add( "a", "b" ).build() );
+
+        assertEquals( ConfigBuilder.create().add( "a", "b" ).build(), app.getConfig() );
+    }
+
+    @Test
+    public void getConfig_awaits_configuration()
+        throws Exception
+    {
+        final ApplicationKey key = ApplicationKey.from( "myapp" );
+        deployBundle( "myapp", true );
+
+        final Application app = service.getInstalledApplication( key );
+
+        CompletableFuture.runAsync( () -> service.setConfiguration( key, ConfigBuilder.create().add( "a", "b" ).build() ) );
+
+        assertEquals( ConfigBuilder.create().add( "a", "b" ).build(), app.getConfig() );
     }
 
     private static class ApplicationEventMatcher

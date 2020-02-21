@@ -12,13 +12,13 @@ import org.osgi.framework.Constants;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationListener;
-import com.enonic.xp.config.ConfigBuilder;
-import com.enonic.xp.core.impl.app.config.ApplicationConfigMap;
+import com.enonic.xp.app.ApplicationService;
 
 import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class ApplicationListenerHubTest
     extends BundleBasedTest
@@ -43,7 +43,11 @@ class ApplicationListenerHubTest
     {
         final Phaser phaser = new Phaser( 2 );
 
-        ApplicationListenerHub dispatcher = new ApplicationListenerHub( executor );
+        ApplicationService applicationService = mock( ApplicationService.class );
+        when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).
+            thenReturn( mock( Application.class ) );
+
+        ApplicationListenerHub dispatcher = new ApplicationListenerHub( executor, applicationService );
         dispatcher.activate( getBundleContext() );
 
         final ApplicationListener listener = mock( ApplicationListener.class );
@@ -84,7 +88,6 @@ class ApplicationListenerHubTest
     private Bundle deployBundle()
         throws Exception
     {
-        ApplicationConfigMap.INSTANCE.put( ApplicationKey.from( "myapplication" ), ConfigBuilder.create().build() );
         final InputStream in = newBundle( "myapplication", true ).
             set( Constants.BUNDLE_NAME, "myapplication" ).
             set( ApplicationHelper.X_APPLICATION_URL, "http://enonic.com/path/to/application" ).
