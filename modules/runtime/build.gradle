@@ -20,6 +20,7 @@ ext {
 addBundle( 'com.sun.activation:jakarta.activation:1.2.1', 4 )
 addBundle( "com.sun.mail:jakarta.mail:${jakartaMailVersion}", 4 )
 addBundle( "jakarta.annotation:jakarta.annotation-api:${jakartaAnnotationApiVersion}", 4 )
+addBundle( "jakarta.validation:jakarta.validation-api:2.0.2", 4 )
 
 addBundle( 'javax.xml.bind:jaxb-api:2.2.11', 4 )
 addBundle( 'com.sun.xml.bind:jaxb-core:2.2.11', 4 )
