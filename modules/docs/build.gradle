@@ -13,9 +13,7 @@ ext {
 
 def javadocProjects = leafProjects.findAll { project -> project.name.endsWith( '-api' ) }
 
-task javadocAll( type: Javadoc ) {
-    source javadocProjects.collect { project -> project.sourceSets.main.allJava }
-    classpath = files( javadocProjects.collect { project -> project.sourceSets.main.compileClasspath } )
+task javadocAll( type: Javadoc, group: 'documentation' ) {
     failOnError = false
     title = "Enonic XP API ${version}"
     verbose = false
@@ -25,6 +23,15 @@ task javadocAll( type: Javadoc ) {
         links 'http://www.javadoc.io/doc/com.google.guava/guava/26.0-jre'
         quiet()
         encoding( 'UTF-8' )
+    }
+
+    javadocProjects.each { project ->
+        project.tasks.withType(Javadoc).each { javadocTask ->
+            source += javadocTask.source
+            classpath += javadocTask.classpath
+            excludes += javadocTask.excludes
+            includes += javadocTask.includes
+        }
     }
 }
 
