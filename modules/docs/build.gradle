@@ -1,9 +1,9 @@
 apply plugin: 'java-base'
-apply plugin: 'com.moowork.node'
+apply plugin: 'com.github.node-gradle.node'
 
 node {
     download = true
-    version = '8.12.0'
+    version = '10.19.0'
 }
 
 ext {
@@ -30,7 +30,7 @@ task javadocAll( type: Javadoc ) {
 
 task javadocZip( type: Zip ) {
     from javadocAll
-    classifier = 'javadoc'
+    archiveClassifier.set( 'javadoc' )
 }
 
 task gruntAll(type: NpmTask, dependsOn: 'npmInstall') {
@@ -38,9 +38,9 @@ task gruntAll(type: NpmTask, dependsOn: 'npmInstall') {
     args = ['run', 'jsdoc']
 }
 
-task libdocZip( type: Zip ) {
-    from gruntAll
-    classifier = 'libdoc'
+task libdocZip( type: Zip, dependsOn: 'gruntAll' ) {
+    from jsDocOutput
+    archiveClassifier.set( 'libdoc' )
 }
 
 publishing.publications {
