@@ -9,7 +9,6 @@ dependencies {
         exclude group: 'org.jboss.spec.javax.ws.rs'
         exclude group: 'org.apache.httpcomponents'
         exclude group: 'com.github.stephenc.jcip'
-        exclude group: 'javax.validation'
     }
 
     testCompile project( ':jaxrs:jaxrs-impl' )
