@@ -1,4 +1,4 @@
-/* global require, Java, testInstance*/
+/* global Java, testInstance*/
 const repoLib = require('/lib/xp/repo.js');
 
 

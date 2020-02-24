@@ -1,7 +1,6 @@
-/* global require, Java, testInstance*/
+/* global Java, testInstance*/
 const repoLib = require('/lib/xp/repo.js');
 const valueLib = require('/lib/xp/value');
-const assert = require('/lib/xp/testing.js');
 
 const stream = testInstance.createByteSource('Hello World');
 
