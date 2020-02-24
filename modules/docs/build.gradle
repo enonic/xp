@@ -1,5 +1,5 @@
 apply plugin: 'java-base'
-apply plugin: 'com.moowork.grunt'
+apply plugin: 'com.moowork.node'
 
 node {
     download = true
@@ -33,12 +33,9 @@ task javadocZip( type: Zip ) {
     classifier = 'javadoc'
 }
 
-task gruntAll( type: GruntTask, dependsOn: npmInstall ) {
+task gruntAll(type: NpmTask, dependsOn: 'npmInstall') {
     description = 'Build JSDoc for libraries.'
-    inputs.files fileTree( dir: "${projectDir}/../lib", include: '**/lib/xp/*.js' )
-    inputs.dir "${projectDir}/src/jsdoc"
-    outputs.dir jsDocOutput
-    args = ['all']
+    args = ['run', 'jsdoc']
 }
 
 task libdocZip( type: Zip ) {
