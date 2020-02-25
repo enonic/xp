@@ -62,7 +62,7 @@ public class ElasticsearchActivatorTest
                     try
                     {
                         local1 = InetAddress.getByName( "localhost" );
-                        local2 = InetAddress.getByName( "192.168.0.1" );
+                        local2 = InetAddress.getByName( "127.1.0.1" );
                     }
                     catch ( UnknownHostException e )
                     {
