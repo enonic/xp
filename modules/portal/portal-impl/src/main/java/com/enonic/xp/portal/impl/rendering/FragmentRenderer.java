@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.rendering;
 
 import java.text.MessageFormat;
 
-import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,9 +19,7 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.FragmentComponent;
 
-@org.osgi.service.component.annotations.Component(immediate = true, service = Renderer.class)
 public final class FragmentRenderer
-    implements Renderer<FragmentComponent>
 {
     private static final String EMPTY_FRAGMENT_HTML = "<div " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE + "=\"{0}\"></div>";
 
@@ -36,17 +33,16 @@ public final class FragmentRenderer
 
     private ContentService contentService;
 
-    private RendererFactory rendererFactory;
+    private RendererDelegate rendererDelegate;
 
     private FragmentPageResolver fragmentPageResolver = new FragmentPageResolver();
 
-    @Override
-    public Class<FragmentComponent> getType()
+    public FragmentRenderer( final ContentService contentService, final RendererDelegate rendererDelegate )
     {
-        return FragmentComponent.class;
+        this.contentService = contentService;
+        this.rendererDelegate = rendererDelegate;
     }
 
-    @Override
     public PortalResponse render( final FragmentComponent component, final PortalRequest portalRequest )
     {
         final RenderMode renderMode = getRenderingMode( portalRequest );
@@ -73,22 +69,17 @@ public final class FragmentRenderer
             }
         }
 
-        final Renderer<Component> renderer = this.rendererFactory.getRenderer( fragmentComponent );
-        if ( renderer == null )
-        {
-            throw new RenderException( "No Renderer found for: " + fragmentComponent.getClass().getSimpleName() );
-        }
-
         // replace resolved fragment in current PortalRequest Page
         final Page sourcePage = portalRequest.getContent().getPage();
         final Page page = fragmentPageResolver.inlineFragmentInPage( sourcePage, fragmentComponent, component.getPath() );
         final Content content = Content.create( portalRequest.getContent() ).page( page ).build();
         portalRequest.setContent( content );
 
-        final PortalResponse fragmentResponse = renderer.render( fragmentComponent, portalRequest );
+        final PortalResponse fragmentResponse = rendererDelegate.render( fragmentComponent, portalRequest );
         if ( renderMode == RenderMode.EDIT && fragmentResponse != null )
         {
-            if ( !( fragmentResponse.getBody() instanceof String ) || !fragmentResponse.getContentType().is( MediaType.parse( "text/html" ) ) )
+            if ( !( fragmentResponse.getBody() instanceof String ) ||
+                !fragmentResponse.getContentType().is( MediaType.parse( "text/html" ) ) )
             {
                 return fragmentResponse;
             }
@@ -97,7 +88,7 @@ public final class FragmentRenderer
 
             final String noMethodErrorMessage = "No method provided to handle request";
 
-            if( body.contains( noMethodErrorMessage ) )
+            if ( body.contains( noMethodErrorMessage ) )
             {
                 return renderErrorComponentPlaceHolder( component, noMethodErrorMessage );
             }
@@ -155,17 +146,5 @@ public final class FragmentRenderer
     private RenderMode getRenderingMode( final PortalRequest portalRequest )
     {
         return portalRequest == null ? RenderMode.LIVE : portalRequest.getMode();
-    }
-
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
-    }
-
-    @Reference
-    public void setRendererFactory( final RendererFactory rendererFactory )
-    {
-        this.rendererFactory = rendererFactory;
     }
 }
