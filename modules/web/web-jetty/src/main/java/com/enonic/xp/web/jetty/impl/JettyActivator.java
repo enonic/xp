@@ -32,7 +32,7 @@ import com.enonic.xp.web.jetty.impl.configurator.HttpConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.MultipartConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.RequestLogConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.SessionConfigurator;
-import com.enonic.xp.web.jetty.impl.session.JettySessionStorageConfigurator;
+import com.enonic.xp.web.jetty.impl.session.JettySessionStoreConfigurator;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.web.jetty")
 public final class JettyActivator
@@ -49,7 +49,7 @@ public final class JettyActivator
 
     private ServiceRegistration<ServletContext> xpServletContextReg;
 
-    private final JettySessionStorageConfigurator jettySessionStorageConfigurator;
+    private final JettySessionStoreConfigurator jettySessionStoreConfigurator;
 
     private final ContextHandlerCollection contexts = new ContextHandlerCollection();
 
@@ -57,12 +57,12 @@ public final class JettyActivator
 
     @Activate
     public JettyActivator( final JettyConfig config, final BundleContext bundleContext,
-                           @Reference final JettySessionStorageConfigurator jettySessionStorageConfigurator,
+                           @Reference final JettySessionStoreConfigurator jettySessionStoreConfigurator,
                            @Reference final List<DispatchServlet> dispatchServlets )
     {
         this.config = config;
         this.bundleContext = bundleContext;
-        this.jettySessionStorageConfigurator = jettySessionStorageConfigurator;
+        this.jettySessionStoreConfigurator = jettySessionStoreConfigurator;
         dispatchServlets.stream().map( this::initServletContextHandler ).forEach( contexts::addHandler );
     }
 
@@ -119,7 +119,7 @@ public final class JettyActivator
     {
         final Server server = createServer();
 
-        jettySessionStorageConfigurator.configure( server );
+        jettySessionStoreConfigurator.configure( server );
         new HttpConfigurator().configure( this.config, server );
         new RequestLogConfigurator().configure( this.config, server );
 

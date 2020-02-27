@@ -103,6 +103,8 @@ final class JaxRsServiceImpl
     @Override
     public void removedService( final ServiceReference<JaxRsComponent> reference, final JaxRsComponent component )
     {
+        this.context.ungetService( reference );
+
         remove( component );
     }
 

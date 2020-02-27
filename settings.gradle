@@ -31,6 +31,7 @@ include 'core:core-auth'
 include 'core:core-macro'
 include 'core:core-task'
 include 'core:core-cluster'
+include 'core:core-hazelcast'
 include 'core:core-internal'
 
 include 'server:server-config'

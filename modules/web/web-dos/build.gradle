@@ -1,7 +1,9 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
-    compile project( ':web:web-jetty' )
+    compile project( ':web:web-api' )
+    compile "org.eclipse.jetty:jetty-servlets:${jettyVersion}"
+
     testCompile project( path: ':web:web-api', configuration: 'testOutput' )
 }
 

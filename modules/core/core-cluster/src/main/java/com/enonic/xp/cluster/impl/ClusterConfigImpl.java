@@ -85,12 +85,6 @@ public class ClusterConfigImpl
     }
 
     @Override
-    public boolean isSessionReplicationEnabled()
-    {
-        return Boolean.parseBoolean( this.config.getOrDefault( "session.replication.enabled", "false" ) );
-    }
-
-    @Override
     public String networkPublishHost()
     {
         final String host = this.config.get( "network.publish.host" );

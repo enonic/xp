@@ -1,5 +1,6 @@
 package com.enonic.xp.task;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
@@ -8,7 +9,10 @@ import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
 public final class TaskProgress
+    implements Serializable
 {
+    private static final long serialVersionUID = 0;
+
     public final static TaskProgress EMPTY = TaskProgress.create().build();
 
     private final int current;
