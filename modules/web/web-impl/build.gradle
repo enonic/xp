@@ -2,10 +2,9 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':web:web-api' )
-    testCompile project( ':portal:portal-impl' )
-    testCompile project( path: ':web:web-api', configuration: 'testOutput' )
-    testCompile project( path: ':web:web-jetty', configuration: 'testOutput' )
-    testCompile "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
+
+    testImplementation( project(":portal:portal-impl" ) )
+    testImplementation( testFixtures( project(":web:web-jetty") ) )
 }
 
 jar {

@@ -3,6 +3,7 @@ dependencies {
     compileOnly project( ':script:script-api' )
     compileOnly project( ':portal:portal-api' )
     compile project( ':lib:lib-value' )
-    testCompile project( ':tools:testing' )
     compile project( ':lib:lib-common' )
+
+    testImplementation project( ':tools:testing' )
 }

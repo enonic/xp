@@ -7,7 +7,7 @@ dependencies {
     compile 'javax.servlet:javax.servlet-api:3.1.0'
     compile 'javax.websocket:javax.websocket-api:1.1'
 
-    testCompile project( path: ':core:core-api', configuration: 'testOutput' )
+    testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
 }
 
 jar {

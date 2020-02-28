@@ -1,6 +1,7 @@
 dependencies {
     compileOnly project( ':core:core-api' )
     compileOnly project( ':portal:portal-api' )
-    testCompile project( ':tools:testing' )
     compile project( ':lib:lib-common' )
+
+    testImplementation project( ':tools:testing' )
 }

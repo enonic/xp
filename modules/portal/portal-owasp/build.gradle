@@ -5,8 +5,6 @@ dependencies {
     compile( 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20191001.1' ) {
         exclude group: 'com.google.guava'
     }
-    testCompile project( ':portal:portal-api' )
-    testCompile project( path: ':portal:portal-api', configuration: 'testOutput' )
 }
 
 jar {

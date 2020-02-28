@@ -4,8 +4,11 @@ dependencies {
     compile project( ':core:core-api' )
     implementation project( ':core:core-internal' )
 
-    testCompile project( path: ':core:core-api', configuration: 'testOutput' )
-    testCompile project( path: ':core:core-app', configuration: 'testOutput' )
+    testFixturesApi( testFixtures( project(":core:core-app") ) )
+    testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
+
+    testImplementation( testFixtures( project(":core:core-api") ) )
 }
 
 jar {
