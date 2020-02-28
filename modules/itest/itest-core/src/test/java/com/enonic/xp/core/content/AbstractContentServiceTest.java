@@ -52,6 +52,8 @@ import com.enonic.xp.core.impl.content.ContentInitializer;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
+import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
+import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.site.SiteServiceImpl;
 import com.enonic.xp.data.PropertySet;
@@ -291,11 +293,20 @@ public class AbstractContentServiceTest
         LayoutDescriptorService layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
         auditLogService = Mockito.mock( AuditLogService.class );
 
+        final ProjectServiceImpl projectService = new ProjectServiceImpl();
+        projectService.setIndexService( indexService );
+        projectService.setRepositoryService( repositoryService );
+        projectService.setNodeService( nodeService );
+
         final ContentConfig contentConfig = Mockito.mock( ContentConfig.class );
         Mockito.when( contentConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
 
         final ContentAuditLogSupportImpl contentAuditLogSupport =
             new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutorImpl(), auditLogService );
+
+        final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
+        projectAccessContextManager.setRepositoryService( repositoryService );
+        projectService.setProjectPermissionsContextManager( projectAccessContextManager );
 
         contentService.setNodeService( nodeService );
         contentService.setEventPublisher( eventPublisher );
@@ -308,9 +319,7 @@ public class AbstractContentServiceTest
         contentService.setLayoutDescriptorService( layoutDescriptorService );
         contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
-        contentService.setIndexService( indexService );
-        contentService.setNodeService( nodeService );
-        contentService.setRepositoryService( repositoryService );
+        contentService.setProjectService( projectService );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
         contentService.initialize();
 

@@ -14,13 +14,15 @@ var expected = [{
     'branches': [
         'master'
     ],
-    settings: {}
+    settings: {},
+    data: {}
 }, {
     'id': 'another-repo',
     'branches': [
         'master'
     ],
-    settings: {}
+    settings: {},
+    data: {}
 }];
 // END
 t.assertJsonEquals(expected, result);

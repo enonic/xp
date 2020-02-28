@@ -1,0 +1,16 @@
+{
+  "description": "project description",
+  "displayName": "project name",
+  "icon": {
+    "label": "small",
+    "mimeType": "image/png",
+    "name": "logo.png",
+    "size": 0
+  },
+  "name": "project1",
+  "permissions": {
+    "contributor": [],
+    "expert": [],
+    "owner": []
+  }
+}

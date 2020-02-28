@@ -61,7 +61,6 @@ import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentListJson;
-import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.BatchContentJson;
@@ -192,13 +191,15 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
+import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.CMS_PATH;
+import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.REST_ROOT;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static java.lang.Math.toIntExact;
 import static java.util.Optional.ofNullable;
 
 @SuppressWarnings("UnusedDeclaration")
-@Path(ResourceConstants.REST_ROOT + "content")
+@Path(REST_ROOT + "{content:(content|" + CMS_PATH + "/content)}")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")

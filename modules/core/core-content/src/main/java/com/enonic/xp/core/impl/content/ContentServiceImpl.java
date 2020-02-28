@@ -27,6 +27,7 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -92,7 +93,6 @@ import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
-import com.enonic.xp.index.IndexService;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -106,10 +106,13 @@ import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.project.CreateProjectParams;
+import com.enonic.xp.project.ProjectConstants;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
@@ -140,8 +143,6 @@ public class ContentServiceImpl
 
     private NodeService nodeService;
 
-    private RepositoryService repositoryService;
-
     private EventPublisher eventPublisher;
 
     private MediaInfoService mediaInfoService;
@@ -152,7 +153,7 @@ public class ContentServiceImpl
 
     private ContentNodeTranslator translator;
 
-    private IndexService indexService;
+    private ProjectService projectService;
 
     private final ContentProcessors contentProcessors = new ContentProcessors();
 
@@ -171,12 +172,17 @@ public class ContentServiceImpl
     @Activate
     public void initialize()
     {
-        ContentInitializer.create().
-            setIndexService( indexService ).
-            setNodeService( nodeService ).
-            setRepositoryService( repositoryService ).
-            build().
-            initialize();
+        runAsContentAdmin( () -> {
+            if ( projectService.get( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ) == null )
+            {
+                this.projectService.create( CreateProjectParams.create().
+                    name( ProjectConstants.DEFAULT_PROJECT.getName() ).
+                    displayName( ProjectConstants.DEFAULT_PROJECT.getDisplayName() ).
+                    description( ProjectConstants.DEFAULT_PROJECT.getDescription() ).
+                    permissions( ProjectConstants.DEFAULT_PROJECT.getPermissions() ).
+                    build() );
+            }
+        } );
 
         this.contentDataSerializer = ContentDataSerializer.create().
             contentService( this ).
@@ -769,7 +775,6 @@ public class ContentServiceImpl
             execute();
     }
 
-
     @Override
     public FindContentIdsByQueryResult find( final ContentQuery query )
     {
@@ -902,7 +907,6 @@ public class ContentServiceImpl
             execute();
     }
 
-
     @Override
     public GetActiveContentVersionsResult getActiveVersions( final GetActiveContentVersionsParams params )
     {
@@ -1013,7 +1017,7 @@ public class ContentServiceImpl
     {
         final ContentPath rootContentPath = ContentPath.ROOT;
         final NodePath rootNodePath = ContentNodeHelper.translateContentPathToNodePath( rootContentPath );
-        final Node rootNode = runAsContentAdmin( () -> nodeService.getByPath( rootNodePath ) );
+        final Node rootNode = callAuthenticatedAsContentAdmin( () -> nodeService.getByPath( rootNodePath ) );
         return rootNode != null ? rootNode.getPermissions() : AccessControlList.empty();
     }
 
@@ -1058,7 +1062,17 @@ public class ContentServiceImpl
             execute();
     }
 
-    private <T> T runAsContentAdmin( final Callable<T> callable )
+    private void runAsContentAdmin( final Runnable runnable )
+    {
+        adminContext().runWith( runnable );
+    }
+
+    private <T> T callAsContentAdmin( final Callable<T> callable )
+    {
+        return adminContext().callWith( callable );
+    }
+
+    private <T> T callAuthenticatedAsContentAdmin( final Callable<T> callable )
     {
         final Context context = ContextAccessor.current();
         final AuthenticationInfo authInfo = context.getAuthInfo();
@@ -1067,10 +1081,17 @@ public class ContentServiceImpl
             return context.callWith( callable );
         }
 
+        return callAsContentAdmin( callable );
+    }
+
+    private Context adminContext()
+    {
         return ContextBuilder.from( ContextAccessor.current() ).
-            authInfo( AuthenticationInfo.copyOf( authInfo ).principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ).build() ).
-            build().
-            callWith( callable );
+            authInfo( AuthenticationInfo.
+                copyOf( ContextAccessor.current().getAuthInfo() ).
+                principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ).
+                build() ).
+            build();
     }
 
     @Override
@@ -1229,12 +1250,6 @@ public class ContentServiceImpl
     }
 
     @Reference
-    public void setRepositoryService( final RepositoryService repositoryService )
-    {
-        this.repositoryService = repositoryService;
-    }
-
-    @Reference
     public void setEventPublisher( final EventPublisher eventPublisher )
     {
         this.eventPublisher = eventPublisher;
@@ -1258,11 +1273,10 @@ public class ContentServiceImpl
         this.siteService = siteService;
     }
 
-    @SuppressWarnings("unused")
     @Reference
-    public void setIndexService( final IndexService indexService )
+    public void setProjectService( final ProjectService projectService )
     {
-        this.indexService = indexService;
+        this.projectService = projectService;
     }
 
     @SuppressWarnings("unused")

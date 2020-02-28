@@ -146,7 +146,7 @@ public abstract class AbstractNodeTest
     protected StorageDaoImpl storageDao;
 
     @BeforeEach
-    void setUpNode()
+    protected void setUpNode()
         throws Exception
     {
         deleteAllIndices();

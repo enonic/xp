@@ -19,7 +19,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.json.schema.xdata.XDataJson;
 import com.enonic.xp.admin.impl.json.schema.xdata.XDataListJson;
-import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.ContentTypeNameWildcardResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
@@ -48,10 +47,12 @@ import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.XDataMappings;
 
+import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.CMS_PATH;
+import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.REST_ROOT;
 import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.stream.Collectors.toList;
 
-@Path(ResourceConstants.REST_ROOT + "schema/xdata")
+@Path(REST_ROOT + "{content:(schema|" + CMS_PATH + "/schema)}/xdata")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")

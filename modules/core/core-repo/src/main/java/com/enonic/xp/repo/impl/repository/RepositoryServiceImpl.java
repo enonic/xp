@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -20,6 +21,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.RefreshMode;
@@ -35,6 +37,7 @@ import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteBranchParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
+import com.enonic.xp.repository.EditableRepository;
 import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
@@ -42,8 +45,10 @@ import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.BinaryReference;
 
 @Component(immediate = true)
 public class RepositoryServiceImpl
@@ -119,6 +124,43 @@ public class RepositoryServiceImpl
         final Repository repository = createRepositoryObject( params );
         repositoryEntryService.createRepositoryEntry( repository );
         return repository;
+    }
+
+    @Override
+    public Repository updateRepository( final UpdateRepositoryParams params )
+    {
+        requireAdminRole();
+
+        Repository repository = repositoryMap.compute( params.getRepositoryId(),
+                                                       ( key, previousRepository ) -> doUpdateRepository( params, previousRepository ) );
+
+        invalidatePathCache();
+
+        return repository;
+    }
+
+    private Repository doUpdateRepository( final UpdateRepositoryParams updateRepositoryParams, Repository previousRepository )
+    {
+        RepositoryId repositoryId = updateRepositoryParams.getRepositoryId();
+
+        previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( repositoryId ) : previousRepository;
+
+        if ( previousRepository == null )
+        {
+            throw new RepositoryNotFoundException( repositoryId );
+        }
+
+        final EditableRepository editableRepository = new EditableRepository( previousRepository );
+
+        updateRepositoryParams.getEditor().accept( editableRepository );
+
+        UpdateRepositoryEntryParams params = UpdateRepositoryEntryParams.create().
+            repositoryId( repositoryId ).
+            repositoryData( editableRepository.data ).
+            attachments( ImmutableList.copyOf( editableRepository.binaryAttachments ) ).
+            build();
+
+        return repositoryEntryService.updateRepositoryEntry( params );
     }
 
     @Override
@@ -264,6 +306,21 @@ public class RepositoryServiceImpl
     public void invalidate( final RepositoryId repositoryId )
     {
         repositoryMap.remove( repositoryId );
+    }
+
+    @Override
+    public ByteSource getBinary( final RepositoryId repositoryId, final BinaryReference binaryReference )
+    {
+        requireAdminRole();
+
+        Repository repository = repositoryEntryService.getRepositoryEntry( repositoryId );
+        if ( repository == null )
+        {
+            throw new RepositoryNotFoundException( repositoryId );
+        }
+
+        final AttachedBinary attachedBinary = repository.getAttachments().getByBinaryReference( binaryReference );
+        return attachedBinary == null ? null : repositoryEntryService.getBinary( attachedBinary );
     }
 
     private void requireAdminRole()

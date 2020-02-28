@@ -35,6 +35,7 @@ public final class PortalRequestSerializer
         req.setApplicationKey( sourceRequest.getApplicationKey() );
         req.setPageDescriptor( sourceRequest.getPageDescriptor() );
         req.setControllerScript( sourceRequest.getControllerScript() );
+        req.setRepositoryId( sourceRequest.getRepositoryId() );
 
         populateMethod( req, value.getMember( "method" ) );
         populateScheme( req, value.getMember( "scheme" ) );
