@@ -12,7 +12,7 @@ dependencies {
     runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jacksonVersion}"
     runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
 
-    testCompile project( path: ':core:core-api', configuration: 'testOutput' )
+    testImplementation( testFixtures( project(":core:core-api") ) )
 }
 
 jar {

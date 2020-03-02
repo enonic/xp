@@ -13,8 +13,13 @@ dependencies {
     runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
 
     compile 'org.apache.commons:commons-compress:1.19'
-    testCompile project( path: ':core:core-blobstore', configuration: 'testOutput' )
-    testCompile project( path: ':core:core-api', configuration: 'testOutput' )
+
+    testFixturesImplementation( testFixtures( project(":core:core-blobstore") ) )
+    testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
+
+    testImplementation( testFixtures( project(":core:core-api") ) )
+    testImplementation( testFixtures( project(":core:core-blobstore") ) )
 }
 
 jar {

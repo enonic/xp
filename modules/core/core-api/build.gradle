@@ -13,6 +13,9 @@ dependencies {
     compile "com.sun.mail:jakarta.mail:${jakartaMailVersion}"
     compile "io.dropwizard.metrics:metrics-core:${dropwizardMetricsVersion}"
 
+    testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
+
     testImplementation project( ':core:core-internal' )
 }
 

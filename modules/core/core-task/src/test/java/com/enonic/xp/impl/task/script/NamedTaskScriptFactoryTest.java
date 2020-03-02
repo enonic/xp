@@ -14,7 +14,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.portal.impl.controller.AbstractControllerTest;
 import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
@@ -60,7 +59,7 @@ public class NamedTaskScriptFactoryTest
         {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final URL resourceUrl =
-                AbstractControllerTest.class.getResource( "/" + resourceKey.getApplicationKey() + resourceKey.getPath() );
+                NamedTaskScriptFactoryTest.class.getResource( "/" + resourceKey.getApplicationKey() + resourceKey.getPath() );
             return new UrlResource( resourceKey, resourceUrl );
         };
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( getResource );

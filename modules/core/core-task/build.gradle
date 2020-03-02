@@ -15,9 +15,10 @@ dependencies {
     runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jacksonVersion}"
     runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
 
-    testCompile project( path: ':core:core-api', configuration: 'testOutput' )
-    testCompile project( path: ':core:core-app', configuration: 'testOutput' )
-    testCompile project( path: ':portal:portal-impl', configuration: 'testOutput' )
+    testImplementation( project(":script:script-impl")  )
+    testImplementation( project(":portal:portal-impl")  )
+    testImplementation( testFixtures( project(":core:core-api") ) )
+    testImplementation( testFixtures( project(":core:core-app") ) )
 }
 
 jar {

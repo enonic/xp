@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'java-test-fixtures'
 apply plugin: 'jacoco'
 
 def defaultEncoding = 'UTF-8'
@@ -13,19 +14,14 @@ compileTestJava {
     options.compilerArgs = ['-Xlint:-options'] // , '-Xlint:unchecked', '-Xlint:deprecation']
 }
 
-configurations {
-    testOutput.extendsFrom testRuntime
-}
-
 dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
-    testImplementation 'org.mockito:mockito-core:2.28.2'
-    testImplementation 'org.mockito:mockito-junit-jupiter:2.28.2'
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
     testImplementation 'org.springframework:spring-test:4.1.6.RELEASE'
     testRuntimeOnly "org.slf4j:slf4j-simple:${slf4jVersion}"
-    testOutput sourceSets.test.output
 }
 
 task testJar( type: Jar ) {
@@ -48,7 +44,8 @@ test {
         excludeTags 'elasticsearch'
     }
     systemProperty 'java.awt.headless', 'true'
-    jvmArgs '-Xmx2048m', '-noverify', '-XX:TieredStopAtLevel=1'
+    maxHeapSize = '2G'
+    jvmArgs '-noverify', '-XX:TieredStopAtLevel=1'
 }
 
 task integrationTest(type: Test) {
@@ -60,7 +57,7 @@ task integrationTest(type: Test) {
     }
 
     systemProperty 'java.awt.headless', 'true'
-    jvmArgs '-Xmx2048m'
+    maxHeapSize = '2G'
 
     shouldRunAfter test
 }

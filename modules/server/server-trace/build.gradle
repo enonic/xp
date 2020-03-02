@@ -4,7 +4,6 @@ dependencies {
     compile project( ':core:core-api' )
     compile project( ':jaxrs:jaxrs-api' )
     implementation project( ':core:core-internal' )
-    testCompile project( path: ':core:core-api', configuration: 'testOutput' )
 }
 
 jar {

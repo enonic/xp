@@ -11,10 +11,10 @@ dependencies {
         exclude group: 'com.github.stephenc.jcip'
     }
 
-    testCompile project( ':jaxrs:jaxrs-impl' )
-    testCompile project( path: ':core:core-app', configuration: 'testOutput' )
-    testCompile project( path: ':portal:portal-api', configuration: 'testOutput' )
-    testCompile project( path: ':jaxrs:jaxrs-impl', configuration: 'testOutput' )
+    testImplementation( testFixtures( project(":core:core-api") ) )
+    testImplementation( testFixtures( project(":core:core-app") ) )
+    testImplementation( testFixtures( project(":web:web-api") ) )
+    testImplementation( testFixtures( project(":jaxrs:jaxrs-impl") ) )
 }
 
 jar {
