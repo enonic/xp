@@ -3,6 +3,7 @@ package com.enonic.xp.lib.auth;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
@@ -41,6 +42,12 @@ public class LoginHandlerTest
         ContextAccessor.current().getLocalScope().setSession( session );
     }
 
+    @AfterEach
+    public void removeNoSessionAuthInfo()
+    {
+        ContextAccessor.current().getLocalScope().removeAttribute( AuthenticationInfo.class );
+    }
+
     @Test
     public void testExamples()
     {
@@ -68,6 +75,23 @@ public class LoginHandlerTest
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
         assertEquals( authInfo, sessionAuthInfo );
+    }
+
+    @Test
+    public void testLoginSuccessNoSession()
+    {
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
+
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginSuccessNoSession" );
+
+        final AuthenticationInfo localScopeAuth = ContextAccessor.current().getLocalScope().getAttribute( AuthenticationInfo.class );
+        final Session session = ContextAccessor.current().getLocalScope().getSession();
+        final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
+        assertEquals( authInfo, localScopeAuth );
+        assertEquals( null, sessionAuthInfo );
     }
 
     @Test
