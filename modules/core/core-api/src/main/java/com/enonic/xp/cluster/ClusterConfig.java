@@ -11,6 +11,4 @@ public interface ClusterConfig
     String networkPublishHost();
 
     String networkHost();
-
-    boolean isSessionReplicationEnabled();
 }

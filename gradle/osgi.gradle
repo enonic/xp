@@ -10,4 +10,3 @@ jar {
          '-dsannotations': '*',
          'Implementation-Version': project.version )
 }
-

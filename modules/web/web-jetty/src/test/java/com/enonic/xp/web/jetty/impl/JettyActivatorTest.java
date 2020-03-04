@@ -18,7 +18,7 @@ import org.osgi.framework.ServiceRegistration;
 import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.dispatch.DispatchServlet;
-import com.enonic.xp.web.jetty.impl.session.JettySessionStorageConfigurator;
+import com.enonic.xp.web.jetty.impl.session.JettySessionStoreConfigurator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -67,11 +67,11 @@ class JettyActivatorTest
     void testLifecycle()
         throws Exception
     {
-        final JettySessionStorageConfigurator jettySessionStorageConfigurator = Mockito.mock( JettySessionStorageConfigurator.class );
+        final JettySessionStoreConfigurator jettySessionStoreConfigurator = Mockito.mock( JettySessionStoreConfigurator.class );
         final DispatchServlet xpDispatcherServlet = mock( DispatchServlet.class );
         when( xpDispatcherServlet.getConnector() ).thenReturn( DispatchConstants.XP_CONNECTOR );
         JettyActivator activator =
-            new JettyActivator( config, bundleContext, jettySessionStorageConfigurator, Collections.singletonList( xpDispatcherServlet ) );
+            new JettyActivator( config, bundleContext, jettySessionStoreConfigurator, Collections.singletonList( xpDispatcherServlet ) );
 
         activator.activate();
 
