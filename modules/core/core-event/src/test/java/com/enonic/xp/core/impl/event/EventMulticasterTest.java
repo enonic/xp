@@ -13,6 +13,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class EventMulticasterTest
 {
@@ -92,16 +93,16 @@ public class EventMulticasterTest
     public void testListenerOrder()
     {
         final EventListener listener1 = mock( EventListener.class );
-        Mockito.when( listener1.getOrder() ).thenReturn( 100 );
-        Mockito.when( listener1.toString() ).thenReturn( "listener1" );
+        when( listener1.getOrder() ).thenReturn( Integer.MIN_VALUE );
+        when( listener1.toString() ).thenReturn( "listener1" );
 
         final EventListener listener2 = mock( EventListener.class );
-        Mockito.when( listener2.getOrder() ).thenReturn( 200 );
-        Mockito.when( listener2.toString() ).thenReturn( "listener2" );
+        when( listener2.getOrder() ).thenReturn( 200 );
+        when( listener2.toString() ).thenReturn( "listener2" );
 
         final EventListener listener3 = mock( EventListener.class );
-        Mockito.when( listener3.getOrder() ).thenReturn( Integer.MAX_VALUE );
-        Mockito.when( listener3.toString() ).thenReturn( "listener3" );
+        when( listener3.getOrder() ).thenReturn( Integer.MAX_VALUE );
+        when( listener3.toString() ).thenReturn( "listener3" );
 
         this.multicaster.add( listener2 );
         this.multicaster.add( listener1 );
@@ -110,7 +111,7 @@ public class EventMulticasterTest
         final Event event = Event.create( "test" ).build();
         this.multicaster.publish( event );
 
-        final InOrder inOrder = inOrder( listener1, listener2, listener3 );
+        InOrder inOrder = inOrder( listener1, listener2, listener3 );
 
         inOrder.verify( listener1, times( 1 ) ).onEvent( event );
         inOrder.verify( listener2, times( 1 ) ).onEvent( event );
