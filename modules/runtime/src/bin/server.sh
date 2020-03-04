@@ -88,7 +88,7 @@ init() {
 }
 
 run() {
-    exec "$JAVACMD" $JAVA_OPTS -Dxp.install="$XP_INSTALL" -Dfile.encoding=UTF8 -Dnashorn.args="--no-deprecation-warning" $XP_OPTS -Dmapper.allow_dots_in_name=true --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED -classpath "$XP_INSTALL/lib/*" com.enonic.xp.launcher.LauncherMain "${ARGS[@]}"
+    exec "$JAVACMD" $JAVA_OPTS -Dxp.install="$XP_INSTALL" -Dfile.encoding=UTF8 -Dnashorn.args="--no-deprecation-warning" $XP_OPTS -Dmapper.allow_dots_in_name=true --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-modules java.se --add-exports java.base/jdk.internal.ref=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED -classpath "$XP_INSTALL/lib/*" com.enonic.xp.launcher.LauncherMain "${ARGS[@]}"
 }
 
 main() {

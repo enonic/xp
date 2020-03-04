@@ -1,13 +1,11 @@
 package com.enonic.xp.core.impl.event.cluster;
 
-import org.elasticsearch.cluster.ClusterService;
-import org.elasticsearch.cluster.node.DiscoveryNode;
-import org.elasticsearch.threadpool.ThreadPool;
-import org.elasticsearch.transport.EmptyTransportResponseHandler;
-import org.elasticsearch.transport.TransportRequest;
-import org.elasticsearch.transport.TransportService;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.ITopic;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
@@ -18,47 +16,20 @@ public final class ClusterEventSender
 {
     public static final String ACTION = "xp/event";
 
-    private ClusterService clusterService;
+    private final ITopic<Event> topic;
 
-    private TransportService transportService;
+    @Activate
+    public ClusterEventSender( @Reference final HazelcastInstance hazelcastInstance )
+    {
+        this.topic = hazelcastInstance.getTopic( ACTION );
+    }
 
     @Override
     public void onEvent( final Event event )
     {
         if ( event != null && event.isDistributed() )
         {
-            final TransportRequest transportRequest = new SendEventRequest( event );
-            send( transportRequest );
+            topic.publish( event );
         }
-    }
-
-    private void send( final TransportRequest transportRequest )
-    {
-        final DiscoveryNode localNode = this.clusterService.localNode();
-        for ( final DiscoveryNode node : this.clusterService.state().nodes() )
-        {
-            if ( !node.equals( localNode ) )
-            {
-                send( transportRequest, node );
-            }
-        }
-    }
-
-    private void send( final TransportRequest transportRequest, final DiscoveryNode node )
-    {
-        final EmptyTransportResponseHandler responseHandler = new EmptyTransportResponseHandler( ThreadPool.Names.MANAGEMENT );
-        this.transportService.sendRequest( node, ACTION, transportRequest, responseHandler );
-    }
-
-    @Reference
-    public void setClusterService( final ClusterService clusterService )
-    {
-        this.clusterService = clusterService;
-    }
-
-    @Reference
-    public void setTransportService( final TransportService transportService )
-    {
-        this.transportService = transportService;
     }
 }

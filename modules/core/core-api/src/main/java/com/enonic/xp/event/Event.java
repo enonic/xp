@@ -1,5 +1,6 @@
 package com.enonic.xp.event;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -11,7 +12,10 @@ import com.google.common.collect.ImmutableMap;
 import com.enonic.xp.convert.Converters;
 
 public final class Event
+    implements Serializable
 {
+    private static final long serialVersionUID = 0;
+
     private final String type;
 
     private final long timestamp;

@@ -1,5 +1,6 @@
 package com.enonic.xp.task;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -12,7 +13,10 @@ import com.enonic.xp.security.PrincipalKey;
 
 @PublicApi
 public final class TaskInfo
+    implements Serializable
 {
+    private static final long serialVersionUID = 0;
+
     private final TaskId id;
 
     private final String name;
@@ -225,4 +229,55 @@ public final class TaskInfo
         }
     }
 
+    private Object writeReplace()
+    {
+        return new SerializedForm( this );
+    }
+
+    private static class SerializedForm
+        implements Serializable
+    {
+        private static final long serialVersionUID = 0;
+
+        private final TaskId id;
+
+        private final String name;
+
+        private final String description;
+
+        private final TaskState state;
+
+        private final TaskProgress progress;
+
+        private final String application;
+
+        private final String user;
+
+        private final Instant startTime;
+
+        public SerializedForm( TaskInfo taskInfo )
+        {
+            this.id = taskInfo.id;
+            this.name = taskInfo.name;
+            this.description = taskInfo.description;
+            this.progress = taskInfo.progress;
+            this.state = taskInfo.state;
+            this.application = taskInfo.application.toString();
+            this.user = taskInfo.user.toString();
+            this.startTime = taskInfo.startTime;
+        }
+
+        private Object readResolve()
+        {
+            return TaskInfo.create().id( id ).
+                name( name ).
+                description( description ).
+                state( state ).
+                application( ApplicationKey.from( application ) ).
+                user( PrincipalKey.from( user ) ).
+                startTime( startTime ).
+                progress( progress ).
+                build();
+        }
+    }
 }
