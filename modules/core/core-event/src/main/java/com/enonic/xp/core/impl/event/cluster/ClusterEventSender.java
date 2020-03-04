@@ -1,15 +1,11 @@
 package com.enonic.xp.core.impl.event.cluster;
 
-import org.elasticsearch.cluster.ClusterService;
-import org.elasticsearch.cluster.node.DiscoveryNode;
-import org.elasticsearch.threadpool.ThreadPool;
-import org.elasticsearch.transport.EmptyTransportResponseHandler;
-import org.elasticsearch.transport.TransportException;
-import org.elasticsearch.transport.TransportService;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.ITopic;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
@@ -18,67 +14,22 @@ import com.enonic.xp.event.EventListener;
 public final class ClusterEventSender
     implements EventListener
 {
-    private static final Logger LOG = LoggerFactory.getLogger( ClusterEventSender.class );
-
     public static final String ACTION = "xp/event";
 
-    private ClusterService clusterService;
+    private final ITopic<Event> topic;
 
-    private TransportService transportService;
+    @Activate
+    public ClusterEventSender( @Reference final HazelcastInstance hazelcastInstance )
+    {
+        this.topic = hazelcastInstance.getTopic( ACTION );
+    }
 
     @Override
     public void onEvent( final Event event )
     {
         if ( event != null && event.isDistributed() )
         {
-            final SendEventRequest transportRequest = new SendEventRequest( event );
-            send( transportRequest );
-        }
-    }
-
-    private void send( final SendEventRequest transportRequest )
-    {
-        final DiscoveryNode localNode = this.clusterService.localNode();
-        for ( final DiscoveryNode node : this.clusterService.state().nodes() )
-        {
-            if ( !node.equals( localNode ) )
-            {
-                send( transportRequest, node );
-            }
-        }
-    }
-
-    private void send( final SendEventRequest transportRequest, final DiscoveryNode node )
-    {
-        this.transportService.sendRequest( node, ACTION, transportRequest, LoggingTransportResponseHandler.INSTANCE );
-    }
-
-    @Reference
-    public void setClusterService( final ClusterService clusterService )
-    {
-        this.clusterService = clusterService;
-    }
-
-    @Reference
-    public void setTransportService( final TransportService transportService )
-    {
-        this.transportService = transportService;
-    }
-
-    private static class LoggingTransportResponseHandler
-        extends EmptyTransportResponseHandler
-    {
-        static LoggingTransportResponseHandler INSTANCE = new LoggingTransportResponseHandler();
-
-        public LoggingTransportResponseHandler()
-        {
-            super( ThreadPool.Names.SAME );
-        }
-
-        @Override
-        public void handleException( final TransportException exp )
-        {
-            LOG.debug( "Could not deliver Event", exp );
+            topic.publish( event );
         }
     }
 }

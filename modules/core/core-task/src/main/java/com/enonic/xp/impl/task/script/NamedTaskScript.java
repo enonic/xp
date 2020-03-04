@@ -47,8 +47,8 @@ public final class NamedTaskScript
         }
         catch ( Throwable t )
         {
-            LOG.error( "Error executing named task [{}] '{}' with id {}: {}", taskDescriptor.getKey().toString(),
-                       taskDescriptor.getDescription(), id.toString(), t.getMessage(), t );
+            LOG.error( "Error executing named task [{}] '{}' with id {}: {}", taskDescriptor.getKey(), taskDescriptor.getDescription(), id,
+                       t.getMessage(), t );
             throw t;
         }
     }
