@@ -1,5 +1,8 @@
 package com.enonic.xp.core.project;
 
+import java.util.List;
+import java.util.Locale;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +24,11 @@ import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.Projects;
+import com.enonic.xp.project.layer.ContentLayer;
+import com.enonic.xp.project.layer.ContentLayerKey;
+import com.enonic.xp.project.layer.ContentLayerName;
+import com.enonic.xp.project.layer.CreateLayerParams;
+import com.enonic.xp.project.layer.ModifyLayerParams;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
@@ -35,6 +43,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -174,6 +183,25 @@ class ProjectServiceImplTest
     }
 
     @Test
+    void create_layer()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+
+        final Project createdProject = doCreateProjectAsAdmin( ProjectName.from( projectRepoId ) );
+
+        final ContentLayerKey contentLayerKey = ContentLayerKey.from( createdProject.getName(), ContentLayerName.DEFAULT_LAYER_NAME );
+        final ContentLayer createdLayer = doCreateLayerAsAdmin( contentLayerKey );
+
+        ADMIN_CONTEXT.runWith( () -> {
+            final Repository fetchedRepo = repositoryService.get( projectRepoId );
+            final Project fetchedProject = Project.from( fetchedRepo );
+
+            assertNotEquals( fetchedProject, createdProject );
+            assertEquals( fetchedProject.getLayers().getLayer( contentLayerKey ), createdLayer );
+        } );
+    }
+
+    @Test
     void delete()
     {
         final ProjectName projectName = ProjectName.from( "test-project" );
@@ -233,6 +261,26 @@ class ProjectServiceImplTest
         final RuntimeException ex = Assertions.assertThrows( RuntimeException.class, () -> projectService.delete( projectName ) );
 
         assertEquals( "Denied [user:system:test-user] user access for [delete] operation", ex.getMessage() );
+    }
+
+    @Test
+    void delete_layer()
+    {
+        final ProjectName projectName = ProjectName.from( "test-project" );
+        doCreateProjectAsAdmin( projectName );
+
+        final ContentLayerKey contentLayerKey = ContentLayerKey.from( projectName, ContentLayerName.DEFAULT_LAYER_NAME );
+        doCreateLayerAsAdmin( contentLayerKey );
+
+        ADMIN_CONTEXT.runWith( () -> {
+
+            assertTrue( this.projectService.deleteLayer( contentLayerKey ) );
+
+            final Project project = this.projectService.get( projectName );
+            final ContentLayer layer = project.getLayers().getLayer( contentLayerKey );
+            assertNull( layer );
+
+        } );
     }
 
     @Test
@@ -415,15 +463,68 @@ class ProjectServiceImplTest
 
     }
 
+    @Test
+    void modify_layer()
+    {
+        final ProjectName projectName = ProjectName.from( "test-project" );
+        doCreateProjectAsAdmin( projectName );
+
+        final ContentLayerKey contentLayerKey = ContentLayerKey.from( projectName, ContentLayerName.DEFAULT_LAYER_NAME );
+        final ContentLayerKey contentLayerKey2 = ContentLayerKey.from( projectName, ContentLayerName.from( "layer2" ) );
+        final ContentLayerKey contentLayerKey3 = ContentLayerKey.from( projectName, ContentLayerName.from( "layer3" ) );
+
+        final ContentLayer contentLayer = doCreateLayerAsAdmin( contentLayerKey );
+        final ContentLayer contentLayer2 = doCreateLayerAsAdmin( contentLayerKey2 );
+        final ContentLayer contentLayer3 = doCreateLayerAsAdmin( contentLayerKey3 );
+
+        ADMIN_CONTEXT.runWith( () -> {
+            projectService.modifyLayer( ModifyLayerParams.create().
+                key( contentLayerKey ).
+                description( "new description" ).
+                displayName( "new display name" ).
+                locale( Locale.US ).
+                parentKeys( List.of( ContentLayerKey.from( "default:newParent" ) ) ).
+                icon( CreateAttachment.create().
+                    mimeType( "image/png" ).
+                    label( "My New Image" ).
+                    name( "MyNewImage.png" ).
+                    byteSource( ByteSource.wrap( "new bytes".getBytes() ) ).
+                    build() ).
+                build() );
+
+            final Project modifiedProject = projectService.get( ProjectName.from( "test-project" ) );
+
+            assertEquals( 3, modifiedProject.getLayers().getSize() );
+            assertEquals( contentLayer2, modifiedProject.getLayers().getLayer( contentLayerKey2 ) );
+            assertEquals( contentLayer3, modifiedProject.getLayers().getLayer( contentLayerKey3 ) );
+            assertNotEquals( contentLayer, modifiedProject.getLayers().getLayer( contentLayerKey ) );
+
+            final ContentLayer modifiedLayer = modifiedProject.getLayers().getLayer( contentLayerKey );
+
+            assertEquals( "new description", modifiedLayer.getDescription() );
+            assertEquals( "new display name", modifiedLayer.getDisplayName() );
+            assertEquals( Locale.US, modifiedLayer.getLocale() );
+            assertEquals( List.of( ContentLayerKey.from( "default:newParent" ) ), modifiedLayer.getParentKeys() );
+            assertEquals( "image/png", modifiedLayer.getIcon().getMimeType() );
+            assertEquals( "My New Image", modifiedLayer.getIcon().getLabel() );
+            assertEquals( "MyNewImage.png", modifiedLayer.getIcon().getName() );
+        } );
+
+    }
+
     private Project doCreateProjectAsAdmin( final ProjectName name )
     {
         return ADMIN_CONTEXT.callWith( () -> doCreateProject( name ) );
-
     }
 
     private Project doCreateProjectAsAdmin( final ProjectName name, final ProjectPermissions projectPermissions )
     {
         return ADMIN_CONTEXT.callWith( () -> doCreateProject( name, projectPermissions ) );
+    }
+
+    private ContentLayer doCreateLayerAsAdmin( final ContentLayerKey key )
+    {
+        return ADMIN_CONTEXT.callWith( () -> doCreateLayer( key ) );
     }
 
     private Project doCreateProject( final ProjectName name )
@@ -448,6 +549,23 @@ class ProjectServiceImplTest
             permissions( projectPermissions ).
             build() );
 
+    }
+
+    private ContentLayer doCreateLayer( final ContentLayerKey key )
+    {
+        return this.projectService.createLayer( CreateLayerParams.create().
+            key( key ).
+            description( "Layer description" ).
+            displayName( "Layer display name" ).
+            locale( Locale.ENGLISH ).
+            addParentKeys( List.of( ContentLayerKey.from( "default:base" ) ) ).
+            icon( CreateAttachment.create().
+                mimeType( "image/jpg" ).
+                label( "My Layer Image" ).
+                name( "MyLayerImage.jpg" ).
+                byteSource( ByteSource.wrap( "layer bytes".getBytes() ) ).
+                build() ).
+            build() );
     }
 
 }

@@ -38,12 +38,16 @@ public class ContentConstants
 
     public static final String DOCUMENT_INDEX_DEFAULT_ANALYZER = "document_index_default";
 
+    public static final String BRANCH_VALUE_DRAFT = "draft";
+
+    public static final String BRANCH_VALUE_MASTER = "master";
+
     public static final Branch BRANCH_DRAFT = Branch.create().
-        value( "draft" ).
+        value( BRANCH_VALUE_DRAFT ).
         build();
 
     public static final Branch BRANCH_MASTER = Branch.create().
-        value( "master" ).
+        value( BRANCH_VALUE_MASTER ).
         build();
 
     public static final String CONTENT_REPO_ID_PREFIX = ProjectConstants.PROJECT_REPO_ID_PREFIX;

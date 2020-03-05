@@ -1,10 +1,12 @@
 package com.enonic.xp.admin.impl.rest.resource.project.json;
 
-import java.util.Objects;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
+import com.enonic.xp.admin.impl.rest.resource.project.layer.json.ContentLayerJson;
 import com.enonic.xp.project.Project;
 
 public final class ProjectJson
@@ -17,6 +19,8 @@ public final class ProjectJson
 
     private final AttachmentJson icon;
 
+    private final List<ContentLayerJson> layers;
+
     private final ProjectPermissionsJson permissions;
 
     public ProjectJson( final Project project )
@@ -28,6 +32,9 @@ public final class ProjectJson
         this.displayName = project.getDisplayName();
         this.description = project.getDescription();
         this.icon = project.getIcon() != null ? new AttachmentJson( project.getIcon() ) : null;
+        this.layers = project.getLayers() != null ? project.getLayers().stream().
+            map( ContentLayerJson::new ).
+            collect( Collectors.toList() ) : null;
         this.permissions = project.getPermissions() != null ? new ProjectPermissionsJson( project.getPermissions() ) : null;
     }
 
@@ -51,31 +58,13 @@ public final class ProjectJson
         return icon;
     }
 
+    public List<ContentLayerJson> getLayers()
+    {
+        return layers;
+    }
+
     public ProjectPermissionsJson getPermissions()
     {
         return permissions;
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final ProjectJson that = (ProjectJson) o;
-        return Objects.equals( name, that.name ) && Objects.equals( displayName, that.displayName ) &&
-            Objects.equals( description, that.description ) && Objects.equals( icon, that.icon ) &&
-            Objects.equals( permissions, that.permissions );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( name, displayName, description, icon, permissions );
     }
 }

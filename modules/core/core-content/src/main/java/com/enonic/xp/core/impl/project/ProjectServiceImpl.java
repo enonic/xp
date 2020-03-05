@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.project;
 
+import java.util.Iterator;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -8,14 +9,15 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.attachment.AttachmentSerializer;
+import com.google.common.collect.Iterables;
+
 import com.enonic.xp.attachment.CreateAttachment;
-import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.ContentInitializer;
 import com.enonic.xp.core.impl.issue.IssueInitializer;
+import com.enonic.xp.core.impl.project.layer.LayerAlreadyExistsException;
+import com.enonic.xp.core.impl.project.layer.LayerNotFoundException;
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.NodeService;
@@ -26,7 +28,12 @@ import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
+import com.enonic.xp.project.layer.ContentLayer;
+import com.enonic.xp.project.layer.ContentLayerKey;
+import com.enonic.xp.project.layer.CreateLayerParams;
+import com.enonic.xp.project.layer.ModifyLayerParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
+import com.enonic.xp.repository.EditableRepository;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
@@ -101,15 +108,31 @@ public class ProjectServiceImpl
 
     private Project doModify( final ModifyProjectParams params )
     {
+        final Project prevProject = doGet( params.getName() );
+
         final UpdateRepositoryParams updateParams = UpdateRepositoryParams.create().
             repositoryId( params.getName().getRepoId() ).
             editor( editableRepository -> {
 
+                if ( prevProject != null && prevProject.getIcon() != null )
+                {
+                    editableRepository.binaryAttachments = editableRepository.binaryAttachments.stream().
+                        filter( binaryAttachment -> binaryAttachment.getReference().equals( prevProject.getIcon().getBinaryReference() ) ).
+                        collect( Collectors.toList() );
+                }
+
                 if ( params.getIcon() != null )
                 {
-                    editableRepository.binaryAttachments.add( createProjectIcon( params.getIcon() ) );
+                    editableRepository.binaryAttachments.add( createIcon( params.getIcon() ) );
                 }
-                editableRepository.data = createProjectData( params );
+
+                final PropertySet projectData =
+                    editableRepository.data.getSet( ProjectConstants.PROJECT_DATA_SET_NAME ) == null ? editableRepository.data.addSet(
+                        ProjectConstants.PROJECT_DATA_SET_NAME ) : editableRepository.data.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
+
+                params.toData().getSet( ProjectConstants.PROJECT_DATA_SET_NAME ).getProperties().forEach( property -> {
+                    projectData.setProperty( property.getName(), property.getValue() );
+                } );
             } ).
             build();
 
@@ -169,41 +192,140 @@ public class ProjectServiceImpl
         return deletedRepositoryId != null;
     }
 
-    private PropertyTree createProjectData( final ModifyProjectParams params )
+    @Override
+    public ContentLayer createLayer( final CreateLayerParams params )
     {
-        final PropertyTree data = new PropertyTree();
+        return callWithUpdateContext( ( () -> {
+            final ContentLayer result = doCreateLayer( params );
+            LOG.info( "Layer created: " + params.getKey() );
 
-        final PropertySet set = data.addSet( ProjectConstants.PROJECT_DATA_SET_NAME );
-        set.addString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
-        set.addString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
-        if ( params.getIcon() != null )
-        {
-            AttachmentSerializer.create( set, CreateAttachments.from( params.getIcon() ), ProjectConstants.PROJECT_ICON_PROPERTY );
-        }
-        else
-        {
-            set.addSet( ProjectConstants.PROJECT_ICON_PROPERTY, null );
-        }
-
-        if ( params.getPermissions() != null )
-        {
-            final PropertySet permissionsSet = set.addSet( ProjectConstants.PROJECT_PERMISSIONS_PROPERTY );
-            permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_OWNER_PROPERTY,
-                                       params.getPermissions().getOwner().asStrings() );
-            permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_EXPERT_PROPERTY,
-                                       params.getPermissions().getExpert().asStrings() );
-            permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY,
-                                       params.getPermissions().getContributor().asStrings() );
-        }
-        else
-        {
-            set.addSet( ProjectConstants.PROJECT_PERMISSIONS_PROPERTY, null );
-        }
-
-        return data;
+            return result;
+        } ), params.getKey().getProjectName() );
     }
 
-    private BinaryAttachment createProjectIcon( final CreateAttachment icon )
+    private ContentLayer doCreateLayer( final CreateLayerParams params )
+    {
+        final Project project = doGet( params.getKey().getProjectName() );
+
+        if ( project == null )
+        {
+            throw new ProjectNotFoundException( params.getKey().getProjectName() );
+        }
+
+        if ( project.getKeys().contains( params.getKey() ) )
+        {
+            throw new LayerAlreadyExistsException( params.getKey() );
+        }
+
+        return doModifyLayer( ModifyLayerParams.create( params ).build() );
+    }
+
+    @Override
+    public ContentLayer modifyLayer( final ModifyLayerParams params )
+    {
+        return callWithUpdateContext( ( () -> {
+            final ContentLayer result = doModifyLayer( params );
+            LOG.info( "Layer updated: " + params.getKey() );
+
+            return result;
+        } ), params.getKey().getProjectName() );
+    }
+
+    private ContentLayer doModifyLayer( final ModifyLayerParams params )
+    {
+        final Project prevProject = doGet( params.getKey().getProjectName() );
+
+        final UpdateRepositoryParams updateParams = UpdateRepositoryParams.create().
+            repositoryId( params.getKey().getProjectName().getRepoId() ).
+            editor( editableRepository -> {
+
+                if ( prevProject != null )
+                {
+                    final ContentLayer prevLayer = prevProject.getLayers().getLayer( params.getKey() );
+
+                    if ( prevLayer != null && prevLayer.getIcon() != null )
+                    {
+                        editableRepository.binaryAttachments = editableRepository.binaryAttachments.stream().
+                            filter(
+                                binaryAttachment -> binaryAttachment.getReference().equals( prevLayer.getIcon().getBinaryReference() ) ).
+                            collect( Collectors.toList() );
+                    }
+                }
+
+                if ( params.getIcon() != null )
+                {
+                    editableRepository.binaryAttachments.add( createIcon( params.getIcon() ) );
+                }
+
+                this.doRemoveLayer( editableRepository, params.getKey() );
+                editableRepository.data.getSet( ProjectConstants.PROJECT_DATA_SET_NAME ).addSet( ProjectConstants.PROJECT_LAYERS_PROPERTY,
+                                                                                                 params.toData() );
+            } ).
+            build();
+
+        final Repository updatedRepository = repositoryService.updateRepository( updateParams );
+        final Project updatedProject = Project.from( updatedRepository );
+
+        return updatedProject.getLayers().getLayer( params.getKey() );
+    }
+
+    @Override
+    public boolean deleteLayer( final ContentLayerKey key )
+    {
+        return callWithUpdateContext( () -> {
+            final boolean result = doDeleteLayer( key );
+            LOG.info( "Layer deleted: " + key );
+
+            return result;
+        }, key.getProjectName() );
+    }
+
+    private boolean doDeleteLayer( final ContentLayerKey key )
+    {
+        final Project project = doGet( key.getProjectName() );
+
+        if ( !project.getLayers().getKeys().contains( key ) )
+        {
+            throw new LayerNotFoundException( key );
+        }
+
+        final UpdateRepositoryParams updateParams = UpdateRepositoryParams.create().
+            repositoryId( key.getProjectName().getRepoId() ).
+            editor( editableRepository -> {
+                this.doRemoveLayer( editableRepository, key );
+            } ).
+            build();
+
+        repositoryService.updateRepository( updateParams );
+        return true;
+    }
+
+    private void doRemoveLayer( final EditableRepository editableRepository, final ContentLayerKey key )
+    {
+        final PropertySet projectData = editableRepository.data.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
+
+        if ( projectData == null )
+        {
+            throw new ProjectNotFoundException( key.getProjectName() );
+        }
+
+        final Iterable<PropertySet> layerSets = projectData.getSets( ProjectConstants.PROJECT_LAYERS_PROPERTY );
+        final Iterator<PropertySet> layersIterator = layerSets.iterator();
+
+        while ( layersIterator.hasNext() )
+        {
+            final PropertySet layerSet = layersIterator.next();
+            if ( key.toString().equals( layerSet.getPropertyNames()[0] ) )
+            {
+                layersIterator.remove();
+            }
+        }
+
+        projectData.removeProperties( ProjectConstants.PROJECT_LAYERS_PROPERTY );
+        projectData.addSets( ProjectConstants.PROJECT_LAYERS_PROPERTY, Iterables.toArray( layerSets, PropertySet.class ) );
+    }
+
+    private BinaryAttachment createIcon( final CreateAttachment icon )
     {
         if ( icon != null )
         {

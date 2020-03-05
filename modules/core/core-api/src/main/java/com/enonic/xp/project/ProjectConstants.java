@@ -20,6 +20,8 @@ public final class ProjectConstants
 
     public static final String PROJECT_ICON_PROPERTY = "icon";
 
+    public static final String PROJECT_LAYERS_PROPERTY = "layers";
+
     public static final String PROJECT_PERMISSIONS_PROPERTY = "permissions";
 
     public static final String PROJECT_ACCESS_LEVEL_OWNER_PROPERTY = "owner";

@@ -6,9 +6,11 @@ import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
+@PublicApi
 public final class ProjectPermissions
 {
     private Map<ProjectPermissionsLevel, PrincipalKeys> permissions;
@@ -23,6 +25,11 @@ public final class ProjectPermissions
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public static Builder create( final ProjectPermissions source )
+    {
+        return new Builder( source );
     }
 
     public PrincipalKeys getOwner()
@@ -76,6 +83,20 @@ public final class ProjectPermissions
         private PrincipalKeys.Builder expert = PrincipalKeys.create();
 
         private PrincipalKeys.Builder contributor = PrincipalKeys.create();
+
+        private Builder()
+        {
+        }
+
+        private Builder( final ProjectPermissions source )
+        {
+            if ( source != null )
+            {
+                owner.addAll( source.getOwner() );
+                expert.addAll( source.getExpert() );
+                contributor.addAll( source.getContributor() );
+            }
+        }
 
         public Builder addOwner( final String owner )
         {

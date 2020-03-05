@@ -2,15 +2,15 @@ package com.enonic.xp.project;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.repository.RepositoryId;
 
-@Beta
+@PublicApi
 public final class ProjectName
 {
-    public static final String VALID_PROJECT_NAME_REGEX = "([a-z0-9\\-])([a-z0-9_\\-])*";
+    public static final String VALID_PROJECT_NAME_REGEX = "[a-z0-9\\-][a-z0-9_\\-]*";
 
     private final String value;
 

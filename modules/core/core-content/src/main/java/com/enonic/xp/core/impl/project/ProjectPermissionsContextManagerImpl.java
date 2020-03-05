@@ -77,7 +77,7 @@ public final class ProjectPermissionsContextManagerImpl
     public Context initUpdateContext( final ProjectName projectName )
     {
         final AuthenticationInfo authenticationInfo = ContextAccessor.current().getAuthInfo();
-        if ( hasAdminAccess( authenticationInfo ) || hasAdminProjectPermission( projectName, authenticationInfo ) )
+        if ( hasAdminAccess( authenticationInfo ) || hasOwnerProjectPermission( projectName, authenticationInfo ) )
         {
             return adminContext();
         }
@@ -120,7 +120,7 @@ public final class ProjectPermissionsContextManagerImpl
                                                                         ProjectPermissionsLevel.CONTRIBUTOR ) );
     }
 
-    private boolean hasAdminProjectPermission( final ProjectName projectName, final AuthenticationInfo authenticationInfo )
+    private boolean hasOwnerProjectPermission( final ProjectName projectName, final AuthenticationInfo authenticationInfo )
     {
         return hasPermissions( projectName, authenticationInfo, Set.of( ProjectPermissionsLevel.OWNER ) );
     }

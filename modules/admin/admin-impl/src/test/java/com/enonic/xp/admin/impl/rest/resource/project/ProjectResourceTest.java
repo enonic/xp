@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.project;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.ws.rs.core.MediaType;
 
@@ -21,6 +22,10 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
+import com.enonic.xp.project.layer.ContentLayer;
+import com.enonic.xp.project.layer.ContentLayerKey;
+import com.enonic.xp.project.layer.CreateLayerParams;
+import com.enonic.xp.project.layer.ModifyLayerParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
@@ -95,11 +100,11 @@ public class ProjectResourceTest
 
         Mockito.when( projectService.create( Mockito.isA( CreateProjectParams.class ) ) ).thenThrow( e );
 
-        createForm();
+        createProjectForm();
 
         assertThrows( IllegalArgumentException.class, () -> {
             request().path( "project/create" ).
-                entity( readFromFile( "create_project_params.json" ), MediaType.MULTIPART_FORM_DATA_TYPE ).
+                entity( "".getBytes(), MediaType.MULTIPART_FORM_DATA_TYPE ).
                 post().getAsString();
         } );
     }
@@ -116,13 +121,34 @@ public class ProjectResourceTest
 
         Mockito.when( projectService.create( Mockito.isA( CreateProjectParams.class ) ) ).thenReturn( project1 );
 
-        createForm();
+        createProjectForm();
 
         String jsonString = request().path( "project/create" ).
-            multipart( "icon", "logo.png", readFromFile( "create_project_params.json" ).getBytes(), MediaType.MULTIPART_FORM_DATA_TYPE ).
+            multipart( "icon", "logo.png", "".getBytes(), MediaType.MULTIPART_FORM_DATA_TYPE ).
             post().getAsString();
 
         assertJson( "create_project_success.json", jsonString );
+    }
+
+    @Test
+    public void create_layer_success()
+        throws Exception
+    {
+        final ContentLayer layer = createLayer( "default:layer1", "layer name 1", "layer description 1", Attachment.create().
+            name( "logo.png" ).
+            mimeType( "image/png" ).
+            label( "small" ).
+            build() );
+
+        Mockito.when( projectService.createLayer( Mockito.isA( CreateLayerParams.class ) ) ).thenReturn( layer );
+
+        createLayerForm();
+
+        String jsonString = request().path( "project/createLayer" ).
+            multipart( "icon", "logo.png", "".getBytes(), MediaType.MULTIPART_FORM_DATA_TYPE ).
+            post().getAsString();
+
+        assertJson( "create_layer_success.json", jsonString );
     }
 
     @Test
@@ -137,13 +163,34 @@ public class ProjectResourceTest
 
         Mockito.when( projectService.modify( Mockito.isA( ModifyProjectParams.class ) ) ).thenReturn( project1 );
 
-        createForm();
+        createProjectForm();
 
         String jsonString = request().path( "project/modify" ).
-            entity( readFromFile( "create_project_params.json" ), MediaType.MULTIPART_FORM_DATA_TYPE ).
+            entity( "".getBytes(), MediaType.MULTIPART_FORM_DATA_TYPE ).
             post().getAsString();
 
         assertJson( "create_project_success.json", jsonString );
+    }
+
+    @Test
+    public void modify_layer_success()
+        throws Exception
+    {
+        final ContentLayer layer = createLayer( "default:layer1", "layer name 1", "layer description 1", Attachment.create().
+            name( "logo.png" ).
+            mimeType( "image/png" ).
+            label( "small" ).
+            build() );
+
+        Mockito.when( projectService.modifyLayer( Mockito.isA( ModifyLayerParams.class ) ) ).thenReturn( layer );
+
+        createLayerForm();
+
+        String jsonString = request().path( "project/modifyLayer" ).
+            entity( "".getBytes(), MediaType.MULTIPART_FORM_DATA_TYPE ).
+            post().getAsString();
+
+        assertJson( "create_layer_success.json", jsonString );
     }
 
     @Test
@@ -173,6 +220,21 @@ public class ProjectResourceTest
         assertEquals( 405, mockRestResponse.getStatus() );
     }
 
+    @Test
+    public void delete_layer()
+        throws Exception
+    {
+        Mockito.when( projectService.deleteLayer( ContentLayerKey.from( "default:layer" ) ) ).thenReturn( true );
+
+        final String jsonString = request().
+            path( "project/deleteLayer" ).
+            entity( "{\"key\" : \"default:layer\"}", MediaType.APPLICATION_JSON_TYPE ).
+            post().
+            getAsString();
+
+        assertEquals( "true", jsonString );
+    }
+
     private Project createProject( final String name, final String displayName, final String description, final Attachment icon )
     {
         return createProject( name, displayName, description, icon, null );
@@ -190,7 +252,21 @@ public class ProjectResourceTest
             build();
     }
 
-    private MultipartForm createForm()
+    private ContentLayer createLayer( final String key, final String displayName, final String description, final Attachment icon )
+    {
+        final ContentLayerKey contentLayerKey = ContentLayerKey.from( key );
+
+        return ContentLayer.create().
+            key( contentLayerKey ).
+            displayName( displayName ).
+            description( description ).
+            addParentKey( ContentLayerKey.from( "default:base" ) ).
+            locale( Locale.ENGLISH ).
+            icon( icon ).
+            build();
+    }
+
+    private MultipartForm createProjectForm()
     {
         final MultipartForm form = Mockito.mock( MultipartForm.class );
 
@@ -201,6 +277,25 @@ public class ProjectResourceTest
         Mockito.when( form.getAsString( "name" ) ).thenReturn( "projname" );
         Mockito.when( form.getAsString( "displayName" ) ).thenReturn( "Project Display Name" );
         Mockito.when( form.getAsString( "description" ) ).thenReturn( "project Description" );
+
+        Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
+
+        return form;
+    }
+
+    private MultipartForm createLayerForm()
+    {
+        final MultipartForm form = Mockito.mock( MultipartForm.class );
+
+        final MultipartItem file = createItem( "icon", "logo.png", 10, "png", "image/png" );
+
+        Mockito.when( form.iterator() ).thenReturn( Lists.newArrayList( file ).iterator() );
+        Mockito.when( form.get( "icon" ) ).thenReturn( file );
+        Mockito.when( form.getAsString( "key" ) ).thenReturn( "default:layer1" );
+        Mockito.when( form.getAsString( "displayName" ) ).thenReturn( "Layer Display Name" );
+        Mockito.when( form.getAsString( "description" ) ).thenReturn( "Layer Description" );
+        Mockito.when( form.getAsString( "locale" ) ).thenReturn( "en" );
+        Mockito.when( form.getAsString( "parentKeys" ) ).thenReturn( "default:parent,default:otherParent" );
 
         Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
 

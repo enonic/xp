@@ -2,17 +2,21 @@ package com.enonic.xp.project;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.project.layer.ContentLayer;
+import com.enonic.xp.project.layer.ContentLayerKey;
+import com.enonic.xp.project.layer.ContentLayerKeys;
+import com.enonic.xp.project.layer.ContentLayers;
 import com.enonic.xp.repository.Repository;
 
-@Beta
+@PublicApi
 public final class Project
 {
     private final ProjectName name;
@@ -23,6 +27,8 @@ public final class Project
 
     private final Attachment icon;
 
+    private final ContentLayers layers;
+
     private final ProjectPermissions permissions;
 
     private Project( Builder builder )
@@ -31,12 +37,18 @@ public final class Project
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.icon = builder.icon;
+        this.layers = builder.layers.build();
         this.permissions = builder.permissions.build();
     }
 
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public static Builder create( final Project source )
+    {
+        return new Builder( source );
     }
 
     public static Project from( final Repository repository )
@@ -67,6 +79,7 @@ public final class Project
             displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) );
 
         buildIcon( project, projectData );
+        buildLayers( project, projectData );
         buildPermissions( project, projectData );
 
         return project.build();
@@ -85,6 +98,16 @@ public final class Project
                 size( iconData.getLong( ContentPropertyNames.ATTACHMENT_SIZE ) ).
                 textContent( iconData.getString( ContentPropertyNames.ATTACHMENT_TEXT ) ).
                 build() );
+        }
+    }
+
+    private static void buildLayers( final Project.Builder project, final PropertySet projectData )
+    {
+        final Iterable<PropertySet> layerSets = projectData.getSets( ProjectConstants.PROJECT_LAYERS_PROPERTY );
+
+        if ( layerSets != null )
+        {
+            layerSets.forEach( layerSet -> project.addLayer( ContentLayer.from( layerSet ) ) );
         }
     }
 
@@ -139,6 +162,21 @@ public final class Project
         return icon;
     }
 
+    public ContentLayers getLayers()
+    {
+        return layers;
+    }
+
+    public ContentLayer getLayer( final ContentLayerKey contentLayerKey )
+    {
+        return layers.getLayer( contentLayerKey );
+    }
+
+    public ContentLayerKeys getKeys()
+    {
+        return layers.getKeys();
+    }
+
     public ProjectPermissions getPermissions()
     {
         return permissions;
@@ -157,18 +195,18 @@ public final class Project
         }
         final Project project = (Project) o;
         return Objects.equals( name, project.name ) && Objects.equals( displayName, project.displayName ) &&
-            Objects.equals( description, project.description ) && Objects.equals( icon, project.icon );
+            Objects.equals( description, project.description ) && Objects.equals( icon, project.icon ) &&
+            Objects.equals( layers, project.layers ) && Objects.equals( permissions, project.permissions );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( name, displayName, description, icon );
+        return Objects.hash( name, displayName, description, icon, layers, permissions );
     }
 
     public static final class Builder
     {
-
         private ProjectName name;
 
         private String displayName;
@@ -177,10 +215,23 @@ public final class Project
 
         private Attachment icon;
 
-        private ProjectPermissions.Builder permissions = ProjectPermissions.create();
+        private ContentLayers.Builder layers = ContentLayers.create();
+
+        private ProjectPermissions.Builder permissions;
 
         private Builder()
         {
+            permissions = ProjectPermissions.create();
+        }
+
+        private Builder( final Project source )
+        {
+            this.name = source.name;
+            this.displayName = source.displayName;
+            this.description = source.description;
+            this.icon = source.icon;
+            this.layers.addAll( source.layers.getSet() );
+            this.permissions = ProjectPermissions.create( source.permissions );
         }
 
         public Builder name( final ProjectName value )
@@ -204,6 +255,15 @@ public final class Project
         public Builder icon( final Attachment icon )
         {
             this.icon = icon;
+            return this;
+        }
+
+        public Builder addLayer( final ContentLayer contentLayer )
+        {
+            if ( contentLayer != null )
+            {
+                this.layers.add( contentLayer );
+            }
             return this;
         }
 

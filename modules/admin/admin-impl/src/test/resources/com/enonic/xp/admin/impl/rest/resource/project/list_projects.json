@@ -9,6 +9,7 @@
         "name": "logo.png",
         "size": 0
       },
+      "layers": [],
       "name": "project1",
       "permissions": {
         "contributor": [],
@@ -22,6 +23,7 @@
       "description": null,
       "displayName": "project2",
       "icon": null,
+      "layers": [],
       "name": "project2",
       "permissions": {
         "contributor": [],
@@ -35,6 +37,7 @@
       "description": null,
       "displayName": null,
       "icon": null,
+      "layers": [],
       "name": "project3",
       "permissions": {
         "contributor": [

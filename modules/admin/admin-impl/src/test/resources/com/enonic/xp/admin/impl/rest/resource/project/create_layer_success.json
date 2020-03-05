@@ -1,0 +1,15 @@
+{
+  "description": "layer description 1",
+  "displayName": "layer name 1",
+  "icon": {
+    "label": "small",
+    "mimeType": "image/png",
+    "name": "logo.png",
+    "size": 0
+  },
+  "key": "default:layer1",
+  "locale": "en",
+  "parentKeys": [
+    "default:base"
+  ]
+}

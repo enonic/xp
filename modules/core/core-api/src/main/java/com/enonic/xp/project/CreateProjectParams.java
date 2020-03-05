@@ -2,12 +2,12 @@ package com.enonic.xp.project;
 
 import java.util.Objects;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachment;
 
-@Beta
+@PublicApi
 public final class CreateProjectParams
 {
     private final ProjectName name;
@@ -84,7 +84,6 @@ public final class CreateProjectParams
 
     public static final class Builder
     {
-
         private ProjectName name;
 
         private String displayName;

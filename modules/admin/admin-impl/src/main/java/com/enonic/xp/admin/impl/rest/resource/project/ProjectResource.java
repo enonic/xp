@@ -1,7 +1,9 @@
 package com.enonic.xp.admin.impl.rest.resource.project;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
@@ -24,6 +26,8 @@ import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.project.json.DeleteProjectParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectsJson;
+import com.enonic.xp.admin.impl.rest.resource.project.layer.json.ContentLayerJson;
+import com.enonic.xp.admin.impl.rest.resource.project.layer.json.DeleteLayerParamsJson;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.project.CreateProjectParams;
@@ -33,6 +37,11 @@ import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.project.layer.ContentLayer;
+import com.enonic.xp.project.layer.ContentLayerConstants;
+import com.enonic.xp.project.layer.ContentLayerKey;
+import com.enonic.xp.project.layer.CreateLayerParams;
+import com.enonic.xp.project.layer.ModifyLayerParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
@@ -58,8 +67,18 @@ public final class ProjectResource
     public ProjectJson create( final MultipartForm form )
         throws Exception
     {
-        final Project project = projectService.create( createParams( form ) );
+        final Project project = projectService.create( createProjectParams( form ) );
         return new ProjectJson( project );
+    }
+
+    @POST
+    @Path("createLayer")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public ContentLayerJson createLayer( final MultipartForm form )
+        throws Exception
+    {
+        final ContentLayer layer = projectService.createLayer( createLayerParams( form ) );
+        return new ContentLayerJson( layer );
     }
 
     @POST
@@ -68,8 +87,18 @@ public final class ProjectResource
     public ProjectJson modify( final MultipartForm form )
         throws Exception
     {
-        final Project modifiedProject = this.projectService.modify( ModifyProjectParams.create( createParams( form ) ).build() );
+        final Project modifiedProject = this.projectService.modify( ModifyProjectParams.create( createProjectParams( form ) ).build() );
         return new ProjectJson( modifiedProject );
+    }
+
+    @POST
+    @Path("modifyLayer")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public ContentLayerJson modifyLayer( final MultipartForm form )
+        throws Exception
+    {
+        final ContentLayer modifiedLayer = this.projectService.modifyLayer( ModifyLayerParams.create( createLayerParams( form ) ).build() );
+        return new ContentLayerJson( modifiedLayer );
     }
 
     @POST
@@ -82,6 +111,13 @@ public final class ProjectResource
         }
 
         return this.projectService.delete( params.getName() );
+    }
+
+    @POST
+    @Path("deleteLayer")
+    public boolean deleteLayer( final DeleteLayerParamsJson params )
+    {
+        return this.projectService.deleteLayer( params.getKey() );
     }
 
     @GET
@@ -101,7 +137,7 @@ public final class ProjectResource
         return new ProjectJson( project );
     }
 
-    private CreateProjectParams createParams( final MultipartForm form )
+    private CreateProjectParams createProjectParams( final MultipartForm form )
         throws IOException
     {
         final ProjectPermissions projectPermissions = getPermissionsFromForm( form );
@@ -126,10 +162,39 @@ public final class ProjectResource
         return builder.build();
     }
 
+    private CreateLayerParams createLayerParams( final MultipartForm form )
+        throws IOException
+    {
+        final CreateLayerParams.Builder builder = CreateLayerParams.create().
+            key( ContentLayerKey.from( form.getAsString( "key" ) ) ).
+            displayName( form.getAsString( "displayName" ) ).
+            description( form.getAsString( "description" ) ).
+            locale( Locale.forLanguageTag( form.getAsString( "locale" ) ) );
+
+        if ( form.getAsString( "parentKeys" ) != null && form.getAsString( "parentKeys" ).length() > 0 )
+        {
+            final List<String> parentKeys = Arrays.asList( form.getAsString( "parentKeys" ).split( "," ) );
+            parentKeys.forEach( builder::addParentKey );
+        }
+
+        final MultipartItem icon = form.get( "icon" );
+
+        if ( icon != null )
+        {
+            builder.icon( CreateAttachment.create().
+                name( ContentLayerConstants.ICON_PROPERTY ).
+                mimeType( icon.getContentType().toString() ).
+                byteSource( icon.getBytes() ).
+                build() );
+        }
+
+        return builder.build();
+    }
+
     private ProjectPermissions getPermissionsFromForm( final MultipartForm form )
         throws IOException
     {
-        final ProjectPermissions.Builder builder = new ProjectPermissions.Builder();
+        final ProjectPermissions.Builder builder = ProjectPermissions.create();
         final String permissionsAsString = form.getAsString( "permissions" );
         if ( permissionsAsString == null )
         {

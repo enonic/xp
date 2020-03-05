@@ -1,13 +1,15 @@
 package com.enonic.xp.project;
 
-import java.util.Objects;
-
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.attachment.AttachmentSerializer;
 import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 
-@Beta
+@PublicApi
 public final class ModifyProjectParams
 {
     private final ProjectName name;
@@ -29,19 +31,53 @@ public final class ModifyProjectParams
         this.permissions = builder.permissions;
     }
 
-    public static Builder create()
-    {
-        return new Builder();
-    }
-
     public static Builder create( final CreateProjectParams params )
     {
-        return create().
+        final Builder builder = create().
             name( params.getName() ).
             description( params.getDescription() ).
             displayName( params.getDisplayName() ).
             permissions( params.getPermissions() ).
             icon( params.getIcon() );
+
+        return builder;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public PropertyTree toData()
+    {
+        final PropertyTree data = new PropertyTree();
+
+        final PropertySet set = data.addSet( ProjectConstants.PROJECT_DATA_SET_NAME );
+        set.addString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, description );
+        set.addString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, displayName );
+        if ( icon != null )
+        {
+            AttachmentSerializer.create( set, CreateAttachments.from( icon ), ProjectConstants.PROJECT_ICON_PROPERTY );
+        }
+        else
+        {
+            set.addSet( ProjectConstants.PROJECT_ICON_PROPERTY, null );
+        }
+
+        if ( permissions != null )
+        {
+            final PropertySet permissionsSet = set.addSet( ProjectConstants.PROJECT_PERMISSIONS_PROPERTY );
+            permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_OWNER_PROPERTY, permissions.getOwner().asStrings() );
+            permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_EXPERT_PROPERTY, permissions.getExpert().asStrings() );
+            permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY,
+                                       permissions.getContributor().asStrings() );
+        }
+        else
+        {
+            set.addSet( ProjectConstants.PROJECT_PERMISSIONS_PROPERTY, null );
+        }
+
+        return data;
     }
 
     public ProjectName getName()
@@ -69,32 +105,8 @@ public final class ModifyProjectParams
         return permissions;
     }
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final ModifyProjectParams that = (ModifyProjectParams) o;
-        return Objects.equals( name, that.name ) && Objects.equals( displayName, that.displayName ) &&
-            Objects.equals( description, that.description ) && Objects.equals( icon, that.icon ) &&
-            Objects.equals( permissions, that.permissions );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( name, displayName, description, icon, permissions );
-    }
-
     public static final class Builder
     {
-
         private ProjectName name;
 
         private String displayName;
