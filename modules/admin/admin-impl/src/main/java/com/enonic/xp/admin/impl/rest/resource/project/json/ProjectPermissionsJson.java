@@ -20,9 +20,9 @@ public class ProjectPermissionsJson
         return this.permissions.getOwner().asStrings();
     }
 
-    public Set<String> getExpert()
+    public Set<String> getEditor()
     {
-        return this.permissions.getExpert().asStrings();
+        return this.permissions.getEditor().asStrings();
     }
 
     public Set<String> getContributor()

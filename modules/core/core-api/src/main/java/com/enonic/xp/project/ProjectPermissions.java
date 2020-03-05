@@ -16,7 +16,7 @@ public final class ProjectPermissions
     private ProjectPermissions( Builder builder )
     {
         this.permissions =
-            Map.of( ProjectPermissionsLevel.OWNER, builder.owner.build(), ProjectPermissionsLevel.EXPERT, builder.expert.build(),
+            Map.of( ProjectPermissionsLevel.OWNER, builder.owner.build(), ProjectPermissionsLevel.EDITOR, builder.editor.build(),
                     ProjectPermissionsLevel.CONTRIBUTOR, builder.contributor.build() );
     }
 
@@ -30,9 +30,9 @@ public final class ProjectPermissions
         return permissions.get( ProjectPermissionsLevel.OWNER );
     }
 
-    public PrincipalKeys getExpert()
+    public PrincipalKeys getEditor()
     {
-        return permissions.get( ProjectPermissionsLevel.EXPERT );
+        return permissions.get( ProjectPermissionsLevel.EDITOR );
     }
 
     public PrincipalKeys getContributor()
@@ -73,7 +73,7 @@ public final class ProjectPermissions
     {
         private PrincipalKeys.Builder owner = PrincipalKeys.create();
 
-        private PrincipalKeys.Builder expert = PrincipalKeys.create();
+        private PrincipalKeys.Builder editor = PrincipalKeys.create();
 
         private PrincipalKeys.Builder contributor = PrincipalKeys.create();
 
@@ -95,20 +95,20 @@ public final class ProjectPermissions
             return this;
         }
 
-        public Builder addExpert( final String expert )
+        public Builder addEditor( final String editor )
         {
-            if ( StringUtils.isNotBlank( expert ) )
+            if ( StringUtils.isNotBlank( editor ) )
             {
-                this.expert.add( PrincipalKey.from( expert ) );
+                this.editor.add( PrincipalKey.from( editor ) );
             }
             return this;
         }
 
-        public Builder addExpert( final PrincipalKey expert )
+        public Builder addEditor( final PrincipalKey editor )
         {
-            if ( expert != null )
+            if ( editor != null )
             {
-                this.expert.add( expert );
+                this.editor.add( editor );
             }
             return this;
         }

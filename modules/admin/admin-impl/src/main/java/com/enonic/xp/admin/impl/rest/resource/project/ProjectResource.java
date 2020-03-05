@@ -39,7 +39,7 @@ import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
 import static com.enonic.xp.project.ProjectConstants.PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY;
-import static com.enonic.xp.project.ProjectConstants.PROJECT_ACCESS_LEVEL_EXPERT_PROPERTY;
+import static com.enonic.xp.project.ProjectConstants.PROJECT_ACCESS_LEVEL_EDITOR_PROPERTY;
 import static com.enonic.xp.project.ProjectConstants.PROJECT_ACCESS_LEVEL_OWNER_PROPERTY;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -146,9 +146,9 @@ public final class ProjectResource
             map.get( PROJECT_ACCESS_LEVEL_OWNER_PROPERTY ).forEach( builder::addOwner );
         }
 
-        if ( map.containsKey( PROJECT_ACCESS_LEVEL_EXPERT_PROPERTY ) )
+        if ( map.containsKey( PROJECT_ACCESS_LEVEL_EDITOR_PROPERTY ) )
         {
-            map.get( PROJECT_ACCESS_LEVEL_EXPERT_PROPERTY ).forEach( builder::addExpert );
+            map.get( PROJECT_ACCESS_LEVEL_EDITOR_PROPERTY ).forEach( builder::addEditor );
         }
 
         if ( map.containsKey( PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY ) )
