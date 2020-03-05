@@ -23,11 +23,11 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQuery;
+import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.NodeVersionsMetadata;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.node.NodeConstants;
-import com.enonic.xp.repo.impl.node.executor.BatchedGetVersionsExecutor;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.vacuum.blob.IsBlobUsedByVersionCommand;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
@@ -98,44 +98,39 @@ public class VersionTableVacuumCommand
 
     private void doProcessRepository( final Repository repository )
     {
-        final BatchedGetVersionsExecutor executor = BatchedGetVersionsExecutor.create().
-            query( query ).
-            nodeService( nodeService ).
-            build();
-
         final VacuumListener listener = params.getListener();
+
+        final NodeVersionQueryResult versionsResult = nodeService.findVersions( query );
+
         if ( listener != null )
         {
-            final Long versionTotal = executor.getTotalHits();
-            listener.stepBegin( repository.getId().toString(), versionTotal );
+            listener.stepBegin( repository.getId().toString(), versionsResult.getTotalHits() );
         }
 
         final Set<NodeVersionId> versionToDeleteSet = new HashSet<>();
         final Set<BlobKey> nodeBlobToCheckSet = new HashSet<>();
         final Set<BlobKey> binaryBlobToCheckSet = new HashSet<>();
-        while ( executor.hasMore() )
-        {
-            final NodeVersionsMetadata versions = executor.execute();
 
-            versions.forEach( ( version ) -> {
-                final boolean toDelete = processVersion( repository, version );
-                if ( toDelete )
-                {
-                    result.deleted();
-                    versionToDeleteSet.add( version.getNodeVersionId() );
-                    nodeBlobToCheckSet.add( version.getNodeVersionKey().getNodeBlobKey() );
-                    version.getBinaryBlobKeys().forEach( binaryBlobToCheckSet::add );
-                }
-                else
-                {
-                    result.inUse();
-                }
-            } );
+        final NodeVersionsMetadata versions = versionsResult.getNodeVersionsMetadata();
 
-            if ( listener != null )
+        versions.forEach( ( version ) -> {
+            final boolean toDelete = processVersion( repository, version );
+            if ( toDelete )
             {
-                listener.processed( versions.size() );
+                result.deleted();
+                versionToDeleteSet.add( version.getNodeVersionId() );
+                nodeBlobToCheckSet.add( version.getNodeVersionKey().getNodeBlobKey() );
+                version.getBinaryBlobKeys().forEach( binaryBlobToCheckSet::add );
             }
+            else
+            {
+                result.inUse();
+            }
+        } );
+
+        if ( listener != null )
+        {
+            listener.processed( versions.size() );
         }
 
         versionService.delete( versionToDeleteSet, InternalContext.from( ContextAccessor.current() ) );
@@ -231,6 +226,7 @@ public class VersionTableVacuumCommand
 
         return NodeVersionQuery.create().
             addQueryFilter( mustBeOlderThanFilter ).
+            size( -1 ).
             build();
     }
 
