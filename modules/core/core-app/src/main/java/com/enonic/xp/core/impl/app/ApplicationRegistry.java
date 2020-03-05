@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -308,13 +309,24 @@ final class ApplicationRegistry
                         LOG.debug( "Waiting for app {}", application.getKey() );
                     }
                 }
-                latch.await();
+                final boolean releasedNormally = latch.await( 10, TimeUnit.SECONDS );
+                latch.countDown(); //release all waiting threads even if released by timeout
+
+                if ( !releasedNormally )
+                {
+                    LOG.warn( "App {} was not configured properly", application.getKey() );
+                }
 
                 if ( awaitWillLock && LOG.isDebugEnabled() )
                 {
                     LOG.debug( Thread.currentThread().getName() + " Finished waiting for app {}", application.getKey() );
                 }
-                return application.getConfig();
+                final Configuration config = application.getConfig();
+                if ( config == null )
+                {
+                    throw new RuntimeException( "App was not fully configured" );
+                }
+                return config;
             }
             catch ( InterruptedException e )
             {
