@@ -11,6 +11,7 @@
       },
       "name": "project1",
       "permissions": {
+        "author": [],
         "contributor": [],
         "editor": [],
         "owner": [
@@ -24,6 +25,7 @@
       "icon": null,
       "name": "project2",
       "permissions": {
+        "author": [],
         "contributor": [],
         "editor": [
           "role:system.authenticated"
@@ -37,9 +39,24 @@
       "icon": null,
       "name": "project3",
       "permissions": {
+        "author": [],
         "contributor": [
           "role:system.authenticated"
         ],
+        "editor": [],
+        "owner": []
+      }
+    },
+    {
+      "description": null,
+      "displayName": "project4",
+      "icon": null,
+      "name": "project4",
+      "permissions": {
+        "author": [
+          "role:system.authenticated"
+        ],
+        "contributor": [],
         "editor": [],
         "owner": []
       }

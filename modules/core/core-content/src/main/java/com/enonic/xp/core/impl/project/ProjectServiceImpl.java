@@ -192,6 +192,8 @@ public class ProjectServiceImpl
                                        params.getPermissions().getOwner().asStrings() );
             permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_EDITOR_PROPERTY,
                                        params.getPermissions().getEditor().asStrings() );
+            permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_AUTHOR_PROPERTY,
+                                       params.getPermissions().getAuthor().asStrings() );
             permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY,
                                        params.getPermissions().getContributor().asStrings() );
         }

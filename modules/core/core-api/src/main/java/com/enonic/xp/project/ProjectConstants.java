@@ -26,6 +26,8 @@ public final class ProjectConstants
 
     public static final String PROJECT_ACCESS_LEVEL_EDITOR_PROPERTY = "editor";
 
+    public static final String PROJECT_ACCESS_LEVEL_AUTHOR_PROPERTY = "author";
+
     public static final String PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY = "contributor";
 
     private static final ProjectPermissions DEFAULT_PROJECT_PERMISSIONS = ProjectPermissions.create().

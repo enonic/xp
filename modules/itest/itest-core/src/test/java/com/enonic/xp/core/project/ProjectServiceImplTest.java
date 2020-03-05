@@ -289,12 +289,14 @@ class ProjectServiceImplTest
         doCreateProjectAsAdmin( ProjectName.from( "test-project3" ),
                                 ProjectPermissions.create().addEditor( REPO_TEST_OWNER.getKey() ).build() );
         doCreateProjectAsAdmin( ProjectName.from( "test-project4" ),
+                                ProjectPermissions.create().addAuthor( REPO_TEST_OWNER.getKey() ).build() );
+        doCreateProjectAsAdmin( ProjectName.from( "test-project5" ),
                                 ProjectPermissions.create().addContributor( REPO_TEST_OWNER.getKey() ).build() );
 
         CONTENT_CUSTOM_MANAGER_CONTEXT.runWith( () -> {
             final Projects projects = projectService.list();
 
-            assertEquals( 4, projectService.list().getSize() );
+            assertEquals( 5, projectService.list().getSize() );
             assertFalse( projects.stream().anyMatch( project -> project.getName().toString().equals( "test-project1" ) ) );
             assertTrue(
                 projects.stream().anyMatch( project -> project.getName().equals( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ) ) );

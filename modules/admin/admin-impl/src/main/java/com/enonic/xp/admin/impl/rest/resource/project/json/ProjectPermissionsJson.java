@@ -25,6 +25,11 @@ public class ProjectPermissionsJson
         return this.permissions.getEditor().asStrings();
     }
 
+    public Set<String> getAuthor()
+    {
+        return this.permissions.getAuthor().asStrings();
+    }
+
     public Set<String> getContributor()
     {
         return this.permissions.getContributor().asStrings();

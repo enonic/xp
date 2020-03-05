@@ -17,7 +17,8 @@ public final class ProjectPermissions
     {
         this.permissions =
             Map.of( ProjectPermissionsLevel.OWNER, builder.owner.build(), ProjectPermissionsLevel.EDITOR, builder.editor.build(),
-                    ProjectPermissionsLevel.CONTRIBUTOR, builder.contributor.build() );
+                    ProjectPermissionsLevel.AUTHOR, builder.author.build(), ProjectPermissionsLevel.CONTRIBUTOR,
+                    builder.contributor.build() );
     }
 
     public static Builder create()
@@ -33,6 +34,11 @@ public final class ProjectPermissions
     public PrincipalKeys getEditor()
     {
         return permissions.get( ProjectPermissionsLevel.EDITOR );
+    }
+
+    public PrincipalKeys getAuthor()
+    {
+        return permissions.get( ProjectPermissionsLevel.AUTHOR );
     }
 
     public PrincipalKeys getContributor()
@@ -75,6 +81,8 @@ public final class ProjectPermissions
 
         private PrincipalKeys.Builder editor = PrincipalKeys.create();
 
+        private PrincipalKeys.Builder author = PrincipalKeys.create();
+
         private PrincipalKeys.Builder contributor = PrincipalKeys.create();
 
         public Builder addOwner( final String owner )
@@ -109,6 +117,24 @@ public final class ProjectPermissions
             if ( editor != null )
             {
                 this.editor.add( editor );
+            }
+            return this;
+        }
+
+        public Builder addAuthor( final String author )
+        {
+            if ( StringUtils.isNotBlank( author ) )
+            {
+                this.author.add( PrincipalKey.from( author ) );
+            }
+            return this;
+        }
+
+        public Builder addAuthor( final PrincipalKey author )
+        {
+            if ( author != null )
+            {
+                this.author.add( author );
             }
             return this;
         }

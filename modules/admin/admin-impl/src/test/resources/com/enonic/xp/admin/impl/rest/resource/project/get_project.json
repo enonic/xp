@@ -9,6 +9,7 @@
   },
   "name": "project1",
   "permissions": {
+    "author": [],
     "contributor": [],
     "editor": [],
     "owner": []
