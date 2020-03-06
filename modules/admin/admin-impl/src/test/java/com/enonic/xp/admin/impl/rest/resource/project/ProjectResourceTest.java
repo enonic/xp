@@ -76,7 +76,7 @@ public class ProjectResourceTest
             build(), ProjectPermissions.create().addOwner( RoleKeys.AUTHENTICATED ).build() );
 
         final Project project2 =
-            createProject( "project2", "project2", null, null, ProjectPermissions.create().addExpert( RoleKeys.AUTHENTICATED ).build() );
+            createProject( "project2", "project2", null, null, ProjectPermissions.create().addEditor( RoleKeys.AUTHENTICATED ).build() );
         final Project project3 =
             createProject( "project3", null, null, null, ProjectPermissions.create().addContributor( RoleKeys.AUTHENTICATED ).build() );
 

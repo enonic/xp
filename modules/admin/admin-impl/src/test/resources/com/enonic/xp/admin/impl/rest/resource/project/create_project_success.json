@@ -10,7 +10,7 @@
   "name": "project1",
   "permissions": {
     "contributor": [],
-    "expert": [],
+    "editor": [],
     "owner": []
   }
 }

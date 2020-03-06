@@ -24,12 +24,11 @@ public final class ProjectConstants
 
     public static final String PROJECT_ACCESS_LEVEL_OWNER_PROPERTY = "owner";
 
-    public static final String PROJECT_ACCESS_LEVEL_EXPERT_PROPERTY = "expert";
+    public static final String PROJECT_ACCESS_LEVEL_EDITOR_PROPERTY = "editor";
 
     public static final String PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY = "contributor";
 
     private static final ProjectPermissions DEFAULT_PROJECT_PERMISSIONS = ProjectPermissions.create().
-        addExpert( RoleKeys.CONTENT_MANAGER_EXPERT ).
         addContributor( RoleKeys.CONTENT_MANAGER_APP ).
         build();
 

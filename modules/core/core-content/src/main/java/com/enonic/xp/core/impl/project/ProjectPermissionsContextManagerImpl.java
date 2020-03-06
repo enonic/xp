@@ -116,7 +116,7 @@ public final class ProjectPermissionsContextManagerImpl
     @Override
     public boolean hasAnyProjectPermission( final ProjectName projectName, final AuthenticationInfo authenticationInfo )
     {
-        return hasPermissions( projectName, authenticationInfo, Set.of( ProjectPermissionsLevel.OWNER, ProjectPermissionsLevel.EXPERT,
+        return hasPermissions( projectName, authenticationInfo, Set.of( ProjectPermissionsLevel.OWNER, ProjectPermissionsLevel.EDITOR,
                                                                         ProjectPermissionsLevel.CONTRIBUTOR ) );
     }
 
@@ -125,9 +125,9 @@ public final class ProjectPermissionsContextManagerImpl
         return hasPermissions( projectName, authenticationInfo, Set.of( ProjectPermissionsLevel.OWNER ) );
     }
 
-    private boolean hasExpertProjectPermission( final ProjectName projectName, final AuthenticationInfo authenticationInfo )
+    private boolean hasEditorProjectPermission( final ProjectName projectName, final AuthenticationInfo authenticationInfo )
     {
-        return hasPermissions( projectName, authenticationInfo, Set.of( ProjectPermissionsLevel.EXPERT ) );
+        return hasPermissions( projectName, authenticationInfo, Set.of( ProjectPermissionsLevel.EDITOR ) );
     }
 
     private boolean hasContributorProjectPermission( final ProjectName projectName, final AuthenticationInfo authenticationInfo )

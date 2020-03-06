@@ -287,7 +287,7 @@ class ProjectServiceImplTest
         doCreateProjectAsAdmin( ProjectName.from( "test-project2" ),
                                 ProjectPermissions.create().addOwner( REPO_TEST_OWNER.getKey() ).build() );
         doCreateProjectAsAdmin( ProjectName.from( "test-project3" ),
-                                ProjectPermissions.create().addExpert( REPO_TEST_OWNER.getKey() ).build() );
+                                ProjectPermissions.create().addEditor( REPO_TEST_OWNER.getKey() ).build() );
         doCreateProjectAsAdmin( ProjectName.from( "test-project4" ),
                                 ProjectPermissions.create().addContributor( REPO_TEST_OWNER.getKey() ).build() );
 
