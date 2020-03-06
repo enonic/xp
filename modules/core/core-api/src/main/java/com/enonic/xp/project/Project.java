@@ -96,6 +96,7 @@ public final class Project
         {
             final Iterable<String> ownerKeys = permissionsSet.getStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_OWNER_PROPERTY );
             final Iterable<String> editorKeys = permissionsSet.getStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_EDITOR_PROPERTY );
+            final Iterable<String> authorKeys = permissionsSet.getStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_AUTHOR_PROPERTY );
             final Iterable<String> contributorKeys =
                 permissionsSet.getStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY );
 
@@ -108,6 +109,11 @@ public final class Project
             if ( editorKeys != null )
             {
                 editorKeys.forEach( projectPermissions::addEditor );
+            }
+
+            if ( authorKeys != null )
+            {
+                authorKeys.forEach( projectPermissions::addAuthor );
             }
 
             if ( contributorKeys != null )
@@ -213,6 +219,7 @@ public final class Project
             {
                 projectPermissions.getOwner().forEach( this.permissions::addOwner );
                 projectPermissions.getEditor().forEach( this.permissions::addEditor );
+                projectPermissions.getAuthor().forEach( this.permissions::addAuthor );
                 projectPermissions.getContributor().forEach( this.permissions::addContributor );
             }
             return this;

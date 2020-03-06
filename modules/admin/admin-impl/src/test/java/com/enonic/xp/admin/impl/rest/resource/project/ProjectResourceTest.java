@@ -79,8 +79,11 @@ public class ProjectResourceTest
             createProject( "project2", "project2", null, null, ProjectPermissions.create().addEditor( RoleKeys.AUTHENTICATED ).build() );
         final Project project3 =
             createProject( "project3", null, null, null, ProjectPermissions.create().addContributor( RoleKeys.AUTHENTICATED ).build() );
+        final Project project4 =
+            createProject( "project4", "project4", null, null, ProjectPermissions.create().addAuthor( RoleKeys.AUTHENTICATED ).build() );
 
-        Mockito.when( projectService.list() ).thenReturn( Projects.create().addAll( List.of( project1, project2, project3 ) ).build() );
+        Mockito.when( projectService.list() ).thenReturn(
+            Projects.create().addAll( List.of( project1, project2, project3, project4 ) ).build() );
 
         String jsonString = request().path( "project/list" ).get().getAsString();
 
