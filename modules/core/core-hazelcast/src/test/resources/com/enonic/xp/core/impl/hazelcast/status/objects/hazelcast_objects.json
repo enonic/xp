@@ -1,0 +1,31 @@
+{
+  "maps": [
+    {
+      "name": "map",
+      "size": 10
+    }
+  ],
+  "queues": [
+    {
+      "name": "queue",
+      "size": 20
+    }
+  ],
+  "topics": [
+    {
+      "name": "topic"
+    }
+  ],
+  "executorServices": [
+    {
+      "name": "executorService"
+    }
+  ],
+  "fencedLocks": [
+    {
+      "name": "lock",
+      "locked": true,
+      "lockCount": 30
+    }
+  ]
+}
