@@ -2,7 +2,6 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':web:web-api' )
-    compile "org.eclipse.jetty:jetty-server:${jettyVersion}"
     compile "org.eclipse.jetty:jetty-hazelcast:${jettyVersion}"
     compile "com.hazelcast:hazelcast-client:${hazelcastVersion}"
 }
