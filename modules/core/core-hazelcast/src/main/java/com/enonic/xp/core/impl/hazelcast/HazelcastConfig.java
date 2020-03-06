@@ -47,4 +47,8 @@ public @interface HazelcastConfig
     boolean network_interfaces_enabled() default false;
 
     String network_interfaces();
+
+    boolean network_restApi_enabled() default false;
+
+    String network_restApi_restEndpointGroups() default "HEALTH_CHECK, CLUSTER_READ";
 }

@@ -17,6 +17,8 @@ import com.hazelcast.config.DiscoveryStrategyConfig;
 import com.hazelcast.config.InterfacesConfig;
 import com.hazelcast.config.MulticastConfig;
 import com.hazelcast.config.NetworkConfig;
+import com.hazelcast.config.RestApiConfig;
+import com.hazelcast.config.RestEndpointGroup;
 import com.hazelcast.config.SerializationConfig;
 import com.hazelcast.config.SerializerConfig;
 import com.hazelcast.config.TcpIpConfig;
@@ -116,6 +118,8 @@ public class HazelcastConfigServiceImpl
         configureInterfaces( config );
 
         configureJoin( config );
+
+        configureRestApi( config );
     }
 
     private void configureJoin( Config config )
@@ -150,8 +154,27 @@ public class HazelcastConfigServiceImpl
             final String interfacesStr = requireNonNullElse( hazelcastConfig.network_interfaces(), "" ).trim();
             List<String> interfaces = Arrays.stream( interfacesStr.split( "," ) ).
                 filter( Predicate.not( String::isBlank ) ).
+                map( String::trim ).
                 collect( Collectors.toUnmodifiableList() );
             interfacesConfig.setInterfaces( interfaces );
+        }
+    }
+
+    private void configureRestApi( Config config )
+    {
+        if ( hazelcastConfig.network_restApi_enabled() )
+        {
+            final RestApiConfig restApiConfig = new RestApiConfig();
+            restApiConfig.setEnabled( true );
+            final String endpointGroupsConfig = requireNonNullElse( hazelcastConfig.network_restApi_restEndpointGroups(), "" );
+
+            final List<RestEndpointGroup> restEndpointGroups = Arrays.stream( endpointGroupsConfig.split( "," ) ).
+                filter( Predicate.not( String::isBlank ) ).
+                map( String::trim ).
+                map( RestEndpointGroup::valueOf ).collect( Collectors.toList() );
+
+            restApiConfig.setEnabledGroups( restEndpointGroups );
+            config.getNetworkConfig().setRestApiConfig( restApiConfig );
         }
     }
 
@@ -174,6 +197,7 @@ public class HazelcastConfigServiceImpl
             {
                 members = Arrays.stream( membersConfig.split( "," ) ).
                     filter( Predicate.not( String::isBlank ) ).
+                    map( String::trim ).
                     collect( Collectors.toUnmodifiableList() );
             }
             else if ( hazelcastConfig.clusterConfigDefaults() )
