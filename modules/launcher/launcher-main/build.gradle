@@ -1,4 +1,3 @@
 dependencies {
-    compile project( ':launcher:launcher-ui' )
     compile project( ':launcher:launcher-impl' )
 }
