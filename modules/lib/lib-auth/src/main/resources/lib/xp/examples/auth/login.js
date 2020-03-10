@@ -41,6 +41,26 @@ var result4 = authLib.login({
 // END
 
 // BEGIN
+// Login with an explicit scope SESSION.
+var result5 = authLib.login({
+    user: 'user1@enonic.com',
+    idProvider: 'enonic',
+    skipAuth: true,
+    scope: 'SESSION'
+});
+// END
+
+// BEGIN
+// Login with an explicit scope REQUEST.
+var result6 = authLib.login({
+    user: 'user1@enonic.com',
+    idProvider: 'enonic',
+    skipAuth: true,
+    scope: 'REQUEST'
+});
+// END
+
+// BEGIN
 // Result of a successful login operation.
 var expected = {
     'authenticated': true,
@@ -61,3 +81,5 @@ t.assertJsonEquals(expected, result1);
 t.assertJsonEquals(expected, result2);
 t.assertJsonEquals(expected, result3);
 t.assertJsonEquals(expected, result4);
+t.assertJsonEquals(expected, result5);
+t.assertJsonEquals(expected, result6);
