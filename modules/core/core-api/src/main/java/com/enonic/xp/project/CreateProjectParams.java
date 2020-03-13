@@ -20,6 +20,8 @@ public final class CreateProjectParams
 
     private final ProjectPermissions permissions;
 
+    private final ProjectReadAccess readAccess;
+
     private CreateProjectParams( final Builder builder )
     {
         this.name = builder.name;
@@ -27,6 +29,7 @@ public final class CreateProjectParams
         this.description = builder.description;
         this.icon = builder.icon;
         this.permissions = builder.permissions;
+        this.readAccess = builder.readAccess;
     }
 
     public static Builder create()
@@ -59,6 +62,11 @@ public final class CreateProjectParams
         return permissions;
     }
 
+    public ProjectReadAccess getReadAccess()
+    {
+        return readAccess;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -66,14 +74,17 @@ public final class CreateProjectParams
         {
             return true;
         }
+
         if ( o == null || getClass() != o.getClass() )
         {
             return false;
         }
+
         final CreateProjectParams that = (CreateProjectParams) o;
+
         return Objects.equals( name, that.name ) && Objects.equals( displayName, that.displayName ) &&
             Objects.equals( description, that.description ) && Objects.equals( icon, that.icon ) &&
-            Objects.equals( permissions, that.permissions );
+            Objects.equals( permissions, that.permissions ) && Objects.equals( readAccess, that.readAccess );
     }
 
     @Override
@@ -94,6 +105,8 @@ public final class CreateProjectParams
         private CreateAttachment icon;
 
         private ProjectPermissions permissions;
+
+        private ProjectReadAccess readAccess;
 
         private Builder()
         {
@@ -128,6 +141,13 @@ public final class CreateProjectParams
             this.permissions = permissions;
             return this;
         }
+
+        public Builder readAccess( final ProjectReadAccess readAccess )
+        {
+            this.readAccess = readAccess;
+            return this;
+        }
+
 
         private void validate()
         {

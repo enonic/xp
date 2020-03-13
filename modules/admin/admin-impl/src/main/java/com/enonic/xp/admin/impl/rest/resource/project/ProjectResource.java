@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.project;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
@@ -23,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.project.json.DeleteProjectParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectJson;
+import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectReadAccessJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectsJson;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.jaxrs.JaxRsComponent;
@@ -32,7 +34,11 @@ import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
+import com.enonic.xp.project.ProjectReadAccess;
+import com.enonic.xp.project.ProjectReadAccessType;
 import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
@@ -106,12 +112,14 @@ public final class ProjectResource
         throws IOException
     {
         final ProjectPermissions projectPermissions = getPermissionsFromForm( form );
+        final ProjectReadAccess readAccess = this.getReadAccessFromForm( form );
 
         final CreateProjectParams.Builder builder = CreateProjectParams.create().
             name( ProjectName.from( form.getAsString( "name" ) ) ).
             displayName( form.getAsString( "displayName" ) ).
             description( form.getAsString( "description" ) ).
-            permissions( projectPermissions );
+            permissions( projectPermissions ).
+            readAccess( readAccess );
 
         final MultipartItem icon = form.get( "icon" );
 
@@ -163,6 +171,39 @@ public final class ProjectResource
         }
 
         return builder.build();
+    }
+
+    private ProjectReadAccess getReadAccessFromForm( final MultipartForm form )
+        throws IOException
+    {
+        final String readAccessAsString = form.getAsString( "readAccess" );
+
+        if ( readAccessAsString == null )
+        {
+            return new ProjectReadAccess( ProjectReadAccessType.PRIVATE );
+        }
+
+        final ProjectReadAccessJson readAccessJson = new ObjectMapper().readValue( readAccessAsString, ProjectReadAccessJson.class );
+
+        return readAccessJsonToReadAccess( readAccessJson );
+    }
+
+    private ProjectReadAccess readAccessJsonToReadAccess( final ProjectReadAccessJson json )
+    {
+        final ProjectReadAccessType type = ProjectReadAccessType.valueOf( json.getType().toUpperCase() );
+
+        if ( type == ProjectReadAccessType.CUSTOM )
+        {
+            if ( json.getPrincipals() == null || json.getPrincipals().isEmpty() )
+            {
+                return new ProjectReadAccess( ProjectReadAccessType.PRIVATE );
+            }
+
+            return new ProjectReadAccess( type, PrincipalKeys.from(
+                json.getPrincipals().stream().map( PrincipalKey::from ).collect( Collectors.toList() ) ) );
+        }
+
+        return new ProjectReadAccess( type );
     }
 
     @Reference

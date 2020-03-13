@@ -22,6 +22,12 @@ public final class ProjectConstants
 
     public static final String PROJECT_PERMISSIONS_PROPERTY = "permissions";
 
+    public static final String PROJECT_READ_ACCESS_PROPERTY = "readAccess";
+
+    public static final String PROJECT_READ_ACCESS_TYPE_PROPERTY = "type";
+
+    public static final String PROJECT_READ_ACCESS_PRINCIPALS_PROPERTY = "principals";
+
     public static final String PROJECT_ACCESS_LEVEL_OWNER_PROPERTY = "owner";
 
     public static final String PROJECT_ACCESS_LEVEL_EDITOR_PROPERTY = "editor";
@@ -34,9 +40,12 @@ public final class ProjectConstants
         addContributor( RoleKeys.CONTENT_MANAGER_APP ).
         build();
 
+    private static final ProjectReadAccess DEFAULT_PROJECT_READ_ACCESS = new ProjectReadAccess( ProjectReadAccessType.PRIVATE );
+
     public static final Project DEFAULT_PROJECT = Project.create().
         name( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ).
         displayName( "Default" ).
         addPermissions( DEFAULT_PROJECT_PERMISSIONS ).
+        readAccess( DEFAULT_PROJECT_READ_ACCESS ).
         build();
 }

@@ -20,6 +20,8 @@ public final class ModifyProjectParams
 
     private final ProjectPermissions permissions;
 
+    private final ProjectReadAccess readAccess;
+
     private ModifyProjectParams( final Builder builder )
     {
         this.name = builder.name;
@@ -27,6 +29,7 @@ public final class ModifyProjectParams
         this.description = builder.description;
         this.icon = builder.icon;
         this.permissions = builder.permissions;
+        this.readAccess = builder.readAccess;
     }
 
     public static Builder create()
@@ -41,6 +44,7 @@ public final class ModifyProjectParams
             description( params.getDescription() ).
             displayName( params.getDisplayName() ).
             permissions( params.getPermissions() ).
+            readAccess( params.getReadAccess() ).
             icon( params.getIcon() );
     }
 
@@ -69,6 +73,11 @@ public final class ModifyProjectParams
         return permissions;
     }
 
+    public ProjectReadAccess getReadAccess()
+    {
+        return readAccess;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -76,14 +85,17 @@ public final class ModifyProjectParams
         {
             return true;
         }
+
         if ( o == null || getClass() != o.getClass() )
         {
             return false;
         }
+
         final ModifyProjectParams that = (ModifyProjectParams) o;
+
         return Objects.equals( name, that.name ) && Objects.equals( displayName, that.displayName ) &&
             Objects.equals( description, that.description ) && Objects.equals( icon, that.icon ) &&
-            Objects.equals( permissions, that.permissions );
+            Objects.equals( permissions, that.permissions ) && Objects.equals( readAccess, that.readAccess );
     }
 
     @Override
@@ -104,6 +116,8 @@ public final class ModifyProjectParams
         private CreateAttachment icon;
 
         private ProjectPermissions permissions;
+
+        private ProjectReadAccess readAccess;
 
         private Builder()
         {
@@ -136,6 +150,12 @@ public final class ModifyProjectParams
         public Builder permissions( final ProjectPermissions permissions )
         {
             this.permissions = permissions;
+            return this;
+        }
+
+        public Builder readAccess( final ProjectReadAccess readAccess )
+        {
+            this.readAccess = readAccess;
             return this;
         }
 

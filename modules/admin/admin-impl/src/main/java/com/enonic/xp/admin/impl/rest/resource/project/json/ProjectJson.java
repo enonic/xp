@@ -19,6 +19,8 @@ public final class ProjectJson
 
     private final ProjectPermissionsJson permissions;
 
+    private final ProjectReadAccessJson readAccess;
+
     public ProjectJson( final Project project )
     {
         Preconditions.checkArgument( project != null, "Project cannot be null." );
@@ -29,6 +31,7 @@ public final class ProjectJson
         this.description = project.getDescription();
         this.icon = project.getIcon() != null ? new AttachmentJson( project.getIcon() ) : null;
         this.permissions = project.getPermissions() != null ? new ProjectPermissionsJson( project.getPermissions() ) : null;
+        this.readAccess = project.getReadAccess() != null ? new ProjectReadAccessJson( project.getReadAccess() ) : null;
     }
 
     public String getName()
@@ -56,6 +59,11 @@ public final class ProjectJson
         return permissions;
     }
 
+    public ProjectReadAccessJson getReadAccess()
+    {
+        return readAccess;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -70,12 +78,12 @@ public final class ProjectJson
         final ProjectJson that = (ProjectJson) o;
         return Objects.equals( name, that.name ) && Objects.equals( displayName, that.displayName ) &&
             Objects.equals( description, that.description ) && Objects.equals( icon, that.icon ) &&
-            Objects.equals( permissions, that.permissions );
+            Objects.equals( permissions, that.permissions ) && Objects.equals( readAccess, that.readAccess );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( name, displayName, description, icon, permissions );
+        return Objects.hash( name, displayName, description, icon, permissions, readAccess );
     }
 }

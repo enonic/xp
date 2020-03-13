@@ -11,6 +11,8 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 
 @Beta
 public final class Project
@@ -25,6 +27,8 @@ public final class Project
 
     private final ProjectPermissions permissions;
 
+    private final ProjectReadAccess readAccess;
+
     private Project( Builder builder )
     {
         this.name = builder.name;
@@ -32,6 +36,7 @@ public final class Project
         this.description = builder.description;
         this.icon = builder.icon;
         this.permissions = builder.permissions.build();
+        this.readAccess = builder.readAccess;
     }
 
     public static Builder create()
@@ -64,7 +69,8 @@ public final class Project
         final Project.Builder project = Project.create().
             name( ProjectName.from( repository.getId() ) ).
             description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) ).
-            displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) );
+            displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) ).
+            readAccess( getReadAccessFromData( projectData ) );
 
         buildIcon( project, projectData );
         buildPermissions( project, projectData );
@@ -125,6 +131,30 @@ public final class Project
         }
     }
 
+    private static ProjectReadAccess getReadAccessFromData( final PropertySet projectData )
+    {
+        final PropertySet readAccessSet = projectData.getPropertySet( ProjectConstants.PROJECT_READ_ACCESS_PROPERTY );
+
+        if ( readAccessSet == null )
+        {
+            return new ProjectReadAccess( ProjectReadAccessType.PUBLIC );
+        }
+
+        final ProjectReadAccessType type =
+            ProjectReadAccessType.valueOf( readAccessSet.getString( ProjectConstants.PROJECT_READ_ACCESS_TYPE_PROPERTY ) );
+
+        if ( type == ProjectReadAccessType.CUSTOM )
+        {
+            final PrincipalKeys.Builder builder = PrincipalKeys.create();
+            readAccessSet.getStrings( ProjectConstants.PROJECT_READ_ACCESS_PRINCIPALS_PROPERTY ).forEach(
+                principal -> builder.add( PrincipalKey.from( principal ) ) );
+
+            return new ProjectReadAccess( ProjectReadAccessType.CUSTOM, builder.build() );
+        }
+
+        return new ProjectReadAccess( type );
+    }
+
     public ProjectName getName()
     {
         return name;
@@ -148,6 +178,11 @@ public final class Project
     public ProjectPermissions getPermissions()
     {
         return permissions;
+    }
+
+    public ProjectReadAccess getReadAccess()
+    {
+        return this.readAccess;
     }
 
     @Override
@@ -184,6 +219,8 @@ public final class Project
         private Attachment icon;
 
         private ProjectPermissions.Builder permissions = ProjectPermissions.create();
+
+        private ProjectReadAccess readAccess;
 
         private Builder()
         {
@@ -225,11 +262,16 @@ public final class Project
             return this;
         }
 
+        public Builder readAccess( final ProjectReadAccess readAccess )
+        {
+            this.readAccess = readAccess;
+            return this;
+        }
+
         private void validate()
         {
             Preconditions.checkNotNull( name, "name cannot be null" );
         }
-
 
         public Project build()
         {

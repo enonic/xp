@@ -202,6 +202,11 @@ public class ProjectServiceImpl
             set.addSet( ProjectConstants.PROJECT_PERMISSIONS_PROPERTY, null );
         }
 
+        final PropertySet readAccessSet = set.addSet( ProjectConstants.PROJECT_READ_ACCESS_PROPERTY );
+        readAccessSet.addString( ProjectConstants.PROJECT_READ_ACCESS_TYPE_PROPERTY, params.getReadAccess().getType().toString() );
+        readAccessSet.addStrings( ProjectConstants.PROJECT_READ_ACCESS_PRINCIPALS_PROPERTY,
+                                  params.getReadAccess().getPrincipals().asStrings() );
+
         return data;
     }
 
