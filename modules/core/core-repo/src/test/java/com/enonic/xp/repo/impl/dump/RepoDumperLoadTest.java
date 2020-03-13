@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.dump;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
@@ -20,7 +19,6 @@ public class RepoDumperLoadTest
     }
 
     @Test
-    @Disabled
     public void name()
         throws Exception
     {
