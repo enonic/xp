@@ -19,6 +19,8 @@ import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
+import com.enonic.xp.project.ProjectReadAccess;
+import com.enonic.xp.project.ProjectReadAccessType;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.security.RoleKeys;
@@ -178,11 +180,17 @@ public class ProjectResourceTest
 
     private Project createProject( final String name, final String displayName, final String description, final Attachment icon )
     {
-        return createProject( name, displayName, description, icon, null );
+        return createProject( name, displayName, description, icon, null,  new ProjectReadAccess( ProjectReadAccessType.PRIVATE ));
     }
 
     private Project createProject( final String name, final String displayName, final String description, final Attachment icon,
                                    final ProjectPermissions projectPermissions )
+    {
+        return createProject( name, displayName, description, icon, projectPermissions,  new ProjectReadAccess( ProjectReadAccessType.PRIVATE ));
+    }
+
+    private Project createProject( final String name, final String displayName, final String description, final Attachment icon,
+                                   final ProjectPermissions projectPermissions, final ProjectReadAccess readAccess )
     {
         return Project.create().
             name( ProjectName.from( name ) ).
@@ -190,6 +198,7 @@ public class ProjectResourceTest
             description( description ).
             icon( icon ).
             addPermissions( projectPermissions ).
+            readAccess( readAccess ).
             build();
     }
 

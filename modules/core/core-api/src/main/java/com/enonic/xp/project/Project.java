@@ -220,7 +220,7 @@ public final class Project
 
         private ProjectPermissions.Builder permissions = ProjectPermissions.create();
 
-        private ProjectReadAccess readAccess;
+        private ProjectReadAccess readAccess = new ProjectReadAccess( ProjectReadAccessType.PRIVATE );
 
         private Builder()
         {
