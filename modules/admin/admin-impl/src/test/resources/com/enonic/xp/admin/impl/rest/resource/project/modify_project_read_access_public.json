@@ -1,0 +1,21 @@
+{
+  "description": "project description 1",
+  "displayName": "project name 1",
+  "icon": {
+    "label": "small",
+    "mimeType": "image/png",
+    "name": "logo.png",
+    "size": 0
+  },
+  "name": "project1",
+  "permissions": {
+    "author": [],
+    "contributor": [],
+    "editor": [],
+    "owner": []
+  },
+  "readAccess": {
+    "principals": [],
+    "type": "PUBLIC"
+  }
+}

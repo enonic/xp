@@ -1,10 +1,12 @@
 package com.enonic.xp.admin.impl.rest.resource.project;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.MediaType;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
@@ -23,12 +25,15 @@ import com.enonic.xp.project.ProjectReadAccess;
 import com.enonic.xp.project.ProjectReadAccessType;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ProjectResourceTest
     extends AdminResourceTestSupport
@@ -152,6 +157,80 @@ public class ProjectResourceTest
     }
 
     @Test
+    public void modify_project_read_access_public()
+        throws Exception
+    {
+        final ProjectReadAccess readAccess = new ProjectReadAccess( ProjectReadAccessType.PUBLIC );
+        final Project project1 = createProject( "project1", "project name 1", "project description 1", Attachment.create().
+            name( "logo.png" ).
+            mimeType( "image/png" ).
+            label( "small" ).
+            build(), null, readAccess );
+
+        final ArgumentCaptor<ModifyProjectParams> modifyParamsCaptor = ArgumentCaptor.forClass( ModifyProjectParams.class );
+        Mockito.when( projectService.modify( Mockito.isA( ModifyProjectParams.class ) ) ).thenReturn( project1 );
+
+        createForm( readAccess );
+
+        String jsonString = request().path( "project/modify" ).
+            entity( readFromFile( "create_project_params.json" ), MediaType.MULTIPART_FORM_DATA_TYPE ).
+            post().getAsString();
+
+        Mockito.verify( projectService ).modify( modifyParamsCaptor.capture() );
+
+        assertTrue( modifyParamsCaptor.getValue().getReadAccess().getType() == ProjectReadAccessType.PUBLIC );
+        assertJson( "modify_project_read_access_public.json", jsonString );
+    }
+
+    @Test
+    public void modify_project_read_access_custom()
+        throws Exception
+    {
+        final PrincipalKeys principalKeys = PrincipalKeys.from( PrincipalKey.ofSuperUser(), PrincipalKey.ofAnonymous() );
+        final ProjectReadAccess readAccess = new ProjectReadAccess( ProjectReadAccessType.CUSTOM, principalKeys );
+        final Project project1 = createProject( "project1", "project name 1", "project description 1", Attachment.create().
+            name( "logo.png" ).
+            mimeType( "image/png" ).
+            label( "small" ).
+            build(), null, readAccess );
+
+        final ArgumentCaptor<ModifyProjectParams> modifyParamsCaptor = ArgumentCaptor.forClass( ModifyProjectParams.class );
+        Mockito.when( projectService.modify( Mockito.isA( ModifyProjectParams.class ) ) ).thenReturn( project1 );
+
+        createForm( readAccess );
+
+        String jsonString = request().path( "project/modify" ).
+            entity( readFromFile( "create_project_params.json" ), MediaType.MULTIPART_FORM_DATA_TYPE ).
+            post().getAsString();
+
+        Mockito.verify( projectService ).modify( modifyParamsCaptor.capture() );
+
+        assertTrue( modifyParamsCaptor.getValue().getReadAccess().getType() == ProjectReadAccessType.CUSTOM );
+        assertTrue( modifyParamsCaptor.getValue().getReadAccess().getPrincipals().equals( principalKeys ) );
+        assertJson( "modify_project_read_access_custom.json", jsonString );
+    }
+
+    @Test
+    public void no_read_access_set_returns_private_on_create_modify()
+        throws Exception
+    {
+        final Project project1 = createProject( "project1", "project name 1", "project description 1", null, null );
+
+        final ArgumentCaptor<ModifyProjectParams> modifyParamsCaptor = ArgumentCaptor.forClass( ModifyProjectParams.class );
+        Mockito.when( projectService.modify( Mockito.isA( ModifyProjectParams.class ) ) ).thenReturn( project1 );
+
+        createForm();
+
+        request().path( "project/modify" ).
+            entity( readFromFile( "create_project_params.json" ), MediaType.MULTIPART_FORM_DATA_TYPE ).
+            post().getAsString();
+
+        Mockito.verify( projectService ).modify( modifyParamsCaptor.capture() );
+
+        assertTrue( modifyParamsCaptor.getValue().getReadAccess().getType() == ProjectReadAccessType.PRIVATE );
+    }
+
+    @Test
     public void delete_project()
         throws Exception
     {
@@ -204,6 +283,11 @@ public class ProjectResourceTest
 
     private MultipartForm createForm()
     {
+        return createForm( null );
+    }
+
+    private MultipartForm createForm( final ProjectReadAccess readAccess )
+    {
         final MultipartForm form = Mockito.mock( MultipartForm.class );
 
         final MultipartItem file = createItem( "icon", "logo.png", 10, "png", "image/png" );
@@ -213,6 +297,18 @@ public class ProjectResourceTest
         Mockito.when( form.getAsString( "name" ) ).thenReturn( "projname" );
         Mockito.when( form.getAsString( "displayName" ) ).thenReturn( "Project Display Name" );
         Mockito.when( form.getAsString( "description" ) ).thenReturn( "project Description" );
+
+        if ( readAccess != null )
+        {
+            final String type = readAccess.getType().toString().toLowerCase();
+            final List<String> principals =
+                readAccess.getPrincipals().stream().map( principalKey -> "\"" + principalKey + "\"" ).collect( Collectors.toList() );
+            final String principalsAsString = String.join( ",", principals );
+
+            Mockito.
+                when( form.getAsString( "readAccess" ) ).
+                thenReturn( "{ \"type\":\"" + type + "\", \"principals\":[" + principalsAsString + "]}" );
+        }
 
         Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
 
