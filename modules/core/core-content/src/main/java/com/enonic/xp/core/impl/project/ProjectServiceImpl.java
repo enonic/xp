@@ -24,6 +24,7 @@ import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectRoles;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repository.DeleteRepositoryParams;
@@ -31,6 +32,9 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
+import com.enonic.xp.security.CreateRoleParams;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
@@ -45,6 +49,8 @@ public class ProjectServiceImpl
     private IndexService indexService;
 
     private NodeService nodeService;
+
+    private SecurityService securityService;
 
     private ProjectPermissionsContextManager projectPermissionsContextManager;
 
@@ -114,6 +120,9 @@ public class ProjectServiceImpl
             build();
 
         final Repository updatedRepository = repositoryService.updateRepository( updateParams );
+
+        doCreateRoles( params.getName() );
+
         return Project.from( updatedRepository );
     }
 
@@ -166,6 +175,8 @@ public class ProjectServiceImpl
         final DeleteRepositoryParams params = DeleteRepositoryParams.from( projectName.getRepoId() );
         final RepositoryId deletedRepositoryId = this.repositoryService.deleteRepository( params );
 
+        doDeleteRoles( projectName );
+
         return deletedRepositoryId != null;
     }
 
@@ -215,6 +226,51 @@ public class ProjectServiceImpl
         return null;
     }
 
+    private void doCreateRoles( final ProjectName projectName )
+    {
+        if ( projectName == null || ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        {
+            return;
+        }
+
+        for ( ProjectRoles projectRole : ProjectRoles.values() )
+        {
+
+            final PrincipalKey roleKey = getRoleKey( projectName, projectRole );
+
+            if ( securityService.getRole( roleKey ).isEmpty() )
+            {
+                securityService.createRole( CreateRoleParams.create().
+                    roleKey( PrincipalKey.ofRole( roleKey.getId() ) ).
+                    displayName( roleKey.getId() ).
+                    build() );
+            }
+        }
+    }
+
+    private void doDeleteRoles( final ProjectName projectName )
+    {
+        if ( projectName == null || ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        {
+            return;
+        }
+
+        for ( ProjectRoles projectRole : ProjectRoles.values() )
+        {
+            final PrincipalKey roleKey = getRoleKey( projectName, projectRole );
+            if ( securityService.getRole( roleKey ).isPresent() )
+            {
+                securityService.deletePrincipal( PrincipalKey.ofRole( roleKey.getId() ) );
+            }
+        }
+    }
+
+    private PrincipalKey getRoleKey( final ProjectName projectName, final ProjectRoles role )
+    {
+        final String roleName = ProjectConstants.PROJECT_REPO_ID_PREFIX + projectName + "." + role.getValue();
+        return PrincipalKey.ofRole( roleName );
+    }
+
     private <T> T callWithCreateContext( final Callable<T> runnable )
     {
         return projectPermissionsContextManager.initCreateContext().callWith( runnable );
@@ -256,6 +312,12 @@ public class ProjectServiceImpl
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
+    }
+
+    @Reference
+    public void setSecurityService( final SecurityService securityService )
+    {
+        this.securityService = securityService;
     }
 
     @Reference

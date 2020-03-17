@@ -12,6 +12,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
+import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.project.CreateProjectParams;
@@ -98,6 +99,8 @@ class ProjectServiceImplTest
 
     private ProjectServiceImpl projectService;
 
+    private SecurityServiceImpl securityService;
+
     @BeforeEach
     protected void setUpNode()
         throws Exception
@@ -116,6 +119,15 @@ class ProjectServiceImplTest
         projectService.setNodeService( nodeService );
         projectService.setRepositoryService( repositoryService );
         projectService.setProjectPermissionsContextManager( projectAccessContextManager );
+
+        securityService = new SecurityServiceImpl();
+        securityService.setNodeService( this.nodeService );
+        securityService.setIndexService( indexService );
+
+        ADMIN_CONTEXT.runWith( () -> {
+            securityService.initialize();
+            projectService.setSecurityService( securityService );
+        } );
     }
 
     @Test
@@ -170,6 +182,21 @@ class ProjectServiceImplTest
 
             assertEquals( "Denied [user:system:custom-user] user access for [create] operation", ex.getMessage() );
         } );
+
+    }
+
+    @Test
+    void create_with_roles()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+
+        doCreateProjectAsAdmin( ProjectName.from( projectRepoId ) );
+
+        assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.owner" ) ).isPresent() );
+        assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.author" ) ).isPresent() );
+        assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.contributor" ) ).isPresent() );
+        assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.editor" ) ).isPresent() );
+        assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.viewer" ) ).isPresent() );
 
     }
 
@@ -233,6 +260,24 @@ class ProjectServiceImplTest
         final RuntimeException ex = Assertions.assertThrows( RuntimeException.class, () -> projectService.delete( projectName ) );
 
         assertEquals( "Denied [user:system:test-user] user access for [delete] operation", ex.getMessage() );
+    }
+
+    @Test
+    void delete_with_roles()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+        doCreateProjectAsAdmin( ProjectName.from( projectRepoId ) );
+
+        ADMIN_CONTEXT.runWith( () -> {
+            this.projectService.delete( ProjectName.from( projectRepoId ) );
+
+            assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.owner" ) ).isEmpty() );
+            assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.author" ) ).isEmpty() );
+            assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.contributor" ) ).isEmpty() );
+            assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.editor" ) ).isEmpty() );
+            assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.viewer" ) ).isEmpty() );
+
+        } );
     }
 
     @Test
@@ -415,6 +460,34 @@ class ProjectServiceImplTest
             assertTrue( modifiedProject.getPermissions().getOwner().contains( PrincipalKey.from( "user:store:new" ) ) );
         } );
 
+    }
+
+    @Test
+    void modify_with_deleted_role()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+        doCreateProjectAsAdmin( ProjectName.from( projectRepoId ) );
+
+        ADMIN_CONTEXT.runWith( () -> {
+            securityService.deletePrincipal( PrincipalKey.ofRole( "com.enonic.cms.test-project.owner" ) );
+
+            projectService.modify( ModifyProjectParams.create().
+                name( ProjectName.from( "test-project" ) ).
+                description( "new description" ).
+                displayName( "new display name" ).
+                icon( CreateAttachment.create().
+                    mimeType( "image/png" ).
+                    label( "My New Image" ).
+                    name( "MyNewImage.png" ).
+                    byteSource( ByteSource.wrap( "new bytes".getBytes() ) ).
+                    build() ).
+                permissions( ProjectPermissions.create().
+                    addOwner( PrincipalKey.from( "user:store:new" ) ).
+                    build() ).
+                build() );
+        } );
+
+        assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.owner" ) ).isPresent() );
     }
 
     private Project doCreateProjectAsAdmin( final ProjectName name )

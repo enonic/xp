@@ -34,8 +34,10 @@ public final class ProjectConstants
         addContributor( RoleKeys.CONTENT_MANAGER_APP ).
         build();
 
+    public static final ProjectName DEFAULT_PROJECT_NAME = ProjectName.from( ContentConstants.CONTENT_REPO_ID );
+
     public static final Project DEFAULT_PROJECT = Project.create().
-        name( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ).
+        name( DEFAULT_PROJECT_NAME ).
         displayName( "Default" ).
         addPermissions( DEFAULT_PROJECT_PERMISSIONS ).
         build();
