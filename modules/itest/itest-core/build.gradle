@@ -9,4 +9,5 @@ dependencies {
 
     testImplementation( testFixtures( project(":core:core-blobstore") ) )
     testImplementation( testFixtures( project(":core:core-repo") ) )
+    testImplementation( testFixtures( project(":core:core-security") ) )
 }
