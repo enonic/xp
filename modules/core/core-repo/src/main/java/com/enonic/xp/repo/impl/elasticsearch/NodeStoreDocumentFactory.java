@@ -1,8 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collections;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.Property;
@@ -49,11 +48,7 @@ public class NodeStoreDocumentFactory
     {
         this.node.validateForIndexing();
 
-        Set<IndexDocument> indexDocuments = new HashSet<>();
-
-        indexDocuments.add( createDataDocument() );
-
-        return indexDocuments;
+        return Collections.singleton( createDataDocument() );
     }
 
     private IndexDocument createDataDocument()

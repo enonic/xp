@@ -1,6 +1,7 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -14,13 +15,17 @@ public class NodeBranchEntries
 
     private NodeBranchEntries( final Builder builder )
     {
-        this.branchNodeVersionMap = builder.map;
+        this.branchNodeVersionMap = Collections.unmodifiableMap( builder.map );
     }
 
     private NodeBranchEntries( final Collection<NodeBranchEntry> entries )
     {
-        branchNodeVersionMap = new LinkedHashMap<>();
-        entries.forEach( entry -> branchNodeVersionMap.put( entry.getNodeId(), entry ) );
+        Map<NodeId, NodeBranchEntry> builder = new LinkedHashMap<>();
+        for ( NodeBranchEntry entry : entries )
+        {
+            builder.put( entry.getNodeId(), entry );
+        }
+        this.branchNodeVersionMap = Collections.unmodifiableMap( builder );
     }
 
     public static NodeBranchEntries from( final Collection<NodeBranchEntry> nodeBranchEntries )

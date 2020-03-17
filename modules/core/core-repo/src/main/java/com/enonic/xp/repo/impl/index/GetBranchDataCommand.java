@@ -1,14 +1,12 @@
 package com.enonic.xp.repo.impl.index;
 
-import java.util.List;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.node.NodeBranchEntry;
+import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -18,14 +16,11 @@ import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResult;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
-import com.enonic.xp.repo.impl.node.executor.ExecutorCommand;
-import com.enonic.xp.repo.impl.node.executor.ExecutorCommandResult;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repository.RepositoryId;
 
 class GetBranchDataCommand
-    implements ExecutorCommand<List<NodeBranchEntry>>
 {
     private final Branch branch;
 
@@ -33,34 +28,23 @@ class GetBranchDataCommand
 
     private final RepositoryId repositoryId;
 
-    private final long totalHits;
-
     private GetBranchDataCommand( final Builder builder )
     {
         branch = builder.branch;
         nodeSearchService = builder.nodeSearchService;
         repositoryId = builder.repositoryId;
-        final SearchResult result = doQuery( 0, 0 );
-        this.totalHits = result.getTotalHits();
     }
 
-    @Override
-    public long getTotalHits()
+    public NodeBranchEntries execute()
     {
-        return this.totalHits;
-    }
-
-    @Override
-    public ExecutorCommandResult<List<NodeBranchEntry>> execute( final int from, final int size )
-    {
-        final SearchResult result = doQuery( from, size );
+        final SearchResult result = doExecute();
 
         final NodeBranchQueryResult nodeBranchEntries = NodeBranchQueryResultFactory.create( result );
 
-        return new NodeBranchEntryResult( nodeBranchEntries.getList() );
+        return NodeBranchEntries.from( nodeBranchEntries.getList() );
     }
 
-    private SearchResult doQuery( final int from, final int size )
+    private SearchResult doExecute()
     {
         final CompareExpr compareExpr =
             CompareExpr.create( FieldExpr.from( BranchIndexPath.BRANCH_NAME.getPath() ), CompareExpr.Operator.EQ,
@@ -73,8 +57,7 @@ class GetBranchDataCommand
 
         return this.nodeSearchService.query( NodeBranchQuery.create().
             query( QueryExpr.from( compareExpr ) ).
-            from( from ).
-            size( size ).
+            size( NodeSearchService.GET_ALL_SIZE_FLAG ).
             build(), SingleRepoStorageSource.create( reindexContext.getRepositoryId(), SingleRepoStorageSource.Type.BRANCH ) );
     }
 

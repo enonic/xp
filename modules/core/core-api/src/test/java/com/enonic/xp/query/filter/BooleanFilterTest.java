@@ -65,7 +65,7 @@ public class BooleanFilterTest
             build();
 
         assertEquals(
-            "BooleanFilter{must=[IdFilter{fieldName=field1, values=[node1]}], mustNot=[IndicesFilter{indices=[index1], filter=IdFilter{values=[value1]}, noMatchFilter=IdFilter{values=[value2]}}], should=[RangeFilter{from=2.0, to=50.0}]}",
+            "BooleanFilter{must=[IdFilter{fieldName=field1, values=[node1]}], mustNot=[IndicesFilter{indices=[index1], filter=IdFilter{values=[value1]}, noMatchFilter=IdFilter{values=[value2]}}], should=[RangeFilter{from=2.0, to=50.0, includeLower=true, includeUpper=true}]}",
             filter.toString() );
     }
 }

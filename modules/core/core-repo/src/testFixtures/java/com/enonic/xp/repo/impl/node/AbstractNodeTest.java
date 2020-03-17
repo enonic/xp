@@ -29,6 +29,7 @@ import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
@@ -334,6 +335,14 @@ public abstract class AbstractNodeTest
             name( name ).
             setNodeId( NodeId.from( name ) ).
             build() );
+    }
+
+    protected NodeCommitEntry commit( NodeIds nodeIds )
+    {
+        final NodeCommitEntry nodeCommitEntry = NodeCommitEntry.create().
+            message( "commit" ).
+            build();
+        return nodeService.commit( nodeCommitEntry, nodeIds );
     }
 
 
