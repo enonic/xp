@@ -1,5 +1,9 @@
 package com.enonic.xp.core.impl.project;
 
+import com.enonic.xp.project.ProjectConstants;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.security.PrincipalKey;
+
 public enum ProjectRoles
 {
     OWNER( "owner" ), EDITOR( "editor" ), AUTHOR( "author" ), CONTRIBUTOR( "contributor" ), VIEWER( "viewer" );
@@ -11,8 +15,9 @@ public enum ProjectRoles
         this.value = value;
     }
 
-    public String getValue()
+    public PrincipalKey getRoleKey( final ProjectName projectName )
     {
-        return value;
+        final String roleName = ProjectConstants.PROJECT_REPO_ID_PREFIX + projectName + "." + value;
+        return PrincipalKey.ofRole( roleName );
     }
 }
