@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.index;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
 
 import com.google.common.base.Stopwatch;
 
@@ -12,12 +11,12 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ReindexListener;
 import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionService;
-import com.enonic.xp.repo.impl.node.executor.BatchedExecutor;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.IndexDataService;
 import com.enonic.xp.repository.RepositoryId;
@@ -33,8 +32,6 @@ public class ReindexExecutor
     private final NodeVersionService nodeVersionService;
 
     private final IndexDataService indexDataService;
-
-    private final static int BATCH_SIZE = 1000;
 
     private final ReindexListener listener;
 
@@ -76,44 +73,36 @@ public class ReindexExecutor
 
     private void doReindexBranchNew( final RepositoryId repositoryId, final ReindexResult.Builder builder, final Branch branch )
     {
-        final BatchedExecutor<List<NodeBranchEntry>> executor = new BatchedExecutor<>( GetBranchDataCommand.create().
+        final NodeBranchEntries nodeBranchEntries = GetBranchDataCommand.create().
             branch( branch ).
             repositoryId( repositoryId ).
             nodeSearchService( this.nodeSearchService ).
-            build(), BATCH_SIZE );
-
-        final long total = executor.getTotalHits();
+            build().execute();
 
         if ( listener != null )
         {
-            listener.branch( repositoryId, branch, total );
+            listener.branch( repositoryId, branch, nodeBranchEntries.getSize() );
         }
 
-        while ( executor.hasMore() )
+        for ( final NodeBranchEntry nodeBranchEntry : nodeBranchEntries )
         {
-            final List<NodeBranchEntry> result = executor.execute();
+            final InternalContext context = InternalContext.create( ContextAccessor.current() ).
+                repositoryId( repositoryId ).
+                branch( branch ).
+                build();
 
-            for ( final NodeBranchEntry nodeBranchEntry : result )
+            final NodeVersion nodeVersion = this.nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context );
+
+            final Node node = NodeFactory.create( nodeVersion, nodeBranchEntry );
+
+            this.indexDataService.store( node, context );
+
+            builder.add( node.id() );
+
+            if ( listener != null )
             {
-                final InternalContext context = InternalContext.create( ContextAccessor.current() ).
-                    repositoryId( repositoryId ).
-                    branch( branch ).
-                    build();
-
-                final NodeVersion nodeVersion = this.nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context );
-
-                final Node node = NodeFactory.create( nodeVersion, nodeBranchEntry );
-
-                this.indexDataService.store( node, context );
-
-                builder.add( node.id() );
-
-                if ( listener != null )
-                {
-                    listener.branchEntry( nodeBranchEntry );
-                }
+                listener.branchEntry( nodeBranchEntry );
             }
-
         }
     }
 

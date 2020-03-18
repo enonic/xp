@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -27,6 +28,10 @@ class TestDumpWriter
     private final Set<String> binaries = new HashSet<>();
 
     private final Set<NodeVersionKey> nodeVersionKeys = new HashSet<>();
+
+    private AtomicLong commitCount = new AtomicLong();
+
+    private AtomicLong versionCount = new AtomicLong();
 
     private DumpMeta dumpMeta;
 
@@ -74,13 +79,14 @@ class TestDumpWriter
     @Override
     public void writeVersionsEntry( final VersionsDumpEntry versionsDumpEntry )
     {
+        versionCount.incrementAndGet();
         // Do nothing yet
     }
 
     @Override
     public void writeCommitEntry( final CommitDumpEntry commitDumpEntry )
     {
-        // Do nothing yet
+        commitCount.incrementAndGet();
     }
 
 
@@ -119,6 +125,16 @@ class TestDumpWriter
     public Set<NodeVersionKey> getNodeVersionKeys()
     {
         return nodeVersionKeys;
+    }
+
+    public long getCommitCount()
+    {
+        return commitCount.get();
+    }
+
+    public long getVersionCount()
+    {
+        return versionCount.get();
     }
 
     static final class RepoBranchEntry

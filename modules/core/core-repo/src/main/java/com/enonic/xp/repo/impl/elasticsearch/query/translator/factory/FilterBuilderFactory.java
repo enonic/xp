@@ -177,8 +177,8 @@ public class FilterBuilderFactory
         RangeQueryBuilder builder = new RangeQueryBuilder( queryFieldName ).
             from( from ).
             to( to ).
-            includeLower( true ).
-            includeUpper( true );
+            includeLower( filter.isIncludeLower() ).
+            includeUpper( filter.isIncludeUpper() );
 
         //TODO Java10
 //        if ( filter.isCache() != null )

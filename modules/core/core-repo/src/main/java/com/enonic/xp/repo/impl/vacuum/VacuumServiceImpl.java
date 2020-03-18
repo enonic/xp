@@ -62,6 +62,7 @@ public class VacuumServiceImpl
             final VacuumTaskParams taskParams = VacuumTaskParams.create().
                 listener( params.getVacuumListener() ).
                 ageThreshold( getAgeThresholdMs( params ) ).
+                versionsBatchSize( config.versionsBatchSize() ).
                 build();
             final VacuumTaskResult taskResult = task.execute( taskParams );
 
