@@ -30,9 +30,6 @@ class VersionTableVacuumTaskTest
     // Negative threshold queries versions timestamps in future, so nearly created nodes guaranteed to be found.
     private static final long NEGATIVE_AGE_THRESHOLD_MILLIS = -Duration.of( 1, ChronoUnit.HOURS ).toMillis();
 
-    // Number of versions created on fresh setup.
-    private static int SYSTEM_NODES_COUNT = 7;
-
     @BeforeEach
     void setUp()
     {
@@ -48,8 +45,8 @@ class VersionTableVacuumTaskTest
     @Test
     void delete_node_deletes_versions()
     {
-        // Do enough updates to go over the default batch-size
-        final int updates = 1500;
+        final int updates = 10_000;
+        final int versionsBatchSize = updates / 2; // to make sure nodes fetched in batches
         final int expectedVersionCount = updates + 1;
 
         final Node node1 = createNode( NodePath.ROOT, "node1" );
@@ -60,6 +57,7 @@ class VersionTableVacuumTaskTest
 
         final VacuumTaskResult result = NodeHelper.runAsAdmin( () -> this.task.execute( VacuumTaskParams.create().
             ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS ).
+            versionsBatchSize( versionsBatchSize ).
             build() ) );
         refresh();
 

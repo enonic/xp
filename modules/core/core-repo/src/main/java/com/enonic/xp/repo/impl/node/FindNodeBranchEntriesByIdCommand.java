@@ -42,14 +42,9 @@ public class FindNodeBranchEntriesByIdCommand
     {
         final Context context = ContextAccessor.current();
 
-        final NodeBranchEntries.Builder allResultsBuilder = NodeBranchEntries.create();
-
         final NodeIds nodeIds = getNodeIds( context );
 
-        allResultsBuilder.addAll(
-            this.nodeStorageService.getBranchNodeVersions( nodeIds, !this.orderExpressions.isEmpty(), InternalContext.from( context ) ) );
-
-        return allResultsBuilder.build();
+        return this.nodeStorageService.getBranchNodeVersions( nodeIds, !this.orderExpressions.isEmpty(), InternalContext.from( context ) );
     }
 
     private NodeIds getNodeIds( final Context context )
