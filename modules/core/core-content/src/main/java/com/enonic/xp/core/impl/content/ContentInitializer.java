@@ -53,10 +53,13 @@ public final class ContentInitializer
 
     private final RepositoryService repositoryService;
 
+    private final AccessControlList accessControlList;
+
     private ContentInitializer( final Builder builder )
     {
         super( builder );
         this.repositoryService = builder.repositoryService;
+        this.accessControlList = builder.accessControlList;
     }
 
     @Override
@@ -121,7 +124,7 @@ public final class ContentInitializer
                 data( data ).
                 name( ContentConstants.CONTENT_ROOT_NAME ).
                 parent( NodePath.ROOT ).
-                permissions( CONTENT_ROOT_DEFAULT_ACL ).
+                permissions( this.accessControlList ).
                 childOrder( CONTENT_DEFAULT_CHILD_ORDER ).
                 build() );
 
@@ -143,9 +146,17 @@ public final class ContentInitializer
     {
         private RepositoryService repositoryService;
 
+        private AccessControlList accessControlList = CONTENT_ROOT_DEFAULT_ACL;
+
         public Builder setRepositoryService( final RepositoryService repositoryService )
         {
             this.repositoryService = repositoryService;
+            return this;
+        }
+
+        public Builder accessControlList( final AccessControlList accessControlList )
+        {
+            this.accessControlList = accessControlList;
             return this;
         }
 
