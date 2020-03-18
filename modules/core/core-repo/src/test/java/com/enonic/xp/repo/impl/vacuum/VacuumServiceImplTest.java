@@ -8,6 +8,7 @@ import com.enonic.xp.vacuum.VacuumResult;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class VacuumServiceImplTest
 {
@@ -18,7 +19,7 @@ public class VacuumServiceImplTest
     {
 
         final VacuumServiceImpl service = new VacuumServiceImpl();
-        service.activate( new TestVacuumConfig() );
+        service.activate( mock( VacuumConfig.class, i -> i.getMethod().getDefaultValue() ) );
 
         service.addTask( new VacuumTask()
         {
