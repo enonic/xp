@@ -33,7 +33,11 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
@@ -79,6 +83,7 @@ public class ProjectServiceImpl
             setNodeService( nodeService ).
             setRepositoryService( repositoryService ).
             repositoryId( params.getName().getRepoId() ).
+            accessControlList( createContentRootPermissions( params.getName() ) ).
             build().
             initialize();
 
@@ -234,8 +239,7 @@ public class ProjectServiceImpl
 
         for ( ProjectRoles projectRole : ProjectRoles.values() )
         {
-
-            final PrincipalKey roleKey = getRoleKey( projectName, projectRole );
+            final PrincipalKey roleKey = projectRole.getRoleKey( projectName );
 
             if ( securityService.getRole( roleKey ).isEmpty() )
             {
@@ -256,7 +260,7 @@ public class ProjectServiceImpl
 
         for ( ProjectRoles projectRole : ProjectRoles.values() )
         {
-            final PrincipalKey roleKey = getRoleKey( projectName, projectRole );
+            final PrincipalKey roleKey = projectRole.getRoleKey( projectName );
             if ( securityService.getRole( roleKey ).isPresent() )
             {
                 securityService.deletePrincipal( PrincipalKey.ofRole( roleKey.getId() ) );
@@ -264,10 +268,43 @@ public class ProjectServiceImpl
         }
     }
 
-    private PrincipalKey getRoleKey( final ProjectName projectName, final ProjectRoles role )
+    private AccessControlList createContentRootPermissions( final ProjectName projectName )
     {
-        final String roleName = ProjectConstants.PROJECT_REPO_ID_PREFIX + projectName + "." + role.getValue();
-        return PrincipalKey.ofRole( roleName );
+        if ( projectName == null || ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        {
+            return null;
+        }
+
+        return AccessControlList.create().
+            add( AccessControlEntry.create().
+                allowAll().
+                principal( RoleKeys.ADMIN ).
+                build() ).
+            add( AccessControlEntry.create().
+                allowAll().
+                principal( RoleKeys.CONTENT_MANAGER_ADMIN ).
+                build() ).
+            add( AccessControlEntry.create().
+                allowAll().
+                principal( ProjectRoles.OWNER.getRoleKey( projectName ) ).
+                build() ).
+            add( AccessControlEntry.create().
+                allowAll().
+                principal( ProjectRoles.EDITOR.getRoleKey( projectName ) ).
+                build() ).
+            add( AccessControlEntry.create().
+                allow( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE ).
+                principal( ProjectRoles.AUTHOR.getRoleKey( projectName ) ).
+                build() ).
+            add( AccessControlEntry.create().
+                allow( Permission.READ ).
+                principal( ProjectRoles.CONTRIBUTOR.getRoleKey( projectName ) ).
+                build() ).
+            add( AccessControlEntry.create().
+                allow( Permission.READ ).
+                principal( ProjectRoles.VIEWER.getRoleKey( projectName ) ).
+                build() ).
+            build();
     }
 
     private <T> T callWithCreateContext( final Callable<T> runnable )

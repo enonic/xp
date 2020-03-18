@@ -1,5 +1,7 @@
 package com.enonic.xp.core.project;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
+import com.enonic.xp.core.impl.project.ProjectRoles;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.node.Node;
@@ -32,6 +35,8 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -197,7 +202,41 @@ class ProjectServiceImplTest
         assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.contributor" ) ).isPresent() );
         assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.editor" ) ).isPresent() );
         assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.viewer" ) ).isPresent() );
+    }
 
+    @Test
+    void create_with_root_content_permissions()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+        final ProjectName projectName = ProjectName.from( projectRepoId );
+
+        doCreateProjectAsAdmin( projectName );
+
+        List.of( ContextBuilder.from( ADMIN_CONTEXT ).
+            branch( ContentConstants.BRANCH_DRAFT ).
+            repositoryId( projectRepoId ).
+            build(), ContextBuilder.from( ADMIN_CONTEXT ).
+            branch( ContentConstants.BRANCH_MASTER ).
+            repositoryId( projectRepoId ).
+            build() ).
+            forEach( context -> context.runWith( () -> {
+
+                final Node rootContentNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
+                final AccessControlList rootContentPermissions = rootContentNode.getPermissions();
+
+                assertTrue( rootContentPermissions.getEntry( RoleKeys.ADMIN ).isAllowedAll() );
+                assertTrue( rootContentPermissions.getEntry( RoleKeys.CONTENT_MANAGER_ADMIN ).isAllowedAll() );
+                assertTrue( rootContentPermissions.getEntry( ProjectRoles.OWNER.getRoleKey( projectName ) ).isAllowedAll() );
+                assertTrue( rootContentPermissions.getEntry( ProjectRoles.EDITOR.getRoleKey( projectName ) ).isAllowedAll() );
+                assertTrue( rootContentPermissions.getEntry( ProjectRoles.AUTHOR.getRoleKey( projectName ) ).isAllowed( Permission.READ,
+                                                                                                                        Permission.CREATE,
+                                                                                                                        Permission.MODIFY,
+                                                                                                                        Permission.DELETE ) );
+                assertTrue( rootContentPermissions.getEntry( ProjectRoles.CONTRIBUTOR.getRoleKey( projectName ) ).
+                    isAllowed( Permission.READ ) );
+                assertTrue( rootContentPermissions.getEntry( ProjectRoles.VIEWER.getRoleKey( projectName ) ).
+                    isAllowed( Permission.READ ) );
+            } ) );
     }
 
     @Test
