@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.project;
 
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,7 @@ import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repository.DeleteRepositoryParams;
@@ -31,8 +33,6 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
-import com.enonic.xp.security.CreateRoleParams;
-import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -123,11 +123,25 @@ public class ProjectServiceImpl
             } ).
             build();
 
+        final ProjectPermissions oldProjectPermissions = Optional.ofNullable( doGet( params.getName() ) ).
+            map( Project::getPermissions ).
+            orElse( null );
+
         final Repository updatedRepository = repositoryService.updateRepository( updateParams );
+        final Project updatedProject = Project.from( updatedRepository );
 
-        doCreateRoles( params.getName() );
+        if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( params.getName() ) )
+        {
+            UpdateProjectRolesCommand.create().
+                projectName( params.getName() ).
+                oldPermissions( oldProjectPermissions ).
+                newPermissions( updatedProject.getPermissions() ).
+                securityService( securityService ).
+                build().
+                execute();
+        }
 
-        return Project.from( updatedRepository );
+        return updatedProject;
     }
 
     @Override
@@ -179,7 +193,11 @@ public class ProjectServiceImpl
         final DeleteRepositoryParams params = DeleteRepositoryParams.from( projectName.getRepoId() );
         final RepositoryId deletedRepositoryId = this.repositoryService.deleteRepository( params );
 
-        doDeleteRoles( projectName );
+        DeleteProjectRolesCommand.create().
+            projectName( projectName ).
+            securityService( securityService ).
+            build().
+            execute();
 
         return deletedRepositoryId != null;
     }
@@ -228,44 +246,6 @@ public class ProjectServiceImpl
         }
 
         return null;
-    }
-
-    private void doCreateRoles( final ProjectName projectName )
-    {
-        if ( projectName == null || ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
-        {
-            return;
-        }
-
-        for ( ProjectRoles projectRole : ProjectRoles.values() )
-        {
-            final PrincipalKey roleKey = projectRole.getRoleKey( projectName );
-
-            if ( securityService.getRole( roleKey ).isEmpty() )
-            {
-                securityService.createRole( CreateRoleParams.create().
-                    roleKey( PrincipalKey.ofRole( roleKey.getId() ) ).
-                    displayName( roleKey.getId() ).
-                    build() );
-            }
-        }
-    }
-
-    private void doDeleteRoles( final ProjectName projectName )
-    {
-        if ( projectName == null || ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
-        {
-            return;
-        }
-
-        for ( ProjectRoles projectRole : ProjectRoles.values() )
-        {
-            final PrincipalKey roleKey = projectRole.getRoleKey( projectName );
-            if ( securityService.getRole( roleKey ).isPresent() )
-            {
-                securityService.deletePrincipal( PrincipalKey.ofRole( roleKey.getId() ) );
-            }
-        }
     }
 
     private AccessControlList createContentRootPermissions( final ProjectName projectName )
@@ -351,14 +331,14 @@ public class ProjectServiceImpl
     }
 
     @Reference
-    public void setSecurityService( final SecurityService securityService )
-    {
-        this.securityService = securityService;
-    }
-
-    @Reference
     public void setProjectPermissionsContextManager( final ProjectPermissionsContextManager projectPermissionsContextManager )
     {
         this.projectPermissionsContextManager = projectPermissionsContextManager;
+    }
+
+    @Reference
+    public void setSecurityService( final SecurityService securityService )
+    {
+        this.securityService = securityService;
     }
 }

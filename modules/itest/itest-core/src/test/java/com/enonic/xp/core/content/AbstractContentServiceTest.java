@@ -55,6 +55,7 @@ import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
+import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.core.impl.site.SiteServiceImpl;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -307,6 +308,13 @@ public class AbstractContentServiceTest
         final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
         projectAccessContextManager.setRepositoryService( repositoryService );
         projectService.setProjectPermissionsContextManager( projectAccessContextManager );
+
+        SecurityServiceImpl securityService = new SecurityServiceImpl();
+        securityService.setNodeService( nodeService );
+        securityService.setIndexService( indexService );
+        securityService.initialize();
+
+        projectService.setSecurityService( securityService );
 
         contentService.setNodeService( nodeService );
         contentService.setEventPublisher( eventPublisher );

@@ -46,12 +46,22 @@ public final class ProjectPermissions
         return permissions.get( ProjectPermissionsLevel.CONTRIBUTOR );
     }
 
-    public PrincipalKeys getPermissions( final Collection<ProjectPermissionsLevel> permissions )
+    public PrincipalKeys getPermission( final ProjectPermissionsLevel projectPermissionsLevel )
+    {
+        return doGetPermission( projectPermissionsLevel );
+    }
+
+    public PrincipalKeys getPermissions( final Collection<ProjectPermissionsLevel> projectPermissionsLevels )
     {
         final PrincipalKeys.Builder result = PrincipalKeys.create();
-        permissions.forEach( permission -> result.addAll( this.permissions.get( permission ) ) );
+        projectPermissionsLevels.forEach( permission -> result.addAll( doGetPermission( permission ) ) );
 
         return result.build();
+    }
+
+    private PrincipalKeys doGetPermission( final ProjectPermissionsLevel projectPermissionsLevel )
+    {
+        return this.permissions.get( projectPermissionsLevel );
     }
 
     @Override

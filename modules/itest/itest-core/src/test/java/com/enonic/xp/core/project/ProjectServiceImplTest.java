@@ -30,8 +30,10 @@ import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
@@ -202,6 +204,40 @@ class ProjectServiceImplTest
         assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.contributor" ) ).isPresent() );
         assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.editor" ) ).isPresent() );
         assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.viewer" ) ).isPresent() );
+    }
+
+    @Test
+    void create_with_role_members()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+
+        ADMIN_CONTEXT.runWith( () -> {
+            final User user1 = securityService.createUser( CreateUserParams.create().
+                userKey( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
+                displayName( "user1" ).
+                login( "user1" ).
+                build() );
+
+            final User user2 = securityService.createUser( CreateUserParams.create().
+                userKey( PrincipalKey.ofUser( IdProviderKey.system(), "user2" ) ).
+                displayName( "user2" ).
+                login( "user2" ).
+                build() );
+
+            doCreateProjectAsAdmin( ProjectName.from( projectRepoId ), ProjectPermissions.create().
+                addOwner( user1.getKey() ).
+                addOwner( user2.getKey() ).
+                build() );
+
+            assertEquals( securityService.getRelationships( PrincipalKey.ofRole( "com.enonic.cms.test-project.owner" ) ).
+                get( 0 ).
+                getTo(), user1.getKey() );
+
+            assertEquals( securityService.getRelationships( PrincipalKey.ofRole( "com.enonic.cms.test-project.owner" ) ).
+                get( 1 ).
+                getTo(), user2.getKey() );
+
+        } );
     }
 
     @Test
@@ -527,6 +563,53 @@ class ProjectServiceImplTest
         } );
 
         assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.owner" ) ).isPresent() );
+    }
+
+    @Test
+    void modify_role_members()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+
+        ADMIN_CONTEXT.runWith( () -> {
+            final User user1 = securityService.createUser( CreateUserParams.create().
+                userKey( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
+                displayName( "user1" ).
+                login( "user1" ).
+                build() );
+
+            final User user2 = securityService.createUser( CreateUserParams.create().
+                userKey( PrincipalKey.ofUser( IdProviderKey.system(), "user2" ) ).
+                displayName( "user2" ).
+                login( "user2" ).
+                build() );
+
+            doCreateProjectAsAdmin( ProjectName.from( projectRepoId ), ProjectPermissions.create().
+                addOwner( user1.getKey() ).
+                build() );
+
+            projectService.modify( ModifyProjectParams.create().
+                name( ProjectName.from( "test-project" ) ).
+                description( "new description" ).
+                displayName( "new display name" ).
+                icon( CreateAttachment.create().
+                    mimeType( "image/png" ).
+                    label( "My New Image" ).
+                    name( "MyNewImage.png" ).
+                    byteSource( ByteSource.wrap( "new bytes".getBytes() ) ).
+                    build() ).
+                permissions( ProjectPermissions.create().
+                    addOwner( user2.getKey() ).
+                    build() ).
+                build() );
+
+            final PrincipalRelationships principalRelationships =
+                securityService.getRelationships( PrincipalKey.ofRole( "com.enonic.cms.test-project.owner" ) );
+
+            assertEquals( 1, principalRelationships.getSize() );
+            assertEquals( principalRelationships.
+                get( 0 ).
+                getTo(), user2.getKey() );
+        } );
     }
 
     private Project doCreateProjectAsAdmin( final ProjectName name )
