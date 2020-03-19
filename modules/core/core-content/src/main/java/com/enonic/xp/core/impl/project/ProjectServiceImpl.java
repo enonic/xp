@@ -185,7 +185,7 @@ public class ProjectServiceImpl
             LOG.info( "Project deleted: " + projectName );
 
             return result;
-        } );
+        }, projectName );
     }
 
     private boolean doDelete( final ProjectName projectName )
@@ -307,9 +307,9 @@ public class ProjectServiceImpl
         return projectPermissionsContextManager.initListContext().callWith( runnable );
     }
 
-    private <T> T callWithDeleteContext( final Callable<T> runnable )
+    private <T> T callWithDeleteContext( final Callable<T> runnable, final ProjectName projectName )
     {
-        return projectPermissionsContextManager.initDeleteContext().callWith( runnable );
+        return projectPermissionsContextManager.initDeleteContext( projectName ).callWith( runnable );
     }
 
     @Reference

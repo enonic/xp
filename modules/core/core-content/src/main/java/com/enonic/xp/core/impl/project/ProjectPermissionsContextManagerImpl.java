@@ -12,6 +12,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissionsLevel;
 import com.enonic.xp.repository.Repository;
@@ -35,14 +36,20 @@ public final class ProjectPermissionsContextManagerImpl
     public Context initGetContext( final ProjectName projectName )
     {
         final AuthenticationInfo authenticationInfo = ContextAccessor.current().getAuthInfo();
-        if ( hasAdminAccess( authenticationInfo ) || hasAnyProjectPermission( projectName, authenticationInfo ) )
+
+        if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        {
+            if ( hasManagerAccess( authenticationInfo ) )
+            {
+                return adminContext();
+            }
+        }
+        else if ( hasAdminAccess( authenticationInfo ) || hasAnyProjectPermission( projectName, authenticationInfo ) )
         {
             return adminContext();
         }
-        else
-        {
-            throw new ProjectAccessException( authenticationInfo.getUser(), projectName, "get" );
-        }
+
+        throw new ProjectAccessException( authenticationInfo.getUser(), projectName, "get" );
     }
 
     @Override
@@ -60,10 +67,10 @@ public final class ProjectPermissionsContextManagerImpl
     }
 
     @Override
-    public Context initDeleteContext()
+    public Context initDeleteContext( final ProjectName projectName )
     {
         final AuthenticationInfo authenticationInfo = ContextAccessor.current().getAuthInfo();
-        if ( hasAdminAccess( authenticationInfo ) )
+        if ( hasAdminAccess( authenticationInfo ) && !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
         {
             return adminContext();
         }
@@ -77,7 +84,8 @@ public final class ProjectPermissionsContextManagerImpl
     public Context initUpdateContext( final ProjectName projectName )
     {
         final AuthenticationInfo authenticationInfo = ContextAccessor.current().getAuthInfo();
-        if ( hasAdminAccess( authenticationInfo ) || hasAdminProjectPermission( projectName, authenticationInfo ) )
+        if ( hasAdminAccess( authenticationInfo ) || ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) &&
+            hasAdminProjectPermission( projectName, authenticationInfo ) ) )
         {
             return adminContext();
         }

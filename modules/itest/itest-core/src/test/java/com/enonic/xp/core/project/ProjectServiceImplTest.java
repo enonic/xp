@@ -338,6 +338,18 @@ class ProjectServiceImplTest
     }
 
     @Test
+    void delete_default_project_as_admin()
+    {
+        ADMIN_CONTEXT.runWith( () -> {
+            assertNotNull( this.projectService.get( ProjectConstants.DEFAULT_PROJECT_NAME ) );
+
+            final RuntimeException ex =
+                Assertions.assertThrows( RuntimeException.class, () -> projectService.delete( ProjectConstants.DEFAULT_PROJECT_NAME ) );
+            assertEquals( "Denied [user:system:repo-test-user] user access for [delete] operation", ex.getMessage() );
+        } );
+    }
+
+    @Test
     void delete_with_roles()
     {
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
@@ -505,6 +517,15 @@ class ProjectServiceImplTest
     }
 
     @Test
+    void get_default_project()
+    {
+        CONTENT_CUSTOM_MANAGER_CONTEXT.runWith( () -> {
+            final Project defaultProject = projectService.get( ProjectConstants.DEFAULT_PROJECT_NAME );
+            assertNotNull( defaultProject );
+        } );
+    }
+
+    @Test
     void modify()
     {
         doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
@@ -563,6 +584,41 @@ class ProjectServiceImplTest
         } );
 
         assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.owner" ) ).isPresent() );
+    }
+
+    @Test
+    void modify_default_project()
+    {
+        ADMIN_CONTEXT.runWith( () -> {
+            final Project modifiedProject = projectService.modify( ModifyProjectParams.create().
+                name( ProjectConstants.DEFAULT_PROJECT_NAME ).
+                description( "new description" ).
+                displayName( "new display name" ).
+                icon( CreateAttachment.create().
+                    mimeType( "image/png" ).
+                    label( "My New Image" ).
+                    name( "MyNewImage.png" ).
+                    byteSource( ByteSource.wrap( "new bytes".getBytes() ) ).
+                    build() ).
+                permissions( ProjectPermissions.create().
+                    addOwner( REPO_TEST_OWNER.getKey() ).
+                    build() ).
+                build() );
+
+            assertTrue( modifiedProject.getPermissions().getOwner().contains( REPO_TEST_OWNER.getKey() ) );
+
+        } );
+
+        CONTENT_CUSTOM_MANAGER_CONTEXT.runWith( () -> {
+            final RuntimeException ex =
+                Assertions.assertThrows( RuntimeException.class, () -> projectService.modify( ModifyProjectParams.create().
+                    name( ProjectConstants.DEFAULT_PROJECT_NAME ).
+                    build() ) );
+
+            assertEquals( "Denied [user:system:custom-user] user access to [default] project for [update] operation", ex.getMessage() );
+
+        } );
+
     }
 
     @Test
