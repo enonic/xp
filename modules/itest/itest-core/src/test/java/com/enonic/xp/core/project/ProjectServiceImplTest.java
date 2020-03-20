@@ -197,11 +197,11 @@ class ProjectServiceImplTest
 
         doCreateProjectAsAdmin( ProjectName.from( projectRepoId ) );
 
-        assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.owner" ) ).isPresent() );
-        assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.author" ) ).isPresent() );
-        assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.contributor" ) ).isPresent() );
-        assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.editor" ) ).isPresent() );
-        assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.viewer" ) ).isPresent() );
+        assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.owner" ) ).isPresent() );
+        assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.author" ) ).isPresent() );
+        assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.contributor" ) ).isPresent() );
+        assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.editor" ) ).isPresent() );
+        assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.viewer" ) ).isPresent() );
     }
 
     @Test
@@ -310,11 +310,11 @@ class ProjectServiceImplTest
         ADMIN_CONTEXT.runWith( () -> {
             this.projectService.delete( ProjectName.from( projectRepoId ) );
 
-            assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.owner" ) ).isEmpty() );
-            assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.author" ) ).isEmpty() );
-            assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.contributor" ) ).isEmpty() );
-            assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.editor" ) ).isEmpty() );
-            assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.viewer" ) ).isEmpty() );
+            assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.owner" ) ).isEmpty() );
+            assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.author" ) ).isEmpty() );
+            assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.contributor" ) ).isEmpty() );
+            assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.editor" ) ).isEmpty() );
+            assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.viewer" ) ).isEmpty() );
 
         } );
     }
@@ -508,7 +508,7 @@ class ProjectServiceImplTest
         doCreateProjectAsAdmin( ProjectName.from( projectRepoId ) );
 
         ADMIN_CONTEXT.runWith( () -> {
-            securityService.deletePrincipal( PrincipalKey.ofRole( "com.enonic.cms.test-project.owner" ) );
+            securityService.deletePrincipal( PrincipalKey.ofRole( "cms.project.test-project.owner" ) );
 
             projectService.modify( ModifyProjectParams.create().
                 name( ProjectName.from( "test-project" ) ).
@@ -526,7 +526,7 @@ class ProjectServiceImplTest
                 build() );
         } );
 
-        assertTrue( securityService.getRole( PrincipalKey.ofRole( "com.enonic.cms.test-project.owner" ) ).isPresent() );
+        assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.owner" ) ).isPresent() );
     }
 
     private Project doCreateProjectAsAdmin( final ProjectName name )

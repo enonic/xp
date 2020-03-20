@@ -17,7 +17,7 @@ public enum ProjectRoles
 
     public PrincipalKey getRoleKey( final ProjectName projectName )
     {
-        final String roleName = ProjectConstants.PROJECT_REPO_ID_PREFIX + projectName + "." + value;
+        final String roleName = ProjectConstants.PROJECT_NAME_PREFIX + projectName + "." + value;
         return PrincipalKey.ofRole( roleName );
     }
 }
