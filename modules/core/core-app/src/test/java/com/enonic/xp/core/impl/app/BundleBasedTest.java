@@ -24,7 +24,7 @@ public abstract class BundleBasedTest
     @TempDir
     public Path temporaryFolder;
 
-    private Felix felix;
+    protected Felix felix;
 
     @BeforeEach
     public final void setup()
