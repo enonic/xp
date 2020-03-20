@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import org.mockito.verification.VerificationMode;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.VersionRange;
+import org.osgi.service.cm.ConfigurationAdmin;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
@@ -23,6 +24,7 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
+import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
@@ -37,11 +39,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ApplicationServiceImplTest
     extends BundleBasedTest
 {
-    private final ApplicationRepoServiceImpl repoService = Mockito.mock( ApplicationRepoServiceImpl.class );
+    private final ApplicationRepoServiceImpl repoService = mock( ApplicationRepoServiceImpl.class );
 
     private ApplicationServiceImpl service;
 
@@ -52,7 +57,7 @@ public class ApplicationServiceImplTest
     {
         this.service = new ApplicationServiceImpl( getBundleContext() );
         this.service.setRepoService( this.repoService );
-        this.eventPublisher = Mockito.mock( EventPublisher.class );
+        this.eventPublisher = mock( EventPublisher.class );
         this.service.setEventPublisher( this.eventPublisher );
     }
 
@@ -281,7 +286,7 @@ public class ApplicationServiceImplTest
 
         mockRepoCreateNode( node );
 
-        Mockito.when( this.repoService.updateApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
+        when( this.repoService.updateApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
             thenReturn( node );
 
         mockRepoGetNode( node, bundleName );
@@ -315,7 +320,7 @@ public class ApplicationServiceImplTest
 
         mockRepoCreateNode( node );
 
-        Mockito.when( this.repoService.updateApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
+        when( this.repoService.updateApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
             thenReturn( node );
 
         mockRepoGetNode( node, bundleName );
@@ -356,7 +361,7 @@ public class ApplicationServiceImplTest
 
         final String bundleName = "my-bundle";
 
-        Mockito.when( this.repoService.getApplicationSource( node.id() ) ).
+        when( this.repoService.getApplicationSource( node.id() ) ).
             thenReturn( createBundleSource( bundleName ) );
 
         final Application application = this.service.installStoredApplication( node.id() );
@@ -382,7 +387,7 @@ public class ApplicationServiceImplTest
 
         final String bundleName = "my-bundle";
 
-        Mockito.when( this.repoService.getApplicationSource( node.id() ) ).
+        when( this.repoService.getApplicationSource( node.id() ) ).
             thenReturn( createBundleSource( bundleName ) );
 
         final Application application = this.service.installStoredApplication( node.id() );
@@ -434,7 +439,7 @@ public class ApplicationServiceImplTest
 
         mockRepoCreateNode( node );
 
-        Mockito.when( this.repoService.updateApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
+        when( this.repoService.updateApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
             thenReturn( node );
 
         mockRepoGetNode( node, bundleName );
@@ -476,7 +481,7 @@ public class ApplicationServiceImplTest
 
         mockRepoCreateNode( node );
 
-        Mockito.when( this.repoService.updateApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
+        when( this.repoService.updateApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
             thenReturn( node );
 
         mockRepoGetNode( node, bundleName );
@@ -500,7 +505,7 @@ public class ApplicationServiceImplTest
         assertEquals( updatedApplication, this.service.getInstalledApplication( applicationKey ) );
         assertTrue( this.service.isLocalApplication( applicationKey ) );
 
-        Mockito.when( this.repoService.getApplicationSource( node.id() ) ).
+        when( this.repoService.getApplicationSource( node.id() ) ).
             thenReturn( ByteSource.wrap( ByteStreams.toByteArray( newBundle( "my-bundle", true, "1.0.0" ).
                 build() ) ) );
 
@@ -529,7 +534,7 @@ public class ApplicationServiceImplTest
         final Application application = this.service.installLocalApplication( byteSource, bundleName );
         assertTrue( this.service.isLocalApplication( application.getKey() ) );
 
-        Mockito.when( this.repoService.getApplicationNode( application.getKey() ) ).
+        when( this.repoService.getApplicationNode( application.getKey() ) ).
             thenReturn( null ).
             thenReturn( applicationNode );
 
@@ -555,13 +560,13 @@ public class ApplicationServiceImplTest
 
     private void mockRepoCreateNode( final Node node )
     {
-        Mockito.when( this.repoService.createApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
+        when( this.repoService.createApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).
             thenReturn( node );
     }
 
     private void mockRepoGetNode( final Node applicationNode, final String appName )
     {
-        Mockito.when( this.repoService.getApplicationNode( ApplicationKey.from( appName ) ) ).
+        when( this.repoService.getApplicationNode( ApplicationKey.from( appName ) ) ).
             thenReturn( applicationNode );
     }
 
@@ -605,8 +610,8 @@ public class ApplicationServiceImplTest
 
         this.service.getInstalledApplication( key );
 
-        final ApplicationInvalidator invalidator1 = Mockito.mock( ApplicationInvalidator.class );
-        final ApplicationInvalidator invalidator2 = Mockito.mock( ApplicationInvalidator.class );
+        final ApplicationInvalidator invalidator1 = mock( ApplicationInvalidator.class );
+        final ApplicationInvalidator invalidator2 = mock( ApplicationInvalidator.class );
 
         this.service.addInvalidator( invalidator1 );
         this.service.addInvalidator( invalidator2 );
@@ -631,6 +636,23 @@ public class ApplicationServiceImplTest
         deployBundle( "myapp", true );
 
         service.setConfiguration( key, ConfigBuilder.create().add( "a", "b" ).build() );
+
+        final Application app = service.getInstalledApplication( key );
+
+        assertEquals( ConfigBuilder.create().add( "a", "b" ).build(), app.getConfig() );
+    }
+
+    @Test
+    public void configuration_comes_never()
+        throws Exception
+    {
+        final ConfigurationAdmin configurationAdmin = mock( ConfigurationAdmin.class, RETURNS_DEEP_STUBS );
+        when( configurationAdmin.getConfiguration( "myapp" ).getProperties() ).thenReturn( Dictionaries.of( "a", "b" ) );
+
+        registerService( ConfigurationAdmin.class, configurationAdmin );
+
+        final ApplicationKey key = ApplicationKey.from( "myapp" );
+        deployBundle( "myapp", true ).start();
 
         final Application app = service.getInstalledApplication( key );
 

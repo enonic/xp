@@ -64,6 +64,12 @@ public abstract class BundleBasedTest
         return deploy( name, bundle.build() );
     }
 
+    protected <T> void registerService( final Class<T> clazz, final T configurationAdmin )
+    {
+        felix.getBundleContext().registerService( clazz, configurationAdmin, null );
+    }
+
+
     protected final TinyBundle newBundle( final String name, final boolean isApp )
     {
         return doCreateNewBundle( name, isApp, "1.0.0" );

@@ -1,9 +1,12 @@
 package com.enonic.xp.core.impl.app;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Dictionary;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,7 +17,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +28,7 @@ import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.server.RunMode;
 
@@ -314,7 +320,8 @@ final class ApplicationRegistry
 
                 if ( !releasedNormally )
                 {
-                    LOG.warn( "App {} was not configured properly", application.getKey() );
+                    LOG.warn( "App {} was not configured properly. Fallback to ConfigurationAdmin", application.getKey() );
+                    application.setConfig( loadConfig( application.getBundle() ) );
                 }
 
                 if ( awaitWillLock && LOG.isDebugEnabled() )
@@ -338,6 +345,40 @@ final class ApplicationRegistry
         public boolean isSystem()
         {
             return application.isSystem();
+        }
+    }
+
+    private static Configuration loadConfig( final Bundle bundle )
+    {
+        final BundleContext ctx = bundle.getBundleContext();
+        if ( ctx == null )
+        {
+            return null;
+        }
+        final ServiceReference<ConfigurationAdmin> serviceRef = ctx.getServiceReference( ConfigurationAdmin.class );
+        if ( serviceRef == null )
+        {
+            return null;
+        }
+
+        final ConfigurationAdmin configAdmin = ctx.getService( serviceRef );
+        try
+        {
+            final ConfigBuilder configBuilder = ConfigBuilder.create();
+            final Dictionary<String, Object> properties = configAdmin.getConfiguration( bundle.getSymbolicName() ).getProperties();
+            if ( properties != null )
+            {
+                configBuilder.addAll( properties );
+            }
+            return configBuilder.build();
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+        finally
+        {
+            ctx.ungetService( serviceRef );
         }
     }
 }
