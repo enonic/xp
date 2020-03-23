@@ -15,7 +15,7 @@
         "contributor": [],
         "editor": [],
         "owner": [
-          "role:system.authenticated"
+          "user:system:owner"
         ]
       }
     },
@@ -28,22 +28,8 @@
         "author": [],
         "contributor": [],
         "editor": [
-          "role:system.authenticated"
+          "user:system:editor"
         ],
-        "owner": []
-      }
-    },
-    {
-      "description": null,
-      "displayName": null,
-      "icon": null,
-      "name": "project3",
-      "permissions": {
-        "author": [],
-        "contributor": [
-          "role:system.authenticated"
-        ],
-        "editor": [],
         "owner": []
       }
     },
@@ -53,8 +39,22 @@
       "icon": null,
       "name": "project4",
       "permissions": {
+        "author": [],
+        "contributor": [
+          "user:system:contributor"
+        ],
+        "editor": [],
+        "owner": []
+      }
+    },
+    {
+      "description": null,
+      "displayName": null,
+      "icon": null,
+      "name": "project3",
+      "permissions": {
         "author": [
-          "role:system.authenticated"
+          "user:system:author"
         ],
         "contributor": [],
         "editor": [],

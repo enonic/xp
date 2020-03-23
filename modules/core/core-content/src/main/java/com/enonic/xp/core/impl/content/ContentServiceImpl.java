@@ -179,7 +179,6 @@ public class ContentServiceImpl
                     name( ProjectConstants.DEFAULT_PROJECT.getName() ).
                     displayName( ProjectConstants.DEFAULT_PROJECT.getDisplayName() ).
                     description( ProjectConstants.DEFAULT_PROJECT.getDescription() ).
-                    permissions( ProjectConstants.DEFAULT_PROJECT.getPermissions() ).
                     build() );
             }
         } );

@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.project;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +61,11 @@ public final class ProjectResource
         throws Exception
     {
         final Project project = projectService.create( createParams( form ) );
-        return new ProjectJson( project );
+
+        final ProjectPermissions projectPermissions = getPermissionsFromForm( form );
+        projectService.modifyPermissions( project.getName(), getPermissionsFromForm( form ) );
+
+        return new ProjectJson( project, projectPermissions );
     }
 
     @POST
@@ -70,7 +75,11 @@ public final class ProjectResource
         throws Exception
     {
         final Project modifiedProject = this.projectService.modify( ModifyProjectParams.create( createParams( form ) ).build() );
-        return new ProjectJson( modifiedProject );
+        final ProjectPermissions projectPermissions = getPermissionsFromForm( form );
+
+        this.projectService.modifyPermissions( modifiedProject.getName(), projectPermissions );
+
+        return new ProjectJson( modifiedProject, projectPermissions );
     }
 
     @POST
@@ -90,16 +99,25 @@ public final class ProjectResource
     @Path("list")
     public ProjectsJson list()
     {
-        return new ProjectsJson( this.projectService.list() );
+        return new ProjectsJson( this.projectService.list().
+            stream().
+            collect( HashMap::new, ( m, v ) -> m.put( v, !ProjectConstants.DEFAULT_PROJECT_NAME.equals( v.getName() )
+                ? this.projectService.getPermissions( v.getName() )
+                : null ), HashMap::putAll ) );
     }
 
     @GET
     @RolesAllowed({RoleKeys.ADMIN_ID, RoleKeys.CONTENT_MANAGER_ADMIN_ID, RoleKeys.CONTENT_MANAGER_APP_ID})
     @Path("get")
-    public ProjectJson get( final @QueryParam("name") String projectName )
+    public ProjectJson get( final @QueryParam("name") String projectNameValue )
     {
-        final Project project = this.projectService.get( ProjectName.from( projectName ) );
-        return new ProjectJson( project );
+        final ProjectName projectName = ProjectName.from( projectNameValue );
+
+        final Project project = this.projectService.get( projectName );
+        final ProjectPermissions projectPermissions =
+            !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) ? this.projectService.getPermissions( projectName ) : null;
+
+        return new ProjectJson( project, projectPermissions );
     }
 
     private CreateProjectParams createParams( final MultipartForm form )
@@ -110,8 +128,7 @@ public final class ProjectResource
         final CreateProjectParams.Builder builder = CreateProjectParams.create().
             name( ProjectName.from( form.getAsString( "name" ) ) ).
             displayName( form.getAsString( "displayName" ) ).
-            description( form.getAsString( "description" ) ).
-            permissions( projectPermissions );
+            description( form.getAsString( "description" ) );
 
         final MultipartItem icon = form.get( "icon" );
 

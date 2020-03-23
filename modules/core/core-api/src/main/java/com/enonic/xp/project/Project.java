@@ -23,15 +23,12 @@ public final class Project
 
     private final Attachment icon;
 
-    private final ProjectPermissions permissions;
-
     private Project( Builder builder )
     {
         this.name = builder.name;
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.icon = builder.icon;
-        this.permissions = builder.permissions.build();
     }
 
     public static Builder create()
@@ -67,7 +64,6 @@ public final class Project
             displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) );
 
         buildIcon( project, projectData );
-        buildPermissions( project, projectData );
 
         return project.build();
     }
@@ -85,43 +81,6 @@ public final class Project
                 size( iconData.getLong( ContentPropertyNames.ATTACHMENT_SIZE ) ).
                 textContent( iconData.getString( ContentPropertyNames.ATTACHMENT_TEXT ) ).
                 build() );
-        }
-    }
-
-    private static void buildPermissions( final Project.Builder project, final PropertySet projectData )
-    {
-        final PropertySet permissionsSet = projectData.getPropertySet( ProjectConstants.PROJECT_PERMISSIONS_PROPERTY );
-
-        if ( permissionsSet != null )
-        {
-            final Iterable<String> ownerKeys = permissionsSet.getStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_OWNER_PROPERTY );
-            final Iterable<String> editorKeys = permissionsSet.getStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_EDITOR_PROPERTY );
-            final Iterable<String> authorKeys = permissionsSet.getStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_AUTHOR_PROPERTY );
-            final Iterable<String> contributorKeys =
-                permissionsSet.getStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY );
-
-            final ProjectPermissions.Builder projectPermissions = ProjectPermissions.create();
-            if ( ownerKeys != null )
-            {
-                ownerKeys.forEach( projectPermissions::addOwner );
-            }
-
-            if ( editorKeys != null )
-            {
-                editorKeys.forEach( projectPermissions::addEditor );
-            }
-
-            if ( authorKeys != null )
-            {
-                authorKeys.forEach( projectPermissions::addAuthor );
-            }
-
-            if ( contributorKeys != null )
-            {
-                contributorKeys.forEach( projectPermissions::addContributor );
-            }
-
-            project.addPermissions( projectPermissions.build() );
         }
     }
 
@@ -143,11 +102,6 @@ public final class Project
     public Attachment getIcon()
     {
         return icon;
-    }
-
-    public ProjectPermissions getPermissions()
-    {
-        return permissions;
     }
 
     @Override
@@ -183,8 +137,6 @@ public final class Project
 
         private Attachment icon;
 
-        private ProjectPermissions.Builder permissions = ProjectPermissions.create();
-
         private Builder()
         {
         }
@@ -210,18 +162,6 @@ public final class Project
         public Builder icon( final Attachment icon )
         {
             this.icon = icon;
-            return this;
-        }
-
-        public Builder addPermissions( final ProjectPermissions projectPermissions )
-        {
-            if ( projectPermissions != null )
-            {
-                projectPermissions.getOwner().forEach( this.permissions::addOwner );
-                projectPermissions.getEditor().forEach( this.permissions::addEditor );
-                projectPermissions.getAuthor().forEach( this.permissions::addAuthor );
-                projectPermissions.getContributor().forEach( this.permissions::addContributor );
-            }
             return this;
         }
 
