@@ -54,7 +54,14 @@ public class ProjectResourceTest
             label( "small" ).
             build() );
 
+        final ProjectPermissions projectPermissions = ProjectPermissions.create().
+            addOwner( "user:system:owner" ).
+            addEditor( "user:system:editor" ).
+            addAuthor( "user:system:author" ).
+            addContributor( "user:system:contributor" ).build();
+
         Mockito.when( projectService.get( project.getName() ) ).thenReturn( project );
+        Mockito.when( projectService.getPermissions( project.getName() ) ).thenReturn( projectPermissions );
 
         final String jsonString = request().
             path( "project/get" ).
@@ -84,6 +91,18 @@ public class ProjectResourceTest
 
         Mockito.when( projectService.list() ).thenReturn(
             Projects.create().addAll( List.of( project1, project2, project3, project4 ) ).build() );
+
+        Mockito.when( projectService.getPermissions( ProjectName.from( "project1" ) ) ).
+            thenReturn( ProjectPermissions.create().addOwner( "user:system:owner" ).build() );
+
+        Mockito.when( projectService.getPermissions( ProjectName.from( "project2" ) ) ).
+            thenReturn( ProjectPermissions.create().addEditor( "user:system:editor" ).build() );
+
+        Mockito.when( projectService.getPermissions( ProjectName.from( "project3" ) ) ).
+            thenReturn( ProjectPermissions.create().addAuthor( "user:system:author" ).build() );
+
+        Mockito.when( projectService.getPermissions( ProjectName.from( "project4" ) ) ).
+            thenReturn( ProjectPermissions.create().addContributor( "user:system:contributor" ).build() );
 
         String jsonString = request().path( "project/list" ).get().getAsString();
 
@@ -189,7 +208,6 @@ public class ProjectResourceTest
             displayName( displayName ).
             description( description ).
             icon( icon ).
-            addPermissions( projectPermissions ).
             build();
     }
 

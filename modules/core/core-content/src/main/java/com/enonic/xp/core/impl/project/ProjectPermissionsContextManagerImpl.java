@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.project;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -11,13 +12,17 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissionsLevel;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.PrincipalRelationship;
+import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -31,18 +36,26 @@ public final class ProjectPermissionsContextManagerImpl
 
     private RepositoryService repositoryService;
 
+    private SecurityService securityService;
+
     @Override
     public Context initGetContext( final ProjectName projectName )
     {
         final AuthenticationInfo authenticationInfo = ContextAccessor.current().getAuthInfo();
-        if ( hasAdminAccess( authenticationInfo ) || hasAnyProjectPermission( projectName, authenticationInfo ) )
+
+        if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        {
+            if ( hasManagerAccess( authenticationInfo ) )
+            {
+                return adminContext();
+            }
+        }
+        else if ( hasAdminAccess( authenticationInfo ) || hasAnyProjectPermission( projectName, authenticationInfo ) )
         {
             return adminContext();
         }
-        else
-        {
-            throw new ProjectAccessException( authenticationInfo.getUser(), projectName, "get" );
-        }
+
+        throw new ProjectAccessException( authenticationInfo.getUser(), projectName, "get" );
     }
 
     @Override
@@ -60,10 +73,10 @@ public final class ProjectPermissionsContextManagerImpl
     }
 
     @Override
-    public Context initDeleteContext()
+    public Context initDeleteContext( final ProjectName projectName )
     {
         final AuthenticationInfo authenticationInfo = ContextAccessor.current().getAuthInfo();
-        if ( hasAdminAccess( authenticationInfo ) )
+        if ( hasAdminAccess( authenticationInfo ) && !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
         {
             return adminContext();
         }
@@ -77,7 +90,8 @@ public final class ProjectPermissionsContextManagerImpl
     public Context initUpdateContext( final ProjectName projectName )
     {
         final AuthenticationInfo authenticationInfo = ContextAccessor.current().getAuthInfo();
-        if ( hasAdminAccess( authenticationInfo ) || hasAdminProjectPermission( projectName, authenticationInfo ) )
+        if ( hasAdminAccess( authenticationInfo ) || ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) &&
+            hasAdminProjectPermission( projectName, authenticationInfo ) ) )
         {
             return adminContext();
         }
@@ -159,17 +173,10 @@ public final class ProjectPermissionsContextManagerImpl
                 throw new ProjectNotFoundException( projectName );
             }
 
-            final Project project = Project.from( repository );
-            final PrincipalKeys projectPrincipalKeys = project.getPermissions().getPermissions( permissions );
-
+            final Set<PrincipalKey> projectPrincipalKeys = getProjectPermissionMembers( projectName, permissions );
             final PrincipalKeys userKeys = authenticationInfo.getPrincipals();
 
-            if ( projectPrincipalKeys.stream().anyMatch( userKeys::contains ) )
-            {
-                return true;
-            }
-
-            return false;
+            return projectPrincipalKeys.stream().anyMatch( userKeys::contains );
         } );
     }
 
@@ -186,9 +193,44 @@ public final class ProjectPermissionsContextManagerImpl
             build();
     }
 
+    private Set<PrincipalKey> getProjectPermissionMembers( final ProjectName projectName,
+                                                           final Collection<ProjectPermissionsLevel> projectPermissionsLevels )
+    {
+        return projectPermissionsLevels.stream().
+            map( this::getProjectRole ).
+            map( projectRole -> projectRole.getRoleKey( projectName ) ).
+            map( securityService::getRelationships ).
+            flatMap( PrincipalRelationships::stream ).
+            map( PrincipalRelationship::getTo ).
+            collect( Collectors.toSet() );
+    }
+
+    private ProjectRoles getProjectRole( final ProjectPermissionsLevel projectPermissionsLevel )
+    {
+        switch ( projectPermissionsLevel )
+        {
+            case OWNER:
+                return ProjectRoles.OWNER;
+            case EDITOR:
+                return ProjectRoles.EDITOR;
+            case AUTHOR:
+                return ProjectRoles.AUTHOR;
+            case CONTRIBUTOR:
+                return ProjectRoles.CONTRIBUTOR;
+            default:
+                throw new IllegalArgumentException( "cannot parse project permission level" );
+        }
+    }
+
     @Reference
     public void setRepositoryService( final RepositoryService repositoryService )
     {
         this.repositoryService = repositoryService;
+    }
+
+    @Reference
+    public void setSecurityService( final SecurityService securityService )
+    {
+        this.securityService = securityService;
     }
 }

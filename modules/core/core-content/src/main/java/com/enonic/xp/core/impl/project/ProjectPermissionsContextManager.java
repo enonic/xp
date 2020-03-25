@@ -8,13 +8,13 @@ public interface ProjectPermissionsContextManager
 {
     Context initCreateContext();
 
-    Context initDeleteContext();
+    Context initDeleteContext( final ProjectName projectName );
 
     Context initListContext();
 
-    Context initGetContext( ProjectName projectName );
+    Context initGetContext( final ProjectName projectName );
 
-    Context initUpdateContext( ProjectName projectName );
+    Context initUpdateContext( final ProjectName projectName );
 
     boolean hasAdminAccess( final AuthenticationInfo authenticationInfo );
 
