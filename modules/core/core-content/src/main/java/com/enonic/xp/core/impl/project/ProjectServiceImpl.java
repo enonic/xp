@@ -24,6 +24,7 @@ import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repository.DeleteRepositoryParams;
@@ -125,7 +126,10 @@ public class ProjectServiceImpl
 
         final Repository updatedRepository = repositoryService.updateRepository( updateParams );
 
-        doCreateRoles( params.getName() );
+        if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( params.getName() ) )
+        {
+            doCreateRoles( params.getName() );
+        }
 
         return Project.from( updatedRepository );
     }
@@ -141,6 +145,8 @@ public class ProjectServiceImpl
             return Projects.create().
                 addAll( projects.stream().
                     filter( project -> projectPermissionsContextManager.hasAdminAccess( authenticationInfo ) ||
+                        ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() ) &&
+                            projectPermissionsContextManager.hasManagerAccess( authenticationInfo ) ) ||
                         projectPermissionsContextManager.hasAnyProjectPermission( project.getName(), authenticationInfo ) ).
                     collect( Collectors.toSet() ) ).
                 build();
@@ -171,7 +177,7 @@ public class ProjectServiceImpl
             LOG.info( "Project deleted: " + projectName );
 
             return result;
-        } );
+        }, projectName );
     }
 
     private boolean doDelete( final ProjectName projectName )
@@ -179,9 +185,61 @@ public class ProjectServiceImpl
         final DeleteRepositoryParams params = DeleteRepositoryParams.from( projectName.getRepoId() );
         final RepositoryId deletedRepositoryId = this.repositoryService.deleteRepository( params );
 
-        doDeleteRoles( projectName );
+        if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        {
+            doDeleteRoles( projectName );
+        }
 
         return deletedRepositoryId != null;
+    }
+
+    @Override
+    public ProjectPermissions getPermissions( final ProjectName projectName )
+    {
+        if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        {
+            throw new IllegalArgumentException( "Default project has no roles." );
+        }
+
+        return callWithGetContext( () -> doGetPermissions( projectName ), projectName );
+    }
+
+    private ProjectPermissions doGetPermissions( final ProjectName projectName )
+    {
+        return GetProjectPermissionsCommand.create().
+            securityService( securityService ).
+            projectName( projectName ).
+            build().
+            execute();
+    }
+
+    @Override
+    public ProjectPermissions modifyPermissions( final ProjectName projectName, final ProjectPermissions projectPermissions )
+    {
+        if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        {
+            throw new IllegalArgumentException( "Default project permissions cannot be modified." );
+        }
+
+        return callWithUpdateContext( () -> {
+
+            final ProjectPermissions result = doModifyPermissions( projectName, projectPermissions );
+            LOG.info( "Project permissions updated: " + projectName );
+
+            return result;
+
+
+        }, projectName );
+    }
+
+    private ProjectPermissions doModifyPermissions( final ProjectName projectName, final ProjectPermissions projectPermissions )
+    {
+        return UpdateProjectPermissionsCommand.create().
+            projectName( projectName ).
+            permissions( projectPermissions ).
+            securityService( securityService ).
+            build().
+            execute();
     }
 
     private PropertyTree createProjectData( final ModifyProjectParams params )
@@ -200,23 +258,6 @@ public class ProjectServiceImpl
             set.addSet( ProjectConstants.PROJECT_ICON_PROPERTY, null );
         }
 
-        if ( params.getPermissions() != null )
-        {
-            final PropertySet permissionsSet = set.addSet( ProjectConstants.PROJECT_PERMISSIONS_PROPERTY );
-            permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_OWNER_PROPERTY,
-                                       params.getPermissions().getOwner().asStrings() );
-            permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_EDITOR_PROPERTY,
-                                       params.getPermissions().getEditor().asStrings() );
-            permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_AUTHOR_PROPERTY,
-                                       params.getPermissions().getAuthor().asStrings() );
-            permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY,
-                                       params.getPermissions().getContributor().asStrings() );
-        }
-        else
-        {
-            set.addSet( ProjectConstants.PROJECT_PERMISSIONS_PROPERTY, null );
-        }
-
         return data;
     }
 
@@ -232,11 +273,6 @@ public class ProjectServiceImpl
 
     private void doCreateRoles( final ProjectName projectName )
     {
-        if ( projectName == null || ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
-        {
-            return;
-        }
-
         for ( ProjectRoles projectRole : ProjectRoles.values() )
         {
             final PrincipalKey roleKey = projectRole.getRoleKey( projectName );
@@ -253,11 +289,6 @@ public class ProjectServiceImpl
 
     private void doDeleteRoles( final ProjectName projectName )
     {
-        if ( projectName == null || ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
-        {
-            return;
-        }
-
         for ( ProjectRoles projectRole : ProjectRoles.values() )
         {
             final PrincipalKey roleKey = projectRole.getRoleKey( projectName );
@@ -327,9 +358,9 @@ public class ProjectServiceImpl
         return projectPermissionsContextManager.initListContext().callWith( runnable );
     }
 
-    private <T> T callWithDeleteContext( final Callable<T> runnable )
+    private <T> T callWithDeleteContext( final Callable<T> runnable, final ProjectName projectName )
     {
-        return projectPermissionsContextManager.initDeleteContext().callWith( runnable );
+        return projectPermissionsContextManager.initDeleteContext( projectName ).callWith( runnable );
     }
 
     @Reference

@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.project;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
@@ -60,7 +61,11 @@ public final class ProjectResource
         throws Exception
     {
         final Project project = projectService.create( createParams( form ) );
-        return new ProjectJson( project );
+
+        final ProjectPermissions projectPermissions = getPermissionsFromForm( form );
+        projectService.modifyPermissions( project.getName(), projectPermissions );
+
+        return new ProjectJson( project, projectPermissions );
     }
 
     @POST
@@ -70,14 +75,21 @@ public final class ProjectResource
         throws Exception
     {
         final Project modifiedProject = this.projectService.modify( ModifyProjectParams.create( createParams( form ) ).build() );
-        return new ProjectJson( modifiedProject );
+        final ProjectPermissions projectPermissions = getPermissionsFromForm( form );
+
+        if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( modifiedProject.getName() ) )
+        {
+            this.projectService.modifyPermissions( modifiedProject.getName(), projectPermissions );
+        }
+
+        return new ProjectJson( modifiedProject, projectPermissions );
     }
 
     @POST
     @Path("delete")
     public boolean delete( final DeleteProjectParamsJson params )
     {
-        if ( ProjectConstants.PROJECT_REPO_ID_DEFAULT.equals( params.getName().toString() ) )
+        if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( params.getName() ) )
         {
             throw new WebApplicationException( "Default repo is not allowed to be deleted", HttpStatus.METHOD_NOT_ALLOWED.value() );
         }
@@ -90,16 +102,27 @@ public final class ProjectResource
     @Path("list")
     public ProjectsJson list()
     {
-        return new ProjectsJson( this.projectService.list() );
+        final List<ProjectJson> projects = this.projectService.list().stream().
+            map( project -> new ProjectJson( project, !ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() )
+                ? this.projectService.getPermissions( project.getName() )
+                : null ) ).
+            collect( Collectors.toList() );
+
+        return new ProjectsJson( projects );
     }
 
     @GET
     @RolesAllowed({RoleKeys.ADMIN_ID, RoleKeys.CONTENT_MANAGER_ADMIN_ID, RoleKeys.CONTENT_MANAGER_APP_ID})
     @Path("get")
-    public ProjectJson get( final @QueryParam("name") String projectName )
+    public ProjectJson get( final @QueryParam("name") String projectNameValue )
     {
-        final Project project = this.projectService.get( ProjectName.from( projectName ) );
-        return new ProjectJson( project );
+        final ProjectName projectName = ProjectName.from( projectNameValue );
+
+        final Project project = this.projectService.get( projectName );
+        final ProjectPermissions projectPermissions =
+            !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) ? this.projectService.getPermissions( projectName ) : null;
+
+        return new ProjectJson( project, projectPermissions );
     }
 
     private CreateProjectParams createParams( final MultipartForm form )
@@ -110,8 +133,7 @@ public final class ProjectResource
         final CreateProjectParams.Builder builder = CreateProjectParams.create().
             name( ProjectName.from( form.getAsString( "name" ) ) ).
             displayName( form.getAsString( "displayName" ) ).
-            description( form.getAsString( "description" ) ).
-            permissions( projectPermissions );
+            description( form.getAsString( "description" ) );
 
         final MultipartItem icon = form.get( "icon" );
 

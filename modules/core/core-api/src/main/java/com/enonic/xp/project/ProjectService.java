@@ -14,4 +14,8 @@ public interface ProjectService
     Project get( final ProjectName projectName );
 
     boolean delete( final ProjectName projectName );
+
+    ProjectPermissions modifyPermissions( final ProjectName projectName, final ProjectPermissions projectPermissions );
+
+    ProjectPermissions getPermissions( final ProjectName projectName );
 }

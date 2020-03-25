@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
 import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectPermissions;
 
 public final class ProjectJson
 {
@@ -19,7 +20,7 @@ public final class ProjectJson
 
     private final ProjectPermissionsJson permissions;
 
-    public ProjectJson( final Project project )
+    public ProjectJson( final Project project, final ProjectPermissions projectPermissions )
     {
         Preconditions.checkArgument( project != null, "Project cannot be null." );
         Preconditions.checkArgument( project.getName() != null, "Project name cannot be null." );
@@ -28,7 +29,7 @@ public final class ProjectJson
         this.displayName = project.getDisplayName();
         this.description = project.getDescription();
         this.icon = project.getIcon() != null ? new AttachmentJson( project.getIcon() ) : null;
-        this.permissions = project.getPermissions() != null ? new ProjectPermissionsJson( project.getPermissions() ) : null;
+        this.permissions = projectPermissions != null ? new ProjectPermissionsJson( projectPermissions ) : null;
     }
 
     public String getName()
