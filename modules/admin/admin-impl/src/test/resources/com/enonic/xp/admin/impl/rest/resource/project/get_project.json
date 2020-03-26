@@ -21,5 +21,11 @@
     "owner": [
       "user:system:owner"
     ]
+  },
+  "readAccess": {
+    "principals": [
+      "user:system:custom"
+    ],
+    "type": "CUSTOM"
   }
 }

@@ -17,6 +17,10 @@
         "owner": [
           "user:system:owner"
         ]
+      },
+      "readAccess": {
+        "principals": [],
+        "type": "PRIVATE"
       }
     },
     {
@@ -31,6 +35,10 @@
           "user:system:editor"
         ],
         "owner": []
+      },
+      "readAccess": {
+        "principals": [],
+        "type": "PUBLIC"
       }
     },
     {
@@ -45,6 +53,12 @@
         "contributor": [],
         "editor": [],
         "owner": []
+      },
+      "readAccess": {
+        "principals": [
+          "user:system:custom"
+        ],
+        "type": "CUSTOM"
       }
     },
     {
@@ -59,7 +73,8 @@
         ],
         "editor": [],
         "owner": []
-      }
+      },
+      "readAccess": null
     }
   ]
 }

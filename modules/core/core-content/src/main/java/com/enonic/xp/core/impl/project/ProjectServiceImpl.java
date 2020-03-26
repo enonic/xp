@@ -25,6 +25,7 @@ import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
+import com.enonic.xp.project.ProjectReadAccess;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repository.DeleteRepositoryParams;
@@ -238,6 +239,57 @@ public class ProjectServiceImpl
             projectName( projectName ).
             permissions( projectPermissions ).
             securityService( securityService ).
+            build().
+            execute();
+    }
+
+    @Override
+    public ProjectReadAccess modifyReadAccess( final ProjectName projectName, final ProjectReadAccess readAccess )
+    {
+        if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        {
+            throw new IllegalArgumentException( "Default project has no read access." );
+        }
+
+        return callWithUpdateContext( () -> {
+
+            final ProjectReadAccess result = doModifyReadAccess( projectName, readAccess );
+            LOG.info( "Project read access updated: " + projectName );
+
+            return result;
+
+
+        }, projectName );
+    }
+
+    private ProjectReadAccess doModifyReadAccess( final ProjectName projectName, final ProjectReadAccess readAccess )
+    {
+        return UpdateProjectReadAccessCommand.create().
+            securityService( this.securityService ).
+            nodeService( this.nodeService ).
+            projectName( projectName ).
+            readAccess( readAccess ).
+            build().
+            execute();
+    }
+
+    @Override
+    public ProjectReadAccess getReadAccess( final ProjectName projectName )
+    {
+        if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        {
+            throw new IllegalArgumentException( "Default project readAccess cannot be modified." );
+        }
+
+        return callWithGetContext( () -> doGetReadAccess( projectName ), projectName );
+    }
+
+    private ProjectReadAccess doGetReadAccess( final ProjectName projectName )
+    {
+        return GetProjectReadAccessCommand.create().
+            securityService( this.securityService ).
+            nodeService( this.nodeService ).
+            projectName( projectName ).
             build().
             execute();
     }

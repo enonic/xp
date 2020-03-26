@@ -13,5 +13,11 @@
     "contributor": [],
     "editor": [],
     "owner": []
+  },
+  "readAccess": {
+    "principals": [
+      "user:system:custom"
+    ],
+    "type": "CUSTOM"
   }
 }

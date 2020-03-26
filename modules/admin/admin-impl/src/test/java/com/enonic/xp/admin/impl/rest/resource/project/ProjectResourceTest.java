@@ -19,6 +19,8 @@ import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
+import com.enonic.xp.project.ProjectReadAccess;
+import com.enonic.xp.project.ProjectReadAccessType;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.security.RoleKeys;
@@ -60,8 +62,14 @@ public class ProjectResourceTest
             addAuthor( "user:system:author" ).
             addContributor( "user:system:contributor" ).build();
 
+        final ProjectReadAccess readAccess = ProjectReadAccess.create().
+            setType( ProjectReadAccessType.CUSTOM ).
+            addPrincipal( "user:system:custom" ).
+            build();
+
         Mockito.when( projectService.get( project.getName() ) ).thenReturn( project );
         Mockito.when( projectService.getPermissions( project.getName() ) ).thenReturn( projectPermissions );
+        Mockito.when( projectService.getReadAccess( project.getName() ) ).thenReturn( readAccess );
 
         final String jsonString = request().
             path( "project/get" ).
@@ -95,11 +103,20 @@ public class ProjectResourceTest
         Mockito.when( projectService.getPermissions( ProjectName.from( "project1" ) ) ).
             thenReturn( ProjectPermissions.create().addOwner( "user:system:owner" ).build() );
 
+        Mockito.when( projectService.getReadAccess( ProjectName.from( "project1" ) ) ).
+            thenReturn( ProjectReadAccess.create().setType( ProjectReadAccessType.PRIVATE ).build() );
+
         Mockito.when( projectService.getPermissions( ProjectName.from( "project2" ) ) ).
             thenReturn( ProjectPermissions.create().addEditor( "user:system:editor" ).build() );
 
+        Mockito.when( projectService.getReadAccess( ProjectName.from( "project2" ) ) ).
+            thenReturn( ProjectReadAccess.create().setType( ProjectReadAccessType.PUBLIC ).build() );
+
         Mockito.when( projectService.getPermissions( ProjectName.from( "project3" ) ) ).
             thenReturn( ProjectPermissions.create().addAuthor( "user:system:author" ).build() );
+
+        Mockito.when( projectService.getReadAccess( ProjectName.from( "project3" ) ) ).
+            thenReturn( ProjectReadAccess.create().setType( ProjectReadAccessType.CUSTOM ).addPrincipal( "user:system:custom" ).build() );
 
         Mockito.when( projectService.getPermissions( ProjectName.from( "project4" ) ) ).
             thenReturn( ProjectPermissions.create().addContributor( "user:system:contributor" ).build() );
@@ -158,6 +175,10 @@ public class ProjectResourceTest
             build() );
 
         Mockito.when( projectService.modify( Mockito.isA( ModifyProjectParams.class ) ) ).thenReturn( project1 );
+        Mockito.when( projectService.modifyPermissions( Mockito.isA( ProjectName.class ), Mockito.isA( ProjectPermissions.class ) ) ).
+            thenAnswer( i -> i.getArguments()[1] );
+        Mockito.when( projectService.modifyReadAccess( Mockito.isA( ProjectName.class ), Mockito.isA( ProjectReadAccess.class ) ) ).
+            thenAnswer( i -> i.getArguments()[1] );
 
         createForm();
 
@@ -222,6 +243,8 @@ public class ProjectResourceTest
         Mockito.when( form.getAsString( "name" ) ).thenReturn( "projname" );
         Mockito.when( form.getAsString( "displayName" ) ).thenReturn( "Project Display Name" );
         Mockito.when( form.getAsString( "description" ) ).thenReturn( "project Description" );
+
+        Mockito.when( form.getAsString( "readAccess" ) ).thenReturn( "{\"type\":\"custom\", \"principals\":[\"user:system:custom\"]}" );
 
         Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
 

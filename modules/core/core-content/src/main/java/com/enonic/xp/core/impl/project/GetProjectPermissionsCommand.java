@@ -8,7 +8,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
 
 public final class GetProjectPermissionsCommand
-    extends AbstractProjectPermissionsCommand
+    extends AbstractProjectRolesCommand
 {
 
     private GetProjectPermissionsCommand( final Builder builder )
@@ -47,7 +47,7 @@ public final class GetProjectPermissionsCommand
     }
 
     public static final class Builder
-        extends AbstractProjectPermissionsCommand.Builder<Builder>
+        extends AbstractProjectRolesCommand.Builder<Builder>
     {
         private Builder()
         {

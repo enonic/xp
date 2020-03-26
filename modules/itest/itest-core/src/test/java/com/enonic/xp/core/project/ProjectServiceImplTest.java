@@ -26,6 +26,8 @@ import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
+import com.enonic.xp.project.ProjectReadAccess;
+import com.enonic.xp.project.ProjectReadAccessType;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
@@ -671,6 +673,57 @@ class ProjectServiceImplTest
         } );
     }
 
+    @Test
+    void get_read_access_default_project()
+    {
+        final RuntimeException ex =
+            Assertions.assertThrows( RuntimeException.class, () -> projectService.getReadAccess( ProjectConstants.DEFAULT_PROJECT_NAME ) );
+
+        assertEquals( "Default project readAccess cannot be modified.", ex.getMessage() );
+    }
+
+    @Test
+    void get_read_access_wrong_project()
+    {
+        final RuntimeException ex =
+            Assertions.assertThrows( RuntimeException.class, () -> projectService.getReadAccess( ProjectName.from( "test-project" ) ) );
+
+        assertEquals( "Project [test-project] was not found", ex.getMessage() );
+    }
+
+    @Test
+    void get_read_access()
+    {
+        doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
+
+        ADMIN_CONTEXT.runWith( () -> {
+            final ProjectReadAccess readAccess = projectService.getReadAccess( ProjectName.from( "test-project" ) );
+            assertEquals( ProjectReadAccessType.CUSTOM, readAccess.getType() );
+            assertEquals( List.of( PrincipalKey.from( "user:system:custom2" ), PrincipalKey.from( "user:system:custom1" ) ),
+                          readAccess.getPrincipals() );
+        } );
+
+    }
+
+    @Test
+    void modify_read_access()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+
+        ADMIN_CONTEXT.runWith( () -> {
+            doCreateProjectAsAdmin( ProjectName.from( projectRepoId ) );
+
+            projectService.modifyReadAccess( ProjectName.from( "test-project" ), ProjectReadAccess.create().
+                setType( ProjectReadAccessType.PUBLIC ).
+                build() );
+
+            final ProjectReadAccess readAccess = projectService.getReadAccess( ProjectName.from( "test-project" ) );
+
+            assertEquals( ProjectReadAccessType.PUBLIC, readAccess.getType() );
+            assertEquals( 0, readAccess.getPrincipals().size() );
+        } );
+    }
+
     private Project doCreateProjectAsAdmin( final ProjectName name )
     {
         return ADMIN_CONTEXT.callWith( () -> doCreateProject( name ) );
@@ -679,17 +732,28 @@ class ProjectServiceImplTest
 
     private Project doCreateProjectAsAdmin( final ProjectName name, final ProjectPermissions projectPermissions )
     {
-        return ADMIN_CONTEXT.callWith( () -> doCreateProject( name, projectPermissions ) );
+        return ADMIN_CONTEXT.callWith( () -> doCreateProject( name, projectPermissions, null ) );
+    }
+
+    private Project doCreateProjectAsAdmin( final ProjectName name, final ProjectPermissions projectPermissions,
+                                            final ProjectReadAccess readAccess )
+    {
+        return ADMIN_CONTEXT.callWith( () -> doCreateProject( name, projectPermissions, readAccess ) );
     }
 
     private Project doCreateProject( final ProjectName name )
     {
         return doCreateProject( name, ProjectPermissions.create().
             addOwner( REPO_TEST_OWNER.getKey() ).
+            build(), ProjectReadAccess.create().
+            setType( ProjectReadAccessType.CUSTOM ).
+            addPrincipal( "user:system:custom1" ).
+            addPrincipal( "user:system:custom2" ).
             build() );
     }
 
-    private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions )
+    private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions,
+                                     final ProjectReadAccess readAccess )
     {
         final Project project = this.projectService.create( CreateProjectParams.create().
             name( name ).
@@ -703,7 +767,14 @@ class ProjectServiceImplTest
                 build() ).
             build() );
 
-        this.projectService.modifyPermissions( name, projectPermissions );
+        if ( projectPermissions != null )
+        {
+            this.projectService.modifyPermissions( name, projectPermissions );
+        }
+        if ( readAccess != null )
+        {
+            this.projectService.modifyReadAccess( name, readAccess );
+        }
 
         return project;
     }
