@@ -1,8 +1,10 @@
 package com.enonic.xp.admin.impl.rest.resource.project;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
@@ -17,6 +19,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,8 +28,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.project.json.DeleteProjectParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectJson;
+import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectReadAccessJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectsJson;
 import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ModifyProjectParams;
@@ -33,8 +39,10 @@ import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
+import com.enonic.xp.project.ProjectReadAccessType;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
@@ -43,6 +51,8 @@ import static com.enonic.xp.project.ProjectConstants.PROJECT_ACCESS_LEVEL_AUTHOR
 import static com.enonic.xp.project.ProjectConstants.PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY;
 import static com.enonic.xp.project.ProjectConstants.PROJECT_ACCESS_LEVEL_EDITOR_PROPERTY;
 import static com.enonic.xp.project.ProjectConstants.PROJECT_ACCESS_LEVEL_OWNER_PROPERTY;
+import static com.enonic.xp.project.ProjectConstants.PROJECT_PERMISSIONS_JSON_PROPERTY_NAME;
+import static com.enonic.xp.project.ProjectConstants.PROJECT_READ_ACCESS_JSON_PROPERTY_NAME;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "project")
@@ -52,7 +62,13 @@ import static com.enonic.xp.project.ProjectConstants.PROJECT_ACCESS_LEVEL_OWNER_
 public final class ProjectResource
     implements JaxRsComponent
 {
+    private final static Logger LOG = LoggerFactory.getLogger( ProjectResource.class );
+
     private ProjectService projectService;
+
+    private TaskService taskService;
+
+    private ContentService contentService;
 
     @POST
     @Path("create")
@@ -62,10 +78,21 @@ public final class ProjectResource
     {
         final Project project = projectService.create( createParams( form ) );
 
-        final ProjectPermissions projectPermissions = getPermissionsFromForm( form );
-        projectService.modifyPermissions( project.getName(), projectPermissions );
+        final ProjectPermissions.Builder projectPermissionsBuilder = getPermissionsFromForm( form );
+        final ProjectReadAccess readAccess = getReadAccessFromForm( form );
 
-        return new ProjectJson( project, projectPermissions );
+        final ProjectPermissions projectPermissions =
+            projectService.modifyPermissions( project.getName(), doAddViewerRoleMembers( projectPermissionsBuilder, readAccess ).build() );
+
+        ApplyProjectReadAccessPermissionsCommand.create().
+            projectName( project.getName() ).
+            readAccess( readAccess ).
+            taskService( taskService ).
+            contentService( contentService ).
+            build().
+            execute();
+
+        return new ProjectJson( project, projectPermissions, readAccess.getType() );
     }
 
     @POST
@@ -75,14 +102,39 @@ public final class ProjectResource
         throws Exception
     {
         final Project modifiedProject = this.projectService.modify( ModifyProjectParams.create( createParams( form ) ).build() );
-        final ProjectPermissions projectPermissions = getPermissionsFromForm( form );
 
-        if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( modifiedProject.getName() ) )
+        if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( modifiedProject.getName() ) )
         {
-            this.projectService.modifyPermissions( modifiedProject.getName(), projectPermissions );
+            return doCreateJson( modifiedProject, null, null );
         }
 
-        return new ProjectJson( modifiedProject, projectPermissions );
+        final ProjectPermissions.Builder projectPermissionsBuilder = getPermissionsFromForm( form );
+        final ProjectReadAccess readAccess = getReadAccessFromForm( form );
+
+        final ProjectPermissions modifiedProjectPermissions = this.projectService.modifyPermissions( modifiedProject.getName(),
+                                                                                                     doAddViewerRoleMembers(
+                                                                                                         projectPermissionsBuilder,
+                                                                                                         readAccess ).build() );
+        ApplyProjectReadAccessPermissionsCommand.create().
+            projectName( modifiedProject.getName() ).
+            readAccess( readAccess ).
+            taskService( taskService ).
+            contentService( contentService ).
+            build().
+            execute();
+
+        return doCreateJson( modifiedProject, modifiedProjectPermissions, readAccess.getType() );
+    }
+
+    private ProjectPermissions.Builder doAddViewerRoleMembers( final ProjectPermissions.Builder builder,
+                                                               final ProjectReadAccess readAccess )
+    {
+        if ( ProjectReadAccessType.CUSTOM.equals( readAccess.getType() ) )
+        {
+            readAccess.getPrincipals().forEach( builder::addViewer );
+        }
+
+        return builder;
     }
 
     @POST
@@ -103,9 +155,7 @@ public final class ProjectResource
     public ProjectsJson list()
     {
         final List<ProjectJson> projects = this.projectService.list().stream().
-            map( project -> new ProjectJson( project, !ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() )
-                ? this.projectService.getPermissions( project.getName() )
-                : null ) ).
+            map( this::doCreateJson ).
             collect( Collectors.toList() );
 
         return new ProjectsJson( projects );
@@ -117,19 +167,12 @@ public final class ProjectResource
     public ProjectJson get( final @QueryParam("name") String projectNameValue )
     {
         final ProjectName projectName = ProjectName.from( projectNameValue );
-
-        final Project project = this.projectService.get( projectName );
-        final ProjectPermissions projectPermissions =
-            !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) ? this.projectService.getPermissions( projectName ) : null;
-
-        return new ProjectJson( project, projectPermissions );
+        return doCreateJson( this.projectService.get( projectName ) );
     }
 
     private CreateProjectParams createParams( final MultipartForm form )
         throws IOException
     {
-        final ProjectPermissions projectPermissions = getPermissionsFromForm( form );
-
         final CreateProjectParams.Builder builder = CreateProjectParams.create().
             name( ProjectName.from( form.getAsString( "name" ) ) ).
             displayName( form.getAsString( "displayName" ) ).
@@ -149,14 +192,34 @@ public final class ProjectResource
         return builder.build();
     }
 
-    private ProjectPermissions getPermissionsFromForm( final MultipartForm form )
+    private ProjectReadAccess getReadAccessFromForm( final MultipartForm form )
+    {
+        final ProjectReadAccess.Builder readAccess = ProjectReadAccess.create();
+
+        return Optional.ofNullable( form.getAsString( PROJECT_READ_ACCESS_JSON_PROPERTY_NAME ) ).
+            map( readAccessAsString -> {
+                try
+                {
+                    return new ObjectMapper().
+                        readValue( readAccessAsString, ProjectReadAccessJson.class );
+                }
+                catch ( IOException e )
+                {
+                    throw new UncheckedIOException( e );
+                }
+            } ).
+            map( ProjectReadAccessJson::getProjectReadAccess ).
+            orElseGet( readAccess::build );
+    }
+
+    private ProjectPermissions.Builder getPermissionsFromForm( final MultipartForm form )
         throws IOException
     {
         final ProjectPermissions.Builder builder = new ProjectPermissions.Builder();
-        final String permissionsAsString = form.getAsString( "permissions" );
+        final String permissionsAsString = form.getAsString( PROJECT_PERMISSIONS_JSON_PROPERTY_NAME );
         if ( permissionsAsString == null )
         {
-            return builder.build();
+            return builder;
         }
 
         final ObjectMapper permissionsMapper = new ObjectMapper();
@@ -184,12 +247,52 @@ public final class ProjectResource
             map.get( PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY ).forEach( builder::addContributor );
         }
 
-        return builder.build();
+        return builder;
+    }
+
+    private ProjectJson doCreateJson( final Project project, final ProjectPermissions projectPermissions,
+                                      final ProjectReadAccessType readAccessType )
+    {
+        return new ProjectJson( project, projectPermissions, readAccessType );
+    }
+
+    private ProjectJson doCreateJson( final Project project )
+    {
+        final ProjectName projectName = project.getName();
+
+        ProjectPermissions projectPermissions = null;
+        ProjectReadAccessType readAccessType = null;
+
+        if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        {
+            projectPermissions = this.projectService.getPermissions( projectName );
+            readAccessType = GetProjectReadAccessCommand.create().
+                viewerRoleMembers( projectPermissions.getViewer() ).
+                projectName( projectName ).
+                contentService( contentService ).
+                build().
+                execute().
+                getType();
+        }
+
+        return doCreateJson( project, projectPermissions, readAccessType );
     }
 
     @Reference
     public void setProjectService( final ProjectService projectService )
     {
         this.projectService = projectService;
+    }
+
+    @Reference
+    public void setContentService( final ContentService contentService )
+    {
+        this.contentService = contentService;
+    }
+
+    @Reference
+    public void setTaskService( final TaskService taskService )
+    {
+        this.taskService = taskService;
     }
 }

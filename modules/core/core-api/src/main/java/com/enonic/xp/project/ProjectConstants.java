@@ -29,6 +29,10 @@ public final class ProjectConstants
 
     public static final String PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY = "contributor";
 
+    public static final String PROJECT_READ_ACCESS_JSON_PROPERTY_NAME = "readAccess";
+
+    public static final String PROJECT_PERMISSIONS_JSON_PROPERTY_NAME = "permissions";
+
     public static final ProjectName DEFAULT_PROJECT_NAME = ProjectName.from( ContentConstants.CONTENT_REPO_ID );
 
     public static final Project DEFAULT_PROJECT = Project.create().

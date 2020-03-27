@@ -25,6 +25,7 @@ import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
+import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repository.DeleteRepositoryParams;
@@ -242,6 +243,57 @@ public class ProjectServiceImpl
             execute();
     }
 
+  /*  @Override
+    public ProjectReadAccess modifyReadAccess( final ProjectName projectName, final ProjectReadAccess readAccess )
+    {
+        if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        {
+            throw new IllegalArgumentException( "Default project has no read access." );
+        }
+
+        return callWithUpdateContext( () -> {
+
+            final ProjectReadAccess result = doModifyReadAccess( projectName, readAccess );
+            LOG.info( "Project read access updated: " + projectName );
+
+            return result;
+
+
+        }, projectName );
+    }*/
+
+   /* private ProjectReadAccess doModifyReadAccess( final ProjectName projectName, final ProjectReadAccess readAccess )
+    {
+        return UpdateProjectReadAccessCommand.create().
+            securityService( this.securityService ).
+            nodeService( this.nodeService ).
+            projectName( projectName ).
+            readAccess( readAccess ).
+            build().
+            execute();
+    }*/
+
+  /*  @Override
+    public ProjectReadAccess getReadAccess( final ProjectName projectName )
+    {
+        if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        {
+            throw new IllegalArgumentException( "Default project readAccess cannot be modified." );
+        }
+
+        return callWithGetContext( () -> doGetReadAccess( projectName ), projectName );
+    }*/
+/*
+    private ProjectReadAccess doGetReadAccess( final ProjectName projectName )
+    {
+        return GetProjectReadAccessCommand.create().
+            securityService( this.securityService ).
+            nodeService( this.nodeService ).
+            projectName( projectName ).
+            build().
+            execute();
+    }*/
+
     private PropertyTree createProjectData( final ModifyProjectParams params )
     {
         final PropertyTree data = new PropertyTree();
@@ -273,7 +325,7 @@ public class ProjectServiceImpl
 
     private void doCreateRoles( final ProjectName projectName )
     {
-        for ( ProjectRoles projectRole : ProjectRoles.values() )
+        for ( ProjectRole projectRole : ProjectRole.values() )
         {
             final PrincipalKey roleKey = projectRole.getRoleKey( projectName );
 
@@ -289,7 +341,7 @@ public class ProjectServiceImpl
 
     private void doDeleteRoles( final ProjectName projectName )
     {
-        for ( ProjectRoles projectRole : ProjectRoles.values() )
+        for ( ProjectRole projectRole : ProjectRole.values() )
         {
             final PrincipalKey roleKey = projectRole.getRoleKey( projectName );
             if ( securityService.getRole( roleKey ).isPresent() )
@@ -317,23 +369,23 @@ public class ProjectServiceImpl
                 build() ).
             add( AccessControlEntry.create().
                 allowAll().
-                principal( ProjectRoles.OWNER.getRoleKey( projectName ) ).
+                principal( ProjectRole.OWNER.getRoleKey( projectName ) ).
                 build() ).
             add( AccessControlEntry.create().
                 allowAll().
-                principal( ProjectRoles.EDITOR.getRoleKey( projectName ) ).
+                principal( ProjectRole.EDITOR.getRoleKey( projectName ) ).
                 build() ).
             add( AccessControlEntry.create().
                 allow( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE ).
-                principal( ProjectRoles.AUTHOR.getRoleKey( projectName ) ).
+                principal( ProjectRole.AUTHOR.getRoleKey( projectName ) ).
                 build() ).
             add( AccessControlEntry.create().
                 allow( Permission.READ ).
-                principal( ProjectRoles.CONTRIBUTOR.getRoleKey( projectName ) ).
+                principal( ProjectRole.CONTRIBUTOR.getRoleKey( projectName ) ).
                 build() ).
             add( AccessControlEntry.create().
                 allow( Permission.READ ).
-                principal( ProjectRoles.VIEWER.getRoleKey( projectName ) ).
+                principal( ProjectRole.VIEWER.getRoleKey( projectName ) ).
                 build() ).
             build();
     }

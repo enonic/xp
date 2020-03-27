@@ -18,4 +18,8 @@ public interface ProjectService
     ProjectPermissions modifyPermissions( final ProjectName projectName, final ProjectPermissions projectPermissions );
 
     ProjectPermissions getPermissions( final ProjectName projectName );
+
+//    ProjectReadAccess modifyReadAccess( final ProjectName projectName, final ProjectReadAccess readAccess );
+//
+//    ProjectReadAccess getReadAccess( final ProjectName projectName );
 }

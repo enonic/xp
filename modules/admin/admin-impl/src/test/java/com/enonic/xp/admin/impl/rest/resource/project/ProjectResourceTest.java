@@ -12,6 +12,10 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ModifyProjectParams;
@@ -22,6 +26,10 @@ import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
@@ -33,13 +41,21 @@ public class ProjectResourceTest
 {
     private ProjectService projectService;
 
+    private ContentService contentService;
+
+    private TaskService taskService;
+
     @Override
     protected ProjectResource getResourceInstance()
     {
         projectService = Mockito.mock( ProjectService.class );
+        contentService = Mockito.mock( ContentService.class );
+        taskService = Mockito.mock( TaskService.class );
 
         final ProjectResource resource = new ProjectResource();
         resource.setProjectService( projectService );
+        resource.setContentService( contentService );
+        resource.setTaskService( taskService );
 
         return resource;
     }
@@ -58,7 +74,11 @@ public class ProjectResourceTest
             addOwner( "user:system:owner" ).
             addEditor( "user:system:editor" ).
             addAuthor( "user:system:author" ).
-            addContributor( "user:system:contributor" ).build();
+            addContributor( "user:system:contributor" ).
+            addViewer( "user:system:custom" ).
+            build();
+
+        mockRootContent();
 
         Mockito.when( projectService.get( project.getName() ) ).thenReturn( project );
         Mockito.when( projectService.getPermissions( project.getName() ) ).thenReturn( projectPermissions );
@@ -89,6 +109,14 @@ public class ProjectResourceTest
         final Project project4 =
             createProject( "project4", "project4", null, null, ProjectPermissions.create().addAuthor( RoleKeys.AUTHENTICATED ).build() );
 
+        final Content content = mockRootContent();
+        Mockito.when( content.getPermissions() ).
+            thenReturn( AccessControlList.of( AccessControlEntry.create().
+                principal( RoleKeys.EVERYONE ).
+                allow( Permission.READ ).
+                build() ) ).
+            thenReturn( AccessControlList.empty() );
+
         Mockito.when( projectService.list() ).thenReturn(
             Projects.create().addAll( List.of( project1, project2, project3, project4 ) ).build() );
 
@@ -102,7 +130,10 @@ public class ProjectResourceTest
             thenReturn( ProjectPermissions.create().addAuthor( "user:system:author" ).build() );
 
         Mockito.when( projectService.getPermissions( ProjectName.from( "project4" ) ) ).
-            thenReturn( ProjectPermissions.create().addContributor( "user:system:contributor" ).build() );
+            thenReturn( ProjectPermissions.create().
+                addContributor( "user:system:contributor" ).
+                addViewer( "user:system:custom" ).
+                build() );
 
         String jsonString = request().path( "project/list" ).get().getAsString();
 
@@ -130,13 +161,16 @@ public class ProjectResourceTest
     public void create_project_success()
         throws Exception
     {
-        final Project project1 = createProject( "project1", "project name 1", "project description 1", Attachment.create().
+        final Project project = createProject( "project1", "project name 1", "project description 1", Attachment.create().
             name( "logo.png" ).
             mimeType( "image/png" ).
             label( "small" ).
             build() );
 
-        Mockito.when( projectService.create( Mockito.isA( CreateProjectParams.class ) ) ).thenReturn( project1 );
+        mockRootContent();
+        Mockito.when( projectService.create( Mockito.isA( CreateProjectParams.class ) ) ).thenReturn( project );
+        Mockito.when( projectService.modifyPermissions( Mockito.eq( project.getName() ), Mockito.isA( ProjectPermissions.class ) ) ).
+            thenAnswer( i -> i.getArguments()[1] );
 
         createForm();
 
@@ -151,13 +185,18 @@ public class ProjectResourceTest
     public void modify_project_success()
         throws Exception
     {
-        final Project project1 = createProject( "project1", "project name 1", "project description 1", Attachment.create().
+        final Project project = createProject( "project1", "project name 1", "project description 1", Attachment.create().
             name( "logo.png" ).
             mimeType( "image/png" ).
             label( "small" ).
             build() );
 
-        Mockito.when( projectService.modify( Mockito.isA( ModifyProjectParams.class ) ) ).thenReturn( project1 );
+        mockRootContent();
+        Mockito.when( projectService.modify( Mockito.isA( ModifyProjectParams.class ) ) ).thenReturn( project );
+        Mockito.when( projectService.modifyPermissions( Mockito.isA( ProjectName.class ), Mockito.isA( ProjectPermissions.class ) ) ).
+            thenAnswer( i -> i.getArguments()[1] );
+        Mockito.when( projectService.modifyPermissions( Mockito.eq( project.getName() ), Mockito.isA( ProjectPermissions.class ) ) ).
+            thenAnswer( i -> i.getArguments()[1] );
 
         createForm();
 
@@ -223,6 +262,8 @@ public class ProjectResourceTest
         Mockito.when( form.getAsString( "displayName" ) ).thenReturn( "Project Display Name" );
         Mockito.when( form.getAsString( "description" ) ).thenReturn( "project Description" );
 
+        Mockito.when( form.getAsString( "readAccess" ) ).thenReturn( "{\"type\":\"custom\", \"principals\":[\"user:system:custom\"]}" );
+
         Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
 
         return form;
@@ -237,5 +278,16 @@ public class ProjectResourceTest
         Mockito.when( item.getSize() ).thenReturn( size );
         Mockito.when( item.getBytes() ).thenReturn( ByteSource.wrap( name.getBytes() ) );
         return item;
+    }
+
+    private Content mockRootContent()
+    {
+        final Content contentRoot = Mockito.mock( Content.class );
+        Mockito.when( contentRoot.getId() ).thenReturn( ContentId.from( "123" ) );
+        Mockito.when( contentRoot.getPermissions() ).thenReturn( AccessControlList.empty() );
+
+        Mockito.when( contentService.getByPath( ContentPath.ROOT ) ).thenReturn( contentRoot );
+
+        return contentRoot;
     }
 }
