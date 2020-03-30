@@ -15,7 +15,6 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
-import com.enonic.xp.core.impl.project.ProjectRoles;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.node.Node;
@@ -26,6 +25,7 @@ import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
+import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
@@ -266,15 +266,15 @@ class ProjectServiceImplTest
 
                 assertTrue( rootContentPermissions.getEntry( RoleKeys.ADMIN ).isAllowedAll() );
                 assertTrue( rootContentPermissions.getEntry( RoleKeys.CONTENT_MANAGER_ADMIN ).isAllowedAll() );
-                assertTrue( rootContentPermissions.getEntry( ProjectRoles.OWNER.getRoleKey( projectName ) ).isAllowedAll() );
-                assertTrue( rootContentPermissions.getEntry( ProjectRoles.EDITOR.getRoleKey( projectName ) ).isAllowedAll() );
-                assertTrue( rootContentPermissions.getEntry( ProjectRoles.AUTHOR.getRoleKey( projectName ) ).isAllowed( Permission.READ,
-                                                                                                                        Permission.CREATE,
-                                                                                                                        Permission.MODIFY,
-                                                                                                                        Permission.DELETE ) );
-                assertTrue( rootContentPermissions.getEntry( ProjectRoles.CONTRIBUTOR.getRoleKey( projectName ) ).
+                assertTrue( rootContentPermissions.getEntry( ProjectRole.OWNER.getRoleKey( projectName ) ).isAllowedAll() );
+                assertTrue( rootContentPermissions.getEntry( ProjectRole.EDITOR.getRoleKey( projectName ) ).isAllowedAll() );
+                assertTrue( rootContentPermissions.getEntry( ProjectRole.AUTHOR.getRoleKey( projectName ) ).isAllowed( Permission.READ,
+                                                                                                                       Permission.CREATE,
+                                                                                                                       Permission.MODIFY,
+                                                                                                                       Permission.DELETE ) );
+                assertTrue( rootContentPermissions.getEntry( ProjectRole.CONTRIBUTOR.getRoleKey( projectName ) ).
                     isAllowed( Permission.READ ) );
-                assertTrue( rootContentPermissions.getEntry( ProjectRoles.VIEWER.getRoleKey( projectName ) ).
+                assertTrue( rootContentPermissions.getEntry( ProjectRole.VIEWER.getRoleKey( projectName ) ).
                     isAllowed( Permission.READ ) );
             } ) );
     }
@@ -602,20 +602,6 @@ class ProjectServiceImplTest
     }
 
     @Test
-    void get_empty_permissions()
-    {
-        doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
-
-        ADMIN_CONTEXT.runWith( () -> {
-            final ProjectPermissions projectPermissions = projectService.getPermissions( ProjectName.from( "test-project" ) );
-            assertEquals( ProjectPermissions.create().
-                addOwner( REPO_TEST_OWNER.getKey() ).
-                build(), projectPermissions );
-        } );
-
-    }
-
-    @Test
     void modify_permissions()
     {
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
@@ -685,7 +671,7 @@ class ProjectServiceImplTest
     private Project doCreateProject( final ProjectName name )
     {
         return doCreateProject( name, ProjectPermissions.create().
-            addOwner( REPO_TEST_OWNER.getKey() ).
+            addOwner( REPO_TEST_OWNER.getKey() ).addViewer( "user:system:custom1" ).addViewer( "user:system:custom2" ).
             build() );
     }
 
@@ -703,7 +689,10 @@ class ProjectServiceImplTest
                 build() ).
             build() );
 
-        this.projectService.modifyPermissions( name, projectPermissions );
+        if ( projectPermissions != null )
+        {
+            this.projectService.modifyPermissions( name, projectPermissions );
+        }
 
         return project;
     }

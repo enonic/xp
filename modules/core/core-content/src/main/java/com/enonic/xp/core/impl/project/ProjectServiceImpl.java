@@ -25,6 +25,7 @@ import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
+import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repository.DeleteRepositoryParams;
@@ -273,7 +274,7 @@ public class ProjectServiceImpl
 
     private void doCreateRoles( final ProjectName projectName )
     {
-        for ( ProjectRoles projectRole : ProjectRoles.values() )
+        for ( ProjectRole projectRole : ProjectRole.values() )
         {
             final PrincipalKey roleKey = projectRole.getRoleKey( projectName );
 
@@ -289,7 +290,7 @@ public class ProjectServiceImpl
 
     private void doDeleteRoles( final ProjectName projectName )
     {
-        for ( ProjectRoles projectRole : ProjectRoles.values() )
+        for ( ProjectRole projectRole : ProjectRole.values() )
         {
             final PrincipalKey roleKey = projectRole.getRoleKey( projectName );
             if ( securityService.getRole( roleKey ).isPresent() )
@@ -317,23 +318,23 @@ public class ProjectServiceImpl
                 build() ).
             add( AccessControlEntry.create().
                 allowAll().
-                principal( ProjectRoles.OWNER.getRoleKey( projectName ) ).
+                principal( ProjectRole.OWNER.getRoleKey( projectName ) ).
                 build() ).
             add( AccessControlEntry.create().
                 allowAll().
-                principal( ProjectRoles.EDITOR.getRoleKey( projectName ) ).
+                principal( ProjectRole.EDITOR.getRoleKey( projectName ) ).
                 build() ).
             add( AccessControlEntry.create().
                 allow( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE ).
-                principal( ProjectRoles.AUTHOR.getRoleKey( projectName ) ).
+                principal( ProjectRole.AUTHOR.getRoleKey( projectName ) ).
                 build() ).
             add( AccessControlEntry.create().
                 allow( Permission.READ ).
-                principal( ProjectRoles.CONTRIBUTOR.getRoleKey( projectName ) ).
+                principal( ProjectRole.CONTRIBUTOR.getRoleKey( projectName ) ).
                 build() ).
             add( AccessControlEntry.create().
                 allow( Permission.READ ).
-                principal( ProjectRoles.VIEWER.getRoleKey( projectName ) ).
+                principal( ProjectRole.VIEWER.getRoleKey( projectName ) ).
                 build() ).
             build();
     }

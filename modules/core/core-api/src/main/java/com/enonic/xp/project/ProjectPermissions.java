@@ -11,14 +11,13 @@ import com.enonic.xp.security.PrincipalKeys;
 
 public final class ProjectPermissions
 {
-    private Map<ProjectPermissionsLevel, PrincipalKeys> permissions;
+    private Map<ProjectRole, PrincipalKeys> permissions;
 
     private ProjectPermissions( Builder builder )
     {
-        this.permissions =
-            Map.of( ProjectPermissionsLevel.OWNER, builder.owner.build(), ProjectPermissionsLevel.EDITOR, builder.editor.build(),
-                    ProjectPermissionsLevel.AUTHOR, builder.author.build(), ProjectPermissionsLevel.CONTRIBUTOR,
-                    builder.contributor.build() );
+        this.permissions = Map.of( ProjectRole.OWNER, builder.owner.build(), ProjectRole.EDITOR, builder.editor.build(), ProjectRole.AUTHOR,
+                                   builder.author.build(), ProjectRole.CONTRIBUTOR, builder.contributor.build(), ProjectRole.VIEWER,
+                                   builder.viewer.build() );
     }
 
     public static Builder create()
@@ -28,43 +27,48 @@ public final class ProjectPermissions
 
     public PrincipalKeys getOwner()
     {
-        return permissions.get( ProjectPermissionsLevel.OWNER );
+        return permissions.get( ProjectRole.OWNER );
     }
 
     public PrincipalKeys getEditor()
     {
-        return permissions.get( ProjectPermissionsLevel.EDITOR );
+        return permissions.get( ProjectRole.EDITOR );
     }
 
     public PrincipalKeys getAuthor()
     {
-        return permissions.get( ProjectPermissionsLevel.AUTHOR );
+        return permissions.get( ProjectRole.AUTHOR );
     }
 
     public PrincipalKeys getContributor()
     {
-        return permissions.get( ProjectPermissionsLevel.CONTRIBUTOR );
+        return permissions.get( ProjectRole.CONTRIBUTOR );
     }
 
-    public PrincipalKeys getPermission( final ProjectPermissionsLevel projectPermissionsLevel )
+    public PrincipalKeys getViewer()
     {
-        return doGetPermission( projectPermissionsLevel );
+        return permissions.get( ProjectRole.VIEWER );
     }
 
-    public PrincipalKeys getPermissions( final Collection<ProjectPermissionsLevel> projectPermissionsLevels )
+    public PrincipalKeys getPermission( final ProjectRole projectRole )
+    {
+        return doGetPermission( projectRole );
+    }
+
+    public PrincipalKeys getPermissions( final Collection<ProjectRole> projectRoles )
     {
         {
             final PrincipalKeys.Builder result = PrincipalKeys.create();
-            projectPermissionsLevels.forEach( permission -> result.addAll( doGetPermission( permission ) ) );
+            projectRoles.forEach( permission -> result.addAll( doGetPermission( permission ) ) );
 
             return result.build();
         }
     }
 
 
-    private PrincipalKeys doGetPermission( final ProjectPermissionsLevel projectPermissionsLevel )
+    private PrincipalKeys doGetPermission( final ProjectRole projectRole )
     {
-        return this.permissions.get( projectPermissionsLevel );
+        return this.permissions.get( projectRole );
     }
 
     @Override
@@ -97,6 +101,8 @@ public final class ProjectPermissions
         private PrincipalKeys.Builder author = PrincipalKeys.create();
 
         private PrincipalKeys.Builder contributor = PrincipalKeys.create();
+
+        private PrincipalKeys.Builder viewer = PrincipalKeys.create();
 
         public Builder addOwner( final String owner )
         {
@@ -166,6 +172,24 @@ public final class ProjectPermissions
             if ( contributor != null )
             {
                 this.contributor.add( contributor );
+            }
+            return this;
+        }
+
+        public Builder addViewer( final String viewer )
+        {
+            if ( StringUtils.isNotBlank( viewer ) )
+            {
+                this.viewer.add( PrincipalKey.from( viewer ) );
+            }
+            return this;
+        }
+
+        public Builder addViewer( final PrincipalKey viewer )
+        {
+            if ( viewer != null )
+            {
+                this.viewer.add( viewer );
             }
             return this;
         }
