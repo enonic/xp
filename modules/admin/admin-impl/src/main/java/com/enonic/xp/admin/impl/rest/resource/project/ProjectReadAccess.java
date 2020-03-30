@@ -41,12 +41,6 @@ public final class ProjectReadAccess
 
         private ProjectReadAccessType type;
 
-        public Builder addPrincipal( final String principal )
-        {
-            this.principals.add( PrincipalKey.from( principal ) );
-            return this;
-        }
-
         public Builder addPrincipals( final Collection<PrincipalKey> principals )
         {
             this.principals.addAll( principals );

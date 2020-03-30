@@ -1,8 +1,8 @@
 package com.enonic.xp.project;
 
-import com.google.common.annotations.Beta;
+import com.enonic.xp.annotation.PublicApi;
 
-@Beta
+@PublicApi
 public interface ProjectService
 {
     Project create( final CreateProjectParams params );

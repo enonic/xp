@@ -1,10 +1,8 @@
 package com.enonic.xp.project;
 
-import java.util.Objects;
-
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -12,7 +10,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.repository.Repository;
 
-@Beta
+@PublicApi
 public final class Project
 {
     private final ProjectName name;
@@ -102,28 +100,6 @@ public final class Project
     public Attachment getIcon()
     {
         return icon;
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final Project project = (Project) o;
-        return Objects.equals( name, project.name ) && Objects.equals( displayName, project.displayName ) &&
-            Objects.equals( description, project.description ) && Objects.equals( icon, project.icon );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( name, displayName, description, icon );
     }
 
     public static final class Builder
