@@ -6,14 +6,14 @@ import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.repository.Repositories;
-import com.enonic.xp.support.AbstractImmutableEntitySet;
+import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @Beta
 public final class Projects
-    extends AbstractImmutableEntitySet<Project>
+    extends AbstractImmutableEntityList<Project>
 {
     private Projects( final Builder builder )
     {
@@ -35,7 +35,7 @@ public final class Projects
         return create().addAll( repositories.stream().
             map( Project::from ).
             filter( Objects::nonNull ).
-            collect( Collectors.toSet() ) ).
+            collect( Collectors.toList() ) ).
             build();
     }
 
@@ -58,7 +58,7 @@ public final class Projects
 
     public static class Builder
     {
-        private ImmutableSet.Builder<Project> projects = ImmutableSet.builder();
+        private ImmutableList.Builder<Project> projects = ImmutableList.builder();
 
         public Builder addAll( Collection<Project> projects )
         {

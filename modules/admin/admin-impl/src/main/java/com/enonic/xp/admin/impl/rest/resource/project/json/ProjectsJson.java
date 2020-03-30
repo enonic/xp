@@ -13,7 +13,7 @@ public final class ProjectsJson
         this.projects = ImmutableList.copyOf( projects );
     }
 
-    public ImmutableList<ProjectJson> getProjects()
+    public List<ProjectJson> getProjects()
     {
         return projects;
     }

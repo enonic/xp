@@ -12,7 +12,6 @@ import com.enonic.xp.admin.impl.rest.resource.project.ProjectReadAccess;
 import com.enonic.xp.admin.impl.rest.resource.project.ProjectReadAccessType;
 import com.enonic.xp.security.PrincipalKey;
 
-@SuppressWarnings("UnusedDeclaration")
 public class ProjectReadAccessJson
 {
     private final ProjectReadAccessType type;

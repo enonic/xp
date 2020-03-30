@@ -1,13 +1,11 @@
 package com.enonic.xp.project;
 
-import java.util.Objects;
-
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachment;
 
-@Beta
+@PublicApi
 public final class CreateProjectParams
 {
     private final ProjectName name;
@@ -49,28 +47,6 @@ public final class CreateProjectParams
     public CreateAttachment getIcon()
     {
         return icon;
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final CreateProjectParams that = (CreateProjectParams) o;
-        return Objects.equals( name, that.name ) && Objects.equals( displayName, that.displayName ) &&
-            Objects.equals( description, that.description ) && Objects.equals( icon, that.icon );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( name, displayName, description, icon );
     }
 
     public static final class Builder

@@ -2,13 +2,14 @@ package com.enonic.xp.project;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
+@PublicApi
 public final class ProjectPermissions
 {
     private Map<ProjectRole, PrincipalKeys> permissions;
@@ -69,27 +70,6 @@ public final class ProjectPermissions
     private PrincipalKeys doGetPermission( final ProjectRole projectRole )
     {
         return this.permissions.get( projectRole );
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final ProjectPermissions that = (ProjectPermissions) o;
-        return Objects.equals( permissions, that.permissions );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( permissions );
     }
 
     public static final class Builder

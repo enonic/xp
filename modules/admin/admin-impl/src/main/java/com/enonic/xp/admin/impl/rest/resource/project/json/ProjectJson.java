@@ -1,7 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.project.json;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
@@ -66,28 +64,5 @@ public final class ProjectJson
     public ProjectReadAccessJson getReadAccess()
     {
         return projectReadAccess;
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final ProjectJson that = (ProjectJson) o;
-        return Objects.equals( name, that.name ) && Objects.equals( displayName, that.displayName ) &&
-            Objects.equals( description, that.description ) && Objects.equals( icon, that.icon ) &&
-            Objects.equals( permissions, that.permissions ) && Objects.equals( projectReadAccess, that.projectReadAccess );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( name, displayName, description, icon, permissions, projectReadAccess );
     }
 }
