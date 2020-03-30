@@ -1,16 +1,14 @@
-package com.enonic.xp.core.impl.project;
+package com.enonic.xp.project;
 
-import com.enonic.xp.project.ProjectConstants;
-import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.security.PrincipalKey;
 
-public enum ProjectRoles
+public enum ProjectRole
 {
     OWNER( "owner" ), EDITOR( "editor" ), AUTHOR( "author" ), CONTRIBUTOR( "contributor" ), VIEWER( "viewer" );
 
     private String value;
 
-    ProjectRoles( final String value )
+    ProjectRole( final String value )
     {
         this.value = value;
     }

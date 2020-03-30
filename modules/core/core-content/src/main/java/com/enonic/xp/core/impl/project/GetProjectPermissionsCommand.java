@@ -4,11 +4,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.project.ProjectPermissions;
+import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
 
 public final class GetProjectPermissionsCommand
-    extends AbstractProjectPermissionsCommand
+    extends AbstractProjectRolesCommand
 {
 
     private GetProjectPermissionsCommand( final Builder builder )
@@ -30,15 +31,16 @@ public final class GetProjectPermissionsCommand
     {
         final ProjectPermissions.Builder projectPermissions = ProjectPermissions.create();
 
-        doGetRoleMembers( ProjectRoles.OWNER ).forEach( projectPermissions::addOwner );
-        doGetRoleMembers( ProjectRoles.EDITOR ).forEach( projectPermissions::addEditor );
-        doGetRoleMembers( ProjectRoles.AUTHOR ).forEach( projectPermissions::addAuthor );
-        doGetRoleMembers( ProjectRoles.CONTRIBUTOR ).forEach( projectPermissions::addContributor );
+        doGetRoleMembers( ProjectRole.OWNER ).forEach( projectPermissions::addOwner );
+        doGetRoleMembers( ProjectRole.EDITOR ).forEach( projectPermissions::addEditor );
+        doGetRoleMembers( ProjectRole.AUTHOR ).forEach( projectPermissions::addAuthor );
+        doGetRoleMembers( ProjectRole.CONTRIBUTOR ).forEach( projectPermissions::addContributor );
+        doGetRoleMembers( ProjectRole.VIEWER ).forEach( projectPermissions::addViewer );
 
         return projectPermissions.build();
     }
 
-    private List<PrincipalKey> doGetRoleMembers( final ProjectRoles projectRole )
+    private List<PrincipalKey> doGetRoleMembers( final ProjectRole projectRole )
     {
         return securityService.getRelationships( projectRole.getRoleKey( this.projectName ) ).
             stream().
@@ -47,7 +49,7 @@ public final class GetProjectPermissionsCommand
     }
 
     public static final class Builder
-        extends AbstractProjectPermissionsCommand.Builder<Builder>
+        extends AbstractProjectRolesCommand.Builder<Builder>
     {
         private Builder()
         {

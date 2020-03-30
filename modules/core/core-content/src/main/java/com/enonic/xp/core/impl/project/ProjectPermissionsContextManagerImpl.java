@@ -14,7 +14,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
-import com.enonic.xp.project.ProjectPermissionsLevel;
+import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.PrincipalKey;
@@ -131,33 +131,33 @@ public final class ProjectPermissionsContextManagerImpl
     public boolean hasAnyProjectPermission( final ProjectName projectName, final AuthenticationInfo authenticationInfo )
     {
         return hasPermissions( projectName, authenticationInfo,
-                               Set.of( ProjectPermissionsLevel.OWNER, ProjectPermissionsLevel.EDITOR, ProjectPermissionsLevel.AUTHOR,
-                                       ProjectPermissionsLevel.CONTRIBUTOR ) );
+                               Set.of( ProjectRole.OWNER, ProjectRole.EDITOR, ProjectRole.AUTHOR, ProjectRole.CONTRIBUTOR,
+                                       ProjectRole.VIEWER ) );
     }
 
     private boolean hasAdminProjectPermission( final ProjectName projectName, final AuthenticationInfo authenticationInfo )
     {
-        return hasPermissions( projectName, authenticationInfo, Set.of( ProjectPermissionsLevel.OWNER ) );
+        return hasPermissions( projectName, authenticationInfo, Set.of( ProjectRole.OWNER ) );
     }
 
     private boolean hasEditorProjectPermission( final ProjectName projectName, final AuthenticationInfo authenticationInfo )
     {
-        return hasPermissions( projectName, authenticationInfo, Set.of( ProjectPermissionsLevel.EDITOR ) );
+        return hasPermissions( projectName, authenticationInfo, Set.of( ProjectRole.EDITOR ) );
     }
 
     private boolean hasAuthorProjectPermission( final ProjectName projectName, final AuthenticationInfo authenticationInfo )
     {
-        return hasPermissions( projectName, authenticationInfo, Set.of( ProjectPermissionsLevel.AUTHOR ) );
+        return hasPermissions( projectName, authenticationInfo, Set.of( ProjectRole.AUTHOR ) );
     }
 
     private boolean hasContributorProjectPermission( final ProjectName projectName, final AuthenticationInfo authenticationInfo )
     {
-        return hasPermissions( projectName, authenticationInfo, Set.of( ProjectPermissionsLevel.CONTRIBUTOR ) );
+        return hasPermissions( projectName, authenticationInfo, Set.of( ProjectRole.CONTRIBUTOR ) );
     }
 
 
     private boolean hasPermissions( final ProjectName projectName, final AuthenticationInfo authenticationInfo,
-                                    final Collection<ProjectPermissionsLevel> permissions )
+                                    final Collection<ProjectRole> projectRoles )
     {
         if ( projectName == null )
         {
@@ -173,7 +173,7 @@ public final class ProjectPermissionsContextManagerImpl
                 throw new ProjectNotFoundException( projectName );
             }
 
-            final Set<PrincipalKey> projectPrincipalKeys = getProjectPermissionMembers( projectName, permissions );
+            final Set<PrincipalKey> projectPrincipalKeys = getProjectPermissionMembers( projectName, projectRoles );
             final PrincipalKeys userKeys = authenticationInfo.getPrincipals();
 
             return projectPrincipalKeys.stream().anyMatch( userKeys::contains );
@@ -193,33 +193,14 @@ public final class ProjectPermissionsContextManagerImpl
             build();
     }
 
-    private Set<PrincipalKey> getProjectPermissionMembers( final ProjectName projectName,
-                                                           final Collection<ProjectPermissionsLevel> projectPermissionsLevels )
+    private Set<PrincipalKey> getProjectPermissionMembers( final ProjectName projectName, final Collection<ProjectRole> projectRoles )
     {
-        return projectPermissionsLevels.stream().
-            map( this::getProjectRole ).
+        return projectRoles.stream().
             map( projectRole -> projectRole.getRoleKey( projectName ) ).
             map( securityService::getRelationships ).
             flatMap( PrincipalRelationships::stream ).
             map( PrincipalRelationship::getTo ).
             collect( Collectors.toSet() );
-    }
-
-    private ProjectRoles getProjectRole( final ProjectPermissionsLevel projectPermissionsLevel )
-    {
-        switch ( projectPermissionsLevel )
-        {
-            case OWNER:
-                return ProjectRoles.OWNER;
-            case EDITOR:
-                return ProjectRoles.EDITOR;
-            case AUTHOR:
-                return ProjectRoles.AUTHOR;
-            case CONTRIBUTOR:
-                return ProjectRoles.CONTRIBUTOR;
-            default:
-                throw new IllegalArgumentException( "cannot parse project permission level" );
-        }
     }
 
     @Reference
