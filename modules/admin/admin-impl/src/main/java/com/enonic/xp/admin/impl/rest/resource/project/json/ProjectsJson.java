@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+@SuppressWarnings("UnusedDeclaration")
 public final class ProjectsJson
 {
     private final ImmutableList<ProjectJson> projects;
@@ -13,7 +14,7 @@ public final class ProjectsJson
         this.projects = ImmutableList.copyOf( projects );
     }
 
-    public ImmutableList<ProjectJson> getProjects()
+    public List<ProjectJson> getProjects()
     {
         return projects;
     }

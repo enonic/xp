@@ -1,7 +1,9 @@
 package com.enonic.xp.project;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 
+@PublicApi
 public enum ProjectRole
 {
     OWNER( "owner" ), EDITOR( "editor" ), AUTHOR( "author" ), CONTRIBUTOR( "contributor" ), VIEWER( "viewer" );

@@ -44,6 +44,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -457,7 +458,7 @@ class ProjectServiceImplTest
         final Project createdProject = doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
         ADMIN_CONTEXT.runWith( () -> {
-            assertEquals( createdProject, projectService.get( createdProject.getName() ) );
+            checkProjectsEquality( createdProject, projectService.get( createdProject.getName() ) );
         } );
 
     }
@@ -468,7 +469,7 @@ class ProjectServiceImplTest
         final Project createdProject = doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
         CONTENT_ADMIN_CONTEXT.runWith( () -> {
-            assertEquals( createdProject, projectService.get( createdProject.getName() ) );
+            checkProjectsEquality( createdProject, projectService.get( createdProject.getName() ) );
         } );
 
     }
@@ -494,7 +495,7 @@ class ProjectServiceImplTest
         final Project createdProject = doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
         CONTENT_CUSTOM_MANAGER_CONTEXT.runWith( () -> {
-            assertEquals( createdProject, projectService.get( createdProject.getName() ) );
+            checkProjectsEquality( createdProject, projectService.get( createdProject.getName() ) );
         } );
     }
 
@@ -695,6 +696,12 @@ class ProjectServiceImplTest
         }
 
         return project;
+    }
+
+    private void checkProjectsEquality( final Project p1, final Project p2 )
+    {
+        assertAll( () -> assertEquals( p1.getName(), p2.getName() ), () -> assertEquals( p1.getDescription(), p2.getDescription() ),
+                   () -> assertEquals( p1.getDisplayName(), p2.getDisplayName() ), () -> assertEquals( p1.getIcon(), p2.getIcon() ) );
     }
 
 }
