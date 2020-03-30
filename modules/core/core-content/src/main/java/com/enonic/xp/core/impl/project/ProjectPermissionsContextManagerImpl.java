@@ -61,15 +61,7 @@ public final class ProjectPermissionsContextManagerImpl
     @Override
     public Context initListContext()
     {
-        final AuthenticationInfo authenticationInfo = ContextAccessor.current().getAuthInfo();
-        if ( hasManagerAccess( authenticationInfo ) )
-        {
-            return adminContext();
-        }
-        else
-        {
-            throw new ProjectAccessException( authenticationInfo.getUser(), null, "list" );
-        }
+        return adminContext();
     }
 
     @Override

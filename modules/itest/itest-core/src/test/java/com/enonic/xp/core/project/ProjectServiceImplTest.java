@@ -446,9 +446,7 @@ class ProjectServiceImplTest
         doCreateProjectAsAdmin( ProjectName.from( "test-project2" ) );
         doCreateProjectAsAdmin( ProjectName.from( "test-project3" ) );
 
-        final RuntimeException ex = Assertions.assertThrows( RuntimeException.class, () -> projectService.list() );
-
-        assertEquals( "Denied [user:system:test-user] user access for [list] operation", ex.getMessage() );
+        assertEquals( 0, projectService.list().getSize() );
     }
 
     @Test
