@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.project;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -14,13 +13,11 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
-import com.enonic.xp.security.PrincipalRelationship;
-import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.SystemConstants;
@@ -165,7 +162,7 @@ public final class ProjectPermissionsContextManagerImpl
                 throw new ProjectNotFoundException( projectName );
             }
 
-            final Set<PrincipalKey> projectPrincipalKeys = getProjectPermissionMembers( projectName, projectRoles );
+            final PrincipalKeys projectPrincipalKeys = getProjectPermissionMembers( projectName, projectRoles );
             final PrincipalKeys userKeys = authenticationInfo.getPrincipals();
 
             return projectPrincipalKeys.stream().anyMatch( userKeys::contains );
@@ -185,14 +182,15 @@ public final class ProjectPermissionsContextManagerImpl
             build();
     }
 
-    private Set<PrincipalKey> getProjectPermissionMembers( final ProjectName projectName, final Collection<ProjectRole> projectRoles )
+    private PrincipalKeys getProjectPermissionMembers( final ProjectName projectName, final Collection<ProjectRole> projectRoles )
     {
-        return projectRoles.stream().
-            map( projectRole -> projectRole.getRoleKey( projectName ) ).
-            map( securityService::getRelationships ).
-            flatMap( PrincipalRelationships::stream ).
-            map( PrincipalRelationship::getTo ).
-            collect( Collectors.toSet() );
+        final ProjectPermissions projectPermissions = GetProjectPermissionsCommand.create().
+            projectName( projectName ).
+            securityService( securityService ).
+            build().
+            execute();
+
+        return projectPermissions.getPermissions( projectRoles );
     }
 
     @Reference

@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.PrincipalRelationship;
@@ -46,6 +47,12 @@ abstract class AbstractProjectRolesCommand
                 stream().
                 noneMatch( newRoleMember -> oldRoleMember.getTo().equals( newRoleMember ) ) ).
             collect( Collectors.toSet() );
+    }
+
+    protected PrincipalKey createRoleKey( final ProjectRole projectRole )
+    {
+        final String roleName = ProjectConstants.PROJECT_NAME_PREFIX + projectName + "." + projectRole.getValue().toLowerCase();
+        return PrincipalKey.ofRole( roleName );
     }
 
     public static class Builder<B extends Builder>
