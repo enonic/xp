@@ -1,7 +1,6 @@
 package com.enonic.xp.project;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.security.PrincipalKey;
 
 @PublicApi
 public enum ProjectRole
@@ -15,14 +14,8 @@ public enum ProjectRole
         this.value = value;
     }
 
-    public PrincipalKey getRoleKey( final ProjectName projectName )
+    public String getValue()
     {
-        final String roleName = ProjectConstants.PROJECT_NAME_PREFIX + projectName + "." + value.toLowerCase();
-        return PrincipalKey.ofRole( roleName );
-    }
-
-    public String getRoleDisplayName( final String projectDisplayName )
-    {
-        return projectDisplayName + " - " + value;
+        return value;
     }
 }

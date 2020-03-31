@@ -25,7 +25,6 @@ import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
-import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repository.DeleteRepositoryParams;
@@ -33,15 +32,7 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
-import com.enonic.xp.security.CreateRoleParams;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.Role;
-import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.UpdateRoleParams;
-import com.enonic.xp.security.acl.AccessControlEntry;
-import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
@@ -87,7 +78,11 @@ public class ProjectServiceImpl
             setNodeService( nodeService ).
             setRepositoryService( repositoryService ).
             repositoryId( params.getName().getRepoId() ).
-            accessControlList( createContentRootPermissions( params.getName() ) ).
+            accessControlList( CreateProjectRootPermissionsCommand.create().
+                projectName( params.getName() ).
+                securityService( securityService ).
+                build().
+                execute() ).
             build().
             initialize();
 
@@ -132,7 +127,12 @@ public class ProjectServiceImpl
 
         if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( params.getName() ) )
         {
-            doCreateRoles( updatedProject );
+            CreateProjectRolesCommand.create().
+                securityService( securityService ).
+                projectName( params.getName() ).
+                projectDisplayName( params.getDisplayName() ).
+                build().
+                execute();
         }
 
         return updatedProject;
@@ -149,9 +149,9 @@ public class ProjectServiceImpl
             return Projects.create().
                 addAll( projects.stream().
                     filter( project -> projectPermissionsContextManager.hasAdminAccess( authenticationInfo ) ||
-                        ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() ) &&
-                            projectPermissionsContextManager.hasManagerAccess( authenticationInfo ) ) ||
-                        projectPermissionsContextManager.hasAnyProjectPermission( project.getName(), authenticationInfo ) ).
+                        ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() )
+                            ? projectPermissionsContextManager.hasManagerAccess( authenticationInfo )
+                            : projectPermissionsContextManager.hasAnyProjectPermission( project.getName(), authenticationInfo ) ) ).
                     collect( Collectors.toSet() ) ).
                 build();
         } );
@@ -191,7 +191,11 @@ public class ProjectServiceImpl
 
         if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
         {
-            doDeleteRoles( projectName );
+            DeleteProjectRolesCommand.create().
+                securityService( securityService ).
+                projectName( projectName ).
+                build().
+                execute();
         }
 
         return deletedRepositoryId != null;
@@ -273,87 +277,6 @@ public class ProjectServiceImpl
         }
 
         return null;
-    }
-
-    private void doCreateRoles( final Project project )
-    {
-        for ( ProjectRole projectRole : ProjectRole.values() )
-        {
-            final PrincipalKey roleKey = projectRole.getRoleKey( project.getName() );
-            final String roleDisplayName = projectRole.getRoleDisplayName( project.getDisplayName() );
-
-            securityService.getRole( roleKey ).
-                ifPresentOrElse( ( roleValue ) -> doUpdateRoleDisplayName( roleValue, roleDisplayName ),
-                                 () -> doCreateRole( roleKey, roleDisplayName ) );
-        }
-    }
-
-    private Role doCreateRole( final PrincipalKey roleKey, final String displayName )
-    {
-        return securityService.createRole( CreateRoleParams.create().
-            roleKey( roleKey ).
-            displayName( displayName ).
-            build() );
-    }
-
-    private Role doUpdateRoleDisplayName( final Role role, final String newDisplayName )
-    {
-        return !newDisplayName.equals( role.getDisplayName() ) ? securityService.updateRole( UpdateRoleParams.create().
-            roleKey( role.getKey() ).
-            displayName( newDisplayName ).
-            description( role.getDescription() ).
-            build() ) : role;
-    }
-
-    private void doDeleteRoles( final ProjectName projectName )
-    {
-        for ( ProjectRole projectRole : ProjectRole.values() )
-        {
-            final PrincipalKey roleKey = projectRole.getRoleKey( projectName );
-            if ( securityService.getRole( roleKey ).isPresent() )
-            {
-                securityService.deletePrincipal( PrincipalKey.ofRole( roleKey.getId() ) );
-            }
-        }
-    }
-
-    private AccessControlList createContentRootPermissions( final ProjectName projectName )
-    {
-        if ( projectName == null || ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
-        {
-            return null;
-        }
-
-        return AccessControlList.create().
-            add( AccessControlEntry.create().
-                allowAll().
-                principal( RoleKeys.ADMIN ).
-                build() ).
-            add( AccessControlEntry.create().
-                allowAll().
-                principal( RoleKeys.CONTENT_MANAGER_ADMIN ).
-                build() ).
-            add( AccessControlEntry.create().
-                allowAll().
-                principal( ProjectRole.OWNER.getRoleKey( projectName ) ).
-                build() ).
-            add( AccessControlEntry.create().
-                allowAll().
-                principal( ProjectRole.EDITOR.getRoleKey( projectName ) ).
-                build() ).
-            add( AccessControlEntry.create().
-                allow( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE ).
-                principal( ProjectRole.AUTHOR.getRoleKey( projectName ) ).
-                build() ).
-            add( AccessControlEntry.create().
-                allow( Permission.READ ).
-                principal( ProjectRole.CONTRIBUTOR.getRoleKey( projectName ) ).
-                build() ).
-            add( AccessControlEntry.create().
-                allow( Permission.READ ).
-                principal( ProjectRole.VIEWER.getRoleKey( projectName ) ).
-                build() ).
-            build();
     }
 
     private <T> T callWithCreateContext( final Callable<T> runnable )
