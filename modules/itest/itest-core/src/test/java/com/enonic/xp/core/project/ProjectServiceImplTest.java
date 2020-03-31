@@ -25,7 +25,6 @@ import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
-import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
@@ -267,15 +266,16 @@ class ProjectServiceImplTest
 
                 assertTrue( rootContentPermissions.getEntry( RoleKeys.ADMIN ).isAllowedAll() );
                 assertTrue( rootContentPermissions.getEntry( RoleKeys.CONTENT_MANAGER_ADMIN ).isAllowedAll() );
-                assertTrue( rootContentPermissions.getEntry( ProjectRole.OWNER.getRoleKey( projectName ) ).isAllowedAll() );
-                assertTrue( rootContentPermissions.getEntry( ProjectRole.EDITOR.getRoleKey( projectName ) ).isAllowedAll() );
-                assertTrue( rootContentPermissions.getEntry( ProjectRole.AUTHOR.getRoleKey( projectName ) ).isAllowed( Permission.READ,
-                                                                                                                       Permission.CREATE,
-                                                                                                                       Permission.MODIFY,
-                                                                                                                       Permission.DELETE ) );
-                assertTrue( rootContentPermissions.getEntry( ProjectRole.CONTRIBUTOR.getRoleKey( projectName ) ).
+                assertTrue( rootContentPermissions.getEntry( PrincipalKey.ofRole( "cms.project.test-project.owner" ) ).isAllowedAll() );
+                assertTrue( rootContentPermissions.getEntry( PrincipalKey.ofRole( "cms.project.test-project.editor" ) ).isAllowedAll() );
+                assertTrue(
+                    rootContentPermissions.getEntry( PrincipalKey.ofRole( "cms.project.test-project.author" ) ).isAllowed( Permission.READ,
+                                                                                                                           Permission.CREATE,
+                                                                                                                           Permission.MODIFY,
+                                                                                                                           Permission.DELETE ) );
+                assertTrue( rootContentPermissions.getEntry( PrincipalKey.ofRole( "cms.project.test-project.contributor" ) ).
                     isAllowed( Permission.READ ) );
-                assertTrue( rootContentPermissions.getEntry( ProjectRole.VIEWER.getRoleKey( projectName ) ).
+                assertTrue( rootContentPermissions.getEntry( PrincipalKey.ofRole( "cms.project.test-project.viewer" ) ).
                     isAllowed( Permission.READ ) );
             } ) );
     }
