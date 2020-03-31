@@ -4,7 +4,7 @@ import com.enonic.xp.security.PrincipalKey;
 
 public enum ProjectRole
 {
-    OWNER( "owner" ), EDITOR( "editor" ), AUTHOR( "author" ), CONTRIBUTOR( "contributor" ), VIEWER( "viewer" );
+    OWNER( "Owner" ), EDITOR( "Editor" ), AUTHOR( "Author" ), CONTRIBUTOR( "Contributor" ), VIEWER( "Viewer" );
 
     private String value;
 
@@ -15,7 +15,12 @@ public enum ProjectRole
 
     public PrincipalKey getRoleKey( final ProjectName projectName )
     {
-        final String roleName = ProjectConstants.PROJECT_NAME_PREFIX + projectName + "." + value;
+        final String roleName = ProjectConstants.PROJECT_NAME_PREFIX + projectName + "." + value.toLowerCase();
         return PrincipalKey.ofRole( roleName );
+    }
+
+    public String getRoleDisplayName( final String projectDisplayName )
+    {
+        return projectDisplayName + " - " + value;
     }
 }
