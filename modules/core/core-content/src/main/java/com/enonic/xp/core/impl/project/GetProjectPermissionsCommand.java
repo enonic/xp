@@ -9,7 +9,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
 
 public final class GetProjectPermissionsCommand
-    extends AbstractProjectRolesCommand
+    extends AbstractProjectPermissionsCommand
 {
 
     private GetProjectPermissionsCommand( final Builder builder )
@@ -42,14 +42,14 @@ public final class GetProjectPermissionsCommand
 
     private List<PrincipalKey> doGetRoleMembers( final ProjectRole projectRole )
     {
-        return securityService.getRelationships( projectRole.getRoleKey( this.projectName ) ).
+        return securityService.getRelationships( createRoleKey( projectRole ) ).
             stream().
             map( PrincipalRelationship::getTo ).
             collect( Collectors.toList() );
     }
 
     public static final class Builder
-        extends AbstractProjectRolesCommand.Builder<Builder>
+        extends AbstractProjectPermissionsCommand.Builder<Builder>
     {
         private Builder()
         {

@@ -6,23 +6,21 @@ import java.util.stream.Collectors;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.project.ProjectConstants;
-import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.SecurityService;
 
-abstract class AbstractProjectRolesCommand
+abstract class AbstractProjectPermissionsCommand
+    extends AbstractProjectCommand
 {
-    final ProjectName projectName;
-
     final SecurityService securityService;
 
-    AbstractProjectRolesCommand( final Builder builder )
+    AbstractProjectPermissionsCommand( final Builder builder )
     {
+        super( builder );
         this.securityService = builder.securityService;
-        this.projectName = builder.projectName;
     }
 
     protected Set<PrincipalRelationship> doGetAddedMembers( final PrincipalRelationships oldRoleMembers, final PrincipalKeys newRoleMembers,
@@ -49,32 +47,21 @@ abstract class AbstractProjectRolesCommand
     }
 
     public static class Builder<B extends Builder>
+        extends AbstractProjectCommand.Builder<B>
     {
         SecurityService securityService;
 
-        ProjectName projectName;
-
-        @SuppressWarnings("unchecked")
         public B securityService( final SecurityService securityService )
         {
             this.securityService = securityService;
             return (B) this;
         }
 
-        @SuppressWarnings("unchecked")
-        public B projectName( final ProjectName projectName )
-        {
-            this.projectName = projectName;
-            return (B) this;
-        }
-
         void validate()
         {
             Preconditions.checkNotNull( securityService, "securityService cannot be null" );
-            Preconditions.checkNotNull( projectName, "Project name cannot be null" );
             Preconditions.checkArgument( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ), "Default project has no roles" );
         }
-
     }
 
 }
