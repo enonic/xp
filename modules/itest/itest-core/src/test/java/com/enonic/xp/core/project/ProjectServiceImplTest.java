@@ -205,11 +205,16 @@ class ProjectServiceImplTest
 
         doCreateProjectAsAdmin( ProjectName.from( projectRepoId ) );
 
-        assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.owner" ) ).isPresent() );
-        assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.author" ) ).isPresent() );
-        assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.contributor" ) ).isPresent() );
-        assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.editor" ) ).isPresent() );
-        assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.viewer" ) ).isPresent() );
+        assertAll( () -> assertEquals( "Project display name - Owner", securityService.getRole(
+            PrincipalKey.ofRole( "cms.project.test-project.owner" ) ).get().getDisplayName() ),
+                   () -> assertEquals( "Project display name - Author", securityService.getRole(
+                       PrincipalKey.ofRole( "cms.project.test-project.author" ) ).get().getDisplayName() ),
+                   () -> assertEquals( "Project display name - Contributor", securityService.getRole(
+                       PrincipalKey.ofRole( "cms.project.test-project.contributor" ) ).get().getDisplayName() ),
+                   () -> assertEquals( "Project display name - Editor", securityService.getRole(
+                       PrincipalKey.ofRole( "cms.project.test-project.editor" ) ).get().getDisplayName() ),
+                   () -> assertEquals( "Project display name - Viewer", securityService.getRole(
+                       PrincipalKey.ofRole( "cms.project.test-project.viewer" ) ).get().getDisplayName() ) );
     }
 
     @Test
@@ -447,9 +452,7 @@ class ProjectServiceImplTest
         doCreateProjectAsAdmin( ProjectName.from( "test-project2" ) );
         doCreateProjectAsAdmin( ProjectName.from( "test-project3" ) );
 
-        final RuntimeException ex = Assertions.assertThrows( RuntimeException.class, () -> projectService.list() );
-
-        assertEquals( "Denied [user:system:test-user] user access for [list] operation", ex.getMessage() );
+        assertEquals( 0, projectService.list().getSize() );
     }
 
     @Test
@@ -582,6 +585,32 @@ class ProjectServiceImplTest
         } );
 
         assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.owner" ) ).isPresent() );
+    }
+
+    @Test
+    void modify_project_display_name()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+        doCreateProjectAsAdmin( ProjectName.from( projectRepoId ) );
+
+        ADMIN_CONTEXT.runWith( () -> {
+            projectService.modify( ModifyProjectParams.create().
+                name( ProjectName.from( "test-project" ) ).
+                displayName( "New project display name" ).
+                build() );
+
+            assertAll( () -> assertEquals( "New project display name - Owner", securityService.getRole(
+                PrincipalKey.ofRole( "cms.project.test-project.owner" ) ).get().getDisplayName() ),
+                       () -> assertEquals( "New project display name - Author", securityService.getRole(
+                           PrincipalKey.ofRole( "cms.project.test-project.author" ) ).get().getDisplayName() ),
+                       () -> assertEquals( "New project display name - Contributor", securityService.getRole(
+                           PrincipalKey.ofRole( "cms.project.test-project.contributor" ) ).get().getDisplayName() ),
+                       () -> assertEquals( "New project display name - Editor", securityService.getRole(
+                           PrincipalKey.ofRole( "cms.project.test-project.editor" ) ).get().getDisplayName() ),
+                       () -> assertEquals( "New project display name - Viewer", securityService.getRole(
+                           PrincipalKey.ofRole( "cms.project.test-project.viewer" ) ).get().getDisplayName() ) );
+
+        } );
     }
 
     @Test

@@ -35,8 +35,10 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.CreateRoleParams;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.UpdateRoleParams;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -126,13 +128,14 @@ public class ProjectServiceImpl
             build();
 
         final Repository updatedRepository = repositoryService.updateRepository( updateParams );
+        final Project updatedProject = Project.from( updatedRepository );
 
         if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( params.getName() ) )
         {
-            doCreateRoles( params.getName() );
+            doCreateRoles( updatedProject );
         }
 
-        return Project.from( updatedRepository );
+        return updatedProject;
     }
 
     @Override
@@ -272,20 +275,34 @@ public class ProjectServiceImpl
         return null;
     }
 
-    private void doCreateRoles( final ProjectName projectName )
+    private void doCreateRoles( final Project project )
     {
         for ( ProjectRole projectRole : ProjectRole.values() )
         {
-            final PrincipalKey roleKey = projectRole.getRoleKey( projectName );
+            final PrincipalKey roleKey = projectRole.getRoleKey( project.getName() );
+            final String roleDisplayName = projectRole.getRoleDisplayName( project.getDisplayName() );
 
-            if ( securityService.getRole( roleKey ).isEmpty() )
-            {
-                securityService.createRole( CreateRoleParams.create().
-                    roleKey( PrincipalKey.ofRole( roleKey.getId() ) ).
-                    displayName( roleKey.getId() ).
-                    build() );
-            }
+            securityService.getRole( roleKey ).
+                ifPresentOrElse( ( roleValue ) -> doUpdateRoleDisplayName( roleValue, roleDisplayName ),
+                                 () -> doCreateRole( roleKey, roleDisplayName ) );
         }
+    }
+
+    private Role doCreateRole( final PrincipalKey roleKey, final String displayName )
+    {
+        return securityService.createRole( CreateRoleParams.create().
+            roleKey( roleKey ).
+            displayName( displayName ).
+            build() );
+    }
+
+    private Role doUpdateRoleDisplayName( final Role role, final String newDisplayName )
+    {
+        return !newDisplayName.equals( role.getDisplayName() ) ? securityService.updateRole( UpdateRoleParams.create().
+            roleKey( role.getKey() ).
+            displayName( newDisplayName ).
+            description( role.getDescription() ).
+            build() ) : role;
     }
 
     private void doDeleteRoles( final ProjectName projectName )
