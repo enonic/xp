@@ -9,8 +9,15 @@
   },
   "name": "project1",
   "permissions": {
+    "author": [],
     "contributor": [],
-    "expert": [],
+    "editor": [],
     "owner": []
+  },
+  "readAccess": {
+    "principals": [
+      "user:system:custom"
+    ],
+    "type": "CUSTOM"
   }
 }

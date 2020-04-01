@@ -1,21 +1,19 @@
 package com.enonic.xp.admin.impl.rest.resource.project.json;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
-import com.enonic.xp.project.Projects;
+import com.google.common.collect.ImmutableList;
 
 public final class ProjectsJson
 {
     private final ImmutableList<ProjectJson> projects;
 
-    public ProjectsJson( final Projects projects )
+    public ProjectsJson( final List<ProjectJson> projects )
     {
-        this.projects = projects != null ? projects.stream().
-            map( ProjectJson::new ).
-            collect( ImmutableList.toImmutableList() ) : ImmutableList.of();
+        this.projects = ImmutableList.copyOf( projects );
     }
 
-    public ImmutableList<ProjectJson> getProjects()
+    public List<ProjectJson> getProjects()
     {
         return projects;
     }

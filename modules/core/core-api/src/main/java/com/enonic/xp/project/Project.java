@@ -1,10 +1,8 @@
 package com.enonic.xp.project;
 
-import java.util.Objects;
-
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -12,7 +10,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.repository.Repository;
 
-@Beta
+@PublicApi
 public final class Project
 {
     private final ProjectName name;
@@ -23,15 +21,12 @@ public final class Project
 
     private final Attachment icon;
 
-    private final ProjectPermissions permissions;
-
     private Project( Builder builder )
     {
         this.name = builder.name;
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.icon = builder.icon;
-        this.permissions = builder.permissions.build();
     }
 
     public static Builder create()
@@ -67,7 +62,6 @@ public final class Project
             displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) );
 
         buildIcon( project, projectData );
-        buildPermissions( project, projectData );
 
         return project.build();
     }
@@ -85,37 +79,6 @@ public final class Project
                 size( iconData.getLong( ContentPropertyNames.ATTACHMENT_SIZE ) ).
                 textContent( iconData.getString( ContentPropertyNames.ATTACHMENT_TEXT ) ).
                 build() );
-        }
-    }
-
-    private static void buildPermissions( final Project.Builder project, final PropertySet projectData )
-    {
-        final PropertySet permissionsSet = projectData.getPropertySet( ProjectConstants.PROJECT_PERMISSIONS_PROPERTY );
-
-        if ( permissionsSet != null )
-        {
-            final Iterable<String> ownerKeys = permissionsSet.getStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_OWNER_PROPERTY );
-            final Iterable<String> expertKeys = permissionsSet.getStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_EXPERT_PROPERTY );
-            final Iterable<String> contributorKeys =
-                permissionsSet.getStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY );
-
-            final ProjectPermissions.Builder projectPermissions = ProjectPermissions.create();
-            if ( ownerKeys != null )
-            {
-                ownerKeys.forEach( projectPermissions::addOwner );
-            }
-
-            if ( expertKeys != null )
-            {
-                expertKeys.forEach( projectPermissions::addExpert );
-            }
-
-            if ( contributorKeys != null )
-            {
-                contributorKeys.forEach( projectPermissions::addContributor );
-            }
-
-            project.addPermissions( projectPermissions.build() );
         }
     }
 
@@ -139,33 +102,6 @@ public final class Project
         return icon;
     }
 
-    public ProjectPermissions getPermissions()
-    {
-        return permissions;
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final Project project = (Project) o;
-        return Objects.equals( name, project.name ) && Objects.equals( displayName, project.displayName ) &&
-            Objects.equals( description, project.description ) && Objects.equals( icon, project.icon );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( name, displayName, description, icon );
-    }
-
     public static final class Builder
     {
 
@@ -176,8 +112,6 @@ public final class Project
         private String description;
 
         private Attachment icon;
-
-        private ProjectPermissions.Builder permissions = ProjectPermissions.create();
 
         private Builder()
         {
@@ -204,17 +138,6 @@ public final class Project
         public Builder icon( final Attachment icon )
         {
             this.icon = icon;
-            return this;
-        }
-
-        public Builder addPermissions( final ProjectPermissions projectPermissions )
-        {
-            if ( projectPermissions != null )
-            {
-                projectPermissions.getOwner().forEach( this.permissions::addOwner );
-                projectPermissions.getExpert().forEach( this.permissions::addExpert );
-                projectPermissions.getContributor().forEach( this.permissions::addContributor );
-            }
             return this;
         }
 

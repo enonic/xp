@@ -2,22 +2,23 @@ package com.enonic.xp.project;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
+@PublicApi
 public final class ProjectPermissions
 {
-    private Map<ProjectPermissionsLevel, PrincipalKeys> permissions;
+    private Map<ProjectRole, PrincipalKeys> permissions;
 
     private ProjectPermissions( Builder builder )
     {
-        this.permissions =
-            Map.of( ProjectPermissionsLevel.OWNER, builder.owner.build(), ProjectPermissionsLevel.EXPERT, builder.expert.build(),
-                    ProjectPermissionsLevel.CONTRIBUTOR, builder.contributor.build() );
+        this.permissions = Map.of( ProjectRole.OWNER, builder.owner.build(), ProjectRole.EDITOR, builder.editor.build(), ProjectRole.AUTHOR,
+                                   builder.author.build(), ProjectRole.CONTRIBUTOR, builder.contributor.build(), ProjectRole.VIEWER,
+                                   builder.viewer.build() );
     }
 
     public static Builder create()
@@ -27,55 +28,61 @@ public final class ProjectPermissions
 
     public PrincipalKeys getOwner()
     {
-        return permissions.get( ProjectPermissionsLevel.OWNER );
+        return permissions.get( ProjectRole.OWNER );
     }
 
-    public PrincipalKeys getExpert()
+    public PrincipalKeys getEditor()
     {
-        return permissions.get( ProjectPermissionsLevel.EXPERT );
+        return permissions.get( ProjectRole.EDITOR );
+    }
+
+    public PrincipalKeys getAuthor()
+    {
+        return permissions.get( ProjectRole.AUTHOR );
     }
 
     public PrincipalKeys getContributor()
     {
-        return permissions.get( ProjectPermissionsLevel.CONTRIBUTOR );
+        return permissions.get( ProjectRole.CONTRIBUTOR );
     }
 
-    public PrincipalKeys getPermissions( final Collection<ProjectPermissionsLevel> permissions )
+    public PrincipalKeys getViewer()
     {
-        final PrincipalKeys.Builder result = PrincipalKeys.create();
-        permissions.forEach( permission -> result.addAll( this.permissions.get( permission ) ) );
-
-        return result.build();
+        return permissions.get( ProjectRole.VIEWER );
     }
 
-    @Override
-    public boolean equals( final Object o )
+    public PrincipalKeys getPermission( final ProjectRole projectRole )
     {
-        if ( this == o )
+        return doGetPermission( projectRole );
+    }
+
+    public PrincipalKeys getPermissions( final Collection<ProjectRole> projectRoles )
+    {
         {
-            return true;
+            final PrincipalKeys.Builder result = PrincipalKeys.create();
+            projectRoles.forEach( permission -> result.addAll( doGetPermission( permission ) ) );
+
+            return result.build();
         }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final ProjectPermissions that = (ProjectPermissions) o;
-        return Objects.equals( permissions, that.permissions );
     }
 
-    @Override
-    public int hashCode()
+
+    private PrincipalKeys doGetPermission( final ProjectRole projectRole )
     {
-        return Objects.hash( permissions );
+        return this.permissions.get( projectRole );
     }
 
     public static final class Builder
     {
         private PrincipalKeys.Builder owner = PrincipalKeys.create();
 
-        private PrincipalKeys.Builder expert = PrincipalKeys.create();
+        private PrincipalKeys.Builder editor = PrincipalKeys.create();
+
+        private PrincipalKeys.Builder author = PrincipalKeys.create();
 
         private PrincipalKeys.Builder contributor = PrincipalKeys.create();
+
+        private PrincipalKeys.Builder viewer = PrincipalKeys.create();
 
         public Builder addOwner( final String owner )
         {
@@ -95,20 +102,38 @@ public final class ProjectPermissions
             return this;
         }
 
-        public Builder addExpert( final String expert )
+        public Builder addEditor( final String editor )
         {
-            if ( StringUtils.isNotBlank( expert ) )
+            if ( StringUtils.isNotBlank( editor ) )
             {
-                this.expert.add( PrincipalKey.from( expert ) );
+                this.editor.add( PrincipalKey.from( editor ) );
             }
             return this;
         }
 
-        public Builder addExpert( final PrincipalKey expert )
+        public Builder addEditor( final PrincipalKey editor )
         {
-            if ( expert != null )
+            if ( editor != null )
             {
-                this.expert.add( expert );
+                this.editor.add( editor );
+            }
+            return this;
+        }
+
+        public Builder addAuthor( final String author )
+        {
+            if ( StringUtils.isNotBlank( author ) )
+            {
+                this.author.add( PrincipalKey.from( author ) );
+            }
+            return this;
+        }
+
+        public Builder addAuthor( final PrincipalKey author )
+        {
+            if ( author != null )
+            {
+                this.author.add( author );
             }
             return this;
         }
@@ -127,6 +152,24 @@ public final class ProjectPermissions
             if ( contributor != null )
             {
                 this.contributor.add( contributor );
+            }
+            return this;
+        }
+
+        public Builder addViewer( final String viewer )
+        {
+            if ( StringUtils.isNotBlank( viewer ) )
+            {
+                this.viewer.add( PrincipalKey.from( viewer ) );
+            }
+            return this;
+        }
+
+        public Builder addViewer( final PrincipalKey viewer )
+        {
+            if ( viewer != null )
+            {
+                this.viewer.add( viewer );
             }
             return this;
         }

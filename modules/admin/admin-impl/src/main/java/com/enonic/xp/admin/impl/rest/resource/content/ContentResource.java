@@ -690,7 +690,7 @@ public final class ContentResource
     public TaskResultJson applyPermissions( final ApplyContentPermissionsJson jsonParams )
     {
         return ApplyPermissionsRunnableTask.create().
-            params( jsonParams ).
+            params( jsonParams.toParams() ).
             description( "Apply content permissions" ).
             taskService( taskService ).
             contentService( contentService ).

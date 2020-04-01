@@ -11,11 +11,16 @@
       },
       "name": "project1",
       "permissions": {
+        "author": [],
         "contributor": [],
-        "expert": [],
+        "editor": [],
         "owner": [
-          "role:system.authenticated"
+          "user:system:owner"
         ]
+      },
+      "readAccess": {
+        "principals": [],
+        "type": "PUBLIC"
       }
     },
     {
@@ -24,11 +29,16 @@
       "icon": null,
       "name": "project2",
       "permissions": {
+        "author": [],
         "contributor": [],
-        "expert": [
-          "role:system.authenticated"
+        "editor": [
+          "user:system:editor"
         ],
         "owner": []
+      },
+      "readAccess": {
+        "principals": [],
+        "type": "PRIVATE"
       }
     },
     {
@@ -37,11 +47,36 @@
       "icon": null,
       "name": "project3",
       "permissions": {
-        "contributor": [
-          "role:system.authenticated"
+        "author": [
+          "user:system:author"
         ],
-        "expert": [],
+        "contributor": [],
+        "editor": [],
         "owner": []
+      },
+      "readAccess": {
+        "principals": [],
+        "type": "PRIVATE"
+      }
+    },
+    {
+      "description": null,
+      "displayName": "project4",
+      "icon": null,
+      "name": "project4",
+      "permissions": {
+        "author": [],
+        "contributor": [
+          "user:system:contributor"
+        ],
+        "editor": [],
+        "owner": []
+      },
+      "readAccess": {
+        "principals": [
+          "user:system:custom"
+        ],
+        "type": "CUSTOM"
       }
     }
   ]

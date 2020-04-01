@@ -1,5 +1,9 @@
 package com.enonic.xp.core.project;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +16,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
+import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.project.CreateProjectParams;
@@ -26,13 +31,19 @@ import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalRelationship;
+import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -98,6 +109,8 @@ class ProjectServiceImplTest
 
     private ProjectServiceImpl projectService;
 
+    private SecurityServiceImpl securityService;
+
     @BeforeEach
     protected void setUpNode()
         throws Exception
@@ -108,14 +121,25 @@ class ProjectServiceImplTest
         indexService.setIndexDataService( indexedDataService );
         indexService.setIndexServiceInternal( indexServiceInternal );
 
-        final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
-        projectAccessContextManager.setRepositoryService( repositoryService );
+        securityService = new SecurityServiceImpl();
+        securityService.setNodeService( this.nodeService );
+        securityService.setIndexService( indexService );
 
-        projectService = new ProjectServiceImpl();
-        projectService.setIndexService( indexService );
-        projectService.setNodeService( nodeService );
-        projectService.setRepositoryService( repositoryService );
-        projectService.setProjectPermissionsContextManager( projectAccessContextManager );
+        ADMIN_CONTEXT.runWith( () -> {
+            securityService.initialize();
+
+            final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
+            projectAccessContextManager.setRepositoryService( repositoryService );
+            projectAccessContextManager.setSecurityService( securityService );
+
+            projectService = new ProjectServiceImpl();
+            projectService.setIndexService( indexService );
+            projectService.setNodeService( nodeService );
+            projectService.setRepositoryService( repositoryService );
+            projectService.setProjectPermissionsContextManager( projectAccessContextManager );
+
+            projectService.setSecurityService( securityService );
+        } );
     }
 
     @Test
@@ -171,6 +195,89 @@ class ProjectServiceImplTest
             assertEquals( "Denied [user:system:custom-user] user access for [create] operation", ex.getMessage() );
         } );
 
+    }
+
+    @Test
+    void create_with_roles()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+
+        doCreateProjectAsAdmin( ProjectName.from( projectRepoId ) );
+
+        assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.owner" ) ).isPresent() );
+        assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.author" ) ).isPresent() );
+        assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.contributor" ) ).isPresent() );
+        assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.editor" ) ).isPresent() );
+        assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.viewer" ) ).isPresent() );
+    }
+
+    @Test
+    void create_with_role_members()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+
+        ADMIN_CONTEXT.runWith( () -> {
+            final User user1 = securityService.createUser( CreateUserParams.create().
+                userKey( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
+                displayName( "user1" ).
+                login( "user1" ).
+                build() );
+
+            final User user2 = securityService.createUser( CreateUserParams.create().
+                userKey( PrincipalKey.ofUser( IdProviderKey.system(), "user2" ) ).
+                displayName( "user2" ).
+                login( "user2" ).
+                build() );
+
+            doCreateProjectAsAdmin( ProjectName.from( projectRepoId ), ProjectPermissions.create().
+                addOwner( user1.getKey() ).
+                addOwner( user2.getKey() ).
+                build() );
+
+            final Set<PrincipalKey> members = securityService.getRelationships( PrincipalKey.ofRole( "cms.project.test-project.owner" ) ).
+                stream().
+                map( PrincipalRelationship::getTo ).collect( Collectors.toSet() );
+
+            assertTrue( members.contains( user1.getKey() ) );
+            assertTrue( members.contains( user2.getKey() ) );
+
+        } );
+    }
+
+    @Test
+    void create_with_root_content_permissions()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+        final ProjectName projectName = ProjectName.from( projectRepoId );
+
+        doCreateProjectAsAdmin( projectName );
+
+        List.of( ContextBuilder.from( ADMIN_CONTEXT ).
+            branch( ContentConstants.BRANCH_DRAFT ).
+            repositoryId( projectRepoId ).
+            build(), ContextBuilder.from( ADMIN_CONTEXT ).
+            branch( ContentConstants.BRANCH_MASTER ).
+            repositoryId( projectRepoId ).
+            build() ).
+            forEach( context -> context.runWith( () -> {
+
+                final Node rootContentNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
+                final AccessControlList rootContentPermissions = rootContentNode.getPermissions();
+
+                assertTrue( rootContentPermissions.getEntry( RoleKeys.ADMIN ).isAllowedAll() );
+                assertTrue( rootContentPermissions.getEntry( RoleKeys.CONTENT_MANAGER_ADMIN ).isAllowedAll() );
+                assertTrue( rootContentPermissions.getEntry( PrincipalKey.ofRole( "cms.project.test-project.owner" ) ).isAllowedAll() );
+                assertTrue( rootContentPermissions.getEntry( PrincipalKey.ofRole( "cms.project.test-project.editor" ) ).isAllowedAll() );
+                assertTrue(
+                    rootContentPermissions.getEntry( PrincipalKey.ofRole( "cms.project.test-project.author" ) ).isAllowed( Permission.READ,
+                                                                                                                           Permission.CREATE,
+                                                                                                                           Permission.MODIFY,
+                                                                                                                           Permission.DELETE ) );
+                assertTrue( rootContentPermissions.getEntry( PrincipalKey.ofRole( "cms.project.test-project.contributor" ) ).
+                    isAllowed( Permission.READ ) );
+                assertTrue( rootContentPermissions.getEntry( PrincipalKey.ofRole( "cms.project.test-project.viewer" ) ).
+                    isAllowed( Permission.READ ) );
+            } ) );
     }
 
     @Test
@@ -236,6 +343,36 @@ class ProjectServiceImplTest
     }
 
     @Test
+    void delete_default_project_as_admin()
+    {
+        ADMIN_CONTEXT.runWith( () -> {
+            assertNotNull( this.projectService.get( ProjectConstants.DEFAULT_PROJECT_NAME ) );
+
+            final RuntimeException ex =
+                Assertions.assertThrows( RuntimeException.class, () -> projectService.delete( ProjectConstants.DEFAULT_PROJECT_NAME ) );
+            assertEquals( "Denied [user:system:repo-test-user] user access for [delete] operation", ex.getMessage() );
+        } );
+    }
+
+    @Test
+    void delete_with_roles()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+        doCreateProjectAsAdmin( ProjectName.from( projectRepoId ) );
+
+        ADMIN_CONTEXT.runWith( () -> {
+            this.projectService.delete( ProjectName.from( projectRepoId ) );
+
+            assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.owner" ) ).isEmpty() );
+            assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.author" ) ).isEmpty() );
+            assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.contributor" ) ).isEmpty() );
+            assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.editor" ) ).isEmpty() );
+            assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.viewer" ) ).isEmpty() );
+
+        } );
+    }
+
+    @Test
     void list()
     {
         doCreateProjectAsAdmin( ProjectName.from( "test-project1" ) );
@@ -287,14 +424,16 @@ class ProjectServiceImplTest
         doCreateProjectAsAdmin( ProjectName.from( "test-project2" ),
                                 ProjectPermissions.create().addOwner( REPO_TEST_OWNER.getKey() ).build() );
         doCreateProjectAsAdmin( ProjectName.from( "test-project3" ),
-                                ProjectPermissions.create().addExpert( REPO_TEST_OWNER.getKey() ).build() );
+                                ProjectPermissions.create().addEditor( REPO_TEST_OWNER.getKey() ).build() );
         doCreateProjectAsAdmin( ProjectName.from( "test-project4" ),
+                                ProjectPermissions.create().addAuthor( REPO_TEST_OWNER.getKey() ).build() );
+        doCreateProjectAsAdmin( ProjectName.from( "test-project5" ),
                                 ProjectPermissions.create().addContributor( REPO_TEST_OWNER.getKey() ).build() );
 
         CONTENT_CUSTOM_MANAGER_CONTEXT.runWith( () -> {
             final Projects projects = projectService.list();
 
-            assertEquals( 4, projectService.list().getSize() );
+            assertEquals( 5, projectService.list().getSize() );
             assertFalse( projects.stream().anyMatch( project -> project.getName().toString().equals( "test-project1" ) ) );
             assertTrue(
                 projects.stream().anyMatch( project -> project.getName().equals( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ) ) );
@@ -308,9 +447,7 @@ class ProjectServiceImplTest
         doCreateProjectAsAdmin( ProjectName.from( "test-project2" ) );
         doCreateProjectAsAdmin( ProjectName.from( "test-project3" ) );
 
-        final RuntimeException ex = Assertions.assertThrows( RuntimeException.class, () -> projectService.list() );
-
-        assertEquals( "Denied [user:system:test-user] user access for [list] operation", ex.getMessage() );
+        assertEquals( 0, projectService.list().getSize() );
     }
 
     @Test
@@ -319,7 +456,7 @@ class ProjectServiceImplTest
         final Project createdProject = doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
         ADMIN_CONTEXT.runWith( () -> {
-            assertEquals( createdProject, projectService.get( createdProject.getName() ) );
+            assertProjectEquals( createdProject, projectService.get( createdProject.getName() ) );
         } );
 
     }
@@ -330,7 +467,7 @@ class ProjectServiceImplTest
         final Project createdProject = doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
         CONTENT_ADMIN_CONTEXT.runWith( () -> {
-            assertEquals( createdProject, projectService.get( createdProject.getName() ) );
+            assertProjectEquals( createdProject, projectService.get( createdProject.getName() ) );
         } );
 
     }
@@ -356,7 +493,7 @@ class ProjectServiceImplTest
         final Project createdProject = doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
         CONTENT_CUSTOM_MANAGER_CONTEXT.runWith( () -> {
-            assertEquals( createdProject, projectService.get( createdProject.getName() ) );
+            assertProjectEquals( createdProject, projectService.get( createdProject.getName() ) );
         } );
     }
 
@@ -383,6 +520,15 @@ class ProjectServiceImplTest
     }
 
     @Test
+    void get_default_project()
+    {
+        CONTENT_CUSTOM_MANAGER_CONTEXT.runWith( () -> {
+            final Project defaultProject = projectService.get( ProjectConstants.DEFAULT_PROJECT_NAME );
+            assertNotNull( defaultProject );
+        } );
+    }
+
+    @Test
     void modify()
     {
         doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
@@ -398,9 +544,6 @@ class ProjectServiceImplTest
                     name( "MyNewImage.png" ).
                     byteSource( ByteSource.wrap( "new bytes".getBytes() ) ).
                     build() ).
-                permissions( ProjectPermissions.create().
-                    addOwner( PrincipalKey.from( "user:store:new" ) ).
-                    build() ).
                 build() );
 
             final Project modifiedProject = projectService.get( ProjectName.from( "test-project" ) );
@@ -410,9 +553,107 @@ class ProjectServiceImplTest
             assertEquals( "image/png", modifiedProject.getIcon().getMimeType() );
             assertEquals( "My New Image", modifiedProject.getIcon().getLabel() );
             assertEquals( "MyNewImage.png", modifiedProject.getIcon().getName() );
-            assertTrue( modifiedProject.getPermissions().getOwner().contains( PrincipalKey.from( "user:store:new" ) ) );
         } );
 
+    }
+
+    @Test
+    void modify_with_deleted_role()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+        doCreateProjectAsAdmin( ProjectName.from( projectRepoId ) );
+
+        ADMIN_CONTEXT.runWith( () -> {
+            securityService.deletePrincipal( PrincipalKey.ofRole( "cms.project.test-project.owner" ) );
+
+            projectService.modify( ModifyProjectParams.create().
+                name( ProjectName.from( "test-project" ) ).
+                description( "new description" ).
+                displayName( "new display name" ).
+                icon( CreateAttachment.create().
+                    mimeType( "image/png" ).
+                    label( "My New Image" ).
+                    name( "MyNewImage.png" ).
+                    byteSource( ByteSource.wrap( "new bytes".getBytes() ) ).
+                    build() ).
+                build() );
+        } );
+
+        assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.owner" ) ).isPresent() );
+    }
+
+    @Test
+    void get_permissions_wrong_project()
+    {
+        final RuntimeException ex =
+            Assertions.assertThrows( RuntimeException.class, () -> projectService.getPermissions( ProjectName.from( "test-project" ) ) );
+
+        assertEquals( "Project [test-project] was not found", ex.getMessage() );
+    }
+
+    @Test
+    void get_permissions_default_project()
+    {
+        final RuntimeException ex =
+            Assertions.assertThrows( RuntimeException.class, () -> projectService.getPermissions( ProjectConstants.DEFAULT_PROJECT_NAME ) );
+
+        assertEquals( "Default project has no roles.", ex.getMessage() );
+    }
+
+    @Test
+    void modify_permissions()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+
+        ADMIN_CONTEXT.runWith( () -> {
+            final User user1 = securityService.createUser( CreateUserParams.create().
+                userKey( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
+                displayName( "user1" ).
+                login( "user1" ).
+                build() );
+
+            final User user2 = securityService.createUser( CreateUserParams.create().
+                userKey( PrincipalKey.ofUser( IdProviderKey.system(), "user2" ) ).
+                displayName( "user2" ).
+                login( "user2" ).
+                build() );
+
+            doCreateProjectAsAdmin( ProjectName.from( projectRepoId ), ProjectPermissions.create().
+                addOwner( user1.getKey() ).
+                build() );
+
+            projectService.modifyPermissions( ProjectName.from( "test-project" ), ProjectPermissions.create().
+                addOwner( user2.getKey() ).
+                build() );
+
+            final PrincipalRelationships principalRelationships =
+                securityService.getRelationships( PrincipalKey.ofRole( "cms.project.test-project.owner" ) );
+
+            assertEquals( 1, principalRelationships.getSize() );
+            assertEquals( principalRelationships.
+                get( 0 ).
+                getTo(), user2.getKey() );
+        } );
+    }
+
+    @Test
+    void modify_default_project_permissions()
+    {
+        ADMIN_CONTEXT.runWith( () -> {
+            final User user1 = securityService.createUser( CreateUserParams.create().
+                userKey( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
+                displayName( "user1" ).
+                login( "user1" ).
+                build() );
+
+            final RuntimeException ex = Assertions.assertThrows( RuntimeException.class, () -> projectService.modifyPermissions(
+                ProjectConstants.DEFAULT_PROJECT_NAME, ProjectPermissions.create().
+                    addOwner( user1.getKey() ).
+                    build() ) );
+
+            assertEquals( "Default project permissions cannot be modified.", ex.getMessage() );
+
+        } );
     }
 
     private Project doCreateProjectAsAdmin( final ProjectName name )
@@ -429,13 +670,13 @@ class ProjectServiceImplTest
     private Project doCreateProject( final ProjectName name )
     {
         return doCreateProject( name, ProjectPermissions.create().
-            addOwner( REPO_TEST_OWNER.getKey() ).
+            addOwner( REPO_TEST_OWNER.getKey() ).addViewer( "user:system:custom1" ).addViewer( "user:system:custom2" ).
             build() );
     }
 
     private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions )
     {
-        return this.projectService.create( CreateProjectParams.create().
+        final Project project = this.projectService.create( CreateProjectParams.create().
             name( name ).
             description( "description" ).
             displayName( "Project display name" ).
@@ -445,9 +686,20 @@ class ProjectServiceImplTest
                 name( "MyImage.jpg" ).
                 byteSource( ByteSource.wrap( "bytes".getBytes() ) ).
                 build() ).
-            permissions( projectPermissions ).
             build() );
 
+        if ( projectPermissions != null )
+        {
+            this.projectService.modifyPermissions( name, projectPermissions );
+        }
+
+        return project;
+    }
+
+    private void assertProjectEquals( final Project p1, final Project p2 )
+    {
+        assertAll( () -> assertEquals( p1.getName(), p2.getName() ), () -> assertEquals( p1.getDescription(), p2.getDescription() ),
+                   () -> assertEquals( p1.getDisplayName(), p2.getDisplayName() ), () -> assertEquals( p1.getIcon(), p2.getIcon() ) );
     }
 
 }

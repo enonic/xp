@@ -1,13 +1,11 @@
 package com.enonic.xp.project;
 
-import java.util.Objects;
-
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachment;
 
-@Beta
+@PublicApi
 public final class ModifyProjectParams
 {
     private final ProjectName name;
@@ -18,15 +16,12 @@ public final class ModifyProjectParams
 
     private final CreateAttachment icon;
 
-    private final ProjectPermissions permissions;
-
     private ModifyProjectParams( final Builder builder )
     {
         this.name = builder.name;
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.icon = builder.icon;
-        this.permissions = builder.permissions;
     }
 
     public static Builder create()
@@ -40,7 +35,6 @@ public final class ModifyProjectParams
             name( params.getName() ).
             description( params.getDescription() ).
             displayName( params.getDisplayName() ).
-            permissions( params.getPermissions() ).
             icon( params.getIcon() );
     }
 
@@ -64,34 +58,6 @@ public final class ModifyProjectParams
         return icon;
     }
 
-    public ProjectPermissions getPermissions()
-    {
-        return permissions;
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final ModifyProjectParams that = (ModifyProjectParams) o;
-        return Objects.equals( name, that.name ) && Objects.equals( displayName, that.displayName ) &&
-            Objects.equals( description, that.description ) && Objects.equals( icon, that.icon ) &&
-            Objects.equals( permissions, that.permissions );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( name, displayName, description, icon, permissions );
-    }
-
     public static final class Builder
     {
 
@@ -102,8 +68,6 @@ public final class ModifyProjectParams
         private String description;
 
         private CreateAttachment icon;
-
-        private ProjectPermissions permissions;
 
         private Builder()
         {
@@ -130,12 +94,6 @@ public final class ModifyProjectParams
         public Builder icon( final CreateAttachment icon )
         {
             this.icon = icon;
-            return this;
-        }
-
-        public Builder permissions( final ProjectPermissions permissions )
-        {
-            this.permissions = permissions;
             return this;
         }
 

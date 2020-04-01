@@ -24,6 +24,7 @@ import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repository.DeleteRepositoryParams;
@@ -31,6 +32,7 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
+import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
@@ -45,6 +47,8 @@ public class ProjectServiceImpl
     private IndexService indexService;
 
     private NodeService nodeService;
+
+    private SecurityService securityService;
 
     private ProjectPermissionsContextManager projectPermissionsContextManager;
 
@@ -74,6 +78,10 @@ public class ProjectServiceImpl
             setNodeService( nodeService ).
             setRepositoryService( repositoryService ).
             repositoryId( params.getName().getRepoId() ).
+            accessControlList( CreateProjectRootAccessListCommand.create().
+                projectName( params.getName() ).
+                build().
+                execute() ).
             build().
             initialize();
 
@@ -114,6 +122,17 @@ public class ProjectServiceImpl
             build();
 
         final Repository updatedRepository = repositoryService.updateRepository( updateParams );
+
+        if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( params.getName() ) )
+        {
+            CreateProjectPermissionRolesCommand.create().
+                securityService( securityService ).
+                projectName( params.getName() ).
+                projectDisplayName( params.getDisplayName() ).
+                build().
+                execute();
+        }
+
         return Project.from( updatedRepository );
     }
 
@@ -128,7 +147,9 @@ public class ProjectServiceImpl
             return Projects.create().
                 addAll( projects.stream().
                     filter( project -> projectPermissionsContextManager.hasAdminAccess( authenticationInfo ) ||
-                        projectPermissionsContextManager.hasAnyProjectPermission( project.getName(), authenticationInfo ) ).
+                        ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() )
+                            ? projectPermissionsContextManager.hasManagerAccess( authenticationInfo )
+                            : projectPermissionsContextManager.hasAnyProjectPermission( project.getName(), authenticationInfo ) ) ).
                     collect( Collectors.toSet() ) ).
                 build();
         } );
@@ -158,7 +179,7 @@ public class ProjectServiceImpl
             LOG.info( "Project deleted: " + projectName );
 
             return result;
-        } );
+        }, projectName );
     }
 
     private boolean doDelete( final ProjectName projectName )
@@ -166,7 +187,65 @@ public class ProjectServiceImpl
         final DeleteRepositoryParams params = DeleteRepositoryParams.from( projectName.getRepoId() );
         final RepositoryId deletedRepositoryId = this.repositoryService.deleteRepository( params );
 
+        if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        {
+            DeleteProjectPermissionRolesCommand.create().
+                securityService( securityService ).
+                projectName( projectName ).
+                build().
+                execute();
+        }
+
         return deletedRepositoryId != null;
+    }
+
+    @Override
+    public ProjectPermissions getPermissions( final ProjectName projectName )
+    {
+        if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        {
+            throw new IllegalArgumentException( "Default project has no roles." );
+        }
+
+        return callWithGetContext( () -> doGetPermissions( projectName ), projectName );
+    }
+
+    private ProjectPermissions doGetPermissions( final ProjectName projectName )
+    {
+        return GetProjectPermissionsCommand.create().
+            securityService( securityService ).
+            projectName( projectName ).
+            build().
+            execute();
+    }
+
+    @Override
+    public ProjectPermissions modifyPermissions( final ProjectName projectName, final ProjectPermissions projectPermissions )
+    {
+        if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+        {
+            throw new IllegalArgumentException( "Default project permissions cannot be modified." );
+        }
+
+        return callWithUpdateContext( () -> {
+
+            final ProjectPermissions result = doModifyPermissions( projectName, projectPermissions );
+            LOG.info( "Project permissions updated: " + projectName );
+
+            return result;
+
+
+        }, projectName );
+    }
+
+    private ProjectPermissions doModifyPermissions( final ProjectName projectName, final ProjectPermissions projectPermissions )
+    {
+        return UpdateProjectPermissionsCommand.create().
+            projectName( projectName ).
+            permissions( projectPermissions ).
+            securityService( securityService ).
+            build().
+            execute();
     }
 
     private PropertyTree createProjectData( final ModifyProjectParams params )
@@ -183,21 +262,6 @@ public class ProjectServiceImpl
         else
         {
             set.addSet( ProjectConstants.PROJECT_ICON_PROPERTY, null );
-        }
-
-        if ( params.getPermissions() != null )
-        {
-            final PropertySet permissionsSet = set.addSet( ProjectConstants.PROJECT_PERMISSIONS_PROPERTY );
-            permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_OWNER_PROPERTY,
-                                       params.getPermissions().getOwner().asStrings() );
-            permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_EXPERT_PROPERTY,
-                                       params.getPermissions().getExpert().asStrings() );
-            permissionsSet.addStrings( ProjectConstants.PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY,
-                                       params.getPermissions().getContributor().asStrings() );
-        }
-        else
-        {
-            set.addSet( ProjectConstants.PROJECT_PERMISSIONS_PROPERTY, null );
         }
 
         return data;
@@ -233,9 +297,9 @@ public class ProjectServiceImpl
         return projectPermissionsContextManager.initListContext().callWith( runnable );
     }
 
-    private <T> T callWithDeleteContext( final Callable<T> runnable )
+    private <T> T callWithDeleteContext( final Callable<T> runnable, final ProjectName projectName )
     {
-        return projectPermissionsContextManager.initDeleteContext().callWith( runnable );
+        return projectPermissionsContextManager.initDeleteContext( projectName ).callWith( runnable );
     }
 
     @Reference
@@ -254,6 +318,12 @@ public class ProjectServiceImpl
     public void setNodeService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
+    }
+
+    @Reference
+    public void setSecurityService( final SecurityService securityService )
+    {
+        this.securityService = securityService;
     }
 
     @Reference

@@ -9,8 +9,23 @@
   },
   "name": "project1",
   "permissions": {
-    "contributor": [],
-    "expert": [],
-    "owner": []
+    "author": [
+      "user:system:author"
+    ],
+    "contributor": [
+      "user:system:contributor"
+    ],
+    "editor": [
+      "user:system:editor"
+    ],
+    "owner": [
+      "user:system:owner"
+    ]
+  },
+  "readAccess": {
+    "principals": [
+      "user:system:custom"
+    ],
+    "type": "CUSTOM"
   }
 }
