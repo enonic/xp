@@ -9,7 +9,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.project.ProjectName;
 
-abstract class AbstractProjectReadAccessCommand
+abstract class AbstractProjectRootCommand
 {
     final Context projectRepoContext;
 
@@ -17,7 +17,7 @@ abstract class AbstractProjectReadAccessCommand
 
     final ProjectName projectName;
 
-    AbstractProjectReadAccessCommand( final Builder builder )
+    AbstractProjectRootCommand( final Builder builder )
     {
         this.contentService = builder.contentService;
         this.projectName = builder.projectName;
