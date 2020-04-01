@@ -1,7 +1,11 @@
 package com.enonic.xp.script.impl.executor;
 
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -41,12 +45,17 @@ public final class ScriptExecutorManager
             throw new ApplicationNotFoundException( key );
         }
 
+        final Bundle bundle = application.getBundle();
+
         final ClassLoader classLoader = application.getClassLoader();
+        final BundleContext bundleContext = Objects.requireNonNull( bundle.getBundleContext(),
+                                                                    String.format( "application bundle %s context must not be null",
+                                                                                   bundle.getBundleId() ) );
 
         final ScriptExecutorImpl executor = new ScriptExecutorImpl();
         executor.setScriptSettings( this.scriptSettings );
         executor.setClassLoader( classLoader );
-        executor.setServiceRegistry( new ServiceRegistryImpl( application.getBundle().getBundleContext() ) );
+        executor.setServiceRegistry( new ServiceRegistryImpl( bundleContext ) );
         executor.setResourceService( this.resourceService );
         executor.setApplication( application );
         executor.setRunMode( RunMode.get() );
