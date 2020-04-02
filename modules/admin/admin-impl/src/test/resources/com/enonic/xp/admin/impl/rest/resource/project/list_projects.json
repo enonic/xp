@@ -9,6 +9,7 @@
         "name": "logo.png",
         "size": 0
       },
+      "language": "en-CA",
       "name": "project1",
       "permissions": {
         "author": [],
@@ -27,6 +28,7 @@
       "description": null,
       "displayName": "project2",
       "icon": null,
+      "language": null,
       "name": "project2",
       "permissions": {
         "author": [],
@@ -45,6 +47,7 @@
       "description": null,
       "displayName": null,
       "icon": null,
+      "language": "en",
       "name": "project3",
       "permissions": {
         "author": [
@@ -63,6 +66,7 @@
       "description": null,
       "displayName": "project4",
       "icon": null,
+      "language": "fr-FR",
       "name": "project4",
       "permissions": {
         "author": [],

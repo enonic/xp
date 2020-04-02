@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.project;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.ws.rs.core.MediaType;
 
@@ -16,6 +17,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ModifyProjectParams;
@@ -70,18 +72,10 @@ public class ProjectResourceTest
             label( "small" ).
             build() );
 
-        final ProjectPermissions projectPermissions = ProjectPermissions.create().
-            addOwner( "user:system:owner" ).
-            addEditor( "user:system:editor" ).
-            addAuthor( "user:system:author" ).
-            addContributor( "user:system:contributor" ).
-            addViewer( "user:system:custom" ).
-            build();
-
-        mockRootContent();
-
         Mockito.when( projectService.get( project.getName() ) ).thenReturn( project );
-        Mockito.when( projectService.getPermissions( project.getName() ) ).thenReturn( projectPermissions );
+
+        mockProjectPermissions( project.getName() );
+        mockRootContent();
 
         final String jsonString = request().
             path( "project/get" ).
@@ -110,6 +104,13 @@ public class ProjectResourceTest
             createProject( "project4", "project4", null, null, ProjectPermissions.create().addAuthor( RoleKeys.AUTHENTICATED ).build() );
 
         final Content content = mockRootContent();
+
+        Mockito.when( content.getLanguage() ).
+            thenReturn( Locale.CANADA ).
+            thenReturn( null ).
+            thenReturn( Locale.ENGLISH ).
+            thenReturn( Locale.FRANCE );
+
         Mockito.when( content.getPermissions() ).
             thenReturn( AccessControlList.of( AccessControlEntry.create().
                 principal( RoleKeys.EVERYONE ).
@@ -173,6 +174,7 @@ public class ProjectResourceTest
             thenAnswer( i -> i.getArguments()[1] );
 
         createForm();
+        mockProjectPermissions( project.getName() );
 
         String jsonString = request().path( "project/create" ).
             multipart( "icon", "logo.png", readFromFile( "create_project_params.json" ).getBytes(), MediaType.MULTIPART_FORM_DATA_TYPE ).
@@ -191,7 +193,9 @@ public class ProjectResourceTest
             label( "small" ).
             build() );
 
+        mockProjectPermissions( project.getName() );
         mockRootContent();
+
         Mockito.when( projectService.modify( Mockito.isA( ModifyProjectParams.class ) ) ).thenReturn( project );
         Mockito.when( projectService.modifyPermissions( Mockito.isA( ProjectName.class ), Mockito.isA( ProjectPermissions.class ) ) ).
             thenAnswer( i -> i.getArguments()[1] );
@@ -280,13 +284,28 @@ public class ProjectResourceTest
         return item;
     }
 
+    private void mockProjectPermissions( final ProjectName projectName )
+    {
+        final ProjectPermissions projectPermissions = ProjectPermissions.create().
+            addOwner( "user:system:owner" ).
+            addEditor( "user:system:editor" ).
+            addAuthor( "user:system:author" ).
+            addContributor( "user:system:contributor" ).
+            addViewer( "user:system:custom" ).
+            build();
+
+        Mockito.when( projectService.getPermissions( projectName ) ).thenReturn( projectPermissions );
+    }
+
     private Content mockRootContent()
     {
         final Content contentRoot = Mockito.mock( Content.class );
         Mockito.when( contentRoot.getId() ).thenReturn( ContentId.from( "123" ) );
         Mockito.when( contentRoot.getPermissions() ).thenReturn( AccessControlList.empty() );
+        Mockito.when( contentRoot.getLanguage() ).thenReturn( Locale.ENGLISH );
 
         Mockito.when( contentService.getByPath( ContentPath.ROOT ) ).thenReturn( contentRoot );
+        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( contentRoot );
 
         return contentRoot;
     }

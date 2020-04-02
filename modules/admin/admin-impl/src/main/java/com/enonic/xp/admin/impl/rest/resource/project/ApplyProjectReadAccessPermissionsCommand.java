@@ -15,7 +15,7 @@ import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 
 public final class ApplyProjectReadAccessPermissionsCommand
-    extends AbstractProjectReadAccessCommand
+    extends AbstractProjectRootCommand
 {
     private final ProjectReadAccess readAccess;
 
@@ -88,7 +88,7 @@ public final class ApplyProjectReadAccessPermissionsCommand
     }
 
     public static final class Builder
-        extends AbstractProjectReadAccessCommand.Builder<Builder>
+        extends AbstractProjectRootCommand.Builder<Builder>
     {
         private ProjectReadAccess readAccess;
 
