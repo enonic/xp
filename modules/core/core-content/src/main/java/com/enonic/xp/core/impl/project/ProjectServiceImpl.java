@@ -89,6 +89,10 @@ public class ProjectServiceImpl
             setIndexService( indexService ).
             setNodeService( nodeService ).
             repositoryId( params.getName().getRepoId() ).
+            accessControlList( CreateProjectIssuesAccessListCommand.create().
+                projectName( params.getName() ).
+                build().
+                execute() ).
             build().
             initialize();
 

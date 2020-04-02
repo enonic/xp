@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.issue;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +82,7 @@ public class IssueInitializer
             data( data ).
             name( IssueConstants.ISSUE_ROOT_NAME ).
             parent( NodePath.ROOT ).
-            permissions( ISSUE_ROOT_DEFAULT_ACL ).
+            permissions( Objects.requireNonNullElse( accessControlList, ISSUE_ROOT_DEFAULT_ACL ) ).
             childOrder( IssueConstants.DEFAULT_CHILD_ORDER ).
             build() );
 
