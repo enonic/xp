@@ -14,6 +14,8 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.util.tracker.BundleTracker;
 import org.osgi.util.tracker.BundleTrackerCustomizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationConfigService;
@@ -23,6 +25,8 @@ import com.enonic.xp.core.impl.app.ApplicationHelper;
 public class ApplicationConfigInvalidator
     implements BundleTrackerCustomizer<ServiceRegistration<ManagedService>>
 {
+    private final static Logger LOG = LoggerFactory.getLogger( ApplicationConfigInvalidator.class );
+
     private ApplicationConfigService applicationConfigService;
 
     private BundleTracker<ServiceRegistration<ManagedService>> tracker;
@@ -60,6 +64,7 @@ public class ApplicationConfigInvalidator
     @Override
     public void removedBundle( final Bundle bundle, final BundleEvent event, final ServiceRegistration<ManagedService> object )
     {
+        LOG.debug( "Unregister app config reloader for bundle {}", bundle.getBundleId() );
         object.unregister();
     }
 
@@ -72,6 +77,7 @@ public class ApplicationConfigInvalidator
         final Hashtable<String, Object> props = new Hashtable<>();
         props.put( Constants.SERVICE_PID, bundle.getSymbolicName() );
 
+        LOG.debug( "Register app {} config reloader for bundle {}", key, bundle.getBundleId() );
         return context.registerService( ManagedService.class, reloader, props );
     }
 
