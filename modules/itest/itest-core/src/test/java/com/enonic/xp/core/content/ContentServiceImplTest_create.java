@@ -1,6 +1,7 @@
 package com.enonic.xp.core.content;
 
 import java.time.Instant;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -16,9 +17,11 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -114,6 +117,30 @@ public class ContentServiceImplTest_create
 
         final Attachments attachments = storedContent.getAttachments();
         assertEquals( 1, attachments.getSize() );
+    }
+
+    @Test
+    public void create_with_root_language()
+        throws Exception
+    {
+        final Content root = this.contentService.getByPath( ContentPath.ROOT );
+        contentService.update( new UpdateContentParams().
+            contentId( root.getId() ).
+            modifier( ContextAccessor.current().getAuthInfo().getUser().getKey() ).
+            editor( edit -> edit.language = Locale.ENGLISH ) );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final Content storedContent = this.contentService.getById( content.getId() );
+
+        assertEquals( Locale.ENGLISH, storedContent.getLanguage() );
     }
 
     @Test
