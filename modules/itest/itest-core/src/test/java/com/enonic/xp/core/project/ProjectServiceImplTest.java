@@ -19,6 +19,7 @@ import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
@@ -34,6 +35,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.CreateUserParams;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.RoleKeys;
@@ -278,6 +280,37 @@ class ProjectServiceImplTest
                 assertTrue( rootContentPermissions.getEntry( PrincipalKey.ofRole( "cms.project.test-project.viewer" ) ).
                     isAllowed( Permission.READ ) );
             } ) );
+    }
+
+    @Test
+    void create_with_root_issues_permissions()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+        final ProjectName projectName = ProjectName.from( projectRepoId );
+
+        doCreateProjectAsAdmin( projectName );
+
+        ContextBuilder.from( ADMIN_CONTEXT ).
+            branch( ContentConstants.BRANCH_DRAFT ).
+            repositoryId( projectRepoId ).
+            build().runWith( () -> {
+
+            final Node rootIssuesNode = nodeService.getByPath( NodePath.create( NodePath.ROOT, "issues" ).build() );
+            final AccessControlList rootContentPermissions = rootIssuesNode.getPermissions();
+
+            assertAll( () -> assertTrue( rootContentPermissions.getEntry( RoleKeys.ADMIN ).isAllowedAll() ),
+                       () -> assertTrue( rootContentPermissions.getEntry( RoleKeys.CONTENT_MANAGER_ADMIN ).isAllowedAll() ),
+                       () -> assertTrue( rootContentPermissions.isAllowedFor( PrincipalKey.ofRole( "cms.project.test-project.viewer" ),
+                                                                              Permission.READ ) ) );
+
+            PrincipalKeys.from( PrincipalKey.ofRole( "cms.project.test-project.owner" ),
+                                PrincipalKey.ofRole( "cms.project.test-project.editor" ),
+                                PrincipalKey.ofRole( "cms.project.test-project.contributor" ),
+                                PrincipalKey.ofRole( "cms.project.test-project.author" ) ).
+                forEach( principalKey -> assertTrue(
+                    rootContentPermissions.isAllowedFor( principalKey, Permission.READ, Permission.CREATE, Permission.MODIFY,
+                                                         Permission.DELETE ) ) );
+        } );
     }
 
     @Test

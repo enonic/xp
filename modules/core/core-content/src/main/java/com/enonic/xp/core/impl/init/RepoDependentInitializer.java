@@ -11,6 +11,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public abstract class RepoDependentInitializer
@@ -25,12 +26,15 @@ public abstract class RepoDependentInitializer
 
     protected final RepositoryId repositoryId;
 
+    protected final AccessControlList accessControlList;
+
     protected RepoDependentInitializer( final Builder builder )
     {
         super( builder );
 
         this.nodeService = builder.nodeService;
         this.repositoryId = builder.repositoryId;
+        this.accessControlList = builder.accessControlList;
     }
 
     protected Context createAdminContext()
@@ -57,6 +61,8 @@ public abstract class RepoDependentInitializer
 
         private RepositoryId repositoryId = ContentConstants.CONTENT_REPO_ID;
 
+        private AccessControlList accessControlList;
+
         public T setNodeService( final NodeService nodeService )
         {
             this.nodeService = nodeService;
@@ -66,6 +72,12 @@ public abstract class RepoDependentInitializer
         public T repositoryId( final RepositoryId repositoryId )
         {
             this.repositoryId = repositoryId;
+            return (T) this;
+        }
+
+        public T accessControlList( final AccessControlList accessControlList )
+        {
+            this.accessControlList = accessControlList;
             return (T) this;
         }
 

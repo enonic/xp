@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,13 +54,10 @@ public final class ContentInitializer
 
     private final RepositoryService repositoryService;
 
-    private final AccessControlList accessControlList;
-
     private ContentInitializer( final Builder builder )
     {
         super( builder );
         this.repositoryService = builder.repositoryService;
-        this.accessControlList = builder.accessControlList != null ? builder.accessControlList : CONTENT_ROOT_DEFAULT_ACL;
     }
 
     @Override
@@ -124,7 +122,7 @@ public final class ContentInitializer
                 data( data ).
                 name( ContentConstants.CONTENT_ROOT_NAME ).
                 parent( NodePath.ROOT ).
-                permissions( this.accessControlList ).
+                permissions( Objects.requireNonNullElse( this.accessControlList, CONTENT_ROOT_DEFAULT_ACL ) ).
                 childOrder( CONTENT_DEFAULT_CHILD_ORDER ).
                 build() );
 
@@ -146,17 +144,9 @@ public final class ContentInitializer
     {
         private RepositoryService repositoryService;
 
-        private AccessControlList accessControlList;
-
         public Builder setRepositoryService( final RepositoryService repositoryService )
         {
             this.repositoryService = repositoryService;
-            return this;
-        }
-
-        public Builder accessControlList( final AccessControlList accessControlList )
-        {
-            this.accessControlList = accessControlList;
             return this;
         }
 
