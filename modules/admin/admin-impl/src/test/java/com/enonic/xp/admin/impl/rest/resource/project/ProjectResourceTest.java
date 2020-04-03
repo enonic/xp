@@ -212,6 +212,25 @@ public class ProjectResourceTest
     }
 
     @Test
+    public void modify_language_success()
+        throws Exception
+    {
+        createProject( "project1", "project name 1", "project description 1", Attachment.create().
+            name( "logo.png" ).
+            mimeType( "image/png" ).
+            label( "small" ).
+            build() );
+
+        mockRootContent();
+
+        String result = request().path( "project/modifyLanguage" ).
+            entity( "{\"name\":\"project1\",\"language\":\"en\"}", MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertEquals( "en", result );
+    }
+
+    @Test
     public void delete_project()
         throws Exception
     {
