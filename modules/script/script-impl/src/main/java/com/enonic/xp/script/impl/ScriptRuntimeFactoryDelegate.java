@@ -4,16 +4,18 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationListener;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
 
-@Component(immediate = true, service = {ScriptRuntimeFactory.class, ApplicationInvalidator.class})
+@Component(immediate = true, service = {ScriptRuntimeFactory.class, ApplicationInvalidator.class, ApplicationListener.class})
 public final class ScriptRuntimeFactoryDelegate
-    implements ScriptRuntimeFactory, ApplicationInvalidator
+    implements ScriptRuntimeFactory, ApplicationInvalidator, ApplicationListener
 {
     private final static String SWITCH_PROP = "xp.usePurpleJs";
 
@@ -53,6 +55,17 @@ public final class ScriptRuntimeFactoryDelegate
     public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
     {
         this.provider.invalidate( key );
+    }
+
+    @Override
+    public void activated( final Application app )
+    {
+    }
+
+    @Override
+    public void deactivated( final Application app )
+    {
+        this.provider.runDisposers( app.getKey() );
     }
 
     @Reference(target = "(provider=standard)")

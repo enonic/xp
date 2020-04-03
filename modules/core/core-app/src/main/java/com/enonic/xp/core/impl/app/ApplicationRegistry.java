@@ -1,12 +1,10 @@
 package com.enonic.xp.core.impl.app;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.URL;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Dictionary;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,9 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
-import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +24,6 @@ import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.server.RunMode;
 
@@ -72,9 +67,10 @@ final class ApplicationRegistry
 
     public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
     {
+        LOG.debug( "Invalidating app {}", key );
         applications.computeIfPresent( key, ( k, v ) -> {
             callInvalidators( k, level );
-            v.unlatch();
+            v.setConfig( null );
             return null;
         } );
     }
@@ -96,8 +92,7 @@ final class ApplicationRegistry
                     callInvalidators( k, ApplicationInvalidationLevel.CACHE );
                 }
                 LOG.debug( "Configure and unlatch app {}", key );
-                v.application.setConfig( configuration );
-                v.unlatch();
+                v.setConfig( configuration );
                 return v;
             }
         } );
@@ -131,7 +126,7 @@ final class ApplicationRegistry
         {
             return null;
         }
-        LOG.debug( "Create app {} {}", configuration == null ? "configured" : "latched", key );
+        LOG.debug( "Create app {} {} bundle {}", configuration != null ? "configured" : "latched", key, bundle.getBundleId() );
 
         return new ApplicationWrapper( this.factory.create( bundle, configuration ), configuration != null );
     }
@@ -183,6 +178,8 @@ final class ApplicationRegistry
     private static class ApplicationWrapper
         implements Application
     {
+        static final Duration CONFIGURATION_WAIT_TIME = Duration.ofSeconds( 10 );
+
         volatile ApplicationImpl application;
 
         final CountDownLatch latch;
@@ -192,11 +189,6 @@ final class ApplicationRegistry
             this.application = application;
 
             this.latch = new CountDownLatch( configured ? 0 : 1 );
-        }
-
-        void unlatch()
-        {
-            latch.countDown();
         }
 
         @Override
@@ -312,21 +304,20 @@ final class ApplicationRegistry
                     awaitWillLock = latch.getCount() > 0;
                     if ( awaitWillLock )
                     {
-                        LOG.debug( "Waiting for app {}", application.getKey() );
+                        LOG.debug( "Waiting for app {} config", application.getKey() );
                     }
                 }
-                final boolean releasedNormally = latch.await( 10, TimeUnit.SECONDS );
-                latch.countDown(); //release all waiting threads even if released by timeout
+                final boolean releasedNormally = latch.await( CONFIGURATION_WAIT_TIME.toMillis(), TimeUnit.MILLISECONDS );
 
                 if ( !releasedNormally )
                 {
-                    LOG.warn( "App {} was not configured properly. Fallback to ConfigurationAdmin", application.getKey() );
-                    application.setConfig( loadConfig( application.getBundle() ) );
+                    LOG.warn( "App {} was not configured within {}", application.getKey(), CONFIGURATION_WAIT_TIME );
+                    setConfig( null );
                 }
 
                 if ( awaitWillLock && LOG.isDebugEnabled() )
                 {
-                    LOG.debug( Thread.currentThread().getName() + " Finished waiting for app {}", application.getKey() );
+                    LOG.debug( "Finished waiting for app {} config", application.getKey() );
                 }
                 final Configuration config = application.getConfig();
                 if ( config == null )
@@ -341,44 +332,16 @@ final class ApplicationRegistry
             }
         }
 
+        public void setConfig( final Configuration config )
+        {
+            application.setConfig( config );
+            latch.countDown();
+        }
+
         @Override
         public boolean isSystem()
         {
             return application.isSystem();
-        }
-    }
-
-    private static Configuration loadConfig( final Bundle bundle )
-    {
-        final BundleContext ctx = bundle.getBundleContext();
-        if ( ctx == null )
-        {
-            return null;
-        }
-        final ServiceReference<ConfigurationAdmin> serviceRef = ctx.getServiceReference( ConfigurationAdmin.class );
-        if ( serviceRef == null )
-        {
-            return null;
-        }
-
-        final ConfigurationAdmin configAdmin = ctx.getService( serviceRef );
-        try
-        {
-            final ConfigBuilder configBuilder = ConfigBuilder.create();
-            final Dictionary<String, Object> properties = configAdmin.getConfiguration( bundle.getSymbolicName() ).getProperties();
-            if ( properties != null )
-            {
-                configBuilder.addAll( properties );
-            }
-            return configBuilder.build();
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
-        finally
-        {
-            ctx.ungetService( serviceRef );
         }
     }
 }

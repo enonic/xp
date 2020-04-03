@@ -1,7 +1,13 @@
 package com.enonic.xp.script.impl.executor;
 
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -14,17 +20,23 @@ import com.enonic.xp.server.RunMode;
 
 public final class ScriptExecutorManager
 {
+    private static final Logger LOG = LoggerFactory.getLogger( ScriptExecutorManager.class );
+
     private final ConcurrentMap<ApplicationKey, ScriptExecutor> executors;
 
-    private ApplicationService applicationService;
+    private final ApplicationService applicationService;
 
-    private ResourceService resourceService;
+    private final ResourceService resourceService;
 
-    private ScriptSettings scriptSettings;
+    private final ScriptSettings scriptSettings;
 
-    public ScriptExecutorManager()
+    public ScriptExecutorManager( final ApplicationService applicationService, final ResourceService resourceService,
+                                  final ScriptSettings scriptSettings )
     {
         this.executors = new ConcurrentHashMap<>();
+        this.applicationService = applicationService;
+        this.resourceService = resourceService;
+        this.scriptSettings = scriptSettings;
     }
 
     public ScriptExecutor getExecutor( final ApplicationKey key )
@@ -34,6 +46,7 @@ public final class ScriptExecutorManager
 
     private ScriptExecutor createExecutor( final ApplicationKey key )
     {
+        LOG.debug( "Create Script Executor for {}", key );
         final Application application = this.applicationService.getInstalledApplication( key );
 
         if ( application == null )
@@ -43,10 +56,15 @@ public final class ScriptExecutorManager
 
         final ClassLoader classLoader = application.getClassLoader();
 
+        final Bundle bundle = application.getBundle();
+        final BundleContext bundleContext = Objects.requireNonNull( bundle.getBundleContext(),
+                                                                    String.format( "application bundle %s context must not be null",
+                                                                                   bundle.getBundleId() ) );
+
         final ScriptExecutorImpl executor = new ScriptExecutorImpl();
         executor.setScriptSettings( this.scriptSettings );
         executor.setClassLoader( classLoader );
-        executor.setServiceRegistry( new ServiceRegistryImpl( application.getBundle().getBundleContext() ) );
+        executor.setServiceRegistry( new ServiceRegistryImpl( bundleContext ) );
         executor.setResourceService( this.resourceService );
         executor.setApplication( application );
         executor.setRunMode( RunMode.get() );
@@ -54,27 +72,19 @@ public final class ScriptExecutorManager
         return executor;
     }
 
-    public void invalidate( final ApplicationKey key )
+    public void runDisposers( final ApplicationKey key )
     {
-        final ScriptExecutor executor = this.executors.remove( key );
+        final ScriptExecutor executor = this.executors.get( key );
         if ( executor != null )
         {
+            LOG.debug( "Run script disposers for {}", key );
             executor.runDisposers();
         }
     }
 
-    public void setApplicationService( final ApplicationService applicationService )
+    public void invalidate( final ApplicationKey key )
     {
-        this.applicationService = applicationService;
-    }
-
-    public void setResourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
-    }
-
-    public void setScriptSettings( final ScriptSettings scriptSettings )
-    {
-        this.scriptSettings = scriptSettings;
+        LOG.debug( "Remove Script Executor for {}", key );
+        this.executors.remove( key );
     }
 }
