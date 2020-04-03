@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.app;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -16,18 +14,16 @@ import com.enonic.xp.app.ApplicationListener;
 @Component(service = ApplicationListenerHub.class)
 public final class ApplicationListenerHub
 {
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-
     private final List<ApplicationListener> listeners = new CopyOnWriteArrayList<>();
 
     public void activated( final Application app )
     {
-        this.executor.submit( () -> notifyActivated( app ) );
+        notifyActivated( app );
     }
 
     public void deactivated( final Application app )
     {
-        this.executor.submit( () -> notifyDeactivated( app ) );
+        notifyDeactivated( app );
     }
 
     private void notifyActivated( final Application app )

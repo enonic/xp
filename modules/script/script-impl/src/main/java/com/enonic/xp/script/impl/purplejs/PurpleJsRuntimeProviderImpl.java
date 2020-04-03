@@ -3,6 +3,7 @@ package com.enonic.xp.script.impl.purplejs;
 import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.script.impl.ScriptRuntimeInternal;
 import com.enonic.xp.script.impl.ScriptRuntimeProvider;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
@@ -13,7 +14,7 @@ public final class PurpleJsRuntimeProviderImpl
     implements ScriptRuntimeProvider, ScriptRuntimeFactory
 {
     @Override
-    public ScriptRuntime create( final ScriptSettings settings )
+    public ScriptRuntimeInternal create( final ScriptSettings settings )
     {
         throw new IllegalArgumentException( "Not implemented" );
     }
@@ -25,6 +26,11 @@ public final class PurpleJsRuntimeProviderImpl
 
     @Override
     public void invalidate( final ApplicationKey key )
+    {
+    }
+
+    @Override
+    public void runDisposers( final ApplicationKey key )
     {
     }
 }
