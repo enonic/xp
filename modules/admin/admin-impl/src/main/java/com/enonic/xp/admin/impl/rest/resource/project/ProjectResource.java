@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.project.json.DeleteProjectParamsJson;
+import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyLanguageParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectReadAccessJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectsJson;
@@ -93,13 +94,20 @@ public final class ProjectResource
 
         if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( modifiedProject.getName() ) )
         {
-            final Locale language = doApplyLanguage( modifiedProject.getName(), getLanguageFromForm( form ) );
-            return doCreateJson( modifiedProject, null, null, language );
+            return doCreateJson( modifiedProject, null, null, doFetchLanguage( modifiedProject.getName() ) );
         }
 
         applyProjectData( modifiedProject, form );
 
         return doCreateJson( modifiedProject );
+    }
+
+    @POST
+    @Path("modifyLanguage")
+    public String modifyLanguage( final ModifyLanguageParamsJson params )
+    {
+        return doApplyLanguage( params.getName(), params.getLanguage() ).
+            toLanguageTag();
     }
 
     @POST
@@ -153,13 +161,6 @@ public final class ProjectResource
         }
 
         return builder.build();
-    }
-
-    private Locale getLanguageFromForm( final MultipartForm form )
-    {
-        return Optional.ofNullable( form.getAsString( "language" ) ).
-            map( Locale::forLanguageTag ).
-            orElse( null );
     }
 
     private ProjectReadAccess getReadAccessFromForm( final MultipartForm form )
@@ -249,13 +250,11 @@ public final class ProjectResource
 
         final ProjectPermissions.Builder projectPermissionsBuilder = getPermissionsFromForm( form );
         final ProjectReadAccess readAccess = getReadAccessFromForm( form );
-        final Locale language = getLanguageFromForm( form );
 
         final ProjectPermissions projectPermissions = doAddViewerRoleMembers( projectPermissionsBuilder, readAccess ).build();
 
         doApplyPermissions( projectName, projectPermissions );
         doApplyReadAccess( projectName, readAccess );
-        doApplyLanguage( projectName, language );
     }
 
     private ProjectPermissions doFetchPermissions( final ProjectName projectName )
