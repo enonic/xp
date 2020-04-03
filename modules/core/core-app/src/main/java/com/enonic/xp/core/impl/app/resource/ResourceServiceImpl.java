@@ -6,6 +6,8 @@ import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidationLevel;
@@ -24,6 +26,8 @@ import com.enonic.xp.server.RunMode;
 public final class ResourceServiceImpl
     implements ResourceService, ApplicationInvalidator
 {
+    private static final Logger LOG = LoggerFactory.getLogger( ResourceServiceImpl.class );
+
     private static final ApplicationKey SYSTEM_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
 
     private final ProcessingCache cache;
@@ -123,6 +127,7 @@ public final class ResourceServiceImpl
     @Override
     public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
     {
+        LOG.debug( "Cleanup Resource cache for {}", key );
         this.cache.invalidate( key );
     }
 }
