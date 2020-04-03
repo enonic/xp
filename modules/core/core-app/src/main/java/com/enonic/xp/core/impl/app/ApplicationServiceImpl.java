@@ -403,9 +403,9 @@ public final class ApplicationServiceImpl
     {
         try
         {
-            application.getBundle().stop();
-
             applicationListenerHub.deactivated( application );
+
+            application.getBundle().stop();
 
             registry.invalidate( application.getKey(), ApplicationInvalidationLevel.FULL );
 
@@ -433,9 +433,9 @@ public final class ApplicationServiceImpl
     {
         try
         {
-            application.getBundle().uninstall();
-
             applicationListenerHub.deactivated( application );
+
+            application.getBundle().uninstall();
 
             registry.invalidate( application.getKey(), ApplicationInvalidationLevel.FULL );
 
@@ -578,10 +578,13 @@ public final class ApplicationServiceImpl
     {
         try
         {
-            final Bundle bundle = this.context.getBundle( applicationKey.getName() );
+            final Application application = this.registry.get( applicationKey );
 
-            if ( bundle != null )
+            if ( application != null )
             {
+                applicationListenerHub.deactivated( application );
+
+                final Bundle bundle = application.getBundle();
                 LOG.debug( "Uninstalling application {} bundle {}", applicationKey, bundle.getBundleId() );
                 bundle.uninstall();
                 LOG.debug( "Uninstalled application {} bundle {}", applicationKey, bundle.getBundleId() );

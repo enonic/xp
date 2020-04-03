@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.script.impl.ScriptRuntimeInternal;
 import com.enonic.xp.script.impl.ScriptRuntimeProvider;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
@@ -19,7 +20,7 @@ import com.enonic.xp.script.runtime.ScriptSettings;
 public final class ScriptRuntimeFactoryImpl
     implements ScriptRuntimeProvider, ScriptRuntimeFactory
 {
-    private final List<ScriptRuntime> list;
+    private final List<ScriptRuntimeInternal> list;
 
     private ApplicationService applicationService;
 
@@ -31,12 +32,9 @@ public final class ScriptRuntimeFactoryImpl
     }
 
     @Override
-    public ScriptRuntime create( final ScriptSettings settings )
+    public ScriptRuntimeInternal create( final ScriptSettings settings )
     {
-        final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl();
-        runtime.setScriptSettings( settings );
-        runtime.setApplicationService( this.applicationService );
-        runtime.setResourceService( this.resourceService );
+        final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( applicationService, resourceService, settings );
 
         this.list.add( runtime );
         return runtime;
@@ -52,6 +50,12 @@ public final class ScriptRuntimeFactoryImpl
     public void invalidate( final ApplicationKey key )
     {
         this.list.forEach( runtime -> runtime.invalidate( key ) );
+    }
+
+    @Override
+    public void runDisposers( final ApplicationKey key )
+    {
+        this.list.forEach( runtime -> runtime.runDisposers( key ) );
     }
 
     @Reference
