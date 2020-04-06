@@ -64,7 +64,7 @@ public class ImageServiceImpl
         final ByteSource blob = contentService.getBinary( readImageParams.getContentId(), readImageParams.getBinaryReference() );
         if ( blob != null )
         {
-            if ( renderAsSourceGif( readImageParams ) && isGifImage( blob ) )
+            if ( isGifImage( blob ) )
             {
                 return blob;
             }
@@ -76,18 +76,6 @@ public class ImageServiceImpl
             }
         }
         return null;
-    }
-
-    private boolean renderAsSourceGif( final ReadImageParams params )
-    {
-        final boolean noScale =
-            ( params.getScaleParams() == null || "full".equals( params.getScaleParams().getName() ) ) && !params.isScaleSquare() &&
-                !params.isScaleWidth();
-        final boolean noCropping = params.getCropping() == null;
-        final boolean noFilter = params.getFilterParam() == null;
-        final boolean isGifFormat = "gif".equals( params.getFormat() );
-
-        return isGifFormat && noScale && noCropping && noFilter;
     }
 
     private boolean isGifImage( final ByteSource blob )
