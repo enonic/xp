@@ -1,0 +1,23 @@
+{
+  "name": "project1",
+  "permissions": {
+    "owner": [
+      "user:system:user1"
+    ],
+    "editor": [
+      "user:system:user2"
+    ],
+    "author": [
+      "user:system:user3"
+    ],
+    "contributor": [
+      "user:system:user4"
+    ]
+  },
+  "readAccess": {
+    "type": "private",
+    "principals": [
+      "user:system:user5"
+    ]
+  }
+}
