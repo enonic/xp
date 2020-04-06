@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,12 +22,12 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.project.json.DeleteProjectParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyLanguageParamsJson;
+import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyPermissionsParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectReadAccessJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectsJson;
@@ -44,15 +43,11 @@ import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
-
-import static com.enonic.xp.project.ProjectConstants.PROJECT_ACCESS_LEVEL_AUTHOR_PROPERTY;
-import static com.enonic.xp.project.ProjectConstants.PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY;
-import static com.enonic.xp.project.ProjectConstants.PROJECT_ACCESS_LEVEL_EDITOR_PROPERTY;
-import static com.enonic.xp.project.ProjectConstants.PROJECT_ACCESS_LEVEL_OWNER_PROPERTY;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "project")
@@ -79,8 +74,6 @@ public final class ProjectResource
         throws Exception
     {
         final Project project = projectService.create( createParams( form ) );
-        applyProjectData( project, form );
-
         return doCreateJson( project );
     }
 
@@ -97,8 +90,6 @@ public final class ProjectResource
             return doCreateJson( modifiedProject, null, null, doFetchLanguage( modifiedProject.getName() ) );
         }
 
-        applyProjectData( modifiedProject, form );
-
         return doCreateJson( modifiedProject );
     }
 
@@ -108,6 +99,14 @@ public final class ProjectResource
     {
         return doApplyLanguage( params.getName(), params.getLanguage() ).
             toLanguageTag();
+    }
+
+    @POST
+    @Path("modifyPermissions")
+    public TaskResultJson modifyPermissions( final ModifyPermissionsParamsJson params )
+    {
+        doApplyPermissions( params.getName(), params.getPermissions() );
+        return doApplyReadAccess( params.getName(), params.getReadAccess() );
     }
 
     @POST
@@ -182,43 +181,6 @@ public final class ProjectResource
             orElseGet( readAccess::build );
     }
 
-    private ProjectPermissions.Builder getPermissionsFromForm( final MultipartForm form )
-        throws IOException
-    {
-        final ProjectPermissions.Builder builder = new ProjectPermissions.Builder();
-        final String permissionsAsString = form.getAsString( "permissions" );
-        if ( permissionsAsString == null )
-        {
-            return builder;
-        }
-
-        final Map<String, List<String>> map = MAPPER.readValue( permissionsAsString, new TypeReference<Map<String, List<String>>>()
-        {
-        } );
-
-        if ( map.containsKey( PROJECT_ACCESS_LEVEL_OWNER_PROPERTY ) )
-        {
-            map.get( PROJECT_ACCESS_LEVEL_OWNER_PROPERTY ).forEach( builder::addOwner );
-        }
-
-        if ( map.containsKey( PROJECT_ACCESS_LEVEL_EDITOR_PROPERTY ) )
-        {
-            map.get( PROJECT_ACCESS_LEVEL_EDITOR_PROPERTY ).forEach( builder::addEditor );
-        }
-
-        if ( map.containsKey( PROJECT_ACCESS_LEVEL_AUTHOR_PROPERTY ) )
-        {
-            map.get( PROJECT_ACCESS_LEVEL_AUTHOR_PROPERTY ).forEach( builder::addAuthor );
-        }
-
-        if ( map.containsKey( PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY ) )
-        {
-            map.get( PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY ).forEach( builder::addContributor );
-        }
-
-        return builder;
-    }
-
     private ProjectJson doCreateJson( final Project project, final ProjectPermissions projectPermissions,
                                       final ProjectReadAccessType readAccessType, final Locale language )
     {
@@ -241,20 +203,6 @@ public final class ProjectResource
         final Locale language = doFetchLanguage( projectName );
 
         return doCreateJson( project, projectPermissions, readAccessType, language );
-    }
-
-    private void applyProjectData( final Project project, final MultipartForm form )
-        throws IOException
-    {
-        final ProjectName projectName = project.getName();
-
-        final ProjectPermissions.Builder projectPermissionsBuilder = getPermissionsFromForm( form );
-        final ProjectReadAccess readAccess = getReadAccessFromForm( form );
-
-        final ProjectPermissions projectPermissions = doAddViewerRoleMembers( projectPermissionsBuilder, readAccess ).build();
-
-        doApplyPermissions( projectName, projectPermissions );
-        doApplyReadAccess( projectName, readAccess );
     }
 
     private ProjectPermissions doFetchPermissions( final ProjectName projectName )
@@ -296,9 +244,9 @@ public final class ProjectResource
             execute();
     }
 
-    private void doApplyReadAccess( final ProjectName projectName, final ProjectReadAccess readAccess )
+    private TaskResultJson doApplyReadAccess( final ProjectName projectName, final ProjectReadAccess readAccess )
     {
-        ApplyProjectReadAccessPermissionsCommand.create().
+        return ApplyProjectReadAccessPermissionsCommand.create().
             projectName( projectName ).
             readAccess( readAccess ).
             taskService( taskService ).

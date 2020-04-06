@@ -26,6 +26,11 @@ public final class ProjectPermissions
         return new Builder();
     }
 
+    public static Builder create( final ProjectPermissions source )
+    {
+        return new Builder( source );
+    }
+
     public PrincipalKeys getOwner()
     {
         return permissions.get( ProjectRole.OWNER );
@@ -83,6 +88,20 @@ public final class ProjectPermissions
         private PrincipalKeys.Builder contributor = PrincipalKeys.create();
 
         private PrincipalKeys.Builder viewer = PrincipalKeys.create();
+
+        private Builder()
+        {
+
+        }
+
+        private Builder( final ProjectPermissions source )
+        {
+            this.owner.addAll( source.getOwner() );
+            this.editor.addAll( source.getEditor() );
+            this.author.addAll( source.getAuthor() );
+            this.contributor.addAll( source.getContributor() );
+            this.viewer.addAll( source.getViewer() );
+        }
 
         public Builder addOwner( final String owner )
         {

@@ -12,6 +12,7 @@ import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
+import com.enonic.xp.admin.impl.rest.resource.content.task.ApplyPermissionsRunnableTask;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -27,6 +28,7 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -35,8 +37,10 @@ import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ProjectResourceTest
     extends AdminResourceTestSupport
@@ -228,6 +232,33 @@ public class ProjectResourceTest
             post().getAsString();
 
         assertEquals( "en", result );
+    }
+
+    @Test
+    public void modify_permissions_success()
+        throws Exception
+    {
+        mockRootContent();
+
+        final ProjectName projectName = ProjectName.from( "project1" );
+        Mockito.when( projectService.modifyPermissions( Mockito.eq( projectName ), Mockito.isA( ProjectPermissions.class ) ) ).
+            then( args -> {
+                final ProjectPermissions projectPermissions = args.getArgument( 1 );
+                assertAll( () -> assertTrue( projectPermissions.getOwner().contains( PrincipalKey.from( "user:system:user1" ) ) ),
+                           () -> assertTrue( projectPermissions.getEditor().contains( PrincipalKey.from( "user:system:user2" ) ) ),
+                           () -> assertTrue( projectPermissions.getAuthor().contains( PrincipalKey.from( "user:system:user3" ) ) ),
+                           () -> assertTrue( projectPermissions.getContributor().contains( PrincipalKey.from( "user:system:user4" ) ) ),
+                           () -> assertTrue( projectPermissions.getViewer().contains( PrincipalKey.from( "user:system:user5" ) ) ) );
+
+                return projectPermissions;
+            } );
+
+        request().path( "project/modifyPermissions" ).
+            entity( readFromFile( "modify_permissions_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post();
+
+        Mockito.verify( taskService, Mockito.times( 1 ) ).submitTask( Mockito.isA( ApplyPermissionsRunnableTask.class ),
+                                                                      Mockito.eq( "Apply project's content root permissions" ) );
     }
 
     @Test
