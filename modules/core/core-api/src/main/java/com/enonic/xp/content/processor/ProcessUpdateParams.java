@@ -60,6 +60,7 @@ public class ProcessUpdateParams
         return editedContent;
     }
 
+    @Deprecated
     public User getModifier()
     {
         return modifier;
@@ -113,6 +114,7 @@ public class ProcessUpdateParams
             return this;
         }
 
+        @Deprecated
         public Builder modifier( final User modifier )
         {
             this.modifier = modifier;

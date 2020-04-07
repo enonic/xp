@@ -1,7 +1,7 @@
-package com.enonic.xp.core.impl.content.processor;
+package com.enonic.xp.core.impl.project;
 
 import java.util.Objects;
-import java.util.concurrent.Callable;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -14,21 +14,19 @@ import com.enonic.xp.content.processor.ProcessUpdateParams;
 import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.project.ProjectConstants;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.security.PrincipalKeys;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
 
 @Component
-public final class RoleContentProcessor
+public final class ProjectAccessSiteProcessor
     implements ContentProcessor
 {
-    private SecurityService securityService;
+    private ProjectPermissionsContextManager projectPermissionsContextManager;
 
     @Override
     public boolean supports( final ContentType contentType )
@@ -51,38 +49,33 @@ public final class RoleContentProcessor
         final SiteConfigs editedSiteConfigs = editedSite.getSiteConfigs();
         final Site originalSite = (Site) params.getOriginalContent();
         final SiteConfigs originalSiteConfigs = originalSite.getSiteConfigs();
-        final User modifier = params.getModifier();
 
-        if ( !Objects.equals( originalSiteConfigs, editedSiteConfigs ) && !this.hasContentAdminRole( modifier ) )
+        final Context context = ContextAccessor.current();
+        final AuthenticationInfo authenticationInfo = context.getAuthInfo();
+        final ProjectName projectName = ProjectName.from( context.getRepositoryId() );
+
+        if ( !Objects.equals( originalSiteConfigs, editedSiteConfigs ) )
         {
-            throw new RoleRequiredException( modifier.getKey(), RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN );
+            if ( !ProjectAccessHelper.hasAdminAccess( authenticationInfo ) )
+            {
+                if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+                {
+                    throw new ProjectAccessRequiredException( authenticationInfo.getUser().getKey() );
+                }
+                else if ( !this.projectPermissionsContextManager.hasAnyProjectRole( authenticationInfo, projectName,
+                                                                                    Set.of( ProjectRole.OWNER ) ) )
+                {
+                    throw new ProjectAccessRequiredException( authenticationInfo.getUser().getKey(), ProjectRole.OWNER );
+                }
+            }
         }
 
         return null;
     }
 
-    private boolean hasContentAdminRole( final User user )
-    {
-        return runAsAdmin( () -> {
-            PrincipalKeys principalKeys = securityService.getAllMemberships( user.getKey() );
-            return principalKeys.contains( RoleKeys.ADMIN ) || principalKeys.contains( RoleKeys.CONTENT_MANAGER_ADMIN );
-        } );
-
-    }
-
-    private <T> T runAsAdmin( final Callable<T> callable )
-    {
-        final Context context = ContextAccessor.current();
-        return ContextBuilder.from( ContextAccessor.current() ).
-            authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).
-                principals( RoleKeys.ADMIN ).build() ).
-            build().
-            callWith( callable );
-    }
-
     @Reference
-    public void setSecurityService( final SecurityService securityService )
+    public void setProjectPermissionsContextManager( final ProjectPermissionsContextManager projectPermissionsContextManager )
     {
-        this.securityService = securityService;
+        this.projectPermissionsContextManager = projectPermissionsContextManager;
     }
 }

@@ -42,7 +42,7 @@ public final class GetProjectPermissionsCommand
 
     private List<PrincipalKey> doGetRoleMembers( final ProjectRole projectRole )
     {
-        return securityService.getRelationships( createRoleKey( projectRole ) ).
+        return securityService.getRelationships( ProjectAccessHelper.createRoleKey( projectName, projectRole ) ).
             stream().
             map( PrincipalRelationship::getTo ).
             collect( Collectors.toList() );

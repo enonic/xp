@@ -14,6 +14,7 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.project.ProjectAccessHelper;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
@@ -26,6 +27,7 @@ import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
+import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
@@ -82,6 +84,7 @@ class ProjectServiceImplTest
     private static final AuthenticationInfo REPO_TEST_CUSTOM_MANAGER_AUTHINFO = AuthenticationInfo.create().
         principals( RoleKeys.AUTHENTICATED ).
         principals( RoleKeys.CONTENT_MANAGER_APP ).
+        principals( ProjectAccessHelper.createRoleKey( ProjectName.from( "test-project" ), ProjectRole.OWNER ) ).
         user( REPO_TEST_OWNER ).
         build();
 
@@ -132,7 +135,6 @@ class ProjectServiceImplTest
 
             final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
             projectAccessContextManager.setRepositoryService( repositoryService );
-            projectAccessContextManager.setSecurityService( securityService );
 
             projectService = new ProjectServiceImpl();
             projectService.setIndexService( indexService );
@@ -463,14 +465,24 @@ class ProjectServiceImplTest
         doCreateProjectAsAdmin( ProjectName.from( "test-project5" ),
                                 ProjectPermissions.create().addContributor( REPO_TEST_OWNER.getKey() ).build() );
 
-        CONTENT_CUSTOM_MANAGER_CONTEXT.runWith( () -> {
-            final Projects projects = projectService.list();
+        final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( CONTENT_CUSTOM_MANAGER_CONTEXT.getAuthInfo() ).
+            principals( ProjectAccessHelper.createRoleKey( ProjectName.from( "test-project2" ), ProjectRole.OWNER ),
+                        ProjectAccessHelper.createRoleKey( ProjectName.from( "test-project3" ), ProjectRole.EDITOR ),
+                        ProjectAccessHelper.createRoleKey( ProjectName.from( "test-project4" ), ProjectRole.AUTHOR ),
+                        ProjectAccessHelper.createRoleKey( ProjectName.from( "test-project5" ), ProjectRole.CONTRIBUTOR ) ).
+            build();
 
-            assertEquals( 5, projectService.list().getSize() );
-            assertFalse( projects.stream().anyMatch( project -> project.getName().toString().equals( "test-project1" ) ) );
-            assertTrue(
-                projects.stream().anyMatch( project -> project.getName().equals( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ) ) );
-        } );
+        ContextBuilder.from( CONTENT_CUSTOM_MANAGER_CONTEXT ).
+            authInfo( authenticationInfo ).
+            build().
+            runWith( () -> {
+                final Projects projects = projectService.list();
+
+                assertEquals( 5, projectService.list().getSize() );
+                assertFalse( projects.stream().anyMatch( project -> project.getName().toString().equals( "test-project1" ) ) );
+                assertTrue( projects.stream().anyMatch(
+                    project -> project.getName().equals( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ) ) );
+            } );
     }
 
     @Test

@@ -312,7 +312,6 @@ public class AbstractContentServiceTest
 
         final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
         projectAccessContextManager.setRepositoryService( repositoryService );
-        projectAccessContextManager.setSecurityService( securityService );
 
         projectService.setProjectPermissionsContextManager( projectAccessContextManager );
 
