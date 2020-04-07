@@ -43,23 +43,23 @@ public final class CreateProjectIssuesAccessListCommand
                 build() ).
             add( AccessControlEntry.create().
                 allow( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE ).
-                principal( createRoleKey( ProjectRole.OWNER ) ).
+                principal( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.OWNER ) ).
                 build() ).
             add( AccessControlEntry.create().
                 allow( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE ).
-                principal( createRoleKey( ProjectRole.EDITOR ) ).
+                principal( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.EDITOR ) ).
                 build() ).
             add( AccessControlEntry.create().
                 allow( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE ).
-                principal( createRoleKey( ProjectRole.AUTHOR ) ).
+                principal( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.AUTHOR ) ).
                 build() ).
             add( AccessControlEntry.create().
                 allow( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE ).
-                principal( createRoleKey( ProjectRole.CONTRIBUTOR ) ).
+                principal( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.CONTRIBUTOR ) ).
                 build() ).
             add( AccessControlEntry.create().
                 allow( Permission.READ ).
-                principal( createRoleKey( ProjectRole.VIEWER ) ).
+                principal( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.VIEWER ) ).
                 build() ).
             build();
     }

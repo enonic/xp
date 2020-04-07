@@ -33,7 +33,7 @@ public final class CreateProjectPermissionRolesCommand
     {
         for ( ProjectRole projectRole : ProjectRole.values() )
         {
-            final PrincipalKey roleKey = createRoleKey( projectRole );
+            final PrincipalKey roleKey = ProjectAccessHelper.createRoleKey( projectName, projectRole );
             final String roleDisplayName = createRoleDisplayName( projectRole );
 
             securityService.getRole( roleKey ).
