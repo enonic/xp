@@ -48,12 +48,12 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.ContentAuditLogExecutorImpl;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
-import com.enonic.xp.core.impl.content.ContentInitializer;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
+import com.enonic.xp.core.impl.project.init.ContentInitializer;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.core.impl.site.SiteServiceImpl;
@@ -294,11 +294,6 @@ public class AbstractContentServiceTest
         LayoutDescriptorService layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
         auditLogService = Mockito.mock( AuditLogService.class );
 
-        final ProjectServiceImpl projectService = new ProjectServiceImpl();
-        projectService.setIndexService( indexService );
-        projectService.setRepositoryService( repositoryService );
-        projectService.setNodeService( nodeService );
-
         final ContentConfig contentConfig = Mockito.mock( ContentConfig.class );
         Mockito.when( contentConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
 
@@ -313,7 +308,12 @@ public class AbstractContentServiceTest
         final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
         projectAccessContextManager.setRepositoryService( repositoryService );
 
+        final ProjectServiceImpl projectService = new ProjectServiceImpl();
+        projectService.setIndexService( indexService );
+        projectService.setRepositoryService( repositoryService );
+        projectService.setNodeService( nodeService );
         projectService.setProjectPermissionsContextManager( projectAccessContextManager );
+        projectService.initialize();
 
         contentService.setNodeService( nodeService );
         contentService.setEventPublisher( eventPublisher );
@@ -326,7 +326,6 @@ public class AbstractContentServiceTest
         contentService.setLayoutDescriptorService( layoutDescriptorService );
         contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
-        contentService.setProjectService( projectService );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
         contentService.initialize();
 

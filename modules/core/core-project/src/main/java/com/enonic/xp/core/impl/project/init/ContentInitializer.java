@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.content;
+package com.enonic.xp.core.impl.project.init;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.core.impl.init.RepoDependentInitializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexPath;
@@ -58,6 +57,11 @@ public final class ContentInitializer
     {
         super( builder );
         this.repositoryService = builder.repositoryService;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     @Override
@@ -132,11 +136,6 @@ public final class ContentInitializer
 
             nodeService.push( NodeIds.from( contentRoot.id() ), ContentConstants.BRANCH_DRAFT );
         }
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
     }
 
     public static class Builder

@@ -5,6 +5,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.IssueAlreadyExistsException;
 import com.enonic.xp.issue.IssueComment;
+import com.enonic.xp.issue.IssueConstants;
 import com.enonic.xp.issue.IssueName;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;

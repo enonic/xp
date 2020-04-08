@@ -1,5 +1,4 @@
-package com.enonic.xp.core.impl.issue;
-
+package com.enonic.xp.issue;
 
 public final class IssuePropertyNames
 {

@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.init;
+package com.enonic.xp.core.impl.project.init;
 
 import com.google.common.base.Preconditions;
 
