@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.issue;
+package com.enonic.xp.core.impl.project.init;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -9,8 +9,9 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.core.impl.init.RepoDependentInitializer;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.issue.IssueConstants;
+import com.enonic.xp.issue.IssuePropertyNames;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;
@@ -46,6 +47,11 @@ public class IssueInitializer
     private IssueInitializer( final Builder builder )
     {
         super( builder );
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     @Override
@@ -91,11 +97,6 @@ public class IssueInitializer
         nodeService.refresh( RefreshMode.ALL );
 
         nodeService.push( NodeIds.from( issueRoot.id() ), ContentConstants.BRANCH_DRAFT );
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
     }
 
     public static class Builder

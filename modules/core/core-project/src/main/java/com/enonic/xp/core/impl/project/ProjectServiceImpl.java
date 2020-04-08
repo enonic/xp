@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -12,9 +13,12 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.attachment.AttachmentSerializer;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.core.impl.content.ContentInitializer;
-import com.enonic.xp.core.impl.issue.IssueInitializer;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.project.init.ContentInitializer;
+import com.enonic.xp.core.impl.project.init.IssueInitializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexService;
@@ -34,6 +38,7 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
@@ -54,6 +59,20 @@ public class ProjectServiceImpl
 
     private ProjectPermissionsContextManager projectPermissionsContextManager;
 
+    @Activate
+    public void initialize()
+    {
+        adminContext().runWith( () -> {
+            if ( doGet( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ) == null )
+            {
+                doCreate( CreateProjectParams.create().
+                    name( ProjectConstants.DEFAULT_PROJECT.getName() ).
+                    displayName( ProjectConstants.DEFAULT_PROJECT.getDisplayName() ).
+                    description( ProjectConstants.DEFAULT_PROJECT.getDescription() ).
+                    build() );
+            }
+        } );
+    }
 
     @Override
     public Project create( CreateProjectParams params )
@@ -307,6 +326,16 @@ public class ProjectServiceImpl
     private <T> T callWithDeleteContext( final Callable<T> runnable, final ProjectName projectName )
     {
         return projectPermissionsContextManager.initDeleteContext( projectName ).callWith( runnable );
+    }
+
+    private Context adminContext()
+    {
+        return ContextBuilder.from( ContextAccessor.current() ).
+            authInfo( AuthenticationInfo.
+                copyOf( ContextAccessor.current().getAuthInfo() ).
+                principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ).
+                build() ).
+            build();
     }
 
     @Reference

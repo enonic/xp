@@ -15,11 +15,11 @@ import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.security.PrincipalKeys;
 
-import static com.enonic.xp.core.impl.issue.IssuePropertyNames.APPROVERS;
-import static com.enonic.xp.core.impl.issue.IssuePropertyNames.DESCRIPTION;
-import static com.enonic.xp.core.impl.issue.IssuePropertyNames.PUBLISH_REQUEST;
-import static com.enonic.xp.core.impl.issue.IssuePropertyNames.STATUS;
-import static com.enonic.xp.core.impl.issue.IssuePropertyNames.TITLE;
+import static com.enonic.xp.issue.IssuePropertyNames.APPROVERS;
+import static com.enonic.xp.issue.IssuePropertyNames.DESCRIPTION;
+import static com.enonic.xp.issue.IssuePropertyNames.PUBLISH_REQUEST;
+import static com.enonic.xp.issue.IssuePropertyNames.STATUS;
+import static com.enonic.xp.issue.IssuePropertyNames.TITLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

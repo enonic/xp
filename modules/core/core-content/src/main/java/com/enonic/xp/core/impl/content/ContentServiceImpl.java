@@ -27,7 +27,6 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -106,9 +105,6 @@ import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.page.PageDescriptorService;
-import com.enonic.xp.project.CreateProjectParams;
-import com.enonic.xp.project.ProjectConstants;
-import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -172,17 +168,6 @@ public class ContentServiceImpl
     @Activate
     public void initialize()
     {
-        runAsContentAdmin( () -> {
-            if ( projectService.get( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ) == null )
-            {
-                this.projectService.create( CreateProjectParams.create().
-                    name( ProjectConstants.DEFAULT_PROJECT.getName() ).
-                    displayName( ProjectConstants.DEFAULT_PROJECT.getDisplayName() ).
-                    description( ProjectConstants.DEFAULT_PROJECT.getDescription() ).
-                    build() );
-            }
-        } );
-
         this.contentDataSerializer = ContentDataSerializer.create().
             contentService( this ).
             layoutDescriptorService( layoutDescriptorService ).
@@ -1059,11 +1044,6 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             build().
             execute();
-    }
-
-    private void runAsContentAdmin( final Runnable runnable )
-    {
-        adminContext().runWith( runnable );
     }
 
     private <T> T callAsContentAdmin( final Callable<T> callable )
