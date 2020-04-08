@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
@@ -17,6 +19,8 @@ import com.enonic.xp.script.event.ScriptEventManager;
 public final class ScriptEventManagerImpl
     implements ScriptEventManager, ApplicationInvalidator, EventListener
 {
+    private static final Logger LOG = LoggerFactory.getLogger( ScriptEventManagerImpl.class );
+
     private final CopyOnWriteArrayList<ScriptEventListener> listeners;
 
     public ScriptEventManagerImpl()
@@ -27,6 +31,7 @@ public final class ScriptEventManagerImpl
     @Override
     public void add( final ScriptEventListener listener )
     {
+        LOG.debug( "Add Script Event Listener for {}", listener.getApplication() );
         this.listeners.add( listener );
     }
 
@@ -48,6 +53,7 @@ public final class ScriptEventManagerImpl
     {
         if ( ApplicationInvalidationLevel.FULL == level )
         {
+            LOG.debug( "Remove Script Event Listeners for {}", key );
             this.listeners.removeIf( ( listener ) -> key.equals( listener.getApplication() ) );
         }
     }

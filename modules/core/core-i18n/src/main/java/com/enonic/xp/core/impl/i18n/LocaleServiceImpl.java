@@ -15,6 +15,8 @@ import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
 
@@ -35,6 +37,8 @@ import static java.util.stream.Collectors.toSet;
 public final class LocaleServiceImpl
     implements LocaleService, ApplicationInvalidator
 {
+    private static final Logger LOG = LoggerFactory.getLogger( LocaleServiceImpl.class );
+
     private static final String DELIMITER = "_";
 
     private static final String KEY_SEPARATOR = "|";
@@ -118,6 +122,7 @@ public final class LocaleServiceImpl
 
     private Set<Locale> getAppLocales( final ApplicationKey applicationKey, final String... bundleNames )
     {
+        LOG.debug( "Create app locales for {}", applicationKey );
         final Set<Locale> locales = new LinkedHashSet<>();
         for ( final String bundleName : bundleNames )
         {
@@ -198,6 +203,7 @@ public final class LocaleServiceImpl
 
     private MessageBundle createMessageBundle( final ApplicationKey applicationKey, final Locale locale, final String... bundleNames )
     {
+        LOG.debug( "Create message bundle for {} {}", applicationKey, locale );
         final Properties props = new Properties();
         for ( final String bundleName : bundleNames )
         {
@@ -281,6 +287,7 @@ public final class LocaleServiceImpl
     @Override
     public void invalidate( final ApplicationKey appKey, final ApplicationInvalidationLevel level )
     {
+        LOG.debug( "Cleanup i18n caches for {}", appKey );
         final String cacheKeyPrefix = appKey.toString() + KEY_SEPARATOR;
         bundleCache.keySet().removeIf( ( k ) -> k.startsWith( cacheKeyPrefix ) );
         appLocalesCache.keySet().removeIf( ( k ) -> k.startsWith( cacheKeyPrefix ) );

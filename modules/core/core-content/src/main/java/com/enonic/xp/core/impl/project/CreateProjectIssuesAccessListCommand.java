@@ -7,10 +7,10 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
-public final class CreateProjectRootAccessListCommand
+public final class CreateProjectIssuesAccessListCommand
     extends AbstractProjectCommand
 {
-    private CreateProjectRootAccessListCommand( final Builder builder )
+    private CreateProjectIssuesAccessListCommand( final Builder builder )
     {
         super( builder );
     }
@@ -42,11 +42,11 @@ public final class CreateProjectRootAccessListCommand
                 principal( RoleKeys.CONTENT_MANAGER_ADMIN ).
                 build() ).
             add( AccessControlEntry.create().
-                allowAll().
+                allow( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE ).
                 principal( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.OWNER ) ).
                 build() ).
             add( AccessControlEntry.create().
-                allowAll().
+                allow( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE ).
                 principal( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.EDITOR ) ).
                 build() ).
             add( AccessControlEntry.create().
@@ -54,7 +54,7 @@ public final class CreateProjectRootAccessListCommand
                 principal( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.AUTHOR ) ).
                 build() ).
             add( AccessControlEntry.create().
-                allow( Permission.READ ).
+                allow( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE ).
                 principal( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.CONTRIBUTOR ) ).
                 build() ).
             add( AccessControlEntry.create().
@@ -76,10 +76,10 @@ public final class CreateProjectRootAccessListCommand
             super.validate();
         }
 
-        public CreateProjectRootAccessListCommand build()
+        public CreateProjectIssuesAccessListCommand build()
         {
             validate();
-            return new CreateProjectRootAccessListCommand( this );
+            return new CreateProjectIssuesAccessListCommand( this );
         }
 
     }

@@ -1,7 +1,10 @@
 package com.enonic.xp.core.impl.project;
 
+import java.util.Set;
+
 import com.enonic.xp.context.Context;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public interface ProjectPermissionsContextManager
@@ -16,11 +19,6 @@ public interface ProjectPermissionsContextManager
 
     Context initUpdateContext( final ProjectName projectName );
 
-    boolean hasAdminAccess( final AuthenticationInfo authenticationInfo );
-
-    boolean hasManagerAccess( final AuthenticationInfo authenticationInfo );
-
-    boolean hasAnyProjectPermission( final ProjectName projectName, final AuthenticationInfo authenticationInfo );
-
-
+    boolean hasAnyProjectRole( final AuthenticationInfo authenticationInfo, final ProjectName projectName,
+                               final Set<ProjectRole> projectRoles );
 }

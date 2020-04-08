@@ -25,7 +25,7 @@ public final class DeleteProjectPermissionRolesCommand
     {
         for ( ProjectRole projectRole : ProjectRole.values() )
         {
-            final PrincipalKey roleKey = createRoleKey( projectRole );
+            final PrincipalKey roleKey = ProjectAccessHelper.createRoleKey( projectName, projectRole );
             if ( securityService.getRole( roleKey ).isPresent() )
             {
                 securityService.deletePrincipal( PrincipalKey.ofRole( roleKey.getId() ) );

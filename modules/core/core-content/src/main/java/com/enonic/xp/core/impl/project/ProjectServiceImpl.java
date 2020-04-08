@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.project;
 
+import java.util.EnumSet;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,7 @@ import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
+import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repository.DeleteRepositoryParams;
@@ -89,6 +91,10 @@ public class ProjectServiceImpl
             setIndexService( indexService ).
             setNodeService( nodeService ).
             repositoryId( params.getName().getRepoId() ).
+            accessControlList( CreateProjectIssuesAccessListCommand.create().
+                projectName( params.getName() ).
+                build().
+                execute() ).
             build().
             initialize();
 
@@ -146,10 +152,11 @@ public class ProjectServiceImpl
 
             return Projects.create().
                 addAll( projects.stream().
-                    filter( project -> projectPermissionsContextManager.hasAdminAccess( authenticationInfo ) ||
+                    filter( project -> ProjectAccessHelper.hasAdminAccess( authenticationInfo ) ||
                         ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( project.getName() )
-                            ? projectPermissionsContextManager.hasManagerAccess( authenticationInfo )
-                            : projectPermissionsContextManager.hasAnyProjectPermission( project.getName(), authenticationInfo ) ) ).
+                            ? ProjectAccessHelper.hasManagerAccess( authenticationInfo )
+                            : projectPermissionsContextManager.hasAnyProjectRole( authenticationInfo, project.getName(),
+                                                                                  EnumSet.allOf( ProjectRole.class ) ) ) ).
                     collect( Collectors.toSet() ) ).
                 build();
         } );

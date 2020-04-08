@@ -59,6 +59,7 @@ public class ApplicationServiceImplTest
         this.service.setRepoService( this.repoService );
         this.eventPublisher = mock( EventPublisher.class );
         this.service.setEventPublisher( this.eventPublisher );
+        this.service.setApplicationListenerHub( new ApplicationListenerHub() );
     }
 
     @Test
@@ -656,7 +657,7 @@ public class ApplicationServiceImplTest
 
         final Application app = service.getInstalledApplication( key );
 
-        assertEquals( ConfigBuilder.create().add( "a", "b" ).build(), app.getConfig() );
+        assertThrows( RuntimeException.class, app::getConfig );
     }
 
     @Test

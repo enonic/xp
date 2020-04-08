@@ -53,7 +53,7 @@ public final class UpdateProjectPermissionsCommand
 
     private Set<PrincipalKey> doSetRoleMembers( final ProjectRole projectRole )
     {
-        final PrincipalKey roleKey = createRoleKey( projectRole );
+        final PrincipalKey roleKey = ProjectAccessHelper.createRoleKey( projectName, projectRole );
         final PrincipalRelationships currRoleMembers = securityService.getRelationships( roleKey );
         final PrincipalKeys newRoleMembers = this.permissions.getPermission( projectRole );
 

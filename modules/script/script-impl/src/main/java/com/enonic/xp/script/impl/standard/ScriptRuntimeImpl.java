@@ -6,20 +6,21 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.impl.ScriptRuntimeInternal;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
 import com.enonic.xp.script.impl.executor.ScriptExecutorManager;
 import com.enonic.xp.script.impl.util.JsObjectConverter;
-import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptSettings;
 
 final class ScriptRuntimeImpl
-    implements ScriptRuntime
+    implements ScriptRuntimeInternal
 {
     private final ScriptExecutorManager executorManager;
 
-    ScriptRuntimeImpl()
+    ScriptRuntimeImpl( final ApplicationService applicationService, final ResourceService resourceService,
+                       final ScriptSettings scriptSettings )
     {
-        this.executorManager = new ScriptExecutorManager();
+        this.executorManager = new ScriptExecutorManager( applicationService, resourceService, scriptSettings );
     }
 
     @Override
@@ -56,18 +57,9 @@ final class ScriptRuntimeImpl
         return new JsObjectConverter( executor.getJavascriptHelper() ).toJs( value );
     }
 
-    void setApplicationService( final ApplicationService applicationService )
+    @Override
+    public void runDisposers( final ApplicationKey key )
     {
-        this.executorManager.setApplicationService( applicationService );
-    }
-
-    void setResourceService( final ResourceService resourceService )
-    {
-        this.executorManager.setResourceService( resourceService );
-    }
-
-    void setScriptSettings( final ScriptSettings scriptSettings )
-    {
-        this.executorManager.setScriptSettings( scriptSettings );
+        this.executorManager.runDisposers( key );
     }
 }

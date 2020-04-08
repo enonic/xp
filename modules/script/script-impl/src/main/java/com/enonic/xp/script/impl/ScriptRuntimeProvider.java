@@ -9,9 +9,11 @@ import com.enonic.xp.script.runtime.ScriptSettings;
  */
 public interface ScriptRuntimeProvider
 {
-    ScriptRuntime create( ScriptSettings settings );
+    ScriptRuntimeInternal create( ScriptSettings settings );
 
     void dispose( ScriptRuntime runtime );
 
     void invalidate( ApplicationKey key );
+
+    void runDisposers( ApplicationKey key );
 }
