@@ -6,6 +6,7 @@ dependencies {
     compile project( ':core:core-event' )
     compile project( ':core:core-media' )
     compile project( ':core:core-site' )
+    compile project( ':core:core-project' )
 
     testImplementation( testFixtures( project(":core:core-blobstore") ) )
     testImplementation( testFixtures( project(":core:core-repo") ) )

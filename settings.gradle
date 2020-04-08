@@ -32,6 +32,7 @@ include 'core:core-macro'
 include 'core:core-task'
 include 'core:core-cluster'
 include 'core:core-internal'
+include 'core:core-project'
 
 include 'server:server-config'
 include 'server:server-deploy'

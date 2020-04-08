@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.issue;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.issue.IssueConstants;
 import com.enonic.xp.issue.IssueQuery;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.IssueType;
@@ -16,11 +17,11 @@ import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
-import static com.enonic.xp.core.impl.issue.IssuePropertyNames.APPROVERS;
-import static com.enonic.xp.core.impl.issue.IssuePropertyNames.CREATOR;
-import static com.enonic.xp.core.impl.issue.IssuePropertyNames.PUBLISH_REQUEST_ITEM_ID;
-import static com.enonic.xp.core.impl.issue.IssuePropertyNames.STATUS;
-import static com.enonic.xp.core.impl.issue.IssuePropertyNames.TYPE;
+import static com.enonic.xp.issue.IssuePropertyNames.APPROVERS;
+import static com.enonic.xp.issue.IssuePropertyNames.CREATOR;
+import static com.enonic.xp.issue.IssuePropertyNames.PUBLISH_REQUEST_ITEM_ID;
+import static com.enonic.xp.issue.IssuePropertyNames.STATUS;
+import static com.enonic.xp.issue.IssuePropertyNames.TYPE;
 import static java.util.stream.Collectors.toList;
 
 final class IssueQueryNodeQueryTranslator
