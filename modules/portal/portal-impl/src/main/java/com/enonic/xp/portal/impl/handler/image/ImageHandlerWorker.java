@@ -24,7 +24,6 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
-import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
@@ -90,19 +89,18 @@ final class ImageHandlerWorker
             return PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
         }
 
-        final String mimeType = getMimeType( this.name, imageContent.getName(), attachment );
-        final String format = getFormat( this.name, mimeType );
+        final String fileExtension = Files.getFileExtension( this.name ).toLowerCase();
         final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary, imageContent );
 
         final PortalResponse.Builder portalResponse = PortalResponse.create().
-            contentType( MediaType.parse( mimeType ) );
+            contentType( MediaType.parse( attachment.getMimeType() ) );
 
-        if ( "svgz".equals( format ) )
+        if ( "svgz".equals( fileExtension ) )
         {
             portalResponse.header( "Content-Encoding", "gzip" );
             portalResponse.body( binary );
         }
-        else if ( "svg".equals( format ) )
+        else if ( "svg".equals( fileExtension ) )
         {
             portalResponse.body( binary );
         }
@@ -116,7 +114,7 @@ final class ImageHandlerWorker
                 focalPoint( imageContent.getFocalPoint() ).
                 filterParam( this.filterParam ).
                 backgroundColor( getBackgroundColor() ).
-                format( format ).
+                mimeType( attachment.getMimeType() ).
                 quality( getImageQuality() ).
                 orientation( imageOrientation ).
                 build();
@@ -140,18 +138,6 @@ final class ImageHandlerWorker
         }
 
         return portalResponse.build();
-    }
-
-    private String getFormat( final String fileName, final String mimeType )
-        throws Exception
-    {
-        String format = Files.getFileExtension( fileName ).toLowerCase();
-        if ( isNullOrEmpty( format ) )
-        {
-            format = this.imageService.getFormatByMimeType( mimeType );
-        }
-
-        return format;
     }
 
     private int getImageQuality()
@@ -240,10 +226,5 @@ final class ImageHandlerWorker
     {
         final String contentNameStr = contentName.toString();
         return contentNameStr.equals( urlName ) || contentNameStr.equals( Files.getNameWithoutExtension( urlName ) );
-    }
-
-    private String getMimeType( final String fileName, final ContentName contentName, final Attachment attachment )
-    {
-        return contentName.toString().equals( fileName ) ? attachment.getMimeType() : MediaTypes.instance().fromFile( fileName ).toString();
     }
 }

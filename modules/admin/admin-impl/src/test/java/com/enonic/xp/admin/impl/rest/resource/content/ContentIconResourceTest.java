@@ -42,7 +42,6 @@ import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
 
 public class ContentIconResourceTest
     extends AdminResourceTestSupport
@@ -77,7 +76,6 @@ public class ContentIconResourceTest
         Content content = createContent( "content-id", thumbnail, "my-content-type" );
 
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
-        Mockito.when( imageService.getFormatByMimeType( eq( "image/png" ) ) ).thenReturn( "format" );
 
         ByteSource byteSource = ByteSource.wrap( new byte[]{1, 2, 3} );
         Mockito.when( imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenReturn( byteSource );
@@ -106,7 +104,6 @@ public class ContentIconResourceTest
         Content content = createContent( "content-id", ContentTypeName.imageMedia().toString() );
 
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
-        Mockito.when( imageService.getFormatByMimeType( eq( "image/png" ) ) ).thenReturn( "format" );
 
         ByteSource byteSource = ByteSource.wrap( new byte[]{1, 2, 3} );
         Mockito.when( imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenReturn( byteSource );
@@ -175,7 +172,6 @@ public class ContentIconResourceTest
         Content content = createContent( "content-id", thumbnail, "my-content-type" );
 
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
-        Mockito.when( imageService.getFormatByMimeType( eq( "image/png" ) ) ).thenReturn( "format" );
 
         Mockito.when( imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenThrow( new IOException( "io error message" ) );
 

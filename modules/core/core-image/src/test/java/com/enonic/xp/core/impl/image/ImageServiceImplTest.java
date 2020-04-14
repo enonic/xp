@@ -19,8 +19,6 @@ import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ImageServiceImplTest
 {
@@ -63,30 +61,11 @@ public class ImageServiceImplTest
     }
 
     @Test
-    public void testGetFormatByMineType()
-        throws IOException
-    {
-        final String format = imageService.getFormatByMimeType( "image/jpeg" );
-        assertEquals( "JPEG", format );
-
-        boolean ioExceptionCaught = false;
-        try
-        {
-            imageService.getFormatByMimeType( "image/unknown" );
-        }
-        catch ( IOException e )
-        {
-            ioExceptionCaught = true;
-        }
-        assertTrue( ioExceptionCaught );
-    }
-
-    @Test
     public void testReadImageMinimal()
         throws IOException
     {
         final ReadImageParams readImageParams =
-            ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference ).format( "png" ).build();
+            ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference ).mimeType( "image/png" ).build();
         final ByteSource imageData = imageService.readImage( readImageParams );
 
         assertArrayEquals( imageDataOriginal, imageData.read() );
@@ -104,7 +83,7 @@ public class ImageServiceImplTest
             cropping( cropping ).
             scaleSize( 128 ).
             filterParam( "blur(10)" ).
-            format( "JPEG" ).
+            mimeType( "image/jpeg" ).
             backgroundColor( 0xFF0000 ).
             quality( 5 ).
             orientation( ImageOrientation.BottomLeft ).

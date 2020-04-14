@@ -25,7 +25,7 @@ public class ReadImageParamsTest
             scaleWidth( true ).
             filterParam( "filterParam" ).
             backgroundColor( 0xFF0000 ).
-            format( "format" ).
+            mimeType( "image/png" ).
             quality( 2 ).
             orientation( ImageOrientation.BottomRight ).
             build();
@@ -41,7 +41,7 @@ public class ReadImageParamsTest
         assertTrue( readImageParams.isScaleWidth() );
         assertEquals( "filterParam", readImageParams.getFilterParam() );
         assertEquals( 0xFF0000, readImageParams.getBackgroundColor() );
-        assertEquals( "format", readImageParams.getFormat() );
+        assertEquals( "image/png", readImageParams.getMimeType() );
         assertEquals( 2, readImageParams.getQuality() );
         assertEquals( ImageOrientation.BottomRight, readImageParams.getOrientation() );
     }
