@@ -109,7 +109,7 @@ final class CreateContentCommand
         final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedParams );
 
         final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams ).
-            contentTypeService(this.contentTypeService ).
+            contentTypeService( this.contentTypeService ).
             pageDescriptorService( this.pageDescriptorService ).
             xDataService( this.xDataService ).
             partDescriptorService( this.partDescriptorService ).
@@ -325,7 +325,7 @@ final class CreateContentCommand
     private Locale getDefaultLanguage( final CreateContentParams createContentParams )
     {
         ContentPath parentPath = createContentParams.getParent();
-        if ( createContentParams.getLanguage() == null && !parentPath.isRoot() )
+        if ( createContentParams.getLanguage() == null )
         {
             final Content parent = getContent( parentPath );
 

@@ -715,7 +715,9 @@ class ProjectServiceImplTest
     private Project doCreateProject( final ProjectName name )
     {
         return doCreateProject( name, ProjectPermissions.create().
-            addOwner( REPO_TEST_OWNER.getKey() ).addViewer( "user:system:custom1" ).addViewer( "user:system:custom2" ).
+            addOwner( REPO_TEST_OWNER.getKey() ).
+            addViewer( PrincipalKey.from( "user:system:custom1" ) ).
+            addViewer( PrincipalKey.from( "user:system:custom2" ) ).
             build() );
     }
 

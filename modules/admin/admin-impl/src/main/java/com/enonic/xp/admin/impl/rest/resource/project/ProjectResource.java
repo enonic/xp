@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.project;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -22,11 +22,12 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.project.json.DeleteProjectParamsJson;
+import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyLanguageParamsJson;
+import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyPermissionsParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectReadAccessJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectsJson;
@@ -40,16 +41,13 @@ import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
-
-import static com.enonic.xp.project.ProjectConstants.PROJECT_ACCESS_LEVEL_AUTHOR_PROPERTY;
-import static com.enonic.xp.project.ProjectConstants.PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY;
-import static com.enonic.xp.project.ProjectConstants.PROJECT_ACCESS_LEVEL_EDITOR_PROPERTY;
-import static com.enonic.xp.project.ProjectConstants.PROJECT_ACCESS_LEVEL_OWNER_PROPERTY;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(ResourceConstants.REST_ROOT + "project")
@@ -76,22 +74,7 @@ public final class ProjectResource
         throws Exception
     {
         final Project project = projectService.create( createParams( form ) );
-
-        final ProjectPermissions.Builder projectPermissionsBuilder = getPermissionsFromForm( form );
-        final ProjectReadAccess readAccess = getReadAccessFromForm( form );
-
-        final ProjectPermissions projectPermissions =
-            projectService.modifyPermissions( project.getName(), doAddViewerRoleMembers( projectPermissionsBuilder, readAccess ).build() );
-
-        ApplyProjectReadAccessPermissionsCommand.create().
-            projectName( project.getName() ).
-            readAccess( readAccess ).
-            taskService( taskService ).
-            contentService( contentService ).
-            build().
-            execute();
-
-        return new ProjectJson( project, projectPermissions, readAccess.getType() );
+        return doCreateJson( project );
     }
 
     @POST
@@ -104,36 +87,27 @@ public final class ProjectResource
 
         if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( modifiedProject.getName() ) )
         {
-            return doCreateJson( modifiedProject, null, null );
+            return doCreateJson( modifiedProject, null, null, doFetchLanguage( modifiedProject.getName() ) );
         }
 
-        final ProjectPermissions.Builder projectPermissionsBuilder = getPermissionsFromForm( form );
-        final ProjectReadAccess readAccess = getReadAccessFromForm( form );
-
-        final ProjectPermissions modifiedProjectPermissions = this.projectService.modifyPermissions( modifiedProject.getName(),
-                                                                                                     doAddViewerRoleMembers(
-                                                                                                         projectPermissionsBuilder,
-                                                                                                         readAccess ).build() );
-        ApplyProjectReadAccessPermissionsCommand.create().
-            projectName( modifiedProject.getName() ).
-            readAccess( readAccess ).
-            taskService( taskService ).
-            contentService( contentService ).
-            build().
-            execute();
-
-        return doCreateJson( modifiedProject, modifiedProjectPermissions, readAccess.getType() );
+        return doCreateJson( modifiedProject );
     }
 
-    private ProjectPermissions.Builder doAddViewerRoleMembers( final ProjectPermissions.Builder builder,
-                                                               final ProjectReadAccess readAccess )
+    @POST
+    @Path("modifyLanguage")
+    public String modifyLanguage( final ModifyLanguageParamsJson params )
     {
-        if ( ProjectReadAccessType.CUSTOM.equals( readAccess.getType() ) )
-        {
-            readAccess.getPrincipals().forEach( builder::addViewer );
-        }
+        return doApplyLanguage( params.getName(), params.getLanguage() ).
+            map( Locale::toLanguageTag ).
+            orElse( null );
+    }
 
-        return builder;
+    @POST
+    @Path("modifyPermissions")
+    public TaskResultJson modifyPermissions( final ModifyPermissionsParamsJson params )
+    {
+        doApplyPermissions( params.getName(), params.getPermissions() );
+        return doApplyReadAccess( params.getName(), params.getReadAccess() );
     }
 
     @POST
@@ -208,47 +182,10 @@ public final class ProjectResource
             orElseGet( readAccess::build );
     }
 
-    private ProjectPermissions.Builder getPermissionsFromForm( final MultipartForm form )
-        throws IOException
-    {
-        final ProjectPermissions.Builder builder = new ProjectPermissions.Builder();
-        final String permissionsAsString = form.getAsString( "permissions" );
-        if ( permissionsAsString == null )
-        {
-            return builder;
-        }
-
-        final Map<String, List<String>> map = MAPPER.readValue( permissionsAsString, new TypeReference<Map<String, List<String>>>()
-        {
-        } );
-
-        if ( map.containsKey( PROJECT_ACCESS_LEVEL_OWNER_PROPERTY ) )
-        {
-            map.get( PROJECT_ACCESS_LEVEL_OWNER_PROPERTY ).forEach( builder::addOwner );
-        }
-
-        if ( map.containsKey( PROJECT_ACCESS_LEVEL_EDITOR_PROPERTY ) )
-        {
-            map.get( PROJECT_ACCESS_LEVEL_EDITOR_PROPERTY ).forEach( builder::addEditor );
-        }
-
-        if ( map.containsKey( PROJECT_ACCESS_LEVEL_AUTHOR_PROPERTY ) )
-        {
-            map.get( PROJECT_ACCESS_LEVEL_AUTHOR_PROPERTY ).forEach( builder::addAuthor );
-        }
-
-        if ( map.containsKey( PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY ) )
-        {
-            map.get( PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY ).forEach( builder::addContributor );
-        }
-
-        return builder;
-    }
-
     private ProjectJson doCreateJson( final Project project, final ProjectPermissions projectPermissions,
-                                      final ProjectReadAccessType readAccessType )
+                                      final ProjectReadAccessType readAccessType, final Locale language )
     {
-        return new ProjectJson( project, projectPermissions, readAccessType );
+        return new ProjectJson( project, projectPermissions, readAccessType, language );
     }
 
     private ProjectJson doCreateJson( final Project project )
@@ -260,17 +197,76 @@ public final class ProjectResource
 
         if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
         {
-            projectPermissions = this.projectService.getPermissions( projectName );
-            readAccessType = GetProjectReadAccessCommand.create().
-                viewerRoleMembers( projectPermissions.getViewer() ).
-                projectName( projectName ).
-                contentService( contentService ).
-                build().
-                execute().
-                getType();
+            projectPermissions = doFetchPermissions( projectName );
+            readAccessType = doFetchReadAccess( projectName, projectPermissions.getViewer() ).getType();
         }
 
-        return doCreateJson( project, projectPermissions, readAccessType );
+        final Locale language = doFetchLanguage( projectName );
+
+        return doCreateJson( project, projectPermissions, readAccessType, language );
+    }
+
+    private ProjectPermissions doFetchPermissions( final ProjectName projectName )
+    {
+        return this.projectService.getPermissions( projectName );
+    }
+
+    private ProjectReadAccess doFetchReadAccess( final ProjectName projectName, final PrincipalKeys viewerRoleMembers )
+    {
+        return GetProjectReadAccessCommand.create().
+            viewerRoleMembers( viewerRoleMembers ).
+            projectName( projectName ).
+            contentService( contentService ).
+            build().
+            execute();
+    }
+
+    private Locale doFetchLanguage( final ProjectName projectName )
+    {
+        return GetProjectLanguageCommand.create().
+            projectName( projectName ).
+            contentService( contentService ).
+            build().
+            execute();
+    }
+
+    private ProjectPermissions doApplyPermissions( final ProjectName projectName, final ProjectPermissions projectPermissions )
+    {
+        return projectService.modifyPermissions( projectName, projectPermissions );
+    }
+
+    private Optional<Locale> doApplyLanguage( final ProjectName projectName, final Locale language )
+    {
+        final Locale result = ApplyProjectLanguageCommand.create().
+            projectName( projectName ).
+            language( language ).
+            contentService( contentService ).
+            build().
+            execute();
+
+        return Optional.ofNullable( result );
+    }
+
+    private TaskResultJson doApplyReadAccess( final ProjectName projectName, final ProjectReadAccess readAccess )
+    {
+        return ApplyProjectReadAccessPermissionsCommand.create().
+            projectName( projectName ).
+            readAccess( readAccess ).
+            taskService( taskService ).
+            contentService( contentService ).
+            build().
+            execute();
+    }
+
+    private ProjectPermissions.Builder doAddViewerRoleMembers( final ProjectPermissions.Builder builder,
+                                                               final ProjectReadAccess readAccess )
+    {
+        if ( ProjectReadAccessType.CUSTOM.equals( readAccess.getType() ) )
+        {
+            readAccess.getPrincipals().forEach( builder::addViewer );
+        }
+
+        return builder;
     }
 
     @Reference

@@ -105,7 +105,7 @@ public class CreateContentCommandTest
         CreateContentCommand command = createContentCommand( createContentParams().build() );
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( null );
         // exercise
-        assertThrows(IllegalArgumentException.class, () -> command.execute());
+        assertThrows( IllegalArgumentException.class, () -> command.execute() );
     }
 
     @Test
@@ -126,7 +126,7 @@ public class CreateContentCommandTest
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
             ContentType.create().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build() );
 
-        assertThrows(ContentNotFoundException.class, () -> command.execute());
+        assertThrows( ContentNotFoundException.class, () -> command.execute() );
     }
 
     @Test
@@ -141,6 +141,7 @@ public class CreateContentCommandTest
             build();
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
+        mockContentRootNode();
         // exercise
         final Content createdContent = command.execute();
         assertEquals( ContentName.from( "displayname" ), createdContent.getName() );
@@ -156,9 +157,8 @@ public class CreateContentCommandTest
                 allowChildContent( false ).
                 build() );
 
-        final NodePath sitePath = initContent( ContentTypeName.site(),"site", ContentConstants.CONTENT_ROOT_PATH );
-        final NodePath templatePath =
-            initContent( ContentTypeName.pageTemplate(),"template", sitePath );
+        final NodePath sitePath = initContent( ContentTypeName.site(), "site", ContentConstants.CONTENT_ROOT_PATH );
+        final NodePath templatePath = initContent( ContentTypeName.pageTemplate(), "template", sitePath );
 
         final CreateContentParams params = CreateContentParams.create().
             type( ContentTypeName.folder() ).
@@ -185,7 +185,7 @@ public class CreateContentCommandTest
                 allowChildContent( false ).
                 build() );
 
-        initContent( ContentTypeName.pageTemplate(),"template", ContentConstants.CONTENT_ROOT_PATH );
+        initContent( ContentTypeName.pageTemplate(), "template", ContentConstants.CONTENT_ROOT_PATH );
 
         final CreateContentParams params = CreateContentParams.create().
             type( ContentTypeName.folder() ).
@@ -197,7 +197,7 @@ public class CreateContentCommandTest
 
         CreateContentCommand command = createContentCommand( params );
 
-        assertThrows(IllegalArgumentException.class, () -> command.execute());
+        assertThrows( IllegalArgumentException.class, () -> command.execute() );
     }
 
     @Test
@@ -210,7 +210,7 @@ public class CreateContentCommandTest
                 allowChildContent( false ).
                 build() );
 
-        initContent( ContentTypeName.folder(),"folder", ContentConstants.CONTENT_ROOT_PATH );
+        initContent( ContentTypeName.folder(), "folder", ContentConstants.CONTENT_ROOT_PATH );
 
         final CreateContentParams params = CreateContentParams.create().
             type( ContentTypeName.folder() ).
@@ -221,7 +221,7 @@ public class CreateContentCommandTest
             build();
 
         CreateContentCommand command = createContentCommand( params );
-        assertThrows(IllegalArgumentException.class, () -> command.execute());
+        assertThrows( IllegalArgumentException.class, () -> command.execute() );
     }
 
     @Test
@@ -235,6 +235,8 @@ public class CreateContentCommandTest
             name( ContentTypeName.dataMedia() ).
             build();
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+
+        mockContentRootNode();
 
         // exercise
         final Content createdContent = command.execute();
@@ -260,7 +262,8 @@ public class CreateContentCommandTest
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
             ContentType.create().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build() );
 
-        // exercise
+        mockContentRootNode();
+
         final Content createdContent = command.execute();
         assertEquals( ContentName.from( "myname" ), createdContent.getName() );
     }
@@ -475,6 +478,26 @@ public class CreateContentCommandTest
             build();
     }
 
+    private void mockContentRootNode()
+    {
+
+        final PropertyTree tree = new PropertyTree();
+        tree.addString( ContentPropertyNames.TYPE, "folder" );
+        tree.addString( ContentPropertyNames.CREATOR, "user:system:user1" );
+        tree.addSet( ContentPropertyNames.DATA, new PropertySet() );
+
+        final Node contentRootNode = Node.create().
+            id( NodeId.from( "id1" ) ).
+            name( "content" ).
+            path( "/content" ).
+            parentPath( NodePath.ROOT ).
+            data( tree ).
+            build();
+
+        Mockito.when( nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) ).thenReturn( contentRootNode );
+
+    }
+
     private NodePath initContent( final ContentTypeName contentTypeName, final String name, final NodePath parentPath )
     {
         final PropertyTree nodeData = new PropertyTree();
@@ -485,7 +508,7 @@ public class CreateContentCommandTest
         final Node node = Node.create().
             id( NodeId.from( name ) ).
             name( name ).
-            parentPath(parentPath ).
+            parentPath( parentPath ).
             data( nodeData ).
             build();
 

@@ -9,7 +9,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
 
 public final class GetProjectReadAccessCommand
-    extends AbstractProjectReadAccessCommand
+    extends AbstractProjectRootCommand
 {
     private PrincipalKeys viewerRoleMembers;
 
@@ -57,7 +57,7 @@ public final class GetProjectReadAccessCommand
     }
 
     public static final class Builder
-        extends AbstractProjectReadAccessCommand.Builder<Builder>
+        extends AbstractProjectRootCommand.Builder<Builder>
     {
         private PrincipalKeys viewerRoleMembers;
 

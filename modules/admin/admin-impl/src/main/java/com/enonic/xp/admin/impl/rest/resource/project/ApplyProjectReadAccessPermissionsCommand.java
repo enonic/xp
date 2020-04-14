@@ -15,7 +15,7 @@ import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 
 public final class ApplyProjectReadAccessPermissionsCommand
-    extends AbstractProjectReadAccessCommand
+    extends AbstractProjectRootCommand
 {
     private final ProjectReadAccess readAccess;
 
@@ -47,8 +47,6 @@ public final class ApplyProjectReadAccessPermissionsCommand
                 ? doAddEveryonePermissions( contentRoot.getId(), contentRoot.getPermissions() )
                 : doRemoveEveryonePermissions( contentRoot.getId(), contentRoot.getPermissions() );
 
-        if ( !contentRoot.getPermissions().equals( newList ) )
-        {
             return ApplyPermissionsRunnableTask.create().
                 params( ApplyContentPermissionsParams.create().
                     permissions( newList ).
@@ -60,35 +58,28 @@ public final class ApplyProjectReadAccessPermissionsCommand
                 contentService( contentService ).
                 build().
                 createTaskResult();
-        }
-
-        return null;
     }
 
     private AccessControlList doRemoveEveryonePermissions( final ContentId contentId, final AccessControlList permissions )
     {
-        return permissions.getEntry( RoleKeys.EVERYONE ) != null && permissions.getEntry( RoleKeys.EVERYONE ).
-            isAllowed( Permission.READ ) ?
-
-            AccessControlList.create( permissions ).
-                remove( RoleKeys.EVERYONE ).
-                build() : permissions;
+        return AccessControlList.create( permissions ).
+            remove( RoleKeys.EVERYONE ).
+            build();
 
     }
 
     private AccessControlList doAddEveryonePermissions( final ContentId contentId, final AccessControlList permissions )
     {
-        return permissions.getEntry( RoleKeys.EVERYONE ) == null || !permissions.getEntry( RoleKeys.EVERYONE ).
-            isAllowed( Permission.READ ) ? AccessControlList.create( permissions ).
+        return AccessControlList.create( permissions ).
             add( AccessControlEntry.create().
                 principal( RoleKeys.EVERYONE ).
                 allow( Permission.READ ).
                 build() ).
-            build() : permissions;
+            build();
     }
 
     public static final class Builder
-        extends AbstractProjectReadAccessCommand.Builder<Builder>
+        extends AbstractProjectRootCommand.Builder<Builder>
     {
         private ProjectReadAccess readAccess;
 
