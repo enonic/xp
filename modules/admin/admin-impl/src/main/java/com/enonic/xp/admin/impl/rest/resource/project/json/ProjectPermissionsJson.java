@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.project.ProjectPermissions;
+import com.enonic.xp.security.PrincipalKey;
 
 public class ProjectPermissionsJson
 {
@@ -23,11 +24,21 @@ public class ProjectPermissionsJson
     {
         final ProjectPermissions.Builder builder = ProjectPermissions.create();
 
-        Optional.ofNullable( ownerList ).ifPresent( list -> list.forEach( builder::addOwner ) );
-        Optional.ofNullable( editorList ).ifPresent( list -> list.forEach( builder::addEditor ) );
-        Optional.ofNullable( authorList ).ifPresent( list -> list.forEach( builder::addAuthor ) );
-        Optional.ofNullable( contributorList ).ifPresent( list -> list.forEach( builder::addContributor ) );
-        Optional.ofNullable( viewerList ).ifPresent( list -> list.forEach( builder::addViewer ) );
+        Optional.ofNullable( ownerList ).ifPresent( list -> list.stream().
+            map( PrincipalKey::from ).
+            forEach( builder::addOwner ) );
+        Optional.ofNullable( editorList ).ifPresent( list -> list.stream().
+            map( PrincipalKey::from ).
+            forEach( builder::addEditor ) );
+        Optional.ofNullable( authorList ).ifPresent( list -> list.stream().
+            map( PrincipalKey::from ).
+            forEach( builder::addAuthor ) );
+        Optional.ofNullable( contributorList ).ifPresent( list -> list.stream().
+            map( PrincipalKey::from ).
+            forEach( builder::addContributor ) );
+        Optional.ofNullable( viewerList ).ifPresent( list -> list.stream().
+            map( PrincipalKey::from ).
+            forEach( builder::addViewer ) );
 
         this.permissions = builder.build();
     }
