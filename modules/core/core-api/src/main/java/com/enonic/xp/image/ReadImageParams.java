@@ -30,6 +30,8 @@ public class ReadImageParams
 
     private final String format;
 
+    private final String mimeType;
+
     private final int quality;
 
     private final ImageOrientation orientation;
@@ -48,6 +50,7 @@ public class ReadImageParams
         this.backgroundColor = builder.backgroundColor;
         this.format = builder.format;
         this.quality = builder.quality;
+        this.mimeType = builder.mimeType;
         this.orientation = builder.orientation != null ? builder.orientation : ImageOrientation.TopLeft;
     }
 
@@ -101,6 +104,12 @@ public class ReadImageParams
         return backgroundColor;
     }
 
+    public String getMimeType()
+    {
+        return mimeType;
+    }
+
+    @Deprecated
     public String getFormat()
     {
         return format;
@@ -144,6 +153,8 @@ public class ReadImageParams
         private int backgroundColor;
 
         private String format;
+
+        private String mimeType;
 
         private ImageOrientation orientation;
 
@@ -213,9 +224,16 @@ public class ReadImageParams
             return this;
         }
 
+        @Deprecated
         public Builder format( String format )
         {
             this.format = format;
+            return this;
+        }
+
+        public Builder mimeType( final String mimeType )
+        {
+            this.mimeType = mimeType;
             return this;
         }
 
@@ -235,7 +253,7 @@ public class ReadImageParams
         {
             Preconditions.checkNotNull( contentId, "contentId cannot be null" );
             Preconditions.checkNotNull( binaryReference, "binaryReference cannot be null" );
-            Preconditions.checkNotNull( format, "format cannot be null" );
+            Preconditions.checkNotNull( mimeType, "mimeType cannot be null" );
             return new ReadImageParams( this );
         }
     }

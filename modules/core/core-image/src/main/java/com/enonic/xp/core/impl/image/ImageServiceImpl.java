@@ -12,9 +12,7 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageInputStream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -53,22 +51,22 @@ public class ImageServiceImpl
     public ByteSource readImage( final ReadImageParams readImageParams )
         throws IOException
     {
+        if ( renderAsSource( readImageParams ) )
+        {
+            return contentService.getBinary( readImageParams.getContentId(), readImageParams.getBinaryReference() );
+        }
+
         final Path cachedImagePath = getCachedImagePath( readImageParams );
-        ByteSource imageByteSource = ImmutableFilesHelper.computeIfAbsent( cachedImagePath, () -> createImage( readImageParams ) );
-        return imageByteSource;
+        return ImmutableFilesHelper.computeIfAbsent( cachedImagePath, () -> createImage( readImageParams ) );
     }
 
     private ByteSource createImage( final ReadImageParams readImageParams )
         throws IOException
     {
         final ByteSource blob = contentService.getBinary( readImageParams.getContentId(), readImageParams.getBinaryReference() );
+
         if ( blob != null )
         {
-            if ( renderAsSourceGif( readImageParams ) && isGifImage( blob ) )
-            {
-                return blob;
-            }
-
             final BufferedImage bufferedImage = readBufferedImage( blob, readImageParams );
             if ( bufferedImage != null )
             {
@@ -78,42 +76,20 @@ public class ImageServiceImpl
         return null;
     }
 
-    private boolean renderAsSourceGif( final ReadImageParams params )
+    private boolean renderAsSource( final ReadImageParams params )
     {
-        final boolean noScale =
-            ( params.getScaleParams() == null || "full".equals( params.getScaleParams().getName() ) ) && !params.isScaleSquare() &&
-                !params.isScaleWidth();
-        final boolean noCropping = params.getCropping() == null;
-        final boolean noFilter = params.getFilterParam() == null;
-        final boolean isGifFormat = "gif".equals( params.getFormat() );
-
-        return isGifFormat && noScale && noCropping && noFilter;
+        return "image/gif".equals( params.getMimeType() );
     }
 
-    private boolean isGifImage( final ByteSource blob )
-    {
-        try
-        {
-            final ImageInputStream iis = ImageIO.createImageInputStream( blob.openStream() );
-            final Iterator<ImageReader> imageReaders = ImageIO.getImageReaders( iis );
-            while ( imageReaders.hasNext() )
-            {
-                final ImageReader reader = imageReaders.next();
-                if ( "gif".equals( reader.getFormatName() ) )
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        catch ( IOException e )
-        {
-            return false;
-        }
-    }
-
+    @Deprecated
     @Override
     public String getFormatByMimeType( final String mimeType )
+        throws IOException
+    {
+        return doGetFormatByMimeType( mimeType );
+    }
+
+    private String doGetFormatByMimeType( final String mimeType )
         throws IOException
     {
         final Iterator<ImageWriter> i = ImageIO.getImageWritersByMIMEType( mimeType );
@@ -126,6 +102,7 @@ public class ImageServiceImpl
     }
 
     private Path getCachedImagePath( final ReadImageParams readImageParams )
+        throws IOException
     {
         final String homeDir = HomeDir.get().toString();
 
@@ -157,9 +134,7 @@ public class ImageServiceImpl
         //Filter string value
         final String filter = readImageParams.getFilterParam() != null ? readImageParams.getFilterParam() : "no-filter";
 
-        //Format string value
-        final String format = readImageParams.getFormat();
-
+        final String format = doGetFormatByMimeType( readImageParams.getMimeType() );
         //Background string value
         final String background = "background-" + readImageParams.getBackgroundColor();
 
@@ -217,7 +192,7 @@ public class ImageServiceImpl
             }
 
             //Applies alpha channel removal
-            if ( !ImageHelper.supportsAlphaChannel( readImageParams.getFormat() ) )
+            if ( !"image/png".equals( readImageParams.getMimeType() ) )
             {
                 bufferedImage = ImageHelper.removeAlphaChannel( bufferedImage, readImageParams.getBackgroundColor() );
             }
@@ -334,13 +309,15 @@ public class ImageServiceImpl
     {
         final ByteSource serializedImage;
         //TODO If/Else due to a difference of treatment between admin and portal. Should be uniform
+
+        final String format = doGetFormatByMimeType( readImageParams.getMimeType() );
         if ( readImageParams.getQuality() != 0 )
         {
-            serializedImage = serializeImage( bufferedImage, readImageParams.getFormat(), readImageParams.getQuality() );
+            serializedImage = serializeImage( bufferedImage, format, readImageParams.getQuality() );
         }
         else
         {
-            serializedImage = serializeImage( bufferedImage, readImageParams.getFormat() );
+            serializedImage = serializeImage( bufferedImage, format );
         }
         return serializedImage;
     }

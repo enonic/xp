@@ -151,7 +151,6 @@ public final class ContentImageResource
                     final Cropping cropping = (!source && crop) ? media.getCropping() : null;
                     final ImageOrientation imageOrientation = source ? null : mediaInfoService.getImageOrientation( binary, media );
                     final FocalPoint focalPoint = source ? null : media.getFocalPoint();
-                    final String format = imageService.getFormatByMimeType( attachment.getMimeType() );
                     final String filterParam = filter;
                     final int sizeParam = (size > 0) ? size : (source ? 0 : getOriginalWidth( media ));
                     final ScaleParams scaleParam = parseScaleParam( media, scale, sizeParam );
@@ -164,7 +163,7 @@ public final class ContentImageResource
                         focalPoint( focalPoint ).
                         scaleSize( sizeParam ).
                         scaleWidth( scaleWidth ).
-                        format( format ).
+                        mimeType( attachment.getMimeType() ).
                         orientation( imageOrientation ).
                         filterParam( filterParam ).
                         build();

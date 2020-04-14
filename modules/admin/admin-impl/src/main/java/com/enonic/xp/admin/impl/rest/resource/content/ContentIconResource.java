@@ -149,15 +149,13 @@ public final class ContentIconResource
             }
             else
             {
-                final String format = imageService.getFormatByMimeType( params.mimeType );
-
                 final ReadImageParams readImageParams = ReadImageParams.newImageParams().
                     contentId( params.id ).
                     binaryReference( params.binaryReference ).
                     cropping( params.cropping ).
                     scaleSize( params.size ).
                     scaleSquare( params.crop ).
-                    format( format ).
+                    mimeType( params.mimeType ).
                     orientation( params.imageOrientation ).
                     build();
 

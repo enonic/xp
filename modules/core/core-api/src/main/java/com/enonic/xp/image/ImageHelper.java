@@ -166,6 +166,7 @@ public final class ImageHelper
         return target;
     }
 
+    @Deprecated
     public static boolean supportsAlphaChannel( final String format )
     {
         return format.equals( "png" );
