@@ -98,7 +98,8 @@ public final class ProjectResource
     public String modifyLanguage( final ModifyLanguageParamsJson params )
     {
         return doApplyLanguage( params.getName(), params.getLanguage() ).
-            toLanguageTag();
+            map( Locale::toLanguageTag ).
+            orElse( null );
     }
 
     @POST
@@ -234,14 +235,16 @@ public final class ProjectResource
         return projectService.modifyPermissions( projectName, projectPermissions );
     }
 
-    private Locale doApplyLanguage( final ProjectName projectName, final Locale language )
+    private Optional<Locale> doApplyLanguage( final ProjectName projectName, final Locale language )
     {
-        return ApplyProjectLanguageCommand.create().
+        final Locale result = ApplyProjectLanguageCommand.create().
             projectName( projectName ).
             language( language ).
             contentService( contentService ).
             build().
             execute();
+
+        return Optional.ofNullable( result );
     }
 
     private TaskResultJson doApplyReadAccess( final ProjectName projectName, final ProjectReadAccess readAccess )

@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.project;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.ws.rs.core.MediaType;
 
@@ -15,10 +16,15 @@ import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.task.ApplyPermissionsRunnableTask;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.EditableContent;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ModifyProjectParams;
@@ -30,9 +36,7 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
@@ -107,37 +111,24 @@ public class ProjectResourceTest
         final Project project4 =
             createProject( "project4", "project4", null, null, ProjectPermissions.create().addAuthor( RoleKeys.AUTHENTICATED ).build() );
 
-        final Content content = mockRootContent();
-
-        Mockito.when( content.getLanguage() ).
-            thenReturn( Locale.CANADA ).
-            thenReturn( null ).
-            thenReturn( Locale.ENGLISH ).
-            thenReturn( Locale.FRANCE );
-
-        Mockito.when( content.getPermissions() ).
-            thenReturn( AccessControlList.of( AccessControlEntry.create().
-                principal( RoleKeys.EVERYONE ).
-                allow( Permission.READ ).
-                build() ) ).
-            thenReturn( AccessControlList.empty() );
+        mockRootContent();
 
         Mockito.when( projectService.list() ).thenReturn(
             Projects.create().addAll( List.of( project1, project2, project3, project4 ) ).build() );
 
         Mockito.when( projectService.getPermissions( ProjectName.from( "project1" ) ) ).
-            thenReturn( ProjectPermissions.create().addOwner( "user:system:owner" ).build() );
+            thenReturn( ProjectPermissions.create().addOwner( PrincipalKey.from( "user:system:owner" ) ).build() );
 
         Mockito.when( projectService.getPermissions( ProjectName.from( "project2" ) ) ).
-            thenReturn( ProjectPermissions.create().addEditor( "user:system:editor" ).build() );
+            thenReturn( ProjectPermissions.create().addEditor( PrincipalKey.from( "user:system:editor" ) ).build() );
 
         Mockito.when( projectService.getPermissions( ProjectName.from( "project3" ) ) ).
-            thenReturn( ProjectPermissions.create().addAuthor( "user:system:author" ).build() );
+            thenReturn( ProjectPermissions.create().addAuthor( PrincipalKey.from( "user:system:author" ) ).build() );
 
         Mockito.when( projectService.getPermissions( ProjectName.from( "project4" ) ) ).
             thenReturn( ProjectPermissions.create().
-                addContributor( "user:system:contributor" ).
-                addViewer( "user:system:custom" ).
+                addContributor( PrincipalKey.from( "user:system:contributor" ) ).
+                addViewer( PrincipalKey.from( "user:system:custom" ) ).
                 build() );
 
         String jsonString = request().path( "project/list" ).get().getAsString();
@@ -219,19 +210,54 @@ public class ProjectResourceTest
     public void modify_language_success()
         throws Exception
     {
+        testModifyLanguage( "en" );
+    }
+
+    @Test
+    public void modify_language_null()
+        throws Exception
+    {
+        testModifyLanguage( null );
+    }
+
+    @Test
+    public void modify_language_empty()
+        throws Exception
+    {
+        testModifyLanguage( "" );
+    }
+
+    private void testModifyLanguage( final String language )
+        throws Exception
+    {
         createProject( "project1", "project name 1", "project description 1", Attachment.create().
             name( "logo.png" ).
             mimeType( "image/png" ).
             label( "small" ).
             build() );
 
-        mockRootContent();
+        final Content rootContent = mockRootContent();
 
-        String result = request().path( "project/modifyLanguage" ).
-            entity( "{\"name\":\"project1\",\"language\":\"en\"}", MediaType.APPLICATION_JSON_TYPE ).
+        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).
+            then( args -> {
+                final UpdateContentParams params = args.getArgument( 0 );
+                final ContentEditor contentEditor = params.getEditor();
+                final EditableContent editableContent = new EditableContent( rootContent );
+
+                contentEditor.edit( editableContent );
+                final Content modifiedContent = editableContent.build();
+
+                assertEquals( language, Optional.ofNullable( modifiedContent.getLanguage() ).
+                    map( Locale::toLanguageTag ).
+                    orElse( null ) );
+
+                return modifiedContent;
+            } );
+
+        request().path( "project/modifyLanguage" ).
+            entity( "{\"name\":\"project1\",\"language\":" + language + "}", MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertEquals( "en", result );
     }
 
     @Test
@@ -337,11 +363,11 @@ public class ProjectResourceTest
     private void mockProjectPermissions( final ProjectName projectName )
     {
         final ProjectPermissions projectPermissions = ProjectPermissions.create().
-            addOwner( "user:system:owner" ).
-            addEditor( "user:system:editor" ).
-            addAuthor( "user:system:author" ).
-            addContributor( "user:system:contributor" ).
-            addViewer( "user:system:custom" ).
+            addOwner( PrincipalKey.from( "user:system:owner" ) ).
+            addEditor( PrincipalKey.from( "user:system:editor" ) ).
+            addAuthor( PrincipalKey.from( "user:system:author" ) ).
+            addContributor( PrincipalKey.from( "user:system:contributor" ) ).
+            addViewer( PrincipalKey.from( "user:system:custom" ) ).
             build();
 
         Mockito.when( projectService.getPermissions( projectName ) ).thenReturn( projectPermissions );
@@ -349,10 +375,14 @@ public class ProjectResourceTest
 
     private Content mockRootContent()
     {
-        final Content contentRoot = Mockito.mock( Content.class );
-        Mockito.when( contentRoot.getId() ).thenReturn( ContentId.from( "123" ) );
-        Mockito.when( contentRoot.getPermissions() ).thenReturn( AccessControlList.empty() );
-        Mockito.when( contentRoot.getLanguage() ).thenReturn( Locale.ENGLISH );
+        final Content contentRoot = Content.create().id( ContentId.from( "123" ) ).
+            name( ContentName.from( "root" ) ).
+            parentPath( ContentPath.ROOT ).
+            permissions( AccessControlList.empty() ).
+            language( Locale.ENGLISH ).
+            data( new PropertyTree() ).
+            extraDatas( ExtraDatas.empty() ).
+            build();
 
         Mockito.when( contentService.getByPath( ContentPath.ROOT ) ).thenReturn( contentRoot );
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( contentRoot );
