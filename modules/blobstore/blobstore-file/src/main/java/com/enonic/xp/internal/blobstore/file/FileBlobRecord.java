@@ -1,9 +1,11 @@
 package com.enonic.xp.internal.blobstore.file;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
+import com.google.common.io.MoreFiles;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
@@ -13,9 +15,9 @@ final class FileBlobRecord
 {
     private final BlobKey key;
 
-    private final File file;
+    private final Path file;
 
-    FileBlobRecord( final BlobKey key, final File file )
+    FileBlobRecord( final BlobKey key, final Path file )
     {
         this.key = key;
         this.file = file;
@@ -30,19 +32,33 @@ final class FileBlobRecord
     @Override
     public long getLength()
     {
-        return this.file.length();
+        try
+        {
+            return Files.size( this.file );
+        }
+        catch ( IOException e )
+        {
+            return 0;
+        }
     }
 
     @Override
     public ByteSource getBytes()
     {
-        return Files.asByteSource( this.file );
+        return MoreFiles.asByteSource( this.file );
     }
 
     @Override
     public long lastModified()
     {
-        return this.file.lastModified();
+        try
+        {
+            return Files.getLastModifiedTime( this.file ).toMillis();
+        }
+        catch ( IOException e )
+        {
+            return 0;
+        }
     }
 
     @Override

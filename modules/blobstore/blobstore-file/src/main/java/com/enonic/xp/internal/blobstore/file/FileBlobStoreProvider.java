@@ -23,7 +23,7 @@ public final class FileBlobStoreProvider
             return;
         }
 
-        this.blobStore = new FileBlobStore( config.baseDir() );
+        this.blobStore = new FileBlobStore( config.baseDir().toPath() );
     }
 
     @Override
