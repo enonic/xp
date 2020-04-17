@@ -29,7 +29,7 @@ public class BranchDumpResultJson
 
     public static BranchDumpResultJson from( final BranchDumpResult branchResult )
     {
-        final List<String> errors = branchResult.getErrors().stream().map( DumpError::toString ).collect( Collectors.toList() );
+        final List<String> errors = branchResult.getErrors().stream().map( DumpError::getMessage ).collect( Collectors.toList() );
         return new BranchDumpResultJson( branchResult.getSuccessful(), errors );
     }
 

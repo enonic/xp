@@ -17,11 +17,11 @@ public class JsonDumpSerializer
     private final static ObjectMapper MAPPER = new ObjectMapper();
 
     @Override
-    public String serialize( final BranchDumpEntry branchDumpEntry )
+    public byte[] serialize( final BranchDumpEntry branchDumpEntry )
     {
         try
         {
-            return MAPPER.writeValueAsString( BranchDumpEntryJson.from( branchDumpEntry ) );
+            return MAPPER.writeValueAsBytes( BranchDumpEntryJson.from( branchDumpEntry ) );
         }
         catch ( JsonProcessingException e )
         {
@@ -30,11 +30,11 @@ public class JsonDumpSerializer
     }
 
     @Override
-    public String serialize( final VersionsDumpEntry versionsDumpEntry )
+    public byte[] serialize( final VersionsDumpEntry versionsDumpEntry )
     {
         try
         {
-            return MAPPER.writeValueAsString( VersionsDumpEntryJson.from( versionsDumpEntry ) );
+            return MAPPER.writeValueAsBytes( VersionsDumpEntryJson.from( versionsDumpEntry ) );
         }
         catch ( JsonProcessingException e )
         {
@@ -43,11 +43,11 @@ public class JsonDumpSerializer
     }
 
     @Override
-    public String serialize( final CommitDumpEntry commitDumpEntry )
+    public byte[] serialize( final CommitDumpEntry commitDumpEntry )
     {
         try
         {
-            return MAPPER.writeValueAsString( CommitDumpEntryJson.from( commitDumpEntry ) );
+            return MAPPER.writeValueAsBytes( CommitDumpEntryJson.from( commitDumpEntry ) );
         }
         catch ( JsonProcessingException e )
         {

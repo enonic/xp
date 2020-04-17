@@ -28,9 +28,9 @@ public class FileDumpReaderTest
     public void setUp()
         throws Exception
     {
-        this.dumpFolder = Files.createDirectory( this.temporaryFolder.resolve( "myDump" ) );
+        this.dumpFolder = Files.createDirectory( temporaryFolder.resolve( "myDump" ) );
         createMetaDataFile( dumpFolder );
-        this.fileDumpReader = new FileDumpReader( temporaryFolder.toFile().toPath(), "myDump", null );
+        this.fileDumpReader = FileDumpReader.create( null, temporaryFolder, "myDump" );
     }
 
     @Test

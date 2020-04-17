@@ -13,7 +13,6 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.data.PropertyPath;
@@ -22,6 +21,7 @@ import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.serializer.json.BranchDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionsDumpEntryJson;
@@ -76,7 +76,7 @@ public class IndexConfigUpgrader
     }
 
     @Override
-    protected String upgradeBranchEntry( final RepositoryId repositoryId, final String entryContent )
+    protected byte[] upgradeBranchEntry( final RepositoryId repositoryId, final String entryContent )
     {
         final BranchDumpEntryJson sourceBranchEntry = deserializeValue( entryContent, BranchDumpEntryJson.class );
         final VersionDumpEntryJson sourceVersionEntry = sourceBranchEntry.getMeta();
@@ -88,11 +88,11 @@ public class IndexConfigUpgrader
             return serialize( BranchDumpEntryJson.create( sourceBranchEntry ).meta( upgradedVersionEntry ).build() );
         }
 
-        return entryContent;
+        return entryContent.getBytes( StandardCharsets.UTF_8 );
     }
 
     @Override
-    protected String upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent )
+    protected byte[] upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent )
     {
         final VersionsDumpEntryJson sourceVersionsEntry = deserializeValue( entryContent, VersionsDumpEntryJson.class );
 
@@ -106,13 +106,15 @@ public class IndexConfigUpgrader
             versions( upgradedVersionList ).
             build();
 
-        return !sourceVersionsEntry.equals( upgradedVersionsEntry ) ? serialize( upgradedVersionsEntry ) : entryContent;
+        return !sourceVersionsEntry.equals( upgradedVersionsEntry )
+            ? serialize( upgradedVersionsEntry )
+            : entryContent.getBytes( StandardCharsets.UTF_8 );
     }
 
 
     private VersionDumpEntryJson upgradeVersionMeta( final VersionDumpEntryJson version )
     {
-        final BlobRecord nodeBlobRecord = dumpReader.getDumpBlobStore().
+        final DumpBlobRecord nodeBlobRecord = dumpReader.getDumpBlobStore().
             getRecord( NODE_SEGMENT, BlobKey.from( version.getNodeBlobKey() ) );
 
         final NodeVersionDataJson nodeVersionDataJson = getNode( nodeBlobRecord );
@@ -132,7 +134,7 @@ public class IndexConfigUpgrader
 
     }
 
-    private NodeVersionDataJson getNode( final BlobRecord nodeBlobRecord )
+    private NodeVersionDataJson getNode( final DumpBlobRecord nodeBlobRecord )
     {
         final CharSource charSource = nodeBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 );
         try
@@ -145,7 +147,7 @@ public class IndexConfigUpgrader
         }
     }
 
-    private PatternIndexConfigDocument getIndexConfigDocument( final BlobRecord indexConfigBlobRecord )
+    private PatternIndexConfigDocument getIndexConfigDocument( final DumpBlobRecord indexConfigBlobRecord )
     {
         final CharSource charSource = indexConfigBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 );
         try
@@ -161,7 +163,7 @@ public class IndexConfigUpgrader
 
     private BlobKey upgradeIndexConfigDocument( final BlobKey blobKey, final NodeVersion nodeVersion )
     {
-        final BlobRecord indexConfigBlobRecord = dumpReader.getDumpBlobStore().
+        final DumpBlobRecord indexConfigBlobRecord = dumpReader.getDumpBlobStore().
             getRecord( INDEX_CONFIG_SEGMENT, blobKey );
 
         final PatternIndexConfigDocument sourceDocument = getIndexConfigDocument( indexConfigBlobRecord );
@@ -207,11 +209,8 @@ public class IndexConfigUpgrader
     {
         final IndexConfigDocumentJson indexConfigDocumentJson = IndexConfigDocumentJson.toJson( indexConfigDocument );
 
-        final String indexConfigDocumentSerialized = serialize( indexConfigDocumentJson );
+        final byte[] indexConfigDocumentSerialized = serialize( indexConfigDocumentJson );
 
-        final BlobRecord indexBlobRecord =
-            dumpReader.getDumpBlobStore().addRecord( INDEX_CONFIG_SEGMENT, ByteSource.wrap( indexConfigDocumentSerialized.getBytes() ) );
-
-        return indexBlobRecord.getKey();
+        return dumpReader.getDumpBlobStore().addRecord( INDEX_CONFIG_SEGMENT, ByteSource.wrap( indexConfigDocumentSerialized ) );
     }
 }

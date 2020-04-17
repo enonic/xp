@@ -15,11 +15,11 @@ public final class NodeVersionJsonSerializer
 {
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
-    public String toNodeString( final NodeVersion nodeVersion )
+    public byte[] toNodeString( final NodeVersion nodeVersion )
     {
         try
         {
-            return MAPPER.writeValueAsString( NodeVersionDataJson.toJson( nodeVersion ) );
+            return MAPPER.writeValueAsBytes( NodeVersionDataJson.toJson( nodeVersion ) );
         }
         catch ( final JsonProcessingException e )
         {
@@ -27,12 +27,12 @@ public final class NodeVersionJsonSerializer
         }
     }
 
-    public String toIndexConfigDocumentString( final NodeVersion nodeVersion )
+    public byte[] toIndexConfigDocumentString( final NodeVersion nodeVersion )
     {
         try
         {
             final IndexConfigDocumentJson entityIndexConfig = createEntityIndexConfig( nodeVersion.getIndexConfigDocument() );
-            return MAPPER.writeValueAsString( entityIndexConfig );
+            return MAPPER.writeValueAsBytes( entityIndexConfig );
 
         }
         catch ( final JsonProcessingException e )
@@ -41,12 +41,12 @@ public final class NodeVersionJsonSerializer
         }
     }
 
-    public String toAccessControlString( final NodeVersion nodeVersion )
+    public byte[] toAccessControlString( final NodeVersion nodeVersion )
     {
         try
         {
             final AccessControlJson accessControlJson = AccessControlJson.toJson( nodeVersion );
-            return MAPPER.writeValueAsString( accessControlJson );
+            return MAPPER.writeValueAsBytes( accessControlJson );
 
         }
         catch ( final JsonProcessingException e )
@@ -55,7 +55,7 @@ public final class NodeVersionJsonSerializer
         }
     }
 
-    public NodeVersion toNodeVersion( final String data, final String indexConfigDocument, final String accessControl )
+    public NodeVersion toNodeVersion( final byte[] data, final byte[] indexConfigDocument, byte[] accessControl )
     {
         try
         {

@@ -12,7 +12,7 @@ dependencies {
     runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jacksonVersion}"
     runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
 
-    compile 'org.apache.commons:commons-compress:1.19'
+    compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
 
     testFixturesImplementation( testFixtures( project(":core:core-blobstore") ) )
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"

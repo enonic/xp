@@ -1,6 +1,7 @@
 package com.enonic.xp.internal.blobstore;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import com.google.common.io.ByteSource;
 
@@ -11,17 +12,24 @@ import com.enonic.xp.blob.BlobRecord;
 public class MemoryBlobRecord
     implements BlobRecord
 {
-    private BlobKey blobKey;
+    private final BlobKey blobKey;
 
-    private ByteSource byteSource;
+    private final ByteSource byteSource;
 
     private final long lastModified;
 
     public MemoryBlobRecord( final BlobKey blobKey, final ByteSource source )
     {
         this.blobKey = blobKey;
-        this.byteSource = source;
         this.lastModified = System.currentTimeMillis();
+        try
+        {
+            this.byteSource = ByteSource.wrap( source.read() );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     @Override
@@ -39,7 +47,7 @@ public class MemoryBlobRecord
         }
         catch ( IOException e )
         {
-            throw new RuntimeException( "WTF" );
+            throw new UncheckedIOException( e );
         }
     }
 

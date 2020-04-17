@@ -1,9 +1,13 @@
 package com.enonic.xp.repo.impl.dump;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.ComponentContext;
@@ -38,7 +42,9 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
+import com.enonic.xp.repo.impl.dump.reader.DumpReader;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
+import com.enonic.xp.repo.impl.dump.reader.ZipDumpReader;
 import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.IndexConfigUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.MissingModelVersionDumpUpgrader;
@@ -48,7 +54,9 @@ import com.enonic.xp.repo.impl.dump.upgrade.commit.CommitDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.htmlarea.HtmlAreaDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.indexaccesssegments.IndexAccessSegmentsDumpUpgrader;
+import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
+import com.enonic.xp.repo.impl.dump.writer.ZipDumpWriter;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
@@ -98,6 +106,8 @@ public class DumpServiceImpl
         {
             throw new RepoDumpException( "Only admin role users can upgrade dumps" );
         }
+
+        ensureBasePath();
 
         final String dumpName = params.getDumpName();
         if ( nullToEmpty( dumpName ).isBlank() )
@@ -163,13 +173,7 @@ public class DumpServiceImpl
 
     private Version getDumpModelVersion( final String dumpName )
     {
-        Version modelVersion = getDumpMeta( dumpName ).
-            getModelVersion();
-        if ( modelVersion == null )
-        {
-            return Version.emptyVersion;
-        }
-        return modelVersion;
+        return Objects.requireNonNullElse( getDumpMeta( dumpName ).getModelVersion(), Version.emptyVersion );
     }
 
     private void updateDumpModelVersion( final String dumpName, final Version modelVersion )
@@ -179,13 +183,20 @@ public class DumpServiceImpl
             modelVersion( modelVersion ).
             build();
 
-        new FileDumpWriter( basePath, dumpName, this.blobStore ).
-            writeDumpMetaData( updatedDumpMeta );
+        final FileDumpWriter fileDumpWriter = FileDumpWriter.create( basePath, dumpName, blobStore );
+        try (fileDumpWriter)
+        {
+            fileDumpWriter.writeDumpMetaData( updatedDumpMeta );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     private DumpMeta getDumpMeta( final String dumpName )
     {
-        final FileDumpReader dumpReader = new FileDumpReader( basePath, dumpName, null );
+        final DumpReader dumpReader = FileDumpReader.create( null, basePath, dumpName );
         return dumpReader.getDumpMeta();
     }
 
@@ -197,113 +208,141 @@ public class DumpServiceImpl
             throw new RepoDumpException( "Only admin role users can dump repositories" );
         }
 
-        final FileDumpWriter writer = new FileDumpWriter( basePath, params.getDumpName(), blobStore );
+        ensureBasePath();
 
-        final Repositories repositories = this.repositoryService.list();
-
-        if ( params.getListener() != null )
+        final DumpWriter writer = params.isZip()
+            ? ZipDumpWriter.create( basePath, params.getDumpName(), blobStore )
+            : FileDumpWriter.create( basePath, params.getDumpName(), blobStore );
+        try (writer)
         {
-            final long branchesCount = repositories.
-                stream().
-                flatMap( repository -> repository.getBranches().stream() ).
-                count();
+            final Repositories repositories = this.repositoryService.list();
 
-            params.getListener().totalBranches( branchesCount );
+            if ( params.getListener() != null )
+            {
+                final long branchesCount = repositories.
+                    stream().
+                    flatMap( repository -> repository.getBranches().stream() ).
+                    count();
+
+                params.getListener().totalBranches( branchesCount );
+            }
+
+            final SystemDumpResult.Builder dumpResults = SystemDumpResult.create();
+
+            for ( final Repository repository : repositories )
+            {
+                final RepoDumpResult result = RepoDumper.create().
+                    writer( writer ).
+                    includeVersions( params.isIncludeVersions() ).
+                    includeBinaries( params.isIncludeBinaries() ).
+                    nodeService( this.nodeService ).
+                    repositoryService( this.repositoryService ).
+                    repositoryId( repository.getId() ).
+                    maxVersions( params.getMaxVersions() ).
+                    maxAge( params.getMaxAge() ).
+                    listener( params.getListener() ).
+                    build().
+                    execute();
+
+                dumpResults.add( result );
+            }
+
+            final SystemDumpResult systemDumpResult = dumpResults.build();
+            writer.writeDumpMetaData( DumpMeta.create().
+                xpVersion( this.xpVersion ).
+                modelVersion( DumpConstants.MODEL_VERSION ).
+                timestamp( Instant.now() ).
+                systemDumpResult( systemDumpResult ).build() );
+
+            return systemDumpResult;
         }
-
-        final SystemDumpResult.Builder dumpResults = SystemDumpResult.create();
-
-        for ( final Repository repository : repositories )
+        catch ( IOException e )
         {
-            final RepoDumpResult result = RepoDumper.create().
-                writer( writer ).
-                includeVersions( params.isIncludeVersions() ).
-                includeBinaries( params.isIncludeBinaries() ).
-                nodeService( this.nodeService ).
-                repositoryService( this.repositoryService ).
-                repositoryId( repository.getId() ).
-                maxVersions( params.getMaxVersions() ).
-                maxAge( params.getMaxAge() ).
-                listener( params.getListener() ).
-                build().
-                execute();
-
-            dumpResults.add( result );
+            throw new UncheckedIOException( e );
         }
-
-        final SystemDumpResult systemDumpResult = dumpResults.build();
-        writer.writeDumpMetaData( DumpMeta.create().
-            xpVersion( this.xpVersion ).
-            modelVersion( DumpConstants.MODEL_VERSION ).
-            timestamp( Instant.now() ).
-            systemDumpResult( systemDumpResult ).build() );
-
-        return systemDumpResult;
     }
 
     @Override
     public SystemLoadResult load( final SystemLoadParams params )
     {
-        final SystemLoadResult.Builder results = SystemLoadResult.create();
-
         if ( !SecurityHelper.isAdmin() )
         {
             throw new RepoLoadException( "Only admin role users can load repositories" );
         }
 
-        final Version modelVersion = getDumpModelVersion( params.getDumpName() );
-        if ( modelVersion.getMajor() < DumpConstants.MODEL_VERSION.getMajor() )
+        ensureBasePath();
+
+        final SystemLoadResult.Builder results = SystemLoadResult.create();
+
+        final DumpReader dumpReader = params.isZip()
+            ? ZipDumpReader.create( params.getListener(), basePath, params.getDumpName() )
+            : FileDumpReader.create( params.getListener(), basePath, params.getDumpName() );
+
+        try (dumpReader)
         {
-            if ( params.isUpgrade() )
+
+            final Version modelVersion = Objects.requireNonNullElse( dumpReader.getDumpMeta().getModelVersion(), Version.emptyVersion );
+
+            if ( modelVersion.getMajor() < DumpConstants.MODEL_VERSION.getMajor() )
             {
-                final SystemDumpUpgradeParams dumpUpgradeParams = SystemDumpUpgradeParams.create().
-                    dumpName( params.getDumpName() ).
-                    build();
-                doUpgrade( dumpUpgradeParams );
+                if ( params.isUpgrade() )
+                {
+                    if ( params.isZip() )
+                    {
+                        throw new RepoLoadException(
+                            "Cannot load system-dump; upgrade is not possible on zipped dump; unzip and upgrade the system-dump" );
+                    }
+                    final SystemDumpUpgradeParams dumpUpgradeParams = SystemDumpUpgradeParams.create().
+                        dumpName( params.getDumpName() ).
+                        build();
+                    doUpgrade( dumpUpgradeParams );
+                }
+                else
+                {
+                    throw new RepoLoadException(
+                        "Cannot load system-dump; major model version previous to the current version; upgrade the system-dump" );
+                }
             }
-            else
+
+            final RepositoryIds dumpRepositories = dumpReader.getRepositories();
+
+            if ( !dumpRepositories.contains( SystemConstants.SYSTEM_REPO.getId() ) )
             {
-                throw new RepoLoadException(
-                    "Cannot load system-dump; major model version previous to the current version; upgrade the system-dump" );
+                throw new SystemDumpException( "Cannot load system-dump; dump does not contain system repository" );
             }
+
+            uninstallNonSystemApplications();
+
+            if ( params.getListener() != null )
+            {
+                final long branchesCount = dumpRepositories.
+                    stream().
+                    flatMap( repositoryId -> dumpReader.getBranches( repositoryId ).stream() ).
+                    count();
+
+                params.getListener().totalBranches( branchesCount );
+            }
+
+            doDeleteRepositories();
+
+            initializeSystemRepo( params, dumpReader, results );
+
+            final List<Repository> repositoriesToLoad = repositoryService.list().stream().
+                filter( ( repo ) -> !repo.getId().equals( SystemConstants.SYSTEM_REPO.getId() ) ).
+                collect( Collectors.toList() );
+
+            for ( Repository repository : repositoriesToLoad )
+            {
+                initializeRepo( repository );
+                doLoadRepository( repository.getId(), params, dumpReader, results );
+            }
+
+            initApplications();
         }
-
-        final FileDumpReader dumpReader = new FileDumpReader( basePath, params.getDumpName(), params.getListener() );
-        final RepositoryIds dumpRepositories = dumpReader.getRepositories();
-
-        if ( !dumpRepositories.contains( SystemConstants.SYSTEM_REPO.getId() ) )
+        catch ( IOException e )
         {
-            throw new SystemDumpException( "Cannot load system-dump; dump does not contain system repository" );
+            throw new UncheckedIOException( e );
         }
-
-        uninstallNonSystemApplications();
-
-        if ( params.getListener() != null )
-        {
-            final long branchesCount = dumpReader.getRepositories().
-                stream().
-                flatMap( repositoryId -> dumpReader.getBranches( repositoryId ).stream() ).
-                count();
-
-            params.getListener().totalBranches( branchesCount );
-        }
-
-        doDeleteRepositories();
-
-        initializeSystemRepo( params, dumpReader, results );
-
-        final List<Repository> repositoriesToLoad = repositoryService.list().stream().
-            filter( ( repo ) -> !repo.getId().equals( SystemConstants.SYSTEM_REPO.getId() ) ).
-            collect( Collectors.toList() );
-
-        for ( Repository repository : repositoriesToLoad )
-        {
-            initializeRepo( repository );
-            doLoadRepository( repository.getId(), params, dumpReader, results );
-        }
-
-        initApplications();
-
         return results.build();
     }
 
@@ -337,8 +376,7 @@ public class DumpServiceImpl
         NodeHelper.runAsAdmin( () -> applicationService.installAllStoredApplications( params ) );
     }
 
-    private void initializeSystemRepo( final SystemLoadParams params, final FileDumpReader dumpReader,
-                                       final SystemLoadResult.Builder results )
+    private void initializeSystemRepo( final SystemLoadParams params, final DumpReader dumpReader, final SystemLoadResult.Builder results )
     {
         final Context systemContext = ContextBuilder.from( ContextAccessor.current() ).
             repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
@@ -392,7 +430,7 @@ public class DumpServiceImpl
         this.repositoryService.createRepository( createRepositoryParams );
     }
 
-    private void doLoadRepository( final RepositoryId repositoryId, final SystemLoadParams params, final FileDumpReader dumpReader,
+    private void doLoadRepository( final RepositoryId repositoryId, final SystemLoadParams params, final DumpReader dumpReader,
                                    final SystemLoadResult.Builder builder )
     {
         LOG.info( "Loading repository [" + repositoryId + "]" );
@@ -406,6 +444,18 @@ public class DumpServiceImpl
             repositoryId( repositoryId ).
             build().
             execute() );
+    }
+
+    private void ensureBasePath()
+    {
+        try
+        {
+            Files.createDirectories( basePath );
+        }
+        catch ( IOException e )
+        {
+            throw new RepoDumpException( "Cannot create dump directory", e );
+        }
     }
 
     @Reference

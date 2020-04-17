@@ -6,11 +6,11 @@ import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 
 public interface DumpSerializer
 {
-    String serialize( final BranchDumpEntry branchDumpEntry );
+    byte[] serialize( final BranchDumpEntry branchDumpEntry );
 
-    String serialize( final VersionsDumpEntry versionsDumpEntry );
+    byte[] serialize( final VersionsDumpEntry versionsDumpEntry );
 
-    String serialize( final CommitDumpEntry commitDumpEntry );
+    byte[] serialize( final CommitDumpEntry commitDumpEntry );
 
     BranchDumpEntry toBranchMetaEntry( final String value );
 

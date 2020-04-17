@@ -121,7 +121,8 @@ public class LoadRunnableTaskTest
 
         Mockito.when( this.dumpService.load( Mockito.isA( SystemLoadParams.class ) ) ).thenReturn( systemLoadResult );
 
-        final LoadRunnableTask task = createAndRunTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade() ) );
+        final LoadRunnableTask task =
+            createAndRunTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade(), params.isZip() ) );
 
         task.createTaskResult();
 
@@ -148,7 +149,8 @@ public class LoadRunnableTaskTest
 
         Mockito.when( this.dumpService.load( Mockito.isA( SystemLoadParams.class ) ) ).thenReturn( systemLoadResult );
 
-        final LoadRunnableTask task = createAndRunTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade() ) );
+        final LoadRunnableTask task =
+            createAndRunTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade(), params.isZip() ) );
 
         task.createTaskResult();
 
@@ -165,7 +167,7 @@ public class LoadRunnableTaskTest
         throws Exception
     {
         final IllegalArgumentException ex =
-            assertThrows( IllegalArgumentException.class, () -> createAndRunTask( new SystemLoadRequestJson( "name", false ) ) );
+            assertThrows( IllegalArgumentException.class, () -> createAndRunTask( new SystemLoadRequestJson( "name", false, false ) ) );
         assertEquals( "No dump with name 'name' found in " + dataDir, ex.getMessage() );
     }
 }

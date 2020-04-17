@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.dump.upgrade.commit;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 
@@ -56,7 +57,7 @@ public class CommitDumpUpgrader
                 forEach( branch -> upgradeBranch( repositoryId, branch ) );
 
             final Path versionsFile = dumpReader.getVersionsFile( repositoryId );
-            if ( versionsFile != null )
+            if ( Files.exists( versionsFile ) )
             {
                 upgradeVersionEntries( repositoryId, versionsFile );
             }
@@ -76,17 +77,17 @@ public class CommitDumpUpgrader
                 committer( nodeCommitEntry.getCommitter().toString() ).
                 timestamp( nodeCommitEntry.getTimestamp().toString() ).
                 build();
-            final String commitDumpEntrySerialized = serialize( commitDumpEntryJson );
+            final byte[] commitDumpEntrySerialized = serialize( commitDumpEntryJson );
             tmpDumpWriter.storeTarEntry( commitDumpEntrySerialized, commitId + ".json" );
         }
         finally
         {
-            tmpDumpWriter.close();
+            tmpDumpWriter.closeMeta();
         }
     }
 
     @Override
-    protected String upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent )
+    protected byte[] upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent )
     {
         final Pre6VersionsDumpEntryJson sourceEntry = deserializeValue( entryContent, Pre6VersionsDumpEntryJson.class );
 
@@ -104,7 +105,7 @@ public class CommitDumpUpgrader
     }
 
     @Override
-    protected String upgradeBranchEntry( final RepositoryId repositoryId, final String entryContent )
+    protected byte[] upgradeBranchEntry( final RepositoryId repositoryId, final String entryContent )
     {
         if ( processingMaster )
         {

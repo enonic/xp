@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
@@ -25,7 +26,7 @@ class TestDumpWriter
 
     private RepoBranchEntry current;
 
-    private final Set<String> binaries = new HashSet<>();
+    private final Set<BlobKey> binaries = new HashSet<>();
 
     private final Set<NodeVersionKey> nodeVersionKeys = new HashSet<>();
 
@@ -65,6 +66,12 @@ class TestDumpWriter
     }
 
     @Override
+    public void closeMeta()
+    {
+        current = null;
+    }
+
+    @Override
     public void close()
     {
         current = null;
@@ -80,7 +87,6 @@ class TestDumpWriter
     public void writeVersionsEntry( final VersionsDumpEntry versionsDumpEntry )
     {
         versionCount.incrementAndGet();
-        // Do nothing yet
     }
 
     @Override
@@ -97,7 +103,7 @@ class TestDumpWriter
     }
 
     @Override
-    public void writeBinaryBlob( final RepositoryId repositoryId, final String key )
+    public void writeBinaryBlob( final RepositoryId repositoryId, final BlobKey key )
     {
         binaries.add( key );
     }
@@ -107,7 +113,7 @@ class TestDumpWriter
         return this.entries.get( new RepoBranchEntry( repoId, branch ) );
     }
 
-    public Set<String> getBinaries()
+    public Set<BlobKey> getBinaries()
     {
         return binaries;
     }
