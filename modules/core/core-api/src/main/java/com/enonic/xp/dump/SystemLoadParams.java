@@ -10,6 +10,8 @@ public class SystemLoadParams
 
     private final boolean upgrade;
 
+    private final boolean zip;
+
     private final SystemLoadListener listener;
 
     private SystemLoadParams( final Builder builder )
@@ -18,6 +20,7 @@ public class SystemLoadParams
         this.includeVersions = builder.includeVersions;
         this.listener = builder.listener;
         this.upgrade = builder.upgrade;
+        this.zip = builder.zip;
     }
 
     public String getDumpName()
@@ -40,6 +43,11 @@ public class SystemLoadParams
         return upgrade;
     }
 
+    public boolean isZip()
+    {
+        return zip;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -57,14 +65,14 @@ public class SystemLoadParams
             return false;
         }
         final SystemLoadParams that = (SystemLoadParams) o;
-        return includeVersions == that.includeVersions && upgrade == that.upgrade && Objects.equals( dumpName, that.dumpName ) &&
-            Objects.equals( listener, that.listener );
+        return includeVersions == that.includeVersions && upgrade == that.upgrade && zip == that.zip &&
+            Objects.equals( dumpName, that.dumpName ) && Objects.equals( listener, that.listener );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( dumpName, includeVersions, upgrade, listener );
+        return Objects.hash( dumpName, includeVersions, upgrade, listener, zip );
     }
 
     public static final class Builder
@@ -74,6 +82,8 @@ public class SystemLoadParams
         private boolean includeVersions = false;
 
         private boolean upgrade = false;
+
+        private boolean zip;
 
         private SystemLoadListener listener;
 
@@ -102,6 +112,12 @@ public class SystemLoadParams
         public Builder upgrade( final boolean upgrade )
         {
             this.upgrade = upgrade;
+            return this;
+        }
+
+        public Builder zip( final boolean zip )
+        {
+            this.zip = zip;
             return this;
         }
 

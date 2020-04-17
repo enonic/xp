@@ -71,7 +71,8 @@ public class DumpRunnableTaskTest
         Mockito.when( this.dumpService.dump( Mockito.isA( SystemDumpParams.class ) ) ).thenReturn( systemDumpResult );
 
         final DumpRunnableTask task = createAndRunTask(
-            new SystemDumpRequestJson( params.getDumpName(), params.isIncludeVersions(), params.getMaxAge(), params.getMaxVersions() ) );
+            new SystemDumpRequestJson( params.getDumpName(), params.isIncludeVersions(), params.getMaxAge(), params.getMaxVersions(),
+                                       params.isZip() ) );
 
         task.createTaskResult();
 

@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
 import com.enonic.xp.blob.BlobKey;
@@ -18,8 +17,8 @@ import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.repo.impl.dump.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.FileUtils;
+import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.serializer.json.DumpMetaJsonSerializer;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre5.Pre5ContentConstants;
@@ -79,7 +78,7 @@ public class RepositoryIdDumpUpgrader
     }
 
     @Override
-    protected String upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent )
+    protected byte[] upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent )
     {
         final Pre6VersionsDumpEntryJson sourceVersionsEntry = deserializeValue( entryContent, Pre6VersionsDumpEntryJson.class );
 
@@ -97,7 +96,7 @@ public class RepositoryIdDumpUpgrader
     }
 
     @Override
-    protected String upgradeBranchEntry( final RepositoryId repositoryId, final String entryContent )
+    protected byte[] upgradeBranchEntry( final RepositoryId repositoryId, final String entryContent )
     {
         final Pre6BranchDumpEntryJson sourceBranchEntry = deserializeValue( entryContent, Pre6BranchDumpEntryJson.class );
         final Pre6VersionDumpEntryJson sourceVersionEntry = sourceBranchEntry.getMeta();
@@ -125,7 +124,7 @@ public class RepositoryIdDumpUpgrader
 
     private void upgradeNodeVersionBlob( final String nodeBlobKey )
     {
-        final DumpBlobRecord dumpBlobRecord = (DumpBlobRecord) dumpReader.getDumpBlobStore().
+        final DumpBlobRecord dumpBlobRecord = dumpReader.getDumpBlobStore().
             getRecord( SEGMENT, BlobKey.from( nodeBlobKey ) );
 
         final NodeVersionDataJson sourceNodeVersion = getNodeVersion( dumpBlobRecord );
@@ -141,7 +140,7 @@ public class RepositoryIdDumpUpgrader
     {
         final Path oldRepoDirectory = this.dumpReader.getRepositoryDir( OLD_REPOSITORY_ID );
 
-        if ( oldRepoDirectory != null )
+        if ( Files.exists( oldRepoDirectory ) )
         {
             final Path newRepoDirectory = oldRepoDirectory.getParent().resolve( NEW_REPOSITORY_ID.toString() );
 
@@ -169,7 +168,7 @@ public class RepositoryIdDumpUpgrader
 
         try
         {
-            Files.writeString( dumpMetaFile, new DumpMetaJsonSerializer().serialize( upgradedDumpMeta ) );
+            Files.write( dumpMetaFile, new DumpMetaJsonSerializer().serialize( upgradedDumpMeta ) );
         }
         catch ( IOException e )
         {
@@ -222,7 +221,7 @@ public class RepositoryIdDumpUpgrader
     }
 
     @Override
-    protected boolean hasToUpgradeEntry( final RepositoryId repositoryId, final String entryContent, final String entryName )
+    protected boolean hasToUpgradeEntry( final RepositoryId repositoryId, final String entryName )
     {
         return OLD_REPOSITORY_FILE_NAME.equals( entryName );
     }
@@ -258,11 +257,9 @@ public class RepositoryIdDumpUpgrader
 
     private void writeNodeVersion( final NodeVersion nodeVersion, final DumpBlobRecord dumpBlobRecord )
     {
-        final String serializedUpgradedNodeVersion = NODE_VERSION_JSON_SERIALIZER.toNodeString( nodeVersion );
-        final ByteSource byteSource = ByteSource.wrap( serializedUpgradedNodeVersion.getBytes( StandardCharsets.UTF_8 ) );
         try
         {
-            byteSource.copyTo( dumpBlobRecord.getByteSink() );
+            dumpBlobRecord.getByteSink().write( NODE_VERSION_JSON_SERIALIZER.toNodeString( nodeVersion ) );
         }
         catch ( IOException e )
         {

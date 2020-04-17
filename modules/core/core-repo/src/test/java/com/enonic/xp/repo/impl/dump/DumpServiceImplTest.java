@@ -76,6 +76,7 @@ import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -106,10 +107,45 @@ public class DumpServiceImplTest
         this.dumpService.setBlobStore( this.blobStore );
         this.dumpService.setNodeService( this.nodeService );
         this.dumpService.setRepositoryService( this.repositoryService );
-        this.dumpService.setBasePath( temporaryFolder.toFile().toPath() );
+        this.dumpService.setBasePath( temporaryFolder );
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
         Mockito.when( applicationService.getInstalledApplications() ).thenReturn( Applications.empty() );
         this.dumpService.setApplicationService( applicationService );
+    }
+
+    @Test
+    public void zip_unzip()
+        throws Exception
+    {
+        final Node node = createNode( NodePath.ROOT, "myNode" );
+        updateNode( node );
+        updateNode( node );
+        updateNode( node );
+
+        refresh();
+
+        final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
+            zip( true ).
+            includeVersions( true ).
+            dumpName( "testDump" ).
+            build() ) );
+
+        // 4 of node, 1 of root
+        assertEquals( 5, systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).getVersions() );
+        final BranchDumpResult branchDumpResult = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
+
+        assertEquals( 2, branchDumpResult.getSuccessful() );
+
+        NodeHelper.runAsAdmin( () -> this.dumpService.load( SystemLoadParams.create().
+            zip( true ).
+            includeVersions( true ).
+            dumpName( "testDump" ).
+            build() ) );
+
+        final Repositories newRepos = NodeHelper.runAsAdmin( () -> this.repositoryService.list() );
+
+        assertEquals( RepositoryIds.from( RepositoryId.from( "com.enonic.cms.default" ), RepositoryId.from( "system-repo" ) ),
+                      newRepos.getIds() );
     }
 
     @Test
@@ -261,6 +297,8 @@ public class DumpServiceImplTest
         updateNode( node );
         updateNode( node );
         updateNode( node );
+
+        refresh();
 
         final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
             dumpName( "testDump" ).
@@ -728,7 +766,7 @@ public class DumpServiceImplTest
             Mockito.verify( upgradeListener, Mockito.times( 8 ) ).upgraded();
             Mockito.verify( upgradeListener, Mockito.times( 1 ) ).total( 8 );
 
-            FileDumpReader reader = new FileDumpReader( temporaryFolder.toFile().toPath(), dumpName, null );
+            FileDumpReader reader = FileDumpReader.create( null, temporaryFolder, dumpName );
             final DumpMeta updatedMeta = reader.getDumpMeta();
             assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
         } );
@@ -748,7 +786,7 @@ public class DumpServiceImplTest
                 includeVersions( true ).
                 build() );
 
-            FileDumpReader reader = new FileDumpReader( temporaryFolder.toFile().toPath(), dumpName, null );
+            FileDumpReader reader = FileDumpReader.create( null, temporaryFolder, dumpName );
             final DumpMeta updatedMeta = reader.getDumpMeta();
             assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
 

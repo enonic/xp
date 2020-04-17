@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.dump.upgrade;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.slf4j.Logger;
@@ -37,10 +38,12 @@ public abstract class AbstractMetaBlobUpgrader
     protected void upgradeRepository( final RepositoryId repositoryId )
     {
         final Path versionsFile = dumpReader.getVersionsFile( repositoryId );
-        if ( versionsFile != null )
+        if ( Files.exists( versionsFile ) )
         {
             upgradeVersionEntries( repositoryId, versionsFile );
-        } else {
+        }
+        else
+        {
             dumpReader.getBranches( repositoryId ).
                 forEach( branch -> upgradeBranch( repositoryId, branch ) );
         }
@@ -49,7 +52,7 @@ public abstract class AbstractMetaBlobUpgrader
     protected void upgradeBranch( final RepositoryId repositoryId, final Branch branch )
     {
         final Path entriesFile = dumpReader.getBranchEntriesFile( repositoryId, branch );
-        if ( entriesFile != null )
+        if ( Files.exists( entriesFile ) )
         {
             upgradeBranchEntries( repositoryId, branch, entriesFile );
         }
@@ -62,7 +65,7 @@ public abstract class AbstractMetaBlobUpgrader
 
     protected void upgradeVersionEntries( final RepositoryId repositoryId, final Path entriesFile )
     {
-        dumpReader.processEntries( ( entryContent, entryName ) -> {
+        processEntries( ( entryContent, entryName ) -> {
             result.processed();
             try
             {
@@ -78,7 +81,7 @@ public abstract class AbstractMetaBlobUpgrader
 
     protected void upgradeBranchEntries( final RepositoryId repositoryId, final Branch branch, final Path entriesFile )
     {
-        dumpReader.processEntries( ( entryContent, entryName ) -> {
+        processEntries( ( entryContent, entryName ) -> {
             result.processed();
             try
             {
