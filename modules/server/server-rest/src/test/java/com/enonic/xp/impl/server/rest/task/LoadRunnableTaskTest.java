@@ -30,9 +30,6 @@ import com.enonic.xp.task.AbstractRunnableTaskTest;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 public class LoadRunnableTaskTest
     extends AbstractRunnableTaskTest
 {
@@ -49,8 +46,6 @@ public class LoadRunnableTaskTest
 
     private Path dumpDir;
 
-    private Path dataDir;
-
     @BeforeEach
     public void setUp()
         throws Exception
@@ -63,8 +58,7 @@ public class LoadRunnableTaskTest
         final Path homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) ).toAbsolutePath();
         System.setProperty( "xp.home", homeDir.toString() );
 
-        this.dataDir = Files.createDirectory( homeDir.resolve( "data" ) );
-        this.dumpDir = Files.createDirectory( dataDir.resolve( "dump" ) );
+        this.dumpDir = Files.createDirectories( homeDir.resolve( "data" ).resolve( "dump" ) );
     }
 
     @Override
@@ -160,14 +154,5 @@ public class LoadRunnableTaskTest
         final String result = contentQueryArgumentCaptor.getAllValues().get( 0 );
         jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "load_system_result.json" ), jsonTestHelper.stringToJson( result ) );
 
-    }
-
-    @Test
-    public void load_no_dump()
-        throws Exception
-    {
-        final IllegalArgumentException ex =
-            assertThrows( IllegalArgumentException.class, () -> createAndRunTask( new SystemLoadRequestJson( "name", false, false ) ) );
-        assertEquals( "No dump with name 'name' found in " + dataDir, ex.getMessage() );
     }
 }
