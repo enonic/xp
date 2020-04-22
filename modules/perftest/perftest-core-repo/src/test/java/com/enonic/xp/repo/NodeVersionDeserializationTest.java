@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
 import org.elasticsearch.client.Client;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -26,13 +25,16 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.MoreFiles;
 import com.google.common.io.RecursiveDeleteOption;
 
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.blob.NodeVersionKeys;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.PatternIndexConfigDocument;
+import com.enonic.xp.internal.blobstore.cache.CachedBlobStore;
 import com.enonic.xp.internal.blobstore.file.FileBlobStore;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -62,7 +64,6 @@ import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-@Disabled
 public class NodeVersionDeserializationTest
 {
     private static final Logger LOG = LoggerFactory.getLogger( NodeVersionDeserializationTest.class );
@@ -79,10 +80,9 @@ public class NodeVersionDeserializationTest
     }
 
     @Benchmark
-    public void nodeVersionService_get( MyState state, Blackhole bh )
+    public void nodeVersionService_get1000( MyState state, Blackhole bh )
     {
-
-        bh.consume( state.nodeDao.get( state.nodeVersionKey, state.internalContext ) );
+        bh.consume( state.nodeDao.get( state.nodeVersionKeys, state.internalContext ) );
     }
 
     @Test
@@ -91,7 +91,7 @@ public class NodeVersionDeserializationTest
     {
         final MyState state = new MyState();
         state.setup();
-        System.out.println( state.nodeDao.get( state.nodeVersionKey, state.internalContext ) );
+        System.out.println( state.nodeDao.get( state.nodeVersionKeys, state.internalContext ) );
         state.teardown();
     }
 
@@ -108,7 +108,7 @@ public class NodeVersionDeserializationTest
 
         InternalContext internalContext;
 
-        NodeVersionKey nodeVersionKey;
+        NodeVersionKeys nodeVersionKeys;
 
         IndexServiceInternalImpl indexServiceInternal;
 
@@ -122,7 +122,7 @@ public class NodeVersionDeserializationTest
 
         VersionServiceImpl versionService;
 
-        FileBlobStore blobStore;
+        BlobStore blobStore;
 
         StorageDaoImpl storageDao;
 
@@ -145,12 +145,17 @@ public class NodeVersionDeserializationTest
             setupXpNode();
             createInternalContext();
 
-            final CreateNodeParams createNodeParams = CreateNodeParams.create().
-                name( "my-node" ).
-                parent( NodePath.ROOT ).
-                build();
-            final Node createdNode = createNode( createNodeParams );
-            createNodeVersionKey( createdNode );
+            final NodeVersionKeys.Builder builder = NodeVersionKeys.create();
+            for ( int i = 0; i < 1000; i++ )
+            {
+                final CreateNodeParams createNodeParams = CreateNodeParams.create().
+                    name( "my-node" + i ).
+                    parent( NodePath.ROOT ).
+                    build();
+                final Node createdNode = createNode( createNodeParams );
+                builder.add( createNodeVersionKey( createdNode ) );
+            }
+            nodeVersionKeys = builder.build();
         }
 
         @TearDown
@@ -168,10 +173,9 @@ public class NodeVersionDeserializationTest
             internalContext = InternalContext.create( currentContext ).build();
         }
 
-        void createNodeVersionKey( Node node )
+        NodeVersionKey createNodeVersionKey( Node node )
         {
-            nodeVersionKey = branchService.get( node.id(), internalContext ).
-                getNodeVersionKey();
+            return branchService.get( node.id(), internalContext ).getNodeVersionKey();
         }
 
         Node createNode( final CreateNodeParams createNodeParams )
@@ -224,7 +228,9 @@ public class NodeVersionDeserializationTest
 
             ContextAccessor.INSTANCE.set( createAdminContext() );
 
-            this.blobStore = new FileBlobStore( performanceTemporaryFolder.resolve( "blobs" ) );
+            //simulate default production settings
+            this.blobStore = CachedBlobStore.create().memoryCapacity( 100 * 1024 * 1024 ).sizeTreshold( 1024 * 1024 ).blobStore(
+                new FileBlobStore( performanceTemporaryFolder.resolve( "blobs" ) ) ).build();
 
             this.binaryService = new BinaryServiceImpl();
             this.binaryService.setBlobStore( blobStore );
