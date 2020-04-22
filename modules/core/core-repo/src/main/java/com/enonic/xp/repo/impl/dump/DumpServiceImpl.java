@@ -210,7 +210,7 @@ public class DumpServiceImpl
 
         ensureBasePath();
 
-        final DumpWriter writer = params.isZip()
+        final DumpWriter writer = params.isArchive()
             ? ZipDumpWriter.create( basePath, params.getDumpName(), blobStore )
             : FileDumpWriter.create( basePath, params.getDumpName(), blobStore );
         try (writer)
@@ -274,7 +274,7 @@ public class DumpServiceImpl
 
         final SystemLoadResult.Builder results = SystemLoadResult.create();
 
-        final DumpReader dumpReader = params.isZip()
+        final DumpReader dumpReader = params.isArchive()
             ? ZipDumpReader.create( params.getListener(), basePath, params.getDumpName() )
             : FileDumpReader.create( params.getListener(), basePath, params.getDumpName() );
 
@@ -287,10 +287,10 @@ public class DumpServiceImpl
             {
                 if ( params.isUpgrade() )
                 {
-                    if ( params.isZip() )
+                    if ( params.isArchive() )
                     {
                         throw new RepoLoadException(
-                            "Cannot load system-dump; upgrade is not possible on zipped dump; unzip and upgrade the system-dump" );
+                            "Cannot load system-dump; upgrade is not possible on archived dump; unarchive and upgrade the system-dump" );
                     }
                     final SystemDumpUpgradeParams dumpUpgradeParams = SystemDumpUpgradeParams.create().
                         dumpName( params.getDumpName() ).

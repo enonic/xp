@@ -8,14 +8,14 @@ public class SystemLoadRequestJson
 
     private final boolean upgrade;
 
-    private final boolean zip;
+    private final boolean archive;
 
     public SystemLoadRequestJson( @JsonProperty("name") final String name, @JsonProperty("upgrade") final boolean upgrade,
-                                  @JsonProperty("zip") final boolean zip )
+                                  @JsonProperty("archive") final boolean archive )
     {
         this.name = name;
         this.upgrade = upgrade;
-        this.zip = zip;
+        this.archive = archive;
     }
 
     public String getName()
@@ -28,8 +28,8 @@ public class SystemLoadRequestJson
         return upgrade;
     }
 
-    public boolean isZip()
+    public boolean isArchive()
     {
-        return zip;
+        return archive;
     }
 }

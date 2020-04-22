@@ -10,7 +10,7 @@ public class SystemLoadParams
 
     private final boolean upgrade;
 
-    private final boolean zip;
+    private final boolean archive;
 
     private final SystemLoadListener listener;
 
@@ -20,7 +20,7 @@ public class SystemLoadParams
         this.includeVersions = builder.includeVersions;
         this.listener = builder.listener;
         this.upgrade = builder.upgrade;
-        this.zip = builder.zip;
+        this.archive = builder.archive;
     }
 
     public String getDumpName()
@@ -43,9 +43,9 @@ public class SystemLoadParams
         return upgrade;
     }
 
-    public boolean isZip()
+    public boolean isArchive()
     {
-        return zip;
+        return archive;
     }
 
     public static Builder create()
@@ -65,14 +65,14 @@ public class SystemLoadParams
             return false;
         }
         final SystemLoadParams that = (SystemLoadParams) o;
-        return includeVersions == that.includeVersions && upgrade == that.upgrade && zip == that.zip &&
+        return includeVersions == that.includeVersions && upgrade == that.upgrade && archive == that.archive &&
             Objects.equals( dumpName, that.dumpName ) && Objects.equals( listener, that.listener );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( dumpName, includeVersions, upgrade, listener, zip );
+        return Objects.hash( dumpName, includeVersions, upgrade, listener, archive );
     }
 
     public static final class Builder
@@ -83,7 +83,7 @@ public class SystemLoadParams
 
         private boolean upgrade = false;
 
-        private boolean zip;
+        private boolean archive;
 
         private SystemLoadListener listener;
 
@@ -115,9 +115,9 @@ public class SystemLoadParams
             return this;
         }
 
-        public Builder zip( final boolean zip )
+        public Builder archive( final boolean archive )
         {
-            this.zip = zip;
+            this.archive = archive;
             return this;
         }
 

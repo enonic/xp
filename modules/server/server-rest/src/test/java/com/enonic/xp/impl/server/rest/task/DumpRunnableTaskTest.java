@@ -72,7 +72,7 @@ public class DumpRunnableTaskTest
 
         final DumpRunnableTask task = createAndRunTask(
             new SystemDumpRequestJson( params.getDumpName(), params.isIncludeVersions(), params.getMaxAge(), params.getMaxVersions(),
-                                       params.isZip() ) );
+                                       params.isArchive() ) );
 
         task.createTaskResult();
 

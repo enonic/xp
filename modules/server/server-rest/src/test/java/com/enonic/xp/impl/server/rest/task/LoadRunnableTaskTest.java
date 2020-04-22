@@ -116,7 +116,7 @@ public class LoadRunnableTaskTest
         Mockito.when( this.dumpService.load( Mockito.isA( SystemLoadParams.class ) ) ).thenReturn( systemLoadResult );
 
         final LoadRunnableTask task =
-            createAndRunTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade(), params.isZip() ) );
+            createAndRunTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade(), params.isArchive() ) );
 
         task.createTaskResult();
 
@@ -144,7 +144,7 @@ public class LoadRunnableTaskTest
         Mockito.when( this.dumpService.load( Mockito.isA( SystemLoadParams.class ) ) ).thenReturn( systemLoadResult );
 
         final LoadRunnableTask task =
-            createAndRunTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade(), params.isZip() ) );
+            createAndRunTask( new SystemLoadRequestJson( params.getDumpName(), params.isUpgrade(), params.isArchive() ) );
 
         task.createTaskResult();
 
