@@ -151,7 +151,7 @@ public class LoadRunnableTask
         final SystemLoadResult systemLoadResult = this.dumpService.load( SystemLoadParams.create().
             dumpName( request.getName() ).
             upgrade( request.isUpgrade() ).
-            zip( request.isZip() ).
+            archive( request.isArchive() ).
             includeVersions( true ).
             listener( loadDumpListener ).
             build() );

@@ -125,7 +125,7 @@ public class DumpServiceImplTest
         refresh();
 
         final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
-            zip( true ).
+            archive( true ).
             includeVersions( true ).
             dumpName( "testDump" ).
             build() ) );
@@ -137,7 +137,7 @@ public class DumpServiceImplTest
         assertEquals( 2, branchDumpResult.getSuccessful() );
 
         NodeHelper.runAsAdmin( () -> this.dumpService.load( SystemLoadParams.create().
-            zip( true ).
+            archive( true ).
             includeVersions( true ).
             dumpName( "testDump" ).
             build() ) );

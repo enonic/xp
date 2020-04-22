@@ -16,7 +16,7 @@ public class SystemDumpParams
 
     private final SystemDumpListener listener;
 
-    private final boolean zip;
+    private final boolean archive;
 
     private SystemDumpParams( final Builder builder )
     {
@@ -26,7 +26,7 @@ public class SystemDumpParams
         maxAge = builder.maxAge;
         maxVersions = builder.maxVersions;
         this.listener = builder.listener;
-        this.zip = builder.zip;
+        this.archive = builder.archive;
     }
 
     public String getDumpName()
@@ -64,9 +64,9 @@ public class SystemDumpParams
         return listener;
     }
 
-    public boolean isZip()
+    public boolean isArchive()
     {
-        return zip;
+        return archive;
     }
 
     @Override
@@ -106,7 +106,7 @@ public class SystemDumpParams
 
         private SystemDumpListener listener;
 
-        private boolean zip;
+        private boolean archive;
 
         private Builder()
         {
@@ -148,9 +148,9 @@ public class SystemDumpParams
             return this;
         }
 
-        public Builder zip( final boolean zip )
+        public Builder archive( final boolean archive )
         {
-            this.zip = zip;
+            this.archive = archive;
             return this;
         }
 
