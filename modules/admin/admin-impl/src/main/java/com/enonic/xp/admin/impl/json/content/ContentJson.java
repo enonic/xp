@@ -9,14 +9,13 @@ import com.enonic.xp.admin.impl.json.content.page.PageJson;
 import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
+import com.enonic.xp.admin.impl.rest.resource.content.json.AccessControlEntriesJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AccessControlEntryJson;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTreeJson;
 import com.enonic.xp.security.Principals;
-import com.enonic.xp.security.acl.AccessControlEntry;
-import com.enonic.xp.security.acl.AccessControlList;
 
 @SuppressWarnings("UnusedDeclaration")
 public final class ContentJson
@@ -30,7 +29,7 @@ public final class ContentJson
 
     private final PageJson pageJson;
 
-    private final List<AccessControlEntryJson> accessControlList;
+    private final AccessControlEntriesJson accessControlList;
 
     private final boolean inheritPermissions;
 
@@ -50,21 +49,8 @@ public final class ContentJson
         this.pageJson = content.hasPage() ? new PageJson( content.getPage(), componentNameResolver ) : null;
 
         final Principals principals = contentPrincipalsResolver.resolveAccessControlListPrincipals( content.getPermissions() );
-        this.accessControlList = aclToJson( content.getPermissions(), principals );
+        this.accessControlList = AccessControlEntriesJson.from( content.getPermissions(), principals );
         this.inheritPermissions = content.inheritsPermissions();
-    }
-
-    private List<AccessControlEntryJson> aclToJson( final AccessControlList acl, final Principals principals )
-    {
-        final List<AccessControlEntryJson> jsonList = new ArrayList<>();
-        for ( AccessControlEntry entry : acl )
-        {
-            if ( principals.getPrincipal( entry.getPrincipal() ) != null )
-            {
-                jsonList.add( new AccessControlEntryJson( entry, principals.getPrincipal( entry.getPrincipal() ) ) );
-            }
-        }
-        return jsonList;
     }
 
     public List<PropertyArrayJson> getData()
@@ -84,7 +70,7 @@ public final class ContentJson
 
     public List<AccessControlEntryJson> getPermissions()
     {
-        return this.accessControlList;
+        return this.accessControlList.getList();
     }
 
     public PageJson getPage()
