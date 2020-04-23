@@ -899,31 +899,6 @@ public class ContentResourceTest
         TaskResultJson result = contentResource.applyPermissions( json );
 
         assertEquals( "task-id", result.getTaskId() );
-
-
-       /* Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
-
-        final User admin = User.create().displayName( "Admin" ).key( PrincipalKey.from( "user:system:admin" ) ).login( "admin" ).build();
-        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.from( "user:system:admin" ) ) ).thenReturn(
-            Optional.of( admin ) );
-        final User anon = User.create().displayName( "Anonymous" ).key( PrincipalKey.ofAnonymous() ).login( "anonymous" ).build();
-        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.ofAnonymous() ) ).thenReturn(
-            Optional.of( anon ) );
-
-        final AccessControlList permissions = getTestPermissions();
-        content = Content.create( content ).permissions( permissions ).inheritPermissions( true ).build();
-        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
-
-        Mockito.when( taskService.submitTask( Mockito.isA( ApplyPermissionsRunnableTask.class ), eq( "Apply content permissions" ) ) ).thenReturn(
-            TaskId.from( "task-id" ) );
-
-        String jsonString = request().path( "content/applyPermissions" ).
-            entity( readFromFile( "apply_content_permissions_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-
-        Mockito.verify( contentService, Mockito.times( 1 ) ).applyPermissions( Mockito.isA( ApplyContentPermissionsParams.class ) );
-
-        assertJson( "apply_content_permissions_success.json", jsonString );*/
     }
 
     @Test
@@ -945,6 +920,27 @@ public class ContentResourceTest
         Mockito.verify( contentService, Mockito.times( 1 ) ).getRootPermissions();
 
         assertJson( "get_content_root_permissions_success.json", jsonString );
+    }
+
+    @Test
+    public void getRootPermissionsWithNullPrincipal()
+        throws Exception
+    {
+        final User admin = User.create().displayName( "Admin" ).key( PrincipalKey.from( "user:system:admin" ) ).login( "admin" ).build();
+        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.from( "user:system:admin" ) ) ).thenReturn(
+            Optional.of( admin ) );
+        final User anon = User.create().displayName( "Anonymous" ).key( PrincipalKey.ofAnonymous() ).login( "anonymous" ).build();
+        Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.ofAnonymous() ) ).thenReturn(
+            Optional.ofNullable( null ) );
+
+        final AccessControlList permissions = getTestPermissions();
+        Mockito.when( contentService.getRootPermissions() ).thenReturn( permissions );
+
+        String jsonString = request().path( "content/rootPermissions" ).get().getAsString();
+
+        Mockito.verify( contentService, Mockito.times( 1 ) ).getRootPermissions();
+
+        assertJson( "get_content_root_permissions_with_null_principal.json", jsonString );
     }
 
     @Test
