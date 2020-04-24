@@ -3,16 +3,11 @@ package com.enonic.xp.core.impl.image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Iterator;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -70,7 +65,8 @@ public class ImageServiceImpl
             final BufferedImage bufferedImage = readBufferedImage( blob, readImageParams );
             if ( bufferedImage != null )
             {
-                return serializeImage( readImageParams, bufferedImage );
+                return ByteSource.wrap(
+                    ImageHelper.serializeImage( bufferedImage, readImageParams.getMimeType(), readImageParams.getQuality() ) );
             }
         }
         return null;
@@ -86,19 +82,7 @@ public class ImageServiceImpl
     public String getFormatByMimeType( final String mimeType )
         throws IOException
     {
-        return doGetFormatByMimeType( mimeType );
-    }
-
-    private String doGetFormatByMimeType( final String mimeType )
-        throws IOException
-    {
-        final Iterator<ImageWriter> i = ImageIO.getImageWritersByMIMEType( mimeType );
-        if ( !i.hasNext() )
-        {
-            throw new IOException( "The image-based media type " + mimeType + " is not supported for writing" );
-        }
-
-        return i.next().getOriginatingProvider().getFormatNames()[0];
+        return ImageHelper.getFormatByMimeType( mimeType );
     }
 
     private Path getCachedImagePath( final ReadImageParams readImageParams )
@@ -134,7 +118,7 @@ public class ImageServiceImpl
         //Filter string value
         final String filter = readImageParams.getFilterParam() != null ? readImageParams.getFilterParam() : "no-filter";
 
-        final String format = doGetFormatByMimeType( readImageParams.getMimeType() );
+        final String format = ImageHelper.getFormatByMimeType( readImageParams.getMimeType() );
         //Background string value
         final String background = "background-" + readImageParams.getBackgroundColor();
 
@@ -302,39 +286,6 @@ public class ImageServiceImpl
         final BufferedImage destinationImage = new BufferedImage( resultWidth, resultHeight, bufferedImage.getType() );
         final AffineTransformOp op = new AffineTransformOp( transform, AffineTransformOp.TYPE_BICUBIC );
         return op.filter( bufferedImage, destinationImage );
-    }
-
-    private ByteSource serializeImage( final ReadImageParams readImageParams, final BufferedImage bufferedImage )
-        throws IOException
-    {
-        final ByteSource serializedImage;
-        //TODO If/Else due to a difference of treatment between admin and portal. Should be uniform
-
-        final String format = doGetFormatByMimeType( readImageParams.getMimeType() );
-        if ( readImageParams.getQuality() != 0 )
-        {
-            serializedImage = serializeImage( bufferedImage, format, readImageParams.getQuality() );
-        }
-        else
-        {
-            serializedImage = serializeImage( bufferedImage, format );
-        }
-        return serializedImage;
-    }
-
-    private ByteSource serializeImage( final BufferedImage bufferedImage, final String format, final int quality )
-        throws IOException
-    {
-        final byte[] bytes = ImageHelper.writeImage( bufferedImage, format, quality );
-        return ByteSource.wrap( bytes );
-    }
-
-    private ByteSource serializeImage( final BufferedImage bufferedImage, final String format )
-        throws IOException
-    {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ImageIO.write( bufferedImage, format, out );
-        return ByteSource.wrap( out.toByteArray() );
     }
 
     @Reference

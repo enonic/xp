@@ -85,6 +85,44 @@ public final class ImageHelper
         }
     }
 
+    public static String getFormatByMimeType( final String mimeType )
+        throws IOException
+    {
+        final Iterator<ImageWriter> i = ImageIO.getImageWritersByMIMEType( mimeType );
+        if ( !i.hasNext() )
+        {
+            throw new IOException( "The image-based media type " + mimeType + " is not supported for writing" );
+        }
+
+        return i.next().getOriginatingProvider().getFormatNames()[0];
+    }
+
+    public static byte[] serializeImage( final BufferedImage bufferedImage, final String mimeType, final int quality )
+        throws IOException
+    {
+        final byte[] serializedImage;
+
+        final String format = getFormatByMimeType( mimeType );
+        if ( quality != 0 )
+        {
+            serializedImage = writeImage( bufferedImage, format, quality );
+        }
+        else
+        {
+            serializedImage = writeImage( bufferedImage, format );
+        }
+
+        return serializedImage;
+    }
+
+    private static byte[] writeImage( final BufferedImage bufferedImage, final String format )
+        throws IOException
+    {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ImageIO.write( bufferedImage, format, out );
+        return out.toByteArray();
+    }
+
     public static byte[] writeImage( final BufferedImage image, final String format, final int quality )
         throws IOException
     {

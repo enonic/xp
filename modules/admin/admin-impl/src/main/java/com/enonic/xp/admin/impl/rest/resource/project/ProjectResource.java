@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.project.json.CreateOrModifyProjectParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.DeleteProjectParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyLanguageParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyPermissionsParamsJson;
@@ -35,6 +36,7 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.project.CreateProjectParams;
+import com.enonic.xp.project.ModifyProjectIconParams;
 import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
@@ -69,21 +71,19 @@ public final class ProjectResource
 
     @POST
     @Path("create")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public ProjectJson create( final MultipartForm form )
+    public ProjectJson create( final CreateOrModifyProjectParamsJson json )
         throws Exception
     {
-        final Project project = projectService.create( createParams( form ) );
+        final Project project = projectService.create( createParams( json ) );
         return doCreateJson( project );
     }
 
     @POST
     @Path("modify")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public ProjectJson modify( final MultipartForm form )
+    public ProjectJson modify( final CreateOrModifyProjectParamsJson json )
         throws Exception
     {
-        final Project modifiedProject = this.projectService.modify( ModifyProjectParams.create( createParams( form ) ).build() );
+        final Project modifiedProject = this.projectService.modify( ModifyProjectParams.create( createParams( json ) ).build() );
 
         if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( modifiedProject.getName() ) )
         {
@@ -108,6 +108,20 @@ public final class ProjectResource
     {
         doApplyPermissions( params.getName(), params.getPermissions() );
         return doApplyReadAccess( params.getName(), params.getReadAccess() );
+    }
+
+    @POST
+    @Path("modifyIcon")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public void modifyIcon( final MultipartForm form )
+    {
+        final ModifyProjectIconParams params = ModifyProjectIconParams.create().
+            name( ProjectName.from( form.getAsString( "name" ) ) ).
+            scaleWidth( Integer.parseInt( form.getAsString( "scaleWidth" ) ) ).
+            icon( createIcon( form ) ).
+            build();
+
+        this.projectService.modifyIcon( params );
     }
 
     @POST
@@ -141,26 +155,28 @@ public final class ProjectResource
         return doCreateJson( this.projectService.get( projectName ) );
     }
 
-    private CreateProjectParams createParams( final MultipartForm form )
-        throws IOException
+    private CreateProjectParams createParams( final CreateOrModifyProjectParamsJson json )
     {
-        final CreateProjectParams.Builder builder = CreateProjectParams.create().
-            name( ProjectName.from( form.getAsString( "name" ) ) ).
-            displayName( form.getAsString( "displayName" ) ).
-            description( form.getAsString( "description" ) );
+        return CreateProjectParams.create().
+            name( json.getName() ).
+            displayName( json.getDisplayName() ).
+            description( json.getDescription() ).build();
+    }
 
+    private CreateAttachment createIcon( final MultipartForm form )
+    {
         final MultipartItem icon = form.get( "icon" );
 
-        if ( icon != null )
+        if ( icon == null )
         {
-            builder.icon( CreateAttachment.create().
-                name( ProjectConstants.PROJECT_ICON_PROPERTY ).
-                mimeType( icon.getContentType().toString() ).
-                byteSource( icon.getBytes() ).
-                build() );
+            return null;
         }
-
-        return builder.build();
+        return CreateAttachment.create().
+            name( ProjectConstants.PROJECT_ICON_PROPERTY ).
+            label( icon.getFileName() ).
+            mimeType( icon.getContentType().toString() ).
+            byteSource( icon.getBytes() ).
+            build();
     }
 
     private ProjectReadAccess getReadAccessFromForm( final MultipartForm form )

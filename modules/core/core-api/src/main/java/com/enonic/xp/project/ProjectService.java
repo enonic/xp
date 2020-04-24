@@ -9,6 +9,8 @@ public interface ProjectService
 
     Project modify( final ModifyProjectParams params );
 
+    void modifyIcon( final ModifyProjectIconParams params );
+
     Projects list();
 
     Project get( final ProjectName projectName );

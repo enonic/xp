@@ -3,7 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
-final class ResolvedImage
+public final class ResolvedImage
 {
     final Object image;
 
@@ -11,26 +11,26 @@ final class ResolvedImage
 
     final boolean gzip;
 
-    ResolvedImage( final Object image, final String mimeType )
+    public ResolvedImage( final Object image, final String mimeType )
     {
         this.image = image;
         this.mimeType = mimeType;
         this.gzip = false;
     }
 
-    ResolvedImage( final Object image, final String mimeType, final String fileName )
+    public ResolvedImage( final Object image, final String mimeType, final String fileName )
     {
         this.image = image;
         this.mimeType = mimeType;
         this.gzip = fileName != null && fileName.toLowerCase().endsWith( ".svgz" );
     }
 
-    static ResolvedImage unresolved()
+    public static ResolvedImage unresolved()
     {
         return new ResolvedImage( null, null );
     }
 
-    boolean isOK()
+    public boolean isOK()
     {
         return image != null && mimeType != null;
     }
@@ -45,12 +45,12 @@ final class ResolvedImage
         return r;
     }
 
-    Response toResponse()
+    public Response toResponse()
     {
         return newResponse().build();
     }
 
-    Response toResponse( final CacheControl cc )
+    public Response toResponse( final CacheControl cc )
     {
         return newResponse().cacheControl( cc ).build();
     }

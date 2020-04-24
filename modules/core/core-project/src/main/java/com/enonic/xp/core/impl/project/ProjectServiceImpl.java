@@ -1,5 +1,11 @@
 package com.enonic.xp.core.impl.project;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.EnumSet;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
@@ -9,6 +15,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.attachment.AttachmentSerializer;
 import com.enonic.xp.attachment.CreateAttachment;
@@ -21,10 +29,12 @@ import com.enonic.xp.core.impl.project.init.ContentInitializer;
 import com.enonic.xp.core.impl.project.init.IssueInitializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.project.CreateProjectParams;
+import com.enonic.xp.project.ModifyProjectIconParams;
 import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
@@ -79,7 +89,7 @@ public class ProjectServiceImpl
     {
         return callWithCreateContext( ( () -> {
             final Project result = doCreate( params );
-            LOG.info( "Project created: " + params.getName() );
+            LOG.debug( "Project created: " + params.getName() );
 
             return result;
         } ) );
@@ -126,7 +136,7 @@ public class ProjectServiceImpl
     {
         return callWithUpdateContext( ( () -> {
             final Project result = doModify( params );
-            LOG.info( "Project updated: " + params.getName() );
+            LOG.debug( "Project updated: " + params.getName() );
 
             return result;
         } ), params.getName() );
@@ -136,14 +146,7 @@ public class ProjectServiceImpl
     {
         final UpdateRepositoryParams updateParams = UpdateRepositoryParams.create().
             repositoryId( params.getName().getRepoId() ).
-            editor( editableRepository -> {
-
-                if ( params.getIcon() != null )
-                {
-                    editableRepository.binaryAttachments.add( createProjectIcon( params.getIcon() ) );
-                }
-                editableRepository.data = createProjectData( params );
-            } ).
+            editor( editableRepository -> modifyProjectData( params, editableRepository.data ) ).
             build();
 
         final Repository updatedRepository = repositoryService.updateRepository( updateParams );
@@ -159,6 +162,43 @@ public class ProjectServiceImpl
         }
 
         return Project.from( updatedRepository );
+    }
+
+    @Override
+    public void modifyIcon( final ModifyProjectIconParams params )
+    {
+        callWithUpdateContext( ( () -> {
+            doModifyIcon( params );
+            LOG.debug( "Icon for project updated: " + params.getName() );
+
+            return true;
+        } ), params.getName() );
+    }
+
+    private void doModifyIcon( final ModifyProjectIconParams params )
+    {
+        final UpdateRepositoryParams updateParams = UpdateRepositoryParams.create().
+            repositoryId( params.getName().getRepoId() ).
+            editor( editableRepository -> {
+
+                if ( params.getIcon() != null )
+                {
+                    try
+                    {
+                        editableRepository.binaryAttachments.add( createProjectIcon( params.getIcon(), params.getScaleWidth() ) );
+                    }
+                    catch ( IOException e )
+                    {
+                        throw new UncheckedIOException( e );
+                    }
+                }
+
+                final PropertySet projectData = editableRepository.data.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
+                setIconData( projectData, params.getIcon() );
+            } ).
+            build();
+
+        repositoryService.updateRepository( updateParams );
     }
 
     @Override
@@ -202,7 +242,7 @@ public class ProjectServiceImpl
     {
         return callWithDeleteContext( () -> {
             final boolean result = doDelete( projectName );
-            LOG.info( "Project deleted: " + projectName );
+            LOG.debug( "Project deleted: " + projectName );
 
             return result;
         }, projectName );
@@ -256,7 +296,7 @@ public class ProjectServiceImpl
         return callWithUpdateContext( () -> {
 
             final ProjectPermissions result = doModifyPermissions( projectName, projectPermissions );
-            LOG.info( "Project permissions updated: " + projectName );
+            LOG.debug( "Project permissions updated: " + projectName );
 
             return result;
 
@@ -274,33 +314,79 @@ public class ProjectServiceImpl
             execute();
     }
 
-    private PropertyTree createProjectData( final ModifyProjectParams params )
+    private PropertyTree modifyProjectData( final ModifyProjectParams params, final PropertyTree data )
     {
-        final PropertyTree data = new PropertyTree();
+        PropertySet projectData = data.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
 
-        final PropertySet set = data.addSet( ProjectConstants.PROJECT_DATA_SET_NAME );
-        set.addString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
-        set.addString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
-        if ( params.getIcon() != null )
+        if ( projectData == null )
         {
-            AttachmentSerializer.create( set, CreateAttachments.from( params.getIcon() ), ProjectConstants.PROJECT_ICON_PROPERTY );
+            projectData = data.addSet( ProjectConstants.PROJECT_DATA_SET_NAME );
         }
-        else
-        {
-            set.addSet( ProjectConstants.PROJECT_ICON_PROPERTY, null );
-        }
+
+        projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
+        projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
 
         return data;
     }
 
-    private BinaryAttachment createProjectIcon( final CreateAttachment icon )
+    private void setIconData( final PropertySet parent, final CreateAttachment icon )
     {
+        parent.removeProperties( ProjectConstants.PROJECT_ICON_PROPERTY );
+
         if ( icon != null )
         {
-            return new BinaryAttachment( BinaryReference.from( icon.getName() ), icon.getByteSource() );
+            AttachmentSerializer.create( parent, CreateAttachments.from( icon ), ProjectConstants.PROJECT_ICON_PROPERTY );
+        }
+        else
+        {
+            parent.addSet( ProjectConstants.PROJECT_ICON_PROPERTY, null );
+        }
+    }
+
+    private BinaryAttachment createProjectIcon( final CreateAttachment icon, final int size )
+        throws IOException
+    {
+
+        if ( icon != null )
+        {
+            final ByteSource source = icon.getByteSource();
+
+            if ( "image/svg+xml".equals( icon.getMimeType() ) )
+            {
+                return new BinaryAttachment( BinaryReference.from( icon.getName() ), icon.getByteSource() );
+            }
+
+            try (final InputStream inputStream = source.openStream())
+            {
+                final BufferedImage bufferedImage = ImageHelper.toBufferedImage( inputStream );
+
+                if ( size > 0 && ( bufferedImage.getWidth() >= size ) )
+                {
+                    final BufferedImage scaledImage = scaleWidth( bufferedImage, size );
+                    final ByteSource scaledSource = ByteSource.wrap( ImageHelper.serializeImage( scaledImage, icon.getMimeType(), 0 ) );
+
+                    return new BinaryAttachment( BinaryReference.from( icon.getName() ), scaledSource );
+                }
+
+                return new BinaryAttachment( BinaryReference.from( icon.getName() ), icon.getByteSource() );
+            }
         }
 
         return null;
+    }
+
+    private BufferedImage scaleWidth( final BufferedImage source, final int sizeInt )
+    {
+        final BigDecimal newWidth = new BigDecimal( sizeInt );
+        final BigDecimal size = newWidth.setScale( 2, RoundingMode.UP );
+
+        final BigDecimal width = new BigDecimal( source.getWidth() );
+        final BigDecimal height = new BigDecimal( source.getHeight() );
+
+        final BigDecimal scale = size.divide( width, RoundingMode.UP );
+        final BigDecimal newHeight = height.multiply( scale ).setScale( 0, RoundingMode.UP );
+
+        return ImageHelper.getScaledInstance( source, newWidth.intValue(), newHeight.intValue() );
     }
 
     private <T> T callWithCreateContext( final Callable<T> runnable )

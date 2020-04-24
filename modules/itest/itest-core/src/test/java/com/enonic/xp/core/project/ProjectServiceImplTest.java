@@ -22,6 +22,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.project.CreateProjectParams;
+import com.enonic.xp.project.ModifyProjectIconParams;
 import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
@@ -583,23 +584,49 @@ class ProjectServiceImplTest
                 name( ProjectName.from( "test-project" ) ).
                 description( "new description" ).
                 displayName( "new display name" ).
-                icon( CreateAttachment.create().
-                    mimeType( "image/png" ).
-                    label( "My New Image" ).
-                    name( "MyNewImage.png" ).
-                    byteSource( ByteSource.wrap( "new bytes".getBytes() ) ).
-                    build() ).
                 build() );
 
             final Project modifiedProject = projectService.get( ProjectName.from( "test-project" ) );
 
             assertEquals( "new description", modifiedProject.getDescription() );
             assertEquals( "new display name", modifiedProject.getDisplayName() );
+        } );
+
+    }
+
+    @Test
+    void modify_icon()
+    {
+        doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
+
+        ADMIN_CONTEXT.runWith( () -> {
+            projectService.modifyIcon( ModifyProjectIconParams.create().
+                name( ProjectName.from( "test-project" ) ).
+                icon( CreateAttachment.create().
+                    mimeType( "image/png" ).
+                    label( "My New Image" ).
+                    name( "MyNewImage.png" ).
+                    byteSource( ByteSource.wrap( "new bytes".getBytes() ) ).
+                    build() ).
+                scaleWidth( 0 ).
+                build() );
+
+            Project modifiedProject = projectService.get( ProjectName.from( "test-project" ) );
+
             assertEquals( "image/png", modifiedProject.getIcon().getMimeType() );
             assertEquals( "My New Image", modifiedProject.getIcon().getLabel() );
             assertEquals( "MyNewImage.png", modifiedProject.getIcon().getName() );
-        } );
 
+            projectService.modifyIcon( ModifyProjectIconParams.create().
+                name( ProjectName.from( "test-project" ) ).
+                icon( null ).
+                scaleWidth( 0 ).
+                build() );
+
+            modifiedProject = projectService.get( ProjectName.from( "test-project" ) );
+
+            assertNull( modifiedProject.getIcon() );
+        } );
     }
 
     @Test
@@ -615,12 +642,6 @@ class ProjectServiceImplTest
                 name( ProjectName.from( "test-project" ) ).
                 description( "new description" ).
                 displayName( "new display name" ).
-                icon( CreateAttachment.create().
-                    mimeType( "image/png" ).
-                    label( "My New Image" ).
-                    name( "MyNewImage.png" ).
-                    byteSource( ByteSource.wrap( "new bytes".getBytes() ) ).
-                    build() ).
                 build() );
         } );
 
@@ -727,12 +748,6 @@ class ProjectServiceImplTest
             name( name ).
             description( "description" ).
             displayName( "Project display name" ).
-            icon( CreateAttachment.create().
-                mimeType( "image/jpg" ).
-                label( "My Image 1" ).
-                name( "MyImage.jpg" ).
-                byteSource( ByteSource.wrap( "bytes".getBytes() ) ).
-                build() ).
             build() );
 
         if ( projectPermissions != null )
