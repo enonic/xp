@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.project;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -27,6 +29,7 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
 import com.enonic.xp.project.CreateProjectParams;
+import com.enonic.xp.project.ModifyProjectIconParams;
 import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
@@ -35,7 +38,6 @@ import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.multipart.MultipartForm;
@@ -102,14 +104,11 @@ public class ProjectResourceTest
             name( "logo.png" ).
             mimeType( "image/png" ).
             label( "small" ).
-            build(), ProjectPermissions.create().addOwner( RoleKeys.AUTHENTICATED ).build() );
+            build() );
 
-        final Project project2 =
-            createProject( "project2", "project2", null, null, ProjectPermissions.create().addEditor( RoleKeys.AUTHENTICATED ).build() );
-        final Project project3 =
-            createProject( "project3", null, null, null, ProjectPermissions.create().addContributor( RoleKeys.AUTHENTICATED ).build() );
-        final Project project4 =
-            createProject( "project4", "project4", null, null, ProjectPermissions.create().addAuthor( RoleKeys.AUTHENTICATED ).build() );
+        final Project project2 = createProject( "project2", "project2", null, null );
+        final Project project3 = createProject( "project3", null, null, null );
+        final Project project4 = createProject( "project4", "project4", null, null );
 
         mockRootContent();
 
@@ -144,11 +143,9 @@ public class ProjectResourceTest
 
         Mockito.when( projectService.create( Mockito.isA( CreateProjectParams.class ) ) ).thenThrow( e );
 
-        createForm();
-
         assertThrows( IllegalArgumentException.class, () -> {
             request().path( "project/create" ).
-                entity( readFromFile( "create_project_params.json" ), MediaType.MULTIPART_FORM_DATA_TYPE ).
+                entity( readFromFile( "create_project_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
                 post().getAsString();
         } );
     }
@@ -168,11 +165,10 @@ public class ProjectResourceTest
         Mockito.when( projectService.modifyPermissions( Mockito.eq( project.getName() ), Mockito.isA( ProjectPermissions.class ) ) ).
             thenAnswer( i -> i.getArguments()[1] );
 
-        createForm();
         mockProjectPermissions( project.getName() );
 
         String jsonString = request().path( "project/create" ).
-            multipart( "icon", "logo.png", readFromFile( "create_project_params.json" ).getBytes(), MediaType.MULTIPART_FORM_DATA_TYPE ).
+            entity( readFromFile( "create_project_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
         assertJson( "create_project_success.json", jsonString );
@@ -197,10 +193,8 @@ public class ProjectResourceTest
         Mockito.when( projectService.modifyPermissions( Mockito.eq( project.getName() ), Mockito.isA( ProjectPermissions.class ) ) ).
             thenAnswer( i -> i.getArguments()[1] );
 
-        createForm();
-
         String jsonString = request().path( "project/modify" ).
-            entity( readFromFile( "create_project_params.json" ), MediaType.MULTIPART_FORM_DATA_TYPE ).
+            entity( readFromFile( "create_project_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
         assertJson( "create_project_success.json", jsonString );
@@ -261,6 +255,34 @@ public class ProjectResourceTest
     }
 
     @Test
+    public void testModifyIcon()
+        throws Exception
+    {
+        final Project project = createProject( "project1", "project name 1", "project description 1", Attachment.create().
+            name( "logo.png" ).
+            mimeType( "image/png" ).
+            label( "small" ).
+            build() );
+
+        createIconForm( project.getName(), 150 );
+
+        Mockito.doAnswer( invocation -> {
+            final Object[] args = invocation.getArguments();
+
+            ModifyProjectIconParams params = (ModifyProjectIconParams) args[0];
+            assertEquals( project.getName(), params.getName() );
+            assertEquals( 726l, params.getIcon().getByteSource().size() );
+            assertEquals( 150, params.getScaleWidth() );
+
+            return null;
+        } ).when( projectService ).modifyIcon( Mockito.any() );
+
+        request().path( "project/modifyIcon" ).
+            multipart( "icon", "icon.png", new byte[]{}, MediaType.MULTIPART_FORM_DATA_TYPE ).
+            post().getAsString();
+    }
+
+    @Test
     public void modify_permissions_success()
         throws Exception
     {
@@ -316,12 +338,6 @@ public class ProjectResourceTest
 
     private Project createProject( final String name, final String displayName, final String description, final Attachment icon )
     {
-        return createProject( name, displayName, description, icon, null );
-    }
-
-    private Project createProject( final String name, final String displayName, final String description, final Attachment icon,
-                                   final ProjectPermissions projectPermissions )
-    {
         return Project.create().
             name( ProjectName.from( name ) ).
             displayName( displayName ).
@@ -330,33 +346,45 @@ public class ProjectResourceTest
             build();
     }
 
-    private MultipartForm createForm()
+    private MultipartForm createIconForm( final ProjectName projectName, final int scaleWidth )
+        throws IOException
     {
         final MultipartForm form = Mockito.mock( MultipartForm.class );
 
-        final MultipartItem file = createItem( "icon", "logo.png", 10, "png", "image/png" );
+        try (InputStream stream = this.getClass().getResourceAsStream( "icon/projecticon1.png" ))
+        {
+            final MultipartItem file = createItem( "icon", "logo.png", 10, "png", "image/png", stream.readAllBytes() );
 
-        Mockito.when( form.iterator() ).thenReturn( Lists.newArrayList( file ).iterator() );
-        Mockito.when( form.get( "icon" ) ).thenReturn( file );
-        Mockito.when( form.getAsString( "name" ) ).thenReturn( "projname" );
-        Mockito.when( form.getAsString( "displayName" ) ).thenReturn( "Project Display Name" );
-        Mockito.when( form.getAsString( "description" ) ).thenReturn( "project Description" );
+            Mockito.when( form.iterator() ).thenReturn( Lists.newArrayList( file ).iterator() );
+            Mockito.when( form.get( "icon" ) ).thenReturn( file );
+            if ( projectName != null )
+            {
+                Mockito.when( form.getAsString( "name" ) ).thenReturn( projectName.toString() );
+            }
+            if ( scaleWidth > 0 )
+            {
 
-        Mockito.when( form.getAsString( "readAccess" ) ).thenReturn( "{\"type\":\"custom\", \"principals\":[\"user:system:custom\"]}" );
+                Mockito.when( form.getAsString( "scaleWidth" ) ).thenReturn( String.valueOf( scaleWidth ) );
+            }
 
-        Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
+            Mockito.when( form.getAsString( "readAccess" ) ).thenReturn( "{\"type\":\"custom\", \"principals\":[\"user:system:custom\"]}" );
 
-        return form;
+            Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
+
+            return form;
+        }
+
     }
 
-    private MultipartItem createItem( final String name, final String fileName, final long size, final String ext, final String type )
+    private MultipartItem createItem( final String name, final String fileName, final long size, final String ext, final String type,
+                                      final byte[] bytes )
     {
         final MultipartItem item = Mockito.mock( MultipartItem.class );
         Mockito.when( item.getName() ).thenReturn( name );
         Mockito.when( item.getFileName() ).thenReturn( fileName + "." + ext );
         Mockito.when( item.getContentType() ).thenReturn( com.google.common.net.MediaType.parse( type ) );
         Mockito.when( item.getSize() ).thenReturn( size );
-        Mockito.when( item.getBytes() ).thenReturn( ByteSource.wrap( name.getBytes() ) );
+        Mockito.when( item.getBytes() ).thenReturn( ByteSource.wrap( bytes ) );
         return item;
     }
 
