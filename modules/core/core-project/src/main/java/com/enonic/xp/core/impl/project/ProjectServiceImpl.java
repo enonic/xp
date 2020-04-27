@@ -117,6 +117,16 @@ public class ProjectServiceImpl
             build().
             initialize();
 
+        if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( params.getName() ) )
+        {
+            CreateProjectRolesCommand.create().
+                securityService( securityService ).
+                projectName( params.getName() ).
+                projectDisplayName( params.getDisplayName() ).
+                build().
+                execute();
+        }
+
         final ModifyProjectParams modifyProjectParams = ModifyProjectParams.create( params ).build();
         return doModify( modifyProjectParams );
     }
@@ -150,7 +160,7 @@ public class ProjectServiceImpl
 
         if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( params.getName() ) )
         {
-            CreateProjectPermissionRolesCommand.create().
+            UpdateProjectRoleNamesCommand.create().
                 securityService( securityService ).
                 projectName( params.getName() ).
                 projectDisplayName( params.getDisplayName() ).
@@ -215,7 +225,7 @@ public class ProjectServiceImpl
 
         if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
         {
-            DeleteProjectPermissionRolesCommand.create().
+            DeleteProjectRolesCommand.create().
                 securityService( securityService ).
                 projectName( projectName ).
                 build().
@@ -238,7 +248,7 @@ public class ProjectServiceImpl
 
     private ProjectPermissions doGetPermissions( final ProjectName projectName )
     {
-        return GetProjectPermissionsCommand.create().
+        return GetProjectRolesCommand.create().
             securityService( securityService ).
             projectName( projectName ).
             build().
@@ -266,7 +276,7 @@ public class ProjectServiceImpl
 
     private ProjectPermissions doModifyPermissions( final ProjectName projectName, final ProjectPermissions projectPermissions )
     {
-        return UpdateProjectPermissionsCommand.create().
+        return UpdateProjectRolesCommand.create().
             projectName( projectName ).
             permissions( projectPermissions ).
             securityService( securityService ).

@@ -3,10 +3,10 @@ package com.enonic.xp.core.impl.project;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.security.PrincipalKey;
 
-public final class DeleteProjectPermissionRolesCommand
-    extends AbstractProjectPermissionsCommand
+public final class DeleteProjectRolesCommand
+    extends AbstractProjectRolesCommand
 {
-    private DeleteProjectPermissionRolesCommand( final Builder builder )
+    private DeleteProjectRolesCommand( final Builder builder )
     {
         super( builder );
     }
@@ -34,7 +34,7 @@ public final class DeleteProjectPermissionRolesCommand
     }
 
     public static final class Builder
-        extends AbstractProjectPermissionsCommand.Builder<Builder>
+        extends AbstractProjectRolesCommand.Builder<Builder>
     {
         private Builder()
         {
@@ -45,10 +45,10 @@ public final class DeleteProjectPermissionRolesCommand
             super.validate();
         }
 
-        public DeleteProjectPermissionRolesCommand build()
+        public DeleteProjectRolesCommand build()
         {
             validate();
-            return new DeleteProjectPermissionRolesCommand( this );
+            return new DeleteProjectRolesCommand( this );
         }
 
     }

@@ -624,7 +624,7 @@ class ProjectServiceImplTest
                 build() );
         } );
 
-        assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.owner" ) ).isPresent() );
+        assertFalse( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.owner" ) ).isPresent() );
     }
 
     @Test
