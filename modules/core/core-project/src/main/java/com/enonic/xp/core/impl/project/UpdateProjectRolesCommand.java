@@ -12,12 +12,12 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.PrincipalRelationships;
 
-public final class UpdateProjectPermissionsCommand
-    extends AbstractProjectPermissionsCommand
+public final class UpdateProjectRolesCommand
+    extends AbstractProjectRolesCommand
 {
     private ProjectPermissions permissions;
 
-    private UpdateProjectPermissionsCommand( final Builder builder )
+    private UpdateProjectRolesCommand( final Builder builder )
     {
         super( builder );
         this.permissions = builder.permissions;
@@ -69,7 +69,7 @@ public final class UpdateProjectPermissionsCommand
     }
 
     public static final class Builder
-        extends AbstractProjectPermissionsCommand.Builder<Builder>
+        extends AbstractProjectRolesCommand.Builder<Builder>
     {
         private ProjectPermissions permissions;
 
@@ -89,10 +89,10 @@ public final class UpdateProjectPermissionsCommand
             Preconditions.checkNotNull( this.permissions, "Project permissions is required" );
         }
 
-        public UpdateProjectPermissionsCommand build()
+        public UpdateProjectRolesCommand build()
         {
             validate();
-            return new UpdateProjectPermissionsCommand( this );
+            return new UpdateProjectRolesCommand( this );
         }
 
     }

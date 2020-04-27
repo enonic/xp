@@ -8,11 +8,11 @@ import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalRelationship;
 
-public final class GetProjectPermissionsCommand
-    extends AbstractProjectPermissionsCommand
+public final class GetProjectRolesCommand
+    extends AbstractProjectRolesCommand
 {
 
-    private GetProjectPermissionsCommand( final Builder builder )
+    private GetProjectRolesCommand( final Builder builder )
     {
         super( builder );
     }
@@ -49,7 +49,7 @@ public final class GetProjectPermissionsCommand
     }
 
     public static final class Builder
-        extends AbstractProjectPermissionsCommand.Builder<Builder>
+        extends AbstractProjectRolesCommand.Builder<Builder>
     {
         private Builder()
         {
@@ -60,10 +60,10 @@ public final class GetProjectPermissionsCommand
             super.validate();
         }
 
-        public GetProjectPermissionsCommand build()
+        public GetProjectRolesCommand build()
         {
             validate();
-            return new GetProjectPermissionsCommand( this );
+            return new GetProjectRolesCommand( this );
         }
 
     }
