@@ -34,8 +34,7 @@ class MarketDataHttpProviderTest
         server.start();
         marketUrl = "http://localhost:" + this.server.getAddress().getPort();
 
-        provider = new MarketDataHttpProvider();
-        provider.activate( new MarketConfig()
+        provider = new MarketDataHttpProvider( new MarketConfig()
         {
             @Override
             public String marketUrl()
