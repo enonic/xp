@@ -47,7 +47,7 @@ public class VersionTableCleanupTaskTest
         throws Exception
     {
         // Do enough updates to go over the default batch-size
-        final int updates = 1000;
+        final int updates = 20000;
 
         final Node node1 = createNode( NodePath.ROOT, "node1" );
         updateNode( node1.id(), updates );
