@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.web.dispatch.DispatchConstants;
+import com.enonic.xp.web.jetty.impl.JettyConfig;
 import com.enonic.xp.web.websocket.EndpointFactory;
 import com.enonic.xp.web.websocket.WebSocketService;
 
@@ -43,9 +44,11 @@ public final class WebSocketServiceImpl
     private final WebSocketServerFactory serverFactory;
 
     @Activate
-    public WebSocketServiceImpl( @Reference(target = SERVLET_CONTEXT_TARGET) final ServletContext servletContext )
+    public WebSocketServiceImpl( final JettyConfig config, @Reference(target = SERVLET_CONTEXT_TARGET) final ServletContext servletContext )
     {
-        this.serverFactory = new WebSocketServerFactory( servletContext, WebSocketPolicy.newServerPolicy() );
+        final WebSocketPolicy webSocketPolicy = WebSocketPolicy.newServerPolicy();
+        webSocketPolicy.setIdleTimeout( config.websocket_idleTimeout() );
+        this.serverFactory = new WebSocketServerFactory( servletContext, webSocketPolicy );
     }
 
     @SuppressWarnings("WeakerAccess")

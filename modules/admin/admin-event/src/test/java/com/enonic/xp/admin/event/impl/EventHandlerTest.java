@@ -1,7 +1,8 @@
 package com.enonic.xp.admin.event.impl;
 
+import java.util.List;
+
 import javax.websocket.Endpoint;
-import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,8 @@ public class EventHandlerTest
 {
     private EventHandler handler;
 
+    private EventEndpointFactory endpointFactory;
+
     private WebSocketService webSocketService;
 
     private MockHttpServletRequest req;
@@ -33,10 +36,9 @@ public class EventHandlerTest
     public void setup()
         throws Exception
     {
-        this.handler = new EventHandler();
-
         this.webSocketService = Mockito.mock( WebSocketService.class );
-        this.handler.setWebSocketService( this.webSocketService );
+        this.endpointFactory = new EventEndpointFactory( Mockito.mock( WebsocketManager.class ) );
+        this.handler = new EventHandler( this.webSocketService, this.endpointFactory );
 
         this.req = new MockHttpServletRequest();
         this.res = new MockHttpServletResponse();
@@ -45,17 +47,17 @@ public class EventHandlerTest
     @Test
     public void testSubProtocols()
     {
-        assertEquals( "[text]", this.handler.getSubProtocols().toString() );
+        assertEquals( List.of( "text" ), endpointFactory.getSubProtocols() );
     }
 
     @Test
     public void testNewEndpoint()
         throws Exception
     {
-        final Endpoint e1 = this.handler.newEndpoint();
+        final Endpoint e1 = endpointFactory.newEndpoint();
         assertNotNull( e1 );
 
-        final Endpoint e2 = this.handler.newEndpoint();
+        final Endpoint e2 = endpointFactory.newEndpoint();
         assertNotNull( e2 );
 
         assertNotSame( e1, e2 );
@@ -64,7 +66,7 @@ public class EventHandlerTest
     @Test
     public void openCloseSocket()
     {
-        final EventWebSocket socket = (EventWebSocket) this.handler.newEndpoint();
+        final EventEndpoint socket = (EventEndpoint) endpointFactory.newEndpoint();
         assertFalse( socket.isOpen() );
 
         final Session session = mockSession();
@@ -80,28 +82,6 @@ public class EventHandlerTest
 
         socket.onError( session, null );
         assertFalse( socket.isOpen() );
-    }
-
-    @Test
-    public void sendToAll()
-        throws Exception
-    {
-        final EventWebSocket socket1 = (EventWebSocket) this.handler.newEndpoint();
-        final Session session1 = mockSession();
-        final RemoteEndpoint.Basic basic1 = Mockito.mock( RemoteEndpoint.Basic.class );
-        Mockito.when( session1.getBasicRemote() ).thenReturn( basic1 );
-        socket1.onOpen( session1, null );
-
-        final EventWebSocket socket2 = (EventWebSocket) this.handler.newEndpoint();
-        final Session session2 = mockSession();
-        final RemoteEndpoint.Basic basic2 = Mockito.mock( RemoteEndpoint.Basic.class );
-        Mockito.when( session2.getBasicRemote() ).thenReturn( basic2 );
-        socket2.onOpen( session2, null );
-
-        this.handler.sendToAll( "hello" );
-
-        Mockito.verify( basic1, Mockito.times( 1 ) ).sendText( "hello" );
-        Mockito.verify( basic2, Mockito.times( 1 ) ).sendText( "hello" );
     }
 
     private Session mockSession()
@@ -145,6 +125,6 @@ public class EventHandlerTest
         this.handler.service( this.req, this.res );
 
         assertEquals( 200, this.res.getStatus() );
-        Mockito.verify( this.webSocketService, Mockito.times( 1 ) ).acceptWebSocket( this.req, this.res, this.handler );
+        Mockito.verify( this.webSocketService, Mockito.times( 1 ) ).acceptWebSocket( this.req, this.res, this.endpointFactory );
     }
 }

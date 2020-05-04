@@ -19,10 +19,13 @@ public abstract class JettyTestSupport
 
     protected String baseUrl;
 
+    protected JettyConfig config;
+
     @BeforeEach
     public final void startServer()
         throws Exception
     {
+        this.config = new JettyConfigMockFactory().newConfig();
         this.server = new JettyTestServer();
         this.server.start();
         configure();
