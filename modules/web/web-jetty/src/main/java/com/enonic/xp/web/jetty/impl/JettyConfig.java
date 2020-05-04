@@ -135,4 +135,9 @@ public @interface JettyConfig
      * Thread Idle Timeout (in milliseconds).
      */
     int threadPool_idleTimeout() default 60000;
+
+    /**
+     * The time in milliseconds that a websocket may be idle before closing.
+     */
+    long websocket_idleTimeout() default 300000;
 }

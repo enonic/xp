@@ -11,20 +11,19 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class EventListenerImplTest
+public class WebsocketEventListenerTest
 {
-    private EventListenerImpl eventListener;
+    private WebsocketEventListener eventListener;
 
-    private WebSocketManager webSocketManager;
+    private WebsocketManager webSocketManager;
 
     @BeforeEach
     public final void setUp()
         throws Exception
     {
-        this.webSocketManager = mock( WebSocketManager.class );
+        this.webSocketManager = mock( WebsocketManager.class );
 
-        this.eventListener = new EventListenerImpl();
-        this.eventListener.setWebSocketManager( this.webSocketManager );
+        this.eventListener = new WebsocketEventListener( this.webSocketManager );
     }
 
     @Test
