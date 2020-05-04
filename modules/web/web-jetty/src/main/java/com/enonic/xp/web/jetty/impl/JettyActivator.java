@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.jetty9.InstrumentedHandler;
+import com.codahale.metrics.jetty9.InstrumentedQueuedThreadPool;
 
 import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.util.Metrics;
@@ -145,7 +146,8 @@ public final class JettyActivator
         final int minThreads = config.threadPool_minThreads();
         final int idleTimeout = config.threadPool_idleTimeout();
 
-        final QueuedThreadPool threadPool = new QueuedThreadPool( maxThreads, minThreads, idleTimeout );
+        Metrics.removeAll( QueuedThreadPool.class );
+        final QueuedThreadPool threadPool = new InstrumentedQueuedThreadPool( Metrics.registry(), maxThreads, minThreads, idleTimeout );
         return new Server( threadPool );
     }
 
