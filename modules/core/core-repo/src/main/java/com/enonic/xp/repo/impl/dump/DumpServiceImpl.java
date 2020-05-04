@@ -28,6 +28,7 @@ import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.home.HomeDir;
+import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
@@ -37,7 +38,6 @@ import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
 import com.enonic.xp.repo.impl.node.NodeHelper;
-import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repositories;
@@ -113,8 +113,8 @@ public class DumpServiceImpl
         }
 
         final SystemDumpResult systemDumpResult = dumpResults.build();
-        writer.writeDumpMetaData( new DumpMeta( this.xpVersion, Instant.now(), systemDumpResult ) );   
-        
+        writer.writeDumpMetaData( new DumpMeta( this.xpVersion, Instant.now(), systemDumpResult ) );
+
         return systemDumpResult;
     }
 
@@ -165,9 +165,12 @@ public class DumpServiceImpl
                 if ( !installedApplication.isSystem() )
                 {
                     final ApplicationKey applicationKey = installedApplication.getKey();
-                    if (applicationService.isLocalApplication( applicationKey )) {
-                        applicationService.publishUninstalledEvent(applicationKey);
-                    } else {
+                    if ( applicationService.isLocalApplication( applicationKey ) )
+                    {
+                        applicationService.publishUninstalledEvent( applicationKey );
+                    }
+                    else
+                    {
                         applicationService.uninstallApplication( installedApplication.getKey(), true );
                     }
                 }
@@ -180,7 +183,7 @@ public class DumpServiceImpl
         LOG.info( "Install global applications" );
         final ApplicationInstallationParams params = ApplicationInstallationParams.create().
             build();
-        NodeHelper.runAsAdmin( () -> applicationService.installAllStoredApplications(params) );
+        NodeHelper.runAsAdmin( () -> applicationService.installAllStoredApplications( params ) );
     }
 
     private void initializeSystemRepo( final SystemLoadParams params, final FileDumpReader dumpReader,
@@ -205,16 +208,13 @@ public class DumpServiceImpl
     private void doDeleteAllNodes( final Context context )
     {
         context.runWith( () -> {
-            final BatchedGetChildrenExecutor executor = BatchedGetChildrenExecutor.create().parentId( Node.ROOT_UUID ).
-                nodeService( this.nodeService ).
+            final NodeIds children = this.nodeService.findByParent( FindNodesByParentParams.create().
+                parentId( Node.ROOT_UUID ).
                 recursive( false ).
-                build();
+                build() ).
+                getNodeIds();
 
-            while ( executor.hasMore() )
-            {
-                final NodeIds children = executor.execute();
-                children.forEach( ( child ) -> this.nodeService.deleteById( child ) );
-            }
+            children.forEach( ( child ) -> this.nodeService.deleteById( child ) );
         } );
     }
 

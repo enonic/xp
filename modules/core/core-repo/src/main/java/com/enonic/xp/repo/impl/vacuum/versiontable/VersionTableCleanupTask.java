@@ -16,12 +16,14 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQuery;
-import com.enonic.xp.node.NodeVersionsMetadata;
+import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.node.executor.BatchedGetVersionsExecutor;
 import com.enonic.xp.repo.impl.vacuum.AbstractVacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
@@ -46,6 +48,12 @@ public class VersionTableCleanupTask
 
     private VersionService versionService;
 
+    private VacuumListener listener;
+
+    private VacuumTaskResult.Builder result;
+
+    private Instant until;
+
     private final static Logger LOG = LoggerFactory.getLogger( VersionTableCleanupTask.class );
 
     @Override
@@ -62,58 +70,67 @@ public class VersionTableCleanupTask
 
     public VacuumTaskResult execute( final VacuumTaskParams params )
     {
-        final NodeVersionQuery query = createQuery( params );
-        final VacuumTaskResult.Builder result = VacuumTaskResult.create().taskName( this.name() );
+        this.result = VacuumTaskResult.create();
+        this.listener = params.getListener();
+        this.until = Instant.now().minusMillis( params.getAgeThreshold() );
 
-        this.repositoryService.list().forEach( repo -> cleanRepository( repo, query, result, params.getListener() ) );
+        this.repositoryService.list().forEach( this::cleanRepository );
 
         return result.build();
     }
 
-    private void cleanRepository( final Repository repository, final NodeVersionQuery query, final VacuumTaskResult.Builder result,
-                                  final VacuumListener listener )
+    private void cleanRepository( final Repository repository )
     {
         ContextBuilder.from( ContextAccessor.current() ).
             repositoryId( repository.getId() ).
             branch( RepositoryConstants.MASTER_BRANCH ).
             build().
-            runWith( () -> doCleanRepository( repository, query, result, listener ) );
+            runWith( () -> doCleanRepository( repository ) );
     }
 
-    private void doCleanRepository( final Repository repository, final NodeVersionQuery query, final VacuumTaskResult.Builder result,
-                                    final VacuumListener listener )
+    private void doCleanRepository( final Repository repository )
     {
         final RepositoryId repositoryId = repository.getId();
         LOG.info( "Cleaning repository: " + repositoryId );
 
-        final BatchedGetVersionsExecutor executor = BatchedGetVersionsExecutor.create().
-            query( query ).
-            nodeService( this.nodeService ).
-            build();
-
-        final List<NodeVersionDocumentId> toBeDeleted = Lists.newArrayList();
+        NodeVersionQuery query = createQuery( null );
+        NodeVersionQueryResult versionsResult = nodeService.findVersions( query );
 
         if ( listener != null )
         {
-            final Long versionTotal = executor.getTotalHits();
-            listener.vacuumingVersionRepository( repositoryId, versionTotal );
+            listener.vacuumingVersionRepository( repositoryId, versionsResult.getTotalHits() );
         }
 
-        while ( executor.hasMore() )
+        List<NodeVersionMetadata> nodeVersionMetadatas = Lists.newArrayList( versionsResult.getNodeVersionsMetadata() );
+        NodeVersionMetadata lastVersion = null;
+
+        while ( nodeVersionMetadatas.size() > 0 )
         {
-            final NodeVersionsMetadata versions = executor.execute();
-            versions.forEach( ( version ) -> {
+            List<NodeVersionDocumentId> toBeDeleted = Lists.newArrayList();
+
+            for ( NodeVersionMetadata version : nodeVersionMetadatas )
+            {
                 processVersion( repository, result, toBeDeleted, version );
+
                 if ( listener != null )
                 {
                     listener.vacuumingVersion( 1L );
                 }
-            } );
+                lastVersion = version;
+            }
+
+            if ( toBeDeleted.size() > 0 )
+            {
+                versionService.delete( toBeDeleted, InternalContext.from( ContextAccessor.current() ) );
+                LOG.info( "Deleting: " + toBeDeleted.size() + " versions from repository: " + repositoryId );
+            }
+
+            query = createQuery( lastVersion.getNodeVersionId() );
+            versionsResult = nodeService.findVersions( query );
+
+            nodeVersionMetadatas = Lists.newArrayList( versionsResult.getNodeVersionsMetadata() );
+            nodeVersionMetadatas.remove( lastVersion ); // to avoid changing RangeFilter in 6.15
         }
-
-        LOG.info( "Deleting: " + toBeDeleted.size() + " versions from repository: " + repositoryId );
-
-        versionService.delete( toBeDeleted, InternalContext.from( ContextAccessor.current() ) );
     }
 
     private void processVersion( final Repository repository, final VacuumTaskResult.Builder result,
@@ -164,15 +181,27 @@ public class VersionTableCleanupTask
         return false;
     }
 
-    private NodeVersionQuery createQuery( final VacuumTaskParams params )
+    private NodeVersionQuery createQuery( final NodeVersionId lastVersionId )
     {
-        final Instant since = Instant.now().minusMillis( params.getAgeThreshold() );
+        final NodeVersionQuery.Builder builder = NodeVersionQuery.create();
 
-        return NodeVersionQuery.create().
-            addQueryFilter( RangeFilter.create().
-                fieldName( VersionIndexPath.TIMESTAMP.getPath() ).
-                to( ValueFactory.newDateTime( since ) ).
-                build() ).
+        if ( lastVersionId != null )
+        {
+            final RangeFilter versionIdFilter = RangeFilter.create().
+                fieldName( VersionIndexPath.VERSION_ID.getPath() ).
+                from( ValueFactory.newString( lastVersionId.toString() ) ).
+                build();
+            builder.addQueryFilter( versionIdFilter );
+        }
+
+        final RangeFilter mustBeOlderThanFilter = RangeFilter.create().
+            fieldName( VersionIndexPath.TIMESTAMP.getPath() ).
+            to( ValueFactory.newDateTime( this.until ) ).
+            build();
+
+        return builder.addQueryFilter( mustBeOlderThanFilter ).
+            addOrderBy( FieldOrderExpr.create( VersionIndexPath.VERSION_ID, OrderExpr.Direction.ASC ) ).
+            size( 10000 ).
             build();
     }
 

@@ -23,9 +23,10 @@ import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.AttachedBinary;
+import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionMetadata;
@@ -34,10 +35,8 @@ import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
-import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
-import com.enonic.xp.repo.impl.node.executor.BatchedGetChildrenExecutor;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
@@ -45,8 +44,6 @@ import com.enonic.xp.repository.RepositoryService;
 
 class RepoDumper
 {
-    private static final int DEFAULT_BATCH_SIZE = 5000;
-
     private final Logger LOG = LoggerFactory.getLogger( RepoDumper.class );
 
     private final RepositoryId repositoryId;
@@ -130,28 +127,22 @@ class RepoDumper
         Set<NodeId> dumpedNodes = Sets.newHashSet();
 
         final Node rootNode = this.nodeService.getRoot();
-        final BatchedGetChildrenExecutor executor = BatchedGetChildrenExecutor.create().
-            nodeService( this.nodeService ).
+
+        final FindNodesByParentResult children = this.nodeService.findByParent( FindNodesByParentParams.create().
             parentId( rootNode.id() ).
             recursive( true ).
-            batchSize( DEFAULT_BATCH_SIZE ).
             childOrder( ChildOrder.from( "_path asc" ) ).
-            build();
+            build() );
 
-        reportDumpingBranch( ContextAccessor.current().getBranch(), executor.getTotalHits() + 1 );
+        reportDumpingBranch( ContextAccessor.current().getBranch(), children.getTotalHits() + 1 );
 
         doDumpNode( rootNode.id(), dumpResult );
         dumpedNodes.add( rootNode.id() );
 
-        while ( executor.hasMore() )
+        for ( final NodeId child : children.getNodeIds() )
         {
-            final NodeIds children = executor.execute();
-
-            for ( final NodeId child : children )
-            {
-                doDumpNode( child, dumpResult );
-                dumpedNodes.add( child );
-            }
+            doDumpNode( child, dumpResult );
+            dumpedNodes.add( child );
         }
 
         return dumpedNodes;
@@ -395,7 +386,7 @@ class RepoDumper
             this.writer = writer;
             return this;
         }
-        
+
         public Builder maxAge( final Integer maxAge )
         {
             this.maxAge = maxAge;
