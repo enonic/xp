@@ -1,7 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.project;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -29,8 +27,9 @@ import com.enonic.xp.admin.impl.rest.resource.project.json.CreateOrModifyProject
 import com.enonic.xp.admin.impl.rest.resource.project.json.DeleteProjectParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyLanguageParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyPermissionsParamsJson;
+import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyReadAccessParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectJson;
-import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectReadAccessJson;
+import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectPermissionsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectsJson;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.content.ContentService;
@@ -104,9 +103,16 @@ public final class ProjectResource
 
     @POST
     @Path("modifyPermissions")
-    public TaskResultJson modifyPermissions( final ModifyPermissionsParamsJson params )
+    public ProjectPermissionsJson modifyPermissions( final ModifyPermissionsParamsJson params )
     {
-        doApplyPermissions( params.getName(), params.getPermissions() );
+        final ProjectPermissions projectPermissions = doApplyPermissions( params.getName(), params.getPermissions() );
+        return new ProjectPermissionsJson( projectPermissions );
+    }
+
+    @POST
+    @Path("modifyReadAccess")
+    public TaskResultJson modifyReadAccess( final ModifyReadAccessParamsJson params )
+    {
         return doApplyReadAccess( params.getName(), params.getReadAccess() );
     }
 
@@ -177,25 +183,6 @@ public final class ProjectResource
             mimeType( icon.getContentType().toString() ).
             byteSource( icon.getBytes() ).
             build();
-    }
-
-    private ProjectReadAccess getReadAccessFromForm( final MultipartForm form )
-    {
-        final ProjectReadAccess.Builder readAccess = ProjectReadAccess.create();
-
-        return Optional.ofNullable( form.getAsString( "readAccess" ) ).
-            map( readAccessAsString -> {
-                try
-                {
-                    return MAPPER.readValue( readAccessAsString, ProjectReadAccessJson.class );
-                }
-                catch ( IOException e )
-                {
-                    throw new UncheckedIOException( e );
-                }
-            } ).
-            map( ProjectReadAccessJson::getProjectReadAccess ).
-            orElseGet( readAccess::build );
     }
 
     private ProjectJson doCreateJson( final Project project, final ProjectPermissions projectPermissions,
@@ -272,17 +259,6 @@ public final class ProjectResource
             contentService( contentService ).
             build().
             execute();
-    }
-
-    private ProjectPermissions.Builder doAddViewerRoleMembers( final ProjectPermissions.Builder builder,
-                                                               final ProjectReadAccess readAccess )
-    {
-        if ( ProjectReadAccessType.CUSTOM.equals( readAccess.getType() ) )
-        {
-            readAccess.getPrincipals().forEach( builder::addViewer );
-        }
-
-        return builder;
     }
 
     @Reference
