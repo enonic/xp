@@ -24,9 +24,9 @@
     ]
   },
   "readAccess": {
+    "type": "CUSTOM",
     "principals": [
       "user:system:custom"
-    ],
-    "type": "CUSTOM"
+    ]
   }
 }

@@ -19,13 +19,10 @@ public class ProjectReadAccessJson
     private final List<PrincipalKey> principals;
 
     @JsonCreator
-    public ProjectReadAccessJson( @JsonProperty("type") final String type, @JsonProperty("principals") final List<String> principals )
+    public ProjectReadAccessJson( @JsonProperty("type") final String type )
     {
         this.type = ProjectReadAccessType.from( type );
-
-        this.principals = principals != null ? principals.stream().
-            map( PrincipalKey::from ).
-            collect( Collectors.toList() ) : ImmutableList.of();
+        this.principals = ImmutableList.of();
     }
 
     public ProjectReadAccessJson( final ProjectReadAccessType type, final List<PrincipalKey> principals )

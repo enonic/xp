@@ -12,11 +12,8 @@
     ],
     "contributor": [
       "user:system:user4"
-    ]
-  },
-  "readAccess": {
-    "type": "private",
-    "principals": [
+    ],
+    "viewer": [
       "user:system:user5"
     ]
   }

@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
+import com.enonic.xp.content.ContentPath;
+
 class ApplyPermissionsTaskMessageGenerator
     extends TaskMessageGenerator<RunnableTaskResult>
 {
@@ -26,7 +28,9 @@ class ApplyPermissionsTaskMessageGenerator
     {
         if ( result.getSucceeded() != null && result.getSucceeded().size() == 1 )
         {
-            builder.append( String.format( "Permissions for \"%s\" are applied.", result.getSucceeded().get( 0 ).getName() ) );
+            final ContentPath succeedPath = result.getSucceeded().get( 0 );
+            builder.append( String.format( "Permissions for \"%s\" are applied.",
+                                           !ContentPath.ROOT.equals( succeedPath ) ? succeedPath.getName() : succeedPath.toString() ) );
         }
     }
 

@@ -20,8 +20,8 @@
         ]
       },
       "readAccess": {
-        "principals": [],
-        "type": "PRIVATE"
+        "type": "PRIVATE",
+        "principals": []
       }
     },
     {
@@ -39,8 +39,8 @@
         "owner": []
       },
       "readAccess": {
-        "principals": [],
-        "type": "PRIVATE"
+        "type": "PRIVATE",
+        "principals": []
       }
     },
     {
@@ -58,8 +58,8 @@
         "owner": []
       },
       "readAccess": {
-        "principals": [],
-        "type": "PRIVATE"
+        "type": "PRIVATE",
+        "principals": []
       }
     },
     {
@@ -77,10 +77,10 @@
         "owner": []
       },
       "readAccess": {
+        "type": "CUSTOM",
         "principals": [
           "user:system:custom"
-        ],
-        "type": "CUSTOM"
+        ]
       }
     }
   ]

@@ -304,6 +304,17 @@ public class ProjectResourceTest
         request().path( "project/modifyPermissions" ).
             entity( readFromFile( "modify_permissions_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post();
+    }
+
+    @Test
+    public void modify_read_access_success()
+        throws Exception
+    {
+        mockRootContent();
+
+        request().path( "project/modifyReadAccess" ).
+            entity( readFromFile( "modify_read_access_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post();
 
         Mockito.verify( taskService, Mockito.times( 1 ) ).submitTask( Mockito.isA( ApplyPermissionsRunnableTask.class ),
                                                                       Mockito.eq( "Apply project's content root permissions" ) );
