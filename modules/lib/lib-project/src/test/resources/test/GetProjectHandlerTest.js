@@ -2,20 +2,20 @@ var assert = require('/lib/xp/testing.js');
 var project = require('/lib/xp/project.js');
 
 var getProjectExpected = {
-    name: "myproject",
-    displayName: "project display name",
-    description: "project description",
+    name: 'myproject',
+    displayName: 'project display name',
+    description: 'project description',
     permissions: {
         owner: [
-            "user:system:owner2",
-            "user:system:owner1"
+            'user:system:owner2',
+            'user:system:owner1'
         ],
         viewer: [
-            "user:system:viewer1"
+            'user:system:viewer1'
         ]
     },
     readAccess: {
-        "public": true
+        'public': true
     }
 };
 
@@ -30,12 +30,12 @@ exports.getProject = function () {
 };
 
 var getProjectWithoutPermissionsExpected = {
-    name: "myproject",
-    displayName: "project display name",
-    description: "project description",
+    name: 'myproject',
+    displayName: 'project display name',
+    description: 'project description',
     permissions: {},
     readAccess: {
-        "public": true
+        'public': true
     }
 };
 

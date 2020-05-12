@@ -2,16 +2,16 @@ var assert = require('/lib/xp/testing.js');
 var project = require('/lib/xp/project.js');
 
 var project1Expected = {
-    name: "myproject1",
-    displayName: "project display name 1",
-    description: "project description 1",
+    name: 'myproject1',
+    displayName: 'project display name 1',
+    description: 'project description 1',
     permissions: {
         owner: [
-            "user:system:owner2",
-            "user:system:owner1"
+            'user:system:owner2',
+            'user:system:owner1'
         ],
         viewer: [
-            "user:system:viewer1"
+            'user:system:viewer1'
         ]
     },
     readAccess: {

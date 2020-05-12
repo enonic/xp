@@ -4,11 +4,11 @@ var project = require('/lib/xp/project.js');
 var addPermissionsExpected = {
     permissions: {
         owner: [
-            "user:system:owner2",
-            "user:system:owner1"
+            'user:system:owner2',
+            'user:system:owner1'
         ],
         viewer: [
-            "user:system:viewer1"
+            'user:system:viewer1'
         ]
     }
 };
@@ -20,11 +20,11 @@ exports.addPermissions = function () {
         name: 'myproject',
         permissions: {
             owner: [
-                "user:system:owner2",
-                "user:system:owner1"
+                'user:system:owner2',
+                'user:system:owner1'
             ],
             viewer: [
-                "user:system:viewer1"
+                'user:system:viewer1'
             ]
         }
     });
@@ -46,24 +46,24 @@ exports.addPermissionsNull = function () {
 
     result = project.addPermissions({
         name: 'myproject',
-        permissions: {owner: ["user:system:owner"]}
+        permissions: {owner: ['user:system:owner']}
     });
 
 
-    assert.assertJsonEquals({permissions: {owner: ["user:system:owner"]}}, result);
+    assert.assertJsonEquals({permissions: {owner: ['user:system:owner']}}, result);
 
     result = project.addPermissions({
         name: 'myproject',
         permissions: {owner: null, author: null}
     });
 
-    assert.assertJsonEquals({permissions: {owner: ["user:system:owner"]}}, result);
+    assert.assertJsonEquals({permissions: {owner: ['user:system:owner']}}, result);
 };
 
 var removePermissionsExpected = {
     permissions: {
         owner: [
-            "user:system:owner3"
+            'user:system:owner3'
         ]
     }
 };
@@ -75,29 +75,29 @@ exports.removePermissions = function () {
         'myproject',
         {
             owner: [
-                "user:system:owner3",
-                "user:system:owner2",
-                "user:system:owner1"
+                'user:system:owner3',
+                'user:system:owner2',
+                'user:system:owner1'
             ],
             viewer: [
-                "user:system:viewer1"
+                'user:system:viewer1'
             ]
 
         });
 
     var result = removePermissions('myproject', {
         owner: [
-            "user:system:owner2",
-            "user:system:owner1"
+            'user:system:owner2',
+            'user:system:owner1'
         ],
         viewer: [
-            "user:system:viewer1"
+            'user:system:viewer1'
         ],
         contributor: [
-            "user:system:contributor"
+            'user:system:contributor'
         ],
         author: [
-            "user:system:author1", "user:system:author2"
+            'user:system:author1', 'user:system:author2'
         ]
 
     });
@@ -118,18 +118,18 @@ exports.removePermissionsNull = function () {
 
     result = project.addPermissions({
         name: 'myproject',
-        permissions: {owner: ["user:system:owner"]}
+        permissions: {owner: ['user:system:owner']}
     });
 
 
-    assert.assertJsonEquals({permissions: {owner: ["user:system:owner"]}}, result);
+    assert.assertJsonEquals({permissions: {owner: ['user:system:owner']}}, result);
 
     result = project.removePermissions({
         name: 'myproject',
         permissions: {owner: null, author: null}
     });
 
-    assert.assertJsonEquals({permissions: {owner: ["user:system:owner"]}}, result);
+    assert.assertJsonEquals({permissions: {owner: ['user:system:owner']}}, result);
 };
 
 function addPermissions(projectName, permissions) {

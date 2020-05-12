@@ -84,7 +84,7 @@ public final class CreateProjectHandler
 
     public void setLanguage( final String value )
     {
-        this.language = buildLanguage( value ).orElse( null );
+        this.language = buildLanguage( value );
     }
 
     public void setPermissions( final ScriptValue value )

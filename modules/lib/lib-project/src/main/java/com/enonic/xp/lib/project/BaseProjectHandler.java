@@ -25,9 +25,9 @@ public abstract class BaseProjectHandler
 
     protected abstract Object doExecute();
 
-    protected Optional<Locale> buildLanguage( final String value )
+    protected Locale buildLanguage( final String value )
     {
-        return Optional.ofNullable( value ).map( Locale::forLanguageTag );
+        return Optional.ofNullable( value ).map( Locale::forLanguageTag ).orElse( null );
     }
 
     protected ProjectPermissions buildProjectPermissions( final ScriptValue value )

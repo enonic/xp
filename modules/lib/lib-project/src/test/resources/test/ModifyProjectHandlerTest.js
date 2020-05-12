@@ -2,17 +2,17 @@ var assert = require('/lib/xp/testing.js');
 var project = require('/lib/xp/project.js');
 
 var modifyProjectExpected = {
-    name: "myproject",
-    displayName: "new display name",
-    description: "new description",
-    language: "fr",
+    name: 'myproject',
+    displayName: 'new display name',
+    description: 'new description',
+    language: 'fr',
     permissions: {
         owner: [
-            "user:system:owner2",
-            "user:system:owner1"
+            'user:system:owner2',
+            'user:system:owner1'
         ],
         viewer: [
-            "user:system:viewer1"
+            'user:system:viewer1'
         ]
     },
     readAccess: {
@@ -35,16 +35,16 @@ exports.modifyProject = function () {
 };
 
 var modifyDescriptionExpected = {
-    name: "myproject",
-    displayName: "project display name",
-    description: "new description",
+    name: 'myproject',
+    displayName: 'project display name',
+    description: 'new description',
     permissions: {
         owner: [
-            "user:system:owner2",
-            "user:system:owner1"
+            'user:system:owner2',
+            'user:system:owner1'
         ],
         viewer: [
-            "user:system:viewer1"
+            'user:system:viewer1'
         ]
     },
     readAccess: {
@@ -64,16 +64,16 @@ exports.modifyDescription = function () {
 };
 
 var modifyDisplayNameExpected = {
-    name: "myproject",
-    displayName: "new display name",
-    description: "project description",
+    name: 'myproject',
+    displayName: 'new display name',
+    description: 'project description',
     permissions: {
         owner: [
-            "user:system:owner2",
-            "user:system:owner1"
+            'user:system:owner2',
+            'user:system:owner1'
         ],
         viewer: [
-            "user:system:viewer1"
+            'user:system:viewer1'
         ]
     },
     readAccess: {
@@ -93,17 +93,17 @@ exports.modifyDisplayName = function () {
 };
 
 var modifyLanguageExpected = {
-    name: "myproject",
-    displayName: "project display name",
-    description: "project description",
-    language: "no",
+    name: 'myproject',
+    displayName: 'project display name',
+    description: 'project description',
+    language: 'no',
     permissions: {
         owner: [
-            "user:system:owner2",
-            "user:system:owner1"
+            'user:system:owner2',
+            'user:system:owner1'
         ],
         viewer: [
-            "user:system:viewer1"
+            'user:system:viewer1'
         ]
     },
     readAccess: {

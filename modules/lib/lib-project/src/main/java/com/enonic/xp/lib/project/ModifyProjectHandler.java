@@ -91,6 +91,6 @@ public final class ModifyProjectHandler
 
     public void setLanguage( final String value )
     {
-        this.language = buildLanguage( value ).orElse( null );
+        this.language = buildLanguage( value );
     }
 }

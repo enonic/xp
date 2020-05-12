@@ -2,17 +2,17 @@ var assert = require('/lib/xp/testing.js');
 var project = require('/lib/xp/project.js');
 
 var createProjectExpected = {
-    name: "myproject",
-    displayName: "project display name",
-    description: "project description",
-    language: "no",
+    name: 'myproject',
+    displayName: 'project display name',
+    description: 'project description',
+    language: 'no',
     permissions: {
         owner: [
-            "user:system:owner2",
-            "user:system:owner1"
+            'user:system:owner2',
+            'user:system:owner1'
         ],
         viewer: [
-            "user:system:viewer1"
+            'user:system:viewer1'
         ]
     },
     readAccess: {
@@ -34,16 +34,16 @@ exports.createProject = function () {
 };
 
 var createProjectWithoutLanguageExpected = {
-    name: "myproject",
-    displayName: "project display name",
-    description: "project description",
+    name: 'myproject',
+    displayName: 'project display name',
+    description: 'project description',
     permissions: {
         owner: [
-            "user:system:owner2",
-            "user:system:owner1"
+            'user:system:owner2',
+            'user:system:owner1'
         ],
         viewer: [
-            "user:system:viewer1"
+            'user:system:viewer1'
         ]
     },
     readAccess: {
@@ -65,10 +65,10 @@ exports.createProjectWithoutLanguage = function () {
 
 var createProjectWithoutPermissionsExpected = {
 
-    name: "myproject",
-    displayName: "project display name",
-    description: "project description",
-    language: "no",
+    name: 'myproject',
+    displayName: 'project display name',
+    description: 'project description',
+    language: 'no',
     permissions: {},
     readAccess: {
         public: true
