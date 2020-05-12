@@ -50,15 +50,7 @@ public final class ClusterEventSender
 
     private void send( final SendEventRequest transportRequest, final DiscoveryNode node )
     {
-        final EmptyTransportResponseHandler responseHandler = new EmptyTransportResponseHandler( ThreadPool.Names.SAME )
-        {
-            @Override
-            public void handleException( final TransportException exp )
-            {
-                LOG.warn( "Failed to send Event to {} {}", node, transportRequest.getEvent(), exp );
-            }
-        };
-        this.transportService.sendRequest( node, ACTION, transportRequest, responseHandler );
+        this.transportService.sendRequest( node, ACTION, transportRequest, LoggingTransportResponseHandler.INSTANCE );
     }
 
     @Reference
@@ -71,5 +63,22 @@ public final class ClusterEventSender
     public void setTransportService( final TransportService transportService )
     {
         this.transportService = transportService;
+    }
+
+    private static class LoggingTransportResponseHandler
+        extends EmptyTransportResponseHandler
+    {
+        static LoggingTransportResponseHandler INSTANCE = new LoggingTransportResponseHandler();
+
+        public LoggingTransportResponseHandler()
+        {
+            super( ThreadPool.Names.SAME );
+        }
+
+        @Override
+        public void handleException( final TransportException exp )
+        {
+            LOG.debug( "Could not deliver Event", exp );
+        }
     }
 }

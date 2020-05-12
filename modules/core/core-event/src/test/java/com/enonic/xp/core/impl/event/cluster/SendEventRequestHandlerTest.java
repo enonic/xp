@@ -45,14 +45,14 @@ public class SendEventRequestHandlerTest
     {
         this.sendEventRequestHandler.activate();
         Mockito.verify( this.transportService ).registerRequestHandler( ClusterEventSender.ACTION, SendEventRequest.class,
-                                                                        ThreadPool.Names.MANAGEMENT, this.sendEventRequestHandler );
+                                                                        ThreadPool.Names.SAME, this.sendEventRequestHandler );
         this.sendEventRequestHandler.deactivate();
         Mockito.verify( this.transportService ).removeHandler( ClusterEventSender.ACTION );
     }
 
     @Test
     public void testMessageReceived()
-        throws IOException
+        throws Exception
     {
 
         //Creates an event
