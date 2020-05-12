@@ -86,6 +86,7 @@ include 'lib:lib-event'
 include 'lib:lib-admin'
 include 'lib:lib-cluster'
 include 'lib:lib-auditlog'
+include 'lib:lib-project'
 
 include 'launcher:launcher-api'
 include 'launcher:launcher-impl'
