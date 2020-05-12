@@ -50,7 +50,7 @@ locateJava() {
 }
 
 setupDefaults() {
-    DEFAULT_JAVA_OPTS="-XX:+CMSParallelRemarkEnabled -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=60 -XX:+ScavengeBeforeFullGC -XX:+CMSScavengeBeforeRemark -XX:-OmitStackTraceInFastThrow"
+    DEFAULT_JAVA_OPTS="-XX:+CMSParallelRemarkEnabled -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=60 -XX:+ScavengeBeforeFullGC -XX:+CMSScavengeBeforeRemark -XX:-OmitStackTraceInFastThrow -XX:+AlwaysPreTouch"
     DEFAULT_JAVA_DEBUG_OPTS="-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"
 }
 
