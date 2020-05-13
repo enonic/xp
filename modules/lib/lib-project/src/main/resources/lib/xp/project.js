@@ -8,31 +8,20 @@
  */
 
 /**
- @typedef ReadAccessDef
- @type {object}
- @property {boolean} [public] - Public read access (READ permissions for `system.everyone`). Defaults to `true`.
- */
-
-/**
- @typedef PermissionsDef
- @type {object}
- @property {string} role - Role name (one of 'owner', 'editor', 'author', 'contributor', 'viewer')
- @property {array} principals - Array of principals
- */
-
-/**
  * Creates a new Content Project.
  *
- * @param {object} params JSON with the parameters.
+ * @param {Object} params JSON with the parameters.
  * @param {string} params.id Unique project id (alpha-numeric characters and hyphens allowed).
  * @param {string} [params.displayName] Project's display name. Defaults to `params.name`.
  * @param {string} [params.description] Project description.
  * @param {string} [params.language] Default project language.
- * @param {PermissionsDef} [params.permissions] Project permissions.
- * @param {ReadAccessDef} [params.readAccess] Read access settings.
-
+ * @param {Object.<string, string[]>} [params.permissions] Project permissions. 1 to 5 properties where key is a role and value is an array of principals.
+ * @param {string} params.permissions.role - Role id (one of `owner`, `editor`, `author`, `contributor`, `viewer`)
+ * @param {string[]} params.permissions.principals - Array of principals
+ * @param {Object<string, boolean>} [params.readAccess] Read access settings.
+ * @param {boolean} params.readAccess.public Public read access (READ permissions for `system.everyone`).
  *
- * @returns {object} Created project.
+ * @returns {Object} Created project.
  */
 exports.create = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.project.CreateProjectHandler');
@@ -48,14 +37,14 @@ exports.create = function (params) {
 /**
  * Modifies an existing Content Project.
  *
- * @param {object} params JSON with the parameters.
+ * @param {Object} params JSON with the parameters.
  * @param {string} params.id Unique project id to identify the project.
  * @param {string} [params.displayName] Project's display name.
  * @param {string} [params.description] Project description.
  * @param {string} [params.language] Default project language.
 
  *
- * @returns {object} Modified project.
+ * @returns {Object} Modified project.
  */
 exports.modify = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.project.ModifyProjectHandler');
@@ -69,11 +58,11 @@ exports.modify = function (params) {
 /**
  * Deletes an existing Content Project. This will delete all of the data inside the project repository.
  *
- * @param {object} params JSON with the parameters.
+ * @param {Object} params JSON with the parameters.
  * @param {string} params.id Unique project id to identify the project.
 
  *
- * @returns {object} Deleted project.
+ * @returns {boolean} True if project was successfully deleted.
  */
 exports.delete = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.project.DeleteProjectHandler');
@@ -84,11 +73,11 @@ exports.delete = function (params) {
 /**
  * Returns an existing Content Project.
  *
- * @param {object} params JSON with the parameters.
+ * @param {Object} params JSON with the parameters.
  * @param {string} params.id Unique project id to identify the project.
 
  *
- * @returns {object} Content Project.
+ * @returns {Object} Content Project.
  */
 exports.get = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.project.GetProjectHandler');
@@ -101,7 +90,7 @@ exports.get = function (params) {
  *
 
  *
- * @returns {object[]} Array of Content Projects.
+ * @returns {Object[]} Array of Content Projects.
  */
 exports.list = function () {
     var bean = __.newBean('com.enonic.xp.lib.project.ListProjectsHandler');
@@ -111,12 +100,14 @@ exports.list = function () {
 /**
  * Adds permissions to an existing Content Project.
  *
- * @param {object} params JSON with the parameters.
+ * @param {Object} params JSON with the parameters.
  * @param {string} params.id Unique project id to identify the project.
- * @param {PermissionsDef} params.permissions Project permissions to add.
+ * @param {Object.<string, string[]>} params.permissions Project permissions to add. 1 to 5 properties where key is a role and value is an array of principals.
+ * @param {string} params.permissions.role - Role id (one of `owner`, `editor`, `author`, `contributor`, `viewer`)
+ * @param {Object[]} params.permissions.principals - Array of principals to add to this role
 
  *
- * @returns {object} Content Project.
+ * @returns {Object} All current project permissions.
  */
 exports.addPermissions = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.project.AddProjectPermissionsHandler');
@@ -128,12 +119,14 @@ exports.addPermissions = function (params) {
 /**
  * Removes permissions from an existing Content Project.
  *
- * @param {object} params JSON with the parameters.
+ * @param {Object} params JSON with the parameters.
  * @param {string} params.id Unique project id to identify the project.
- * @param {PermissionsDef} params.permissions Project permissions to remove.
+ * @param {Object.<string, string[]>} params.permissions Project permissions to delete. 1 to 5 properties where key is a role and value is an array of principals.
+ * @param {string} params.permissions.role - Role id (one of `owner`, `editor`, `author`, `contributor`, `viewer`)
+ * @param {Object[]} params.permissions.principals - Array of principals to delete from this role
 
  *
- * @returns {object} Content Project.
+ * @returns {Object} All current project permissions.
  */
 exports.removePermissions = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.project.RemoveProjectPermissionsHandler');
@@ -146,12 +139,13 @@ exports.removePermissions = function (params) {
  * Toggles public/private read access for an existing Content Project.
  * This will modify permissions on all of the content items inside the repository by adding or removing READ access for `system.everyone`.
  *
- * @param {object} params JSON with the parameters.
+ * @param {Object} params JSON with the parameters.
  * @param {string} params.id Unique project id to identify the project.
- * @param {ReadAccessDef} params.readAccess Read access.
+ * @param {Object<string, boolean>} params.readAccess Read access.
+ * @param {boolean} params.readAccess.public Public read access (READ permissions for `system.everyone`).
 
  *
- * @returns {object} Content Project.
+ * @returns {Object<string, boolean>} Current state of Read access.
  */
 exports.modifyReadAccess = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.project.ModifyProjectReadAccessHandler');
