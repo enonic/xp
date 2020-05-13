@@ -51,7 +51,7 @@ exports.refresh = function (params) {
  */
 /**
  * Creates a repository
- *œ
+ *
  * @example-ref examples/repo/create.js
  *
  * @param {object} params JSON with the parameters.
