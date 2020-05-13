@@ -8,7 +8,7 @@ import com.enonic.xp.script.ScriptValue;
 public final class ModifyProjectReadAccessHandler
     extends BaseProjectHandler
 {
-    private ProjectName name;
+    private ProjectName id;
 
     private boolean isPublic;
 
@@ -18,16 +18,16 @@ public final class ModifyProjectReadAccessHandler
         final Boolean result = ApplyProjectReadAccessCommand.create().
             setPublic( this.isPublic ).
             contentService( this.contentService ).
-            projectName( this.name ).
+            projectName( this.id ).
             build().
             execute();
 
         return new ProjectReadAccessMapper( result );
     }
 
-    public void setName( final String value )
+    public void setId( final String value )
     {
-        this.name = ProjectName.from( value );
+        this.id = ProjectName.from( value );
     }
 
     public void setReadAccess( final ScriptValue value )

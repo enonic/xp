@@ -5,7 +5,7 @@ exports.deleteProject = function () {
     createProject();
 
     var result = project.delete({
-        name: 'myproject'
+        id: 'myproject'
     });
 
     assert.assertJsonEquals(true, result);
@@ -14,7 +14,7 @@ exports.deleteProject = function () {
 exports.deleteNotExistProject = function () {
 
     var result = project.delete({
-        name: 'myproject'
+        id: 'myproject'
     });
 
     assert.assertJsonEquals(false, result);
@@ -25,7 +25,7 @@ exports.deleteProjectNull = function () {
     try {
 
         project.delete({
-            name: null
+            id: null
         });
         throw new Error('IllegalArgumentException should be thrown.');
 
@@ -37,7 +37,7 @@ exports.deleteProjectNull = function () {
 
 function createProject() {
     project.create({
-        name: 'myproject',
+        id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
         readAccess: {public: true},

@@ -5,16 +5,16 @@ import com.enonic.xp.project.ProjectName;
 public final class DeleteProjectHandler
     extends BaseProjectHandler
 {
-    private ProjectName name;
+    private ProjectName id;
 
     @Override
     protected Boolean doExecute()
     {
-        return this.projectService.delete( this.name );
+        return this.projectService.delete( this.id );
     }
 
-    public void setName( final String value )
+    public void setId( final String value )
     {
-        this.name = ProjectName.from( value );
+        this.id = ProjectName.from( value );
     }
 }

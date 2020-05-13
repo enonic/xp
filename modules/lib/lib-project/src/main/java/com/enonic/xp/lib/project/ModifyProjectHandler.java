@@ -14,7 +14,7 @@ import com.enonic.xp.project.ProjectPermissions;
 public final class ModifyProjectHandler
     extends BaseProjectHandler
 {
-    private ProjectName name;
+    private ProjectName id;
 
     private String displayName;
 
@@ -25,7 +25,7 @@ public final class ModifyProjectHandler
     @Override
     protected ProjectMapper doExecute()
     {
-        final Project projectBeforeUpdate = this.projectService.get( this.name );
+        final Project projectBeforeUpdate = this.projectService.get( this.id );
         final ModifyProjectParams params = modifyProjectParams( projectBeforeUpdate );
 
         final Project project = this.projectService.modify( params );
@@ -34,7 +34,7 @@ public final class ModifyProjectHandler
         if ( this.language != null )
         {
             projectLanguage = ApplyProjectLanguageCommand.create().
-                projectName( this.name ).
+                projectName( this.id ).
                 language( this.language ).
                 contentService( this.contentService ).
                 build().
@@ -43,19 +43,19 @@ public final class ModifyProjectHandler
         else
         {
             projectLanguage = GetProjectLanguageCommand.create().
-                projectName( this.name ).
+                projectName( this.id ).
                 contentService( this.contentService ).
                 build().
                 execute();
         }
 
         final Boolean isPublic = GetProjectReadAccessCommand.create().
-            projectName( this.name ).
+            projectName( this.id ).
             contentService( this.contentService ).
             build().
             execute();
 
-        final ProjectPermissions projectPermissions = this.projectService.getPermissions( this.name );
+        final ProjectPermissions projectPermissions = this.projectService.getPermissions( this.id );
 
         return ProjectMapper.create().
             setProject( project ).
@@ -68,15 +68,15 @@ public final class ModifyProjectHandler
     private ModifyProjectParams modifyProjectParams( final Project projectBeforeUpdate )
     {
         return ModifyProjectParams.create().
-            name( this.name ).
+            name( this.id ).
             displayName( this.displayName != null ? this.displayName : projectBeforeUpdate.getDisplayName() ).
             description( this.description != null ? this.description : projectBeforeUpdate.getDescription() ).
             build();
     }
 
-    public void setName( final String value )
+    public void setId( final String value )
     {
-        this.name = ProjectName.from( value );
+        this.id = ProjectName.from( value );
     }
 
     public void setDisplayName( final String value )

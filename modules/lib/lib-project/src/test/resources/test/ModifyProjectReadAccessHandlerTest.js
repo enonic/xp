@@ -5,14 +5,14 @@ exports.modifyReadAccess = function () {
     createProject();
 
     var result = project.modifyReadAccess({
-        name: 'myproject',
+        id: 'myproject',
         readAccess: {public: false}
     });
 
     assert.assertJsonEquals({readAccess: {public: false}}, result);
 
     result = project.modifyReadAccess({
-        name: 'myproject',
+        id: 'myproject',
         readAccess: {public: true}
     });
 
@@ -23,8 +23,8 @@ exports.modifyReadAccessNull = function () {
     createProject();
 
     try {
-        var result = project.modifyReadAccess({
-            name: 'myproject',
+        project.modifyReadAccess({
+            id: 'myproject',
             readAccess: null
         });
 
@@ -34,8 +34,8 @@ exports.modifyReadAccessNull = function () {
     }
 
     try {
-        var result = project.modifyReadAccess({
-            name: 'myproject',
+        project.modifyReadAccess({
+            id: 'myproject',
             readAccess: {public: null}
         });
 
@@ -47,7 +47,7 @@ exports.modifyReadAccessNull = function () {
 
 function createProject() {
     project.create({
-        name: 'myproject',
+        id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
         readAccess: {public: true},

@@ -2,7 +2,7 @@ var assert = require('/lib/xp/testing.js');
 var project = require('/lib/xp/project.js');
 
 var createProjectExpected = {
-    name: 'myproject',
+    id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
     language: 'no',
@@ -22,7 +22,7 @@ var createProjectExpected = {
 
 exports.createProject = function () {
     var result = project.create({
-        name: 'myproject',
+        id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
         language: 'no',
@@ -34,7 +34,7 @@ exports.createProject = function () {
 };
 
 var createProjectWithoutLanguageExpected = {
-    name: 'myproject',
+    id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
     permissions: {
@@ -53,7 +53,7 @@ var createProjectWithoutLanguageExpected = {
 
 exports.createProjectWithoutLanguage = function () {
     var result = project.create({
-        name: 'myproject',
+        id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
         readAccess: {public: true},
@@ -65,7 +65,7 @@ exports.createProjectWithoutLanguage = function () {
 
 var createProjectWithoutPermissionsExpected = {
 
-    name: 'myproject',
+    id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
     language: 'no',
@@ -78,7 +78,7 @@ var createProjectWithoutPermissionsExpected = {
 
 exports.createProjectWithoutPermissions = function () {
     var result = project.create({
-        name: 'myproject',
+        id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
         language: 'no',
@@ -92,7 +92,7 @@ exports.createProjectWithoutReadAccess = function () {
 
     try {
         project.create({
-            name: 'myproject',
+            id: 'myproject',
             displayName: 'project display name',
             description: 'project description',
             language: 'no',

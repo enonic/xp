@@ -17,7 +17,7 @@ exports.addPermissions = function () {
     createProject();
 
     var result = project.addPermissions({
-        name: 'myproject',
+        id: 'myproject',
         permissions: {
             owner: [
                 'user:system:owner2',
@@ -37,7 +37,7 @@ exports.addPermissionsNull = function () {
     createProject();
 
     var result = project.addPermissions({
-        name: 'myproject',
+        id: 'myproject',
         permissions: null
     });
 
@@ -45,7 +45,7 @@ exports.addPermissionsNull = function () {
     assert.assertJsonEquals({permissions: {}}, result);
 
     result = project.addPermissions({
-        name: 'myproject',
+        id: 'myproject',
         permissions: {owner: ['user:system:owner']}
     });
 
@@ -53,7 +53,7 @@ exports.addPermissionsNull = function () {
     assert.assertJsonEquals({permissions: {owner: ['user:system:owner']}}, result);
 
     result = project.addPermissions({
-        name: 'myproject',
+        id: 'myproject',
         permissions: {owner: null, author: null}
     });
 
@@ -109,7 +109,7 @@ exports.removePermissionsNull = function () {
     createProject();
 
     var result = project.removePermissions({
-        name: 'myproject',
+        id: 'myproject',
         permissions: null
     });
 
@@ -117,7 +117,7 @@ exports.removePermissionsNull = function () {
     assert.assertJsonEquals({permissions: {}}, result);
 
     result = project.addPermissions({
-        name: 'myproject',
+        id: 'myproject',
         permissions: {owner: ['user:system:owner']}
     });
 
@@ -125,7 +125,7 @@ exports.removePermissionsNull = function () {
     assert.assertJsonEquals({permissions: {owner: ['user:system:owner']}}, result);
 
     result = project.removePermissions({
-        name: 'myproject',
+        id: 'myproject',
         permissions: {owner: null, author: null}
     });
 
@@ -134,21 +134,21 @@ exports.removePermissionsNull = function () {
 
 function addPermissions(projectName, permissions) {
     return project.addPermissions({
-        name: projectName,
+        id: projectName,
         permissions: permissions
     });
 }
 
 function removePermissions(projectName, permissions) {
     return project.removePermissions({
-        name: projectName,
+        id: projectName,
         permissions: permissions
     });
 }
 
 function createProject() {
     project.create({
-        name: 'myproject',
+        id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
         readAccess: {public: true}

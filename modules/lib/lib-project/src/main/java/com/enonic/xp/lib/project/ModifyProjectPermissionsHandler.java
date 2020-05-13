@@ -8,17 +8,18 @@ import com.enonic.xp.script.ScriptValue;
 public abstract class ModifyProjectPermissionsHandler
     extends BaseProjectHandler
 {
-    private ProjectName name;
+    private ProjectName id;
 
     private ProjectPermissions permissions;
 
     @Override
     protected ProjectPermissionsMapper doExecute()
     {
-        final ProjectPermissions permissionsBeforeUpdate = this.projectService.getPermissions( this.name );
+        final ProjectPermissions permissionsBeforeUpdate = this.projectService.getPermissions( this.id );
 
-        final ProjectPermissions projectPermissions = this.permissions != null ? this.projectService.modifyPermissions( this.name, merge(
-            permissionsBeforeUpdate, this.permissions ) ) : this.projectService.getPermissions( this.name );
+        final ProjectPermissions projectPermissions = this.permissions != null
+            ? this.projectService.modifyPermissions( this.id, merge( permissionsBeforeUpdate, this.permissions ) )
+            : this.projectService.getPermissions( this.id );
 
         return new ProjectPermissionsMapper( projectPermissions );
     }
@@ -26,9 +27,9 @@ public abstract class ModifyProjectPermissionsHandler
     protected abstract ProjectPermissions merge( final ProjectPermissions permissionsBeforeUpdate,
                                                  final ProjectPermissions paramPermissions );
 
-    public void setName( final String value )
+    public void setId( final String value )
     {
-        this.name = ProjectName.from( value );
+        this.id = ProjectName.from( value );
     }
 
     public void setPermissions( final ScriptValue value )

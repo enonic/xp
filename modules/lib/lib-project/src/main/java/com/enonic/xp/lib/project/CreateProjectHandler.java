@@ -14,7 +14,7 @@ import com.enonic.xp.script.ScriptValue;
 public final class CreateProjectHandler
     extends BaseProjectHandler
 {
-    private ProjectName name;
+    private ProjectName id;
 
     private String displayName;
 
@@ -33,20 +33,20 @@ public final class CreateProjectHandler
         final Project project = this.projectService.create( params );
 
         final Locale modifiedLanguage = this.language != null ? ApplyProjectLanguageCommand.create().
-            projectName( this.name ).
+            projectName( this.id ).
             language( this.language ).
             contentService( this.contentService ).
             build().
             execute() : null;
 
         final ProjectPermissions modifiedPermissions = this.permissions != null
-            ? this.projectService.modifyPermissions( this.name, this.permissions )
+            ? this.projectService.modifyPermissions( this.id, this.permissions )
             : ProjectPermissions.create().build();
 
         final Boolean modifiedIsPublic = ApplyProjectReadAccessCommand.create().
             setPublic( this.isPublic ).
             contentService( this.contentService ).
-            projectName( this.name ).
+            projectName( this.id ).
             build().
             execute();
 
@@ -61,15 +61,15 @@ public final class CreateProjectHandler
     private CreateProjectParams createProjectParams()
     {
         return CreateProjectParams.create().
-            name( this.name ).
+            name( this.id ).
             displayName( this.displayName ).
             description( this.description ).
             build();
     }
 
-    public void setName( final String value )
+    public void setId( final String value )
     {
-        this.name = ProjectName.from( value );
+        this.id = ProjectName.from( value );
     }
 
     public void setDisplayName( final String value )

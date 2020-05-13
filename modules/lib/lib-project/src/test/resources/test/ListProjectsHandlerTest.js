@@ -2,7 +2,7 @@ var assert = require('/lib/xp/testing.js');
 var project = require('/lib/xp/project.js');
 
 var project1Expected = {
-    name: 'myproject1',
+    id: 'myproject1',
     displayName: 'project display name 1',
     description: 'project description 1',
     permissions: {
@@ -20,7 +20,7 @@ var project1Expected = {
 };
 
 var project2Expected = {
-    name: 'myproject2',
+    id: 'myproject2',
     displayName: 'project display name 2',
     description: 'project description 2',
     permissions: {},
@@ -39,7 +39,7 @@ exports.listProjects = function () {
 
 function createProject1() {
     project.create({
-        name: 'myproject1',
+        id: 'myproject1',
         displayName: 'project display name 1',
         description: 'project description 1',
         readAccess: {public: false},
@@ -52,7 +52,7 @@ function createProject1() {
 
 function createProject2() {
     project.create({
-        name: 'myproject2',
+        id: 'myproject2',
         displayName: 'project display name 2',
         description: 'project description 2',
         readAccess: {public: false}

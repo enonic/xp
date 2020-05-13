@@ -13,12 +13,12 @@ import com.enonic.xp.project.ProjectPermissions;
 public final class GetProjectHandler
     extends BaseProjectHandler
 {
-    private ProjectName name;
+    private ProjectName id;
 
     @Override
     protected ProjectMapper doExecute()
     {
-        final Project project = this.projectService.get( this.name );
+        final Project project = this.projectService.get( this.id );
 
         if ( project == null )
         {
@@ -34,7 +34,7 @@ public final class GetProjectHandler
                 this.contentService ).projectName( project.getName() ).build().execute() : null;
 
         final Locale language = GetProjectLanguageCommand.create().
-            projectName( this.name ).
+            projectName( this.id ).
             contentService( this.contentService ).
             build().
             execute();
@@ -47,8 +47,8 @@ public final class GetProjectHandler
             build();
     }
 
-    public void setName( final String value )
+    public void setId( final String value )
     {
-        this.name = ProjectName.from( value );
+        this.id = ProjectName.from( value );
     }
 }

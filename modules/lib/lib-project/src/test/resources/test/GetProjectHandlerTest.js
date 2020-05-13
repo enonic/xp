@@ -2,7 +2,7 @@ var assert = require('/lib/xp/testing.js');
 var project = require('/lib/xp/project.js');
 
 var getProjectExpected = {
-    name: 'myproject',
+    id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
     permissions: {
@@ -23,14 +23,14 @@ exports.getProject = function () {
     createProject({owner: ['user:system:owner2', 'user:system:owner1'], viewer: ['user:system:viewer1']});
 
     var result = project.get({
-        name: 'myproject'
+        id: 'myproject'
     });
 
     assert.assertJsonEquals(getProjectExpected, result);
 };
 
 var getProjectWithoutPermissionsExpected = {
-    name: 'myproject',
+    id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
     permissions: {},
@@ -43,7 +43,7 @@ exports.getProjectWithoutPermissions = function () {
     createProject(null);
 
     var result = project.get({
-        name: 'myproject'
+        id: 'myproject'
     });
 
     assert.assertJsonEquals(getProjectWithoutPermissionsExpected, result);
@@ -53,7 +53,7 @@ exports.getProjectNotExist = function () {
     createProject();
 
     var result = project.get({
-        name: 'myproject1'
+        id: 'myproject1'
     });
 
     assert.assertJsonEquals(null, result);
@@ -64,7 +64,7 @@ exports.getProjectNull = function () {
 
     try {
         project.get({
-            name: null
+            id: null
         });
 
         throw new Error('IllegalArgumentException should be thrown.');
@@ -77,7 +77,7 @@ exports.getProjectNull = function () {
 
 function createProject(permissions) {
     project.create({
-        name: 'myproject',
+        id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
         readAccess: {public: true},

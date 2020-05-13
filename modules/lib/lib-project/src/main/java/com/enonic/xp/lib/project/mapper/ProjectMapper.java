@@ -41,7 +41,7 @@ public final class ProjectMapper
 
     private void doSerialize( final MapGenerator gen )
     {
-        gen.value( "name", project.getName().toString() );
+        gen.value( "id", project.getName().toString() );
         gen.value( "displayName", project.getDisplayName() );
         gen.value( "description", project.getDescription() );
         gen.value( "language", language != null ? language.toLanguageTag() : null );

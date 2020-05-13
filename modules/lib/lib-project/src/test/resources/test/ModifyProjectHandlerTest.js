@@ -2,7 +2,7 @@ var assert = require('/lib/xp/testing.js');
 var project = require('/lib/xp/project.js');
 
 var modifyProjectExpected = {
-    name: 'myproject',
+    id: 'myproject',
     displayName: 'new display name',
     description: 'new description',
     language: 'fr',
@@ -24,7 +24,7 @@ exports.modifyProject = function () {
     createProject();
 
     var result = project.modify({
-        name: 'myproject',
+        id: 'myproject',
         displayName: 'new display name',
         description: 'new description',
         language: 'fr'
@@ -35,7 +35,7 @@ exports.modifyProject = function () {
 };
 
 var modifyDescriptionExpected = {
-    name: 'myproject',
+    id: 'myproject',
     displayName: 'project display name',
     description: 'new description',
     permissions: {
@@ -56,7 +56,7 @@ exports.modifyDescription = function () {
     createProject();
 
     var result = project.modify({
-        name: 'myproject',
+        id: 'myproject',
         description: 'new description'
     });
 
@@ -64,7 +64,7 @@ exports.modifyDescription = function () {
 };
 
 var modifyDisplayNameExpected = {
-    name: 'myproject',
+    id: 'myproject',
     displayName: 'new display name',
     description: 'project description',
     permissions: {
@@ -85,7 +85,7 @@ exports.modifyDisplayName = function () {
     createProject();
 
     var result = project.modify({
-        name: 'myproject',
+        id: 'myproject',
         displayName: 'new display name'
     });
 
@@ -93,7 +93,7 @@ exports.modifyDisplayName = function () {
 };
 
 var modifyLanguageExpected = {
-    name: 'myproject',
+    id: 'myproject',
     displayName: 'project display name',
     description: 'project description',
     language: 'no',
@@ -115,7 +115,7 @@ exports.modifyLanguage = function () {
     createProject();
 
     var result = project.modify({
-        name: 'myproject',
+        id: 'myproject',
         language: 'no'
     });
 
@@ -124,7 +124,7 @@ exports.modifyLanguage = function () {
 
 function createProject() {
     project.create({
-        name: 'myproject',
+        id: 'myproject',
         displayName: 'project display name',
         description: 'project description',
         readAccess: {public: true},
