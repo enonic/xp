@@ -27,8 +27,8 @@ var expected = {
 
 // BEGIN
 // Creates a Content Project with extended properties
-var projectLib = require('/lib/xp/project');
-var project = projectLib.create({
+var projectLib2 = require('/lib/xp/project');
+var project2 = projectLib2.create({
     id: 'my-project',
     displayName: 'My Content Project',
     description: 'Some exciting content is stored here',
@@ -47,7 +47,7 @@ var project = projectLib.create({
 // END
 
 // BEGIN
-var expected = {
+var expected2 = {
     'id': 'my-project',
     'displayName': 'My Content Project',
     'description': 'Some exciting content is stored here',
@@ -77,20 +77,20 @@ var expected = {
 
 // BEGIN
 // Creates a Content Project inside context with `system.admin` role
-var projectLib = require('/lib/xp/project');
+var projectLib3 = require('/lib/xp/project');
 var contextLib = require('/lib/xp/context');
 
 var createProject = function () {
-    return projectLib.create({
+    return projectLib3.create({
         id: 'my-project',
         displayName: 'My Content Project',
         readAccess: {
             public: true
         }
     });
-}
+};
 
-var project = contextLib.run({
-    principals: ["role:system.admin"]
+var project3 = contextLib.run({
+    principals: ['role:system.admin']
 }, createProject);
 // END
