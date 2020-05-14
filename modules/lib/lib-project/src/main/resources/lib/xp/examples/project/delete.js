@@ -8,17 +8,17 @@ var result = projectLib.delete({
 
 // BEGIN
 // Deletes an existing content project inside context with `system.admin` role
-var projectLib = require('/lib/xp/project');
+var projectLib2 = require('/lib/xp/project');
 var contextLib = require('/lib/xp/context');
 
 var deleteProject = function () {
-    return projectLib.delete({
+    return projectLib2.delete({
         id: 'my-project'
     });
 }
 
-var result = contextLib.run({
-    principals: ["role:system.admin"]
+var result2 = contextLib.run({
+    principals: ['role:system.admin']
 }, deleteProject);
 // END
 

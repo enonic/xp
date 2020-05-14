@@ -12,19 +12,19 @@ var project = projectLib.modify({
 
 // BEGIN
 // Modifies an existing content project inside context with `system.admin` role
-var projectLib = require('/lib/xp/project');
+var projectLib2 = require('/lib/xp/project');
 var contextLib = require('/lib/xp/context');
 
 var modifyProject = function () {
-    return projectLib.modify({
+    return projectLib2.modify({
         id: 'my-project',
         displayName: 'New project name',
         description: 'New project description',
         language: 'en'
     });
-}
+};
 
-var project = contextLib.run({
+var project2 = contextLib.run({
     principals: ['role:system.admin']
 }, modifyProject);
 // END
