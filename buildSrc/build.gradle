@@ -17,5 +17,5 @@ dependencies {
     implementation 'org.eclipse.jgit:org.eclipse.jgit:5.6.0.201912101111-r'
     runtimeOnly 'com.gradle.publish:plugin-publish-plugin:0.10.1'
     runtimeOnly 'gradle.plugin.com.enonic.gradle:gradle-defaults:2.0.1'
-    runtimeOnly 'com.github.ben-manes:gradle-versions-plugin:0.27.0'
+    runtimeOnly 'com.github.ben-manes:gradle-versions-plugin:0.28.0'
 }
