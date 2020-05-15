@@ -1,0 +1,17 @@
+trigger:
+  branches:
+    include:
+    - '*'
+
+pool:
+  vmImage: 'ubuntu-latest'
+container: adoptopenjdk:11-jdk-hotspot
+steps:
+- script: $(Pipeline.Workspace)/s/gradlew build --stacktrace
+  displayName: 'Clone and build xp core'
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: $(Build.SourcesDirectory)/build/libs/
+    targetFolder: $(Build.ArtifactStagingDirectory)
+- publish: $(Build.SourcesDirectory)/build/libs/
+  artifact: xp-core
