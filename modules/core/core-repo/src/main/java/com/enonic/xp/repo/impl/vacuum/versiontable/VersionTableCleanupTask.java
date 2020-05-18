@@ -70,7 +70,7 @@ public class VersionTableCleanupTask
 
     public VacuumTaskResult execute( final VacuumTaskParams params )
     {
-        this.result = VacuumTaskResult.create();
+        this.result = VacuumTaskResult.create().taskName( this.name() );
         this.listener = params.getListener();
         this.until = Instant.now().minusMillis( params.getAgeThreshold() );
 
