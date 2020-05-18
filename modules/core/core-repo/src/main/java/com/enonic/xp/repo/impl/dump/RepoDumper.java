@@ -2,13 +2,13 @@ package com.enonic.xp.repo.impl.dump;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -27,6 +27,7 @@ import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionMetadata;
@@ -37,6 +38,7 @@ import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
@@ -66,6 +68,8 @@ class RepoDumper
 
     private final SystemDumpListener listener;
 
+    private boolean branchDumpStarted;
+
     private RepoDumper( final Builder builder )
     {
         this.repositoryId = builder.repositoryId;
@@ -82,9 +86,14 @@ class RepoDumper
 
     public RepoDumpResult execute()
     {
-        final Set<NodeId> dumpedNodes = Sets.newHashSet();
+        final Set<NodeId> dumpedNodes = new HashSet<>();
+        final Consumer<NodeId> nodeIdsAccumulator = includeVersions ? dumpedNodes::add : nodeId -> {
+        };
 
-        getBranches().forEach( ( branch ) -> dumpedNodes.addAll( setContext( branch ).callWith( this::doExecute ) ) );
+        for ( Branch branch : getBranches() )
+        {
+            setContext( branch ).runWith( () -> dumpBranch( nodeIdsAccumulator ) );
+        }
 
         if ( this.includeVersions )
         {
@@ -94,19 +103,20 @@ class RepoDumper
         return this.dumpResult.build();
     }
 
-    private Set<NodeId> doExecute()
+    private void dumpBranch( final Consumer<NodeId> nodeIdsAccumulator )
     {
         this.nodeService.refresh( RefreshMode.ALL );
 
-        Set<NodeId> dumpedNodes = Sets.newHashSet();
+        this.branchDumpStarted = false;
 
         final Branch branch = ContextAccessor.current().getBranch();
 
         final BranchDumpResult.Builder branchDumpResult = BranchDumpResult.create( branch );
+
         try
         {
             writer.openBranchMeta( this.repositoryId, branch );
-            dumpedNodes.addAll( dumpBranch( branchDumpResult ) );
+            dumpBranch( branchDumpResult, nodeIdsAccumulator );
         }
         catch ( Exception e )
         {
@@ -114,38 +124,57 @@ class RepoDumper
         }
         finally
         {
+            this.dumpResult.add( branchDumpResult.build() );
             writer.close();
         }
-
-        this.dumpResult.add( branchDumpResult.build() );
-
-        return dumpedNodes;
     }
 
-    private Set<NodeId> dumpBranch( final BranchDumpResult.Builder dumpResult )
+    private void dumpBranch( final BranchDumpResult.Builder branchDumpResult, final Consumer<NodeId> nodeIdsAccumulator )
     {
-        Set<NodeId> dumpedNodes = Sets.newHashSet();
-
         final Node rootNode = this.nodeService.getRoot();
 
-        final FindNodesByParentResult children = this.nodeService.findByParent( FindNodesByParentParams.create().
+        final FindNodesByParentParams.Builder builder = FindNodesByParentParams.create().
             parentId( rootNode.id() ).
-            recursive( true ).
             childOrder( ChildOrder.from( "_path asc" ) ).
-            build() );
+            recursive( true ).
+            batchCallback( result -> this.handleBatchCallback( (SearchResult) result, branchDumpResult, nodeIdsAccumulator ) );
 
-        reportDumpingBranch( ContextAccessor.current().getBranch(), children.getTotalHits() + 1 );
+        this.nodeService.findByParent( builder.build() );
 
-        doDumpNode( rootNode.id(), dumpResult );
-        dumpedNodes.add( rootNode.id() );
+    }
+
+    private void handleBatchCallback( final SearchResult searchResult, final BranchDumpResult.Builder branchDumpResult,
+                                      final Consumer<NodeId> nodeIdsAccumulator )
+    {
+        final FindNodesByParentResult children = FindNodesByParentResult.create().
+            nodeIds( NodeIds.from( searchResult.getIds() ) ).
+            totalHits( searchResult.getTotalHits() ).
+            hits( searchResult.getNumberOfHits() ).
+            build();
+
+        if ( !this.branchDumpStarted )
+        {
+            final Branch branch = ContextAccessor.current().getBranch();
+            if ( this.listener != null )
+            {
+                this.listener.dumpingBranch( this.repositoryId, branch, children.getTotalHits() + 1 );
+            }
+            else
+            {
+                LOG.info( "Dumping repository [" + this.repositoryId + "], branch [" + branch + "]  " );
+            }
+
+            doDumpNode( this.nodeService.getRoot().id(), branchDumpResult );
+            nodeIdsAccumulator.accept( this.nodeService.getRoot().id() );
+
+            this.branchDumpStarted = true;
+        }
 
         for ( final NodeId child : children.getNodeIds() )
         {
-            doDumpNode( child, dumpResult );
-            dumpedNodes.add( child );
+            doDumpNode( child, branchDumpResult );
+            nodeIdsAccumulator.accept( child );
         }
-
-        return dumpedNodes;
     }
 
     private void dumpVersions( final Set<NodeId> dumpedNodes )
@@ -154,8 +183,8 @@ class RepoDumper
         {
             writer.openVersionsMeta( this.repositoryId );
 
-            dumpedNodes.stream().forEach( ( nodeId ) -> {
-
+            for ( NodeId nodeId : dumpedNodes )
+            {
                 final VersionsDumpEntry.Builder builder = VersionsDumpEntry.create( nodeId );
 
                 final NodeVersionQueryResult versions = getVersions( nodeId );
@@ -167,7 +196,7 @@ class RepoDumper
                 }
 
                 this.writer.writeVersionsEntry( builder.build() );
-            } );
+            }
         }
         finally
         {
@@ -310,18 +339,6 @@ class RepoDumper
         return this.nodeService.findVersions( queryBuilder.build() );
     }
 
-    private void reportDumpingBranch( final Branch branch, final Long totalHits )
-    {
-        if ( this.listener != null )
-        {
-            this.listener.dumpingBranch( this.repositoryId, branch, totalHits );
-        }
-        else
-        {
-            LOG.info( "Dumping repository [" + this.repositoryId + "], branch [" + branch + "]  " );
-        }
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -410,4 +427,5 @@ class RepoDumper
             return new RepoDumper( this );
         }
     }
+
 }

@@ -269,6 +269,7 @@ public class NodeServiceImpl
                 indexServiceInternal( this.indexServiceInternal ).
                 searchService( this.nodeSearchService ).
                 storageService( this.nodeStorageService ).
+                batchCallback( params.getBatchCallback() ).
                 build().
                 execute();
         }

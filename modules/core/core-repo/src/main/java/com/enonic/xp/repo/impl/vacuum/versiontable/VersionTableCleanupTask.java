@@ -16,20 +16,19 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
-import com.enonic.xp.query.expr.FieldOrderExpr;
-import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.vacuum.AbstractVacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.version.NodeVersionDocumentId;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repo.impl.version.VersionService;
+import com.enonic.xp.repo.impl.version.search.NodeVersionQueryResultFactory;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
@@ -53,6 +52,8 @@ public class VersionTableCleanupTask
     private VacuumTaskResult.Builder result;
 
     private Instant until;
+
+    private boolean repositoryCleanStarted;
 
     private final static Logger LOG = LoggerFactory.getLogger( VersionTableCleanupTask.class );
 
@@ -90,47 +91,12 @@ public class VersionTableCleanupTask
 
     private void doCleanRepository( final Repository repository )
     {
+        this.repositoryCleanStarted = false;
         final RepositoryId repositoryId = repository.getId();
         LOG.info( "Cleaning repository: " + repositoryId );
 
-        NodeVersionQuery query = createQuery( null );
-        NodeVersionQueryResult versionsResult = nodeService.findVersions( query );
-
-        if ( listener != null )
-        {
-            listener.vacuumingVersionRepository( repositoryId, versionsResult.getTotalHits() );
-        }
-
-        List<NodeVersionMetadata> nodeVersionMetadatas = Lists.newArrayList( versionsResult.getNodeVersionsMetadata() );
-        NodeVersionMetadata lastVersion = null;
-
-        while ( nodeVersionMetadatas.size() > 0 )
-        {
-            List<NodeVersionDocumentId> toBeDeleted = Lists.newArrayList();
-
-            for ( NodeVersionMetadata version : nodeVersionMetadatas )
-            {
-                processVersion( repository, result, toBeDeleted, version );
-
-                if ( listener != null )
-                {
-                    listener.vacuumingVersion( 1L );
-                }
-                lastVersion = version;
-            }
-
-            if ( toBeDeleted.size() > 0 )
-            {
-                versionService.delete( toBeDeleted, InternalContext.from( ContextAccessor.current() ) );
-                LOG.info( "Deleting: " + toBeDeleted.size() + " versions from repository: " + repositoryId );
-            }
-
-            query = createQuery( lastVersion.getNodeVersionId() );
-            versionsResult = nodeService.findVersions( query );
-
-            nodeVersionMetadatas = Lists.newArrayList( versionsResult.getNodeVersionsMetadata() );
-            nodeVersionMetadatas.remove( lastVersion ); // to avoid changing RangeFilter in 6.15
-        }
+        NodeVersionQuery query = createQuery( repository );
+        nodeService.findVersions( query );
     }
 
     private void processVersion( final Repository repository, final VacuumTaskResult.Builder result,
@@ -181,28 +147,56 @@ public class VersionTableCleanupTask
         return false;
     }
 
-    private NodeVersionQuery createQuery( final NodeVersionId lastVersionId )
+    private NodeVersionQuery createQuery( final Repository repository )
     {
         final NodeVersionQuery.Builder builder = NodeVersionQuery.create();
 
-        if ( lastVersionId != null )
-        {
-            final RangeFilter versionIdFilter = RangeFilter.create().
-                fieldName( VersionIndexPath.VERSION_ID.getPath() ).
-                from( ValueFactory.newString( lastVersionId.toString() ) ).
-                build();
-            builder.addQueryFilter( versionIdFilter );
-        }
-
-        final RangeFilter mustBeOlderThanFilter = RangeFilter.create().
+        builder.addQueryFilter( RangeFilter.create().
             fieldName( VersionIndexPath.TIMESTAMP.getPath() ).
             to( ValueFactory.newDateTime( this.until ) ).
-            build();
+            build() );
 
-        return builder.addQueryFilter( mustBeOlderThanFilter ).
-            addOrderBy( FieldOrderExpr.create( VersionIndexPath.VERSION_ID, OrderExpr.Direction.ASC ) ).
-            size( 10000 ).
-            build();
+        builder.size( -1 ).
+            batchSize( 100 ).
+            batchCallback( result -> this.handleBatchCallback( (SearchResult) result, repository, builder.build() ) );
+
+        return builder.build();
+    }
+
+    private void handleBatchCallback( final SearchResult searchResult, final Repository repository,
+                                      final NodeVersionQuery nodeVersionQuery )
+    {
+        final List<NodeVersionDocumentId> toBeDeleted = Lists.newArrayList();
+
+        final long versionTotal = searchResult.getTotalHits();
+        if ( !this.repositoryCleanStarted )
+        {
+            if ( listener != null )
+            {
+                listener.vacuumingVersionRepository( repository.getId(), versionTotal );
+
+            }
+            this.repositoryCleanStarted = true;
+        }
+
+        if ( searchResult.isEmpty() )
+        {
+            return;
+        }
+
+        final NodeVersionQueryResult nodeVersionQueryResult = NodeVersionQueryResultFactory.create( nodeVersionQuery, searchResult );
+
+        nodeVersionQueryResult.getNodeVersionsMetadata().forEach( ( version ) -> {
+            processVersion( repository, result, toBeDeleted, version );
+            if ( listener != null )
+            {
+                listener.vacuumingVersion( 1L );
+            }
+        } );
+
+        LOG.info( "Deleting: " + toBeDeleted.size() + " versions from repository: " + repository.getId() );
+
+        versionService.delete( toBeDeleted, InternalContext.from( ContextAccessor.current() ) );
     }
 
     @Reference
@@ -222,4 +216,5 @@ public class VersionTableCleanupTask
     {
         this.versionService = versionService;
     }
+
 }

@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.function.Consumer;
+
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -38,6 +40,8 @@ public class FindNodeIdsByParentCommand
 
     private final boolean recursive;
 
+    private final Consumer batchCallback;
+
     private FindNodeIdsByParentCommand( final Builder builder )
     {
         super( builder );
@@ -49,6 +53,7 @@ public class FindNodeIdsByParentCommand
         childOrder = builder.childOrder;
         countOnly = builder.countOnly;
         recursive = builder.recursive;
+        batchCallback = builder.batchCallback;
     }
 
     public static Builder create()
@@ -101,7 +106,8 @@ public class FindNodeIdsByParentCommand
             size( size ).
             searchMode( countOnly ? SearchMode.COUNT : SearchMode.SEARCH ).
             setOrderExpressions( order.getOrderExpressions() ).
-            accurateScoring( true );
+            accurateScoring( true ).
+            batchCallback( batchCallback );
 
         if ( !recursive )
         {
@@ -172,6 +178,8 @@ public class FindNodeIdsByParentCommand
 
         private boolean recursive = false;
 
+        private Consumer batchCallback;
+
         public Builder()
         {
             super();
@@ -234,6 +242,13 @@ public class FindNodeIdsByParentCommand
         public Builder recursive( final boolean val )
         {
             recursive = val;
+            return this;
+        }
+
+        @Deprecated
+        public Builder batchCallback( final Consumer batchCallback )
+        {
+            this.batchCallback = batchCallback;
             return this;
         }
     }

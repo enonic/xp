@@ -45,7 +45,17 @@ class ScrollExecutor
         {
             LOG.debug( "Scrolling, got " + scrollResp.getHits().hits().length + " hits" );
 
-            searchHitsBuilder.addAll( SearchHitsFactory.create( scrollResp.getHits() ) );
+            if ( query.getBatchCallback() != null )
+            {
+                query.getBatchCallback().accept( SearchResult.create().
+                    hits( SearchHitsFactory.create( scrollResp.getHits() ) ).
+                    totalHits( scrollResp.getHits().getTotalHits() ).
+                    build() );
+            }
+            else
+            {
+                searchHitsBuilder.addAll( SearchHitsFactory.create( scrollResp.getHits() ) );
+            }
 
             scrollResp = client.prepareSearchScroll( scrollResp.getScrollId() ).
                 setScroll( defaultScrollTime ).
