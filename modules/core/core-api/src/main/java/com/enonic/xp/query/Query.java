@@ -1,5 +1,7 @@
 package com.enonic.xp.query;
 
+import java.util.function.Consumer;
+
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.node.SearchMode;
@@ -28,4 +30,6 @@ public interface Query
 
     boolean isExplain();
 
+    @Deprecated
+    Consumer getBatchCallback();
 }

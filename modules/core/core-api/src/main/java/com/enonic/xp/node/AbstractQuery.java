@@ -2,6 +2,7 @@ package com.enonic.xp.node;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -44,6 +45,8 @@ public class AbstractQuery
 
     private final boolean explain;
 
+    private final Consumer batchCallback;
+
     @SuppressWarnings("unchecked")
     protected AbstractQuery( Builder builder )
     {
@@ -58,6 +61,7 @@ public class AbstractQuery
         this.queryFilters = builder.queryFilters.build();
         this.searchOptimizer = builder.searchOptimizer;
         this.explain = builder.explain;
+        this.batchCallback = builder.batchCallback;
     }
 
     private ImmutableList<OrderExpr> setOrderExpressions( final Builder builder )
@@ -129,6 +133,12 @@ public class AbstractQuery
         return searchOptimizer;
     }
 
+    @Deprecated
+    public Consumer getBatchCallback()
+    {
+        return batchCallback;
+    }
+
     public static abstract class Builder<B extends Builder>
     {
         private final Filters.Builder postFilters = Filters.create();
@@ -152,6 +162,8 @@ public class AbstractQuery
         private SearchOptimizer searchOptimizer = SearchOptimizer.SPEED;
 
         private boolean explain = false;
+
+        private Consumer batchCallback;
 
         protected Builder()
         {
@@ -260,6 +272,13 @@ public class AbstractQuery
         public B searchOptimizer( SearchOptimizer searchOptimizer )
         {
             this.searchOptimizer = searchOptimizer;
+            return (B) this;
+        }
+
+        @Deprecated
+        public B batchCallback( Consumer batchCallback )
+        {
+            this.batchCallback = batchCallback;
             return (B) this;
         }
     }

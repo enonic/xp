@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -48,6 +49,8 @@ public class ElasticsearchQuery
 
     private final SearchOptimizer searchOptimizer;
 
+    private final Consumer batchCallback;
+
     private ElasticsearchQuery( final Builder builder )
     {
         this.query = builder.queryBuilder;
@@ -63,6 +66,7 @@ public class ElasticsearchQuery
         this.searchMode = builder.searchMode;
         this.searchOptimizer = builder.searchOptimizer;
         this.explain = builder.explain;
+        this.batchCallback = builder.batchCallback;
     }
 
     public static Builder create()
@@ -135,6 +139,12 @@ public class ElasticsearchQuery
         return explain;
     }
 
+    @Deprecated
+    public Consumer getBatchCallback()
+    {
+        return batchCallback;
+    }
+
     @Override
     public String toString()
     {
@@ -191,6 +201,8 @@ public class ElasticsearchQuery
         private SearchOptimizer searchOptimizer = SearchOptimizer.DEFAULT;
 
         private boolean explain = false;
+
+        private Consumer batchCallback;
 
         public Builder query( final QueryBuilder queryBuilder )
         {
@@ -287,6 +299,13 @@ public class ElasticsearchQuery
         public Builder explain( final boolean explain )
         {
             this.explain = explain;
+            return this;
+        }
+
+        @Deprecated
+        public Builder batchCallback( Consumer batchCallback )
+        {
+            this.batchCallback = batchCallback;
             return this;
         }
 

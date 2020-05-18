@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import java.util.function.Consumer;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
@@ -25,6 +27,8 @@ public class FindNodesByParentParams
 
     private final boolean recursive;
 
+    private final Consumer batchCallback;
+
     private FindNodesByParentParams( Builder builder )
     {
         Preconditions.checkArgument( builder.parentPath == null || builder.parentId == null,
@@ -37,6 +41,7 @@ public class FindNodesByParentParams
         childOrder = builder.childOrder;
         countOnly = builder.countOnly;
         recursive = builder.recursive;
+        batchCallback = builder.batchCallback;
     }
 
     public NodePath getParentPath()
@@ -79,6 +84,12 @@ public class FindNodesByParentParams
         return recursive;
     }
 
+    @Deprecated
+    public Consumer getBatchCallback()
+    {
+        return batchCallback;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -101,6 +112,8 @@ public class FindNodesByParentParams
         private boolean countOnly = false;
 
         private boolean recursive = false;
+
+        private Consumer batchCallback;
 
         private Builder()
         {
@@ -152,6 +165,13 @@ public class FindNodesByParentParams
         public Builder recursive( final boolean recursive )
         {
             this.recursive = recursive;
+            return this;
+        }
+
+        @Deprecated
+        public Builder batchCallback( final Consumer batchCallback )
+        {
+            this.batchCallback = batchCallback;
             return this;
         }
 
