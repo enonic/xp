@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.SearchOptimizer;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.ValueFilter;
@@ -10,7 +11,6 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.QueryBuild
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.StoreQueryFieldNameResolver;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
-import com.enonic.xp.node.NodeVersionQuery;
 
 class NodeVersionQueryTranslator
     implements QueryTypeTranslator
@@ -33,7 +33,7 @@ class NodeVersionQueryTranslator
     @Override
     public int getBatchSize()
     {
-        return query.getSize();
+        return query.getBatchSize();
     }
 
     @Override
