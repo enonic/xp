@@ -166,7 +166,9 @@ public final class ProjectResource
         return CreateProjectParams.create().
             name( json.getName() ).
             displayName( json.getDisplayName() ).
-            description( json.getDescription() ).build();
+            description( json.getDescription() ).
+            forceInitialization( true ).
+            build();
     }
 
     private CreateAttachment createIcon( final MultipartForm form )
