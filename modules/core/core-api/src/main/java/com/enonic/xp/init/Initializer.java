@@ -17,19 +17,22 @@ public abstract class Initializer
 
     private final long initializationCheckMaxCount;
 
+    private final boolean forceInitialization;
+
     protected Initializer( final Builder builder )
     {
         this.initializationCheckPeriod =
             builder.initializationCheckPeriod == null ? INITIALIZATION_CHECK_PERIOD : builder.initializationCheckPeriod;
         this.initializationCheckMaxCount =
             builder.initializationCheckMaxCount == null ? INITIALIZATION_CHECK_MAX_COUNT : builder.initializationCheckMaxCount;
+        this.forceInitialization = builder.forceInitialization;
     }
 
     public void initialize()
     {
         while ( true )
         {
-            if ( isMaster() )
+            if ( this.forceInitialization || isMaster() )
             {
                 if ( !isInitialized() )
                 {
@@ -77,17 +80,29 @@ public abstract class Initializer
 
         private Long initializationCheckMaxCount;
 
-        @SuppressWarnings("unchecked")
+        private boolean forceInitialization;
+
         public T setInitializationCheckPeriod( final Long initializationCheckPeriod )
         {
             this.initializationCheckPeriod = initializationCheckPeriod;
             return (T) this;
         }
 
-        @SuppressWarnings("unchecked")
         public T setInitializationCheckMaxCount( final Long initializationCheckMaxCount )
         {
             this.initializationCheckMaxCount = initializationCheckMaxCount;
+            return (T) this;
+        }
+
+        /**
+         * Allows to call initializer from non-master cluster node.
+         * IMPORTANT: do not change for any multi-cluster-node calls(app's main.js etc.)
+         *
+         * @param forceInitialization force initialization value.
+         */
+        public T forceInitialization( final boolean forceInitialization )
+        {
+            this.forceInitialization = forceInitialization;
             return (T) this;
         }
     }
