@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
@@ -32,6 +33,7 @@ import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
+import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
@@ -117,13 +119,15 @@ class ProjectServiceImplTest
 
     private SecurityServiceImpl securityService;
 
+    private IndexServiceImpl indexService;
+
     @BeforeEach
     protected void setUpNode()
         throws Exception
     {
         super.setUpNode();
 
-        final IndexServiceImpl indexService = new IndexServiceImpl();
+        indexService = new IndexServiceImpl();
         indexService.setIndexDataService( indexedDataService );
         indexService.setIndexServiceInternal( indexServiceInternal );
 
@@ -153,6 +157,28 @@ class ProjectServiceImplTest
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
 
         final Project project = doCreateProjectAsAdmin( ProjectName.from( projectRepoId ) );
+        assertNotNull( project );
+        assertEquals( "test-project", project.getName().toString() );
+
+        final NodeBranchEntry nodeBranchEntry =
+            this.branchService.get( Node.ROOT_UUID, InternalContext.create( ADMIN_CONTEXT ).repositoryId( projectRepoId ).build() );
+        assertNotNull( nodeBranchEntry );
+
+        ADMIN_CONTEXT.runWith( () -> {
+            final Repository pro = repositoryService.get( projectRepoId );
+            assertNotNull( pro );
+        } );
+    }
+
+    @Test
+    void create_in_non_master_node()
+    {
+        IndexServiceInternal indexServiceInternalMock = Mockito.mock( IndexServiceInternal.class );
+        indexService.setIndexServiceInternal( indexServiceInternalMock );
+
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+
+        final Project project = ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), null, true ) );
         assertNotNull( project );
         assertEquals( "test-project", project.getName().toString() );
 
@@ -744,10 +770,17 @@ class ProjectServiceImplTest
 
     private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions )
     {
+        return this.doCreateProject( name, projectPermissions, false );
+    }
+
+    private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions,
+                                     final boolean forceInitialization )
+    {
         final Project project = this.projectService.create( CreateProjectParams.create().
             name( name ).
             description( "description" ).
             displayName( "Project display name" ).
+            forceInitialization( forceInitialization ).
             build() );
 
         if ( projectPermissions != null )

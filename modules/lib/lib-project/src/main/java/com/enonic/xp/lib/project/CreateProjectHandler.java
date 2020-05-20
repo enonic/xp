@@ -68,6 +68,7 @@ public final class CreateProjectHandler
             name( this.id ).
             displayName( this.displayName ).
             description( this.description ).
+            forceInitialization( true ).
             build();
     }
 
