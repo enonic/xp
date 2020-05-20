@@ -3,4 +3,6 @@ dependencies {
     compileOnly project( ':script:script-api' )
 
     testImplementation project( ':tools:testing' )
+
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine"
 }
