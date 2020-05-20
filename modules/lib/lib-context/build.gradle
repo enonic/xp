@@ -4,4 +4,7 @@ dependencies {
     compile project( ':lib:lib-common' )
 
     testImplementation project( ':tools:testing' )
+
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine"
+
 }
