@@ -10,6 +10,7 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.SimpleBindings;
 
+import com.google.common.io.Files;
 import com.google.common.util.concurrent.Striped;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
@@ -338,7 +339,9 @@ public final class ScriptExecutorImpl
     @Override
     public void registerMock( final String name, final Object value )
     {
-        this.mocks.put( name, value );
+        final String resourcePath = Files.getFileExtension( name ).isEmpty() ? name + ".js" : name;
+
+        this.mocks.put( resourcePath, value );
     }
 
     @Override
