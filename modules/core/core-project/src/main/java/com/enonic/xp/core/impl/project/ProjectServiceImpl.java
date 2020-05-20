@@ -113,6 +113,7 @@ public class ProjectServiceImpl
                 projectName( params.getName() ).
                 build().
                 execute() ).
+            forceInitialization( params.isForceInitialization() ).
             build().
             initialize();
 
@@ -124,6 +125,7 @@ public class ProjectServiceImpl
                 projectName( params.getName() ).
                 build().
                 execute() ).
+            forceInitialization( params.isForceInitialization() ).
             build().
             initialize();
 
