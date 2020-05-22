@@ -17,7 +17,6 @@ import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentPublishInfo;
@@ -47,14 +46,13 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.name.NamePrettyfier;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Component(configurationPid = "com.enonic.xp.content")
 public class ContentAuditLogSupportImpl
@@ -76,13 +74,15 @@ public class ContentAuditLogSupportImpl
         this.auditLogService = auditLogService;
     }
 
-
+    @Override
     public void createSite( final CreateSiteParams params, final Site site )
     {
-        executor.execute( () -> doCreateSite( params, site ) );
+        final Context context = ContextAccessor.current();
+
+        executor.execute( () -> doCreateSite( params, site, context ) );
     }
 
-    private void doCreateSite( final CreateSiteParams params, final Site site )
+    private void doCreateSite( final CreateSiteParams params, final Site site, final Context rootContext )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -95,15 +95,18 @@ public class ContentAuditLogSupportImpl
 
         addContent( resultSet, site );
 
-        log( "system.content.create", data, site.getPath() );
+        log( "system.content.create", data, site.getPath(), rootContext );
     }
 
+    @Override
     public void createContent( final CreateContentParams params, final Content content )
     {
-        executor.execute( () -> doCreateContent( params, content ) );
+        final Context context = ContextAccessor.current();
+
+        executor.execute( () -> doCreateContent( params, content, context ) );
     }
 
-    private void doCreateContent( final CreateContentParams params, final Content content )
+    private void doCreateContent( final CreateContentParams params, final Content content, final Context rootContext )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -128,15 +131,18 @@ public class ContentAuditLogSupportImpl
 
         addContent( resultSet, content );
 
-        log( "system.content.create", data, content.getPath() );
+        log( "system.content.create", data, content.getPath(), rootContext );
     }
 
+    @Override
     public void createMedia( final CreateMediaParams params, final Content content )
     {
-        executor.execute( () -> doCreateMedia( params, content ) );
+        final Context context = ContextAccessor.current();
+
+        executor.execute( () -> doCreateMedia( params, content, context ) );
     }
 
-    private void doCreateMedia( final CreateMediaParams params, final Content content )
+    private void doCreateMedia( final CreateMediaParams params, final Content content, final Context rootContext )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -154,15 +160,18 @@ public class ContentAuditLogSupportImpl
 
         addContent( resultSet, content );
 
-        log( "system.content.create", data, content.getPath() );
+        log( "system.content.create", data, content.getPath(), rootContext );
     }
 
+    @Override
     public void update( final UpdateContentParams params, final Content content )
     {
-        executor.execute( () -> doUpdate( params, content ) );
+        final Context context = ContextAccessor.current();
+
+        executor.execute( () -> doUpdate( params, content, context ) );
     }
 
-    private void doUpdate( final UpdateContentParams params, final Content content )
+    private void doUpdate( final UpdateContentParams params, final Content content, final Context rootContext )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -175,15 +184,18 @@ public class ContentAuditLogSupportImpl
 
         addContent( resultSet, content );
 
-        log( "system.content.update", data, content.getId() );
+        log( "system.content.update", data, content.getId(), rootContext );
     }
 
+    @Override
     public void update( final UpdateMediaParams params, final Content content )
     {
-        executor.execute( () -> doUpdate( params, content ) );
+        final Context context = ContextAccessor.current();
+
+        executor.execute( () -> doUpdate( params, content, context ) );
     }
 
-    private void doUpdate( final UpdateMediaParams params, final Content content )
+    private void doUpdate( final UpdateMediaParams params, final Content content, final Context rootContext )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -201,15 +213,18 @@ public class ContentAuditLogSupportImpl
 
         addContent( resultSet, content );
 
-        log( "system.content.update", data, content.getId() );
+        log( "system.content.update", data, content.getId(), rootContext );
     }
 
+    @Override
     public void delete( final DeleteContentParams params, final DeleteContentsResult contents )
     {
-        executor.execute( () -> doDelete( params, contents ) );
+        final Context context = ContextAccessor.current();
+
+        executor.execute( () -> doDelete( params, contents, context ) );
     }
 
-    private void doDelete( final DeleteContentParams params, final DeleteContentsResult contents )
+    private void doDelete( final DeleteContentParams params, final DeleteContentsResult contents, final Context rootContext )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -224,15 +239,18 @@ public class ContentAuditLogSupportImpl
         log( "system.content.delete", data, ContentIds.create().
             addAll( contents.getDeletedContents() ).
             addAll( contents.getPendingContents() ).
-            build() );
+            build(), rootContext );
     }
 
+    @Override
     public void undoPendingDelete( final UndoPendingDeleteContentParams params, final Contents contents )
     {
-        executor.execute( () -> doUndoPendingDelete( params, contents ) );
+        final Context context = ContextAccessor.current();
+
+        executor.execute( () -> doUndoPendingDelete( params, contents, context ) );
     }
 
-    private void doUndoPendingDelete( final UndoPendingDeleteContentParams params, final Contents contents )
+    private void doUndoPendingDelete( final UndoPendingDeleteContentParams params, final Contents contents, final Context rootContext )
     {
         if ( params.getContentIds() == null )
         {
@@ -248,15 +266,18 @@ public class ContentAuditLogSupportImpl
 
         addContents( data.getRoot(), contents, "result" );
 
-        log( "system.content.delete", data, contents.getIds() );
+        log( "system.content.delete", data, contents.getIds(), rootContext );
     }
 
+    @Override
     public void publish( final PushContentParams params, final PublishContentResult result )
     {
-        executor.execute( () -> doPublish( params, result ) );
+        final Context context = ContextAccessor.current();
+
+        executor.execute( () -> doPublish( params, result, context ) );
     }
 
-    private void doPublish( final PushContentParams params, final PublishContentResult result )
+    private void doPublish( final PushContentParams params, final PublishContentResult result, final Context rootContext )
     {
         if ( params.getContentIds() == null )
         {
@@ -301,15 +322,18 @@ public class ContentAuditLogSupportImpl
         log( "system.content.publish", data, ContentIds.create().
             addAll( result.getPushedContents() ).
             addAll( result.getDeletedContents() ).
-            build() );
+            build(), rootContext );
     }
 
+    @Override
     public void unpublishContent( final UnpublishContentParams params, final UnpublishContentsResult result )
     {
-        executor.execute( () -> doUnpublishContent( params, result ) );
+        final Context context = ContextAccessor.current();
+
+        executor.execute( () -> doUnpublishContent( params, result, context ) );
     }
 
-    private void doUnpublishContent( final UnpublishContentParams params, final UnpublishContentsResult result )
+    private void doUnpublishContent( final UnpublishContentParams params, final UnpublishContentsResult result, final Context rootContext )
     {
         if ( params.getContentIds() == null )
         {
@@ -330,15 +354,18 @@ public class ContentAuditLogSupportImpl
 
         addContents( resultSet, result.getUnpublishedContents(), "unpublishedContents" );
 
-        log( "system.content.unpublishContent", data, result.getUnpublishedContents() );
+        log( "system.content.unpublishContent", data, result.getUnpublishedContents(), rootContext );
     }
 
+    @Override
     public void duplicate( final DuplicateContentParams params, final DuplicateContentsResult result )
     {
-        executor.execute( () -> doDuplicate( params, result ) );
+        final Context context = ContextAccessor.current();
+
+        executor.execute( () -> doDuplicate( params, result, context ) );
     }
 
-    private void doDuplicate( final DuplicateContentParams params, final DuplicateContentsResult result )
+    private void doDuplicate( final DuplicateContentParams params, final DuplicateContentsResult result, final Context rootContext )
     {
         if ( params.getContentId() == null )
         {
@@ -359,15 +386,18 @@ public class ContentAuditLogSupportImpl
         resultSet.addStrings( "duplicatedContents",
                               result.getDuplicatedContents().stream().map( ContentId::toString ).collect( Collectors.toSet() ) );
 
-        log( "system.content.duplicate", data, result.getDuplicatedContents() );
+        log( "system.content.duplicate", data, result.getDuplicatedContents(), rootContext );
     }
 
+    @Override
     public void move( final MoveContentParams params, MoveContentsResult result )
     {
-        executor.execute( () -> doMove( params, result ) );
+        final Context context = ContextAccessor.current();
+
+        executor.execute( () -> doMove( params, result, context ) );
     }
 
-    private void doMove( final MoveContentParams params, MoveContentsResult result )
+    private void doMove( final MoveContentParams params, MoveContentsResult result, final Context rootContext )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -382,16 +412,18 @@ public class ContentAuditLogSupportImpl
 
         addContents( resultSet, result.getMovedContents(), "movedContents" );
 
-        log( "system.content.move", data, params.getContentId() );
+        log( "system.content.move", data, params.getContentId(), rootContext );
     }
 
+    @Override
     public void rename( final RenameContentParams params, final Content content )
     {
-        executor.execute( () -> doRename( params, content ) );
+        final Context context = ContextAccessor.current();
 
+        executor.execute( () -> doRename( params, content, context ) );
     }
 
-    private void doRename( final RenameContentParams params, final Content content )
+    private void doRename( final RenameContentParams params, final Content content, final Context rootContext )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -402,15 +434,18 @@ public class ContentAuditLogSupportImpl
 
         addContent( resultSet, content );
 
-        log( "system.content.rename", data, content.getId() );
+        log( "system.content.rename", data, content.getId(), rootContext );
     }
 
+    @Override
     public void setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
     {
-        executor.execute( () -> doSetActiveContentVersion( contentId, versionId ) );
+        final Context context = ContextAccessor.current();
+
+        executor.execute( () -> doSetActiveContentVersion( contentId, versionId, context ) );
     }
 
-    private void doSetActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
+    private void doSetActiveContentVersion( final ContentId contentId, final ContentVersionId versionId, final Context rootContext )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -422,15 +457,18 @@ public class ContentAuditLogSupportImpl
         resultSet.addString( "contentId", nullToNull( contentId ) );
         resultSet.addString( "versionId", nullToNull( versionId ) );
 
-        log( "system.content.setActiveContentVersion", data, contentId );
+        log( "system.content.setActiveContentVersion", data, contentId, rootContext );
     }
 
+    @Override
     public void setChildOrder( final SetContentChildOrderParams params, final Content content )
     {
-        executor.execute( () -> doSetChildOrder( params, content ) );
+        final Context context = ContextAccessor.current();
+
+        executor.execute( () -> doSetChildOrder( params, content, context ) );
     }
 
-    private void doSetChildOrder( final SetContentChildOrderParams params, final Content content )
+    private void doSetChildOrder( final SetContentChildOrderParams params, final Content content, final Context rootContext )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -441,16 +479,19 @@ public class ContentAuditLogSupportImpl
 
         addContent( resultSet, content );
 
-        log( "system.content.setChildOrder", data, content.getId() );
+        log( "system.content.setChildOrder", data, content.getId(), rootContext );
     }
 
+    @Override
     public void reorderChildren( final ReorderChildContentsParams params, final ReorderChildContentsResult result )
     {
-        executor.execute( () -> doReorderChildren( params, result ) );
+        final Context context = ContextAccessor.current();
 
+        executor.execute( () -> doReorderChildren( params, result, context ) );
     }
 
-    private void doReorderChildren( final ReorderChildContentsParams params, final ReorderChildContentsResult result )
+    private void doReorderChildren( final ReorderChildContentsParams params, final ReorderChildContentsResult result,
+                                    final Context rootContext )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -461,15 +502,19 @@ public class ContentAuditLogSupportImpl
 
         resultSet.addLong( "size", (long) result.getMovedChildren() );
 
-        log( "system.content.reorderChildren", data, params.getContentId() );
+        log( "system.content.reorderChildren", data, params.getContentId(), rootContext );
     }
 
+    @Override
     public void applyPermissions( final ApplyContentPermissionsParams params, final ApplyContentPermissionsResult result )
     {
-        executor.execute( () -> doApplyPermissions( params, result ) );
+        final Context context = ContextAccessor.current();
+
+        executor.execute( () -> doApplyPermissions( params, result, context ) );
     }
 
-    private void doApplyPermissions( final ApplyContentPermissionsParams params, final ApplyContentPermissionsResult result )
+    private void doApplyPermissions( final ApplyContentPermissionsParams params, final ApplyContentPermissionsResult result,
+                                     final Context rootContext )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -488,15 +533,18 @@ public class ContentAuditLogSupportImpl
         addContents( resultSet, result.getSkippedContents(), "skippedContents" );
         addContents( resultSet, result.getSucceedContents(), "succeedContents" );
 
-        log( "system.content.applyPermissions", data, result.getSucceedContents() );
+        log( "system.content.applyPermissions", data, result.getSucceedContents(), rootContext );
     }
 
+    @Override
     public void reprocess( final Content content )
     {
-        executor.execute( () -> doReprocess( content ) );
+        final Context context = ContextAccessor.current();
+
+        executor.execute( () -> doReprocess( content, context ) );
     }
 
-    private void doReprocess( final Content content )
+    private void doReprocess( final Content content, final Context rootContext )
     {
         final ContentId contentId = content.getId();
 
@@ -508,7 +556,7 @@ public class ContentAuditLogSupportImpl
 
         addContent( resultSet, content );
 
-        log( "system.content.reprocess", data, contentId );
+        log( "system.content.reprocess", data, contentId, rootContext );
     }
 
     private void addContent( final PropertySet targetSet, final Content content )
@@ -542,54 +590,56 @@ public class ContentAuditLogSupportImpl
             collect( Collectors.toSet() ) );
     }
 
-    private void log( final String type, final PropertyTree data, final ContentPaths contentPaths )
+    private void log( final String type, final PropertyTree data, final ContentPaths contentPaths, final Context rootContext )
     {
         log( type, data, AuditLogUris.from( contentPaths.
             stream().
-            map( this::createAuditLogUri ).
-            collect( Collectors.toList() ) ) );
+            map( contentPath -> createAuditLogUri( contentPath, rootContext ) ).
+            collect( Collectors.toList() ) ), rootContext );
     }
 
-    private void log( final String type, final PropertyTree data, final ContentIds contentIds )
+    private void log( final String type, final PropertyTree data, final ContentIds contentIds, final Context rootContext )
     {
         log( type, data, AuditLogUris.from( contentIds.
             stream().
-            map( this::createAuditLogUri ).
-            collect( Collectors.toList() ) ) );
+            map( contentId -> createAuditLogUri( contentId, rootContext ) ).
+            collect( Collectors.toList() ) ), rootContext );
     }
 
-    private void log( final String type, final PropertyTree data, final AuditLogUris uris )
+    private void log( final String type, final PropertyTree data, final AuditLogUris uris, final Context rootContext )
     {
+        final PrincipalKey userPrincipalKey =
+            rootContext.getAuthInfo().getUser() != null ? rootContext.getAuthInfo().getUser().getKey() : User.ANONYMOUS.getKey();
+
         final LogAuditLogParams logParams = LogAuditLogParams.create().
             type( type ).
             source( SOURCE_CORE_CONTENT ).
             data( data ).
             objectUris( uris ).
+            user( userPrincipalKey ).
             build();
 
-        runAsAuditLog( () -> auditLogService.log( logParams ) );
+        runAsAuditLog( () -> auditLogService.log( logParams ), rootContext );
     }
 
-    private void log( final String type, final PropertyTree data, final ContentId contentId )
+    private void log( final String type, final PropertyTree data, final ContentId contentId, final Context rootContext )
     {
-        log( type, data, ContentIds.from( contentId ) );
+        log( type, data, ContentIds.from( contentId ), rootContext );
     }
 
-    private void log( final String type, final PropertyTree data, final ContentPath contentPath )
+    private void log( final String type, final PropertyTree data, final ContentPath contentPath, final Context rootContext )
     {
-        log( type, data, ContentPaths.from( contentPath ) );
+        log( type, data, ContentPaths.from( contentPath ), rootContext );
     }
 
-    private AuditLogUri createAuditLogUri( final ContentId contentId )
+    private AuditLogUri createAuditLogUri( final ContentId contentId, final Context rootContext )
     {
-        final Context context = ContextAccessor.current();
-        return AuditLogUri.from( context.getRepositoryId() + ":" + context.getBranch() + ":" + contentId );
+        return AuditLogUri.from( rootContext.getRepositoryId() + ":" + rootContext.getBranch() + ":" + contentId );
     }
 
-    private AuditLogUri createAuditLogUri( final ContentPath contentPath )
+    private AuditLogUri createAuditLogUri( final ContentPath contentPath, final Context rootContext )
     {
-        final Context context = ContextAccessor.current();
-        return AuditLogUri.from( context.getRepositoryId() + ":" + context.getBranch() + ":/content" + contentPath );
+        return AuditLogUri.from( rootContext.getRepositoryId() + ":" + rootContext.getBranch() + ":/content" + contentPath );
     }
 
     private String nullToNull( Object value )
@@ -597,29 +647,13 @@ public class ContentAuditLogSupportImpl
         return value != null ? value.toString() : null;
     }
 
-    private <T> T runAsAuditLog( final Callable<T> callable )
+    private <T> T runAsAuditLog( final Callable<T> callable, final Context rootContext )
     {
-        final Context context = ContextAccessor.current();
-        return ContextBuilder.from( ContextAccessor.current() ).
-            authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).
+        return ContextBuilder.from( rootContext ).
+            authInfo( AuthenticationInfo.copyOf( rootContext.getAuthInfo() ).
                 principals( RoleKeys.AUDIT_LOG ).build() ).
             build().
             callWith( callable );
     }
 
-    private String generateNameFromParams( final ContentName contentName, final String displayName )
-    {
-        if ( contentName == null || isNullOrEmpty( contentName.toString() ) )
-        {
-            if ( isNullOrEmpty( displayName ) )
-            {
-                return ContentName.unnamed().toString();
-            }
-            else
-            {
-                return NamePrettyfier.create( displayName );
-            }
-        }
-        return contentName.toString();
-    }
 }
