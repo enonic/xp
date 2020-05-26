@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.resource.Resource;
@@ -22,7 +23,9 @@ import com.enonic.xp.resource.UrlResource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LocaleServiceImplTest
@@ -35,10 +38,9 @@ public class LocaleServiceImplTest
     public void before()
         throws Exception
     {
-        this.localeService = new LocaleServiceImpl();
         this.resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( this::loadResource );
-        this.localeService.setResourceService( resourceService );
+        this.localeService = new LocaleServiceImpl( resourceService );
     }
 
     private Resource loadResource( final InvocationOnMock invocation )
@@ -166,16 +168,18 @@ public class LocaleServiceImplTest
         MessageBundle otherBundleCached = localeService.getBundle( otherApp, Locale.ENGLISH, "/texts" );
         MessageBundle otherBundle = localeService.getBundle( otherApp, Locale.ENGLISH, "/texts" );
 
-        assertTrue( bundle == bundleCached );
-        assertTrue( otherBundle == otherBundleCached );
+        assertSame( bundle, bundleCached );
+        assertSame( otherBundle, otherBundleCached );
 
-        localeService.invalidate( myApp );
+        Application application = Mockito.mock( Application.class );
+        Mockito.when( application.getKey() ).thenReturn( myApp );
+        localeService.activated( application );
 
         bundle = localeService.getBundle( myApp, Locale.ENGLISH, "/phrases", "/override" );
         otherBundle = localeService.getBundle( otherApp, Locale.ENGLISH, "/texts" );
 
-        assertTrue( bundle != bundleCached );
-        assertTrue( otherBundle == otherBundleCached );
+        assertNotSame( bundle, bundleCached );
+        assertSame( otherBundle, otherBundleCached );
     }
 
     @Test

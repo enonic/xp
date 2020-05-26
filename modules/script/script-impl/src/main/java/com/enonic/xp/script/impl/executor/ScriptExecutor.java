@@ -1,5 +1,7 @@
 package com.enonic.xp.script.impl.executor;
 
+import java.util.concurrent.Executor;
+
 import com.enonic.xp.app.Application;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -28,6 +30,8 @@ public interface ScriptExecutor
     ScriptSettings getScriptSettings();
 
     JavascriptHelper getJavascriptHelper();
+
+    Executor getAsyncExecutor();
 
     void registerMock( String name, Object value );
 

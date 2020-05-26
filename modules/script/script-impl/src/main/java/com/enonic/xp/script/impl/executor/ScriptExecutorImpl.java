@@ -2,6 +2,7 @@ package com.enonic.xp.script.impl.executor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
@@ -43,6 +44,8 @@ public final class ScriptExecutorImpl
 
     private final static String POST_SCRIPT = "\n});";
 
+    private final Executor asyncExecutor;
+
     private ScriptEngine engine;
 
     private ScriptSettings scriptSettings;
@@ -68,6 +71,11 @@ public final class ScriptExecutorImpl
     private JavascriptHelper javascriptHelper;
 
     private final static Striped<Lock> REQUIRE_LOCKS = Striped.lazyWeakLock( 1000 );
+
+    public ScriptExecutorImpl( final Executor asyncExecutor )
+    {
+        this.asyncExecutor = asyncExecutor;
+    }
 
     public void setScriptSettings( final ScriptSettings scriptSettings )
     {
@@ -363,5 +371,11 @@ public final class ScriptExecutorImpl
     public void runDisposers()
     {
         this.disposers.values().forEach( Runnable::run );
+    }
+
+    @Override
+    public Executor getAsyncExecutor()
+    {
+        return asyncExecutor;
     }
 }

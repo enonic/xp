@@ -45,20 +45,9 @@ public final class ApplicationHelper
 
     private static final String APPLICATION_XML = "application.xml";
 
-    public static boolean isApplication( final Bundle bundle )
-    {
-        return getHeader( bundle, X_BUNDLE_TYPE, "" ).equals( APPLICATION_BUNDLE_TYPE ) || isSystemApplication( bundle ) ||
-            bundle.getEntry( APPLICATION_XML ) != null || bundle.getEntry( SITE_XML ) != null;
-    }
-
     static boolean isApplication( final JarFile jarFile )
     {
         return hasApplicationHeader( jarFile ) || jarFile.getEntry( APPLICATION_XML ) != null || jarFile.getEntry( SITE_XML ) != null;
-    }
-
-    public static boolean isSystemApplication( final Bundle bundle )
-    {
-        return getHeader( bundle, X_BUNDLE_TYPE, "" ).equals( SYSTEM_BUNDLE_TYPE );
     }
 
     private static boolean hasApplicationHeader( final JarFile jarFile )

@@ -14,6 +14,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.impl.service.ServiceRegistryImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
 import com.enonic.xp.server.RunMode;
@@ -28,14 +29,17 @@ public final class ScriptExecutorManager
 
     private final ResourceService resourceService;
 
+    private final ScriptAsyncService scriptAsyncService;
+
     private final ScriptSettings scriptSettings;
 
     public ScriptExecutorManager( final ApplicationService applicationService, final ResourceService resourceService,
-                                  final ScriptSettings scriptSettings )
+                                  ScriptAsyncService scriptAsyncService, final ScriptSettings scriptSettings )
     {
         this.executors = new ConcurrentHashMap<>();
         this.applicationService = applicationService;
         this.resourceService = resourceService;
+        this.scriptAsyncService = scriptAsyncService;
         this.scriptSettings = scriptSettings;
     }
 
@@ -49,7 +53,7 @@ public final class ScriptExecutorManager
         LOG.debug( "Create Script Executor for {}", key );
         final Application application = this.applicationService.getInstalledApplication( key );
 
-        if ( application == null )
+        if ( application == null || !application.isStarted() )
         {
             throw new ApplicationNotFoundException( key );
         }
@@ -61,7 +65,7 @@ public final class ScriptExecutorManager
                                                                     String.format( "application bundle %s context must not be null",
                                                                                    bundle.getBundleId() ) );
 
-        final ScriptExecutorImpl executor = new ScriptExecutorImpl();
+        final ScriptExecutorImpl executor = new ScriptExecutorImpl( scriptAsyncService.getAsyncExecutor( application.getKey() ) );
         executor.setScriptSettings( this.scriptSettings );
         executor.setClassLoader( classLoader );
         executor.setServiceRegistry( new ServiceRegistryImpl( bundleContext ) );
@@ -78,11 +82,18 @@ public final class ScriptExecutorManager
         if ( executor != null )
         {
             LOG.debug( "Run script disposers for {}", key );
-            executor.runDisposers();
+            try
+            {
+                executor.runDisposers();
+            }
+            catch ( Exception e )
+            {
+                LOG.warn( "Error while running disposers", e );
+            }
         }
     }
 
-    public void invalidate( final ApplicationKey key )
+    public void remove( final ApplicationKey key )
     {
         LOG.debug( "Remove Script Executor for {}", key );
         this.executors.remove( key );

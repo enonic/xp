@@ -2,8 +2,13 @@ package com.enonic.xp.script.impl.event;
 
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.RejectedExecutionException;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,35 +19,39 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.script.event.ScriptEventListener;
 import com.enonic.xp.script.event.ScriptEventManager;
+import com.enonic.xp.script.impl.async.ScriptAsyncService;
 
-@Component(immediate = true, service = {ScriptEventManager.class, ApplicationInvalidator.class, EventListener.class})
+@Component(immediate = true)
 public final class ScriptEventManagerImpl
-    implements ScriptEventManager, ApplicationInvalidator, EventListener
+    implements ScriptEventManager, EventListener, ApplicationInvalidator
 {
     private static final Logger LOG = LoggerFactory.getLogger( ScriptEventManagerImpl.class );
 
-    private final CopyOnWriteArrayList<ScriptEventListener> listeners;
+    private final CopyOnWriteArrayList<ScriptEventListenerWrapper> listeners = new CopyOnWriteArrayList<>();
 
-    public ScriptEventManagerImpl()
+    private final ScriptAsyncService scriptAsyncService;
+
+    @Activate
+    public ScriptEventManagerImpl( @Reference final ScriptAsyncService scriptAsyncService )
     {
-        this.listeners = new CopyOnWriteArrayList<>();
+        this.scriptAsyncService = scriptAsyncService;
+    }
+
+    @Deactivate
+    public void deactivate()
+    {
+        listeners.clear();
     }
 
     @Override
     public void add( final ScriptEventListener listener )
     {
-        LOG.debug( "Add Script Event Listener for {}", listener.getApplication() );
-        this.listeners.add( listener );
+        final ScriptEventListenerWrapper wrapper = new ScriptEventListenerWrapper( listener );
+        listeners.add( wrapper );
+        LOG.debug( "Added Script Event Listener for {}", wrapper.applicationKey );
     }
 
     @Override
-    public Iterator<ScriptEventListener> iterator()
-    {
-        return this.listeners.iterator();
-    }
-
-    @Override
-    @Deprecated
     public void invalidate( final ApplicationKey key )
     {
         invalidate( key, ApplicationInvalidationLevel.FULL );
@@ -51,19 +60,57 @@ public final class ScriptEventManagerImpl
     @Override
     public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
     {
-        if ( ApplicationInvalidationLevel.FULL == level )
+        final boolean removed = listeners.removeIf( w -> w.applicationKey.equals( key ) );
+        if ( removed )
         {
-            LOG.debug( "Remove Script Event Listeners for {}", key );
-            this.listeners.removeIf( ( listener ) -> key.equals( listener.getApplication() ) );
+            LOG.info( "Removed all Script Event Listeners for {}", key );
         }
+    }
+
+    @Override
+    public Iterator<ScriptEventListener> iterator()
+    {
+        return listeners.stream().map( w -> w.listener ).iterator();
     }
 
     @Override
     public void onEvent( final Event event )
     {
-        for ( final ScriptEventListener listener : listeners )
+        listeners.forEach( listener -> listener.onEvent( event ) );
+    }
+
+    private class ScriptEventListenerWrapper
+    {
+        private final ApplicationKey applicationKey;
+
+        private final ScriptEventListener listener;
+
+        private final Executor asyncExecutor;
+
+        ScriptEventListenerWrapper( final ScriptEventListener listener )
         {
-            listener.onEvent( event );
+            this.listener = listener;
+            this.applicationKey = listener.getApplication();
+            this.asyncExecutor = scriptAsyncService.getAsyncExecutor( this.applicationKey );
+        }
+
+        public void onEvent( final Event event )
+        {
+            try
+            {
+                asyncExecutor.execute( () -> listener.onEvent( event ) );
+            }
+            catch ( RejectedExecutionException e )
+            {
+                // Async executor is shutdown as soon as application's bundle is not STARTED anymore.
+                // There is still a change for events to arrive so we catch RejectedExecutionException
+                // and remove Event Listener as it is not functioning anymore.
+                final boolean removed = listeners.remove( this );
+                if ( removed )
+                {
+                    LOG.info( "Removed Script Event Listener for {}", applicationKey );
+                }
+            }
         }
     }
 }

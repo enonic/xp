@@ -6,6 +6,8 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationService;
 
+import static org.mockito.ArgumentMatchers.any;
+
 public class StoredApplicationsDeployerTest
 {
     private ApplicationService applicationService;
@@ -24,6 +26,6 @@ public class StoredApplicationsDeployerTest
     public void deploy()
     {
         this.deployer.deploy();
-        Mockito.verify( this.applicationService, Mockito.times( 1 ) ).installAllStoredApplications();
+        Mockito.verify( this.applicationService, Mockito.times( 1 ) ).installAllStoredApplications( any() );
     }
 }

@@ -10,6 +10,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.mockito.verification.VerificationMode;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.VersionRange;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -17,8 +18,6 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.app.Application;
-import com.enonic.xp.app.ApplicationInvalidationLevel;
-import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.Applications;
@@ -50,16 +49,17 @@ public class ApplicationServiceImplTest
 
     private ApplicationServiceImpl service;
 
+    private ApplicationRegistryImpl applicationRegistry;
+
     private EventPublisher eventPublisher;
 
     @BeforeEach
     public void initService()
     {
-        this.service = new ApplicationServiceImpl( getBundleContext() );
-        this.service.setRepoService( this.repoService );
+        final BundleContext bundleContext = getBundleContext();
+        this.applicationRegistry = new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub() );
         this.eventPublisher = mock( EventPublisher.class );
-        this.service.setEventPublisher( this.eventPublisher );
-        this.service.setApplicationListenerHub( new ApplicationListenerHub() );
+        this.service = new ApplicationServiceImpl( bundleContext, applicationRegistry, repoService, eventPublisher );
     }
 
     @Test
@@ -67,6 +67,7 @@ public class ApplicationServiceImplTest
         throws Exception
     {
         final Bundle bundle = deployBundle( "app1", true );
+        applicationRegistry.installApplication( bundle );
 
         final Application result = this.service.getInstalledApplication( ApplicationKey.from( "app1" ) );
         assertNotNull( result );
@@ -83,9 +84,12 @@ public class ApplicationServiceImplTest
     public void get_all_applications()
         throws Exception
     {
-        deployBundle( "app1", true );
-        deployBundle( "app2", true );
+        final Bundle bundle1 = deployBundle( "app1", true );
+        final Bundle bundle2 = deployBundle( "app2", true );
         deployBundle( "app3", false );
+
+        applicationRegistry.installApplication( bundle1 );
+        applicationRegistry.installApplication( bundle2 );
 
         final Applications result = this.service.getInstalledApplications();
         assertNotNull( result );
@@ -96,9 +100,12 @@ public class ApplicationServiceImplTest
     public void get_application_keys()
         throws Exception
     {
-        deployBundle( "app1", true );
-        deployBundle( "app2", true );
+        final Bundle bundle1 = deployBundle( "app1", true );
+        final Bundle bundle2 = deployBundle( "app2", true );
         deployBundle( "app3", false );
+
+        applicationRegistry.installApplication( bundle1 );
+        applicationRegistry.installApplication( bundle2 );
 
         final ApplicationKeys result = this.service.getInstalledApplicationKeys();
         assertNotNull( result );
@@ -113,6 +120,8 @@ public class ApplicationServiceImplTest
     {
         final Bundle bundle = deployBundle( "app1", true );
 
+        applicationRegistry.installApplication( bundle );
+
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         this.service.startApplication( ApplicationKey.from( "app1" ), false );
         assertEquals( Bundle.ACTIVE, bundle.getState() );
@@ -124,6 +133,8 @@ public class ApplicationServiceImplTest
     {
         // At a time of writing Felix version is 6.0.1. All greater versions should work as well.
         final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "6.0" ) );
+
+        applicationRegistry.installApplication( bundle );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         this.service.startApplication( ApplicationKey.from( "app1" ), false );
@@ -137,6 +148,8 @@ public class ApplicationServiceImplTest
         // At a time of writing Felix version is 6.0.1. Range covers all future versions as well.
         final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "(6.0,9999.0]" ) );
 
+        applicationRegistry.installApplication( bundle );
+
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         this.service.startApplication( ApplicationKey.from( "app1" ), false );
         assertEquals( Bundle.ACTIVE, bundle.getState() );
@@ -148,6 +161,8 @@ public class ApplicationServiceImplTest
     {
         // Version upper bound is too low for current and future Felix version (at a time of writing 6.0.1)
         final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "[5.1,5.2)" ) );
+
+        applicationRegistry.installApplication( bundle );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         assertThrows( ApplicationInvalidVersionException.class,
@@ -161,6 +176,8 @@ public class ApplicationServiceImplTest
         // There is no version 0.0 of Felix.
         final Bundle bundle = deployBundle( "app1", true, VersionRange.valueOf( "[0.0,0.0]" ) );
 
+        applicationRegistry.installApplication( bundle );
+
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         assertThrows( ApplicationInvalidVersionException.class,
                       () -> this.service.startApplication( ApplicationKey.from( "app1" ), false ) );
@@ -171,6 +188,9 @@ public class ApplicationServiceImplTest
         throws Exception
     {
         final Bundle bundle = deployBundle( "app1", true );
+
+        applicationRegistry.installApplication( bundle );
+
         bundle.start();
 
         assertEquals( Bundle.ACTIVE, bundle.getState() );
@@ -536,7 +556,6 @@ public class ApplicationServiceImplTest
         assertTrue( this.service.isLocalApplication( application.getKey() ) );
 
         when( this.repoService.getApplicationNode( application.getKey() ) ).
-            thenReturn( null ).
             thenReturn( applicationNode );
 
         this.service.installGlobalApplication( byteSource, bundleName );
@@ -603,40 +622,13 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void testInvalidate()
-        throws Exception
-    {
-        final ApplicationKey key = ApplicationKey.from( "myapp" );
-        deployBundle( "myapp", true );
-
-        this.service.getInstalledApplication( key );
-
-        final ApplicationInvalidator invalidator1 = mock( ApplicationInvalidator.class );
-        final ApplicationInvalidator invalidator2 = mock( ApplicationInvalidator.class );
-
-        this.service.addInvalidator( invalidator1 );
-        this.service.addInvalidator( invalidator2 );
-        this.service.invalidate( key, ApplicationInvalidationLevel.FULL );
-
-        Mockito.verify( invalidator1, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
-        Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
-
-        this.service.removeInvalidator( invalidator1 );
-        this.service.removeInvalidator( invalidator2 );
-        this.service.invalidate( key, ApplicationInvalidationLevel.FULL );
-
-        Mockito.verify( invalidator1, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
-        Mockito.verify( invalidator2, Mockito.times( 1 ) ).invalidate( key, ApplicationInvalidationLevel.FULL );
-    }
-
-    @Test
     public void configuration_comes_first()
         throws Exception
     {
         final ApplicationKey key = ApplicationKey.from( "myapp" );
-        deployBundle( "myapp", true );
+        final Bundle bundle = deployBundle( "myapp", true );
 
-        service.setConfiguration( key, ConfigBuilder.create().add( "a", "b" ).build() );
+        applicationRegistry.configureApplication( bundle, ConfigBuilder.create().add( "a", "b" ).build() );
 
         final Application app = service.getInstalledApplication( key );
 
@@ -653,7 +645,11 @@ public class ApplicationServiceImplTest
         registerService( ConfigurationAdmin.class, configurationAdmin );
 
         final ApplicationKey key = ApplicationKey.from( "myapp" );
-        deployBundle( "myapp", true ).start();
+        final Bundle bundle = deployBundle( "myapp", true );
+
+        applicationRegistry.installApplication( bundle );
+
+        applicationRegistry.startApplication( key, true );
 
         final Application app = service.getInstalledApplication( key );
 
@@ -665,11 +661,13 @@ public class ApplicationServiceImplTest
         throws Exception
     {
         final ApplicationKey key = ApplicationKey.from( "myapp" );
-        deployBundle( "myapp", true );
+        final Bundle bundle = deployBundle( "myapp", true );
+
+        applicationRegistry.installApplication( bundle );
 
         final Application app = service.getInstalledApplication( key );
 
-        service.setConfiguration( key, ConfigBuilder.create().add( "a", "b" ).build() );
+        applicationRegistry.configureApplication( bundle, ConfigBuilder.create().add( "a", "b" ).build() );
 
         assertEquals( ConfigBuilder.create().add( "a", "b" ).build(), app.getConfig() );
     }
@@ -679,11 +677,14 @@ public class ApplicationServiceImplTest
         throws Exception
     {
         final ApplicationKey key = ApplicationKey.from( "myapp" );
-        deployBundle( "myapp", true );
+        final Bundle bundle = deployBundle( "myapp", true );
+
+        applicationRegistry.installApplication( bundle );
 
         final Application app = service.getInstalledApplication( key );
 
-        CompletableFuture.runAsync( () -> service.setConfiguration( key, ConfigBuilder.create().add( "a", "b" ).build() ) );
+        CompletableFuture.runAsync(
+            () -> applicationRegistry.configureApplication( bundle, ConfigBuilder.create().add( "a", "b" ).build() ) );
 
         assertEquals( ConfigBuilder.create().add( "a", "b" ).build(), app.getConfig() );
     }
