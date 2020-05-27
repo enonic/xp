@@ -69,9 +69,9 @@ public class ApplicationRepoServiceImpl
     }
 
     @Override
-    public void deleteApplicationNode( final Application application )
+    public void deleteApplicationNode( final ApplicationKey applicationKey )
     {
-        this.nodeService.deleteByPath( NodePath.create( APPLICATION_PATH, application.getKey().getName() ).build() );
+        this.nodeService.deleteByPath( NodePath.create( APPLICATION_PATH, applicationKey.getName() ).build() );
     }
 
     @Override

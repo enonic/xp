@@ -2,38 +2,32 @@ package com.enonic.xp.core.impl.app.config;
 
 import java.util.Dictionary;
 
+import org.osgi.framework.Bundle;
 import org.osgi.service.cm.ManagedService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
-import com.enonic.xp.core.impl.app.ApplicationConfigService;
+import com.enonic.xp.core.impl.app.ApplicationRegistry;
 
 final class ApplicationConfigReloader
     implements ManagedService
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ApplicationConfigReloader.class );
-
     private static final Configuration EMPTY_CONFIG = ConfigBuilder.create().build();
 
-    private final ApplicationKey key;
+    private final Bundle bundle;
 
-    private final ApplicationConfigService applicationConfigService;
+    private final ApplicationRegistry applicationRegistry;
 
-    ApplicationConfigReloader( final ApplicationKey key, final ApplicationConfigService applicationConfigService )
+    ApplicationConfigReloader( final Bundle bundle, final ApplicationRegistry applicationRegistry )
     {
-        this.key = key;
-        this.applicationConfigService = applicationConfigService;
+        this.bundle = bundle;
+        this.applicationRegistry = applicationRegistry;
     }
 
     @Override
     public void updated( final Dictionary<String, ?> properties )
     {
-        LOG.info( "Configuring application {}", this.key );
-
-        this.applicationConfigService.setConfiguration( this.key, properties == null ? EMPTY_CONFIG : ConfigBuilder.create().
+        applicationRegistry.configureApplication( bundle, properties == null ? EMPTY_CONFIG : ConfigBuilder.create().
             addAll( properties ).build() );
     }
 }

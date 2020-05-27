@@ -11,6 +11,8 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationService;
 
+import static org.mockito.ArgumentMatchers.any;
+
 public class ApplicationDeployerManagerTest
 {
     @TempDir
@@ -56,7 +58,7 @@ public class ApplicationDeployerManagerTest
         deployDirectoryWatcher.setApplicationService( applicationService );
 
         applicationDeployerManager.activate();
-        Mockito.verify( applicationService ).installAllStoredApplications();
+        Mockito.verify( applicationService ).installAllStoredApplications( any() );
         Mockito.verify( applicationService ).installGlobalApplication( new URL( "http://localhost/url1" ) );
     }
 }

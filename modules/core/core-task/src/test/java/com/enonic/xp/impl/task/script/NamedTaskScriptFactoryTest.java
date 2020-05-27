@@ -12,6 +12,7 @@ import org.osgi.framework.BundleContext;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
@@ -19,6 +20,7 @@ import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
+import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.impl.standard.ScriptRuntimeFactoryImpl;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskDescriptor;
@@ -50,13 +52,14 @@ public class NamedTaskScriptFactoryTest
         final Application application = Mockito.mock( Application.class );
         Mockito.when( application.getBundle() ).thenReturn( bundle );
         Mockito.when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
+        Mockito.when( application.isStarted() ).thenReturn( true );
+        Mockito.when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
         Mockito.when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
 
         ResourceService resourceService = Mockito.mock( ResourceService.class );
-        final Answer<Object> getResource = invocation ->
-        {
+        final Answer<Object> getResource = invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final URL resourceUrl =
                 NamedTaskScriptFactoryTest.class.getResource( "/" + resourceKey.getApplicationKey() + resourceKey.getPath() );
@@ -64,12 +67,12 @@ public class NamedTaskScriptFactoryTest
         };
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( getResource );
 
-        final ScriptRuntimeFactoryImpl runtimeFactory = new ScriptRuntimeFactoryImpl();
-        runtimeFactory.setApplicationService( applicationService );
-        runtimeFactory.setResourceService( resourceService );
+        final ScriptAsyncService scriptAsyncService = Mockito.mock( ScriptAsyncService.class );
 
-        final PortalScriptServiceImpl scriptService = new PortalScriptServiceImpl();
-        scriptService.setScriptRuntimeFactory( runtimeFactory );
+        final ScriptRuntimeFactoryImpl runtimeFactory =
+            new ScriptRuntimeFactoryImpl( applicationService, resourceService, scriptAsyncService );
+
+        final PortalScriptServiceImpl scriptService = new PortalScriptServiceImpl( runtimeFactory );
         scriptService.initialize();
 
         return scriptService;
