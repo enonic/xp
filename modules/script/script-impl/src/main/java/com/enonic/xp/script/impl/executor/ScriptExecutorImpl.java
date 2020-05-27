@@ -1,7 +1,9 @@
 package com.enonic.xp.script.impl.executor;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
@@ -43,71 +45,47 @@ public final class ScriptExecutorImpl
 
     private final static String POST_SCRIPT = "\n});";
 
-    private ScriptEngine engine;
+    private final Executor asyncExecutor;
 
-    private ScriptSettings scriptSettings;
+    private final ScriptEngine engine;
 
-    private ScriptExportsCache exportsCache;
+    private final ScriptSettings scriptSettings;
 
-    private ClassLoader classLoader;
+    private final ScriptExportsCache exportsCache = new ScriptExportsCache();
 
-    private ServiceRegistry serviceRegistry;
+    private final ClassLoader classLoader;
 
-    private ResourceService resourceService;
+    private final ServiceRegistry serviceRegistry;
 
-    private Application application;
+    private final ResourceService resourceService;
 
-    private Map<String, Object> mocks;
+    private final Application application;
 
-    private Map<ResourceKey, Runnable> disposers;
+    private final Map<String, Object> mocks = new ConcurrentHashMap<>();
 
-    private RunMode runMode;
+    private final Map<ResourceKey, Runnable> disposers = new ConcurrentHashMap<>();
 
-    private ScriptValueFactory scriptValueFactory;
+    private final RunMode runMode;
 
-    private JavascriptHelper javascriptHelper;
+    private final ScriptValueFactory scriptValueFactory;
+
+    private final JavascriptHelper javascriptHelper;
 
     private final static Striped<Lock> REQUIRE_LOCKS = Striped.lazyWeakLock( 1000 );
 
-    public void setScriptSettings( final ScriptSettings scriptSettings )
+    public ScriptExecutorImpl( final Executor asyncExecutor, final ScriptSettings scriptSettings, final ClassLoader classLoader,
+                               final ServiceRegistry serviceRegistry, final ResourceService resourceService, final Application application,
+                               final RunMode runMode )
     {
+        this.asyncExecutor = asyncExecutor;
+        this.engine = NashornHelper.getScriptEngine( classLoader );
         this.scriptSettings = scriptSettings;
-    }
-
-    public void setClassLoader( final ClassLoader classLoader )
-    {
         this.classLoader = classLoader;
-    }
-
-    public void setServiceRegistry( final ServiceRegistry serviceRegistry )
-    {
         this.serviceRegistry = serviceRegistry;
-    }
-
-    public void setResourceService( final ResourceService resourceService )
-    {
         this.resourceService = resourceService;
-    }
-
-    public void setApplication( final Application application )
-    {
         this.application = application;
-    }
-
-    public void setRunMode( final RunMode runMode )
-    {
         this.runMode = runMode;
-    }
-
-    public void initialize()
-    {
-        this.engine = NashornHelper.getScriptEngine( this.classLoader );
-        this.mocks = new HashMap<>();
-        this.disposers = new HashMap<>();
-        this.exportsCache = new ScriptExportsCache();
-
-        final JavascriptHelperFactory javascriptHelperFactory = new JavascriptHelperFactory( this.engine );
-        this.javascriptHelper = javascriptHelperFactory.create();
+        this.javascriptHelper = new JavascriptHelperFactory( this.engine ).create();
         this.scriptValueFactory = new ScriptValueFactoryImpl( this.javascriptHelper );
 
         final Bindings global = new SimpleBindings();
@@ -128,10 +106,14 @@ public final class ScriptExecutorImpl
     public ScriptExports executeMain( final ResourceKey key )
     {
         expireCacheIfNeeded();
+        return doExecuteMain( key );
+    }
 
-        final Object exports = executeRequire( key );
-        final ScriptValue value = newScriptValue( exports );
-        return new ScriptExportsImpl( key, value, exports );
+    @Override
+    public CompletableFuture<ScriptExports> executeMainAsync( final ResourceKey key )
+    {
+        expireCacheIfNeeded();
+        return CompletableFuture.completedFuture( key ).thenApplyAsync( this::doExecuteMain, asyncExecutor );
     }
 
     private void expireCacheIfNeeded()
@@ -146,6 +128,13 @@ public final class ScriptExecutorImpl
             this.exportsCache.clear();
             runDisposers();
         }
+    }
+
+    private ScriptExports doExecuteMain( final ResourceKey key )
+    {
+        final Object exports = executeRequire( key );
+        final ScriptValue value = newScriptValue( exports );
+        return new ScriptExportsImpl( key, value, exports );
     }
 
     @Override

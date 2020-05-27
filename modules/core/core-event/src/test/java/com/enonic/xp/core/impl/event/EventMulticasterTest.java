@@ -2,14 +2,14 @@ package com.enonic.xp.core.impl.event;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -107,9 +107,13 @@ public class EventMulticasterTest
         this.multicaster.add( listener1 );
         this.multicaster.add( listener3 );
 
-        assertEquals( 3, this.multicaster.listeners.size() );
-        assertSame( listener1, this.multicaster.listeners.get( 0 ) );
-        assertSame( listener2, this.multicaster.listeners.get( 1 ) );
-        assertSame( listener3, this.multicaster.listeners.get( 2 ) );
+        final Event event = Event.create( "test" ).build();
+        this.multicaster.publish( event );
+
+        final InOrder inOrder = inOrder( listener1, listener2, listener3 );
+
+        inOrder.verify( listener1, times( 1 ) ).onEvent( event );
+        inOrder.verify( listener2, times( 1 ) ).onEvent( event );
+        inOrder.verify( listener3, times( 1 ) ).onEvent( event );
     }
 }

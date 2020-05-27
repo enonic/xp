@@ -10,6 +10,7 @@ import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationBundleUtils;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
@@ -169,6 +170,6 @@ final class ApplicationImpl
     @Override
     public boolean isSystem()
     {
-        return ApplicationHelper.isSystemApplication( this.bundle );
+        return ApplicationBundleUtils.isSystemApplication( this.bundle );
     }
 }
