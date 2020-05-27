@@ -1,65 +1,100 @@
 package com.enonic.xp.core.impl.app.config;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.junit.jupiter.api.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.ManagedService;
 
-import com.enonic.xp.core.impl.app.ApplicationConfigService;
+import com.enonic.xp.core.impl.app.ApplicationRegistry;
 import com.enonic.xp.core.impl.app.BundleBasedTest;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.doAnswer;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.withSettings;
 
-public class ApplicationConfigInvalidatorTest
+class ApplicationConfigInvalidatorTest
     extends BundleBasedTest
 
 {
     @Test
-    public void lifecycle()
+    void lifecycle()
         throws Exception
     {
-        final ApplicationConfigInvalidator invalidator = spy( ApplicationConfigInvalidator.class );
-        final ApplicationConfigService mock = mock( ApplicationConfigService.class );
-        invalidator.setApplicationConfigService( mock );
-        invalidator.activate( getBundleContext() );
+        final BundleContext bundleContext = getBundleContext();
 
-        final Bundle bundle = deploy( "app1", newBundle( "app1", true ) );
+        final ApplicationConfigInvalidator service =
+            new ApplicationConfigInvalidator( bundleContext, mock( ApplicationRegistry.class, withSettings().stubOnly() ) );
 
-        final ResultCaptor<ServiceRegistration<ManagedService>> resultCaptor = new ResultCaptor<>();
+        service.activate();
 
-        doAnswer( resultCaptor ).when( invalidator ).addingBundle( same( bundle ), any() );
+        final String appName = "app1";
+
+        final Bundle bundle = deploy( appName, newBundle( appName, true ) );
+
+        assertIterableEquals( Collections.emptyList(), getManagedServiceReferences( bundleContext, appName ),
+                              "Must be no ManagedService before bundle starts" );
 
         bundle.start();
 
-        verify( invalidator ).addingBundle( same( bundle ), any() );
-
-        final ServiceRegistration<ManagedService> reference = resultCaptor.result;
+        assertEquals( 1, getManagedServiceReferences( bundleContext, appName ).size(),
+                      "Must be one ManagedService after bundle is started" );
 
         bundle.stop();
 
-        verify( invalidator ).removedBundle( same( bundle ), any(), same( reference ) );
+        assertIterableEquals( Collections.emptyList(), getManagedServiceReferences( bundleContext, appName ),
+                              "Must be no ManagedService after bundle is stopped" );
 
-        invalidator.deactivate();
+        bundle.start();
+
+        assertEquals( 1, getManagedServiceReferences( bundleContext, appName ).size(),
+                      "Must be one ManagedService after bundle is started again" );
+
+        service.deactivate();
+
+        assertIterableEquals( Collections.emptyList(), getManagedServiceReferences( bundleContext, appName ),
+                              "Must be no ManagedService after ApplicationConfigInvalidator is deactivated " );
     }
 
-    private static class ResultCaptor<T>
-        implements Answer<T>
+    @Test
+    void lifecycle_non_application_skipped()
+        throws Exception
     {
-        T result;
+        final BundleContext bundleContext = getBundleContext();
 
-        @Override
-        public T answer( InvocationOnMock invocation )
-            throws Throwable
-        {
-            result = (T) invocation.callRealMethod();
-            return result;
-        }
+        final ApplicationConfigInvalidator service =
+            new ApplicationConfigInvalidator( bundleContext, mock( ApplicationRegistry.class, withSettings().stubOnly() ) );
+
+        service.activate();
+
+        final String appName = "app1";
+
+        final String nonAppName = "nonApp";
+
+        final Bundle bundle1 = deploy( appName, newBundle( appName, true ) );
+        final Bundle bundle2 = deploy( nonAppName, newBundle( nonAppName, false ) );
+
+        bundle1.start();
+        bundle2.start();
+
+        assertEquals( 1, getManagedServiceReferences( bundleContext, appName ).size(), "Must be one ManagedService for app bundle" );
+
+        assertIterableEquals( Collections.emptyList(), getManagedServiceReferences( bundleContext, nonAppName ),
+                              "Must be no ManagedService fon nonApp bundle" );
+
+        service.deactivate();
+    }
+
+    private static Collection<ServiceReference<ManagedService>> getManagedServiceReferences( final BundleContext bundleContext,
+                                                                                             final String appName )
+        throws InvalidSyntaxException
+    {
+        return bundleContext.getServiceReferences( ManagedService.class, "(" + Constants.SERVICE_PID + "=" + appName + ")" );
     }
 }

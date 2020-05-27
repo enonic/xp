@@ -14,7 +14,7 @@ interface ApplicationRepoService
 
     Node updateApplicationNode( final Application application, final ByteSource source );
 
-    void deleteApplicationNode( final Application application );
+    void deleteApplicationNode( final ApplicationKey application );
 
     Node getApplicationNode( final ApplicationKey applicationKey );
 

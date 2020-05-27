@@ -14,15 +14,24 @@ import com.enonic.xp.script.serializer.MapSerializable;
 final class ScriptEventListenerImpl
     implements ScriptEventListener
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ScriptEventListenerImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ScriptEventListenerImpl.class );
 
-    ApplicationKey application;
+    private final ApplicationKey application;
 
-    Pattern typePattern;
+    private final Pattern typePattern;
 
-    Consumer<Object> listener;
+    private final Consumer<Object> listener;
 
-    boolean localOnly;
+    private final boolean localOnly;
+
+    public ScriptEventListenerImpl( final ApplicationKey application, final Pattern typePattern, final Consumer<Object> listener,
+                                    final boolean localOnly )
+    {
+        this.application = application;
+        this.typePattern = typePattern;
+        this.listener = listener;
+        this.localOnly = localOnly;
+    }
 
     @Override
     public ApplicationKey getApplication()
