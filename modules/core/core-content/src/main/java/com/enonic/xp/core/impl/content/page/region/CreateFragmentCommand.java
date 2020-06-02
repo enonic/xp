@@ -35,6 +35,13 @@ import com.enonic.xp.security.User;
 
 final class CreateFragmentCommand
 {
+
+    private static final String HTML_TAG_REGEX = "\\<[^>]*>";
+
+    private static final String CONTROL_CHAR_REGEX = "(\\u00A0|\\t|\\r?\\n)+";
+
+    private static final String MACRO_REGEX = "\\[[^\\[]*\\]";
+
     private final CreateFragmentParams params;
 
     private final ContentService contentService;
@@ -113,8 +120,11 @@ final class CreateFragmentCommand
     private String doGenerateDisplayName( final TextComponent textComponent )
     {
         final String html = textComponent.getText();
-        String text = StringEscapeUtils.unescapeHtml( html.replaceAll( "\\<[^>]*>", "" ) ).trim();
-        text = text.replaceAll( "(\\t|\\r?\\n)+", " " ).trim();
+        final String text = StringEscapeUtils.unescapeHtml( html ).
+            replaceAll( HTML_TAG_REGEX, "" ).
+            replaceAll( CONTROL_CHAR_REGEX, " " ).
+            replaceAll( MACRO_REGEX, "" ).
+            trim();
         return text.isEmpty() ? textComponent.getName().toString() : abbreviate( text, 40 );
     }
 

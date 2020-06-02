@@ -111,6 +111,29 @@ public class CreateFragmentCommandTest
     }
 
     @Test
+    public void textComponentName_macro()
+    {
+        assertEquals( "Text", testTextComponentName( "<p>[embed]&lt;iframe src=\"https://enonic.com/\" &lt;/iframe&gt;[/embed]</p>" ) );
+    }
+
+    @Test
+    public void textComponentName_mixedHtmlAndMacro()
+    {
+        final String html =
+            "<p>lorem ipsum</p>\n<p>[tweet url=\"https://twitter.com/euroradio/status/1267747616588214272\"/]</p>\n<p>123</p>\n";
+        assertEquals( "lorem ipsum  123", testTextComponentName( html ) );
+    }
+
+    @Test
+    public void textComponentName_tableOnly()
+    {
+        final String tableHtml =
+            "<table>\n\t<tbody>\n\t\t<tr>\n\t\t\t<td>&nbsp;</td>\n\t\t\t<td>&nbsp;</td>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<td>&nbsp;" +
+                "</td>\n\t\t\t<td>&nbsp;</td>\n\t\t</tr>\n\t</tbody>\n</table>\n";
+        assertEquals( "Text", testTextComponentName( tableHtml ) );
+    }
+
+    @Test
     public void imageComponentName_contentNotFound()
     {
         Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).thenThrow(
