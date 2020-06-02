@@ -105,6 +105,7 @@ import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
@@ -1289,5 +1290,12 @@ public class ContentServiceImpl
     public void setContentAuditLogSupport( final ContentAuditLogSupport contentAuditLogSupport )
     {
         this.contentAuditLogSupport = contentAuditLogSupport;
+    }
+
+    @Reference
+    public void setProjectService( final ProjectService projectService )
+    {
+        //Many starters depend on ContentService avaialbe only when default cms repo is fully initialized.
+        // Starting from 7.3 Initialization happens in ProjectService, so we need a dependency.
     }
 }
