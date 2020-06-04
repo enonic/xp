@@ -5,4 +5,8 @@ public interface WebSessionStoreConfigService
     int getSavePeriodSeconds();
 
     int getGracePeriodSeconds();
+
+    boolean isSaveOnCreate();
+
+    boolean isFlushOnResponseCommit();
 }
