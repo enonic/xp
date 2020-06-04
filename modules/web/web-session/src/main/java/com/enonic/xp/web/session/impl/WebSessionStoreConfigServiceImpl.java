@@ -71,4 +71,16 @@ public class WebSessionStoreConfigServiceImpl
     {
         return webSessionstoreConfig.gracePeriodSeconds();
     }
+
+    @Override
+    public boolean isSaveOnCreate()
+    {
+        return webSessionstoreConfig.saveOnCreate();
+    }
+
+    @Override
+    public boolean isFlushOnResponseCommit()
+    {
+        return webSessionstoreConfig.flushOnResponseCommit();
+    }
 }
