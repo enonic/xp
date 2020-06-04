@@ -2,7 +2,6 @@ package com.enonic.xp.web.session.impl;
 
 import org.eclipse.jetty.hazelcast.session.HazelcastSessionDataStoreFactory;
 import org.eclipse.jetty.server.session.NullSessionCacheFactory;
-import org.eclipse.jetty.server.session.SessionCacheFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -35,7 +34,9 @@ public class HazelcastSessionStoreFactoryActivator
         sessionDataStoreFactory.setHazelcastInstance( hazelcastInstance );
         sessionDataStoreFactory.setSavePeriodSec( webSessionStoreConfigService.getSavePeriodSeconds() );
         sessionDataStoreFactory.setGracePeriodSec( webSessionStoreConfigService.getGracePeriodSeconds() );
-        final SessionCacheFactory sessionCacheFactory = new NullSessionCacheFactory();
+        final NullSessionCacheFactory sessionCacheFactory = new NullSessionCacheFactory();
+        sessionCacheFactory.setSaveOnCreate( webSessionStoreConfigService.isSaveOnCreate() );
+        sessionCacheFactory.setFlushOnResponseCommit( webSessionStoreConfigService.isFlushOnResponseCommit() );
 
         registerServices( sessionDataStoreFactory, sessionCacheFactory );
     }

@@ -7,4 +7,8 @@ public @interface WebSessionStoreConfig
     int savePeriodSeconds() default 0;
 
     int gracePeriodSeconds() default 3600;
+
+    boolean saveOnCreate() default false;
+
+    boolean flushOnResponseCommit() default false;
 }
