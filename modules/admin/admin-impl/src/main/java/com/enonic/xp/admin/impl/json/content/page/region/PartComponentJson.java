@@ -25,7 +25,8 @@ public class PartComponentJson
 
     @JsonCreator
     public PartComponentJson( @JsonProperty("descriptor") final String descriptor,
-                              @JsonProperty("config") final List<PropertyArrayJson> config )
+                              @JsonProperty("config") final List<PropertyArrayJson> config,
+                              @Deprecated @JsonProperty("name") final String name )
     {
         super( PartComponent.create().
             descriptor( descriptor != null ? DescriptorKey.from( descriptor ) : null ).
