@@ -36,8 +36,6 @@ public final class ProjectIconResource
 {
     private ProjectService projectService;
 
-    private RepositoryService repositoryService;
-
     @GET
     @Path("{projectName}")
     public Response getContentIcon( @PathParam("projectName") final String projectNameAsString, @QueryParam("ts") final String timestamp )
@@ -56,8 +54,7 @@ public final class ProjectIconResource
         }
 
         final Attachment iconAttachment = project.getIcon();
-        final ByteSource iconSource = repositoryService.getBinary( projectName.getRepoId(), iconAttachment.getBinaryReference() );
-
+        final ByteSource iconSource = projectService.getIcon( projectName );
         if ( iconSource == null )
         {
             throw new WebApplicationException( "Icon source not found for project: " + projectNameAsString,
@@ -95,9 +92,4 @@ public final class ProjectIconResource
         this.projectService = projectService;
     }
 
-    @Reference
-    public void setRepositoryService( final RepositoryService repositoryService )
-    {
-        this.repositoryService = repositoryService;
-    }
 }

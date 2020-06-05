@@ -35,8 +35,6 @@ public class ProjectIconResourceTest
 
     private ProjectService projectService;
 
-    private RepositoryService repositoryService;
-
     @BeforeAll
     public static void beforeAll()
         throws IOException
@@ -59,7 +57,7 @@ public class ProjectIconResourceTest
             build() );
 
         Mockito.when( projectService.get( project.getName() ) ).thenReturn( project );
-        Mockito.when( repositoryService.getBinary( project.getName().getRepoId(), project.getIcon().getBinaryReference() ) ).
+        Mockito.when( projectService.getIcon( project.getName() ) ).
             thenReturn( ByteSource.wrap( iconSourceData ) );
     }
 
@@ -67,11 +65,9 @@ public class ProjectIconResourceTest
     protected ProjectIconResource getResourceInstance()
     {
         projectService = Mockito.mock( ProjectService.class );
-        repositoryService = Mockito.mock( RepositoryService.class );
 
         final ProjectIconResource resource = new ProjectIconResource();
         resource.setProjectService( projectService );
-        resource.setRepositoryService( repositoryService );
 
         return resource;
     }
@@ -114,7 +110,7 @@ public class ProjectIconResourceTest
     public void test_icon_not_found()
         throws Exception
     {
-        Mockito.when( repositoryService.getBinary( ProjectName.from( "project1" ).getRepoId(), BinaryReference.from( "logo.png" ) ) ).
+        Mockito.when( projectService.getIcon( ProjectName.from( "project1" ) ) ).
             thenReturn( null );
         final MockRestResponse response = request().path( "project/icon/project1" ).get();
 
