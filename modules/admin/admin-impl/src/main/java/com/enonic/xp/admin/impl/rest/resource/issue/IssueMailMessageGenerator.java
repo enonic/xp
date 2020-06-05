@@ -19,10 +19,12 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.text.StrSubstitutor;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.issue.IssueComment;
 import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.IssueType;
 import com.enonic.xp.mail.MailMessage;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.security.User;
 
 import static com.google.common.base.Strings.nullToEmpty;
@@ -125,6 +127,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
             params.getLocaleMessageResolver().localizeMessage( "issue.email.showDetailsCaption", "Show Details..." );
         final String latestCommentTitle =
             params.getLocaleMessageResolver().localizeMessage( "issue.email.latestCommentTitle", "Latest comment" );
+        final ProjectName projectName = ProjectName.from( ContextAccessor.current().getRepositoryId() );
 
         messageParams.put( "id", idString );
         messageParams.put( "index", params.getIssue().getIndex() );
@@ -137,7 +140,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
         messageParams.put( "statusBgColor", isOpen ? "#2c76e9" : "#777" );
         messageParams.put( "creator", params.getIssue().getCreator().getId() );
         messageParams.put( "description", description );
-        messageParams.put( "url", params.getUrl() + "#/issue/" + idString );
+        messageParams.put( "url", params.getUrl() + "#/" + projectName + "/issue/" + idString );
         messageParams.put( "description-block-visibility", description.length() == 0 ? "none" : "block" );
         messageParams.put( "comments-block-visibility", showComments ? "block" : "none" );
         messageParams.put( "comments", generateCommentsHtml() );
