@@ -14,7 +14,9 @@ class ApplyPermissionsTaskMessageGenerator
     @Override
     void appendMessageForSingleFailure( final StringBuilder builder, final RunnableTaskResult result )
     {
-        builder.append( String.format( "Permissions for \"%s\" could not be applied.", result.getFailed().get( 0 ).getName() ) );
+        final ContentPath failedPath = result.getFailed().get( 0 );
+        builder.append( String.format( "Permissions for \"%s\" could not be applied.",
+                                       !failedPath.isRoot() ? failedPath.getName() : failedPath.toString() ) );
     }
 
     @Override
@@ -30,7 +32,7 @@ class ApplyPermissionsTaskMessageGenerator
         {
             final ContentPath succeedPath = result.getSucceeded().get( 0 );
             builder.append( String.format( "Permissions for \"%s\" are applied.",
-                                           !ContentPath.ROOT.equals( succeedPath ) ? succeedPath.getName() : succeedPath.toString() ) );
+                                           !succeedPath.isRoot() ? succeedPath.getName() : succeedPath.toString() ) );
         }
     }
 
