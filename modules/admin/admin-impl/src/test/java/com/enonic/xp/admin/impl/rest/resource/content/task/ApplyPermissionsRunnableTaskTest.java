@@ -147,9 +147,29 @@ public class ApplyPermissionsRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 0 );
 
-        assertEquals( "{\"state\":\"ERROR\",\"message\":\"Permissions for \\\"content1\\\" could not be applied.\"}",
-                             resultMessage );
+        assertEquals( "{\"state\":\"ERROR\",\"message\":\"Permissions for \\\"content1\\\" could not be applied.\"}", resultMessage );
     }
+
+    @Test
+    public void create_message_single_root_failed()
+        throws Exception
+    {
+
+        Mockito.when( this.contentService.applyPermissions( Mockito.isA( ApplyContentPermissionsParams.class ) ) ).thenReturn(
+            ApplyContentPermissionsResult.create().setSkippedContents( ContentPaths.from( ContentPath.ROOT ) ).build() );
+
+        final ApplyPermissionsRunnableTask task = createAndRunTask();
+        task.createTaskResult();
+
+        Mockito.verify( progressReporter, Mockito.times( 1 ) ).info( contentQueryArgumentCaptor.capture() );
+        Mockito.verify( taskService, Mockito.times( 1 ) ).submitTask( Mockito.isA( RunnableTask.class ),
+                                                                      Mockito.eq( "Apply permissions" ) );
+
+        final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 0 );
+
+        assertEquals( "{\"state\":\"ERROR\",\"message\":\"Permissions for \\\"/\\\" could not be applied.\"}", resultMessage );
+    }
+
 
     @Test
     public void create_message_multiple_failed_and_one_succeed()
