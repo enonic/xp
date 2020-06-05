@@ -1,5 +1,7 @@
 package com.enonic.xp.core.project;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -49,8 +51,10 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -653,6 +657,43 @@ class ProjectServiceImplTest
 
             assertNull( modifiedProject.getIcon() );
         } );
+    }
+
+    @Test
+    void get_icon() throws Exception
+    {
+        final Project project = doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
+
+            final ByteSource source = ByteSource.wrap( "new bytes".getBytes() );
+        ADMIN_CONTEXT.runWith( () -> {
+            assertNull( projectService.getIcon( project.getName() ) );
+
+
+            projectService.modifyIcon( ModifyProjectIconParams.create().
+                name( project.getName() ).
+                icon( CreateAttachment.create().
+                    mimeType( "image/png" ).
+                    label( "My New Image" ).
+                    name( "MyNewImage.png" ).
+                    byteSource( ByteSource.wrap( "new bytes".getBytes() ) ).
+                    build() ).
+                build() );
+
+            try
+            {
+                assertArrayEquals( source.read(), projectService.getIcon( project.getName() ).read() );
+            }
+            catch ( IOException e )
+            {
+                throw new UncheckedIOException( e );
+            }
+        } );
+
+        final RuntimeException ex =
+            Assertions.assertThrows( RuntimeException.class, () -> projectService.getIcon( project.getName() ) );
+        assertEquals( "Denied [user:system:test-user] user access to [test-project] project for [get] operation",
+                      ex.getMessage() );
+
     }
 
     @Test
