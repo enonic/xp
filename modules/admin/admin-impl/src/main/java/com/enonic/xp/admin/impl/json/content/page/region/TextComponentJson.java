@@ -19,7 +19,7 @@ public class TextComponentJson
     }
 
     @JsonCreator
-    public TextComponentJson( @JsonProperty("text") final String text )
+    public TextComponentJson( @JsonProperty("text") final String text, @Deprecated @JsonProperty("name") final String name )
     {
         super( TextComponent.create().
             text( text ).

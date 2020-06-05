@@ -19,7 +19,7 @@ public class FragmentComponentJson
 
     @JsonCreator
     public FragmentComponentJson( @JsonProperty("config") final List<PropertyArrayJson> config,
-                                  @JsonProperty("fragment") final String fragment )
+                                  @JsonProperty("fragment") final String fragment, @Deprecated @JsonProperty("name") final String name )
     {
         super( FragmentComponent.create().
             fragment( fragment != null ? ContentId.from( fragment ) : null ).
