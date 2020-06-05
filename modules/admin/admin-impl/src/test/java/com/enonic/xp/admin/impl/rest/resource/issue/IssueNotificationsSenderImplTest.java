@@ -49,6 +49,7 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -220,6 +221,7 @@ public class IssueNotificationsSenderImplTest
         mailCaptor.getValue().compose( msg );
         final Set<String> allRecipients = Arrays.stream( msg.getAllRecipients() ).map( Address::toString ).collect( Collectors.toSet() );
         assertEquals( recipients, allRecipients );
+        assertTrue( msg.getContent().toString().contains( "url#/default/issue" ) );
     }
 
     @Test
