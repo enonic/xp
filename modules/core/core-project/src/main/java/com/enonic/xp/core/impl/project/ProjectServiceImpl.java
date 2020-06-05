@@ -7,6 +7,7 @@ import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentSerializer;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
@@ -211,6 +213,20 @@ public class ProjectServiceImpl
             build();
 
         repositoryService.updateRepository( updateParams );
+    }
+
+    public ByteSource getIcon( final ProjectName projectName )
+    {
+        return callWithGetContext( ( () -> doGetIcon( projectName ) ), projectName );
+    }
+
+    private ByteSource doGetIcon( final ProjectName projectName )
+    {
+        return Optional.ofNullable( doGet( projectName ) ).
+            map( Project::getIcon ).
+            map( Attachment::getBinaryReference ).
+            map( binaryReference -> repositoryService.getBinary( projectName.getRepoId(), binaryReference ) ).
+            orElse( null );
     }
 
     @Override
