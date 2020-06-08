@@ -29,6 +29,9 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.issue.Issue;
@@ -38,6 +41,7 @@ import com.enonic.xp.issue.PublishRequest;
 import com.enonic.xp.issue.PublishRequestItem;
 import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.MailService;
+import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -48,7 +52,9 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 
+import static com.enonic.xp.content.ContentConstants.CONTENT_REPO_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -87,6 +93,8 @@ public class IssueNotificationsSenderImplTest
                 localeService ).contentTypeService( contentTypeService );
 
         mailCaptor = ArgumentCaptor.forClass( MailMessage.class );
+
+        resetContextRepo();
     }
 
     @Test
@@ -111,7 +119,9 @@ public class IssueNotificationsSenderImplTest
 
         issueNotificationsSender.notifyIssueCreated( params );
 
-        verifyRecipients( Set.of( approver.getEmail() ) );
+        final MimeMessage msg = getMessageSent();
+        verifyRecipients( msg, Set.of( approver.getEmail() ) );
+        verifyIssueLink( msg );
         verify( securityService, times( 2 ) ).getUser( any() );
         verify( mailService, times( 1 ) ).send( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
@@ -171,7 +181,9 @@ public class IssueNotificationsSenderImplTest
 
         issueNotificationsSender.notifyIssueCreated( params );
 
-        verifyRecipients( Set.of( approvers.get( 1 ).getEmail(), approvers.get( 2 ).getEmail() ) );
+        final MimeMessage msg = getMessageSent();
+        verifyRecipients( msg, Set.of( approvers.get( 1 ).getEmail(), approvers.get( 2 ).getEmail() ) );
+        verifyIssueLink( msg );
         verify( securityService, times( 4 ) ).getUser( any() );
         verify( mailService, times( 1 ) ).send( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
@@ -205,21 +217,41 @@ public class IssueNotificationsSenderImplTest
 
         issueNotificationsSender.notifyIssueCreated( params );
 
-        verifyRecipients( approvers.stream().map( approver -> approver.getEmail() ).collect( Collectors.toSet() ) );
+        final MimeMessage msg = getMessageSent();
+        verifyRecipients( msg, approvers.stream().map( approver -> approver.getEmail() ).collect( Collectors.toSet() ) );
+        verifyIssueLink( msg );
         verify( securityService, times( 4 ) ).getUser( any() );
         verify( mailService, times( 1 ) ).send( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
         verify( contentService, times( 1 ) ).compare( Mockito.any( CompareContentsParams.class ) );
     }
 
-    private void verifyRecipients( final Set<String> recipients )
+    private void verifyRecipients( final MimeMessage msg, final Set<String> recipients )
+        throws Exception
+    {
+        final Set<String> allRecipients = Arrays.stream( msg.getAllRecipients() ).map( Address::toString ).collect( Collectors.toSet() );
+        assertEquals( recipients, allRecipients );
+    }
+
+    private MimeMessage getMessageSent()
         throws Exception
     {
         verify( mailService ).send( mailCaptor.capture() );
         MimeMessage msg = new MimeMessage( Session.getDefaultInstance( new Properties() ) );
         mailCaptor.getValue().compose( msg );
-        final Set<String> allRecipients = Arrays.stream( msg.getAllRecipients() ).map( Address::toString ).collect( Collectors.toSet() );
-        assertEquals( recipients, allRecipients );
+        return msg;
+    }
+
+    private void verifyIssueLink( final MimeMessage msg )
+        throws Exception
+    {
+        assertTrue( msg.getContent().toString().contains( "url#/issue" ) );
+    }
+
+    private void verifyIssueLink( final MimeMessage msg, final String link )
+        throws Exception
+    {
+        assertTrue( msg.getContent().toString().contains( link ) );
     }
 
     @Test
@@ -256,9 +288,13 @@ public class IssueNotificationsSenderImplTest
             build().
             updatedParams();
 
+        setContextRepo( "repoid" );
+
         issueNotificationsSender.notifyIssueUpdated( params );
 
-        verifyRecipients( Set.of( approver.getEmail(), creator.getEmail() ) );
+        final MimeMessage msg = getMessageSent();
+        verifyRecipients( msg, Set.of( approver.getEmail(), creator.getEmail() ) );
+        verifyIssueLink( msg, "url#/repoid/issue" );
         verify( mailService, times( 1 ) ).send( any() );
         verify( securityService, times( 2 ) ).getUser( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
@@ -344,7 +380,9 @@ public class IssueNotificationsSenderImplTest
 
         issueNotificationsSender.notifyIssueUpdated( params );
 
-        verifyRecipients( Set.of( approvers.get( 1 ).getEmail(), approvers.get( 2 ).getEmail(), creator.getEmail() ) );
+        final MimeMessage msg = getMessageSent();
+        verifyRecipients( msg, Set.of( approvers.get( 1 ).getEmail(), approvers.get( 2 ).getEmail(), creator.getEmail() ) );
+        verifyIssueLink( msg );
         verify( mailService, Mockito.times( 1 ) ).send( any() );
         verify( securityService, times( 4 ) ).getUser( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
@@ -387,7 +425,9 @@ public class IssueNotificationsSenderImplTest
 
         issueNotificationsSender.notifyIssueCommented( params );
 
-        verifyRecipients( Set.of( creator.getEmail() ) );
+        final MimeMessage msg = getMessageSent();
+        verifyRecipients( msg, Set.of( creator.getEmail() ) );
+        verifyIssueLink( msg );
         verify( mailService, times( 1 ) ).send( any() );
         verify( securityService, times( 2 ) ).getUser( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
@@ -475,7 +515,9 @@ public class IssueNotificationsSenderImplTest
 
         issueNotificationsSender.notifyIssueCommented( params );
 
-        verifyRecipients( Set.of( approvers.get( 1 ).getEmail(), creator.getEmail() ) );
+        final MimeMessage msg = getMessageSent();
+        verifyRecipients( msg, Set.of( approvers.get( 1 ).getEmail(), creator.getEmail() ) );
+        verifyIssueLink( msg );
         verify( mailService, times( 1 ) ).send( any() );
         verify( securityService, times( 3 ) ).getUser( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
@@ -504,7 +546,9 @@ public class IssueNotificationsSenderImplTest
 
         issueNotificationsSender.notifyIssuePublished( params );
 
-        verifyRecipients( Set.of( approver.getEmail(), creator.getEmail() ) );
+        final MimeMessage msg = getMessageSent();
+        verifyRecipients( msg, Set.of( approver.getEmail(), creator.getEmail() ) );
+        verifyIssueLink( msg );
         verify( mailService, times( 1 ) ).send( any() );
         verify( securityService, times( 2 ) ).getUser( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
@@ -576,13 +620,35 @@ public class IssueNotificationsSenderImplTest
             build().
             publishedParams();
 
+        setContextRepo( "testrepo" );
+
         issueNotificationsSender.notifyIssuePublished( params );
 
-        verifyRecipients( Set.of( approvers.get( 1 ).getEmail(), creator.getEmail() ) );
+        final MimeMessage msg = getMessageSent();
+        verifyRecipients( msg, Set.of( approvers.get( 1 ).getEmail(), creator.getEmail() ) );
+        verifyIssueLink( msg, "url#/testrepo/issue" );
         verify( mailService, times( 1 ) ).send( any() );
         verify( securityService, times( 3 ) ).getUser( any() );
         verify( contentService, times( 1 ) ).getByIds( any() );
         verify( contentService, times( 1 ) ).compare( Mockito.any( CompareContentsParams.class ) );
+    }
+
+    private void setContextRepo( final String repoId )
+    {
+        final Context context = ContextBuilder.
+            from( ContextAccessor.current() ).
+            repositoryId( ProjectConstants.PROJECT_REPO_ID_PREFIX + repoId ).
+            build();
+        ContextAccessor.INSTANCE.set( context );
+    }
+
+    private void resetContextRepo()
+    {
+        final Context context = ContextBuilder.
+            from( ContextAccessor.current() ).
+            repositoryId( CONTENT_REPO_ID ).
+            build();
+        ContextAccessor.INSTANCE.set( context );
     }
 
     private Issue createIssue( final PrincipalKey creator, final PrincipalKeys approvers )
