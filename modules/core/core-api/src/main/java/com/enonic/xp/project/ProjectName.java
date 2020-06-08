@@ -11,7 +11,7 @@ import com.enonic.xp.repository.RepositoryId;
 @PublicApi
 public final class ProjectName
 {
-    private static final Pattern VALID_PROJECT_NAME_PATTERN = Pattern.compile( "^([a-z0-9\\-])([a-z0-9_\\-])*$" );
+    private static final Pattern VALID_PROJECT_NAME_PATTERN = Pattern.compile( "^([a-z0-9])([a-z0-9_\\-])*$" );
 
     private final String value;
 
