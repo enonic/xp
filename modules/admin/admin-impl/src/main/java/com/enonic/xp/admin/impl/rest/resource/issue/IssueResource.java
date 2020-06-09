@@ -63,12 +63,15 @@ import com.enonic.xp.issue.IssueType;
 import com.enonic.xp.issue.UpdateIssueCommentParams;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.project.ProjectConstants;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectPermissions;
+import com.enonic.xp.project.ProjectRole;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.PrincipalNotFoundException;
-import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
@@ -97,6 +100,8 @@ public final class IssueResource
     private ContentTypeService contentTypeService;
 
     private LocaleService localeService;
+
+    private ProjectService projectService;
 
     @POST
     @Path("create")
@@ -477,23 +482,24 @@ public final class IssueResource
             build();
     }
 
-    private PrincipalKeys filterInvalidAssignees( final List<PrincipalKey> assignees )
+    private static PrincipalKey doCreateRoleKey( final ProjectName projectName, final ProjectRole projectRole )
     {
-        return PrincipalKeys.from( assignees.stream().filter( this::isValidAssignee ).collect( Collectors.toList() ) );
+        final String roleName = ProjectConstants.PROJECT_NAME_PREFIX + projectName + "." + projectRole.name().toLowerCase();
+        return PrincipalKey.ofRole( roleName );
     }
 
-    private boolean isValidAssignee( final PrincipalKey principalKey )
+    private PrincipalKeys filterInvalidAssignees( final List<PrincipalKey> assignees )
     {
-        final PrincipalKeys membershipKeys = securityService.getAllMemberships( principalKey );
-        if ( membershipKeys.getSize() > 0 )
-        {
-            final Principals memberships = securityService.getPrincipals( membershipKeys );
-            return memberships.stream().anyMatch( this::hasIssuePermissions );
-        }
-        else
-        {
-            return false;
-        }
+        final ProjectName projectName = ProjectName.from( ContextAccessor.current().getRepositoryId() );
+
+        final PrincipalKeys issuePublisherRoles = ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName )
+            ? PrincipalKeys.empty()
+            : PrincipalKeys.from( doCreateRoleKey( projectName, ProjectRole.OWNER ), doCreateRoleKey( projectName, ProjectRole.EDITOR ) );
+
+        return PrincipalKeys.from( assignees.
+            stream().
+            filter( assignee -> this.isValidAssignee( assignee, issuePublisherRoles ) ).
+            collect( Collectors.toList() ) );
     }
 
     private PrincipalKeys filterKeys( final PrincipalKeys oldKeys, final PrincipalKeys newKeys, final boolean existing )
@@ -509,24 +515,48 @@ public final class IssueResource
         }
     }
 
-    private boolean hasIssuePermissions( final Principal principal )
+    private boolean isValidAssignee( final PrincipalKey principalKey, final PrincipalKeys issuePublisherRoles )
     {
-        if ( principal.getKey().equals( RoleKeys.ADMIN ) )
+        if ( principalKey.isUser() )
         {
-            return true;
+            final ProjectName projectName = ProjectName.from( ContextAccessor.current().getRepositoryId() );
+            final PrincipalKeys membershipKeys = securityService.getAllMemberships( principalKey );
+
+            if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
+            {
+                return membershipKeys.stream().anyMatch( this::hasManagerAccess );
+            }
+            else
+            {
+                final ProjectPermissions projectPermissions = projectService.getPermissions( projectName );
+
+                return membershipKeys.stream().
+                    anyMatch( membershipKey -> this.hasProjectIssuePermissions( membershipKey, issuePublisherRoles ) );
+            }
         }
 
-        if ( principal.getKey().equals( RoleKeys.CONTENT_MANAGER_ADMIN ) )
-        {
-            return true;
-        }
+        return false;
+    }
 
-        if ( principal.getKey().equals( RoleKeys.CONTENT_MANAGER_EXPERT ) )
-        {
-            return true;
-        }
+    private boolean hasAdminAccess( final PrincipalKey principalKey )
+    {
+        return RoleKeys.ADMIN.equals( principalKey ) || RoleKeys.CONTENT_MANAGER_ADMIN.equals( principalKey ) ||
+            RoleKeys.CONTENT_MANAGER_EXPERT.equals( principalKey );
+    }
 
-        return principal.getKey().equals( RoleKeys.CONTENT_MANAGER_APP );
+    private boolean hasManagerAccess( final PrincipalKey principalKey )
+    {
+        return this.hasAdminAccess( principalKey ) || RoleKeys.CONTENT_MANAGER_APP.equals( principalKey );
+    }
+
+    private boolean hasProjectIssuePermissions( final PrincipalKey principalKey, final PrincipalKeys issuePublisherRoles )
+    {
+        return this.hasManagerAccess( principalKey ) || this.isProjectOwnerOrEditor( principalKey, issuePublisherRoles );
+    }
+
+    private boolean isProjectOwnerOrEditor( final PrincipalKey principalKey, final PrincipalKeys issuePublisherRoles )
+    {
+        return issuePublisherRoles.contains( principalKey );
     }
 
     @Reference
@@ -563,6 +593,12 @@ public final class IssueResource
     public void setLocaleService( final LocaleService localeService )
     {
         this.localeService = localeService;
+    }
+
+    @Reference
+    public void setProjectService( final ProjectService projectService )
+    {
+        this.projectService = projectService;
     }
 
 }

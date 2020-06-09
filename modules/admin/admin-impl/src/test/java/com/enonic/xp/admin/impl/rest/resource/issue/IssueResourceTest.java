@@ -38,6 +38,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
@@ -61,14 +62,15 @@ import com.enonic.xp.issue.UpdateIssueCommentParams;
 import com.enonic.xp.issue.UpdateIssueParams;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectPermissions;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.PrincipalNotFoundException;
-import com.enonic.xp.security.Principals;
-import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
@@ -94,6 +96,8 @@ public class IssueResourceTest
 
     private ContentTypeService contentTypeService;
 
+    private ProjectService projectService;
+
     @Override
     protected IssueResource getResourceInstance()
     {
@@ -106,17 +110,18 @@ public class IssueResourceTest
         contentTypeService = Mockito.mock( ContentTypeService.class );
         issueNotificationsSender = Mockito.mock( IssueNotificationsSender.class );
         securityService = Mockito.mock( SecurityService.class );
+        projectService = Mockito.mock( ProjectService.class );
         Mockito.when( securityService.getAllMemberships( Mockito.isA( PrincipalKey.class ) ) ).thenReturn(
             PrincipalKeys.from( "role:system:one" ) );
-        Mockito.when( securityService.getPrincipals( Mockito.isA( PrincipalKeys.class ) ) ).thenReturn(
-            Principals.from( Role.create().key( RoleKeys.ADMIN ).displayName( "Admin" ).build() ) );
         Mockito.when( securityService.getUser( User.ANONYMOUS.getKey() ) ).thenReturn( Optional.of( User.ANONYMOUS ) );
+        Mockito.when( projectService.getPermissions( Mockito.isA( ProjectName.class ) ) ).thenReturn( createProjectPermissions() );
 
         resource.setIssueService( issueService );
         resource.setIssueNotificationsSender( issueNotificationsSender );
         resource.setSecurityService( securityService );
         resource.setContentService( contentService );
         resource.setContentTypeService( contentTypeService );
+        resource.setProjectService( projectService );
 
         return resource;
     }
@@ -146,12 +151,10 @@ public class IssueResourceTest
 
         final Issue issue = this.createIssue();
         final IssueComment comment = IssueComment.create().text( issue.getDescription() ).creator( issue.getCreator() ).build();
-        final Role role = Role.create().key( RoleKeys.CONTENT_MANAGER_APP ).displayName( "dname" ).build();
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
         final ArgumentCaptor<CreateIssueCommentParams> commentCaptor = ArgumentCaptor.forClass( CreateIssueCommentParams.class );
 
-        Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( Principals.from( role ) );
         Mockito.when( issueService.create( Mockito.any( CreateIssueParams.class ) ) ).thenReturn( issue );
         Mockito.when( issueService.createComment( Mockito.any( CreateIssueCommentParams.class ) ) ).thenReturn( comment );
 
@@ -172,18 +175,16 @@ public class IssueResourceTest
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( IssueType.PUBLISH_REQUEST.toString(), "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(),
-                                 createPublishRequestSchedule() );
+            new CreateIssueJson( IssueType.PUBLISH_REQUEST.toString(), "title", "desc", Arrays.asList( User.ANONYMOUS.getKey().toString() ),
+                                 createPublishRequest(), createPublishRequestSchedule() );
 
         final Issue issue = this.createPublishRequestIssue();
         final IssueComment comment = IssueComment.create().text( issue.getDescription() ).creator( issue.getCreator() ).build();
-        final Role role = Role.create().key( RoleKeys.CONTENT_MANAGER_APP ).displayName( "dname" ).build();
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
         final ArgumentCaptor<CreateIssueCommentParams> commentCaptor = ArgumentCaptor.forClass( CreateIssueCommentParams.class );
         final ArgumentCaptor<CreateIssueParams> paramCaptor = ArgumentCaptor.forClass( CreateIssueParams.class );
 
-        Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( Principals.from( role ) );
         Mockito.when( issueService.create( Mockito.any( CreateIssueParams.class ) ) ).thenReturn( issue );
         Mockito.when( issueService.createComment( Mockito.any( CreateIssueCommentParams.class ) ) ).thenReturn( comment );
 
@@ -210,12 +211,9 @@ public class IssueResourceTest
             new CreateIssueJson( null, "title", null, Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(), null );
 
         final Issue issue = this.createIssue();
-
-        final Role role = Role.create().key( RoleKeys.CONTENT_MANAGER_APP ).displayName( "dname" ).build();
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
 
-        Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( Principals.from( role ) );
         Mockito.when( issueService.create( Mockito.any( CreateIssueParams.class ) ) ).thenReturn( issue );
 
         issueResource.create( params, request );
@@ -226,17 +224,112 @@ public class IssueResourceTest
     }
 
     @Test
-    public void verifyValidAssigneeNotFiltered()
+    public void verifyAdminNotFiltered()
+        throws Exception
+    {
+        verifyValidAssigneeNotFiltered( PrincipalKeys.from( RoleKeys.ADMIN ) );
+    }
+
+    @Test
+    public void verifyContentManagerAdminNotFiltered()
+        throws Exception
+    {
+        verifyValidAssigneeNotFiltered( PrincipalKeys.from( RoleKeys.CONTENT_MANAGER_ADMIN ) );
+    }
+
+    @Test
+    public void verifyContentManagerExpertNotFiltered()
+        throws Exception
+    {
+        verifyValidAssigneeNotFiltered( PrincipalKeys.from( RoleKeys.CONTENT_MANAGER_EXPERT ) );
+    }
+
+    @Test
+    public void verifyContentManagerNotFiltered()
+        throws Exception
+    {
+        verifyValidAssigneeNotFiltered( PrincipalKeys.from( RoleKeys.CONTENT_MANAGER_APP ) );
+    }
+
+    @Test
+    public void verifyProjectOwnerNotFiltered()
+        throws Exception
+    {
+        ContextBuilder.from( ContextAccessor.current() ).repositoryId( ProjectName.from( "test-project" ).getRepoId() ).build().runWith(
+            () -> {
+                try
+                {
+                    verifyValidAssigneeNotFiltered( createKeyForUserOwner(),
+                                                    PrincipalKeys.from( PrincipalKey.ofRole( "cms.project.test-project.owner" ) ) );
+                }
+                catch ( Exception e )
+                {
+                    throw new RuntimeException( e );
+                }
+            } );
+    }
+
+    @Test
+    public void verifyProjectEditorNotFiltered()
+        throws Exception
+    {
+        ContextBuilder.from( ContextAccessor.current() ).repositoryId( ProjectName.from( "test-project" ).getRepoId() ).build().runWith(
+            () -> {
+                try
+                {
+                    verifyValidAssigneeNotFiltered( createKeyForUserEditor(),
+                                                    PrincipalKeys.from( PrincipalKey.ofRole( "cms.project.test-project.editor" ) ) );
+                }
+                catch ( Exception e )
+                {
+                    throw new RuntimeException( e );
+                }
+            } );
+    }
+
+    @Test
+    public void verifyUserInOwnerGroup()
+        throws Exception
+    {
+        final PrincipalKey userInGroup = PrincipalKey.ofUser( IdProviderKey.system(), "user-in-owner-group" );
+
+        ContextBuilder.from( ContextAccessor.current() ).repositoryId( ProjectName.from( "test-project" ).getRepoId() ).build().runWith(
+            () -> {
+                try
+                {
+                    verifyValidAssigneeNotFiltered( userInGroup,
+                                                    PrincipalKeys.from( PrincipalKey.ofRole( "cms.project.test-project.owner" ),
+                                                                        createKeyForGroupOwner() ) );
+                }
+                catch ( Exception e )
+                {
+                    throw new RuntimeException( e );
+                }
+            } );
+    }
+
+    private void verifyValidAssigneeNotFiltered( final PrincipalKeys memberships )
+        throws Exception
+    {
+        verifyValidAssigneeNotFiltered( User.ANONYMOUS.getKey(), memberships );
+    }
+
+    private void verifyValidAssigneeNotFiltered( final PrincipalKey user )
+        throws Exception
+    {
+        verifyValidAssigneeNotFiltered( user, PrincipalKeys.empty() );
+    }
+
+    private void verifyValidAssigneeNotFiltered( final PrincipalKey user, PrincipalKeys memberships )
         throws Exception
     {
         final CreateIssueJson params =
-            new CreateIssueJson( null, "title", "", Arrays.asList( User.ANONYMOUS.getKey().toString() ), createPublishRequest(), null );
+            new CreateIssueJson( null, "title", "", Arrays.asList( user.toString() ), createPublishRequest(), null );
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
-        final Role role = Role.create().key( RoleKeys.CONTENT_MANAGER_EXPERT ).displayName( "dname" ).build();
-        Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( Principals.from( role ) );
         Mockito.when( issueService.create( Mockito.isA( CreateIssueParams.class ) ) ).thenReturn( this.createIssue() );
+        Mockito.when( securityService.getAllMemberships( Mockito.isA( PrincipalKey.class ) ) ).thenReturn( memberships );
 
         ArgumentCaptor<CreateIssueParams> issueParamsArgumentCaptor = ArgumentCaptor.forClass( CreateIssueParams.class );
 
@@ -255,8 +348,6 @@ public class IssueResourceTest
 
         final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
         final IssueResource issueResource = getResourceInstance();
-        final Role role = Role.create().key( RoleKeys.EVERYONE ).displayName( "dname" ).build();
-        Mockito.when( securityService.getPrincipals( Mockito.any( PrincipalKeys.class ) ) ).thenReturn( Principals.from( role ) );
         ArgumentCaptor<CreateIssueParams> issueParamsArgumentCaptor = ArgumentCaptor.forClass( CreateIssueParams.class );
         Mockito.when( issueService.create( Mockito.isA( CreateIssueParams.class ) ) ).thenReturn( this.createIssue() );
 
@@ -265,29 +356,6 @@ public class IssueResourceTest
         Mockito.verify( issueService ).create( issueParamsArgumentCaptor.capture() );
 
         assertTrue( issueParamsArgumentCaptor.getValue().getApproverIds().isEmpty() );
-    }
-
-    @Test
-    public void verifyOnlyInvalidAssigneeFiltered()
-        throws Exception
-    {
-        final CreateIssueJson params =
-            new CreateIssueJson( null, "title", "", Arrays.asList( User.ANONYMOUS.getKey().toString(), User.ANONYMOUS.getKey().toString() ),
-                                 createPublishRequest(), null );
-
-        final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
-        final IssueResource issueResource = getResourceInstance();
-        final Role role1 = Role.create().key( RoleKeys.EVERYONE ).displayName( "dname" ).build();
-        final Role role2 = Role.create().key( RoleKeys.CONTENT_MANAGER_ADMIN ).displayName( "dname" ).build();
-        Mockito.when( securityService.getPrincipals( Mockito.any() ) ).thenReturn( Principals.from( role1 ), Principals.from( role2 ) );
-        ArgumentCaptor<CreateIssueParams> issueParamsArgumentCaptor = ArgumentCaptor.forClass( CreateIssueParams.class );
-        Mockito.when( issueService.create( Mockito.isA( CreateIssueParams.class ) ) ).thenReturn( this.createIssue() );
-
-        issueResource.create( params, request );
-
-        Mockito.verify( issueService ).create( issueParamsArgumentCaptor.capture() );
-
-        assertTrue( issueParamsArgumentCaptor.getValue().getApproverIds().getSize() == 1 );
     }
 
     @Test
@@ -555,7 +623,7 @@ public class IssueResourceTest
         Mockito.when( issueService.getIssue( params.issueId ) ).thenReturn( issue );
         Mockito.when( securityService.getUser( params.creator ) ).thenReturn( Optional.empty() );
 
-        assertThrows(PrincipalNotFoundException.class, () -> resource.comment( params, Mockito.mock( HttpServletRequest.class ) ) );
+        assertThrows( PrincipalNotFoundException.class, () -> resource.comment( params, Mockito.mock( HttpServletRequest.class ) ) );
     }
 
     @Test
@@ -571,7 +639,7 @@ public class IssueResourceTest
         Mockito.when( issueService.getIssue( params.issueId ) ).thenThrow( new IssueNotFoundException( issue.getId() ) );
         Mockito.when( securityService.getUser( params.creator ) ).thenReturn( Optional.of( User.ANONYMOUS ) );
 
-        assertThrows(IssueNotFoundException.class, () -> resource.comment( params, Mockito.mock( HttpServletRequest.class ) ) );
+        assertThrows( IssueNotFoundException.class, () -> resource.comment( params, Mockito.mock( HttpServletRequest.class ) ) );
     }
 
     @Test
@@ -714,5 +782,26 @@ public class IssueResourceTest
         final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN ).build();
         localScope.setAttribute( authInfo );
         localScope.setSession( new SimpleSession( SessionKey.generate() ) );
+    }
+
+    private ProjectPermissions createProjectPermissions()
+    {
+        return ProjectPermissions.create().addEditor( createKeyForUserEditor() ).addOwner( createKeyForGroupOwner() ).addOwner(
+            createKeyForUserOwner() ).build();
+    }
+
+    private PrincipalKey createKeyForUserEditor()
+    {
+        return PrincipalKey.ofUser( IdProviderKey.system(), "userEditor" );
+    }
+
+    private PrincipalKey createKeyForUserOwner()
+    {
+        return PrincipalKey.ofUser( IdProviderKey.system(), "userOwner" );
+    }
+
+    private PrincipalKey createKeyForGroupOwner()
+    {
+        return PrincipalKey.ofGroup( IdProviderKey.system(), "groupOwner" );
     }
 }
