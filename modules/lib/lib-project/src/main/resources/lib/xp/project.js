@@ -27,15 +27,6 @@ function nullOrValue(value) {
 }
 
 /**
- * Functions to manage Content Projects.
- *
- * @example
- * var projectLib = require('/lib/xp/project');
- *
- * @module project
- */
-
-/**
  * Creates a new Content Project. Only `system.admin` and `cms.admin` roles have permissions to create new projects.
  *
  * @example-ref examples/project/create.js
@@ -66,7 +57,7 @@ exports.create = function (params) {
 
 /**
  * Modifies an existing Content Project.
- * To `modify` a project, user must have `owner` permissions for this project, or either `system.admin` or `cms.admin` role.
+ * To modify a project, user must have `owner` permissions for this project, or either `system.admin` or `cms.admin` role.
  *
  * @example-ref examples/project/modify.js
  *
@@ -89,14 +80,14 @@ exports.modify = function (params) {
 
 /**
  * Deletes an existing Content Project. This will delete all of the data inside the project repository.
- * To `delete` a project, user must have `owner` permissions for this project, or either `system.admin` or `cms.admin` role.
+ * To delete a project, user must have either `system.admin` or `cms.admin` role.
  *
  * @example-ref examples/project/delete.js
  *
  * @param {Object} params JSON with the parameters.
  * @param {string} params.id Unique project id to identify the project.
  *
- * @returns {boolean} `true` if project was successfully deleted.
+ * @returns {boolean} `true` if the project was successfully deleted.
  */
 exports.delete = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.project.DeleteProjectHandler');
@@ -106,7 +97,7 @@ exports.delete = function (params) {
 
 /**
  * Returns an existing Content Project.
- * To `get` a project, user must have permissions for this project, or either `system.admin` or `cms.admin` role.
+ * To `get` a project, user must be a member of one of the project roles, or either `system.admin` or `cms.admin` role.
  *
  * @example-ref examples/project/get.js
  *
