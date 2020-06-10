@@ -1,6 +1,5 @@
 
 Licenses used by Enonic XP (full license texts are provided after the list of libraries)
-
     Apache Commons
     Apache License 2.0
     http://www.apache.org/licenses/LICENSE-2.0
@@ -29,6 +28,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     MIT License
     https://github.com/typetools/checker-framework/blob/master/LICENSE.txt
 
+    CodeMirror
+    MIT License
+    https://github.com/codemirror/CodeMirror/blob/master/LICENSE
+
     Dropwizard Metrics
     Apache License 2.0
     https://github.com/dropwizard/metrics/blob/4.1-development/LICENSE
@@ -52,6 +55,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Google Guava
     Apache License 2.0
     https://github.com/google/guava/blob/master/COPYING
+
+    IcoMoon icons (Ultimate Pack)
+    Friendly license (Need seperate development licenses for developing software using the icons.)
+    https://icomoon.io/#icons-icomoon/license
 
     J2ObjC
     Apache License 2.0
@@ -115,6 +122,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Common Development and Distribution License 1.1:
     https://github.com/jax-rs/api/blob/master/LICENSE.txt
 
+    JMustache
+    Michael Bayne personal license
+    https://github.com/samskivert/jmustache/blob/master/LICENSE
+
     JParSec
     Apache License 2.0
     https://github.com/jparsec/jparsec/blob/master/LICENSE
@@ -137,6 +148,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     MIT License
     http://slf4j.org/license.html
 
+    SlickGrid
+    MIT License
+    https://github.com/mleibman/SlickGrid/blob/master/MIT-LICENSE.txt
+
 ---------------------------------------------------------------------------
 
 LICENSE TEXTS
@@ -146,6 +161,7 @@ LICENSE TEXTS
 4. Eclipse Public License 2.0
 5. MIT License
 6. Sun Microsystems, Inc. ("Sun") SOFTWARE LICENSE AGREEMENT
+7. IcoMoon Friendly License
 
 ---------------------------------------------------------------------------
 
@@ -1037,6 +1053,7 @@ Simply including a copy of this Agreement, including this Exhibit A is not suffi
 If it is not possible or desirable to put the notice in a particular file, then You may include the notice in a location (such as a LICENSE file in a relevant directory) where a recipient would be likely to look for such a notice.
 
 You may add additional accurate notices of copyright ownership.
+---------------------------------------------------------------------------
 
 
 
@@ -1062,7 +1079,6 @@ MIT License
   WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---------------------------------------------------------------------------
-
 
 
 
@@ -1312,5 +1328,125 @@ authorized representative of each party.
 
 Please contact Sun Microsystems, Inc. 4150 Network Circle, Santa Clara,
 California 95054 if you have questions.
+
+---------------------------------------------------------------------------
+
+
+IcoMoon Friendly License
+
+License Agreement
+
+This license agreement (“Agreement”) constitutes a legal contract
+between you (“Licensee” or “you”) and Keyamoon.com (“Licensor”),
+setting forth the terms and conditions with respect to the digital
+content, non-ditigal content, icons, symbols, pictograms, or part
+thereof (collectively, “Item”) licensed to you, by Licensor. By
+downloading, using, or copying any part of the Item, you automatically
+agree to the following terms and conditions:
+
+Grant of License
+
+Licensor grants the Licensee a non-exclusive license without the right
+of sublicense to use the Item, subject to the terms of this Agreement.
+In consideration for the rights granted to Licensee hereunder, Licensee
+shall pay a license fee. The Item may be accessed and used for
+development purposes, by the Licensee and up to nine (9) other people
+employed by the Licensee. These ten people must belong to the same
+company or household purchasing the license. You do not need an extra
+license for new projects. The license includes future updates, which
+means that no additional payment is required.
+
+Permitted Uses
+
+You can use the Item in all your commercial and non-commercial
+projects, services and products.You may alter, modify or manipulate
+the Item, or incorporate it into other content and make a derivative
+work from it. The resulting derivative work is subject to the terms of
+this Agreement.
+
+Prohibited Uses
+
+You may not sublicense, resell, share, or otherwise redistribute the
+Item, not even for free. You need to get permission for using the Item
+in open source projects. You may not give, rent, or lease the Item or
+parts of it to third parties. You may not use the Item as a part of any
+project where your customers are not a final customer. You need to get
+permission to use the Item in any project where your customers or users
+can select any part of the Item to use in, modify, or customize the end
+product. You may not use the Item in a project which most or all of its
+value is driven by the Item.
+
+Refund Policy
+
+You have 14 calendar days to request for a refund from the date you
+purchased the license. You may only submit your request to the
+publisher from which you purchased the license. After receiving your
+refund, you should stop using and destroy all copies of the Item,
+including all backups and copies.
+
+Disclaimer & Warranty
+
+All parts of the Item are provided “as is” without warranty of any
+kind, either expressed or implied. Licensor is not liable for any
+damages arising out of any defects in the materials and the Item. You
+agree to hold Licensor harmless for any result that may occur during
+the course of using, or inability to use the Item. In no event shall
+Licensor be liable for any damages including, but not limited to,
+direct, indirect, special, incidental or consequential damages or other
+losses arising out of the use of or inability to use the Item.
+
+To the best of the knowledge of the Licensor, no part of the Item is
+defamatory, obscene or immoral, and does not infringe any rights of
+copyright or other intellectual property or proprietary rights of third
+parties, but no right of action shall accrue against Licensor in the
+event of any part of the Item being deemed or found to be defamatory,
+obscene or immoral or an infringement of third party rights. If the
+Item contains trademarks or other intellectual property owned by third
+parties, clearance from the rights owner may be required. It is your
+responsibility to consider whether your use of the Item requires a
+clearance and if so, to obtain that clearance from the rights owner.
+
+Copyright
+
+All parts of the Item are owned by and property of the Licensor. No
+title to or intellectual property rights to the Item are transferred to
+you. All parts of the Item and the accompanying materials are
+copyrighted and contain proprietary information and trade secrets
+belonging to the Licensor. The Item cannot be incorporated in a
+trademark or service mark, not even logos. You may make a reasonable
+number of backup copies of the Item for archival purposes only. Copies
+must contain the same documentation, license, copyright, trademark,
+and other proprietary notices that appear on, in, or with the Item.
+Except for using the Item in your project, you may not copy the Item or
+allow third parties to copy the Item. Unpublished rights are reserved.
+
+Reserved Rights
+
+Licensor reserves rights to change the price of the license and to
+update the Item without prior notice and at its sole discretion.
+Licensor reserves the rights to make changes to this Agreement without
+any prior notice at its sole discretion. Any such changes will be
+reflected on this page. Licensor has the right to terminate your
+license immediately if you fail to comply with any terms of this
+Agreement.
+
+Governing Law & General Provisions
+
+This Agreement will be governed by and construed in accordance with the
+laws in force in the United States of America and the State of
+California, excluding its conflict of law principles. This Agreement
+shall not be governed by the United Nations Convention on Contracts for
+the International Sale of Goods, the application of which is expressly
+excluded. If any part of this Agreement is found void and
+unenforceable, the remainder of this Agreement shall remain valid and
+continue in full force and effect. You agree that the Item will not be
+shipped, transferred, or exported into any country or used in any
+manner prohibited by export administration legislation or any other
+export laws, restrictions, or regulations. The section headings
+contained in this Agreement are for reference purposes only and shall
+not affect the meaning or interpretation of this Agreement.
+
+If you have any questions regarding this Agreement feel free to contact
+the Licensor at: http://keyamoon.com
 
 ---------------------------------------------------------------------------
