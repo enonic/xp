@@ -207,7 +207,7 @@ public final class ImageHelper
     @Deprecated
     public static boolean supportsAlphaChannel( final String format )
     {
-        return format.equals( "png" );
+        return "png".equals( format );
     }
 
     public static BufferedImage scaleSquare( final BufferedImage source, final int size )
