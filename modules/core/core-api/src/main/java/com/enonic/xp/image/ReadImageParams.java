@@ -253,7 +253,7 @@ public class ReadImageParams
         {
             Preconditions.checkNotNull( contentId, "contentId cannot be null" );
             Preconditions.checkNotNull( binaryReference, "binaryReference cannot be null" );
-            Preconditions.checkNotNull( mimeType, "mimeType cannot be null" );
+            Preconditions.checkArgument( mimeType != null || format != null, "mimeType or format must be set" );
             return new ReadImageParams( this );
         }
     }

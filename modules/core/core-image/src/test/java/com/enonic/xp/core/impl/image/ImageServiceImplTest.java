@@ -72,6 +72,18 @@ public class ImageServiceImplTest
     }
 
     @Test
+    @Deprecated
+    public void testReadImageWithFormat()
+        throws IOException
+    {
+        final ReadImageParams readImageParams =
+            ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference ).format( "png" ).build();
+        final ByteSource imageData = imageService.readImage( readImageParams );
+
+        assertArrayEquals( imageDataOriginal, imageData.read() );
+    }
+
+    @Test
     public void testReadImageWithCache()
         throws IOException
     {

@@ -3,11 +3,14 @@ package com.enonic.xp.core.impl.image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import javax.imageio.ImageIO;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -65,8 +68,17 @@ public class ImageServiceImpl
             final BufferedImage bufferedImage = readBufferedImage( blob, readImageParams );
             if ( bufferedImage != null )
             {
-                return ByteSource.wrap(
-                    ImageHelper.serializeImage( bufferedImage, readImageParams.getMimeType(), readImageParams.getQuality() ) );
+                if ( readImageParams.getMimeType() != null )
+                {
+                    return ByteSource.wrap(
+                        ImageHelper.serializeImage( bufferedImage, readImageParams.getMimeType(), readImageParams.getQuality() ) );
+                }
+                else if ( readImageParams.getFormat() != null )
+                {
+                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    ImageIO.write( bufferedImage, readImageParams.getFormat(), out );
+                    return ByteSource.wrap( out.toByteArray() );
+                }
             }
         }
         return null;
@@ -74,7 +86,7 @@ public class ImageServiceImpl
 
     private boolean renderAsSource( final ReadImageParams params )
     {
-        return "image/gif".equals( params.getMimeType() );
+        return "image/gif".equals( params.getMimeType() ) || "gif".equals( params.getFormat() );
     }
 
     @Deprecated
@@ -118,7 +130,9 @@ public class ImageServiceImpl
         //Filter string value
         final String filter = readImageParams.getFilterParam() != null ? readImageParams.getFilterParam() : "no-filter";
 
-        final String format = ImageHelper.getFormatByMimeType( readImageParams.getMimeType() );
+        final String format = readImageParams.getMimeType() == null
+            ? readImageParams.getFormat()
+            : ImageHelper.getFormatByMimeType( readImageParams.getMimeType() );
         //Background string value
         final String background = "background-" + readImageParams.getBackgroundColor();
 
@@ -176,7 +190,7 @@ public class ImageServiceImpl
             }
 
             //Applies alpha channel removal
-            if ( !"image/png".equals( readImageParams.getMimeType() ) )
+            if ( !"image/png".equals( readImageParams.getMimeType() ) && !ImageHelper.supportsAlphaChannel( readImageParams.getFormat() ) )
             {
                 bufferedImage = ImageHelper.removeAlphaChannel( bufferedImage, readImageParams.getBackgroundColor() );
             }
