@@ -106,9 +106,9 @@ public class ProjectResourceTest
             label( "small" ).
             build() );
 
-        final Project project2 = createProject( "project2", "project2", null, null );
+        final Project project2 = createProject( "project2", "project2", null, null, "parent1" );
         final Project project3 = createProject( "project3", null, null, null );
-        final Project project4 = createProject( "project4", "project4", null, null );
+        final Project project4 = createProject( "project4", "project4", null, null, "parent2" );
 
         mockRootContent();
 
@@ -172,6 +172,30 @@ public class ProjectResourceTest
             post().getAsString();
 
         assertJson( "create_project_success.json", jsonString );
+    }
+
+    @Test
+    public void create_project_with_parents()
+        throws Exception
+    {
+        final Project project = createProject( "project1", "project name 1", "project description 1", Attachment.create().
+            name( "logo.png" ).
+            mimeType( "image/png" ).
+            label( "small" ).
+            build(), "parent1" );
+
+        mockRootContent();
+        Mockito.when( projectService.create( Mockito.isA( CreateProjectParams.class ) ) ).thenReturn( project );
+        Mockito.when( projectService.modifyPermissions( Mockito.eq( project.getName() ), Mockito.isA( ProjectPermissions.class ) ) ).
+            thenAnswer( i -> i.getArguments()[1] );
+
+        mockProjectPermissions( project.getName() );
+
+        String jsonString = request().path( "project/create" ).
+            entity( readFromFile( "create_project_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "create_project_with_parents.json", jsonString );
     }
 
     @Test
@@ -354,6 +378,18 @@ public class ProjectResourceTest
             displayName( displayName ).
             description( description ).
             icon( icon ).
+            build();
+    }
+
+    private Project createProject( final String name, final String displayName, final String description, final Attachment icon,
+                                   final String parent )
+    {
+        return Project.create().
+            name( ProjectName.from( name ) ).
+            displayName( displayName ).
+            description( description ).
+            icon( icon ).
+            parent( ProjectName.from( parent ) ).
             build();
     }
 

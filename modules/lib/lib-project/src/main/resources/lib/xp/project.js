@@ -18,14 +18,6 @@ function required(params, name) {
     return value;
 }
 
-function nullOrValue(value) {
-    if (value === undefined) {
-        return null;
-    }
-
-    return value;
-}
-
 /**
  * Creates a new Content Project. Only `system.admin` and `cms.admin` roles have permissions to create new projects.
  *
@@ -36,6 +28,7 @@ function nullOrValue(value) {
  * @param {string} params.displayName Project's display name.
  * @param {string} [params.description] Project description.
  * @param {string} [params.language] Default project language.
+ * @param {string} params.parent Parent project id.
  * @param {Object.<string, string[]>} [params.permissions] Project permissions. 1 to 5 properties where key is role id and value is an array of principals.
  * @param {string} params.permissions.role - Role id (one of `owner`, `editor`, `author`, `contributor`, `viewer`)
  * @param {string[]} params.permissions.principals - Array of principals
@@ -48,10 +41,11 @@ exports.create = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.project.CreateProjectHandler');
     bean.id = required(params, 'id');
     bean.displayName = required(params, 'displayName');
-    bean.description = nullOrValue(params.description);
-    bean.language = nullOrValue(params.language);
+    bean.description = __.nullOrValue(params.description);
+    bean.language = __.nullOrValue(params.language);
     bean.permissions = __.toScriptValue(params.permissions);
     bean.readAccess = __.toScriptValue(params.readAccess);
+    bean.parent = __.nullOrValue(params.parent);
     return __.toNativeObject(bean.execute());
 };
 
@@ -72,9 +66,9 @@ exports.create = function (params) {
 exports.modify = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.project.ModifyProjectHandler');
     bean.id = required(params, 'id');
-    bean.displayName = nullOrValue(params.displayName);
-    bean.description = nullOrValue(params.description);
-    bean.language = nullOrValue(params.language);
+    bean.displayName = __.nullOrValue(params.displayName);
+    bean.description = __.nullOrValue(params.description);
+    bean.language = __.nullOrValue(params.language);
     return __.toNativeObject(bean.execute());
 };
 
@@ -189,3 +183,4 @@ exports.modifyReadAccess = function (params) {
     bean.readAccess = __.toScriptValue(params.readAccess);
     return __.toNativeObject(bean.execute());
 };
+

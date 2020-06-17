@@ -24,6 +24,8 @@ public final class CreateProjectHandler
 
     private String description;
 
+    private ProjectName parent;
+
     private Locale language;
 
     private ProjectPermissions permissions;
@@ -54,8 +56,10 @@ public final class CreateProjectHandler
             build().
             execute();
 
+        final Project fetchedProject = this.projectService.get( project.getName() );
+
         return ProjectMapper.create().
-            setProject( project ).
+            setProject( fetchedProject ).
             setLanguage( modifiedLanguage ).
             setProjectPermissions( modifiedPermissions ).
             setIsPublic( modifiedIsPublic ).
@@ -68,6 +72,7 @@ public final class CreateProjectHandler
             name( this.id ).
             displayName( this.displayName ).
             description( this.description ).
+            parent( this.parent ).
             forceInitialization( true ).
             build();
     }
@@ -105,5 +110,10 @@ public final class CreateProjectHandler
     public void setReadAccess( final ScriptValue value )
     {
         this.isPublic = buildReadAccess( value );
+    }
+
+    public void setParent( final String value )
+    {
+        this.parent = value != null ? ProjectName.from( value ) : null;
     }
 }

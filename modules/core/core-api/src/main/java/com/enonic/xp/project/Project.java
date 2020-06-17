@@ -1,5 +1,7 @@
 package com.enonic.xp.project;
 
+import java.util.Iterator;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -19,6 +21,8 @@ public final class Project
 
     private final String description;
 
+    private final ProjectName parent;
+
     private final Attachment icon;
 
     private Project( Builder builder )
@@ -26,6 +30,7 @@ public final class Project
         this.name = builder.name;
         this.displayName = builder.displayName;
         this.description = builder.description;
+        this.parent = builder.parent;
         this.icon = builder.icon;
     }
 
@@ -61,6 +66,7 @@ public final class Project
             description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) ).
             displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) );
 
+        buildParents( project, projectData );
         buildIcon( project, projectData );
 
         return project.build();
@@ -79,6 +85,15 @@ public final class Project
                 size( iconData.getLong( ContentPropertyNames.ATTACHMENT_SIZE ) ).
                 textContent( iconData.getString( ContentPropertyNames.ATTACHMENT_TEXT ) ).
                 build() );
+        }
+    }
+
+    private static void buildParents( final Project.Builder project, final PropertySet projectData )
+    {
+        final Iterator<String> projectNamesIterator = projectData.getStrings( ProjectConstants.PROJECT_PARENTS_PROPERTY ).iterator();
+        if ( projectNamesIterator.hasNext() )
+        {
+            project.parent( ProjectName.from( projectNamesIterator.next() ) );
         }
     }
 
@@ -102,6 +117,11 @@ public final class Project
         return icon;
     }
 
+    public ProjectName getParent()
+    {
+        return parent;
+    }
+
     public static final class Builder
     {
 
@@ -110,6 +130,8 @@ public final class Project
         private String displayName;
 
         private String description;
+
+        private ProjectName parent;
 
         private Attachment icon;
 
@@ -138,6 +160,12 @@ public final class Project
         public Builder icon( final Attachment icon )
         {
             this.icon = icon;
+            return this;
+        }
+
+        public Builder parent( final ProjectName parent )
+        {
+            this.parent = parent;
             return this;
         }
 

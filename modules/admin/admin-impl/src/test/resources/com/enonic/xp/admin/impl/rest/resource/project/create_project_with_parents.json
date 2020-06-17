@@ -9,7 +9,7 @@
   },
   "language": "en",
   "name": "project1",
-  "parent": null,
+  "parent": "parent1",
   "permissions": {
     "author": [
       "user:system:author"
