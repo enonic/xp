@@ -23,6 +23,7 @@ import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentSerializer;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -73,44 +74,43 @@ public class ProjectServiceImpl
     @Activate
     public void initialize()
     {
-        adminContext().runWith( () -> doCreate( CreateProjectParams.create().
-            name( ProjectConstants.DEFAULT_PROJECT.getName() ).
-            displayName( ProjectConstants.DEFAULT_PROJECT.getDisplayName() ).
-            description( ProjectConstants.DEFAULT_PROJECT.getDescription() ).
-            build() ) );
+        adminContext().runWith( () -> {
+            if ( doGet( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ) == null )
+            {
+                doCreate( CreateProjectParams.create().
+                    name( ProjectConstants.DEFAULT_PROJECT.getName() ).
+                    displayName( ProjectConstants.DEFAULT_PROJECT.getDisplayName() ).
+                    description( ProjectConstants.DEFAULT_PROJECT.getDescription() ).
+                    build() );
+            }
+        } );
     }
 
     @Override
     public Project create( CreateProjectParams params )
     {
-        return callWithCreateContext( () -> {
-            if ( repositoryService.isInitialized( params.getName().getRepoId() ) )
-            {
-                throw new ProjectAlreadyExistsException( params.getName() );
-            }
+        return callWithCreateContext( ( () -> {
             final Project result = doCreate( params );
-
-            CreateProjectRolesCommand.create().
-                securityService( securityService ).
-                projectName( params.getName() ).
-                projectDisplayName( params.getDisplayName() ).
-                build().
-                execute();
-
             LOG.debug( "Project created: " + params.getName() );
 
             return result;
-        } );
+        } ) );
     }
 
     private Project doCreate( final CreateProjectParams params )
     {
-        ContentInitializer.create().
+        if ( repositoryService.isInitialized( params.getName().getRepoId() ) )
+        {
+            throw new ProjectAlreadyExistsException( params.getName() );
+        }
+
+        final ContentInitializer.Builder contentInitializer = ContentInitializer.create();
+
+        contentInitializer.
             setIndexService( indexService ).
             setNodeService( nodeService ).
             setRepositoryService( repositoryService ).
             repositoryId( params.getName().getRepoId() ).
-            setData( createProjectData( params ) ).
             accessControlList( CreateProjectRootAccessListCommand.create().
                 projectName( params.getName() ).
                 build().
@@ -131,18 +131,37 @@ public class ProjectServiceImpl
             build().
             initialize();
 
-        return Project.from( repositoryService.get( params.getName().getRepoId() ) );
+        if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( params.getName() ) )
+        {
+            CreateProjectRolesCommand.create().
+                securityService( securityService ).
+                projectName( params.getName() ).
+                projectDisplayName( params.getDisplayName() ).
+                build().
+                execute();
+        }
+
+        final ModifyProjectParams modifyProjectParams = ModifyProjectParams.create( params ).build();
+        doModify( modifyProjectParams );
+
+        final UpdateRepositoryParams updateParams = UpdateRepositoryParams.create().
+            repositoryId( params.getName().getRepoId() ).
+            editor( editableRepository -> modifyProjectParent( params.getParent(), editableRepository.data ) ).
+            build();
+
+        return Project.from( repositoryService.updateRepository( updateParams ) );
+
     }
 
     @Override
     public Project modify( ModifyProjectParams params )
     {
-        return callWithUpdateContext( () -> {
+        return callWithUpdateContext( ( () -> {
             final Project result = doModify( params );
             LOG.debug( "Project updated: " + params.getName() );
 
             return result;
-        }, params.getName() );
+        } ), params.getName() );
     }
 
     private Project doModify( final ModifyProjectParams params )
@@ -170,12 +189,12 @@ public class ProjectServiceImpl
     @Override
     public void modifyIcon( final ModifyProjectIconParams params )
     {
-        callWithUpdateContext( () -> {
+        callWithUpdateContext( ( () -> {
             doModifyIcon( params );
             LOG.debug( "Icon for project updated: " + params.getName() );
 
             return true;
-        }, params.getName() );
+        } ), params.getName() );
     }
 
     private void doModifyIcon( final ModifyProjectIconParams params )
@@ -204,10 +223,9 @@ public class ProjectServiceImpl
         repositoryService.updateRepository( updateParams );
     }
 
-    @Override
     public ByteSource getIcon( final ProjectName projectName )
     {
-        return callWithGetContext( () -> doGetIcon( projectName ), projectName );
+        return callWithGetContext( ( () -> doGetIcon( projectName ) ), projectName );
     }
 
     private ByteSource doGetIcon( final ProjectName projectName )
@@ -332,18 +350,6 @@ public class ProjectServiceImpl
             execute();
     }
 
-    private PropertyTree createProjectData( final CreateProjectParams params )
-    {
-        PropertyTree data = new PropertyTree();
-
-        final PropertySet projectData = data.addSet( ProjectConstants.PROJECT_DATA_SET_NAME );
-
-        projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
-        projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
-
-        return data;
-    }
-
     private PropertyTree modifyProjectData( final ModifyProjectParams params, final PropertyTree data )
     {
         PropertySet projectData = data.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
@@ -355,6 +361,23 @@ public class ProjectServiceImpl
 
         projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
         projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
+
+        return data;
+    }
+
+    private PropertyTree modifyProjectParent( final ProjectName parent, final PropertyTree data )
+    {
+        PropertySet projectData = data.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
+
+        if ( projectData != null )
+        {
+            projectData.removeProperty( ProjectConstants.PROJECT_PARENTS_PROPERTY );
+            if ( parent != null )
+            {
+                projectData.setString( ProjectConstants.PROJECT_PARENTS_PROPERTY, parent.toString() );
+
+            }
+        }
 
         return data;
     }

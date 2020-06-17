@@ -17,13 +17,10 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.project.ProjectAccessException;
 import com.enonic.xp.core.impl.project.ProjectAccessHelper;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
-import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodePath;
@@ -37,6 +34,7 @@ import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repository.Repository;
@@ -53,6 +51,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -124,7 +123,6 @@ class ProjectServiceImplTest
     private ProjectServiceImpl projectService;
 
     private SecurityServiceImpl securityService;
-
 
     @BeforeEach
     protected void setUpNode()
@@ -202,7 +200,7 @@ class ProjectServiceImplTest
 
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
 
-        final Project project = ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), null, true ) );
+        final Project project = ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), null, true, null ) );
         assertNotNull( project );
         assertEquals( "test-project", project.getName().toString() );
 
@@ -645,6 +643,18 @@ class ProjectServiceImplTest
     }
 
     @Test
+    void create_parent()
+    {
+
+        ADMIN_CONTEXT.runWith( () -> {
+            doCreateProject( ProjectName.from( "test-project" ), null, true, ProjectName.from( "parent" ) );
+            final Project modifiedProject = projectService.get( ProjectName.from( "test-project" ) );
+
+            assertEquals( ProjectName.from( "parent" ), modifiedProject.getParent() );
+        } );
+    }
+
+    @Test
     void modify_icon()
     {
         doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
@@ -709,7 +719,9 @@ class ProjectServiceImplTest
             }
         } );
 
-        Assertions.assertThrows( ProjectAccessException.class, () -> projectService.getIcon( project.getName() ) );
+        final RuntimeException ex = Assertions.assertThrows( RuntimeException.class, () -> projectService.getIcon( project.getName() ) );
+        assertEquals( "Denied [user:system:test-user] user access to [test-project] project for [get] operation", ex.getMessage() );
+
     }
 
     @Test
@@ -813,6 +825,11 @@ class ProjectServiceImplTest
         return ADMIN_CONTEXT.callWith( () -> doCreateProject( name, projectPermissions ) );
     }
 
+    private Project doCreateProjectAsAdmin( final ProjectName name, final ProjectPermissions projectPermissions, final ProjectName parent )
+    {
+        return ADMIN_CONTEXT.callWith( () -> doCreateProject( name, projectPermissions ) );
+    }
+
     private Project doCreateProject( final ProjectName name )
     {
         return doCreateProject( name, ProjectPermissions.create().
@@ -824,27 +841,17 @@ class ProjectServiceImplTest
 
     private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions )
     {
-        return this.doCreateProject( name, projectPermissions, false );
+        return this.doCreateProject( name, projectPermissions, false, null );
     }
 
-    private Project doCreateProject( final ProjectName name, final String displayName, final String description )
-    {
-        final Project project = this.projectService.create( CreateProjectParams.create().
-            name( name ).
-            description( description ).
-            displayName( displayName ).
-            build() );
-
-        return project;
-    }
-
-    private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions,
-                                     final boolean forceInitialization )
+    private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions, final boolean forceInitialization,
+                                     final ProjectName parent )
     {
         final Project project = this.projectService.create( CreateProjectParams.create().
             name( name ).
             description( "description" ).
             displayName( "Project display name" ).
+            parent( parent ).
             forceInitialization( forceInitialization ).
             build() );
 
