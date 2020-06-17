@@ -142,7 +142,15 @@ public class ProjectServiceImpl
         }
 
         final ModifyProjectParams modifyProjectParams = ModifyProjectParams.create( params ).build();
-        return doModify( modifyProjectParams );
+        doModify( modifyProjectParams );
+
+        final UpdateRepositoryParams updateParams = UpdateRepositoryParams.create().
+            repositoryId( params.getName().getRepoId() ).
+            editor( editableRepository -> modifyProjectParent( params.getParent(), editableRepository.data ) ).
+            build();
+
+        return Project.from( repositoryService.updateRepository( updateParams ) );
+
     }
 
     @Override
@@ -353,6 +361,23 @@ public class ProjectServiceImpl
 
         projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
         projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
+
+        return data;
+    }
+
+    private PropertyTree modifyProjectParent( final ProjectName parent, final PropertyTree data )
+    {
+        PropertySet projectData = data.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
+
+        if ( projectData != null )
+        {
+            projectData.removeProperty( ProjectConstants.PROJECT_PARENTS_PROPERTY );
+            if ( parent != null )
+            {
+                projectData.setString( ProjectConstants.PROJECT_PARENTS_PROPERTY, parent.toString() );
+
+            }
+        }
 
         return data;
     }

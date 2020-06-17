@@ -51,7 +51,6 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -182,7 +181,7 @@ class ProjectServiceImplTest
 
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
 
-        final Project project = ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), null, true ) );
+        final Project project = ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), null, true, null ) );
         assertNotNull( project );
         assertEquals( "test-project", project.getName().toString() );
 
@@ -625,6 +624,18 @@ class ProjectServiceImplTest
     }
 
     @Test
+    void create_parent()
+    {
+
+        ADMIN_CONTEXT.runWith( () -> {
+            doCreateProject( ProjectName.from( "test-project" ), null, true, ProjectName.from( "parent" ) );
+            final Project modifiedProject = projectService.get( ProjectName.from( "test-project" ) );
+
+            assertEquals( ProjectName.from( "parent" ), modifiedProject.getParent() );
+        } );
+    }
+
+    @Test
     void modify_icon()
     {
         doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
@@ -660,14 +671,14 @@ class ProjectServiceImplTest
     }
 
     @Test
-    void get_icon() throws Exception
+    void get_icon()
+        throws Exception
     {
         final Project project = doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
-            final ByteSource source = ByteSource.wrap( "new bytes".getBytes() );
+        final ByteSource source = ByteSource.wrap( "new bytes".getBytes() );
         ADMIN_CONTEXT.runWith( () -> {
             assertNull( projectService.getIcon( project.getName() ) );
-
 
             projectService.modifyIcon( ModifyProjectIconParams.create().
                 name( project.getName() ).
@@ -689,10 +700,8 @@ class ProjectServiceImplTest
             }
         } );
 
-        final RuntimeException ex =
-            Assertions.assertThrows( RuntimeException.class, () -> projectService.getIcon( project.getName() ) );
-        assertEquals( "Denied [user:system:test-user] user access to [test-project] project for [get] operation",
-                      ex.getMessage() );
+        final RuntimeException ex = Assertions.assertThrows( RuntimeException.class, () -> projectService.getIcon( project.getName() ) );
+        assertEquals( "Denied [user:system:test-user] user access to [test-project] project for [get] operation", ex.getMessage() );
 
     }
 
@@ -800,6 +809,11 @@ class ProjectServiceImplTest
         return ADMIN_CONTEXT.callWith( () -> doCreateProject( name, projectPermissions ) );
     }
 
+    private Project doCreateProjectAsAdmin( final ProjectName name, final ProjectPermissions projectPermissions, final ProjectName parent )
+    {
+        return ADMIN_CONTEXT.callWith( () -> doCreateProject( name, projectPermissions ) );
+    }
+
     private Project doCreateProject( final ProjectName name )
     {
         return doCreateProject( name, ProjectPermissions.create().
@@ -811,16 +825,17 @@ class ProjectServiceImplTest
 
     private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions )
     {
-        return this.doCreateProject( name, projectPermissions, false );
+        return this.doCreateProject( name, projectPermissions, false, null );
     }
 
-    private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions,
-                                     final boolean forceInitialization )
+    private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions, final boolean forceInitialization,
+                                     final ProjectName parent )
     {
         final Project project = this.projectService.create( CreateProjectParams.create().
             name( name ).
             description( "description" ).
             displayName( "Project display name" ).
+            parent( parent ).
             forceInitialization( forceInitialization ).
             build() );
 

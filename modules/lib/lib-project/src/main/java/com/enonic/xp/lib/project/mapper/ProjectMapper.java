@@ -44,6 +44,7 @@ public final class ProjectMapper
         gen.value( "id", project.getName().toString() );
         gen.value( "displayName", project.getDisplayName() );
         gen.value( "description", project.getDescription() );
+        gen.value( "parent", project.getParent() );
         gen.value( "language", language != null ? language.toLanguageTag() : null );
 
         serializePermissions( gen );

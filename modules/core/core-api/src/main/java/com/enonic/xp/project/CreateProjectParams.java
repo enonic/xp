@@ -13,6 +13,8 @@ public final class CreateProjectParams
 
     private final String description;
 
+    private final ProjectName parent;
+
     private final boolean forceInitialization;
 
     private CreateProjectParams( final Builder builder )
@@ -20,6 +22,7 @@ public final class CreateProjectParams
         this.name = builder.name;
         this.displayName = builder.displayName;
         this.description = builder.description;
+        this.parent = builder.parent;
         this.forceInitialization = builder.forceInitialization;
     }
 
@@ -43,6 +46,11 @@ public final class CreateProjectParams
         return description;
     }
 
+    public ProjectName getParent()
+    {
+        return parent;
+    }
+
     public boolean isForceInitialization()
     {
         return forceInitialization;
@@ -56,6 +64,8 @@ public final class CreateProjectParams
         private String displayName;
 
         private String description;
+
+        private ProjectName parent;
 
         private boolean forceInitialization = false;
 
@@ -78,6 +88,12 @@ public final class CreateProjectParams
         public Builder description( final String description )
         {
             this.description = description;
+            return this;
+        }
+
+        public Builder parent( final ProjectName parent )
+        {
+            this.parent = parent;
             return this;
         }
 

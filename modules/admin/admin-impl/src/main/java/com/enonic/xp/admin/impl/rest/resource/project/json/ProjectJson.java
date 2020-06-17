@@ -20,6 +20,8 @@ public final class ProjectJson
 
     private final String language;
 
+    private final String parent;
+
     private final AttachmentJson icon;
 
     private final ProjectPermissionsJson permissions;
@@ -37,6 +39,7 @@ public final class ProjectJson
         this.description = project.getDescription();
         this.icon = project.getIcon() != null ? new AttachmentJson( project.getIcon() ) : null;
         this.language = language != null ? language.toLanguageTag() : null;
+        this.parent = project.getParent() != null ? project.getParent().toString() : null;
         this.permissions = projectPermissions != null ? new ProjectPermissionsJson( projectPermissions ) : null;
         this.projectReadAccess = readAccessType != null ? new ProjectReadAccessJson( readAccessType, ImmutableList.copyOf(
             projectPermissions.getViewer().getSet() ) ) : null;
@@ -65,6 +68,11 @@ public final class ProjectJson
     public String getLanguage()
     {
         return language;
+    }
+
+    public String getParent()
+    {
+        return parent;
     }
 
     public ProjectPermissionsJson getPermissions()

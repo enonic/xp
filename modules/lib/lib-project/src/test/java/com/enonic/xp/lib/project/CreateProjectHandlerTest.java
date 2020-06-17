@@ -12,6 +12,14 @@ public class CreateProjectHandlerTest
         runFunction( "/test/CreateProjectHandlerTest.js", "createProject" );
     }
 
+
+    @Test
+    public void createProjectWithParent()
+        throws Exception
+    {
+        runFunction( "/test/CreateProjectHandlerTest.js", "createProjectWithParent" );
+    }
+
     @Test
     public void createProjectWithoutLanguage()
         throws Exception
