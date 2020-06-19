@@ -47,7 +47,10 @@ public final class FormDefaultValuesProcessorImpl
                     {
                         final Value defaultValue = InputTypes.BUILTIN.resolve( input.getInputType() ).
                             createDefaultValue( input );
-                        if ( defaultValue != null )
+
+                        final PropertyPath propertyPath = PropertyPath.from( parentPath, input.getName() );
+
+                        if ( defaultValue != null && data.getProperty( propertyPath ) == null )
                         {
                             data.setProperty( PropertyPath.from( parentPath, input.getName() ), defaultValue );
                         }
