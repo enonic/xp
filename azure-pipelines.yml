@@ -11,7 +11,9 @@ steps:
   displayName: 'Clone and build xp core'
 - task: CopyFiles@2
   inputs:
-    SourceFolder: $(Build.SourcesDirectory)/build/libs/
+    Contents: $(Build.SourcesDirectory)/modules/runtime/build
     targetFolder: $(Build.ArtifactStagingDirectory)
-- publish: $(Build.SourcesDirectory)/build/libs/
-  artifact: xp-core
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: $(Build.ArtifactStagingDirectory)
+    artifactName: xp-core
