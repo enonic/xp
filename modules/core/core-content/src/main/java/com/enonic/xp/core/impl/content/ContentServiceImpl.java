@@ -248,7 +248,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( content instanceof Site )
+        if ( content instanceof Site && params.createSiteTemplateFolder() )
         {
             this.create( CreateContentParams.create().
                 owner( content.getOwner() ).
