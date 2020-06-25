@@ -49,6 +49,8 @@ public final class CreateContentParams
 
     private final WorkflowInfo workflowInfo;
 
+    private final boolean createSiteTemplateFolder;
+
     private CreateContentParams( Builder builder )
     {
         this.data = builder.data;
@@ -68,6 +70,7 @@ public final class CreateContentParams
         this.contentPublishInfo = builder.contentPublishInfo;
         this.processedIds = builder.processedIds.build();
         this.workflowInfo = builder.workflowInfo;
+        this.createSiteTemplateFolder = builder.createSiteTemplateFolder;
     }
 
     public static Builder create()
@@ -165,6 +168,11 @@ public final class CreateContentParams
         return workflowInfo;
     }
 
+    public boolean createSiteTemplateFolder()
+    {
+        return createSiteTemplateFolder;
+    }
+
     public static final class Builder
     {
         private PropertyTree data;
@@ -201,6 +209,8 @@ public final class CreateContentParams
 
         private WorkflowInfo workflowInfo;
 
+        private boolean createSiteTemplateFolder = true;
+
         private Builder()
         {
         }
@@ -222,6 +232,38 @@ public final class CreateContentParams
             this.language = source.language;
             this.contentPublishInfo = source.contentPublishInfo;
             this.workflowInfo = source.workflowInfo;
+            this.createSiteTemplateFolder = source.createSiteTemplateFolder;
+        }
+
+        private Builder( final Content source )
+        {
+          /*  this.data = source.getData();
+            this.extraDatas = source.getAllExtraData();
+            this.type = source.getType();
+            this.owner = source.getOwner();
+            this.displayName = source.getDisplayName();
+            this.name = source.getName();
+            this.parentPath = source.getParentPath();
+            this.requireValid = false;
+            this.permissions = source.getPermissions();
+            this.inheritPermissions = source.inheritsPermissions();
+            this.createAttachments = source.getAttachments().
+                stream().
+                map( attachment -> {
+                    final ByteSource binary = contentService.getBinary( this.getId(), attachment.getBinaryReference() );
+
+                    final CreateAttachment createAttachment = CreateAttachment.create().
+                        name( attachment.getName() ).
+                        label( attachment.getLabel() ).
+                        mimeType( attachment.getMimeType() ).
+                        text( attachment.getTextContent() ).
+                        byteSource( binary ).
+                        build();
+                }).collect( Collectors.toSet() );
+                this.childOrder = source.getChildOrder();
+            this.language = source.getLanguage();
+            this.contentPublishInfo = source.getPublishInfo();
+            this.workflowInfo = source.getWorkflowInfo();*/
         }
 
         public Builder contentData( final PropertyTree data )
@@ -330,6 +372,12 @@ public final class CreateContentParams
         public Builder workflowInfo( final WorkflowInfo workflowInfo )
         {
             this.workflowInfo = workflowInfo;
+            return this;
+        }
+
+        public Builder createSiteTemplateFolder( final boolean createSiteTemplateFolder )
+        {
+            this.createSiteTemplateFolder = createSiteTemplateFolder;
             return this;
         }
 
