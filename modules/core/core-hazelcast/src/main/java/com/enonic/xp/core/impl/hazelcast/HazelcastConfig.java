@@ -8,7 +8,7 @@ public @interface HazelcastConfig
 
     boolean system_hazelcast_socket_bind_any() default true;
 
-    int system_hazelcast_initial_min_cluster_size() default 0;
+    int system_hazelcast_initial_min_cluster_size() default 2;
 
     boolean system_hazelcast_prefer_ipv4_stack() default true;
 
