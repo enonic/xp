@@ -8,24 +8,18 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.cluster.ClusterConfig;
-
 @Component
 public class JettySessionStoreConfiguratorImpl
     implements JettySessionStoreConfigurator
 {
-    private final String workerName;
-
     private final SessionDataStoreFactory sessionDataStoreFactory;
 
     private final SessionCacheFactory sessionCacheFactory;
 
     @Activate
-    public JettySessionStoreConfiguratorImpl( @Reference final ClusterConfig clusterConfig,
-                                              @Reference final SessionDataStoreFactory sessionDataStoreFactory,
+    public JettySessionStoreConfiguratorImpl( @Reference final SessionDataStoreFactory sessionDataStoreFactory,
                                               @Reference final SessionCacheFactory sessionCacheFactory )
     {
-        this.workerName = clusterConfig.name().toString();
         this.sessionDataStoreFactory = sessionDataStoreFactory;
         this.sessionCacheFactory = sessionCacheFactory;
     }
@@ -37,7 +31,7 @@ public class JettySessionStoreConfiguratorImpl
 
         server.addBean( sessionDataStoreFactory );
         server.addBean( sessionCacheFactory );
-        sessionManager.setWorkerName( workerName );
+        sessionManager.setWorkerName( "" );
 
         server.setSessionIdManager( sessionManager );
     }
