@@ -15,6 +15,8 @@ import com.enonic.xp.security.acl.AccessControlList;
 @PublicApi
 public final class CreateContentParams
 {
+    private final ContentId contentId;
+
     private final PropertyTree data;
 
     private final ExtraDatas extraDatas;
@@ -54,6 +56,7 @@ public final class CreateContentParams
     private CreateContentParams( Builder builder )
     {
         this.data = builder.data;
+        this.contentId = builder.contentId;
         this.extraDatas = builder.extraDatas;
         this.type = builder.type;
         this.owner = builder.owner;
@@ -81,6 +84,11 @@ public final class CreateContentParams
     public static Builder create( final CreateContentParams source )
     {
         return new Builder( source );
+    }
+
+    public ContentId getContentId()
+    {
+        return contentId;
     }
 
     public PropertyTree getData()
@@ -175,6 +183,8 @@ public final class CreateContentParams
 
     public static final class Builder
     {
+        private ContentId contentId;
+
         private PropertyTree data;
 
         private ExtraDatas extraDatas;
@@ -217,6 +227,7 @@ public final class CreateContentParams
 
         private Builder( final CreateContentParams source )
         {
+            this.contentId = source.contentId;
             this.data = source.data;
             this.extraDatas = source.extraDatas;
             this.type = source.type;
@@ -264,6 +275,12 @@ public final class CreateContentParams
             this.language = source.getLanguage();
             this.contentPublishInfo = source.getPublishInfo();
             this.workflowInfo = source.getWorkflowInfo();*/
+        }
+
+        public Builder contentId( final ContentId contentId )
+        {
+            this.contentId = contentId;
+            return this;
         }
 
         public Builder contentData( final PropertyTree data )

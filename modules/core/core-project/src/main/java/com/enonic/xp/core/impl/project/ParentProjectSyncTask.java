@@ -80,8 +80,10 @@ public class ParentProjectSyncTask
                 {
                     LOG.warn( "parent project [{}] does not exist.", project.getParent() );
                 }
-
-                doSync( project, project.getParent() );
+                else
+                {
+                    doSync( project, project.getParent() );
+                }
             } ) );
 
     }
@@ -153,7 +155,8 @@ public class ParentProjectSyncTask
     {
         final CreateContentParams.Builder builder = CreateContentParams.create();
 
-        builder.contentData( source.getData() ).
+        builder.contentId( source.getId() ).
+            contentData( source.getData() ).
             extraDatas( source.getAllExtraData() ).
             type( source.getType() ).
             owner( source.getOwner() ).
