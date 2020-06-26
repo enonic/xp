@@ -1,5 +1,7 @@
 package com.enonic.xp.web.jetty.impl.session;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.session.DefaultSessionIdManager;
 import org.eclipse.jetty.server.session.SessionCacheFactory;
@@ -33,7 +35,14 @@ public class JettySessionStoreConfiguratorImpl
     @Override
     public void configure( final Server server )
     {
-        final DefaultSessionIdManager sessionManager = new DefaultSessionIdManager( server );
+        final DefaultSessionIdManager sessionManager = new DefaultSessionIdManager( server )
+        {
+            @Override
+            public String getExtendedId( final String clusterId, final HttpServletRequest request )
+            {
+                return clusterId;
+            }
+        };
 
         server.addBean( sessionDataStoreFactory );
         server.addBean( sessionCacheFactory );
