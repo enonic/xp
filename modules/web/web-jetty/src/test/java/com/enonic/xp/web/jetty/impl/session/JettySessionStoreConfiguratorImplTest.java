@@ -10,20 +10,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.enonic.xp.cluster.ClusterConfig;
-import com.enonic.xp.cluster.ClusterNodeId;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class JettySessionStoreConfiguratorImplTest
 {
-    @Mock
-    private ClusterConfig clusterConfig;
-
     @Mock
     private SessionDataStoreFactory sessionDataStoreFactory;
 
@@ -36,10 +29,8 @@ class JettySessionStoreConfiguratorImplTest
     @Test
     void configure()
     {
-        when( clusterConfig.name() ).thenReturn( ClusterNodeId.from( "localNodeName" ) );
-
         final JettySessionStoreConfiguratorImpl jettySessionStorageConfigurator =
-            new JettySessionStoreConfiguratorImpl( clusterConfig, sessionDataStoreFactory, sessionCacheFactory );
+            new JettySessionStoreConfiguratorImpl( sessionDataStoreFactory, sessionCacheFactory );
 
         jettySessionStorageConfigurator.configure( server );
 
@@ -49,6 +40,6 @@ class JettySessionStoreConfiguratorImplTest
         final ArgumentCaptor<SessionIdManager> captor = ArgumentCaptor.forClass( SessionIdManager.class );
         verify( server ).setSessionIdManager( captor.capture() );
 
-        assertEquals( "localNodeName", captor.getValue().getWorkerName() );
+        assertEquals( "", captor.getValue().getWorkerName() );
     }
 }
