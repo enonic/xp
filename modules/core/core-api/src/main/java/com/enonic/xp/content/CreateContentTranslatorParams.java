@@ -16,6 +16,8 @@ import com.enonic.xp.security.acl.AccessControlList;
 @PublicApi
 public class CreateContentTranslatorParams
 {
+    private final ContentId contentId;
+
     private final PropertyTree data;
 
     private final ExtraDatas extraDatas;
@@ -60,6 +62,7 @@ public class CreateContentTranslatorParams
     {
         final Instant now = Instant.now();
 
+        this.contentId = builder.contentId;
         this.data = builder.data;
         this.extraDatas = builder.extraDatas;
         this.type = builder.type;
@@ -90,6 +93,11 @@ public class CreateContentTranslatorParams
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public ContentId getContentId()
+    {
+        return contentId;
     }
 
     public PropertyTree getData()
@@ -194,6 +202,8 @@ public class CreateContentTranslatorParams
 
     public static final class Builder
     {
+        private ContentId contentId;
+
         private PropertyTree data;
 
         private ExtraDatas extraDatas;
@@ -234,6 +244,7 @@ public class CreateContentTranslatorParams
 
         private Builder( final CreateContentParams params )
         {
+            this.contentId = params.getContentId();
             this.data = params.getData();
             this.extraDatas = params.getExtraDatas();
             this.type = params.getType();
@@ -249,6 +260,12 @@ public class CreateContentTranslatorParams
             this.contentPublishInfo = params.getContentPublishInfo();
             this.processedIds = params.getProcessedIds();
             this.workflowInfo = params.getWorkflowInfo();
+        }
+
+        public Builder contentId( final ContentId contentId )
+        {
+            this.contentId = contentId;
+            return this;
         }
 
         public Builder contentData( final PropertyTree data )
