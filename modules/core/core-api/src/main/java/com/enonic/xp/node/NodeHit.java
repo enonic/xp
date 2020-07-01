@@ -2,6 +2,7 @@ package com.enonic.xp.node;
 
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.query.QueryExplanation;
+import com.enonic.xp.sortvalues.SortValuesProperty;
 
 public class NodeHit
 {
@@ -13,12 +14,15 @@ public class NodeHit
 
     private final HighlightedProperties highlight;
 
+    private final SortValuesProperty sort;
+
     private NodeHit( final Builder builder )
     {
         nodeId = builder.nodeId;
         score = builder.score;
         explanation = builder.explanation;
         highlight = builder.highlight.build();
+        sort = builder.sort;
     }
 
     public static Builder create()
@@ -46,6 +50,11 @@ public class NodeHit
         return highlight;
     }
 
+    public SortValuesProperty getSort()
+    {
+        return sort;
+    }
+
     public static final class Builder
     {
         private NodeId nodeId;
@@ -55,6 +64,8 @@ public class NodeHit
         private QueryExplanation explanation;
 
         private HighlightedProperties.Builder highlight = HighlightedProperties.create();
+
+        private SortValuesProperty sort;
 
         private Builder()
         {
@@ -84,6 +95,11 @@ public class NodeHit
             return this;
         }
 
+        public Builder sort( final SortValuesProperty sortValues )
+        {
+            this.sort = sortValues;
+            return this;
+        }
 
         public NodeHit build()
         {

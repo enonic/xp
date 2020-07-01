@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
+import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.search.sort.GeoDistanceSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -24,6 +25,11 @@ class GeoDistanceSortFunction
         GeoDistanceSortBuilder builder = new GeoDistanceSortBuilder( queryFieldName );
         builder.point( arguments.getLatitude(), arguments.getLongitude() );
         builder.order( SortOrder.valueOf( orderExpr.getDirection().toString() ) );
+
+        if ( arguments.getUnit() != null )
+        {
+            builder.unit( DistanceUnit.fromString( arguments.getUnit() ) );
+        }
 
         return builder;
     }

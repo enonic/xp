@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
@@ -10,8 +10,8 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.sortvalues.SortValuesProperty;
 
 final class FindContentIdsByQueryCommand
     extends AbstractContentCommand
@@ -35,19 +35,31 @@ final class FindContentIdsByQueryCommand
             addQueryFilters( createFilters() ).
             build();
 
+        final Map<ContentId, HighlightedProperties> highlight = new LinkedHashMap<>();
+
+        final Map<ContentId, SortValuesProperty> sortValues = new LinkedHashMap<>();
+
         final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
 
-        final Map<ContentId, HighlightedProperties> highlight = result.getNodeHits().stream().
-            filter( nodeHit -> nodeHit.getHighlight() != null && nodeHit.getHighlight().size() > 0 ).
-            collect( Collectors.toMap( hit -> ContentId.from( hit.getNodeId().toString() ), NodeHit::getHighlight ) );
+        result.getNodeHits().forEach( nodeHit -> {
+            if ( nodeHit.getHighlight() != null && !nodeHit.getHighlight().isEmpty() )
+            {
+                highlight.put( ContentId.from( nodeHit.getNodeId().toString() ), nodeHit.getHighlight() );
+            }
+
+            if ( nodeHit.getSort() != null && nodeHit.getSort().getValues() != null && !nodeHit.getSort().getValues().isEmpty() )
+            {
+                sortValues.put( ContentId.from( nodeHit.getNodeId().toString() ), nodeHit.getSort() );
+            }
+        } );
 
         return FindContentIdsByQueryResult.create().
             contents( ContentNodeHelper.toContentIds( result.getNodeIds() ) ).
             aggregations( result.getAggregations() ).
             highlight( highlight ).
+            sort( sortValues ).
             hits( result.getHits() ).
             totalHits( result.getTotalHits() ).
-
             build();
     }
 
