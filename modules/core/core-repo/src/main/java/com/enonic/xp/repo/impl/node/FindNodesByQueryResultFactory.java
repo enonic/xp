@@ -23,6 +23,7 @@ class FindNodesByQueryResultFactory
                 score( hit.getScore() ).
                 explanation( hit.getExplanation() ).
                 highlight( hit.getHighlightedProperties() ).
+                sort( hit.getSortValues() ).
                 build() );
         }
 

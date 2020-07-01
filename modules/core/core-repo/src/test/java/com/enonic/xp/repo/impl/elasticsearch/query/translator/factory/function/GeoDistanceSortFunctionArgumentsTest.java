@@ -15,12 +15,13 @@ public class GeoDistanceSortFunctionArgumentsTest
     public void argumentsRead()
     {
         final GeoDistanceSortFunctionArguments arguments =
-            new GeoDistanceSortFunctionArguments( List.of( ValueExpr.string( "myField" ), ValueExpr.string( "79,80" ) ) );
+            new GeoDistanceSortFunctionArguments( List.of( ValueExpr.string( "myField" ), ValueExpr.string( "79,80" ), ValueExpr.string( "km" ) ) );
 
         assertEquals( "myField", arguments.getFieldName() );
         assertEquals( "geoDistance", arguments.getFunctionName() );
         assertEquals( 79, arguments.getLatitude(), 0 );
         assertEquals( 80, arguments.getLongitude(), 0 );
+        assertEquals( "km", arguments.getUnit() );
     }
 
     @Test

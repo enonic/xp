@@ -54,7 +54,7 @@ public class SortBuilderFactoryTest
     {
         final Set<OrderExpr> orderExprs = new HashSet<>();
         orderExprs.add( new DynamicOrderExpr(
-            new FunctionExpr( "geoDistance", List.of( ValueExpr.string( "myField" ), ValueExpr.geoPoint( "-50,40" ) ) ),
+            new FunctionExpr( "geoDistance", List.of( ValueExpr.string( "myField" ), ValueExpr.geoPoint( "-50,40" ), ValueExpr.string( "km" ) ) ),
             OrderExpr.Direction.ASC ) );
 
         final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create( orderExprs );

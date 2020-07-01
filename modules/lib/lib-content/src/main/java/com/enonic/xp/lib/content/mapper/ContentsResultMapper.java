@@ -9,6 +9,7 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.sortvalues.SortValuesProperty;
 
 public final class ContentsResultMapper
     implements MapSerializable
@@ -21,21 +22,26 @@ public final class ContentsResultMapper
 
     private final ImmutableMap<ContentId, HighlightedProperties> highlight;
 
+    private final ImmutableMap<ContentId, SortValuesProperty> sortValues;
+
     public ContentsResultMapper( final Contents contents, final long total )
     {
         this.contents = contents;
         this.total = total;
         this.aggregations = null;
         this.highlight = null;
+        this.sortValues = null;
     }
 
     public ContentsResultMapper( final Contents contents, final long total, final Aggregations aggregations,
-                                 final ImmutableMap<ContentId, HighlightedProperties> highlight )
+                                 final ImmutableMap<ContentId, HighlightedProperties> highlight,
+                                 final ImmutableMap<ContentId, SortValuesProperty> sortValues )
     {
         this.contents = contents;
         this.total = total;
         this.aggregations = aggregations;
         this.highlight = highlight;
+        this.sortValues = sortValues;
     }
 
     @Override
@@ -54,7 +60,7 @@ public final class ContentsResultMapper
         for ( Content content : contents )
         {
             gen.map();
-            new ContentMapper( content ).serialize( gen );
+            new ContentMapper( content, sortValues != null ? sortValues.get( content.getId() ) : null ).serialize( gen );
             gen.end();
         }
         gen.end();
