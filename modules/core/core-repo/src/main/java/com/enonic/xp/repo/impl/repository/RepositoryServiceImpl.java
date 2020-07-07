@@ -339,6 +339,8 @@ public class RepositoryServiceImpl
             id( params.getRepositoryId() ).
             branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
             settings( params.getRepositorySettings() ).
+            data( params.getData() ).
+            attachments( params.getAttachedBinaries() ).
             build();
     }
 

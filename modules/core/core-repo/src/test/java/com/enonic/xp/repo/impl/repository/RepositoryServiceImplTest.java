@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.repository;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -12,6 +10,8 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.AttachedBinaries;
+import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
@@ -65,6 +65,27 @@ class RepositoryServiceImplTest
         final Repository repo = doCreateRepo( "fisk" );
         assertNotNull( repo );
         assertEquals( RepositoryId.from( "fisk" ), repo.getId() );
+    }
+
+    @Test
+    void create_with_data()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "string", "value" );
+
+        final Repository repo = doCreateRepo( "fisk", data, null );
+        assertEquals( data, repo.getData() );
+    }
+
+    @Test
+    void create_with_binaries()
+    {
+        final AttachedBinaries attachedBinaries = AttachedBinaries.create().
+            add( new AttachedBinary( BinaryReference.from( "123" ), "key" ) ).
+            build();
+
+        final Repository repo = doCreateRepo( "fisk", null, attachedBinaries );
+        assertEquals( attachedBinaries, repo.getAttachments() );
     }
 
     @Test
@@ -128,7 +149,7 @@ class RepositoryServiceImplTest
         ByteSource persistedAttachment = mockCurrentContext.callWith(
             () -> repositoryService.getBinary( RepositoryId.from( repoId ), BinaryReference.from( "image1.jpg" ) ) );
 
-        assertTrue( binarySource.contentEquals( persistedAttachment) );
+        assertTrue( binarySource.contentEquals( persistedAttachment ) );
     }
 
     @Test
@@ -219,6 +240,11 @@ class RepositoryServiceImplTest
 
     private Repository doCreateRepo( final String id )
     {
+        return doCreateRepo( id, null, null );
+    }
+
+    private Repository doCreateRepo( final String id, final PropertyTree data, final AttachedBinaries binaries )
+    {
         return ADMIN_CONTEXT.callWith( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
             repositoryId( RepositoryId.from( id ) ).
             rootPermissions( AccessControlList.create().
@@ -227,6 +253,8 @@ class RepositoryServiceImplTest
                     allowAll().
                     build() ).
                 build() ).
+            data( data ).
+            attachedBinaries( binaries ).
             build() ) );
     }
 

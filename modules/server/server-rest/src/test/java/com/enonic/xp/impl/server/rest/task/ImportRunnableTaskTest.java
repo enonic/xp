@@ -9,10 +9,13 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.impl.server.rest.model.ImportNodesRequestJson;
+import com.enonic.xp.node.AttachedBinaries;
+import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.NodeRepositoryService;
@@ -84,9 +87,16 @@ public class ImportRunnableTaskTest
 
         Mockito.when( this.exportService.importNodes( isA( ImportNodesParams.class ) ) ).thenReturn( nodeImportResult );
 
+        final PropertyTree repoData = new PropertyTree();
+        repoData.addString( "key", "value" );
+
         Mockito.when( this.repositoryService.list() ).thenReturn( Repositories.from( Repository.create().
             branches( Branch.from( "master" ) ).
             id( RepositoryId.from( "system-repo" ) ).
+            data( repoData ).
+            attachments( AttachedBinaries.create().
+                add( new AttachedBinary( BinaryReference.from( "123" ), "key" ) ).
+                build() ).
             build() ) );
 
         final ImportRunnableTask task =
@@ -97,9 +107,16 @@ public class ImportRunnableTaskTest
         Mockito.verify( repositoryService, Mockito.times( 1 ) ).invalidateAll();
 
         Mockito.verify( nodeRepositoryService, Mockito.times( 1 ) ).isInitialized( RepositoryId.from( "system-repo" ) );
-        Mockito.verify( nodeRepositoryService, Mockito.times( 1 ) ).create(
-            CreateRepositoryParams.create().repositoryId( RepositoryId.from( "system-repo" ) ).repositorySettings(
-                RepositorySettings.create().build() ).build() );
+
+        Mockito.verify( nodeRepositoryService, Mockito.times( 1 ) ).create( CreateRepositoryParams.create().
+            repositoryId( RepositoryId.from( "system-repo" ) ).
+            data( repoData ).
+            attachedBinaries( AttachedBinaries.create().
+                add( new AttachedBinary( BinaryReference.from( "123" ), "key" ) ).
+                build() ).
+            repositorySettings( RepositorySettings.create().
+                build() ).
+            build() );
 
         Mockito.verify( progressReporter, Mockito.times( 1 ) ).info( contentQueryArgumentCaptor.capture() );
         Mockito.verify( taskService, Mockito.times( 1 ) ).submitTask( Mockito.isA( RunnableTask.class ), Mockito.eq( "import" ) );

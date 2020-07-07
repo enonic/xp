@@ -111,6 +111,7 @@ public class ProjectServiceImpl
             setNodeService( nodeService ).
             setRepositoryService( repositoryService ).
             repositoryId( params.getName().getRepoId() ).
+            setData( createProjectData( params ) ).
             accessControlList( CreateProjectRootAccessListCommand.create().
                 projectName( params.getName() ).
                 build().
@@ -141,8 +142,8 @@ public class ProjectServiceImpl
                 execute();
         }
 
-        final ModifyProjectParams modifyProjectParams = ModifyProjectParams.create( params ).build();
-        return doModify( modifyProjectParams );
+        return Project.from( repositoryService.get( params.getName().getRepoId() ) );
+
     }
 
     @Override
@@ -340,6 +341,23 @@ public class ProjectServiceImpl
             securityService( securityService ).
             build().
             execute();
+    }
+
+    private PropertyTree createProjectData( final CreateProjectParams params )
+    {
+        PropertyTree data = new PropertyTree();
+
+        final PropertySet projectData = data.addSet( ProjectConstants.PROJECT_DATA_SET_NAME );
+
+        projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
+        projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
+
+      /*  if ( params.getParent() != null )  TODO: unlock after parent data merge
+        {
+            projectData.setString( ProjectConstants.PROJECT_PARENTS_PROPERTY, params.getParent().toString() );
+        }*/
+
+        return data;
     }
 
     private PropertyTree modifyProjectData( final ModifyProjectParams params, final PropertyTree data )
