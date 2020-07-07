@@ -100,6 +100,8 @@ public class ImportRunnableTask
                 final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
                     repositoryId( repository.getId() ).
                     repositorySettings( repository.getSettings() ).
+                    data( repository.getData() ).
+                    attachedBinaries( repository.getAttachments() ).
                     build();
                 this.nodeRepositoryService.create( createRepositoryParams );
             }
