@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.repository;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -68,6 +66,16 @@ class RepositoryServiceImplTest
     }
 
     @Test
+    void create_with_data()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "string", "value" );
+
+        final Repository repo = doCreateRepo( "fisk", data );
+        assertEquals( data, repo.getData() );
+    }
+
+    @Test
     void update_data()
     {
         final String repoId = "repo-with-data";
@@ -128,7 +136,7 @@ class RepositoryServiceImplTest
         ByteSource persistedAttachment = mockCurrentContext.callWith(
             () -> repositoryService.getBinary( RepositoryId.from( repoId ), BinaryReference.from( "image1.jpg" ) ) );
 
-        assertTrue( binarySource.contentEquals( persistedAttachment) );
+        assertTrue( binarySource.contentEquals( persistedAttachment ) );
     }
 
     @Test
@@ -219,6 +227,11 @@ class RepositoryServiceImplTest
 
     private Repository doCreateRepo( final String id )
     {
+        return doCreateRepo( id, null );
+    }
+
+    private Repository doCreateRepo( final String id, final PropertyTree data )
+    {
         return ADMIN_CONTEXT.callWith( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
             repositoryId( RepositoryId.from( id ) ).
             rootPermissions( AccessControlList.create().
@@ -227,6 +240,7 @@ class RepositoryServiceImplTest
                     allowAll().
                     build() ).
                 build() ).
+            data( data ).
             build() ) );
     }
 
