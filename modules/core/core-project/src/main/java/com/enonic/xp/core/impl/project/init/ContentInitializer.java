@@ -53,10 +53,13 @@ public final class ContentInitializer
 
     private final RepositoryService repositoryService;
 
+    private final PropertyTree data;
+
     private ContentInitializer( final Builder builder )
     {
         super( builder );
         this.repositoryService = builder.repositoryService;
+        this.data = builder.data;
     }
 
     public static Builder create()
@@ -97,6 +100,7 @@ public final class ContentInitializer
     {
         final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
             repositoryId( repositoryId ).
+            data( data ).
             rootPermissions( ContentConstants.CONTENT_REPO_DEFAULT_ACL ).
             rootChildOrder( ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER ).
             build();
@@ -143,9 +147,17 @@ public final class ContentInitializer
     {
         private RepositoryService repositoryService;
 
+        private PropertyTree data;
+
         public Builder setRepositoryService( final RepositoryService repositoryService )
         {
             this.repositoryService = repositoryService;
+            return this;
+        }
+
+        public Builder setData( final PropertyTree data )
+        {
+            this.data = data;
             return this;
         }
 
