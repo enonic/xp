@@ -425,6 +425,7 @@ public class DumpServiceImpl
         final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
             repositoryId( repository.getId() ).
             repositorySettings( repository.getSettings() ).
+            data( repository.getData() ).
             build();
 
         this.repositoryService.createRepository( createRepositoryParams );
