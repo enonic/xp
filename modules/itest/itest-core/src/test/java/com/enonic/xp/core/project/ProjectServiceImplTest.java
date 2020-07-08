@@ -21,6 +21,8 @@ import com.enonic.xp.core.impl.project.ProjectAccessHelper;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodePath;
@@ -51,7 +53,6 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -171,6 +172,28 @@ class ProjectServiceImplTest
         ADMIN_CONTEXT.runWith( () -> {
             final Repository pro = repositoryService.get( projectRepoId );
             assertNotNull( pro );
+        } );
+    }
+
+    @Test
+    void create_with_data()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+        final String displayName = "test display name";
+        final String description = "test description";
+
+        final PropertyTree data = new PropertyTree();
+
+        final PropertySet projectData = data.addSet( ProjectConstants.PROJECT_DATA_SET_NAME );
+
+        projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, displayName );
+        projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, description );
+
+        ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), displayName, description ) );
+
+        ADMIN_CONTEXT.runWith( () -> {
+            final Repository projectRepo = repositoryService.get( projectRepoId );
+            assertEquals( data, projectRepo.getData() );
         } );
     }
 
@@ -668,7 +691,6 @@ class ProjectServiceImplTest
         ADMIN_CONTEXT.runWith( () -> {
             assertNull( projectService.getIcon( project.getName() ) );
 
-
             projectService.modifyIcon( ModifyProjectIconParams.create().
                 name( project.getName() ).
                 icon( CreateAttachment.create().
@@ -812,6 +834,17 @@ class ProjectServiceImplTest
     private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions )
     {
         return this.doCreateProject( name, projectPermissions, false );
+    }
+
+    private Project doCreateProject( final ProjectName name, final String displayName, final String description )
+    {
+        final Project project = this.projectService.create( CreateProjectParams.create().
+            name( name ).
+            description( description ).
+            displayName( displayName ).
+            build() );
+
+        return project;
     }
 
     private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions,
