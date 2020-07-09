@@ -18,7 +18,9 @@ import com.enonic.xp.web.impl.serializer.ResponseSerializationServiceImpl;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class WebDispatcherServletTest
     extends JettyTestSupport
@@ -135,13 +137,13 @@ public class WebDispatcherServletTest
     public void testParameters()
         throws Exception
     {
-        final HttpRequest request = newRequest( "/site/master/a/b?a=1&b=2&b=3" ).
+        final HttpRequest request = newRequest( "/site/master/a/b?a=1&b=2&b=3&b=3" ).
             GET().
             build();
 
         this.handler.verifier = req -> {
-            assertEquals( "1", String.join( ",", req.getParams().get( "a" ) ) );
-            assertEquals( "2,3", String.join( ",", req.getParams().get( "b" ) ) );
+            assertAll( () -> assertIterableEquals( List.of( "1" ), req.getParams().get( "a" ) ),
+                       () -> assertIterableEquals( List.of( "2", "3", "3" ), req.getParams().get( "b" ) ) );
         };
 
         final HttpResponse response = callRequest( request );
