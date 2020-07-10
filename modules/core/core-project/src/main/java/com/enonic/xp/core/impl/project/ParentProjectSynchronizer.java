@@ -77,7 +77,7 @@ public class ParentProjectSynchronizer
 
                 for ( final Content content : result.getContents() )
                 {
-                    final Content synchedContent = this.doSync( content );
+                    final Content synchedContent = this.doSync( content, false );
 
                     if ( synchedContent != null )
                     {
@@ -91,20 +91,34 @@ public class ParentProjectSynchronizer
         } );
     }
 
-    public void sync( final ContentId contentId )
+    public void syncWithParents( final ContentId contentId )
     {
-        this.doSync( sourceContext.callWith( () -> this.contentService.getById( contentId ) ) );
+        this.doSync( sourceContext.callWith( () -> this.contentService.getById( contentId ) ), false );
     }
 
-    private Content doSync( final Content content )
+    private Content doSync( final ContentPath contentPath, final boolean force )
+    {
+        return this.doSync( sourceContext.callWith( () -> this.contentService.getByPath( contentPath ) ), force );
+    }
+
+
+    private Content doSync( final Content content, final boolean force )
     {
         return sourceContext.callWith( () -> {
 
-            if ( WorkflowState.READY.equals( content.getWorkflowInfo().getState() ) )
+            if ( force || WorkflowState.READY.equals( content.getWorkflowInfo().getState() ) )
             {
                 final CreateContentParams params = createParams( content );
 
                 return targetContext.callWith( () -> {
+
+                    final ContentPath parentPath = content.getPath().getParentPath();
+
+                    if ( !parentPath.isRoot() && !contentService.contentExists( parentPath ) )
+                    {
+                        this.doSync( parentPath, true );
+                    }
+
                     if ( !contentService.contentExists( content.getPath() ) )
                     {
                         try
@@ -153,7 +167,8 @@ public class ParentProjectSynchronizer
                         build();
                 } ).collect( Collectors.toSet() ) ) ).
             childOrder( source.getChildOrder() ).
-            language( source.getLanguage() );
+            language( source.getLanguage() ).
+            workflowInfo( source.getWorkflowInfo() );
 
         return builder.build();
     }
