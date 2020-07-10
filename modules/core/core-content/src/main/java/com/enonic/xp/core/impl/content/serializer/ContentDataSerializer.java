@@ -44,6 +44,7 @@ import static com.enonic.xp.content.ContentPropertyNames.CREATOR;
 import static com.enonic.xp.content.ContentPropertyNames.DATA;
 import static com.enonic.xp.content.ContentPropertyNames.DISPLAY_NAME;
 import static com.enonic.xp.content.ContentPropertyNames.EXTRA_DATA;
+import static com.enonic.xp.content.ContentPropertyNames.INHERITED;
 import static com.enonic.xp.content.ContentPropertyNames.LANGUAGE;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIER;
@@ -90,6 +91,7 @@ public class ContentDataSerializer
         final PropertySet contentAsData = propertyTree.getRoot();
 
         contentAsData.addBoolean( VALID, params.isValid() );
+        contentAsData.addBoolean( INHERITED, params.isInherited() );
         contentAsData.ifNotNull().addString( DISPLAY_NAME, params.getDisplayName() );
         contentAsData.ifNotNull().addString( TYPE, params.getType() != null ? params.getType().toString() : null );
         contentAsData.ifNotNull().addInstant( CREATED_TIME, params.getCreatedTime() );
@@ -173,6 +175,7 @@ public class ContentDataSerializer
 
         builder.displayName( contentAsSet.getString( DISPLAY_NAME ) );
         builder.valid( contentAsSet.getBoolean( VALID ) != null ? contentAsSet.getBoolean( ContentPropertyNames.VALID ) : false );
+        builder.inherited( contentAsSet.getBoolean( INHERITED ) != null ? contentAsSet.getBoolean( INHERITED ) : false );
         builder.data( contentAsSet.getSet( DATA ).toTree() );
 
         extractUserInfo( contentAsSet, builder );
@@ -191,6 +194,7 @@ public class ContentDataSerializer
     private void addMetadata( final UpdateContentTranslatorParams params, final PropertySet contentAsData, final Content content )
     {
         contentAsData.setBoolean( ContentPropertyNames.VALID, content.isValid() );
+        contentAsData.setBoolean( INHERITED, content.isInherited() );
         contentAsData.ifNotNull().addString( DISPLAY_NAME, content.getDisplayName() );
         contentAsData.ifNotNull().addString( TYPE, content.getType().toString() );
         contentAsData.ifNotNull().addString( OWNER, content.getOwner() != null ? content.getOwner().toString() : null );

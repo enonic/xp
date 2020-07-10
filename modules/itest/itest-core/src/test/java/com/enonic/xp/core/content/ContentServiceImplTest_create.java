@@ -232,6 +232,22 @@ public class ContentServiceImplTest_create
     }
 
     @Test
+    public void create_inherited()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            inherited( true ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+        assertTrue( content.isInherited() );
+    }
+
+    @Test
     public void audit_data()
     {
         final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
