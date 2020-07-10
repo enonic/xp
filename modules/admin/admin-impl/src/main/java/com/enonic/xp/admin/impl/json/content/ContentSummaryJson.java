@@ -24,6 +24,8 @@ public class ContentSummaryJson
 
     private final boolean isPage;
 
+    private final boolean inherited;
+
     private final ChildOrderJson childOrderJson;
 
     private final ContentPublishInfoJson publish;
@@ -40,6 +42,7 @@ public class ContentSummaryJson
         this.thumbnailJson = content.hasThumbnail() ? new ThumbnailJson( content.getThumbnail() ) : null;
         this.isSite = content.isSite();
         this.isPage = content.hasPage();
+        this.inherited = content.isInherited();
         this.childOrderJson = content.getChildOrder() != null ? new ChildOrderJson( content.getChildOrder() ) : null;
         this.contentState = content.getContentState().toString();
         this.publish = content.getPublishInfo() != null ? new ContentPublishInfoJson( content.getPublishInfo() ) : null;
@@ -143,6 +146,11 @@ public class ContentSummaryJson
     public boolean getIsPage()
     {
         return isPage;
+    }
+
+    public boolean getInherited()
+    {
+        return inherited;
     }
 
     public String getContentState()

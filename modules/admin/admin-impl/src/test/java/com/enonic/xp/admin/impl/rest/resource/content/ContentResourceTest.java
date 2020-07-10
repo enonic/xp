@@ -696,6 +696,20 @@ public class ContentResourceTest
     }
 
     @Test
+    public void create_content_inherited()
+        throws Exception
+    {
+        Content content = createContent( "content-id", "content-path", "myapplication:content-type", true );
+        Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ) ) ).thenReturn( content );
+
+        String jsonString = request().path( "content/create" ).
+            entity( readFromFile( "create_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "create_content_inherited_success.json", jsonString );
+    }
+
+    @Test
     public void update_content_new_name_occurred()
         throws Exception
     {
@@ -760,6 +774,23 @@ public class ContentResourceTest
         Mockito.verify( contentService, Mockito.times( 0 ) ).rename( Mockito.isA( RenameContentParams.class ) );
 
         assertJson( "update_content_success.json", jsonString );
+    }
+
+    @Test
+    public void update_content_inherited_success()
+        throws Exception
+    {
+        Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
+        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
+        Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
+        Mockito.when( contentService.getPermissionsById( content.getId() ) ).thenReturn( AccessControlList.empty() );
+        String jsonString = request().path( "content/update" ).
+            entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        Mockito.verify( contentService, Mockito.times( 0 ) ).rename( Mockito.isA( RenameContentParams.class ) );
+
+        assertJson( "update_content_inherited_success.json", jsonString );
     }
 
     @Test
@@ -2428,6 +2459,11 @@ public class ContentResourceTest
     private Content createContent( final String id, final String name, final String contentTypeName )
     {
         return this.createContent( id, ContentPath.ROOT, name, contentTypeName );
+    }
+
+    private Content createContent( final String id, final String name, final String contentTypeName, final boolean inherited )
+    {
+        return Content.create( this.createContent( id, ContentPath.ROOT, name, contentTypeName ) ).inherited( inherited ).build();
     }
 
     private Site createSite( final String id, final String name, final String contentTypeName, SiteConfigs siteConfigs )

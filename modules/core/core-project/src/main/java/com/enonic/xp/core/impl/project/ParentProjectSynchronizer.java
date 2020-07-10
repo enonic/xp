@@ -138,6 +138,7 @@ public class ParentProjectSynchronizer
             requireValid( false ).
             createSiteTemplateFolder( false ).
             inheritPermissions( true ).
+            inherited( true ).
             createAttachments( CreateAttachments.from( source.getAttachments().
                 stream().
                 map( attachment -> {
