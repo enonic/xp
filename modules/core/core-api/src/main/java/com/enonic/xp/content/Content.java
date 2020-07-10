@@ -67,6 +67,8 @@ public class Content
 
     private final boolean inheritPermissions;
 
+    private final boolean inherited;
+
     private final Locale language;
 
     private final ContentState contentState;
@@ -111,6 +113,7 @@ public class Content
         this.page = builder.page;
         this.thumbnail = builder.thumbnail;
         this.hasChildren = builder.hasChildren;
+        this.inherited = builder.inherited;
         this.childOrder = builder.childOrder;
         this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
@@ -268,6 +271,11 @@ public class Content
         return this.hasChildren;
     }
 
+    public boolean isInherited()
+    {
+        return inherited;
+    }
+
     public boolean isSite()
     {
         return this instanceof Site;
@@ -347,29 +355,18 @@ public class Content
 
         final Content other = (Content) o;
 
-        return Objects.equals( id, other.id ) &&
-            Objects.equals( name, other.name ) &&
-            Objects.equals( parentPath, other.parentPath ) &&
-            Objects.equals( displayName, other.displayName ) &&
-            Objects.equals( type, other.type ) &&
-            Objects.equals( valid, other.valid ) &&
-            Objects.equals( modifier, other.modifier ) &&
-            Objects.equals( creator, other.creator ) &&
-            Objects.equals( owner, other.owner ) &&
-            Objects.equals( createdTime, other.createdTime ) &&
-            Objects.equals( modifiedTime, other.modifiedTime ) &&
-            Objects.equals( hasChildren, other.hasChildren ) &&
-            Objects.equals( inheritPermissions, other.inheritPermissions ) &&
-            Objects.equals( childOrder, other.childOrder ) &&
-            Objects.equals( thumbnail, other.thumbnail ) &&
-            Objects.equals( permissions, other.permissions ) &&
-            Objects.equals( attachments, other.attachments ) &&
-            Objects.equals( data, other.data ) &&
-            Objects.equals( extraDatas, other.extraDatas ) &&
-            Objects.equals( page, other.page ) &&
-            Objects.equals( language, other.language ) &&
-            Objects.equals( contentState, other.contentState ) && Objects.equals( publishInfo, other.publishInfo ) &&
-            Objects.equals( processedReferences, other.processedReferences ) &&
+        return Objects.equals( id, other.id ) && Objects.equals( name, other.name ) && Objects.equals( parentPath, other.parentPath ) &&
+            Objects.equals( displayName, other.displayName ) && Objects.equals( type, other.type ) &&
+            Objects.equals( valid, other.valid ) && Objects.equals( modifier, other.modifier ) &&
+            Objects.equals( creator, other.creator ) && Objects.equals( owner, other.owner ) &&
+            Objects.equals( createdTime, other.createdTime ) && Objects.equals( modifiedTime, other.modifiedTime ) &&
+            Objects.equals( hasChildren, other.hasChildren ) && Objects.equals( inherited, other.inherited ) &&
+            Objects.equals( inheritPermissions, other.inheritPermissions ) && Objects.equals( childOrder, other.childOrder ) &&
+            Objects.equals( thumbnail, other.thumbnail ) && Objects.equals( permissions, other.permissions ) &&
+            Objects.equals( attachments, other.attachments ) && Objects.equals( data, other.data ) &&
+            Objects.equals( extraDatas, other.extraDatas ) && Objects.equals( page, other.page ) &&
+            Objects.equals( language, other.language ) && Objects.equals( contentState, other.contentState ) &&
+            Objects.equals( publishInfo, other.publishInfo ) && Objects.equals( processedReferences, other.processedReferences ) &&
             Objects.equals( workflowInfo, other.workflowInfo );
     }
 
@@ -377,8 +374,8 @@ public class Content
     public int hashCode()
     {
         return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
-                             hasChildren, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, extraDatas, page,
-                             language, contentState, publishInfo, processedReferences, workflowInfo );
+                             hasChildren, inherited, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, extraDatas,
+                             page, language, contentState, publishInfo, processedReferences, workflowInfo );
     }
 
     public static class Builder<BUILDER extends Builder>
@@ -418,6 +415,8 @@ public class Content
         protected Thumbnail thumbnail;
 
         protected boolean hasChildren;
+
+        protected boolean inherited;
 
         protected ChildOrder childOrder;
 
@@ -459,6 +458,7 @@ public class Content
             this.creator = source.creator;
             this.modifier = source.modifier;
             this.hasChildren = source.hasChildren;
+            this.inherited = source.inherited;
             this.page = source.page != null ? source.page.copy() : null;
             this.thumbnail = source.thumbnail;
             this.childOrder = source.childOrder;
@@ -605,6 +605,12 @@ public class Content
         public BUILDER hasChildren( final boolean hasChildren )
         {
             this.hasChildren = hasChildren;
+            return (BUILDER) this;
+        }
+
+        public BUILDER inherited( final boolean inherited )
+        {
+            this.inherited = inherited;
             return (BUILDER) this;
         }
 

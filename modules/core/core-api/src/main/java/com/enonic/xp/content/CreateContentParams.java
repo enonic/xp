@@ -53,6 +53,8 @@ public final class CreateContentParams
 
     private final boolean createSiteTemplateFolder;
 
+    private final boolean inherited;
+
     private CreateContentParams( Builder builder )
     {
         this.data = builder.data;
@@ -74,6 +76,7 @@ public final class CreateContentParams
         this.processedIds = builder.processedIds.build();
         this.workflowInfo = builder.workflowInfo;
         this.createSiteTemplateFolder = builder.createSiteTemplateFolder;
+        this.inherited = builder.inherited;
     }
 
     public static Builder create()
@@ -181,6 +184,11 @@ public final class CreateContentParams
         return createSiteTemplateFolder;
     }
 
+    public boolean isInherited()
+    {
+        return inherited;
+    }
+
     public static final class Builder
     {
         private ContentId contentId;
@@ -221,6 +229,8 @@ public final class CreateContentParams
 
         private boolean createSiteTemplateFolder = true;
 
+        private boolean inherited = false;
+
         private Builder()
         {
         }
@@ -244,37 +254,7 @@ public final class CreateContentParams
             this.contentPublishInfo = source.contentPublishInfo;
             this.workflowInfo = source.workflowInfo;
             this.createSiteTemplateFolder = source.createSiteTemplateFolder;
-        }
-
-        private Builder( final Content source )
-        {
-          /*  this.data = source.getData();
-            this.extraDatas = source.getAllExtraData();
-            this.type = source.getType();
-            this.owner = source.getOwner();
-            this.displayName = source.getDisplayName();
-            this.name = source.getName();
-            this.parentPath = source.getParentPath();
-            this.requireValid = false;
-            this.permissions = source.getPermissions();
-            this.inheritPermissions = source.inheritsPermissions();
-            this.createAttachments = source.getAttachments().
-                stream().
-                map( attachment -> {
-                    final ByteSource binary = contentService.getBinary( this.getId(), attachment.getBinaryReference() );
-
-                    final CreateAttachment createAttachment = CreateAttachment.create().
-                        name( attachment.getName() ).
-                        label( attachment.getLabel() ).
-                        mimeType( attachment.getMimeType() ).
-                        text( attachment.getTextContent() ).
-                        byteSource( binary ).
-                        build();
-                }).collect( Collectors.toSet() );
-                this.childOrder = source.getChildOrder();
-            this.language = source.getLanguage();
-            this.contentPublishInfo = source.getPublishInfo();
-            this.workflowInfo = source.getWorkflowInfo();*/
+            this.inherited = source.inherited;
         }
 
         public Builder contentId( final ContentId contentId )
@@ -395,6 +375,12 @@ public final class CreateContentParams
         public Builder createSiteTemplateFolder( final boolean createSiteTemplateFolder )
         {
             this.createSiteTemplateFolder = createSiteTemplateFolder;
+            return this;
+        }
+
+        public Builder inherited( final boolean inherited )
+        {
+            this.inherited = inherited;
             return this;
         }
 

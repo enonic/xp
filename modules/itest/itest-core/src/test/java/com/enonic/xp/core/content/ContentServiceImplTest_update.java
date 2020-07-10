@@ -41,6 +41,7 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.acl.AccessControlList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -144,6 +145,33 @@ public class ContentServiceImplTest_update
         assertEquals( "This is my content", storedContent.getDisplayName() );
         assertEquals( "value-updated", storedContent.getData().getString( "testString" ) );
         assertEquals( "value", storedContent.getData().getString( "testString2" ) );
+    }
+
+    @Test
+    public void update_content_inherited()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            inherited( true ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final UpdateContentParams updateContentParams = new UpdateContentParams();
+        updateContentParams.
+            contentId( content.getId() ).
+            editor( edit -> {
+            } );
+
+        this.contentService.update( updateContentParams );
+
+        final Content storedContent = this.contentService.getById( content.getId() );
+
+        assertFalse( storedContent.isInherited() );
     }
 
 

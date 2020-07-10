@@ -58,6 +58,8 @@ public class CreateContentTranslatorParams
 
     private final WorkflowInfo workflowInfo;
 
+    private final boolean inherited;
+
     private CreateContentTranslatorParams( Builder builder )
     {
         final Instant now = Instant.now();
@@ -83,6 +85,7 @@ public class CreateContentTranslatorParams
         this.contentPublishInfo = builder.contentPublishInfo;
         this.processedIds = builder.processedIds;
         this.workflowInfo = builder.workflowInfo;
+        this.inherited = builder.inherited;
     }
 
     public static Builder create( final CreateContentParams source )
@@ -200,6 +203,11 @@ public class CreateContentTranslatorParams
         return workflowInfo;
     }
 
+    public boolean isInherited()
+    {
+        return inherited;
+    }
+
     public static final class Builder
     {
         private ContentId contentId;
@@ -238,6 +246,8 @@ public class CreateContentTranslatorParams
 
         private WorkflowInfo workflowInfo;
 
+        private boolean inherited;
+
         private Builder()
         {
         }
@@ -260,6 +270,7 @@ public class CreateContentTranslatorParams
             this.contentPublishInfo = params.getContentPublishInfo();
             this.processedIds = params.getProcessedIds();
             this.workflowInfo = params.getWorkflowInfo();
+            this.inherited = params.isInherited();
         }
 
         public Builder contentId( final ContentId contentId )
@@ -373,6 +384,12 @@ public class CreateContentTranslatorParams
         public Builder workflowInfo( final WorkflowInfo workflowInfo )
         {
             this.workflowInfo = workflowInfo;
+            return this;
+        }
+
+        public Builder inherited( final boolean inherited )
+        {
+            this.inherited = inherited;
             return this;
         }
 
