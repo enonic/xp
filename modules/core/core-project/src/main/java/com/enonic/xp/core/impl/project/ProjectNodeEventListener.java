@@ -115,7 +115,7 @@ public class ProjectNodeEventListener
                         sourceProject( sourceProject ).
                         contentService( contentService ).build();
 
-                    parentProjectSynchronizer.sync( ContentId.from( nodeMap.get( "id" ) ) );
+                    parentProjectSynchronizer.syncWithParents( ContentId.from( nodeMap.get( "id" ) ) );
 
                 } );
         } );
