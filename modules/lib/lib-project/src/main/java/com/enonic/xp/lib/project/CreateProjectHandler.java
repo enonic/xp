@@ -72,6 +72,7 @@ public final class CreateProjectHandler
             build();
     }
 
+    @Override
     protected void validate()
     {
         Preconditions.checkArgument( !nullToEmpty( this.displayName ).isBlank(), "Project display name is required" );

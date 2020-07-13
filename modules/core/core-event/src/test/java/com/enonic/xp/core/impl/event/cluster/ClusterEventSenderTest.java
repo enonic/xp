@@ -13,7 +13,7 @@ import com.enonic.xp.event.Event;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,6 +53,6 @@ class ClusterEventSenderTest
 
         this.clusterEventSender.onEvent( event );
 
-        verifyZeroInteractions( topic );
+        verifyNoInteractions( topic );
     }
 }

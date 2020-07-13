@@ -62,11 +62,13 @@ public class WebSessionStoreConfigServiceImpl
         context.disableComponent( enabledComponent );
     }
 
+    @Override
     public int getSavePeriodSeconds()
     {
         return webSessionstoreConfig.savePeriodSeconds();
     }
 
+    @Override
     public int getGracePeriodSeconds()
     {
         return webSessionstoreConfig.gracePeriodSeconds();

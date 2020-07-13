@@ -94,6 +94,7 @@ abstract class AbstractProjectRolesCommand
         }
 
 
+        @Override
         void validate()
         {
             Preconditions.checkNotNull( securityService, "securityService cannot be null" );

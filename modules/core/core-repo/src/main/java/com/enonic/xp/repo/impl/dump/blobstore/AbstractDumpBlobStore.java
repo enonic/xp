@@ -21,11 +21,13 @@ public abstract class AbstractDumpBlobStore
         this.pathRef = pathRef;
     }
 
+    @Override
     public DumpBlobRecord getRecord( final Segment segment, final BlobKey key )
     {
         return new DumpBlobRecord( segment, key, this );
     }
 
+    @Override
     public BlobKey addRecord( final Segment segment, final ByteSource in )
         throws BlobStoreException
     {

@@ -28,7 +28,7 @@ public class FormItemPath
     public static FormItemPath from( final FormItemPath parentPath, final String name )
     {
         Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
-        Preconditions.checkNotNull( parentPath, "name cannot be null" );
+        Preconditions.checkNotNull( name, "name cannot be null" );
 
         return new FormItemPath( parentPath, name );
     }
@@ -51,7 +51,7 @@ public class FormItemPath
     public FormItemPath( final FormItemPath parentPath, final String name )
     {
         Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
-        Preconditions.checkNotNull( parentPath, "name cannot be null" );
+        Preconditions.checkNotNull( name, "name cannot be null" );
 
         this.parentPath = parentPath;
         final ImmutableList.Builder<String> elementBuilder = ImmutableList.builder();

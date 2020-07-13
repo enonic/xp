@@ -4,7 +4,7 @@ public enum ProjectReadAccessType
 {
     PUBLIC( "public" ), PRIVATE( "private" ), CUSTOM( "custom" );
 
-    private String value;
+    private final String value;
 
     private ProjectReadAccessType( final String value )
     {

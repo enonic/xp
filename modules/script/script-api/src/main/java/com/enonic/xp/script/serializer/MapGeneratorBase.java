@@ -1,9 +1,10 @@
 package com.enonic.xp.script.serializer;
 
+import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
@@ -16,14 +17,9 @@ public abstract class MapGeneratorBase
 {
     private Object root;
 
-    private final Stack<Object> stack;
+    private final Deque<Object> stack = new ArrayDeque<>();
 
     private Object current;
-
-    public MapGeneratorBase()
-    {
-        this.stack = new Stack<>();
-    }
 
     protected void initRoot()
     {
@@ -80,7 +76,7 @@ public abstract class MapGeneratorBase
 
     private void setCurrent( final Object object )
     {
-        this.stack.push( this.current );
+        this.stack.addFirst( this.current );
         this.current = object;
     }
 
@@ -185,7 +181,7 @@ public abstract class MapGeneratorBase
     {
         if ( !this.stack.isEmpty() )
         {
-            this.current = this.stack.pop();
+            this.current = this.stack.removeFirst();
         }
 
         return this;

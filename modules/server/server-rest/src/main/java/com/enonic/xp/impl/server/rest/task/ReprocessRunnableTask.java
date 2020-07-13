@@ -136,6 +136,7 @@ public class ReprocessRunnableTask
             return this;
         }
 
+        @Override
         public ReprocessRunnableTask build()
         {
             return new ReprocessRunnableTask( this );

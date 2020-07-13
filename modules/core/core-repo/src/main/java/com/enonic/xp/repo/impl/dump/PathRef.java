@@ -67,7 +67,7 @@ public final class PathRef
     @Override
     public boolean equals( final Object o )
     {
-        return this == o || o instanceof PathRef && path.equals( ( (PathRef) o ).path );
+        return this == o || ( o instanceof PathRef && path.equals( ( (PathRef) o ).path ) );
     }
 
     @Override

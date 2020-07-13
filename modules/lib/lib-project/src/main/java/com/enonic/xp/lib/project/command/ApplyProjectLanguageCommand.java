@@ -65,6 +65,7 @@ public final class ApplyProjectLanguageCommand
             return this;
         }
 
+        @Override
         void validate()
         {
             super.validate();

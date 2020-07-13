@@ -205,8 +205,9 @@ public class VersionTableVacuumCommand
                     LOG.debug( "Other version found in branch for for [" + version.getNodeId() + "/ " + version.getNodeVersionId() + "]" );
                 }
                 return version.getNodeCommitId() == null;
+            default:
+                return false;
         }
-        return false;
     }
 
     private BRANCH_CHECK_RESULT findVersionsInBranches( final Repository repository, final NodeVersionMetadata versionMetadata )

@@ -333,7 +333,7 @@ public final class ExceptionRendererImpl
 
     private boolean isUnauthorizedError( final HttpStatus httpStatus )
     {
-        return ( HttpStatus.UNAUTHORIZED == httpStatus || ( HttpStatus.FORBIDDEN == httpStatus ) && !isAuthenticated() );
+        return HttpStatus.UNAUTHORIZED == httpStatus || ( HttpStatus.FORBIDDEN == httpStatus && !isAuthenticated() );
     }
 
     private boolean isAuthenticated()

@@ -23,21 +23,25 @@ public class FileDumpBlobStore
         this.baseDir = baseDir;
     }
 
+    @Override
     public DumpBlobRecord getRecord( final Segment segment, final BlobKey key )
     {
         return new DumpBlobRecord( segment, key, this );
     }
 
+    @Override
     protected ByteSource getBytes( final Segment segment, final BlobKey key )
     {
         return MoreFiles.asByteSource( getBlobRef( segment, key ).asPath( baseDir ) );
     }
 
+    @Override
     protected ByteSink getByteSink( final Segment segment, final BlobKey key )
     {
         return MoreFiles.asByteSink( getBlobRef( segment, key ).asPath( baseDir ) );
     }
 
+    @Override
     protected void writeRecord( final Segment segment, final BlobKey key, final ByteSource in )
         throws IOException
     {
