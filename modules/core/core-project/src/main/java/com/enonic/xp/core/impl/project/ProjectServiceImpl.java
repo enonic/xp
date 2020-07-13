@@ -89,12 +89,12 @@ public class ProjectServiceImpl
     @Override
     public Project create( CreateProjectParams params )
     {
-        return callWithCreateContext( ( () -> {
+        return callWithCreateContext( () -> {
             final Project result = doCreate( params );
             LOG.debug( "Project created: " + params.getName() );
 
             return result;
-        } ) );
+        } );
     }
 
     private Project doCreate( final CreateProjectParams params )
@@ -148,12 +148,12 @@ public class ProjectServiceImpl
     @Override
     public Project modify( ModifyProjectParams params )
     {
-        return callWithUpdateContext( ( () -> {
+        return callWithUpdateContext( () -> {
             final Project result = doModify( params );
             LOG.debug( "Project updated: " + params.getName() );
 
             return result;
-        } ), params.getName() );
+        }, params.getName() );
     }
 
     private Project doModify( final ModifyProjectParams params )
@@ -181,12 +181,12 @@ public class ProjectServiceImpl
     @Override
     public void modifyIcon( final ModifyProjectIconParams params )
     {
-        callWithUpdateContext( ( () -> {
+        callWithUpdateContext( () -> {
             doModifyIcon( params );
             LOG.debug( "Icon for project updated: " + params.getName() );
 
             return true;
-        } ), params.getName() );
+        }, params.getName() );
     }
 
     private void doModifyIcon( final ModifyProjectIconParams params )
@@ -215,9 +215,10 @@ public class ProjectServiceImpl
         repositoryService.updateRepository( updateParams );
     }
 
+    @Override
     public ByteSource getIcon( final ProjectName projectName )
     {
-        return callWithGetContext( ( () -> doGetIcon( projectName ) ), projectName );
+        return callWithGetContext( () -> doGetIcon( projectName ), projectName );
     }
 
     private ByteSource doGetIcon( final ProjectName projectName )

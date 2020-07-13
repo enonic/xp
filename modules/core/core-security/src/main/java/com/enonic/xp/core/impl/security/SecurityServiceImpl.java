@@ -118,10 +118,6 @@ public final class SecurityServiceImpl
     private static final Pattern SU_PASSWORD_PATTERN =
         Pattern.compile( "(?:\\{(sha1|sha256|sha512|md5)\\})?(\\S+)", Pattern.CASE_INSENSITIVE );
 
-    private static final long INITIALIZATION_CHECK_PERIOD = 1000;
-
-    private static final long INITIALIZATION_CHECK_MAX_COUNT = 30;
-
     private final Clock clock;
 
     private final PasswordEncoder passwordEncoder = new PBKDF2Encoder();

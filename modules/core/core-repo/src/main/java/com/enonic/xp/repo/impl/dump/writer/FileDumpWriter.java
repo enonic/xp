@@ -34,6 +34,7 @@ public class FileDumpWriter
         return new FileDumpWriter( blobStore, filePaths, dumpPath, new FileDumpBlobStore( dumpPath ) );
     }
 
+    @Override
     protected OutputStream openMetaFileStream( final PathRef metaFile )
         throws IOException
     {

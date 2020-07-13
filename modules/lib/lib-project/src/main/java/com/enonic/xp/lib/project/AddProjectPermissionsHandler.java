@@ -7,7 +7,7 @@ import com.enonic.xp.project.ProjectPermissions;
 public final class AddProjectPermissionsHandler
     extends ModifyProjectPermissionsHandler
 {
-
+    @Override
     protected ProjectPermissions merge( final ProjectPermissions permissionsBeforeUpdate, final ProjectPermissions paramPermissions )
     {
         final ProjectPermissions.Builder builder = ProjectPermissions.create();

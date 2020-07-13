@@ -35,7 +35,7 @@ public final class PropertyPath
     public static PropertyPath from( final PropertyPath parentPath, final String element )
     {
         Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
-        Preconditions.checkNotNull( parentPath, "element cannot be null" );
+        Preconditions.checkNotNull( element, "element cannot be null" );
         return new PropertyPath( parentPath, new Element( element ) );
     }
 

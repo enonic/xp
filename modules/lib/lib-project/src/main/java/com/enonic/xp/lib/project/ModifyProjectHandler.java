@@ -76,6 +76,7 @@ public final class ModifyProjectHandler
             build();
     }
 
+    @Override
     protected void validate()
     {
         Preconditions.checkArgument( this.displayName == null || !this.displayName.isBlank(), "Project display name cannot be empty" );

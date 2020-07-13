@@ -42,12 +42,14 @@ public class FileDumpReader
         return new FileDumpReader( listener, filePaths, new FileDumpBlobStore( dumpPath ), dumpPath );
     }
 
+    @Override
     protected InputStream openMetaFileStream( final PathRef metaFile )
         throws IOException
     {
         return Files.newInputStream( metaFile.asPath( dumpPath ) );
     }
 
+    @Override
     protected Stream<String> listDirectories( final PathRef repoRootPath )
         throws IOException
     {
@@ -56,6 +58,7 @@ public class FileDumpReader
         } ).map( dir -> dir.getFileName().toString() );
     }
 
+    @Override
     protected boolean exists( final PathRef file )
     {
         return Files.exists( file.asPath( dumpPath ) );

@@ -82,7 +82,7 @@ public final class ProjectResource
     public ProjectJson modify( final CreateOrModifyProjectParamsJson json )
         throws Exception
     {
-        final Project modifiedProject = this.projectService.modify( ModifyProjectParams.create( createParams( json ) ).build() );
+        final Project modifiedProject = this.projectService.modify( modifyParams( json ) );
 
         if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( modifiedProject.getName() ) )
         {
@@ -169,6 +169,14 @@ public final class ProjectResource
             description( json.getDescription() ).
             forceInitialization( true ).
             build();
+    }
+
+    private ModifyProjectParams modifyParams( final CreateOrModifyProjectParamsJson json )
+    {
+        return ModifyProjectParams.create().
+            name( json.getName() ).
+            description( json.getDescription() ).
+            displayName( json.getDisplayName() ).build();
     }
 
     private CreateAttachment createIcon( final MultipartForm form )

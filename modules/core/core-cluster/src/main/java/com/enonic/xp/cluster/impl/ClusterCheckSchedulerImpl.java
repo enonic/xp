@@ -41,10 +41,10 @@ public class ClusterCheckSchedulerImpl
         recurringJobScheduler.shutdownNow();
     }
 
+    @Override
     public RecurringJob scheduleWithFixedDelay( Runnable command )
     {
         return recurringJobScheduler.
-            scheduleWithFixedDelay( command, initialDelay, delay, e -> LOG.warn( "Error while checking cluster providers", e ),
-                                    e -> LOG.error( "Error while checking cluster providers, no further attempts will be made", e ) );
+            scheduleWithFixedDelay( command, initialDelay, delay, e -> LOG.warn( "Error while checking cluster providers", e ), e -> LOG.error( "Error while checking cluster providers, no further attempts will be made", e ) );
     }
 }

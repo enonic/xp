@@ -45,11 +45,13 @@ public class HazelcastConfigServiceImpl
         this.hazelcastConfig = hazelcastConfig;
     }
 
+    @Override
     public boolean isHazelcastEnabled()
     {
         return clusterConfig.isEnabled();
     }
 
+    @Override
     public Config configure()
     {
         Config config = new Config();
@@ -58,26 +60,19 @@ public class HazelcastConfigServiceImpl
 
         config.setProperty( GroupProperty.SHUTDOWNHOOK_ENABLED.getName(), String.valueOf( false ) );
 
-        config.setProperty( GroupProperty.INITIAL_MIN_CLUSTER_SIZE.getName(),
-                            String.valueOf( hazelcastConfig.system_hazelcast_initial_min_cluster_size() ) );
+        config.setProperty( GroupProperty.INITIAL_MIN_CLUSTER_SIZE.getName(), String.valueOf( hazelcastConfig.system_hazelcast_initial_min_cluster_size() ) );
 
-        config.setProperty( GroupProperty.MAX_NO_HEARTBEAT_SECONDS.getName(),
-                            String.valueOf( hazelcastConfig.system_hazelcast_max_no_heartbeat_seconds() ) );
+        config.setProperty( GroupProperty.MAX_NO_HEARTBEAT_SECONDS.getName(), String.valueOf( hazelcastConfig.system_hazelcast_max_no_heartbeat_seconds() ) );
 
-        config.setProperty( GroupProperty.HEARTBEAT_INTERVAL_SECONDS.getName(),
-                            String.valueOf( hazelcastConfig.system_hazelcast_heartbeat_interval_seconds() ) );
+        config.setProperty( GroupProperty.HEARTBEAT_INTERVAL_SECONDS.getName(), String.valueOf( hazelcastConfig.system_hazelcast_heartbeat_interval_seconds() ) );
 
-        config.setProperty( GroupProperty.MASTERSHIP_CLAIM_TIMEOUT_SECONDS.getName(),
-                            String.valueOf( hazelcastConfig.system_hazelcast_mastership_claim_timeout_seconds() ) );
+        config.setProperty( GroupProperty.MASTERSHIP_CLAIM_TIMEOUT_SECONDS.getName(), String.valueOf( hazelcastConfig.system_hazelcast_mastership_claim_timeout_seconds() ) );
 
-        config.setProperty( GroupProperty.PHONE_HOME_ENABLED.getName(),
-                            String.valueOf( hazelcastConfig.system_hazelcast_phone_home_enabled() ) );
+        config.setProperty( GroupProperty.PHONE_HOME_ENABLED.getName(), String.valueOf( hazelcastConfig.system_hazelcast_phone_home_enabled() ) );
 
-        config.setProperty( GroupProperty.WAIT_SECONDS_BEFORE_JOIN.getName(),
-                            String.valueOf( hazelcastConfig.hazelcast_wait_seconds_before_join() ) );
+        config.setProperty( GroupProperty.WAIT_SECONDS_BEFORE_JOIN.getName(), String.valueOf( hazelcastConfig.hazelcast_wait_seconds_before_join() ) );
 
-        config.setProperty( GroupProperty.MAX_WAIT_SECONDS_BEFORE_JOIN.getName(),
-                            String.valueOf( hazelcastConfig.hazelcast_max_wait_seconds_before_join() ) );
+        config.setProperty( GroupProperty.MAX_WAIT_SECONDS_BEFORE_JOIN.getName(), String.valueOf( hazelcastConfig.hazelcast_max_wait_seconds_before_join() ) );
 
         config.setClassLoader( HazelcastConfigServiceImpl.class.getClassLoader() );
 

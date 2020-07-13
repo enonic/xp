@@ -3,6 +3,7 @@ package com.enonic.xp.internal.blobstore;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 import com.google.common.io.ByteSource;
@@ -16,11 +17,11 @@ import com.enonic.xp.blob.Segment;
 public class MemoryBlobStore
     implements BlobStore
 {
-    private Map<Segment, Map<BlobKey, BlobRecord>> store;
+    private final Map<Segment, Map<BlobKey, BlobRecord>> store;
 
     public MemoryBlobStore()
     {
-        this.store = new HashMap<>();
+        this.store = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -92,7 +93,7 @@ public class MemoryBlobStore
 
     public void clear()
     {
-        this.store = new HashMap<>();
+        this.store.clear();
     }
 }
 
