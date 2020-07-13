@@ -1,6 +1,7 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 apply plugin: 'java-base'
+apply plugin: 'distribution'
 
 configurations {
     lib
@@ -11,9 +12,6 @@ dependencies {
 }
 
 ext {
-    installDir = "$buildDir/install"
-    bundlesDir = "$installDir/system"
-    // archiveBase = "enonic-xp-$version"
     bundleCopySpecs = []
 }
 
@@ -153,13 +151,11 @@ def getOrCreateBundleConfig( level )
     def levelStr = "$level".padLeft( 2, '0' )
     def name = "bundle@$levelStr"
 
-    if ( configurations.asMap.containsKey( name ) )
+    def config = configurations.findByName( name )
+
+    if (config == null)
     {
-        return configurations.getByName( name )
-    }
-    else
-    {
-        def config = configurations.create( name )
+        config = configurations.create( name )
         config.transitive = false
         config.description = "Bundles for run-level $level"
 
@@ -167,64 +163,60 @@ def getOrCreateBundleConfig( level )
             from config
             into levelStr
         }
-
-        return config
     }
+    return config
 }
 
-task copyBundles( type: Copy ) {
-    into bundlesDir
-    with( bundleCopySpecs as CopySpec[] )
-}
-
-task copyResources( type: Copy ) {
-    destinationDir = file( installDir )
-    into( 'bin' ) {
-        from( 'src/bin' ) {
-            include '*.sh'
-            fileMode 0755
+distributions {
+    main {
+        contents {
+            into('/system') {
+                with( bundleCopySpecs as CopySpec[] )
+            }
+            into( '/lib' ) {
+                from( configurations.lib )
+            }
+            into( '/bin' ) {
+                from( 'src/bin' ) {
+                    include '*.sh'
+                    fileMode 0755
+                }
+            }
+            into( '/service' ) {
+                from( 'src/service' ) {
+                    include '*.sh'
+                    fileMode 0755
+                    filter( ReplaceTokens, tokens: [version: version] )
+                }
+            }
+            into( '/service/init.d' ) {
+                from( 'src/service/init.d' ) {
+                    include 'xp'
+                    fileMode 0755
+                }
+            }
+            into('/') {
+                from( 'src' ) {
+                    include 'README.txt'
+                    expand project.properties
+                }
+                from( 'src' )
+                from( rootDir ) {
+                    include 'LICENSE.txt'
+                    include 'NOTICE.txt'
+                }
+            }
         }
     }
-    into( 'service' ) {
-        from( 'src/service' ) {
-            include '*.sh'
-            fileMode 0755
-            filter( ReplaceTokens, tokens: [version: version] )
-
-        }
-    }
-    into( 'service/init.d' ) {
-        from( 'src/service/init.d' ) {
-            include 'xp'
-            fileMode 0755
-        }
-    }
-    into( 'lib' ) {
-        from( configurations.lib )
-    }
-    from( 'src' ) {
-        include 'README.txt'
-        expand project.properties
-    }
-    from( 'src' )
-    from( rootDir ) {
-        include 'LICENSE.txt'
-        include 'NOTICE.txt'
-    }
 }
 
-task installDist( dependsOn: [copyResources, copyBundles] ) {
-    description = 'Update distribution without creating zip.'
-    group = 'Dist'
+tasks.distTar.enabled = false
+
+installDist {
+    destinationDir = file("$buildDir/install")
 }
 
-task distZip( type: Zip, dependsOn: installDist ) {
-    description = 'Build full distribution zip.'
-    group = 'Dist'
-    from installDir
-    // into archiveBase
-}
-build.dependsOn distZip
+build.dependsOn installDist
 
 task run( type: Exec, dependsOn: 'installDist' ) {
     description = 'Starts the server (use -Pdev for dev-mode or -Pdebug for debug-mode).'
