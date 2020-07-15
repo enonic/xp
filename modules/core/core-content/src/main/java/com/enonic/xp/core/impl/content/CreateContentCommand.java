@@ -17,6 +17,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
@@ -327,9 +328,10 @@ final class CreateContentCommand
         ContentPath parentPath = createContentParams.getParent();
         if ( createContentParams.getLanguage() == null )
         {
-            final Content parent = getContent( parentPath );
+            final Node parent = nodeService.getByPath( ContentNodeHelper.translateContentParentToNodeParentPath( parentPath ) );
 
-            return parent != null ? parent.getLanguage() : null;
+            final String language = parent.data().getString( ContentPropertyNames.LANGUAGE );
+            return language != null ? Locale.forLanguageTag( language ) : null;
         }
         else
         {
