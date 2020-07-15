@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -308,6 +309,39 @@ public class CreateContentCommandTest
             assertEquals( "A template folder can only be created below a content of type 'site'. Path: /parent/_templates",
                           e.getMessage() );
         }
+    }
+
+    @Test
+    public void createContentWithDefaultLanguage()
+    {
+        final PropertyTree parentNodeData = new PropertyTree();
+        parentNodeData.setSet( ContentPropertyNames.DATA, new PropertySet() );
+        parentNodeData.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
+        parentNodeData.setString( ContentPropertyNames.LANGUAGE, "en" );
+        final Node parentNode = Node.create().
+            id( NodeId.from( "id1" ) ).
+            name( "parent" ).
+            parentPath( ContentConstants.CONTENT_ROOT_PATH ).
+            data( parentNodeData ).
+            build();
+
+        Mockito.when( nodeService.getByPath( Mockito.eq( NodePath.create( "/content" ).build() ) ) ).thenReturn( parentNode );
+
+        final CreateContentParams params = CreateContentParams.create().
+            type( ContentTypeName.folder() ).
+            name( "name" ).
+            parent( ContentPath.from( "/" ) ).
+            contentData( new PropertyTree() ).
+            displayName( "displayName" ).
+            build();
+
+        CreateContentCommand command = createContentCommand( params );
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().superType( ContentTypeName.folder() ).name( ContentTypeName.folder() ).build() );
+
+        final Content content = command.execute();
+        assertEquals( Locale.ENGLISH, content.getLanguage() );
     }
 
     @Test
