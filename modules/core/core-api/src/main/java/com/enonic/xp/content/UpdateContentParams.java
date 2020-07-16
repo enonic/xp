@@ -26,6 +26,8 @@ public final class UpdateContentParams
 
     private boolean requireValid;
 
+    private boolean inherited = false;
+
     public UpdateContentParams editor( final ContentEditor editor )
     {
         this.editor = editor;
@@ -65,6 +67,13 @@ public final class UpdateContentParams
     public UpdateContentParams clearAttachments( final boolean clearAttachments )
     {
         this.clearAttachments = clearAttachments;
+        return this;
+    }
+
+
+    public UpdateContentParams inherited( final boolean inherited )
+    {
+        this.inherited = inherited;
         return this;
     }
 
@@ -111,6 +120,11 @@ public final class UpdateContentParams
         return clearAttachments;
     }
 
+    public boolean isInherited()
+    {
+        return inherited;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -126,12 +140,12 @@ public final class UpdateContentParams
         return clearAttachments == that.clearAttachments && requireValid == that.requireValid &&
             Objects.equals( contentId, that.contentId ) && Objects.equals( editor, that.editor ) &&
             Objects.equals( modifier, that.modifier ) && Objects.equals( createAttachments, that.createAttachments ) &&
-            Objects.equals( removeAttachments, that.removeAttachments );
+            Objects.equals( removeAttachments, that.removeAttachments ) && Objects.equals( inherited, that.inherited );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( contentId, editor, modifier, createAttachments, removeAttachments, clearAttachments, requireValid );
+        return Objects.hash( contentId, editor, modifier, createAttachments, removeAttachments, clearAttachments, requireValid, inherited );
     }
 }

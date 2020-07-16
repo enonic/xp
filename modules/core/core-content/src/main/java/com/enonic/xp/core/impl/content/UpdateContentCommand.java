@@ -95,6 +95,8 @@ final class UpdateContentCommand
 
         Content editedContent = editContent( params.getEditor(), contentBeforeChange );
 
+        editedContent = setInherited( editedContent, params.isInherited() );
+
         if ( contentBeforeChange.equals( editedContent ) && params.getCreateAttachments() == null && params.getRemoveAttachments() == null )
         {
             return contentBeforeChange;
@@ -205,6 +207,14 @@ final class UpdateContentCommand
             modifiedTime( Instant.now() ).
             build();
     }
+
+    private Content setInherited( final Content content, final boolean inherited )
+    {
+        return Content.create( content ).
+            inherited( inherited ).
+            build();
+    }
+
 
     private void validateBlockingChecks( final Content editedContent )
     {
