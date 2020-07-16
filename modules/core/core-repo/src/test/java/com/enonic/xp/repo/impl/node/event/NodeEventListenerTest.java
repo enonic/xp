@@ -224,7 +224,7 @@ public class NodeEventListenerTest
             build();
 
         final PushNodeEntries pushNodeEntries = PushNodeEntries.create().
-            targetRepo( ContentConstants.CONTENT_REPO.getId() ).
+            targetRepo( ContentConstants.CONTENT_REPO_ID ).
             targetBranch( ContentConstants.BRANCH_MASTER ).
             add( pushNodeEntry ).
             build();

@@ -687,7 +687,7 @@ public class DumpServiceImplTest
 
         Mockito.verify( systemDumpListener ).dumpingBranch( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch(), 2 );
         Mockito.verify( systemDumpListener ).dumpingBranch( CTX_OTHER.getRepositoryId(), CTX_OTHER.getBranch(), 1 );
-        Mockito.verify( systemDumpListener ).dumpingBranch( SystemConstants.SYSTEM_REPO.getId(), SystemConstants.BRANCH_SYSTEM, 4 );
+        Mockito.verify( systemDumpListener ).dumpingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 4 );
         Mockito.verify( systemDumpListener, Mockito.times( 7 ) ).nodeDumped();
 
         final SystemLoadListener systemLoadListener = Mockito.mock( SystemLoadListener.class );
@@ -700,8 +700,8 @@ public class DumpServiceImplTest
         Mockito.verify( systemLoadListener ).loadingBranch( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch(), 2L );
         Mockito.verify( systemLoadListener ).loadingBranch( CTX_OTHER.getRepositoryId(), CTX_OTHER.getBranch(), 1L );
         Mockito.verify( systemLoadListener ).loadingVersions( CTX_OTHER.getRepositoryId() );
-        Mockito.verify( systemLoadListener ).loadingBranch( SystemConstants.SYSTEM_REPO.getId(), SystemConstants.BRANCH_SYSTEM, 4L );
-        Mockito.verify( systemLoadListener ).loadingVersions( SystemConstants.SYSTEM_REPO.getId() );
+        Mockito.verify( systemLoadListener ).loadingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 4L );
+        Mockito.verify( systemLoadListener ).loadingVersions( SystemConstants.SYSTEM_REPO_ID );
         Mockito.verify( systemLoadListener, Mockito.times( 2 + 1 + 2 + 4 + 4 ) ).entryLoaded();
     }
 
@@ -1038,7 +1038,7 @@ public class DumpServiceImplTest
 
         for ( final Repository repository : repositories )
         {
-            if ( !repository.getId().equals( SystemConstants.SYSTEM_REPO.getId() ) )
+            if ( !repository.getId().equals( SystemConstants.SYSTEM_REPO_ID ) )
             {
                 this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repository.getId() ) );
             }
@@ -1049,8 +1049,8 @@ public class DumpServiceImplTest
             this.blobStore.clear();
         }
 
-        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveSearchIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
-        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveStorageIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
+        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveSearchIndexName( SystemConstants.SYSTEM_REPO_ID ) );
+        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveStorageIndexName( SystemConstants.SYSTEM_REPO_ID ) );
 
         SystemRepoInitializer.create().
             setIndexServiceInternal( indexServiceInternal ).

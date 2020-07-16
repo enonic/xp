@@ -86,7 +86,7 @@ public class ImportRunnableTask
 
     private boolean targetIsSystemRepo( final RepoPath targetRepoPath )
     {
-        return SystemConstants.SYSTEM_REPO.getId().equals( targetRepoPath.getRepositoryId() ) &&
+        return SystemConstants.SYSTEM_REPO_ID.equals( targetRepoPath.getRepositoryId() ) &&
             SystemConstants.BRANCH_SYSTEM.equals( targetRepoPath.getBranch() );
     }
 

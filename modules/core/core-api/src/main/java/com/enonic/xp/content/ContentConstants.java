@@ -50,6 +50,7 @@ public class ContentConstants
 
     public static final RepositoryId CONTENT_REPO_ID = RepositoryId.from( CONTENT_REPO_ID_PREFIX + PROJECT_REPO_ID_DEFAULT );
 
+    @Deprecated
     public static final Repository CONTENT_REPO = Repository.create().
         id( CONTENT_REPO_ID ).
         branches( Branches.from( BRANCH_DRAFT, BRANCH_MASTER ) ).
@@ -57,12 +58,12 @@ public class ContentConstants
 
     public static final Context CONTEXT_DRAFT = ContextBuilder.create().
         branch( BRANCH_DRAFT ).
-        repositoryId( CONTENT_REPO.getId() ).
+        repositoryId( CONTENT_REPO_ID ).
         build();
 
     public static final Context CONTEXT_MASTER = ContextBuilder.create().
         branch( BRANCH_MASTER ).
-        repositoryId( CONTENT_REPO.getId() ).
+        repositoryId( CONTENT_REPO_ID ).
         build();
 
     public static final AccessControlList CONTENT_REPO_DEFAULT_ACL = AccessControlList.create().
