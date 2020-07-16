@@ -13,21 +13,28 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.content.CompareContentParams;
+import com.enonic.xp.content.CompareContentResult;
+import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.content.RenameContentParams;
+import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.project.Project;
+import com.enonic.xp.security.PrincipalKey;
 
 public class ParentProjectSynchronizer
 {
@@ -77,7 +84,7 @@ public class ParentProjectSynchronizer
 
                 for ( final Content content : result.getContents() )
                 {
-                    final Content synchedContent = this.doSync( content, false );
+                    final Content synchedContent = this.doSync( content );
 
                     if ( synchedContent != null )
                     {
@@ -91,50 +98,152 @@ public class ParentProjectSynchronizer
         } );
     }
 
-    public void syncWithParents( final ContentId contentId )
+    public void sync( final ContentId contentId )
     {
-        this.doSync( sourceContext.callWith( () -> this.contentService.getById( contentId ) ), false );
+        this.doSync( sourceContext.callWith( () -> this.contentService.getById( contentId ) ) );
     }
 
-    private Content doSync( final ContentPath contentPath, final boolean force )
-    {
-        return this.doSync( sourceContext.callWith( () -> this.contentService.getByPath( contentPath ) ), force );
-    }
-
-
-    private Content doSync( final Content content, final boolean force )
+    private Content doSync( final Content sourceContent )
     {
         return sourceContext.callWith( () -> {
 
-            if ( force || WorkflowState.READY.equals( content.getWorkflowInfo().getState() ) )
+            if ( isToSync( sourceContent ) )
             {
-                final CreateContentParams params = createParams( content );
-
                 return targetContext.callWith( () -> {
 
-                    final ContentPath parentPath = content.getPath().getParentPath();
-
-                    if ( !parentPath.isRoot() && !contentService.contentExists( parentPath ) )
+                    if ( contentService.contentExists( sourceContent.getId() ) )
                     {
-                        this.doSync( parentPath, true );
+                        final Content targetContent = contentService.getById( sourceContent.getId() );
+
+                        this.doSyncRenamed( sourceContent, targetContent );
+                        return this.doSyncUpdated( sourceContent, targetContent );
                     }
 
-                    if ( !contentService.contentExists( content.getPath() ) )
-                    {
-                        try
-                        {
-                            return contentService.create( params );
-                        }
-                        catch ( ContentAlreadyExistsException e )
-                        {
-                            LOG.warn( "content [{}] already exists.", params.getContentId() );
-                        }
-                    }
-                    return null;
+                    return this.doSyncCreated( sourceContent );
                 } );
             }
             return null;
         } );
+    }
+
+    public Content syncRenamed( final ContentId contentId )
+    {
+        return sourceContext.callWith( () -> {
+            final Content sourceContent = contentService.getById( contentId );
+
+            if ( isToSync( sourceContent ) )
+            {
+                return targetContext.callWith( () -> {
+                    final Content targetContent = contentService.getById( contentId );
+                    return doSyncRenamed( sourceContent, targetContent );
+                } );
+            }
+            return null;
+        } );
+
+    }
+
+    private Content doSyncRenamed( final Content sourceContent, final Content targetContent )
+    {
+        if ( targetContent.isInherited() )
+        {
+            if ( !targetContent.getName().equals( sourceContent.getName() ) )
+            {
+                return contentService.rename( RenameContentParams.create().
+                    contentId( targetContent.getId() ).
+                    newName( sourceContent.getName() ).
+                    build() );
+            }
+        }
+        return null;
+    }
+
+    public Content syncUpdated( final ContentId contentId )
+    {
+        return sourceContext.callWith( () -> {
+            final Content sourceContent = contentService.getById( contentId );
+
+            if ( isToSync( sourceContent ) )
+            {
+                return targetContext.callWith( () -> {
+                    final Content targetContent = contentService.getById( contentId );
+
+                    doSyncRenamed( sourceContent, targetContent );
+                    return doSyncUpdated( sourceContent, targetContent );
+                } );
+            }
+            return null;
+        } );
+    }
+
+    private Content doSyncUpdated( final Content sourceContent, final Content targetContent )
+    {
+        if ( targetContent.isInherited() )
+        {
+            if ( !sourceContent.equals( targetContent ) )
+            {
+                final UpdateContentParams params = updateParams( sourceContent );
+                return contentService.update( params );
+            }
+        }
+        return null;
+    }
+
+    public Content syncCreated( final ContentId contentId )
+    {
+        return sourceContext.callWith( () -> {
+            final Content sourceContent = contentService.getById( contentId );
+            return targetContext.callWith( () -> doSyncCreated( sourceContent ) );
+        } );
+    }
+
+    private Content doSyncCreated( final Content sourceContent )
+    {
+        final CreateContentParams params = createParams( sourceContent );
+        try
+        {
+            return contentService.create( params );
+        }
+        catch ( ContentAlreadyExistsException e )
+        {
+            LOG.warn( "content [{}] already exists.", params.getContentId() );
+        }
+        return null;
+    }
+
+    private boolean isToSync( final Content content )
+    {
+        final CompareContentResult compareResult =
+            contentService.compare( new CompareContentParams( content.getId(), ContentConstants.BRANCH_MASTER ) );
+
+        return CompareStatus.NEW.equals( compareResult.getCompareStatus() ) ||
+            CompareStatus.EQUAL.equals( compareResult.getCompareStatus() ) ||
+            ( ( CompareStatus.NEWER.equals( compareResult.getCompareStatus() ) ||
+                CompareStatus.MOVED.equals( compareResult.getCompareStatus() ) ) &&
+                WorkflowState.READY.equals( content.getWorkflowInfo().getState() ) );
+    }
+
+    private UpdateContentParams updateParams( final Content source )
+    {
+        return new UpdateContentParams().
+            requireValid( false ).
+            contentId( source.getId() ).
+            modifier( PrincipalKey.ofAnonymous() ).
+            inherited( true ).
+            editor( edit -> {
+                edit.data = source.getData();
+                edit.extraDatas = source.getAllExtraData();
+                edit.displayName = source.getDisplayName();
+                edit.owner = source.getOwner();
+                edit.language = source.getLanguage();
+                edit.inheritPermissions = source.inheritsPermissions();
+                edit.permissions = source.getPermissions();
+                edit.workflowInfo = source.getWorkflowInfo();
+                edit.page = source.getPage();
+                edit.thumbnail = source.getThumbnail();
+                edit.valid = source.isValid();
+                edit.processedReferences = ContentIds.create().addAll( source.getProcessedReferences() );
+            } );
     }
 
     private CreateContentParams createParams( final Content source )

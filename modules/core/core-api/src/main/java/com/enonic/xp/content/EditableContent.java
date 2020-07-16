@@ -88,7 +88,6 @@ public class EditableContent
             publishInfo( publishInfo ).
             processedReferences( processedReferences.build() ).
             workflowInfo( workflowInfo ).
-            inherited( false ).
             build();
     }
 }
