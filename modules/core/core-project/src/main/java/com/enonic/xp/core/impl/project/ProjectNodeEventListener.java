@@ -56,22 +56,10 @@ public class ProjectNodeEventListener
                 return;
             }
 
-            this.doHandleEvent( event );
-        }
-    }
-
-    private void doHandleEvent( final Event event )
-    {
-        final String type = event.getType();
-
-        switch ( type )
-        {
-            case "node.created":
-                handleEventType( event );
-                break;
-            case "node.updated":
-                handleEventType( event );
-                break;
+            if ( this.isContentEvent( event.getType() ) )
+            {
+                this.handleEventType( event );
+            }
         }
     }
 
@@ -84,7 +72,7 @@ public class ProjectNodeEventListener
             nodes.forEach( nodeMap -> {
                 if ( nodeMap.get( "path" ).startsWith( "/content/" ) )
                 {
-                    this.simpleExecutor.execute( () -> handleContentEvent( nodeMap ) );
+                    this.simpleExecutor.execute( () -> handleContentEvent( nodeMap, event.getType() ) );
                 }
             } );
         }
@@ -94,7 +82,13 @@ public class ProjectNodeEventListener
         }
     }
 
-    private void handleContentEvent( final Map<String, String> nodeMap )
+    private boolean isContentEvent( final String type )
+    {
+        return "node.created".equals( type ) || "node.updated".equals( type ) || "node.pushed".equals( type ) ||
+            "node.renamed".equals( type );
+    }
+
+    private void handleContentEvent( final Map<String, String> nodeMap, final String type )
     {
         createAdminContext().runWith( () -> {
 
@@ -115,7 +109,23 @@ public class ProjectNodeEventListener
                         sourceProject( sourceProject ).
                         contentService( contentService ).build();
 
-                    parentProjectSynchronizer.syncWithParents( ContentId.from( nodeMap.get( "id" ) ) );
+                    final ContentId contentId = ContentId.from( nodeMap.get( "id" ) );
+
+                    switch ( type )
+                    {
+                        case "node.created":
+                            parentProjectSynchronizer.syncCreated( contentId );
+                            break;
+                        case "node.updated":
+                            parentProjectSynchronizer.syncUpdated( contentId );
+                            break;
+                        case "node.pushed":
+                            parentProjectSynchronizer.syncUpdated( contentId );
+                            break;
+                        case "node.renamed":
+                            parentProjectSynchronizer.syncRenamed( contentId );
+                            break;
+                    }
 
                 } );
         } );
