@@ -18,6 +18,7 @@ public final class SystemConstants
 
     public static final RepositoryId SYSTEM_REPO_ID = RepositoryId.from( "system-repo" );
 
+    @Deprecated
     public static final Repository SYSTEM_REPO = Repository.create().
         id( SYSTEM_REPO_ID ).
         branches( Branches.from( BRANCH_SYSTEM ) ).

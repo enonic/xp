@@ -62,7 +62,7 @@ public class NodeEventsTest
             build();
 
         final PushNodeEntries pushNodeEntries = PushNodeEntries.create().
-            targetRepo( ContentConstants.CONTENT_REPO.getId() ).
+            targetRepo( ContentConstants.CONTENT_REPO_ID ).
             targetBranch( ContentConstants.BRANCH_MASTER ).
             add( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry ).build() ).
             add( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry2 ).build() ).

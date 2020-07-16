@@ -97,7 +97,7 @@ public class RepositoryEntryServiceImpl
     @Override
     public Repository getRepositoryEntry( final RepositoryId repositoryId )
     {
-        if ( this.nodeRepositoryService.isInitialized( SystemConstants.SYSTEM_REPO.getId() ) )
+        if ( this.nodeRepositoryService.isInitialized( SystemConstants.SYSTEM_REPO_ID ) )
         {
             final NodeId nodeId = NodeId.from( repositoryId.toString() );
             final Node node = this.nodeStorageService.get( nodeId, createInternalContext() );
@@ -161,7 +161,7 @@ public class RepositoryEntryServiceImpl
     @Override
     public ByteSource getBinary( AttachedBinary attachedBinary )
     {
-        return binaryService.get( SystemConstants.SYSTEM_REPO.getId(), attachedBinary );
+        return binaryService.get( SystemConstants.SYSTEM_REPO_ID, attachedBinary );
     }
 
     private void refresh()
@@ -201,7 +201,7 @@ public class RepositoryEntryServiceImpl
     private Context createContext()
     {
         return ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             branch( SystemConstants.BRANCH_SYSTEM ).
             build();
     }
@@ -209,7 +209,7 @@ public class RepositoryEntryServiceImpl
     private InternalContext createInternalContext()
     {
         return InternalContext.create( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             branch( SystemConstants.BRANCH_SYSTEM ).
             build();
     }

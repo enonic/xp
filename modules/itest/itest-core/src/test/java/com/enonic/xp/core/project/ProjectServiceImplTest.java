@@ -98,25 +98,25 @@ class ProjectServiceImplTest
 
     private final static Context ADMIN_CONTEXT = ContextBuilder.create().
         branch( "master" ).
-        repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+        repositoryId( SystemConstants.SYSTEM_REPO_ID ).
         authInfo( REPO_TEST_ADMIN_USER_AUTHINFO ).
         build();
 
     private final static Context CONTENT_ADMIN_CONTEXT = ContextBuilder.create().
         branch( "master" ).
-        repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+        repositoryId( SystemConstants.SYSTEM_REPO_ID ).
         authInfo( REPO_TEST_CONTENT_ADMIN_AUTHINFO ).
         build();
 
     private final static Context CONTENT_MANAGER_CONTEXT = ContextBuilder.create().
         branch( "master" ).
-        repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+        repositoryId( SystemConstants.SYSTEM_REPO_ID ).
         authInfo( REPO_TEST_CONTENT_MANAGER_AUTHINFO ).
         build();
 
     private final static Context CONTENT_CUSTOM_MANAGER_CONTEXT = ContextBuilder.create().
         branch( "master" ).
-        repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+        repositoryId( SystemConstants.SYSTEM_REPO_ID ).
         authInfo( REPO_TEST_CUSTOM_MANAGER_AUTHINFO ).
         build();
 

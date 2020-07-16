@@ -14,7 +14,7 @@ public final class ContextAccessor
     {
         final Context context = ContextBuilder.create().build();
         context.getLocalScope().setAttribute( ContentConstants.BRANCH_DRAFT );
-        context.getLocalScope().setAttribute( ContentConstants.CONTENT_REPO.getId() );
+        context.getLocalScope().setAttribute( ContentConstants.CONTENT_REPO_ID );
         return context;
     }
 

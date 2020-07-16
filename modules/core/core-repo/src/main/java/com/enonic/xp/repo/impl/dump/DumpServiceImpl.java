@@ -306,7 +306,7 @@ public class DumpServiceImpl
 
             final RepositoryIds dumpRepositories = dumpReader.getRepositories();
 
-            if ( !dumpRepositories.contains( SystemConstants.SYSTEM_REPO.getId() ) )
+            if ( !dumpRepositories.contains( SystemConstants.SYSTEM_REPO_ID ) )
             {
                 throw new SystemDumpException( "Cannot load system-dump; dump does not contain system repository" );
             }
@@ -328,7 +328,7 @@ public class DumpServiceImpl
             initializeSystemRepo( params, dumpReader, results );
 
             final List<Repository> repositoriesToLoad = repositoryService.list().stream().
-                filter( ( repo ) -> !repo.getId().equals( SystemConstants.SYSTEM_REPO.getId() ) ).
+                filter( ( repo ) -> !repo.getId().equals( SystemConstants.SYSTEM_REPO_ID ) ).
                 collect( Collectors.toList() );
 
             for ( Repository repository : repositoriesToLoad )
@@ -379,7 +379,7 @@ public class DumpServiceImpl
     private void initializeSystemRepo( final SystemLoadParams params, final DumpReader dumpReader, final SystemLoadResult.Builder results )
     {
         final Context systemContext = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             branch( SystemConstants.BRANCH_SYSTEM ).
             build();
 
@@ -387,7 +387,7 @@ public class DumpServiceImpl
 
         doDeleteAllNodes( systemContext );
 
-        doLoadRepository( SystemConstants.SYSTEM_REPO.getId(), params, dumpReader, results );
+        doLoadRepository( SystemConstants.SYSTEM_REPO_ID, params, dumpReader, results );
 
         this.repositoryService.invalidateAll();
 
@@ -410,7 +410,7 @@ public class DumpServiceImpl
     private void doDeleteRepositories()
     {
         repositoryService.list().stream().
-            filter( ( repo ) -> !repo.getId().equals( SystemConstants.SYSTEM_REPO.getId() ) ).
+            filter( ( repo ) -> !repo.getId().equals( SystemConstants.SYSTEM_REPO_ID ) ).
             forEach( ( repo ) -> doDeleteRepository( repo.getId() ) );
     }
 

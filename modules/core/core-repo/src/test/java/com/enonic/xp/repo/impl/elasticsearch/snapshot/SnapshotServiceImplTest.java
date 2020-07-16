@@ -106,8 +106,8 @@ public class SnapshotServiceImplTest
             build() );
 
         assertNotNull( this.repositoryService.get( newRepoId ) );
-        assertNotNull( this.repositoryService.get( SystemConstants.SYSTEM_REPO.getId() ) );
-        assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO.getId() ) );
+        assertNotNull( this.repositoryService.get( SystemConstants.SYSTEM_REPO_ID ) );
+        assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO_ID ) );
     }
 
     @Test
@@ -142,13 +142,13 @@ public class SnapshotServiceImplTest
         assertNull( this.repositoryService.get( newRepoId ) );
 
         this.snapshotService.restore( RestoreParams.create().
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             snapshotName( "my-snapshot" ).
             build() );
 
         assertNotNull( this.repositoryService.get( newRepoId ) );
-        assertNotNull( this.repositoryService.get( SystemConstants.SYSTEM_REPO.getId() ) );
-        assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO.getId() ) );
+        assertNotNull( this.repositoryService.get( SystemConstants.SYSTEM_REPO_ID ) );
+        assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO_ID ) );
     }
 
     @Test
@@ -183,8 +183,8 @@ public class SnapshotServiceImplTest
         }
         finally
         {
-            assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO.getId() ) );
-            assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO.getId() ) );
+            assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO_ID ) );
+            assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO_ID ) );
         }
     }
 

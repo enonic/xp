@@ -100,7 +100,7 @@ public class LoadRunnableTask
         final long branchesCount = repositories.
             stream().
             flatMap( repository -> repository.getBranches().stream() ).
-            count() + SystemConstants.SYSTEM_REPO.getBranches().getSize();
+            count();
 
         loadDumpListener.totalBranches( branchesCount );
 
@@ -124,10 +124,10 @@ public class LoadRunnableTask
 
     private RepoLoadResult importSystemRepo( final SystemLoadRequestJson request )
     {
-        final RepoLoadResult.Builder builder = RepoLoadResult.create( SystemConstants.SYSTEM_REPO.getId() );
+        final RepoLoadResult.Builder builder = RepoLoadResult.create( SystemConstants.SYSTEM_REPO_ID );
 
         final NodeImportResult systemRepoImport =
-            importRepoBranch( SystemConstants.SYSTEM_REPO.getId().toString(), SystemConstants.BRANCH_SYSTEM.toString(), request.getName() );
+            importRepoBranch( SystemConstants.SYSTEM_REPO_ID.toString(), SystemConstants.BRANCH_SYSTEM.toString(), request.getName() );
 
         final BranchLoadResult branchLoadResult = NodeImportResultTranslator.translate( systemRepoImport, SystemConstants.BRANCH_SYSTEM );
         builder.add( branchLoadResult );
@@ -177,7 +177,7 @@ public class LoadRunnableTask
 
     private boolean isSystemRepoMaster( final Repository repository, final Branch branch )
     {
-        return SystemConstants.SYSTEM_REPO.equals( repository ) && SystemConstants.BRANCH_SYSTEM.equals( branch );
+        return SystemConstants.SYSTEM_REPO_ID.equals( repository.getId() ) && SystemConstants.BRANCH_SYSTEM.equals( branch );
     }
 
 

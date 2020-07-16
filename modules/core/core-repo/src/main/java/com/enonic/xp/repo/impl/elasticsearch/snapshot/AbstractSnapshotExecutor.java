@@ -106,7 +106,7 @@ class AbstractSnapshotExecutor
         final Repositories list = this.repositoryService.list();
 
         return RepositoryIds.from( list.stream().
-            filter( ( repo ) -> includeSystemRepo || !repo.getId().equals( SystemConstants.SYSTEM_REPO.getId() ) ).
+            filter( ( repo ) -> includeSystemRepo || !repo.getId().equals( SystemConstants.SYSTEM_REPO_ID ) ).
             map( Repository::getId ).
             collect( Collectors.toSet() ) );
     }

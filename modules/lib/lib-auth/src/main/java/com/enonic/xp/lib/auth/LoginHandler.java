@@ -18,6 +18,7 @@ import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
@@ -218,7 +219,7 @@ public final class LoginHandler
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.ANONYMOUS ).build();
         return ContextBuilder.from( this.context.get() ).
             authInfo( authInfo ).
-            repositoryId( SecurityConstants.SECURITY_REPO.getId() ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             branch( SecurityConstants.BRANCH_SECURITY ).build().
             callWith( runnable );
     }

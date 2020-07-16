@@ -126,12 +126,12 @@ public class AbstractContentServiceTest
 
     public static final Context MASTER_CONTEXT = ContextBuilder.create().
         branch( ContentConstants.BRANCH_MASTER ).
-        repositoryId( ContentConstants.CONTENT_REPO.getId() ).
+        repositoryId( ContentConstants.CONTENT_REPO_ID ).
         build();
 
     public static final Context AUTHORIZED_MASTER_CONTEXT = ContextBuilder.create().
         branch( ContentConstants.BRANCH_MASTER ).
-        repositoryId( ContentConstants.CONTENT_REPO.getId() ).
+        repositoryId( ContentConstants.CONTENT_REPO_ID ).
         authInfo( AuthenticationInfo.create().
             principals( RoleKeys.ADMIN ).
             user( ContentInitializer.SUPER_USER ).
