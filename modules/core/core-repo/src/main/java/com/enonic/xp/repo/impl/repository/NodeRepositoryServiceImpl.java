@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.repo.impl.elasticsearch.ClusterHealthStatus;
-import com.enonic.xp.repo.impl.elasticsearch.ClusterStatusCode;
 import com.enonic.xp.repo.impl.index.ApplyMappingRequest;
 import com.enonic.xp.repo.impl.index.CreateIndexRequest;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
@@ -29,8 +27,6 @@ public class NodeRepositoryServiceImpl
 
     private final static Logger LOG = LoggerFactory.getLogger( NodeRepositoryServiceImpl.class );
 
-    private final static String CLUSTER_HEALTH_TIMEOUT_VALUE = "10s";
-
     private final static String DEFAULT_INDEX_RESOURCE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
 
     private final static IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =
@@ -41,35 +37,18 @@ public class NodeRepositoryServiceImpl
     {
         createIndexes( params );
         applyMappings( params );
-
-        checkClusterHealth();
     }
 
     @Override
     public void delete( final RepositoryId repositoryId )
     {
-        delete( repositoryId, IndexType.SEARCH );
-        delete( repositoryId, IndexType.VERSION );
-    }
-
-    private void delete( final RepositoryId repositoryId, final IndexType indexType )
-    {
-        final String indexName = resolveIndexName( repositoryId, indexType );
-        indexServiceInternal.deleteIndices( indexName );
+        indexServiceInternal.deleteIndices( IndexNameResolver.resolveIndexNames( repositoryId ).toArray( String[]::new ) );
     }
 
     @Override
     public boolean isInitialized( final RepositoryId repositoryId )
     {
-        if ( !checkClusterHealth() )
-        {
-            throw new RepositoryException( "Unable to initialize repositories" );
-        }
-
-        final String storageIndexName = IndexNameResolver.resolveStorageIndexName( repositoryId );
-        final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
-
-        return indexServiceInternal.indicesExists( storageIndexName, searchIndexName );
+        return indexServiceInternal.indicesExists( IndexNameResolver.resolveIndexNames( repositoryId ).toArray( String[]::new ) );
     }
 
     private void createIndexes( final CreateRepositoryParams params )
@@ -188,29 +167,6 @@ public class NodeRepositoryServiceImpl
         }
 
         throw new IllegalArgumentException( "Cannot resolve index name for indexType [" + indexType.getName() + "]" );
-    }
-
-    private boolean checkClusterHealth()
-    {
-        try
-        {
-            final ClusterHealthStatus clusterHealth = indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
-
-            if ( clusterHealth.isTimedOut() || clusterHealth.getClusterStatusCode().equals( ClusterStatusCode.RED ) )
-            {
-                LOG.error( "Cluster not healthy: " + "timed out: " + clusterHealth.isTimedOut() + ", state: " +
-                               clusterHealth.getClusterStatusCode() );
-                return false;
-            }
-
-            return true;
-        }
-        catch ( Exception e )
-        {
-            LOG.error( "Failed to get cluster health status", e );
-        }
-
-        return false;
     }
 
     @Reference

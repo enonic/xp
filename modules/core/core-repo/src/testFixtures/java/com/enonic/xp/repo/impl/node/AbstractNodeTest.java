@@ -17,6 +17,8 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.audit.AuditLogConstants;
+import com.enonic.xp.core.impl.audit.AuditLogRepoInitializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.IndexType;
@@ -48,6 +50,7 @@ import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
 import com.enonic.xp.repo.impl.elasticsearch.snapshot.SnapshotServiceImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
+import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
@@ -79,9 +82,9 @@ public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
 {
     protected static final Repository TEST_REPO = Repository.create().
-            id( RepositoryId.from( "com.enonic.cms.default" ) ).
-            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-            build();
+        id( RepositoryId.from( "com.enonic.cms.default" ) ).
+        branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
+        build();
 
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
@@ -110,6 +113,10 @@ public abstract class AbstractNodeTest
         repositoryId( TEST_REPO.getId() ).
         authInfo( TEST_DEFAULT_USER_AUTHINFO ).
         build();
+
+    protected static final RepositoryId AUDIT_LOG_REPO_ID = AuditLogConstants.AUDIT_LOG_REPO_ID;
+
+    protected static final Branch AUDIT_LOG_BRANCH = AuditLogConstants.AUDIT_LOG_BRANCH;
 
     @TempDir
     public Path temporaryFolder;
@@ -146,10 +153,16 @@ public abstract class AbstractNodeTest
 
     protected StorageDaoImpl storageDao;
 
+    protected EventPublisher eventPublisher;
+
+    protected IndexServiceImpl indexService;
+
     @BeforeEach
     protected void setUpNode()
         throws Exception
     {
+        eventPublisher = Mockito.mock( EventPublisher.class );
+
         deleteAllIndices();
 
         final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
@@ -211,14 +224,33 @@ public abstract class AbstractNodeTest
 
         setUpRepositoryServices();
 
+        indexService = new IndexServiceImpl();
+        indexService.setIndexDataService( this.indexedDataService );
+        indexService.setIndexServiceInternal( this.indexServiceInternal );
+        indexService.setNodeSearchService( this.searchService );
+        indexService.setNodeVersionService( this.nodeDao );
+        indexService.setRepositoryEntryService( this.repositoryEntryService );
+
+        bootstrap();
+
+        createRepository( TEST_REPO );
+        waitForClusterHealth();
+    }
+
+    protected void bootstrap()
+    {
         SystemRepoInitializer.create().
             setIndexServiceInternal( indexServiceInternal ).
             setRepositoryService( repositoryService ).
             setNodeStorageService( storageService ).
             build().
             initialize();
-        createRepository( TEST_REPO );
-        waitForClusterHealth();
+
+        AuditLogRepoInitializer.create().
+            setIndexService( indexService ).
+            setRepositoryService( repositoryService ).
+            build().
+            initialize();
     }
 
     private void setUpRepositoryServices()
@@ -228,16 +260,15 @@ public abstract class AbstractNodeTest
         nodeService.setNodeStorageService( this.storageService );
         nodeService.setNodeSearchService( this.searchService );
         nodeService.setBinaryService( this.binaryService );
-        nodeService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
+        nodeService.setEventPublisher( eventPublisher );
 
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
         nodeRepositoryService.setIndexServiceInternal( this.indexServiceInternal );
 
         this.repositoryEntryService = new RepositoryEntryServiceImpl();
         this.repositoryEntryService.setIndexServiceInternal( this.indexServiceInternal );
-        this.repositoryEntryService.setNodeRepositoryService( nodeRepositoryService );
         this.repositoryEntryService.setNodeStorageService( this.storageService );
-        this.repositoryEntryService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
+        this.repositoryEntryService.setEventPublisher( eventPublisher );
         this.repositoryEntryService.setNodeSearchService( this.searchService );
         this.repositoryEntryService.setBinaryService( this.binaryService );
 

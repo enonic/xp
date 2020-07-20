@@ -1,18 +1,22 @@
 package com.enonic.xp.launcher.impl.framework;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.felix.framework.Felix;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkListener;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.startlevel.BundleStartLevel;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,30 +27,28 @@ import com.enonic.xp.launcher.impl.config.ConfigProperties;
 
 import static java.util.Objects.requireNonNullElse;
 
-public final class FrameworkService
+public class FrameworkService
     implements SharedConstants
 {
-    private final static Logger LOG = LoggerFactory.getLogger( FrameworkService.class );
+    private static final Logger LOG = LoggerFactory.getLogger( FrameworkService.class );
 
-    private Felix felix;
+    public static final int WAIT_FOR_STOP_TIMEOUT_MS = 10_000;
 
-    private ConfigProperties config;
+    private final ConfigProperties config;
 
-    private final List<BundleActivator> activators;
+    private final List<BundleActivator> activators = new CopyOnWriteArrayList<>();
 
-    private LauncherListener listener;
+    private final Map<String, Object> services = new ConcurrentHashMap<>();
 
-    private long startTime;
+    private volatile Felix felix;
 
-    public FrameworkService()
-    {
-        this.activators = new ArrayList<>();
-    }
+    private volatile LauncherListener listener;
 
-    public FrameworkService config( final ConfigProperties config )
+    private volatile long startTime;
+
+    public FrameworkService( final ConfigProperties config )
     {
         this.config = config;
-        return this;
     }
 
     public FrameworkService activator( final BundleActivator activator )
@@ -58,6 +60,12 @@ public final class FrameworkService
     public FrameworkService listener( final LauncherListener listener )
     {
         this.listener = listener;
+        return this;
+    }
+
+    public FrameworkService service( Class<?> clazz, Object service )
+    {
+        services.put( clazz.getName(), service );
         return this;
     }
 
@@ -130,6 +138,7 @@ public final class FrameworkService
 
         setBundleStartLevel();
         startActivators();
+        registerServices();
         setRunningStartLevel();
     }
 
@@ -170,12 +179,40 @@ public final class FrameworkService
         LOG.info( "Server has been stopped" );
     }
 
+    public void restart()
+    {
+        LOG.info( "Restarting server..." );
+        stop();
+        start();
+    }
+
+    public void reset()
+    {
+        LOG.info( "Resetting server..." );
+        final int initialBundleStartLevel = getStartLevelService().getInitialBundleStartLevel();
+        for ( Bundle bundle : this.felix.getBundleContext().getBundles() )
+        {
+            if ( bundle.adapt( BundleStartLevel.class ).getStartLevel() > initialBundleStartLevel )
+            {
+                try
+                {
+                    bundle.uninstall();
+                }
+                catch ( BundleException e )
+                {
+                    LOG.warn( "Cannon uninstall bundle {}", bundle.getSymbolicName() );
+                }
+            }
+        }
+        LOG.info( "Server has been reset..." );
+    }
+
     private void doStop()
         throws Exception
     {
         stopActivators();
         this.felix.stop();
-        this.felix.waitForStop( 1000 );
+        this.felix.waitForStop( WAIT_FOR_STOP_TIMEOUT_MS );
     }
 
     private void startActivators()
@@ -184,6 +221,15 @@ public final class FrameworkService
         for ( final BundleActivator activator : this.activators )
         {
             activator.start( this.felix.getBundleContext() );
+        }
+    }
+
+    public void registerServices()
+    {
+        final BundleContext bundleContext = this.felix.getBundleContext();
+        for ( Map.Entry<String, Object> classObjectEntry : services.entrySet() )
+        {
+            bundleContext.registerService( classObjectEntry.getKey(), classObjectEntry.getValue(), null );
         }
     }
 

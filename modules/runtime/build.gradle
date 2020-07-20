@@ -9,6 +9,8 @@ configurations {
 
 dependencies {
     lib project( ':launcher:launcher-main' )
+    // JNA required for ElasticSearch but can't be refreshed. It should be part of lib
+    lib 'net.java.dev.jna:jna:4.1.0'
 }
 
 ext {
@@ -39,9 +41,6 @@ addBundle( "org.jboss.logging:jboss-logging:3.3.2.Final", 6 )
 
 // Java Cryptography Extension
 addBundle( 'org.bouncycastle:bcprov-jdk15on:1.54', 6 )
-
-// JNA required for ElasticSearch
-addBundle( 'net.java.dev.jna:jna:4.1.0', 6)
 
 // Library dependencies
 addBundle( 'com.google.guava:guava:26.0-jre', 8 )

@@ -4,7 +4,9 @@ import java.io.File;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
@@ -24,8 +26,9 @@ import org.elasticsearch.snapshots.SnapshotInfo;
 import org.elasticsearch.snapshots.SnapshotState;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.cluster.ClusterManager;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
@@ -36,7 +39,11 @@ import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
+import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.NodeHelper;
+import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.snapshot.SnapshotService;
 
@@ -44,7 +51,9 @@ import com.enonic.xp.snapshot.SnapshotService;
 public class SnapshotServiceImpl
     implements SnapshotService
 {
-    private final static String SNAPSHOT_REPOSITORY_NAME = "enonic-xp-snapshot-repo";
+    private static final Logger LOG = LoggerFactory.getLogger( SnapshotServiceImpl.class );
+
+    private static final String SNAPSHOT_REPOSITORY_NAME = "enonic-xp-snapshot-repo";
 
     private Client client;
 
@@ -54,7 +63,7 @@ public class SnapshotServiceImpl
 
     private EventPublisher eventPublisher;
 
-    private ClusterManager clusterManager;
+    private IndexServiceInternal indexServiceInternal;
 
     @Override
     public SnapshotResult snapshot( final SnapshotParams snapshotParams )
@@ -66,11 +75,13 @@ public class SnapshotServiceImpl
     {
         checkSnapshotRepository();
 
+        final RepositoryIds repositoriesToSnapshot =
+            RepositoryIds.from( Optional.ofNullable( snapshotParams.getRepositoryId() ).map( Set::of ).orElseGet( this::getRepositories ) );
+
         return SnapshotExecutor.create().
             snapshotName( snapshotParams.getSnapshotName() ).
-            repositoryToSnapshot( snapshotParams.getRepositoryId() ).
+            repositories( repositoriesToSnapshot ).
             client( this.client ).
-            repositoryService( this.repositoryService ).
             snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME ).
             build().
             execute();
@@ -87,21 +98,29 @@ public class SnapshotServiceImpl
         checkSnapshotRepository();
         validateSnapshot( restoreParams.getSnapshotName() );
 
+        final RepositoryIds repositoriesToRestore =
+            RepositoryIds.from( Optional.ofNullable( restoreParams.getRepositoryId() ).map( Set::of ).orElseGet( this::getRepositories ) );
+
         this.eventPublisher.publish( RepositoryEvents.restoreInitialized() );
 
         final RestoreResult result = SnapshotRestoreExecutor.create().
-            repositoryToRestore( restoreParams.getRepositoryId() ).
             snapshotName( restoreParams.getSnapshotName() ).
+            repositories( repositoriesToRestore ).
             client( this.client ).
-            repositoryService( this.repositoryService ).
-            clusterManager( this.clusterManager ).
             snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME ).
+            indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
 
+        LOG.info( "Snapshot Restore completed" );
         this.eventPublisher.publish( RepositoryEvents.restored() );
 
         return result;
+    }
+
+    private Set<RepositoryId> getRepositories()
+    {
+        return this.repositoryService.list().stream().map( Repository::getId ).collect( Collectors.toSet() );
     }
 
     @Override
@@ -322,8 +341,8 @@ public class SnapshotServiceImpl
     }
 
     @Reference
-    public void setClusterManager( final ClusterManager clusterManager )
+    public void setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )
     {
-        this.clusterManager = clusterManager;
+        this.indexServiceInternal = indexServiceInternal;
     }
 }

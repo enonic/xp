@@ -1,6 +1,11 @@
 package com.enonic.xp.repo.impl.repository;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryIds;
 
 public class IndexNameResolver
 {
@@ -20,5 +25,17 @@ public class IndexNameResolver
         return SEARCH_INDEX_PREFIX + DIVIDER + repositoryId.toString();
     }
 
+    public static Set<String> resolveIndexNames( final RepositoryId repositoryId )
+    {
+        return Stream.of( IndexNameResolver.resolveStorageIndexName( repositoryId ),
+                          IndexNameResolver.resolveSearchIndexName( repositoryId ) ).
+            collect( Collectors.toUnmodifiableSet() );
+    }
 
+    public static Set<String> resolveIndexNames( final RepositoryIds repositoryIds )
+    {
+        return repositoryIds.stream().
+            flatMap( repositoryId -> IndexNameResolver.resolveIndexNames( repositoryId ).stream() ).
+            collect( Collectors.toUnmodifiableSet() );
+    }
 }

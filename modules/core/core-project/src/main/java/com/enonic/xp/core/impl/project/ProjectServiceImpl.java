@@ -23,7 +23,6 @@ import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentSerializer;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -74,23 +73,30 @@ public class ProjectServiceImpl
     @Activate
     public void initialize()
     {
-        adminContext().runWith( () -> {
-            if ( doGet( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ) == null )
-            {
-                doCreate( CreateProjectParams.create().
-                    name( ProjectConstants.DEFAULT_PROJECT.getName() ).
-                    displayName( ProjectConstants.DEFAULT_PROJECT.getDisplayName() ).
-                    description( ProjectConstants.DEFAULT_PROJECT.getDescription() ).
-                    build() );
-            }
-        } );
+        adminContext().runWith( () -> doCreate( CreateProjectParams.create().
+            name( ProjectConstants.DEFAULT_PROJECT.getName() ).
+            displayName( ProjectConstants.DEFAULT_PROJECT.getDisplayName() ).
+            description( ProjectConstants.DEFAULT_PROJECT.getDescription() ).
+            build() ) );
     }
 
     @Override
     public Project create( CreateProjectParams params )
     {
         return callWithCreateContext( () -> {
+            if ( repositoryService.isInitialized( params.getName().getRepoId() ) )
+            {
+                throw new ProjectAlreadyExistsException( params.getName() );
+            }
             final Project result = doCreate( params );
+
+            CreateProjectRolesCommand.create().
+                securityService( securityService ).
+                projectName( params.getName() ).
+                projectDisplayName( params.getDisplayName() ).
+                build().
+                execute();
+
             LOG.debug( "Project created: " + params.getName() );
 
             return result;
@@ -99,14 +105,7 @@ public class ProjectServiceImpl
 
     private Project doCreate( final CreateProjectParams params )
     {
-        if ( repositoryService.isInitialized( params.getName().getRepoId() ) )
-        {
-            throw new ProjectAlreadyExistsException( params.getName() );
-        }
-
-        final ContentInitializer.Builder contentInitializer = ContentInitializer.create();
-
-        contentInitializer.
+        ContentInitializer.create().
             setIndexService( indexService ).
             setNodeService( nodeService ).
             setRepositoryService( repositoryService ).
@@ -131,16 +130,6 @@ public class ProjectServiceImpl
             forceInitialization( params.isForceInitialization() ).
             build().
             initialize();
-
-        if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( params.getName() ) )
-        {
-            CreateProjectRolesCommand.create().
-                securityService( securityService ).
-                projectName( params.getName() ).
-                projectDisplayName( params.getDisplayName() ).
-                build().
-                execute();
-        }
 
         return Project.from( repositoryService.get( params.getName().getRepoId() ) );
     }

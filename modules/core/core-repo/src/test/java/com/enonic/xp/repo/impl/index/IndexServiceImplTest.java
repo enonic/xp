@@ -248,13 +248,11 @@ public class IndexServiceImplTest
 
         refresh();
 
-        assertEquals( 5, systemRepoContext.
-            callWith( this::findAllNodes ).getHits() );
+        final long nodesInSystemRepoCount = systemRepoContext.callWith( this::findAllNodes ).getHits();
 
         this.indexService.purgeSearchIndex( new PurgeIndexParams( systemRepoContext.getRepositoryId() ) );
 
-        assertEquals( 0, systemRepoContext.
-            callWith( this::findAllNodes ).getHits() );
+        assertEquals( 0, systemRepoContext.callWith( this::findAllNodes ).getHits() );
 
         this.indexService.reindex( ReindexParams.create().
             addBranch( systemRepoContext.getBranch() ).
@@ -264,9 +262,7 @@ public class IndexServiceImplTest
 
         refresh();
 
-        assertEquals( 5, systemRepoContext.
-            callWith( this::findAllNodes ).getHits() );
-
+        assertEquals( nodesInSystemRepoCount, systemRepoContext.callWith( this::findAllNodes ).getHits() );
     }
 
     private FindNodesByQueryResult findAllNodes()

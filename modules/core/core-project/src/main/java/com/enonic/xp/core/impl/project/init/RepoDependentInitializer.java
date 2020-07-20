@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.project.init;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
@@ -37,10 +38,11 @@ public abstract class RepoDependentInitializer
         this.accessControlList = builder.accessControlList;
     }
 
-    protected Context createAdminContext()
+    protected Context createAdminContext( Branch branch )
     {
         final AuthenticationInfo authInfo = createAdminAuthInfo();
-        return ContextBuilder.from( ContentConstants.CONTEXT_MASTER ).
+        return ContextBuilder.create().
+            branch( branch ).
             repositoryId( repositoryId ).
             authInfo( authInfo ).
             build();

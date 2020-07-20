@@ -35,8 +35,7 @@ public class RefreshCommand
 
         if ( refreshMode.equals( RefreshMode.ALL ) )
         {
-            indices.add( IndexNameResolver.resolveSearchIndexName( repositoryId ) );
-            indices.add( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
+            indices.addAll( IndexNameResolver.resolveIndexNames( repositoryId ) );
         }
         else if ( refreshMode.equals( RefreshMode.SEARCH ) )
         {

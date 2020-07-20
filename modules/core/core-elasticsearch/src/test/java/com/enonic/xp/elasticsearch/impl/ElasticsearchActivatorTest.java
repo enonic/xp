@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.client.AdminClient;
+import org.elasticsearch.client.Client;
 import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.node.Node;
@@ -44,6 +45,8 @@ public class ElasticsearchActivatorTest
     private ServiceRegistration<ClusterService> clusterServiceReg;
 
     private ServiceRegistration<TransportService> transportServiceReg;
+
+    private ServiceRegistration<Client> clientServiceRegistration;
 
     @BeforeEach
     public void setup()
@@ -105,6 +108,7 @@ public class ElasticsearchActivatorTest
         this.clusterAdminClientReg = mockRegisterService( ClusterAdminClient.class );
         this.clusterServiceReg = mockRegisterService( ClusterService.class );
         this.transportServiceReg = mockRegisterService( TransportService.class );
+        this.clientServiceRegistration = mockRegisterService( Client.class );
     }
 
     @Test
@@ -120,6 +124,7 @@ public class ElasticsearchActivatorTest
         verifyRegisterService( ClusterAdminClient.class );
         verifyRegisterService( ClusterService.class );
         verifyRegisterService( TransportService.class );
+        verifyRegisterService( Client.class );
 
         this.activator.deactivate();
         verifyUnregisterService( this.nodeReg );
@@ -127,6 +132,7 @@ public class ElasticsearchActivatorTest
         verifyUnregisterService( this.clusterAdminClientReg );
         verifyUnregisterService( this.clusterServiceReg );
         verifyUnregisterService( this.transportServiceReg );
+        verifyUnregisterService( this.clientServiceRegistration );
     }
 
     private <T> void verifyRegisterService( final Class<T> type )

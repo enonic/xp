@@ -14,6 +14,7 @@ dependencies {
 
     compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
 
+    testFixturesImplementation( project(":core:core-audit") )
     testFixturesImplementation( testFixtures( project(":core:core-blobstore") ) )
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"

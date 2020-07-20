@@ -30,7 +30,6 @@ import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.node.UpdateNodeCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
-import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
@@ -43,8 +42,6 @@ public class RepositoryEntryServiceImpl
 {
 
     private IndexServiceInternal indexServiceInternal;
-
-    private NodeRepositoryService nodeRepositoryService;
 
     private NodeStorageService nodeStorageService;
 
@@ -97,13 +94,9 @@ public class RepositoryEntryServiceImpl
     @Override
     public Repository getRepositoryEntry( final RepositoryId repositoryId )
     {
-        if ( this.nodeRepositoryService.isInitialized( SystemConstants.SYSTEM_REPO_ID ) )
-        {
-            final NodeId nodeId = NodeId.from( repositoryId.toString() );
-            final Node node = this.nodeStorageService.get( nodeId, createInternalContext() );
-            return node == null ? null : RepositoryNodeTranslator.toRepository( node );
-        }
-        return null;
+        final NodeId nodeId = NodeId.from( repositoryId.toString() );
+        final Node node = this.nodeStorageService.get( nodeId, createInternalContext() );
+        return node == null ? null : RepositoryNodeTranslator.toRepository( node );
     }
 
     @Override
@@ -218,12 +211,6 @@ public class RepositoryEntryServiceImpl
     public void setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )
     {
         this.indexServiceInternal = indexServiceInternal;
-    }
-
-    @Reference
-    public void setNodeRepositoryService( final NodeRepositoryService nodeRepositoryService )
-    {
-        this.nodeRepositoryService = nodeRepositoryService;
     }
 
     @Reference
