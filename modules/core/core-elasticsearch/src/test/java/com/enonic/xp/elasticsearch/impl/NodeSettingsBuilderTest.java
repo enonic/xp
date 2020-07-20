@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.elasticsearch.common.settings.Settings;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
@@ -22,7 +21,6 @@ import com.enonic.xp.cluster.NodeDiscovery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Disabled
 public class NodeSettingsBuilderTest
 {
     private NodeSettingsBuilder builder;
@@ -110,7 +108,7 @@ public class NodeSettingsBuilderTest
         assertEquals( "mycluster", settings.get( "cluster.name" ) );
         assertEquals( "127.0.0.1", settings.get( "network.host" ) );
         assertEquals( "false", settings.get( "discovery.zen.ping.multicast.enabled" ) );
-        assertEquals( "127.0.0.1[9300]", settings.get( "discovery.zen.ping.unicast.hosts" ) );
+        assertEquals( "127.0.0.1:9300", settings.get( "discovery.zen.ping.unicast.hosts" ) );
         assertEquals( "1", settings.get( "gateway.expected_nodes" ) );
         assertEquals( "5m", settings.get( "gateway.recover_after_time" ) );
         assertEquals( "1", settings.get( "gateway.recover_after_nodes" ) );

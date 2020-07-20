@@ -239,7 +239,6 @@ public class AbstractContentServiceTest
 
         final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
         repositoryEntryService.setIndexServiceInternal( elasticsearchIndexService );
-        repositoryEntryService.setNodeRepositoryService( nodeRepositoryService );
         repositoryEntryService.setNodeStorageService( storageService );
         repositoryEntryService.setNodeSearchService( searchService );
         repositoryEntryService.setEventPublisher( eventPublisher );
@@ -306,7 +305,6 @@ public class AbstractContentServiceTest
         securityService.initialize();
 
         final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
-        projectAccessContextManager.setRepositoryService( repositoryService );
 
         final ProjectServiceImpl projectService = new ProjectServiceImpl();
         projectService.setIndexService( indexService );

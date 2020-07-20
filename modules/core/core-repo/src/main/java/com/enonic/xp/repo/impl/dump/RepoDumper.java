@@ -48,14 +48,12 @@ import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
-import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositoryService;
 
 class RepoDumper
 {
     private static final Logger LOG = LoggerFactory.getLogger( RepoDumper.class );
 
-    private final RepositoryId repositoryId;
+    private final Repository repository;
 
     private final boolean includeVersions;
 
@@ -67,8 +65,6 @@ class RepoDumper
 
     private final NodeService nodeService;
 
-    private final RepositoryService repositoryService;
-
     private final DumpWriter writer;
 
     private final RepoDumpResult.Builder dumpResult;
@@ -77,13 +73,12 @@ class RepoDumper
 
     private RepoDumper( final Builder builder )
     {
-        this.repositoryId = builder.repositoryId;
+        this.repository = builder.repository;
         this.includeVersions = builder.includeVersions;
         this.includeBinaries = builder.includeBinaries;
         this.nodeService = builder.nodeService;
-        this.repositoryService = builder.repositoryService;
         this.writer = builder.writer;
-        this.dumpResult = RepoDumpResult.create( this.repositoryId );
+        this.dumpResult = RepoDumpResult.create( this.repository.getId() );
         this.maxAge = builder.maxAge;
         this.maxVersions = builder.maxVersions;
         this.listener = Objects.requireNonNullElseGet( builder.listener, NullSystemDumpListener::new );
@@ -96,7 +91,7 @@ class RepoDumper
         final Consumer<NodeId> nodeIdsAccumulator = includeVersions ? dumpedNodes::add : nodeId -> {
         };
 
-        for ( Branch branch : getBranches() )
+        for ( Branch branch : this.repository.getBranches() )
         {
             setContext( branch ).runWith( () -> dumpBranch( nodeIdsAccumulator ) );
         }
@@ -118,7 +113,7 @@ class RepoDumper
         final Branch branch = ContextAccessor.current().getBranch();
 
         final BranchDumpResult.Builder branchDumpResult = BranchDumpResult.create( branch );
-        writer.openBranchMeta( this.repositoryId, branch );
+        writer.openBranchMeta( repository.getId(), branch );
         try
         {
             dumpBranch( branchDumpResult, nodeIdsAccumulator );
@@ -126,7 +121,7 @@ class RepoDumper
         }
         catch ( Exception e )
         {
-            throw new RepoDumpException( "Error occurred when dumping repository " + repositoryId, e );
+            throw new RepoDumpException( "Error occurred when dumping repository " + repository.getId(), e );
         }
         finally
         {
@@ -145,8 +140,8 @@ class RepoDumper
             build() );
 
         final Branch branch = ContextAccessor.current().getBranch();
-        this.listener.dumpingBranch( this.repositoryId, branch, children.getTotalHits() + 1 );
-        LOG.info( "Dumping repository [" + this.repositoryId + "], branch [" + branch + "]  " );
+        this.listener.dumpingBranch( repository.getId(), branch, children.getTotalHits() + 1 );
+        LOG.info( "Dumping repository [{}], branch [{}]", repository.getId(), branch );
 
         doDumpNode( rootNode.id(), dumpResult );
         nodeIdsAccumulator.accept( rootNode.id() );
@@ -160,7 +155,7 @@ class RepoDumper
 
     private void dumpVersions( final Collection<NodeId> dumpedNodes )
     {
-        writer.openVersionsMeta( this.repositoryId );
+        writer.openVersionsMeta( repository.getId() );
         try
         {
             for ( NodeId nodeId : dumpedNodes )
@@ -168,7 +163,6 @@ class RepoDumper
                 final VersionsDumpEntry.Builder builder = VersionsDumpEntry.create( nodeId );
 
                 final NodeVersionQueryResult versions = getVersions( nodeId );
-
                 for ( final NodeVersionMetadata metaData : versions.getNodeVersionsMetadata() )
                 {
                     doStoreVersion( builder, metaData, this.dumpResult );
@@ -186,7 +180,7 @@ class RepoDumper
 
     private void dumpCommits()
     {
-        writer.openCommitsMeta( this.repositoryId );
+        writer.openCommitsMeta( repository.getId() );
         try
         {
             final NodeCommitQuery nodeCommitQuery = NodeCommitQuery.create().size( -1 ).build();
@@ -230,7 +224,7 @@ class RepoDumper
     {
         try
         {
-            writer.writeNodeVersionBlobs( repositoryId, nodeVersionKey );
+            writer.writeNodeVersionBlobs( repository.getId(), nodeVersionKey );
         }
         catch ( Exception e )
         {
@@ -244,7 +238,7 @@ class RepoDumper
         nodeVersion.getAttachedBinaries().forEach( ( attachedBinary ) -> {
             try
             {
-                this.writer.writeBinaryBlob( repositoryId, BlobKey.from( attachedBinary.getBlobKey() ) );
+                this.writer.writeBinaryBlob( repository.getId(), BlobKey.from( attachedBinary.getBlobKey() ) );
             }
             catch ( Exception e )
             {
@@ -254,22 +248,10 @@ class RepoDumper
         } );
     }
 
-    private Branches getBranches()
-    {
-        final Repository repository = this.repositoryService.get( this.repositoryId );
-
-        if ( repository == null )
-        {
-            throw new RepoDumpException( String.format( "Repository [%s] not found", this.repositoryId ) );
-        }
-
-        return repository.getBranches();
-    }
-
     private Context setContext( final Branch branch )
     {
         return ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( this.repositoryId ).
+            repositoryId( repository.getId() ).
             branch( branch ).
             build();
     }
@@ -280,7 +262,7 @@ class RepoDumper
         {
             final BranchDumpEntry branchDumpEntry = createDumpEntry( nodeId );
             writer.writeBranchEntry( branchDumpEntry );
-            writer.writeNodeVersionBlobs( repositoryId, branchDumpEntry.getMeta().getNodeVersionKey() );
+            writer.writeNodeVersionBlobs( repository.getId(), branchDumpEntry.getMeta().getNodeVersionKey() );
             writeBinaries( dumpResult, branchDumpEntry.getBinaryReferences() );
             dumpResult.addedNode();
             this.listener.nodeDumped();
@@ -296,7 +278,7 @@ class RepoDumper
         binaryReferences.forEach( ref -> {
             try
             {
-                writer.writeBinaryBlob( repositoryId, BlobKey.from( ref ) );
+                writer.writeBinaryBlob( repository.getId(), BlobKey.from( ref ) );
             }
             catch ( RepoDumpException e )
             {
@@ -361,15 +343,13 @@ class RepoDumper
 
     public static final class Builder
     {
-        private RepositoryId repositoryId;
+        private Repository repository;
 
         private boolean includeVersions;
 
         private boolean includeBinaries;
 
         private NodeService nodeService;
-
-        private RepositoryService repositoryService;
 
         private DumpWriter writer;
 
@@ -383,9 +363,9 @@ class RepoDumper
         {
         }
 
-        public Builder repositoryId( final RepositoryId val )
+        public Builder repository( final Repository val )
         {
-            repositoryId = val;
+            repository = val;
             return this;
         }
 
@@ -404,12 +384,6 @@ class RepoDumper
         public Builder nodeService( final NodeService val )
         {
             nodeService = val;
-            return this;
-        }
-
-        public Builder repositoryService( final RepositoryService val )
-        {
-            repositoryService = val;
             return this;
         }
 

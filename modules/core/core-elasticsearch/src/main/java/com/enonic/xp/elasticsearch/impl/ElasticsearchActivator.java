@@ -3,6 +3,7 @@ package com.enonic.xp.elasticsearch.impl;
 import java.util.Map;
 
 import org.elasticsearch.client.AdminClient;
+import org.elasticsearch.client.Client;
 import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.cluster.ClusterService;
 import org.elasticsearch.common.inject.Injector;
@@ -27,6 +28,8 @@ public final class ElasticsearchActivator
     private Node node;
 
     private ServiceRegistration<Node> nodeReg;
+
+    private ServiceRegistration<Client> clientServiceRegistration;
 
     private ServiceRegistration<AdminClient> adminClientReg;
 
@@ -61,6 +64,7 @@ public final class ElasticsearchActivator
         this.nodeReg = context.registerService( Node.class, this.node, null );
         this.clusterServiceReg = context.registerService( ClusterService.class, clusterService, null );
         this.transportServiceReg = context.registerService( TransportService.class, transportService, null );
+        this.clientServiceRegistration = context.registerService( Client.class, this.node.client(), null );
         this.adminClientReg = context.registerService( AdminClient.class, this.node.client().admin(), null );
         this.clusterAdminClientReg = context.registerService( ClusterAdminClient.class, this.node.client().admin().cluster(), null );
     }
@@ -74,6 +78,7 @@ public final class ElasticsearchActivator
         this.clusterServiceReg.unregister();
         this.adminClientReg.unregister();
         this.clusterAdminClientReg.unregister();
+        this.clientServiceRegistration.unregister();
         this.node.close();
     }
 

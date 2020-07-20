@@ -133,7 +133,6 @@ public class SecurityServiceImplTest
 
         final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
         repositoryEntryService.setIndexServiceInternal( this.indexServiceInternal );
-        repositoryEntryService.setNodeRepositoryService( nodeRepositoryService );
         repositoryEntryService.setNodeStorageService( storageService );
         repositoryEntryService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 

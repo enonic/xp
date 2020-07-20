@@ -149,7 +149,6 @@ public class AbstractIssueServiceTest
 
         final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
         repositoryEntryService.setIndexServiceInternal( elasticsearchIndexService );
-        repositoryEntryService.setNodeRepositoryService( nodeRepositoryService );
         repositoryEntryService.setNodeStorageService(storageService);
         repositoryEntryService.setNodeSearchService(searchService);
         repositoryEntryService.setEventPublisher( eventPublisher );

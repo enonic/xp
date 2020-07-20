@@ -24,6 +24,7 @@ public class AuditLogServiceImplDisabledTest
         Mockito.when( config.isEnabled() ).thenReturn( false );
         Mockito.when( config.isOutputLogs() ).thenReturn( true );
         IndexService indexService = Mockito.mock( IndexService.class );
+        Mockito.when( indexService.waitForYellowStatus() ).thenReturn( true );
         Mockito.when( indexService.isMaster() ).thenReturn( true );
         RepositoryService repositoryService = Mockito.mock( RepositoryService.class );
 

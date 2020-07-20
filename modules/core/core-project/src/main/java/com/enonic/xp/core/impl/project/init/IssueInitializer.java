@@ -57,13 +57,13 @@ public class IssueInitializer
     @Override
     protected void doInitialize()
     {
-        createAdminContext().runWith( this::initIssueNode );
+        createAdminContext( ContentConstants.BRANCH_DRAFT ).runWith( this::initIssueNode );
     }
 
     @Override
     public boolean isInitialized()
     {
-        return createAdminContext().
+        return createAdminContext( ContentConstants.BRANCH_MASTER ).
             callWith( () -> nodeService.getByPath( IssueConstants.ISSUE_ROOT_PATH ) != null );
     }
 
@@ -96,7 +96,7 @@ public class IssueInitializer
 
         nodeService.refresh( RefreshMode.ALL );
 
-        nodeService.push( NodeIds.from( issueRoot.id() ), ContentConstants.BRANCH_DRAFT );
+        nodeService.push( NodeIds.from( issueRoot.id() ), ContentConstants.BRANCH_MASTER );
     }
 
     public static class Builder

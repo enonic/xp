@@ -32,8 +32,6 @@ import com.enonic.xp.util.JsonHelper;
 public class IndexServiceImpl
     implements IndexService
 {
-    private final static String CLUSTER_HEALTH_TIMEOUT_VALUE = "10s";
-
     private IndexServiceInternal indexServiceInternal;
 
     private IndexDataService indexDataService;
@@ -138,6 +136,12 @@ public class IndexServiceImpl
     }
 
     @Override
+    public boolean waitForYellowStatus()
+    {
+        return indexServiceInternal.waitForYellowStatus();
+    }
+
+    @Override
     public void purgeSearchIndex( final PurgeIndexParams params )
     {
         doInitializeSearchIndex( params.getRepositoryId() );
@@ -148,7 +152,6 @@ public class IndexServiceImpl
         final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
 
         indexServiceInternal.deleteIndices( searchIndexName );
-        indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
 
         final IndexSettings indexSettings = getSearchIndexSettings( repositoryId );
         indexServiceInternal.createIndex( CreateIndexRequest.create().
@@ -156,16 +159,12 @@ public class IndexServiceImpl
             indexSettings( indexSettings ).
             build() );
 
-        indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
-
         final IndexMapping indexMapping = getSearchIndexMapping( repositoryId );
         indexServiceInternal.applyMapping( ApplyMappingRequest.create().
             indexName( searchIndexName ).
             indexType( IndexType.SEARCH ).
             mapping( indexMapping ).
             build() );
-
-        indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
     }
 
     private IndexSettings getSearchIndexSettings( final RepositoryId repositoryId )

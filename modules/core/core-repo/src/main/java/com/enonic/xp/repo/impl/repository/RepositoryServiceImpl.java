@@ -85,7 +85,6 @@ public class RepositoryServiceImpl
             setNodeStorageService( nodeStorageService ).
             build().
             initialize();
-
     }
 
     @Override
@@ -93,34 +92,26 @@ public class RepositoryServiceImpl
     {
         requireAdminRole();
 
-        return repositoryMap.compute( params.getRepositoryId(),
-                                      ( repositoryId, previousRepository ) -> doCreateRepo( params, previousRepository ) );
+        return repositoryMap.compute( params.getRepositoryId(), ( repositoryId, previousRepository ) -> doCreateRepo( params ) );
     }
 
-    private Repository doCreateRepo( final CreateRepositoryParams params, final Repository previousRepository )
+    private Repository doCreateRepo( final CreateRepositoryParams params )
     {
-        //If the repository entry already exists, throws an exception
         final RepositoryId repositoryId = params.getRepositoryId();
         final boolean repoAlreadyInitialized = this.nodeRepositoryService.isInitialized( repositoryId );
 
-        if ( previousRepository != null && repoAlreadyInitialized )
+        if ( repoAlreadyInitialized )
         {
             throw new RepositoryAlreadyExistException( repositoryId );
         }
 
-        //If the repository does not exist, creates it
-        if ( !this.nodeRepositoryService.isInitialized( repositoryId ) )
-        {
-            this.nodeRepositoryService.create( params );
-        }
+        this.nodeRepositoryService.create( params );
 
-        //If the root node does not exist, creates it
-        if ( getRootNode( params.getRepositoryId(), RepositoryConstants.MASTER_BRANCH ) == null )
+        if ( getRootNode( repositoryId, RepositoryConstants.MASTER_BRANCH ) == null )
         {
             createRootNode( params );
         }
 
-        //Creates the repository entry
         final Repository repository = createRepositoryObject( params );
         repositoryEntryService.createRepositoryEntry( repository );
         return repository;
@@ -219,8 +210,8 @@ public class RepositoryServiceImpl
     public boolean isInitialized( final RepositoryId repositoryId )
     {
         requireAdminRole();
-        final Repository repository = this.get( repositoryId );
-        return repository != null && this.nodeRepositoryService.isInitialized( repositoryId );
+        return this.nodeRepositoryService.isInitialized( repositoryId ) &&
+            this.repositoryEntryService.getRepositoryEntry( repositoryId ) != null;
     }
 
     @Override
@@ -379,7 +370,7 @@ public class RepositoryServiceImpl
             return null;
         } );
 
-        LOG.info( "Created root node in with id [" + rootNode.id() + "] in repository [" + params.getRepositoryId() + "]" );
+        LOG.info( "Created root node with id [" + rootNode.id() + "] in repository [" + params.getRepositoryId() + "]" );
     }
 
     private void pushRootNode( final Repository currentRepo, final Branch branch )

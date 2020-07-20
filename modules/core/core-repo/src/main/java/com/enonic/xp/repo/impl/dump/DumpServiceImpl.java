@@ -8,23 +8,17 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
-import org.osgi.service.component.ComponentContext;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.app.ApplicationInstallationParams;
-import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.app.Applications;
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.DumpUpgradeResult;
 import com.enonic.xp.dump.DumpUpgradeStepResult;
@@ -34,12 +28,10 @@ import com.enonic.xp.dump.SystemDumpResult;
 import com.enonic.xp.dump.SystemDumpUpgradeParams;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.home.HomeDir;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.DumpReader;
@@ -57,7 +49,6 @@ import com.enonic.xp.repo.impl.dump.upgrade.indexaccesssegments.IndexAccessSegme
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
 import com.enonic.xp.repo.impl.dump.writer.ZipDumpWriter;
-import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repositories;
@@ -65,6 +56,7 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.util.Version;
 
@@ -77,26 +69,28 @@ public class DumpServiceImpl
 {
     private final static Logger LOG = LoggerFactory.getLogger( DumpServiceImpl.class );
 
+    private static final RepositoryId AUDIT_LOG_REPO_ID = RepositoryId.from( "system.auditlog" );
+
     private BlobStore blobStore;
 
     private NodeService nodeService;
 
     private RepositoryService repositoryService;
 
-    private ApplicationService applicationService;
+    private final EventPublisher eventPublisher;
 
-    private String xpVersion;
+    private final String xpVersion;
 
     private Path basePath = Paths.get( HomeDir.get().toString(), "data", "dump" );
 
-    @SuppressWarnings("unused")
     @Activate
-    public void activate( final ComponentContext context )
+    public DumpServiceImpl( final BundleContext context, @Reference EventPublisher eventPublisher )
     {
-        xpVersion = context.getBundleContext().
+        this.xpVersion = context.
             getBundle().
             getVersion().
             toString();
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -236,8 +230,7 @@ public class DumpServiceImpl
                     includeVersions( params.isIncludeVersions() ).
                     includeBinaries( params.isIncludeBinaries() ).
                     nodeService( this.nodeService ).
-                    repositoryService( this.repositoryService ).
-                    repositoryId( repository.getId() ).
+                    repository( repository ).
                     maxVersions( params.getMaxVersions() ).
                     maxAge( params.getMaxAge() ).
                     listener( params.getListener() ).
@@ -254,6 +247,7 @@ public class DumpServiceImpl
                 timestamp( Instant.now() ).
                 systemDumpResult( systemDumpResult ).build() );
 
+            LOG.info( "Dump completed" );
             return systemDumpResult;
         }
         catch ( IOException e )
@@ -280,38 +274,16 @@ public class DumpServiceImpl
 
         try (dumpReader)
         {
-
-            final Version modelVersion = Objects.requireNonNullElse( dumpReader.getDumpMeta().getModelVersion(), Version.emptyVersion );
-
-            if ( modelVersion.getMajor() < DumpConstants.MODEL_VERSION.getMajor() )
-            {
-                if ( params.isUpgrade() )
-                {
-                    if ( params.isArchive() )
-                    {
-                        throw new RepoLoadException(
-                            "Cannot load system-dump; upgrade is not possible on archived dump; unarchive and upgrade the system-dump" );
-                    }
-                    final SystemDumpUpgradeParams dumpUpgradeParams = SystemDumpUpgradeParams.create().
-                        dumpName( params.getDumpName() ).
-                        build();
-                    doUpgrade( dumpUpgradeParams );
-                }
-                else
-                {
-                    throw new RepoLoadException(
-                        "Cannot load system-dump; major model version previous to the current version; upgrade the system-dump" );
-                }
-            }
+            verifyOrUpdateDumpVersion( params, dumpReader );
 
             final RepositoryIds dumpRepositories = dumpReader.getRepositories();
 
             if ( !dumpRepositories.contains( SystemConstants.SYSTEM_REPO_ID ) )
             {
-                throw new SystemDumpException( "Cannot load system-dump; dump does not contain system repository" );
+                throw new RepoLoadException( "Cannot load system-dump; dump does not contain system repository" );
             }
 
-            uninstallNonSystemApplications();
+            this.eventPublisher.publish( RepositoryEvents.restoreInitialized() );
 
             if ( params.getListener() != null )
             {
@@ -323,21 +295,57 @@ public class DumpServiceImpl
                 params.getListener().totalBranches( branchesCount );
             }
 
-            doDeleteRepositories();
+            final boolean includeVersions = params.isIncludeVersions();
 
-            initializeSystemRepo( params, dumpReader, results );
+            final RepositorySettings currentSystemSettings = repositoryService.get( SystemConstants.SYSTEM_REPO_ID ).getSettings();
 
-            final List<Repository> repositoriesToLoad = repositoryService.list().stream().
-                filter( ( repo ) -> !repo.getId().equals( SystemConstants.SYSTEM_REPO_ID ) ).
-                collect( Collectors.toList() );
+            final RepositorySettings currentAuditLogSettings = repositoryService.get( AUDIT_LOG_REPO_ID ).getSettings();
 
-            for ( Repository repository : repositoriesToLoad )
+            // First delete all non-system repositories
+            repositoryService.list().
+                stream().
+                map( Repository::getId ).
+                filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).or( Predicate.isEqual( AUDIT_LOG_REPO_ID ) ).negate() ).
+                forEach( this::doDeleteRepository );
+
+            // Then delete all system repositories
+            doDeleteRepository( AUDIT_LOG_REPO_ID );
+
+            // system-repo must be deleted last
+            doDeleteRepository( SystemConstants.SYSTEM_REPO_ID );
+
+            // Repository Service has invalid cache. Clear it fully
+            repositoryService.invalidateAll();
+
+            // Load system repo to be able to read repository settings and data
+            initAndLoad( includeVersions, results, dumpReader, SystemConstants.SYSTEM_REPO_ID, currentSystemSettings, null );
+            // Now Repository Service an fetch correct entries
+
+            if ( dumpRepositories.contains( AUDIT_LOG_REPO_ID ) )
             {
-                initializeRepo( repository );
-                doLoadRepository( repository.getId(), params, dumpReader, results );
+                // Dump contains audit-log repository. Do a normal load.
+                initAndLoad( includeVersions, results, dumpReader, AUDIT_LOG_REPO_ID,
+                             repositoryService.get( AUDIT_LOG_REPO_ID ).getSettings(), new PropertyTree() );
+            }
+            else
+            {
+                // If it is a pre 7.2 dump it does not contain audit-log repo. It should be recreated with existing settings
+                initializeRepo( AUDIT_LOG_REPO_ID, currentAuditLogSettings, null );
             }
 
-            initApplications();
+            // Load non-system repositories
+            dumpRepositories.
+                stream().
+                filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).or( Predicate.isEqual( AUDIT_LOG_REPO_ID ) ).negate() ).
+                forEach( repositoryId -> {
+                    final Repository repository = repositoryService.get( repositoryId );
+                    final RepositorySettings settings = repository.getSettings();
+                    final PropertyTree data = repository.getData();
+                    initAndLoad( includeVersions, results, dumpReader, repositoryId, settings, data );
+                } );
+
+            this.eventPublisher.publish( RepositoryEvents.restored() );
+            LOG.info( "Dump Load completed" );
         }
         catch ( IOException e )
         {
@@ -346,72 +354,37 @@ public class DumpServiceImpl
         return results.build();
     }
 
-    private void uninstallNonSystemApplications()
+    void verifyOrUpdateDumpVersion( final SystemLoadParams params, final DumpReader dumpReader )
     {
-        LOG.info( "Uninstall global applications" );
-        NodeHelper.runAsAdmin( () -> {
-            final Applications installedApplications = applicationService.getInstalledApplications();
-            installedApplications.forEach( installedApplication -> {
-                if ( !installedApplication.isSystem() )
+        final Version modelVersion = Objects.requireNonNullElse( dumpReader.getDumpMeta().getModelVersion(), Version.emptyVersion );
+
+        if ( modelVersion.getMajor() < DumpConstants.MODEL_VERSION.getMajor() )
+        {
+            if ( params.isUpgrade() )
+            {
+                if ( params.isArchive() )
                 {
-                    final ApplicationKey applicationKey = installedApplication.getKey();
-                    if ( applicationService.isLocalApplication( applicationKey ) )
-                    {
-                        applicationService.publishUninstalledEvent( applicationKey );
-                    }
-                    else
-                    {
-                        applicationService.uninstallApplication( installedApplication.getKey(), true );
-                    }
+                    throw new RepoLoadException(
+                        "Cannot load system-dump; upgrade is not possible on archived dump; unarchive and upgrade the system-dump" );
                 }
-            } );
-        } );
+                final SystemDumpUpgradeParams dumpUpgradeParams = SystemDumpUpgradeParams.create().
+                    dumpName( params.getDumpName() ).
+                    build();
+                doUpgrade( dumpUpgradeParams );
+            }
+            else
+            {
+                throw new RepoLoadException(
+                    "Cannot load system-dump; major model version previous to the current version; upgrade the system-dump" );
+            }
+        }
     }
 
-    private void initApplications()
+    void initAndLoad( final boolean includeVersions, final SystemLoadResult.Builder results, final DumpReader dumpReader,
+                      final RepositoryId repository, RepositorySettings settings, PropertyTree data )
     {
-        LOG.info( "Install global applications" );
-        final ApplicationInstallationParams params = ApplicationInstallationParams.create().
-            build();
-        NodeHelper.runAsAdmin( () -> applicationService.installAllStoredApplications( params ) );
-    }
-
-    private void initializeSystemRepo( final SystemLoadParams params, final DumpReader dumpReader, final SystemLoadResult.Builder results )
-    {
-        final Context systemContext = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-            branch( SystemConstants.BRANCH_SYSTEM ).
-            build();
-
-        systemContext.runWith( () -> this.nodeService.refresh( RefreshMode.ALL ) );
-
-        doDeleteAllNodes( systemContext );
-
-        doLoadRepository( SystemConstants.SYSTEM_REPO_ID, params, dumpReader, results );
-
-        this.repositoryService.invalidateAll();
-
-        systemContext.runWith( () -> this.nodeService.refresh( RefreshMode.ALL ) );
-    }
-
-    private void doDeleteAllNodes( final Context context )
-    {
-        context.runWith( () -> {
-            final NodeIds children = this.nodeService.findByParent( FindNodesByParentParams.create().
-                parentId( Node.ROOT_UUID ).
-                recursive( false ).
-                build() ).
-                getNodeIds();
-
-            children.forEach( ( child ) -> this.nodeService.deleteById( child ) );
-        } );
-    }
-
-    private void doDeleteRepositories()
-    {
-        repositoryService.list().stream().
-            filter( ( repo ) -> !repo.getId().equals( SystemConstants.SYSTEM_REPO_ID ) ).
-            forEach( ( repo ) -> doDeleteRepository( repo.getId() ) );
+        initializeRepo( repository, settings, data );
+        doLoadRepository( repository, includeVersions, dumpReader, results );
     }
 
     private void doDeleteRepository( final RepositoryId repositoryId )
@@ -420,18 +393,18 @@ public class DumpServiceImpl
         this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repositoryId ) );
     }
 
-    private void initializeRepo( final Repository repository )
+    private void initializeRepo( final RepositoryId repository, RepositorySettings settings, PropertyTree data )
     {
         final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
-            repositoryId( repository.getId() ).
-            repositorySettings( repository.getSettings() ).
-            data( repository.getData() ).
+            repositoryId( repository ).
+            repositorySettings( settings ).
+            data( data ).
             build();
 
         this.repositoryService.createRepository( createRepositoryParams );
     }
 
-    private void doLoadRepository( final RepositoryId repositoryId, final SystemLoadParams params, final DumpReader dumpReader,
+    private void doLoadRepository( final RepositoryId repositoryId, final boolean includeVersions, final DumpReader dumpReader,
                                    final SystemLoadResult.Builder builder )
     {
         LOG.info( "Loading repository [" + repositoryId + "]" );
@@ -440,7 +413,7 @@ public class DumpServiceImpl
             reader( dumpReader ).
             nodeService( this.nodeService ).
             blobStore( this.blobStore ).
-            includeVersions( params.isIncludeVersions() ).
+            includeVersions( includeVersions ).
             repositoryService( this.repositoryService ).
             repositoryId( repositoryId ).
             build().
@@ -475,12 +448,6 @@ public class DumpServiceImpl
     public void setRepositoryService( final RepositoryService repositoryService )
     {
         this.repositoryService = repositoryService;
-    }
-
-    @Reference
-    public void setApplicationService( final ApplicationService applicationService )
-    {
-        this.applicationService = applicationService;
     }
 
     public void setBasePath( final Path basePath )

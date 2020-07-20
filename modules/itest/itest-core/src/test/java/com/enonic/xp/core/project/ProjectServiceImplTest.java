@@ -17,6 +17,7 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.project.ProjectAccessException;
 import com.enonic.xp.core.impl.project.ProjectAccessHelper;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
@@ -36,7 +37,6 @@ import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repository.Repository;
@@ -61,6 +61,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 class ProjectServiceImplTest
     extends AbstractNodeTest
@@ -124,17 +125,12 @@ class ProjectServiceImplTest
 
     private SecurityServiceImpl securityService;
 
-    private IndexServiceImpl indexService;
 
     @BeforeEach
     protected void setUpNode()
         throws Exception
     {
         super.setUpNode();
-
-        indexService = new IndexServiceImpl();
-        indexService.setIndexDataService( indexedDataService );
-        indexService.setIndexServiceInternal( indexServiceInternal );
 
         securityService = new SecurityServiceImpl();
         securityService.setNodeService( this.nodeService );
@@ -144,7 +140,6 @@ class ProjectServiceImplTest
             securityService.initialize();
 
             final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
-            projectAccessContextManager.setRepositoryService( repositoryService );
 
             projectService = new ProjectServiceImpl();
             projectService.setIndexService( indexService );
@@ -201,6 +196,8 @@ class ProjectServiceImplTest
     void create_in_non_master_node()
     {
         IndexServiceInternal indexServiceInternalMock = Mockito.mock( IndexServiceInternal.class );
+        when( indexServiceInternalMock.waitForYellowStatus() ).thenReturn( true );
+
         indexService.setIndexServiceInternal( indexServiceInternalMock );
 
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
@@ -683,11 +680,12 @@ class ProjectServiceImplTest
     }
 
     @Test
-    void get_icon() throws Exception
+    void get_icon()
+        throws Exception
     {
         final Project project = doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
-            final ByteSource source = ByteSource.wrap( "new bytes".getBytes() );
+        final ByteSource source = ByteSource.wrap( "new bytes".getBytes() );
         ADMIN_CONTEXT.runWith( () -> {
             assertNull( projectService.getIcon( project.getName() ) );
 
@@ -711,11 +709,7 @@ class ProjectServiceImplTest
             }
         } );
 
-        final RuntimeException ex =
-            Assertions.assertThrows( RuntimeException.class, () -> projectService.getIcon( project.getName() ) );
-        assertEquals( "Denied [user:system:test-user] user access to [test-project] project for [get] operation",
-                      ex.getMessage() );
-
+        Assertions.assertThrows( ProjectAccessException.class, () -> projectService.getIcon( project.getName() ) );
     }
 
     @Test
@@ -740,10 +734,7 @@ class ProjectServiceImplTest
     @Test
     void get_permissions_wrong_project()
     {
-        final RuntimeException ex =
-            Assertions.assertThrows( RuntimeException.class, () -> projectService.getPermissions( ProjectName.from( "test-project" ) ) );
-
-        assertEquals( "Project [test-project] was not found", ex.getMessage() );
+        Assertions.assertThrows( ProjectAccessException.class, () -> projectService.getPermissions( ProjectName.from( "test-project" ) ) );
     }
 
     @Test

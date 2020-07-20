@@ -1,5 +1,8 @@
 package com.enonic.xp.init;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -9,20 +12,19 @@ public class InitializerTest
     public void testNonMaster()
     {
         final Runnable doInitalization = Mockito.mock( Runnable.class );
-        final TestInitializer initializer = createInitializer( false, false, doInitalization );
 
-        new Thread( () -> {
-            try
-            {
-                Thread.sleep( 100 );
-            }
-            catch ( InterruptedException e )
-            {
-                e.printStackTrace();
-            }
-            initializer.setInitialized( true );
-        } ).start();
+        final long willInitializeIn = 100L;
 
+        final TestInitializer initializer = TestInitializer.create().
+            setInitializationCheckMaxCount( willInitializeIn * 2L ).
+            setInitializationCheckPeriod( 1L ).
+            setMaster( false ).
+            setInitialized( false ).
+            setInitialization( doInitalization ).
+            build();
+
+        CompletableFuture.runAsync( () -> initializer.setInitialized( true ),
+                                    CompletableFuture.delayedExecutor( willInitializeIn, TimeUnit.MILLISECONDS ) );
         initializer.initialize();
         Mockito.verify( doInitalization, Mockito.never() ).run();
     }
@@ -31,8 +33,14 @@ public class InitializerTest
     public void testMaster()
     {
         final Runnable doInitalization = Mockito.mock( Runnable.class );
-        createInitializer( true, false, doInitalization ).
-            initialize();
+        final TestInitializer initializer = TestInitializer.create().
+            setMaster( true ).
+            setInitialized( false ).
+            setInitialization( doInitalization ).
+            build();
+
+        initializer.initialize();
+
         Mockito.verify( doInitalization ).run();
     }
 
@@ -40,8 +48,14 @@ public class InitializerTest
     public void testNonMasterInitialized()
     {
         final Runnable doInitalization = Mockito.mock( Runnable.class );
-        createInitializer( false, true, doInitalization ).
-            initialize();
+        final TestInitializer initializer = TestInitializer.create().
+            setMaster( false ).
+            setInitialized( true ).
+            setInitialization( doInitalization ).
+            build();
+
+        initializer.initialize();
+
         Mockito.verify( doInitalization, Mockito.never() ).run();
     }
 
@@ -49,18 +63,14 @@ public class InitializerTest
     public void testMasterInitialized()
     {
         final Runnable doInitalization = Mockito.mock( Runnable.class );
-        createInitializer( true, true, doInitalization ).
-            initialize();
-        Mockito.verify( doInitalization, Mockito.never() ).run();
-    }
-
-    private TestInitializer createInitializer( final boolean isMaster, final boolean isInitialized, final Runnable initialization )
-    {
-        return TestInitializer.create().
-            setInitializationCheckMaxCount( 2L ).
-            setInitializationCheckPeriod( 1L ).
-            setMaster( isMaster ).
-            setInitialized( isInitialized ).setInitialization( initialization ).
+        final TestInitializer initializer = TestInitializer.create().
+            setMaster( true ).
+            setInitialized( true ).
+            setInitialization( doInitalization ).
             build();
+
+        initializer.initialize();
+
+        Mockito.verify( doInitalization, Mockito.never() ).run();
     }
 }

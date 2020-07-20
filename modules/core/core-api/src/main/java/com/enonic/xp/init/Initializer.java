@@ -30,39 +30,42 @@ public abstract class Initializer
 
     public void initialize()
     {
-        while ( true )
+        final String initializationSubject = getInitializationSubject();
+
+        for ( int i = 0; i < initializationCheckMaxCount; i++ )
         {
-            if ( this.forceInitialization || isMaster() )
+            if ( readyToInitialize() )
             {
-                if ( !isInitialized() )
+                final boolean initialized = isInitialized();
+                if ( initialized )
                 {
-                    LOG.info( "Initializing " + getInitializationSubject() );
+                    LOG.debug( "Already initialized {}", initializationSubject );
+                    return;
+                }
+
+                if ( forceInitialization || isMaster() )
+                {
+                    LOG.info( "Initializing {}", initializationSubject );
                     doInitialize();
-                    LOG.info( getInitializationSubject() + " successfully initialized" );
-                }
-                return;
-            }
-            else
-            {
-                for ( int i = 0; i < initializationCheckMaxCount; i++ )
-                {
-                    final boolean initialized = isInitialized();
-                    if ( initialized )
-                    {
-                        return;
-                    }
-                    try
-                    {
-                        LOG.info( "Waiting [" + ( initializationCheckPeriod / 1000 ) + "s] for " + getInitializationSubject() +
-                                      " to be initialized" );
-                        Thread.sleep( initializationCheckPeriod );
-                    }
-                    catch ( InterruptedException e )
-                    {
-                        throw new InitializationException( getInitializationSubject() + " initialization check thread interrupted", e );
-                    }
+                    LOG.info( "{} successfully initialized", initializationSubject );
+                    return;
                 }
             }
+            standBy( initializationSubject );
+        }
+        throw new InitializationException( "Could not initialize" );
+    }
+
+    void standBy( final String initializationSubject )
+    {
+        try
+        {
+            LOG.info( "Waiting [{}ms] for {} to be initialized", initializationCheckPeriod, initializationSubject );
+            Thread.sleep( initializationCheckPeriod );
+        }
+        catch ( InterruptedException e )
+        {
+            throw new InitializationException( initializationSubject + " initialization check thread interrupted", e );
         }
     }
 
@@ -71,6 +74,8 @@ public abstract class Initializer
     protected abstract boolean isInitialized();
 
     protected abstract void doInitialize();
+
+    protected abstract boolean readyToInitialize();
 
     protected abstract String getInitializationSubject();
 

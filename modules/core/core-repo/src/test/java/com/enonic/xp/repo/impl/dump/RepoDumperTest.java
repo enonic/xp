@@ -141,11 +141,10 @@ public class RepoDumperTest
     {
         NodeHelper.runAsAdmin( () -> RepoDumper.create().
             nodeService( this.nodeService ).
-            repositoryService( this.repositoryService ).
             writer( writer ).
             includeBinaries( true ).
             includeVersions( true ).
-            repositoryId( CTX_DEFAULT.getRepositoryId() ).
+            repository( this.repositoryService.get( CTX_DEFAULT.getRepositoryId() ) ).
             build().
             execute() );
     }

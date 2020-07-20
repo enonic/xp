@@ -4,7 +4,6 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
@@ -13,8 +12,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectRole;
-import com.enonic.xp.repository.Repository;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
@@ -24,8 +21,6 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public final class ProjectPermissionsContextManagerImpl
     implements ProjectPermissionsContextManager
 {
-    private RepositoryService repositoryService;
-
     @Override
     public Context initGetContext( final ProjectName projectName )
     {
@@ -117,14 +112,6 @@ public final class ProjectPermissionsContextManagerImpl
         }
 
         return adminContext().callWith( () -> {
-
-            final Repository repository = this.repositoryService.get( projectName.getRepoId() );
-
-            if ( repository == null )
-            {
-                throw new ProjectNotFoundException( projectName );
-            }
-
             final PrincipalKeys rolesKeys = ProjectAccessHelper.createRoleKeys( projectName, projectRoles );
             return rolesKeys.stream().anyMatch( authenticationInfo::hasRole );
         } );
@@ -142,11 +129,4 @@ public final class ProjectPermissionsContextManagerImpl
                 build() ).
             build();
     }
-
-    @Reference
-    public void setRepositoryService( final RepositoryService repositoryService )
-    {
-        this.repositoryService = repositoryService;
-    }
-
 }

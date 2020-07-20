@@ -85,8 +85,7 @@ final class SecurityInitializer
     @Override
     public boolean isInitialized()
     {
-        return createAdminContext().
-            callWith( () -> this.nodeService.getByPath( SUPER_USER.toPath() ) != null );
+        return createAdminContext().callWith( () -> securityService.getMemberships( SUPER_USER ).contains( RoleKeys.ADMIN ) );
     }
 
     @Override

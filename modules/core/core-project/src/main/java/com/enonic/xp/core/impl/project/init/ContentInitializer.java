@@ -70,17 +70,17 @@ public final class ContentInitializer
     @Override
     public final void doInitialize()
     {
-        createAdminContext().runWith( () -> {
+        createAdminContext( ContentConstants.BRANCH_MASTER ).runWith( () -> {
             initializeRepository();
             createDraftBranch();
-            initContentNode();
         } );
+        createAdminContext( ContentConstants.BRANCH_DRAFT ).runWith( this::initContentNode );
     }
 
     @Override
     protected boolean isInitialized()
     {
-        return createAdminContext().
+        return createAdminContext( ContentConstants.BRANCH_MASTER ).
             callWith( () -> repositoryService.isInitialized( repositoryId ) &&
                 nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) != null );
     }
@@ -138,7 +138,7 @@ public final class ContentInitializer
 
             nodeService.refresh( RefreshMode.ALL );
 
-            nodeService.push( NodeIds.from( contentRoot.id() ), ContentConstants.BRANCH_DRAFT );
+            nodeService.push( NodeIds.from( contentRoot.id() ), ContentConstants.BRANCH_MASTER );
         }
     }
 

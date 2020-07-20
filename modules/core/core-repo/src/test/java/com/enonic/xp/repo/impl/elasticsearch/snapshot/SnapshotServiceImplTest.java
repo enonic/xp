@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.cluster.ClusterManager;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.DeleteSnapshotParams;
@@ -40,8 +39,6 @@ public class SnapshotServiceImplTest
 
     private EventPublisher eventPublisher;
 
-    private ClusterManager clusterManager;
-
     @BeforeEach
     public void setUp()
         throws Exception
@@ -67,9 +64,6 @@ public class SnapshotServiceImplTest
 
         eventPublisher = Mockito.mock( EventPublisher.class );
 
-        clusterManager = Mockito.mock( ClusterManager.class );
-        Mockito.when( clusterManager.isHealthy() ).thenReturn( false );
-
         this.snapshotService.setRepositoryService( repositoryService );
         final RepoConfiguration configuration = Mockito.mock( RepoConfiguration.class );
         Mockito.when( configuration.getSnapshotsDir() ).thenReturn( getSnapshotsDir() );
@@ -77,7 +71,7 @@ public class SnapshotServiceImplTest
         this.snapshotService.setConfiguration( configuration );
         this.snapshotService.setClient( client );
         this.snapshotService.setEventPublisher( eventPublisher );
-        this.snapshotService.setClusterManager( clusterManager );
+        this.snapshotService.setIndexServiceInternal( indexServiceInternal );
     }
 
     @Test
