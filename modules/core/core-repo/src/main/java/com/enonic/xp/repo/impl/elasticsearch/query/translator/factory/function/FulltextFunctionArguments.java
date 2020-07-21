@@ -12,8 +12,6 @@ import static com.google.common.base.Strings.nullToEmpty;
 public class FulltextFunctionArguments
     extends AbstractSimpleQueryStringFunctionArguments
 {
-    private final String functionName = "fulltext";
-
     @Override
     protected String resolveAnalyzer( final String value )
     {
@@ -28,7 +26,7 @@ public class FulltextFunctionArguments
     @Override
     public String getFunctionName()
     {
-        return functionName;
+        return "fulltext";
     }
 
 

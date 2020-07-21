@@ -8,9 +8,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.google.common.net.MediaType;
+
 import com.enonic.xp.status.StatusReporter;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 public class StatusResourceTest
     extends ServerRestTestSupport
@@ -27,11 +30,11 @@ public class StatusResourceTest
     protected StatusResource getResourceInstance()
     {
         serverReporter = Mockito.mock( StatusReporter.class );
-        Mockito.when( serverReporter.getName() ).thenReturn( "server" );
+        when( serverReporter.getName() ).thenReturn( "server" );
 
         final StatusResource resource = new StatusResource();
         resource.addStatusReporter( serverReporter );
-
+        when( serverReporter.getMediaType() ).thenReturn( MediaType.PLAIN_TEXT_UTF_8 );
         return resource;
     }
 
@@ -53,8 +56,6 @@ public class StatusResourceTest
     {
         Mockito.doThrow( new IOException( "error_message" ) ).when( serverReporter ).report( Mockito.isA( OutputStream.class ) );
 
-        assertThrows(IOException.class, () -> request().path( "status/server" ).get() );
+        assertThrows( IOException.class, () -> request().path( "status/server" ).get() );
     }
-
-
 }

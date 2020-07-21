@@ -97,13 +97,11 @@ public class JsonToFilterMapper
 
         final Filters.Builder filters = Filters.create();
 
-        for ( final String key : filterMap.keySet() )
-        {
-            final Object filter = filterMap.get( key );
+        filterMap.forEach( ( key, filter ) -> {
 
             if ( filter instanceof Collection )
             {
-                for ( final Object filterValue : (Collection) filter )
+                for ( final Object filterValue : (Collection<?>) filter )
                 {
                     filters.add( doCreateFilter( key, filterValue ) );
                 }
@@ -112,7 +110,7 @@ public class JsonToFilterMapper
             {
                 filters.add( doCreateFilter( key, filter ) );
             }
-        }
+        } );
 
         return filters.build();
     }

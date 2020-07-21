@@ -6,8 +6,6 @@ import com.enonic.xp.annotation.PublicApi;
 public class NodePublishReasonIsParent
     implements NodePublishReason
 {
-    private final String message = "Parent for %s";
-
     private final NodeId nodeId;
 
     public NodePublishReasonIsParent( final NodeId nodeId )
@@ -24,6 +22,6 @@ public class NodePublishReasonIsParent
     @Override
     public String getMessage()
     {
-        return String.format( message, nodeId.toString() );
+        return String.format( "Parent for %s", nodeId );
     }
 }

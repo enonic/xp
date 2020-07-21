@@ -4,7 +4,7 @@ import java.time.Instant;
 
 public class IssueCommentNameFactory
 {
-    public static String ISSUE_COMMENT_NAME_PREFIX = "comment-";
+    public static final String ISSUE_COMMENT_NAME_PREFIX = "comment-";
 
     public static String create( final Instant created )
     {

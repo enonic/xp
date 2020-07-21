@@ -73,7 +73,7 @@ public final class RestRequestBuilder
 
     public RestRequestBuilder entity( final String data, final MediaType type )
     {
-        return entity( data.getBytes(), type );
+        return entity( data.getBytes( StandardCharsets.UTF_8 ), type );
     }
 
     public RestRequestBuilder entity( final byte[] data, final MediaType type )

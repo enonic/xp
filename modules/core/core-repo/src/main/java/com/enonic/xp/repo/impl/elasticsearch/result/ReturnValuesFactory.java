@@ -14,11 +14,7 @@ class ReturnValuesFactory
 
         final ReturnValues.Builder builder = ReturnValues.create();
 
-        for ( final String fieldName : fields.keySet() )
-        {
-            final SearchHitField hitField = fields.get( fieldName );
-            builder.add( fieldName, hitField.values() );
-        }
+        fields.forEach( ( fieldName, hitField ) -> builder.add( fieldName, hitField.values() ) );
 
         return builder.build();
     }

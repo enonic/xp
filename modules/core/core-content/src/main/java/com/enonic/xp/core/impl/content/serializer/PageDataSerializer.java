@@ -183,22 +183,25 @@ final class PageDataSerializer
 
         final PropertySet specialBlockSet = pageData.getSet( PAGE );
 
-        if ( specialBlockSet != null && specialBlockSet.isNotNull( DESCRIPTOR ) )
+        if ( specialBlockSet != null )
         {
-            final DescriptorKey descriptorKey = DescriptorKey.from( specialBlockSet.getString( DESCRIPTOR ) );
-            page.descriptor( descriptorKey );
-            page.config( getConfigFromData( specialBlockSet, descriptorKey ) );
-            page.regions( getPageRegions( descriptorKey, componentsAsData ) );
-        }
+            if ( specialBlockSet.isNotNull( DESCRIPTOR ) )
+            {
+                final DescriptorKey descriptorKey = DescriptorKey.from( specialBlockSet.getString( DESCRIPTOR ) );
+                page.descriptor( descriptorKey );
+                page.config( getConfigFromData( specialBlockSet, descriptorKey ) );
+                page.regions( getPageRegions( descriptorKey, componentsAsData ) );
+            }
 
-        if ( specialBlockSet.isNotNull( TEMPLATE ) )
-        {
-            page.template( PageTemplateKey.from( specialBlockSet.getReference( TEMPLATE ).toString() ) );
-        }
+            if ( specialBlockSet.isNotNull( TEMPLATE ) )
+            {
+                page.template( PageTemplateKey.from( specialBlockSet.getReference( TEMPLATE ).toString() ) );
+            }
 
-        if ( specialBlockSet.isNotNull( CUSTOMIZED ) )
-        {
-            page.customized( specialBlockSet.getBoolean( CUSTOMIZED ) );
+            if ( specialBlockSet.isNotNull( CUSTOMIZED ) )
+            {
+                page.customized( specialBlockSet.getBoolean( CUSTOMIZED ) );
+            }
         }
 
         return page.build();
