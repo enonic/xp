@@ -23,7 +23,7 @@ import com.enonic.xp.script.runtime.ScriptSettings;
 
 public abstract class AbstractScriptTest
 {
-    private final static ApplicationKey APPLICATION_KEY = ApplicationKey.from( "myapplication" );
+    private static final ApplicationKey APPLICATION_KEY = ApplicationKey.from( "myapplication" );
 
     protected final ScriptRuntime scriptRuntime;
 

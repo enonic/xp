@@ -57,7 +57,7 @@ public class BranchServiceImpl
 
     private static final int BATCHED_EXECUTOR_LIMIT = 1000;
 
-    private final static Striped<Lock> PARENT_PATH_LOCKS = Striped.lazyWeakLock( 100 );
+    private static final Striped<Lock> PARENT_PATH_LOCKS = Striped.lazyWeakLock( 100 );
 
     private final BranchCachePath pathCache = new BranchCachePath();
 

@@ -27,7 +27,7 @@ import com.enonic.xp.util.BinaryReference;
 public class ApplicationRepoServiceImpl
     implements ApplicationRepoService
 {
-    final static NodePath APPLICATION_PATH = NodePath.create( NodePath.ROOT, "/applications" ).build();
+    static final NodePath APPLICATION_PATH = NodePath.create( NodePath.ROOT, "/applications" ).build();
 
     private NodeService nodeService;
 

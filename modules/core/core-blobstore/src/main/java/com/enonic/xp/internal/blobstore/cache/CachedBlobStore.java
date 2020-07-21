@@ -118,7 +118,7 @@ public final class CachedBlobStore
         return new Builder();
     }
 
-    public final static class Builder
+    public static final class Builder
     {
         private BlobStore store;
 

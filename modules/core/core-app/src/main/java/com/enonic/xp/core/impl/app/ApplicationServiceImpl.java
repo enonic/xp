@@ -37,7 +37,7 @@ import com.enonic.xp.node.Nodes;
 public final class ApplicationServiceImpl
     implements ApplicationService
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ApplicationServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ApplicationServiceImpl.class );
 
     private final BundleContext context;
 

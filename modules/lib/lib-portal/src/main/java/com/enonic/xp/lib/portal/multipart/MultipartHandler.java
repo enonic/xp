@@ -16,7 +16,7 @@ import com.enonic.xp.web.multipart.MultipartService;
 public final class MultipartHandler
     implements ScriptBean
 {
-    private final static ImmutableList<MediaType> TEXT_CONTENT_TYPES =
+    private static final ImmutableList<MediaType> TEXT_CONTENT_TYPES =
         ImmutableList.of( MediaType.ANY_TEXT_TYPE, MediaType.create( "application", "json" ) );
 
     private MultipartForm form;

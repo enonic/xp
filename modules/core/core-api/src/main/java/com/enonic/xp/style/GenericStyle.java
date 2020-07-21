@@ -8,7 +8,7 @@ import com.google.common.base.Preconditions;
 public final class GenericStyle
     implements ElementStyle
 {
-    public final static String STYLE_ELEMENT_NAME = "style";
+    public static final String STYLE_ELEMENT_NAME = "style";
 
     private final String name;
 
@@ -85,7 +85,7 @@ public final class GenericStyle
         return new Builder();
     }
 
-    public final static class Builder
+    public static final class Builder
     {
         private String name;
 

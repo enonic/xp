@@ -16,7 +16,7 @@ import com.enonic.xp.repository.IndexException;
 public class StoreExecutor
     extends AbstractExecutor
 {
-    private final static Logger LOG = LoggerFactory.getLogger( StoreExecutor.class );
+    private static final Logger LOG = LoggerFactory.getLogger( StoreExecutor.class );
 
     private StoreExecutor( final Builder builder )
     {

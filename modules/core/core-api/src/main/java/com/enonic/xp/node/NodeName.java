@@ -9,7 +9,7 @@ import com.enonic.xp.name.Name;
 public final class NodeName
     extends Name
 {
-    public final static NodeName ROOT = new NodeName( "", false );
+    public static final NodeName ROOT = new NodeName( "", false );
 
     private NodeName( final String name, final boolean validate )
     {

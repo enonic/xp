@@ -214,15 +214,15 @@ public final class ContentResource
 
     private static final String DEFAULT_SIZE_PARAM = "500";
 
-    private final static String EXPAND_FULL = "full";
+    private static final String EXPAND_FULL = "full";
 
-    private final static String EXPAND_SUMMARY = "summary";
+    private static final String EXPAND_SUMMARY = "summary";
 
-    private final static String EXPAND_NONE = "none";
+    private static final String EXPAND_NONE = "none";
 
     private static final int MAX_EFFECTIVE_PERMISSIONS_PRINCIPALS = 10;
 
-    private final static Logger LOG = LoggerFactory.getLogger( ContentResource.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ContentResource.class );
 
     private ContentService contentService;
 

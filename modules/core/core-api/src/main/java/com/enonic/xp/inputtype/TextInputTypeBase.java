@@ -9,7 +9,7 @@ import com.enonic.xp.data.Property;
 abstract class TextInputTypeBase
     extends InputTypeBase
 {
-    private final static Logger LOG = LoggerFactory.getLogger( LongType.class );
+    private static final Logger LOG = LoggerFactory.getLogger( LongType.class );
 
     TextInputTypeBase( final InputTypeName name )
     {

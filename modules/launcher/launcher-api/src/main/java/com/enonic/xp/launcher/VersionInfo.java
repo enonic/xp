@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public final class VersionInfo
 {
-    private final static VersionInfo INSTANCE = load();
+    private static final VersionInfo INSTANCE = load();
 
     private final Properties props;
 

@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 
 public final class Tracer
 {
-    private final static Tracer INSTANCE = new Tracer();
+    private static final Tracer INSTANCE = new Tracer();
 
     private final ThreadLocal<Trace> current;
 

@@ -17,7 +17,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 
 public final class ContentPrincipalsResolver
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ContentPrincipalsResolver.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ContentPrincipalsResolver.class );
 
     private final SecurityService securityService;
 

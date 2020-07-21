@@ -18,7 +18,7 @@ import com.enonic.xp.node.NodesHasChildrenResult;
 
 public class ContentNodeTranslator
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ContentNodeTranslator.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ContentNodeTranslator.class );
 
     private NodeService nodeService;
 

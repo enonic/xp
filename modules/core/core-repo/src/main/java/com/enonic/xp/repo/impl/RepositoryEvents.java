@@ -7,15 +7,15 @@ public class RepositoryEvents
 {
     public static final String REPOSITORY_ID_KEY = "id";
 
-    public final static String RESTORED_EVENT_TYPE = "repository.restored";
+    public static final String RESTORED_EVENT_TYPE = "repository.restored";
 
-    public final static String RESTORE_INITIALIZED_EVENT_TYPE = "repository.restoreInitialized";
+    public static final String RESTORE_INITIALIZED_EVENT_TYPE = "repository.restoreInitialized";
 
-    public final static String CREATED_EVENT_TYPE = "repository.created";
+    public static final String CREATED_EVENT_TYPE = "repository.created";
 
-    public final static String UPDATED_EVENT_TYPE = "repository.updated";
+    public static final String UPDATED_EVENT_TYPE = "repository.updated";
 
-    public final static String DELETED_EVENT_TYPE = "repository.deleted";
+    public static final String DELETED_EVENT_TYPE = "repository.deleted";
 
     public static Event created( final RepositoryId repositoryId )
     {

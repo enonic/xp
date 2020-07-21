@@ -12,7 +12,7 @@ import com.enonic.xp.task.ProgressReporter;
 public class ReindexListenerImpl
     implements ReindexListener
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ReindexListenerImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ReindexListenerImpl.class );
 
     private final ProgressReporter progressReporter;
 

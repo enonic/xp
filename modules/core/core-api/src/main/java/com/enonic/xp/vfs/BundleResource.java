@@ -15,7 +15,7 @@ import com.google.common.io.Resources;
 class BundleResource
     implements VirtualFile
 {
-    private final static String PATTERN = "*";
+    private static final String PATTERN = "*";
 
     private final Bundle bundle;
 

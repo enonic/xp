@@ -60,25 +60,25 @@ import com.enonic.xp.repository.RepositoryId;
 public class IndexServiceInternalImpl
     implements IndexServiceInternal
 {
-    private final static Logger LOG = LoggerFactory.getLogger( IndexServiceInternalImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( IndexServiceInternalImpl.class );
 
     private static final String ES_DEFAULT_INDEX_TYPE_NAME = "_default_";
 
-    private final static String DELETE_INDEX_TIMEOUT = "5s";
+    private static final String DELETE_INDEX_TIMEOUT = "5s";
 
-    private final static String CREATE_INDEX_TIMEOUT = "5s";
+    private static final String CREATE_INDEX_TIMEOUT = "5s";
 
-    private final static String UPDATE_INDEX_TIMEOUT = "5s";
+    private static final String UPDATE_INDEX_TIMEOUT = "5s";
 
-    private final static String APPLY_MAPPING_TIMEOUT = "5s";
+    private static final String APPLY_MAPPING_TIMEOUT = "5s";
 
-    private final static String INDEX_EXISTS_TIMEOUT = "5s";
+    private static final String INDEX_EXISTS_TIMEOUT = "5s";
 
-    private final static String CLUSTER_STATE_TIMEOUT = "5s";
+    private static final String CLUSTER_STATE_TIMEOUT = "5s";
 
-    private final static String GET_SETTINGS_TIMEOUT = "5s";
+    private static final String GET_SETTINGS_TIMEOUT = "5s";
 
-    private final static String CLUSTER_HEALTH_TIMEOUT = "10s";
+    private static final String CLUSTER_HEALTH_TIMEOUT = "10s";
 
     private Client client;
 

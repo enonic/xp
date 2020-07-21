@@ -26,7 +26,7 @@ import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 public final class VirtualHostFilter
     extends OncePerRequestFilter
 {
-    private final static Logger LOG = LoggerFactory.getLogger( VirtualHostFilter.class );
+    private static final Logger LOG = LoggerFactory.getLogger( VirtualHostFilter.class );
 
     private VirtualHostConfig config;
 

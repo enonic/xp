@@ -29,7 +29,7 @@ public final class FragmentRenderer
     private static final String COMPONENT_PLACEHOLDER_ERROR_HTML = "<div " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE +
         "=\"{0}\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">{1}</span></div>";
 
-    private final static Logger LOG = LoggerFactory.getLogger( FragmentRenderer.class );
+    private static final Logger LOG = LoggerFactory.getLogger( FragmentRenderer.class );
 
     private ContentService contentService;
 

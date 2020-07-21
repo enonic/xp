@@ -6,7 +6,7 @@ import com.enonic.xp.annotation.PublicApi;
 public final class ImageComponentType
     extends ComponentType
 {
-    public final static ImageComponentType INSTANCE = new ImageComponentType();
+    public static final ImageComponentType INSTANCE = new ImageComponentType();
 
     private ImageComponentType()
     {

@@ -9,7 +9,7 @@ import com.google.common.net.MediaType;
 
 public final class RequestBodyReader
 {
-    private final static MediaType JSON = MediaType.JSON_UTF_8.withoutParameters();
+    private static final MediaType JSON = MediaType.JSON_UTF_8.withoutParameters();
 
     public static Object readBody( final HttpServletRequest req )
         throws IOException

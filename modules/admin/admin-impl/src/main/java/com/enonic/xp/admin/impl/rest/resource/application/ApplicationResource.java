@@ -100,11 +100,11 @@ import static com.google.common.base.Strings.nullToEmpty;
 public final class ApplicationResource
     implements JaxRsComponent
 {
-    private final static Set<String> ALLOWED_PROTOCOLS = Set.of( "http", "https" );
+    private static final Set<String> ALLOWED_PROTOCOLS = Set.of( "http", "https" );
 
-    private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
 
-    private final static Striped<Lock> LOCK_STRIPED = Striped.lazyWeakLock( 100 );
+    private static final Striped<Lock> LOCK_STRIPED = Striped.lazyWeakLock( 100 );
 
     private ApplicationService applicationService;
 

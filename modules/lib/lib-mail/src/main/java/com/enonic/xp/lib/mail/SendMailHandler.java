@@ -35,7 +35,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 public final class SendMailHandler
     implements MailMessage, ScriptBean
 {
-    private final static Logger LOG = LoggerFactory.getLogger( SendMailHandler.class );
+    private static final Logger LOG = LoggerFactory.getLogger( SendMailHandler.class );
 
     private String[] to;
 

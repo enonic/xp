@@ -25,7 +25,7 @@ import com.enonic.xp.xml.parser.XmlStyleDescriptorParser;
 public class StyleDescriptorServiceImpl
     implements StyleDescriptorService
 {
-    private final static Logger LOG = LoggerFactory.getLogger( StyleDescriptorServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( StyleDescriptorServiceImpl.class );
 
     private ResourceService resourceService;
 

@@ -34,7 +34,7 @@ import com.enonic.xp.schema.mixin.Mixins;
 public final class MixinServiceImpl
     implements MixinService
 {
-    private final static Logger LOG = LoggerFactory.getLogger( MixinServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( MixinServiceImpl.class );
 
     private ApplicationService applicationService;
 

@@ -17,11 +17,11 @@ import com.enonic.xp.util.Exceptions;
 
 final class XmlDateTimeConverter
 {
-    private final static DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern( "yyyy-MM-ddX" );
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern( "yyyy-MM-ddX" );
 
-    private final static DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern( "HH:mm:ss.SSSX" );
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern( "HH:mm:ss.SSSX" );
 
-    private final static DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH:mm:ss.SSSX" );
+    private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH:mm:ss.SSSX" );
 
     public static Instant parseInstant( final String value )
     {

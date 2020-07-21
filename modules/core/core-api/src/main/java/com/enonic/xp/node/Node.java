@@ -17,7 +17,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 @PublicApi
 public final class Node
 {
-    public final static NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
+    public static final NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
 
     private final NodeId id;
 

@@ -13,7 +13,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 final class TextLineType
     extends TextInputTypeBase
 {
-    public final static TextLineType INSTANCE = new TextLineType();
+    public static final TextLineType INSTANCE = new TextLineType();
 
     private TextLineType()
     {

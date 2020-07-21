@@ -10,7 +10,7 @@ import com.enonic.xp.util.GeoPoint;
 final class GeoPointType
     extends InputTypeBase
 {
-    public final static GeoPointType INSTANCE = new GeoPointType();
+    public static final GeoPointType INSTANCE = new GeoPointType();
 
     private GeoPointType()
     {

@@ -7,7 +7,7 @@ final class ContentSelectorAliasConverter
     implements InputTypeAliasConverter
 {
 
-    public final static ContentSelectorAliasConverter INSTANCE = new ContentSelectorAliasConverter();
+    public static final ContentSelectorAliasConverter INSTANCE = new ContentSelectorAliasConverter();
 
     private ContentSelectorAliasConverter()
     {

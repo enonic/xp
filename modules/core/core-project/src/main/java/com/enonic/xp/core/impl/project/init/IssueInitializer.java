@@ -27,7 +27,7 @@ import com.enonic.xp.security.acl.Permission;
 public class IssueInitializer
     extends RepoDependentInitializer
 {
-    private final static Logger LOG = LoggerFactory.getLogger( IssueInitializer.class );
+    private static final Logger LOG = LoggerFactory.getLogger( IssueInitializer.class );
 
     private static final AccessControlList ISSUE_ROOT_DEFAULT_ACL = AccessControlList.create().
         add( AccessControlEntry.create().

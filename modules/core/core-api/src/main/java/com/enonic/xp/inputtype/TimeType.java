@@ -13,7 +13,7 @@ import com.enonic.xp.form.Input;
 final class TimeType
     extends InputTypeBase
 {
-    public final static TimeType INSTANCE = new TimeType();
+    public static final TimeType INSTANCE = new TimeType();
 
     private TimeType()
     {

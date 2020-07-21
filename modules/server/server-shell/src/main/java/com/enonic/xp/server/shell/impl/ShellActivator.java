@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 @Component(immediate = true, configurationPid = "com.enonic.xp.server.shell")
 public final class ShellActivator
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ShellActivator.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ShellActivator.class );
 
     private ShellConfig config;
 

@@ -29,7 +29,7 @@ import com.enonic.xp.util.BinaryReference;
 
 public class NodeExporter
 {
-    private final static String LINE_SEPARATOR = System.getProperty( "line.separator" );
+    private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
     private final NodePath sourceNodePath;
 
@@ -53,7 +53,7 @@ public class NodeExporter
 
     private final NodeExportResult.Builder result = NodeExportResult.create();
 
-    private final static Logger LOG = LoggerFactory.getLogger( NodeExporter.class );
+    private static final Logger LOG = LoggerFactory.getLogger( NodeExporter.class );
 
     private NodeExporter( final Builder builder )
     {

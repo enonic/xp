@@ -11,7 +11,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 final class ComboBoxType
     extends InputTypeBase
 {
-    public final static ComboBoxType INSTANCE = new ComboBoxType();
+    public static final ComboBoxType INSTANCE = new ComboBoxType();
 
     private ComboBoxType()
     {

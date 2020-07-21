@@ -27,7 +27,7 @@ import com.enonic.xp.server.ServerInfo;
 public final class DeployDirectoryWatcher
     implements FileAlterationListener
 {
-    private final static Logger LOGGER = LoggerFactory.getLogger( DeployDirectoryWatcher.class );
+    private static final Logger LOGGER = LoggerFactory.getLogger( DeployDirectoryWatcher.class );
 
     private final Map<String, ApplicationKey> applicationKeyByPath = new ConcurrentHashMap<>();
 

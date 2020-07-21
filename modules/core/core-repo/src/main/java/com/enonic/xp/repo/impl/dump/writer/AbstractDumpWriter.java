@@ -35,7 +35,7 @@ import com.enonic.xp.repository.RepositorySegmentUtils;
 public abstract class AbstractDumpWriter
     implements DumpWriter
 {
-    private final static Logger LOG = LoggerFactory.getLogger( FileDumpWriter.class );
+    private static final Logger LOG = LoggerFactory.getLogger( FileDumpWriter.class );
 
     private final DumpBlobStore dumpBlobStore;
 

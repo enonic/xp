@@ -20,7 +20,7 @@ public class EmbeddedElasticsearchServer
 
     private final String dataDirectory;
 
-    private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
+    private static final Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
 
     private final long now = System.currentTimeMillis();
 

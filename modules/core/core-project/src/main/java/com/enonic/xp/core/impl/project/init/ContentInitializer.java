@@ -30,7 +30,7 @@ import com.enonic.xp.security.acl.Permission;
 public final class ContentInitializer
     extends RepoDependentInitializer
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ContentInitializer.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ContentInitializer.class );
 
     private static final AccessControlList CONTENT_ROOT_DEFAULT_ACL = AccessControlList.create().
         add( AccessControlEntry.create().

@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public final class ContentTypeFromMimeTypeResolver
 {
-    private final static Map<String, ContentTypeName> MAP = new HashMap<>();
+    private static final Map<String, ContentTypeName> MAP = new HashMap<>();
 
     static
     {

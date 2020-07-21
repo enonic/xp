@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ProjectAccessSiteProcessorTest
 {
-    private final static User TEST_USER = User.create().
+    private static final User TEST_USER = User.create().
         key( PrincipalKey.from( "user:system:test-user" ) ).
         displayName( "Test User" ).
         login( "test-user" ).

@@ -25,7 +25,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public final class JsonExceptionMapper
     implements ExceptionMapper<Throwable>
 {
-    private final static Logger LOG = LoggerFactory.getLogger( JsonExceptionMapper.class );
+    private static final Logger LOG = LoggerFactory.getLogger( JsonExceptionMapper.class );
 
     @Override
     public final Response toResponse( final Throwable cause )

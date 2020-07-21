@@ -11,7 +11,7 @@ import org.osgi.framework.BundleContext;
 final class ShellContextProxy
     implements InvocationHandler
 {
-    private final static String GET_PROPERTY_NAME = "getProperty";
+    private static final String GET_PROPERTY_NAME = "getProperty";
 
     private final BundleContext delegate;
 

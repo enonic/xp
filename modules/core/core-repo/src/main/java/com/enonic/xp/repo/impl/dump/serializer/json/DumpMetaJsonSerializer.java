@@ -10,7 +10,7 @@ import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 
 public class DumpMetaJsonSerializer
 {
-    private final static ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     public byte[] serialize( final DumpMeta dumpMeta )
     {

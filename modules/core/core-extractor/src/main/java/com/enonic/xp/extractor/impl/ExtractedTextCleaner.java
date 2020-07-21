@@ -15,15 +15,15 @@ class ExtractedTextCleaner
 
     private static final String ANY_HORIZONTAL_WHITESPACE = "\\h";
 
-    private final static String LINE_BREAK_AND_WHITESPACE = "(" + LINE_BREAK_CR_LF + "(" + ANY_HORIZONTAL_WHITESPACE + ")*)+";
+    private static final String LINE_BREAK_AND_WHITESPACE = "(" + LINE_BREAK_CR_LF + "(" + ANY_HORIZONTAL_WHITESPACE + ")*)+";
 
-    private final static String ANY_LINE_BREAK_AND_WHITESPACE = "(" + ANY_LINE_BREAK + "(" + ANY_HORIZONTAL_WHITESPACE + ")*)";
+    private static final String ANY_LINE_BREAK_AND_WHITESPACE = "(" + ANY_LINE_BREAK + "(" + ANY_HORIZONTAL_WHITESPACE + ")*)";
 
-    private final static String LINE_BREAKS = "" + ANY_LINE_BREAK + "+";
+    private static final String LINE_BREAKS = "" + ANY_LINE_BREAK + "+";
 
-    private final static String CONSECUTIVE_HORIZONTAL_WHITESPACE = "(" + ANY_HORIZONTAL_WHITESPACE + ")+";
+    private static final String CONSECUTIVE_HORIZONTAL_WHITESPACE = "(" + ANY_HORIZONTAL_WHITESPACE + ")+";
 
-    private final static String LINE_SEPARATOR = "\n";
+    private static final String LINE_SEPARATOR = "\n";
 
     public static String clean( final String value )
     {

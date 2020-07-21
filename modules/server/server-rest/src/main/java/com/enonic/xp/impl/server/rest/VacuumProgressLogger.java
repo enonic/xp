@@ -13,9 +13,9 @@
 //public final class VacuumProgressLogger
 //    implements VacuumListener
 //{
-//    private final static Logger LOG = LoggerFactory.getLogger( VacuumProgressLogger.class );
+//    private static final Logger LOG = LoggerFactory.getLogger( VacuumProgressLogger.class );
 //
-//    private final static int REPORTING_PERIOD_SEC = 30;
+//    private static final int REPORTING_PERIOD_SEC = 30;
 //
 //    private Instant lastProgressLogged;
 //

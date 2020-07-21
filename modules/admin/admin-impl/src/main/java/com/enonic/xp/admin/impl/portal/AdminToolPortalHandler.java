@@ -21,13 +21,13 @@ import com.enonic.xp.web.handler.WebHandler;
 public class AdminToolPortalHandler
     extends BasePortalHandler
 {
-    public final static String ADMIN_TOOL_START = "/admin/tool";
+    public static final String ADMIN_TOOL_START = "/admin/tool";
 
-    public final static String ADMIN_TOOL_PREFIX = ADMIN_TOOL_START + "/";
+    public static final String ADMIN_TOOL_PREFIX = ADMIN_TOOL_START + "/";
 
-    public final static DescriptorKey DEFAULT_DESCRIPTOR_KEY = DescriptorKey.from( "com.enonic.xp.app.main:home" );
+    public static final DescriptorKey DEFAULT_DESCRIPTOR_KEY = DescriptorKey.from( "com.enonic.xp.app.main:home" );
 
-    public final static Pattern PATTERN = Pattern.compile( "^([^/^_]+)/([^/^_]+)" );
+    public static final Pattern PATTERN = Pattern.compile( "^([^/^_]+)/([^/^_]+)" );
 
     @Override
     protected boolean canHandle( final WebRequest webRequest )

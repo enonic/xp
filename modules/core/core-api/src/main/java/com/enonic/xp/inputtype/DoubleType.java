@@ -15,9 +15,9 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 final class DoubleType
     extends InputTypeBase
 {
-    public final static DoubleType INSTANCE = new DoubleType();
+    public static final DoubleType INSTANCE = new DoubleType();
 
-    private final static Logger LOG = LoggerFactory.getLogger( DoubleType.class );
+    private static final Logger LOG = LoggerFactory.getLogger( DoubleType.class );
 
     private DoubleType()
     {

@@ -17,7 +17,7 @@ import com.enonic.xp.web.multipart.MultipartService;
 public final class MultipartServiceImpl
     implements MultipartService
 {
-    private final static MediaType MULTIPART_FORM = MediaType.create( "multipart", "form-data" );
+    private static final MediaType MULTIPART_FORM = MediaType.create( "multipart", "form-data" );
 
     @Override
     public MultipartForm parse( final HttpServletRequest req )

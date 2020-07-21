@@ -5,7 +5,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public final class NodeType
 {
-    public final static NodeType DEFAULT_NODE_COLLECTION = NodeType.from( "default" );
+    public static final NodeType DEFAULT_NODE_COLLECTION = NodeType.from( "default" );
 
     private final String name;
 

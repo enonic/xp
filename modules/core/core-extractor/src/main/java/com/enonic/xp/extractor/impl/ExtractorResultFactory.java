@@ -15,7 +15,7 @@ import com.enonic.xp.extractor.ExtractedData;
 
 class ExtractorResultFactory
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ExtractorResultFactory.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ExtractorResultFactory.class );
 
     static ExtractedData create( final Metadata metadata, final BodyContentHandler handler )
     {

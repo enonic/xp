@@ -8,7 +8,7 @@ import com.enonic.xp.data.ValueTypes;
 final class ImageSelectorType
     extends InputTypeBase
 {
-    public final static ImageSelectorType INSTANCE = new ImageSelectorType();
+    public static final ImageSelectorType INSTANCE = new ImageSelectorType();
 
     private ImageSelectorType()
     {

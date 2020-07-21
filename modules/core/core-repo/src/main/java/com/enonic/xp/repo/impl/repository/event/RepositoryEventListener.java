@@ -14,7 +14,7 @@ import com.enonic.xp.repository.RepositoryService;
 public class RepositoryEventListener
     implements EventListener
 {
-    private final static Logger LOG = LoggerFactory.getLogger( RepositoryEventListener.class );
+    private static final Logger LOG = LoggerFactory.getLogger( RepositoryEventListener.class );
 
     private RepositoryRestoredHandler repositoryRestoredHandler;
 

@@ -7,7 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public class FindContentVersionsParams
 {
-    private final static int DEFAULT_SIZE = 10;
+    private static final int DEFAULT_SIZE = 10;
 
     private final ContentId contentId;
 

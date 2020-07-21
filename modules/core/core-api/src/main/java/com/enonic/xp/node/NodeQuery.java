@@ -6,7 +6,7 @@ import com.enonic.xp.annotation.PublicApi;
 public class NodeQuery
     extends AbstractQuery
 {
-    public final static int ALL_RESULTS_SIZE_FLAG = -1;
+    public static final int ALL_RESULTS_SIZE_FLAG = -1;
 
     private final NodePath parent;
 

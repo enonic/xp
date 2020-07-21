@@ -12,7 +12,7 @@ import com.enonic.xp.script.bean.ScriptBean;
 public final class EventSenderHelper
     implements ScriptBean
 {
-    private final static String CUSTOM_PREFIX = "custom.";
+    private static final String CUSTOM_PREFIX = "custom.";
 
     private Supplier<EventPublisher> publisher;
 

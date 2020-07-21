@@ -38,7 +38,7 @@ import com.enonic.xp.web.jetty.impl.session.JettySessionStoreConfigurator;
 @Component(immediate = true, configurationPid = "com.enonic.xp.web.jetty")
 public final class JettyActivator
 {
-    private final static Logger LOG = LoggerFactory.getLogger( JettyActivator.class );
+    private static final Logger LOG = LoggerFactory.getLogger( JettyActivator.class );
 
     private final BundleContext bundleContext;
 

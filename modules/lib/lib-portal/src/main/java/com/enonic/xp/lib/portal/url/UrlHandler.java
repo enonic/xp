@@ -11,7 +11,7 @@ import com.enonic.xp.portal.url.GenerateUrlParams;
 public final class UrlHandler
     extends AbstractUrlHandler
 {
-    private final static Set<String> VALID_URL_PROPERTY_KEYS = new HashSet<>( Arrays.asList( "path", "type", "params" ) );
+    private static final Set<String> VALID_URL_PROPERTY_KEYS = new HashSet<>( Arrays.asList( "path", "type", "params" ) );
 
     @Override
     protected String buildUrl( final Multimap<String, String> map )

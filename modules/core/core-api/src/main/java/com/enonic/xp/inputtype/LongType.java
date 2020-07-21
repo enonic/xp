@@ -15,9 +15,9 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 final class LongType
     extends InputTypeBase
 {
-    public final static LongType INSTANCE = new LongType();
+    public static final LongType INSTANCE = new LongType();
 
-    private final static Logger LOG = LoggerFactory.getLogger( LongType.class );
+    private static final Logger LOG = LoggerFactory.getLogger( LongType.class );
 
     private LongType()
     {

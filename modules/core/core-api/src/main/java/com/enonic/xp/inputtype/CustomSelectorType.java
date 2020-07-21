@@ -11,7 +11,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 final class CustomSelectorType
     extends InputTypeBase
 {
-    public final static CustomSelectorType INSTANCE = new CustomSelectorType();
+    public static final CustomSelectorType INSTANCE = new CustomSelectorType();
 
     private CustomSelectorType()
     {

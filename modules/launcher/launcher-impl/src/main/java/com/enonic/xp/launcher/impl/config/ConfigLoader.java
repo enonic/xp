@@ -18,9 +18,9 @@ import com.enonic.xp.launcher.impl.env.Environment;
 public final class ConfigLoader
     implements SharedConstants
 {
-    private final static String CONFIG_FILE = "system.properties";
+    private static final String CONFIG_FILE = "system.properties";
 
-    private final static String DEFAULT_CONFIG = "/META-INF/config/system.properties";
+    private static final String DEFAULT_CONFIG = "/META-INF/config/system.properties";
 
     private final Environment env;
 

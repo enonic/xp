@@ -11,7 +11,7 @@ import com.enonic.xp.portal.url.ComponentUrlParams;
 public final class ComponentUrlHandler
     extends AbstractUrlHandler
 {
-    private final static Set<String> VALID_URL_PROPERTY_KEYS =
+    private static final Set<String> VALID_URL_PROPERTY_KEYS =
         new HashSet<>( Arrays.asList( "id", "path", "component", "type", "params" ) );
 
     @Override

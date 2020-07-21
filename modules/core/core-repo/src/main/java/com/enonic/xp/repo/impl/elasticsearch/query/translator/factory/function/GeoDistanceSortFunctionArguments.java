@@ -16,9 +16,9 @@ public class GeoDistanceSortFunctionArguments
 
     private static final int UNIT_POSITION = 2;
 
-    private final static int MIN_ARGUMENTS = 2;
+    private static final int MIN_ARGUMENTS = 2;
 
-    private final static int MAX_ARGUMENTS = 3;
+    private static final int MAX_ARGUMENTS = 3;
 
     private double latitude;
 

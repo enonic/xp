@@ -20,7 +20,7 @@ import com.enonic.xp.repo.impl.dump.PathRef;
 public class ZipDumpWriteBlobStore
     extends AbstractDumpBlobStore
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ZipDumpWriteBlobStore.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ZipDumpWriteBlobStore.class );
 
     private final ZipArchiveOutputStream zipArchiveOutputStream;
 

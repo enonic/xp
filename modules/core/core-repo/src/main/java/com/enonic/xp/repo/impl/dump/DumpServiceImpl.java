@@ -67,7 +67,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 public class DumpServiceImpl
     implements DumpService
 {
-    private final static Logger LOG = LoggerFactory.getLogger( DumpServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( DumpServiceImpl.class );
 
     private static final RepositoryId AUDIT_LOG_REPO_ID = RepositoryId.from( "system.auditlog" );
 

@@ -7,7 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public final class BuildInfo
 {
-    private final static String NA = "N/A";
+    private static final String NA = "N/A";
 
     private final Properties props;
 

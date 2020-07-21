@@ -25,11 +25,11 @@ public class NodeRepositoryServiceImpl
 {
     private IndexServiceInternal indexServiceInternal;
 
-    private final static Logger LOG = LoggerFactory.getLogger( NodeRepositoryServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( NodeRepositoryServiceImpl.class );
 
-    private final static String DEFAULT_INDEX_RESOURCE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
+    private static final String DEFAULT_INDEX_RESOURCE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
 
-    private final static IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =
+    private static final IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =
         new DefaultIndexResourceProvider( DEFAULT_INDEX_RESOURCE_FOLDER );
 
     @Override

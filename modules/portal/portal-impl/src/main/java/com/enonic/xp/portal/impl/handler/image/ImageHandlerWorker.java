@@ -32,9 +32,9 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 final class ImageHandlerWorker
     extends PortalHandlerWorker<PortalRequest>
 {
-    private final static int DEFAULT_BACKGROUND = 0x00FFFFFF;
+    private static final int DEFAULT_BACKGROUND = 0x00FFFFFF;
 
-    private final static int DEFAULT_QUALITY = 85;
+    private static final int DEFAULT_QUALITY = 85;
 
     protected String name;
 
