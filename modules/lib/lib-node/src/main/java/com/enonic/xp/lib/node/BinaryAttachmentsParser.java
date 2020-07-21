@@ -38,10 +38,7 @@ class BinaryAttachmentsParser
 
     private void handleMap( final Map map )
     {
-        for ( final Object key : map.keySet() )
-        {
-            handleElement( map.get( key ) );
-        }
+        handleArray( map.values() );
     }
 
     private void handleArray( final Collection values )

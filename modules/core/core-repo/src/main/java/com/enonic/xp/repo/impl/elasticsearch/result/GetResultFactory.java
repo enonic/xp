@@ -21,12 +21,7 @@ public class GetResultFactory
 
         final ReturnValues.Builder builder = ReturnValues.create();
 
-        for ( final String fieldName : hitFieldMap.keySet() )
-        {
-            final GetField getField = hitFieldMap.get( fieldName );
-
-            builder.add( fieldName, getField.getValues() );
-        }
+        hitFieldMap.forEach( ( fieldName, getField ) -> builder.add( fieldName, getField.getValues() ) );
 
         return GetResult.create().
             id( getResponse.getId() ).

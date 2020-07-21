@@ -18,9 +18,7 @@ public final class MapperHelper
                                           final Map<String, ? extends Collection<String>> params )
     {
         gen.map( name );
-        for ( final String key : params.keySet() )
-        {
-            final Collection<String> values = params.get( key );
+        params.forEach( ( key, values ) -> {
             if ( values.size() == 1 )
             {
                 gen.value( key, values.iterator().next() );
@@ -31,7 +29,7 @@ public final class MapperHelper
                 values.forEach( gen::value );
                 gen.end();
             }
-        }
+        } );
         gen.end();
     }
 

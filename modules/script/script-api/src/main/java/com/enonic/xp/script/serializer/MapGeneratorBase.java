@@ -284,9 +284,7 @@ public abstract class MapGeneratorBase
     private MapGeneratorBase serializeMultimap( final Multimap<?, ?> multimap )
     {
         final Map<?, ? extends Collection<?>> params = multimap.asMap();
-        for ( final Object key : params.keySet() )
-        {
-            final Collection<?> values = params.get( key );
+        params.forEach( ( key, values ) -> {
             if ( values.size() == 1 )
             {
                 this.value( key.toString(), values.iterator().next() );
@@ -297,7 +295,7 @@ public abstract class MapGeneratorBase
                 values.forEach( this::value );
                 this.end();
             }
-        }
+        } );
         return this;
     }
 

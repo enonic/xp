@@ -122,12 +122,6 @@ public final class ContentMediaResource
         return response.build();
     }
 
-    private Response doServeMedia( final ContentId contentId, final String identifier )
-        throws IOException
-    {
-        return doServeMedia( contentId, identifier, false );
-    }
-
     private Boolean attachmentAllowsPreview( final Attachment attachment )
     {
         return ALLOWED_PREVIEW_TYPES.contains( attachment.getMimeType() );
