@@ -27,7 +27,7 @@ import com.enonic.xp.repo.impl.storage.CopyRequest;
 public class CopyExecutor
     extends AbstractExecutor
 {
-    private final static Logger LOG = LoggerFactory.getLogger( CopyExecutor.class );
+    private static final Logger LOG = LoggerFactory.getLogger( CopyExecutor.class );
 
     public static final int BATCH_SIZE = 1_000;
 

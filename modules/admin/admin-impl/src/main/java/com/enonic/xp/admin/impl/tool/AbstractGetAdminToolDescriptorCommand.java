@@ -13,7 +13,7 @@ import com.enonic.xp.xml.XmlException;
 
 abstract class AbstractGetAdminToolDescriptorCommand<T extends AbstractGetAdminToolDescriptorCommand>
 {
-    private final static String PATH = "/admin/tools";
+    private static final String PATH = "/admin/tools";
 
     protected ResourceService resourceService;
 

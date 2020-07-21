@@ -41,9 +41,9 @@ import static com.google.common.base.Strings.nullToEmpty;
 public final class ScriptExecutorImpl
     implements ScriptExecutor
 {
-    private final static String PRE_SCRIPT = "(function(log, require, resolve, __, exports, module) { ";
+    private static final String PRE_SCRIPT = "(function(log, require, resolve, __, exports, module) { ";
 
-    private final static String POST_SCRIPT = "\n});";
+    private static final String POST_SCRIPT = "\n});";
 
     private final Executor asyncExecutor;
 
@@ -71,7 +71,7 @@ public final class ScriptExecutorImpl
 
     private final JavascriptHelper javascriptHelper;
 
-    private final static Striped<Lock> REQUIRE_LOCKS = Striped.lazyWeakLock( 1000 );
+    private static final Striped<Lock> REQUIRE_LOCKS = Striped.lazyWeakLock( 1000 );
 
     public ScriptExecutorImpl( final Executor asyncExecutor, final ScriptSettings scriptSettings, final ClassLoader classLoader,
                                final ServiceRegistry serviceRegistry, final ResourceService resourceService, final Application application,

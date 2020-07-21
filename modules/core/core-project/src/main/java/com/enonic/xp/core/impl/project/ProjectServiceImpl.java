@@ -58,7 +58,7 @@ import com.enonic.xp.util.BinaryReference;
 public class ProjectServiceImpl
     implements ProjectService
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ProjectServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ProjectServiceImpl.class );
 
     private RepositoryService repositoryService;
 

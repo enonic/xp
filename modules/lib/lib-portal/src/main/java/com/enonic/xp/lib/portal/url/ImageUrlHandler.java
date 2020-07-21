@@ -11,7 +11,7 @@ import com.enonic.xp.portal.url.ImageUrlParams;
 public final class ImageUrlHandler
     extends AbstractUrlHandler
 {
-    private final static Set<String> VALID_URL_PROPERTY_KEYS = new HashSet<>(
+    private static final Set<String> VALID_URL_PROPERTY_KEYS = new HashSet<>(
         Arrays.asList( "id", "path", "scale", "quality", "background", "format", "filter", "contextPath", "type", "params" ) );
 
     @Override

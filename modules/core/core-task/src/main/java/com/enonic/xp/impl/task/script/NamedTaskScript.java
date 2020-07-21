@@ -15,7 +15,7 @@ import com.enonic.xp.task.TaskProgressReporterContext;
 public final class NamedTaskScript
     implements RunnableTask
 {
-    private final static Logger LOG = LoggerFactory.getLogger( NamedTaskScript.class );
+    private static final Logger LOG = LoggerFactory.getLogger( NamedTaskScript.class );
 
     public static final String SCRIPT_METHOD_NAME = "run";
 

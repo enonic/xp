@@ -77,7 +77,7 @@ import com.enonic.xp.util.BinaryReference;
 class NodeServiceMock
     implements NodeService
 {
-    private final static Logger LOG = LoggerFactory.getLogger( NodeServiceMock.class );
+    private static final Logger LOG = LoggerFactory.getLogger( NodeServiceMock.class );
 
     private final Map<NodeId, Node> nodeIdMap = new HashMap<>();
 

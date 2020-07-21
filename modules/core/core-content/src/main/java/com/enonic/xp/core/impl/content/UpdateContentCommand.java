@@ -41,7 +41,7 @@ import com.enonic.xp.site.Site;
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
 {
-    private final static Logger LOG = LoggerFactory.getLogger( UpdateContentCommand.class );
+    private static final Logger LOG = LoggerFactory.getLogger( UpdateContentCommand.class );
 
     private final UpdateContentParams params;
 

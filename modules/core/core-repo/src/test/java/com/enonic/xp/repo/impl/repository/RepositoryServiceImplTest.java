@@ -51,7 +51,7 @@ class RepositoryServiceImplTest
         user( REPO_TEST_DEFAULT_USER ).
         build();
 
-    private final static Context ADMIN_CONTEXT = ContextBuilder.create().
+    private static final Context ADMIN_CONTEXT = ContextBuilder.create().
         branch( "master" ).
         repositoryId( SystemConstants.SYSTEM_REPO_ID ).
         authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).

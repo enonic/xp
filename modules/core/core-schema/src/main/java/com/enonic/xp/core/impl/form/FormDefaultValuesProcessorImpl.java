@@ -27,7 +27,7 @@ import static com.enonic.xp.form.FormItemType.LAYOUT;
 public final class FormDefaultValuesProcessorImpl
     implements FormDefaultValuesProcessor
 {
-    private final static Logger LOG = LoggerFactory.getLogger( FormDefaultValuesProcessorImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( FormDefaultValuesProcessorImpl.class );
 
     @Override
     public void setDefaultValues( final Form form, final PropertyTree data )

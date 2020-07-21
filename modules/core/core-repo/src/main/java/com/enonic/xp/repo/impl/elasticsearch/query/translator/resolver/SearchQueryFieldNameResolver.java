@@ -11,7 +11,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public class SearchQueryFieldNameResolver
     extends AbstractQueryFieldNameResolver
 {
-    private final static List<String> BUILT_IN_FIELDS = List.of( "_score", "_id" );
+    private static final List<String> BUILT_IN_FIELDS = List.of( "_score", "_id" );
 
 
     @Override

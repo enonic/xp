@@ -8,7 +8,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public final class Converters
 {
-    private final static Converters INSTANCE = new Converters();
+    private static final Converters INSTANCE = new Converters();
 
     private final Map<Class, Converter> map;
 

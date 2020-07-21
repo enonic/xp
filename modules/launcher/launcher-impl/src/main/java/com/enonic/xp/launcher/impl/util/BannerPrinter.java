@@ -9,7 +9,7 @@ import com.enonic.xp.launcher.impl.env.Environment;
 
 public final class BannerPrinter
 {
-    private final static String PRODUCT = "Enonic XP";
+    private static final String PRODUCT = "Enonic XP";
 
     private final Environment env;
 

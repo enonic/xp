@@ -23,7 +23,7 @@ public class VacuumServiceImpl
 {
     private final VacuumTasks tasks = new VacuumTasks();
 
-    private final static Logger LOG = LoggerFactory.getLogger( VacuumServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( VacuumServiceImpl.class );
 
     private VacuumConfig config;
 

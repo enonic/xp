@@ -11,7 +11,7 @@ import com.enonic.xp.portal.url.AssetUrlParams;
 public final class AssetUrlHandler
     extends AbstractUrlHandler
 {
-    private final static Set<String> VALID_URL_PROPERTY_KEYS =
+    private static final Set<String> VALID_URL_PROPERTY_KEYS =
         new HashSet<>( Arrays.asList( "path", "application", "contextPath", "type", "params" ) );
 
     @Override

@@ -17,9 +17,9 @@ import com.enonic.xp.media.MediaTypeService;
 public final class MediaTypes
     implements MediaTypeService
 {
-    private final static MediaTypes INSTANCE = new MediaTypes();
+    private static final MediaTypes INSTANCE = new MediaTypes();
 
-    private final static MediaType DEFAULT = MediaType.OCTET_STREAM;
+    private static final MediaType DEFAULT = MediaType.OCTET_STREAM;
 
     private final List<MediaTypeProvider> providers = new CopyOnWriteArrayList<>();
 

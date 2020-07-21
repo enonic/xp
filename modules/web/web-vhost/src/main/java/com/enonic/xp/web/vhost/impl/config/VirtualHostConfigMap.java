@@ -16,11 +16,11 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class VirtualHostConfigMap
 {
-    private final static String DEFAULT_ID_PROVIDER_VALUE = "default";
+    private static final String DEFAULT_ID_PROVIDER_VALUE = "default";
 
-    private final static String ENABLED_ID_PROVIDER_VALUE = "enabled";
+    private static final String ENABLED_ID_PROVIDER_VALUE = "enabled";
 
-    private final static Pattern MAPPING_NAME_PATTERN = Pattern.compile( "mapping\\.([^\\.]+)\\..+" );
+    private static final Pattern MAPPING_NAME_PATTERN = Pattern.compile( "mapping\\.([^\\.]+)\\..+" );
 
     private final Map<String, String> map;
 

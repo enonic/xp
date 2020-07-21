@@ -9,7 +9,7 @@ import com.enonic.xp.form.Input;
 final class HtmlAreaType
     extends InputTypeBase
 {
-    public final static HtmlAreaType INSTANCE = new HtmlAreaType();
+    public static final HtmlAreaType INSTANCE = new HtmlAreaType();
 
     private HtmlAreaType()
     {

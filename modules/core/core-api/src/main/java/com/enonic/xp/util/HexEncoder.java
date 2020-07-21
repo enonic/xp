@@ -5,7 +5,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public class HexEncoder
 {
-    private final static char[] HEX = "0123456789abcdef".toCharArray();
+    private static final char[] HEX = "0123456789abcdef".toCharArray();
 
     public static String toHex( final byte[] value )
     {

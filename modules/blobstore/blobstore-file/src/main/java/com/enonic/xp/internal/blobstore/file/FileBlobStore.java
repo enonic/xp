@@ -25,7 +25,7 @@ import com.enonic.xp.blob.SegmentLevel;
 public final class FileBlobStore
     implements BlobStore
 {
-    private final static Logger LOG = LoggerFactory.getLogger( FileBlobStore.class );
+    private static final Logger LOG = LoggerFactory.getLogger( FileBlobStore.class );
 
     private final Path baseDir;
 

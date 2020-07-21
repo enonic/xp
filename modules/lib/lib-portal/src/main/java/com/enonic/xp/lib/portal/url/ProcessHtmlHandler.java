@@ -11,7 +11,7 @@ import com.enonic.xp.portal.url.ProcessHtmlParams;
 public final class ProcessHtmlHandler
     extends AbstractUrlHandler
 {
-    private final static Set<String> VALID_URL_PROPERTY_KEYS = new HashSet<>( Arrays.asList( "value", "type" ) );
+    private static final Set<String> VALID_URL_PROPERTY_KEYS = new HashSet<>( Arrays.asList( "value", "type" ) );
 
     @Override
     protected String buildUrl( final Multimap<String, String> map )

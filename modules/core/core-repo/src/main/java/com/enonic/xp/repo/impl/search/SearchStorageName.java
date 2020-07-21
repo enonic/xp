@@ -6,9 +6,9 @@ import com.enonic.xp.repository.RepositoryId;
 public class SearchStorageName
     implements StorageName
 {
-    public final static String STORAGE_INDEX_PREFIX = "search";
+    public static final String STORAGE_INDEX_PREFIX = "search";
 
-    public final static String DIVIDER = "-";
+    public static final String DIVIDER = "-";
 
     private final String name;
 

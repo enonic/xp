@@ -21,7 +21,7 @@ import com.enonic.xp.resource.ResourceService;
 final class DescriptorFacetImpl<T extends Descriptor>
     implements DescriptorFacet<T>
 {
-    private final static Logger LOG = LoggerFactory.getLogger( DescriptorFacetImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( DescriptorFacetImpl.class );
 
     private final Class<T> type;
 

@@ -129,7 +129,7 @@ public class ContentServiceImpl
 {
     public static final String TEMPLATES_FOLDER_NAME = "_templates";
 
-    private final static Logger LOG = LoggerFactory.getLogger( ContentServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ContentServiceImpl.class );
 
     private static final String TEMPLATES_FOLDER_DISPLAY_NAME = "Templates";
 

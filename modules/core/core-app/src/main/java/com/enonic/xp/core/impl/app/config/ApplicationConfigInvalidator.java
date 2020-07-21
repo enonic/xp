@@ -23,7 +23,7 @@ import com.enonic.xp.core.internal.Dictionaries;
 @Component(immediate = true)
 public class ApplicationConfigInvalidator
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ApplicationConfigInvalidator.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ApplicationConfigInvalidator.class );
 
     private final BundleTracker<ServiceRegistration<ManagedService>> tracker;
 

@@ -26,7 +26,7 @@ import com.enonic.xp.extractor.impl.config.ExtractorConfig;
 public class BinaryExtractorImpl
     implements BinaryExtractor
 {
-    private final static Logger LOG = LoggerFactory.getLogger( BinaryExtractorImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( BinaryExtractorImpl.class );
 
     private Detector detector;
 

@@ -30,7 +30,7 @@ public final class ImageRenderer
     private static final String COMPONENT_PLACEHOLDER_ERROR_HTML = "<div " + RenderingConstants.PORTAL_COMPONENT_ATTRIBUTE +
         "=\"{0}\" data-portal-placeholder=\"true\" data-portal-placeholder-error=\"true\"><span class=\"data-portal-placeholder-error\">{1}</span></div>";
 
-    private final static Logger LOG = LoggerFactory.getLogger( ImageRenderer.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ImageRenderer.class );
 
     private PortalUrlService urlService;
 
@@ -54,7 +54,7 @@ public final class ImageRenderer
 
         private final PortalRequest portalRequest;
 
-        private final static String ERROR_IMAGE_NOT_FOUND = "Image could not be found";
+        private static final String ERROR_IMAGE_NOT_FOUND = "Image could not be found";
 
         private ImageComponentRenderer( final ImageComponent component, final PortalRequest portalRequest )
         {

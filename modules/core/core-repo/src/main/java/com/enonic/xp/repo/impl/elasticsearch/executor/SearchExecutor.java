@@ -18,7 +18,7 @@ public class SearchExecutor
 {
     private static final int SCROLL_THRESHOLD = 1000;
 
-    private final static Logger LOG = LoggerFactory.getLogger( SearchExecutor.class );
+    private static final Logger LOG = LoggerFactory.getLogger( SearchExecutor.class );
 
     private SearchExecutor( final Builder builder )
     {

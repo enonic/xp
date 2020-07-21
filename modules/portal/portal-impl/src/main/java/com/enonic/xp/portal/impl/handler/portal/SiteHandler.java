@@ -15,9 +15,9 @@ import com.enonic.xp.web.handler.WebHandler;
 public class SiteHandler
     extends BaseSiteHandler
 {
-    private final static String BASE_URI = "/site";
+    private static final String BASE_URI = "/site";
 
-    private final static String BRANCH_PREFIX = BASE_URI + "/";
+    private static final String BRANCH_PREFIX = BASE_URI + "/";
 
     @Override
     protected boolean canHandle( final WebRequest webRequest )

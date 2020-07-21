@@ -14,7 +14,7 @@ import com.enonic.xp.repo.impl.dump.serializer.DumpSerializer;
 public class JsonDumpSerializer
     implements DumpSerializer
 {
-    private final static ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Override
     public byte[] serialize( final BranchDumpEntry branchDumpEntry )

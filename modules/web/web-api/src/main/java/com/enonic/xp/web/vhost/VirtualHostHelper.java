@@ -7,7 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public final class VirtualHostHelper
 {
-    private final static String KEY = VirtualHost.class.getName();
+    private static final String KEY = VirtualHost.class.getName();
 
     public static boolean hasVirtualHost( final HttpServletRequest req )
     {

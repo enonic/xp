@@ -23,17 +23,17 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class ApplicationHelper
 {
-    final static String X_APPLICATION_URL = "X-Application-Url";
+    static final String X_APPLICATION_URL = "X-Application-Url";
 
-    final static String X_VENDOR_NAME = "X-Vendor-Name";
+    static final String X_VENDOR_NAME = "X-Vendor-Name";
 
-    final static String X_VENDOR_URL = "X-Vendor-Url";
+    static final String X_VENDOR_URL = "X-Vendor-Url";
 
-    final static String X_SYSTEM_VERSION = "X-System-Version";
+    static final String X_SYSTEM_VERSION = "X-System-Version";
 
-    final static String X_SOURCE_PATHS = "X-Source-Paths";
+    static final String X_SOURCE_PATHS = "X-Source-Paths";
 
-    final static String X_CAPABILITY = "X-Capability";
+    static final String X_CAPABILITY = "X-Capability";
 
     static final String X_BUNDLE_TYPE = "X-Bundle-Type";
 

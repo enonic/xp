@@ -8,7 +8,7 @@ import com.enonic.xp.data.ValueFactory;
 final class AttachmentUploaderType
     extends InputTypeBase
 {
-    public final static AttachmentUploaderType INSTANCE = new AttachmentUploaderType();
+    public static final AttachmentUploaderType INSTANCE = new AttachmentUploaderType();
 
     private AttachmentUploaderType()
     {

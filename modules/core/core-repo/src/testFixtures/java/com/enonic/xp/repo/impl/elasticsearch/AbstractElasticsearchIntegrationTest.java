@@ -26,7 +26,7 @@ import com.google.common.io.RecursiveDeleteOption;
 @ExtendWith(AbstractElasticsearchIntegrationTest.EmbeddedElasticsearchExtension.class)
 public abstract class AbstractElasticsearchIntegrationTest
 {
-    private final static Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
+    private static final Logger LOG = LoggerFactory.getLogger( AbstractElasticsearchIntegrationTest.class );
 
     protected static Client client;
 

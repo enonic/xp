@@ -6,11 +6,11 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 abstract class DuplicateValueResolver
 {
-    final static String COPY_TOKEN = "copy";
+    static final String COPY_TOKEN = "copy";
 
-    private final static String NAME_SEPARATOR = "-";
+    private static final String NAME_SEPARATOR = "-";
 
-    private final static String DISPLAY_NAME_SEPARATOR = " ";
+    private static final String DISPLAY_NAME_SEPARATOR = " ";
 
     public static String name( final NodeName nodeName )
     {

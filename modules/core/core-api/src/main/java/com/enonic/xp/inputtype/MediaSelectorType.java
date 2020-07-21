@@ -8,7 +8,7 @@ import com.enonic.xp.data.ValueTypes;
 final class MediaSelectorType
     extends InputTypeBase
 {
-    public final static MediaSelectorType INSTANCE = new MediaSelectorType();
+    public static final MediaSelectorType INSTANCE = new MediaSelectorType();
 
     private MediaSelectorType()
     {

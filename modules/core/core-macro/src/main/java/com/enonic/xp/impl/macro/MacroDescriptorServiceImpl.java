@@ -28,7 +28,7 @@ public final class MacroDescriptorServiceImpl
     implements MacroDescriptorService
 {
 
-    private final static String PATH = "/site/macros";
+    private static final String PATH = "/site/macros";
 
     private final BuiltinMacroDescriptors builtinMacrosDescriptors = new BuiltinMacroDescriptors();
 

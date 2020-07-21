@@ -54,7 +54,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 final class CreateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
 {
-    private final static Logger LOG = LoggerFactory.getLogger( CreateContentCommand.class );
+    private static final Logger LOG = LoggerFactory.getLogger( CreateContentCommand.class );
 
     private final CreateContentParams params;
 

@@ -24,9 +24,9 @@ import com.enonic.xp.xml.parser.XmlServiceDescriptorParser;
 public final class ServiceDescriptorServiceImpl
     implements ServiceDescriptorService
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ServiceDescriptorServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ServiceDescriptorServiceImpl.class );
 
-    private final static String ROOT_PATH = "/services";
+    private static final String ROOT_PATH = "/services";
 
     private ResourceService resourceService;
 

@@ -24,7 +24,7 @@ import com.enonic.xp.security.acl.Permission;
 public final class SetPermissionsHandler
     implements ScriptBean
 {
-    private final static Logger LOG = LoggerFactory.getLogger( SetPermissionsHandler.class );
+    private static final Logger LOG = LoggerFactory.getLogger( SetPermissionsHandler.class );
 
     private ContentService contentService;
 

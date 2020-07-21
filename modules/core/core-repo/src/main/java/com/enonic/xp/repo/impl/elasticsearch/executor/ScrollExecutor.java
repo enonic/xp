@@ -19,7 +19,7 @@ class ScrollExecutor
 {
     private static final TimeValue DEFAULT_SCROLL_TIME = new TimeValue( 30, TimeUnit.SECONDS );
 
-    private final static Logger LOG = LoggerFactory.getLogger( ScrollExecutor.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ScrollExecutor.class );
 
     private ScrollExecutor( final Builder builder )
     {

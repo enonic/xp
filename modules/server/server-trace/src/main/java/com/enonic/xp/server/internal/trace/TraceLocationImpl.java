@@ -8,7 +8,7 @@ import com.enonic.xp.trace.Tracer;
 final class TraceLocationImpl
     implements TraceLocation
 {
-    private final static Set<String> IGNORED_CLASSES =
+    private static final Set<String> IGNORED_CLASSES =
         Set.of( TraceLocationImpl.class.getName(), Tracer.class.getName(), TraceService.class.getName() );
 
     private final String method;

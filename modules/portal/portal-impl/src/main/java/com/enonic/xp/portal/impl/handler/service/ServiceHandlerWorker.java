@@ -35,7 +35,7 @@ import com.enonic.xp.web.websocket.WebSocketEndpoint;
 final class ServiceHandlerWorker
     extends ControllerHandlerWorker
 {
-    private final static String ROOT_SERVICE_PREFIX = "services/";
+    private static final String ROOT_SERVICE_PREFIX = "services/";
 
     protected ResourceService resourceService;
 

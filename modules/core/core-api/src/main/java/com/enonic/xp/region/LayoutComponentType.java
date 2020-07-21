@@ -6,7 +6,7 @@ import com.enonic.xp.annotation.PublicApi;
 public final class LayoutComponentType
     extends ComponentType
 {
-    public final static LayoutComponentType INSTANCE = new LayoutComponentType();
+    public static final LayoutComponentType INSTANCE = new LayoutComponentType();
 
     private LayoutComponentType()
     {

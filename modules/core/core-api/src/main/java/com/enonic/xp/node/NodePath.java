@@ -19,7 +19,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public final class NodePath
     implements Comparable<NodePath>
 {
-    public final static NodePath ROOT = new NodePath( "/" );
+    public static final NodePath ROOT = new NodePath( "/" );
 
     private static final char ELEMENT_DIVIDER = '/';
 
@@ -277,7 +277,7 @@ public final class NodePath
         return builder;
     }
 
-    public final static class Element
+    public static final class Element
     {
         private String name;
 
@@ -327,7 +327,7 @@ public final class NodePath
         return this.refString.compareTo( o.refString );
     }
 
-    public final static class Builder
+    public static final class Builder
     {
         private boolean absolute = true;
 

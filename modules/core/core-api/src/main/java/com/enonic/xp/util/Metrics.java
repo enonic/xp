@@ -13,7 +13,7 @@ import com.codahale.metrics.Timer;
 
 public final class Metrics
 {
-    private final static Metrics INSTANCE = new Metrics();
+    private static final Metrics INSTANCE = new Metrics();
 
     private final MetricRegistry registry;
 

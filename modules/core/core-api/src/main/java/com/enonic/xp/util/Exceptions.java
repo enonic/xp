@@ -7,7 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public abstract class Exceptions
 {
-    public final static class Builder<T extends Throwable>
+    public static final class Builder<T extends Throwable>
     {
         private final T exception;
 

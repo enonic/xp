@@ -34,7 +34,7 @@ public class ReprocessRunnableTask
 
     private int current;
 
-    private final static Logger LOG = LoggerFactory.getLogger( ReprocessRunnableTask.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ReprocessRunnableTask.class );
 
     private ReprocessRunnableTask( Builder builder )
     {

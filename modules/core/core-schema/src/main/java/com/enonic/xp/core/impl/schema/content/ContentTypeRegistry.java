@@ -19,7 +19,7 @@ import com.enonic.xp.schema.content.ContentTypes;
 
 final class ContentTypeRegistry
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ContentTypeRegistry.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ContentTypeRegistry.class );
 
     private final BuiltinContentTypes builtInTypes;
 

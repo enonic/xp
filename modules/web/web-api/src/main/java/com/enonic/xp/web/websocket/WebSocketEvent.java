@@ -64,7 +64,7 @@ public final class WebSocketEvent
         return new Builder();
     }
 
-    public final static class Builder
+    public static final class Builder
     {
         private WebSocketEventType type;
 

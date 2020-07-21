@@ -11,9 +11,9 @@ import java.util.regex.Pattern;
 
 public final class FilterExprParserContext
 {
-    private final static Pattern QUOTE_PATTERN = Pattern.compile( "'([^']*)'" );
+    private static final Pattern QUOTE_PATTERN = Pattern.compile( "'([^']*)'" );
 
-    private final static Pattern DQUOTE_PATTERN = Pattern.compile( "\"([^\"]*)\"" );
+    private static final Pattern DQUOTE_PATTERN = Pattern.compile( "\"([^\"]*)\"" );
 
     private final String value;
 

@@ -6,7 +6,7 @@ import com.enonic.xp.cluster.ClusterNodeId;
 
 public class ClusterNodeNameProvider
 {
-    private final static String ID = UUID.randomUUID().toString();
+    private static final String ID = UUID.randomUUID().toString();
 
     public static ClusterNodeId getID()
     {

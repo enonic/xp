@@ -14,7 +14,7 @@ import com.enonic.xp.resource.ResourceService;
 public class MyDescriptorLoader
     implements DescriptorLoader<MyDescriptor>
 {
-    private final static String PATH = "/mytype";
+    private static final String PATH = "/mytype";
 
     ResourceService resourceService;
 

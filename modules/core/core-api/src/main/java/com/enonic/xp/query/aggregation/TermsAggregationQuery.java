@@ -8,7 +8,7 @@ import com.enonic.xp.annotation.PublicApi;
 public class TermsAggregationQuery
     extends BucketAggregationQuery
 {
-    public final static int TERM_DEFAULT_SIZE = 10;
+    public static final int TERM_DEFAULT_SIZE = 10;
 
     private final String fieldName;
 

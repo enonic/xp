@@ -2,31 +2,31 @@ package com.enonic.xp.lib.node;
 
 public class NodePropertyConstants
 {
-    public final static String NODE_ID = "_id";
+    public static final String NODE_ID = "_id";
 
-    public final static String NODE_NAME = "_name";
+    public static final String NODE_NAME = "_name";
 
-    public final static String PATH = "_path";
+    public static final String PATH = "_path";
 
-    public final static String PARENT_PATH = "_parentPath";
+    public static final String PARENT_PATH = "_parentPath";
 
-    public final static String CHILD_ORDER = "_childOrder";
+    public static final String CHILD_ORDER = "_childOrder";
 
-    public final static String NODE_STATE = "_state";
+    public static final String NODE_STATE = "_state";
 
-    public final static String NODE_TYPE = "_nodeType";
+    public static final String NODE_TYPE = "_nodeType";
 
-    public final static String NODE_VERSION_ID = "_versionKey";
+    public static final String NODE_VERSION_ID = "_versionKey";
 
-    public final static String MANUAL_ORDER_VALUE = "_manualOrderValue";
+    public static final String MANUAL_ORDER_VALUE = "_manualOrderValue";
 
-    public final static String TIMESTAMP = "_ts";
+    public static final String TIMESTAMP = "_ts";
 
-    public final static String PERMISSIONS = "_permissions";
+    public static final String PERMISSIONS = "_permissions";
 
-    public final static String ATTACHED_BINARIES = "_attachedBinaries";
+    public static final String ATTACHED_BINARIES = "_attachedBinaries";
 
-    public final static String INDEX_CONFIG = "_indexConfig";
+    public static final String INDEX_CONFIG = "_indexConfig";
 
     public static final String INHERITS_PERMISSIONS = "_inheritsPermissions";
 

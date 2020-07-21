@@ -11,7 +11,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 final class RadioButtonType
     extends InputTypeBase
 {
-    public final static RadioButtonType INSTANCE = new RadioButtonType();
+    public static final RadioButtonType INSTANCE = new RadioButtonType();
 
     private RadioButtonType()
     {

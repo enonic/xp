@@ -13,7 +13,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public final class VirtualHostMapping
     implements VirtualHost, Comparable<VirtualHostMapping>
 {
-    private final static String DEFAULT_HOST = "localhost";
+    private static final String DEFAULT_HOST = "localhost";
 
     private final String name;
 

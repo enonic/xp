@@ -14,7 +14,7 @@ import com.enonic.xp.web.vhost.VirtualHostHelper;
 public final class LoginUrlHandler
     extends AbstractUrlHandler
 {
-    private final static Set<String> VALID_URL_PROPERTY_KEYS =
+    private static final Set<String> VALID_URL_PROPERTY_KEYS =
         new HashSet<>( Arrays.asList( "idProvider", "redirect", "contextPath", "type", "params" ) );
 
     @Override

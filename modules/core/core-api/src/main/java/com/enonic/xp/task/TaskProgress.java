@@ -13,7 +13,7 @@ public final class TaskProgress
 {
     private static final long serialVersionUID = 0;
 
-    public final static TaskProgress EMPTY = TaskProgress.create().build();
+    public static final TaskProgress EMPTY = TaskProgress.create().build();
 
     private final int current;
 
