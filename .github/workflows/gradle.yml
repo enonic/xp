@@ -25,3 +25,44 @@ jobs:
       - uses: codacy/codacy-coverage-reporter-action@master
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+
+      - name: Read version property
+        id: read_version
+        uses: christian-draeger/read-properties@1.0.1
+        with:
+          path: './gradle.properties'
+          property: 'version'
+
+      - name: Publish to snapshot repository
+        if: "contains(steps.read_version.outputs.value, '-SNAPSHOT') && (github.ref == 'refs/heads/master' || contains(github.ref, 'refs/heads/7.') || github.ref == 'refs/heads/issue-8247')"
+        run: ./gradlew publish -PrepoKey=snapshot -PrepoUser=${{ secrets.ARTIFACTORY_USERNAME }} -PrepoPassword=${{ secrets.ARTIFACTORY_PASSWORD }}
+
+      #- name: Publish to release repository
+      #  if: "!contains(steps.read_version.outputs.value, '-SNAPSHOT') && contains(github.ref, 'refs/heads/7.')"
+      #  run: ./gradlew publish -PrepoKey=public -PrepoUser=${{ secrets.ARTIFACTORY_USERNAME }} -PrepoPassword=${{ secrets.ARTIFACTORY_PASSWORD }}
+      #- name: Create Release
+      #  "!contains(steps.read_version.outputs.value, '-SNAPSHOT') && contains(github.ref, 'refs/heads/7.')"
+      #  id: create_release
+      #  uses: actions/create-release@v1
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #  with:
+      #    tag_name: v${{ steps.read_version.outputs.value }}
+      #    release_name: Enonic XP Runtime ${{ steps.read_version.outputs.value }}
+      #    draft: true
+
+  dispatch:
+    needs: build
+    strategy:
+      matrix:
+        repo: ["enonic/app-admin-home", "enonic/app-applications", "enonic/app-users", "enonic/app-standardidprovider" ]
+    runs-on: ubuntu-latest
+    if: "(github.ref == 'refs/heads/master' || contains(github.ref, 'refs/heads/7.'))"
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          repository: ${{ matrix.repo }}
+          event-type: xp
+          client-payload: '{"ref": "${{ github.ref }}"}'
