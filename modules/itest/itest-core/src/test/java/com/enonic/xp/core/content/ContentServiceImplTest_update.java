@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -18,6 +19,7 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
@@ -41,7 +43,6 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.acl.AccessControlList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -148,14 +149,14 @@ public class ContentServiceImplTest_update
     }
 
     @Test
-    public void update_content_inherited()
+    public void update_content_inherit()
         throws Exception
     {
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( new PropertyTree() ).
             displayName( "This is my content" ).
             parent( ContentPath.ROOT ).
-            inherited( true ).
+            inherit( Set.of( ContentInheritType.DATA, ContentInheritType.PATH ) ).
             type( ContentTypeName.folder() ).
             build();
 
@@ -171,7 +172,7 @@ public class ContentServiceImplTest_update
 
         final Content storedContent = this.contentService.getById( content.getId() );
 
-        assertFalse( storedContent.isInherited() );
+        assertTrue( storedContent.getInherit().isEmpty() );
     }
 
 

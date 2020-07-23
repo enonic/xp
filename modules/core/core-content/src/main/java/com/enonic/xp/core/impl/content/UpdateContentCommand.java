@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.EditableSite;
@@ -95,7 +97,7 @@ final class UpdateContentCommand
 
         Content editedContent = editContent( params.getEditor(), contentBeforeChange );
 
-        editedContent = setInherited( editedContent, params.isInherited() );
+        editedContent = setInherit( editedContent, params.getInherit() );
 
         if ( contentBeforeChange.equals( editedContent ) && params.getCreateAttachments() == null && params.getRemoveAttachments() == null )
         {
@@ -208,10 +210,10 @@ final class UpdateContentCommand
             build();
     }
 
-    private Content setInherited( final Content content, final boolean inherited )
+    private Content setInherit( final Content content, final Set<ContentInheritType> inherit )
     {
         return Content.create( content ).
-            inherited( inherited ).
+            setInherit( inherit ).
             build();
     }
 

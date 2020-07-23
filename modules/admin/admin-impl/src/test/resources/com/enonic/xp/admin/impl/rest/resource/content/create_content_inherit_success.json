@@ -11,8 +11,11 @@
   "hasChildren": false,
   "iconUrl": "/admin/rest/schema/content/icon/myapplication:content-type?hash=f95b70fdc3088560732a5ac135644506",
   "id": "content-id",
+  "inherit": [
+    "DATA",
+    "PATH"
+  ],
   "inheritPermissions": true,
-  "inherited": true,
   "isPage": false,
   "isRoot": true,
   "isValid": true,

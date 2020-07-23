@@ -93,5 +93,5 @@ public class ContentPropertyNames
 
     public static final String WORKFLOW_INFO_CHECKS = "checks";
 
-    public static final String INHERITED = "inherited";
+    public static final String INHERIT = "inherit";
 }
