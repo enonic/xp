@@ -14,9 +14,6 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
-import com.enonic.xp.content.CompareContentParams;
-import com.enonic.xp.content.CompareContentResult;
-import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentConstants;
@@ -108,27 +105,25 @@ public class ParentProjectSynchronizer
 
     private Content doSync( final Content sourceContent )
     {
-        return sourceContext.callWith( () -> {
+        return targetContext.callWith( () -> {
 
-            if ( isSourceSyncable( sourceContent ) )
+            if ( contentService.contentExists( sourceContent.getId() ) )
             {
-                return targetContext.callWith( () -> {
+                Content targetContent = contentService.getById( sourceContent.getId() );
 
-                    if ( contentService.contentExists( sourceContent.getId() ) )
-                    {
-                        Content targetContent = contentService.getById( sourceContent.getId() );
+                if ( isSyncable( sourceContent, targetContent ) )
+                {
+                    targetContent = this.doSyncMoved( sourceContent, targetContent );
+                    targetContent = this.doSyncRenamed( sourceContent, targetContent );
+                    return this.doSyncUpdated( sourceContent, targetContent );
+                }
 
-                        targetContent = this.doSyncMoved( sourceContent, targetContent );
-                        targetContent = this.doSyncRenamed( sourceContent, targetContent );
-                        return this.doSyncUpdated( sourceContent, targetContent );
-                    }
-                    else
-                    {
-                        return this.doSyncCreated( sourceContent );
-                    }
-                } );
+                return null;
             }
-            return null;
+            else
+            {
+                return this.doSyncCreated( sourceContent );
+            }
         } );
     }
 
@@ -137,14 +132,14 @@ public class ParentProjectSynchronizer
         return sourceContext.callWith( () -> {
             final Content sourceContent = contentService.getById( contentId );
 
-            if ( isSourceSyncable( sourceContent ) )
-            {
-                return targetContext.callWith( () -> {
-                    final Content targetContent = contentService.getById( contentId );
+            return targetContext.callWith( () -> {
+                final Content targetContent = contentService.getById( contentId );
+                if ( isSyncable( sourceContent, targetContent ) )
+                {
                     return doSyncRenamed( sourceContent, targetContent );
-                } );
-            }
-            return null;
+                }
+                return null;
+            } );
         } );
 
     }
@@ -169,14 +164,14 @@ public class ParentProjectSynchronizer
         return sourceContext.callWith( () -> {
             final Content sourceContent = contentService.getById( contentId );
 
-            if ( isSourceSyncable( sourceContent ) )
-            {
-                return targetContext.callWith( () -> {
-                    final Content targetContent = contentService.getById( contentId );
+            return targetContext.callWith( () -> {
+                final Content targetContent = contentService.getById( contentId );
+                if ( isSyncable( sourceContent, targetContent ) )
+                {
                     return doSyncMoved( sourceContent, targetContent );
-                } );
-            }
-            return null;
+                }
+                return null;
+            } );
         } );
 
     }
@@ -205,15 +200,14 @@ public class ParentProjectSynchronizer
         return sourceContext.callWith( () -> {
             final Content sourceContent = contentService.getById( contentId );
 
-            if ( isSourceSyncable( sourceContent ) )
-            {
-                return targetContext.callWith( () -> {
-                    final Content targetContent = contentService.getById( contentId );
-
+            return targetContext.callWith( () -> {
+                final Content targetContent = contentService.getById( contentId );
+                if ( isSyncable( sourceContent, targetContent ) )
+                {
                     return doSyncUpdated( sourceContent, targetContent );
-                } );
-            }
-            return null;
+                }
+                return null;
+            } );
         } );
     }
 
@@ -252,16 +246,13 @@ public class ParentProjectSynchronizer
         return null;
     }
 
-    private boolean isSourceSyncable( final Content sourceContent )
+    private boolean isSyncable( final Content sourceContent, final Content targetContent )
     {
-        final CompareContentResult compareResult =
-            contentService.compare( new CompareContentParams( sourceContent.getId(), ContentConstants.BRANCH_MASTER ) );
-
-        return CompareStatus.NEW.equals( compareResult.getCompareStatus() ) ||
-            CompareStatus.EQUAL.equals( compareResult.getCompareStatus() ) ||
-            ( ( CompareStatus.NEWER.equals( compareResult.getCompareStatus() ) ||
-                CompareStatus.MOVED.equals( compareResult.getCompareStatus() ) ) &&
-                WorkflowState.READY.equals( sourceContent.getWorkflowInfo().getState() ) );
+        if ( WorkflowState.READY.equals( targetContent.getWorkflowInfo().getState() ) )
+        {
+            return WorkflowState.READY.equals( sourceContent.getWorkflowInfo().getState() );
+        }
+        return true;
     }
 
     private boolean isToSyncData( final Content targetContent )
