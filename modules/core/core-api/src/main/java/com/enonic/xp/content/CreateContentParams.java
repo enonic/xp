@@ -1,8 +1,11 @@
 package com.enonic.xp.content;
 
+import java.util.Collection;
 import java.util.Locale;
+import java.util.Set;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
@@ -53,7 +56,7 @@ public final class CreateContentParams
 
     private final boolean createSiteTemplateFolder;
 
-    private final boolean inherited;
+    private final Set<ContentInheritType> inherit;
 
     private CreateContentParams( Builder builder )
     {
@@ -76,7 +79,7 @@ public final class CreateContentParams
         this.processedIds = builder.processedIds.build();
         this.workflowInfo = builder.workflowInfo;
         this.createSiteTemplateFolder = builder.createSiteTemplateFolder;
-        this.inherited = builder.inherited;
+        this.inherit = builder.inherit.build();
     }
 
     public static Builder create()
@@ -184,9 +187,9 @@ public final class CreateContentParams
         return createSiteTemplateFolder;
     }
 
-    public boolean isInherited()
+    public Set<ContentInheritType> getInherit()
     {
-        return inherited;
+        return inherit;
     }
 
     public static final class Builder
@@ -229,7 +232,7 @@ public final class CreateContentParams
 
         private boolean createSiteTemplateFolder = true;
 
-        private boolean inherited = false;
+        private ImmutableSet.Builder<ContentInheritType> inherit = ImmutableSet.builder();
 
         private Builder()
         {
@@ -254,7 +257,7 @@ public final class CreateContentParams
             this.contentPublishInfo = source.contentPublishInfo;
             this.workflowInfo = source.workflowInfo;
             this.createSiteTemplateFolder = source.createSiteTemplateFolder;
-            this.inherited = source.inherited;
+            this.inherit.addAll( source.inherit );
         }
 
         public Builder contentId( final ContentId contentId )
@@ -378,9 +381,9 @@ public final class CreateContentParams
             return this;
         }
 
-        public Builder inherited( final boolean inherited )
+        public Builder inherit( final Collection<ContentInheritType> inherit )
         {
-            this.inherited = inherited;
+            this.inherit.addAll( inherit );
             return this;
         }
 

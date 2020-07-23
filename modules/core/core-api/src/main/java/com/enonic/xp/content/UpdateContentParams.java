@@ -1,6 +1,8 @@
 package com.enonic.xp.content;
 
+import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
@@ -26,7 +28,7 @@ public final class UpdateContentParams
 
     private boolean requireValid;
 
-    private boolean inherited = false;
+    private Set<ContentInheritType> inherit = Set.of();
 
     public UpdateContentParams editor( final ContentEditor editor )
     {
@@ -71,9 +73,9 @@ public final class UpdateContentParams
     }
 
 
-    public UpdateContentParams inherited( final boolean inherited )
+    public UpdateContentParams inherit( final Collection<ContentInheritType> inherit )
     {
-        this.inherited = inherited;
+        this.inherit = Set.copyOf( inherit );
         return this;
     }
 
@@ -120,9 +122,9 @@ public final class UpdateContentParams
         return clearAttachments;
     }
 
-    public boolean isInherited()
+    public Set<ContentInheritType> getInherit()
     {
-        return inherited;
+        return inherit;
     }
 
     @Override
@@ -140,12 +142,12 @@ public final class UpdateContentParams
         return clearAttachments == that.clearAttachments && requireValid == that.requireValid &&
             Objects.equals( contentId, that.contentId ) && Objects.equals( editor, that.editor ) &&
             Objects.equals( modifier, that.modifier ) && Objects.equals( createAttachments, that.createAttachments ) &&
-            Objects.equals( removeAttachments, that.removeAttachments ) && Objects.equals( inherited, that.inherited );
+            Objects.equals( removeAttachments, that.removeAttachments ) && Objects.equals( inherit, that.inherit );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( contentId, editor, modifier, createAttachments, removeAttachments, clearAttachments, requireValid, inherited );
+        return Objects.hash( contentId, editor, modifier, createAttachments, removeAttachments, clearAttachments, requireValid, inherit );
     }
 }

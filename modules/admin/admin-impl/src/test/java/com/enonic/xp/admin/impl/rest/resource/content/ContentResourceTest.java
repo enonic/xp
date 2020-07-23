@@ -99,6 +99,7 @@ import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentDependenciesAggregation;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
@@ -696,17 +697,18 @@ public class ContentResourceTest
     }
 
     @Test
-    public void create_content_inherited()
+    public void create_content_inherit()
         throws Exception
     {
-        Content content = createContent( "content-id", "content-path", "myapplication:content-type", true );
+        Content content = createContent( "content-id", "content-path", "myapplication:content-type",
+                                         Set.of( ContentInheritType.DATA, ContentInheritType.PATH ) );
         Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ) ) ).thenReturn( content );
 
         String jsonString = request().path( "content/create" ).
             entity( readFromFile( "create_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertJson( "create_content_inherited_success.json", jsonString );
+        assertJson( "create_content_inherit_success.json", jsonString );
     }
 
     @Test
@@ -777,7 +779,7 @@ public class ContentResourceTest
     }
 
     @Test
-    public void update_content_inherited_success()
+    public void update_content_inherit_success()
         throws Exception
     {
         Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
@@ -790,7 +792,7 @@ public class ContentResourceTest
 
         Mockito.verify( contentService, Mockito.times( 0 ) ).rename( Mockito.isA( RenameContentParams.class ) );
 
-        assertJson( "update_content_inherited_success.json", jsonString );
+        assertJson( "update_content_inherit_success.json", jsonString );
     }
 
     @Test
@@ -2461,9 +2463,9 @@ public class ContentResourceTest
         return this.createContent( id, ContentPath.ROOT, name, contentTypeName );
     }
 
-    private Content createContent( final String id, final String name, final String contentTypeName, final boolean inherited )
+    private Content createContent( final String id, final String name, final String contentTypeName, final Set<ContentInheritType> inherit )
     {
-        return Content.create( this.createContent( id, ContentPath.ROOT, name, contentTypeName ) ).inherited( inherited ).build();
+        return Content.create( this.createContent( id, ContentPath.ROOT, name, contentTypeName ) ).setInherit( inherit ).build();
     }
 
     private Site createSite( final String id, final String name, final String contentTypeName, SiteConfigs siteConfigs )

@@ -3,6 +3,7 @@ package com.enonic.xp.core.content;
 import java.time.Instant;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -14,6 +15,7 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
@@ -232,7 +234,7 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    public void create_inherited()
+    public void create_inherit()
         throws Exception
     {
         final CreateContentParams createContentParams = CreateContentParams.create().
@@ -240,11 +242,11 @@ public class ContentServiceImplTest_create
             displayName( "This is my content" ).
             parent( ContentPath.ROOT ).
             type( ContentTypeName.folder() ).
-            inherited( true ).
+            inherit( Set.of( ContentInheritType.DATA, ContentInheritType.PATH ) ).
             build();
 
         final Content content = this.contentService.create( createContentParams );
-        assertTrue( content.isInherited() );
+        assertEquals( 2, content.getInherit().size() );
     }
 
     @Test

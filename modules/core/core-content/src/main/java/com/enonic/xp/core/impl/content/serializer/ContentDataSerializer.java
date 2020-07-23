@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.google.common.base.Preconditions;
 
@@ -16,6 +19,7 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentService;
@@ -44,7 +48,7 @@ import static com.enonic.xp.content.ContentPropertyNames.CREATOR;
 import static com.enonic.xp.content.ContentPropertyNames.DATA;
 import static com.enonic.xp.content.ContentPropertyNames.DISPLAY_NAME;
 import static com.enonic.xp.content.ContentPropertyNames.EXTRA_DATA;
-import static com.enonic.xp.content.ContentPropertyNames.INHERITED;
+import static com.enonic.xp.content.ContentPropertyNames.INHERIT;
 import static com.enonic.xp.content.ContentPropertyNames.LANGUAGE;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIER;
@@ -91,7 +95,6 @@ public class ContentDataSerializer
         final PropertySet contentAsData = propertyTree.getRoot();
 
         contentAsData.addBoolean( VALID, params.isValid() );
-        contentAsData.addBoolean( INHERITED, params.isInherited() );
         contentAsData.ifNotNull().addString( DISPLAY_NAME, params.getDisplayName() );
         contentAsData.ifNotNull().addString( TYPE, params.getType() != null ? params.getType().toString() : null );
         contentAsData.ifNotNull().addInstant( CREATED_TIME, params.getCreatedTime() );
@@ -106,6 +109,7 @@ public class ContentDataSerializer
 
         addPublishInfo( contentAsData, params.getContentPublishInfo() );
         addWorkflowInfo( contentAsData, params.getWorkflowInfo() );
+        addInherit( contentAsData, params.getInherit() );
 
         final ExtraDatas extraData = params.getExtraDatas();
 
@@ -175,7 +179,6 @@ public class ContentDataSerializer
 
         builder.displayName( contentAsSet.getString( DISPLAY_NAME ) );
         builder.valid( contentAsSet.getBoolean( VALID ) != null ? contentAsSet.getBoolean( ContentPropertyNames.VALID ) : false );
-        builder.inherited( contentAsSet.getBoolean( INHERITED ) != null ? contentAsSet.getBoolean( INHERITED ) : false );
         builder.data( contentAsSet.getSet( DATA ).toTree() );
 
         extractUserInfo( contentAsSet, builder );
@@ -187,6 +190,7 @@ public class ContentDataSerializer
         extractPublishInfo( contentAsSet, builder );
         extractProcessedReferences( contentAsSet, builder );
         extractWorkflowInfo( contentAsSet, builder );
+        extractInherit( contentAsSet, builder );
 
         return builder;
     }
@@ -194,7 +198,6 @@ public class ContentDataSerializer
     private void addMetadata( final UpdateContentTranslatorParams params, final PropertySet contentAsData, final Content content )
     {
         contentAsData.setBoolean( ContentPropertyNames.VALID, content.isValid() );
-        contentAsData.setBoolean( INHERITED, content.isInherited() );
         contentAsData.ifNotNull().addString( DISPLAY_NAME, content.getDisplayName() );
         contentAsData.ifNotNull().addString( TYPE, content.getType().toString() );
         contentAsData.ifNotNull().addString( OWNER, content.getOwner() != null ? content.getOwner().toString() : null );
@@ -205,6 +208,7 @@ public class ContentDataSerializer
         contentAsData.ifNotNull().addInstant( CREATED_TIME, content.getCreatedTime() );
         addPublishInfo( contentAsData, content.getPublishInfo() );
         addWorkflowInfo( contentAsData, content.getWorkflowInfo() );
+        addInherit( contentAsData, content.getInherit() );
     }
 
     private void addProcessedReferences( final PropertySet contentAsData, final ContentIds processedIds )
@@ -239,6 +243,17 @@ public class ContentDataSerializer
 
             final PropertySet workflowInfoChecks = workflowInfo.addSet( WORKFLOW_INFO_CHECKS );
             data.getChecks().forEach( ( key, value ) -> workflowInfoChecks.addString( key, value.toString() ) );
+        }
+    }
+
+    private void addInherit( final PropertySet contentAsData, final Set<ContentInheritType> inherit )
+    {
+        if ( inherit != null )
+        {
+            contentAsData.ifNotNull().addStrings( INHERIT, inherit.
+                stream().
+                map( Enum::name ).
+                collect( Collectors.toSet() ) );
         }
     }
 
@@ -329,6 +344,14 @@ public class ContentDataSerializer
         final PropertySet workflowInfoSet = contentAsSet.getSet( WORKFLOW_INFO );
         final WorkflowInfo workflowInfo = workflowInfoSerializer.extract( workflowInfoSet );
         builder.workflowInfo( workflowInfo );
+    }
+
+    private void extractInherit( final PropertySet contentAsSet, final Content.Builder builder )
+    {
+        builder.setInherit( StreamSupport.
+            stream( contentAsSet.getStrings( INHERIT ).spliterator(), false ).
+            map( ContentInheritType::valueOf ).
+            collect( Collectors.toSet() ) );
     }
 
     private Attachments dataToAttachments( final Iterable<PropertySet> attachmentSets )

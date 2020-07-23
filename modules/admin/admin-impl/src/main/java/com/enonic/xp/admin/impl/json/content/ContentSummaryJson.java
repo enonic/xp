@@ -1,6 +1,8 @@
 package com.enonic.xp.admin.impl.json.content;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.admin.impl.json.ChangeTraceableJson;
 import com.enonic.xp.admin.impl.json.ItemJson;
@@ -8,6 +10,7 @@ import com.enonic.xp.admin.impl.json.thumb.ThumbnailJson;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ChildOrderJson;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentInheritType;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ContentSummaryJson
@@ -26,7 +29,7 @@ public class ContentSummaryJson
 
     private final boolean isPage;
 
-    private final boolean inherited;
+    private final List<ContentInheritType> inherit;
 
     private final ChildOrderJson childOrderJson;
 
@@ -44,7 +47,10 @@ public class ContentSummaryJson
         this.thumbnailJson = content.hasThumbnail() ? new ThumbnailJson( content.getThumbnail() ) : null;
         this.isSite = content.isSite();
         this.isPage = content.hasPage();
-        this.inherited = content.isInherited();
+        this.inherit = content.getInherit().
+            stream().
+            sorted().
+            collect( Collectors.toList() );
         this.childOrderJson = content.getChildOrder() != null ? new ChildOrderJson( content.getChildOrder() ) : null;
         this.contentState = content.getContentState().toString();
         this.publish = content.getPublishInfo() != null ? new ContentPublishInfoJson( content.getPublishInfo() ) : null;
@@ -150,9 +156,9 @@ public class ContentSummaryJson
         return isPage;
     }
 
-    public boolean getInherited()
+    public List<ContentInheritType> getInherit()
     {
-        return inherited;
+        return inherit;
     }
 
     public String getContentState()

@@ -1,9 +1,12 @@
 package com.enonic.xp.content;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Locale;
+import java.util.Set;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
@@ -58,7 +61,7 @@ public class CreateContentTranslatorParams
 
     private final WorkflowInfo workflowInfo;
 
-    private final boolean inherited;
+    private final Set<ContentInheritType> inherit;
 
     private CreateContentTranslatorParams( Builder builder )
     {
@@ -85,7 +88,7 @@ public class CreateContentTranslatorParams
         this.contentPublishInfo = builder.contentPublishInfo;
         this.processedIds = builder.processedIds;
         this.workflowInfo = builder.workflowInfo;
-        this.inherited = builder.inherited;
+        this.inherit = builder.inherit.build();
     }
 
     public static Builder create( final CreateContentParams source )
@@ -203,9 +206,9 @@ public class CreateContentTranslatorParams
         return workflowInfo;
     }
 
-    public boolean isInherited()
+    public Set<ContentInheritType> getInherit()
     {
-        return inherited;
+        return inherit;
     }
 
     public static final class Builder
@@ -246,7 +249,7 @@ public class CreateContentTranslatorParams
 
         private WorkflowInfo workflowInfo;
 
-        private boolean inherited;
+        private ImmutableSet.Builder<ContentInheritType> inherit = ImmutableSet.builder();
 
         private Builder()
         {
@@ -270,7 +273,7 @@ public class CreateContentTranslatorParams
             this.contentPublishInfo = params.getContentPublishInfo();
             this.processedIds = params.getProcessedIds();
             this.workflowInfo = params.getWorkflowInfo();
-            this.inherited = params.isInherited();
+            this.inherit.addAll( params.getInherit() );
         }
 
         public Builder contentId( final ContentId contentId )
@@ -387,9 +390,10 @@ public class CreateContentTranslatorParams
             return this;
         }
 
-        public Builder inherited( final boolean inherited )
+        public Builder inherit( final Collection<ContentInheritType> inherit )
         {
-            this.inherited = inherited;
+            this.inherit.addAll( inherit );
+
             return this;
         }
 

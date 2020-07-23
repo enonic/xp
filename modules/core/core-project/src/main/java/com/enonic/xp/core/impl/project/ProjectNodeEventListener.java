@@ -85,7 +85,7 @@ public class ProjectNodeEventListener
     private boolean isContentEvent( final String type )
     {
         return "node.created".equals( type ) || "node.updated".equals( type ) || "node.pushed".equals( type ) ||
-            "node.renamed".equals( type );
+            "node.renamed".equals( type ) || "node.moved".equals( type );
     }
 
     private void handleContentEvent( final Map<String, String> nodeMap, final String type )
@@ -124,6 +124,9 @@ public class ProjectNodeEventListener
                             break;
                         case "node.renamed":
                             parentProjectSynchronizer.syncRenamed( contentId );
+                            break;
+                        case "node.moved":
+                            parentProjectSynchronizer.syncMoved( contentId );
                             break;
                     }
 

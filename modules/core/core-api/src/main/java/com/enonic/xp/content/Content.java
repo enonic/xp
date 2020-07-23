@@ -1,8 +1,10 @@
 package com.enonic.xp.content;
 
 import java.time.Instant;
+import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
@@ -67,7 +69,7 @@ public class Content
 
     private final boolean inheritPermissions;
 
-    private final boolean inherited;
+    private final Set<ContentInheritType> inherit;
 
     private final Locale language;
 
@@ -113,7 +115,7 @@ public class Content
         this.page = builder.page;
         this.thumbnail = builder.thumbnail;
         this.hasChildren = builder.hasChildren;
-        this.inherited = builder.inherited;
+        this.inherit = builder.inherit;
         this.childOrder = builder.childOrder;
         this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
@@ -271,9 +273,9 @@ public class Content
         return this.hasChildren;
     }
 
-    public boolean isInherited()
+    public Set<ContentInheritType> getInherit()
     {
-        return inherited;
+        return inherit;
     }
 
     public boolean isSite()
@@ -360,7 +362,7 @@ public class Content
             Objects.equals( valid, other.valid ) && Objects.equals( modifier, other.modifier ) &&
             Objects.equals( creator, other.creator ) && Objects.equals( owner, other.owner ) &&
             Objects.equals( createdTime, other.createdTime ) && Objects.equals( modifiedTime, other.modifiedTime ) &&
-            Objects.equals( hasChildren, other.hasChildren ) && Objects.equals( inherited, other.inherited ) &&
+            Objects.equals( hasChildren, other.hasChildren ) && Objects.equals( inherit, other.inherit ) &&
             Objects.equals( inheritPermissions, other.inheritPermissions ) && Objects.equals( childOrder, other.childOrder ) &&
             Objects.equals( thumbnail, other.thumbnail ) && Objects.equals( permissions, other.permissions ) &&
             Objects.equals( attachments, other.attachments ) && Objects.equals( data, other.data ) &&
@@ -374,7 +376,7 @@ public class Content
     public int hashCode()
     {
         return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
-                             hasChildren, inherited, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, extraDatas,
+                             hasChildren, inherit, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, extraDatas,
                              page, language, contentState, publishInfo, processedReferences, workflowInfo );
     }
 
@@ -416,7 +418,7 @@ public class Content
 
         protected boolean hasChildren;
 
-        protected boolean inherited;
+        protected EnumSet<ContentInheritType> inherit = EnumSet.noneOf( ContentInheritType.class );
 
         protected ChildOrder childOrder;
 
@@ -458,7 +460,7 @@ public class Content
             this.creator = source.creator;
             this.modifier = source.modifier;
             this.hasChildren = source.hasChildren;
-            this.inherited = source.inherited;
+            this.inherit.addAll( source.inherit );
             this.page = source.page != null ? source.page.copy() : null;
             this.thumbnail = source.thumbnail;
             this.childOrder = source.childOrder;
@@ -608,9 +610,12 @@ public class Content
             return (BUILDER) this;
         }
 
-        public BUILDER inherited( final boolean inherited )
+        public BUILDER setInherit( final Set<ContentInheritType> inherit )
         {
-            this.inherited = inherited;
+            if ( inherit != null )
+            {
+                this.inherit = inherit.isEmpty() ? EnumSet.noneOf( ContentInheritType.class ) : EnumSet.copyOf( inherit );
+            }
             return (BUILDER) this;
         }
 
