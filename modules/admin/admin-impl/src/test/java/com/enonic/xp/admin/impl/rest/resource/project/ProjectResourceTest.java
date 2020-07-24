@@ -136,6 +136,47 @@ public class ProjectResourceTest
     }
 
     @Test
+    public void fetch_projects_by_content_id()
+        throws Exception
+    {
+        final Project project1 = createProject( "project1", "project name 1", "project description 1", null, "base" );
+
+        final Project project2 = createProject( "project2", "project2", null, null, "parent1" );
+        final Project project3 = createProject( "project3", null, null, null );
+        final Project project4 = createProject( "project4", "project4", null, null, "parent2" );
+
+        mockRootContent();
+
+        Mockito.when( projectService.list() ).thenReturn(
+            Projects.create().addAll( List.of( project1, project2, project3, project4 ) ).build() );
+
+        Mockito.when( contentService.contentExists( ContentId.from( "123" ) ) ).
+            thenReturn( true ).
+            thenReturn( false ).
+            thenReturn( true ).
+            thenReturn( false );
+
+        Mockito.when( projectService.getPermissions( ProjectName.from( "project1" ) ) ).
+            thenReturn( ProjectPermissions.create().addOwner( PrincipalKey.from( "user:system:owner" ) ).build() );
+
+        Mockito.when( projectService.getPermissions( ProjectName.from( "project2" ) ) ).
+            thenReturn( ProjectPermissions.create().addEditor( PrincipalKey.from( "user:system:editor" ) ).build() );
+
+        Mockito.when( projectService.getPermissions( ProjectName.from( "project3" ) ) ).
+            thenReturn( ProjectPermissions.create().addAuthor( PrincipalKey.from( "user:system:author" ) ).build() );
+
+        Mockito.when( projectService.getPermissions( ProjectName.from( "project4" ) ) ).
+            thenReturn( ProjectPermissions.create().addAuthor( PrincipalKey.from( "user:system:contributor" ) ).build() );
+
+        final String jsonString = request().path( "project/fetchByContentId" ).
+            queryParam( "contentId", "123" ).
+            get().
+            getAsString();
+
+        assertJson( "fetch_by_content_id_projects.json", jsonString );
+    }
+
+    @Test
     public void create_project_exception()
         throws Exception
     {

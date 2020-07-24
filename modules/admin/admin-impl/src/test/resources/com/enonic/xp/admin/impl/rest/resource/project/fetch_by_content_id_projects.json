@@ -1,0 +1,44 @@
+{
+  "projects": [
+    {
+      "description": "project description 1",
+      "displayName": "project name 1",
+      "icon": null,
+      "language": "en",
+      "name": "project1",
+      "parent": "base",
+      "permissions": {
+        "author": [],
+        "contributor": [],
+        "editor": [],
+        "owner": [
+          "user:system:owner"
+        ]
+      },
+      "readAccess": {
+        "type": "PRIVATE",
+        "principals": []
+      }
+    },
+    {
+      "description": null,
+      "displayName": null,
+      "icon": null,
+      "language": "en",
+      "name": "project3",
+      "parent": null,
+      "permissions": {
+        "author": [
+          "user:system:author"
+        ],
+        "contributor": [],
+        "editor": [],
+        "owner": []
+      },
+      "readAccess": {
+        "type": "PRIVATE",
+        "principals": []
+      }
+    }
+  ]
+}
