@@ -33,7 +33,11 @@ import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectPermissionsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectsJson;
 import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ModifyProjectIconParams;
@@ -148,6 +152,24 @@ public final class ProjectResource
     public ProjectsJson list()
     {
         final List<ProjectJson> projects = this.projectService.list().stream().
+            map( this::doCreateJson ).
+            collect( Collectors.toList() );
+
+        return new ProjectsJson( projects );
+    }
+
+    @GET
+    @Path("fetchByContentId")
+    public ProjectsJson fetchByContentId( @QueryParam("contentId") final String contentIdString )
+    {
+        final ContentId contentId = ContentId.from( contentIdString );
+
+        final List<ProjectJson> projects = this.projectService.list().stream().
+            filter( project -> ContextBuilder.from( ContextAccessor.current() ).
+                repositoryId( project.getName().getRepoId() ).
+                branch( ContentConstants.BRANCH_DRAFT ).
+                build().
+                callWith( () -> contentService.contentExists( contentId ) ) ).
             map( this::doCreateJson ).
             collect( Collectors.toList() );
 
