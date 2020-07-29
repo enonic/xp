@@ -311,6 +311,7 @@ public class AbstractContentServiceTest
         projectService.setRepositoryService( repositoryService );
         projectService.setNodeService( nodeService );
         projectService.setProjectPermissionsContextManager( projectAccessContextManager );
+        projectService.setEventPublisher( eventPublisher );
         projectService.initialize();
 
         contentService.setNodeService( nodeService );
