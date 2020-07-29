@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.project;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -215,7 +216,7 @@ public class ParentProjectSynchronizer
     {
         if ( isToSyncData( targetContent ) )
         {
-            if ( !sourceContent.equals( targetContent ) )
+            if ( needToUpdate( sourceContent, targetContent ) )
             {
                 final UpdateContentParams params = updateParams( sourceContent, targetContent );
                 return contentService.update( params );
@@ -263,6 +264,21 @@ public class ParentProjectSynchronizer
     private boolean isToSyncPath( final Content targetContent )
     {
         return targetContent.getInherit().contains( ContentInheritType.PATH );
+    }
+
+    private boolean needToUpdate( final Content sourceContent, final Content targetContent )
+    {
+        return !Objects.equals( sourceContent.getData(), targetContent.getData() ) ||
+            !Objects.equals( sourceContent.getAllExtraData(), targetContent.getAllExtraData() ) ||
+            !Objects.equals( sourceContent.getDisplayName(), targetContent.getDisplayName() ) ||
+            !Objects.equals( sourceContent.getOwner(), targetContent.getOwner() ) ||
+            !Objects.equals( sourceContent.getLanguage(), targetContent.getLanguage() ) ||
+            !Objects.equals( sourceContent.getWorkflowInfo(), targetContent.getWorkflowInfo() ) ||
+            !Objects.equals( sourceContent.getPage(), targetContent.getPage() ) ||
+            !Objects.equals( sourceContent.getThumbnail(), targetContent.getThumbnail() ) ||
+            !Objects.equals( sourceContent.getProcessedReferences(), targetContent.getProcessedReferences() ) ||
+            sourceContent.inheritsPermissions() != targetContent.inheritsPermissions() ||
+            sourceContent.isValid() != ( targetContent.isValid() );
     }
 
     private UpdateContentParams updateParams( final Content source, final Content target )
