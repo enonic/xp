@@ -26,6 +26,8 @@ jobs:
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
 
+      ### PUBLISHING STEPS ###
+
       - name: Read version property
         id: read_version
         uses: christian-draeger/read-properties@1.0.1
@@ -33,23 +35,37 @@ jobs:
           path: './gradle.properties'
           property: 'version'
 
-      - name: Publish to snapshot repository
-        if: "contains(steps.read_version.outputs.value, '-SNAPSHOT') && (github.ref == 'refs/heads/master' || contains(github.ref, 'refs/heads/7.'))"
-        run: ./gradlew publish -PrepoKey=snapshot -PrepoUser=${{ secrets.ARTIFACTORY_USERNAME }} -PrepoPassword=${{ secrets.ARTIFACTORY_PASSWORD }}
+      - name: Get publishing variables
+        id: get_publish_vars
+        run: |
+          PUBLISH=${{ github.ref == 'refs/heads/master' || contains(github.ref, 'refs/heads/7.') }}
+          RELEASE_BRANCH=${{ contains(github.ref, 'refs/heads/7.') }}
 
-      #- name: Publish to release repository
-      #  if: "!contains(steps.read_version.outputs.value, '-SNAPSHOT') && contains(github.ref, 'refs/heads/7.')"
-      #  run: ./gradlew publish -PrepoKey=public -PrepoUser=${{ secrets.ARTIFACTORY_USERNAME }} -PrepoPassword=${{ secrets.ARTIFACTORY_PASSWORD }}
-      #- name: Create Release
-      #  "!contains(steps.read_version.outputs.value, '-SNAPSHOT') && contains(github.ref, 'refs/heads/7.')"
-      #  id: create_release
-      #  uses: actions/create-release@v1
-      #  env:
-      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #  with:
-      #    tag_name: v${{ steps.read_version.outputs.value }}
-      #    release_name: Enonic XP Runtime ${{ steps.read_version.outputs.value }}
-      #    draft: true
+          echo ::set-output name=publish::$PUBLISH
+
+          if ${{ contains(steps.read_version.outputs.value, '-SNAPSHOT') }};
+          then
+            echo "::set-output name=release::false"
+            echo "::set-output name=repo::snapshot"
+          else
+            echo "::set-output name=release::true"
+            echo "::set-output name=repo::public"
+          fi
+
+      - name: Publish
+        if: steps.get_publish_vars.outputs.publish == 'true'
+        run: ./gradlew publish -PrepoKey=${{ steps.get_publish_vars.outputs.repo }} -PrepoUser=${{ secrets.ARTIFACTORY_USERNAME }} -PrepoPassword=${{ secrets.ARTIFACTORY_PASSWORD }}
+
+      - name: Create Release
+        if: steps.get_publish_vars.outputs.release == 'true'
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.read_version.outputs.value }}
+          release_name: Enonic XP Runtime ${{ steps.read_version.outputs.value }}
+          draft: true
 
   dispatch:
     needs: build
