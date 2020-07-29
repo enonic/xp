@@ -59,6 +59,11 @@ public class ParentProjectSyncTask
 
     }
 
+    public void run( final Project targetProject, final Project sourceProject )
+    {
+        createAdminContext().runWith( () -> doSync( targetProject, sourceProject ) );
+    }
+
     private void doSync( final Project targetProject, final Project sourceProject )
     {
         final ParentProjectSynchronizer parentProjectSynchronizer = ParentProjectSynchronizer.create().

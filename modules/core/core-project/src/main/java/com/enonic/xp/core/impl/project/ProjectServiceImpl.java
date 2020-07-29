@@ -31,6 +31,7 @@ import com.enonic.xp.core.impl.project.init.ContentInitializer;
 import com.enonic.xp.core.impl.project.init.IssueInitializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.BinaryAttachment;
@@ -68,6 +69,8 @@ public class ProjectServiceImpl
     private NodeService nodeService;
 
     private SecurityService securityService;
+
+    private EventPublisher eventPublisher;
 
     private ProjectPermissionsContextManager projectPermissionsContextManager;
 
@@ -149,7 +152,11 @@ public class ProjectServiceImpl
             editor( editableRepository -> modifyProjectParent( params.getParent(), editableRepository.data ) ).
             build();
 
-        return Project.from( repositoryService.updateRepository( updateParams ) );
+        final Repository updatedRepository = repositoryService.updateRepository( updateParams );
+
+        eventPublisher.publish( ProjectEvents.created( params.getName() ) );
+
+        return Project.from( updatedRepository );
 
     }
 
@@ -499,6 +506,12 @@ public class ProjectServiceImpl
     public void setSecurityService( final SecurityService securityService )
     {
         this.securityService = securityService;
+    }
+
+    @Reference
+    public void setEventPublisher( final EventPublisher eventPublisher )
+    {
+        this.eventPublisher = eventPublisher;
     }
 
     @Reference

@@ -56,14 +56,48 @@ public class ProjectNodeEventListener
                 return;
             }
 
-            if ( this.isContentEvent( event.getType() ) )
+            if ( this.isAllowedContentEvent( event.getType() ) )
             {
-                this.handleEventType( event );
+                this.handleContentEvent( event );
+            }
+
+            if ( this.isAllowedProjectEvent( event.getType() ) )
+            {
+                this.handleProjectEvent( event );
+
             }
         }
     }
 
-    private void handleEventType( final Event event )
+    private void handleProjectEvent( final Event event )
+    {
+        final Map<String, Object> nodes = event.getData();
+        final String projectName = (String) nodes.get( ProjectEvents.PROJECT_NAME_KEY );
+
+        this.simpleExecutor.execute( () -> createAdminContext().runWith( () -> handleProjectCreated( ProjectName.from( projectName ) ) ) );
+
+    }
+
+    private void handleProjectCreated( final ProjectName projectName )
+    {
+        final Project project = this.projectService.get( projectName );
+
+        if ( project != null && project.getParent() != null )
+        {
+            final Project parentProject = this.projectService.get( project.getParent() );
+
+            if ( parentProject != null )
+            {
+                ParentProjectSyncTask.create().
+                    contentService( contentService ).
+                    projectService( projectService ).
+                    build().
+                    run( project, parentProject );
+            }
+        }
+    }
+
+    private void handleContentEvent( final Event event )
     {
         try
         {
@@ -82,7 +116,12 @@ public class ProjectNodeEventListener
         }
     }
 
-    private boolean isContentEvent( final String type )
+    private boolean isAllowedProjectEvent( final String type )
+    {
+        return ProjectEvents.CREATED_EVENT_TYPE.equals( type );
+    }
+
+    private boolean isAllowedContentEvent( final String type )
     {
         return "node.created".equals( type ) || "node.updated".equals( type ) || "node.pushed".equals( type ) ||
             "node.renamed".equals( type ) || "node.moved".equals( type );

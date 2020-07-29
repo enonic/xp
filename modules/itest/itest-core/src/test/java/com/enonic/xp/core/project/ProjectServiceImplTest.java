@@ -21,6 +21,7 @@ import com.enonic.xp.core.impl.project.ProjectAccessHelper;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodePath;
@@ -149,6 +150,7 @@ class ProjectServiceImplTest
             projectService.setNodeService( nodeService );
             projectService.setRepositoryService( repositoryService );
             projectService.setProjectPermissionsContextManager( projectAccessContextManager );
+            projectService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 
             projectService.setSecurityService( securityService );
         } );
