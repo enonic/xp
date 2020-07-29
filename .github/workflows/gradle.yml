@@ -39,7 +39,6 @@ jobs:
         id: get_publish_vars
         run: |
           PUBLISH=${{ github.ref == 'refs/heads/master' || contains(github.ref, 'refs/heads/7.') }}
-          RELEASE_BRANCH=${{ contains(github.ref, 'refs/heads/7.') }}
 
           echo ::set-output name=publish::$PUBLISH
 
@@ -65,7 +64,6 @@ jobs:
         with:
           tag_name: v${{ steps.read_version.outputs.value }}
           release_name: Enonic XP Runtime ${{ steps.read_version.outputs.value }}
-          draft: true
 
   dispatch:
     needs: build
