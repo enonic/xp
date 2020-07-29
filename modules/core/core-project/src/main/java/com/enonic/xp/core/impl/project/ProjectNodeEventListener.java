@@ -124,7 +124,7 @@ public class ProjectNodeEventListener
     private boolean isAllowedContentEvent( final String type )
     {
         return "node.created".equals( type ) || "node.updated".equals( type ) || "node.pushed".equals( type ) ||
-            "node.renamed".equals( type ) || "node.moved".equals( type );
+            "node.renamed".equals( type ) || "node.moved".equals( type ) || "node.deleted".equals( type );
     }
 
     private void handleContentEvent( final Map<String, String> nodeMap, final String type )
@@ -137,7 +137,7 @@ public class ProjectNodeEventListener
                 stream().
                 filter( project -> currentProjectName.equals( project.getName() ) ).
                 findAny().
-                orElse( null );
+                orElseThrow( () -> new ProjectNotFoundException( currentProjectName ) );
 
             this.projectService.list().
                 stream().
@@ -146,7 +146,8 @@ public class ProjectNodeEventListener
                     final ParentProjectSynchronizer parentProjectSynchronizer = ParentProjectSynchronizer.create().
                         targetProject( targetProject ).
                         sourceProject( sourceProject ).
-                        contentService( contentService ).build();
+                        contentService( contentService ).
+                        build();
 
                     final ContentId contentId = ContentId.from( nodeMap.get( "id" ) );
 
@@ -166,6 +167,28 @@ public class ProjectNodeEventListener
                             break;
                         case "node.moved":
                             parentProjectSynchronizer.syncMoved( contentId );
+                            break;
+                    }
+
+                } );
+
+            this.projectService.list().
+                stream().
+                filter( project -> project.getName().equals( sourceProject.getParent() ) ).
+                forEach( parentProject -> {
+
+                    final ParentProjectSynchronizer parentProjectSynchronizer = ParentProjectSynchronizer.create().
+                        targetProject( sourceProject ).
+                        sourceProject( parentProject ).
+                        contentService( contentService ).
+                        build();
+
+                    final ContentId contentId = ContentId.from( nodeMap.get( "id" ) );
+
+                    switch ( type )
+                    {
+                        case "node.deleted":
+                            parentProjectSynchronizer.syncCreated( contentId );
                             break;
                     }
 
