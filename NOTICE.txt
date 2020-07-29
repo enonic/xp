@@ -56,6 +56,14 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://github.com/google/guava/blob/master/COPYING
 
+    Hazelcast
+    Apache License 2.0
+    https://github.com/hazelcast/hazelcast/blob/master/LICENSE
+
+    Hazelcast Kubernetes
+    Apache License 2.0
+    https://github.com/hazelcast/hazelcast-kubernetes/blob/master/LICENSE
+
     IcoMoon icons (Ultimate Pack)
     Friendly license (Need seperate development licenses for developing software using the icons.)
     https://icomoon.io/#icons-icomoon/license
