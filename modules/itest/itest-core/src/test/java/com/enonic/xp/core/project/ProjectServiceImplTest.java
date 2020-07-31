@@ -17,10 +17,13 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.project.ProjectAccessException;
 import com.enonic.xp.core.impl.project.ProjectAccessHelper;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
@@ -35,7 +38,6 @@ import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repository.Repository;
@@ -837,6 +839,15 @@ class ProjectServiceImplTest
             addOwner( REPO_TEST_OWNER.getKey() ).
             addViewer( PrincipalKey.from( "user:system:custom1" ) ).
             addViewer( PrincipalKey.from( "user:system:custom2" ) ).
+            build() );
+    }
+
+    private Project doCreateProject( final ProjectName name, final String displayName, final String description )
+    {
+        return this.projectService.create( CreateProjectParams.create().
+            name( name ).
+            description( description ).
+            displayName( displayName ).
             build() );
     }
 
