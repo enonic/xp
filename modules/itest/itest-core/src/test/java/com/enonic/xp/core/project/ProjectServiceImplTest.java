@@ -52,7 +52,6 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
