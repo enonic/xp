@@ -110,7 +110,8 @@ public final class ImageContentProcessor
         final CreateAttachment sourceAttachment = originalAttachments.first();
 
         final XDatas contentXDatas = getXDatas( createContentParams.getType() );
-        ExtraDatas extraDatas = null;
+        ExtraDatas extraDatas = params.getCreateContentParams().getExtraDatas();
+
         if ( mediaInfo != null )
         {
             extraDatas = extractMetadata( mediaInfo, contentXDatas, sourceAttachment );

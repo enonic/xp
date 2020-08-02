@@ -33,9 +33,12 @@ import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 public class ParentProjectSynchronizer
 {
@@ -235,14 +238,13 @@ public class ParentProjectSynchronizer
 
     private Content doSyncCreated( final Content sourceContent )
     {
-        final CreateContentParams params = sourceContext.callWith( () -> createParams( sourceContent ) );
         try
         {
-            return contentService.create( params );
+            return contentService.create( sourceContext.callWith( () -> createParams( sourceContent ) ) );
         }
         catch ( ContentAlreadyExistsException e )
         {
-            LOG.warn( "content [{}] already exists.", params.getContentId() );
+            LOG.warn( "content [{}] already exists.", sourceContent.getId() );
         }
         return null;
     }
@@ -272,13 +274,13 @@ public class ParentProjectSynchronizer
             !Objects.equals( sourceContent.getAllExtraData(), targetContent.getAllExtraData() ) ||
             !Objects.equals( sourceContent.getDisplayName(), targetContent.getDisplayName() ) ||
             !Objects.equals( sourceContent.getOwner(), targetContent.getOwner() ) ||
-            !Objects.equals( sourceContent.getLanguage(), targetContent.getLanguage() ) ||
+//            !Objects.equals( sourceContent.getLanguage(), targetContent.getLanguage() ) ||
             !Objects.equals( sourceContent.getWorkflowInfo(), targetContent.getWorkflowInfo() ) ||
             !Objects.equals( sourceContent.getPage(), targetContent.getPage() ) ||
             !Objects.equals( sourceContent.getThumbnail(), targetContent.getThumbnail() ) ||
             !Objects.equals( sourceContent.getProcessedReferences(), targetContent.getProcessedReferences() ) ||
             sourceContent.inheritsPermissions() != targetContent.inheritsPermissions() ||
-            sourceContent.isValid() != ( targetContent.isValid() );
+            sourceContent.isValid() != targetContent.isValid();
     }
 
     private UpdateContentParams updateParams( final Content source, final Content target )
@@ -293,7 +295,7 @@ public class ParentProjectSynchronizer
                 edit.extraDatas = source.getAllExtraData();
                 edit.displayName = source.getDisplayName();
                 edit.owner = source.getOwner();
-                edit.language = source.getLanguage();
+//                edit.language = source.getLanguage();
                 edit.inheritPermissions = source.inheritsPermissions();
                 edit.permissions = source.getPermissions();
                 edit.workflowInfo = source.getWorkflowInfo();
@@ -309,13 +311,14 @@ public class ParentProjectSynchronizer
         final CreateContentParams.Builder builder = CreateContentParams.create();
 
         builder.contentId( source.getId() ).
-            contentData( source.getData() ).
-            extraDatas( source.getAllExtraData() ).
+            contentData( source.getData().copy() ).
+            extraDatas( source.getAllExtraData().copy() ).
             type( source.getType() ).
             owner( source.getOwner() ).
             displayName( source.getDisplayName() ).
             name( source.getName() ).
             parent( source.getParentPath() ).
+            page( source.getPage() ).
             requireValid( false ).
             createSiteTemplateFolder( false ).
             inheritPermissions( true ).
@@ -334,8 +337,18 @@ public class ParentProjectSynchronizer
                         build();
                 } ).collect( Collectors.toSet() ) ) ).
             childOrder( source.getChildOrder() ).
-            language( source.getLanguage() ).
-            workflowInfo( source.getWorkflowInfo() );
+//            language( source.getLanguage() ).
+    workflowInfo( source.getWorkflowInfo() );
+
+        if ( source instanceof Site )
+        {
+            final Site site = (Site) source;
+
+            final PropertyTree data = source.getData().copy();
+            data.setString( "description", site.getDescription() );
+
+            new SiteConfigsDataSerializer().toProperties( site.getSiteConfigs(), data.getRoot() );
+        }
 
         return builder.build();
     }

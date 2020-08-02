@@ -11,6 +11,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -58,6 +59,8 @@ public final class CreateContentParams
 
     private final Set<ContentInheritType> inherit;
 
+    private final Page page;
+
     private CreateContentParams( Builder builder )
     {
         this.data = builder.data;
@@ -80,6 +83,7 @@ public final class CreateContentParams
         this.workflowInfo = builder.workflowInfo;
         this.createSiteTemplateFolder = builder.createSiteTemplateFolder;
         this.inherit = builder.inherit.build();
+        this.page = builder.page;
     }
 
     public static Builder create()
@@ -192,6 +196,11 @@ public final class CreateContentParams
         return inherit;
     }
 
+    public Page getPage()
+    {
+        return page;
+    }
+
     public static final class Builder
     {
         private ContentId contentId;
@@ -234,6 +243,8 @@ public final class CreateContentParams
 
         private ImmutableSet.Builder<ContentInheritType> inherit = ImmutableSet.builder();
 
+        private Page page;
+
         private Builder()
         {
         }
@@ -258,6 +269,7 @@ public final class CreateContentParams
             this.workflowInfo = source.workflowInfo;
             this.createSiteTemplateFolder = source.createSiteTemplateFolder;
             this.inherit.addAll( source.inherit );
+            this.page = source.page;
         }
 
         public Builder contentId( final ContentId contentId )
@@ -384,6 +396,12 @@ public final class CreateContentParams
         public Builder inherit( final Collection<ContentInheritType> inherit )
         {
             this.inherit.addAll( inherit );
+            return this;
+        }
+
+        public Builder page( final Page page )
+        {
+            this.page = page;
             return this;
         }
 
