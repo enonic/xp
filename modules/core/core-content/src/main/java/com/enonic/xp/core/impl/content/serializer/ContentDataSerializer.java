@@ -118,6 +118,11 @@ public class ContentDataSerializer
             extraDataSerializer.toData( extraData, contentAsData );
         }
 
+        if ( params.getPage() != null )
+        {
+            pageDataSerializer.toData( params.getPage(), contentAsData );
+        }
+
         if ( params.getCreateAttachments() != null )
         {
             addAttachmentInfoToDataset( params.getCreateAttachments(), contentAsData );

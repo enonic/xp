@@ -12,6 +12,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -63,6 +64,8 @@ public class CreateContentTranslatorParams
 
     private final Set<ContentInheritType> inherit;
 
+    private final Page page;
+
     private CreateContentTranslatorParams( Builder builder )
     {
         final Instant now = Instant.now();
@@ -89,6 +92,7 @@ public class CreateContentTranslatorParams
         this.processedIds = builder.processedIds;
         this.workflowInfo = builder.workflowInfo;
         this.inherit = builder.inherit.build();
+        this.page = builder.page;
     }
 
     public static Builder create( final CreateContentParams source )
@@ -211,6 +215,11 @@ public class CreateContentTranslatorParams
         return inherit;
     }
 
+    public Page getPage()
+    {
+        return page;
+    }
+
     public static final class Builder
     {
         private ContentId contentId;
@@ -251,6 +260,8 @@ public class CreateContentTranslatorParams
 
         private ImmutableSet.Builder<ContentInheritType> inherit = ImmutableSet.builder();
 
+        private Page page;
+
         private Builder()
         {
         }
@@ -274,6 +285,7 @@ public class CreateContentTranslatorParams
             this.processedIds = params.getProcessedIds();
             this.workflowInfo = params.getWorkflowInfo();
             this.inherit.addAll( params.getInherit() );
+            this.page = params.getPage();
         }
 
         public Builder contentId( final ContentId contentId )
@@ -393,6 +405,13 @@ public class CreateContentTranslatorParams
         public Builder inherit( final Collection<ContentInheritType> inherit )
         {
             this.inherit.addAll( inherit );
+
+            return this;
+        }
+
+        public Builder page( final Page page )
+        {
+            this.page = page;
 
             return this;
         }

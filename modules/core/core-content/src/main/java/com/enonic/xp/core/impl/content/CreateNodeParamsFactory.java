@@ -71,7 +71,9 @@ public class CreateNodeParamsFactory
         final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties(
             contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.DATA ) ) ).build();
 
-        final Page page = contentAsData.hasProperty( COMPONENTS ) ? contentDataSerializer.fromPageData( contentAsData.getRoot() ) : null;
+        final Page page = params.getPage() != null
+            ? params.getPage()
+            : contentAsData.hasProperty( COMPONENTS ) ? contentDataSerializer.fromPageData( contentAsData.getRoot() ) : null;
 
         final ExtraDatas extraData = extraDataSet != null ? contentDataSerializer.fromExtraData( extraDataSet ) : null;
 
