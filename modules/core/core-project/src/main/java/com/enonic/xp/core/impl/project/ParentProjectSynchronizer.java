@@ -74,6 +74,12 @@ public class ParentProjectSynchronizer
         final Queue<ContentPath> queue = new LinkedList( List.of( contentPath ) );
 
         sourceContext.runWith( () -> {
+
+            if ( !contentPath.isRoot() )
+            {
+                this.doSync( contentService.getByPath( contentPath ) );
+            }
+
             while ( queue.size() > 0 )
             {
                 final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create().

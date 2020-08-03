@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
@@ -183,12 +184,12 @@ public class ProjectNodeEventListener
                         contentService( contentService ).
                         build();
 
-                    final ContentId contentId = ContentId.from( nodeMap.get( "id" ) );
+                    final ContentPath contentPath = translateNodePathToContentPath( nodeMap.get( "path" ) );
 
                     switch ( type )
                     {
                         case "node.deleted":
-                            parentProjectSynchronizer.syncCreated( contentId );
+                            parentProjectSynchronizer.syncWithChildren( contentPath );
                             break;
                     }
 
@@ -213,6 +214,12 @@ public class ProjectNodeEventListener
                 login( PrincipalKey.ofSuperUser().getId() ).
                 build() ).
             build();
+    }
+
+    private ContentPath translateNodePathToContentPath( final String nodePath )
+    {
+        final String contentPath = nodePath.substring( ( "content/" ).length() );
+        return ContentPath.from( contentPath ).asAbsolute();
     }
 
     @Reference
