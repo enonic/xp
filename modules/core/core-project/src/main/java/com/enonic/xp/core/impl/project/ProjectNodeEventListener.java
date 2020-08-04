@@ -19,6 +19,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.concurrent.SimpleExecutor;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
+import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
@@ -37,6 +38,8 @@ public class ProjectNodeEventListener
     private ProjectService projectService;
 
     private ContentService contentService;
+
+    private MediaInfoService mediaInfoService;
 
     private SimpleExecutor simpleExecutor;
 
@@ -92,6 +95,7 @@ public class ProjectNodeEventListener
                 ParentProjectSyncTask.create().
                     contentService( contentService ).
                     projectService( projectService ).
+                    mediaInfoService( mediaInfoService ).
                     build().
                     run( project, parentProject );
             }
@@ -148,6 +152,7 @@ public class ProjectNodeEventListener
                         targetProject( targetProject ).
                         sourceProject( sourceProject ).
                         contentService( contentService ).
+                        mediaInfoService( mediaInfoService ).
                         build();
 
                     final ContentId contentId = ContentId.from( nodeMap.get( "id" ) );
@@ -182,6 +187,7 @@ public class ProjectNodeEventListener
                         targetProject( sourceProject ).
                         sourceProject( parentProject ).
                         contentService( contentService ).
+                        mediaInfoService( mediaInfoService ).
                         build();
 
                     final ContentPath contentPath = translateNodePathToContentPath( nodeMap.get( "path" ) );
@@ -226,6 +232,12 @@ public class ProjectNodeEventListener
     public void setProjectService( final ProjectService projectService )
     {
         this.projectService = projectService;
+    }
+
+    @Reference
+    public void setMediaInfoService( final MediaInfoService mediaInfoService )
+    {
+        this.mediaInfoService = mediaInfoService;
     }
 
     @Reference

@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
@@ -26,6 +28,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.UpdateContentParams;
@@ -34,8 +37,13 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.media.MediaInfo;
+import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.project.Project;
+import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
@@ -46,6 +54,8 @@ public class ParentProjectSynchronizer
 
     private final ContentService contentService;
 
+    private final MediaInfoService mediaInfoService;
+
     private final Context targetContext;
 
     private final Context sourceContext;
@@ -53,6 +63,7 @@ public class ParentProjectSynchronizer
     private ParentProjectSynchronizer( final Builder builder )
     {
         this.contentService = builder.contentService;
+        this.mediaInfoService = builder.mediaInfoService;
         final Project sourceProject = builder.sourceProject;
         final Project targetProject = builder.targetProject;
 
@@ -228,6 +239,10 @@ public class ParentProjectSynchronizer
             if ( needToUpdate( sourceContent, targetContent ) )
             {
                 final UpdateContentParams params = updateParams( sourceContent, targetContent );
+
+                syncMedia( sourceContent, targetContent, params );
+                syncThumbnail( sourceContent, targetContent, params );
+
                 return contentService.update( params );
             }
         }
@@ -359,9 +374,66 @@ public class ParentProjectSynchronizer
         return builder.build();
     }
 
+    private void syncThumbnail( final Content sourceContent, final Content targetContent, final UpdateContentParams params )
+    {
+        if ( sourceContent.hasThumbnail() && !sourceContent.getThumbnail().equals( targetContent.getThumbnail() ) )
+        {
+            final Thumbnail sourceThumbnail = sourceContent.getThumbnail();
+
+            final ByteSource sourceBinary =
+                sourceContext.callWith( () -> contentService.getBinary( sourceContent.getId(), sourceThumbnail.getBinaryReference() ) );
+
+            final CreateAttachment createThumbnail = CreateAttachment.create().
+                name( AttachmentNames.THUMBNAIL ).
+                mimeType( sourceThumbnail.getMimeType() ).
+                byteSource( sourceBinary ).
+                build();
+
+            final CreateAttachments.Builder createAttachments = CreateAttachments.create().add( createThumbnail );
+            if ( params.getCreateAttachments() != null )
+            {
+                createAttachments.add( params.getCreateAttachments() );
+            }
+
+            params.createAttachments( createAttachments.build() );
+        }
+    }
+
+    private void syncMedia( final Content sourceContent, final Content targetContent, final UpdateContentParams params )
+    {
+        if ( sourceContent instanceof Media )
+        {
+            final Media sourceMedia = (Media) sourceContent;
+
+            final Attachment mediaAttachment = sourceMedia.getMediaAttachment();
+
+            final ByteSource sourceBinary =
+                sourceContext.callWith( () -> contentService.getBinary( sourceMedia.getId(), mediaAttachment.getBinaryReference() ) );
+            final MediaInfo mediaInfo = sourceContext.callWith( () -> mediaInfoService.parseMediaInfo( sourceBinary ) );
+
+            final ContentTypeName type = ContentTypeFromMimeTypeResolver.resolve( mediaAttachment.getMimeType() );
+
+            final CreateAttachment createAttachment = CreateAttachment.create().
+                name( mediaAttachment.getName() ).
+                mimeType( mediaAttachment.getMimeType() ).
+                label( "source" ).
+                byteSource( sourceBinary ).
+                text( type != null && type.isTextualMedia() ? mediaInfo.getTextContent() : null ).
+                build();
+
+            params.clearAttachments( true ).
+                createAttachments( CreateAttachments.from( createAttachment ) );
+
+        }
+
+
+    }
+
     public static final class Builder
     {
         private ContentService contentService;
+
+        private MediaInfoService mediaInfoService;
 
         private Project targetProject;
 
@@ -374,6 +446,7 @@ public class ParentProjectSynchronizer
         private void validate()
         {
             Preconditions.checkNotNull( contentService, "contentService must be set." );
+            Preconditions.checkNotNull( mediaInfoService, "mediaInfoService must be set." );
             Preconditions.checkNotNull( sourceProject, "sourceProject must be set." );
             Preconditions.checkNotNull( targetProject, "targetProject must be set." );
             Preconditions.checkNotNull( targetProject.getParent(),
@@ -389,6 +462,12 @@ public class ParentProjectSynchronizer
         public Builder contentService( final ContentService contentService )
         {
             this.contentService = contentService;
+            return this;
+        }
+
+        public Builder mediaInfoService( final MediaInfoService mediaInfoService )
+        {
+            this.mediaInfoService = mediaInfoService;
             return this;
         }
 
