@@ -7,6 +7,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.PrincipalKey;
@@ -17,14 +18,17 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public class ParentProjectSyncTask
     implements Runnable
 {
-    private ProjectService projectService;
+    private final ProjectService projectService;
 
-    private ContentService contentService;
+    private final ContentService contentService;
+
+    private final MediaInfoService mediaInfoService;
 
     public ParentProjectSyncTask( final Builder builder )
     {
         this.projectService = builder.projectService;
         this.contentService = builder.contentService;
+        this.mediaInfoService = builder.mediaInfoService;
     }
 
     public static Builder create()
@@ -70,6 +74,7 @@ public class ParentProjectSyncTask
             targetProject( targetProject ).
             sourceProject( sourceProject ).
             contentService( contentService ).
+            mediaInfoService( mediaInfoService ).
             build();
 
         parentProjectSynchronizer.syncWithChildren( ContentPath.ROOT );
@@ -100,6 +105,8 @@ public class ParentProjectSyncTask
 
         private ContentService contentService;
 
+        private MediaInfoService mediaInfoService;
+
         private Builder()
         {
         }
@@ -113,6 +120,12 @@ public class ParentProjectSyncTask
         public Builder contentService( final ContentService contentService )
         {
             this.contentService = contentService;
+            return this;
+        }
+
+        public Builder mediaInfoService( final MediaInfoService mediaInfoService )
+        {
+            this.mediaInfoService = mediaInfoService;
             return this;
         }
 

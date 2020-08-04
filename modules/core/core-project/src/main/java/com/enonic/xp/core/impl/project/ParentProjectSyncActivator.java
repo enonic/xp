@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.core.internal.concurrent.SimpleRecurringJobScheduler;
+import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.project.ProjectService;
 
 @Component(immediate = true)
@@ -24,6 +25,8 @@ public class ParentProjectSyncActivator
 
     private ContentService contentService;
 
+    private MediaInfoService mediaInfoService;
+
     @Activate
     public void initialize()
     {
@@ -33,6 +36,7 @@ public class ParentProjectSyncActivator
         this.recurringJobScheduler.scheduleWithFixedDelay( ParentProjectSyncTask.create().
                                                                contentService( this.contentService ).
                                                                projectService( this.projectService ).
+                                                               mediaInfoService( this.mediaInfoService ).
                                                                build(), Duration.ofMinutes( 0 ), Duration.ofMinutes( 1 ), e -> LOG.warn( "Error while project sync.", e ),
                                                            e -> LOG.error( "Error while project sync, no further attempts will be made.",
                                                                            e ) );
@@ -48,6 +52,12 @@ public class ParentProjectSyncActivator
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    @Reference
+    public void setMediaInfoService( final MediaInfoService mediaInfoService )
+    {
+        this.mediaInfoService = mediaInfoService;
     }
 
 }
