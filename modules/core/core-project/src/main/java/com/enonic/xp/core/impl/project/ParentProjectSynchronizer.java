@@ -203,14 +203,17 @@ public class ParentProjectSynchronizer
         {
             if ( !targetContent.getParentPath().equals( sourceContent.getParentPath() ) )
             {
-                final MoveContentParams moveContentParams = MoveContentParams.create().
-                    contentId( targetContent.getId() ).
-                    parentContentPath( sourceContent.getParentPath() ).
-                    stopInheritPath( false ).
-                    build();
+                if ( contentService.contentExists( sourceContent.getParentPath() ) )
+                {
+                    final MoveContentParams moveContentParams = MoveContentParams.create().
+                        contentId( targetContent.getId() ).
+                        parentContentPath( sourceContent.getParentPath() ).
+                        stopInheritPath( false ).
+                        build();
 
-                contentService.move( moveContentParams );
-                return contentService.getById( targetContent.getId() );
+                    contentService.move( moveContentParams );
+                    return contentService.getById( targetContent.getId() );
+                }
             }
         }
         return targetContent;
