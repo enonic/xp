@@ -29,6 +29,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Iterables;
+
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
@@ -96,7 +98,21 @@ public class SnapshotServiceImpl
     private RestoreResult doRestore( final RestoreParams restoreParams )
     {
         checkSnapshotRepository();
-        validateSnapshot( restoreParams.getSnapshotName() );
+
+        String snapshotName;
+
+        if ( restoreParams.isLatest() )
+        {
+            final SnapshotResult snapshotResult = Iterables.getLast( list() );
+
+            snapshotName = snapshotResult.getName();
+        }
+        else
+        {
+            snapshotName = restoreParams.getSnapshotName();
+        }
+
+        validateSnapshot( snapshotName );
 
         final RepositoryIds repositoriesToRestore =
             RepositoryIds.from( Optional.ofNullable( restoreParams.getRepositoryId() ).map( Set::of ).orElseGet( this::getRepositories ) );
@@ -104,7 +120,7 @@ public class SnapshotServiceImpl
         this.eventPublisher.publish( RepositoryEvents.restoreInitialized() );
 
         final RestoreResult result = SnapshotRestoreExecutor.create().
-            snapshotName( restoreParams.getSnapshotName() ).
+            snapshotName( snapshotName ).
             repositories( repositoriesToRestore ).
             client( this.client ).
             snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME ).

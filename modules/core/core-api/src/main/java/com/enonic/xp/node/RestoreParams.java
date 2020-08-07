@@ -16,11 +16,14 @@ public class RestoreParams
 
     private final boolean includeIndexedData;
 
+    private final boolean latest;
+
     private RestoreParams( Builder builder )
     {
         this.snapshotName = builder.snapshotName;
         this.repositoryId = builder.repositoryId;
         this.includeIndexedData = builder.includeIndexedData;
+        this.latest = builder.latest;
     }
 
     public boolean isIncludeIndexedData()
@@ -38,6 +41,11 @@ public class RestoreParams
         return repositoryId;
     }
 
+    public boolean isLatest()
+    {
+        return latest;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -50,6 +58,8 @@ public class RestoreParams
         private RepositoryId repositoryId;
 
         private boolean includeIndexedData = true;
+
+        private boolean latest = false;
 
         private Builder()
         {
@@ -73,9 +83,18 @@ public class RestoreParams
             return this;
         }
 
+        public Builder latest( final boolean latest )
+        {
+            this.latest = latest;
+            return this;
+        }
+
         private void validate()
         {
-            Preconditions.checkArgument( !isNullOrEmpty( snapshotName ), "Snapshot name has to be given" );
+            if ( !latest )
+            {
+                Preconditions.checkArgument( !isNullOrEmpty( snapshotName ), "Snapshot name has to be given" );
+            }
         }
 
         public RestoreParams build()

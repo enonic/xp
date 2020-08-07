@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.RestoreParams;
+import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.node.SnapshotParams;
 import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
@@ -180,6 +181,47 @@ public class SnapshotServiceImplTest
             assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO_ID ) );
             assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO_ID ) );
         }
+    }
+
+    @Test
+    public void restore_latest() {
+        NodeHelper.runAsAdmin( this::doRestoreLatest );
+    }
+
+    private void doRestoreLatest()
+    {
+        final RepositoryId newRepoId = RepositoryId.from( "new-repo" );
+        this.repositoryService.createRepository( CreateRepositoryParams.create().
+            repositoryId( newRepoId ).
+            build() );
+
+        assertNotNull( this.repositoryService.get( newRepoId ) );
+
+        this.snapshotService.snapshot( SnapshotParams.create().
+            snapshotName( "my-snapshot-latest" ).
+            build() );
+
+        this.repositoryService.deleteRepository( DeleteRepositoryParams.from( newRepoId ) );
+        assertNull( this.repositoryService.get( newRepoId ) );
+
+        final RestoreResult restoreResult = this.snapshotService.restore( RestoreParams.create().
+            repositoryId( newRepoId ).
+            latest( true ).
+            build() );
+
+        assertEquals( "my-snapshot-latest", restoreResult.getName() );
+
+        // The system repo does not know about this repo now
+        assertNull( this.repositoryService.get( newRepoId ) );
+
+        this.snapshotService.restore( RestoreParams.create().
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
+            snapshotName( "my-snapshot-latest" ).
+            build() );
+
+        assertNotNull( this.repositoryService.get( newRepoId ) );
+        assertNotNull( this.repositoryService.get( SystemConstants.SYSTEM_REPO_ID ) );
+        assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO_ID ) );
     }
 
     @Test
