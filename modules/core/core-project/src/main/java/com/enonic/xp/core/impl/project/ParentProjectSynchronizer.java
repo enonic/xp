@@ -298,13 +298,12 @@ public class ParentProjectSynchronizer
             !Objects.equals( sourceContent.getAllExtraData(), targetContent.getAllExtraData() ) ||
             !Objects.equals( sourceContent.getDisplayName(), targetContent.getDisplayName() ) ||
             !Objects.equals( sourceContent.getOwner(), targetContent.getOwner() ) ||
-//            !Objects.equals( sourceContent.getLanguage(), targetContent.getLanguage() ) ||
+            !Objects.equals( sourceContent.getLanguage(), targetContent.getLanguage() ) ||
             !Objects.equals( sourceContent.getWorkflowInfo(), targetContent.getWorkflowInfo() ) ||
             !Objects.equals( sourceContent.getPage(), targetContent.getPage() ) ||
             !Objects.equals( sourceContent.getThumbnail(), targetContent.getThumbnail() ) ||
             !Objects.equals( sourceContent.getProcessedReferences(), targetContent.getProcessedReferences() ) ||
-            sourceContent.inheritsPermissions() != targetContent.inheritsPermissions() ||
-            sourceContent.isValid() != targetContent.isValid();
+            sourceContent.inheritsPermissions() != targetContent.inheritsPermissions() || sourceContent.isValid() != targetContent.isValid();
     }
 
     private UpdateContentParams updateParams( final Content source, final Content target )
@@ -319,7 +318,7 @@ public class ParentProjectSynchronizer
                 edit.extraDatas = source.getAllExtraData();
                 edit.displayName = source.getDisplayName();
                 edit.owner = source.getOwner();
-//                edit.language = source.getLanguage();
+                edit.language = source.getLanguage();
                 edit.inheritPermissions = source.inheritsPermissions();
                 edit.permissions = source.getPermissions();
                 edit.workflowInfo = source.getWorkflowInfo();
@@ -361,8 +360,9 @@ public class ParentProjectSynchronizer
                         build();
                 } ).collect( Collectors.toSet() ) ) ).
             childOrder( source.getChildOrder() ).
-//            language( source.getLanguage() ).
-    workflowInfo( source.getWorkflowInfo() );
+            language( source.getLanguage() ).
+            useParentLanguage( false ).
+            workflowInfo( source.getWorkflowInfo() );
 
         if ( source instanceof Site )
         {
