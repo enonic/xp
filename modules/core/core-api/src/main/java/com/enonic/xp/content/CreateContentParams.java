@@ -47,6 +47,8 @@ public final class CreateContentParams
 
     private final Locale language;
 
+    private final boolean useParentLanguage;
+
     private final boolean refresh;
 
     private final ContentPublishInfo contentPublishInfo;
@@ -77,6 +79,7 @@ public final class CreateContentParams
         this.createAttachments = builder.createAttachments;
         this.childOrder = builder.childOrder;
         this.language = builder.language;
+        this.useParentLanguage = builder.useParentLanguage;
         this.refresh = builder.refresh;
         this.contentPublishInfo = builder.contentPublishInfo;
         this.processedIds = builder.processedIds.build();
@@ -166,6 +169,11 @@ public final class CreateContentParams
         return language;
     }
 
+    public boolean useParentLanguage()
+    {
+        return useParentLanguage;
+    }
+
     public ContentPublishInfo getContentPublishInfo()
     {
         return contentPublishInfo;
@@ -231,6 +239,8 @@ public final class CreateContentParams
 
         private Locale language;
 
+        private boolean useParentLanguage = true;
+
         private ContentPublishInfo contentPublishInfo;
 
         private boolean refresh = true;
@@ -265,6 +275,7 @@ public final class CreateContentParams
             this.createAttachments = source.createAttachments;
             this.childOrder = source.childOrder;
             this.language = source.language;
+            this.useParentLanguage = source.useParentLanguage;
             this.contentPublishInfo = source.contentPublishInfo;
             this.workflowInfo = source.workflowInfo;
             this.createSiteTemplateFolder = source.createSiteTemplateFolder;
@@ -360,6 +371,12 @@ public final class CreateContentParams
         public Builder language( final Locale language )
         {
             this.language = language;
+            return this;
+        }
+
+        public Builder useParentLanguage( final boolean useParentLanguage )
+        {
+            this.useParentLanguage = useParentLanguage;
             return this;
         }
 
