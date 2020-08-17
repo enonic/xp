@@ -190,12 +190,12 @@ public class ProjectNodeEventListener
                         mediaInfoService( mediaInfoService ).
                         build();
 
-                    final ContentPath contentPath = translateNodePathToContentPath( nodeMap.get( "path" ) );
+                    final ContentId contentId = ContentId.from( nodeMap.get( "id" ) );
 
                     switch ( type )
                     {
                         case "node.deleted":
-                            parentProjectSynchronizer.syncWithChildren( contentPath );
+                            parentProjectSynchronizer.syncWithChildren( contentId );
                             break;
                     }
 
