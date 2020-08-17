@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.project;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
@@ -77,7 +76,7 @@ public class ParentProjectSyncTask
             mediaInfoService( mediaInfoService ).
             build();
 
-        parentProjectSynchronizer.syncWithChildren( ContentPath.ROOT );
+        parentProjectSynchronizer.syncRoot();
     }
 
     private Context createAdminContext()

@@ -83,21 +83,30 @@ public class ParentProjectSynchronizer
         return new Builder();
     }
 
-    public void syncWithChildren( final ContentPath contentPath )
+    public void syncRoot()
     {
-        final Queue<ContentPath> queue = new LinkedList( List.of( contentPath ) );
+        final Content root = sourceContext.callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
+        this.syncWithChildren( root.getId() );
+    }
+
+    public void syncWithChildren( final ContentId contentId )
+    {
+        final Queue<ContentId> queue = new LinkedList( List.of( contentId ) );
 
         sourceContext.runWith( () -> {
 
-            if ( !contentPath.isRoot() )
+            if ( contentService.contentExists( contentId ) )
             {
-                this.doSync( contentService.getByPath( contentPath ) );
+                final Content contentToSync = contentService.getById( contentId );
+                if ( !( "/content".equals( contentToSync.getPath().toString() ) || "/".equals( contentToSync.getPath().toString() ) ) )
+                {
+                    this.doSync( contentService.getById( contentId ) );
+                }
             }
-
             while ( queue.size() > 0 )
             {
                 final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create().
-                    parentPath( queue.poll() ).
+                    parentId( queue.poll() ).
                     recursive( false ).
                     childOrder( ChildOrder.path() ).
                     size( -1 ).
@@ -111,7 +120,7 @@ public class ParentProjectSynchronizer
                     {
                         if ( content.hasChildren() )
                         {
-                            queue.offer( content.getPath() );
+                            queue.offer( content.getId() );
                         }
                     }
                 }
@@ -139,7 +148,7 @@ public class ParentProjectSynchronizer
                     return this.doSyncUpdated( sourceContent, targetContent );
                 }
 
-                return null;
+                return contentService.getById( sourceContent.getId() );
             }
             else
             {
@@ -201,17 +210,25 @@ public class ParentProjectSynchronizer
     {
         if ( isToSyncPath( targetContent ) )
         {
-            if ( !targetContent.getParentPath().equals( sourceContent.getParentPath() ) )
+            if ( targetContext.callWith( () -> contentService.contentExists( targetContent.getParentPath() ) ) &&
+                sourceContext.callWith( () -> contentService.contentExists( sourceContent.getParentPath() ) ) )
             {
-                if ( contentService.contentExists( sourceContent.getParentPath() ) )
-                {
-                    final MoveContentParams moveContentParams = MoveContentParams.create().
-                        contentId( targetContent.getId() ).
-                        parentContentPath( sourceContent.getParentPath() ).
-                        stopInheritPath( false ).
-                        build();
+                final Content targetParent = targetContext.callWith( () -> contentService.getByPath( targetContent.getParentPath() ) );
+                final Content sourceParent = sourceContext.callWith( () -> contentService.getByPath( sourceContent.getParentPath() ) );
 
-                    contentService.move( moveContentParams );
+                if ( !targetContent.getParentPath().equals( sourceContent.getParentPath() ) &&
+                    targetParent.getId().equals( sourceParent.getId() ) )
+                {
+                    if ( contentService.contentExists( targetParent.getParentPath() ) )
+                    {
+                        final MoveContentParams moveContentParams = MoveContentParams.create().
+                            contentId( targetContent.getId() ).
+                            parentContentPath( targetParent.getParentPath() ).
+                            stopInheritPath( false ).
+                            build();
+
+                        contentService.move( moveContentParams );
+                    }
                     return contentService.getById( targetContent.getId() );
                 }
             }
@@ -225,10 +242,13 @@ public class ParentProjectSynchronizer
             final Content sourceContent = contentService.getById( contentId );
 
             return targetContext.callWith( () -> {
-                final Content targetContent = contentService.getById( contentId );
-                if ( isSyncable( sourceContent, targetContent ) )
+                if ( contentService.contentExists( contentId ) )
                 {
-                    return doSyncUpdated( sourceContent, targetContent );
+                    final Content targetContent = contentService.getById( contentId );
+                    if ( isSyncable( sourceContent, targetContent ) )
+                    {
+                        return doSyncUpdated( sourceContent, targetContent );
+                    }
                 }
                 return null;
             } );
@@ -256,7 +276,16 @@ public class ParentProjectSynchronizer
     {
         return sourceContext.callWith( () -> {
             final Content sourceContent = contentService.getById( contentId );
-            return targetContext.callWith( () -> doSyncCreated( sourceContent ) );
+            return targetContext.callWith( () -> {
+                if ( contentService.contentExists( contentId ) )
+                {
+                    return contentService.getById( contentId );
+                }
+                else
+                {
+                    return doSyncCreated( sourceContent );
+                }
+            } );
         } );
     }
 
@@ -264,7 +293,30 @@ public class ParentProjectSynchronizer
     {
         try
         {
-            return contentService.create( sourceContext.callWith( () -> createParams( sourceContent ) ) );
+            return sourceContext.callWith( () -> {
+                if ( contentService.contentExists( sourceContent.getParentPath() ) )
+                {
+                    final ContentId parentId = contentService.getByPath( sourceContent.getParentPath() ).getId();
+                    return targetContext.callWith( () -> {
+
+                        if ( sourceContent.getParentPath().isRoot() )
+                        {
+                            return contentService.create( sourceContext.callWith( () -> createParams( sourceContent, ContentPath.ROOT ) ) );
+                        }
+
+                        if ( contentService.contentExists( parentId ) )
+                        {
+                            final Content targetParent = contentService.getById( parentId );
+                            return contentService.create(
+                                sourceContext.callWith( () -> createParams( sourceContent, targetParent.getPath() ) ) );
+                        }
+
+                        return null;
+                    } );
+                }
+                return null;
+            } );
+
         }
         catch ( ContentAlreadyExistsException e )
         {
@@ -330,7 +382,7 @@ public class ParentProjectSynchronizer
             } );
     }
 
-    private CreateContentParams createParams( final Content source )
+    private CreateContentParams createParams( final Content source, final ContentPath targetParentPath )
     {
         final CreateContentParams.Builder builder = CreateContentParams.create();
 
@@ -341,7 +393,7 @@ public class ParentProjectSynchronizer
             owner( source.getOwner() ).
             displayName( source.getDisplayName() ).
             name( source.getName() ).
-            parent( source.getParentPath() ).
+            parent( targetParentPath ).
             page( source.getPage() ).
             requireValid( false ).
             createSiteTemplateFolder( false ).
