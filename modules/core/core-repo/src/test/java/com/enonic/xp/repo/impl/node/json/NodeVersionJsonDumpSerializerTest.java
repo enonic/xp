@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.node.json;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -111,14 +112,16 @@ public class NodeVersionJsonDumpSerializerTest
         final String expectedNodeStr = readJson( "serialized-node.json" );
         final String expectedIndexConfigStr = readJson( "serialized-index.json" );
         final String expectedAccessControlStr = readJson( "serialized-access.json" );
-        final String serializedNode = this.serializer.toNodeString( nodeVersion );
-        final String serializedIndexConfig = this.serializer.toIndexConfigDocumentString( nodeVersion );
-        final String serializedAccessControl = this.serializer.toAccessControlString( nodeVersion );
+        final String serializedNode = new String( this.serializer.toNodeString( nodeVersion ), StandardCharsets.UTF_8 );
+        final String serializedIndexConfig =
+            new String( this.serializer.toIndexConfigDocumentString( nodeVersion ), StandardCharsets.UTF_8 );
+        final String serializedAccessControl = new String( this.serializer.toAccessControlString( nodeVersion ), StandardCharsets.UTF_8 );
         assertEquals( expectedNodeStr, serializedNode );
         assertEquals( expectedIndexConfigStr, serializedIndexConfig );
         assertEquals( expectedAccessControlStr, serializedAccessControl );
-        final NodeVersion deSerializedNode =
-            this.serializer.toNodeVersion( expectedNodeStr, expectedIndexConfigStr, expectedAccessControlStr );
+        final NodeVersion deSerializedNode = this.serializer.toNodeVersion( expectedNodeStr.getBytes( StandardCharsets.UTF_8 ),
+                                                                            expectedIndexConfigStr.getBytes( StandardCharsets.UTF_8 ),
+                                                                            expectedAccessControlStr.getBytes( StandardCharsets.UTF_8 ) );
         assertEquals( nodeVersion, deSerializedNode );
     }
 

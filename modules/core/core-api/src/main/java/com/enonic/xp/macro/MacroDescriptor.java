@@ -8,7 +8,7 @@ import com.enonic.xp.resource.ResourceKey;
 @PublicApi
 public final class MacroDescriptor
 {
-    private final static String SITE_MACROS_PREFIX = "site/macros/";
+    private static final String SITE_MACROS_PREFIX = "site/macros/";
 
     private final MacroKey key;
 

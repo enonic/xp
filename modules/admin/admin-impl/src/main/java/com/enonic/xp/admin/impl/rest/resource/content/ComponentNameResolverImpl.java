@@ -3,6 +3,7 @@ package com.enonic.xp.admin.impl.rest.resource.content;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentName;
@@ -70,8 +71,16 @@ public final class ComponentNameResolverImpl
     {
         if ( component.hasImage() )
         {
-            final Content content = contentService.getById( component.getImage() );
-            return ComponentName.from( content.getDisplayName() );
+            try
+            {
+                final Content content = contentService.getById( component.getImage() );
+                return ComponentName.from( content.getDisplayName() );
+            }
+            catch ( final ContentNotFoundException e )
+            {
+                return component.getName();
+            }
+
         }
         return component.getName();
     }
@@ -80,8 +89,15 @@ public final class ComponentNameResolverImpl
     {
         if ( component.getFragment() != null )
         {
-            final Content content = contentService.getById( component.getFragment() );
-            return ComponentName.from( content.getDisplayName() );
+            try
+            {
+                final Content content = contentService.getById( component.getFragment() );
+                return ComponentName.from( content.getDisplayName() );
+            }
+            catch ( final ContentNotFoundException e )
+            {
+                return component.getName();
+            }
         }
         return component.getName();
     }

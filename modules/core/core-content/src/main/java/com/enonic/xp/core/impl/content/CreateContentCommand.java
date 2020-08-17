@@ -17,6 +17,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
@@ -53,7 +54,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 final class CreateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
 {
-    private final static Logger LOG = LoggerFactory.getLogger( CreateContentCommand.class );
+    private static final Logger LOG = LoggerFactory.getLogger( CreateContentCommand.class );
 
     private final CreateContentParams params;
 
@@ -109,7 +110,7 @@ final class CreateContentCommand
         final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedParams );
 
         final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams ).
-            contentTypeService(this.contentTypeService ).
+            contentTypeService( this.contentTypeService ).
             pageDescriptorService( this.pageDescriptorService ).
             xDataService( this.xDataService ).
             partDescriptorService( this.partDescriptorService ).
@@ -325,11 +326,12 @@ final class CreateContentCommand
     private Locale getDefaultLanguage( final CreateContentParams createContentParams )
     {
         ContentPath parentPath = createContentParams.getParent();
-        if ( createContentParams.getLanguage() == null && !parentPath.isRoot() )
+        if ( createContentParams.getLanguage() == null )
         {
-            final Content parent = getContent( parentPath );
+            final Node parent = nodeService.getByPath( ContentNodeHelper.translateContentParentToNodeParentPath( parentPath ) );
 
-            return parent != null ? parent.getLanguage() : null;
+            final String language = parent.data().getString( ContentPropertyNames.LANGUAGE );
+            return language != null ? Locale.forLanguageTag( language ) : null;
         }
         else
         {

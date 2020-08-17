@@ -35,13 +35,13 @@ import static org.mockito.ArgumentMatchers.any;
 public class MixinResourceTest
     extends AdminResourceTestSupport
 {
-    private final static MixinName MY_MIXIN_QUALIFIED_NAME_1 = MixinName.from( "myapplication:input_text_1" );
+    private static final MixinName MY_MIXIN_QUALIFIED_NAME_1 = MixinName.from( "myapplication:input_text_1" );
 
-    private final static String MY_MIXIN_INPUT_NAME_1 = "input_text_1";
+    private static final String MY_MIXIN_INPUT_NAME_1 = "input_text_1";
 
-    private final static MixinName MY_MIXIN_QUALIFIED_NAME_2 = MixinName.from( "myapplication:text_area_2" );
+    private static final MixinName MY_MIXIN_QUALIFIED_NAME_2 = MixinName.from( "myapplication:text_area_2" );
 
-    private final static String MY_MIXIN_INPUT_NAME_2 = "text_area_2";
+    private static final String MY_MIXIN_INPUT_NAME_2 = "text_area_2";
 
     private MixinService mixinService;
 

@@ -13,7 +13,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 @SuppressWarnings("UnusedDeclaration")
 public final class ContentTypeFilterJson
 {
-    private final static ImmutableList<String> LIST_ALL = ImmutableList.of( "*" );
+    private static final ImmutableList<String> LIST_ALL = ImmutableList.of( "*" );
 
     private final ImmutableList<String> allow;
 

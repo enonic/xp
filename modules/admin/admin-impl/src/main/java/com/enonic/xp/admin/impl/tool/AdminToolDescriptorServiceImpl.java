@@ -23,7 +23,7 @@ public final class AdminToolDescriptorServiceImpl
 {
     private static final String ADMIN_TOOLS_URI_PREFIX = "/admin/tool";
 
-    private final static String PATH = "/admin/tools";
+    private static final String PATH = "/admin/tools";
 
     private ApplicationService applicationService;
 

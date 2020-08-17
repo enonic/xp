@@ -2,6 +2,7 @@ package com.enonic.xp.node;
 
 
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
 
@@ -12,7 +13,7 @@ public class UUID
 {
     protected final String value;
 
-    private static final String VALID_NODE_ID_PATTERN = "([a-z0-9A-Z_\\-\\.:])*";
+    private static final Pattern VALID_NODE_ID_PATTERN = Pattern.compile( "^(?:[a-zA-Z0-9_\\-.:])+$" );
 
     public UUID()
     {
@@ -22,8 +23,8 @@ public class UUID
     protected UUID( final String value )
     {
         Preconditions.checkNotNull( value, "UUID cannot be null" );
-        Preconditions.checkArgument( !value.trim().isEmpty(), "UUID cannot be blank" );
-        Preconditions.checkArgument( value.matches( "^" + VALID_NODE_ID_PATTERN + "$" ), "UUID format incorrect: " + value );
+        Preconditions.checkArgument( !value.isBlank(), "UUID cannot be blank" );
+        Preconditions.checkArgument( VALID_NODE_ID_PATTERN.matcher( value ).matches(), "UUID format incorrect: " + value );
 
         this.value = value;
     }
@@ -47,7 +48,7 @@ public class UUID
     @Override
     public int hashCode()
     {
-        return Objects.hash( value );
+        return value.hashCode();
     }
 
     @Override

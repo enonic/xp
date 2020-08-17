@@ -28,9 +28,9 @@ import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 public final class PageDescriptorServiceImpl
     implements PageDescriptorService
 {
-    private final static Logger LOG = LoggerFactory.getLogger( PageDescriptorServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( PageDescriptorServiceImpl.class );
 
-    private final static String PATH = "/site/pages";
+    private static final String PATH = "/site/pages";
 
     private MixinService mixinService;
 

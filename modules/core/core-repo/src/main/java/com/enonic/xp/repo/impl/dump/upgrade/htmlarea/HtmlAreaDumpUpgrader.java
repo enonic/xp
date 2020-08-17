@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
-import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
 import com.enonic.xp.blob.BlobKey;
@@ -12,7 +11,7 @@ import com.enonic.xp.blob.Segment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.repo.impl.dump.DumpBlobRecord;
+import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.serializer.json.BranchDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionsDumpEntryJson;
@@ -87,9 +86,9 @@ public class HtmlAreaDumpUpgrader
 
     private void upgradeVersionMeta( final VersionDumpEntryJson versionDumpEntryJson )
     {
-        final DumpBlobRecord nodeDumpBlobRecord = (DumpBlobRecord) dumpReader.getDumpBlobStore().
+        final DumpBlobRecord nodeDumpBlobRecord = dumpReader.getDumpBlobStore().
             getRecord( NODE_SEGMENT, BlobKey.from( versionDumpEntryJson.getNodeBlobKey() ) );
-        final DumpBlobRecord indexDumpBlobRecord = (DumpBlobRecord) dumpReader.getDumpBlobStore().
+        final DumpBlobRecord indexDumpBlobRecord = dumpReader.getDumpBlobStore().
             getRecord( INDEX_SEGMENT, BlobKey.from( versionDumpEntryJson.getIndexConfigBlobKey() ) );
         upgradeBlobRecord( nodeDumpBlobRecord, indexDumpBlobRecord );
     }
@@ -135,12 +134,10 @@ public class HtmlAreaDumpUpgrader
 
     private void writeNodeVersion( final NodeVersion nodeVersion, final DumpBlobRecord dumpBlobRecord )
     {
-        final String serializedUpgradedNodeVersion = serialize( NodeVersionDataJson.toJson( nodeVersion ) );
-        final ByteSource byteSource = ByteSource.wrap( serializedUpgradedNodeVersion.getBytes( StandardCharsets.UTF_8 ) );
+        final byte[] serializedUpgradedNodeVersion = serialize( NodeVersionDataJson.toJson( nodeVersion ) );
         try
         {
-
-            byteSource.copyTo( dumpBlobRecord.getByteSink() );
+            dumpBlobRecord.getByteSink().write( serializedUpgradedNodeVersion );
         }
         catch ( IOException e )
         {

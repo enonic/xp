@@ -10,11 +10,11 @@ import static com.google.common.base.Strings.nullToEmpty;
 @PublicApi
 public final class IdProviderKey
 {
-    private final static IdProviderKey SYSTEM = IdProviderKey.from( "system" );
+    private static final IdProviderKey SYSTEM = IdProviderKey.from( "system" );
 
-    private final static IdProviderKey DEFAULT = IdProviderKey.from( "default" );
+    private static final IdProviderKey DEFAULT = IdProviderKey.from( "default" );
 
-    private final static String RESERVED_ID_PROVIDER_KEY = PrincipalKey.ROLES_NODE_NAME;
+    private static final String RESERVED_ID_PROVIDER_KEY = PrincipalKey.ROLES_NODE_NAME;
 
     private final String id;
 

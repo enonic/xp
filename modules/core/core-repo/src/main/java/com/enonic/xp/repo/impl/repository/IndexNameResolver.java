@@ -2,22 +2,27 @@ package com.enonic.xp.repo.impl.repository;
 
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryIds;
 
 public class IndexNameResolver
 {
-    private final static String SEARCH_INDEX_PREFIX = "search";
+    private static final String SEARCH_INDEX_PREFIX = "search";
 
-    private final static String STORAGE_INDEX_PREFIX = "storage";
+    private static final String STORAGE_INDEX_PREFIX = "storage";
 
-    private final static String COMMIT_INDEX_PREFIX = "commit";
+    private static final String COMMIT_INDEX_PREFIX = "commit";
 
-    private final static String DIVIDER = "-";
+    private static final String DIVIDER = "-";
 
     public static String resolveIndexName( final RepositoryId repositoryId, final IndexType indexType )
     {
@@ -44,6 +49,11 @@ public class IndexNameResolver
         return COMMIT_INDEX_PREFIX + DIVIDER + repositoryId.toString();
     }
 
+    public static String resolveSearchIndexName( final RepositoryId repositoryId, final Branch branch )
+    {
+        return SEARCH_INDEX_PREFIX + DIVIDER + repositoryId.toString() + DIVIDER + branch.getValue().toLowerCase();
+    }
+
     public static Set<String> resolveSearchIndexNames( final RepositoryId repositoryId, final Branches branches )
     {
         return branches.stream().
@@ -51,13 +61,23 @@ public class IndexNameResolver
             collect( Collectors.toSet() );
     }
 
-    public static String resolveSearchIndexName( final RepositoryId repositoryId, final Branch branch )
-    {
-        return SEARCH_INDEX_PREFIX + DIVIDER + repositoryId.toString() + DIVIDER + branch.getValue().toLowerCase();
-    }
-
-    static String resolveSearchIndexPrefix( final RepositoryId repositoryId )
+    public static String resolveSearchIndexPrefix( final RepositoryId repositoryId )
     {
         return SEARCH_INDEX_PREFIX + DIVIDER + repositoryId.toString() + DIVIDER + "*";
     }
+
+    public static Set<String> resolveIndexNames( final RepositoryId repositoryId )
+    {
+        return Stream.of( IndexNameResolver.resolveStorageIndexName( repositoryId ),
+                          IndexNameResolver.resolveSearchIndexName( repositoryId ) ).
+            collect( Collectors.toUnmodifiableSet() );
+    }
+
+    public static Set<String> resolveIndexNames( final RepositoryIds repositoryIds )
+    {
+        return repositoryIds.stream().
+            flatMap( repositoryId -> IndexNameResolver.resolveIndexNames( repositoryId ).stream() ).
+            collect( Collectors.toUnmodifiableSet() );
+    }
+
 }

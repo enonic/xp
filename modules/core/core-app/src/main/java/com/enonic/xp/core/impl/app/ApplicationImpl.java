@@ -10,6 +10,7 @@ import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationBundleUtils;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
@@ -32,7 +33,7 @@ final class ApplicationImpl
 
     private final ClassLoader classLoader;
 
-    private final Configuration config;
+    private volatile Configuration config;
 
     private final Set<String> capabilities;
 
@@ -155,6 +156,11 @@ final class ApplicationImpl
         return this.config;
     }
 
+    public void setConfig( final Configuration config )
+    {
+        this.config = config;
+    }
+
     @Override
     public Set<String> getCapabilities()
     {
@@ -164,6 +170,6 @@ final class ApplicationImpl
     @Override
     public boolean isSystem()
     {
-        return ApplicationHelper.isSystemApplication( this.bundle );
+        return ApplicationBundleUtils.isSystemApplication( this.bundle );
     }
 }

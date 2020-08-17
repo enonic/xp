@@ -19,8 +19,7 @@ import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
-import com.enonic.xp.portal.impl.rendering.Renderer;
-import com.enonic.xp.portal.impl.rendering.RendererFactory;
+import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.resource.Resource;
@@ -44,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.when;
 
 public class MappingHandlerTest
@@ -59,7 +59,7 @@ public class MappingHandlerTest
 
     private ControllerScript controllerScript;
 
-    private RendererFactory rendererFactory;
+    private RendererDelegate rendererDelegate;
 
     private FilterScriptFactory filterScriptFactory;
 
@@ -91,14 +91,14 @@ public class MappingHandlerTest
         when( this.resourceService.getResource( ResourceKey.from( "demo:/services/test" ) ) ).thenReturn( resource );
 
         this.contentService = Mockito.mock( ContentService.class );
-        this.rendererFactory = Mockito.mock( RendererFactory.class );
+        this.rendererDelegate = Mockito.mock( RendererDelegate.class );
         this.siteService = Mockito.mock( SiteService.class );
 
         this.handler = new MappingHandler();
         this.handler.setControllerScriptFactory( controllerScriptFactory );
         this.handler.setContentService( this.contentService );
         this.handler.setResourceService( this.resourceService );
-        this.handler.setRendererFactory( this.rendererFactory );
+        this.handler.setRendererDelegate( this.rendererDelegate );
         this.handler.setSiteService( this.siteService );
         this.handler.setFilterScriptFactory( this.filterScriptFactory );
 
@@ -153,22 +153,8 @@ public class MappingHandlerTest
         this.request.setEndpointPath( "" );
         this.request.setContent( this.contentService.getById( ContentId.from( "id" ) ) );
 
-        Renderer<ControllerMappingDescriptor> renderer = new Renderer<>()
-        {
-            @Override
-            public Class<ControllerMappingDescriptor> getType()
-            {
-                return ControllerMappingDescriptor.class;
-            }
-
-            @Override
-            public PortalResponse render( final ControllerMappingDescriptor component, final PortalRequest portalRequest )
-            {
-                return PortalResponse.create().body( "Ok" ).build();
-            }
-        };
-
-        when( rendererFactory.getRenderer( isA( ControllerMappingDescriptor.class ) ) ).thenReturn( renderer );
+        when( rendererDelegate.render( isA( ControllerMappingDescriptor.class ), same( request ) ) ).
+            thenReturn( PortalResponse.create().body( "Ok" ).build() );
 
         final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertEquals( HttpStatus.OK, response.getStatus() );

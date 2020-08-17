@@ -1,0 +1,87 @@
+{
+  "projects": [
+    {
+      "description": "project description 1",
+      "displayName": "project name 1",
+      "icon": {
+        "label": "small",
+        "mimeType": "image/png",
+        "name": "logo.png",
+        "size": 0
+      },
+      "language": "en",
+      "name": "project1",
+      "permissions": {
+        "author": [],
+        "contributor": [],
+        "editor": [],
+        "owner": [
+          "user:system:owner"
+        ]
+      },
+      "readAccess": {
+        "type": "PRIVATE",
+        "principals": []
+      }
+    },
+    {
+      "description": null,
+      "displayName": "project2",
+      "icon": null,
+      "language": "en",
+      "name": "project2",
+      "permissions": {
+        "author": [],
+        "contributor": [],
+        "editor": [
+          "user:system:editor"
+        ],
+        "owner": []
+      },
+      "readAccess": {
+        "type": "PRIVATE",
+        "principals": []
+      }
+    },
+    {
+      "description": null,
+      "displayName": null,
+      "icon": null,
+      "language": "en",
+      "name": "project3",
+      "permissions": {
+        "author": [
+          "user:system:author"
+        ],
+        "contributor": [],
+        "editor": [],
+        "owner": []
+      },
+      "readAccess": {
+        "type": "PRIVATE",
+        "principals": []
+      }
+    },
+    {
+      "description": null,
+      "displayName": "project4",
+      "icon": null,
+      "language": "en",
+      "name": "project4",
+      "permissions": {
+        "author": [],
+        "contributor": [
+          "user:system:contributor"
+        ],
+        "editor": [],
+        "owner": []
+      },
+      "readAccess": {
+        "type": "CUSTOM",
+        "principals": [
+          "user:system:custom"
+        ]
+      }
+    }
+  ]
+}

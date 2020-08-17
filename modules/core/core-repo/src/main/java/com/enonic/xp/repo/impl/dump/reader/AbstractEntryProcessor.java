@@ -22,7 +22,7 @@ import com.enonic.xp.repository.RepositorySegmentUtils;
 
 class AbstractEntryProcessor
 {
-    private final static Logger LOG = LoggerFactory.getLogger( AbstractEntryProcessor.class );
+    private static final Logger LOG = LoggerFactory.getLogger( AbstractEntryProcessor.class );
 
     private final BlobStore blobStore;
 

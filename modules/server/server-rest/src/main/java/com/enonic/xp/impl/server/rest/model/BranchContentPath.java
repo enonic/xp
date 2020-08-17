@@ -12,7 +12,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class BranchContentPath
 {
-    private final static String SEPARATOR = ":";
+    private static final String SEPARATOR = ":";
 
     private final Branch branch;
 

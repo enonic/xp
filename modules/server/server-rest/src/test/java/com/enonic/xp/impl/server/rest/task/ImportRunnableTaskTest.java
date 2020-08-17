@@ -9,6 +9,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeImportResult;
@@ -84,9 +85,13 @@ public class ImportRunnableTaskTest
 
         Mockito.when( this.exportService.importNodes( isA( ImportNodesParams.class ) ) ).thenReturn( nodeImportResult );
 
+        final PropertyTree repoData = new PropertyTree();
+        repoData.addString( "key", "value" );
+
         Mockito.when( this.repositoryService.list() ).thenReturn( Repositories.from( Repository.create().
             branches( Branch.from( "master" ) ).
             id( RepositoryId.from( "system-repo" ) ).
+            data( repoData ).
             build() ) );
 
         final ImportRunnableTask task =
@@ -97,9 +102,13 @@ public class ImportRunnableTaskTest
         Mockito.verify( repositoryService, Mockito.times( 1 ) ).invalidateAll();
 
         Mockito.verify( nodeRepositoryService, Mockito.times( 1 ) ).isInitialized( RepositoryId.from( "system-repo" ) );
-        Mockito.verify( nodeRepositoryService, Mockito.times( 1 ) ).create(
-            CreateRepositoryParams.create().repositoryId( RepositoryId.from( "system-repo" ) ).repositorySettings(
-                RepositorySettings.create().build() ).build() );
+
+        Mockito.verify( nodeRepositoryService, Mockito.times( 1 ) ).create( CreateRepositoryParams.create().
+            repositoryId( RepositoryId.from( "system-repo" ) ).
+            data( repoData ).
+            repositorySettings( RepositorySettings.create().
+                build() ).
+            build() );
 
         Mockito.verify( progressReporter, Mockito.times( 1 ) ).info( contentQueryArgumentCaptor.capture() );
         Mockito.verify( taskService, Mockito.times( 1 ) ).submitTask( Mockito.isA( RunnableTask.class ), Mockito.eq( "import" ) );

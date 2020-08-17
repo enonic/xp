@@ -7,12 +7,15 @@ dependencies {
     compile project( ':core:core-elasticsearch-client' )
 
     implementation project( ':core:core-internal' )
+    compile "com.hazelcast:hazelcast:${hazelcastVersion}"
 
-    testCompile project( path: ':core:core-api', configuration: 'testOutput' )
-    testCompile project( path: ':core:core-app', configuration: 'testOutput' )
-    testCompile project( path: ':portal:portal-impl', configuration: 'testOutput' )
+    testImplementation( project(":script:script-impl")  )
+    testImplementation( project(":portal:portal-impl")  )
+    testImplementation( testFixtures( project(":core:core-api") ) )
+    testImplementation( testFixtures( project(":core:core-app") ) )
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Core - Task' )
+    bnd( 'Bundle-Name': 'Enonic XP Core - Task',
+         'Export-Package': 'com.enonic.xp.impl.task.distributed')
 }

@@ -83,35 +83,31 @@ public abstract class BaseContentHandler
                                                      strictContentValidation( contentTypeName ) ).translate( json );
     }
 
-    ExtraDatas createExtraDatas( final Map<String, Object> value, final ContentTypeName contentTypeName )
+    ExtraDatas createExtraDatas( final Map<String, Object> mapValue, final ContentTypeName contentTypeName )
     {
-        if ( value == null )
+        if ( mapValue == null )
         {
             return null;
         }
 
         final ExtraDatas.Builder extradatasBuilder = ExtraDatas.create();
-        for ( final String applicationPrefix : value.keySet() )
-        {
-            final ApplicationKey applicationKey = ExtraData.fromApplicationPrefix( applicationPrefix );
-            final Object metadatasObject = value.get( applicationPrefix );
-            if ( !( metadatasObject instanceof Map ) )
-            {
-                continue;
-            }
+        mapValue.forEach( ( key, metadatasObject ) -> {
+            final ApplicationKey applicationKey = ExtraData.fromApplicationPrefix( key );
 
-            final Map<String, Object> metadatas = (Map<String, Object>) metadatasObject;
-
-            for ( final String metadataName : metadatas.keySet() )
+            if ( metadatasObject instanceof Map )
             {
-                final XDataName xDataName = XDataName.from( applicationKey, metadataName );
-                final ExtraData item = createExtraData( xDataName, contentTypeName, metadatas.get( metadataName ) );
-                if ( item != null )
-                {
-                    extradatasBuilder.add( item );
-                }
+                final Map<String, Object> metadatas = (Map<String, Object>) metadatasObject;
+
+                metadatas.forEach( ( metadataName, value ) -> {
+                    final XDataName xDataName = XDataName.from( applicationKey, metadataName );
+                    final ExtraData item = createExtraData( xDataName, contentTypeName, value );
+                    if ( item != null )
+                    {
+                        extradatasBuilder.add( item );
+                    }
+                } );
             }
-        }
+        } );
 
         return extradatasBuilder.build();
     }

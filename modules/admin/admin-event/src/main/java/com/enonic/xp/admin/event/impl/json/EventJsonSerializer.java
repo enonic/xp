@@ -14,17 +14,13 @@ import com.enonic.xp.event.Event;
 
 public final class EventJsonSerializer
 {
-    public ObjectNode toJson( final Event event )
+    public String toJson( final Event event )
     {
-        if ( event != null )
-        {
-            final ObjectNode json = JsonNodeFactory.instance.objectNode();
-            json.put( "type", event.getType() );
-            json.put( "timestamp", event.getTimestamp() );
-            json.set( "data", toJsonNode( event.getData() ) );
-            return json;
-        }
-        return null;
+        final ObjectNode json = JsonNodeFactory.instance.objectNode();
+        json.put( "type", event.getType() );
+        json.put( "timestamp", event.getTimestamp() );
+        json.set( "data", toJsonNode( event.getData() ) );
+        return json.toString();
     }
 
     private JsonNode toJsonNode( Object value )

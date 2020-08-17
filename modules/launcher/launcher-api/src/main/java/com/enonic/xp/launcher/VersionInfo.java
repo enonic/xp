@@ -1,12 +1,13 @@
 package com.enonic.xp.launcher;
 
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
 public final class VersionInfo
 {
-    private final static VersionInfo INSTANCE = load();
+    private static final VersionInfo INSTANCE = load();
 
     private final Properties props;
 
@@ -54,10 +55,10 @@ public final class VersionInfo
 
     private static Properties loadProperties()
     {
-        try
+        try (final InputStream stream = VersionInfo.class.getResourceAsStream( "/META-INF/build.properties" ))
         {
             final Properties props = new Properties();
-            props.load( VersionInfo.class.getResourceAsStream( "/META-INF/build.properties" ) );
+            props.load( stream );
             return props;
         }
         catch ( final Exception e )

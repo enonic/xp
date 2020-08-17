@@ -37,6 +37,7 @@ public class DumpRunnableTask
             includeBinaries( true ).
             includeVersions( params.isIncludeVersions() ).
             maxAge( params.getMaxAge() ).
+            archive( params.isArchive() ).
             maxVersions( params.getMaxVersions() ).
             listener( new SystemDumpListenerImpl( progressReporter ) ).
             build();

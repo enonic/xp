@@ -53,7 +53,7 @@ public final class StatusResource
 
     private JsonNode createRepoReadOnlyJson()
     {
-        final IndexSettings indexSettings = this.indexService.getIndexSettings( ContentConstants.CONTENT_REPO.getId(), IndexType.SEARCH );
+        final IndexSettings indexSettings = this.indexService.getIndexSettings( ContentConstants.CONTENT_REPO_ID, IndexType.SEARCH );
 
         final JsonNode writeJsonNode = indexSettings != null ? indexSettings.getNode().get( "index.blocks.write" ) : null;
 

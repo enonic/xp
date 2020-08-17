@@ -34,7 +34,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 final class ValidateContentDataCommand
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ValidateContentDataCommand.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ValidateContentDataCommand.class );
 
     private final ContentTypeService contentTypeService;
 

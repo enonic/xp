@@ -7,7 +7,7 @@ import com.enonic.xp.data.ValueFactory;
 final class SiteConfiguratorType
     extends InputTypeBase
 {
-    public final static SiteConfiguratorType INSTANCE = new SiteConfiguratorType();
+    public static final SiteConfiguratorType INSTANCE = new SiteConfiguratorType();
 
     private SiteConfiguratorType()
     {

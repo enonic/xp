@@ -4,7 +4,7 @@ dependencies {
     compile project( ':core:core-api' )
     compile project( ':core:core-elasticsearch-client' )
 
-    testCompile project( path: ':core:core-api', configuration: 'testOutput' )
+    testImplementation( testFixtures( project(":core:core-api") ) )
 }
 
 jar {

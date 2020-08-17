@@ -5,7 +5,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public final class TaskProgressReporterContext
 {
-    private final static ThreadLocal<ProgressReporter> CURRENT = new ThreadLocal<>();
+    private static final ThreadLocal<ProgressReporter> CURRENT = new ThreadLocal<>();
 
     public static ProgressReporter current()
     {

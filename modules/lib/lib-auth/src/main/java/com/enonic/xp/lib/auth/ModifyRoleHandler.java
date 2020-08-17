@@ -12,7 +12,6 @@ import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.EditableRole;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.Role;
-import com.enonic.xp.security.RoleEditor;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateRoleParams;
 
@@ -50,7 +49,7 @@ public final class ModifyRoleHandler
         {
             final UpdateRoleParams params = UpdateRoleParams.create().
                 roleKey( this.principalKey ).
-                editor( this.newRoleEditor() ).
+                editor( this::newRoleEditor ).
                 build();
 
             return new PrincipalMapper( this.securityService.get().updateRole( params ) );
@@ -58,15 +57,14 @@ public final class ModifyRoleHandler
         return null;
     }
 
-    private RoleEditor newRoleEditor()
+    private void newRoleEditor( final EditableRole edit )
     {
-        return edit -> {
-            final ScriptValue value = this.editor.call( new PrincipalMapper( edit.source ) );
-            if ( value != null )
-            {
-                updateRole( edit, value.getMap() );
-            }
-        };
+
+        final ScriptValue value = this.editor.call( new PrincipalMapper( edit.source ) );
+        if ( value != null )
+        {
+            updateRole( edit, value.getMap() );
+        }
     }
 
     private void updateRole( final EditableRole target, final Map map )

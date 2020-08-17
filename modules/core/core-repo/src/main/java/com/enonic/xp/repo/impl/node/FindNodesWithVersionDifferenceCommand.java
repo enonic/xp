@@ -18,6 +18,9 @@ import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
 
 public class FindNodesWithVersionDifferenceCommand
 {
+
+    private static final int BATCH_SIZE = 10_000;
+
     private final NodePath nodePath;
 
     private final Branch source;
@@ -31,8 +34,6 @@ public class FindNodesWithVersionDifferenceCommand
     private final NodeSearchService nodeSearchService;
 
     private final NodeStorageService nodeStorageService;
-
-    private final int batchSize = 10_000;
 
     private FindNodesWithVersionDifferenceCommand( final Builder builder )
     {
@@ -62,7 +63,7 @@ public class FindNodesWithVersionDifferenceCommand
             nodePath( nodePath ).
             excludes( excludeEntries ).
             size( this.size ).
-            batchSize( batchSize ).
+            batchSize( BATCH_SIZE ).
             build(), SingleRepoStorageSource.create( ContextAccessor.current().getRepositoryId(), SingleRepoStorageSource.Type.VERSION ) );
 
         return NodeVersionDiffResultFactory.create( result );

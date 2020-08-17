@@ -1,3 +1,14 @@
+plugins {
+    id "com.gradle.enterprise" version "3.1.1"
+}
+
+gradleEnterprise {
+    buildScan {
+        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+        termsOfServiceAgree = 'yes'
+    }
+}
+
 include 'core:core-api'
 include 'core:core-audit'
 include 'core:core-event'
@@ -22,7 +33,9 @@ include 'core:core-auth'
 include 'core:core-macro'
 include 'core:core-task'
 include 'core:core-cluster'
+include 'core:core-hazelcast'
 include 'core:core-internal'
+include 'core:core-project'
 
 include 'server:server-config'
 include 'server:server-deploy'
@@ -77,10 +90,10 @@ include 'lib:lib-event'
 include 'lib:lib-admin'
 include 'lib:lib-cluster'
 include 'lib:lib-auditlog'
+include 'lib:lib-project'
 
 include 'launcher:launcher-api'
 include 'launcher:launcher-impl'
-include 'launcher:launcher-ui'
 include 'launcher:launcher-main'
 
 include 'blobstore:blobstore-file'

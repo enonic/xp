@@ -1,13 +1,11 @@
 package com.enonic.xp.core.impl.audit;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -19,11 +17,6 @@ public class AuditLogConstants
 
     public static final Branch AUDIT_LOG_BRANCH = Branch.create().
         value( "master" ).
-        build();
-
-    public static final Repository AUDIT_LOG_REPO = Repository.create().
-        id( AUDIT_LOG_REPO_ID ).
-        branches( Branches.from( AUDIT_LOG_BRANCH ) ).
         build();
 
     public static final AccessControlList AUDIT_LOG_REPO_DEFAULT_ACL = AccessControlList.create().

@@ -8,7 +8,7 @@ import com.enonic.xp.app.ApplicationKey;
 @PublicApi
 public abstract class BaseSchemaName
 {
-    private final static String SEPARATOR = ":";
+    private static final String SEPARATOR = ":";
 
     private final String refString;
 

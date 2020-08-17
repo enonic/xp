@@ -25,6 +25,7 @@ import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.GetMappingsRequest;
 import org.elasticsearch.client.indices.GetMappingsResponse;
 import org.elasticsearch.client.indices.PutMappingRequest;
+import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.settings.Settings;
@@ -56,31 +57,27 @@ import com.enonic.xp.repository.RepositoryId;
 public class IndexServiceInternalImpl
     implements IndexServiceInternal
 {
-    private final static Logger LOG = LoggerFactory.getLogger( IndexServiceInternalImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( IndexServiceInternalImpl.class );
 
     private static final String ES_DEFAULT_INDEX_TYPE_NAME = "_default_";
 
-    private final static String DELETE_INDEX_TIMEOUT = "5s";
+    private static final String DELETE_INDEX_TIMEOUT = "5s";
 
-    private final static String CREATE_INDEX_TIMEOUT = "5s";
+    private static final String CREATE_INDEX_TIMEOUT = "5s";
 
-    private final static String UPDATE_INDEX_TIMEOUT = "5s";
+    private static final String UPDATE_INDEX_TIMEOUT = "5s";
 
-    private final static String APPLY_MAPPING_TIMEOUT = "5s";
+    private static final String APPLY_MAPPING_TIMEOUT = "5s";
 
-    private final static String INDEX_EXISTS_TIMEOUT = "5s";
+    private static final String INDEX_EXISTS_TIMEOUT = "5s";
 
-    private final static String CLUSTER_STATE_TIMEOUT = "5s";
+    private static final String CLUSTER_STATE_TIMEOUT = "5s";
 
-    private final static String GET_SETTINGS_TIMEOUT = "5s";
+    private static final String GET_SETTINGS_TIMEOUT = "5s";
+
+    private static final String CLUSTER_HEALTH_TIMEOUT = "10s";
 
     private EsClient client;
-
-    @Override
-    public ClusterHealthStatus getClusterHealth( final String timeout, final String... indexNames )
-    {
-        return doGetClusterHealth( timeout, indexNames );
-    }
 
     @Override
     public void refresh( final String... indexNames )
@@ -285,23 +282,38 @@ public class IndexServiceInternalImpl
         return client.indicesExists( request );
     }
 
-    private ClusterHealthStatus doGetClusterHealth( final String timeout, final String... indexNames )
+    @Override
+    public boolean waitForYellowStatus( final String... indexNames )
     {
-        ClusterHealthRequest request = indexNames != null ? new ClusterHealthRequest( indexNames ) : new ClusterHealthRequest();
+        ClusterHealthRequest request = new ClusterHealthRequest( indexNames );
 
-        request.waitForYellowStatus().timeout( timeout );
+        request.waitForYellowStatus().timeout( CLUSTER_HEALTH_TIMEOUT );
 
-        final Stopwatch timer = Stopwatch.createStarted();
+        final ClusterHealthResponse response;
+        try
+        {
+            final Stopwatch timer = Stopwatch.createStarted();
+            response = client.clusterHealth( request );
+            timer.stop();
 
-        final ClusterHealthResponse response = client.clusterHealth( request );
-        timer.stop();
+            LOG.debug( "ElasticSearch cluster '{}' " +
+                           "health (timedOut={}, timeOutValue={}, used={}): Status={}, nodes={}, active shards={}, indices={}",
+                       response.getClusterName(), response.isTimedOut(), CLUSTER_HEALTH_TIMEOUT, timer, response.getStatus(),
+                       response.getNumberOfNodes(), response.getActiveShards(), response.getIndices() );
+        }
+        catch ( Exception e )
+        {
+            LOG.error( "Failed to get cluster health status", e );
+            return false;
+        }
 
-        LOG.debug(
-            "ElasticSearch cluster '{}' health (timedOut={}, timeOutValue={}, used={}): Status={}, nodes={}, active shards={}, indices={}",
-            response.getClusterName(), response.isTimedOut(), timeout, timer.toString(), response.getStatus(), response.getNumberOfNodes(),
-            response.getActiveShards(), response.getIndices().keySet() );
+        if ( response.isTimedOut() || response.getStatus() == ClusterHealthStatus.RED )
+        {
+            LOG.error( "Cluster not healthy: timed out: {}, state: {}", response.isTimedOut(), response.getStatus() );
+            return false;
+        }
 
-        return new ClusterHealthStatus( ClusterStatusCode.valueOf( response.getStatus().name() ), response.isTimedOut() );
+        return true;
     }
 
     @Override

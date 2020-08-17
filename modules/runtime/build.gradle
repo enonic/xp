@@ -1,6 +1,7 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 apply plugin: 'java-base'
+apply plugin: 'distribution'
 
 configurations {
     lib
@@ -8,17 +9,18 @@ configurations {
 
 dependencies {
     lib project( ':launcher:launcher-main' )
+    // JNA required for ElasticSearch but can't be refreshed. It should be part of lib
+    lib 'net.java.dev.jna:jna:4.1.0'
 }
 
 ext {
-    installDir = "$buildDir/install"
-    bundlesDir = "$installDir/system"
-    // archiveBase = "enonic-xp-$version"
     bundleCopySpecs = []
 }
 
 addBundle( 'com.sun.activation:jakarta.activation:1.2.1', 4 )
 addBundle( "com.sun.mail:jakarta.mail:${jakartaMailVersion}", 4 )
+addBundle( "jakarta.annotation:jakarta.annotation-api:${jakartaAnnotationApiVersion}", 4 )
+addBundle( "jakarta.validation:jakarta.validation-api:2.0.2", 4 )
 
 addBundle( 'javax.xml.bind:jaxb-api:2.2.11', 4 )
 addBundle( 'com.sun.xml.bind:jaxb-core:2.2.11', 4 )
@@ -31,8 +33,6 @@ addBundle( 'org.apache.felix:org.apache.felix.configadmin:1.9.16', 5 )
 addBundle( 'org.apache.felix:org.apache.felix.scr:2.1.16', 5 )
 addBundle( 'org.osgi:org.osgi.util.promise:1.1.1', 5 )
 addBundle( 'org.osgi:org.osgi.util.function:1.1.0', 5 )
-
-addBundle( 'javax.annotation:javax.annotation-api:1.3.2', 5 )
 
 //Logging bridges
 addBundle( "org.slf4j:jcl-over-slf4j:${slf4jVersion}", 6 )
@@ -50,19 +50,22 @@ addBundle( 'org.bouncycastle:bcprov-jdk15on:1.54', 6 )
 addBundle( 'com.google.guava:guava:26.0-jre', 8 )
 addBundle( "commons-lang:commons-lang:${commonsLangVersion}", 8 )
 addBundle( "commons-io:commons-io:${commonsIoVersion}", 8 )
-addBundle( 'org.apache.commons:commons-compress:1.19', 8 )
-addBundle( 'com.fasterxml.jackson.core:jackson-core:2.9.10', 8 )
-addBundle( 'com.fasterxml.jackson.core:jackson-annotations:2.9.10', 8 )
-addBundle( 'com.fasterxml.jackson.core:jackson-databind:2.9.10.1', 8 )
-addBundle( 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.10', 8 )
-addBundle( 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.9.10', 8 )
-addBundle( 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.9.10', 8 )
+addBundle( "org.apache.commons:commons-compress:${commonsCompressVersion}", 8 )
+addBundle( "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}", 8 )
+addBundle( "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}", 8 )
+addBundle( "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}", 8 )
+addBundle( "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}", 8 )
+addBundle( "com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:${jacksonVersion}", 8 )
+addBundle( "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:${jacksonVersion}", 8 )
 addBundle( "org.apache.tika:tika-core:${tikaVersion}", 8 )
 addBundle( "org.apache.tika:tika-bundle:${tikaVersion}", 8 )
 addBundle( "io.dropwizard.metrics:metrics-core:${dropwizardMetricsVersion}", 8 )
 addBundle( "io.dropwizard.metrics:metrics-json:${dropwizardMetricsVersion}", 8 )
 addBundle( "io.dropwizard.metrics:metrics-jvm:${dropwizardMetricsVersion}", 8 )
 addBundle( "io.dropwizard.metrics:metrics-jetty9:${dropwizardMetricsVersion}", 8 )
+addBundle( "com.hazelcast:hazelcast:${hazelcastVersion}", 8 )
+addBundle( "com.hazelcast:hazelcast-client:${hazelcastVersion}", 8 )
+addBundle( "com.hazelcast:hazelcast-kubernetes:1.5.3", 8 )
 addBundle( 'org.jparsec:jparsec:3.1', 8 )
 addBundle( project( ':repack:repack-resteasy' ), 8 )
 
@@ -86,6 +89,7 @@ addBundle( project( ':core:core-image' ), 22 )
 addBundle( project( ':core:core-export' ), 22 )
 addBundle( project( ':core:core-mail' ), 22 )
 addBundle( project( ':core:core-elasticsearch' ), 22 )
+addBundle( project( ':core:core-hazelcast' ), 22 )
 addBundle( project( ':core:core-elasticsearch-server' ), 22 )
 addBundle( project( ':core:core-content' ), 22 )
 addBundle( project( ':core:core-site' ), 22 )
@@ -99,6 +103,7 @@ addBundle( project( ':core:core-auth' ), 22 )
 addBundle( project( ':core:core-macro' ), 22 )
 addBundle( project( ':core:core-task' ), 22 )
 addBundle( project( ':core:core-audit' ), 22 )
+addBundle( project( ':core:core-project' ), 22 )
 addBundle( project( ':core:core-cluster' ), 23 )
 
 // Server bundles
@@ -150,13 +155,11 @@ def getOrCreateBundleConfig( level )
     def levelStr = "$level".padLeft( 2, '0' )
     def name = "bundle@$levelStr"
 
-    if ( configurations.asMap.containsKey( name ) )
+    def config = configurations.findByName( name )
+
+    if (config == null)
     {
-        return configurations.getByName( name )
-    }
-    else
-    {
-        def config = configurations.create( name )
+        config = configurations.create( name )
         config.transitive = false
         config.description = "Bundles for run-level $level"
 
@@ -164,64 +167,60 @@ def getOrCreateBundleConfig( level )
             from config
             into levelStr
         }
-
-        return config
     }
+    return config
 }
 
-task copyBundles( type: Copy ) {
-    into bundlesDir
-    with( bundleCopySpecs as CopySpec[] )
-}
-
-task copyResources( type: Copy ) {
-    destinationDir = file( installDir )
-    into( 'bin' ) {
-        from( 'src/bin' ) {
-            include '*.sh'
-            fileMode 0755
+distributions {
+    main {
+        contents {
+            into('/system') {
+                with( bundleCopySpecs as CopySpec[] )
+            }
+            into( '/lib' ) {
+                from( configurations.lib )
+            }
+            into( '/bin' ) {
+                from( 'src/bin' ) {
+                    include '*.sh'
+                    fileMode 0755
+                }
+            }
+            into( '/service' ) {
+                from( 'src/service' ) {
+                    include '*.sh'
+                    fileMode 0755
+                    filter( ReplaceTokens, tokens: [version: version] )
+                }
+            }
+            into( '/service/init.d' ) {
+                from( 'src/service/init.d' ) {
+                    include 'xp'
+                    fileMode 0755
+                }
+            }
+            into('/') {
+                from( 'src' ) {
+                    include 'README.txt'
+                    expand project.properties
+                }
+                from( 'src' )
+                from( rootDir ) {
+                    include 'LICENSE.txt'
+                    include 'NOTICE.txt'
+                }
+            }
         }
     }
-    into( 'service' ) {
-        from( 'src/service' ) {
-            include '*.sh'
-            fileMode 0755
-            filter( ReplaceTokens, tokens: [version: version] )
-
-        }
-    }
-    into( 'service/init.d' ) {
-        from( 'src/service/init.d' ) {
-            include 'xp'
-            fileMode 0755
-        }
-    }
-    into( 'lib' ) {
-        from( configurations.lib )
-    }
-    from( 'src' ) {
-        include 'README.txt'
-        expand project.properties
-    }
-    from( 'src' )
-    from( rootDir ) {
-        include 'LICENSE.txt'
-        include 'NOTICE.txt'
-    }
 }
 
-task installDist( dependsOn: [copyResources, copyBundles] ) {
-    description = 'Update distribution without creating zip.'
-    group = 'Dist'
+tasks.distTar.enabled = false
+
+installDist {
+    destinationDir = file("$buildDir/install")
 }
 
-task distZip( type: Zip, dependsOn: installDist ) {
-    description = 'Build full distribution zip.'
-    group = 'Dist'
-    from installDir
-    // into archiveBase
-}
-build.dependsOn distZip
+build.dependsOn installDist
 
 task run( type: Exec, dependsOn: 'installDist' ) {
     description = 'Starts the server (use -Pdev for dev-mode or -Pdebug for debug-mode).'

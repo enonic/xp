@@ -12,7 +12,7 @@ public class AuditLogConfigImpl
     implements AuditLogConfig
 {
 
-    private final static Logger LOG = LoggerFactory.getLogger( AuditLogConfigImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( AuditLogConfigImpl.class );
 
     private boolean enabled;
 

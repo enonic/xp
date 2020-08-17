@@ -11,7 +11,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 final class TextAreaType
     extends TextInputTypeBase
 {
-    public final static TextAreaType INSTANCE = new TextAreaType();
+    public static final TextAreaType INSTANCE = new TextAreaType();
 
     private TextAreaType()
     {

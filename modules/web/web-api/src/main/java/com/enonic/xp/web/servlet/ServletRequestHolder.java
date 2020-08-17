@@ -7,7 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public final class ServletRequestHolder
 {
-    private final static ThreadLocal<HttpServletRequest> CURRENT_REQUEST = new ThreadLocal<>();
+    private static final ThreadLocal<HttpServletRequest> CURRENT_REQUEST = new ThreadLocal<>();
 
     public static HttpServletRequest getRequest()
     {

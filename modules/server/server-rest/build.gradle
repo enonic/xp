@@ -2,9 +2,9 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':jaxrs:jaxrs-api' )
-    testCompile project( ':jaxrs:jaxrs-impl' )
-    testCompile project( path: ':core:core-app', configuration: 'testOutput' )
-    testCompile project( path: ':jaxrs:jaxrs-impl', configuration: 'testOutput' )
+
+    testImplementation( testFixtures( project(":jaxrs:jaxrs-impl") ) )
+    testImplementation( testFixtures( project(":core:core-api") ) )
 }
 
 jar {

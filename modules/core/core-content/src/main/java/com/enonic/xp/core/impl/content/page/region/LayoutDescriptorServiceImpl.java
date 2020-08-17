@@ -29,9 +29,9 @@ import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
 public final class LayoutDescriptorServiceImpl
     implements LayoutDescriptorService
 {
-    private final static Logger LOG = LoggerFactory.getLogger( LayoutDescriptorServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( LayoutDescriptorServiceImpl.class );
 
-    private final static String PATH = "/site/layouts";
+    private static final String PATH = "/site/layouts";
 
     private MixinService mixinService;
 

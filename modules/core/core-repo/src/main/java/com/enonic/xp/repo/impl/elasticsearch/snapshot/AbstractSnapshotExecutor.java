@@ -27,15 +27,16 @@ class AbstractSnapshotExecutor
 
     final EsClient client;
 
-    private final RepositoryService repositoryService;
+    final String snapshotName;
 
-    private static final Logger LOG = LoggerFactory.getLogger( AbstractSnapshotExecutor.class );
+    final RepositoryIds repositories;
 
     AbstractSnapshotExecutor( final Builder builder )
     {
         snapshotRepositoryName = builder.snapshotRepositoryName;
         client = builder.client;
-        repositoryService = builder.repositoryService;
+        repositories = builder.repositories;
+        snapshotName = builder.snapshotName;
     }
 
     void closeIndices( final RepositoryIds repositoryIds )
@@ -129,7 +130,9 @@ class AbstractSnapshotExecutor
 
         private EsClient client;
 
-        private RepositoryService repositoryService;
+        private RepositoryIds repositories;
+
+        private String snapshotName;
 
         @SuppressWarnings("unchecked")
         public B snapshotRepositoryName( final String val )
@@ -145,13 +148,19 @@ class AbstractSnapshotExecutor
             return (B) this;
         }
 
-
         @SuppressWarnings("unchecked")
-        public B repositoryService( final RepositoryService val )
+        public B repositories( final RepositoryIds repositories )
         {
-            repositoryService = val;
+            this.repositories = repositories;
             return (B) this;
         }
 
+        @SuppressWarnings("unchecked")
+        public B snapshotName( final String snapshotName )
+        {
+            this.snapshotName = snapshotName;
+            return (B) this;
+        }
     }
+
 }

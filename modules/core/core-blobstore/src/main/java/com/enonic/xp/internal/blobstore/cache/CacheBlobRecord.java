@@ -21,7 +21,7 @@ public class CacheBlobRecord
 
     private byte[] content;
 
-    private final static Logger LOG = LoggerFactory.getLogger( CacheBlobRecord.class );
+    private static final Logger LOG = LoggerFactory.getLogger( CacheBlobRecord.class );
 
     public CacheBlobRecord( final BlobRecord blobRecord )
     {

@@ -9,10 +9,9 @@ import java.util.stream.Collectors;
 import com.google.common.io.CharSource;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
-import com.enonic.xp.repo.impl.dump.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.DumpConstants;
+import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.upgrade.AbstractMetaDumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgradeException;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre4.Pre4BranchDumpEntryJson;
@@ -52,7 +51,7 @@ public class IndexAccessSegmentsDumpUpgrader
     }
 
     @Override
-    protected String upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent )
+    protected byte[] upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent )
     {
         final Pre4VersionsDumpEntryJson versionsDumpEntry = deserializeValue( entryContent, Pre4VersionsDumpEntryJson.class );
 
@@ -70,7 +69,7 @@ public class IndexAccessSegmentsDumpUpgrader
     }
 
     @Override
-    protected String upgradeBranchEntry( final RepositoryId repositoryId, final String entryContent )
+    protected byte[] upgradeBranchEntry( final RepositoryId repositoryId, final String entryContent )
     {
         final Pre4BranchDumpEntryJson branchDumpEntry = deserializeValue( entryContent, Pre4BranchDumpEntryJson.class );
         final Pre6VersionDumpEntryJson upgradedVersionDumpEntry = upgradeVersionDumpEntry( repositoryId, branchDumpEntry.getMeta() );
@@ -90,17 +89,17 @@ public class IndexAccessSegmentsDumpUpgrader
         //Retrieves the existing node version
         final Segment nodeDataSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_NODE_SEGMENT_LEVEL );
         final BlobKey nodeBlobKey = BlobKey.from( versionDumpEntry.getBlobKey() );
-        final BlobRecord nodeBlobRecord = dumpReader.getDumpBlobStore().
+        final DumpBlobRecord nodeBlobRecord = dumpReader.getDumpBlobStore().
             getRecord( nodeDataSegment, nodeBlobKey );
-        final Pre4NodeVersionJson nodeVersion = getNodeVersion( (DumpBlobRecord) nodeBlobRecord );
+        final Pre4NodeVersionJson nodeVersion = getNodeVersion( nodeBlobRecord );
 
         //Serializes the new index config blob
-        final String serializedIndexConfig = serialize( nodeVersion.getIndexConfigDocument() );
+        final byte[] serializedIndexConfig = serialize( nodeVersion.getIndexConfigDocument() );
         final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_INDEX_CONFIG_SEGMENT_LEVEL );
         final BlobKey indexConfigBlobKey = addRecord( indexConfigSegment, serializedIndexConfig );
 
         //Serializes the new access control blob
-        final String serializedAccessControl = serializeAccessControl( nodeVersion );
+        final byte[] serializedAccessControl = serializeAccessControl( nodeVersion );
         final Segment accessControlSegment =
             RepositorySegmentUtils.toSegment( repositoryId, DumpConstants.DUMP_ACCESS_CONTROL_SEGMENT_LEVEL );
         final BlobKey accessControlBlobKey = addRecord( accessControlSegment, serializedAccessControl );
@@ -130,7 +129,7 @@ public class IndexAccessSegmentsDumpUpgrader
         }
     }
 
-    private String serializeAccessControl( final Pre4NodeVersionJson nodeVersion )
+    private byte[] serializeAccessControl( final Pre4NodeVersionJson nodeVersion )
     {
         final AccessControlJson accessControlJson = AccessControlJson.create().
             inheritPermissions( nodeVersion.isInheritPermissions() ).

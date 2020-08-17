@@ -1,5 +1,7 @@
 package com.enonic.xp.image;
 
+import java.io.IOException;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentId;
@@ -7,6 +9,7 @@ import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ReadImageParamsTest
@@ -25,7 +28,7 @@ public class ReadImageParamsTest
             scaleWidth( true ).
             filterParam( "filterParam" ).
             backgroundColor( 0xFF0000 ).
-            format( "format" ).
+            mimeType( "image/png" ).
             quality( 2 ).
             orientation( ImageOrientation.BottomRight ).
             build();
@@ -41,8 +44,17 @@ public class ReadImageParamsTest
         assertTrue( readImageParams.isScaleWidth() );
         assertEquals( "filterParam", readImageParams.getFilterParam() );
         assertEquals( 0xFF0000, readImageParams.getBackgroundColor() );
-        assertEquals( "format", readImageParams.getFormat() );
+        assertEquals( "image/png", readImageParams.getMimeType() );
         assertEquals( 2, readImageParams.getQuality() );
         assertEquals( ImageOrientation.BottomRight, readImageParams.getOrientation() );
+    }
+
+    @Test
+    public void testWithoutMimeTypeAndFormat()
+        throws IOException
+    {
+        assertThrows( IllegalArgumentException.class,
+                      () -> ReadImageParams.newImageParams().contentId( ContentId.from( "content-id" ) ).binaryReference(
+                          BinaryReference.from( "ref" ) ).build() );
     }
 }

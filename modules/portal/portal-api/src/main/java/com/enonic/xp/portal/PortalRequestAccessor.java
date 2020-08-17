@@ -7,7 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public final class PortalRequestAccessor
 {
-    private final static ThreadLocal<PortalRequest> CURRENT = new ThreadLocal<>();
+    private static final ThreadLocal<PortalRequest> CURRENT = new ThreadLocal<>();
 
     public static PortalRequest get()
     {

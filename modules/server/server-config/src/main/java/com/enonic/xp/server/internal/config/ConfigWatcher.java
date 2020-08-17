@@ -1,7 +1,6 @@
 package com.enonic.xp.server.internal.config;
 
 import java.io.File;
-import java.io.FileFilter;
 
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
@@ -15,8 +14,6 @@ import org.osgi.service.component.annotations.Reference;
 public final class ConfigWatcher
     extends FileAlterationListenerAdaptor
 {
-    private static final FileFilter FILTER = ( file ) -> file.getName().endsWith( ".cfg" ) && file.isFile();
-
     private FileAlterationMonitor monitor;
 
     private ConfigInstaller installer;
@@ -112,7 +109,7 @@ public final class ConfigWatcher
 
     private FileAlterationObserver newObserver( final File path )
     {
-        final FileAlterationObserver observer = new FileAlterationObserver( path, FILTER );
+        final FileAlterationObserver observer = new FileAlterationObserver( path, this::isConfigFile );
         observer.addListener( this );
         return observer;
     }
@@ -127,7 +124,7 @@ public final class ConfigWatcher
 
     private void updateConfigs( final File baseDir )
     {
-        final File[] list = baseDir.listFiles( FILTER );
+        final File[] list = baseDir.listFiles( this::isConfigFile );
         if ( list == null )
         {
             return;
@@ -137,6 +134,11 @@ public final class ConfigWatcher
         {
             updateConfig( file );
         }
+    }
+
+    private boolean isConfigFile( final File file )
+    {
+        return file.getName().endsWith( ".cfg" ) && file.isFile();
     }
 
     @Reference

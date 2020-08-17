@@ -14,7 +14,6 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateUserParams;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserEditor;
 
 public final class ModifyUserHandler
     implements ScriptBean
@@ -50,7 +49,7 @@ public final class ModifyUserHandler
         {
             final UpdateUserParams params = UpdateUserParams.create().
                 userKey( this.principalKey ).
-                editor( this.newUserEditor() ).
+                editor( this::newUserEditor ).
                 build();
 
             return new PrincipalMapper( this.securityService.get().updateUser( params ) );
@@ -58,15 +57,13 @@ public final class ModifyUserHandler
         return null;
     }
 
-    private UserEditor newUserEditor()
+    private void newUserEditor( final EditableUser edit )
     {
-        return edit -> {
-            final ScriptValue value = this.editor.call( new PrincipalMapper( edit.source ) );
-            if ( value != null )
-            {
-                updateUser( edit, value.getMap() );
-            }
-        };
+        final ScriptValue value = this.editor.call( new PrincipalMapper( edit.source ) );
+        if ( value != null )
+        {
+            updateUser( edit, value.getMap() );
+        }
     }
 
     private void updateUser( final EditableUser target, final Map map )

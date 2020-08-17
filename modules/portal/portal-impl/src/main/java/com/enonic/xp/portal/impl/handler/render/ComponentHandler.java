@@ -10,7 +10,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
-import com.enonic.xp.portal.impl.rendering.RendererFactory;
+import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.trace.Trace;
@@ -26,7 +26,7 @@ public final class ComponentHandler
 {
     private ContentService contentService;
 
-    private RendererFactory rendererFactory;
+    private RendererDelegate rendererDelegate;
 
     private PageDescriptorService pageDescriptorService;
 
@@ -56,7 +56,7 @@ public final class ComponentHandler
         final ComponentHandlerWorker worker = new ComponentHandlerWorker( (PortalRequest) webRequest );
         worker.componentPath = ComponentPath.from( restPath );
         worker.setContentService( this.contentService );
-        worker.rendererFactory = rendererFactory;
+        worker.rendererDelegate = rendererDelegate;
         worker.pageDescriptorService = pageDescriptorService;
         worker.pageTemplateService = pageTemplateService;
         worker.postProcessor = postProcessor;
@@ -75,9 +75,9 @@ public final class ComponentHandler
     }
 
     @Reference
-    public void setRendererFactory( final RendererFactory rendererFactory )
+    public void setRendererDelegate( final RendererDelegate rendererDelegate )
     {
-        this.rendererFactory = rendererFactory;
+        this.rendererDelegate = rendererDelegate;
     }
 
     @Reference

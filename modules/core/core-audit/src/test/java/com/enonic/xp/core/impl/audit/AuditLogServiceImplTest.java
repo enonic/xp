@@ -74,6 +74,7 @@ public class AuditLogServiceImplTest
                 build() );
         IndexService indexService = Mockito.mock( IndexService.class );
         Mockito.when( indexService.isMaster() ).thenReturn( true );
+        Mockito.when( indexService.waitForYellowStatus() ).thenReturn( true );
         RepositoryService repositoryService = Mockito.mock( RepositoryService.class );
 
         AuditLogConfig config = Mockito.mock( AuditLogConfig.class );

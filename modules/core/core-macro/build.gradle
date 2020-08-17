@@ -2,8 +2,8 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':core:core-api' )
-    testCompile project( path: ':core:core-api', configuration: 'testOutput' )
-    testCompile project( path: ':core:core-app', configuration: 'testOutput' )
+
+    testImplementation( testFixtures( project(":core:core-app") ) )
 }
 
 jar {

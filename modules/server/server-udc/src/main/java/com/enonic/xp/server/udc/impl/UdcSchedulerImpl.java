@@ -41,10 +41,10 @@ public class UdcSchedulerImpl
         jobScheduler.shutdownNow();
     }
 
+    @Override
     public RecurringJob scheduleWithFixedDelay( Runnable command )
     {
         return jobScheduler.
-            scheduleWithFixedDelay( command, initialDelay, delay, e -> LOG.debug( "Error error while sending UDC", e ),
-                                    e -> LOG.error( "Error error while sending UDC, no further attempts will be made", e ) );
+            scheduleWithFixedDelay( command, initialDelay, delay, e -> LOG.debug( "Error error while sending UDC", e ), e -> LOG.error( "Error error while sending UDC, no further attempts will be made", e ) );
     }
 }

@@ -10,8 +10,6 @@ import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 public class StemmedFunctionArguments
     extends AbstractSimpleQueryStringFunctionArguments
 {
-    private final String functionName = "stemmed";
-
     private String language;
 
     StemmedFunctionArguments( final List<ValueExpr> arguments )
@@ -29,7 +27,7 @@ public class StemmedFunctionArguments
     @Override
     public String getFunctionName()
     {
-        return functionName;
+        return "stemmed";
     }
 
     @Override

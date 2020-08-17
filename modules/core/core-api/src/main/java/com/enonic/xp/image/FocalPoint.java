@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 
 public final class FocalPoint
 {
-    public final static FocalPoint DEFAULT = new FocalPoint( 0.5, 0.5 );
+    public static final FocalPoint DEFAULT = new FocalPoint( 0.5, 0.5 );
 
     private final double x;
 

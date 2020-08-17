@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.issue;
 
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.issue.IssueCommentQuery;
+import com.enonic.xp.issue.IssueConstants;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;

@@ -9,12 +9,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Iterator;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageInputStream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -53,79 +49,56 @@ public class ImageServiceImpl
     public ByteSource readImage( final ReadImageParams readImageParams )
         throws IOException
     {
+        if ( renderAsSource( readImageParams ) )
+        {
+            return contentService.getBinary( readImageParams.getContentId(), readImageParams.getBinaryReference() );
+        }
+
         final Path cachedImagePath = getCachedImagePath( readImageParams );
-        ByteSource imageByteSource = ImmutableFilesHelper.computeIfAbsent( cachedImagePath, () -> createImage( readImageParams ) );
-        return imageByteSource;
+        return ImmutableFilesHelper.computeIfAbsent( cachedImagePath, () -> createImage( readImageParams ) );
     }
 
     private ByteSource createImage( final ReadImageParams readImageParams )
         throws IOException
     {
         final ByteSource blob = contentService.getBinary( readImageParams.getContentId(), readImageParams.getBinaryReference() );
+
         if ( blob != null )
         {
-            if ( renderAsSourceGif( readImageParams ) && isGifImage( blob ) )
-            {
-                return blob;
-            }
-
             final BufferedImage bufferedImage = readBufferedImage( blob, readImageParams );
             if ( bufferedImage != null )
             {
-                return serializeImage( readImageParams, bufferedImage );
+                if ( readImageParams.getMimeType() != null )
+                {
+                    return ByteSource.wrap(
+                        ImageHelper.serializeImage( bufferedImage, readImageParams.getMimeType(), readImageParams.getQuality() ) );
+                }
+                else if ( readImageParams.getFormat() != null )
+                {
+                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    ImageIO.write( bufferedImage, readImageParams.getFormat(), out );
+                    return ByteSource.wrap( out.toByteArray() );
+                }
             }
         }
         return null;
     }
 
-    private boolean renderAsSourceGif( final ReadImageParams params )
+    private boolean renderAsSource( final ReadImageParams params )
     {
-        final boolean noScale =
-            ( params.getScaleParams() == null || "full".equals( params.getScaleParams().getName() ) ) && !params.isScaleSquare() &&
-                !params.isScaleWidth();
-        final boolean noCropping = params.getCropping() == null;
-        final boolean noFilter = params.getFilterParam() == null;
-        final boolean isGifFormat = "gif".equals( params.getFormat() );
-
-        return isGifFormat && noScale && noCropping && noFilter;
+        return "image/gif".equals( params.getMimeType() ) || "gif".equals( params.getFormat() );
     }
 
-    private boolean isGifImage( final ByteSource blob )
-    {
-        try
-        {
-            final ImageInputStream iis = ImageIO.createImageInputStream( blob.openStream() );
-            final Iterator<ImageReader> imageReaders = ImageIO.getImageReaders( iis );
-            while ( imageReaders.hasNext() )
-            {
-                final ImageReader reader = imageReaders.next();
-                if ( "gif".equals( reader.getFormatName() ) )
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        catch ( IOException e )
-        {
-            return false;
-        }
-    }
-
+    @Deprecated
     @Override
     public String getFormatByMimeType( final String mimeType )
         throws IOException
     {
-        final Iterator<ImageWriter> i = ImageIO.getImageWritersByMIMEType( mimeType );
-        if ( !i.hasNext() )
-        {
-            throw new IOException( "The image-based media type " + mimeType + " is not supported for writing" );
-        }
-
-        return i.next().getOriginatingProvider().getFormatNames()[0];
+        return ImageHelper.getFormatByMimeType( mimeType );
     }
 
     private Path getCachedImagePath( final ReadImageParams readImageParams )
+        throws IOException
     {
         final String homeDir = HomeDir.get().toString();
 
@@ -157,9 +130,9 @@ public class ImageServiceImpl
         //Filter string value
         final String filter = readImageParams.getFilterParam() != null ? readImageParams.getFilterParam() : "no-filter";
 
-        //Format string value
-        final String format = readImageParams.getFormat();
-
+        final String format = readImageParams.getMimeType() == null
+            ? readImageParams.getFormat()
+            : ImageHelper.getFormatByMimeType( readImageParams.getMimeType() );
         //Background string value
         final String background = "background-" + readImageParams.getBackgroundColor();
 
@@ -217,7 +190,7 @@ public class ImageServiceImpl
             }
 
             //Applies alpha channel removal
-            if ( !ImageHelper.supportsAlphaChannel( readImageParams.getFormat() ) )
+            if ( !"image/png".equals( readImageParams.getMimeType() ) && !ImageHelper.supportsAlphaChannel( readImageParams.getFormat() ) )
             {
                 bufferedImage = ImageHelper.removeAlphaChannel( bufferedImage, readImageParams.getBackgroundColor() );
             }
@@ -327,37 +300,6 @@ public class ImageServiceImpl
         final BufferedImage destinationImage = new BufferedImage( resultWidth, resultHeight, bufferedImage.getType() );
         final AffineTransformOp op = new AffineTransformOp( transform, AffineTransformOp.TYPE_BICUBIC );
         return op.filter( bufferedImage, destinationImage );
-    }
-
-    private ByteSource serializeImage( final ReadImageParams readImageParams, final BufferedImage bufferedImage )
-        throws IOException
-    {
-        final ByteSource serializedImage;
-        //TODO If/Else due to a difference of treatment between admin and portal. Should be uniform
-        if ( readImageParams.getQuality() != 0 )
-        {
-            serializedImage = serializeImage( bufferedImage, readImageParams.getFormat(), readImageParams.getQuality() );
-        }
-        else
-        {
-            serializedImage = serializeImage( bufferedImage, readImageParams.getFormat() );
-        }
-        return serializedImage;
-    }
-
-    private ByteSource serializeImage( final BufferedImage bufferedImage, final String format, final int quality )
-        throws IOException
-    {
-        final byte[] bytes = ImageHelper.writeImage( bufferedImage, format, quality );
-        return ByteSource.wrap( bytes );
-    }
-
-    private ByteSource serializeImage( final BufferedImage bufferedImage, final String format )
-        throws IOException
-    {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ImageIO.write( bufferedImage, format, out );
-        return ByteSource.wrap( out.toByteArray() );
     }
 
     @Reference

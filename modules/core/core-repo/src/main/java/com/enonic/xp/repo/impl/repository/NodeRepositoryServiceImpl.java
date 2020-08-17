@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repo.impl.elasticsearch.ClusterHealthStatus;
 import com.enonic.xp.repo.impl.elasticsearch.ClusterStatusCode;
+import com.enonic.xp.repo.impl.index.ApplyMappingRequest;
 import com.enonic.xp.repo.impl.index.CreateIndexRequest;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repository.CreateRepositoryParams;
@@ -27,13 +28,11 @@ public class NodeRepositoryServiceImpl
 {
     private IndexServiceInternal indexServiceInternal;
 
-    private final static Logger LOG = LoggerFactory.getLogger( NodeRepositoryServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( NodeRepositoryServiceImpl.class );
 
-    private final static String CLUSTER_HEALTH_TIMEOUT_VALUE = "10s";
+    private static final String DEFAULT_INDEX_RESOURCE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
 
-    private final static String DEFAULT_INDEX_RESOURCE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
-
-    private final static IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =
+    private static final IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =
         new DefaultIndexResourceProvider( DEFAULT_INDEX_RESOURCE_FOLDER );
 
     @Override
@@ -158,29 +157,6 @@ public class NodeRepositoryServiceImpl
         }
 
         throw new IllegalArgumentException( "Cannot resolve index name." );
-    }
-
-    private boolean checkClusterHealth()
-    {
-        try
-        {
-            final ClusterHealthStatus clusterHealth = indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
-
-            if ( clusterHealth.isTimedOut() || clusterHealth.getClusterStatusCode().equals( ClusterStatusCode.RED ) )
-            {
-                LOG.error( "Cluster not healthy: " + "timed out: " + clusterHealth.isTimedOut() + ", state: " +
-                               clusterHealth.getClusterStatusCode() );
-                return false;
-            }
-
-            return true;
-        }
-        catch ( Exception e )
-        {
-            LOG.error( "Failed to get cluster health status", e );
-        }
-
-        return false;
     }
 
     @Reference

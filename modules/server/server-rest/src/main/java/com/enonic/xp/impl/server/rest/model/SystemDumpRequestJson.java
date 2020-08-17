@@ -10,6 +10,8 @@ public class SystemDumpRequestJson
 
     private final boolean includeVersions;
 
+    private final boolean archive;
+
     private final Integer maxAge;
 
     private final Integer maxVersions;
@@ -17,12 +19,13 @@ public class SystemDumpRequestJson
     public SystemDumpRequestJson( @JsonProperty("name") final String name, //
                                   @JsonProperty("includeVersions") final boolean includeVersions, //
                                   @JsonProperty("maxAge") final Integer maxAge, //
-                                  @JsonProperty("maxVersions") final Integer maxVersions )
+                                  @JsonProperty("maxVersions") final Integer maxVersions, @JsonProperty("archive") final boolean archive )
     {
         this.name = name;
         this.maxAge = maxAge;
         this.maxVersions = maxVersions;
         this.includeVersions = includeVersions;
+        this.archive = archive;
     }
 
     public String getName()
@@ -45,6 +48,11 @@ public class SystemDumpRequestJson
         return maxVersions;
     }
 
+    public boolean isArchive()
+    {
+        return archive;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -57,13 +65,13 @@ public class SystemDumpRequestJson
             return false;
         }
         final SystemDumpRequestJson that = (SystemDumpRequestJson) o;
-        return includeVersions == that.includeVersions && Objects.equals( name, that.name ) && Objects.equals( maxAge, that.maxAge ) &&
-            Objects.equals( maxVersions, that.maxVersions );
+        return includeVersions == that.includeVersions && archive == that.archive && Objects.equals( name, that.name ) &&
+            Objects.equals( maxAge, that.maxAge ) && Objects.equals( maxVersions, that.maxVersions );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( name, includeVersions, maxAge, maxVersions );
+        return Objects.hash( name, includeVersions, maxAge, maxVersions, archive );
     }
 }

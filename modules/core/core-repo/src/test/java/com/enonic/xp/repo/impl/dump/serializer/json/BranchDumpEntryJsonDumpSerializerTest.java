@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.dump.serializer.json;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class BranchDumpEntryJsonDumpSerializerTest
             nodeId( NodeId.from( "myOtherId" ) ).
             build();
 
-        final String serializedEntry = serializer.serialize( branchDumpEntry );
+        final String serializedEntry = new String( serializer.serialize( branchDumpEntry ), StandardCharsets.UTF_8 );
 
         final BranchDumpEntry newBranchDumpEntry = serializer.toBranchMetaEntry( serializedEntry );
 

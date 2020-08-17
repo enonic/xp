@@ -6,7 +6,7 @@ import com.enonic.xp.annotation.PublicApi;
 public final class FragmentComponentType
     extends ComponentType
 {
-    public final static FragmentComponentType INSTANCE = new FragmentComponentType();
+    public static final FragmentComponentType INSTANCE = new FragmentComponentType();
 
     private FragmentComponentType()
     {

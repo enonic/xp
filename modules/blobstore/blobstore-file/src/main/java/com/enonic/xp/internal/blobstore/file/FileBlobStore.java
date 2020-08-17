@@ -1,16 +1,17 @@
 package com.enonic.xp.internal.blobstore.file;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.nio.file.attribute.FileTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
 import com.google.common.io.MoreFiles;
 import com.google.common.io.RecursiveDeleteOption;
 
@@ -24,14 +25,21 @@ import com.enonic.xp.blob.SegmentLevel;
 public final class FileBlobStore
     implements BlobStore
 {
-    private final static Logger LOG = LoggerFactory.getLogger( FileBlobStore.class );
+    private static final Logger LOG = LoggerFactory.getLogger( FileBlobStore.class );
 
-    private final File baseDir;
+    private final Path baseDir;
 
-    public FileBlobStore( final File baseDir )
+    public FileBlobStore( final Path baseDir )
     {
         this.baseDir = baseDir;
-        mkdirs( this.baseDir, true );
+        try
+        {
+            Files.createDirectories( baseDir );
+        }
+        catch ( IOException e )
+        {
+            throw new BlobStoreException( "Failed to create directory [" + baseDir + "]", e );
+        }
     }
 
     @Override
@@ -43,8 +51,9 @@ public final class FileBlobStore
 
     private BlobRecord doGetRecord( final Segment segment, final BlobKey key )
     {
-        final File file = getBlobFile( segment, key );
-        if ( !file.exists() )
+        final Path file = getBlobFile( segment, key );
+
+        if ( !Files.exists( file ) )
         {
             return null;
         }
@@ -86,13 +95,14 @@ public final class FileBlobStore
     public void removeRecord( final Segment segment, final BlobKey key )
         throws BlobStoreException
     {
-        final File file = getBlobFile( segment, key );
-        if ( file.exists() )
+        final Path file = getBlobFile( segment, key );
+        try
         {
-            if ( !file.delete() )
-            {
-                throw new BlobStoreException( "Failed to remove blob" );
-            }
+            Files.deleteIfExists( file );
+        }
+        catch ( IOException e )
+        {
+            throw new BlobStoreException( "Failed to remove blob", e );
         }
     }
 
@@ -101,8 +111,8 @@ public final class FileBlobStore
     {
         try
         {
-            return java.nio.file.Files.walk( this.baseDir.toPath() ).
-                filter( path -> path.toFile().isFile() ).
+            return Files.walk( this.baseDir ).
+                filter( path -> Files.isRegularFile( path ) ).
                 filter( path -> isBlobFileName( segment, path ) ).
                 map( path -> {
                     final BlobKey blobKey = BlobKey.from( path.getFileName().toString() );
@@ -118,16 +128,29 @@ public final class FileBlobStore
     @Override
     public Stream<Segment> listSegments()
     {
-        return Arrays.stream( this.baseDir.listFiles() ).
-            flatMap( firstSegmentLevelFile -> {
-                final String firstSegmentLevel = firstSegmentLevelFile.getName();
+        try
+        {
+            return nioFilesList( this.baseDir ).stream().flatMap( firstSegmentLevelFile -> {
+                final String firstSegmentLevel = firstSegmentLevelFile.getFileName().toString();
 
-                return Arrays.stream( firstSegmentLevelFile.listFiles() ).
-                    map( secondSegmentLevelFile -> {
-                        final String secondSegmentLevel = secondSegmentLevelFile.getName();
-                        return Segment.from( firstSegmentLevel, secondSegmentLevel );
-                    } );
+                try
+                {
+                    return nioFilesList( firstSegmentLevelFile ).stream().
+                        map( secondSegmentLevelFile -> {
+                            final String secondSegmentLevel = secondSegmentLevelFile.getFileName().toString();
+                            return Segment.from( firstSegmentLevel, secondSegmentLevel );
+                        } );
+                }
+                catch ( IOException e )
+                {
+                    throw new BlobStoreException( "Failed to list segments", e );
+                }
             } );
+        }
+        catch ( IOException e )
+        {
+            throw new BlobStoreException( "Failed to list segments", e );
+        }
     }
 
     @Override
@@ -135,17 +158,17 @@ public final class FileBlobStore
     {
         try
         {
-            final File segmentParentDirectory = new File( this.baseDir, segment.getLevel( 0 ).getValue() );
-            final File segmentDirectory = new File( segmentParentDirectory, segment.getLevel( 1 ).getValue() );
+            final Path segmentParentDirectory = this.baseDir.resolve( segment.getLevel( 0 ).getValue() );
+            final Path segmentDirectory = segmentParentDirectory.resolve( segment.getLevel( 1 ).getValue() );
 
-            if ( segmentDirectory.exists() )
+            if ( Files.exists( segmentDirectory ) )
             {
-                MoreFiles.deleteRecursively( segmentDirectory.toPath(), RecursiveDeleteOption.ALLOW_INSECURE );
+                MoreFiles.deleteRecursively( segmentDirectory, RecursiveDeleteOption.ALLOW_INSECURE );
             }
 
-            if ( segmentParentDirectory.exists() && segmentParentDirectory.list().length == 0 )
+            if ( Files.exists( segmentParentDirectory ) && nioFilesList( segmentParentDirectory ).isEmpty() )
             {
-                segmentParentDirectory.delete();
+                Files.delete( segmentParentDirectory );
             }
 
         }
@@ -155,20 +178,28 @@ public final class FileBlobStore
         }
     }
 
-    @SuppressWarnings("unusedReturnValue")
+    private static List<Path> nioFilesList( Path dir )
+        throws IOException
+    {
+        try (final Stream<Path> stream = Files.list( dir ))
+        {
+            return stream.collect( Collectors.toList() );
+        }
+    }
+
     private BlobRecord addRecord( final Segment segment, final BlobKey key, final ByteSource in )
         throws IOException
     {
-        final File file = getBlobFile( segment, key );
+        final Path file = getBlobFile( segment, key );
 
-        if ( !file.exists() )
+        if ( !Files.exists( file ) )
         {
-            mkdirs( file.getParentFile(), false );
-            in.copyTo( Files.asByteSink( file ) );
+            Files.createDirectories( file.getParent() );
+            in.copyTo( MoreFiles.asByteSink( file ) );
         }
         else
         {
-            file.setLastModified( System.currentTimeMillis() );
+            Files.setLastModifiedTime( file, FileTime.fromMillis( System.currentTimeMillis() ) );
         }
 
         return new FileBlobRecord( key, file );
@@ -183,41 +214,23 @@ public final class FileBlobStore
             return false;
         }
 
-        return getBlobFile( segment, BlobKey.from( fileName ) ).exists();
+        return Files.exists( getBlobFile( segment, BlobKey.from( fileName ) ) );
     }
 
-    private File getBlobFile( final Segment segment, final BlobKey key )
+    private Path getBlobFile( final Segment segment, final BlobKey key )
     {
         final String id = key.toString();
-        File file = this.baseDir;
+        Path file = this.baseDir;
+
         for ( SegmentLevel level : segment.getLevels() )
         {
-            file = new File( file, level.getValue() );
-        }
-        file = new File( file, id.substring( 0, 2 ) );
-        file = new File( file, id.substring( 2, 4 ) );
-        file = new File( file, id.substring( 4, 6 ) );
-        return new File( file, id );
-    }
-
-    private boolean mkdirs( final File dir, final boolean error )
-    {
-        if ( dir.isDirectory() )
-        {
-            return false;
+            file = file.resolve( level.getValue() );
         }
 
-        final boolean flag = dir.mkdirs();
-
-        if ( flag )
-        {
-            LOG.debug( "Created directory [" + dir.getAbsolutePath() + "]" );
-        }
-        else if ( error )
-        {
-            throw new BlobStoreException( "Failed to create directory [" + dir.getAbsolutePath() + "]" );
-        }
-
-        return flag;
+        return file.
+            resolve( id.substring( 0, 2 ) ).
+            resolve( id.substring( 2, 4 ) ).
+            resolve( id.substring( 4, 6 ) ).
+            resolve( id );
     }
 }

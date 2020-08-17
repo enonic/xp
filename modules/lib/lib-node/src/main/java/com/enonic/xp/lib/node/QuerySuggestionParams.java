@@ -21,15 +21,14 @@ final class QuerySuggestionParams
         }
 
         final SuggestionQueries.Builder suggestionQueries = SuggestionQueries.create();
-        for ( String name : suggestionsMap.keySet() )
-        {
-            final Map<String, Object> suggestionQueryMap = (Map<String, Object>) suggestionsMap.get( name );
-            final SuggestionQuery suggestionQuery = suggestionQueryFromParams( name, suggestionQueryMap );
+
+        suggestionsMap.forEach( ( name, suggestionQueryMap ) -> {
+            final SuggestionQuery suggestionQuery = suggestionQueryFromParams( name, (Map<String, Object>) suggestionQueryMap );
             if ( suggestionQuery != null )
             {
                 suggestionQueries.add( suggestionQuery );
             }
-        }
+        } );
 
         return suggestionQueries.build();
     }

@@ -10,7 +10,7 @@ import com.enonic.xp.security.RoleKeys;
 
 public final class ServiceDescriptor
 {
-    private final static String ROOT_SERVICE_PREFIX = "services/";
+    private static final String ROOT_SERVICE_PREFIX = "services/";
 
     private final DescriptorKey key;
 

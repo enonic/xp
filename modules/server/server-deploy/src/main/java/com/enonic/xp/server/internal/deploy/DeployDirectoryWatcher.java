@@ -1,7 +1,6 @@
 package com.enonic.xp.server.internal.deploy;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,13 +27,11 @@ import com.enonic.xp.server.ServerInfo;
 public final class DeployDirectoryWatcher
     implements FileAlterationListener
 {
-    private final static Logger LOGGER = LoggerFactory.getLogger( DeployDirectoryWatcher.class );
+    private static final Logger LOGGER = LoggerFactory.getLogger( DeployDirectoryWatcher.class );
 
-    private static final FileFilter FILTER = ( file ) -> file.getName().endsWith( ".jar" ) && file.isFile();
+    private final Map<String, ApplicationKey> applicationKeyByPath = new ConcurrentHashMap<>();
 
-    private Map<String, ApplicationKey> applicationKeyByPath = new ConcurrentHashMap<>();
-
-    private Map<ApplicationKey, Stack<String>> pathsByApplicationKey = new ConcurrentHashMap<>();
+    private final Map<ApplicationKey, Stack<String>> pathsByApplicationKey = new ConcurrentHashMap<>();
 
     private ApplicationService applicationService;
 
@@ -60,7 +57,7 @@ public final class DeployDirectoryWatcher
     private FileAlterationObserver addListenerDir( final File dir )
         throws Exception
     {
-        final FileAlterationObserver observer = new FileAlterationObserver( dir, FILTER );
+        final FileAlterationObserver observer = new FileAlterationObserver( dir, this::isJarFile );
         observer.addListener( this );
 
         installApps( dir );
@@ -75,7 +72,7 @@ public final class DeployDirectoryWatcher
             return;
         }
 
-        final File[] files = dir.listFiles( FILTER );
+        final File[] files = dir.listFiles( this::isJarFile );
         if ( files == null )
         {
             return;
@@ -92,6 +89,11 @@ public final class DeployDirectoryWatcher
                 LOGGER.error( "Failed to install local application [" + file.getName() + "]", e );
             }
         }
+    }
+
+    private boolean isJarFile( final File file )
+    {
+        return file.getName().endsWith( ".jar" ) && file.isFile();
     }
 
     @Deactivate
@@ -200,11 +202,6 @@ public final class DeployDirectoryWatcher
         final ApplicationKey applicationKey = applicationKeyByPath.remove( path );
 
         this.pathsByApplicationKey.computeIfPresent( applicationKey, ( applicationKeyParam, fileNameStack ) -> {
-
-            if ( fileNameStack == null )
-            {
-                return null;
-            }
 
             //Retrieve the file name for the currently installed application
             final String lastInstalledFile = fileNameStack.isEmpty() ? null : fileNameStack.peek();

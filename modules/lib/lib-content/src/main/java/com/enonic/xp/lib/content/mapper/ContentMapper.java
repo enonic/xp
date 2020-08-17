@@ -18,6 +18,7 @@ import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.sortvalues.SortValuesProperty;
 
 import static com.enonic.xp.lib.content.mapper.PageMapper.PAGE;
 
@@ -26,12 +27,20 @@ public final class ContentMapper
 {
     private final Content value;
 
+    private final SortValuesProperty sort;
+
     public ContentMapper( final Content value )
     {
-        this.value = value;
+        this( value, null );
     }
 
-    private static void serialize( final MapGenerator gen, final Content value )
+    public ContentMapper( final Content value, final SortValuesProperty sort )
+    {
+        this.value = value;
+        this.sort = sort;
+    }
+
+    private void serialize( final MapGenerator gen, final Content value )
     {
         gen.value( "_id", value.getId() );
         gen.value( "_name", value.getName() );
@@ -50,6 +59,15 @@ public final class ContentMapper
         {
             gen.value( "childOrder", value.getChildOrder().toString() );
         }
+        if ( sort != null && sort.getValues() != null )
+        {
+            gen.array( "_sort" );
+            for ( final Object sortValue : sort.getValues() )
+            {
+                gen.value( sortValue );
+            }
+            gen.end();
+        }
 
         serializeData( gen, value.getData() );
         serializeExtraData( gen, value.getAllExtraData() );
@@ -59,14 +77,14 @@ public final class ContentMapper
         serializeWorkflowInfo( gen, value.getWorkflowInfo() );
     }
 
-    private static void serializeData( final MapGenerator gen, final PropertyTree value )
+    private void serializeData( final MapGenerator gen, final PropertyTree value )
     {
         gen.map( "data" );
         new PropertyTreeMapper( value ).serialize( gen );
         gen.end();
     }
 
-    private static void serializePublishInfo( final MapGenerator gen, final ContentPublishInfo info )
+    private void serializePublishInfo( final MapGenerator gen, final ContentPublishInfo info )
     {
         gen.map( "publish" );
         if ( info != null )
@@ -78,7 +96,7 @@ public final class ContentMapper
         gen.end();
     }
 
-    private static void serializeWorkflowInfo( final MapGenerator gen, final WorkflowInfo info )
+    private void serializeWorkflowInfo( final MapGenerator gen, final WorkflowInfo info )
     {
         gen.map( "workflow" );
         if ( info != null )
@@ -94,7 +112,7 @@ public final class ContentMapper
         gen.end();
     }
 
-    private static void serializeExtraData( final MapGenerator gen, final Iterable<ExtraData> values )
+    private void serializeExtraData( final MapGenerator gen, final Iterable<ExtraData> values )
     {
         gen.map( "x" );
 
@@ -123,7 +141,7 @@ public final class ContentMapper
         gen.end();
     }
 
-    private static void serializePage( final MapGenerator gen, final Page value )
+    private void serializePage( final MapGenerator gen, final Page value )
     {
         if ( value != null )
         {
@@ -136,7 +154,7 @@ public final class ContentMapper
         }
     }
 
-    private static void serializeAttachments( final MapGenerator gen, final Attachments value )
+    private void serializeAttachments( final MapGenerator gen, final Attachments value )
     {
         gen.map( "attachments" );
         if ( value != null )

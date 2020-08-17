@@ -9,6 +9,7 @@ import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.query.filter.Filters;
 
 final class FindContentIdsByParentCommand
     extends AbstractContentCommand
@@ -73,6 +74,17 @@ final class FindContentIdsByParentCommand
             final NodeId parentId = NodeId.from( params.getParentId().toString() );
             findNodesParam.parentId( parentId );
         }
+    }
+
+    @Override
+    protected Filters createFilters()
+    {
+        final Filters.Builder filters = Filters.create();
+        super.createFilters().
+            forEach( filters::add );
+        params.getQueryFilters().
+            forEach( filters::add );
+        return filters.build();
     }
 
     public static class Builder

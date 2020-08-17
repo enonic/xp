@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -52,7 +52,7 @@ public class WebRequest
 
     public WebRequest()
     {
-        this.params = LinkedHashMultimap.create();
+        this.params = LinkedListMultimap.create();
         this.headers = new HashMap<>();
         this.cookies = new HashMap<>();
     }

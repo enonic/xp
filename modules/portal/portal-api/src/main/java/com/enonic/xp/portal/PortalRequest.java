@@ -19,9 +19,9 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 public final class PortalRequest
     extends WebRequest
 {
-    private final static Branch DEFAULT_BRANCH = ContentConstants.BRANCH_DRAFT;
+    private static final Branch DEFAULT_BRANCH = ContentConstants.BRANCH_DRAFT;
 
-    private final static RepositoryId DEFAULT_REPOSITORY_ID = ContentConstants.CONTENT_REPO_ID;
+    private static final RepositoryId DEFAULT_REPOSITORY_ID = ContentConstants.CONTENT_REPO_ID;
 
     private RenderMode mode;
 

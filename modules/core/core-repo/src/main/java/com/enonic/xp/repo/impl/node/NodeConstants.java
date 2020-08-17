@@ -36,6 +36,6 @@ public final class NodeConstants
         user( NODE_SUPER_USER ).
         build();
 
-    final static Clock CLOCK = Clock.tick( Clock.system( ZoneOffset.UTC ), Duration.ofMillis( 1 ) );
+    static final Clock CLOCK = Clock.tick( Clock.system( ZoneOffset.UTC ), Duration.ofMillis( 1 ) );
 
 }

@@ -2,7 +2,9 @@ package com.enonic.xp.core.impl.form;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.form.FormOptionSet;
@@ -40,6 +42,28 @@ public class FormDefaultValuesProcessorImplTest
         defaultValuesProcessor.setDefaultValues( form, data );
 
         assertTrue( data.getString( "testInput" ).equals( "two" ) );
+    }
+
+    @Test
+    public void defaultValue_string_nonEmptyData()
+    {
+        Input input = Input.create().
+            name( "testInput" ).
+            label( "testInput" ).
+            inputType( InputTypeName.TEXT_LINE ).
+            defaultValue( InputTypeDefault.create().property( InputTypeProperty.create( "default", "two" ).build() ).build() ).
+            build();
+
+        final Form form = Form.create().
+            addFormItem( input ).
+            build();
+
+        final FormDefaultValuesProcessor defaultValuesProcessor = new FormDefaultValuesProcessorImpl();
+        final PropertyTree data = new PropertyTree();
+        data.setProperty( PropertyPath.from( "testInput" ), ValueFactory.newString( "three" ) );
+        defaultValuesProcessor.setDefaultValues( form, data );
+
+        assertEquals( "three", data.getString( "testInput" ) );
     }
 
     @Test

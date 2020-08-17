@@ -8,9 +8,9 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 final class NameCharacterHelper
 {
-    private final static ImmutableSet<Character> ADDITIONAL_ALLOWED_CHARACTERS = ImmutableSet.of( ' ', '-' );
+    private static final ImmutableSet<Character> ADDITIONAL_ALLOWED_CHARACTERS = ImmutableSet.of( ' ', '-' );
 
-    private final static ImmutableSet<Byte> ALLOWED_UNICODE_CATEGORIES =
+    private static final ImmutableSet<Byte> ALLOWED_UNICODE_CATEGORIES =
         ImmutableSet.of( Character.LOWERCASE_LETTER, Character.MODIFIER_LETTER, Character.UPPERCASE_LETTER, Character.DECIMAL_DIGIT_NUMBER,
                          Character.END_PUNCTUATION, Character.START_PUNCTUATION, Character.FINAL_QUOTE_PUNCTUATION,
                          Character.INITIAL_QUOTE_PUNCTUATION, Character.OTHER_PUNCTUATION, Character.CURRENCY_SYMBOL,

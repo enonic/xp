@@ -3,9 +3,13 @@ apply from: "$rootDir/gradle/osgi.gradle"
 dependencies {
     compile project( ':core:core-api' )
     implementation project( ':core:core-internal' )
-    testCompile project( path: ':core:core-api', configuration: 'testOutput' )
-    testCompile "org.apache.felix:org.apache.felix.framework:${felixVersion}"
-    testImplementation 'org.ops4j.pax.tinybundles:tinybundles:3.0.0'
+
+    testFixturesApi(  'org.ops4j.pax.tinybundles:tinybundles:3.0.0' )
+    testFixturesImplementation "org.apache.felix:org.apache.felix.framework:${felixVersion}"
+    testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
+
+    testImplementation( testFixtures( project(":core:core-api") ) )
 }
 
 jar {

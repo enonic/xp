@@ -9,7 +9,7 @@ import com.enonic.xp.data.ValueTypes;
 final class ImageUploaderType
     extends InputTypeBase
 {
-    public final static ImageUploaderType INSTANCE = new ImageUploaderType();
+    public static final ImageUploaderType INSTANCE = new ImageUploaderType();
 
     private ImageUploaderType()
     {

@@ -20,7 +20,7 @@ import com.enonic.xp.trace.Tracer;
 final class TaskWrapper
     implements Runnable, ProgressReporter
 {
-    private final static Logger LOG = LoggerFactory.getLogger( TaskWrapper.class );
+    private static final Logger LOG = LoggerFactory.getLogger( TaskWrapper.class );
 
     private final TaskInfo taskInfo;
 

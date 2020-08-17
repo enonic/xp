@@ -4,17 +4,18 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -29,7 +30,6 @@ import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.node.UpdateNodeCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
-import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
@@ -42,8 +42,6 @@ public class RepositoryEntryServiceImpl
 {
 
     private IndexServiceInternal indexServiceInternal;
-
-    private NodeRepositoryService nodeRepositoryService;
 
     private NodeStorageService nodeStorageService;
 
@@ -96,27 +94,42 @@ public class RepositoryEntryServiceImpl
     @Override
     public Repository getRepositoryEntry( final RepositoryId repositoryId )
     {
-        if ( this.nodeRepositoryService.isInitialized( SystemConstants.SYSTEM_REPO.getId() ) )
-        {
-            final NodeId nodeId = NodeId.from( repositoryId.toString() );
-            final Node node = this.nodeStorageService.get( nodeId, createInternalContext() );
-            return node == null ? null : RepositoryNodeTranslator.toRepository( node );
-        }
-        return null;
+        final NodeId nodeId = NodeId.from( repositoryId.toString() );
+        final Node node = this.nodeStorageService.get( nodeId, createInternalContext() );
+        return node == null ? null : RepositoryNodeTranslator.toRepository( node );
     }
 
     @Override
     public Repository addBranchToRepositoryEntry( final RepositoryId repositoryId, final Branch branch )
     {
-        NodeEditor nodeEditor = RepositoryNodeTranslator.toCreateBranchNodeEditor( branch );
-        return updateRepositoryEntry( repositoryId, nodeEditor );
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+            id( NodeId.from( repositoryId ) ).
+            editor( RepositoryNodeTranslator.toCreateBranchNodeEditor( branch ) ).
+            build();
+
+        return updateRepositoryNode( updateNodeParams );
     }
 
     @Override
     public Repository removeBranchFromRepositoryEntry( final RepositoryId repositoryId, final Branch branch )
     {
-        NodeEditor nodeEditor = RepositoryNodeTranslator.toDeleteBranchNodeEditor( branch );
-        return updateRepositoryEntry( repositoryId, nodeEditor );
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+            id( NodeId.from( repositoryId ) ).
+            editor( RepositoryNodeTranslator.toDeleteBranchNodeEditor( branch ) ).
+            build();
+
+        return updateRepositoryNode( updateNodeParams );
+    }
+
+    @Override
+    public Repository updateRepositoryEntry( UpdateRepositoryEntryParams params )
+    {
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+            id( NodeId.from( params.getRepositoryId() ) ).
+            editor( RepositoryNodeTranslator.toUpdateRepositoryNodeEditor( params ) ).
+            setBinaryAttachments( params.getAttachments() ).
+            build();
+        return updateRepositoryNode( updateNodeParams );
     }
 
     @Override
@@ -138,6 +151,12 @@ public class RepositoryEntryServiceImpl
         }
     }
 
+    @Override
+    public ByteSource getBinary( AttachedBinary attachedBinary )
+    {
+        return binaryService.get( SystemConstants.SYSTEM_REPO_ID, attachedBinary );
+    }
+
     private void refresh()
     {
         createContext().callWith( () -> {
@@ -150,14 +169,8 @@ public class RepositoryEntryServiceImpl
         } );
     }
 
-    private Repository updateRepositoryEntry( final RepositoryId repositoryId, final NodeEditor nodeEditor )
+    private Repository updateRepositoryNode( final UpdateNodeParams updateNodeParams )
     {
-        final NodeId nodeId = NodeId.from( repositoryId.toString() );
-        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
-            id( nodeId ).
-            editor( nodeEditor ).
-            build();
-
         final Node updatedNode = createContext().callWith( () -> UpdateNodeCommand.create().
             params( updateNodeParams ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -167,20 +180,21 @@ public class RepositoryEntryServiceImpl
             build().
             execute() );
 
-        if ( updatedNode != null )
-        {
-            eventPublisher.publish( NodeEvents.updated( updatedNode ) );
-            refresh();
-            eventPublisher.publish( RepositoryEvents.updated( repositoryId ) );
-        }
+        eventPublisher.publish( NodeEvents.updated( updatedNode ) );
 
-        return RepositoryNodeTranslator.toRepository( updatedNode );
+        refresh();
+
+        Repository repository = RepositoryNodeTranslator.toRepository( updatedNode );
+
+        eventPublisher.publish( RepositoryEvents.updated( repository.getId() ) );
+
+        return repository;
     }
 
     private Context createContext()
     {
         return ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             branch( SystemConstants.BRANCH_SYSTEM ).
             build();
     }
@@ -188,7 +202,7 @@ public class RepositoryEntryServiceImpl
     private InternalContext createInternalContext()
     {
         return InternalContext.create( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             branch( SystemConstants.BRANCH_SYSTEM ).
             build();
     }
@@ -197,12 +211,6 @@ public class RepositoryEntryServiceImpl
     public void setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )
     {
         this.indexServiceInternal = indexServiceInternal;
-    }
-
-    @Reference
-    public void setNodeRepositoryService( final NodeRepositoryService nodeRepositoryService )
-    {
-        this.nodeRepositoryService = nodeRepositoryService;
     }
 
     @Reference

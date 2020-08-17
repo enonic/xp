@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.toSet;
 public final class AccessControlList
     implements Iterable<AccessControlEntry>
 {
-    private final static AccessControlList EMPTY = AccessControlList.create().build();
+    private static final AccessControlList EMPTY = AccessControlList.create().build();
 
     private final ImmutableMap<PrincipalKey, AccessControlEntry> entries;
 

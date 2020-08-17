@@ -192,7 +192,7 @@ public class IndexServiceImplTest
     {
 
         final Context cmsRepoContext = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( ContentConstants.CONTENT_REPO.getId() ).
+            repositoryId( ContentConstants.CONTENT_REPO_ID ).
             branch( ContentConstants.BRANCH_DRAFT ).
             build();
 
@@ -234,7 +234,7 @@ public class IndexServiceImplTest
     {
 
         final Context systemRepoContext = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             branch( SystemConstants.BRANCH_SYSTEM ).
             build();
 
@@ -249,13 +249,11 @@ public class IndexServiceImplTest
 
         refresh();
 
-        assertEquals( 5, systemRepoContext.
-            callWith( this::findAllNodes ).getHits() );
+        final long nodesInSystemRepoCount = systemRepoContext.callWith( this::findAllNodes ).getHits();
 
         this.indexService.purgeSearchIndex( new PurgeIndexParams( systemRepoContext.getRepositoryId() ) );
 
-        assertEquals( 0, systemRepoContext.
-            callWith( this::findAllNodes ).getHits() );
+        assertEquals( 0, systemRepoContext.callWith( this::findAllNodes ).getHits() );
 
         this.indexService.reindex( ReindexParams.create().
             addBranch( systemRepoContext.getBranch() ).
@@ -265,9 +263,7 @@ public class IndexServiceImplTest
 
         refresh();
 
-        assertEquals( 5, systemRepoContext.
-            callWith( this::findAllNodes ).getHits() );
-
+        assertEquals( nodesInSystemRepoCount, systemRepoContext.callWith( this::findAllNodes ).getHits() );
     }
 
     private FindNodesByQueryResult findAllNodes()

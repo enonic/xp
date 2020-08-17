@@ -7,7 +7,7 @@ import com.enonic.xp.site.Site;
 public class ContentRelativePathResolver
 {
 
-    public final static String SITE_WILDCARD = "${site}";
+    public static final String SITE_WILDCARD = "${site}";
 
     public static String resolve( final Content content, final String pathExpression )
     {

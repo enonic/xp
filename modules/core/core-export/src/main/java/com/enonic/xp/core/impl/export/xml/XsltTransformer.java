@@ -48,10 +48,7 @@ public final class XsltTransformer
 
             if ( params != null )
             {
-                for ( final String paramName : params.keySet() )
-                {
-                    transformer.setParameter( paramName, params.get( paramName ) );
-                }
+                params.forEach( transformer::setParameter );
             }
 
             return new XsltTransformer( transformer );

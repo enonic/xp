@@ -20,9 +20,9 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public final class PropertyPath
     implements Iterable<PropertyPath.Element>
 {
-    public final static PropertyPath ROOT = new PropertyPath();
+    public static final PropertyPath ROOT = new PropertyPath();
 
-    public final static String ELEMENT_DIVIDER = ".";
+    public static final String ELEMENT_DIVIDER = ".";
 
     private final ImmutableList<Element> elements;
 
@@ -299,9 +299,9 @@ public final class PropertyPath
      */
     public static class Element
     {
-        private final static String INDEX_START_MARKER = "[";
+        private static final String INDEX_START_MARKER = "[";
 
-        private final static String INDEX_STOP_MARKER = "]";
+        private static final String INDEX_STOP_MARKER = "]";
 
         private final String name;
 

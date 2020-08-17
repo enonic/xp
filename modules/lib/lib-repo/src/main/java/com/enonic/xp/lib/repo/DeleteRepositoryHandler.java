@@ -26,8 +26,8 @@ public class DeleteRepositoryHandler
 
     public boolean execute()
     {
-        if ( SystemConstants.SYSTEM_REPO.getId().toString().equals( repositoryId ) ||
-            ContentConstants.CONTENT_REPO.getId().toString().equals( repositoryId ) )
+        if ( SystemConstants.SYSTEM_REPO_ID.toString().equals( repositoryId ) ||
+            ContentConstants.CONTENT_REPO_ID.toString().equals( repositoryId ) )
         {
             throw new RepositoryExeption( "No allowed to delete repository [" + repositoryId + "]" );
         }

@@ -15,6 +15,7 @@ import org.osgi.framework.BundleContext;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.idprovider.IdProviderDescriptorService;
 import com.enonic.xp.portal.PortalRequest;
@@ -26,6 +27,7 @@ import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
+import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.impl.standard.ScriptRuntimeFactoryImpl;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderConfig;
@@ -89,6 +91,8 @@ public class IdProviderControllerServiceImplTest
         final Application application = Mockito.mock( Application.class );
         Mockito.when( application.getBundle() ).thenReturn( bundle );
         Mockito.when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
+        Mockito.when( application.isStarted() ).thenReturn( true );
+        Mockito.when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
         Mockito.when( applicationService.getInstalledApplication( ApplicationKey.from( "defaultapplication" ) ) ).thenReturn( application );
@@ -102,12 +106,12 @@ public class IdProviderControllerServiceImplTest
             return new UrlResource( resourceKey, resourceUrl );
         } );
 
-        final ScriptRuntimeFactoryImpl runtimeFactory = new ScriptRuntimeFactoryImpl();
-        runtimeFactory.setApplicationService( applicationService );
-        runtimeFactory.setResourceService( resourceService );
+        final ScriptAsyncService scriptAsyncService = Mockito.mock( ScriptAsyncService.class );
 
-        final PortalScriptServiceImpl scriptService = new PortalScriptServiceImpl();
-        scriptService.setScriptRuntimeFactory( runtimeFactory );
+        final ScriptRuntimeFactoryImpl runtimeFactory =
+            new ScriptRuntimeFactoryImpl( applicationService, resourceService, scriptAsyncService );
+
+        final PortalScriptServiceImpl scriptService = new PortalScriptServiceImpl( runtimeFactory );
         scriptService.initialize();
 
         return scriptService;

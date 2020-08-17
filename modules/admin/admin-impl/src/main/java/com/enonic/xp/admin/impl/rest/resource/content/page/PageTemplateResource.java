@@ -16,7 +16,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.json.content.ContentListJson;
-import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
@@ -44,7 +43,10 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteService;
 
-@javax.ws.rs.Path(ResourceConstants.REST_ROOT + "content/page/template")
+import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.CMS_PATH;
+import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.REST_ROOT;
+
+@javax.ws.rs.Path(REST_ROOT + "{content:(content|" + CMS_PATH + "/content)}/page/template")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")

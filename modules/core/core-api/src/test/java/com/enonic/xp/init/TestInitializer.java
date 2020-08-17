@@ -5,7 +5,7 @@ public class TestInitializer
 {
     private final boolean isMaster;
 
-    private transient boolean initialized;
+    private volatile boolean initialized;
 
     private final Runnable initialization;
 
@@ -27,6 +27,12 @@ public class TestInitializer
     protected boolean isInitialized()
     {
         return initialized;
+    }
+
+    @Override
+    protected boolean readyToInitialize()
+    {
+        return true;
     }
 
     protected void setInitialized( final boolean initialized )

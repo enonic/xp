@@ -11,7 +11,6 @@ public abstract class ExternalInitializer
 
     protected ExternalInitializer( final Builder builder )
     {
-
         super( builder );
         this.indexService = builder.indexService;
     }
@@ -20,6 +19,12 @@ public abstract class ExternalInitializer
     protected boolean isMaster()
     {
         return indexService.isMaster();
+    }
+
+    @Override
+    protected boolean readyToInitialize()
+    {
+        return indexService.waitForYellowStatus();
     }
 
     public static class Builder<T extends Builder>

@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.dump.reader;
 
+import java.io.Closeable;
+
 import com.google.common.io.ByteSource;
 import com.google.common.io.LineProcessor;
 
@@ -15,6 +17,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 
 public interface DumpReader
+    extends Closeable
 {
     RepositoryIds getRepositories();
 
@@ -31,5 +34,4 @@ public interface DumpReader
     ByteSource getBinary( final RepositoryId repositoryId, final String blobKey );
 
     DumpMeta getDumpMeta();
-
 }

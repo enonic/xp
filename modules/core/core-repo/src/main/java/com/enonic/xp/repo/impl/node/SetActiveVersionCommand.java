@@ -11,7 +11,7 @@ import com.enonic.xp.security.acl.Permission;
 public class SetActiveVersionCommand
     extends AbstractNodeCommand
 {
-    private final static Permission REQUIRED_PERMISSION = Permission.MODIFY;
+    private static final Permission REQUIRED_PERMISSION = Permission.MODIFY;
 
     private final NodeId nodeId;
 

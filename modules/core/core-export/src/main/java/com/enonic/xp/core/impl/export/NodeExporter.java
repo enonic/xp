@@ -29,13 +29,9 @@ import com.enonic.xp.util.BinaryReference;
 
 public class NodeExporter
 {
-    private final static int DEFAULT_BATCH_SIZE = 100;
-
-    private final static String LINE_SEPARATOR = System.getProperty( "line.separator" );
+    private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
     private final NodePath sourceNodePath;
-
-    private final int batchSize;
 
     private final NodeService nodeService;
 
@@ -57,12 +53,11 @@ public class NodeExporter
 
     private final NodeExportResult.Builder result = NodeExportResult.create();
 
-    private final static Logger LOG = LoggerFactory.getLogger( NodeExporter.class );
+    private static final Logger LOG = LoggerFactory.getLogger( NodeExporter.class );
 
     private NodeExporter( final Builder builder )
     {
         this.sourceNodePath = builder.sourceNodePath;
-        this.batchSize = builder.batchSize;
         this.nodeService = builder.nodeService;
         this.exportWriter = builder.exportWriter;
         this.rootDirectory = builder.rootDirectory;
@@ -192,34 +187,20 @@ public class NodeExporter
     {
         final Node parentNode = nodeService.getByPath( parentPath );
 
-        final double batches = getNumberOfBatches( parentPath );
+        final FindNodesByParentResult children = doExport( parentPath );
 
-        int currentFrom = 0;
+        final Nodes childNodes = this.nodeService.getByIds( children.getNodeIds() );
 
-        final Nodes.Builder allCurrentLevelChildren = Nodes.create();
-
-        for ( int i = 1; i <= batches; i++ )
-        {
-            final FindNodesByParentResult childrenBatch = exportBatch( parentPath, currentFrom );
-
-            final Nodes childNodes = this.nodeService.getByIds( childrenBatch.getNodeIds() );
-
-            allCurrentLevelChildren.addAll( childNodes );
-            currentFrom += this.batchSize;
-        }
-
-        writeNodeOrderList( parentNode, allCurrentLevelChildren.build() );
+        writeNodeOrderList( parentNode, childNodes );
     }
 
-    private FindNodesByParentResult exportBatch( final NodePath nodePath, final int currentFrom )
+    private FindNodesByParentResult doExport( final NodePath nodePath )
     {
-        final FindNodesByParentResult childrenBatch = nodeService.findByParent( FindNodesByParentParams.create().
+        final FindNodesByParentResult children = nodeService.findByParent( FindNodesByParentParams.create().
             parentPath( nodePath ).
-            from( currentFrom ).
-            size( this.batchSize ).
             build() );
 
-        final Nodes childNodes = this.nodeService.getByIds( childrenBatch.getNodeIds() );
+        final Nodes childNodes = this.nodeService.getByIds( children.getNodeIds() );
 
         for ( final Node child : childNodes )
         {
@@ -233,7 +214,7 @@ public class NodeExporter
                 result.addError( new ExportError( e.toString() ) );
             }
         }
-        return childrenBatch;
+        return children;
     }
 
 
@@ -314,23 +295,6 @@ public class NodeExporter
             getTotalHits();
     }
 
-    private double getNumberOfBatches( final NodePath nodePath )
-    {
-        final FindNodesByParentResult countResult = nodeService.findByParent( FindNodesByParentParams.create().
-            countOnly( true ).
-            parentPath( nodePath ).
-            build() );
-
-        final long totalHits = countResult.getTotalHits();
-
-        return getBatchSize( totalHits );
-    }
-
-    private double getBatchSize( final double totalHits )
-    {
-        return Math.ceil( totalHits / this.batchSize );
-    }
-
     private Path resolveNodeDataFolder( final Node node )
     {
         final Path nodeBasePath = NodeExportPathResolver.resolveNodeBasePath( this.targetDirectory, node.path(), sourceNodePath );
@@ -352,8 +316,6 @@ public class NodeExporter
     public static final class Builder
     {
         private NodePath sourceNodePath;
-
-        private int batchSize = DEFAULT_BATCH_SIZE;
 
         private NodeService nodeService;
 
@@ -380,12 +342,6 @@ public class NodeExporter
         public Builder sourceNodePath( NodePath exportRootNode )
         {
             this.sourceNodePath = exportRootNode;
-            return this;
-        }
-
-        public Builder batchSize( int batchSize )
-        {
-            this.batchSize = batchSize;
             return this;
         }
 

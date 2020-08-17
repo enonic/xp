@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 public final class SystemProperties
     extends HashMap<String, String>
 {
-    private final static String ENV_PREFIX = "env.";
+    private static final String ENV_PREFIX = "env.";
 
     public String getEnv( final String key )
     {

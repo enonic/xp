@@ -7,9 +7,9 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public final class GeoPoint
 {
-    private final static Range<Double> LATITUDE_RANGE = Range.closed( -90.0, 90.0 );
+    private static final Range<Double> LATITUDE_RANGE = Range.closed( -90.0, 90.0 );
 
-    private final static Range<Double> LONGITUDE_RANGE = Range.closed( -180.0, 180.0 );
+    private static final Range<Double> LONGITUDE_RANGE = Range.closed( -180.0, 180.0 );
 
     private final String value;
 

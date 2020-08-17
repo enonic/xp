@@ -18,6 +18,7 @@ import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
@@ -29,6 +30,11 @@ import com.enonic.xp.session.Session;
 public final class LoginHandler
     implements ScriptBean
 {
+    private enum Scope
+    {
+        SESSION, REQUEST
+    }
+
     private String user;
 
     private String password;
@@ -38,6 +44,8 @@ public final class LoginHandler
     private String[] idProvider;
 
     private Integer sessionTimeout;
+
+    private Scope scope;
 
     private Supplier<SecurityService> securityService;
 
@@ -70,21 +78,25 @@ public final class LoginHandler
         this.sessionTimeout = sessionTimeout;
     }
 
+    public void setScope( final String scope )
+    {
+        this.scope = Scope.valueOf( scope );
+    }
+
     public LoginResultMapper login()
     {
         AuthenticationInfo authInfo = noIdProviderSpecified() ? attemptLoginWithAllExistingIdProviders() : attemptLogin();
 
         if ( authInfo.isAuthenticated() )
         {
-            final Session session = this.context.get().getLocalScope().getSession();
-            if ( session != null )
+            switch ( this.scope )
             {
-                session.setAttribute( authInfo );
-            }
-
-            if ( this.sessionTimeout != null )
-            {
-                setSessionTimeout();
+                case REQUEST:
+                    this.context.get().getLocalScope().setAttribute( authInfo );
+                    break;
+                case SESSION:
+                default:
+                    createSession( authInfo );
             }
 
             return new LoginResultMapper( authInfo );
@@ -92,6 +104,20 @@ public final class LoginHandler
         else
         {
             return new LoginResultMapper( authInfo, "Access Denied" );
+        }
+    }
+
+    private void createSession( final AuthenticationInfo authInfo )
+    {
+        final Session session = this.context.get().getLocalScope().getSession();
+        if ( session != null )
+        {
+            session.setAttribute( authInfo );
+        }
+
+        if ( this.sessionTimeout != null )
+        {
+            setSessionTimeout();
         }
     }
 
@@ -193,7 +219,7 @@ public final class LoginHandler
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.ANONYMOUS ).build();
         return ContextBuilder.from( this.context.get() ).
             authInfo( authInfo ).
-            repositoryId( SecurityConstants.SECURITY_REPO.getId() ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             branch( SecurityConstants.BRANCH_SECURITY ).build().
             callWith( runnable );
     }

@@ -8,68 +8,86 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.ManagedService;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.util.tracker.BundleTracker;
 import org.osgi.util.tracker.BundleTrackerCustomizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.app.ApplicationBundleUtils;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.core.impl.app.ApplicationHelper;
+import com.enonic.xp.core.impl.app.ApplicationRegistry;
 import com.enonic.xp.core.internal.Dictionaries;
 
 @Component(immediate = true)
-public final class ApplicationConfigInvalidator
-    implements BundleTrackerCustomizer<ServiceRegistration<?>>
+public class ApplicationConfigInvalidator
 {
-    private ApplicationService service;
+    private static final Logger LOG = LoggerFactory.getLogger( ApplicationConfigInvalidator.class );
+
+    private final BundleTracker<ServiceRegistration<ManagedService>> tracker;
 
     @Activate
-    public void activate( final BundleContext context )
+    public ApplicationConfigInvalidator( final BundleContext context, @Reference final ApplicationRegistry applicationRegistry )
     {
-        final BundleTracker<ServiceRegistration<?>> tracker = new BundleTracker<>( context, Bundle.ACTIVE, this );
+        this.tracker = new BundleTracker<>( context, Bundle.ACTIVE, new Customizer( applicationRegistry ) );
+    }
+
+    @Activate
+    public void activate()
+    {
         tracker.open();
     }
 
-    @Override
-    public ServiceRegistration<?> addingBundle( final Bundle bundle, final BundleEvent event )
+    @Deactivate
+    public void deactivate()
     {
-        if ( ApplicationHelper.isApplication( bundle ) )
+        tracker.close();
+    }
+
+    private static class Customizer
+        implements BundleTrackerCustomizer<ServiceRegistration<ManagedService>>
+    {
+        private final ApplicationRegistry applicationRegistry;
+
+        public Customizer( final ApplicationRegistry applicationRegistry )
         {
-            return registerReloader( bundle );
+            this.applicationRegistry = applicationRegistry;
         }
 
-        return null;
-    }
+        @Override
+        public ServiceRegistration<ManagedService> addingBundle( final Bundle bundle, final BundleEvent event )
+        {
+            if ( ApplicationBundleUtils.isApplication( bundle ) )
+            {
+                return registerReloader( bundle );
+            }
 
-    @Override
-    public void modifiedBundle( final Bundle bundle, final BundleEvent event, final ServiceRegistration<?> object )
-    {
-        // Do nothing
-    }
+            return null;
+        }
 
-    @Override
-    public void removedBundle( final Bundle bundle, final BundleEvent event, final ServiceRegistration<?> object )
-    {
-        object.unregister();
+        @Override
+        public void modifiedBundle( final Bundle bundle, final BundleEvent event, final ServiceRegistration<ManagedService> object )
+        {
+            // Do nothing
+        }
 
-        final ApplicationKey key = ApplicationKey.from( bundle.getSymbolicName() );
-        ApplicationConfigMap.INSTANCE.remove( key );
-    }
+        @Override
+        public void removedBundle( final Bundle bundle, final BundleEvent event, final ServiceRegistration<ManagedService> object )
+        {
+            LOG.debug( "Unregister app config reloader for bundle {}", bundle.getBundleId() );
+            object.unregister();
+        }
 
-    private ServiceRegistration<?> registerReloader( final Bundle bundle )
-    {
-        final ApplicationKey key = ApplicationKey.from( bundle.getSymbolicName() );
-        final ApplicationConfigReloader reloader = new ApplicationConfigReloader( key, this.service );
+        private ServiceRegistration<ManagedService> registerReloader( final Bundle bundle )
+        {
+            final ApplicationKey key = ApplicationKey.from( bundle );
+            final ApplicationConfigReloader reloader = new ApplicationConfigReloader( bundle, applicationRegistry );
 
-        final BundleContext context = bundle.getBundleContext();
+            final BundleContext context = bundle.getBundleContext();
 
-        return context.registerService( ManagedService.class, reloader,
-                                        Dictionaries.of( Constants.SERVICE_PID, bundle.getSymbolicName() ) );
-    }
-
-    @Reference
-    public void setApplicationService( final ApplicationService service )
-    {
-        this.service = service;
+            LOG.debug( "Register app {} config reloader for bundle {}", key, bundle.getBundleId() );
+            return context.registerService( ManagedService.class, reloader, Dictionaries.of( Constants.SERVICE_PID, key.getName() ) );
+        }
     }
 }

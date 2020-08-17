@@ -17,7 +17,7 @@ import com.enonic.xp.web.dispatch.ResourceMapping;
 abstract class ResourceDefinitionImpl<T>
     implements ResourceDefinition<T>
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ResourceDefinitionImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ResourceDefinitionImpl.class );
 
     private final ResourceMapping<T> mapping;
 

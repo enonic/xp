@@ -19,6 +19,8 @@ public interface IndexService
 
     ReindexResult reindex( ReindexParams params );
 
+    boolean waitForYellowStatus();
+
     void purgeSearchIndex( PurgeIndexParams params );
 
     void initSearchIndices( InitSearchIndicesParams params );

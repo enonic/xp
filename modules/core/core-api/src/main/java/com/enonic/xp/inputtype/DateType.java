@@ -13,7 +13,7 @@ import com.enonic.xp.form.Input;
 final class DateType
     extends InputTypeBase
 {
-    public final static DateType INSTANCE = new DateType();
+    public static final DateType INSTANCE = new DateType();
 
     private DateType()
     {

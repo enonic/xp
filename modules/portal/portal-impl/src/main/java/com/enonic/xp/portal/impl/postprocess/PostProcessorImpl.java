@@ -24,10 +24,10 @@ import com.enonic.xp.web.HttpMethod;
 public final class PostProcessorImpl
     implements PostProcessor
 {
-    private final static ImmutableList<MediaType> HTML_CONTENT_TYPES =
+    private static final ImmutableList<MediaType> HTML_CONTENT_TYPES =
         ImmutableList.of( MediaType.create( "text", "html" ), MediaType.create( "application", "xhtml+xml" ) );
 
-    private final static ImmutableSet<HttpMethod> METHODS_ALLOWED_TO_PROCESS = Sets.immutableEnumSet( HttpMethod.GET, HttpMethod.POST );
+    private static final ImmutableSet<HttpMethod> METHODS_ALLOWED_TO_PROCESS = Sets.immutableEnumSet( HttpMethod.GET, HttpMethod.POST );
 
     private final List<PostProcessInstruction> instructions = new CopyOnWriteArrayList<>();
 

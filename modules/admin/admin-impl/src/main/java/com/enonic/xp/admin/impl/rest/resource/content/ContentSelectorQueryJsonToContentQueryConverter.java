@@ -40,7 +40,7 @@ public class ContentSelectorQueryJsonToContentQueryConverter
 
     private Site parentSite;
 
-    private final static FieldExpr PATH_FIELD_EXPR = FieldExpr.from( NodeIndexPath.PATH );
+    private static final FieldExpr PATH_FIELD_EXPR = FieldExpr.from( NodeIndexPath.PATH );
 
     private ContentSelectorQueryJsonToContentQueryConverter( final Builder builder )
     {

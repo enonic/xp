@@ -46,7 +46,7 @@ public final class LayoutDescriptor
         return ResourceKey.from( key.getApplicationKey(), "site/layouts/" + key.getName() + "/" + key.getName() + ".xml" );
     }
 
-    public final static class Builder
+    public static final class Builder
         extends BaseBuilder<Builder>
     {
         private RegionDescriptors regions;

@@ -9,6 +9,11 @@ public class SearchStorageName
 {
     public static final String STORAGE_INDEX_PREFIX = "search";
 
+    public static final String DIVIDER = "-";
+
+    private final String name;
+    public static final String STORAGE_INDEX_PREFIX = "search";
+
     SearchStorageName( final String name )
     {
         super( name );
