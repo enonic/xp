@@ -4,12 +4,17 @@ dependencies {
     compile project( ':core:core-api' )
     compile project( ':core:core-elasticsearch-client' )
 
+    runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-smile:${jacksonVersion}"
+    runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jacksonVersion}"
+    runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
+
     compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
 
     testFixturesImplementation( project(":core:core-audit") )
     testFixturesImplementation( testFixtures( project(":core:core-blobstore") ) )
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testFixturesImplementation "org.rauschig:jarchivelib:1.0.0"
 
     testImplementation( testFixtures( project(":core:core-api") ) )
     testImplementation( testFixtures( project(":core:core-blobstore") ) )

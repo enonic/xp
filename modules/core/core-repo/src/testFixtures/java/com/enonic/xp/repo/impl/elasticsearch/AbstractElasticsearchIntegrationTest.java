@@ -65,11 +65,10 @@ public abstract class AbstractElasticsearchIntegrationTest
 
     public static void waitForClusterHealth()
     {
-        indexService.getClusterHealth( "10s" );
-//        ElasticsearchFixture.elasticsearchIndexService.waitForYellowStatus();
+        indexService.waitForYellowStatus();
     }
 
-    protected static final RefreshResponse refresh()
+    protected static RefreshResponse refresh()
     {
         return client.indicesRefresh( new RefreshRequest() );
     }

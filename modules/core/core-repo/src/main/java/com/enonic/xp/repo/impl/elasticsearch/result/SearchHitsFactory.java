@@ -16,9 +16,9 @@ public class SearchHitsFactory
                 id( hit.getId() ).
                 score( hit.getScore() ).
                 indexName( hit.getIndex() ).
-                indexType( hit.type() ).
+                indexType( hit.getType() ). // TODO refactoring type is deprecated
                 returnValues( ReturnValuesFactory.create( hit ) ).
-                sortValues( SortValuesPropertyFactory.create( hit.sortValues() ) ).
+                sortValues( SortValuesPropertyFactory.create( hit.getSortValues() ) ).
                 highlightedFields( HighlightedPropertiesFactory.create( hit.getHighlightFields() ) );
 
             if ( hit.getExplanation() != null )

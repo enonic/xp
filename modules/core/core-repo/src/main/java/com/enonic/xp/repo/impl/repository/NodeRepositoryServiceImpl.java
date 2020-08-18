@@ -8,9 +8,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.repo.impl.elasticsearch.ClusterHealthStatus;
-import com.enonic.xp.repo.impl.elasticsearch.ClusterStatusCode;
-import com.enonic.xp.repo.impl.index.ApplyMappingRequest;
 import com.enonic.xp.repo.impl.index.CreateIndexRequest;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repository.CreateRepositoryParams;
@@ -40,8 +37,6 @@ public class NodeRepositoryServiceImpl
     {
         doCreateIndex( params, IndexType.STORAGE );
         doCreateIndex( params, IndexType.COMMIT );
-
-        checkClusterHealth();
     }
 
     @Override
@@ -67,7 +62,7 @@ public class NodeRepositoryServiceImpl
     @Override
     public boolean isInitialized( final RepositoryId repositoryId )
     {
-        if ( !checkClusterHealth() )
+        if ( !indexServiceInternal.waitForYellowStatus() )
         {
             throw new RepositoryException( "Unable to initialize repositories" );
         }

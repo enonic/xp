@@ -1,11 +1,10 @@
 package com.enonic.xp.repo.impl.repository;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -68,9 +67,19 @@ public class IndexNameResolver
 
     public static Set<String> resolveIndexNames( final RepositoryId repositoryId )
     {
-        return Stream.of( IndexNameResolver.resolveStorageIndexName( repositoryId ),
-                          IndexNameResolver.resolveSearchIndexName( repositoryId ) ).
+        return Stream.of( IndexNameResolver.resolveStorageIndexName( repositoryId )/*, // TODO should be fixed
+                          IndexNameResolver.resolveSearchIndexName( repositoryId )*/ ).
             collect( Collectors.toUnmodifiableSet() );
+    }
+
+    public static Set<String> resolveIndexNames( final RepositoryId repositoryId, final Branches branches )
+    {
+        final Set<String> indexNames = new HashSet<>();
+
+        indexNames.add( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
+        indexNames.addAll( IndexNameResolver.resolveSearchIndexNames( repositoryId, branches ) );
+
+        return Collections.unmodifiableSet( indexNames );
     }
 
     public static Set<String> resolveIndexNames( final RepositoryIds repositoryIds )

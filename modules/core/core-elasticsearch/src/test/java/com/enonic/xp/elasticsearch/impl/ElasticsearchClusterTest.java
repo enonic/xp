@@ -1,16 +1,12 @@
 package com.enonic.xp.elasticsearch.impl;
 
-import java.util.Map;
+import java.util.List;
 
 import org.elasticsearch.Version;
+import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.action.support.PlainActionFuture;
-import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.cluster.health.ClusterHealthStatus;
-import org.elasticsearch.cluster.node.DiscoveryNode;
-import org.elasticsearch.cluster.node.DiscoveryNodes;
-import org.elasticsearch.common.transport.DummyTransportAddress;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +17,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.enonic.xp.cluster.ClusterHealth;
 import com.enonic.xp.cluster.ClusterNode;
 import com.enonic.xp.cluster.ClusterNodes;
+import com.enonic.xp.elasticsearch.client.impl.EsClient;
+import com.enonic.xp.elasticsearch.client.impl.nodes.GetNodesResponse;
+import com.enonic.xp.elasticsearch.client.impl.nodes.Node;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
@@ -33,12 +32,12 @@ class ElasticsearchClusterTest
     ElasticsearchCluster activator;
 
     @Mock
-    ClusterAdminClient clusterAdminClient;
+    EsClient client;
 
     @BeforeEach
     public void setup()
     {
-        this.activator = new ElasticsearchCluster( clusterAdminClient );
+        this.activator = new ElasticsearchCluster( client );
     }
 
     private void setClusterHealth( final ClusterHealthStatus status )
@@ -49,25 +48,32 @@ class ElasticsearchClusterTest
         final PlainActionFuture<ClusterHealthResponse> action = new PlainActionFuture<>();
         action.onResponse( response );
 
-        when( this.clusterAdminClient.health( Mockito.any() ) ).thenReturn( action );
+        when( this.client.clusterHealth( Mockito.any( ClusterHealthRequest.class ) ) ).thenReturn( response );
     }
 
     @Test
     void getNodes()
     {
-        final ClusterStateResponse response = mock( ClusterStateResponse.class, RETURNS_DEEP_STUBS );
+        final GetNodesResponse response = mock( GetNodesResponse.class );
 
-        final DiscoveryNodes nodes = DiscoveryNodes.builder().
-            put( new DiscoveryNode( "testName1", "test1", DummyTransportAddress.INSTANCE, Map.of(), Version.CURRENT ) ).
-            put( new DiscoveryNode( "testName2", "test2", DummyTransportAddress.INSTANCE, Map.of(), Version.CURRENT ) ).
-            build();
+        final Node node1 = new Node();
+        node1.setId( "testId1" );
+        node1.setName( "testName1" );
+        node1.setAddress( "test1" );
+        node1.setRoles( List.of() );
+        node1.setVersion( Version.CURRENT.toString() );
 
-        when( response.getState().getNodes() ).thenReturn( nodes );
+        final Node node2 = new Node();
+        node2.setId( "testId2" );
+        node2.setName( "testName2" );
+        node2.setAddress( "test2" );
+        node2.setRoles( List.of() );
+        node2.setVersion( Version.CURRENT.toString() );
 
-        final PlainActionFuture<ClusterStateResponse> action = new PlainActionFuture<>();
-        action.onResponse( response );
+        final List<Node> nodes = List.of( node1, node2 );
 
-        when( this.clusterAdminClient.state( Mockito.any() ) ).thenReturn( action );
+        when( this.client.nodes() ).thenReturn( response );
+        when( response.getNodes() ).thenReturn( nodes );
 
         final ClusterNodes expected = ClusterNodes.create().
             add( ClusterNode.from( "testName1" ) ).

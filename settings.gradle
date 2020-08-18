@@ -69,7 +69,7 @@ include 'admin:admin-impl'
 include 'admin:admin-event'
 
 include 'itest:itest-core'
-include 'perftest:perftest-core-repo'
+//include 'perftest:perftest-core-repo'
 
 include 'tools:testing'
 

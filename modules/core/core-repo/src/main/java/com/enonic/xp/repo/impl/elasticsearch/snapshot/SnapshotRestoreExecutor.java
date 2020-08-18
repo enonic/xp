@@ -3,9 +3,8 @@ package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 import java.util.Arrays;
 
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotAction;
-import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequest;
+import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotResponse;
 
 import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
@@ -53,13 +52,12 @@ public class SnapshotRestoreExecutor
 
         final RestoreSnapshotRequest request = new RestoreSnapshotRequest().
             includeGlobalState( false ).
-            indices( indices.toArray( new String[0] ) ).
+            indices( indices ).
             repository( snapshotRepositoryName ).
             snapshot( snapshotName ).
             waitForCompletion( true );
 
-        final RestoreSnapshotResponse response = client.snapshotRestore( request );
-        return response;
+        return client.snapshotRestore( request );
     }
 
     public static Builder create()

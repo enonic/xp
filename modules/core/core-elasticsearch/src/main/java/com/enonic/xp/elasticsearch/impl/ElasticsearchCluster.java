@@ -1,17 +1,7 @@
 package com.enonic.xp.elasticsearch.impl;
 
-import java.io.IOException;
-
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.client.Client;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
-import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
-import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
-import org.elasticsearch.client.ClusterAdminClient;
-import org.elasticsearch.client.Requests;
-import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -22,9 +12,9 @@ import com.enonic.xp.cluster.Cluster;
 import com.enonic.xp.cluster.ClusterHealth;
 import com.enonic.xp.cluster.ClusterHealthStatus;
 import com.enonic.xp.cluster.ClusterId;
-import com.enonic.xp.cluster.ClusterNode;
 import com.enonic.xp.cluster.ClusterNodes;
 import com.enonic.xp.elasticsearch.client.impl.EsClient;
+import com.enonic.xp.elasticsearch.client.impl.nodes.GetNodesResponse;
 
 @Component(immediate = true)
 public final class ElasticsearchCluster
@@ -79,15 +69,9 @@ public final class ElasticsearchCluster
     {
         try
         {
-            final ClusterStateRequest clusterStateRequest = Requests.clusterStateRequest().
-                clear().
-                nodes( true ).
-                masterNodeTimeout( CLUSTER_HEALTH_TIMEOUT );
+            final GetNodesResponse response = client.nodes();
 
-            final ClusterStateResponse response = clusterAdminClient.state( clusterStateRequest ).actionGet();
-
-            final DiscoveryNodes members = response.getState().getNodes();
-            return ClusterNodesFactory.create( members );
+            return ClusterNodesFactory.create( response.getNodes() );
         }
         catch ( Exception e )
         {
@@ -106,7 +90,6 @@ public final class ElasticsearchCluster
     }
 
     private ClusterHealthResponse doGetHealth()
-        throws IOException
     {
         return client.clusterHealth( new ClusterHealthRequest().
             timeout( CLUSTER_HEALTH_TIMEOUT ).
