@@ -210,24 +210,30 @@ public class ParentProjectSynchronizer
     {
         if ( isToSyncPath( targetContent ) )
         {
-            if ( targetContext.callWith( () -> contentService.contentExists( targetContent.getParentPath() ) ) &&
-                sourceContext.callWith( () -> contentService.contentExists( sourceContent.getParentPath() ) ) )
+            final Content sourceParent = sourceContext.callWith( () -> contentService.getByPath( sourceContent.getParentPath() ) );
+            final ContentPath targetParentPath = targetContext.callWith( () -> contentService.contentExists( sourceParent.getId() )
+                ? contentService.getById( sourceParent.getId() ).getPath()
+                : ( "/content".equals( sourceParent.getPath().toString() ) || "/".equals( sourceParent.getPath().toString() ) )
+                    ? ContentPath.ROOT
+                    : null );
+
+            if ( targetParentPath != null )
             {
-                final Content targetParent = targetContext.callWith( () -> contentService.getByPath( targetContent.getParentPath() ) );
-                final Content sourceParent = sourceContext.callWith( () -> contentService.getByPath( sourceContent.getParentPath() ) );
-
-                if ( !targetContent.getParentPath().equals( sourceContent.getParentPath() ) &&
-                    targetParent.getId().equals( sourceParent.getId() ) )
+                if ( !targetParentPath.equals( targetContent.getParentPath() ) )
                 {
-                    if ( contentService.contentExists( targetParent.getParentPath() ) )
-                    {
-                        final MoveContentParams moveContentParams = MoveContentParams.create().
-                            contentId( targetContent.getId() ).
-                            parentContentPath( targetParent.getParentPath() ).
-                            stopInheritPath( false ).
-                            build();
+                    final MoveContentParams moveContentParams = MoveContentParams.create().
+                        contentId( targetContent.getId() ).
+                        parentContentPath( targetParentPath ).
+                        stopInheritPath( false ).
+                        build();
 
+                    try
+                    {
                         contentService.move( moveContentParams );
+                    }
+                    catch ( Exception e )
+                    {
+                        e.printStackTrace();
                     }
                     return contentService.getById( targetContent.getId() );
                 }
@@ -355,7 +361,8 @@ public class ParentProjectSynchronizer
             !Objects.equals( sourceContent.getPage(), targetContent.getPage() ) ||
             !Objects.equals( sourceContent.getThumbnail(), targetContent.getThumbnail() ) ||
             !Objects.equals( sourceContent.getProcessedReferences(), targetContent.getProcessedReferences() ) ||
-            sourceContent.inheritsPermissions() != targetContent.inheritsPermissions() || sourceContent.isValid() != targetContent.isValid();
+            sourceContent.inheritsPermissions() != targetContent.inheritsPermissions() ||
+            sourceContent.isValid() != targetContent.isValid();
     }
 
     private UpdateContentParams updateParams( final Content source, final Content target )
