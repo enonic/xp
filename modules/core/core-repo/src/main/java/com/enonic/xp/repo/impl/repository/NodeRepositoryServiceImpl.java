@@ -105,7 +105,7 @@ public class NodeRepositoryServiceImpl
     private IndexSettings getDefaultSettings( final CreateRepositoryParams params, final IndexType indexType )
     {
         final IndexSettings defaultSettings = DEFAULT_INDEX_RESOURCE_PROVIDER.getSettings( params.getRepositoryId(), indexType );
-        if ( SystemConstants.SYSTEM_REPO.getId().equals( params.getRepositoryId() ) )
+        if ( SystemConstants.SYSTEM_REPO_ID.equals( params.getRepositoryId() ) )
         {
             return defaultSettings;
         }
@@ -113,7 +113,7 @@ public class NodeRepositoryServiceImpl
         try
         {
             final String numberOfReplicasString =
-                indexServiceInternal.getIndexSettings( SystemConstants.SYSTEM_REPO.getId(), IndexType.STORAGE ).getNode().
+                indexServiceInternal.getIndexSettings( SystemConstants.SYSTEM_REPO_ID, IndexType.STORAGE ).getNode().
                     get( "index.number_of_replicas" ).
                     textValue();
             final int numberOfReplicas = Integer.parseInt( numberOfReplicasString );
@@ -123,7 +123,7 @@ public class NodeRepositoryServiceImpl
         catch ( Exception e )
         {
             LOG.warn(
-                "Failed to retrieve number of replicas from [" + resolveIndexName( SystemConstants.SYSTEM_REPO.getId(), indexType ) + "]" );
+                "Failed to retrieve number of replicas from [" + resolveIndexName( SystemConstants.SYSTEM_REPO_ID, indexType ) + "]" );
         }
 
         return defaultSettings;

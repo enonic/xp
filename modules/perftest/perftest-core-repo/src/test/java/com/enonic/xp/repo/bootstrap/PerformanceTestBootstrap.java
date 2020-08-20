@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.bootstrap;
 
-import java.io.File;
+import java.nio.file.Paths;
 
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
@@ -154,7 +154,7 @@ public class PerformanceTestBootstrap
     public void setupServices()
     {
         final BlobStore blobStore = CachedBlobStore.create().
-            blobStore( new FileBlobStore( new File( "C:\\es\\elasticsearch-7.5.1\\data\\blobs" ) ) ).
+            blobStore( new FileBlobStore( Paths.get( "C:\\es\\elasticsearch-7.5.1\\data\\blobs" ) ) ).
             build();
 
         this.binaryService = new BinaryServiceImpl();
@@ -223,7 +223,7 @@ public class PerformanceTestBootstrap
 
         this.repositoryEntryService = new RepositoryEntryServiceImpl();
         this.repositoryEntryService.setIndexServiceInternal( this.indexServiceInternal );
-        this.repositoryEntryService.setNodeRepositoryService( nodeRepositoryService );
+//        this.repositoryEntryService.setNodeRepositoryService( nodeRepositoryService ); TODO how to fix?
         this.repositoryEntryService.setNodeStorageService( this.storageService );
         this.repositoryEntryService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
         this.repositoryEntryService.setNodeSearchService( this.searchService );

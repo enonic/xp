@@ -47,7 +47,7 @@ class VersionTableVacuumTaskTest
     @Disabled
     void delete_node_deletes_versions()
     {
-        final int updates = 10_000;
+        final int updates = 5_000;
         final int versionsBatchSize = updates / 2; // to make sure nodes fetched in batches
         final int expectedVersionCount = updates + 1;
 
