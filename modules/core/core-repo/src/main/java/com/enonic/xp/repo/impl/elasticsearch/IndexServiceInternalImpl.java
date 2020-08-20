@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -32,6 +33,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.IndexNotFoundException;
+import org.elasticsearch.rest.RestStatus;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -59,23 +61,19 @@ public class IndexServiceInternalImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( IndexServiceInternalImpl.class );
 
-    private static final String ES_DEFAULT_INDEX_TYPE_NAME = "_default_";
+    private static final TimeValue DELETE_INDEX_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
-    private static final String DELETE_INDEX_TIMEOUT = "5s";
+    private static final TimeValue UPDATE_INDEX_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
-    private static final String CREATE_INDEX_TIMEOUT = "5s";
+    private static final TimeValue GET_SETTINGS_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
-    private static final String UPDATE_INDEX_TIMEOUT = "5s";
+    private static final TimeValue GET_INDEX_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
-    private static final String APPLY_MAPPING_TIMEOUT = "5s";
+    private static final TimeValue PUT_MAPPING_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
-    private static final String INDEX_EXISTS_TIMEOUT = "5s";
+    private static final TimeValue GET_MAPPING_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
-    private static final String CLUSTER_STATE_TIMEOUT = "5s";
-
-    private static final String GET_SETTINGS_TIMEOUT = "5s";
-
-    private static final String CLUSTER_HEALTH_TIMEOUT = "10s";
+    private static final TimeValue CLUSTER_HEALTH_TIMEOUT = TimeValue.timeValueSeconds( 10 );
 
     private EsClient client;
 
@@ -224,7 +222,7 @@ public class IndexServiceInternalImpl
             return null;
         }
 
-        final String indexName = IndexNameResolver.resolveIndexName( repositoryId, indexType );
+        final String indexName = IndexNameResolver.resolveIndexName( repositoryId, indexType, branch );
 
         if ( indexName == null )
         {
@@ -233,7 +231,7 @@ public class IndexServiceInternalImpl
 
         final GetMappingsRequest request = new GetMappingsRequest();
         request.indices( indexName );
-        request.setTimeout( TimeValue.timeValueSeconds( 5 ) );
+        request.setTimeout( GET_MAPPING_TIMEOUT );
 
         final GetMappingsResponse response = client.indicesGetMapping( request );
 
@@ -250,7 +248,7 @@ public class IndexServiceInternalImpl
 
         final PutMappingRequest mappingRequest = new PutMappingRequest( indexName ).
             source( request.getMapping().getAsString(), XContentType.JSON );
-        mappingRequest.setTimeout( TimeValue.timeValueSeconds( 5 ) );
+        mappingRequest.setTimeout( PUT_MAPPING_TIMEOUT );
 
         try
         {
@@ -277,7 +275,7 @@ public class IndexServiceInternalImpl
     public boolean indicesExists( final String... indices )
     {
         final GetIndexRequest request = new GetIndexRequest( indices );
-        request.setTimeout( TimeValue.timeValueSeconds( 5 ) );
+        request.setTimeout( GET_INDEX_TIMEOUT );
 
         return client.indicesExists( request );
     }
@@ -370,7 +368,17 @@ public class IndexServiceInternalImpl
         }
         catch ( ElasticsearchException e )
         {
-            LOG.warn( "Failed to delete index {}", indexName );
+            if ( e instanceof ElasticsearchStatusException )
+            {
+                if ( e.status() == RestStatus.NOT_FOUND )
+                {
+                    LOG.warn( "Index \"{}\" not found", indexName );
+                }
+            }
+            else
+            {
+                LOG.warn( "Failed to delete index {}", indexName );
+            }
         }
     }
 

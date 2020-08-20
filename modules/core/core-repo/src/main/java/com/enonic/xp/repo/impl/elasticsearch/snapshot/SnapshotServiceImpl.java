@@ -82,6 +82,7 @@ public class SnapshotServiceImpl
             repositories( repositoriesToSnapshot ).
             client( this.client ).
             snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME ).
+            repositoryService( this.repositoryService ).
             build().
             execute();
     }
@@ -108,6 +109,7 @@ public class SnapshotServiceImpl
             client( this.client ).
             snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME ).
             indexServiceInternal( this.indexServiceInternal ).
+            repositoryService( this.repositoryService ).
             build().
             execute();
 

@@ -1,12 +1,17 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
 
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotRequest;
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
 import org.elasticsearch.common.settings.Settings;
 
 import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
+import com.enonic.xp.repository.Repository;
 
 public class SnapshotExecutor
     extends AbstractSnapshotExecutor
@@ -18,9 +23,11 @@ public class SnapshotExecutor
 
     public SnapshotResult execute()
     {
+        final Set<Repository> repositoriesToSnapshot =
+            repositories.stream().map( repositoryService::get ).filter( Objects::nonNull ).collect( Collectors.toSet() );
 
         final CreateSnapshotRequest request = new CreateSnapshotRequest().
-            indices( IndexNameResolver.resolveIndexNames( repositories ).toArray( String[]::new ) ).
+            indices( IndexNameResolver.resolveIndexNames( repositoriesToSnapshot ).toArray( String[]::new ) ).
             includeGlobalState( false ).
             waitForCompletion( true ).
             repository( this.snapshotRepositoryName ).

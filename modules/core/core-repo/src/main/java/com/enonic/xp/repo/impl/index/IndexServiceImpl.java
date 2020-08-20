@@ -181,15 +181,12 @@ public class IndexServiceImpl
         indexServiceInternal.deleteIndices( searchIndexName );
 
         final IndexSettings indexSettings = getSearchIndexSettings( repositoryId );
+
+        final IndexMapping indexMapping = getSearchIndexMapping( repositoryId );
+
         indexServiceInternal.createIndex( CreateIndexRequest.create().
             indexName( searchIndexName ).
             indexSettings( indexSettings ).
-            build() );
-
-        final IndexMapping indexMapping = getSearchIndexMapping( repositoryId );
-        indexServiceInternal.applyMapping( ApplyMappingRequest.create().
-            indexName( searchIndexName ).
-            indexType( IndexType.SEARCH ).
             mapping( indexMapping ).
             build() );
     }

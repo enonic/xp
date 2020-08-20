@@ -1,6 +1,9 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequest;
@@ -9,6 +12,7 @@ import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotR
 import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
+import com.enonic.xp.repository.Repository;
 
 public class SnapshotRestoreExecutor
     extends AbstractSnapshotExecutor
@@ -23,7 +27,10 @@ public class SnapshotRestoreExecutor
 
     public RestoreResult execute()
     {
-        final String[] indices = IndexNameResolver.resolveIndexNames( repositories ).toArray( String[]::new );
+        final Set<Repository> repositoriesToRestore =
+            repositories.stream().map( repositoryService::get ).filter( Objects::nonNull ).collect( Collectors.toSet() );
+
+        final String[] indices = IndexNameResolver.resolveIndexNames( repositoriesToRestore ).toArray( String[]::new );
 
         indexServiceInternal.closeIndices( indices );
         try

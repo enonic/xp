@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
 import com.enonic.xp.elasticsearch.client.impl.EsClient;
 import com.enonic.xp.repository.RepositoryIds;
+import com.enonic.xp.repository.RepositoryService;
 
 class AbstractSnapshotExecutor
 {
@@ -13,12 +14,15 @@ class AbstractSnapshotExecutor
 
     final RepositoryIds repositories;
 
+    final RepositoryService repositoryService;
+
     AbstractSnapshotExecutor( final Builder builder )
     {
         snapshotRepositoryName = builder.snapshotRepositoryName;
         client = builder.client;
         repositories = builder.repositories;
         snapshotName = builder.snapshotName;
+        repositoryService = builder.repositoryService;
     }
 
     public static class Builder<B extends Builder>
@@ -30,6 +34,8 @@ class AbstractSnapshotExecutor
         private RepositoryIds repositories;
 
         private String snapshotName;
+
+        private RepositoryService repositoryService;
 
         @SuppressWarnings("unchecked")
         public B snapshotRepositoryName( final String val )
@@ -58,6 +64,14 @@ class AbstractSnapshotExecutor
             this.snapshotName = snapshotName;
             return (B) this;
         }
+
+        @SuppressWarnings("unchecked")
+        public B repositoryService( final RepositoryService repositoryService )
+        {
+            this.repositoryService = repositoryService;
+            return (B) this;
+        }
+
     }
 
 }

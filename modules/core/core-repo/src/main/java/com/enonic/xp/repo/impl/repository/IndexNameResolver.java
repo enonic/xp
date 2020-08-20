@@ -4,14 +4,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.IndexType;
+import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositoryIds;
 
 public class IndexNameResolver
 {
@@ -25,6 +24,11 @@ public class IndexNameResolver
 
     public static String resolveIndexName( final RepositoryId repositoryId, final IndexType indexType )
     {
+        return resolveIndexName( repositoryId, indexType, ContextAccessor.current().getBranch() );
+    }
+
+    public static String resolveIndexName( final RepositoryId repositoryId, final IndexType indexType, final Branch branch )
+    {
         switch ( indexType )
         {
             case STORAGE:
@@ -32,7 +36,7 @@ public class IndexNameResolver
             case COMMIT:
                 return resolveCommitIndexName( repositoryId );
             case SEARCH:
-                return resolveSearchIndexName( repositoryId, ContextAccessor.current().getBranch() );
+                return branch != null ? resolveSearchIndexName( repositoryId, branch ) : null;
         }
 
         return null;
@@ -60,32 +64,33 @@ public class IndexNameResolver
             collect( Collectors.toSet() );
     }
 
+    public static Set<String> resolveSearchIndexNames( final Repository repository )
+    {
+        return repository.getBranches().stream().
+            map( branch -> IndexNameResolver.resolveSearchIndexName( repository.getId(), branch ) ).
+            collect( Collectors.toSet() );
+    }
+
     public static String resolveSearchIndexPrefix( final RepositoryId repositoryId )
     {
         return SEARCH_INDEX_PREFIX + DIVIDER + repositoryId.toString() + DIVIDER + "*";
     }
 
-    public static Set<String> resolveIndexNames( final RepositoryId repositoryId )
-    {
-        return Stream.of( IndexNameResolver.resolveStorageIndexName( repositoryId )/*, // TODO should be fixed
-                          IndexNameResolver.resolveSearchIndexName( repositoryId )*/ ).
-            collect( Collectors.toUnmodifiableSet() );
-    }
-
-    public static Set<String> resolveIndexNames( final RepositoryId repositoryId, final Branches branches )
+    public static Set<String> resolveIndexNames( final Repository repository )
     {
         final Set<String> indexNames = new HashSet<>();
 
-        indexNames.add( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
-        indexNames.addAll( IndexNameResolver.resolveSearchIndexNames( repositoryId, branches ) );
+        indexNames.add( IndexNameResolver.resolveCommitIndexName( repository.getId() ) );
+        indexNames.add( IndexNameResolver.resolveStorageIndexName( repository.getId() ) );
+        indexNames.addAll( IndexNameResolver.resolveSearchIndexNames( repository ) );
 
         return Collections.unmodifiableSet( indexNames );
     }
 
-    public static Set<String> resolveIndexNames( final RepositoryIds repositoryIds )
+    public static Set<String> resolveIndexNames( final Set<Repository> repositories )
     {
-        return repositoryIds.stream().
-            flatMap( repositoryId -> IndexNameResolver.resolveIndexNames( repositoryId ).stream() ).
+        return repositories.stream().
+            flatMap( repository -> IndexNameResolver.resolveIndexNames( repository ).stream() ).
             collect( Collectors.toUnmodifiableSet() );
     }
 
