@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.Node;
@@ -44,7 +43,6 @@ class VersionTableVacuumTaskTest
     }
 
     @Test
-    @Disabled
     void delete_node_deletes_versions()
     {
         final int updates = 5_000;
