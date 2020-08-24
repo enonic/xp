@@ -30,6 +30,10 @@ public class DuplicateContentProcessor
         {
             originalData.removeProperty( ContentPropertyNames.PUBLISH_INFO );
         }
+        if ( originalData.hasProperty( ContentPropertyNames.INHERIT ) )
+        {
+            originalData.removeProperties( ContentPropertyNames.INHERIT );
+        }
 
         return builder.build();
     }
