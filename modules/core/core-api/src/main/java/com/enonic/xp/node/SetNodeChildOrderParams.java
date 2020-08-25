@@ -10,10 +10,13 @@ public class SetNodeChildOrderParams
 
     private final ChildOrder childOrder;
 
+    private final SetNodeChildOrderProcessor processor;
+
     private SetNodeChildOrderParams( final Builder builder )
     {
         nodeId = builder.nodeId;
         childOrder = builder.childOrder;
+        processor = builder.processor;
     }
 
     public NodeId getNodeId()
@@ -24,6 +27,11 @@ public class SetNodeChildOrderParams
     public ChildOrder getChildOrder()
     {
         return childOrder;
+    }
+
+    public SetNodeChildOrderProcessor getProcessor()
+    {
+        return processor;
     }
 
     public static Builder create()
@@ -38,6 +46,8 @@ public class SetNodeChildOrderParams
 
         private ChildOrder childOrder;
 
+        private SetNodeChildOrderProcessor processor;
+
         private Builder()
         {
         }
@@ -51,6 +61,12 @@ public class SetNodeChildOrderParams
         public Builder childOrder( ChildOrder childOrder )
         {
             this.childOrder = childOrder;
+            return this;
+        }
+
+        public Builder processor( SetNodeChildOrderProcessor processor )
+        {
+            this.processor = processor;
             return this;
         }
 

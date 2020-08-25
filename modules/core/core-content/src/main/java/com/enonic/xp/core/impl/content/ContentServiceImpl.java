@@ -939,6 +939,7 @@ public class ContentServiceImpl
             final Node node = nodeService.setChildOrder( SetNodeChildOrderParams.create().
                 nodeId( NodeId.from( params.getContentId() ) ).
                 childOrder( params.getChildOrder() ).
+                processor( params.stopInherit() ? new SetContentChildOrderProcessor() : ( n ) -> n ).
                 build() );
 
             final Content content = translator.fromNode( node, true );

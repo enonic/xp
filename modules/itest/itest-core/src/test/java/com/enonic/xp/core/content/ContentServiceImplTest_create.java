@@ -242,11 +242,11 @@ public class ContentServiceImplTest_create
             displayName( "This is my content" ).
             parent( ContentPath.ROOT ).
             type( ContentTypeName.folder() ).
-            inherit( Set.of( ContentInheritType.DATA, ContentInheritType.PATH ) ).
+            inherit( Set.of( ContentInheritType.DATA, ContentInheritType.PATH, ContentInheritType.SORT ) ).
             build();
 
         final Content content = this.contentService.create( createContentParams );
-        assertEquals( 2, content.getInherit().size() );
+        assertEquals( 3, content.getInherit().size() );
     }
 
     @Test

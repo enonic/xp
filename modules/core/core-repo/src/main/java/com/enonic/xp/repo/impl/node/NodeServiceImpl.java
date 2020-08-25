@@ -798,6 +798,7 @@ public class NodeServiceImpl
             searchService( this.nodeSearchService ).
             childOrder( params.getChildOrder() ).
             nodeId( params.getNodeId() ).
+            processor( params.getProcessor() ).
             build().
             execute();
 

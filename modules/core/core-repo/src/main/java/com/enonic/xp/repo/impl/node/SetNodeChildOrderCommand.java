@@ -12,6 +12,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.SearchMode;
+import com.enonic.xp.node.SetNodeChildOrderProcessor;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
@@ -30,11 +31,14 @@ public class SetNodeChildOrderCommand
 
     private final ChildOrder childOrder;
 
+    private final SetNodeChildOrderProcessor processor;
+
     private SetNodeChildOrderCommand( final Builder builder )
     {
         super( builder );
         this.nodeId = builder.nodeId;
         this.childOrder = builder.childOrder;
+        this.processor = builder.processor;
     }
 
     public static Builder create()
@@ -63,7 +67,7 @@ public class SetNodeChildOrderCommand
             build();
 
         StoreNodeCommand.create( this ).
-            node( editedNode ).
+            node( executeProcessor( editedNode ) ).
             build().
             execute();
 
@@ -105,12 +109,19 @@ public class SetNodeChildOrderCommand
         }
     }
 
+    private Node executeProcessor( final Node originalNode )
+    {
+        return processor.process( originalNode );
+    }
+
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
         private NodeId nodeId;
 
         private ChildOrder childOrder;
+
+        private SetNodeChildOrderProcessor processor;
 
         private Builder()
         {
@@ -128,15 +139,23 @@ public class SetNodeChildOrderCommand
             return this;
         }
 
+        public Builder processor( final SetNodeChildOrderProcessor processor )
+        {
+            this.processor = processor;
+            return this;
+        }
+
         @Override
         void validate()
         {
             super.validate();
             Preconditions.checkNotNull( nodeId );
+            Preconditions.checkNotNull( processor );
         }
 
         public SetNodeChildOrderCommand build()
         {
+            validate();
             return new SetNodeChildOrderCommand( this );
         }
     }

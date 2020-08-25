@@ -31,6 +31,7 @@ import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.RenameContentParams;
+import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.Context;
@@ -145,6 +146,7 @@ public class ParentProjectSynchronizer
                 {
                     targetContent = this.doSyncMoved( sourceContent, targetContent );
                     targetContent = this.doSyncRenamed( sourceContent, targetContent );
+                    targetContent = this.doSyncSorted( sourceContent, targetContent );
                     return this.doSyncUpdated( sourceContent, targetContent );
                 }
 
@@ -278,6 +280,43 @@ public class ParentProjectSynchronizer
         return targetContent;
     }
 
+    public Content syncSorted( final ContentId contentId )
+    {
+        return sourceContext.callWith( () -> {
+            final Content sourceContent = contentService.getById( contentId );
+
+            return targetContext.callWith( () -> {
+                if ( contentService.contentExists( contentId ) )
+                {
+                    final Content targetContent = contentService.getById( contentId );
+                    if ( isSyncable( sourceContent, targetContent ) )
+                    {
+                        return doSyncSorted( sourceContent, targetContent );
+                    }
+                }
+                return null;
+            } );
+        } );
+    }
+
+    private Content doSyncSorted( final Content sourceContent, final Content targetContent )
+    {
+        if ( isToSyncSort( targetContent ) )
+        {
+            if ( needToSort( sourceContent, targetContent ) )
+            {
+                final SetContentChildOrderParams sortParams = SetContentChildOrderParams.create().
+                    childOrder( sourceContent.getChildOrder() ).
+                    contentId( sourceContent.getId() ).
+                    stopInherit( false ).
+                    build();
+
+                return contentService.setChildOrder( sortParams );
+            }
+        }
+        return targetContent;
+    }
+
     public Content syncCreated( final ContentId contentId )
     {
         return sourceContext.callWith( () -> {
@@ -350,6 +389,11 @@ public class ParentProjectSynchronizer
         return targetContent.getInherit().contains( ContentInheritType.PATH );
     }
 
+    private boolean isToSyncSort( final Content targetContent )
+    {
+        return targetContent.getInherit().contains( ContentInheritType.SORT );
+    }
+
     private boolean needToUpdate( final Content sourceContent, final Content targetContent )
     {
         return !Objects.equals( sourceContent.getData(), targetContent.getData() ) ||
@@ -363,6 +407,11 @@ public class ParentProjectSynchronizer
             !Objects.equals( sourceContent.getProcessedReferences(), targetContent.getProcessedReferences() ) ||
             sourceContent.inheritsPermissions() != targetContent.inheritsPermissions() ||
             sourceContent.isValid() != targetContent.isValid();
+    }
+
+    private boolean needToSort( final Content sourceContent, final Content targetContent )
+    {
+        return !Objects.equals( sourceContent.getChildOrder(), targetContent.getChildOrder() );
     }
 
     private UpdateContentParams updateParams( final Content source, final Content target )
@@ -404,7 +453,7 @@ public class ParentProjectSynchronizer
             requireValid( false ).
             createSiteTemplateFolder( false ).
             inheritPermissions( true ).
-            inherit( Set.of( ContentInheritType.DATA, ContentInheritType.PATH ) ).
+            inherit( Set.of( ContentInheritType.DATA, ContentInheritType.PATH, ContentInheritType.SORT ) ).
             createAttachments( CreateAttachments.from( source.getAttachments().
                 stream().
                 map( attachment -> {

@@ -12,11 +12,14 @@ public class SetContentChildOrderParams
 
     private final boolean silent;
 
+    private final boolean stopInherit;
+
     private SetContentChildOrderParams( Builder builder )
     {
         contentId = builder.contentId;
         childOrder = builder.childOrder;
         silent = builder.silent;
+        stopInherit = builder.stopInherit;
     }
 
     public ContentId getContentId()
@@ -34,6 +37,11 @@ public class SetContentChildOrderParams
         return silent;
     }
 
+    public boolean stopInherit()
+    {
+        return stopInherit;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -47,6 +55,8 @@ public class SetContentChildOrderParams
         private ChildOrder childOrder;
 
         private boolean silent;
+
+        private boolean stopInherit = true;
 
         private Builder()
         {
@@ -67,6 +77,12 @@ public class SetContentChildOrderParams
         public Builder silent( final boolean silent )
         {
             this.silent = silent;
+            return this;
+        }
+
+        public Builder stopInherit( final boolean stopInherit )
+        {
+            this.stopInherit = stopInherit;
             return this;
         }
 
