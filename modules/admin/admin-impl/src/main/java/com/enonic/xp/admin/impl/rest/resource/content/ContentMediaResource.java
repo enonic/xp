@@ -23,7 +23,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -36,12 +35,14 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.security.RoleKeys;
 
+import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.CMS_PATH;
+import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.REST_ROOT;
 import static com.enonic.xp.web.servlet.ServletRequestUrlHelper.contentDispositionAttachment;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 
 @SuppressWarnings("UnusedDeclaration")
-@Path(ResourceConstants.REST_ROOT + "content/media")
+@Path(REST_ROOT + "{content:(content|" + CMS_PATH + "/content)}/media")
 @Produces(MediaType.APPLICATION_OCTET_STREAM)
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
@@ -119,12 +120,6 @@ public final class ContentMediaResource
             }
         }
         return response.build();
-    }
-
-    private Response doServeMedia( final ContentId contentId, final String identifier )
-        throws IOException
-    {
-        return doServeMedia( contentId, identifier, false );
     }
 
     private Boolean attachmentAllowsPreview( final Attachment attachment )

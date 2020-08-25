@@ -14,21 +14,21 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @PublicApi
 public final class PrincipalKey
 {
-    private final static String SEPARATOR = ":";
+    private static final String SEPARATOR = ":";
 
-    private final static Pattern REF_PATTERN = Pattern.compile( "^(?:(role):([^:]+))|(user|group):([^:]+):([^:]+)$" );
+    private static final Pattern REF_PATTERN = Pattern.compile( "^(?:(role):([^:]+))|(user|group):([^:]+):([^:]+)$" );
 
     private static final PrincipalKey ANONYMOUS_PRINCIPAL = new PrincipalKey();
 
     private static final PrincipalKey SUPER_USER_PRINCIPAL = new PrincipalKey( IdProviderKey.system(), PrincipalType.USER, "su" );
 
-    public final static String IDENTITY_NODE_NAME = "identity";
+    public static final String IDENTITY_NODE_NAME = "identity";
 
-    public final static String ROLES_NODE_NAME = "roles";
+    public static final String ROLES_NODE_NAME = "roles";
 
-    public final static String GROUPS_NODE_NAME = "groups";
+    public static final String GROUPS_NODE_NAME = "groups";
 
-    public final static String USERS_NODE_NAME = "users";
+    public static final String USERS_NODE_NAME = "users";
 
     private final IdProviderKey idProviderKey;
 

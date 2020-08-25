@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.toList;
 
 public final class LocaleMessageResolver
 {
-    private final static Logger LOG = LoggerFactory.getLogger( LocaleMessageResolver.class );
+    private static final Logger LOG = LoggerFactory.getLogger( LocaleMessageResolver.class );
 
     private LocaleService localeService;
 

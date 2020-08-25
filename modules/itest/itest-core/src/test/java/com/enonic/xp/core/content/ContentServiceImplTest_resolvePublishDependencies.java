@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ContentServiceImplTest_resolvePublishDependencies
     extends AbstractContentServiceTest
 {
-    private final static NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
+    private static final NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
 
     private Content content1, content2, child1, child2;
 

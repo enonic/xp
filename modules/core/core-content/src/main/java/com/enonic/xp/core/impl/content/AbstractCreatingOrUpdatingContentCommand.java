@@ -14,11 +14,11 @@ import com.enonic.xp.site.SiteService;
 class AbstractCreatingOrUpdatingContentCommand
     extends AbstractContentCommand
 {
-    private final static ImmutableList<MediaType> BINARY_CONTENT_TYPES =
+    private static final ImmutableList<MediaType> BINARY_CONTENT_TYPES =
         ImmutableList.of( MediaType.OCTET_STREAM, MediaType.create( "application", "force-download" ),
                           MediaType.create( "application", "x-force-download" ) );
 
-    private final static ImmutableList<MediaType> EXECUTABLE_CONTENT_TYPES =
+    private static final ImmutableList<MediaType> EXECUTABLE_CONTENT_TYPES =
         ImmutableList.of( MediaType.OCTET_STREAM, MediaType.create( "text", "plain" ), MediaType.create( "application", "x-bzip2" ) );
 
     final XDataService xDataService;

@@ -182,7 +182,7 @@ public final class ContentPath
         return new Builder();
     }
 
-    public final static class Builder
+    public static final class Builder
     {
         private ImmutableList.Builder<String> elements;
 

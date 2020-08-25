@@ -10,11 +10,12 @@ import org.osgi.framework.Version;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptExports;
-import com.enonic.xp.script.impl.purplejs.PurpleJsRuntimeProviderImpl;
+import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.impl.standard.ScriptRuntimeFactoryImpl;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
@@ -22,9 +23,7 @@ import com.enonic.xp.script.runtime.ScriptSettings;
 
 public abstract class AbstractScriptTest
 {
-    private final static boolean USE_PURPLEJS = false;
-
-    private final static ApplicationKey APPLICATION_KEY = ApplicationKey.from( "myapplication" );
+    private static final ApplicationKey APPLICATION_KEY = ApplicationKey.from( "myapplication" );
 
     protected final ScriptRuntime scriptRuntime;
 
@@ -46,23 +45,6 @@ public abstract class AbstractScriptTest
 
     private ScriptRuntimeFactory createScriptRuntimeFactory()
     {
-        if ( USE_PURPLEJS )
-        {
-            return createPurpleJsRuntimeFactory();
-        }
-        else
-        {
-            return createStandardRuntimeFactory();
-        }
-    }
-
-    private ScriptRuntimeFactory createPurpleJsRuntimeFactory()
-    {
-        return new PurpleJsRuntimeProviderImpl();
-    }
-
-    private ScriptRuntimeFactory createStandardRuntimeFactory()
-    {
         final BundleContext bundleContext = Mockito.mock( BundleContext.class );
 
         final Bundle bundle = Mockito.mock( Bundle.class );
@@ -73,6 +55,8 @@ public abstract class AbstractScriptTest
         Mockito.when( application.getKey() ).thenReturn( APPLICATION_KEY );
         Mockito.when( application.getVersion() ).thenReturn( Version.parseVersion( "1.0.0" ) );
         Mockito.when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
+        Mockito.when( application.isStarted() ).thenReturn( true );
+        Mockito.when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
         Mockito.when( applicationService.getInstalledApplication( APPLICATION_KEY ) ).thenReturn( application );
@@ -84,10 +68,8 @@ public abstract class AbstractScriptTest
             return new UrlResource( resourceKey, resourceUrl );
         } );
 
-        final ScriptRuntimeFactoryImpl scriptRuntimeFactory = new ScriptRuntimeFactoryImpl();
-        scriptRuntimeFactory.setApplicationService( applicationService );
-        scriptRuntimeFactory.setResourceService( resourceService );
+        final ScriptAsyncService scriptAsyncService = Mockito.mock( ScriptAsyncService.class );
 
-        return scriptRuntimeFactory;
+        return new ScriptRuntimeFactoryImpl( applicationService, resourceService, scriptAsyncService );
     }
 }

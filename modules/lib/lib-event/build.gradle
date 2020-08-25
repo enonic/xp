@@ -1,5 +1,8 @@
 dependencies {
     compileOnly project( ':core:core-api' )
     compileOnly project( ':script:script-api' )
-    testCompile project( ':tools:testing' )
+
+    testImplementation project( ':tools:testing' )
+
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine"
 }

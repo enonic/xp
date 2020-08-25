@@ -61,7 +61,6 @@ import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentListJson;
-import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.BatchContentJson;
@@ -192,13 +191,15 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
+import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.CMS_PATH;
+import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.REST_ROOT;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static java.lang.Math.toIntExact;
 import static java.util.Optional.ofNullable;
 
 @SuppressWarnings("UnusedDeclaration")
-@Path(ResourceConstants.REST_ROOT + "content")
+@Path(REST_ROOT + "{content:(content|" + CMS_PATH + "/content)}")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
@@ -213,15 +214,15 @@ public final class ContentResource
 
     private static final String DEFAULT_SIZE_PARAM = "500";
 
-    private final static String EXPAND_FULL = "full";
+    private static final String EXPAND_FULL = "full";
 
-    private final static String EXPAND_SUMMARY = "summary";
+    private static final String EXPAND_SUMMARY = "summary";
 
-    private final static String EXPAND_NONE = "none";
+    private static final String EXPAND_NONE = "none";
 
     private static final int MAX_EFFECTIVE_PERMISSIONS_PRINCIPALS = 10;
 
-    private final static Logger LOG = LoggerFactory.getLogger( ContentResource.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ContentResource.class );
 
     private ContentService contentService;
 
@@ -689,7 +690,7 @@ public final class ContentResource
     public TaskResultJson applyPermissions( final ApplyContentPermissionsJson jsonParams )
     {
         return ApplyPermissionsRunnableTask.create().
-            params( jsonParams ).
+            params( jsonParams.toParams() ).
             description( "Apply content permissions" ).
             taskService( taskService ).
             contentService( contentService ).

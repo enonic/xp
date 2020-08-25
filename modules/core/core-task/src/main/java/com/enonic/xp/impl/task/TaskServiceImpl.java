@@ -2,11 +2,14 @@ package com.enonic.xp.impl.task;
 
 import java.util.List;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.impl.task.cluster.TaskTransportRequestSender;
 import com.enonic.xp.impl.task.script.NamedTaskScriptFactory;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.RunnableTask;
@@ -19,17 +22,27 @@ import com.enonic.xp.task.TaskService;
 
 import static com.enonic.xp.impl.task.script.NamedTaskScript.SCRIPT_METHOD_NAME;
 
-@Component(immediate = true)
+@Component
 public final class TaskServiceImpl
     implements TaskService
 {
-    private TaskManager taskManager;
+    private final TaskManager taskManager;
 
-    private TaskTransportRequestSender taskTransportRequestSender;
+    private final TaskDescriptorService taskDescriptorService;
 
-    private TaskDescriptorService taskDescriptorService;
+    private final NamedTaskScriptFactory namedTaskScriptFactory;
 
-    private NamedTaskScriptFactory namedTaskScriptFactory;
+    private volatile TaskInfoManager taskInfoManager;
+
+    @Activate
+    public TaskServiceImpl( @Reference final TaskManager taskManager, @Reference final TaskDescriptorService taskDescriptorService,
+                            @Reference final NamedTaskScriptFactory namedTaskScriptFactory )
+    {
+        this.taskManager = taskManager;
+        this.taskInfoManager = taskManager;
+        this.taskDescriptorService = taskDescriptorService;
+        this.namedTaskScriptFactory = namedTaskScriptFactory;
+    }
 
     @Override
     public TaskId submitTask( final RunnableTask runnable, final String description )
@@ -59,43 +72,29 @@ public final class TaskServiceImpl
     @Override
     public TaskInfo getTaskInfo( final TaskId taskId )
     {
-        final List<TaskInfo> taskInfos = taskTransportRequestSender.getByTaskId( taskId );
-        return taskInfos.isEmpty() ? null : taskInfos.get( 0 );
+        return taskInfoManager.getTaskInfo( taskId );
     }
 
     @Override
     public List<TaskInfo> getAllTasks()
     {
-        return taskTransportRequestSender.getAllTasks();
+        return taskInfoManager.getAllTasks();
     }
 
     @Override
     public List<TaskInfo> getRunningTasks()
     {
-        return taskTransportRequestSender.getRunningTasks();
+        return taskInfoManager.getRunningTasks();
     }
 
-    @Reference
-    public void setTaskManager( final TaskManager taskManager )
+    @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC, policyOption = ReferencePolicyOption.GREEDY)
+    public void setClusteredTaskManager( final ClusteredTaskManager clusteredTaskManager )
     {
-        this.taskManager = taskManager;
+        this.taskInfoManager = clusteredTaskManager;
     }
 
-    @Reference
-    public void setTaskTransportRequestSender( final TaskTransportRequestSender taskTransportRequestSender )
+    public void unsetClusteredTaskManager( final ClusteredTaskManager clusteredTaskManager )
     {
-        this.taskTransportRequestSender = taskTransportRequestSender;
-    }
-
-    @Reference
-    public void setTaskDescriptorService( final TaskDescriptorService taskDescriptorService )
-    {
-        this.taskDescriptorService = taskDescriptorService;
-    }
-
-    @Reference
-    public void setNamedTaskScriptFactory( final NamedTaskScriptFactory namedTaskScriptFactory )
-    {
-        this.namedTaskScriptFactory = namedTaskScriptFactory;
+        this.taskInfoManager = taskManager;
     }
 }

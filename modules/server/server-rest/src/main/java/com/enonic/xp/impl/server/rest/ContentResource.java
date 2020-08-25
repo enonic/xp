@@ -41,7 +41,7 @@ public final class ContentResource
 
     private TaskService taskService;
 
-    private final static Logger LOG = LoggerFactory.getLogger( ContentResource.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ContentResource.class );
 
     @POST
     @Path("reprocess")

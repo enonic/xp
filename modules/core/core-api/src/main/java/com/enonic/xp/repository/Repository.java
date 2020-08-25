@@ -1,10 +1,14 @@
 package com.enonic.xp.repository;
 
+import java.util.Optional;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.AttachedBinaries;
 
 @PublicApi
 public final class Repository
@@ -15,11 +19,17 @@ public final class Repository
 
     private final RepositorySettings settings;
 
+    private final PropertyTree data;
+
+    private final AttachedBinaries attachments;
+
     private Repository( Builder builder )
     {
         this.id = builder.id;
         this.branches = builder.branches;
         this.settings = builder.settings == null ? RepositorySettings.create().build() : builder.settings;
+        this.data = Optional.ofNullable( builder.data ).orElse( new PropertyTree() );
+        this.attachments = Optional.ofNullable( builder.attachments ).orElse( AttachedBinaries.empty() );
     }
 
     public RepositoryId getId()
@@ -35,6 +45,16 @@ public final class Repository
     public Branches getBranches()
     {
         return branches;
+    }
+
+    public PropertyTree getData()
+    {
+        return data;
+    }
+
+    public AttachedBinaries getAttachments()
+    {
+        return attachments;
     }
 
     public static Builder create()
@@ -78,6 +98,10 @@ public final class Repository
 
         private Branches branches;
 
+        private PropertyTree data;
+
+        private AttachedBinaries attachments;
+
         private Builder()
         {
         }
@@ -87,6 +111,7 @@ public final class Repository
             id = source.id;
             branches = source.branches;
             settings = source.settings;
+            data = source.data;
         }
 
         public Builder id( final RepositoryId id )
@@ -111,6 +136,18 @@ public final class Repository
         public Builder settings( final RepositorySettings settings )
         {
             this.settings = settings;
+            return this;
+        }
+
+        public Builder data( final PropertyTree data )
+        {
+            this.data = data;
+            return this;
+        }
+
+        public Builder attachments( final AttachedBinaries attachments )
+        {
+            this.attachments = attachments;
             return this;
         }
 

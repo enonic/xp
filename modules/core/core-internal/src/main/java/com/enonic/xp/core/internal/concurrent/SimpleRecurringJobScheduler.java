@@ -33,6 +33,7 @@ public final class SimpleRecurringJobScheduler
     /**
      * {@inheritDoc}
      */
+    @Override
     public RecurringJob scheduleWithFixedDelay( final Runnable command, final Duration initialDelay, final Duration delay,
                                                 Consumer<Exception> exceptionHandler, Consumer<Throwable> errorHandler )
     {

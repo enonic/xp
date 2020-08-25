@@ -45,12 +45,17 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.content.ContentAuditLogExecutorImpl;
+import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
-import com.enonic.xp.core.impl.content.ContentInitializer;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
+import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
+import com.enonic.xp.core.impl.project.ProjectServiceImpl;
+import com.enonic.xp.core.impl.project.init.ContentInitializer;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
+import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.core.impl.site.SiteServiceImpl;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -121,12 +126,12 @@ public class AbstractContentServiceTest
 
     public static final Context MASTER_CONTEXT = ContextBuilder.create().
         branch( ContentConstants.BRANCH_MASTER ).
-        repositoryId( ContentConstants.CONTENT_REPO.getId() ).
+        repositoryId( ContentConstants.CONTENT_REPO_ID ).
         build();
 
     public static final Context AUTHORIZED_MASTER_CONTEXT = ContextBuilder.create().
         branch( ContentConstants.BRANCH_MASTER ).
-        repositoryId( ContentConstants.CONTENT_REPO.getId() ).
+        repositoryId( ContentConstants.CONTENT_REPO_ID ).
         authInfo( AuthenticationInfo.create().
             principals( RoleKeys.ADMIN ).
             user( ContentInitializer.SUPER_USER ).
@@ -231,7 +236,6 @@ public class AbstractContentServiceTest
 
         final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
         repositoryEntryService.setIndexServiceInternal( elasticsearchIndexService );
-        repositoryEntryService.setNodeRepositoryService( nodeRepositoryService );
         repositoryEntryService.setNodeStorageService( storageService );
         repositoryEntryService.setNodeSearchService( searchService );
         repositoryEntryService.setEventPublisher( eventPublisher );
@@ -291,6 +295,26 @@ public class AbstractContentServiceTest
         LayoutDescriptorService layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
         auditLogService = Mockito.mock( AuditLogService.class );
 
+        final ContentConfig contentConfig = Mockito.mock( ContentConfig.class );
+        Mockito.when( contentConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
+
+        final ContentAuditLogSupportImpl contentAuditLogSupport =
+            new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutorImpl(), auditLogService );
+
+        final SecurityServiceImpl securityService = new SecurityServiceImpl();
+        securityService.setNodeService( nodeService );
+        securityService.setIndexService( indexService );
+        securityService.initialize();
+
+        final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
+
+        final ProjectServiceImpl projectService = new ProjectServiceImpl();
+        projectService.setIndexService( indexService );
+        projectService.setRepositoryService( repositoryService );
+        projectService.setNodeService( nodeService );
+        projectService.setProjectPermissionsContextManager( projectAccessContextManager );
+        projectService.initialize();
+
         contentService.setNodeService( nodeService );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
@@ -300,15 +324,10 @@ public class AbstractContentServiceTest
         contentService.setPageDescriptorService( pageDescriptorService );
         contentService.setPartDescriptorService( partDescriptorService );
         contentService.setLayoutDescriptorService( layoutDescriptorService );
-        contentService.setAuditLogService( auditLogService );
         contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
-        contentService.setIndexService( indexService );
-        contentService.setNodeService( nodeService );
-        contentService.setRepositoryService( repositoryService );
-        final ContentConfig contentConfig = Mockito.mock( ContentConfig.class );
-        Mockito.when( contentConfig.auditlog_enabled() ).thenReturn( Boolean.TRUE );
-        contentService.initialize( contentConfig );
+        contentService.setContentAuditLogSupport( contentAuditLogSupport );
+        contentService.initialize();
 
         waitForClusterHealth();
     }

@@ -45,7 +45,7 @@ public final class PartDescriptor
         return new Builder( partDescriptor );
     }
 
-    public final static class Builder
+    public static final class Builder
         extends BaseBuilder<Builder>
     {
         private Icon icon;

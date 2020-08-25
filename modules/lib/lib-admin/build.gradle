@@ -5,5 +5,6 @@ dependencies {
     compileOnly project( ':portal:portal-api' )
     compile project( ':lib:lib-i18n' )
     compile project( ':lib:lib-portal' )
-    testCompile project( ':tools:testing' )
+
+    testImplementation project( ':tools:testing' )
 }

@@ -2,6 +2,7 @@ package com.enonic.xp.admin.event.impl.json;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Objects;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +14,6 @@ import org.osgi.framework.BundleEvent;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.json.ObjectMapperHelper;
@@ -58,22 +58,23 @@ public class EventJsonSerializerTest
             value( "double", 6.7d ).
             value( "boolean", true ).
             value( "string", "test" ).
+            value( "collection", List.of( "a", "b" ) ).
             build();
 
-        final ObjectNode json = this.serializer.toJson( event );
+        final String json = this.serializer.toJson( event );
 
         assertNotNull( json );
         assertJson( "testEvent.json", json );
     }
 
-    private void assertJson( final String fileName, final JsonNode actualNode )
+    private void assertJson( final String fileName, final String actual )
         throws Exception
     {
         final JsonNode expectedNode = MAPPER.readTree( readFromFile( fileName ) );
+        final JsonNode actualNode = MAPPER.readTree( actual );
 
         final String expectedStr = OBJECT_WRITER.writeValueAsString( expectedNode );
         final String actualStr = OBJECT_WRITER.writeValueAsString( actualNode );
-
         assertEquals( expectedStr, actualStr );
     }
 

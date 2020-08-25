@@ -1,7 +1,9 @@
 package com.enonic.xp.repo.impl.vacuum.versiontable;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -23,11 +25,13 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQuery;
+import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.NodeVersionsMetadata;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.node.NodeConstants;
-import com.enonic.xp.repo.impl.node.executor.BatchedGetVersionsExecutor;
 import com.enonic.xp.repo.impl.vacuum.VacuumTaskParams;
 import com.enonic.xp.repo.impl.vacuum.blob.IsBlobUsedByVersionCommand;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
@@ -52,9 +56,11 @@ public class VersionTableVacuumCommand
 
     private BlobStore blobStore;
 
-    private final VacuumTaskParams params;
+    private final Instant until;
 
-    private NodeVersionQuery query;
+    private final VacuumListener listener;
+
+    private final int batchSize;
 
     private VacuumTaskResult.Builder result;
 
@@ -69,7 +75,9 @@ public class VersionTableVacuumCommand
         repositoryService = builder.repositoryService;
         versionService = builder.versionService;
         blobStore = builder.blobStore;
-        params = builder.params;
+        until = Instant.now().minusMillis( builder.params.getAgeThreshold() );
+        listener = builder.params.getListener();
+        batchSize = builder.params.getVersionsBatchSize();
     }
 
     public static Builder create()
@@ -79,7 +87,6 @@ public class VersionTableVacuumCommand
 
     public VacuumTaskResult.Builder execute()
     {
-        this.query = createQuery();
         this.result = VacuumTaskResult.create();
 
         this.repositoryService.list().
@@ -98,55 +105,66 @@ public class VersionTableVacuumCommand
 
     private void doProcessRepository( final Repository repository )
     {
-        final BatchedGetVersionsExecutor executor = BatchedGetVersionsExecutor.create().
-            query( query ).
-            nodeService( nodeService ).
-            build();
+        int counter = 0;
 
-        final VacuumListener listener = params.getListener();
+        NodeVersionId lastVersionId = null;
+
+        NodeVersionQuery query = createQuery( lastVersionId );
+        NodeVersionQueryResult versionsResult = nodeService.findVersions( query );
+        long hits = versionsResult.getHits();
+
+        final long totalHits = versionsResult.getTotalHits();
+
         if ( listener != null )
         {
-            final Long versionTotal = executor.getTotalHits();
-            listener.stepBegin( repository.getId().toString(), versionTotal );
+            listener.stepBegin( repository.getId().toString(), totalHits );
         }
 
-        final Set<NodeVersionId> versionToDeleteSet = new HashSet<>();
-        final Set<BlobKey> nodeBlobToCheckSet = new HashSet<>();
-        final Set<BlobKey> binaryBlobToCheckSet = new HashSet<>();
-        while ( executor.hasMore() )
+        while ( hits > 0 )
         {
-            final NodeVersionsMetadata versions = executor.execute();
+            final List<NodeVersionId> versionsToDelete = new ArrayList<>();
+            final Set<BlobKey> nodeBlobToCheckSet = new HashSet<>();
+            final Set<BlobKey> binaryBlobToCheckSet = new HashSet<>();
 
-            versions.forEach( ( version ) -> {
+            final NodeVersionsMetadata versions = versionsResult.getNodeVersionsMetadata();
+
+            for ( NodeVersionMetadata version : versions )
+            {
                 final boolean toDelete = processVersion( repository, version );
                 if ( toDelete )
                 {
                     result.deleted();
-                    versionToDeleteSet.add( version.getNodeVersionId() );
+                    versionsToDelete.add( version.getNodeVersionId() );
                     nodeBlobToCheckSet.add( version.getNodeVersionKey().getNodeBlobKey() );
-                    version.getBinaryBlobKeys().forEach( binaryBlobToCheckSet::add );
+                    binaryBlobToCheckSet.addAll( version.getBinaryBlobKeys().getSet() );
                 }
                 else
                 {
                     result.inUse();
                 }
-            } );
-
-            if ( listener != null )
-            {
-                listener.processed( versions.size() );
+                lastVersionId = version.getNodeVersionId();
+                counter++;
             }
+
+            versionService.delete( versionsToDelete, InternalContext.from( ContextAccessor.current() ) );
+
+            nodeBlobToCheckSet.stream().
+                filter( blobKey -> !isBlobKeyUsed( blobKey, VersionIndexPath.NODE_BLOB_KEY ) ).
+                forEach( blobKey -> removeNodeBlobRecord( repository.getId(), NodeConstants.NODE_SEGMENT_LEVEL, blobKey ) );
+
+            binaryBlobToCheckSet.stream().
+                filter( blobKey -> !isBlobKeyUsed( blobKey, VersionIndexPath.BINARY_BLOB_KEYS ) ).
+                forEach( blobKey -> removeNodeBlobRecord( repository.getId(), NodeConstants.BINARY_SEGMENT_LEVEL, blobKey ) );
+
+            query = createQuery( lastVersionId );
+            versionsResult = nodeService.findVersions( query );
+            hits = versionsResult.getHits();
         }
 
-        versionService.delete( versionToDeleteSet, InternalContext.from( ContextAccessor.current() ) );
-
-        nodeBlobToCheckSet.stream().
-            filter( blobKey -> !isBlobKeyUsed( blobKey, VersionIndexPath.NODE_BLOB_KEY ) ).
-            forEach( blobKey -> removeNodeBlobRecord( repository.getId(), NodeConstants.NODE_SEGMENT_LEVEL, blobKey ) );
-
-        binaryBlobToCheckSet.stream().
-            filter( blobKey -> !isBlobKeyUsed( blobKey, VersionIndexPath.BINARY_BLOB_KEYS ) ).
-            forEach( blobKey -> removeNodeBlobRecord( repository.getId(), NodeConstants.BINARY_SEGMENT_LEVEL, blobKey ) );
+        if ( listener != null )
+        {
+            listener.processed( counter );
+        }
     }
 
     private boolean isBlobKeyUsed( final BlobKey blobKey, final IndexPath fieldPath )
@@ -187,8 +205,9 @@ public class VersionTableVacuumCommand
                     LOG.debug( "Other version found in branch for for [" + version.getNodeId() + "/ " + version.getNodeVersionId() + "]" );
                 }
                 return version.getNodeCommitId() == null;
+            default:
+                return false;
         }
-        return false;
     }
 
     private BRANCH_CHECK_RESULT findVersionsInBranches( final Repository repository, final NodeVersionMetadata versionMetadata )
@@ -221,16 +240,28 @@ public class VersionTableVacuumCommand
         return nodeFound ? BRANCH_CHECK_RESULT.OTHER_VERSION_FOUND : BRANCH_CHECK_RESULT.NO_VERSION_FOUND;
     }
 
-    private NodeVersionQuery createQuery()
+    private NodeVersionQuery createQuery( NodeVersionId lastVersionId )
     {
-        final Instant until = Instant.now().minusMillis( params.getAgeThreshold() );
+        final NodeVersionQuery.Builder builder = NodeVersionQuery.create();
+
+        if ( lastVersionId != null )
+        {
+            final RangeFilter versionIdFilter = RangeFilter.create().
+                fieldName( VersionIndexPath.VERSION_ID.getPath() ).
+                gt( ValueFactory.newString( lastVersionId.toString() ) ).
+                build();
+            builder.addQueryFilter( versionIdFilter );
+        }
+
         final RangeFilter mustBeOlderThanFilter = RangeFilter.create().
             fieldName( VersionIndexPath.TIMESTAMP.getPath() ).
             to( ValueFactory.newDateTime( until ) ).
             build();
 
-        return NodeVersionQuery.create().
+        return builder.
             addQueryFilter( mustBeOlderThanFilter ).
+            addOrderBy( FieldOrderExpr.create( VersionIndexPath.VERSION_ID, OrderExpr.Direction.ASC ) ).
+            size( batchSize ).
             build();
     }
 

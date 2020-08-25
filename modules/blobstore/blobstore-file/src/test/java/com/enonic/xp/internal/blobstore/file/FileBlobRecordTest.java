@@ -1,6 +1,5 @@
 package com.enonic.xp.internal.blobstore.file;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -23,7 +22,7 @@ public class FileBlobRecordTest
         throws Exception
     {
         final BlobKey key = BlobKey.from( "test" );
-        final File file = Files.createFile(this.temporaryFolder.resolve( "test" ) ).toFile();
+        final Path file = Files.createFile( this.temporaryFolder.resolve( "test" ) );
 
         final FileBlobRecord record = new FileBlobRecord( key, file );
         assertSame( key, record.getKey() );
@@ -36,10 +35,10 @@ public class FileBlobRecordTest
         throws Exception
     {
         final BlobKey key = BlobKey.from( "test" );
-        final File file = Files.createFile(this.temporaryFolder.resolve( "test" ) ).toFile();
+        final Path file = Files.createFile( this.temporaryFolder.resolve( "test" ) );
 
         final FileBlobRecord record = new FileBlobRecord( key, file );
 
-        assertEquals( file.lastModified(), record.lastModified() );
+        assertEquals( Files.getLastModifiedTime( file ).toMillis(), record.lastModified() );
     }
 }

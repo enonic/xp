@@ -9,7 +9,7 @@ import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
-import com.enonic.xp.portal.impl.rendering.RendererFactory;
+import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
@@ -25,7 +25,7 @@ public final class PageHandler
 {
     private ContentService contentService;
 
-    private RendererFactory rendererFactory;
+    private RendererDelegate rendererDelegate;
 
     private PageDescriptorService pageDescriptorService;
 
@@ -52,7 +52,7 @@ public final class PageHandler
 
         final PageHandlerWorker worker = new PageHandlerWorker( (PortalRequest) webRequest );
         worker.setContentService( this.contentService );
-        worker.rendererFactory = rendererFactory;
+        worker.rendererDelegate = rendererDelegate;
         worker.pageDescriptorService = pageDescriptorService;
         worker.pageTemplateService = pageTemplateService;
         worker.portalUrlService = portalUrlService;
@@ -71,9 +71,9 @@ public final class PageHandler
     }
 
     @Reference
-    public void setRendererFactory( final RendererFactory rendererFactory )
+    public void setRendererDelegate( final RendererDelegate rendererDelegate )
     {
-        this.rendererFactory = rendererFactory;
+        this.rendererDelegate = rendererDelegate;
     }
 
     @Reference

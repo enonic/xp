@@ -17,7 +17,7 @@ import static java.util.stream.Collectors.toSet;
 public final class IdProviderAccessControlList
     implements Iterable<IdProviderAccessControlEntry>
 {
-    private final static IdProviderAccessControlList EMPTY = IdProviderAccessControlList.create().build();
+    private static final IdProviderAccessControlList EMPTY = IdProviderAccessControlList.create().build();
 
     private final ImmutableMap<PrincipalKey, IdProviderAccessControlEntry> entries;
 

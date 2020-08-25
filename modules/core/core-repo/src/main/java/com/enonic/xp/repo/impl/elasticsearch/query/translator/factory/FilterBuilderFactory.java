@@ -183,8 +183,8 @@ public class FilterBuilderFactory
         RangeQueryBuilder builder = new RangeQueryBuilder( queryFieldName ).
             from( from != null ? from.getObject() : null ).
             to( to != null ? to.getObject() : null).
-            includeLower( true ).
-            includeUpper( true );
+            includeLower( filter.isIncludeLower() ).
+            includeUpper( filter.isIncludeUpper() );
 
         return builder;
     }

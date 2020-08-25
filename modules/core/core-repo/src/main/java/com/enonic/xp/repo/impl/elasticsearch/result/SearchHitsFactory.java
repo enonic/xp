@@ -5,6 +5,7 @@ import com.enonic.xp.repo.impl.search.result.SearchHits;
 
 public class SearchHitsFactory
 {
+
     public static SearchHits create( final org.elasticsearch.search.SearchHits searchHits )
     {
         final SearchHits.Builder builder = SearchHits.create();
@@ -16,6 +17,7 @@ public class SearchHitsFactory
                 score( hit.getScore() ).
                 indexName( hit.getIndex() ).
                 returnValues( ReturnValuesFactory.create( hit ) ).
+                sortValues( SortValuesPropertyFactory.create( hit.getSortValues() ) ).
                 highlightedFields( HighlightedPropertiesFactory.create( hit.getHighlightFields() ) );
 
             if ( hit.getExplanation() != null )

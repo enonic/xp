@@ -14,9 +14,11 @@ public class GeoDistanceSortFunctionArguments
 
     private static final int LOCATION_POSITION = 1;
 
-    private final static int MIN_ARGUMENTS = 2;
+    private static final int UNIT_POSITION = 2;
 
-    private final static int MAX_ARGUMENTS = 2;
+    private static final int MIN_ARGUMENTS = 2;
+
+    private static final int MAX_ARGUMENTS = 3;
 
     private double latitude;
 
@@ -24,6 +26,7 @@ public class GeoDistanceSortFunctionArguments
 
     private final String fieldName;
 
+    private String unit;
 
     public GeoDistanceSortFunctionArguments( final List<ValueExpr> arguments )
     {
@@ -32,6 +35,7 @@ public class GeoDistanceSortFunctionArguments
         this.fieldName = arguments.get( FIELD_POSITION ).getValue().toString();
 
         setLocation( arguments );
+        setUnit( arguments );
     }
 
     private void setLocation( final List<ValueExpr> arguments )
@@ -50,6 +54,16 @@ public class GeoDistanceSortFunctionArguments
         }
     }
 
+    private void setUnit( final List<ValueExpr> arguments )
+    {
+        if ( arguments.size() == 3 )
+        {
+            final Value unitArgument = arguments.get( UNIT_POSITION ).getValue();
+
+            this.unit = unitArgument.asString();
+        }
+    }
+
     public String getFieldName()
     {
         return fieldName;
@@ -63,6 +77,11 @@ public class GeoDistanceSortFunctionArguments
     public double getLongitude()
     {
         return longitude;
+    }
+
+    public String getUnit()
+    {
+        return unit;
     }
 
     @Override

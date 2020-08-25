@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.repository;
 
 import java.util.Iterator;
+import java.util.Optional;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -33,26 +34,35 @@ public class RepositoryNodeTranslator
 
     private static final String SETTINGS_KEY = "settings";
 
+    private static final String DATA_KEY = "data";
+
     public static Node toNode( final Repository repository )
     {
-        final PropertyTree repositoryData = new PropertyTree();
-        toNodeData( repository.getBranches(), repositoryData );
+        final PropertyTree repositoryNodeData = new PropertyTree();
+        toNodeData( repository.getBranches(), repositoryNodeData );
         final RepositorySettings repositorySettings = repository.getSettings();
-        toNodeData( repositorySettings.getIndexDefinitions(), repositoryData );
+        toNodeData( repositorySettings.getIndexDefinitions(), repositoryNodeData );
+        toNodeData( repository.getData(), repositoryNodeData );
 
         return Node.create().
             id( NodeId.from( repository.getId() ) ).
             childOrder( ChildOrder.defaultOrder() ).
-            data( repositoryData ).
+            data( repositoryNodeData ).
             name( repository.getId().toString() ).
             parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH ).
             permissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
+            attachedBinaries( repository.getAttachments() ).
             build();
     }
 
     public static NodeEditor toCreateBranchNodeEditor( final Branch branch )
     {
         return toBeEdited -> toBeEdited.data.addString( BRANCHES_KEY, branch.getValue() );
+    }
+
+    public static NodeEditor toUpdateRepositoryNodeEditor( UpdateRepositoryEntryParams params )
+    {
+        return toBeEdited -> toBeEdited.data.setSet( DATA_KEY, params.getRepositoryData().getRoot() );
     }
 
     public static NodeEditor toDeleteBranchNodeEditor( final Branch branch )
@@ -75,6 +85,11 @@ public class RepositoryNodeTranslator
     private static void toNodeData( final Branches branches, final PropertyTree data )
     {
         branches.forEach( branch -> data.addString( BRANCHES_KEY, branch.getValue() ) );
+    }
+
+    private static void toNodeData( final PropertyTree repositoryData, final PropertyTree data )
+    {
+        data.addSet( DATA_KEY, repositoryData.getRoot().detach() );
     }
 
     private static void toNodeData( final IndexDefinitions indexDefinitions, final PropertyTree data )
@@ -116,10 +131,14 @@ public class RepositoryNodeTranslator
             indexDefinitions( toIndexConfigs( nodeData ) ).
             build();
 
+        final PropertyTree repositoryData = toRepositoryData( nodeData );
+
         return Repository.create().
             id( RepositoryId.from( node.id().toString() ) ).
             branches( toBranches( nodeData ) ).
             settings( repositorySettings ).
+            data( repositoryData ).
+            attachments( node.getAttachedBinaries() ).
             build();
     }
 
@@ -156,5 +175,10 @@ public class RepositoryNodeTranslator
             return indexConfigs.build();
         }
         return null;
+    }
+
+    private static PropertyTree toRepositoryData( final PropertyTree nodeData )
+    {
+        return Optional.ofNullable( nodeData.getSet( DATA_KEY ) ).map( PropertySet::toTree ).orElse( null );
     }
 }

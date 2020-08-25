@@ -13,7 +13,7 @@ final class InputTypeAliasConverters
 
     private final Map<InputTypeName, InputTypeAliasConverter> map;
 
-    private final static InputTypeAliasConverters INSTANCE = new InputTypeAliasConverters();
+    private static final InputTypeAliasConverters INSTANCE = new InputTypeAliasConverters();
 
     private InputTypeAliasConverters()
     {

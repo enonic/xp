@@ -21,7 +21,7 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 public final class AssetHandler
     extends EndpointHandler
 {
-    private final static Pattern PATTERN = Pattern.compile( "([^/^:]+)(:[^/]+)?/(.+)" );
+    private static final Pattern PATTERN = Pattern.compile( "([^/^:]+)(:[^/]+)?/(.+)" );
 
     private ResourceService resourceService;
 

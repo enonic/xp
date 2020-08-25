@@ -18,7 +18,7 @@ final class BlobStoreFactory
 
     private final BlobStoreProviders providers;
 
-    private final static Logger LOG = LoggerFactory.getLogger( BlobStoreFactory.class );
+    private static final Logger LOG = LoggerFactory.getLogger( BlobStoreFactory.class );
 
     private BlobStoreFactory( final Builder builder )
     {

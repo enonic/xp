@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.dump.upgrade;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -9,6 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.repo.impl.dump.DefaultFilePaths;
+import com.enonic.xp.repo.impl.dump.FilePaths;
+import com.enonic.xp.repo.impl.dump.PathRef;
+import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
+import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
 import com.enonic.xp.repository.RepositoryId;
 
 public abstract class AbstractMetaDumpUpgrader
@@ -16,9 +22,9 @@ public abstract class AbstractMetaDumpUpgrader
 {
     private static final Logger LOG = LoggerFactory.getLogger( AbstractMetaDumpUpgrader.class );
 
-    protected BufferFileDumpReader tmpDumpReader;
+    protected FileDumpReader tmpDumpReader;
 
-    protected BufferFileDumpWriter tmpDumpWriter;
+    protected FileDumpWriter tmpDumpWriter;
 
     public AbstractMetaDumpUpgrader( final Path basePath )
     {
@@ -30,8 +36,22 @@ public abstract class AbstractMetaDumpUpgrader
     {
         super.doUpgrade( dumpName );
         final String timeMillis = Long.toString( System.currentTimeMillis() );
-        tmpDumpReader = new BufferFileDumpReader( basePath, dumpName, null, timeMillis );
-        tmpDumpWriter = new BufferFileDumpWriter( basePath, dumpName, null, timeMillis );
+        FilePaths tmpFilePaths = new DefaultFilePaths()
+        {
+            @Override
+            public PathRef branchMetaPath( final RepositoryId repositoryId, final Branch branch )
+            {
+                return branchRootPath( repositoryId ).resolve( branch.toString() ).resolve( "meta-" + timeMillis + ".tar.gz" );
+            }
+
+            @Override
+            public PathRef versionMetaPath( final RepositoryId repositoryId )
+            {
+                return branchRootPath( repositoryId ).resolve( "versions-" + timeMillis + ".tar.gz" );
+            }
+        };
+        tmpDumpReader = FileDumpReader.create( null, basePath, dumpName, tmpFilePaths );
+        tmpDumpWriter = FileDumpWriter.create( basePath, dumpName, null, tmpFilePaths );
 
         try
         {
@@ -53,14 +73,22 @@ public abstract class AbstractMetaDumpUpgrader
         }
         finally
         {
-            tmpDumpWriter.close();
+            try
+            {
+                tmpDumpReader.close();
+                tmpDumpWriter.close();
+            }
+            catch ( IOException e )
+            {
+                LOG.error( "Error while closing dump writer", e );
+            }
         }
     }
 
     protected void upgradeRepository( final RepositoryId repositoryId )
     {
         final Path versionsFile = dumpReader.getVersionsFile( repositoryId );
-        if ( versionsFile != null )
+        if ( Files.exists( versionsFile ) )
         {
             upgradeVersionEntries( repositoryId, versionsFile );
         }
@@ -71,7 +99,7 @@ public abstract class AbstractMetaDumpUpgrader
     protected void upgradeBranch( final RepositoryId repositoryId, final Branch branch )
     {
         final Path entriesFile = dumpReader.getBranchEntriesFile( repositoryId, branch );
-        if ( entriesFile != null )
+        if ( Files.exists( entriesFile ) )
         {
             upgradeBranchEntries( repositoryId, branch, entriesFile );
         }
@@ -87,10 +115,10 @@ public abstract class AbstractMetaDumpUpgrader
         tmpDumpWriter.openVersionsMeta( repositoryId );
         try
         {
-            dumpReader.processEntries( ( entryContent, entryName ) -> {
-                String upgradedEntryContent = entryContent;
+            processEntries( ( entryContent, entryName ) -> {
+                byte[] upgradedEntryContent = null;
                 String upgradedEntryName = entryName;
-                if ( hasToUpgradeEntry( repositoryId, entryContent, entryName ) )
+                if ( hasToUpgradeEntry( repositoryId, entryName ) )
                 {
                     result.processed();
                     try
@@ -104,12 +132,14 @@ public abstract class AbstractMetaDumpUpgrader
                         LOG.error( "Error while upgrading version entry [" + entryName + "]", e );
                     }
                 }
-                tmpDumpWriter.storeTarEntry( upgradedEntryContent, upgradedEntryName );
+                tmpDumpWriter.storeTarEntry(
+                    upgradedEntryContent == null ? entryContent.getBytes( StandardCharsets.UTF_8 ) : upgradedEntryContent,
+                    upgradedEntryName );
             }, entriesFile );
         }
         finally
         {
-            tmpDumpWriter.close();
+            tmpDumpWriter.closeMeta();
         }
     }
 
@@ -118,11 +148,11 @@ public abstract class AbstractMetaDumpUpgrader
         tmpDumpWriter.openBranchMeta( repositoryId, branch );
         try
         {
-            dumpReader.processEntries( ( entryContent, entryName ) -> {
+            processEntries( ( entryContent, entryName ) -> {
 
-                String upgradedEntryContent = entryContent;
+                byte[] upgradedEntryContent = null;
                 String upgradedEntryName = entryName;
-                if ( hasToUpgradeEntry( repositoryId, entryContent, entryName ) )
+                if ( hasToUpgradeEntry( repositoryId, entryName ) )
                 {
                     result.processed();
                     try
@@ -136,12 +166,14 @@ public abstract class AbstractMetaDumpUpgrader
                         LOG.error( "Error while upgrading branch entry [" + entryName + "]", e );
                     }
                 }
-                tmpDumpWriter.storeTarEntry( upgradedEntryContent, upgradedEntryName );
+                tmpDumpWriter.storeTarEntry(
+                    upgradedEntryContent == null ? entryContent.getBytes( StandardCharsets.UTF_8 ) : upgradedEntryContent,
+                    upgradedEntryName );
             }, entriesFile );
         }
         finally
         {
-            tmpDumpWriter.close();
+            tmpDumpWriter.closeMeta();
         }
     }
 
@@ -152,20 +184,18 @@ public abstract class AbstractMetaDumpUpgrader
         {
             final Path newVersions = tmpDumpReader.getVersionsFile( repositoryId );
 
-            if ( newVersions != null )
+            if ( Files.exists( newVersions ) )
             {
-                Files.move( tmpDumpReader.getVersionsFile( repositoryId ), dumpReader.getVersionsFile( repositoryId ),
-                            StandardCopyOption.REPLACE_EXISTING );
+                Files.move( newVersions, dumpReader.getVersionsFile( repositoryId ), StandardCopyOption.REPLACE_EXISTING );
             }
 
             for ( Branch branch : dumpReader.getBranches( repositoryId ) )
             {
                 final Path newBranch = tmpDumpReader.getBranchEntriesFile( repositoryId, branch );
 
-                if ( newBranch != null )
+                if ( Files.exists( newBranch ) )
                 {
-                    Files.move( tmpDumpReader.getBranchEntriesFile( repositoryId, branch ),
-                                dumpReader.getBranchEntriesFile( repositoryId, branch ), StandardCopyOption.REPLACE_EXISTING );
+                    Files.move( newBranch, dumpReader.getBranchEntriesFile( repositoryId, branch ), StandardCopyOption.REPLACE_EXISTING );
                 }
 
             }
@@ -189,7 +219,7 @@ public abstract class AbstractMetaDumpUpgrader
         }
     }
 
-    protected boolean hasToUpgradeEntry( final RepositoryId repositoryId, final String entryContent, final String entryName )
+    protected boolean hasToUpgradeEntry( final RepositoryId repositoryId, final String entryName )
     {
         return true;
     }
@@ -199,7 +229,7 @@ public abstract class AbstractMetaDumpUpgrader
         return entryName;
     }
 
-    protected abstract String upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent );
+    protected abstract byte[] upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent );
 
-    protected abstract String upgradeBranchEntry( final RepositoryId repositoryId, final String entryContent );
+    protected abstract byte[] upgradeBranchEntry( final RepositoryId repositoryId, final String entryContent );
 }

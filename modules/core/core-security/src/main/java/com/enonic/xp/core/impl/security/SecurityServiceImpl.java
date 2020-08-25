@@ -17,8 +17,6 @@ import java.util.regex.Pattern;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -108,8 +106,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public final class SecurityServiceImpl
     implements SecurityService
 {
-    private static final Logger LOG = LoggerFactory.getLogger( SecurityServiceImpl.class );
-
     private static final ImmutableSet<PrincipalKey> FORBIDDEN_FROM_RELATIONSHIP =
         ImmutableSet.of( RoleKeys.EVERYONE, RoleKeys.AUTHENTICATED );
 
@@ -117,10 +113,6 @@ public final class SecurityServiceImpl
 
     private static final Pattern SU_PASSWORD_PATTERN =
         Pattern.compile( "(?:\\{(sha1|sha256|sha512|md5)\\})?(\\S+)", Pattern.CASE_INSENSITIVE );
-
-    private static final long INITIALIZATION_CHECK_PERIOD = 1000;
-
-    private static final long INITIALIZATION_CHECK_MAX_COUNT = 30;
 
     private final Clock clock;
 

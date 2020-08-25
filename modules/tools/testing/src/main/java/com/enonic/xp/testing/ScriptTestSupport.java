@@ -3,6 +3,7 @@ package com.enonic.xp.testing;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.concurrent.Executors;
 
 import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
@@ -192,15 +193,8 @@ public abstract class ScriptTestSupport
     private ScriptExecutor createExecutor()
         throws Exception
     {
-        final ScriptExecutorImpl executor = new ScriptExecutorImpl();
-        executor.setResourceService( this.resourceService );
-        executor.setApplication( createApplication() );
-        executor.setClassLoader( getClass().getClassLoader() );
-        executor.setServiceRegistry( this.serviceRegistry );
-        executor.setScriptSettings( this.scriptSettings.build() );
-        executor.setRunMode( RunMode.DEV );
-        executor.initialize();
-        return executor;
+        return new ScriptExecutorImpl( Executors.newSingleThreadExecutor(), this.scriptSettings.build(), getClass().getClassLoader(),
+                                       this.serviceRegistry, this.resourceService, createApplication(), RunMode.DEV );
     }
 
     private Application createApplication()

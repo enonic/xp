@@ -23,7 +23,7 @@ public class VacuumServiceImpl
 {
     private final VacuumTasks tasks = new VacuumTasks();
 
-    private final static Logger LOG = LoggerFactory.getLogger( VacuumServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( VacuumServiceImpl.class );
 
     private VacuumConfig config;
 
@@ -62,6 +62,7 @@ public class VacuumServiceImpl
             final VacuumTaskParams taskParams = VacuumTaskParams.create().
                 listener( params.getVacuumListener() ).
                 ageThreshold( getAgeThresholdMs( params ) ).
+                versionsBatchSize( config.versionsBatchSize() ).
                 build();
             final VacuumTaskResult taskResult = task.execute( taskParams );
 

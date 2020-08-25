@@ -13,7 +13,7 @@ import com.enonic.xp.security.acl.Permission;
 public final class ContentAccessException
     extends BaseException
 {
-    private final static String CONTENT_ROOT_NODE_NAME = "content";
+    private static final String CONTENT_ROOT_NODE_NAME = "content";
 
     private final User user;
 

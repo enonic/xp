@@ -36,7 +36,7 @@ public class VersionIdDumpUpgrader
     }
 
     @Override
-    protected String upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent )
+    protected byte[] upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent )
     {
         final Pre2VersionsDumpEntryJson sourceEntry = deserializeValue( entryContent, Pre2VersionsDumpEntryJson.class );
         final Pre4VersionsDumpEntryJson.Builder upgradedEntry = Pre4VersionsDumpEntryJson.create().
@@ -51,7 +51,7 @@ public class VersionIdDumpUpgrader
     }
 
     @Override
-    protected String upgradeBranchEntry( final RepositoryId repositoryId, final String entryContent )
+    protected byte[] upgradeBranchEntry( final RepositoryId repositoryId, final String entryContent )
     {
         final Pre2BranchDumpEntryJson sourceEntry = deserializeValue( entryContent, Pre2BranchDumpEntryJson.class );
 

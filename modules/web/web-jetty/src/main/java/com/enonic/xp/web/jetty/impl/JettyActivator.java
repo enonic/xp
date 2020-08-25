@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.jetty9.InstrumentedHandler;
+import com.codahale.metrics.jetty9.InstrumentedQueuedThreadPool;
 
 import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.util.Metrics;
@@ -32,12 +33,12 @@ import com.enonic.xp.web.jetty.impl.configurator.HttpConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.MultipartConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.RequestLogConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.SessionConfigurator;
-import com.enonic.xp.web.jetty.impl.session.JettySessionStorageConfigurator;
+import com.enonic.xp.web.jetty.impl.session.JettySessionStoreConfigurator;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.web.jetty")
 public final class JettyActivator
 {
-    private final static Logger LOG = LoggerFactory.getLogger( JettyActivator.class );
+    private static final Logger LOG = LoggerFactory.getLogger( JettyActivator.class );
 
     private final BundleContext bundleContext;
 
@@ -49,7 +50,7 @@ public final class JettyActivator
 
     private ServiceRegistration<ServletContext> xpServletContextReg;
 
-    private final JettySessionStorageConfigurator jettySessionStorageConfigurator;
+    private final JettySessionStoreConfigurator jettySessionStoreConfigurator;
 
     private final ContextHandlerCollection contexts = new ContextHandlerCollection();
 
@@ -57,12 +58,12 @@ public final class JettyActivator
 
     @Activate
     public JettyActivator( final JettyConfig config, final BundleContext bundleContext,
-                           @Reference final JettySessionStorageConfigurator jettySessionStorageConfigurator,
+                           @Reference final JettySessionStoreConfigurator jettySessionStoreConfigurator,
                            @Reference final List<DispatchServlet> dispatchServlets )
     {
         this.config = config;
         this.bundleContext = bundleContext;
-        this.jettySessionStorageConfigurator = jettySessionStorageConfigurator;
+        this.jettySessionStoreConfigurator = jettySessionStoreConfigurator;
         dispatchServlets.stream().map( this::initServletContextHandler ).forEach( contexts::addHandler );
     }
 
@@ -119,7 +120,7 @@ public final class JettyActivator
     {
         final Server server = createServer();
 
-        jettySessionStorageConfigurator.configure( server );
+        jettySessionStoreConfigurator.configure( server );
         new HttpConfigurator().configure( this.config, server );
         new RequestLogConfigurator().configure( this.config, server );
 
@@ -145,7 +146,8 @@ public final class JettyActivator
         final int minThreads = config.threadPool_minThreads();
         final int idleTimeout = config.threadPool_idleTimeout();
 
-        final QueuedThreadPool threadPool = new QueuedThreadPool( maxThreads, minThreads, idleTimeout );
+        Metrics.removeAll( QueuedThreadPool.class );
+        final QueuedThreadPool threadPool = new InstrumentedQueuedThreadPool( Metrics.registry(), maxThreads, minThreads, idleTimeout );
         return new Server( threadPool );
     }
 

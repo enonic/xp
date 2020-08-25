@@ -24,7 +24,7 @@ public class AuditLogRepoInitializer
     @Override
     protected boolean isInitialized()
     {
-        return this.adminContext.callWith( () -> repositoryService.isInitialized( AuditLogConstants.AUDIT_LOG_REPO.getId() ) );
+        return this.adminContext.callWith( () -> repositoryService.isInitialized( AuditLogConstants.AUDIT_LOG_REPO_ID ) );
     }
 
     @Override
@@ -46,7 +46,7 @@ public class AuditLogRepoInitializer
     @Override
     protected String getInitializationSubject()
     {
-        return AuditLogConstants.AUDIT_LOG_REPO_ID.toString() + " repo";
+        return AuditLogConstants.AUDIT_LOG_REPO_ID + " repo";
     }
 
     public static Builder create()

@@ -14,8 +14,7 @@ import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.rendering.RenderException;
-import com.enonic.xp.portal.impl.rendering.Renderer;
-import com.enonic.xp.portal.impl.rendering.RendererFactory;
+import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentPath;
@@ -35,14 +34,14 @@ public final class ComponentInstruction
 
     public static final String COMPONENT_INSTRUCTION_PREFIX = "COMPONENT";
 
-    private RendererFactory rendererFactory;
+    private RendererDelegate rendererDelegate;
 
     private ComponentService componentService;
 
     @Reference
-    public void setRendererFactory( final RendererFactory rendererFactory )
+    public void setRendererDelegate( final RendererDelegate rendererDelegate )
     {
-        this.rendererFactory = rendererFactory;
+        this.rendererDelegate = rendererDelegate;
     }
 
     @Reference
@@ -100,21 +99,15 @@ public final class ComponentInstruction
 
     private PortalResponse renderComponent( final PortalRequest portalRequest, final Component component )
     {
-        final Renderer<Component> renderer = this.rendererFactory.getRenderer( component );
-        if ( renderer == null )
-        {
-            throw new RenderException( "No Renderer found for: " + component.getClass().getSimpleName() );
-        }
-
         final Trace trace = Tracer.newTrace( "renderComponent" );
         if ( trace == null )
         {
-            return renderer.render( component, portalRequest );
+            return rendererDelegate.render( component, portalRequest );
         }
 
         trace.put( "componentPath", component.getPath() );
         trace.put( "type", component.getType().toString() );
-        return Tracer.trace( trace, () -> renderer.render( component, portalRequest ) );
+        return Tracer.trace( trace, () -> rendererDelegate.render( component, portalRequest ) );
     }
 
     private Component resolveComponent( final PortalRequest portalRequest, final ComponentPath path )

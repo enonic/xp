@@ -21,7 +21,7 @@ public class ApplicationDescriptorServiceImpl
     implements ApplicationDescriptorService, SynchronousBundleListener
 {
 
-    private final static Logger LOG = LoggerFactory.getLogger( ApplicationDescriptorServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ApplicationDescriptorServiceImpl.class );
 
     private final Map<ApplicationKey, ApplicationDescriptor> appDescriptorMap;
 

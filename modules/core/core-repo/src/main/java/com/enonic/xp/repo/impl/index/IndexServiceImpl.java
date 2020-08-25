@@ -35,8 +35,6 @@ import com.enonic.xp.util.JsonHelper;
 public class IndexServiceImpl
     implements IndexService
 {
-    private final static String CLUSTER_HEALTH_TIMEOUT_VALUE = "10s";
-
     private IndexServiceInternal indexServiceInternal;
 
     private IndexDataService indexDataService;
@@ -47,11 +45,11 @@ public class IndexServiceImpl
 
     private RepositoryEntryService repositoryEntryService;
 
-    private final static Logger LOG = LoggerFactory.getLogger( IndexServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( IndexServiceImpl.class );
 
-    private final static String DEFAULT_INDEX_RESOURCE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
+    private static final String DEFAULT_INDEX_RESOURCE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
 
-    private final static IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =
+    private static final IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =
         new DefaultIndexResourceProvider( DEFAULT_INDEX_RESOURCE_FOLDER );
 
     @Override
@@ -149,6 +147,12 @@ public class IndexServiceImpl
     }
 
     @Override
+    public boolean waitForYellowStatus()
+    {
+        return indexServiceInternal.waitForYellowStatus();
+    }
+
+    @Override
     public void purgeSearchIndex( final PurgeIndexParams params )
     {
         final Repository repository = this.repositoryEntryService.getRepositoryEntry( params.getRepositoryId() );
@@ -175,9 +179,9 @@ public class IndexServiceImpl
         final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId, branch );
 
         indexServiceInternal.deleteIndices( searchIndexName );
-        indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
 
         final IndexSettings indexSettings = getSearchIndexSettings( repositoryId );
+
         final IndexMapping indexMapping = getSearchIndexMapping( repositoryId );
 
         indexServiceInternal.createIndex( CreateIndexRequest.create().
@@ -185,8 +189,6 @@ public class IndexServiceImpl
             indexSettings( indexSettings ).
             mapping( indexMapping ).
             build() );
-
-        indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
     }
 
     private IndexSettings getSearchIndexSettings( final RepositoryId repositoryId )

@@ -34,7 +34,7 @@ public class ResolveSyncWorkCommandTest
 
     private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
-    private final static NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
+    private static final NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
 
     @BeforeEach
     public void setUp()

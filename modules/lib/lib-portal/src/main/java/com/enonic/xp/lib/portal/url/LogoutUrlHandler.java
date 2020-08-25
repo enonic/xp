@@ -15,7 +15,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public final class LogoutUrlHandler
     extends AbstractUrlHandler
 {
-    private final static Set<String> VALID_URL_PROPERTY_KEYS =
+    private static final Set<String> VALID_URL_PROPERTY_KEYS =
         new HashSet<>( Arrays.asList( "redirect", "contextPath", "type", "params" ) );
 
     private Context context;

@@ -34,7 +34,7 @@ public class FileBlobStoreTest
     @BeforeEach
     public void setup()
     {
-        this.blobStore = new FileBlobStore( this.temporaryFolder.toFile() );
+        this.blobStore = new FileBlobStore( this.temporaryFolder );
     }
 
     @Test

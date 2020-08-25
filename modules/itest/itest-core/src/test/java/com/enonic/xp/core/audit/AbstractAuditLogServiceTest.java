@@ -114,7 +114,6 @@ public class AbstractAuditLogServiceTest
 
         final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
         repositoryEntryService.setIndexServiceInternal( elasticsearchIndexService );
-        repositoryEntryService.setNodeRepositoryService( nodeRepositoryService );
         repositoryEntryService.setNodeStorageService( this.storageService );
         repositoryEntryService.setNodeSearchService( this.searchService );
         repositoryEntryService.setEventPublisher( eventPublisher );

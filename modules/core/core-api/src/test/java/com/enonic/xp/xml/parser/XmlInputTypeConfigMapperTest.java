@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class XmlInputTypeConfigMapperTest
 {
-    private final static ApplicationKey APP_KEY = ApplicationKey.from( "myapp" );
+    private static final ApplicationKey APP_KEY = ApplicationKey.from( "myapp" );
 
     private InputStream findResource( final String suffix )
     {

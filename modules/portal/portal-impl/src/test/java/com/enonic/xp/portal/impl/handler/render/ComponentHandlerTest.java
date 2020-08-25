@@ -43,7 +43,7 @@ public class ComponentHandlerTest
         this.handler.setContentService( this.contentService );
         this.handler.setPageDescriptorService( this.pageDescriptorService );
         this.handler.setPageTemplateService( this.pageTemplateService );
-        this.handler.setRendererFactory( this.rendererFactory );
+        this.handler.setRendererDelegate( this.rendererDelegate );
         this.handler.setPostProcessor( this.postProcessor );
 
         this.request.setMethod( HttpMethod.GET );

@@ -9,6 +9,7 @@ public interface ImageService
     ByteSource readImage( final ReadImageParams readImageParams )
         throws IOException;
 
+    @Deprecated
     String getFormatByMimeType( String mimeType )
         throws IOException;
 }

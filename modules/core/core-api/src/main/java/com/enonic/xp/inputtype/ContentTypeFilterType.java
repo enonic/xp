@@ -10,7 +10,7 @@ import com.enonic.xp.data.ValueTypes;
 final class ContentTypeFilterType
     extends InputTypeBase
 {
-    public final static ContentTypeFilterType INSTANCE = new ContentTypeFilterType();
+    public static final ContentTypeFilterType INSTANCE = new ContentTypeFilterType();
 
     private ContentTypeFilterType()
     {

@@ -6,8 +6,6 @@ import com.enonic.xp.annotation.PublicApi;
 public class NodePublishReasonIsChild
     implements NodePublishReason
 {
-    private final String message = "Child of %s";
-
     private final NodeId nodeId;
 
     public NodePublishReasonIsChild( final NodeId nodeId )
@@ -24,6 +22,6 @@ public class NodePublishReasonIsChild
     @Override
     public String getMessage()
     {
-        return String.format( message, nodeId.toString() );
+        return String.format( "Child of %s", nodeId );
     }
 }

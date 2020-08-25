@@ -24,7 +24,7 @@ public final class WidgetDescriptorServiceImpl
 {
     private DescriptorService descriptorService;
 
-    private final static String PATH = "/admin/widgets";
+    private static final String PATH = "/admin/widgets";
 
     private ResourceService resourceService;
 

@@ -26,7 +26,7 @@ public class BlobStoreActivator
 
     private BundleContext context;
 
-    private final static Logger LOG = LoggerFactory.getLogger( BlobStoreActivator.class );
+    private static final Logger LOG = LoggerFactory.getLogger( BlobStoreActivator.class );
 
     @Activate
     public void activate( final BundleContext context )

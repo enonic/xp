@@ -5,14 +5,11 @@ dependencies {
     compile project( ':portal:portal-api' )
     compile project( ':portal:portal-owasp' )
     compile 'org.attoparser:attoparser:1.3'
-    testCompile project( ':core:core-macro' )
-    testCompile project( ':portal:portal-api' )
-    testCompile project( ':portal:portal-owasp' )
-    testCompile project( ':script:script-impl' )
-    testCompile project( ':web:web-impl' )
-    testCompile project( path: ':portal:portal-api', configuration: 'testOutput' )
-    testCompile project( path: ':script:script-impl', configuration: 'testOutput' )
-    testCompile project( path: ':web:web-jetty', configuration: 'testOutput' )
+
+    testImplementation( project( ':core:core-macro' ) )
+    testImplementation( project( ':script:script-impl' ) )
+    testImplementation( project( ':web:web-impl' ) )
+    testImplementation( testFixtures( project(":web:web-api") ) )
 }
 
 jar {

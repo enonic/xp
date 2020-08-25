@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.repo.impl.elasticsearch.ClusterHealthStatus;
-import com.enonic.xp.repo.impl.elasticsearch.ClusterStatusCode;
 import com.enonic.xp.repo.impl.index.CreateIndexRequest;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repository.CreateRepositoryParams;
@@ -27,13 +25,11 @@ public class NodeRepositoryServiceImpl
 {
     private IndexServiceInternal indexServiceInternal;
 
-    private final static Logger LOG = LoggerFactory.getLogger( NodeRepositoryServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( NodeRepositoryServiceImpl.class );
 
-    private final static String CLUSTER_HEALTH_TIMEOUT_VALUE = "10s";
+    private static final String DEFAULT_INDEX_RESOURCE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
 
-    private final static String DEFAULT_INDEX_RESOURCE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
-
-    private final static IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =
+    private static final IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =
         new DefaultIndexResourceProvider( DEFAULT_INDEX_RESOURCE_FOLDER );
 
     @Override
@@ -41,8 +37,6 @@ public class NodeRepositoryServiceImpl
     {
         doCreateIndex( params, IndexType.STORAGE );
         doCreateIndex( params, IndexType.COMMIT );
-
-        checkClusterHealth();
     }
 
     @Override
@@ -68,7 +62,7 @@ public class NodeRepositoryServiceImpl
     @Override
     public boolean isInitialized( final RepositoryId repositoryId )
     {
-        if ( !checkClusterHealth() )
+        if ( !indexServiceInternal.waitForYellowStatus() )
         {
             throw new RepositoryException( "Unable to initialize repositories" );
         }
@@ -111,7 +105,7 @@ public class NodeRepositoryServiceImpl
     private IndexSettings getDefaultSettings( final CreateRepositoryParams params, final IndexType indexType )
     {
         final IndexSettings defaultSettings = DEFAULT_INDEX_RESOURCE_PROVIDER.getSettings( params.getRepositoryId(), indexType );
-        if ( SystemConstants.SYSTEM_REPO.getId().equals( params.getRepositoryId() ) )
+        if ( SystemConstants.SYSTEM_REPO_ID.equals( params.getRepositoryId() ) )
         {
             return defaultSettings;
         }
@@ -119,7 +113,7 @@ public class NodeRepositoryServiceImpl
         try
         {
             final String numberOfReplicasString =
-                indexServiceInternal.getIndexSettings( SystemConstants.SYSTEM_REPO.getId(), IndexType.STORAGE ).getNode().
+                indexServiceInternal.getIndexSettings( SystemConstants.SYSTEM_REPO_ID, IndexType.STORAGE ).getNode().
                     get( "index.number_of_replicas" ).
                     textValue();
             final int numberOfReplicas = Integer.parseInt( numberOfReplicasString );
@@ -129,7 +123,7 @@ public class NodeRepositoryServiceImpl
         catch ( Exception e )
         {
             LOG.warn(
-                "Failed to retrieve number of replicas from [" + resolveIndexName( SystemConstants.SYSTEM_REPO.getId(), indexType ) + "]" );
+                "Failed to retrieve number of replicas from [" + resolveIndexName( SystemConstants.SYSTEM_REPO_ID, indexType ) + "]" );
         }
 
         return defaultSettings;
@@ -158,29 +152,6 @@ public class NodeRepositoryServiceImpl
         }
 
         throw new IllegalArgumentException( "Cannot resolve index name." );
-    }
-
-    private boolean checkClusterHealth()
-    {
-        try
-        {
-            final ClusterHealthStatus clusterHealth = indexServiceInternal.getClusterHealth( CLUSTER_HEALTH_TIMEOUT_VALUE );
-
-            if ( clusterHealth.isTimedOut() || clusterHealth.getClusterStatusCode().equals( ClusterStatusCode.RED ) )
-            {
-                LOG.error( "Cluster not healthy: " + "timed out: " + clusterHealth.isTimedOut() + ", state: " +
-                               clusterHealth.getClusterStatusCode() );
-                return false;
-            }
-
-            return true;
-        }
-        catch ( Exception e )
-        {
-            LOG.error( "Failed to get cluster health status", e );
-        }
-
-        return false;
     }
 
     @Reference

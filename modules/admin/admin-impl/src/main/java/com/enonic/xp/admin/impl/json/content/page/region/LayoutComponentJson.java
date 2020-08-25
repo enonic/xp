@@ -22,7 +22,8 @@ public class LayoutComponentJson
     @JsonCreator
     public LayoutComponentJson( @JsonProperty("descriptor") final String descriptor,
                                 @JsonProperty("config") final List<PropertyArrayJson> config,
-                                final @JsonProperty("regions") List<RegionJson> regions )
+                                final @JsonProperty("regions") List<RegionJson> regions,
+                                @Deprecated @JsonProperty("name") final String name )
     {
         super( LayoutComponent.create().
             descriptor( descriptor != null ? DescriptorKey.from( descriptor ) : null ).

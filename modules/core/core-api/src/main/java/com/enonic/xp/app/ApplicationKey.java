@@ -11,7 +11,7 @@ import com.enonic.xp.util.CharacterChecker;
 @PublicApi
 public final class ApplicationKey
 {
-    public final static ApplicationKey SYSTEM = ApplicationKey.from( "system" );
+    public static final ApplicationKey SYSTEM = ApplicationKey.from( "system" );
 
     public static final ApplicationKey MEDIA_MOD = ApplicationKey.from( "media" );
 

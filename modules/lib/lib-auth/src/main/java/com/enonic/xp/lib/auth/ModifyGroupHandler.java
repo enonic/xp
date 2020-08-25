@@ -11,7 +11,6 @@ import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.EditableGroup;
 import com.enonic.xp.security.Group;
-import com.enonic.xp.security.GroupEditor;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateGroupParams;
@@ -50,7 +49,7 @@ public final class ModifyGroupHandler
         {
             final UpdateGroupParams params = UpdateGroupParams.create().
                 groupKey( this.principalKey ).
-                editor( this.newGroupEditor() ).
+                editor( this::newGroupEditor ).
                 build();
 
             return new PrincipalMapper( this.securityService.get().updateGroup( params ) );
@@ -58,15 +57,13 @@ public final class ModifyGroupHandler
         return null;
     }
 
-    private GroupEditor newGroupEditor()
+    private void newGroupEditor( final EditableGroup edit )
     {
-        return edit -> {
-            final ScriptValue value = this.editor.call( new PrincipalMapper( edit.source ) );
-            if ( value != null )
-            {
-                updateGroup( edit, value.getMap() );
-            }
-        };
+        final ScriptValue value = this.editor.call( new PrincipalMapper( edit.source ) );
+        if ( value != null )
+        {
+            updateGroup( edit, value.getMap() );
+        }
     }
 
     private void updateGroup( final EditableGroup target, final Map map )

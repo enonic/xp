@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory;
 final class PingSender
     implements Runnable
 {
-    private final static Logger LOG = LoggerFactory.getLogger( PingSender.class );
+    private static final Logger LOG = LoggerFactory.getLogger( PingSender.class );
 
-    private final static long HTTP_TIMEOUT = TimeUnit.SECONDS.toMillis( 20 );
+    private static final long HTTP_TIMEOUT = TimeUnit.SECONDS.toMillis( 20 );
 
     private final UdcInfoGenerator generator;
 

@@ -21,7 +21,7 @@ import com.enonic.xp.repository.RepositoryService;
 public class AuditLogServiceImpl
     implements AuditLogService
 {
-    private final static Logger LOG = LoggerFactory.getLogger( AuditLogService.class );
+    private static final Logger LOG = LoggerFactory.getLogger( AuditLogService.class );
 
     private AuditLogConfig config;
 

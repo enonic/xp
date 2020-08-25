@@ -46,7 +46,7 @@ public final class ScriptSettings
         return new Builder();
     }
 
-    public final static class Builder
+    public static final class Builder
     {
         private final ImmutableMap.Builder<Class, Supplier> attributes;
 

@@ -2,14 +2,19 @@ package com.enonic.xp.repo.impl.dump.upgrade;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.BiConsumer;
+import java.util.zip.GZIPInputStream;
+
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.json.ObjectMapperHelper;
@@ -46,7 +51,7 @@ public abstract class AbstractDumpUpgrader
 
     protected void doUpgrade( final String dumpName )
     {
-        dumpReader = new FileDumpReader( basePath, dumpName, null );
+        dumpReader = FileDumpReader.create( null, basePath, dumpName );
     }
 
     protected <T> T deserializeValue( final String value, final Class<T> clazz )
@@ -62,11 +67,11 @@ public abstract class AbstractDumpUpgrader
     }
 
 
-    public String serialize( final Object value )
+    public byte[] serialize( final Object value )
     {
         try
         {
-            return MAPPER.writeValueAsString( value );
+            return MAPPER.writeValueAsBytes( value );
         }
         catch ( JsonProcessingException e )
         {
@@ -74,11 +79,33 @@ public abstract class AbstractDumpUpgrader
         }
     }
 
-    protected BlobKey addRecord( final Segment segment, final String serializedData )
+    protected BlobKey addRecord( final Segment segment, final byte[] serializedData )
     {
-        final ByteSource byteSource = ByteSource.wrap( serializedData.getBytes( StandardCharsets.UTF_8 ) );
-        final BlobRecord blobRecord = dumpReader.getDumpBlobStore().
-            addRecord( segment, byteSource );
-        return blobRecord.getKey();
+        final ByteSource byteSource = ByteSource.wrap( serializedData );
+        return dumpReader.getDumpBlobStore().addRecord( segment, byteSource );
+    }
+
+    public void processEntries( final BiConsumer<String, String> processor, final Path tarFile )
+    {
+        try (final TarArchiveInputStream tarInputStream = openStream( tarFile ))
+        {
+            TarArchiveEntry entry = tarInputStream.getNextTarEntry();
+            while ( entry != null )
+            {
+                String entryContent = new String( tarInputStream.readAllBytes(), StandardCharsets.UTF_8 );
+                processor.accept( entryContent, entry.getName() );
+                entry = tarInputStream.getNextTarEntry();
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new RepoDumpException( "Cannot read meta-data", e );
+        }
+    }
+
+    private TarArchiveInputStream openStream( final Path metaFile )
+        throws IOException
+    {
+        return new TarArchiveInputStream( new GZIPInputStream( Files.newInputStream( metaFile ) ) );
     }
 }

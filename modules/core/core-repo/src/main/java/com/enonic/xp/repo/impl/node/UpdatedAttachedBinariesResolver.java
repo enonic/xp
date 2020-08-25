@@ -39,7 +39,7 @@ class UpdatedAttachedBinariesResolver
 
     private final BinaryReferences currentBinaryReferences;
 
-    private final static Logger LOG = LoggerFactory.getLogger( UpdatedAttachedBinariesResolver.class );
+    private static final Logger LOG = LoggerFactory.getLogger( UpdatedAttachedBinariesResolver.class );
 
     private UpdatedAttachedBinariesResolver( Builder builder )
     {

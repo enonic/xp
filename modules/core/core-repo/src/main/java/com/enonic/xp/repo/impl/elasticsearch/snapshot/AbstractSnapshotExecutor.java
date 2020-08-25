@@ -18,14 +18,16 @@ import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
-import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.security.SystemConstants;
 
 class AbstractSnapshotExecutor
 {
     final String snapshotRepositoryName;
 
     final EsClient client;
+
+    final RepositoryIds repositories;
+
+    final String snapshotName;
 
     private final RepositoryService repositoryService;
 
@@ -35,7 +37,8 @@ class AbstractSnapshotExecutor
     {
         snapshotRepositoryName = builder.snapshotRepositoryName;
         client = builder.client;
-        repositoryService = builder.repositoryService;
+        repositories = builder.repositories;
+        snapshotName = builder.snapshotName;
     }
 
     void closeIndices( final RepositoryIds repositoryIds )
@@ -129,7 +132,9 @@ class AbstractSnapshotExecutor
 
         private EsClient client;
 
-        private RepositoryService repositoryService;
+        private RepositoryIds repositories;
+
+        private String snapshotName;
 
         @SuppressWarnings("unchecked")
         public B snapshotRepositoryName( final String val )
@@ -145,13 +150,18 @@ class AbstractSnapshotExecutor
             return (B) this;
         }
 
-
         @SuppressWarnings("unchecked")
-        public B repositoryService( final RepositoryService val )
+        public B repositories( final RepositoryIds repositories )
         {
-            repositoryService = val;
+            this.repositories = repositories;
             return (B) this;
         }
 
+        @SuppressWarnings("unchecked")
+        public B snapshotName( final String snapshotName )
+        {
+            this.snapshotName = snapshotName;
+            return (B) this;
+        }
     }
 }

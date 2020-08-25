@@ -2,7 +2,7 @@
 
 # Enonic XP
 
-[![Build Status](https://travis-ci.org/enonic/xp.svg?branch=master)](https://travis-ci.org/enonic/xp)
+[![Actions Status](https://github.com/enonic/xp/workflows/Java%20CI/badge.svg)](https://github.com/enonic/xp/actions)
 [![Codecov](https://codecov.io/gh/enonic/xp/branch/master/graph/badge.svg)](https://codecov.io/gh/enonic/xp)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ceca6f602c2a43e7a2f32287e202fe2c)](https://www.codacy.com/app/enonic/xp?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=enonic/xp&amp;utm_campaign=Badge_Grade)
 
@@ -14,7 +14,7 @@ please read our docs here: http://xp.readthedocs.org.
 Before trying to build the project, you need to verify that the following software are installed:
 
 * Java 11 for building and running.
-* Gradle 5.x build system.
+* Gradle 6.x build system.
 * Git installed on system.
 
 Build all code and run all tests including integration tests:

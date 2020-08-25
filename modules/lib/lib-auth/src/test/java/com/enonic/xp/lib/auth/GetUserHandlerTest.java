@@ -20,6 +20,7 @@ public class GetUserHandlerTest
     {
         super.initialize();
         this.session = new SimpleSession( SessionKey.generate() );
+        ContextAccessor.current().getLocalScope().removeAttribute( AuthenticationInfo.class );
         ContextAccessor.current().getLocalScope().setSession( session );
     }
 

@@ -17,7 +17,7 @@ import com.enonic.xp.media.MediaTypeProvider;
 public final class MediaTypesLoader
     implements MediaTypeProvider
 {
-    private final static Logger LOG = LoggerFactory.getLogger( MediaTypesLoader.class );
+    private static final Logger LOG = LoggerFactory.getLogger( MediaTypesLoader.class );
 
     private final Map<String, MediaType> types;
 

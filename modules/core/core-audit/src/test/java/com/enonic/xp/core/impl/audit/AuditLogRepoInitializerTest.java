@@ -1,11 +1,8 @@
 package com.enonic.xp.core.impl.audit;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
 
 import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
 import com.enonic.xp.index.IndexService;
@@ -33,8 +30,9 @@ public class AuditLogRepoInitializerTest
         auditLogService.setIndexService( indexService );
 
         Mockito.when( indexService.isMaster() ).thenReturn( true );
+        Mockito.when( indexService.waitForYellowStatus() ).thenReturn( true );
         Mockito.when( repositoryService.createRepository( Mockito.any( CreateRepositoryParams.class ) ) ).thenReturn( null );
-        Mockito.when( repositoryService.isInitialized( Mockito.any( RepositoryId.class ) ) ).thenAnswer( initializationAnswer() );
+        Mockito.when( repositoryService.isInitialized( Mockito.any( RepositoryId.class ) ) ).thenReturn( false );
     }
 
     @Test
@@ -47,19 +45,5 @@ public class AuditLogRepoInitializerTest
         auditLogService.setConfig( config );
         auditLogService.initialize();
         assertNotNull( auditLogService.getConfig() );
-    }
-
-    private static Answer<Boolean> initializationAnswer()
-    {
-        final AtomicBoolean calledOnce = new AtomicBoolean( false );
-        return invocation -> {
-            boolean c = calledOnce.get();
-            if ( c )
-            {
-                return true;
-            }
-            calledOnce.set( true );
-            return false;
-        };
     }
 }

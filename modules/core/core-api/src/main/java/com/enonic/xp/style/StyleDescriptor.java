@@ -84,7 +84,7 @@ public final class StyleDescriptor
         return new Builder();
     }
 
-    public final static class Builder
+    public static final class Builder
     {
         private ApplicationKey application;
 

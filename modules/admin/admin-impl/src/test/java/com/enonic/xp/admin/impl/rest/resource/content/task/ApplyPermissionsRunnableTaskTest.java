@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.Content;
@@ -28,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ApplyPermissionsRunnableTaskTest
     extends AbstractRunnableTaskTest
 {
-    private ApplyContentPermissionsJson params;
+    private ApplyContentPermissionsParams params;
 
     @BeforeEach
     public void setUp()
@@ -42,11 +41,12 @@ public class ApplyPermissionsRunnableTaskTest
             parentPath( ContentPath.from( "/content/content1" ) ).
             build();
         this.contents.add( child );
-        this.params = Mockito.mock( ApplyContentPermissionsJson.class );
 
-        Mockito.when( this.params.getContentId() ).thenReturn( ContentId.from( "content-id" ) );
-        Mockito.when( this.params.getPermissions() ).thenReturn( getTestPermissions() );
-        Mockito.when( this.params.isInheritPermissions() ).thenReturn( true );
+        this.params = ApplyContentPermissionsParams.create().
+            contentId( ContentId.from( "content-id" ) ).
+            permissions( getTestPermissions() ).
+            inheritPermissions( true ).
+            build();
 
         final FindContentIdsByParentResult res =
             FindContentIdsByParentResult.create().contentIds( ContentIds.from( "content-id" ) ).hits( 1 ).totalHits( 1 ).build();
@@ -147,9 +147,29 @@ public class ApplyPermissionsRunnableTaskTest
 
         final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 0 );
 
-        assertEquals( "{\"state\":\"ERROR\",\"message\":\"Permissions for \\\"content1\\\" could not be applied.\"}",
-                             resultMessage );
+        assertEquals( "{\"state\":\"ERROR\",\"message\":\"Permissions for \\\"content1\\\" could not be applied.\"}", resultMessage );
     }
+
+    @Test
+    public void create_message_single_root_failed()
+        throws Exception
+    {
+
+        Mockito.when( this.contentService.applyPermissions( Mockito.isA( ApplyContentPermissionsParams.class ) ) ).thenReturn(
+            ApplyContentPermissionsResult.create().setSkippedContents( ContentPaths.from( ContentPath.ROOT ) ).build() );
+
+        final ApplyPermissionsRunnableTask task = createAndRunTask();
+        task.createTaskResult();
+
+        Mockito.verify( progressReporter, Mockito.times( 1 ) ).info( contentQueryArgumentCaptor.capture() );
+        Mockito.verify( taskService, Mockito.times( 1 ) ).submitTask( Mockito.isA( RunnableTask.class ),
+                                                                      Mockito.eq( "Apply permissions" ) );
+
+        final String resultMessage = contentQueryArgumentCaptor.getAllValues().get( 0 );
+
+        assertEquals( "{\"state\":\"ERROR\",\"message\":\"Permissions for \\\"/\\\" could not be applied.\"}", resultMessage );
+    }
+
 
     @Test
     public void create_message_multiple_failed_and_one_succeed()

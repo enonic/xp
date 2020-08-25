@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.server.rest.task;
 
-import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
@@ -83,11 +84,11 @@ public class LoadRunnableTask
 
     private boolean isExport( final SystemLoadRequestJson request )
     {
-        final java.nio.file.Path rootDir = getDumpRoot( request.getName() );
+        final Path dumpRoot = getDumpRoot( request.getName() );
 
-        final java.nio.file.Path exportProperties = Paths.get( rootDir.toString(), "export.properties" );
+        final Path exportProperties = dumpRoot.resolve( "export.properties" );
 
-        return exportProperties.toFile().exists();
+        return Files.exists( exportProperties );
     }
 
     private SystemLoadResultJson doLoadFromExport( final SystemLoadRequestJson request )
@@ -99,7 +100,7 @@ public class LoadRunnableTask
         final long branchesCount = repositories.
             stream().
             flatMap( repository -> repository.getBranches().stream() ).
-            count() + SystemConstants.SYSTEM_REPO.getBranches().getSize();
+            count();
 
         loadDumpListener.totalBranches( branchesCount );
 
@@ -116,23 +117,17 @@ public class LoadRunnableTask
         return SystemLoadResultJson.from( builder.build() );
     }
 
-    private java.nio.file.Path getDumpRoot( final String dumpName )
+    private Path getDumpRoot( final String dumpName )
     {
-        final java.nio.file.Path rootDir = getDumpDirectory( dumpName );
-
-        if ( !rootDir.toFile().exists() )
-        {
-            throw new IllegalArgumentException( "No dump with name '" + dumpName + "' found in " + getDataHome() );
-        }
-        return rootDir;
+        return HomeDir.get().toFile().toPath().resolve( "data" ).resolve( "dump" ).resolve( dumpName );
     }
 
     private RepoLoadResult importSystemRepo( final SystemLoadRequestJson request )
     {
-        final RepoLoadResult.Builder builder = RepoLoadResult.create( SystemConstants.SYSTEM_REPO.getId() );
+        final RepoLoadResult.Builder builder = RepoLoadResult.create( SystemConstants.SYSTEM_REPO_ID );
 
         final NodeImportResult systemRepoImport =
-            importRepoBranch( SystemConstants.SYSTEM_REPO.getId().toString(), SystemConstants.BRANCH_SYSTEM.toString(), request.getName() );
+            importRepoBranch( SystemConstants.SYSTEM_REPO_ID.toString(), SystemConstants.BRANCH_SYSTEM.toString(), request.getName() );
 
         final BranchLoadResult branchLoadResult = NodeImportResultTranslator.translate( systemRepoImport, SystemConstants.BRANCH_SYSTEM );
         builder.add( branchLoadResult );
@@ -146,6 +141,7 @@ public class LoadRunnableTask
             final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
                 repositoryId( repository.getId() ).
                 repositorySettings( repository.getSettings() ).
+                data( repository.getData() ).
                 build();
             this.nodeRepositoryService.create( createRepositoryParams );
         }
@@ -156,6 +152,7 @@ public class LoadRunnableTask
         final SystemLoadResult systemLoadResult = this.dumpService.load( SystemLoadParams.create().
             dumpName( request.getName() ).
             upgrade( request.isUpgrade() ).
+            archive( request.isArchive() ).
             includeVersions( true ).
             listener( loadDumpListener ).
             build() );
@@ -165,9 +162,9 @@ public class LoadRunnableTask
 
     private NodeImportResult importRepoBranch( final String repoName, final String branch, final String dumpName )
     {
-        final java.nio.file.Path rootDir = getDumpRoot( dumpName );
+        final Path rootDir = getDumpRoot( dumpName );
 
-        final java.nio.file.Path importPath = rootDir.resolve( repoName ).resolve( branch );
+        final Path importPath = rootDir.resolve( repoName ).resolve( branch );
 
         return getContext( branch, repoName ).callWith( () -> this.exportService.importNodes( ImportNodesParams.create().
             source( VirtualFiles.from( importPath ) ).
@@ -177,19 +174,10 @@ public class LoadRunnableTask
             build() ) );
     }
 
-    private java.nio.file.Path getDumpDirectory( final String name )
-    {
-        return Paths.get( HomeDir.get().toString(), "data", "dump", name ).toAbsolutePath();
-    }
-
-    private java.nio.file.Path getDataHome()
-    {
-        return Paths.get( HomeDir.get().toString(), "data" );
-    }
 
     private boolean isSystemRepoMaster( final Repository repository, final Branch branch )
     {
-        return SystemConstants.SYSTEM_REPO.equals( repository ) && SystemConstants.BRANCH_SYSTEM.equals( branch );
+        return SystemConstants.SYSTEM_REPO_ID.equals( repository.getId() ) && SystemConstants.BRANCH_SYSTEM.equals( branch );
     }
 
 

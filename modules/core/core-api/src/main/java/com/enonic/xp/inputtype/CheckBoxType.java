@@ -13,9 +13,9 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 final class CheckBoxType
     extends InputTypeBase
 {
-    public final static CheckBoxType INSTANCE = new CheckBoxType();
+    public static final CheckBoxType INSTANCE = new CheckBoxType();
 
-    private final static String VALID_VALUE = "checked";
+    private static final String VALID_VALUE = "checked";
 
     private CheckBoxType()
     {

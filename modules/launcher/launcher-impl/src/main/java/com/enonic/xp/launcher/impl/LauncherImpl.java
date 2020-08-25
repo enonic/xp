@@ -2,6 +2,8 @@ package com.enonic.xp.launcher.impl;
 
 import java.io.File;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.enonic.xp.launcher.Launcher;
 import com.enonic.xp.launcher.LauncherListener;
@@ -12,6 +14,8 @@ import com.enonic.xp.launcher.impl.env.Environment;
 import com.enonic.xp.launcher.impl.env.EnvironmentResolver;
 import com.enonic.xp.launcher.impl.env.RequirementChecker;
 import com.enonic.xp.launcher.impl.env.SystemProperties;
+import com.enonic.xp.launcher.impl.framework.FrameworkLifecycleActor;
+import com.enonic.xp.launcher.impl.framework.FrameworkLifecycleService;
 import com.enonic.xp.launcher.impl.framework.FrameworkService;
 import com.enonic.xp.launcher.impl.provision.ProvisionActivator;
 import com.enonic.xp.launcher.impl.util.BannerPrinter;
@@ -32,6 +36,8 @@ public final class LauncherImpl
     private FrameworkService framework;
 
     private LauncherListener listener;
+
+    private ExecutorService frameworkLifecycleExecutor;
 
     public LauncherImpl( final String... args )
     {
@@ -82,12 +88,11 @@ public final class LauncherImpl
 
     private void createFramework()
     {
-        this.framework = new FrameworkService();
-        this.framework.listener( this.listener );
-        this.framework.config( this.config );
+        this.framework = new FrameworkService( this.config ).listener( this.listener );
 
         addLoggingActivator();
         addProvisionActivator();
+        setupLifecycleService();
     }
 
     private void addProvisionActivator()
@@ -100,6 +105,19 @@ public final class LauncherImpl
     private void addLoggingActivator()
     {
         this.framework.activator( new org.apache.felix.log.extension.Activator() );
+    }
+
+    private void setupLifecycleService()
+    {
+        this.frameworkLifecycleExecutor = Executors.newSingleThreadExecutor( r -> {
+            final Thread thread = Executors.defaultThreadFactory().newThread( r );
+            thread.setName( "Framework Lifecycle" );
+            return thread;
+        } );
+
+        this.framework.service( FrameworkLifecycleService.class,
+                                new FrameworkLifecycleService( new FrameworkLifecycleActor( framework )::accept,
+                                                               frameworkLifecycleExecutor ) );
     }
 
     @Override
@@ -119,6 +137,7 @@ public final class LauncherImpl
     public void stop()
     {
         this.framework.stop();
+        this.frameworkLifecycleExecutor.shutdownNow();
     }
 
     private void applySystemPropertyArgs()

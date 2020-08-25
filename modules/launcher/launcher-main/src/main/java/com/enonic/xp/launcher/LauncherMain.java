@@ -1,7 +1,6 @@
 package com.enonic.xp.launcher;
 
 import com.enonic.xp.launcher.impl.LauncherImpl;
-import com.enonic.xp.launcher.ui.MainWindow;
 
 public final class LauncherMain
 {
@@ -15,31 +14,10 @@ public final class LauncherMain
     private void launch()
         throws Exception
     {
-        if ( this.launcher.hasArg( "ui" ) )
-        {
-            launchUI();
-        }
-        else
-        {
-            launchConsole();
-        }
-    }
-
-    private void launchConsole()
-        throws Exception
-    {
         System.setProperty( "java.awt.headless", "true" );
         System.setProperty( "java.net.preferIPv4Stack", "true" );
         new ShutdownHook( this.launcher::stop ).register();
         this.launcher.start();
-    }
-
-    private void launchUI()
-        throws Exception
-    {
-        final MainWindow window = new MainWindow( this.launcher );
-        new ShutdownHook( this.launcher::stop ).register();
-        window.showFrame();
     }
 
     public static void main( final String... args )

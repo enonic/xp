@@ -44,6 +44,7 @@ import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityConstants;
+import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.UpdateGroupParams;
 import com.enonic.xp.security.UpdateIdProviderParams;
 import com.enonic.xp.security.UpdateRoleParams;
@@ -132,7 +133,6 @@ public class SecurityServiceImplTest
 
         final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
         repositoryEntryService.setIndexServiceInternal( this.indexServiceInternal );
-        repositoryEntryService.setNodeRepositoryService( nodeRepositoryService );
         repositoryEntryService.setNodeStorageService( storageService );
         repositoryEntryService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
 
@@ -1168,7 +1168,7 @@ public class SecurityServiceImplTest
 
         return ContextBuilder.create().
             authInfo( authInfo ).
-            repositoryId( SecurityConstants.SECURITY_REPO.getId() ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             branch( SecurityConstants.BRANCH_SECURITY ).
             build();
     }

@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 public final class ProvisionActivator
     implements BundleActivator
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ProvisionActivator.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ProvisionActivator.class );
 
     private final File systemDir;
 

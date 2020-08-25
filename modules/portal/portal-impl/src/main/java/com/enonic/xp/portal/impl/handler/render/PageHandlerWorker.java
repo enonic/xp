@@ -17,8 +17,7 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.impl.rendering.Renderer;
-import com.enonic.xp.portal.impl.rendering.RendererFactory;
+import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.site.Site;
@@ -32,7 +31,7 @@ final class PageHandlerWorker
 {
     private static final String SHORTCUT_TARGET_PROPERTY = "target";
 
-    protected RendererFactory rendererFactory;
+    protected RendererDelegate rendererDelegate;
 
     protected PortalUrlService portalUrlService;
 
@@ -118,14 +117,13 @@ final class PageHandlerWorker
         this.request.setPageTemplate( pageTemplate );
         this.request.setPageDescriptor( pageDescriptor );
 
-        final Renderer<Content> renderer = this.rendererFactory.getRenderer( effectiveContent );
         final Trace trace = Tracer.current();
         if ( trace != null )
         {
             trace.put( "contentPath", effectiveContent.getPath().toString() );
             trace.put( "type", "page" );
         }
-        return renderer.render( effectiveContent, this.request );
+        return rendererDelegate.render( effectiveContent, this.request );
     }
 
     private PortalResponse renderShortcut( final Content content )

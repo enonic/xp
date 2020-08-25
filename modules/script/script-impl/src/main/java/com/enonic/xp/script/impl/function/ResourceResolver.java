@@ -5,7 +5,7 @@ import com.enonic.xp.resource.ResourceService;
 
 final class ResourceResolver
 {
-    private final static String SITE_PREFIX = "/site";
+    private static final String SITE_PREFIX = "/site";
 
     private final ResourceService resourceService;
 

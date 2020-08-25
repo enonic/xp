@@ -64,10 +64,7 @@ public class ScriptValueTranslator
 
     private void handleMap( final PropertySet parent, final Map map )
     {
-        for ( final Object key : map.keySet() )
-        {
-            handleElement( parent, key.toString(), map.get( key ) );
-        }
+        map.forEach( ( key, value ) -> handleElement( parent, key.toString(), value ) );
     }
 
     private void handleArray( final PropertySet parent, final String name, final Collection values )

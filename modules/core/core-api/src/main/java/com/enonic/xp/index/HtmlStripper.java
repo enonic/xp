@@ -13,9 +13,9 @@ import com.enonic.xp.data.ValueTypes;
     final class HtmlStripper
     implements IndexValueProcessor
 {
-    public final static String NAME = "htmlStripper";
+    public static final String NAME = "htmlStripper";
 
-    private final static Pattern XML_TAG_PATTERN = Pattern.compile( "(?:<[^>]*>)+", Pattern.MULTILINE );
+    private static final Pattern XML_TAG_PATTERN = Pattern.compile( "(?:<[^>]*>)+", Pattern.MULTILINE );
 
     @Override
     public Value process( final Value value )

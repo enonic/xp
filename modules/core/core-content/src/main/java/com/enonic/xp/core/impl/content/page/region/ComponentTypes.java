@@ -11,7 +11,7 @@ import com.enonic.xp.region.TextComponentType;
 
 public final class ComponentTypes
 {
-    private final static ComponentTypes INSTANCE = new ComponentTypes();
+    private static final ComponentTypes INSTANCE = new ComponentTypes();
 
     private final LinkedHashMap<String, ComponentType> byShortName;
 

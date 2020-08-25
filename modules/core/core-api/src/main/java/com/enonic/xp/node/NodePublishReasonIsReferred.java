@@ -6,8 +6,6 @@ import com.enonic.xp.annotation.PublicApi;
 public class NodePublishReasonIsReferred
     implements NodePublishReason
 {
-    private final String message = "Referred from %s";
-
     private final NodeId nodeId;
 
     public NodePublishReasonIsReferred( final NodeId nodeId )
@@ -24,6 +22,6 @@ public class NodePublishReasonIsReferred
     @Override
     public String getMessage()
     {
-        return String.format( message, nodeId.toString() );
+        return String.format( "Referred from %s", nodeId );
     }
 }

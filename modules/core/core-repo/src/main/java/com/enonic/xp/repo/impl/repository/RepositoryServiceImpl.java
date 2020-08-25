@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -20,6 +21,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.InitSearchIndicesParams;
 import com.enonic.xp.node.Node;
@@ -37,6 +39,7 @@ import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteBranchParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
+import com.enonic.xp.repository.EditableRepository;
 import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
@@ -44,8 +47,10 @@ import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.BinaryReference;
 
 @Component(immediate = true)
 public class RepositoryServiceImpl
@@ -84,7 +89,6 @@ public class RepositoryServiceImpl
             setNodeStorageService( nodeStorageService ).
             build().
             initialize();
-
     }
 
     @Override
@@ -92,26 +96,20 @@ public class RepositoryServiceImpl
     {
         requireAdminRole();
 
-        return repositoryMap.compute( params.getRepositoryId(),
-                                      ( repositoryId, previousRepository ) -> doCreateRepo( params, previousRepository ) );
+        return repositoryMap.compute( params.getRepositoryId(), ( repositoryId, previousRepository ) -> doCreateRepo( params ) );
     }
 
-    private Repository doCreateRepo( final CreateRepositoryParams params, final Repository previousRepository )
+    private Repository doCreateRepo( final CreateRepositoryParams params )
     {
-        //If the repository entry already exists, throws an exception
         final RepositoryId repositoryId = params.getRepositoryId();
         final boolean repoAlreadyInitialized = this.nodeRepositoryService.isInitialized( repositoryId );
 
-        if ( previousRepository != null && repoAlreadyInitialized )
+        if ( repoAlreadyInitialized )
         {
             throw new RepositoryAlreadyExistException( repositoryId );
         }
 
-        //If the repository does not exist, creates it
-        if ( !this.nodeRepositoryService.isInitialized( repositoryId ) )
-        {
-            this.nodeRepositoryService.create( params );
-        }
+        this.nodeRepositoryService.create( params );
 
         if ( !this.indexServiceInternal.indicesExists(
             IndexNameResolver.resolveSearchIndexName( repositoryId, RepositoryConstants.MASTER_BRANCH ) ) )
@@ -120,16 +118,51 @@ public class RepositoryServiceImpl
                 new InitSearchIndicesParams( repositoryId, Branches.from( RepositoryConstants.MASTER_BRANCH ) ) );
         }
 
-        //If the root node does not exist, creates it
-        if ( getRootNode( params.getRepositoryId(), RepositoryConstants.MASTER_BRANCH ) == null )
+        if ( getRootNode( repositoryId, RepositoryConstants.MASTER_BRANCH ) == null )
         {
             createRootNode( params );
         }
 
-        //Creates the repository entry
         final Repository repository = createRepositoryObject( params );
         repositoryEntryService.createRepositoryEntry( repository );
         return repository;
+    }
+
+    @Override
+    public Repository updateRepository( final UpdateRepositoryParams params )
+    {
+        requireAdminRole();
+
+        Repository repository = repositoryMap.compute( params.getRepositoryId(),
+                                                       ( key, previousRepository ) -> doUpdateRepository( params, previousRepository ) );
+
+        invalidatePathCache();
+
+        return repository;
+    }
+
+    private Repository doUpdateRepository( final UpdateRepositoryParams updateRepositoryParams, Repository previousRepository )
+    {
+        RepositoryId repositoryId = updateRepositoryParams.getRepositoryId();
+
+        previousRepository = previousRepository == null ? repositoryEntryService.getRepositoryEntry( repositoryId ) : previousRepository;
+
+        if ( previousRepository == null )
+        {
+            throw new RepositoryNotFoundException( repositoryId );
+        }
+
+        final EditableRepository editableRepository = new EditableRepository( previousRepository );
+
+        updateRepositoryParams.getEditor().accept( editableRepository );
+
+        UpdateRepositoryEntryParams params = UpdateRepositoryEntryParams.create().
+            repositoryId( repositoryId ).
+            repositoryData( editableRepository.data ).
+            attachments( ImmutableList.copyOf( editableRepository.binaryAttachments ) ).
+            build();
+
+        return repositoryEntryService.updateRepositoryEntry( params );
     }
 
     @Override
@@ -193,8 +226,8 @@ public class RepositoryServiceImpl
     public boolean isInitialized( final RepositoryId repositoryId )
     {
         requireAdminRole();
-        final Repository repository = this.get( repositoryId );
-        return repository != null && this.nodeRepositoryService.isInitialized( repositoryId );
+        return this.nodeRepositoryService.isInitialized( repositoryId ) &&
+            this.repositoryEntryService.getRepositoryEntry( repositoryId ) != null;
     }
 
     @Override
@@ -283,6 +316,21 @@ public class RepositoryServiceImpl
         repositoryMap.remove( repositoryId );
     }
 
+    @Override
+    public ByteSource getBinary( final RepositoryId repositoryId, final BinaryReference binaryReference )
+    {
+        requireAdminRole();
+
+        Repository repository = repositoryEntryService.getRepositoryEntry( repositoryId );
+        if ( repository == null )
+        {
+            throw new RepositoryNotFoundException( repositoryId );
+        }
+
+        final AttachedBinary attachedBinary = repository.getAttachments().getByBinaryReference( binaryReference );
+        return attachedBinary == null ? null : repositoryEntryService.getBinary( attachedBinary );
+    }
+
     private void requireAdminRole()
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
@@ -299,6 +347,7 @@ public class RepositoryServiceImpl
             id( params.getRepositoryId() ).
             branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
             settings( params.getRepositorySettings() ).
+            data( params.getData() ).
             build();
     }
 
@@ -338,7 +387,7 @@ public class RepositoryServiceImpl
             return null;
         } );
 
-        LOG.info( "Created root node in with id [" + rootNode.id() + "] in repository [" + params.getRepositoryId() + "]" );
+        LOG.info( "Created root node with id [" + rootNode.id() + "] in repository [" + params.getRepositoryId() + "]" );
     }
 
     private void pushRootNode( final Repository currentRepo, final Branch branch )

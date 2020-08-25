@@ -26,7 +26,7 @@ import com.enonic.xp.resource.ResourceService;
 public final class WidgetDescriptorLoader
     implements DescriptorLoader<WidgetDescriptor>
 {
-    private final static String PATH = "/admin/widgets";
+    private static final String PATH = "/admin/widgets";
 
     private ResourceService resourceService;
 

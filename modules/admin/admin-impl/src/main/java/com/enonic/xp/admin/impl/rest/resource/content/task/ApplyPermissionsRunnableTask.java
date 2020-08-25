@@ -2,7 +2,6 @@ package com.enonic.xp.admin.impl.rest.resource.content.task;
 
 import com.enonic.xp.admin.impl.rest.resource.content.ApplyPermissionsProgressListener;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentResource;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.ApplyPermissionsListener;
@@ -17,7 +16,7 @@ import com.enonic.xp.task.TaskService;
 public class ApplyPermissionsRunnableTask
     extends AbstractRunnableTask
 {
-    private final ApplyContentPermissionsJson params;
+    private final ApplyContentPermissionsParams params;
 
     private ApplyPermissionsRunnableTask( Builder builder )
     {
@@ -60,9 +59,9 @@ public class ApplyPermissionsRunnableTask
     public static class Builder
         extends AbstractRunnableTask.Builder
     {
-        private ApplyContentPermissionsJson params;
+        private ApplyContentPermissionsParams params;
 
-        public Builder params( ApplyContentPermissionsJson params )
+        public Builder params( ApplyContentPermissionsParams params )
         {
             this.params = params;
             return this;

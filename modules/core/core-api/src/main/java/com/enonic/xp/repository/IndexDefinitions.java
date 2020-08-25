@@ -1,7 +1,8 @@
 package com.enonic.xp.repository;
 
-import java.util.HashMap;
 import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.IndexType;
@@ -13,7 +14,7 @@ public class IndexDefinitions
 
     private IndexDefinitions( final Builder builder )
     {
-        this.configs = builder.configs;
+        this.configs = builder.configs.build();
     }
 
     public static Builder create()
@@ -28,7 +29,7 @@ public class IndexDefinitions
 
     public static final class Builder
     {
-        private final Map<IndexType, IndexDefinition> configs = new HashMap<>();
+        private final ImmutableMap.Builder<IndexType, IndexDefinition> configs = ImmutableMap.builder();
 
         private Builder()
         {

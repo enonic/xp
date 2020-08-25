@@ -27,7 +27,7 @@ import com.enonic.xp.xml.schema.SchemaValidator;
 @PublicApi
 public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
 {
-    private final static SchemaValidator VALIDATOR = new SchemaValidator();
+    private static final SchemaValidator VALIDATOR = new SchemaValidator();
 
     private String systemId;
 

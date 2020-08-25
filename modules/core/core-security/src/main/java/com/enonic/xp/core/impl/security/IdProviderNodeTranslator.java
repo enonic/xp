@@ -41,13 +41,13 @@ import static com.enonic.xp.security.acl.Permission.WRITE_PERMISSIONS;
 
 abstract class IdProviderNodeTranslator
 {
-    final static String USER_FOLDER_NODE_NAME = "users";
+    static final String USER_FOLDER_NODE_NAME = "users";
 
-    final static String GROUP_FOLDER_NODE_NAME = "groups";
+    static final String GROUP_FOLDER_NODE_NAME = "groups";
 
     private static final ApplicationKey SYSTEM_ID_PROVIDER_KEY = ApplicationKey.from( "com.enonic.xp.app.standardidprovider" );
 
-    protected final static NodePath ID_PROVIDER_PARENT_PATH = NodePath.create( NodePath.ROOT ).
+    protected static final NodePath ID_PROVIDER_PARENT_PATH = NodePath.create( NodePath.ROOT ).
         addElement( PrincipalKey.IDENTITY_NODE_NAME ).
         build();
 

@@ -4,16 +4,20 @@ dependencies {
     compile project( ':core:core-api' )
     compile project( ':core:core-elasticsearch-client' )
 
-    compile 'org.apache.commons:commons-compress:1.19'
-
     testCompile 'org.rauschig:jarchivelib:1.0.0'
     testCompile project( path: ':core:core-blobstore', configuration: 'testOutput' )
     testCompile project( path: ':core:core-api', configuration: 'testOutput' )
+    compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
+
+    testFixturesImplementation( project( ":core:core-audit" ) )
+    testFixturesImplementation( testFixtures( project( ":core:core-blobstore" ) ) )
+    testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
+
+    testImplementation( testFixtures( project( ":core:core-api" ) ) )
+    testImplementation( testFixtures( project( ":core:core-blobstore" ) ) )
 }
 
 jar {
     bnd( 'Bundle-Name': 'Enonic XP Core - Repo' )
-
-    //Temporary export until refactoring
-    bnd( 'Export-Package': 'com.enonic.xp.repo.impl.branch;-split-package:=first' )
 }

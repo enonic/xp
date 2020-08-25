@@ -36,13 +36,10 @@ final class QueryHighlightParams
             return HighlightQuery.empty();
         }
 
-        for ( String name : propertiesMap.keySet() )
-        {
-            final Map<String, Object> propertyMap = (Map<String, Object>) propertiesMap.get( name );
-            final HighlightQueryProperty highlightQueryProperty = highlightPropertyFromParams( name, propertyMap );
-
+        propertiesMap.forEach( ( name, propertyMap ) -> {
+            final HighlightQueryProperty highlightQueryProperty = highlightPropertyFromParams( name, (Map<String, Object>) propertyMap );
             highlightQuery.property( highlightQueryProperty );
-        }
+        } );
 
         return highlightQuery.build();
     }

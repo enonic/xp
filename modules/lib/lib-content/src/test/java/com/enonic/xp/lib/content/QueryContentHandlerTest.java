@@ -1,10 +1,14 @@
 package com.enonic.xp.lib.content;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Map;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.aggregation.Bucket;
@@ -13,18 +17,64 @@ import com.enonic.xp.aggregation.Buckets;
 import com.enonic.xp.aggregation.DateRangeBucket;
 import com.enonic.xp.aggregation.NumericRangeBucket;
 import com.enonic.xp.aggregation.StatsAggregation;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.highlight.HighlightedProperty;
+import com.enonic.xp.lib.content.mapper.ContentsResultMapper;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.serializer.JsonMapGenerator;
+import com.enonic.xp.sortvalues.SortValuesProperty;
 
 public class QueryContentHandlerTest
     extends BaseContentHandlerTest
 {
+
+    @Test
+    public void testExecute()
+        throws Exception
+    {
+        FindContentIdsByQueryResult queryResult = FindContentIdsByQueryResult.create().
+            contents( ContentIds.from( "contentId" ) ).
+            sort( Collections.singletonMap( ContentId.from( "contentId" ), SortValuesProperty.create().
+                values( 10 ).
+                build() ) ).build();
+
+        Contents contents = Contents.create().
+            add( Content.create().
+                id( ContentId.from( "contentId" ) ).
+                name( "name" ).
+                parentPath( ContentPath.ROOT ).
+                build() ).
+            build();
+
+        Mockito.when( contentService.find( Mockito.any( ContentQuery.class ) ) ).thenReturn( queryResult );
+        Mockito.when( contentService.getByIds( Mockito.any( GetContentByIdsParams.class ) ) ).thenReturn( contents );
+
+        QueryContentHandler instance = new QueryContentHandler();
+
+        instance.initialize( newBeanContext( ResourceKey.from( "myapp:/test" ) ) );
+        instance.setSort( "getDistance(\"location\", \"83,80\", \"km\")" );
+        instance.setQuery( "_name = \"cityName\"" );
+
+        JsonMapGenerator generator = new JsonMapGenerator();
+
+        ContentsResultMapper resultMapper = (ContentsResultMapper) instance.execute();
+        resultMapper.serialize( generator );
+
+        final JsonNode actualJson = (JsonNode) generator.getRoot();
+
+        Assertions.assertEquals( 1, actualJson.path( "count" ).asInt() );
+        Assertions.assertTrue( actualJson.path( "hits" ).get( 0 ).path( "_sort" ).isArray() );
+        Assertions.assertEquals( 10, actualJson.path( "hits" ).get( 0 ).path( "_sort" ).get( 0 ).asInt() );
+    }
+
     @Test
     public void testExample()
     {

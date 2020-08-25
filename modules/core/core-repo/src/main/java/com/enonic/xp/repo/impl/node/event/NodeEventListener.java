@@ -18,7 +18,7 @@ public class NodeEventListener
 {
     private NodeStorageService nodeStorageService;
 
-    private final static Logger LOG = LoggerFactory.getLogger( NodeEventListener.class );
+    private static final Logger LOG = LoggerFactory.getLogger( NodeEventListener.class );
 
     private final NodeCreatedHandler nodeCreatedHandler = new NodeCreatedHandler();
 

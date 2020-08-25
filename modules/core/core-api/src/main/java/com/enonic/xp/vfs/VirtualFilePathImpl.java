@@ -12,7 +12,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 class VirtualFilePathImpl
     implements VirtualFilePath
 {
-    final static String SEPARATOR = "/";
+    static final String SEPARATOR = "/";
 
     final boolean absolute;
 

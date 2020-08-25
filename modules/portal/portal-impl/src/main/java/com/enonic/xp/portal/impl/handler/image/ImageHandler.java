@@ -27,7 +27,7 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 public final class ImageHandler
     extends EndpointHandler
 {
-    private final static Pattern PATTERN = Pattern.compile( "([^/^:]+)(:[^/]+)?/([^/]+)/([^/]+)" );
+    private static final Pattern PATTERN = Pattern.compile( "([^/^:]+)(:[^/]+)?/([^/]+)/([^/]+)" );
 
     private ContentService contentService;
 

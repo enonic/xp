@@ -10,13 +10,13 @@ import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 
 public class DumpMetaJsonSerializer
 {
-    private final static ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    public String serialize( final DumpMeta dumpMeta )
+    public byte[] serialize( final DumpMeta dumpMeta )
     {
         try
         {
-            return MAPPER.writeValueAsString( DumpMetaJson.from( dumpMeta ) );
+            return MAPPER.writeValueAsBytes( DumpMetaJson.from( dumpMeta ) );
         }
         catch ( JsonProcessingException e )
         {

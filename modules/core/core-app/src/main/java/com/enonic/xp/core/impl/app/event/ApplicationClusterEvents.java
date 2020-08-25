@@ -6,15 +6,15 @@ import com.enonic.xp.node.Node;
 
 public class ApplicationClusterEvents
 {
-    public final static String EVENT_TYPE = "application.cluster";
+    public static final String EVENT_TYPE = "application.cluster";
 
     public static final String EVENT_TYPE_KEY = "eventType";
 
-    public final static String INSTALLED = "installed";
+    public static final String INSTALLED = "installed";
 
-    public final static String UNINSTALLED = "uninstalled";
+    public static final String UNINSTALLED = "uninstalled";
 
-    public final static String STATE_CHANGE = "state";
+    public static final String STATE_CHANGE = "state";
 
     public static final String NODE_ID_PARAM = "id";
 

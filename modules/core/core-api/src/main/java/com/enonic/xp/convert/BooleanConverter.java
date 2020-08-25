@@ -3,7 +3,7 @@ package com.enonic.xp.convert;
 final class BooleanConverter
     implements Converter<Boolean>
 {
-    private final static String TRUE_FLAGS = "true|yes|on|1";
+    private static final String TRUE_FLAGS = "true|yes|on|1";
 
     @Override
     public Class<Boolean> getType()

@@ -20,9 +20,9 @@ import com.enonic.xp.web.handler.WebHandler;
 public class AdminSiteHandler
     extends BaseSiteHandler
 {
-    private final static String BASE_URI_START = "/admin/site";
+    private static final String BASE_URI_START = "/admin/site";
 
-    private final static Pattern BASE_URI_PATTERN = Pattern.compile( "^" + BASE_URI_START + "/(edit|preview|admin|inline)" );
+    private static final Pattern BASE_URI_PATTERN = Pattern.compile( "^" + BASE_URI_START + "/(edit|preview|admin|inline)" );
 
     @Override
     protected boolean canHandle( final WebRequest webRequest )

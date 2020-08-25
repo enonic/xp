@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.script;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -17,13 +19,19 @@ import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
 
-@Component(immediate = true, service = PortalScriptService.class)
+@Component(immediate = true)
 public final class PortalScriptServiceImpl
     implements PortalScriptService
 {
-    private ScriptRuntimeFactory scriptRuntimeFactory;
+    private final ScriptRuntimeFactory scriptRuntimeFactory;
 
     private ScriptRuntime scriptRuntime;
+
+    @Activate
+    public PortalScriptServiceImpl( @Reference final ScriptRuntimeFactory scriptRuntimeFactory )
+    {
+        this.scriptRuntimeFactory = scriptRuntimeFactory;
+    }
 
     @Activate
     public void initialize()
@@ -55,6 +63,12 @@ public final class PortalScriptServiceImpl
     }
 
     @Override
+    public CompletableFuture<ScriptExports> executeAsync( final ResourceKey script )
+    {
+        return this.scriptRuntime.executeAsync( script );
+    }
+
+    @Override
     public ScriptValue toScriptValue( final ResourceKey script, final Object value )
     {
         return this.scriptRuntime.toScriptValue( script, value );
@@ -64,11 +78,5 @@ public final class PortalScriptServiceImpl
     public Object toNativeObject( final ResourceKey script, final Object value )
     {
         return this.scriptRuntime.toNativeObject( script, value );
-    }
-
-    @Reference
-    public void setScriptRuntimeFactory( final ScriptRuntimeFactory scriptRuntimeFactory )
-    {
-        this.scriptRuntimeFactory = scriptRuntimeFactory;
     }
 }

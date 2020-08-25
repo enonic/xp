@@ -25,9 +25,9 @@ import com.enonic.xp.query.expr.ValueExpr;
 
 final class QueryGrammar
 {
-    private final static String[] OPERATORS = {"=", "!=", ">", ">=", "<", "<=", ",", "(", ")"};
+    private static final String[] OPERATORS = {"=", "!=", ">", ">=", "<", "<=", ",", "(", ")"};
 
-    private final static String[] KEYWORDS = {"AND", "OR", "NOT", "LIKE", "IN", "ASC", "DESC", "ORDER", "BY"};
+    private static final String[] KEYWORDS = {"AND", "OR", "NOT", "LIKE", "IN", "ASC", "DESC", "ORDER", "BY"};
 
     private final Terminals terminals;
 

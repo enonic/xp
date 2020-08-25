@@ -9,13 +9,12 @@ dependencies {
         exclude group: 'org.jboss.spec.javax.ws.rs'
         exclude group: 'org.apache.httpcomponents'
         exclude group: 'com.github.stephenc.jcip'
-        exclude group: 'javax.validation'
     }
 
-    testCompile project( ':jaxrs:jaxrs-impl' )
-    testCompile project( path: ':core:core-app', configuration: 'testOutput' )
-    testCompile project( path: ':portal:portal-api', configuration: 'testOutput' )
-    testCompile project( path: ':jaxrs:jaxrs-impl', configuration: 'testOutput' )
+    testImplementation( testFixtures( project(":core:core-api") ) )
+    testImplementation( testFixtures( project(":core:core-app") ) )
+    testImplementation( testFixtures( project(":web:web-api") ) )
+    testImplementation( testFixtures( project(":jaxrs:jaxrs-impl") ) )
 }
 
 jar {

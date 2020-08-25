@@ -6,7 +6,7 @@ import com.enonic.xp.annotation.PublicApi;
 public final class PartComponentType
     extends ComponentType
 {
-    public final static PartComponentType INSTANCE = new PartComponentType();
+    public static final PartComponentType INSTANCE = new PartComponentType();
 
     private PartComponentType()
     {

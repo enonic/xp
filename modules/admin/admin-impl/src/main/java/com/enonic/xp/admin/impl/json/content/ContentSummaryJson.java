@@ -20,8 +20,6 @@ public class ContentSummaryJson
 
     private final ThumbnailJson thumbnailJson;
 
-    private final boolean deletable = true;
-
     private final boolean isSite;
 
     private final boolean isPage;
@@ -161,7 +159,7 @@ public class ContentSummaryJson
     @Override
     public boolean getDeletable()
     {
-        return deletable;
+        return true;
     }
 
 }

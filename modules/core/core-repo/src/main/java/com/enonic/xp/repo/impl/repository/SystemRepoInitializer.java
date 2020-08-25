@@ -47,7 +47,7 @@ public class SystemRepoInitializer
     {
         createAdminContext().runWith( () -> {
             final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
-                repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+                repositoryId( SystemConstants.SYSTEM_REPO_ID ).
                 rootChildOrder( ChildOrder.from( "_name ASC" ) ).
                 rootPermissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
                 build();
@@ -62,16 +62,9 @@ public class SystemRepoInitializer
     public boolean isInitialized()
     {
         return createAdminContext().
-            callWith( () -> {
-                if ( this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO.getId() ) )
-                {
-                    final Context currentContext = ContextAccessor.current();
-                    final Node repositoryNode = this.nodeStorageService.get( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH,
-                                                                             InternalContext.from( currentContext ) );
-                    return repositoryNode != null;
-                }
-                return false;
-            } );
+            callWith( () -> this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO_ID ) &&
+                this.nodeStorageService.get( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH,
+                                             InternalContext.from( ContextAccessor.current() ) ) != null );
     }
 
     @Override
@@ -84,6 +77,12 @@ public class SystemRepoInitializer
     protected boolean isMaster()
     {
         return indexServiceInternal.isMaster();
+    }
+
+    @Override
+    protected boolean readyToInitialize()
+    {
+        return indexServiceInternal.waitForYellowStatus();
     }
 
     private void initRepositoryFolder()

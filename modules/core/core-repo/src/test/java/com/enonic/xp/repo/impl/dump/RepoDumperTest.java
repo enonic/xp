@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.CreateNodeParams;
@@ -96,7 +97,7 @@ public class RepoDumperTest
 
         doDump( writer );
 
-        assertTrue( writer.getBinaries().contains( attachedBinary.getBlobKey() ) );
+        assertTrue( writer.getBinaries().contains( BlobKey.from( attachedBinary.getBlobKey() ) ) );
     }
 
     @Test
@@ -132,19 +133,18 @@ public class RepoDumperTest
 
         doDump( writer );
 
-        assertTrue( writer.getBinaries().contains( originalBinary.getBlobKey() ) );
-        assertTrue( writer.getBinaries().contains( updateBinary.getBlobKey() ) );
+        assertTrue( writer.getBinaries().contains( BlobKey.from( originalBinary.getBlobKey() ) ) );
+        assertTrue( writer.getBinaries().contains( BlobKey.from( updateBinary.getBlobKey() ) ) );
     }
 
     private void doDump( final TestDumpWriter writer )
     {
         NodeHelper.runAsAdmin( () -> RepoDumper.create().
             nodeService( this.nodeService ).
-            repositoryService( this.repositoryService ).
             writer( writer ).
             includeBinaries( true ).
             includeVersions( true ).
-            repositoryId( CTX_DEFAULT.getRepositoryId() ).
+            repository( this.repositoryService.get( CTX_DEFAULT.getRepositoryId() ) ).
             build().
             execute() );
     }

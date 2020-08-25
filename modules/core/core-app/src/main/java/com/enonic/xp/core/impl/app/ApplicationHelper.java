@@ -23,17 +23,17 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class ApplicationHelper
 {
-    final static String X_APPLICATION_URL = "X-Application-Url";
+    static final String X_APPLICATION_URL = "X-Application-Url";
 
-    final static String X_VENDOR_NAME = "X-Vendor-Name";
+    static final String X_VENDOR_NAME = "X-Vendor-Name";
 
-    final static String X_VENDOR_URL = "X-Vendor-Url";
+    static final String X_VENDOR_URL = "X-Vendor-Url";
 
-    final static String X_SYSTEM_VERSION = "X-System-Version";
+    static final String X_SYSTEM_VERSION = "X-System-Version";
 
-    final static String X_SOURCE_PATHS = "X-Source-Paths";
+    static final String X_SOURCE_PATHS = "X-Source-Paths";
 
-    final static String X_CAPABILITY = "X-Capability";
+    static final String X_CAPABILITY = "X-Capability";
 
     static final String X_BUNDLE_TYPE = "X-Bundle-Type";
 
@@ -45,20 +45,9 @@ public final class ApplicationHelper
 
     private static final String APPLICATION_XML = "application.xml";
 
-    public static boolean isApplication( final Bundle bundle )
-    {
-        return getHeader( bundle, X_BUNDLE_TYPE, "" ).equals( APPLICATION_BUNDLE_TYPE ) || isSystemApplication( bundle ) ||
-            bundle.getEntry( APPLICATION_XML ) != null || bundle.getEntry( SITE_XML ) != null;
-    }
-
     static boolean isApplication( final JarFile jarFile )
     {
         return hasApplicationHeader( jarFile ) || jarFile.getEntry( APPLICATION_XML ) != null || jarFile.getEntry( SITE_XML ) != null;
-    }
-
-    public static boolean isSystemApplication( final Bundle bundle )
-    {
-        return getHeader( bundle, X_BUNDLE_TYPE, "" ).equals( SYSTEM_BUNDLE_TYPE );
     }
 
     private static boolean hasApplicationHeader( final JarFile jarFile )

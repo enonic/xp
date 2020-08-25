@@ -32,7 +32,7 @@ public class FindNodesWithVersionDifferenceCommand
 
     private final NodeStorageService nodeStorageService;
 
-    private final int batchSize = 10_000;
+    private static final int BATCH_SIZE = 10_000;
 
     private FindNodesWithVersionDifferenceCommand( final Builder builder )
     {
@@ -62,7 +62,7 @@ public class FindNodesWithVersionDifferenceCommand
             nodePath( nodePath ).
             excludes( excludeEntries ).
             size( this.size ).
-            batchSize( batchSize ).
+            batchSize( BATCH_SIZE ).
             build(), SingleRepoStorageSource.create( ContextAccessor.current().getRepositoryId(), SingleRepoStorageSource.Type.VERSION ) );
 
         return NodeVersionDiffResultFactory.create( result );

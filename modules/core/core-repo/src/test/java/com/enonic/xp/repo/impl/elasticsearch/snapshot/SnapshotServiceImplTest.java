@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.cluster.ClusterManager;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.DeleteSnapshotParams;
@@ -45,8 +44,6 @@ public class SnapshotServiceImplTest
     private RepositoryServiceImpl repositoryService;
 
     private EventPublisher eventPublisher;
-
-    private ClusterManager clusterManager;
 
     @AfterAll
     public static void destroy()
@@ -80,9 +77,6 @@ public class SnapshotServiceImplTest
 
         eventPublisher = Mockito.mock( EventPublisher.class );
 
-        clusterManager = Mockito.mock( ClusterManager.class );
-        Mockito.when( clusterManager.isHealthy() ).thenReturn( false );
-
         this.snapshotService.setRepositoryService( repositoryService );
         final RepoConfiguration configuration = Mockito.mock( RepoConfiguration.class );
         Mockito.when( configuration.getSnapshotsDir() ).thenReturn( getSnapshotsDir() );
@@ -90,7 +84,7 @@ public class SnapshotServiceImplTest
         this.snapshotService.setConfiguration( configuration );
         this.snapshotService.setClient( client );
         this.snapshotService.setEventPublisher( eventPublisher );
-        this.snapshotService.setClusterManager( clusterManager );
+        this.snapshotService.setIndexServiceInternal( indexServiceInternal );
     }
 
     @Test
@@ -119,8 +113,8 @@ public class SnapshotServiceImplTest
             build() );
 
         assertNotNull( this.repositoryService.get( newRepoId ) );
-        assertNotNull( this.repositoryService.get( SystemConstants.SYSTEM_REPO.getId() ) );
-        assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO.getId() ) );
+        assertNotNull( this.repositoryService.get( SystemConstants.SYSTEM_REPO_ID ) );
+        assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO_ID ) );
     }
 
     @Test
@@ -155,13 +149,13 @@ public class SnapshotServiceImplTest
         assertNull( this.repositoryService.get( newRepoId ) );
 
         this.snapshotService.restore( RestoreParams.create().
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             snapshotName( "my-snapshot" ).
             build() );
 
         assertNotNull( this.repositoryService.get( newRepoId ) );
-        assertNotNull( this.repositoryService.get( SystemConstants.SYSTEM_REPO.getId() ) );
-        assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO.getId() ) );
+        assertNotNull( this.repositoryService.get( SystemConstants.SYSTEM_REPO_ID ) );
+        assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO_ID ) );
     }
 
     @Test
@@ -196,8 +190,8 @@ public class SnapshotServiceImplTest
         }
         finally
         {
-            assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO.getId() ) );
-            assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO.getId() ) );
+            assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO_ID ) );
+            assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO_ID ) );
         }
     }
 

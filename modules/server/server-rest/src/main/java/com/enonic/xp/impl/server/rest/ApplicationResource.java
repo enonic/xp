@@ -35,9 +35,9 @@ import com.enonic.xp.web.multipart.MultipartItem;
 public final class ApplicationResource
     implements JaxRsComponent
 {
-    private final static Set<String> ALLOWED_PROTOCOLS = Set.of( "http", "https" );
+    private static final Set<String> ALLOWED_PROTOCOLS = Set.of( "http", "https" );
 
-    private final static Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ApplicationResource.class );
 
     private ApplicationService applicationService;
 

@@ -2,7 +2,9 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':script:script-api' )
-    testCompile project( path: ':script:script-api', configuration: 'testOutput' )
+    implementation project( ':core:core-internal' )
+
+    testImplementation( testFixtures( project(":core:core-app") ) )
 }
 
 jar {

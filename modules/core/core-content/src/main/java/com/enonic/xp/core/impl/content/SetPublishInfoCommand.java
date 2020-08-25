@@ -138,7 +138,7 @@ public class SetPublishInfoCommand
         return new Builder( source );
     }
 
-    public final static class Builder
+    public static final class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
         private NodeIds nodeIds;

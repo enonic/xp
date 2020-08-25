@@ -13,7 +13,7 @@ import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMappings;
 public final class VirtualHostConfigImpl
     implements VirtualHostConfig
 {
-    private final static Logger LOG = LoggerFactory.getLogger( VirtualHostConfigImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( VirtualHostConfigImpl.class );
 
     private boolean enabled;
 

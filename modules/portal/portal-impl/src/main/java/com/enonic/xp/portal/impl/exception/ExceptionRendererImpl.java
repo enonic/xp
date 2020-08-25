@@ -42,7 +42,7 @@ public final class ExceptionRendererImpl
     implements ExceptionRenderer
 {
 
-    private final static Logger LOG = LoggerFactory.getLogger( ExceptionRendererImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ExceptionRendererImpl.class );
 
     private static final String DEFAULT_HANDLER = "handleError";
 
@@ -333,7 +333,7 @@ public final class ExceptionRendererImpl
 
     private boolean isUnauthorizedError( final HttpStatus httpStatus )
     {
-        return ( HttpStatus.UNAUTHORIZED == httpStatus || ( HttpStatus.FORBIDDEN == httpStatus ) && !isAuthenticated() );
+        return HttpStatus.UNAUTHORIZED == httpStatus || ( HttpStatus.FORBIDDEN == httpStatus && !isAuthenticated() );
     }
 
     private boolean isAuthenticated()

@@ -17,18 +17,18 @@ public final class NamePrettyfier
 {
     private static final String NOT_ASCII = "[^\\p{ASCII}]";
 
-    private final static char[] ADDITIONAL_ALLOWED_CHARS = {'.', '-', ' '};
+    private static final char[] ADDITIONAL_ALLOWED_CHARS = {'.', '-', ' '};
 
-    private final static char[] REMOVE_CHARS = {'?'};
+    private static final char[] REMOVE_CHARS = {'?'};
 
-    private final static char[] REPLACE_WITH_HYPHEN_CHARS =
+    private static final char[] REPLACE_WITH_HYPHEN_CHARS =
         {'$', '&', '|', ':', ';', '#', '/', '\\', '<', '>', '\"', '*', '+', ',', '=', '@', '%', '{', '}', '[', ']', '`', '~', '^', '_'};
 
-    private final static String DEFAULT_PATHNAME = "page";
+    private static final String DEFAULT_PATHNAME = "page";
 
-    private final static Pattern STRIP_BEGINNING_PATTERN = Pattern.compile( "^([\\.|\\-|_]+)(.*)$" );
+    private static final Pattern STRIP_BEGINNING_PATTERN = Pattern.compile( "^([\\.|\\-|_]+)(.*)$" );
 
-    private final static Pattern STRIP_ENDING_PATTERN = Pattern.compile( "(.*[^\\.|\\-|_])([\\.|\\-|_]+)$" );
+    private static final Pattern STRIP_ENDING_PATTERN = Pattern.compile( "(.*[^\\.|\\-|_])([\\.|\\-|_]+)$" );
 
     private static final String DEFAULT_REPLACE = "";
 

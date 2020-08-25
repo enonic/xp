@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableMap;
 public final class InputTypes
     implements Iterable<InputType>, InputTypeResolver
 {
-    public final static InputTypes BUILTIN = InputTypes.create().
+    public static final InputTypes BUILTIN = InputTypes.create().
         add( ComboBoxType.INSTANCE ).
         add( DateType.INSTANCE ).
         add( TimeType.INSTANCE ).
@@ -66,7 +66,7 @@ public final class InputTypes
         return new Builder();
     }
 
-    public final static class Builder
+    public static final class Builder
     {
         private final Map<String, InputType> map;
 
