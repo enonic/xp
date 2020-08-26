@@ -2,7 +2,7 @@ package com.enonic.gradle;
 
 public final class BuildInfo
 {
-    private final static String NA = "N/A";
+    private static final String NA = "N/A";
 
     private String branch = NA;
 

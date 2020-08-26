@@ -19,7 +19,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -42,8 +41,10 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.util.Exceptions;
 
+import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.CMS_PATH;
+import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.REST_ROOT;
 
-@Path(ResourceConstants.REST_ROOT + "content/image")
+@Path(REST_ROOT + "{content:(content|" + CMS_PATH + "/content)}/image")
 @Produces("image/*")
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
@@ -150,7 +151,6 @@ public final class ContentImageResource
                     final Cropping cropping = (!source && crop) ? media.getCropping() : null;
                     final ImageOrientation imageOrientation = source ? null : mediaInfoService.getImageOrientation( binary, media );
                     final FocalPoint focalPoint = source ? null : media.getFocalPoint();
-                    final String format = imageService.getFormatByMimeType( attachment.getMimeType() );
                     final String filterParam = filter;
                     final int sizeParam = (size > 0) ? size : (source ? 0 : getOriginalWidth( media ));
                     final ScaleParams scaleParam = parseScaleParam( media, scale, sizeParam );
@@ -163,7 +163,7 @@ public final class ContentImageResource
                         focalPoint( focalPoint ).
                         scaleSize( sizeParam ).
                         scaleWidth( scaleWidth ).
-                        format( format ).
+                        mimeType( attachment.getMimeType() ).
                         orientation( imageOrientation ).
                         filterParam( filterParam ).
                         build();

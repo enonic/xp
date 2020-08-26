@@ -43,15 +43,13 @@ final class QueryAggregationParams
         }
 
         final AggregationQueries.Builder aggregations = AggregationQueries.create();
-        for ( String name : aggregationsMap.keySet() )
-        {
-            final Map<String, Object> aggregationQueryMap = (Map<String, Object>) aggregationsMap.get( name );
-            final AggregationQuery aggregationQuery = aggregationQueryFromParams( name, aggregationQueryMap );
+        aggregationsMap.forEach( ( name, aggregationQueryMap ) -> {
+            final AggregationQuery aggregationQuery = aggregationQueryFromParams( name, (Map<String, Object>) aggregationQueryMap );
             if ( aggregationQuery != null )
             {
                 aggregations.add( aggregationQuery );
             }
-        }
+        } );
 
         return aggregations.build();
     }

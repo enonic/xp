@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableMap;
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.highlight.HighlightedProperties;
+import com.enonic.xp.sortvalues.SortValuesProperty;
 
 @PublicApi
 public final class FindContentIdsByQueryResult
@@ -17,6 +18,8 @@ public final class FindContentIdsByQueryResult
     private final ContentIds contentIds;
 
     private final ImmutableMap<ContentId, HighlightedProperties> highlight;
+
+    private final ImmutableMap<ContentId, SortValuesProperty> sort;
 
     private final long totalHits;
 
@@ -29,6 +32,7 @@ public final class FindContentIdsByQueryResult
         this.hits = builder.hits;
         this.aggregations = builder.aggregations;
         this.highlight = builder.highlight != null ? ImmutableMap.copyOf( builder.highlight ) : null;
+        this.sort = builder.sort != null ? ImmutableMap.copyOf( builder.sort ) : null;
     }
 
     public static Builder create()
@@ -57,6 +61,11 @@ public final class FindContentIdsByQueryResult
         return highlight;
     }
 
+    public ImmutableMap<ContentId, SortValuesProperty> getSort()
+    {
+        return sort;
+    }
+
     public long getTotalHits()
     {
         return totalHits;
@@ -81,14 +90,15 @@ public final class FindContentIdsByQueryResult
         }
         final FindContentIdsByQueryResult that = (FindContentIdsByQueryResult) o;
         return totalHits == that.totalHits && hits == that.hits && Objects.equals( aggregations, that.aggregations ) &&
-            Objects.equals( contentIds, that.contentIds ) && Objects.equals( highlight, that.highlight );
+            Objects.equals( contentIds, that.contentIds ) && Objects.equals( highlight, that.highlight ) &&
+            Objects.equals( sort, that.sort );
     }
 
     @Override
     public int hashCode()
     {
 
-        return Objects.hash( aggregations, contentIds, totalHits, hits, highlight );
+        return Objects.hash( aggregations, contentIds, totalHits, hits, highlight, sort );
     }
 
     public static final class Builder
@@ -98,6 +108,8 @@ public final class FindContentIdsByQueryResult
         private Aggregations aggregations;
 
         private Map<ContentId, HighlightedProperties> highlight;
+
+        private Map<ContentId, SortValuesProperty> sort;
 
         private long totalHits;
 
@@ -134,6 +146,12 @@ public final class FindContentIdsByQueryResult
         public Builder highlight( final Map<ContentId, HighlightedProperties> highlight )
         {
             this.highlight = highlight;
+            return this;
+        }
+
+        public Builder sort( final Map<ContentId, SortValuesProperty> sort )
+        {
+            this.sort = sort;
             return this;
         }
 

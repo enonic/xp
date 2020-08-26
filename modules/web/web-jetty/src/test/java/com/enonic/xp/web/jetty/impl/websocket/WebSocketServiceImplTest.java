@@ -35,7 +35,7 @@ public class WebSocketServiceImplTest
 
         this.server.setVirtualHosts( new String[]{DispatchConstants.VIRTUAL_HOST_PREFIX + DispatchConstants.XP_CONNECTOR} );
 
-        this.service = new WebSocketServiceImpl( this.server.getHandler().getServletContext() );
+        this.service = new WebSocketServiceImpl( config, this.server.getHandler().getServletContext() );
         this.service.activate();
 
         this.servlet = new TestWebSocketServlet();

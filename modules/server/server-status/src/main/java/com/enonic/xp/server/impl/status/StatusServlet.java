@@ -35,7 +35,7 @@ import com.enonic.xp.status.StatusReporter;
 public final class StatusServlet
     extends HttpServlet
 {
-    private final static String PATH_PREFIX = "/";
+    private static final String PATH_PREFIX = "/";
 
     private final Map<String, StatusReporter> reporters = new ConcurrentHashMap<>();
 

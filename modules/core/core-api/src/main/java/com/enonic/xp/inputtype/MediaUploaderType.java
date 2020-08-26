@@ -8,7 +8,7 @@ import com.enonic.xp.data.ValueFactory;
 final class MediaUploaderType
     extends InputTypeBase
 {
-    public final static MediaUploaderType INSTANCE = new MediaUploaderType();
+    public static final MediaUploaderType INSTANCE = new MediaUploaderType();
 
     private MediaUploaderType()
     {

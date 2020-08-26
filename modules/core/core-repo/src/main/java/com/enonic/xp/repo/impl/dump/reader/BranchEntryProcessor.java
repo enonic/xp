@@ -22,7 +22,7 @@ public class BranchEntryProcessor
 {
     private EntryLoadResult result;
 
-    private final static Logger LOG = LoggerFactory.getLogger( BranchEntryProcessor.class );
+    private static final Logger LOG = LoggerFactory.getLogger( BranchEntryProcessor.class );
 
     private BranchEntryProcessor( final Builder builder )
     {

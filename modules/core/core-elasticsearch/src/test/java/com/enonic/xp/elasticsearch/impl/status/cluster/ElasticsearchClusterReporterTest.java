@@ -104,7 +104,7 @@ public class ElasticsearchClusterReporterTest
 
         Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
 
-        assertJson( "cluster_with_one_node.json", clusterReporter.getReport().toString() );
+        assertJson( "cluster_with_one_node.json", clusterReporter.getReport() );
     }
 
     @Test
@@ -113,7 +113,7 @@ public class ElasticsearchClusterReporterTest
     {
         Mockito.when( clusterStateInfo.actionGet() ).thenThrow( new ElasticsearchException( "cluster state exception" ) );
 
-        assertJson( "cluster_state_exception.json", clusterReporter.getReport().toString() );
+        assertJson( "cluster_state_exception.json", clusterReporter.getReport() );
     }
 
     @Test
@@ -132,7 +132,7 @@ public class ElasticsearchClusterReporterTest
 
         Mockito.when( clusterState.getNodes() ).thenReturn( nodes );
 
-        assertJson( "cluster_health_info_exception.json", clusterReporter.getReport().toString() );
+        assertJson( "cluster_health_info_exception.json", clusterReporter.getReport() );
     }
 
     @Test
@@ -166,11 +166,10 @@ public class ElasticsearchClusterReporterTest
     }
 
 
-    private final void assertJson( final String fileName, final String actualJson )
+    private void assertJson( final String fileName, final JsonNode actualNode )
         throws Exception
     {
         final JsonNode expectedNode = parseJson( readFromFile( fileName ) );
-        final JsonNode actualNode = parseJson( actualJson );
 
         final String expectedStr = toJson( expectedNode );
         final String actualStr = toJson( actualNode );

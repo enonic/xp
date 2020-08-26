@@ -1,11 +1,13 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
+import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
 import com.enonic.xp.app.ApplicationNotFoundException;
-import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
@@ -23,22 +25,14 @@ public final class ContentIconUrlResolver
     {
         if ( content.hasThumbnail() )
         {
-            return ServletRequestUrlHelper.createUri(
-                "/admin/rest/content/icon/" + content.getId() + "?ts=" + content.getModifiedTime().toEpochMilli() );
+            return makeIconPath( content );
         }
-        else if ( content instanceof Media )
+
+        if ( isImageWithAttachment( content ) )
         {
-            final Media media = (Media) content;
-            if ( media.isImage() )
-            {
-                final Attachment attachment = ( (Media) content ).getMediaAttachment();
-                if ( attachment != null )
-                {
-                    return ServletRequestUrlHelper.createUri(
-                        "/admin/rest/content/icon/" + content.getId() + "?ts=" + content.getModifiedTime().toEpochMilli() );
-                }
-            }
+            return makeIconPath( content );
         }
+
         try
         {
             return this.contentTypeIconUrlResolver.resolve( content.getType() );
@@ -47,5 +41,44 @@ public final class ContentIconUrlResolver
         {
             return null;
         }
+    }
+
+    private boolean isImageWithAttachment( final Content content )
+    {
+        if ( !isImage( content ) )
+        {
+            return false;
+        }
+
+        return ( (Media) content ).getMediaAttachment() != null;
+    }
+
+    private boolean isImage( final Content content )
+    {
+        if ( !( content instanceof Media ) )
+        {
+            return false;
+        }
+
+        return ( (Media) content ).isImage();
+    }
+
+    private String makeIconPath( final Content content )
+    {
+        return ServletRequestUrlHelper.createUri(
+            "/" + ResourceConstants.REST_ROOT + "cms/" + getProjectName() + "/" + getLayer() + "/content/icon/" + content.getId() + "?ts=" +
+                content.getModifiedTime().toEpochMilli() );
+    }
+
+    private String getProjectName()
+    {
+        final String project =
+            ContextAccessor.current().getRepositoryId().toString().replace( ProjectConstants.PROJECT_REPO_ID_PREFIX, "" );
+        return project;
+    }
+
+    private String getLayer()
+    {
+        return "base";
     }
 }

@@ -2,6 +2,7 @@ package com.enonic.xp.impl.server.rest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -48,8 +49,7 @@ public final class StatusResource
         {
             throw Exceptions.unchecked( e );
         }
-
-        return response.toString();
+        return response.toString( serverReporter.getMediaType().charset().or( StandardCharsets.UTF_8 ) );
     }
 
     @SuppressWarnings("UnusedDeclaration")

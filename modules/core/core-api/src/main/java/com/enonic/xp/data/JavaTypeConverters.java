@@ -25,15 +25,15 @@ import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
 
 final class JavaTypeConverters
 {
-    private final static DateTimeFormatter LOCAL_DATE_FORMATTER =
+    private static final DateTimeFormatter LOCAL_DATE_FORMATTER =
         new java.time.format.DateTimeFormatterBuilder().appendValue( ChronoField.YEAR, 4 ).appendLiteral( '-' ).appendValue(
             ChronoField.MONTH_OF_YEAR, 2 ).appendLiteral( '-' ).appendValue( ChronoField.DAY_OF_MONTH, 2 ).toFormatter();
 
-    private final static DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+    private static final DateTimeFormatter LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
-    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
-    private final static DateTimeFormatter LOCAL_TIME_FORMATTER = new DateTimeFormatterBuilder().
+    private static final DateTimeFormatter LOCAL_TIME_FORMATTER = new DateTimeFormatterBuilder().
         appendValue( HOUR_OF_DAY, 1, 2, SignStyle.NORMAL ).
         appendLiteral( ':' ).
         appendValue( MINUTE_OF_HOUR, 2 ).
@@ -44,33 +44,33 @@ final class JavaTypeConverters
         appendFraction( NANO_OF_SECOND, 0, 9, true ).
         toFormatter();
 
-    public final static JavaTypeConverter<String> STRING = newString();
+    public static final JavaTypeConverter<String> STRING = newString();
 
-    public final static JavaTypeConverter<Long> LONG = newLong();
+    public static final JavaTypeConverter<Long> LONG = newLong();
 
-    public final static JavaTypeConverter<Double> DOUBLE = newDouble();
+    public static final JavaTypeConverter<Double> DOUBLE = newDouble();
 
-    public final static JavaTypeConverter<Boolean> BOOLEAN = newBoolean();
+    public static final JavaTypeConverter<Boolean> BOOLEAN = newBoolean();
 
-    public final static JavaTypeConverter<PropertySet> DATA = newData();
+    public static final JavaTypeConverter<PropertySet> DATA = newData();
 
-    public final static JavaTypeConverter<ContentId> CONTENT_ID = newContentId();
+    public static final JavaTypeConverter<ContentId> CONTENT_ID = newContentId();
 
-    public final static JavaTypeConverter<Instant> DATE_TIME = newInstant();
+    public static final JavaTypeConverter<Instant> DATE_TIME = newInstant();
 
-    public final static JavaTypeConverter<LocalDate> LOCAL_DATE = newLocalDate();
+    public static final JavaTypeConverter<LocalDate> LOCAL_DATE = newLocalDate();
 
-    public final static JavaTypeConverter<LocalDateTime> LOCAL_DATE_TIME = newLocalDateTime();
+    public static final JavaTypeConverter<LocalDateTime> LOCAL_DATE_TIME = newLocalDateTime();
 
-    public final static JavaTypeConverter<LocalTime> LOCAL_TIME = newLocalTime();
+    public static final JavaTypeConverter<LocalTime> LOCAL_TIME = newLocalTime();
 
-    public final static JavaTypeConverter<GeoPoint> GEO_POINT = newGeoPoint();
+    public static final JavaTypeConverter<GeoPoint> GEO_POINT = newGeoPoint();
 
-    public final static JavaTypeConverter<Reference> REFERENCE = newReference();
+    public static final JavaTypeConverter<Reference> REFERENCE = newReference();
 
-    public final static JavaTypeConverter<BinaryReference> BINARY_REFERENCE = newBinaryReference();
+    public static final JavaTypeConverter<BinaryReference> BINARY_REFERENCE = newBinaryReference();
 
-    public final static JavaTypeConverter<Link> LINK = newLink();
+    public static final JavaTypeConverter<Link> LINK = newLink();
 
     private static String convertToString( final Object value )
     {

@@ -28,7 +28,7 @@ import com.enonic.xp.util.Reference;
 
 public class HtmlAreaNodeDataUpgrader
 {
-    private final static Logger LOG = LoggerFactory.getLogger( HtmlAreaNodeDataUpgrader.class );
+    private static final Logger LOG = LoggerFactory.getLogger( HtmlAreaNodeDataUpgrader.class );
 
     private static final List<Pattern> BACKWARD_COMPATIBILITY_HTML_PROPERTY_PATH_PATTERNS =
         Stream.of( "x.**", "data.**", "components.layout.config.*.**", "components.part.config.*.**", "components.page.config.*.**",

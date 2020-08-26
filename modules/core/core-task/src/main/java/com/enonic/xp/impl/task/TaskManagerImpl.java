@@ -40,7 +40,7 @@ import static java.util.stream.Collectors.toList;
 public final class TaskManagerImpl
     implements TaskManager
 {
-    final static long KEEP_COMPLETED_MAX_TIME_SEC = 60;
+    static final long KEEP_COMPLETED_MAX_TIME_SEC = 60;
 
     private final Executor executor;
 

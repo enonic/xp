@@ -8,7 +8,7 @@ import com.enonic.xp.data.ValueTypes;
 final class ContentSelectorType
     extends InputTypeBase
 {
-    public final static ContentSelectorType INSTANCE = new ContentSelectorType();
+    public static final ContentSelectorType INSTANCE = new ContentSelectorType();
 
     private ContentSelectorType()
     {

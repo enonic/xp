@@ -1,0 +1,21 @@
+{
+  "clusterState": "IN_TRANSITION",
+  "clusterTime": 0,
+  "clusterVersion": "0.0",
+  "members": [
+    {
+      "uuid": "member1-uuid",
+      "address": "127.0.0.1",
+      "port": 5701,
+      "lightMember": false,
+      "version": "0.0.0"
+    },
+    {
+      "uuid": "member2-uuid",
+      "address": "127.0.0.2",
+      "port": 5702,
+      "lightMember": true,
+      "version": "0.0.0"
+    }
+  ]
+}

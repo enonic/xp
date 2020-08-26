@@ -1,5 +1,8 @@
 package com.enonic.xp.repo.impl.dump.writer;
 
+import java.io.Closeable;
+
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
@@ -9,6 +12,7 @@ import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 import com.enonic.xp.repository.RepositoryId;
 
 public interface DumpWriter
+    extends Closeable
 {
     void writeDumpMetaData( final DumpMeta dumpMeta );
 
@@ -18,7 +22,7 @@ public interface DumpWriter
 
     void openCommitsMeta( final RepositoryId repositoryId );
 
-    void close();
+    void closeMeta();
 
     void writeBranchEntry( final BranchDumpEntry branchDumpEntry );
 
@@ -28,6 +32,5 @@ public interface DumpWriter
 
     void writeNodeVersionBlobs( final RepositoryId repositoryId, final NodeVersionKey nodeVersionKey );
 
-    void writeBinaryBlob( final RepositoryId repositoryId, final String key );
-
+    void writeBinaryBlob( final RepositoryId repositoryId, final BlobKey key );
 }

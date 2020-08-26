@@ -21,9 +21,9 @@ import com.enonic.xp.util.Metrics;
 public final class EventPublisherImpl
     implements EventPublisher
 {
-    private final static Logger LOG = LoggerFactory.getLogger( EventPublisherImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( EventPublisherImpl.class );
 
-    private final static Meter EVENT_METRIC = Metrics.meter( EventPublisher.class, "event" );
+    private static final Meter EVENT_METRIC = Metrics.meter( EventPublisher.class, "event" );
 
     private final EventMulticaster multicaster = new EventMulticaster();
 

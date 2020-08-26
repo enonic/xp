@@ -2,10 +2,11 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':web:web-api' )
-    compile "org.eclipse.jetty:jetty-server:${jettyVersion}"
-    testCompile project( path: ':web:web-api', configuration: 'testOutput' )
+    compile "org.eclipse.jetty:jetty-hazelcast:${jettyVersion}"
+    compile "com.hazelcast:hazelcast-client:${hazelcastVersion}"
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Web - Websession' )
+    bnd( 'Bundle-Name': 'Enonic XP Web - Websession',
+        'Export-Package' : 'org.eclipse.jetty.hazelcast.session' )
 }

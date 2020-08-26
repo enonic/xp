@@ -16,7 +16,6 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.UpdateUserParams;
 import com.enonic.xp.security.User;
-import com.enonic.xp.security.UserEditor;
 
 public final class ModifyProfileHandler
     implements ScriptBean
@@ -53,7 +52,7 @@ public final class ModifyProfileHandler
         {
             final UpdateUserParams params = UpdateUserParams.create().
                 userKey( this.key ).
-                editor( this.newProfileEditor() ).
+                editor( this::newProfileEditor ).
                 build();
 
             final User updatedUser = this.securityService.get().updateUser( params );
@@ -64,14 +63,12 @@ public final class ModifyProfileHandler
         return null;
     }
 
-    private UserEditor newProfileEditor()
+    private void newProfileEditor( final EditableUser edit )
     {
-        return edit -> {
-            final PropertyTree profile = edit.source.getProfile();
-            final PropertyTreeMapper mapper = createPropertyTreeMapper( profile, true );
-            final ScriptValue scriptValue = this.editor.call( mapper );
-            updateUser( edit, scriptValue );
-        };
+        final PropertyTree profile = edit.source.getProfile();
+        final PropertyTreeMapper mapper = createPropertyTreeMapper( profile, true );
+        final ScriptValue scriptValue = this.editor.call( mapper );
+        updateUser( edit, scriptValue );
     }
 
     private PropertyTreeMapper createPropertyTreeMapper( PropertyTree profile, Boolean useRawValue )

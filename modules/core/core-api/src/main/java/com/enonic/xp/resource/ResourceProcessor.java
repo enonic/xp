@@ -48,7 +48,7 @@ public final class ResourceProcessor<K, V>
         return this.processor.apply( resource );
     }
 
-    public final static class Builder<K, V>
+    public static final class Builder<K, V>
     {
         private K key;
 

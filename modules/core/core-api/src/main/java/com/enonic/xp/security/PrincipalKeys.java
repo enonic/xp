@@ -2,8 +2,10 @@ package com.enonic.xp.security;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -50,9 +52,47 @@ public final class PrincipalKeys
         return new PrincipalKeys( ImmutableSet.of() );
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     private static ImmutableSet<PrincipalKey> parsePrincipalKeys( final String... principalKeys )
     {
         final Set<PrincipalKey> principalKeyList = Stream.of( principalKeys ).map( PrincipalKey::from ).collect( toSet() );
         return ImmutableSet.copyOf( principalKeyList );
+    }
+
+    public Set<String> asStrings()
+    {
+        return this.set.stream().map( PrincipalKey::toString ).collect( Collectors.toSet() );
+    }
+
+    public static class Builder
+    {
+        private ImmutableList.Builder<PrincipalKey> principalKeys = new ImmutableList.Builder<>();
+
+        public Builder add( final PrincipalKey principalKey )
+        {
+            if ( principalKey != null )
+            {
+                this.principalKeys.add( principalKey );
+            }
+            return this;
+        }
+
+        public Builder addAll( final PrincipalKeys principalKeys )
+        {
+            if ( principalKeys != null )
+            {
+                this.principalKeys.addAll( principalKeys );
+            }
+            return this;
+        }
+
+        public PrincipalKeys build()
+        {
+            return PrincipalKeys.from( principalKeys.build() );
+        }
     }
 }

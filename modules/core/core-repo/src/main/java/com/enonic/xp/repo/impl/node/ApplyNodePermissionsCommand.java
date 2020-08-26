@@ -23,7 +23,7 @@ import static com.enonic.xp.repo.impl.node.NodePermissionsResolver.contextUserHa
 final class ApplyNodePermissionsCommand
     extends AbstractNodeCommand
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ApplyNodePermissionsCommand.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ApplyNodePermissionsCommand.class );
 
     private final ApplyNodePermissionsParams params;
 

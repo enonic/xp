@@ -6,6 +6,8 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.query.filter.Filter;
+import com.enonic.xp.query.filter.Filters;
 
 @PublicApi
 public final class FindContentByParentParams
@@ -13,6 +15,8 @@ public final class FindContentByParentParams
     private final ContentPath parentPath;
 
     private final ContentId parentId;
+
+    private final Filters queryFilters;
 
     private final Integer size;
 
@@ -34,6 +38,7 @@ public final class FindContentByParentParams
         }
         this.parentPath = builder.parentPath;
         this.parentId = builder.parentId;
+        this.queryFilters = builder.queryFilters.build();
         this.size = builder.size;
         this.from = builder.from;
         this.childOrder = builder.childOrder;
@@ -48,6 +53,11 @@ public final class FindContentByParentParams
     public ContentId getParentId()
     {
         return parentId;
+    }
+
+    public Filters getQueryFilters()
+    {
+        return queryFilters;
     }
 
     public Integer getSize()
@@ -82,9 +92,8 @@ public final class FindContentByParentParams
             return false;
         }
         final FindContentByParentParams that = (FindContentByParentParams) o;
-        return Objects.equals( this.parentPath, that.parentPath ) &&
-            Objects.equals( this.parentId, that.parentId ) &&
-            Objects.equals( this.size, that.size ) &&
+        return Objects.equals( this.parentPath, that.parentPath ) && Objects.equals( this.parentId, that.parentId ) &&
+            Objects.equals( this.queryFilters, that.queryFilters ) && Objects.equals( this.size, that.size ) &&
             Objects.equals( this.from, that.from ) && Objects.equals( this.childOrder, that.childOrder ) &&
             Objects.equals( this.recursive, that.recursive );
     }
@@ -105,6 +114,8 @@ public final class FindContentByParentParams
         private ContentPath parentPath;
 
         private ContentId parentId;
+
+        private Filters.Builder queryFilters = Filters.create();
 
         private Integer size = DEFAULT_SIZE;
 
@@ -127,6 +138,12 @@ public final class FindContentByParentParams
         public Builder parentId( ContentId parentId )
         {
             this.parentId = parentId;
+            return this;
+        }
+
+        public Builder queryFilter( Filter queryFilter )
+        {
+            this.queryFilters.add( queryFilter );
             return this;
         }
 

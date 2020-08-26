@@ -11,7 +11,7 @@ import com.enonic.xp.node.RefreshMode;
 public class FindContentVersionsCommand
     extends AbstractContentCommand
 {
-    private final static int DEFAULT_SIZE = 10;
+    private static final int DEFAULT_SIZE = 10;
 
     private final ContentId contentId;
 

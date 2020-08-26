@@ -20,7 +20,7 @@ public class VersionEntryProcessor
 {
     private EntryLoadResult result;
 
-    private final static Logger LOG = LoggerFactory.getLogger( VersionEntryProcessor.class );
+    private static final Logger LOG = LoggerFactory.getLogger( VersionEntryProcessor.class );
 
     private VersionEntryProcessor( final Builder builder )
     {

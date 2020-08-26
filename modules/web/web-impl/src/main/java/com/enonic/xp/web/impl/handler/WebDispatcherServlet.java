@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -42,7 +43,7 @@ import com.enonic.xp.web.websocket.WebSocketContextFactory;
 public final class WebDispatcherServlet
     extends HttpServlet
 {
-    private WebDispatcher webDispatcher;
+    private final WebDispatcher webDispatcher;
 
     private ExceptionMapper exceptionMapper;
 
@@ -51,6 +52,12 @@ public final class WebDispatcherServlet
     private WebSocketContextFactory webSocketContextFactory;
 
     private ResponseSerializationService responseSerializationService;
+
+    @Activate
+    public WebDispatcherServlet( @Reference final WebDispatcher webDispatcher )
+    {
+        this.webDispatcher = webDispatcher;
+    }
 
     @Override
     protected void service( final HttpServletRequest req, final HttpServletResponse res )
@@ -203,11 +210,5 @@ public final class WebDispatcherServlet
     public void removeWebHandler( final WebHandler webHandler )
     {
         this.webDispatcher.remove( webHandler );
-    }
-
-    @Reference
-    public void setWebDispatcher( final WebDispatcher webDispatcher )
-    {
-        this.webDispatcher = webDispatcher;
     }
 }

@@ -5,7 +5,7 @@ final class ShutdownHook
 {
     public ShutdownHook( final Runnable runnable )
     {
-        super( runnable );
+        super( runnable, "XP Shutdown Hook" );
     }
 
     public void register()

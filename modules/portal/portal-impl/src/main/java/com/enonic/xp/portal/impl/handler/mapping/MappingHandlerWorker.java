@@ -8,8 +8,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
-import com.enonic.xp.portal.impl.rendering.Renderer;
-import com.enonic.xp.portal.impl.rendering.RendererFactory;
+import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceService;
@@ -29,7 +28,7 @@ final class MappingHandlerWorker
 
     protected ControllerMappingDescriptor mappingDescriptor;
 
-    protected RendererFactory rendererFactory;
+    protected RendererDelegate rendererDelegate;
 
     public MappingHandlerWorker( final PortalRequest request )
     {
@@ -67,8 +66,7 @@ final class MappingHandlerWorker
     private PortalResponse renderController( final ControllerScript controllerScript )
     {
         this.request.setControllerScript( controllerScript );
-        final Renderer<ControllerMappingDescriptor> renderer = this.rendererFactory.getRenderer( mappingDescriptor );
-        return renderer.render( mappingDescriptor, this.request );
+        return rendererDelegate.render( mappingDescriptor, this.request );
     }
 
     private ControllerScript getScript()

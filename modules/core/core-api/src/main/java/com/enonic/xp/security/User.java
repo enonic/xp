@@ -19,7 +19,7 @@ public final class User
     extends Principal
 {
 
-    public final static User ANONYMOUS = User.create().
+    public static final User ANONYMOUS = User.create().
         key( PrincipalKey.ofAnonymous() ).
         displayName( "Anonymous User" ).
         login( "anonymous" ).

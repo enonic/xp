@@ -24,7 +24,7 @@ import com.enonic.xp.trace.Tracer;
 
 public final class ResponseProcessorExecutor
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ResponseProcessorExecutor.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ResponseProcessorExecutor.class );
 
     private static final String RESPONSE_PROCESSOR_METHOD = "responseProcessor";
 

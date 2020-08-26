@@ -6,7 +6,7 @@ import com.enonic.xp.annotation.PublicApi;
 public final class TextComponentType
     extends ComponentType
 {
-    public final static TextComponentType INSTANCE = new TextComponentType();
+    public static final TextComponentType INSTANCE = new TextComponentType();
 
     private TextComponentType()
     {

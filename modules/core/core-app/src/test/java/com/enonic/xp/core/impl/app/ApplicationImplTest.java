@@ -8,6 +8,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationBundleUtils;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,7 +37,7 @@ public class ApplicationImplTest
         assertEquals( bundle, application.getBundle() );
         assertTrue( application.getModifiedTime().getEpochSecond() > 0 );
         assertFalse( application.isStarted() );
-        assertTrue( ApplicationHelper.isApplication( bundle ) );
+        assertTrue( ApplicationBundleUtils.isApplication( bundle ) );
         assertNotNull( application.getClassLoader() );
         assertEquals( "[1.2.0,2.0.0)", application.getSystemVersion() );
         assertEquals( "2.0.0", application.getMaxSystemVersion() );

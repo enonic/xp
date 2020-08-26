@@ -31,9 +31,9 @@ import com.enonic.xp.web.vhost.VirtualHostHelper;
 public class IdentityHandler
     extends EndpointHandler
 {
-    private final static int ID_PROVIDER_GROUP_INDEX = 1;
+    private static final int ID_PROVIDER_GROUP_INDEX = 1;
 
-    private final static Pattern PATTERN = Pattern.compile( "^([^/^?]+)(?:/(login|logout))?" );
+    private static final Pattern PATTERN = Pattern.compile( "^([^/^?]+)(?:/(login|logout))?" );
 
     private ContentService contentService;
 

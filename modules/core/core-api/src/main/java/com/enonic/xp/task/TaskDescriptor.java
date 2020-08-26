@@ -60,7 +60,7 @@ public final class TaskDescriptor
         return new Builder();
     }
 
-    public final static class Builder
+    public static final class Builder
     {
         private DescriptorKey key;
 

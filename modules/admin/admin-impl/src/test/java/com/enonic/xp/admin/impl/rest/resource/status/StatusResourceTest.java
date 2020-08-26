@@ -53,7 +53,7 @@ public class StatusResourceTest
         final Map<String, Object> indexes = new HashMap<>();
         indexes.put( "index.blocks.write", true );
 
-        Mockito.when( this.indexService.getIndexSettings( ContentConstants.CONTENT_REPO.getId(), IndexType.SEARCH ) ).thenReturn(
+        Mockito.when( this.indexService.getIndexSettings( ContentConstants.CONTENT_REPO_ID, IndexType.SEARCH ) ).thenReturn(
             IndexSettings.from( indexes ) );
 
         final String json = request().path( "/status" ).get().getAsString();

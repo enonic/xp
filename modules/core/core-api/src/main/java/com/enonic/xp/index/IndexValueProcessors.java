@@ -8,7 +8,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public final class IndexValueProcessors
 {
-    public final static IndexValueProcessor HTML_STRIPPER = new HtmlStripper();
+    public static final IndexValueProcessor HTML_STRIPPER = new HtmlStripper();
 
     private static final Map<String, IndexValueProcessor> PROCESSORS = new HashMap<>();
 

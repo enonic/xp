@@ -10,7 +10,7 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
 public final class NashornHelper
 {
-    private final static NashornScriptEngineFactory FACTORY = new NashornScriptEngineFactory();
+    private static final NashornScriptEngineFactory FACTORY = new NashornScriptEngineFactory();
 
     public static ScriptEngine getScriptEngine( final ClassLoader loader )
     {

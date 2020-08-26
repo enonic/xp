@@ -17,7 +17,6 @@ import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
@@ -94,7 +93,6 @@ import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
-import com.enonic.xp.index.IndexService;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -108,10 +106,10 @@ import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
@@ -126,13 +124,13 @@ import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
-@Component(immediate = true, configurationPid = "com.enonic.xp.content")
+@Component(immediate = true)
 public class ContentServiceImpl
     implements ContentService
 {
     public static final String TEMPLATES_FOLDER_NAME = "_templates";
 
-    private final static Logger LOG = LoggerFactory.getLogger( ContentServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ContentServiceImpl.class );
 
     private static final String TEMPLATES_FOLDER_DISPLAY_NAME = "Templates";
 
@@ -141,8 +139,6 @@ public class ContentServiceImpl
     private ContentTypeService contentTypeService;
 
     private NodeService nodeService;
-
-    private RepositoryService repositoryService;
 
     private EventPublisher eventPublisher;
 
@@ -153,8 +149,6 @@ public class ContentServiceImpl
     private SiteService siteService;
 
     private ContentNodeTranslator translator;
-
-    private IndexService indexService;
 
     private final ContentProcessors contentProcessors = new ContentProcessors();
 
@@ -168,20 +162,11 @@ public class ContentServiceImpl
 
     private ContentDataSerializer contentDataSerializer;
 
-    private AuditLogService auditLogService;
-
     private ContentAuditLogSupport contentAuditLogSupport;
 
     @Activate
-    public void initialize( final ContentConfig config )
+    public void initialize()
     {
-        ContentInitializer.create().
-            setIndexService( indexService ).
-            setNodeService( nodeService ).
-            setRepositoryService( repositoryService ).
-            build().
-            initialize();
-
         this.contentDataSerializer = ContentDataSerializer.create().
             contentService( this ).
             layoutDescriptorService( layoutDescriptorService ).
@@ -190,10 +175,6 @@ public class ContentServiceImpl
             build();
 
         this.translator = new ContentNodeTranslator( nodeService, contentDataSerializer );
-
-        this.contentAuditLogSupport = config.auditlog_enabled() ? ContentAuditLogSupport.create().
-            auditLogService( auditLogService ).
-            build() : null;
     }
 
     @Override
@@ -242,10 +223,7 @@ public class ContentServiceImpl
             contentData( new PropertyTree() ).
             build() );
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.createSite( params, site );
-        }
+        contentAuditLogSupport.createSite( params, site );
 
         return site;
     }
@@ -287,10 +265,7 @@ public class ContentServiceImpl
             return this.getById( content.getId() );
         }
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.createContent( params, content );
-        }
+        contentAuditLogSupport.createContent( params, content );
 
         return content;
     }
@@ -316,10 +291,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.createMedia( params, content );
-        }
+        contentAuditLogSupport.createMedia( params, content );
 
         return content;
     }
@@ -342,10 +314,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.update( params, content );
-        }
+        contentAuditLogSupport.update( params, content );
 
         return content;
     }
@@ -369,10 +338,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.update( params, content );
-        }
+        contentAuditLogSupport.update( params, content );
 
         return content;
     }
@@ -389,10 +355,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.delete( params, result );
-        }
+        contentAuditLogSupport.delete( params, result );
 
         return result;
     }
@@ -409,10 +372,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.undoPendingDelete( params, affectedContents );
-        }
+        contentAuditLogSupport.undoPendingDelete( params, affectedContents );
 
         return affectedContents.getSize();
     }
@@ -437,10 +397,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.publish( params, result );
-        }
+        contentAuditLogSupport.publish( params, result );
 
         return result;
     }
@@ -526,10 +483,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.unpublishContent( params, result );
-        }
+        contentAuditLogSupport.unpublishContent( params, result );
 
         return result;
     }
@@ -745,10 +699,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.duplicate( params, result );
-        }
+        contentAuditLogSupport.duplicate( params, result );
 
         return result;
     }
@@ -766,10 +717,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.move( params, result );
-        }
+        contentAuditLogSupport.move( params, result );
 
         return result;
     }
@@ -792,10 +740,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.rename( params, content );
-        }
+        contentAuditLogSupport.rename( params, content );
 
         return content;
     }
@@ -812,7 +757,6 @@ public class ContentServiceImpl
             build().
             execute();
     }
-
 
     @Override
     public FindContentIdsByQueryResult find( final ContentQuery query )
@@ -946,7 +890,6 @@ public class ContentServiceImpl
             execute();
     }
 
-
     @Override
     public GetActiveContentVersionsResult getActiveVersions( final GetActiveContentVersionsParams params )
     {
@@ -978,10 +921,7 @@ public class ContentServiceImpl
     {
         nodeService.setActiveVersion( NodeId.from( contentId.toString() ), NodeVersionId.from( versionId.toString() ) );
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.setActiveContentVersion( contentId, versionId );
-        }
+        contentAuditLogSupport.setActiveContentVersion( contentId, versionId );
 
         return new SetActiveContentVersionResult( contentId, versionId );
     }
@@ -998,10 +938,7 @@ public class ContentServiceImpl
 
             final Content content = translator.fromNode( node, true );
 
-            if ( contentAuditLogSupport != null )
-            {
-                contentAuditLogSupport.setChildOrder( params, content );
-            }
+            contentAuditLogSupport.setChildOrder( params, content );
 
             return content;
         }
@@ -1031,10 +968,7 @@ public class ContentServiceImpl
 
         final ReorderChildContentsResult result = new ReorderChildContentsResult( reorderChildNodesResult.getSize() );
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.reorderChildren( params, result );
-        }
+        contentAuditLogSupport.reorderChildren( params, result );
 
         return result;
     }
@@ -1056,10 +990,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.applyPermissions( params, result );
-        }
+        contentAuditLogSupport.applyPermissions( params, result );
 
         return result;
     }
@@ -1069,7 +1000,7 @@ public class ContentServiceImpl
     {
         final ContentPath rootContentPath = ContentPath.ROOT;
         final NodePath rootNodePath = ContentNodeHelper.translateContentPathToNodePath( rootContentPath );
-        final Node rootNode = runAsContentAdmin( () -> nodeService.getByPath( rootNodePath ) );
+        final Node rootNode = callAuthenticatedAsContentAdmin( () -> nodeService.getByPath( rootNodePath ) );
         return rootNode != null ? rootNode.getPermissions() : AccessControlList.empty();
     }
 
@@ -1114,7 +1045,12 @@ public class ContentServiceImpl
             execute();
     }
 
-    private <T> T runAsContentAdmin( final Callable<T> callable )
+    private <T> T callAsContentAdmin( final Callable<T> callable )
+    {
+        return adminContext().callWith( callable );
+    }
+
+    private <T> T callAuthenticatedAsContentAdmin( final Callable<T> callable )
     {
         final Context context = ContextAccessor.current();
         final AuthenticationInfo authInfo = context.getAuthInfo();
@@ -1123,10 +1059,17 @@ public class ContentServiceImpl
             return context.callWith( callable );
         }
 
+        return callAsContentAdmin( callable );
+    }
+
+    private Context adminContext()
+    {
         return ContextBuilder.from( ContextAccessor.current() ).
-            authInfo( AuthenticationInfo.copyOf( authInfo ).principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ).build() ).
-            build().
-            callWith( callable );
+            authInfo( AuthenticationInfo.
+                copyOf( ContextAccessor.current().getAuthInfo() ).
+                principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ).
+                build() ).
+            build();
     }
 
     @Override
@@ -1184,10 +1127,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( contentAuditLogSupport != null )
-        {
-            contentAuditLogSupport.reprocess( content );
-        }
+        contentAuditLogSupport.reprocess( content );
 
         return content;
     }
@@ -1288,12 +1228,6 @@ public class ContentServiceImpl
     }
 
     @Reference
-    public void setRepositoryService( final RepositoryService repositoryService )
-    {
-        this.repositoryService = repositoryService;
-    }
-
-    @Reference
     public void setEventPublisher( final EventPublisher eventPublisher )
     {
         this.eventPublisher = eventPublisher;
@@ -1315,13 +1249,6 @@ public class ContentServiceImpl
     public void setSiteService( final SiteService siteService )
     {
         this.siteService = siteService;
-    }
-
-    @SuppressWarnings("unused")
-    @Reference
-    public void setIndexService( final IndexService indexService )
-    {
-        this.indexService = indexService;
     }
 
     @SuppressWarnings("unused")
@@ -1361,9 +1288,15 @@ public class ContentServiceImpl
     }
 
     @Reference
-    public void setAuditLogService( final AuditLogService auditLogService )
+    public void setContentAuditLogSupport( final ContentAuditLogSupport contentAuditLogSupport )
     {
-        this.auditLogService = auditLogService;
+        this.contentAuditLogSupport = contentAuditLogSupport;
     }
 
+    @Reference
+    public void setProjectService( final ProjectService projectService )
+    {
+        //Many starters depend on ContentService avaialbe only when default cms repo is fully initialized.
+        // Starting from 7.3 Initialization happens in ProjectService, so we need a dependency.
+    }
 }

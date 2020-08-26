@@ -1,5 +1,3 @@
-import com.enonic.gradle.OsgiConfigurator
-
 apply plugin: 'biz.aQute.bnd.builder'
 
 ext {
@@ -12,5 +10,3 @@ jar {
          '-dsannotations': '*',
          'Implementation-Version': project.version )
 }
-
-OsgiConfigurator.configure( project )

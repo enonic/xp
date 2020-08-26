@@ -8,10 +8,14 @@ public class SystemLoadRequestJson
 
     private final boolean upgrade;
 
-    public SystemLoadRequestJson( @JsonProperty("name") final String name, @JsonProperty("upgrade") final boolean upgrade )
+    private final boolean archive;
+
+    public SystemLoadRequestJson( @JsonProperty("name") final String name, @JsonProperty("upgrade") final boolean upgrade,
+                                  @JsonProperty("archive") final boolean archive )
     {
         this.name = name;
         this.upgrade = upgrade;
+        this.archive = archive;
     }
 
     public String getName()
@@ -22,5 +26,10 @@ public class SystemLoadRequestJson
     public boolean isUpgrade()
     {
         return upgrade;
+    }
+
+    public boolean isArchive()
+    {
+        return archive;
     }
 }

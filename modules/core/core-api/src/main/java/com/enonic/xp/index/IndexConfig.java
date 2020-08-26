@@ -13,7 +13,7 @@ import com.enonic.xp.annotation.PublicApi;
 public class IndexConfig
     implements Comparable<IndexConfig>
 {
-    public final static IndexConfig NONE = IndexConfig.create().
+    public static final IndexConfig NONE = IndexConfig.create().
         enabled( false ).
         fulltext( false ).
         nGram( false ).
@@ -22,7 +22,7 @@ public class IndexConfig
         path( false ).
         build();
 
-    public final static IndexConfig FULLTEXT = IndexConfig.create().
+    public static final IndexConfig FULLTEXT = IndexConfig.create().
         enabled( true ).
         fulltext( true ).
         nGram( true ).
@@ -31,7 +31,7 @@ public class IndexConfig
         path( false ).
         build();
 
-    public final static IndexConfig PATH = IndexConfig.create().
+    public static final IndexConfig PATH = IndexConfig.create().
         enabled( true ).
         fulltext( false ).
         nGram( false ).
@@ -40,7 +40,7 @@ public class IndexConfig
         path( true ).
         build();
 
-    public final static IndexConfig MINIMAL = IndexConfig.create().
+    public static final IndexConfig MINIMAL = IndexConfig.create().
         enabled( true ).
         fulltext( false ).
         nGram( false ).
@@ -49,7 +49,7 @@ public class IndexConfig
         path( false ).
         build();
 
-    public final static IndexConfig BY_TYPE = IndexConfig.create().
+    public static final IndexConfig BY_TYPE = IndexConfig.create().
         enabled( true ).
         fulltext( false ).
         nGram( false ).
@@ -58,7 +58,7 @@ public class IndexConfig
         path( false ).
         build();
 
-    public final static IndexConfig NGRAM = IndexConfig.create().
+    public static final IndexConfig NGRAM = IndexConfig.create().
         enabled( true ).
         nGram( true ).
         fulltext( false ).

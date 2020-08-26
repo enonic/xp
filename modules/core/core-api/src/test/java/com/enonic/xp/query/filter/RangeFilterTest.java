@@ -34,6 +34,6 @@ public class RangeFilterTest
             setCache( true ).
             build();
 
-        assertEquals( "RangeFilter{from=2.0, to=50.0}", filter.toString() );
+        assertEquals( "RangeFilter{from=2.0, to=50.0, includeLower=true, includeUpper=true}", filter.toString() );
     }
 }

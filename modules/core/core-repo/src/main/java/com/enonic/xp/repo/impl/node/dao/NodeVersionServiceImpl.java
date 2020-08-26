@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.node.dao;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -33,26 +32,20 @@ public class NodeVersionServiceImpl
     public NodeVersionKey store( final NodeVersion nodeVersion, final InternalContext context )
     {
         final Segment nodeSegment = RepositorySegmentUtils.toSegment( context.getRepositoryId(), NodeConstants.NODE_SEGMENT_LEVEL );
-        final String nodeJsonString = this.nodeVersionJsonSerializer.toNodeString( nodeVersion );
-        final BlobRecord nodeBlobRecord = getBlobRecord( nodeSegment, nodeJsonString );
+        final byte[] nodeJsonString = this.nodeVersionJsonSerializer.toNodeString( nodeVersion );
+        final BlobRecord nodeBlobRecord = blobStore.addRecord( nodeSegment, ByteSource.wrap( nodeJsonString ) );
 
         final Segment indexConfigSegment =
             RepositorySegmentUtils.toSegment( context.getRepositoryId(), NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
-        final String indexConfigDocumentString = this.nodeVersionJsonSerializer.toIndexConfigDocumentString( nodeVersion );
-        final BlobRecord indexConfigBlobRecord = getBlobRecord( indexConfigSegment, indexConfigDocumentString );
+        final byte[] indexConfigDocumentString = this.nodeVersionJsonSerializer.toIndexConfigDocumentString( nodeVersion );
+        final BlobRecord indexConfigBlobRecord = blobStore.addRecord( indexConfigSegment, ByteSource.wrap( indexConfigDocumentString ) );
 
         final Segment accessControlSegment =
             RepositorySegmentUtils.toSegment( context.getRepositoryId(), NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL );
-        final String accessControlString = this.nodeVersionJsonSerializer.toAccessControlString( nodeVersion );
-        final BlobRecord accessControlBlobRecord = getBlobRecord( accessControlSegment, accessControlString );
+        final byte[] accessControlString = this.nodeVersionJsonSerializer.toAccessControlString( nodeVersion );
+        final BlobRecord accessControlBlobRecord = blobStore.addRecord( accessControlSegment, ByteSource.wrap( accessControlString ) );
 
         return NodeVersionKey.from( nodeBlobRecord.getKey(), indexConfigBlobRecord.getKey(), accessControlBlobRecord.getKey() );
-    }
-
-    private BlobRecord getBlobRecord( final Segment segment, final String nodeJsonString )
-    {
-        final ByteSource nodeByteSource = ByteSource.wrap( nodeJsonString.getBytes( StandardCharsets.UTF_8 ) );
-        return blobStore.addRecord( segment, nodeByteSource );
     }
 
     @Override
@@ -114,9 +107,9 @@ public class NodeVersionServiceImpl
 
         try
         {
-            final String nodeString = nodeBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 ).read();
-            final String indexConfigString = indexConfigBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 ).read();
-            final String accessControlString = accessControlBlobRecord.getBytes().asCharSource( StandardCharsets.UTF_8 ).read();
+            final byte[] nodeString = nodeBlobRecord.getBytes().read();
+            final byte[] indexConfigString = indexConfigBlobRecord.getBytes().read();
+            final byte[] accessControlString = accessControlBlobRecord.getBytes().read();
             return this.nodeVersionJsonSerializer.toNodeVersion( nodeString, indexConfigString, accessControlString );
         }
         catch ( IOException e )

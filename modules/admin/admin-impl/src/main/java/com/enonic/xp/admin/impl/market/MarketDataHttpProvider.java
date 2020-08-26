@@ -30,12 +30,15 @@ public class MarketDataHttpProvider
 
     private static final ObjectReader JSON_READER = ObjectMapperHelper.create().readerFor( MarketApplicationsJson.class );
 
-    private String marketUrl;
+    private final String marketUrl;
+
+    private final HttpClient client;
 
     @Activate
-    public void activate( final MarketConfig config )
+    public MarketDataHttpProvider( final MarketConfig config )
     {
         this.marketUrl = config.marketUrl();
+        this.client = HttpClient.newBuilder().connectTimeout( CONNECTION_TIMEOUT ).build();
     }
 
     @Override
@@ -48,10 +51,6 @@ public class MarketDataHttpProvider
 
     private MarketApplicationsJson doRequest( HttpRequest request )
     {
-        final HttpClient client = HttpClient.newBuilder().
-            connectTimeout( CONNECTION_TIMEOUT ).
-            build();
-
         final HttpResponse<InputStream> response;
         try
         {

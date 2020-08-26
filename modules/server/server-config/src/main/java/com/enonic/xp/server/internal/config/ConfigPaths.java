@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableList;
 final class ConfigPaths
     implements Iterable<File>
 {
-    private final static ConfigPaths INSTANCE = new ConfigPaths( System.getProperties() );
+    private static final ConfigPaths INSTANCE = new ConfigPaths( System.getProperties() );
 
     private final ImmutableList<File> list;
 

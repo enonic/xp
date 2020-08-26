@@ -17,7 +17,7 @@ import com.enonic.xp.web.WebRequest;
 final class AssetHandlerWorker
     extends PortalHandlerWorker
 {
-    private final static String ROOT_ASSET_PREFIX = "assets/";
+    private static final String ROOT_ASSET_PREFIX = "assets/";
 
     protected ResourceService resourceService;
 

@@ -23,7 +23,7 @@ import com.enonic.xp.query.suggester.SuggestionQuery;
 public class AbstractQuery
     implements Query
 {
-    private final static int DEFAULT_QUERY_SIZE = 10;
+    private static final int DEFAULT_QUERY_SIZE = 10;
 
     private final QueryExpr query;
 

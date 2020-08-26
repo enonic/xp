@@ -11,7 +11,7 @@ import org.osgi.framework.BundleContext;
 
 public final class ConfigInterpolator
 {
-    private final static String ENV_PREFIX = "env.";
+    private static final String ENV_PREFIX = "env.";
 
     private Map<String, String> environment;
 

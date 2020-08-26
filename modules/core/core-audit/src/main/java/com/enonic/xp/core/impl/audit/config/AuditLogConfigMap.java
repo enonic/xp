@@ -7,13 +7,13 @@ import static com.google.common.base.Strings.nullToEmpty;
 public class AuditLogConfigMap
 {
 
-    private final static String ENABLED_PROPERTY = "enabled";
+    private static final String ENABLED_PROPERTY = "enabled";
 
-    private final static String OUTPUT_LOGS_PROPERTY = "outputLogs";
+    private static final String OUTPUT_LOGS_PROPERTY = "outputLogs";
 
-    private final static boolean ENABLED_DEFAULT_VALUE = true;
+    private static final boolean ENABLED_DEFAULT_VALUE = true;
 
-    private final static boolean OUTPUT_LOGS_DEFAULT_VALUE = false;
+    private static final boolean OUTPUT_LOGS_DEFAULT_VALUE = false;
 
     private final Map<String, String> map;
 

@@ -56,6 +56,7 @@ public final class PageTemplateServiceImpl
         return new GetDefaultPageTemplateCommand().
             contentType( params.getContentType() ).
             site( params.getSite() ).
+            sitePath( params.getSitePath() ).
             contentService( this.contentService ).
             execute();
     }

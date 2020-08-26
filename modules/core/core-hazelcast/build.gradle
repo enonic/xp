@@ -1,0 +1,21 @@
+apply from: "$rootDir/gradle/osgi.gradle"
+
+dependencies {
+    compile project( ':core:core-api' )
+    compile "com.hazelcast:hazelcast:${hazelcastVersion}"
+    compile "org.eclipse.jetty:jetty-hazelcast:${jettyVersion}"
+    compile "com.hazelcast:hazelcast-client:${hazelcastVersion}"
+    compile "com.hazelcast:hazelcast-kubernetes:1.5.3"
+
+    testImplementation( testFixtures( project(":core:core-api") ) )
+}
+
+jar {
+    bnd( 'Bundle-Name': 'Enonic XP Core - Hazelcast',
+         'Import-Package':
+             'com.enonic.xp.event;resolution:=optional' + ',' +
+                 'com.enonic.xp.task;resolution:=optional' + ',' +
+                 'com.enonic.xp.impl.task.distributed;resolution:=optional' + ',' +
+                 'com.google.common.collect;resolution:=optional,' +
+                 '*')
+}

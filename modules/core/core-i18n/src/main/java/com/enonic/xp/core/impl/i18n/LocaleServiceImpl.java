@@ -13,14 +13,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
 
-import com.enonic.xp.app.ApplicationInvalidationLevel;
-import com.enonic.xp.app.ApplicationInvalidator;
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationListener;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.resource.Resource;
@@ -33,22 +36,24 @@ import static java.util.stream.Collectors.toSet;
 
 @Component(immediate = true)
 public final class LocaleServiceImpl
-    implements LocaleService, ApplicationInvalidator
+    implements LocaleService, ApplicationListener
 {
+    private static final Logger LOG = LoggerFactory.getLogger( LocaleServiceImpl.class );
+
     private static final String DELIMITER = "_";
 
     private static final String KEY_SEPARATOR = "|";
 
-    private ResourceService resourceService;
+    private final ResourceService resourceService;
 
-    private final ConcurrentMap<String, MessageBundle> bundleCache;
+    private final ConcurrentMap<String, MessageBundle> bundleCache = new ConcurrentHashMap<>();
 
-    private final ConcurrentMap<String, Set<Locale>> appLocalesCache;
+    private final ConcurrentMap<String, Set<Locale>> appLocalesCache = new ConcurrentHashMap<>();
 
-    public LocaleServiceImpl()
+    @Activate
+    public LocaleServiceImpl( @Reference final ResourceService resourceService )
     {
-        this.bundleCache = new ConcurrentHashMap<>();
-        this.appLocalesCache = new ConcurrentHashMap<>();
+        this.resourceService = resourceService;
     }
 
     @Override
@@ -77,7 +82,7 @@ public final class LocaleServiceImpl
         }
 
         final String key = appBundlesCacheKey( applicationKey, bundleNames );
-        return this.appLocalesCache.computeIfAbsent( key, ( k ) -> getAppLocales( applicationKey, bundleNames ) );
+        return this.appLocalesCache.computeIfAbsent( key, k -> getAppLocales( applicationKey, bundleNames ) );
     }
 
     @Override
@@ -118,6 +123,7 @@ public final class LocaleServiceImpl
 
     private Set<Locale> getAppLocales( final ApplicationKey applicationKey, final String... bundleNames )
     {
+        LOG.debug( "Create app locales for {}", applicationKey );
         final Set<Locale> locales = new LinkedHashSet<>();
         for ( final String bundleName : bundleNames )
         {
@@ -193,11 +199,12 @@ public final class LocaleServiceImpl
     private MessageBundle getMessageBundle( final ApplicationKey applicationKey, final Locale locale, final String... bundleNames )
     {
         final String key = bundleCacheKey( applicationKey, locale, bundleNames );
-        return this.bundleCache.computeIfAbsent( key, ( k ) -> createMessageBundle( applicationKey, locale, bundleNames ) );
+        return this.bundleCache.computeIfAbsent( key, k -> createMessageBundle( applicationKey, locale, bundleNames ) );
     }
 
     private MessageBundle createMessageBundle( final ApplicationKey applicationKey, final Locale locale, final String... bundleNames )
     {
+        LOG.debug( "Create message bundle for {} {}", applicationKey, locale );
         final Properties props = new Properties();
         for ( final String bundleName : bundleNames )
         {
@@ -272,23 +279,24 @@ public final class LocaleServiceImpl
     }
 
     @Override
-    @Deprecated
-    public void invalidate( final ApplicationKey key )
+    public void activated( final Application app )
     {
-        invalidate( key, ApplicationInvalidationLevel.FULL );
+        // Locale and message bundle cache can get populated even when application was uninstalled.
+        // We clear it as soon as application is started, so it can be repopulated.
+        clearCache( app.getKey() );
     }
 
     @Override
-    public void invalidate( final ApplicationKey appKey, final ApplicationInvalidationLevel level )
+    public void deactivated( final Application app )
     {
+        clearCache( app.getKey() );
+    }
+
+    private void clearCache( ApplicationKey appKey )
+    {
+        LOG.debug( "Cleanup i18n caches for {}", appKey );
         final String cacheKeyPrefix = appKey.toString() + KEY_SEPARATOR;
         bundleCache.keySet().removeIf( ( k ) -> k.startsWith( cacheKeyPrefix ) );
         appLocalesCache.keySet().removeIf( ( k ) -> k.startsWith( cacheKeyPrefix ) );
-    }
-
-    @Reference
-    public void setResourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
     }
 }

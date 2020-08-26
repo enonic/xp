@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.security.acl.AccessControlList;
 
@@ -54,6 +55,16 @@ public class ApplyContentPermissionsJson
     public boolean isOverwriteChildPermissions()
     {
         return overwriteChildPermissions;
+    }
+
+    public ApplyContentPermissionsParams toParams()
+    {
+        return ApplyContentPermissionsParams.create().
+            contentId( this.contentId ).
+            permissions( this.permissions ).
+            inheritPermissions( this.inheritPermissions ).
+            overwriteChildPermissions( this.overwriteChildPermissions ).
+            build();
     }
 
     private AccessControlList parseAcl( final List<AccessControlEntryJson> accessControlListJson )

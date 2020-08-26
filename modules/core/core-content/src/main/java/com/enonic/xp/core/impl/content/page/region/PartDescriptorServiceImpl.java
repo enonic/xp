@@ -31,9 +31,9 @@ import com.enonic.xp.xml.parser.XmlPartDescriptorParser;
 public final class PartDescriptorServiceImpl
     implements PartDescriptorService
 {
-    private final static Logger LOG = LoggerFactory.getLogger( PartDescriptorServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( PartDescriptorServiceImpl.class );
 
-    private final static String PATH = "/site/parts";
+    private static final String PATH = "/site/parts";
 
     private MixinService mixinService;
 

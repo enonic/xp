@@ -38,7 +38,7 @@ goto fail
 
 :init
 set XP_INSTALL=%DIRNAME%..
-set DEFAULT_JAVA_OPTS=-XX:+CMSParallelRemarkEnabled -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=60 -XX:+ScavengeBeforeFullGC -XX:+CMSScavengeBeforeRemark
+set DEFAULT_JAVA_OPTS=-XX:+CMSParallelRemarkEnabled -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=60 -XX:+ScavengeBeforeFullGC -XX:+CMSScavengeBeforeRemark -XX:-OmitStackTraceInFastThrow -XX:+AlwaysPreTouch
 set DEFAULT_JAVA_DEBUG_OPTS=-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005
 
 if "%JAVA_OPTS%" == "" set JAVA_OPTS=%DEFAULT_JAVA_OPTS%
@@ -47,5 +47,5 @@ if "%JAVA_DEBUG_OPTS%" == "" set JAVA_DEBUG_OPTS=%DEFAULT_JAVA_DEBUG_OPTS%
 IF "%1"=="debug" set JAVA_OPTS=%JAVA_OPTS% %JAVA_DEBUG_OPTS%
 
 :execute
-"%JAVA_EXE%" %JAVA_OPTS% -Dxp.install="%XP_INSTALL%" -Dxp.bundled.es="%XP_BUNDLED_ES%" -Dfile.encoding=UTF8 -Dnashorn.args="--no-deprecation-warning" %XP_OPTS% -Dmapper.allow_dots_in_name=true --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED -classpath "%XP_INSTALL%\lib\*" com.enonic.xp.launcher.LauncherMain %ARGS%
+"%JAVA_EXE%" %JAVA_OPTS% -Dxp.install="%XP_INSTALL%" -Dxp.bundled.es="%XP_BUNDLED_ES%" -Dfile.encoding=UTF8 -Dnashorn.args="--no-deprecation-warning" %XP_OPTS% -Dmapper.allow_dots_in_name=true --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-modules java.se --add-exports java.base/jdk.internal.ref=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED -classpath "%XP_INSTALL%\lib\*" com.enonic.xp.launcher.LauncherMain %ARGS%
 endlocal

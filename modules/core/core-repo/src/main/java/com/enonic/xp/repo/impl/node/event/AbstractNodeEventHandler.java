@@ -14,17 +14,17 @@ import com.enonic.xp.repository.RepositoryId;
 abstract class AbstractNodeEventHandler
     implements NodeEventHandler
 {
-    private final static String ID = "id";
+    private static final String ID = "id";
 
-    private final static String PATH = "path";
+    private static final String PATH = "path";
 
-    private final static String BRANCH = "branch";
+    private static final String BRANCH = "branch";
 
-    private final static String REPOSITORY_ID = "repo";
+    private static final String REPOSITORY_ID = "repo";
 
-    final static String NEW_PATH = "newPath";
+    static final String NEW_PATH = "newPath";
 
-    final static String CURRENT_TARGET_PATH = "currentTargetPath";
+    static final String CURRENT_TARGET_PATH = "currentTargetPath";
 
     @SuppressWarnings("unchecked")
     List<Map<Object, Object>> getValueMapList( final Event event )

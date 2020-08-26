@@ -9,14 +9,25 @@ dependencies {
     compile "org.eclipse.jetty:jetty-jmx:${jettyVersion}"
     compile "org.eclipse.jetty.websocket:websocket-server:${jettyVersion}"
     compile "org.eclipse.jetty.websocket:websocket-servlet:${jettyVersion}"
-    compile "org.eclipse.jetty.websocket:javax-websocket-server-impl:${jettyVersion}"
+    compile ("org.eclipse.jetty.websocket:javax-websocket-server-impl:${jettyVersion}") {
+        exclude group: 'javax.annotation'
+    }
+    compile "jakarta.annotation:jakarta.annotation-api:${jakartaAnnotationApiVersion}"
     implementation "io.dropwizard.metrics:metrics-jetty9:${dropwizardMetricsVersion}"
-    testImplementation project( path: ':core:core-api', configuration: 'testOutput' )
+
+    testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
+
+    testImplementation( testFixtures( project(":core:core-api") ) )
 }
 
 jar {
     bnd( 'Bundle-Name': 'Enonic XP Web - Jetty',
          'Export-Package': 'org.eclipse.jetty.*, javax.servlet.*;-split-package:=merge-first, javax.websocket.*;-split-package:=merge-first',
-         'Import-Package': '*;resolution:=optional',
+         'Import-Package': 'com.enonic.xp.security.auth;resolution:=optional,' +
+             'com.enonic.xp.security;resolution:=optional,' +
+             'com.enonic.xp.data;resolution:=optional,' +
+             'com.enonic.xp.support;resolution:=optional,' +
+             '*;resolution:=optional',
          'X-Jetty-Version': jettyVersion )
 }

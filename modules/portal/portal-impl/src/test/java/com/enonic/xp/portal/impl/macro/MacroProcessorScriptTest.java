@@ -22,6 +22,7 @@ import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
+import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.impl.standard.ScriptRuntimeFactoryImpl;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
@@ -57,6 +58,7 @@ public class MacroProcessorScriptTest
         Mockito.when( application.getBundle() ).thenReturn( bundle );
         Mockito.when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
         Mockito.when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
+        Mockito.when( application.isStarted() ).thenReturn( true );
 
         final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
         Mockito.when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
@@ -69,12 +71,12 @@ public class MacroProcessorScriptTest
             return new UrlResource( resourceKey, resourceUrl );
         } );
 
-        final ScriptRuntimeFactoryImpl runtimeFactory = new ScriptRuntimeFactoryImpl();
-        runtimeFactory.setApplicationService( applicationService );
-        runtimeFactory.setResourceService( this.resourceService );
+        final ScriptAsyncService scriptAsyncService = Mockito.mock( ScriptAsyncService.class );
 
-        final PortalScriptServiceImpl scriptService = new PortalScriptServiceImpl();
-        scriptService.setScriptRuntimeFactory( runtimeFactory );
+        final ScriptRuntimeFactoryImpl runtimeFactory =
+            new ScriptRuntimeFactoryImpl( applicationService, this.resourceService, scriptAsyncService );
+
+        final PortalScriptServiceImpl scriptService = new PortalScriptServiceImpl( runtimeFactory );
         scriptService.initialize();
 
         this.factory = new MacroProcessorFactoryImpl();

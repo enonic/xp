@@ -30,6 +30,7 @@ public class RepositoryMapper
         gen.value( "id", repository.getId() );
         serialize( gen, repository.getBranches() );
         serialize( gen, repository.getSettings() );
+        serialize( gen, repository.getData() );
     }
 
     private void serialize( final MapGenerator gen, final Branches branches )
@@ -43,6 +44,13 @@ public class RepositoryMapper
     {
         gen.map( "settings" );
         serialize( gen, settings.getIndexDefinitions() );
+        gen.end();
+    }
+
+    private void serialize( final MapGenerator gen, final PropertyTree repositoryData )
+    {
+        gen.map( "data" );
+        new PropertyTreeMapper( repositoryData ).serialize( gen );
         gen.end();
     }
 

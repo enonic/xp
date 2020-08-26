@@ -34,7 +34,7 @@ public class GetNodeByPathCommandTest
         throws Exception
     {
         final Context systemContext = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( SystemConstants.SYSTEM_REPO.getId() ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             branch( SystemConstants.BRANCH_SYSTEM ).
             build();
 

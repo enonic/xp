@@ -18,6 +18,8 @@ import com.enonic.xp.web.impl.serializer.ResponseSerializationServiceImpl;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WebDispatcherServletTest
@@ -33,8 +35,7 @@ public class WebDispatcherServletTest
     {
         this.handler = new TestWebHandler();
 
-        this.servlet = new WebDispatcherServlet();
-        this.servlet.setWebDispatcher( new WebDispatcherImpl() );
+        this.servlet = new WebDispatcherServlet( new WebDispatcherImpl() );
         this.servlet.addWebHandler( this.handler );
         this.servlet.setExceptionMapper( new ExceptionMapperImpl() );
         this.servlet.setExceptionRenderer( new ExceptionRendererImpl() );
@@ -136,13 +137,13 @@ public class WebDispatcherServletTest
     public void testParameters()
         throws Exception
     {
-        final HttpRequest request = newRequest( "/site/master/a/b?a=1&b=2&b=3" ).
+        final HttpRequest request = newRequest( "/site/master/a/b?a=1&b=2&b=3&b=3" ).
             GET().
             build();
 
         this.handler.verifier = req -> {
-            assertEquals( "1", String.join( ",", req.getParams().get( "a" ) ) );
-            assertEquals( "2,3", String.join( ",", req.getParams().get( "b" ) ) );
+            assertAll( () -> assertThat( req.getParams().get( "a" ) ).containsExactly( "1" ),
+                       () -> assertThat( req.getParams().get( "b" ) ).containsExactly( "2", "3", "3" ) );
         };
 
         final HttpResponse response = callRequest( request );

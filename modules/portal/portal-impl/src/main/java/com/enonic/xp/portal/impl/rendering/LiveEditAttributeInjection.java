@@ -5,7 +5,7 @@ import com.enonic.xp.region.ComponentType;
 
 final class LiveEditAttributeInjection
 {
-    private final static char BYTE_ORDER_MARK = '\uFEFF';
+    private static final char BYTE_ORDER_MARK = '\uFEFF';
 
     public LiveEditAttributeInjection()
     {

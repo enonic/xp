@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
@@ -25,12 +26,14 @@ import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.GetMappingsRequest;
 import org.elasticsearch.client.indices.GetMappingsResponse;
 import org.elasticsearch.client.indices.PutMappingRequest;
+import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.IndexNotFoundException;
+import org.elasticsearch.rest.RestStatus;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -56,31 +59,23 @@ import com.enonic.xp.repository.RepositoryId;
 public class IndexServiceInternalImpl
     implements IndexServiceInternal
 {
-    private final static Logger LOG = LoggerFactory.getLogger( IndexServiceInternalImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( IndexServiceInternalImpl.class );
 
-    private static final String ES_DEFAULT_INDEX_TYPE_NAME = "_default_";
+    private static final TimeValue DELETE_INDEX_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
-    private final static String DELETE_INDEX_TIMEOUT = "5s";
+    private static final TimeValue UPDATE_INDEX_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
-    private final static String CREATE_INDEX_TIMEOUT = "5s";
+    private static final TimeValue GET_SETTINGS_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
-    private final static String UPDATE_INDEX_TIMEOUT = "5s";
+    private static final TimeValue GET_INDEX_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
-    private final static String APPLY_MAPPING_TIMEOUT = "5s";
+    private static final TimeValue PUT_MAPPING_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
-    private final static String INDEX_EXISTS_TIMEOUT = "5s";
+    private static final TimeValue GET_MAPPING_TIMEOUT = TimeValue.timeValueSeconds( 5 );
 
-    private final static String CLUSTER_STATE_TIMEOUT = "5s";
-
-    private final static String GET_SETTINGS_TIMEOUT = "5s";
+    private static final TimeValue CLUSTER_HEALTH_TIMEOUT = TimeValue.timeValueSeconds( 10 );
 
     private EsClient client;
-
-    @Override
-    public ClusterHealthStatus getClusterHealth( final String timeout, final String... indexNames )
-    {
-        return doGetClusterHealth( timeout, indexNames );
-    }
 
     @Override
     public void refresh( final String... indexNames )
@@ -227,7 +222,7 @@ public class IndexServiceInternalImpl
             return null;
         }
 
-        final String indexName = IndexNameResolver.resolveIndexName( repositoryId, indexType );
+        final String indexName = IndexNameResolver.resolveIndexName( repositoryId, indexType, branch );
 
         if ( indexName == null )
         {
@@ -236,7 +231,7 @@ public class IndexServiceInternalImpl
 
         final GetMappingsRequest request = new GetMappingsRequest();
         request.indices( indexName );
-        request.setTimeout( TimeValue.timeValueSeconds( 5 ) );
+        request.setTimeout( GET_MAPPING_TIMEOUT );
 
         final GetMappingsResponse response = client.indicesGetMapping( request );
 
@@ -253,7 +248,7 @@ public class IndexServiceInternalImpl
 
         final PutMappingRequest mappingRequest = new PutMappingRequest( indexName ).
             source( request.getMapping().getAsString(), XContentType.JSON );
-        mappingRequest.setTimeout( TimeValue.timeValueSeconds( 5 ) );
+        mappingRequest.setTimeout( PUT_MAPPING_TIMEOUT );
 
         try
         {
@@ -280,28 +275,43 @@ public class IndexServiceInternalImpl
     public boolean indicesExists( final String... indices )
     {
         final GetIndexRequest request = new GetIndexRequest( indices );
-        request.setTimeout( TimeValue.timeValueSeconds( 5 ) );
+        request.setTimeout( GET_INDEX_TIMEOUT );
 
         return client.indicesExists( request );
     }
 
-    private ClusterHealthStatus doGetClusterHealth( final String timeout, final String... indexNames )
+    @Override
+    public boolean waitForYellowStatus( final String... indexNames )
     {
-        ClusterHealthRequest request = indexNames != null ? new ClusterHealthRequest( indexNames ) : new ClusterHealthRequest();
+        ClusterHealthRequest request = new ClusterHealthRequest( indexNames );
 
-        request.waitForYellowStatus().timeout( timeout );
+        request.waitForYellowStatus().timeout( CLUSTER_HEALTH_TIMEOUT );
 
-        final Stopwatch timer = Stopwatch.createStarted();
+        final ClusterHealthResponse response;
+        try
+        {
+            final Stopwatch timer = Stopwatch.createStarted();
+            response = client.clusterHealth( request );
+            timer.stop();
 
-        final ClusterHealthResponse response = client.clusterHealth( request );
-        timer.stop();
+            LOG.debug( "ElasticSearch cluster '{}' " +
+                           "health (timedOut={}, timeOutValue={}, used={}): Status={}, nodes={}, active shards={}, indices={}",
+                       response.getClusterName(), response.isTimedOut(), CLUSTER_HEALTH_TIMEOUT, timer, response.getStatus(),
+                       response.getNumberOfNodes(), response.getActiveShards(), response.getIndices() );
+        }
+        catch ( Exception e )
+        {
+            LOG.error( "Failed to get cluster health status", e );
+            return false;
+        }
 
-        LOG.debug(
-            "ElasticSearch cluster '{}' health (timedOut={}, timeOutValue={}, used={}): Status={}, nodes={}, active shards={}, indices={}",
-            response.getClusterName(), response.isTimedOut(), timeout, timer.toString(), response.getStatus(), response.getNumberOfNodes(),
-            response.getActiveShards(), response.getIndices().keySet() );
+        if ( response.isTimedOut() || response.getStatus() == ClusterHealthStatus.RED )
+        {
+            LOG.error( "Cluster not healthy: timed out: {}, state: {}", response.isTimedOut(), response.getStatus() );
+            return false;
+        }
 
-        return new ClusterHealthStatus( ClusterStatusCode.valueOf( response.getStatus().name() ), response.isTimedOut() );
+        return true;
     }
 
     @Override
@@ -358,7 +368,17 @@ public class IndexServiceInternalImpl
         }
         catch ( ElasticsearchException e )
         {
-            LOG.warn( "Failed to delete index {}", indexName );
+            if ( e instanceof ElasticsearchStatusException )
+            {
+                if ( e.status() == RestStatus.NOT_FOUND )
+                {
+                    LOG.warn( "Index \"{}\" not found", indexName );
+                }
+            }
+            else
+            {
+                LOG.warn( "Failed to delete index {}", indexName );
+            }
         }
     }
 

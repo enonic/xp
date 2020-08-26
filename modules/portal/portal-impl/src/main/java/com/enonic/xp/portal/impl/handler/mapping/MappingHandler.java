@@ -9,7 +9,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
-import com.enonic.xp.portal.impl.rendering.RendererFactory;
+import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
@@ -35,7 +35,7 @@ public final class MappingHandler
 
     private FilterScriptFactory filterScriptFactory;
 
-    private RendererFactory rendererFactory;
+    private RendererDelegate rendererDelegate;
 
     public MappingHandler()
     {
@@ -88,7 +88,7 @@ public final class MappingHandler
         worker.mappingDescriptor = mapping;
         worker.resourceService = this.resourceService;
         worker.controllerScriptFactory = this.controllerScriptFactory;
-        worker.rendererFactory = rendererFactory;
+        worker.rendererDelegate = rendererDelegate;
         final Trace trace = Tracer.newTrace( "renderComponent" );
         if ( trace == null )
         {
@@ -144,8 +144,8 @@ public final class MappingHandler
     }
 
     @Reference
-    public void setRendererFactory( final RendererFactory rendererFactory )
+    public void setRendererDelegate( final RendererDelegate rendererDelegate )
     {
-        this.rendererFactory = rendererFactory;
+        this.rendererDelegate = rendererDelegate;
     }
 }

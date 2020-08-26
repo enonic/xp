@@ -5,6 +5,7 @@ import com.enonic.xp.query.QueryExplanation;
 import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.ReturnValues;
 import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
+import com.enonic.xp.sortvalues.SortValuesProperty;
 
 public class SearchHit
 {
@@ -22,6 +23,8 @@ public class SearchHit
 
     private final HighlightedProperties highlightedProperties;
 
+    private final SortValuesProperty sortValues;
+
     private SearchHit( final Builder builder )
     {
         this.score = builder.score;
@@ -31,6 +34,7 @@ public class SearchHit
         this.indexType = builder.indexType;
         this.explanation = builder.explanation;
         this.highlightedProperties = builder.highlightedProperties;
+        this.sortValues = builder.sortValues;
     }
 
     public static Builder create()
@@ -81,6 +85,11 @@ public class SearchHit
     public HighlightedProperties getHighlightedProperties()
     {
         return highlightedProperties;
+    }
+
+    public SortValuesProperty getSortValues()
+    {
+        return sortValues;
     }
 
     private ReturnValue doGetField( final String fieldName, final boolean failOnMissing )
@@ -136,6 +145,8 @@ public class SearchHit
 
         private HighlightedProperties highlightedProperties;
 
+        private SortValuesProperty sortValues;
+
         public Builder score( final float score )
         {
             this.score = score;
@@ -175,6 +186,12 @@ public class SearchHit
         public Builder highlightedFields( final HighlightedProperties highlightedProperties )
         {
             this.highlightedProperties = highlightedProperties;
+            return this;
+        }
+
+        public Builder sortValues( final SortValuesProperty sortValues )
+        {
+            this.sortValues = sortValues;
             return this;
         }
 

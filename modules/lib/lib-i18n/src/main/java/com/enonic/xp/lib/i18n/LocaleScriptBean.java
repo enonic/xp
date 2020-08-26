@@ -25,7 +25,7 @@ public final class LocaleScriptBean
 
     private ApplicationKey application;
 
-    private final static String NOT_TRANSLATED_MESSAGE = "NOT_TRANSLATED";
+    private static final String NOT_TRANSLATED_MESSAGE = "NOT_TRANSLATED";
 
     public String localize( final String key, final List<String> locales, final ScriptValue values, String[] bundles )
     {

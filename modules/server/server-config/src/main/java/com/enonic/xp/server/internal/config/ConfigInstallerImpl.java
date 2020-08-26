@@ -23,9 +23,9 @@ import com.enonic.xp.core.internal.Dictionaries;
 public final class ConfigInstallerImpl
     implements ConfigInstaller
 {
-    private final static String FILENAME_PROP = "config.filename";
+    private static final String FILENAME_PROP = "config.filename";
 
-    private final static Logger LOG = LoggerFactory.getLogger( ConfigInstallerImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ConfigInstallerImpl.class );
 
     private ConfigurationAdmin configurationAdmin;
 

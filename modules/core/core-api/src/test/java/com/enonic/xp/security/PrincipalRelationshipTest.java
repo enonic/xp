@@ -8,17 +8,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PrincipalRelationshipTest
 {
-    private final static PrincipalKey USER = PrincipalKey.ofUser( IdProviderKey.system(), "user" );
+    private static final PrincipalKey USER = PrincipalKey.ofUser( IdProviderKey.system(), "user" );
 
-    private final static PrincipalKey USER_2 = PrincipalKey.ofUser( IdProviderKey.system(), "user2" );
+    private static final PrincipalKey USER_2 = PrincipalKey.ofUser( IdProviderKey.system(), "user2" );
 
-    private final static PrincipalKey GROUP = PrincipalKey.ofGroup( IdProviderKey.system(), "group" );
+    private static final PrincipalKey GROUP = PrincipalKey.ofGroup( IdProviderKey.system(), "group" );
 
-    private final static PrincipalKey GROUP_2 = PrincipalKey.ofGroup( IdProviderKey.system(), "group2" );
+    private static final PrincipalKey GROUP_2 = PrincipalKey.ofGroup( IdProviderKey.system(), "group2" );
 
-    private final static PrincipalKey ROLE = PrincipalKey.ofRole( "role" );
+    private static final PrincipalKey ROLE = PrincipalKey.ofRole( "role" );
 
-    private final static PrincipalKey ROLE_2 = PrincipalKey.ofRole( "role2" );
+    private static final PrincipalKey ROLE_2 = PrincipalKey.ofRole( "role2" );
 
     @Test
     public void testFromToSamePrincipal()

@@ -14,8 +14,6 @@ public class TestCluster
 
     private ClusterNodes nodes;
 
-    private boolean active = false;
-
     private TestCluster( final Builder builder )
     {
         id = builder.id;
@@ -26,7 +24,7 @@ public class TestCluster
     @Override
     public boolean isEnabled()
     {
-        return active;
+        return true;
     }
 
     public static Builder create()
@@ -65,19 +63,11 @@ public class TestCluster
     @Override
     public void enable()
     {
-        if ( !active )
-        {
-            this.active = true;
-        }
     }
 
     @Override
     public void disable()
     {
-        if ( active )
-        {
-            this.active = false;
-        }
     }
 
     public static final class Builder

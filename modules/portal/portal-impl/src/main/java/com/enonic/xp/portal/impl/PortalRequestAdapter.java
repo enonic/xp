@@ -14,9 +14,9 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 public class PortalRequestAdapter
 {
-    public final static String PORTAL_BASE_URI = "/site";
+    public static final String PORTAL_BASE_URI = "/site";
 
-    public final static String ADMIN_BASE_URI = "/admin/site/admin";
+    public static final String ADMIN_BASE_URI = "/admin/site/admin";
 
     public PortalRequest adapt( final HttpServletRequest req )
     {

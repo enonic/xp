@@ -40,13 +40,13 @@ public class XDataResourceTest
     extends AdminResourceTestSupport
 {
 
-    private final static XDataName MY_XDATA_QUALIFIED_NAME_1 = XDataName.from( "myapplication:input_text_1" );
+    private static final XDataName MY_XDATA_QUALIFIED_NAME_1 = XDataName.from( "myapplication:input_text_1" );
 
-    private final static String MY_MIXIN_INPUT_NAME_1 = "input_text_1";
+    private static final String MY_MIXIN_INPUT_NAME_1 = "input_text_1";
 
-    private final static XDataName MY_XDATA_QUALIFIED_NAME_2 = XDataName.from( "myapplication:text_area_2" );
+    private static final XDataName MY_XDATA_QUALIFIED_NAME_2 = XDataName.from( "myapplication:text_area_2" );
 
-    private final static String MY_MIXIN_INPUT_NAME_2 = "text_area_2";
+    private static final String MY_MIXIN_INPUT_NAME_2 = "text_area_2";
 
     private MixinService mixinService;
 

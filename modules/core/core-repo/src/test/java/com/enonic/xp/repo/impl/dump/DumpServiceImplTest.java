@@ -5,17 +5,19 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.app.Applications;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
@@ -67,8 +69,6 @@ import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre5.Pre5ContentConsta
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.node.RenameNodeCommand;
-import com.enonic.xp.repo.impl.repository.IndexNameResolver;
-import com.enonic.xp.repo.impl.repository.SystemRepoInitializer;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.DeleteBranchParams;
 import com.enonic.xp.repository.DeleteRepositoryParams;
@@ -76,6 +76,7 @@ import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -92,24 +93,65 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class DumpServiceImplTest
     extends AbstractNodeTest
 {
     private DumpServiceImpl dumpService;
 
+    private static final AtomicLong UPDATE_COUNTER = new AtomicLong();
+
     @BeforeEach
     public void setUp()
         throws Exception
     {
-        this.dumpService = new DumpServiceImpl();
+        final BundleContext bundleContext = mock( BundleContext.class );
+        final Bundle bundle = mock( Bundle.class );
+        when( bundleContext.getBundle() ).thenReturn( bundle );
+        when( bundle.getVersion() ).thenReturn( org.osgi.framework.Version.emptyVersion );
+
+        this.dumpService = new DumpServiceImpl( bundleContext, eventPublisher );
         this.dumpService.setBlobStore( this.blobStore );
         this.dumpService.setNodeService( this.nodeService );
         this.dumpService.setRepositoryService( this.repositoryService );
-        this.dumpService.setBasePath( temporaryFolder.toFile().toPath() );
-        final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getInstalledApplications() ).thenReturn( Applications.empty() );
-        this.dumpService.setApplicationService( applicationService );
+        this.dumpService.setBasePath( temporaryFolder );
+    }
+
+    @Test
+    public void zip_unzip()
+        throws Exception
+    {
+        final Node node = createNode( NodePath.ROOT, "myNode" );
+        updateNode( node );
+        updateNode( node );
+        updateNode( node );
+
+        refresh();
+
+        final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
+            archive( true ).
+            includeVersions( true ).
+            dumpName( "testDump" ).
+            build() ) );
+
+        // 4 of node, 1 of root
+        assertEquals( 5, systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).getVersions() );
+        final BranchDumpResult branchDumpResult = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
+
+        assertEquals( 2, branchDumpResult.getSuccessful() );
+
+        NodeHelper.runAsAdmin( () -> this.dumpService.load( SystemLoadParams.create().
+            archive( true ).
+            includeVersions( true ).
+            dumpName( "testDump" ).
+            build() ) );
+
+        final Repositories newRepos = NodeHelper.runAsAdmin( () -> this.repositoryService.list() );
+
+        assertEquals( RepositoryIds.from( RepositoryId.from( "com.enonic.cms.default" ), RepositoryId.from( "system-repo" ),
+                                          RepositoryId.from( "system.auditlog" ) ), newRepos.getIds() );
     }
 
     @Test
@@ -182,8 +224,8 @@ public class DumpServiceImplTest
 
         final Repositories newRepos = NodeHelper.runAsAdmin( () -> this.repositoryService.list() );
 
-        assertEquals( 4, oldRepos.getIds().getSize() );
-        assertEquals( 3, newRepos.getIds().getSize() );
+        assertEquals( 5, oldRepos.getIds().getSize() );
+        assertEquals( 4, newRepos.getIds().getSize() );
 
         assertNotNull( newRepos.getRepositoryById( newRepoInsideDump.getId() ) );
         assertNull( newRepos.getRepositoryById( newRepoOutsideDump.getId() ) );
@@ -261,6 +303,8 @@ public class DumpServiceImplTest
         updateNode( node );
         updateNode( node );
         updateNode( node );
+
+        refresh();
 
         final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
             dumpName( "testDump" ).
@@ -638,7 +682,7 @@ public class DumpServiceImplTest
     {
         createNode( NodePath.ROOT, "myNode" );
 
-        final SystemDumpListener systemDumpListener = Mockito.mock( SystemDumpListener.class );
+        final SystemDumpListener systemDumpListener = mock( SystemDumpListener.class );
         NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
             dumpName( "myTestDump" ).
             includeVersions( true ).
@@ -648,10 +692,11 @@ public class DumpServiceImplTest
 
         Mockito.verify( systemDumpListener ).dumpingBranch( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch(), 2 );
         Mockito.verify( systemDumpListener ).dumpingBranch( CTX_OTHER.getRepositoryId(), CTX_OTHER.getBranch(), 1 );
-        Mockito.verify( systemDumpListener ).dumpingBranch( SystemConstants.SYSTEM_REPO.getId(), SystemConstants.BRANCH_SYSTEM, 4 );
-        Mockito.verify( systemDumpListener, Mockito.times( 7 ) ).nodeDumped();
+        Mockito.verify( systemDumpListener ).dumpingBranch( AUDIT_LOG_REPO_ID, AUDIT_LOG_BRANCH, 1 );
+        Mockito.verify( systemDumpListener ).dumpingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 5 );
+        Mockito.verify( systemDumpListener, Mockito.times( 9 ) ).nodeDumped();
 
-        final SystemLoadListener systemLoadListener = Mockito.mock( SystemLoadListener.class );
+        final SystemLoadListener systemLoadListener = mock( SystemLoadListener.class );
         NodeHelper.runAsAdmin( () -> this.dumpService.load( SystemLoadParams.create().
             dumpName( "myTestDump" ).
             includeVersions( true ).
@@ -659,11 +704,14 @@ public class DumpServiceImplTest
             build() ) );
 
         Mockito.verify( systemLoadListener ).loadingBranch( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch(), 2L );
+        Mockito.verify( systemLoadListener ).loadingVersions( CTX_DEFAULT.getRepositoryId() );
         Mockito.verify( systemLoadListener ).loadingBranch( CTX_OTHER.getRepositoryId(), CTX_OTHER.getBranch(), 1L );
         Mockito.verify( systemLoadListener ).loadingVersions( CTX_OTHER.getRepositoryId() );
-        Mockito.verify( systemLoadListener ).loadingBranch( SystemConstants.SYSTEM_REPO.getId(), SystemConstants.BRANCH_SYSTEM, 4L );
-        Mockito.verify( systemLoadListener ).loadingVersions( SystemConstants.SYSTEM_REPO.getId() );
-        Mockito.verify( systemLoadListener, Mockito.times( 2 + 1 + 2 + 4 + 4 ) ).entryLoaded();
+        Mockito.verify( systemLoadListener ).loadingBranch( AUDIT_LOG_REPO_ID, AUDIT_LOG_BRANCH, 1L );
+        Mockito.verify( systemLoadListener ).loadingVersions( AUDIT_LOG_REPO_ID );
+        Mockito.verify( systemLoadListener ).loadingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 5L );
+        Mockito.verify( systemLoadListener ).loadingVersions( SystemConstants.SYSTEM_REPO_ID );
+        Mockito.verify( systemLoadListener, Mockito.times( 17 ) ).entryLoaded();
     }
 
     @Test
@@ -713,7 +761,7 @@ public class DumpServiceImplTest
         createIncompatibleDump( dumpName );
 
         NodeHelper.runAsAdmin( () -> {
-            final UpgradeListener upgradeListener = Mockito.mock( UpgradeListener.class );
+            final UpgradeListener upgradeListener = mock( UpgradeListener.class );
 
             final SystemDumpUpgradeParams params = SystemDumpUpgradeParams.create().
                 dumpName( dumpName ).
@@ -727,7 +775,7 @@ public class DumpServiceImplTest
             Mockito.verify( upgradeListener, Mockito.times( 8 ) ).upgraded();
             Mockito.verify( upgradeListener, Mockito.times( 1 ) ).total( 8 );
 
-            FileDumpReader reader = new FileDumpReader( temporaryFolder.toFile().toPath(), dumpName, null );
+            FileDumpReader reader = FileDumpReader.create( null, temporaryFolder, dumpName );
             final DumpMeta updatedMeta = reader.getDumpMeta();
             assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
         } );
@@ -747,7 +795,7 @@ public class DumpServiceImplTest
                 includeVersions( true ).
                 build() );
 
-            FileDumpReader reader = new FileDumpReader( temporaryFolder.toFile().toPath(), dumpName, null );
+            FileDumpReader reader = FileDumpReader.create( null, temporaryFolder, dumpName );
             final DumpMeta updatedMeta = reader.getDumpMeta();
             assertEquals( DumpConstants.MODEL_VERSION, updatedMeta.getModelVersion() );
 
@@ -995,29 +1043,26 @@ public class DumpServiceImplTest
     {
         doDump( params );
 
-        final Repositories repositories = this.repositoryService.list();
+        repositoryService.list().
+            stream().
+            map( Repository::getId ).
+            filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).
+                or( Predicate.isEqual( AUDIT_LOG_REPO_ID ) ).negate() ).
+            map( DeleteRepositoryParams::from ).
+            forEach( repositoryService::deleteRepository );
 
-        for ( final Repository repository : repositories )
-        {
-            if ( !repository.getId().equals( SystemConstants.SYSTEM_REPO.getId() ) )
-            {
-                this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repository.getId() ) );
-            }
-        }
+        // Then delete all system repositories
+        repositoryService.deleteRepository( DeleteRepositoryParams.from( RepositoryId.from( "system.auditlog" ) ) );
+
+        // system-repo must be deleted last
+        repositoryService.deleteRepository( DeleteRepositoryParams.from( SystemConstants.SYSTEM_REPO_ID ) );
 
         if ( clearBlobStore )
         {
             this.blobStore.clear();
         }
 
-        this.deleteSystemIndices();
-
-        SystemRepoInitializer.create().
-            setIndexServiceInternal( indexServiceInternal ).
-            setRepositoryService( repositoryService ).
-            setNodeStorageService( storageService ).
-            build().
-            initialize();
+        bootstrap();
 
         final SystemLoadResult result = doLoad();
 
@@ -1043,16 +1088,11 @@ public class DumpServiceImplTest
     {
         return updateNode( UpdateNodeParams.create().
             id( node.id() ).
-            editor( ( n ) -> n.data.setInstant( "timestamp", Instant.now() ) ).
+            editor( ( n ) -> {
+                // Guarantee new node version is created. Without it update is ignored because node is not changed.
+                // N.B. Writing "current time" (even System#nanoTime) does not have the same guarantee due low timer resolution.
+                n.data.setLong( "update", UPDATE_COUNTER.incrementAndGet() );
+            } ).
             build() );
-    }
-
-    private void deleteSystemIndices()
-    {
-        IndexNameResolver.resolveSearchIndexNames( SystemConstants.SYSTEM_REPO.getId(), SystemConstants.SYSTEM_REPO.getBranches() ).
-            forEach( this.indexServiceInternal::deleteIndices );
-        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveStorageIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
-        this.indexServiceInternal.deleteIndices( IndexNameResolver.resolveCommitIndexName( SystemConstants.SYSTEM_REPO.getId() ) );
-
     }
 }

@@ -25,7 +25,7 @@ function nullOrValue(value) {
 }
 
 /**
- * Login a user with the specified idProvider, userName and password.
+ * Login a user with the specified idProvider, userName, password and scope.
  *
  * @example-ref examples/auth/login.js
  *
@@ -33,6 +33,7 @@ function nullOrValue(value) {
  * @param {string} params.user Name of user to log in.
  * @param {string} [params.idProvider] Name of id provider where the user is stored. If not specified it will try all available id providers, in alphabetical order.
  * @param {string} [params.password] Password for the user. Ignored if skipAuth is set to true, mandatory otherwise.
+ * @param {('SESSION'|'REQUEST')} [params.scope=SESSION] The scope of this login. Two values are valid. SESSION logs the user in and creates a session in XP for use in future requests. REQUEST logs the user in but only for this particular request and thus does not create a session.
  * @param {boolean} [params.skipAuth=false] Skip authentication.
  * @param {number} [params.sessionTimeout] Session timeout (in seconds). By default, the value of session.timeout from com.enonic.xp.web.jetty.cfg
  * @returns {object} Information for logged-in user.
@@ -50,6 +51,12 @@ exports.login = function (params) {
 
     if (params['idProvider']) {
         bean.idProvider = [].concat(params['idProvider']);
+    }
+
+    if (params['scope']) {
+        bean.scope = params['scope'];
+    } else {
+        bean.scope = 'SESSION';
     }
 
     bean.sessionTimeout = nullOrValue(params['sessionTimeout']);

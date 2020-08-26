@@ -9,11 +9,11 @@ public class SecurityConstants
 {
     public static final Branch BRANCH_SECURITY = SystemConstants.BRANCH_SYSTEM;
 
+    @Deprecated
     public static final Repository SECURITY_REPO = SystemConstants.SYSTEM_REPO;
 
     public static final Context CONTEXT_SECURITY = ContextBuilder.create().
         branch( BRANCH_SECURITY ).
-        repositoryId( SECURITY_REPO.getId() ).
+        repositoryId( SystemConstants.SYSTEM_REPO_ID ).
         build();
-
 }

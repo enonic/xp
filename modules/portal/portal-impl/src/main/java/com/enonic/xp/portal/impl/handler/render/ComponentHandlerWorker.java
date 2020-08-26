@@ -14,8 +14,7 @@ import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.rendering.FragmentPageResolver;
-import com.enonic.xp.portal.impl.rendering.Renderer;
-import com.enonic.xp.portal.impl.rendering.RendererFactory;
+import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentPath;
@@ -30,7 +29,7 @@ final class ComponentHandlerWorker
 {
     protected ComponentPath componentPath;
 
-    protected RendererFactory rendererFactory;
+    protected RendererDelegate rendererDelegate;
 
     protected PostProcessor postProcessor;
 
@@ -115,14 +114,13 @@ final class ComponentHandlerWorker
         this.request.setPageTemplate( pageTemplate );
         this.request.setPageDescriptor( null );
 
-        final Renderer<Component> renderer = this.rendererFactory.getRenderer( component );
         final Trace trace = Tracer.current();
         if ( trace != null )
         {
             trace.put( "componentPath", component.getPath() );
             trace.put( "type", component.getType().toString() );
         }
-        final PortalResponse response = renderer.render( component, this.request );
+        final PortalResponse response = rendererDelegate.render( component, this.request );
         return this.postProcessor.processResponseInstructions( this.request, response );
     }
 

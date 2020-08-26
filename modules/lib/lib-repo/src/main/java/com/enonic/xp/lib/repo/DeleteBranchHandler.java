@@ -59,8 +59,8 @@ public class DeleteBranchHandler
     private boolean isProtectedBranch( final RepositoryId repositoryId, final Branch branch )
     {
         return
-            ( SystemConstants.SYSTEM_REPO.getId().equals( repositoryId ) && SystemConstants.BRANCH_SYSTEM.getValue().equals( branchId ) ) ||
-                ( ContentConstants.CONTENT_REPO.getId().equals( repositoryId ) &&
+            ( SystemConstants.SYSTEM_REPO_ID.equals( repositoryId ) && SystemConstants.BRANCH_SYSTEM.getValue().equals( branchId ) ) ||
+                ( ContentConstants.CONTENT_REPO_ID.equals( repositoryId ) &&
                     ( ContentConstants.BRANCH_DRAFT.getValue().equals( branchId ) ||
                         ContentConstants.BRANCH_MASTER.getValue().equals( branchId ) ) );
     }

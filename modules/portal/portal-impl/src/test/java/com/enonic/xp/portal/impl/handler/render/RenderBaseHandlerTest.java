@@ -22,8 +22,7 @@ import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.impl.rendering.Renderer;
-import com.enonic.xp.portal.impl.rendering.RendererFactory;
+import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.region.PartComponent;
@@ -34,6 +33,10 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.when;
 
 public abstract class RenderBaseHandlerTest
     extends BaseHandlerTest
@@ -50,9 +53,7 @@ public abstract class RenderBaseHandlerTest
 
     protected PortalUrlService portalUrlService;
 
-    protected Renderer renderer;
-
-    protected RendererFactory rendererFactory;
+    protected RendererDelegate rendererDelegate;
 
     protected PostProcessor postProcessor;
 
@@ -69,11 +70,11 @@ public abstract class RenderBaseHandlerTest
         this.applicationService = Mockito.mock( ApplicationService.class );
         this.portalUrlService = Mockito.mock( PortalUrlService.class );
 
-        this.rendererFactory = Mockito.mock( RendererFactory.class );
+        this.rendererDelegate = Mockito.mock( RendererDelegate.class );
         this.postProcessor = Mockito.mock( PostProcessor.class );
 
-        this.renderer = Mockito.mock( Renderer.class );
-        Mockito.when( this.rendererFactory.getRenderer( Mockito.any() ) ).thenReturn( this.renderer );
+        when( rendererDelegate.render( any(), same( request ) ) ).
+            thenReturn( PortalResponse.create().body( "Ok" ).build() );
 
         this.rawRequest = Mockito.mock( HttpServletRequest.class );
         Mockito.when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( Boolean.TRUE );
@@ -249,9 +250,8 @@ public abstract class RenderBaseHandlerTest
         parser.parse();
     }
 
-    @SuppressWarnings("unchecked")
     protected final void setRendererResult( final PortalResponse response )
     {
-        Mockito.when( this.renderer.render( Mockito.any(), Mockito.any() ) ).thenReturn( response );
+        when( this.rendererDelegate.render( any(), any() ) ).thenReturn( response );
     }
 }

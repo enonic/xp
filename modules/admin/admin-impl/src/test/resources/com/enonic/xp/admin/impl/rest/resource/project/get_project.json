@@ -1,0 +1,32 @@
+{
+  "description": "project description",
+  "displayName": "project name",
+  "icon": {
+    "label": "small",
+    "mimeType": "image/png",
+    "name": "logo.png",
+    "size": 0
+  },
+  "language": "en",
+  "name": "project1",
+  "permissions": {
+    "author": [
+      "user:system:author"
+    ],
+    "contributor": [
+      "user:system:contributor"
+    ],
+    "editor": [
+      "user:system:editor"
+    ],
+    "owner": [
+      "user:system:owner"
+    ]
+  },
+  "readAccess": {
+    "type": "CUSTOM",
+    "principals": [
+      "user:system:custom"
+    ]
+  }
+}

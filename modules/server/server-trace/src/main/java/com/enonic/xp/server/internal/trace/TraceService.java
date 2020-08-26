@@ -17,7 +17,7 @@ import com.enonic.xp.trace.Tracer;
 public final class TraceService
     implements TraceManager
 {
-    private final static Logger LOG = LoggerFactory.getLogger( TraceService.class );
+    private static final Logger LOG = LoggerFactory.getLogger( TraceService.class );
 
     private TraceEventDispatcher dispatcher;
 

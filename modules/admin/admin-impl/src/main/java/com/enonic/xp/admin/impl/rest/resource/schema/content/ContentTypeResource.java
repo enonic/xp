@@ -23,7 +23,6 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.admin.impl.json.schema.content.ContentTypeJson;
 import com.enonic.xp.admin.impl.json.schema.content.ContentTypeSummaryJson;
 import com.enonic.xp.admin.impl.json.schema.content.ContentTypeSummaryListJson;
-import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.schema.SchemaImageHelper;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.app.ApplicationKey;
@@ -44,9 +43,11 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
+import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.CMS_PATH;
+import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.REST_ROOT;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-@Path(ResourceConstants.REST_ROOT + "schema/content")
+@Path(REST_ROOT + "{content:(schema|" + CMS_PATH + "/schema)}/content")
 @Produces("application/json")
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")

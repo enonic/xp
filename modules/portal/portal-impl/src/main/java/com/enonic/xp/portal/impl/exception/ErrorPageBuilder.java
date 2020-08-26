@@ -10,11 +10,11 @@ import com.enonic.xp.resource.ResourceService;
 
 final class ErrorPageBuilder
 {
-    private final static int NUM_DELTA_LINES = 3;
+    private static final int NUM_DELTA_LINES = 3;
 
-    private final static int NUM_STACK_ELEMENTS = 140;
+    private static final int NUM_STACK_ELEMENTS = 140;
 
-    private final static class LineInfo
+    private static final class LineInfo
     {
         private final int line;
 

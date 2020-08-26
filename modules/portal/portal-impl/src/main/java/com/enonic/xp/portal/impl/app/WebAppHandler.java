@@ -38,11 +38,11 @@ import com.enonic.xp.web.websocket.WebSocketEndpoint;
 public final class WebAppHandler
     extends BaseWebHandler
 {
-    public final static String PATTERN_PREFIX = "/webapp/";
+    public static final String PATTERN_PREFIX = "/webapp/";
 
-    public final static Pattern PATTERN = Pattern.compile( PATTERN_PREFIX + "([^/]+)(/(?:.)*)?" );
+    public static final Pattern PATTERN = Pattern.compile( PATTERN_PREFIX + "([^/]+)(/(?:.)*)?" );
 
-    private final static String ROOT_ASSET_PREFIX = "assets/";
+    private static final String ROOT_ASSET_PREFIX = "assets/";
 
     private ControllerScriptFactory controllerScriptFactory;
 
