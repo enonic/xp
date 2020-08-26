@@ -66,7 +66,7 @@ import com.enonic.xp.elasticsearch.client.impl.cluster.state.GetClusterStateRequ
 import com.enonic.xp.elasticsearch.client.impl.cluster.state.GetClusterStateResponse;
 import com.enonic.xp.elasticsearch.client.impl.nodes.GetNodesResponse;
 
-public final class EsClient
+public class EsClient
     implements Closeable
 {
     private final RestHighLevelClient client;

@@ -65,7 +65,7 @@ public abstract class AbstractElasticsearchIntegrationTest
 
     public static void waitForClusterHealth()
     {
-        ElasticsearchFixture.elasticsearchIndexService.waitForYellowStatus();
+        indexService.waitForYellowStatus();
     }
 
     protected static RefreshResponse refresh()
