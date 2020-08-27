@@ -1,9 +1,11 @@
 package com.enonic.xp.inputtype;
 
 
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.data.ValueTypes;
 
 final class MediaUploaderType
     extends InputTypeBase
@@ -18,11 +20,15 @@ final class MediaUploaderType
     @Override
     public Value createValue( final Value value, final InputTypeConfig config )
     {
-        return ValueFactory.newReference( value.asReference() );
+        return ValueFactory.newPropertySet( value.asData() );
     }
 
     @Override
     public void validate( final Property property, final InputTypeConfig config )
     {
+        if ( ContentPropertyNames.MEDIA_ATTACHMENT.equals( property.getName() ) )
+        {
+            validateType( property, ValueTypes.STRING );
+        }
     }
 }
