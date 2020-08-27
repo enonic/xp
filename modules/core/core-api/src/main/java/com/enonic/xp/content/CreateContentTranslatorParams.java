@@ -13,6 +13,7 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -64,6 +65,8 @@ public class CreateContentTranslatorParams
 
     private final Set<ContentInheritType> inherit;
 
+    private final ProjectName originProject;
+
     private final Page page;
 
     private CreateContentTranslatorParams( Builder builder )
@@ -92,6 +95,7 @@ public class CreateContentTranslatorParams
         this.processedIds = builder.processedIds;
         this.workflowInfo = builder.workflowInfo;
         this.inherit = builder.inherit.build();
+        this.originProject = builder.originProject;
         this.page = builder.page;
     }
 
@@ -215,6 +219,11 @@ public class CreateContentTranslatorParams
         return inherit;
     }
 
+    public ProjectName getOriginProject()
+    {
+        return originProject;
+    }
+
     public Page getPage()
     {
         return page;
@@ -260,6 +269,8 @@ public class CreateContentTranslatorParams
 
         private ImmutableSet.Builder<ContentInheritType> inherit = ImmutableSet.builder();
 
+        private ProjectName originProject;
+
         private Page page;
 
         private Builder()
@@ -285,6 +296,7 @@ public class CreateContentTranslatorParams
             this.processedIds = params.getProcessedIds();
             this.workflowInfo = params.getWorkflowInfo();
             this.inherit.addAll( params.getInherit() );
+            this.originProject = params.getOriginProject();
             this.page = params.getPage();
         }
 
@@ -405,7 +417,12 @@ public class CreateContentTranslatorParams
         public Builder inherit( final Collection<ContentInheritType> inherit )
         {
             this.inherit.addAll( inherit );
+            return this;
+        }
 
+        public Builder originProject( final ProjectName originProject )
+        {
+            this.originProject = originProject;
             return this;
         }
 

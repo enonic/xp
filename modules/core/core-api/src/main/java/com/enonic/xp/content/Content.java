@@ -17,6 +17,7 @@ import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -71,6 +72,8 @@ public class Content
 
     private final Set<ContentInheritType> inherit;
 
+    private final ProjectName originProject;
+
     private final Locale language;
 
     private final ContentState contentState;
@@ -116,6 +119,7 @@ public class Content
         this.thumbnail = builder.thumbnail;
         this.hasChildren = builder.hasChildren;
         this.inherit = builder.inherit;
+        this.originProject = builder.originProject;
         this.childOrder = builder.childOrder;
         this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
@@ -278,6 +282,11 @@ public class Content
         return inherit;
     }
 
+    public ProjectName getOriginProject()
+    {
+        return originProject;
+    }
+
     public boolean isSite()
     {
         return this instanceof Site;
@@ -363,10 +372,10 @@ public class Content
             Objects.equals( creator, other.creator ) && Objects.equals( owner, other.owner ) &&
             Objects.equals( createdTime, other.createdTime ) && Objects.equals( modifiedTime, other.modifiedTime ) &&
             Objects.equals( hasChildren, other.hasChildren ) && Objects.equals( inherit, other.inherit ) &&
-            Objects.equals( inheritPermissions, other.inheritPermissions ) && Objects.equals( childOrder, other.childOrder ) &&
-            Objects.equals( thumbnail, other.thumbnail ) && Objects.equals( permissions, other.permissions ) &&
-            Objects.equals( attachments, other.attachments ) && Objects.equals( data, other.data ) &&
-            Objects.equals( extraDatas, other.extraDatas ) && Objects.equals( page, other.page ) &&
+            Objects.equals( originProject, other.originProject ) && Objects.equals( inheritPermissions, other.inheritPermissions ) &&
+            Objects.equals( childOrder, other.childOrder ) && Objects.equals( thumbnail, other.thumbnail ) &&
+            Objects.equals( permissions, other.permissions ) && Objects.equals( attachments, other.attachments ) &&
+            Objects.equals( data, other.data ) && Objects.equals( extraDatas, other.extraDatas ) && Objects.equals( page, other.page ) &&
             Objects.equals( language, other.language ) && Objects.equals( contentState, other.contentState ) &&
             Objects.equals( publishInfo, other.publishInfo ) && Objects.equals( processedReferences, other.processedReferences ) &&
             Objects.equals( workflowInfo, other.workflowInfo );
@@ -376,8 +385,8 @@ public class Content
     public int hashCode()
     {
         return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
-                             hasChildren, inherit, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, extraDatas,
-                             page, language, contentState, publishInfo, processedReferences, workflowInfo );
+                             hasChildren, inherit, originProject, inheritPermissions, childOrder, thumbnail, permissions, attachments, data,
+                             extraDatas, page, language, contentState, publishInfo, processedReferences, workflowInfo );
     }
 
     public static class Builder<BUILDER extends Builder>
@@ -420,6 +429,8 @@ public class Content
 
         protected EnumSet<ContentInheritType> inherit = EnumSet.noneOf( ContentInheritType.class );
 
+        protected ProjectName originProject;
+
         protected ChildOrder childOrder;
 
         protected AccessControlList permissions;
@@ -461,6 +472,7 @@ public class Content
             this.modifier = source.modifier;
             this.hasChildren = source.hasChildren;
             this.inherit.addAll( source.inherit );
+            this.originProject = source.originProject;
             this.page = source.page != null ? source.page.copy() : null;
             this.thumbnail = source.thumbnail;
             this.childOrder = source.childOrder;
@@ -616,6 +628,12 @@ public class Content
             {
                 this.inherit = inherit.isEmpty() ? EnumSet.noneOf( ContentInheritType.class ) : EnumSet.copyOf( inherit );
             }
+            return (BUILDER) this;
+        }
+
+        public BUILDER originProject( final ProjectName originProject )
+        {
+            this.originProject = originProject;
             return (BUILDER) this;
         }
 

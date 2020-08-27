@@ -43,6 +43,7 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -446,6 +447,7 @@ public class ParentProjectSynchronizer
             createSiteTemplateFolder( false ).
             inheritPermissions( true ).
             inherit( Set.of( ContentInheritType.DATA, ContentInheritType.PARENT, ContentInheritType.NAME, ContentInheritType.SORT ) ).
+            originProject( ProjectName.from( sourceContext.getRepositoryId() ) ).
             createAttachments( CreateAttachments.from( source.getAttachments().
                 stream().
                 map( attachment -> {

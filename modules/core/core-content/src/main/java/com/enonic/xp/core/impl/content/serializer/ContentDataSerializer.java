@@ -33,6 +33,7 @@ import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -52,6 +53,7 @@ import static com.enonic.xp.content.ContentPropertyNames.INHERIT;
 import static com.enonic.xp.content.ContentPropertyNames.LANGUAGE;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIER;
+import static com.enonic.xp.content.ContentPropertyNames.ORIGIN_PROJECT;
 import static com.enonic.xp.content.ContentPropertyNames.OWNER;
 import static com.enonic.xp.content.ContentPropertyNames.PROCESSED_REFERENCES;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_FIRST;
@@ -105,6 +107,8 @@ public class ContentDataSerializer
             ? null
             : params.getOwner().toString() );
         contentAsData.ifNotNull().addString( LANGUAGE, params.getLanguage() != null ? params.getLanguage().toLanguageTag() : null );
+        contentAsData.ifNotNull().addString( ORIGIN_PROJECT,
+                                             params.getOriginProject() != null ? params.getOriginProject().toString() : null );
         contentAsData.addSet( DATA, params.getData().getRoot().copy( contentAsData.getTree() ) );
 
         addPublishInfo( contentAsData, params.getContentPublishInfo() );
@@ -196,6 +200,7 @@ public class ContentDataSerializer
         extractProcessedReferences( contentAsSet, builder );
         extractWorkflowInfo( contentAsSet, builder );
         extractInherit( contentAsSet, builder );
+        extractOriginProject( contentAsSet, builder );
 
         return builder;
     }
@@ -211,6 +216,8 @@ public class ContentDataSerializer
         contentAsData.ifNotNull().addString( MODIFIER, params.getModifier().toString() );
         contentAsData.ifNotNull().addString( CREATOR, content.getCreator().toString() );
         contentAsData.ifNotNull().addInstant( CREATED_TIME, content.getCreatedTime() );
+        contentAsData.ifNotNull().addString( ORIGIN_PROJECT,
+                                             content.getOriginProject() != null ? content.getOriginProject().toString() : null );
         addPublishInfo( contentAsData, content.getPublishInfo() );
         addWorkflowInfo( contentAsData, content.getWorkflowInfo() );
         addInherit( contentAsData, content.getInherit() );
@@ -357,6 +364,15 @@ public class ContentDataSerializer
             stream( contentAsSet.getStrings( INHERIT ).spliterator(), false ).
             map( ContentInheritType::valueOf ).
             collect( Collectors.toSet() ) );
+    }
+
+    private void extractOriginProject( final PropertySet contentAsSet, final Content.Builder builder )
+    {
+        final String originProject = contentAsSet.getString( ORIGIN_PROJECT );
+        if ( !isNullOrEmpty( originProject ) )
+        {
+            builder.originProject( ProjectName.from( originProject ) );
+        }
     }
 
     private Attachments dataToAttachments( final Iterable<PropertySet> attachmentSets )
