@@ -17,15 +17,22 @@ public class ContentVersionPublishInfoJson
 
     private final String publisherDisplayName;
 
-    public ContentVersionPublishInfoJson( final ContentVersionPublishInfo publishInfo, final ContentPrincipalsResolver principalsResolver )
+    private final ContentPublishInfoJson contentPublishInfo;
+
+    public ContentVersionPublishInfoJson( final ContentVersionPublishInfo versionPublishInfo,
+                                          final ContentPrincipalsResolver principalsResolver )
     {
-        this.timestamp = publishInfo.getTimestamp();
-        this.message = publishInfo.getMessage();
+        this.timestamp = versionPublishInfo.getTimestamp();
+        this.message = versionPublishInfo.getMessage();
 
-        final Principal publisher = principalsResolver.findPrincipal( publishInfo.getPublisher() );
+        final Principal publisher = principalsResolver.findPrincipal( versionPublishInfo.getPublisher() );
 
-        this.publisher = publishInfo.getPublisher().toString();
+        this.publisher = versionPublishInfo.getPublisher().toString();
         this.publisherDisplayName = publisher != null ? publisher.getDisplayName() : "";
+
+        this.contentPublishInfo = versionPublishInfo.getContentPublishInfo() != null
+            ? new ContentPublishInfoJson( versionPublishInfo.getContentPublishInfo() )
+            : null;
     }
 
     public String getPublisher()
@@ -48,6 +55,11 @@ public class ContentVersionPublishInfoJson
         return publisherDisplayName;
     }
 
+    public ContentPublishInfoJson getContentPublishInfo()
+    {
+        return contentPublishInfo;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -61,12 +73,13 @@ public class ContentVersionPublishInfoJson
         }
         final ContentVersionPublishInfoJson that = (ContentVersionPublishInfoJson) o;
         return Objects.equals( publisher, that.publisher ) && Objects.equals( timestamp, that.timestamp ) &&
-            Objects.equals( message, that.message ) && Objects.equals( publisherDisplayName, that.publisherDisplayName );
+            Objects.equals( message, that.message ) && Objects.equals( publisherDisplayName, that.publisherDisplayName ) &&
+            Objects.equals( contentPublishInfo, that.contentPublishInfo );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( publisher, timestamp, message, publisherDisplayName );
+        return Objects.hash( publisher, timestamp, message, publisherDisplayName, contentPublishInfo );
     }
 }
