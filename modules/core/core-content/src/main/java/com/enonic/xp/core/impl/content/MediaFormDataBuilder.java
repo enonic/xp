@@ -97,21 +97,24 @@ final class MediaFormDataBuilder
         }
         data.setSet( ContentPropertyNames.MEDIA, tree.getRoot() );
 
-        if ( caption != null )
+        if ( !type.isDocumentMedia() )
         {
-            data.setString( "caption", caption );
-        }
-        if ( artist != null )
-        {
-            data.setString( "artist", artist );
-        }
-        if ( copyright != null )
-        {
-            data.setString( "copyright", copyright );
-        }
-        if ( tags != null )
-        {
-            data.setString( "tags", tags );
+            if ( caption != null )
+            {
+                data.setString( "caption", caption );
+            }
+            if ( artist != null )
+            {
+                data.setString( "artist", artist );
+            }
+            if ( copyright != null )
+            {
+                data.setString( "copyright", copyright );
+            }
+            if ( tags != null )
+            {
+                data.setString( "tags", tags );
+            }
         }
     }
 }
