@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.storage;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeVersionId;
 
-public class MoveNodeParams
+public class StoreMovedNodeParams
 {
     private final Node node;
 
@@ -11,7 +11,7 @@ public class MoveNodeParams
 
     private final NodeVersionId nodeVersionId;
 
-    private MoveNodeParams( Builder builder )
+    private StoreMovedNodeParams( Builder builder )
     {
         node = builder.node;
         updateMetadataOnly = builder.updateMetadataOnly;
@@ -69,9 +69,9 @@ public class MoveNodeParams
             return this;
         }
 
-        public MoveNodeParams build()
+        public StoreMovedNodeParams build()
         {
-            return new MoveNodeParams( this );
+            return new StoreMovedNodeParams( this );
         }
     }
 }

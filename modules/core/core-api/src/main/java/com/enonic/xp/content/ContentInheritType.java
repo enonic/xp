@@ -2,5 +2,5 @@ package com.enonic.xp.content;
 
 public enum ContentInheritType
 {
-    DATA, PATH, SORT
+    DATA, PARENT, NAME, SORT
 }

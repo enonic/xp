@@ -10,7 +10,7 @@ public class SetNodeChildOrderParams
 
     private final ChildOrder childOrder;
 
-    private final SetNodeChildOrderProcessor processor;
+    private final NodeDataProcessor processor;
 
     private SetNodeChildOrderParams( final Builder builder )
     {
@@ -29,7 +29,7 @@ public class SetNodeChildOrderParams
         return childOrder;
     }
 
-    public SetNodeChildOrderProcessor getProcessor()
+    public NodeDataProcessor getProcessor()
     {
         return processor;
     }
@@ -46,7 +46,7 @@ public class SetNodeChildOrderParams
 
         private ChildOrder childOrder;
 
-        private SetNodeChildOrderProcessor processor;
+        private NodeDataProcessor processor = ( n ) -> n;
 
         private Builder()
         {
@@ -64,7 +64,7 @@ public class SetNodeChildOrderParams
             return this;
         }
 
-        public Builder processor( SetNodeChildOrderProcessor processor )
+        public Builder processor( NodeDataProcessor processor )
         {
             this.processor = processor;
             return this;

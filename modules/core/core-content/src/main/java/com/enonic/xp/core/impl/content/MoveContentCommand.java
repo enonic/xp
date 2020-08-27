@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.stream.Collectors;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
@@ -10,18 +8,15 @@ import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentListener;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
-import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.core.impl.content.processor.ContentProcessors;
-import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -29,9 +24,6 @@ import com.enonic.xp.node.NodeAlreadyMovedException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.page.PageDescriptorService;
-import com.enonic.xp.region.LayoutDescriptorService;
-import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 
@@ -43,14 +35,6 @@ final class MoveContentCommand
 
     private final ContentService contentService;
 
-    private final PageDescriptorService pageDescriptorService;
-
-    private final PartDescriptorService partDescriptorService;
-
-    private final LayoutDescriptorService layoutDescriptorService;
-
-    private final ContentDataSerializer contentDataSerializer;
-
     private final MoveContentListener moveContentListener;
 
     private MoveContentCommand( final Builder builder )
@@ -58,10 +42,6 @@ final class MoveContentCommand
         super( builder );
         this.params = builder.params;
         this.contentService = builder.contentService;
-        this.pageDescriptorService = builder.pageDescriptorService;
-        this.partDescriptorService = builder.partDescriptorService;
-        this.layoutDescriptorService = builder.layoutDescriptorService;
-        this.contentDataSerializer = builder.contentDataSerializer;
         this.moveContentListener = builder.moveContentListener;
     }
 
@@ -120,44 +100,27 @@ final class MoveContentCommand
                 sourceNode.path() );
         }
 
-        final Node movedNode = nodeService.move( sourceNodeId, nodePath, this );
+        final MoveNodeParams.Builder builder = MoveNodeParams.create().
+            nodeId( sourceNodeId ).
+            parentNodePath( nodePath ).
+            moveListener( this );
 
-        Content movedContent = translator.fromNode( movedNode, true );
-
-        if ( params.stopInheritPath() && movedContent.getInherit().contains( ContentInheritType.PATH ) )
+        if ( params.stopInherit() )
         {
-            final UpdateContentParams updateContentParams = new UpdateContentParams().
-                requireValid( false ).
-                contentId( movedContent.getId() ).
-                modifier( movedContent.getModifier() ).
-                inherit( movedContent.getInherit().
-                    stream().
-                    filter( contentInheritType -> !contentInheritType.equals( ContentInheritType.PATH ) ).
-                    collect( Collectors.toSet() ) ).
-                editor( ( e ) -> {
-                } );
-
-            movedContent = UpdateContentCommand.create( this ).
-                params( updateContentParams ).
-                contentTypeService( contentTypeService ).
-                pageDescriptorService( this.pageDescriptorService ).
-                partDescriptorService( this.partDescriptorService ).
-                layoutDescriptorService( this.layoutDescriptorService ).
-                contentDataSerializer( this.contentDataSerializer ).
-                contentProcessors( new ContentProcessors() ).
-                build().
-                execute();
+            builder.processor( new MoveContentProcessor() );
         }
 
-        String contentName = movedContent.getDisplayName();
-        ContentId contentId = movedContent.getId();
+        final Node movedNode = nodeService.move( builder.build() );
 
-        final MoveContentsResult result = MoveContentsResult.create().
+        final Content movedContent = translator.fromNode( movedNode, true );
+
+        final String contentName = movedContent.getDisplayName();
+        final ContentId contentId = movedContent.getId();
+
+        return MoveContentsResult.create().
             setContentName( contentName ).
             addMoved( contentId ).
             build();
-
-        return result;
     }
 
     private void verifyIntegrity( ContentPath destinationPath )
@@ -196,13 +159,13 @@ final class MoveContentCommand
 
         private ContentService contentService;
 
-        private PageDescriptorService pageDescriptorService;
+       /* private PageDescriptorService pageDescriptorService;
 
         private PartDescriptorService partDescriptorService;
 
         private LayoutDescriptorService layoutDescriptorService;
 
-        private ContentDataSerializer contentDataSerializer;
+        private ContentDataSerializer contentDataSerializer;*/
 
         private MoveContentListener moveContentListener;
 
@@ -217,7 +180,7 @@ final class MoveContentCommand
             return this;
         }
 
-        Builder pageDescriptorService( final PageDescriptorService value )
+       /* Builder pageDescriptorService( final PageDescriptorService value )
         {
             this.pageDescriptorService = value;
             return this;
@@ -239,7 +202,7 @@ final class MoveContentCommand
         {
             this.contentDataSerializer = value;
             return this;
-        }
+        }*/
 
         public Builder moveListener( final MoveContentListener moveContentListener )
         {

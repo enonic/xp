@@ -13,6 +13,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
+import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
@@ -25,7 +26,7 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
-import com.enonic.xp.repo.impl.storage.MoveNodeParams;
+import com.enonic.xp.repo.impl.storage.StoreMovedNodeParams;
 import com.enonic.xp.security.acl.Permission;
 
 import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
@@ -39,6 +40,8 @@ public class MoveNodeCommand
 
     private final NodeName newNodeName;
 
+    private final NodeDataProcessor processor;
+
     private final MoveNodeListener moveListener;
 
     private MoveNodeCommand( final Builder builder )
@@ -48,6 +51,7 @@ public class MoveNodeCommand
         this.newParentPath = builder.newParentPath;
         this.newNodeName = builder.newNodeName;
         this.moveListener = builder.moveListener;
+        this.processor = builder.processor;
     }
 
     public static Builder create()
@@ -182,6 +186,7 @@ public class MoveNodeCommand
 
         final Node.Builder nodeToMoveBuilder = Node.create( persistedNode ).
             name( nodeName ).
+            data( processor.process( persistedNode.data() ) ).
             parentPath( newParentPath ).
             indexConfigDocument( persistedNode.getIndexConfigDocument() ).
             timestamp( Instant.now( CLOCK ) );
@@ -253,7 +258,7 @@ public class MoveNodeCommand
 
     private Node doStore( final Node movedNode, final boolean metadataOnly )
     {
-        return this.nodeStorageService.move( MoveNodeParams.create().
+        return this.nodeStorageService.move( StoreMovedNodeParams.create().
             node( movedNode ).
             updateMetadataOnly( metadataOnly ).
             build(), InternalContext.from( ContextAccessor.current() ) );
@@ -296,6 +301,8 @@ public class MoveNodeCommand
 
         private NodeName newNodeName;
 
+        private NodeDataProcessor processor;
+
         private MoveNodeListener moveListener;
 
         private Builder()
@@ -332,6 +339,12 @@ public class MoveNodeCommand
             return this;
         }
 
+        public Builder processor( final NodeDataProcessor processor )
+        {
+            this.processor = processor;
+            return this;
+        }
+
         public MoveNodeCommand build()
         {
             validate();
@@ -343,6 +356,7 @@ public class MoveNodeCommand
         {
             super.validate();
             Preconditions.checkNotNull( id );
+            Preconditions.checkNotNull( processor );
 
             if ( this.newParentPath == null && this.newNodeName == null )
             {

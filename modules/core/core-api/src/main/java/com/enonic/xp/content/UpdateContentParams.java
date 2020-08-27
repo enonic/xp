@@ -1,8 +1,6 @@
 package com.enonic.xp.content;
 
-import java.util.Collection;
 import java.util.Objects;
-import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
@@ -28,7 +26,7 @@ public final class UpdateContentParams
 
     private boolean requireValid;
 
-    private Set<ContentInheritType> inherit = Set.of();
+    private boolean stopInherit = true;
 
     public UpdateContentParams editor( final ContentEditor editor )
     {
@@ -73,9 +71,9 @@ public final class UpdateContentParams
     }
 
 
-    public UpdateContentParams inherit( final Collection<ContentInheritType> inherit )
+    public UpdateContentParams stopInherit( final boolean stopInherit )
     {
-        this.inherit = Set.copyOf( inherit );
+        this.stopInherit = stopInherit;
         return this;
     }
 
@@ -122,9 +120,9 @@ public final class UpdateContentParams
         return clearAttachments;
     }
 
-    public Set<ContentInheritType> getInherit()
+    public boolean stopInherit()
     {
-        return inherit;
+        return stopInherit;
     }
 
     @Override
@@ -142,12 +140,13 @@ public final class UpdateContentParams
         return clearAttachments == that.clearAttachments && requireValid == that.requireValid &&
             Objects.equals( contentId, that.contentId ) && Objects.equals( editor, that.editor ) &&
             Objects.equals( modifier, that.modifier ) && Objects.equals( createAttachments, that.createAttachments ) &&
-            Objects.equals( removeAttachments, that.removeAttachments ) && Objects.equals( inherit, that.inherit );
+            Objects.equals( removeAttachments, that.removeAttachments ) && Objects.equals( stopInherit, that.stopInherit );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( contentId, editor, modifier, createAttachments, removeAttachments, clearAttachments, requireValid, inherit );
+        return Objects.hash( contentId, editor, modifier, createAttachments, removeAttachments, clearAttachments, requireValid,
+                             stopInherit );
     }
 }

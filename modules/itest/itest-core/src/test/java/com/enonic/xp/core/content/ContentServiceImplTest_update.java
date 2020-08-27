@@ -156,7 +156,7 @@ public class ContentServiceImplTest_update
             contentData( new PropertyTree() ).
             displayName( "This is my content" ).
             parent( ContentPath.ROOT ).
-            inherit( Set.of( ContentInheritType.DATA, ContentInheritType.PATH, ContentInheritType.SORT ) ).
+            inherit( Set.of( ContentInheritType.DATA, ContentInheritType.PARENT, ContentInheritType.NAME, ContentInheritType.SORT ) ).
             type( ContentTypeName.folder() ).
             build();
 

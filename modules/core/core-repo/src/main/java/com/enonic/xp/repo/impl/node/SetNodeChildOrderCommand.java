@@ -8,11 +8,11 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.SearchMode;
-import com.enonic.xp.node.SetNodeChildOrderProcessor;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
@@ -31,7 +31,7 @@ public class SetNodeChildOrderCommand
 
     private final ChildOrder childOrder;
 
-    private final SetNodeChildOrderProcessor processor;
+    private final NodeDataProcessor processor;
 
     private SetNodeChildOrderCommand( final Builder builder )
     {
@@ -63,11 +63,12 @@ public class SetNodeChildOrderCommand
 
         final Node editedNode = Node.create( parentNode ).
             childOrder( childOrder ).
+            data( processor.process( parentNode.data() ) ).
             timestamp( Instant.now( CLOCK ) ).
             build();
 
         StoreNodeCommand.create( this ).
-            node( executeProcessor( editedNode ) ).
+            node( editedNode ).
             build().
             execute();
 
@@ -109,11 +110,6 @@ public class SetNodeChildOrderCommand
         }
     }
 
-    private Node executeProcessor( final Node originalNode )
-    {
-        return processor.process( originalNode );
-    }
-
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
@@ -121,7 +117,7 @@ public class SetNodeChildOrderCommand
 
         private ChildOrder childOrder;
 
-        private SetNodeChildOrderProcessor processor;
+        private NodeDataProcessor processor;
 
         private Builder()
         {
@@ -139,7 +135,7 @@ public class SetNodeChildOrderCommand
             return this;
         }
 
-        public Builder processor( final SetNodeChildOrderProcessor processor )
+        public Builder processor( final NodeDataProcessor processor )
         {
             this.processor = processor;
             return this;

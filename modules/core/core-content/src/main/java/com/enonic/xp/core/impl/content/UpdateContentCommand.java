@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +96,11 @@ final class UpdateContentCommand
 
         Content editedContent = editContent( params.getEditor(), contentBeforeChange );
 
-        editedContent = setInherit( editedContent, params.getInherit() );
+        if ( params.stopInherit() )
+        {
+            editedContent.getInherit().remove( ContentInheritType.DATA );
+            editedContent.getInherit().remove( ContentInheritType.NAME );
+        }
 
         if ( contentBeforeChange.equals( editedContent ) && params.getCreateAttachments() == null && params.getRemoveAttachments() == null )
         {
@@ -209,14 +212,6 @@ final class UpdateContentCommand
             modifiedTime( Instant.now() ).
             build();
     }
-
-    private Content setInherit( final Content content, final Set<ContentInheritType> inherit )
-    {
-        return Content.create( content ).
-            setInherit( inherit ).
-            build();
-    }
-
 
     private void validateBlockingChecks( final Content editedContent )
     {
