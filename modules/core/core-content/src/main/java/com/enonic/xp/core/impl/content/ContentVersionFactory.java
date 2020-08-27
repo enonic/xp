@@ -3,11 +3,13 @@ package com.enonic.xp.core.impl.content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.ContentVersionPublishInfo;
 import com.enonic.xp.content.ContentVersions;
 import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.core.impl.content.serializer.PublishInfoSerializer;
 import com.enonic.xp.core.impl.content.serializer.WorkflowInfoSerializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -25,6 +27,8 @@ class ContentVersionFactory
     private final NodeService nodeService;
 
     private final WorkflowInfoSerializer workflowInfoSerializer = new WorkflowInfoSerializer();
+
+    private final PublishInfoSerializer publishInfoSerializer = new PublishInfoSerializer();
 
     public ContentVersionFactory( final NodeService nodeService )
     {
@@ -61,23 +65,33 @@ class ContentVersionFactory
             modified( data.getProperty( ContentPropertyNames.MODIFIED_TIME ).getInstant() ).
             modifier( PrincipalKey.from( data.getProperty( ContentPropertyNames.MODIFIER ).getString() ) ).
             id( ContentVersionId.from( nodeVersionMetadata.getNodeVersionId().toString() ) ).
-            publishInfo( doCreateContentVersionPublishInfo( nodeVersionMetadata.getNodeCommitId() ) ).
+            publishInfo( doCreateContentVersionPublishInfo( nodeVersionMetadata.getNodeCommitId(), data.getRoot() ) ).
             workflowInfo( doCreateContentVersionWorkflowInfo( data.getRoot() ) ).
             build();
     }
 
-    private ContentVersionPublishInfo doCreateContentVersionPublishInfo( final NodeCommitId nodeCommitId )
+    private ContentVersionPublishInfo doCreateContentVersionPublishInfo( final NodeCommitId nodeCommitId,
+                                                                         final PropertySet nodeVersionData )
     {
         if ( nodeCommitId != null )
         {
-            NodeCommitEntry nodeCommitEntry = nodeService.getCommit( nodeCommitId );
+            final NodeCommitEntry nodeCommitEntry = nodeService.getCommit( nodeCommitId );
+
             if ( nodeCommitEntry != null && nodeCommitEntry.getMessage().startsWith( ContentConstants.PUBLISH_COMMIT_PREFIX ) )
             {
-                return ContentVersionPublishInfo.create().
+                final ContentVersionPublishInfo.Builder builder = ContentVersionPublishInfo.create().
                     message( getMessage( nodeCommitEntry ) ).
                     publisher( nodeCommitEntry.getCommitter() ).
-                    timestamp( nodeCommitEntry.getTimestamp() ).
-                    build();
+                    timestamp( nodeCommitEntry.getTimestamp() );
+
+                final ContentPublishInfo contentPublishInfo = publishInfoSerializer.serialize( nodeVersionData );
+
+                if ( contentPublishInfo != null )
+                {
+                    builder.contentPublishInfo( contentPublishInfo );
+                }
+
+                return builder.build();
             }
         }
         return null;
