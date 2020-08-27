@@ -16,7 +16,7 @@ public final class MoveContentParams
 
     private final MoveContentListener moveContentListener;
 
-    private boolean stopInheritPath;
+    private boolean stopInherit;
 
     public MoveContentParams( Builder builder )
     {
@@ -24,7 +24,7 @@ public final class MoveContentParams
         this.parentContentPath = builder.parentContentPath;
         this.creator = builder.creator;
         this.moveContentListener = builder.moveContentListener;
-        this.stopInheritPath = builder.stopInheritPath;
+        this.stopInherit = builder.stopInherit;
     }
 
     public static MoveContentParams.Builder create()
@@ -52,9 +52,9 @@ public final class MoveContentParams
         return moveContentListener;
     }
 
-    public boolean stopInheritPath()
+    public boolean stopInherit()
     {
-        return stopInheritPath;
+        return stopInherit;
     }
 
     public void validate()
@@ -103,7 +103,7 @@ public final class MoveContentParams
 
         private MoveContentListener moveContentListener;
 
-        private boolean stopInheritPath = true;
+        private boolean stopInherit = true;
 
         private Builder()
         {
@@ -133,9 +133,9 @@ public final class MoveContentParams
             return this;
         }
 
-        public Builder stopInheritPath( boolean stopInheritPath )
+        public Builder stopInherit( boolean stopInherit )
         {
-            this.stopInheritPath = stopInheritPath;
+            this.stopInherit = stopInherit;
             return this;
         }
 

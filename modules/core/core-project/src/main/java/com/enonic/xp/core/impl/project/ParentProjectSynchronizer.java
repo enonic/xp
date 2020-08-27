@@ -129,11 +129,6 @@ public class ParentProjectSynchronizer
         } );
     }
 
-    public void sync( final ContentId contentId )
-    {
-        this.doSync( sourceContext.callWith( () -> this.contentService.getById( contentId ) ) );
-    }
-
     private Content doSync( final Content sourceContent )
     {
         return targetContext.callWith( () -> {
@@ -142,7 +137,7 @@ public class ParentProjectSynchronizer
             {
                 Content targetContent = contentService.getById( sourceContent.getId() );
 
-                if ( isSyncable( sourceContent, targetContent ) )
+                if ( isDataSyncable( sourceContent, targetContent ) )
                 {
                     targetContent = this.doSyncMoved( sourceContent, targetContent );
                     targetContent = this.doSyncRenamed( sourceContent, targetContent );
@@ -166,11 +161,7 @@ public class ParentProjectSynchronizer
 
             return targetContext.callWith( () -> {
                 final Content targetContent = contentService.getById( contentId );
-                if ( isSyncable( sourceContent, targetContent ) )
-                {
-                    return doSyncRenamed( sourceContent, targetContent );
-                }
-                return null;
+                return doSyncRenamed( sourceContent, targetContent );
             } );
         } );
 
@@ -178,13 +169,14 @@ public class ParentProjectSynchronizer
 
     private Content doSyncRenamed( final Content sourceContent, final Content targetContent )
     {
-        if ( isToSyncPath( targetContent ) )
+        if ( isToSyncName( targetContent ) )
         {
-            if ( !targetContent.getName().equals( sourceContent.getName() ) )
+            if ( needToRename( sourceContent, targetContent ) )
             {
                 return contentService.rename( RenameContentParams.create().
                     contentId( targetContent.getId() ).
                     newName( sourceContent.getName() ).
+                    stopInherit( false ).
                     build() );
             }
         }
@@ -198,11 +190,7 @@ public class ParentProjectSynchronizer
 
             return targetContext.callWith( () -> {
                 final Content targetContent = contentService.getById( contentId );
-                if ( isSyncable( sourceContent, targetContent ) )
-                {
-                    return doSyncMoved( sourceContent, targetContent );
-                }
-                return null;
+                return doSyncMoved( sourceContent, targetContent );
             } );
         } );
 
@@ -210,7 +198,7 @@ public class ParentProjectSynchronizer
 
     private Content doSyncMoved( final Content sourceContent, final Content targetContent )
     {
-        if ( isToSyncPath( targetContent ) )
+        if ( isToSyncParent( targetContent ) )
         {
             final Content sourceParent = sourceContext.callWith( () -> contentService.getByPath( sourceContent.getParentPath() ) );
             final ContentPath targetParentPath = targetContext.callWith( () -> contentService.contentExists( sourceParent.getId() )
@@ -226,17 +214,11 @@ public class ParentProjectSynchronizer
                     final MoveContentParams moveContentParams = MoveContentParams.create().
                         contentId( targetContent.getId() ).
                         parentContentPath( targetParentPath ).
-                        stopInheritPath( false ).
+                        stopInherit( false ).
                         build();
 
-                    try
-                    {
-                        contentService.move( moveContentParams );
-                    }
-                    catch ( Exception e )
-                    {
-                        e.printStackTrace();
-                    }
+                    contentService.move( moveContentParams );
+
                     return contentService.getById( targetContent.getId() );
                 }
             }
@@ -253,7 +235,7 @@ public class ParentProjectSynchronizer
                 if ( contentService.contentExists( contentId ) )
                 {
                     final Content targetContent = contentService.getById( contentId );
-                    if ( isSyncable( sourceContent, targetContent ) )
+                    if ( isDataSyncable( sourceContent, targetContent ) )
                     {
                         return doSyncUpdated( sourceContent, targetContent );
                     }
@@ -269,10 +251,10 @@ public class ParentProjectSynchronizer
         {
             if ( needToUpdate( sourceContent, targetContent ) )
             {
-                final UpdateContentParams params = updateParams( sourceContent, targetContent );
+                final UpdateContentParams params = updateParams( sourceContent );
 
-                syncMedia( sourceContent, targetContent, params );
-                syncThumbnail( sourceContent, targetContent, params );
+                doSyncMedia( sourceContent, params );
+                doSyncThumbnail( sourceContent, targetContent, params );
 
                 return contentService.update( params );
             }
@@ -289,7 +271,7 @@ public class ParentProjectSynchronizer
                 if ( contentService.contentExists( contentId ) )
                 {
                     final Content targetContent = contentService.getById( contentId );
-                    if ( isSyncable( sourceContent, targetContent ) )
+                    if ( isDataSyncable( sourceContent, targetContent ) )
                     {
                         return doSyncSorted( sourceContent, targetContent );
                     }
@@ -370,7 +352,7 @@ public class ParentProjectSynchronizer
         return null;
     }
 
-    private boolean isSyncable( final Content sourceContent, final Content targetContent )
+    private boolean isDataSyncable( final Content sourceContent, final Content targetContent )
     {
         if ( WorkflowState.READY.equals( targetContent.getWorkflowInfo().getState() ) )
         {
@@ -384,9 +366,14 @@ public class ParentProjectSynchronizer
         return targetContent.getInherit().contains( ContentInheritType.DATA );
     }
 
-    private boolean isToSyncPath( final Content targetContent )
+    private boolean isToSyncName( final Content targetContent )
     {
-        return targetContent.getInherit().contains( ContentInheritType.PATH );
+        return targetContent.getInherit().contains( ContentInheritType.NAME );
+    }
+
+    private boolean isToSyncParent( final Content targetContent )
+    {
+        return targetContent.getInherit().contains( ContentInheritType.PARENT );
     }
 
     private boolean isToSyncSort( final Content targetContent )
@@ -414,13 +401,18 @@ public class ParentProjectSynchronizer
         return !Objects.equals( sourceContent.getChildOrder(), targetContent.getChildOrder() );
     }
 
-    private UpdateContentParams updateParams( final Content source, final Content target )
+    private boolean needToRename( final Content sourceContent, final Content targetContent )
+    {
+        return !targetContent.getName().equals( sourceContent.getName() );
+    }
+
+    private UpdateContentParams updateParams( final Content source )
     {
         return new UpdateContentParams().
-            requireValid( false ).
             contentId( source.getId() ).
             modifier( PrincipalKey.ofAnonymous() ).
-            inherit( target.getInherit() ).
+            requireValid( false ).
+            stopInherit( false ).
             editor( edit -> {
                 edit.data = source.getData();
                 edit.extraDatas = source.getAllExtraData();
@@ -453,7 +445,7 @@ public class ParentProjectSynchronizer
             requireValid( false ).
             createSiteTemplateFolder( false ).
             inheritPermissions( true ).
-            inherit( Set.of( ContentInheritType.DATA, ContentInheritType.PATH, ContentInheritType.SORT ) ).
+            inherit( Set.of( ContentInheritType.DATA, ContentInheritType.PARENT, ContentInheritType.NAME, ContentInheritType.SORT ) ).
             createAttachments( CreateAttachments.from( source.getAttachments().
                 stream().
                 map( attachment -> {
@@ -485,7 +477,7 @@ public class ParentProjectSynchronizer
         return builder.build();
     }
 
-    private void syncThumbnail( final Content sourceContent, final Content targetContent, final UpdateContentParams params )
+    private void doSyncThumbnail( final Content sourceContent, final Content targetContent, final UpdateContentParams params )
     {
         if ( sourceContent.hasThumbnail() && !sourceContent.getThumbnail().equals( targetContent.getThumbnail() ) )
         {
@@ -510,7 +502,7 @@ public class ParentProjectSynchronizer
         }
     }
 
-    private void syncMedia( final Content sourceContent, final Content targetContent, final UpdateContentParams params )
+    private void doSyncMedia( final Content sourceContent, final UpdateContentParams params )
     {
         if ( sourceContent instanceof Media )
         {

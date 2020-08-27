@@ -10,14 +10,17 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public final class RenameContentParams
 {
-    private ContentId contentId;
+    private final ContentId contentId;
 
-    private ContentName newName;
+    private final ContentName newName;
+
+    private final boolean stopInherit;
 
     public RenameContentParams( Builder builder )
     {
         this.contentId = builder.contentId;
         this.newName = builder.newName;
+        this.stopInherit = builder.stopInherit;
     }
 
     public ContentId getContentId()
@@ -28,6 +31,11 @@ public final class RenameContentParams
     public ContentName getNewName()
     {
         return newName;
+    }
+
+    public boolean stopInherit()
+    {
+        return stopInherit;
     }
 
     @Override
@@ -44,13 +52,14 @@ public final class RenameContentParams
         }
 
         final RenameContentParams that = (RenameContentParams) o;
-        return Objects.equals( this.contentId, that.contentId ) && Objects.equals( this.newName, that.newName );
+        return Objects.equals( this.contentId, that.contentId ) && Objects.equals( this.newName, that.newName ) &&
+            Objects.equals( this.stopInherit, that.stopInherit );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( this.contentId, this.newName );
+        return Objects.hash( this.contentId, this.newName, this.stopInherit );
     }
 
     public void validate()
@@ -70,6 +79,8 @@ public final class RenameContentParams
 
         private ContentName newName;
 
+        private boolean stopInherit = true;
+
         public Builder contentId( final ContentId contentId )
         {
             this.contentId = contentId;
@@ -79,6 +90,12 @@ public final class RenameContentParams
         public Builder newName( final ContentName newName )
         {
             this.newName = newName;
+            return this;
+        }
+
+        public Builder stopInherit( final boolean stopInherit )
+        {
+            this.stopInherit = stopInherit;
             return this;
         }
 

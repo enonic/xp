@@ -64,9 +64,12 @@ final class DuplicateContentCommand
             throw new IllegalArgumentException( String.format( "Content with id [%s] not found", params.getContentId() ) );
         }
 
-        final DuplicateNodeParams duplicateNodeParams =
-            DuplicateNodeParams.create().duplicateListener( this ).nodeId( sourceNodeId ).processor(
-                new DuplicateContentProcessor() ).includeChildren( params.getIncludeChildren() ).build();
+        final DuplicateNodeParams duplicateNodeParams = DuplicateNodeParams.create().
+            duplicateListener( this ).
+            nodeId( sourceNodeId ).
+            dataProcessor( new DuplicateContentProcessor() ).
+            includeChildren( params.getIncludeChildren() ).
+            build();
 
         final Node duplicatedNode = nodeService.duplicate( duplicateNodeParams );
 

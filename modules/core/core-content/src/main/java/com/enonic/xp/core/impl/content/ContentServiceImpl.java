@@ -714,10 +714,6 @@ public class ContentServiceImpl
             contentService( this ).
             xDataService( this.xDataService ).
             siteService( this.siteService ).
-            pageDescriptorService( this.pageDescriptorService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            contentDataSerializer( this.contentDataSerializer ).
             moveListener( params.getMoveContentListener() ).
             build().
             execute();
@@ -936,11 +932,16 @@ public class ContentServiceImpl
     {
         try
         {
-            final Node node = nodeService.setChildOrder( SetNodeChildOrderParams.create().
+            final SetNodeChildOrderParams.Builder builder = SetNodeChildOrderParams.create().
                 nodeId( NodeId.from( params.getContentId() ) ).
-                childOrder( params.getChildOrder() ).
-                processor( params.stopInherit() ? new SetContentChildOrderProcessor() : ( n ) -> n ).
-                build() );
+                childOrder( params.getChildOrder() );
+
+            if ( params.stopInherit() )
+            {
+                builder.processor( new SetContentChildOrderProcessor() );
+            }
+
+            final Node node = nodeService.setChildOrder( builder.build() );
 
             final Content content = translator.fromNode( node, true );
 

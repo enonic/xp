@@ -69,10 +69,16 @@ final class RenameContentCommand
 
         final NodeName nodeName = NodeName.from( params.getNewName().toString() );
 
-        final Node node = nodeService.rename( RenameNodeParams.create().
+        final RenameNodeParams.Builder builder = RenameNodeParams.create().
             nodeId( nodeId ).
-            nodeName( nodeName ).
-            build() );
+            nodeName( nodeName );
+
+        if ( params.stopInherit() )
+        {
+            builder.processor( new RenameContentProcessor() );
+        }
+
+        final Node node = nodeService.rename( builder.build() );
 
         final Content content = translator.fromNode( node, false );
 
@@ -110,7 +116,6 @@ final class RenameContentCommand
             requireValid( false ).
             contentId( content.getId() ).
             modifier( content.getModifier() ).
-            inherit( content.getInherit() ).
             editor( edit -> edit.valid = isValid );
 
         return UpdateContentCommand.create( this ).params( updateContentParams ).

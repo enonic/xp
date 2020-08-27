@@ -45,6 +45,7 @@ public final class RenameNodeCommand
             id( params.getNodeId() ).
             newParent( parentPath ).
             newNodeName( params.getNewNodeName() ).
+            processor( params.getProcessor() ).
             build().
             execute();
     }

@@ -701,7 +701,8 @@ public class ContentResourceTest
         throws Exception
     {
         Content content = createContent( "content-id", "content-path", "myapplication:content-type",
-                                         Set.of( ContentInheritType.DATA, ContentInheritType.PATH, ContentInheritType.SORT ) );
+                                         Set.of( ContentInheritType.DATA, ContentInheritType.PARENT, ContentInheritType.NAME,
+                                                 ContentInheritType.SORT ) );
         Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ) ) ).thenReturn( content );
 
         String jsonString = request().path( "content/create" ).
