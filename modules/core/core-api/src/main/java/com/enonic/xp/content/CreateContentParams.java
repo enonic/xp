@@ -12,6 +12,7 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -61,6 +62,8 @@ public final class CreateContentParams
 
     private final Set<ContentInheritType> inherit;
 
+    private final ProjectName originProject;
+
     private final Page page;
 
     private CreateContentParams( Builder builder )
@@ -86,6 +89,7 @@ public final class CreateContentParams
         this.workflowInfo = builder.workflowInfo;
         this.createSiteTemplateFolder = builder.createSiteTemplateFolder;
         this.inherit = builder.inherit.build();
+        this.originProject = builder.originProject;
         this.page = builder.page;
     }
 
@@ -204,6 +208,11 @@ public final class CreateContentParams
         return inherit;
     }
 
+    public ProjectName getOriginProject()
+    {
+        return originProject;
+    }
+
     public Page getPage()
     {
         return page;
@@ -253,6 +262,8 @@ public final class CreateContentParams
 
         private ImmutableSet.Builder<ContentInheritType> inherit = ImmutableSet.builder();
 
+        private ProjectName originProject;
+
         private Page page;
 
         private Builder()
@@ -280,6 +291,7 @@ public final class CreateContentParams
             this.workflowInfo = source.workflowInfo;
             this.createSiteTemplateFolder = source.createSiteTemplateFolder;
             this.inherit.addAll( source.inherit );
+            this.originProject = source.originProject;
             this.page = source.page;
         }
 
@@ -413,6 +425,12 @@ public final class CreateContentParams
         public Builder inherit( final Collection<ContentInheritType> inherit )
         {
             this.inherit.addAll( inherit );
+            return this;
+        }
+
+        public Builder originProject( final ProjectName originProject )
+        {
+            this.originProject = originProject;
             return this;
         }
 
