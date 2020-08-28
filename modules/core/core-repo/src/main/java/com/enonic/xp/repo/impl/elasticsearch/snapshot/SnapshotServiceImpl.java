@@ -96,7 +96,10 @@ public class SnapshotServiceImpl
     private RestoreResult doRestore( final RestoreParams restoreParams )
     {
         checkSnapshotRepository();
-        validateSnapshot( restoreParams.getSnapshotName() );
+
+        final String snapshotName = restoreParams.isLatest() ? determineNameOfLatestSnapshot() : restoreParams.getSnapshotName();
+
+        validateSnapshot( snapshotName );
 
         final RepositoryIds repositoriesToRestore =
             RepositoryIds.from( Optional.ofNullable( restoreParams.getRepositoryId() ).map( Set::of ).orElseGet( this::getRepositories ) );
@@ -104,7 +107,7 @@ public class SnapshotServiceImpl
         this.eventPublisher.publish( RepositoryEvents.restoreInitialized() );
 
         final RestoreResult result = SnapshotRestoreExecutor.create().
-            snapshotName( restoreParams.getSnapshotName() ).
+            snapshotName( snapshotName ).
             repositories( repositoriesToRestore ).
             client( this.client ).
             snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME ).
@@ -314,6 +317,22 @@ public class SnapshotServiceImpl
         final DeleteSnapshotRequest deleteSnapshotRequest = new DeleteSnapshotRequest( SNAPSHOT_REPOSITORY_NAME, snapshotName );
 
         this.client.admin().cluster().deleteSnapshot( deleteSnapshotRequest ).actionGet();
+    }
+
+    private String determineNameOfLatestSnapshot()
+    {
+        final SnapshotResults snapshotResults = list();
+
+        if ( snapshotResults == null || snapshotResults.isEmpty() )
+        {
+            throw new SnapshotException( "No snapshots found" );
+        }
+
+        final SnapshotResult snapshotResult = snapshotResults.getSet().stream().skip( snapshotResults.getSize() - 1 ).
+            findFirst().
+            orElseThrow( () -> new SnapshotException( "No snapshots found" ) );
+
+        return snapshotResult.getName();
     }
 
     @Reference

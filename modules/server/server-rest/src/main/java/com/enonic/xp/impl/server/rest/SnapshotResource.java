@@ -75,6 +75,7 @@ public final class SnapshotResource
             snapshotName( params.getSnapshotName() ).
             setIncludeIndexedData( !params.isSkipIndexedData() ).
             repositoryId( params.getRepositoryId() ).
+            latest( params.isLatest() ).
             build() );
 
         return RestoreResultJson.from( result );

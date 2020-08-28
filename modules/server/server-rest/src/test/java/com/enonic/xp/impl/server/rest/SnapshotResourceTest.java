@@ -69,6 +69,27 @@ public class SnapshotResourceTest
     }
 
     @Test
+    public void restore_latest()
+        throws Exception
+    {
+        final RestoreResult restoreResult = RestoreResult.create().
+            repositoryId( RepositoryId.from( "repo-id" ) ).
+            name( "name" ).
+            message( "He's dead, Jim." ).
+            indices( Arrays.asList( "bc02aa" ) ).
+            failed( false ).
+            build();
+
+        Mockito.when( this.snapshotService.restore( isA( RestoreParams.class ) ) ).thenReturn( restoreResult );
+
+        final String result = request().path( "/repo/snapshot/restore" ).
+            entity( readFromFile( "restore_latest_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "restore.json", result );
+    }
+
+    @Test
     public void delete()
         throws Exception
     {
