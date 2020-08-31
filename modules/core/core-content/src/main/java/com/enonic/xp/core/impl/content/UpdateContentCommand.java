@@ -30,6 +30,8 @@ import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
+import com.enonic.xp.node.NodeCommitEntry;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -98,7 +100,13 @@ final class UpdateContentCommand
 
         if ( params.stopInherit() )
         {
-            editedContent.getInherit().remove( ContentInheritType.DATA );
+            if ( editedContent.getInherit().contains( ContentInheritType.DATA ) )
+            {
+                nodeService.commit( NodeCommitEntry.create().
+                    message( "Base inherited version" ).
+                    build(), NodeIds.from( params.getContentId().toString() ) );
+                editedContent.getInherit().remove( ContentInheritType.DATA );
+            }
             editedContent.getInherit().remove( ContentInheritType.NAME );
         }
 
