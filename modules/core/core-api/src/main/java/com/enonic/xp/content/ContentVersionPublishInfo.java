@@ -13,11 +13,14 @@ public class ContentVersionPublishInfo
 
     private final String message;
 
+    private final ContentPublishInfo contentPublishInfo;
+
     private ContentVersionPublishInfo( Builder builder )
     {
         publisher = builder.publisher;
         timestamp = builder.timestamp;
         message = builder.message;
+        contentPublishInfo = builder.contentPublishInfo;
     }
 
     public PrincipalKey getPublisher()
@@ -33,6 +36,11 @@ public class ContentVersionPublishInfo
     public String getMessage()
     {
         return message;
+    }
+
+    public ContentPublishInfo getContentPublishInfo()
+    {
+        return contentPublishInfo;
     }
 
     public static Builder create()
@@ -52,13 +60,14 @@ public class ContentVersionPublishInfo
             return false;
         }
         final ContentVersionPublishInfo that = (ContentVersionPublishInfo) o;
-        return publisher.equals( that.publisher ) && timestamp.equals( that.timestamp ) && Objects.equals( message, that.message );
+        return Objects.equals( publisher, that.publisher ) && Objects.equals( timestamp, that.timestamp ) &&
+            Objects.equals( message, that.message ) && Objects.equals( contentPublishInfo, that.contentPublishInfo );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( publisher, timestamp, message );
+        return Objects.hash( publisher, timestamp, message, contentPublishInfo );
     }
 
     public static class Builder
@@ -68,6 +77,8 @@ public class ContentVersionPublishInfo
         private Instant timestamp;
 
         private String message;
+
+        private ContentPublishInfo contentPublishInfo;
 
         public Builder publisher( final PrincipalKey publisher )
         {
@@ -84,6 +95,12 @@ public class ContentVersionPublishInfo
         public Builder message( final String message )
         {
             this.message = message;
+            return this;
+        }
+
+        public Builder contentPublishInfo( final ContentPublishInfo contentPublishInfo )
+        {
+            this.contentPublishInfo = contentPublishInfo;
             return this;
         }
 

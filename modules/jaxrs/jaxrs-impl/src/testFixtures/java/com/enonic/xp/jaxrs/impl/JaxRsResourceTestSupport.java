@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.resteasy.core.Dispatcher;
 import org.jboss.resteasy.mock.MockDispatcherFactory;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
@@ -19,9 +20,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.jaxrs.impl.json.JsonObjectProvider;
 import com.enonic.xp.jaxrs.impl.multipart.MultipartFormReader;
 import com.enonic.xp.json.ObjectMapperHelper;
+import com.enonic.xp.session.Session;
 import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
 import com.enonic.xp.web.multipart.MultipartService;
@@ -57,6 +60,22 @@ public abstract class JaxRsResourceTestSupport
 
         final SimpleSession session = new SimpleSession( SessionKey.generate() );
         ContextAccessor.current().getLocalScope().setSession( session );
+    }
+
+    @AfterEach
+    public final void destroy()
+    {
+        final LocalScope localScope = ContextAccessor.current().getLocalScope();
+
+        if ( localScope != null )
+        {
+            Session session = localScope.getSession();
+
+            if ( session != null )
+            {
+                session.invalidate();
+            }
+        }
     }
 
     private void mockCurrentContextHttpRequest()

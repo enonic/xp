@@ -81,3 +81,46 @@ exports.createMediaAutoGenerateName = function () {
 
     assert.assertJsonEquals(expectedJsonAutoGenerateName, result);
 };
+
+var expectedDocumentJson = {
+    '_id': 'dbc077af-fb97-4b17-a567-ad69e85f1010',
+    '_name': 'documentName.pdf',
+    '_path': '/a/b/documentName.pdf',
+    'creator': 'user:system:anonymous',
+    'createdTime': '1975-01-08T00:00:00Z',
+    'type': 'media:document',
+    'displayName': 'documentName.pdf',
+    'hasChildren': false,
+    'valid': true,
+    'data': {
+        'media': {
+            'attachment': 'documentName.pdf'
+        }
+    },
+    'x': {},
+    'page': {},
+    'attachments': {
+        'documentName.pdf': {
+            'name': 'documentName.pdf',
+            'label': 'source',
+            'size': 653453,
+            'mimeType': 'application/pdf'
+        }
+    },
+    'publish': {},
+    'workflow': {
+        'state': 'READY',
+        'checks': {}
+    }
+};
+
+exports.createMediaAsPDF = function () {
+    var result = content.createMedia({
+        name: 'documentName.pdf',
+        parentPath: '/a/b',
+        mimeType: 'application/pdf',
+        data: TestClass.createByteSource('Some text')
+    });
+
+    assert.assertJsonEquals(expectedDocumentJson, result);
+};

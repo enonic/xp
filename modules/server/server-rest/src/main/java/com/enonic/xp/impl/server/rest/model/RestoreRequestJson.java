@@ -13,14 +13,17 @@ public class RestoreRequestJson
 
     private String snapshotName;
 
+    private boolean latest;
+
     @JsonCreator
     public RestoreRequestJson( @JsonProperty("repository") final String repository,
                                @JsonProperty("skipIndexedData") final boolean skipIndexedData,
-                               @JsonProperty("snapshotName") final String snapshotName )
+                               @JsonProperty("snapshotName") final String snapshotName, @JsonProperty("latest") final boolean latest )
     {
         this.repositoryId = repository == null ? null : RepositoryId.from( repository );
         this.skipIndexedData = skipIndexedData;
         this.snapshotName = snapshotName;
+        this.latest = latest;
     }
 
     public RepositoryId getRepositoryId()
@@ -37,4 +40,10 @@ public class RestoreRequestJson
     {
         return snapshotName;
     }
+
+    public boolean isLatest()
+    {
+        return latest;
+    }
+
 }

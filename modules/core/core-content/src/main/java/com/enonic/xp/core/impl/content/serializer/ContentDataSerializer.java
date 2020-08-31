@@ -77,6 +77,8 @@ public class ContentDataSerializer
 
     private WorkflowInfoSerializer workflowInfoSerializer;
 
+    private PublishInfoSerializer publishInfoSerializer;
+
     private ContentDataSerializer( final Builder builder )
     {
         this.pageDataSerializer = PageDataSerializer.create().
@@ -88,6 +90,7 @@ public class ContentDataSerializer
 
         this.extraDataSerializer = new ExtraDataSerializer();
         this.workflowInfoSerializer = new WorkflowInfoSerializer();
+        this.publishInfoSerializer = new PublishInfoSerializer();
     }
 
     public PropertyTree toCreateNodeData( final CreateContentTranslatorParams params )
@@ -279,16 +282,11 @@ public class ContentDataSerializer
 
     private void extractPublishInfo( final PropertySet contentAsSet, final Content.Builder builder )
     {
-        final PropertySet publishInfo = contentAsSet.getSet( PUBLISH_INFO );
+        final ContentPublishInfo publishInfo = publishInfoSerializer.serialize( contentAsSet );
 
         if ( publishInfo != null )
         {
-            builder.publishInfo( ContentPublishInfo.create().
-                first( publishInfo.getInstant( PUBLISH_FIRST ) ).
-                from( publishInfo.getInstant( PUBLISH_FROM ) ).
-                to( publishInfo.getInstant( PUBLISH_TO ) ).
-                first( publishInfo.getInstant( PUBLISH_FIRST ) ).
-                build() );
+            builder.publishInfo( publishInfo );
         }
     }
 

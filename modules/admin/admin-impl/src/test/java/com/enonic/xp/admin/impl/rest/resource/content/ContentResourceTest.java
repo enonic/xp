@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -2033,6 +2034,11 @@ public class ContentResourceTest
                 message( "My version" ).
                 publisher( PrincipalKey.ofAnonymous() ).
                 timestamp( Instant.ofEpochSecond( 1562056003L ) ).
+                contentPublishInfo( ContentPublishInfo.create().
+                    first( Instant.now() ).
+                    from( Instant.now() ).
+                    to( Instant.now().plus( 3, ChronoUnit.DAYS ) ).
+                    build() ).
                 build() ).
             build();
 
