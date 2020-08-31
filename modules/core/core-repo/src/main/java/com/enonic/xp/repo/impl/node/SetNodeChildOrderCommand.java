@@ -117,7 +117,7 @@ public class SetNodeChildOrderCommand
 
         private ChildOrder childOrder;
 
-        private NodeDataProcessor processor;
+        private NodeDataProcessor processor = ( n ) -> n;
 
         private Builder()
         {

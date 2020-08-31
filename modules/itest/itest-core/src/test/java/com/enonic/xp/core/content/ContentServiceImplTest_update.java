@@ -172,7 +172,8 @@ public class ContentServiceImplTest_update
 
         final Content storedContent = this.contentService.getById( content.getId() );
 
-        assertTrue( storedContent.getInherit().isEmpty() );
+        assertTrue( storedContent.getInherit().contains( ContentInheritType.PARENT ) );
+        assertTrue( storedContent.getInherit().contains( ContentInheritType.SORT ) );
     }
 
 

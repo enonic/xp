@@ -301,7 +301,7 @@ public class MoveNodeCommand
 
         private NodeName newNodeName;
 
-        private NodeDataProcessor processor;
+        private NodeDataProcessor processor = ( n ) -> n;
 
         private MoveNodeListener moveListener;
 
@@ -355,8 +355,8 @@ public class MoveNodeCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( id );
-            Preconditions.checkNotNull( processor );
+            Preconditions.checkNotNull( id, "id must be set." );
+            Preconditions.checkNotNull( processor, "processor must be set." );
 
             if ( this.newParentPath == null && this.newNodeName == null )
             {

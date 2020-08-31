@@ -100,7 +100,12 @@ public final class DuplicateNodeCommand
     {
         if ( params.getProcessor() != null )
         {
-            return params.getProcessor().process( originalParams );
+            params.getProcessor().process( originalParams );
+        }
+
+        if ( params.getDataProcessor() != null )
+        {
+            return CreateNodeParams.create( originalParams ).data( params.getDataProcessor().process( originalParams.getData() ) ).build();
         }
 
         return originalParams;

@@ -13,7 +13,8 @@
   "id": "content-id",
   "inherit": [
     "DATA",
-    "PATH",
+    "PARENT",
+    "NAME",
     "SORT"
   ],
   "inheritPermissions": true,

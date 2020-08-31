@@ -246,7 +246,7 @@ public class ContentServiceImplTest_create
             build();
 
         final Content content = this.contentService.create( createContentParams );
-        assertEquals( 3, content.getInherit().size() );
+        assertEquals( 4, content.getInherit().size() );
     }
 
     @Test

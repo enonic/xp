@@ -37,6 +37,7 @@ import com.enonic.xp.node.ImportNodeVersionParams;
 import com.enonic.xp.node.LoadNodeParams;
 import com.enonic.xp.node.LoadNodeResult;
 import com.enonic.xp.node.MoveNodeListener;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
@@ -293,6 +294,12 @@ class NodeServiceMock
 
     @Override
     public Node move( final NodeId nodeId, final NodePath parentNodePath, final MoveNodeListener moveListener )
+    {
+        return null;
+    }
+
+    @Override
+    public Node move( final MoveNodeParams params )
     {
         return null;
     }

@@ -11,6 +11,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -98,7 +99,7 @@ public class MoveContentCommandTest
 
         Mockito.when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
 
-        Mockito.when( nodeService.move( Mockito.any( NodeId.class ), Mockito.any(), Mockito.any() ) ).thenReturn( mockNode );
+        Mockito.when( nodeService.move( Mockito.any( MoveNodeParams.class ) ) ).thenReturn( mockNode );
 
         Mockito.when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
         Mockito.when( translator.fromNode( mockNode, false ) ).thenReturn( existingContent );
@@ -116,7 +117,7 @@ public class MoveContentCommandTest
 
         // exercise
         command.execute();
-        Mockito.verify( nodeService, Mockito.times( 1 ) ).move( Mockito.any( NodeId.class ), Mockito.any(), Mockito.any() );
+        Mockito.verify( nodeService, Mockito.times( 1 ) ).move( Mockito.any( MoveNodeParams.class ) );
 
     }
 
