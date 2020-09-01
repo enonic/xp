@@ -328,4 +328,35 @@ public class ImageHandlerTest
         assertTrue( res.getBody() instanceof ByteSource );
         assertEquals( "gzip", res.getHeaders().get( "Content-Encoding" ) );
     }
+
+    @Test
+    public void testGet()
+        throws Exception
+    {
+        final Attachment attachment = Attachment.create().
+            name( "image-name.jpg" ).
+            mimeType( "image/jpeg" ).
+            label( "source" ).
+            build();
+
+        final Content content = createContent( "123456", "path/to/image-name.jpg", attachment );
+
+        Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ) ) ).thenReturn( content );
+        Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ) ) ).thenReturn( content );
+
+        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
+
+        Mockito.when( this.contentService.getBinary( Mockito.isA( ContentId.class ), Mockito.isA( BinaryReference.class ) ) ).
+            thenReturn( imageBytes );
+
+        Mockito.when( this.imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
+
+        this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg.png" );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( MediaType.PNG, res.getContentType() );
+    }
+
 }
