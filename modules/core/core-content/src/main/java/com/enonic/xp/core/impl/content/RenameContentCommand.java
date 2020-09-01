@@ -116,6 +116,7 @@ final class RenameContentCommand
             requireValid( false ).
             contentId( content.getId() ).
             modifier( content.getModifier() ).
+            stopInherit( false ).
             editor( edit -> edit.valid = isValid );
 
         return UpdateContentCommand.create( this ).params( updateContentParams ).
