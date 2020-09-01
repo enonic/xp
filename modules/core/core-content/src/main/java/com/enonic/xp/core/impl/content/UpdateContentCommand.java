@@ -100,12 +100,12 @@ final class UpdateContentCommand
 
         if ( params.stopInherit() )
         {
-            if ( editedContent.getInherit().contains( ContentInheritType.DATA ) )
+            if ( editedContent.getInherit().contains( ContentInheritType.CONTENT ) )
             {
                 nodeService.commit( NodeCommitEntry.create().
                     message( "Base inherited version" ).
                     build(), NodeIds.from( params.getContentId().toString() ) );
-                editedContent.getInherit().remove( ContentInheritType.DATA );
+                editedContent.getInherit().remove( ContentInheritType.CONTENT );
             }
             editedContent.getInherit().remove( ContentInheritType.NAME );
         }
