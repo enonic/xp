@@ -364,7 +364,7 @@ public class ParentProjectSynchronizer
 
     private boolean isToSyncData( final Content targetContent )
     {
-        return targetContent.getInherit().contains( ContentInheritType.DATA );
+        return targetContent.getInherit().contains( ContentInheritType.CONTENT );
     }
 
     private boolean isToSyncName( final Content targetContent )
@@ -446,7 +446,7 @@ public class ParentProjectSynchronizer
             requireValid( false ).
             createSiteTemplateFolder( false ).
             inheritPermissions( true ).
-            inherit( Set.of( ContentInheritType.DATA, ContentInheritType.PARENT, ContentInheritType.NAME, ContentInheritType.SORT ) ).
+            inherit( Set.of( ContentInheritType.CONTENT, ContentInheritType.PARENT, ContentInheritType.NAME, ContentInheritType.SORT ) ).
             originProject( ProjectName.from( sourceContext.getRepositoryId() ) ).
             createAttachments( CreateAttachments.from( source.getAttachments().
                 stream().
