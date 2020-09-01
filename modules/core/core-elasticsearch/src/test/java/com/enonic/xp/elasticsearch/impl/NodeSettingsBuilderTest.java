@@ -101,7 +101,6 @@ public class NodeSettingsBuilderTest
     private void assertSettings( String pathValue, final Settings settings )
     {
         assertEquals( "local-node", settings.get( "node.name" ) );
-        assertEquals( "false", settings.get( "node.client" ) );
         assertEquals( "true", settings.get( "node.data" ) );
         assertEquals( "true", settings.get( "node.master" ) );
         assertEquals( "false", settings.get( "http.enabled" ) );
