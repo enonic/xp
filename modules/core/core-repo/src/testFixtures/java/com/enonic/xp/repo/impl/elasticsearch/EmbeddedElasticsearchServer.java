@@ -42,7 +42,6 @@ public class EmbeddedElasticsearchServer
 
         Settings.Builder testServerSetup = Settings.settingsBuilder().
             put( "name", "repo-node-" + this.now ).
-            put( "client", "false" ).
             put( "data", "true" ).
             put( "local", "true" ).
             put( "path.data", pathData.getPath() ).
