@@ -3,80 +3,63 @@ package com.enonic.xp.elasticsearch.impl;
 import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.common.settings.Settings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
-import org.mockito.Mockito;
+import org.mockito.Answers;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterNodeId;
-import com.enonic.xp.cluster.NodeDiscovery;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-public class NodeSettingsBuilderTest
+@ExtendWith(MockitoExtension.class)
+class NodeSettingsBuilderTest
 {
     private NodeSettingsBuilder builder;
+
+    @Mock
+    private BundleContext context;
+
+    @Mock(stubOnly = true, lenient = true, answer = Answers.RETURNS_DEEP_STUBS)
+    private ClusterConfig clusterConfig;
 
     @TempDir
     public Path temporaryFolder;
 
     @BeforeEach
-    public void setup()
+    void setup()
         throws Exception
     {
-        final BundleContext context = Mockito.mock( BundleContext.class );
-        final NodeDiscovery nodeDiscovery = Mockito.mock( NodeDiscovery.class );
-        final InetAddress inetAddress = Mockito.mock( InetAddress.class );
-        Mockito.when( inetAddress.getCanonicalHostName() ).thenReturn( "127.0.0.1" );
-        Mockito.when( nodeDiscovery.get() ).thenReturn( Collections.singletonList( inetAddress ) );
-        this.builder = new NodeSettingsBuilder( context, new ClusterConfig()
-        {
-            @Override
-            public NodeDiscovery discovery()
-            {
-                return nodeDiscovery;
-            }
+        final InetAddress inetAddress = mock( InetAddress.class );
+        when( inetAddress.getCanonicalHostName() ).thenReturn( "127.0.0.1" );
 
-            @Override
-            public ClusterNodeId name()
-            {
-                return ClusterNodeId.from( "local-node" );
-            }
+        when( clusterConfig.isEnabled() ).thenReturn( true );
+        when( clusterConfig.discovery().get() ).thenReturn( List.of( inetAddress ) );
+        when( clusterConfig.name() ).thenReturn( ClusterNodeId.from( "local-node" ) );
+        when( clusterConfig.networkHost() ).thenReturn( "127.0.0.1" );
+        when( clusterConfig.networkPublishHost() ).thenReturn( "127.0.0.1" );
 
-            @Override
-            public boolean isEnabled()
-            {
-                return true;
-            }
-
-            @Override
-            public String networkPublishHost()
-            {
-                return "127.0.0.1";
-            }
-
-            @Override
-            public String networkHost()
-            {
-                return "127.0.0.1";
-            }
-
-        } );
+        this.builder = new NodeSettingsBuilder( context, clusterConfig );
 
         final Path homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) ).toAbsolutePath();
         System.setProperty( "xp.home", homeDir.toString() );
     }
 
     @Test
-    public void settings_default()
+    void settings_default()
     {
         final Map<String, String> map = new HashMap<>();
         final Settings settings = this.builder.buildSettings( map );
@@ -86,7 +69,7 @@ public class NodeSettingsBuilderTest
     }
 
     @Test
-    public void settings_override()
+    void settings_override()
     {
         final Map<String, String> map = new HashMap<>();
         map.put( "path", "/to/some/other/path" );
@@ -94,7 +77,6 @@ public class NodeSettingsBuilderTest
         final Settings settings = this.builder.buildSettings( map );
 
         assertNotNull( settings );
-        //    assertEquals( 23, settings.getAsMap().size() );
         assertSettings( "/to/some/other/path", settings );
     }
 
