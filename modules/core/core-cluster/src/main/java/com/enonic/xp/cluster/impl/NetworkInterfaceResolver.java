@@ -43,7 +43,14 @@ final class NetworkInterfaceResolver
     {
         if ( !addressOrInterfaceName.startsWith( "_" ) || !addressOrInterfaceName.endsWith( "_" ) )
         {
-            return addressOrInterfaceName;
+            try
+            {
+                return InetAddress.getByName( addressOrInterfaceName ).getHostAddress();
+            }
+            catch ( UnknownHostException e )
+            {
+                throw new IllegalArgumentException( "Interface address could not be resolved by name: " + addressOrInterfaceName );
+            }
         }
 
         final String interfaceName = addressOrInterfaceName.substring( 1, addressOrInterfaceName.length() - 1 );

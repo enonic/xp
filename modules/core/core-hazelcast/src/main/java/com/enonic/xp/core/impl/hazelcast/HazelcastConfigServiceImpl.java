@@ -107,8 +107,7 @@ public class HazelcastConfigServiceImpl
 
         if ( hazelcastConfig.clusterConfigDefaults() )
         {
-            config.setProperty( "hazelcast.local.localAddress", clusterConfig.networkHost() );
-            config.setProperty( "hazelcast.local.publicAddress", clusterConfig.networkPublishHost() );
+            networkConfig.setPublicAddress( clusterConfig.networkPublishHost() );
         }
         else
         {
@@ -147,16 +146,25 @@ public class HazelcastConfigServiceImpl
 
     private void configureInterfaces( Config config )
     {
-        if ( hazelcastConfig.network_interfaces_enabled() )
+        if ( hazelcastConfig.clusterConfigDefaults() )
         {
             InterfacesConfig interfacesConfig = config.getNetworkConfig().getInterfaces();
             interfacesConfig.setEnabled( true );
-            final String interfacesStr = requireNonNullElse( hazelcastConfig.network_interfaces(), "" ).trim();
-            List<String> interfaces = Arrays.stream( interfacesStr.split( "," ) ).
-                filter( Predicate.not( String::isBlank ) ).
-                map( String::trim ).
-                collect( Collectors.toUnmodifiableList() );
-            interfacesConfig.setInterfaces( interfaces );
+            interfacesConfig.setInterfaces( List.of( clusterConfig.networkHost() ) );
+        }
+        else
+        {
+            if ( hazelcastConfig.network_interfaces_enabled() )
+            {
+                InterfacesConfig interfacesConfig = config.getNetworkConfig().getInterfaces();
+                interfacesConfig.setEnabled( true );
+                final String interfacesStr = requireNonNullElse( hazelcastConfig.network_interfaces(), "" ).trim();
+                List<String> interfaces = Arrays.stream( interfacesStr.split( "," ) ).
+                    filter( Predicate.not( String::isBlank ) ).
+                    map( String::trim ).
+                    collect( Collectors.toUnmodifiableList() );
+                interfacesConfig.setInterfaces( interfaces );
+            }
         }
     }
 
