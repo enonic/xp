@@ -24,6 +24,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 
@@ -92,8 +93,10 @@ final class ImageHandlerWorker
         final String fileExtension = Files.getFileExtension( this.name ).toLowerCase();
         final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary, imageContent );
 
+        final String mimeType = getMimeType( this.name, imageContent.getName(), attachment );
+
         final PortalResponse.Builder portalResponse = PortalResponse.create().
-            contentType( MediaType.parse( attachment.getMimeType() ) );
+            contentType( MediaType.parse( mimeType ) );
 
         if ( "svgz".equals( fileExtension ) )
         {
@@ -114,7 +117,7 @@ final class ImageHandlerWorker
                 focalPoint( imageContent.getFocalPoint() ).
                 filterParam( this.filterParam ).
                 backgroundColor( getBackgroundColor() ).
-                mimeType( attachment.getMimeType() ).
+                mimeType( mimeType ).
                 quality( getImageQuality() ).
                 orientation( imageOrientation ).
                 build();
@@ -138,6 +141,11 @@ final class ImageHandlerWorker
         }
 
         return portalResponse.build();
+    }
+
+    private String getMimeType( final String fileName, final ContentName contentName, final Attachment attachment )
+    {
+        return contentName.toString().equals( fileName ) ? attachment.getMimeType() : MediaTypes.instance().fromFile( fileName ).toString();
     }
 
     private int getImageQuality()
