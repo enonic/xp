@@ -8,11 +8,17 @@ import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateMediaParams;
+import com.enonic.xp.content.Media;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,6 +64,41 @@ public class CreateMediaHandlerTest
 
         assertEquals( 0.3, argumentCaptor.getValue().getFocalX(), 0 );
         assertEquals( 0.1, argumentCaptor.getValue().getFocalY(), 0 );
+    }
+
+    @Test
+    public void createMediaAsPDFDocument()
+    {
+        Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer( mock -> {
+            final CreateMediaParams params = (CreateMediaParams) mock.getArguments()[0];
+
+            final PropertySet attachmentSet = new PropertySet();
+            attachmentSet.addString( "attachment", params.getName() );
+
+            final PropertyTree propertyTree = new PropertyTree();
+            propertyTree.addSet( "media", attachmentSet );
+
+            return Media.create().
+                id( ContentId.from( "dbc077af-fb97-4b17-a567-ad69e85f1010" ) ).
+                name( params.getName() ).
+                parentPath( params.getParent() ).
+                type( ContentTypeName.documentMedia() ).
+                displayName( params.getName() ).
+                valid( true ).
+                creator( PrincipalKey.ofAnonymous() ).
+                data( propertyTree ).
+                attachments( Attachments.create().
+                    add( Attachment.create().
+                        name( "documentName.pdf" ).
+                        label( "source" ).
+                        mimeType( "application/pdf" ).
+                        size( 653453 ).
+                        build() ).
+                    build() ).
+                createdTime( Instant.parse( "1975-01-08T00:00:00Z" ) ).build();
+        } );
+
+        runFunction( "/test/CreateMediaHandlerTest.js", "createMediaAsPDF" );
     }
 
     private Content createContent( final CreateMediaParams params )
