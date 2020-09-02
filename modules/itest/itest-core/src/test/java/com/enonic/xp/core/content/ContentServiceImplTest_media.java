@@ -124,4 +124,31 @@ public class ContentServiceImplTest_media
         assertEquals( content.getId().toString(), logResultSet.getString( "id" ) );
         assertEquals( content.getPath().toString(), logResultSet.getString( "path" ) );
     }
+
+    @Test
+    public void create_media_document()
+        throws Exception
+    {
+        final CreateMediaParams createMediaParams = new CreateMediaParams();
+        createMediaParams.byteSource( loadImage( "document.pdf" ) ).
+            name( "document.pdf" ).
+            mimeType( "application/pdf" ).
+            parent( ContentPath.ROOT );
+
+        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
+
+        final Content content = this.contentService.create( createMediaParams );
+
+        final Content storedContent = this.contentService.getById( content.getId() );
+
+        assertNotNull( storedContent.getName() );
+        assertNotNull( storedContent.getCreatedTime() );
+        assertNotNull( storedContent.getCreator() );
+        assertNotNull( storedContent.getModifiedTime() );
+        assertNotNull( storedContent.getModifier() );
+        assertNotNull( storedContent.getData().getString( ContentPropertyNames.MEDIA ) );
+        final Attachments attachments = storedContent.getAttachments();
+        assertEquals( 1, attachments.getSize() );
+    }
+
 }
