@@ -83,7 +83,8 @@ public class ContentNodeTranslator
             permissions( node.getPermissions() ).
             inheritPermissions( node.inheritsPermissions() ).
             hasChildren( hasChildren ).
-            contentState( ContentState.from( node.getNodeState().value() ) );
+            contentState( ContentState.from( node.getNodeState().value() ) ).
+            manualOrderValue( node.getManualOrderValue() );
 
         return builder.build();
     }

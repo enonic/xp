@@ -82,6 +82,8 @@ public class Content
 
     private final WorkflowInfo workflowInfo;
 
+    private final Long manualOrderValue;
+
     protected Content( final Builder builder )
     {
         Preconditions.checkNotNull( builder.name, "name is required for a Content" );
@@ -127,6 +129,7 @@ public class Content
         this.contentState = builder.contentState == null ? ContentState.DEFAULT : builder.contentState;
         this.processedReferences = builder.processedReferences.build();
         this.workflowInfo = builder.workflowInfo == null ? WorkflowInfo.ready() : builder.workflowInfo;
+        this.manualOrderValue = builder.manualOrderValue;
     }
 
     public static Builder create( final ContentTypeName type )
@@ -352,6 +355,11 @@ public class Content
         return workflowInfo;
     }
 
+    public Long getManualOrderValue()
+    {
+        return manualOrderValue;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -378,7 +386,7 @@ public class Content
             Objects.equals( data, other.data ) && Objects.equals( extraDatas, other.extraDatas ) && Objects.equals( page, other.page ) &&
             Objects.equals( language, other.language ) && Objects.equals( contentState, other.contentState ) &&
             Objects.equals( publishInfo, other.publishInfo ) && Objects.equals( processedReferences, other.processedReferences ) &&
-            Objects.equals( workflowInfo, other.workflowInfo );
+            Objects.equals( workflowInfo, other.workflowInfo ) && Objects.equals( manualOrderValue, other.manualOrderValue );
     }
 
     @Override
@@ -386,7 +394,7 @@ public class Content
     {
         return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
                              hasChildren, inherit, originProject, inheritPermissions, childOrder, thumbnail, permissions, attachments, data,
-                             extraDatas, page, language, contentState, publishInfo, processedReferences, workflowInfo );
+                             extraDatas, page, language, contentState, publishInfo, processedReferences, workflowInfo, manualOrderValue );
     }
 
     public static class Builder<BUILDER extends Builder>
@@ -445,6 +453,8 @@ public class Content
 
         protected WorkflowInfo workflowInfo;
 
+        protected Long manualOrderValue;
+
         protected Builder()
         {
             this.data = new PropertyTree();
@@ -483,6 +493,7 @@ public class Content
             this.publishInfo = source.publishInfo;
             this.processedReferences = ContentIds.create().addAll( source.processedReferences );
             this.workflowInfo = source.workflowInfo;
+            this.manualOrderValue = source.manualOrderValue;
         }
 
         public BUILDER parentPath( final ContentPath path )
@@ -694,6 +705,12 @@ public class Content
         public BUILDER workflowInfo( final WorkflowInfo workflowInfo )
         {
             this.workflowInfo = workflowInfo;
+            return (BUILDER) this;
+        }
+
+        public BUILDER manualOrderValue( final Long manualOrderValue )
+        {
+            this.manualOrderValue = manualOrderValue;
             return (BUILDER) this;
         }
 

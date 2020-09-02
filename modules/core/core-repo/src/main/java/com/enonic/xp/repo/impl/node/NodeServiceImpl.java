@@ -838,6 +838,12 @@ public class NodeServiceImpl
             this.eventPublisher.publish( NodeEvents.sorted( parentNode ) );
         }
 
+        refresh( RefreshMode.SEARCH );
+        for ( NodeId nodeId : reorderChildNodesResult.getNodeIds() )
+        {
+            this.eventPublisher.publish( NodeEvents.manualOrderUpdated( getById( nodeId ) ) );
+        }
+
         return reorderChildNodesResult;
     }
 

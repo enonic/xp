@@ -50,6 +50,8 @@ public class EditableContent
 
     public WorkflowInfo workflowInfo;
 
+    public Long manualOrderValue;
+
     public EditableContent( final Content source )
     {
         this.source = source;
@@ -68,6 +70,7 @@ public class EditableContent
         this.publishInfo = source.getPublishInfo();
         this.processedReferences = ContentIds.create().addAll( source.getProcessedReferences() );
         this.workflowInfo = source.getWorkflowInfo();
+        this.manualOrderValue = source.getManualOrderValue();
     }
 
     public Content build()
@@ -88,6 +91,7 @@ public class EditableContent
             publishInfo( publishInfo ).
             processedReferences( processedReferences.build() ).
             workflowInfo( workflowInfo ).
+            manualOrderValue( manualOrderValue ).
             build();
     }
 }

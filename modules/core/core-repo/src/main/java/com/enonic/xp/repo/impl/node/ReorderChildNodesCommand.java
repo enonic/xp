@@ -1,12 +1,17 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.time.Instant;
+
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
+
+import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 
 public class ReorderChildNodesCommand
     extends AbstractNodeCommand
@@ -55,11 +60,30 @@ public class ReorderChildNodesCommand
                 build().
                 execute();
 
+            processParent( parentNode );
+
             result.addNodeId( reorderedNode.id() );
             result.addParentNode( parentNode );
         }
 
         return result.build();
+    }
+
+    private void processParent( final Node parentNode )
+    {
+        final PropertyTree processedData = params.getProcessor().process( parentNode.data() );
+        if ( !processedData.equals( parentNode.data() ) )
+        {
+            final Node editedNode = Node.create( parentNode ).
+                data( processedData ).
+                timestamp( Instant.now( CLOCK ) ).
+                build();
+
+            StoreNodeCommand.create( this ).
+                node( editedNode ).
+                build().
+                execute();
+        }
     }
 
     public static class Builder

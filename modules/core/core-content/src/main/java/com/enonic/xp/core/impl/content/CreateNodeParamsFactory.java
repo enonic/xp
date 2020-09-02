@@ -15,6 +15,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
@@ -114,7 +115,9 @@ public class CreateNodeParamsFactory
             permissions( params.getPermissions() ).
             inheritPermissions( params.isInheritPermissions() ).
             childOrder( params.getChildOrder() ).
-            nodeType( ContentConstants.CONTENT_NODE_COLLECTION );
+            nodeType( ContentConstants.CONTENT_NODE_COLLECTION ).
+            manualOrderValue( params.getManualOrderValue() ).
+            insertManualStrategy( InsertManualStrategy.MANUAL );
 
         for ( final CreateAttachment attachment : params.getCreateAttachments() )
         {
