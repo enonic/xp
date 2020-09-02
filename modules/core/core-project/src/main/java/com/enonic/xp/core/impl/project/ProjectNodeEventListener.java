@@ -129,7 +129,8 @@ public class ProjectNodeEventListener
     private boolean isAllowedContentEvent( final String type )
     {
         return "node.created".equals( type ) || "node.updated".equals( type ) || "node.pushed".equals( type ) ||
-            "node.renamed".equals( type ) || "node.moved".equals( type ) || "node.deleted".equals( type ) || "node.sorted".equals( type );
+            "node.renamed".equals( type ) || "node.moved".equals( type ) || "node.deleted".equals( type ) || "node.sorted".equals( type ) ||
+            "node.manualOrderUpdated".equals( type );
     }
 
     private void handleContentEvent( final Map<String, String> nodeMap, final String type )
@@ -167,6 +168,9 @@ public class ProjectNodeEventListener
                             break;
                         case "node.pushed":
                             parentProjectSynchronizer.syncUpdated( contentId );
+                            break;
+                        case "node.manualOrderUpdated":
+                            parentProjectSynchronizer.syncManualOrderUpdated( contentId );
                             break;
                         case "node.sorted":
                             parentProjectSynchronizer.syncSorted( contentId );

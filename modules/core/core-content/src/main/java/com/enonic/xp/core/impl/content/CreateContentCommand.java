@@ -341,7 +341,7 @@ final class CreateContentCommand
 
     private PrincipalKey getDefaultOwner( final CreateContentParams createContentParams )
     {
-        if ( createContentParams.getOwner() == null )
+        if ( params.useDefaultOwner() && createContentParams.getOwner() == null )
         {
             PrincipalKey user = getCurrentPrincipalKey();
 

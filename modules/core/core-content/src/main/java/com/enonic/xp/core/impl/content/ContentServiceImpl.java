@@ -969,6 +969,11 @@ public class ContentServiceImpl
                 build() );
         }
 
+        if ( params.stopInherit() )
+        {
+            builder.processor( new SetContentChildOrderProcessor() );
+        }
+
         final ReorderChildNodesResult reorderChildNodesResult = this.nodeService.reorderChildren( builder.build() );
 
         this.nodeService.refresh( RefreshMode.SEARCH );

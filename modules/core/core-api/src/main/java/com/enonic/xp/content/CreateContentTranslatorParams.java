@@ -12,6 +12,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -69,6 +70,10 @@ public class CreateContentTranslatorParams
 
     private final Page page;
 
+    private final Long manualOrderValue;
+
+    private final InsertManualStrategy insertManualStrategy;
+
     private CreateContentTranslatorParams( Builder builder )
     {
         final Instant now = Instant.now();
@@ -97,6 +102,8 @@ public class CreateContentTranslatorParams
         this.inherit = builder.inherit.build();
         this.originProject = builder.originProject;
         this.page = builder.page;
+        this.manualOrderValue = builder.manualOrderValue;
+        this.insertManualStrategy = builder.insertManualStrategy;
     }
 
     public static Builder create( final CreateContentParams source )
@@ -229,6 +236,16 @@ public class CreateContentTranslatorParams
         return page;
     }
 
+    public Long getManualOrderValue()
+    {
+        return manualOrderValue;
+    }
+
+    public InsertManualStrategy getInsertManualStrategy()
+    {
+        return insertManualStrategy;
+    }
+
     public static final class Builder
     {
         private ContentId contentId;
@@ -273,6 +290,10 @@ public class CreateContentTranslatorParams
 
         private Page page;
 
+        private Long manualOrderValue;
+
+        private InsertManualStrategy insertManualStrategy;
+
         private Builder()
         {
         }
@@ -298,6 +319,8 @@ public class CreateContentTranslatorParams
             this.inherit.addAll( params.getInherit() );
             this.originProject = params.getOriginProject();
             this.page = params.getPage();
+            this.manualOrderValue = params.getManualOrderValue();
+            this.insertManualStrategy = params.getInsertManualStrategy();
         }
 
         public Builder contentId( final ContentId contentId )
@@ -429,7 +452,18 @@ public class CreateContentTranslatorParams
         public Builder page( final Page page )
         {
             this.page = page;
+            return this;
+        }
 
+        public Builder manualOrderValue( final Long manualOrderValue )
+        {
+            this.manualOrderValue = manualOrderValue;
+            return this;
+        }
+
+        public Builder insertManualStrategy( final InsertManualStrategy insertManualStrategy )
+        {
+            this.insertManualStrategy = insertManualStrategy;
             return this;
         }
 

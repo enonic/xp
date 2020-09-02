@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.project;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
@@ -39,9 +38,9 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Thumbnail;
-import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
+import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
@@ -93,24 +92,29 @@ public class ParentProjectSynchronizer
 
     public void syncWithChildren( final ContentId contentId )
     {
-        final Queue<ContentId> queue = new LinkedList( List.of( contentId ) );
+        final Queue<Content> queue = new LinkedList();
 
         sourceContext.runWith( () -> {
 
             if ( contentService.contentExists( contentId ) )
             {
-                final Content contentToSync = contentService.getById( contentId );
-                if ( !( "/content".equals( contentToSync.getPath().toString() ) || "/".equals( contentToSync.getPath().toString() ) ) )
+                final Content sourceContent = contentService.getById( contentId );
+                queue.add( sourceContent );
+
+                if ( !( "/content".equals( sourceContent.getPath().toString() ) || "/".equals( sourceContent.getPath().toString() ) ) )
                 {
-                    this.doSync( contentService.getById( contentId ) );
+                    this.doSync( sourceContent );
                 }
+
             }
             while ( queue.size() > 0 )
             {
+                final Content currentContent = queue.poll();
+
                 final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create().
-                    parentId( queue.poll() ).
+                    parentId( currentContent.getId() ).
                     recursive( false ).
-                    childOrder( ChildOrder.path() ).
+                    childOrder( currentContent.getChildOrder() ).
                     size( -1 ).
                     build() );
 
@@ -122,7 +126,7 @@ public class ParentProjectSynchronizer
                     {
                         if ( content.hasChildren() )
                         {
-                            queue.offer( content.getId() );
+                            queue.offer( content );
                         }
                     }
                 }
@@ -143,6 +147,7 @@ public class ParentProjectSynchronizer
                     targetContent = this.doSyncMoved( sourceContent, targetContent );
                     targetContent = this.doSyncRenamed( sourceContent, targetContent );
                     targetContent = this.doSyncSorted( sourceContent, targetContent );
+                    targetContent = this.doSyncManualOrderUpdated( sourceContent, targetContent );
                     return this.doSyncUpdated( sourceContent, targetContent );
                 }
 
@@ -300,6 +305,34 @@ public class ParentProjectSynchronizer
         return targetContent;
     }
 
+    public Content syncManualOrderUpdated( final ContentId contentId )
+    {
+        return sourceContext.callWith( () -> {
+            final Content sourceContent = contentService.getById( contentId );
+
+            return targetContext.callWith( () -> {
+                if ( contentService.contentExists( contentId ) )
+                {
+                    final Content targetContent = contentService.getById( contentId );
+                    return doSyncManualOrderUpdated( sourceContent, targetContent );
+                }
+                return null;
+            } );
+        } );
+    }
+
+    private Content doSyncManualOrderUpdated( final Content sourceContent, final Content targetContent )
+    {
+        if ( needToUpdateManualOrderValue( sourceContent, targetContent ) )
+        {
+            if ( isToSyncManualOrderUpdated( sourceContent, targetContent ) )
+            {
+                return contentService.update( updateManualOrderValueParams( sourceContent ) );
+            }
+        }
+        return targetContent;
+    }
+
     public Content syncCreated( final ContentId contentId )
     {
         return sourceContext.callWith( () -> {
@@ -329,14 +362,17 @@ public class ParentProjectSynchronizer
 
                         if ( sourceContent.getParentPath().isRoot() )
                         {
-                            return contentService.create( sourceContext.callWith( () -> createParams( sourceContent, ContentPath.ROOT ) ) );
+                            return contentService.create(
+                                sourceContext.callWith( () -> createParams( sourceContent, ContentPath.ROOT, null ) ) );
                         }
 
                         if ( contentService.contentExists( parentId ) )
                         {
                             final Content targetParent = contentService.getById( parentId );
-                            return contentService.create(
-                                sourceContext.callWith( () -> createParams( sourceContent, targetParent.getPath() ) ) );
+                            return contentService.create( sourceContext.callWith( () -> createParams( sourceContent, targetParent.getPath(),
+                                                                                                      targetParent.getChildOrder().isManualOrder()
+                                                                                                          ? InsertManualStrategy.MANUAL
+                                                                                                          : null ) ) );
                         }
 
                         return null;
@@ -382,6 +418,24 @@ public class ParentProjectSynchronizer
         return targetContent.getInherit().contains( ContentInheritType.SORT );
     }
 
+    private boolean isToSyncManualOrderUpdated( final Content sourceContent, final Content targetContent )
+    {
+        return targetContext.callWith( () -> {
+            if ( contentService.contentExists( targetContent.getParentPath() ) )
+            {
+                final Content targetParent = contentService.getByPath( targetContent.getParentPath() );
+                if ( targetParent.getChildOrder().isManualOrder() )
+                {
+                    final Content sourceParent = sourceContext.callWith( () -> contentService.getByPath( sourceContent.getParentPath() ) );
+
+                    return targetParent.getId().equals( sourceParent.getId() ) &&
+                        targetParent.getInherit().contains( ContentInheritType.SORT );
+                }
+            }
+            return false;
+        } );
+    }
+
     private boolean needToUpdate( final Content sourceContent, final Content targetContent )
     {
         return !Objects.equals( sourceContent.getData(), targetContent.getData() ) ||
@@ -407,6 +461,11 @@ public class ParentProjectSynchronizer
         return !targetContent.getName().equals( sourceContent.getName() );
     }
 
+    private boolean needToUpdateManualOrderValue( final Content sourceContent, final Content targetContent )
+    {
+        return !Objects.equals( targetContent.getManualOrderValue(), sourceContent.getManualOrderValue() );
+    }
+
     private UpdateContentParams updateParams( final Content source )
     {
         return new UpdateContentParams().
@@ -430,7 +489,18 @@ public class ParentProjectSynchronizer
             } );
     }
 
-    private CreateContentParams createParams( final Content source, final ContentPath targetParentPath )
+    private UpdateContentParams updateManualOrderValueParams( final Content source )
+    {
+        return new UpdateContentParams().
+            contentId( source.getId() ).
+            modifier( PrincipalKey.ofAnonymous() ).
+            requireValid( false ).
+            stopInherit( false ).
+            editor( edit -> edit.manualOrderValue = source.getManualOrderValue() );
+    }
+
+    private CreateContentParams createParams( final Content source, final ContentPath targetParentPath,
+                                              final InsertManualStrategy insertManualStrategy )
     {
         final CreateContentParams.Builder builder = CreateContentParams.create();
 
@@ -445,7 +515,9 @@ public class ParentProjectSynchronizer
             page( source.getPage() ).
             requireValid( false ).
             createSiteTemplateFolder( false ).
-            inheritPermissions( true ).
+            useParentLanguage( false ).
+            useDefaultOwner( false ).
+            inheritPermissions( source.inheritsPermissions() ).
             inherit( Set.of( ContentInheritType.CONTENT, ContentInheritType.PARENT, ContentInheritType.NAME, ContentInheritType.SORT ) ).
             originProject( ProjectName.from( sourceContext.getRepositoryId() ) ).
             createAttachments( CreateAttachments.from( source.getAttachments().
@@ -463,8 +535,9 @@ public class ParentProjectSynchronizer
                 } ).collect( Collectors.toSet() ) ) ).
             childOrder( source.getChildOrder() ).
             language( source.getLanguage() ).
-            useParentLanguage( false ).
-            workflowInfo( source.getWorkflowInfo() );
+            workflowInfo( source.getWorkflowInfo() ).
+            manualOrderValue( source.getManualOrderValue() ).
+            insertManualStrategy( insertManualStrategy );
 
         if ( source instanceof Site )
         {
