@@ -24,7 +24,6 @@ public final class MailServiceImpl
 
     @Activate
     public void activate( final MailConfig config )
-        throws Exception
     {
         final Properties properties = new Properties();
 
@@ -36,7 +35,16 @@ public final class MailServiceImpl
         final boolean auth = config.smtpAuth();
         properties.put( "mail.smtp.auth", Boolean.toString( auth ) );
 
-        this.session = Session.getInstance( properties, auth ? createAuthenticator( config ) : null );
+        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader( Session.class.getClassLoader() );
+        try
+        {
+            this.session = Session.getInstance( properties, auth ? createAuthenticator( config ) : null );
+        }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader( oldLoader );
+        }
     }
 
     @Override
@@ -55,7 +63,6 @@ public final class MailServiceImpl
     }
 
     private MimeMessage newMessage()
-        throws Exception
     {
         return new MimeMessage( this.session );
     }
@@ -71,16 +78,22 @@ public final class MailServiceImpl
         final Address[] to = message.getAllRecipients();
         final Transport transport = this.session.getTransport();
 
+        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader( Session.class.getClassLoader() );
         try (transport)
         {
             transport.connect();
             transport.sendMessage( message, to );
         }
+        finally
+        {
+            Thread.currentThread().setContextClassLoader( oldLoader );
+        }
     }
 
     private Authenticator createAuthenticator( final MailConfig config )
     {
-        return new javax.mail.Authenticator()
+        return new Authenticator()
         {
             @Override
             protected PasswordAuthentication getPasswordAuthentication()
