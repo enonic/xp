@@ -29,15 +29,18 @@ public final class ContentMapper
 
     private final SortValuesProperty sort;
 
+    private final Float score;
+
     public ContentMapper( final Content value )
     {
-        this( value, null );
+        this( value, null, null );
     }
 
-    public ContentMapper( final Content value, final SortValuesProperty sort )
+    public ContentMapper( final Content value, final SortValuesProperty sort, final Float score )
     {
         this.value = value;
         this.sort = sort;
+        this.score = score;
     }
 
     private void serialize( final MapGenerator gen, final Content value )
@@ -45,6 +48,7 @@ public final class ContentMapper
         gen.value( "_id", value.getId() );
         gen.value( "_name", value.getName() );
         gen.value( "_path", value.getPath() );
+        gen.value( "_score", this.score );
         gen.value( "creator", value.getCreator() );
         gen.value( "modifier", value.getModifier() );
         gen.value( "createdTime", value.getCreatedTime() );

@@ -24,6 +24,8 @@ public final class ContentsResultMapper
 
     private final ImmutableMap<ContentId, SortValuesProperty> sortValues;
 
+    private final ImmutableMap<ContentId, Float> scoreValues;
+
     public ContentsResultMapper( final Contents contents, final long total )
     {
         this.contents = contents;
@@ -31,17 +33,20 @@ public final class ContentsResultMapper
         this.aggregations = null;
         this.highlight = null;
         this.sortValues = null;
+        this.scoreValues = null;
     }
 
     public ContentsResultMapper( final Contents contents, final long total, final Aggregations aggregations,
                                  final ImmutableMap<ContentId, HighlightedProperties> highlight,
-                                 final ImmutableMap<ContentId, SortValuesProperty> sortValues )
+                                 final ImmutableMap<ContentId, SortValuesProperty> sortValues,
+                                 final ImmutableMap<ContentId, Float> scoreValues)
     {
         this.contents = contents;
         this.total = total;
         this.aggregations = aggregations;
         this.highlight = highlight;
         this.sortValues = sortValues;
+        this.scoreValues = scoreValues;
     }
 
     @Override
@@ -60,7 +65,10 @@ public final class ContentsResultMapper
         for ( Content content : contents )
         {
             gen.map();
-            new ContentMapper( content, sortValues != null ? sortValues.get( content.getId() ) : null ).serialize( gen );
+            final SortValuesProperty sort = sortValues != null ? sortValues.get( content.getId() ) : null;
+            final Float score = scoreValues != null ? scoreValues.get( content.getId() ) : null;
+
+            new ContentMapper( content, sort, score ).serialize( gen );
             gen.end();
         }
         gen.end();
