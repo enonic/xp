@@ -21,6 +21,8 @@ public final class FindContentIdsByQueryResult
 
     private final ImmutableMap<ContentId, SortValuesProperty> sort;
 
+    private final ImmutableMap<ContentId, Float> score;
+
     private final long totalHits;
 
     private final long hits;
@@ -33,6 +35,7 @@ public final class FindContentIdsByQueryResult
         this.aggregations = builder.aggregations;
         this.highlight = builder.highlight != null ? ImmutableMap.copyOf( builder.highlight ) : null;
         this.sort = builder.sort != null ? ImmutableMap.copyOf( builder.sort ) : null;
+        this.score = builder.score != null ? ImmutableMap.copyOf( builder.score ) : null;
     }
 
     public static Builder create()
@@ -66,6 +69,11 @@ public final class FindContentIdsByQueryResult
         return sort;
     }
 
+    public ImmutableMap<ContentId, Float> getScore()
+    {
+        return score;
+    }
+
     public long getTotalHits()
     {
         return totalHits;
@@ -91,14 +99,13 @@ public final class FindContentIdsByQueryResult
         final FindContentIdsByQueryResult that = (FindContentIdsByQueryResult) o;
         return totalHits == that.totalHits && hits == that.hits && Objects.equals( aggregations, that.aggregations ) &&
             Objects.equals( contentIds, that.contentIds ) && Objects.equals( highlight, that.highlight ) &&
-            Objects.equals( sort, that.sort );
+            Objects.equals( sort, that.sort ) && Objects.equals( score, that.score );
     }
 
     @Override
     public int hashCode()
     {
-
-        return Objects.hash( aggregations, contentIds, totalHits, hits, highlight, sort );
+        return Objects.hash( aggregations, contentIds, totalHits, hits, highlight, sort, score );
     }
 
     public static final class Builder
@@ -110,6 +117,8 @@ public final class FindContentIdsByQueryResult
         private Map<ContentId, HighlightedProperties> highlight;
 
         private Map<ContentId, SortValuesProperty> sort;
+
+        private Map<ContentId, Float> score;
 
         private long totalHits;
 
@@ -152,6 +161,12 @@ public final class FindContentIdsByQueryResult
         public Builder sort( final Map<ContentId, SortValuesProperty> sort )
         {
             this.sort = sort;
+            return this;
+        }
+
+        public Builder score( final Map<ContentId, Float> score )
+        {
+            this.score = score;
             return this;
         }
 

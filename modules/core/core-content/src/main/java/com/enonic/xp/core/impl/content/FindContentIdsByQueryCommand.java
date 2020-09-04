@@ -39,17 +39,23 @@ final class FindContentIdsByQueryCommand
 
         final Map<ContentId, SortValuesProperty> sortValues = new LinkedHashMap<>();
 
+        final Map<ContentId, Float> scoreValues = new LinkedHashMap<>();
+
         final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
 
         result.getNodeHits().forEach( nodeHit -> {
+            final ContentId contentId = ContentId.from( nodeHit.getNodeId().toString() );
+
+            scoreValues.put( contentId, nodeHit.getScore() );
+
             if ( nodeHit.getHighlight() != null && !nodeHit.getHighlight().isEmpty() )
             {
-                highlight.put( ContentId.from( nodeHit.getNodeId().toString() ), nodeHit.getHighlight() );
+                highlight.put( contentId, nodeHit.getHighlight() );
             }
 
             if ( nodeHit.getSort() != null && nodeHit.getSort().getValues() != null && !nodeHit.getSort().getValues().isEmpty() )
             {
-                sortValues.put( ContentId.from( nodeHit.getNodeId().toString() ), nodeHit.getSort() );
+                sortValues.put( contentId, nodeHit.getSort() );
             }
         } );
 
@@ -59,6 +65,7 @@ final class FindContentIdsByQueryCommand
             highlight( highlight ).
             sort( sortValues ).
             hits( result.getHits() ).
+            score( scoreValues ).
             totalHits( result.getTotalHits() ).
             build();
     }
