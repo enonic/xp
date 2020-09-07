@@ -58,12 +58,12 @@ public class ParentProjectSyncTask
             } ).
             forEach( project -> {
                 Project parentProject = this.projectService.get( project.getParent() );
-                doSync( project, parentProject );
+                doSync( parentProject, project );
             } ) );
 
     }
 
-    private void doSync( final Project targetProject, final Project sourceProject )
+    private void doSync( final Project sourceProject, final Project targetProject )
     {
         final ParentProjectSynchronizer parentProjectSynchronizer = ParentProjectSynchronizer.create().
             targetProject( targetProject ).

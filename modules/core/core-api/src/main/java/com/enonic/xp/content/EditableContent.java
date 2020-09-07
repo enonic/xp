@@ -2,6 +2,7 @@ package com.enonic.xp.content;
 
 
 import java.time.Instant;
+import java.util.EnumSet;
 import java.util.Locale;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -52,6 +53,8 @@ public class EditableContent
 
     public Long manualOrderValue;
 
+    public EnumSet<ContentInheritType> inherit;
+
     public EditableContent( final Content source )
     {
         this.source = source;
@@ -71,6 +74,7 @@ public class EditableContent
         this.processedReferences = ContentIds.create().addAll( source.getProcessedReferences() );
         this.workflowInfo = source.getWorkflowInfo();
         this.manualOrderValue = source.getManualOrderValue();
+        this.inherit = EnumSet.copyOf( source.getInherit() );
     }
 
     public Content build()
@@ -92,6 +96,7 @@ public class EditableContent
             processedReferences( processedReferences.build() ).
             workflowInfo( workflowInfo ).
             manualOrderValue( manualOrderValue ).
+            setInherit( inherit ).
             build();
     }
 }
