@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.project;
+package com.enonic.xp.core.impl.content;
 
 import java.util.List;
 import java.util.Map;
@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
@@ -20,6 +19,7 @@ import com.enonic.xp.core.internal.concurrent.SimpleExecutor;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.media.MediaInfoService;
+import com.enonic.xp.project.ParentProjectSynchronizer;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
@@ -30,10 +30,10 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component(immediate = true)
-public class ProjectNodeEventListener
+public class ProjectContentEventListener
     implements EventListener
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ProjectNodeEventListener.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ProjectContentEventListener.class );
 
     private ProjectService projectService;
 
@@ -64,41 +64,6 @@ public class ProjectNodeEventListener
             {
                 this.handleContentEvent( event );
             }
-
-            if ( this.isAllowedProjectEvent( event.getType() ) )
-            {
-                this.handleProjectEvent( event );
-
-            }
-        }
-    }
-
-    private void handleProjectEvent( final Event event )
-    {
-        final Map<String, Object> nodes = event.getData();
-        final String projectName = (String) nodes.get( ProjectEvents.PROJECT_NAME_KEY );
-
-        this.simpleExecutor.execute( () -> createAdminContext().runWith( () -> handleProjectCreated( ProjectName.from( projectName ) ) ) );
-
-    }
-
-    private void handleProjectCreated( final ProjectName projectName )
-    {
-        final Project project = this.projectService.get( projectName );
-
-        if ( project != null && project.getParent() != null )
-        {
-            final Project parentProject = this.projectService.get( project.getParent() );
-
-            if ( parentProject != null )
-            {
-                ParentProjectSyncTask.create().
-                    contentService( contentService ).
-                    projectService( projectService ).
-                    mediaInfoService( mediaInfoService ).
-                    build().
-                    run( project, parentProject );
-            }
         }
     }
 
@@ -119,11 +84,6 @@ public class ProjectNodeEventListener
         {
             LOG.error( "Not able to handle node-event", e );
         }
-    }
-
-    private boolean isAllowedProjectEvent( final String type )
-    {
-        return ProjectEvents.CREATED_EVENT_TYPE.equals( type );
     }
 
     private boolean isAllowedContentEvent( final String type )
@@ -227,12 +187,6 @@ public class ProjectNodeEventListener
                 login( PrincipalKey.ofSuperUser().getId() ).
                 build() ).
             build();
-    }
-
-    private ContentPath translateNodePathToContentPath( final String nodePath )
-    {
-        final String contentPath = nodePath.substring( ( "content/" ).length() );
-        return ContentPath.from( contentPath ).asAbsolute();
     }
 
     @Reference

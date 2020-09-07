@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.project;
+package com.enonic.xp.project;
 
 import java.util.LinkedList;
 import java.util.Objects;
@@ -41,17 +41,18 @@ import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.InsertManualStrategy;
-import com.enonic.xp.project.Project;
-import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 public class ParentProjectSynchronizer
 {
-    private final static Logger LOG = LoggerFactory.getLogger( ParentProjectSynchronizer.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ParentProjectSynchronizer.class );
 
     private final ContentService contentService;
 
@@ -71,11 +72,13 @@ public class ParentProjectSynchronizer
         this.targetContext = ContextBuilder.from( ContextAccessor.current() ).
             repositoryId( targetProject.getName().getRepoId() ).
             branch( ContentConstants.BRANCH_DRAFT ).
+            authInfo( adminAuthInfo() ).
             build();
 
         this.sourceContext = ContextBuilder.from( ContextAccessor.current() ).
             repositoryId( sourceProject.getName().getRepoId() ).
             branch( ContentConstants.BRANCH_DRAFT ).
+            authInfo( adminAuthInfo() ).
             build();
     }
 
@@ -605,6 +608,17 @@ public class ParentProjectSynchronizer
         }
 
 
+    }
+
+    private AuthenticationInfo adminAuthInfo()
+    {
+        return AuthenticationInfo.create().
+            principals( RoleKeys.ADMIN ).
+            user( User.create().
+                key( PrincipalKey.ofSuperUser() ).
+                login( PrincipalKey.ofSuperUser().getId() ).
+                build() ).
+            build();
     }
 
     public static final class Builder

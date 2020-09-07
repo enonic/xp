@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.project;
+package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
@@ -7,6 +7,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.media.MediaInfoService;
+import com.enonic.xp.project.ParentProjectSynchronizer;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.PrincipalKey;
@@ -60,11 +61,6 @@ public class ParentProjectSyncTask
                 doSync( project, parentProject );
             } ) );
 
-    }
-
-    public void run( final Project targetProject, final Project sourceProject )
-    {
-        createAdminContext().runWith( () -> doSync( targetProject, sourceProject ) );
     }
 
     private void doSync( final Project targetProject, final Project sourceProject )
