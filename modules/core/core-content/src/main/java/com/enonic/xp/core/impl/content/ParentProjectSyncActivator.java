@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.project;
+package com.enonic.xp.core.impl.content;
 
 import java.time.Duration;
 import java.util.concurrent.Executors;
@@ -14,7 +14,7 @@ import com.enonic.xp.core.internal.concurrent.SimpleRecurringJobScheduler;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.project.ProjectService;
 
-@Component(immediate = true)
+@Component(immediate = true, configurationPid = "com.enonic.xp.content")
 public class ParentProjectSyncActivator
 {
     private static final Logger LOG = LoggerFactory.getLogger( ParentProjectSyncActivator.class );
@@ -28,18 +28,21 @@ public class ParentProjectSyncActivator
     private MediaInfoService mediaInfoService;
 
     @Activate
-    public void initialize()
+    public void initialize( final ContentConfig config )
     {
         this.recurringJobScheduler =
             new SimpleRecurringJobScheduler( Executors::newSingleThreadScheduledExecutor, "parent-project-synchronizer-thread" );
 
-        this.recurringJobScheduler.scheduleWithFixedDelay( ParentProjectSyncTask.create().
-                                                               contentService( this.contentService ).
-                                                               projectService( this.projectService ).
-                                                               mediaInfoService( this.mediaInfoService ).
-                                                               build(), Duration.ofMinutes( 0 ), Duration.ofMinutes( 1 ), e -> LOG.warn( "Error while project sync.", e ),
-                                                           e -> LOG.error( "Error while project sync, no further attempts will be made.",
-                                                                           e ) );
+        final Duration delay = Duration.parse( config.content_sync_period() );
+        if ( !delay.isZero() )
+        {
+            this.recurringJobScheduler.scheduleWithFixedDelay( ParentProjectSyncTask.create().
+                contentService( this.contentService ).
+                projectService( this.projectService ).
+                mediaInfoService( this.mediaInfoService ).
+                build(), Duration.ofMinutes( 0 ), delay, e -> LOG.warn( "Error while project sync.", e ), e -> LOG.error(
+                "Error while project sync, no further attempts will be made.", e ) );
+        }
     }
 
     @Reference
