@@ -74,6 +74,7 @@ import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.ReprocessContentParams;
+import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
@@ -162,6 +163,8 @@ public class ContentServiceImpl
     private ContentDataSerializer contentDataSerializer;
 
     private ContentAuditLogSupport contentAuditLogSupport;
+
+    private ProjectService projectService;
 
     @Activate
     public void initialize()
@@ -1187,6 +1190,21 @@ public class ContentServiceImpl
     }
 
     @Override
+    public void resetInherit( final ResetContentInheritParams params )
+    {
+        ResetContentInheritCommand.create( params ).
+            contentService( this ).
+            projectService( projectService ).
+            mediaInfoService( mediaInfoService ).
+            nodeService( nodeService ).
+            contentTypeService( contentTypeService ).
+            eventPublisher( eventPublisher ).
+            translator( translator ).
+            build().
+            execute();
+    }
+
+    @Override
     @Deprecated
     public InputStream getBinaryInputStream( final ContentId contentId, final BinaryReference binaryReference )
     {
@@ -1310,5 +1328,7 @@ public class ContentServiceImpl
     {
         //Many starters depend on ContentService avaialbe only when default cms repo is fully initialized.
         // Starting from 7.3 Initialization happens in ProjectService, so we need a dependency.
+        this.projectService = projectService;
     }
+
 }
