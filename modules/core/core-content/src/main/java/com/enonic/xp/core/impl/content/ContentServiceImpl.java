@@ -1190,7 +1190,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public void resetInherit( final ResetContentInheritParams params )
+    public void restoreInherit( final ResetContentInheritParams params )
     {
         ResetContentInheritCommand.create( params ).
             contentService( this ).

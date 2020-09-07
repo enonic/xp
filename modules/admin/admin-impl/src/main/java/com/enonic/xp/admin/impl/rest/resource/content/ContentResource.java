@@ -1466,10 +1466,10 @@ public final class ContentResource
     }
 
     @POST
-    @Path("resetInherit")
-    public void resetInherit( final ResetContentInheritJson paramsJson )
+    @Path("restoreInherit")
+    public void restoreInherit( final ResetContentInheritJson paramsJson )
     {
-        this.contentService.resetInherit( paramsJson.toParams() );
+        this.contentService.restoreInherit( paramsJson.toParams() );
     }
 
     private UpdateContentParams prepareUpdateContentParams( final Content versionedContent, final ContentVersionId contentVersionId )

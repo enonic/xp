@@ -124,5 +124,5 @@ public interface ContentService
 
     Content getByPathAndVersionId( final ContentPath contentPath, final ContentVersionId versionId );
 
-    void resetInherit( final ResetContentInheritParams params );
+    void restoreInherit( final ResetContentInheritParams params );
 }
