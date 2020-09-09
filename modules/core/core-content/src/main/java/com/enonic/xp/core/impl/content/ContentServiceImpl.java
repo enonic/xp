@@ -64,6 +64,8 @@ import com.enonic.xp.content.GetPublishStatusResult;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
+import com.enonic.xp.content.ImportContentParams;
+import com.enonic.xp.content.ImportContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PublishContentResult;
@@ -1187,6 +1189,20 @@ public class ContentServiceImpl
             }
             return content;
         } );
+    }
+
+    @Override
+    public ImportContentResult importContent( final ImportContentParams params )
+    {
+        return ImportContentCommand.create().
+            params( params ).
+            nodeService( nodeService ).
+            contentTypeService( contentTypeService ).
+            contentDataSerializer( contentDataSerializer ).
+            eventPublisher( eventPublisher ).
+            translator( translator ).
+            build().
+            execute();
     }
 
     @Override

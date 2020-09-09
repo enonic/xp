@@ -1,10 +1,9 @@
 package com.enonic.xp.project;
 
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
@@ -25,9 +24,9 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.RenameContentParams;
@@ -37,10 +36,11 @@ import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
+import com.enonic.xp.node.BinaryAttachment;
+import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -48,8 +48,6 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.site.Site;
-import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 @Component(immediate = true)
 public class ParentProjectSynchronizer
@@ -372,16 +370,20 @@ public class ParentProjectSynchronizer
 
                         if ( sourceContent.getParentPath().isRoot() )
                         {
-                            return contentService.create( sourceContext.callWith( () -> createParams( sourceContent, ContentPath.ROOT, null ) ) );
+                            return contentService.importContent(
+                                sourceContext.callWith( () -> createImportParams( sourceContent, ContentPath.ROOT, null ) ) ).
+                                getContent();
                         }
 
                         if ( contentService.contentExists( parentId ) )
                         {
                             final Content targetParent = contentService.getById( parentId );
-                            return contentService.create( sourceContext.callWith( () -> createParams( sourceContent, targetParent.getPath(),
-                                                                                                      targetParent.getChildOrder().isManualOrder()
-                                                                                                          ? InsertManualStrategy.MANUAL
-                                                                                                          : null ) ) );
+                            return contentService.importContent( sourceContext.callWith(
+                                () -> createImportParams( sourceContent, targetParent.getPath(),
+                                                          targetParent.getChildOrder().isManualOrder()
+                                                              ? InsertManualStrategy.MANUAL
+                                                              : null ) ) ).
+                                getContent();
                         }
 
                         return null;
@@ -437,7 +439,8 @@ public class ParentProjectSynchronizer
                 {
                     final Content sourceParent = sourceContext.callWith( () -> contentService.getByPath( sourceContent.getParentPath() ) );
 
-                    return targetParent.getId().equals( sourceParent.getId() ) && targetParent.getInherit().contains( ContentInheritType.SORT );
+                    return targetParent.getId().equals( sourceParent.getId() ) &&
+                        targetParent.getInherit().contains( ContentInheritType.SORT );
                 }
             }
             return false;
@@ -446,12 +449,17 @@ public class ParentProjectSynchronizer
 
     private boolean needToUpdate( final Content sourceContent, final Content targetContent )
     {
-        return !Objects.equals( sourceContent.getData(), targetContent.getData() ) || !Objects.equals( sourceContent.getAllExtraData(), targetContent.getAllExtraData() ) ||
-            !Objects.equals( sourceContent.getDisplayName(), targetContent.getDisplayName() ) || !Objects.equals( sourceContent.getOwner(), targetContent.getOwner() ) ||
-            !Objects.equals( sourceContent.getLanguage(), targetContent.getLanguage() ) || !Objects.equals( sourceContent.getWorkflowInfo(), targetContent.getWorkflowInfo() ) ||
-            !Objects.equals( sourceContent.getPage(), targetContent.getPage() ) || !Objects.equals( sourceContent.getThumbnail(), targetContent.getThumbnail() ) ||
+        return !Objects.equals( sourceContent.getData(), targetContent.getData() ) ||
+            !Objects.equals( sourceContent.getAllExtraData(), targetContent.getAllExtraData() ) ||
+            !Objects.equals( sourceContent.getDisplayName(), targetContent.getDisplayName() ) ||
+            !Objects.equals( sourceContent.getOwner(), targetContent.getOwner() ) ||
+            !Objects.equals( sourceContent.getLanguage(), targetContent.getLanguage() ) ||
+            !Objects.equals( sourceContent.getWorkflowInfo(), targetContent.getWorkflowInfo() ) ||
+            !Objects.equals( sourceContent.getPage(), targetContent.getPage() ) ||
+            !Objects.equals( sourceContent.getThumbnail(), targetContent.getThumbnail() ) ||
             !Objects.equals( sourceContent.getProcessedReferences(), targetContent.getProcessedReferences() ) ||
-            sourceContent.inheritsPermissions() != targetContent.inheritsPermissions() || sourceContent.isValid() != targetContent.isValid();
+            sourceContent.inheritsPermissions() != targetContent.inheritsPermissions() ||
+            sourceContent.isValid() != targetContent.isValid();
     }
 
     private boolean needToSort( final Content sourceContent, final Content targetContent )
@@ -502,56 +510,26 @@ public class ParentProjectSynchronizer
             editor( edit -> edit.manualOrderValue = source.getManualOrderValue() );
     }
 
-    private CreateContentParams createParams( final Content source, final ContentPath targetParentPath, final InsertManualStrategy insertManualStrategy )
+    private ImportContentParams createImportParams( final Content source, final ContentPath targetParentPath,
+                                                    final InsertManualStrategy insertManualStrategy )
     {
-        final CreateContentParams.Builder builder = CreateContentParams.create();
+        final BinaryAttachments.Builder builder = BinaryAttachments.create();
 
-        builder.contentId( source.getId() ).
-            contentData( source.getData().copy() ).
-            extraDatas( source.getAllExtraData().copy() ).
-            type( source.getType() ).
-            owner( source.getOwner() ).
-            displayName( source.getDisplayName() ).
-            name( source.getName() ).
-            parent( targetParentPath ).
-            page( source.getPage() ).
-            requireValid( false ).
-            createSiteTemplateFolder( false ).
-            useParentLanguage( false ).
-            useDefaultOwner( false ).
-            inheritPermissions( source.inheritsPermissions() ).
-            inherit( Set.of( ContentInheritType.CONTENT, ContentInheritType.PARENT, ContentInheritType.NAME, ContentInheritType.SORT ) ).
-            originProject( ProjectName.from( sourceContext.getRepositoryId() ) ).
-            createAttachments( CreateAttachments.from( source.getAttachments().
-                stream().
-                map( attachment -> {
-                    final ByteSource binary = contentService.getBinary( source.getId(), attachment.getBinaryReference() );
+        source.getAttachments().
+            forEach( attachment -> {
+                final ByteSource binary = contentService.getBinary( source.getId(), attachment.getBinaryReference() );
+                builder.add( new BinaryAttachment( attachment.getBinaryReference(), binary ) );
+            } );
 
-                    return CreateAttachment.create().
-                        name( attachment.getName() ).
-                        label( attachment.getLabel() ).
-                        mimeType( attachment.getMimeType() ).
-                        text( attachment.getTextContent() ).
-                        byteSource( binary ).
-                        build();
-                } ).collect( Collectors.toSet() ) ) ).
-            childOrder( source.getChildOrder() ).
-            language( source.getLanguage() ).
-            workflowInfo( source.getWorkflowInfo() ).
-            manualOrderValue( source.getManualOrderValue() ).
-            insertManualStrategy( insertManualStrategy );
-
-        if ( source instanceof Site )
-        {
-            final Site site = (Site) source;
-
-            final PropertyTree data = source.getData().copy();
-            data.setString( "description", site.getDescription() );
-
-            new SiteConfigsDataSerializer().toProperties( site.getSiteConfigs(), data.getRoot() );
-        }
-
-        return builder.build();
+        return ImportContentParams.create().
+            importContent( source ).
+            parentPath( targetParentPath ).
+            binaryAttachments( builder.build() ).
+            inherit( EnumSet.allOf( ContentInheritType.class ) ).
+            importPermissions( false ).
+            dryRun( false ).
+            insertManualStrategy( insertManualStrategy ).
+            build();
     }
 
     private void doSyncThumbnail( final Content sourceContent, final Content targetContent, final UpdateContentParams params )
@@ -560,7 +538,8 @@ public class ParentProjectSynchronizer
         {
             final Thumbnail sourceThumbnail = sourceContent.getThumbnail();
 
-            final ByteSource sourceBinary = sourceContext.callWith( () -> contentService.getBinary( sourceContent.getId(), sourceThumbnail.getBinaryReference() ) );
+            final ByteSource sourceBinary =
+                sourceContext.callWith( () -> contentService.getBinary( sourceContent.getId(), sourceThumbnail.getBinaryReference() ) );
 
             final CreateAttachment createThumbnail = CreateAttachment.create().
                 name( AttachmentNames.THUMBNAIL ).
@@ -586,7 +565,8 @@ public class ParentProjectSynchronizer
 
             final Attachment mediaAttachment = sourceMedia.getMediaAttachment();
 
-            final ByteSource sourceBinary = sourceContext.callWith( () -> contentService.getBinary( sourceMedia.getId(), mediaAttachment.getBinaryReference() ) );
+            final ByteSource sourceBinary =
+                sourceContext.callWith( () -> contentService.getBinary( sourceMedia.getId(), mediaAttachment.getBinaryReference() ) );
             final MediaInfo mediaInfo = sourceContext.callWith( () -> mediaInfoService.parseMediaInfo( sourceBinary ) );
 
             final ContentTypeName type = ContentTypeFromMimeTypeResolver.resolve( mediaAttachment.getMimeType() );

@@ -11,7 +11,6 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -69,10 +68,6 @@ public final class CreateContentParams
 
     private final Long manualOrderValue;
 
-    private final InsertManualStrategy insertManualStrategy;
-
-    private final boolean useDefaultOwner;
-
     private CreateContentParams( Builder builder )
     {
         this.data = builder.data;
@@ -99,8 +94,6 @@ public final class CreateContentParams
         this.originProject = builder.originProject;
         this.page = builder.page;
         this.manualOrderValue = builder.manualOrderValue;
-        this.insertManualStrategy = builder.insertManualStrategy;
-        this.useDefaultOwner = builder.useDefaultOwner;
     }
 
     public static Builder create()
@@ -233,16 +226,6 @@ public final class CreateContentParams
         return manualOrderValue;
     }
 
-    public InsertManualStrategy getInsertManualStrategy()
-    {
-        return insertManualStrategy;
-    }
-
-    public boolean useDefaultOwner()
-    {
-        return useDefaultOwner;
-    }
-
     public static final class Builder
     {
         private ContentId contentId;
@@ -293,10 +276,6 @@ public final class CreateContentParams
 
         private Long manualOrderValue;
 
-        private InsertManualStrategy insertManualStrategy;
-
-        private boolean useDefaultOwner = true;
-
         private Builder()
         {
         }
@@ -325,8 +304,6 @@ public final class CreateContentParams
             this.originProject = source.originProject;
             this.page = source.page;
             this.manualOrderValue = source.manualOrderValue;
-            this.insertManualStrategy = source.insertManualStrategy;
-            this.useDefaultOwner = source.useDefaultOwner;
         }
 
         public Builder contentId( final ContentId contentId )
@@ -477,18 +454,6 @@ public final class CreateContentParams
         public Builder manualOrderValue( final Long manualOrderValue )
         {
             this.manualOrderValue = manualOrderValue;
-            return this;
-        }
-
-        public Builder insertManualStrategy( final InsertManualStrategy insertManualStrategy )
-        {
-            this.insertManualStrategy = insertManualStrategy;
-            return this;
-        }
-
-        public Builder useDefaultOwner( final boolean useDefaultOwner )
-        {
-            this.useDefaultOwner = useDefaultOwner;
             return this;
         }
 
