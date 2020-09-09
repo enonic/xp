@@ -147,7 +147,7 @@ public class ContentDataSerializer
 
         final Content content = params.getEditedContent();
 
-        addMetadata( params, contentAsData, content );
+        addMetadata( contentAsData, content, params.getModifier() );
         contentAsData.addSet( DATA, content.getData().getRoot().copy( contentAsData.getTree() ) );
 
         if ( content.hasExtraData() )
@@ -167,6 +167,37 @@ public class ContentDataSerializer
         addProcessedReferences( contentAsData, content.getProcessedReferences() );
 
         return newPropertyTree;
+    }
+
+    public PropertyTree toNodeData( final Content content )
+    {
+        final PropertyTree propertyTree = new PropertyTree();
+
+        final PropertySet contentAsData = propertyTree.getRoot();
+
+        addMetadata( contentAsData, content, content.getModifier() );
+
+        contentAsData.addSet( DATA, content.getData().getRoot().copy( contentAsData.getTree() ) );
+        final ExtraDatas extraData = content.getAllExtraData();
+
+        if ( extraData != null && !extraData.isEmpty() )
+        {
+            extraDataSerializer.toData( extraData, contentAsData );
+        }
+
+        if ( content.getPage() != null )
+        {
+            pageDataSerializer.toData( content.getPage(), contentAsData );
+        }
+
+        if ( content.getAttachments() != null )
+        {
+            applyAttachmentsAsData( content.getAttachments(), contentAsData );
+        }
+
+        addProcessedReferences( contentAsData, content.getProcessedReferences() );
+
+        return propertyTree;
     }
 
     public void toPageData( final Page page, final PropertySet parent )
@@ -208,7 +239,7 @@ public class ContentDataSerializer
         return builder;
     }
 
-    private void addMetadata( final UpdateContentTranslatorParams params, final PropertySet contentAsData, final Content content )
+    private void addMetadata( final PropertySet contentAsData, final Content content, final PrincipalKey modifier )
     {
         contentAsData.setBoolean( ContentPropertyNames.VALID, content.isValid() );
         contentAsData.ifNotNull().addString( DISPLAY_NAME, content.getDisplayName() );
@@ -216,7 +247,7 @@ public class ContentDataSerializer
         contentAsData.ifNotNull().addString( OWNER, content.getOwner() != null ? content.getOwner().toString() : null );
         contentAsData.ifNotNull().addString( LANGUAGE, content.getLanguage() != null ? content.getLanguage().toLanguageTag() : null );
         contentAsData.ifNotNull().addInstant( MODIFIED_TIME, content.getModifiedTime() );
-        contentAsData.ifNotNull().addString( MODIFIER, params.getModifier().toString() );
+        contentAsData.ifNotNull().addString( MODIFIER, modifier.toString() );
         contentAsData.ifNotNull().addString( CREATOR, content.getCreator().toString() );
         contentAsData.ifNotNull().addInstant( CREATED_TIME, content.getCreatedTime() );
         contentAsData.ifNotNull().addString( ORIGIN_PROJECT,

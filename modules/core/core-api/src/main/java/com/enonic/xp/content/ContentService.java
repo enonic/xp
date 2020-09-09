@@ -124,5 +124,8 @@ public interface ContentService
 
     Content getByPathAndVersionId( final ContentPath contentPath, final ContentVersionId versionId );
 
+    ImportContentResult importContent( final ImportContentParams params );
+
     void restoreInherit( final ResetContentInheritParams params );
+
 }
