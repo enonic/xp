@@ -58,7 +58,7 @@ class JettyActivatorTest
 
         when( this.bundleContext.getBundle() ).thenReturn( bundle );
 
-        this.config = new JettyConfigMockFactory().newConfig();
+        this.config = mock( JettyConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( this.config.http_xp_port() ).thenReturn( 0 );
     }
 

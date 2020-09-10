@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
+import static org.mockito.Mockito.mock;
+
 public abstract class JettyTestSupport
 {
     protected JettyTestServer server;
@@ -25,7 +27,7 @@ public abstract class JettyTestSupport
     public final void startServer()
         throws Exception
     {
-        this.config = new JettyConfigMockFactory().newConfig();
+        this.config = mock( JettyConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         this.server = new JettyTestServer();
         this.server.start();
         configure();
