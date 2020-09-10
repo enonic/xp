@@ -25,9 +25,11 @@ import com.codahale.metrics.jetty9.InstrumentedHandler;
 import com.codahale.metrics.jetty9.InstrumentedQueuedThreadPool;
 
 import com.enonic.xp.core.internal.Dictionaries;
+import com.enonic.xp.server.RunMode;
 import com.enonic.xp.util.Metrics;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.dispatch.DispatchServlet;
+import com.enonic.xp.web.jetty.impl.configurator.ErrorHandlerConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.GZipConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.HttpConfigurator;
 import com.enonic.xp.web.jetty.impl.configurator.MultipartConfigurator;
@@ -123,6 +125,7 @@ public final class JettyActivator
         jettySessionStoreConfigurator.configure( server );
         new HttpConfigurator().configure( this.config, server );
         new RequestLogConfigurator().configure( this.config, server );
+        new ErrorHandlerConfigurator().configure( RunMode.get(), server );
 
         Metrics.removeAll( Handler.class );
         final InstrumentedHandler instrumentedHandler = new InstrumentedHandler( Metrics.registry(), Handler.class.getName() );
