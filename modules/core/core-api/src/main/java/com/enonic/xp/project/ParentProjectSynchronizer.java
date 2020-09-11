@@ -22,6 +22,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.FindContentByParentParams;
@@ -187,14 +188,29 @@ public class ParentProjectSynchronizer
         {
             if ( needToRename( sourceContent, targetContent ) )
             {
+                final ContentName newName =
+                    ContentName.from( buildNewPath( targetContent.getParentPath(), sourceContent.getName() ).getName() );
+
                 return contentService.rename( RenameContentParams.create().
                     contentId( targetContent.getId() ).
-                    newName( sourceContent.getName() ).
-                    stopInherit( false ).
+                    newName( newName ).
+                    stopInherit( !newName.equals( sourceContent.getName() ) ).
                     build() );
             }
         }
         return targetContent;
+    }
+
+    private ContentPath buildNewPath( final ContentPath parentPath, final ContentName name )
+    {
+        String newName = name.toString();
+
+        while ( contentService.contentExists( ContentPath.from( parentPath, newName ) ) )
+        {
+            newName = NameValueResolver.name( newName );
+        }
+
+        return ContentPath.from( parentPath, newName );
     }
 
     public Content syncMoved( final ContentId contentId )
@@ -371,18 +387,17 @@ public class ParentProjectSynchronizer
                         if ( sourceContent.getParentPath().isRoot() )
                         {
                             return contentService.importContent(
-                                sourceContext.callWith( () -> createImportParams( sourceContent, ContentPath.ROOT, null ) ) ).
+                                createImportParams( sourceContent, buildNewPath( ContentPath.ROOT, sourceContent.getName() ), null ) ).
                                 getContent();
                         }
 
                         if ( contentService.contentExists( parentId ) )
                         {
                             final Content targetParent = contentService.getById( parentId );
-                            return contentService.importContent( sourceContext.callWith(
-                                () -> createImportParams( sourceContent, targetParent.getPath(),
-                                                          targetParent.getChildOrder().isManualOrder()
-                                                              ? InsertManualStrategy.MANUAL
-                                                              : null ) ) ).
+
+                            return contentService.importContent(
+                                createImportParams( sourceContent, buildNewPath( targetParent.getPath(), sourceContent.getName() ),
+                                                    targetParent.getChildOrder().isManualOrder() ? InsertManualStrategy.MANUAL : null ) ).
                                 getContent();
                         }
 
@@ -510,22 +525,30 @@ public class ParentProjectSynchronizer
             editor( edit -> edit.manualOrderValue = source.getManualOrderValue() );
     }
 
-    private ImportContentParams createImportParams( final Content source, final ContentPath targetParentPath,
+    private ImportContentParams createImportParams( final Content source, final ContentPath targetPath,
                                                     final InsertManualStrategy insertManualStrategy )
     {
         final BinaryAttachments.Builder builder = BinaryAttachments.create();
 
         source.getAttachments().
             forEach( attachment -> {
-                final ByteSource binary = contentService.getBinary( source.getId(), attachment.getBinaryReference() );
+                final ByteSource binary =
+                    sourceContext.callWith( () -> contentService.getBinary( source.getId(), attachment.getBinaryReference() ) );
                 builder.add( new BinaryAttachment( attachment.getBinaryReference(), binary ) );
             } );
 
+        final EnumSet<ContentInheritType> inheritTypes = EnumSet.allOf( ContentInheritType.class );
+
+        if ( !source.getName().toString().equals( targetPath.getName() ) )
+        {
+            inheritTypes.remove( ContentInheritType.NAME );
+        }
+
         return ImportContentParams.create().
             importContent( source ).
-            parentPath( targetParentPath ).
+            targetPath( targetPath ).
             binaryAttachments( builder.build() ).
-            inherit( EnumSet.allOf( ContentInheritType.class ) ).
+            inherit( inheritTypes ).
             importPermissions( false ).
             dryRun( false ).
             insertManualStrategy( insertManualStrategy ).

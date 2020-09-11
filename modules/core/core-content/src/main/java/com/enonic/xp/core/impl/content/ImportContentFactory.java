@@ -45,9 +45,8 @@ public class ImportContentFactory
 
         return Node.create().
             id( NodeId.from( params.getContent().getId().toString() ) ).
-            parentPath( ContentNodeHelper.translateContentPathToNodePath(
-                params.getParentPath() != null ? params.getParentPath() : params.getContent().getParentPath() ) ).
-            name( NodeName.from( params.getContent().getName().toString() ) ).
+            parentPath( ContentNodeHelper.translateContentPathToNodePath( params.getTargetPath().getParentPath() ) ).
+            name( NodeName.from( params.getTargetPath().getName() ) ).
             data( nodeData ).
             childOrder( params.getContent().getChildOrder() ).
             manualOrderValue( params.getContent().getManualOrderValue() ).
