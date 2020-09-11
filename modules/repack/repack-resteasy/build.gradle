@@ -9,7 +9,7 @@ dependencies {
         exclude group: 'com.github.stephenc.jcip'
     }
     compile "jakarta.annotation:jakarta.annotation-api:${jakartaAnnotationApiVersion}"
-    compile 'javax.ws.rs:javax.ws.rs-api:2.1.1'
+    compile "jakarta.ws.rs:jakarta.ws.rs-api:${jaxrsApiVersion}"
 }
 
 jar {

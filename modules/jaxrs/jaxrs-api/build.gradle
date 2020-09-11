@@ -2,7 +2,7 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':web:web-api' )
-    compile 'javax.ws.rs:javax.ws.rs-api:2.1.1'
+    compile "jakarta.ws.rs:jakarta.ws.rs-api:${jaxrsApiVersion}"
     compile "jakarta.annotation:jakarta.annotation-api:${jakartaAnnotationApiVersion}"
 }
 
