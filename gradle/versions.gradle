@@ -3,7 +3,7 @@ ext {
     felixVersion = '6.0.3'
     jettyVersion = '9.4.29.v20200521'
     jacksonVersion = '2.10.3'
-    junitJupiterVersion = '5.6.0'
+    junitJupiterVersion = '5.6.2'
     dropwizardMetricsVersion = '4.1.9'
     commonsLangVersion = '2.6'
     commonsIoVersion = '2.6'
@@ -13,5 +13,5 @@ ext {
     tikaVersion = '1.23'
     resteasyVersion = '3.11.0.Final'
     hazelcastVersion = '3.12.7'
-    mockitoVersion = '3.3.1'
+    mockitoVersion = '3.5.10'
 }
