@@ -1,7 +1,9 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
-    compile 'com.google.guava:guava:26.0-jre'
+    compile ('com.google.guava:guava:26.0-jre') {
+        exclude group: 'com.google.code.findbugs'
+    }
     compile "commons-lang:commons-lang:${commonsLangVersion}"
     compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
