@@ -22,9 +22,8 @@ addBundle( "com.sun.mail:jakarta.mail:${jakartaMailVersion}", 4 )
 addBundle( "jakarta.annotation:jakarta.annotation-api:${jakartaAnnotationApiVersion}", 4 )
 addBundle( "jakarta.validation:jakarta.validation-api:2.0.2", 4 )
 
-addBundle( 'javax.xml.bind:jaxb-api:2.2.11', 4 )
-addBundle( 'com.sun.xml.bind:jaxb-core:2.2.11', 4 )
-addBundle( 'com.sun.xml.bind:jaxb-impl:2.2.11', 4 )
+addBundle( 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.3', 4 )
+addBundle( 'com.sun.xml.bind:jaxb-osgi:2.3.3', 4 )
 
 // Core bundles
 addBundle( 'org.apache.felix:org.apache.felix.metatype:1.2.2', 5 )
