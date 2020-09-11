@@ -3,6 +3,8 @@ package com.enonic.xp.content;
 import java.util.Collection;
 import java.util.EnumSet;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.InsertManualStrategy;
 
@@ -12,7 +14,7 @@ public class ImportContentParams
 
     private final Content content;
 
-    private final ContentPath parentPath;
+    private final ContentPath targetPath;
 
     private final InsertManualStrategy insertManualStrategy;
 
@@ -26,7 +28,7 @@ public class ImportContentParams
     {
         binaryAttachments = builder.binaryAttachments;
         content = builder.content;
-        parentPath = builder.parentPath;
+        targetPath = builder.targetPath;
         insertManualStrategy = builder.insertManualStrategy;
         inherit = builder.inherit;
         dryRun = builder.dryRun;
@@ -43,9 +45,9 @@ public class ImportContentParams
         return content;
     }
 
-    public ContentPath getParentPath()
+    public ContentPath getTargetPath()
     {
-        return parentPath;
+        return targetPath;
     }
 
     public InsertManualStrategy getInsertManualStrategy()
@@ -79,7 +81,7 @@ public class ImportContentParams
 
         private Content content;
 
-        private ContentPath parentPath;
+        private ContentPath targetPath;
 
         private InsertManualStrategy insertManualStrategy;
 
@@ -105,9 +107,9 @@ public class ImportContentParams
             return this;
         }
 
-        public Builder parentPath( ContentPath parentPath )
+        public Builder targetPath( ContentPath targetPath )
         {
-            this.parentPath = parentPath;
+            this.targetPath = targetPath;
             return this;
         }
 
@@ -136,8 +138,15 @@ public class ImportContentParams
             return this;
         }
 
+        private void validate()
+        {
+            Preconditions.checkNotNull( this.content, "content cannot be null" );
+            Preconditions.checkNotNull( this.targetPath, "targetPath cannot be null" );
+        }
+
         public ImportContentParams build()
         {
+            validate();
             return new ImportContentParams( this );
         }
     }
