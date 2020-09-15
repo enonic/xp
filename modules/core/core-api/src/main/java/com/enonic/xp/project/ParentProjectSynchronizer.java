@@ -458,7 +458,6 @@ public class ParentProjectSynchronizer
             !Objects.equals( sourceContent.getPage(), targetContent.getPage() ) ||
             !Objects.equals( sourceContent.getThumbnail(), targetContent.getThumbnail() ) ||
             !Objects.equals( sourceContent.getProcessedReferences(), targetContent.getProcessedReferences() ) ||
-            sourceContent.inheritsPermissions() != targetContent.inheritsPermissions() ||
             sourceContent.isValid() != targetContent.isValid();
     }
 
@@ -490,8 +489,6 @@ public class ParentProjectSynchronizer
                 edit.displayName = source.getDisplayName();
                 edit.owner = source.getOwner();
                 edit.language = source.getLanguage();
-                edit.inheritPermissions = source.inheritsPermissions();
-                edit.permissions = source.getPermissions();
                 edit.workflowInfo = source.getWorkflowInfo();
                 edit.page = source.getPage();
                 edit.thumbnail = source.getThumbnail();
