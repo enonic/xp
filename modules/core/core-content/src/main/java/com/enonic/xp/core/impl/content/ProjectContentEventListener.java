@@ -141,6 +141,9 @@ public class ProjectContentEventListener
                         case "node.moved":
                             parentProjectSynchronizer.syncMoved( contentId );
                             break;
+                        case "node.deleted":
+                            parentProjectSynchronizer.syncDeleted( contentId );
+                            break;
                     }
 
                 } );

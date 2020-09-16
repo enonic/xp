@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.ImportContentParams;
@@ -94,8 +96,10 @@ public class ParentProjectSynchronizer
 
     public void syncRoot()
     {
-        final Content root = sourceContext.callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
-        this.syncWithChildren( root.getId() );
+        final Content sourceRoot = sourceContext.callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
+
+        this.syncWithChildren( sourceRoot.getId() );
+        this.cleanDeletedContent();
     }
 
     public void syncWithChildren( final ContentId contentId )
@@ -136,6 +140,35 @@ public class ParentProjectSynchronizer
                         {
                             queue.offer( content );
                         }
+                    }
+                }
+            }
+        } );
+    }
+
+    private void cleanDeletedContent()
+    {
+        targetContext.runWith( () -> {
+            final Content targetRoot = contentService.getByPath( ContentPath.ROOT );
+            final Queue<Content> queue = new LinkedList( Set.of( targetRoot ) );
+
+            while ( queue.size() > 0 )
+            {
+                final Content currentContent = queue.poll();
+                this.doSyncDeleted( currentContent );
+
+                if ( currentContent.hasChildren() )
+                {
+                    final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create().
+                        parentId( currentContent.getId() ).
+                        recursive( false ).
+                        childOrder( currentContent.getChildOrder() ).
+                        size( -1 ).
+                        build() );
+
+                    for ( final Content content : result.getContents() )
+                    {
+                        queue.offer( content );
                     }
                 }
             }
@@ -313,6 +346,33 @@ public class ParentProjectSynchronizer
         return targetContent;
     }
 
+    public boolean syncDeleted( final ContentId contentId )
+    {
+        return targetContext.callWith( () -> {
+            final Content targetContent = contentService.getById( contentId );
+            return doSyncDeleted( targetContent );
+        } );
+
+    }
+
+    private boolean doSyncDeleted( final Content targetContent )
+    {
+        if ( isToSyncDelete( targetContent ) )
+        {
+            if ( needToDelete( targetContent ) )
+            {
+                final DeleteContentParams params = DeleteContentParams.create().
+                    contentPath( targetContent.getPath() ).
+                    build();
+
+                return contentService.deleteWithoutFetch( params ).
+                    getDeletedContents().
+                    isNotEmpty();
+            }
+        }
+        return false;
+    }
+
     public Content syncManualOrderUpdated( final ContentId contentId )
     {
         return sourceContext.callWith( () -> {
@@ -429,6 +489,11 @@ public class ParentProjectSynchronizer
         return targetContent.getInherit().contains( ContentInheritType.SORT );
     }
 
+    private boolean isToSyncDelete( final Content targetContent )
+    {
+        return targetContent.getInherit().contains( ContentInheritType.CONTENT );
+    }
+
     private boolean isToSyncManualOrderUpdated( final Content sourceContent, final Content targetContent )
     {
         return targetContext.callWith( () -> {
@@ -475,6 +540,12 @@ public class ParentProjectSynchronizer
     private boolean needToUpdateManualOrderValue( final Content sourceContent, final Content targetContent )
     {
         return !Objects.equals( targetContent.getManualOrderValue(), sourceContent.getManualOrderValue() );
+    }
+
+    private boolean needToDelete( final Content targetContent )
+    {
+        return sourceContext.callWith( () -> !contentService.contentExists( targetContent.getId() ) ) &&
+            contentService.getDependencies( targetContent.getId() ).getInbound().isEmpty() && !targetContent.hasChildren();
     }
 
     private UpdateContentParams updateParams( final Content source )
