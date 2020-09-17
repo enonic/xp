@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
 
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
@@ -25,6 +24,7 @@ import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.server.RunMode;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
@@ -36,9 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.AdditionalMatchers.not;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ExceptionRendererImplTest
+class ExceptionRendererImplTest
 {
     private ExceptionRendererImpl renderer;
 
@@ -53,25 +54,25 @@ public class ExceptionRendererImplTest
     private MockPostProcessor postProcessor;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
-        this.resourceService = Mockito.mock( ResourceService.class );
-        this.contentService = Mockito.mock( ContentService.class );
-        this.errorHandlerScriptFactory = Mockito.mock( ErrorHandlerScriptFactory.class );
+        this.resourceService = mock( ResourceService.class );
+        this.contentService = mock( ContentService.class );
+        this.errorHandlerScriptFactory = mock( ErrorHandlerScriptFactory.class );
         this.postProcessor = new MockPostProcessor();
-        this.renderer = new ExceptionRendererImpl();
+        this.renderer = new ExceptionRendererImpl( RunMode.DEV );
         this.renderer.setResourceService( resourceService );
         this.renderer.setContentService( contentService );
         this.renderer.setErrorHandlerScriptFactory( errorHandlerScriptFactory );
         this.renderer.setPostProcessor( this.postProcessor );
         this.request = new PortalRequest();
 
-        final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
+        final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
         this.request.setRawRequest( rawRequest );
     }
 
     @Test
-    public void render_json()
+    void render_json()
     {
         final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.NOT_FOUND, "Custom message" ) );
         assertEquals( HttpStatus.NOT_FOUND, res.getStatus() );
@@ -82,7 +83,7 @@ public class ExceptionRendererImplTest
     }
 
     @Test
-    public void render_html()
+    void render_html()
     {
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
 
@@ -99,7 +100,7 @@ public class ExceptionRendererImplTest
     }
 
     @Test
-    public void render_json_withCause()
+    void render_json_withCause()
     {
         final RuntimeException cause = new RuntimeException( "Custom message" );
         final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.BAD_REQUEST, cause ) );
@@ -112,7 +113,7 @@ public class ExceptionRendererImplTest
     }
 
     @Test
-    public void render_html_withCause()
+    void render_html_withCause()
     {
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
 
@@ -130,7 +131,7 @@ public class ExceptionRendererImplTest
     }
 
     @Test
-    public void render_custom_error_with_site_context()
+    void render_custom_error_with_site_context()
     {
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
         final Site site = newSite();
@@ -141,7 +142,7 @@ public class ExceptionRendererImplTest
                 HttpStatus.BAD_REQUEST ).postProcess( false ).build();
 
         when( this.errorHandlerScriptFactory.errorScript( errorResource ) ).thenReturn( errorHandlerScript );
-        final Resource resource = Mockito.mock( Resource.class );
+        final Resource resource = mock( Resource.class );
         when( resource.exists() ).thenReturn( true );
         when( this.resourceService.getResource( errorResource ) ).thenReturn( resource );
 
@@ -154,7 +155,7 @@ public class ExceptionRendererImplTest
     }
 
     @Test
-    public void render_custom_error_for_404_in_site_path()
+    void render_custom_error_for_404_in_site_path()
     {
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
         this.request.setContentPath( ContentPath.from( "/mysite/some/long/path" ) );
@@ -170,7 +171,7 @@ public class ExceptionRendererImplTest
                 HttpStatus.NOT_FOUND ).postProcess( false ).build();
 
         when( this.errorHandlerScriptFactory.errorScript( errorResource ) ).thenReturn( errorHandlerScript );
-        final Resource resource = Mockito.mock( Resource.class );
+        final Resource resource = mock( Resource.class );
         when( resource.exists() ).thenReturn( true );
         when( this.resourceService.getResource( errorResource ) ).thenReturn( resource );
 
@@ -183,7 +184,7 @@ public class ExceptionRendererImplTest
     }
 
     @Test
-    public void render_default_error_page_when_error_in_custom_handler()
+    void render_default_error_page_when_error_in_custom_handler()
     {
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
         final Site site = newSite();
@@ -194,7 +195,7 @@ public class ExceptionRendererImplTest
         };
 
         when( this.errorHandlerScriptFactory.errorScript( errorResource ) ).thenReturn( errorHandlerScript );
-        final Resource resource = Mockito.mock( Resource.class );
+        final Resource resource = mock( Resource.class );
         when( resource.exists() ).thenReturn( true );
         when( this.resourceService.getResource( errorResource ) ).thenReturn( resource );
 
@@ -207,7 +208,7 @@ public class ExceptionRendererImplTest
     }
 
     @Test
-    public void customErrorWithPostProcessing()
+    void customErrorWithPostProcessing()
     {
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
         final Site site = newSite();
@@ -217,7 +218,7 @@ public class ExceptionRendererImplTest
             "<h1>Custom message page</h1><!--#COMPONENT module:myPart -->" ).status( HttpStatus.BAD_REQUEST ).postProcess( true ).build();
 
         when( this.errorHandlerScriptFactory.errorScript( errorResource ) ).thenReturn( errorHandlerScript );
-        final Resource resource = Mockito.mock( Resource.class );
+        final Resource resource = mock( Resource.class );
         when( resource.exists() ).thenReturn( true );
         when( this.resourceService.getResource( errorResource ) ).thenReturn( resource );
 
@@ -230,7 +231,8 @@ public class ExceptionRendererImplTest
     }
 
     @Test
-    public void testRender_RenderMode_Admin() {
+    void testRender_RenderMode_Admin()
+    {
         this.request.setMode( RenderMode.ADMIN );
         this.request.setApplicationKey( ApplicationKey.from( "myapplication-key" ) );
 
@@ -257,5 +259,4 @@ public class ExceptionRendererImplTest
         site.parentPath( ContentPath.ROOT );
         return site.build();
     }
-
 }

@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.exception;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.osgi.service.component.annotations.Component;
@@ -28,6 +29,7 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.server.RunMode;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.web.HttpStatus;
@@ -41,7 +43,6 @@ import static com.enonic.xp.portal.RenderMode.EDIT;
 public final class ExceptionRendererImpl
     implements ExceptionRenderer
 {
-
     private static final Logger LOG = LoggerFactory.getLogger( ExceptionRendererImpl.class );
 
     private static final String DEFAULT_HANDLER = "handleError";
@@ -52,7 +53,7 @@ public final class ExceptionRendererImpl
 
     private static final String GENERIC_ERROR_SCRIPT_PATH = "error/error.js";
 
-    private static final String[] SITE_ERROR_SCRIPT_PATHS = {SITE_ERROR_SCRIPT_PATH, GENERIC_ERROR_SCRIPT_PATH};
+    private static final List<String> SITE_ERROR_SCRIPT_PATHS = List.of( SITE_ERROR_SCRIPT_PATH, GENERIC_ERROR_SCRIPT_PATH );
 
     private ResourceService resourceService;
 
@@ -63,6 +64,18 @@ public final class ExceptionRendererImpl
     private IdProviderControllerService idProviderControllerService;
 
     private PostProcessor postProcessor;
+
+    private final RunMode runMode;
+
+    public ExceptionRendererImpl( final RunMode runMode )
+    {
+        this.runMode = runMode;
+    }
+
+    public ExceptionRendererImpl()
+    {
+        this( RunMode.get() );
+    }
 
     @Override
     public PortalResponse render( final WebRequest webRequest, final WebException cause )
@@ -278,17 +291,6 @@ public final class ExceptionRendererImpl
         return null;
     }
 
-    private String[] getSiteErrorScriptPaths()
-    {
-        return new String[]{SITE_ERROR_SCRIPT_PATH, GENERIC_ERROR_SCRIPT_PATH};
-    }
-
-    private String[] getApplicationErrorScriptPaths()
-    {
-        return new String[]{GENERIC_ERROR_SCRIPT_PATH};
-    }
-
-
     private PortalResponse renderIdProviderError( final PortalRequest req, final WebException cause )
     {
         if ( isUnauthorizedError( cause.getStatus() ) )
@@ -319,6 +321,7 @@ public final class ExceptionRendererImpl
     private ExceptionInfo toErrorInfo( final WebException cause )
     {
         return ExceptionInfo.create( cause.getStatus() ).
+            runMode( runMode ).
             cause( cause ).
             resourceService( this.resourceService );
     }
