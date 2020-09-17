@@ -11,7 +11,7 @@ import com.enonic.xp.resource.ResourceService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ErrorPageBuilderTest
+public class ErrorPageRichBuilderTest
 {
     private ResourceService resourceService;
 
@@ -32,7 +32,7 @@ public class ErrorPageBuilderTest
         final Exception cause = new Exception();
         cause.setStackTrace( traceElements );
 
-        final ErrorPageBuilder builder = new ErrorPageBuilder().
+        final ErrorPageRichBuilder builder = new ErrorPageRichBuilder().
             cause( cause ).
             description( "<\"description\" \'with\' " + " escapable  text/> && </>" ).
             resourceService( resourceService ).
@@ -53,7 +53,7 @@ public class ErrorPageBuilderTest
         final Exception cause = new Exception();
         cause.setStackTrace( traceElements );
 
-        final ErrorPageBuilder builder = new ErrorPageBuilder().
+        final ErrorPageRichBuilder builder = new ErrorPageRichBuilder().
             cause( cause ).
             description( "desc" ).
             resourceService( resourceService ).
@@ -79,7 +79,7 @@ public class ErrorPageBuilderTest
         final Exception cause = new Exception();
         cause.setStackTrace( traceElements );
 
-        final ErrorPageBuilder builder = new ErrorPageBuilder().
+        final ErrorPageRichBuilder builder = new ErrorPageRichBuilder().
             cause( cause ).
             description( "desc" ).
             resourceService( resourceService ).
