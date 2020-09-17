@@ -365,8 +365,12 @@ public class ParentProjectSynchronizer
     public boolean syncDeleted( final ContentId contentId )
     {
         return targetContext.callWith( () -> {
-            final Content targetContent = contentService.getById( contentId );
-            return doSyncDeleted( targetContent );
+            if ( contentService.contentExists( contentId ) )
+            {
+                final Content targetContent = contentService.getById( contentId );
+                return doSyncDeleted( targetContent );
+            }
+            return false;
         } );
 
     }
@@ -379,6 +383,7 @@ public class ParentProjectSynchronizer
             {
                 final DeleteContentParams params = DeleteContentParams.create().
                     contentPath( targetContent.getPath() ).
+                    deleteOnline( true ).
                     build();
 
                 return contentService.deleteWithoutFetch( params ).
