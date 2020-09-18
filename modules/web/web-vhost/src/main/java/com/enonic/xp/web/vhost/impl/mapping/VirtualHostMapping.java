@@ -1,19 +1,18 @@
 package com.enonic.xp.web.vhost.impl.mapping;
 
-import javax.servlet.http.HttpServletRequest;
-
-import com.google.common.base.Splitter;
-
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.impl.VirtualHostInternalHelper;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class VirtualHostMapping
-    implements VirtualHost, Comparable<VirtualHostMapping>
+    implements VirtualHost
 {
     private static final String DEFAULT_HOST = "localhost";
+
+    private static final String DEFAULT_PATH = "/";
 
     private final String name;
 
@@ -28,9 +27,9 @@ public final class VirtualHostMapping
     public VirtualHostMapping( final String name )
     {
         this.name = name;
-        setHost( null );
-        setSource( null );
-        setTarget( null );
+        this.host = DEFAULT_HOST;
+        this.source = DEFAULT_PATH;
+        this.target = DEFAULT_PATH;
     }
 
     @Override
@@ -76,87 +75,16 @@ public final class VirtualHostMapping
 
     public void setSource( final String value )
     {
-        this.source = normalizePath( value );
+        this.source = VirtualHostInternalHelper.normalizePath( value );
     }
 
     public void setTarget( final String value )
     {
-        this.target = normalizePath( value );
+        this.target = VirtualHostInternalHelper.normalizePath( value );
     }
 
     public void setVirtualHostIdProvidersMapping( final VirtualHostIdProvidersMapping virtualHostIdProvidersMapping )
     {
         this.virtualHostIdProvidersMapping = virtualHostIdProvidersMapping;
-    }
-
-    public boolean matches( final HttpServletRequest req )
-    {
-        return matchesHost( req ) && matchesSource( req );
-    }
-
-    private boolean matchesHost( final HttpServletRequest req )
-    {
-        final String serverName = req.getServerName();
-        return this.host.equalsIgnoreCase( serverName );
-    }
-
-    private boolean matchesSource( final HttpServletRequest req )
-    {
-        final String actualPath = req.getRequestURI();
-        return "/".equals( this.source ) || actualPath.equals( this.source ) || actualPath.startsWith( this.source + "/" );
-    }
-
-    public String getFullTargetPath( final HttpServletRequest req )
-    {
-        String path = req.getRequestURI();
-        if ( !"/".equals( this.source ) && path.startsWith( this.source ) )
-        {
-            path = path.substring( this.source.length() );
-        }
-
-        return normalizePath( this.target + path );
-    }
-
-    @Override
-    public int compareTo( final VirtualHostMapping o )
-    {
-        final int compared = compareHost( o.host );
-        if ( compared == 0 )
-        {
-            return compareSource( o.source );
-        }
-        else
-        {
-            return compared;
-        }
-    }
-
-    private int compareHost( final String host )
-    {
-        return this.host.compareTo( host );
-    }
-
-    private int compareSource( final String source )
-    {
-        final int compared = source.length() - this.source.length();
-        if ( compared == 0 )
-        {
-            return this.source.compareTo( source );
-        }
-        else
-        {
-            return compared;
-        }
-    }
-
-    private String normalizePath( final String value )
-    {
-        if ( isNullOrEmpty( value ) )
-        {
-            return "/";
-        }
-
-        final Iterable<String> parts = Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value );
-        return "/" + String.join( "/", parts );
     }
 }

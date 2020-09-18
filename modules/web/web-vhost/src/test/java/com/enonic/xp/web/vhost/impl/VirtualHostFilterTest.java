@@ -1,5 +1,8 @@
 package com.enonic.xp.web.vhost.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.FilterChain;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -10,9 +13,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
-import com.enonic.xp.web.vhost.impl.config.VirtualHostConfig;
+import com.enonic.xp.web.vhost.VirtualHostResolver;
+import com.enonic.xp.web.vhost.VirtualHostService;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
-import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMappings;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -23,13 +26,13 @@ public class VirtualHostFilterTest
 {
     private VirtualHostFilter filter;
 
-    private VirtualHostConfig config;
+    private VirtualHostService virtualHostService;
 
     private MockHttpServletRequest req;
 
     private MockHttpServletResponse res;
 
-    private VirtualHostMappings mappings;
+    private List<VirtualHost> virtualHosts;
 
     private FilterChain chain;
 
@@ -40,19 +43,21 @@ public class VirtualHostFilterTest
         this.res = new MockHttpServletResponse();
         this.chain = Mockito.mock( FilterChain.class );
 
-        this.mappings = new VirtualHostMappings();
-        this.config = Mockito.mock( VirtualHostConfig.class );
-        Mockito.when( this.config.getMappings() ).thenReturn( this.mappings );
+        this.virtualHosts = new ArrayList<>();
+        this.virtualHostService = Mockito.mock( VirtualHostService.class );
 
-        this.filter = new VirtualHostFilter();
-        this.filter.setConfig( this.config );
+        final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
+
+        Mockito.when( virtualHostService.getVirtualHosts() ).thenReturn( this.virtualHosts );
+
+        this.filter = new VirtualHostFilter( virtualHostService, virtualHostResolver );
     }
 
     @Test
     public void testNotEnabled()
         throws Exception
     {
-        Mockito.when( this.config.isEnabled() ).thenReturn( false );
+        Mockito.when( this.virtualHostService.isEnabled() ).thenReturn( false );
         this.filter.doFilter( this.req, this.res, this.chain );
 
         Mockito.verify( this.chain, Mockito.times( 1 ) ).doFilter( this.req, this.res );
@@ -62,7 +67,7 @@ public class VirtualHostFilterTest
     public void testNoMapping()
         throws Exception
     {
-        Mockito.when( this.config.isEnabled() ).thenReturn( true );
+        Mockito.when( this.virtualHostService.isEnabled() ).thenReturn( true );
         this.filter.doFilter( this.req, this.res, this.chain );
 
         Mockito.verify( this.chain, Mockito.times( 0 ) ).doFilter( this.req, this.res );
@@ -76,7 +81,7 @@ public class VirtualHostFilterTest
     {
         addMapping();
 
-        Mockito.when( this.config.isEnabled() ).thenReturn( true );
+        Mockito.when( this.virtualHostService.isEnabled() ).thenReturn( true );
         this.filter.doFilter( this.req, this.res, this.chain );
 
         Mockito.verify( this.chain, Mockito.times( 0 ) ).doFilter( this.req, this.res );
@@ -89,7 +94,7 @@ public class VirtualHostFilterTest
         throws Exception
     {
         addMapping();
-        Mockito.when( this.config.isEnabled() ).thenReturn( true );
+        Mockito.when( this.virtualHostService.isEnabled() ).thenReturn( true );
 
         this.req.setServerName( "enonic.com" );
         this.req.setRequestURI( "/rest/status" );
@@ -111,6 +116,6 @@ public class VirtualHostFilterTest
         mapping.setHost( "enonic.com" );
         mapping.setSource( "/rest" );
         mapping.setTarget( "/admin/rest" );
-        this.mappings.add( mapping );
+        this.virtualHosts.add( mapping );
     }
 }

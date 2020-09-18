@@ -1,0 +1,6 @@
+dependencies {
+    compileOnly project( ':web:web-api' )
+    compileOnly project( ':script:script-api' )
+
+    testImplementation project( ':tools:testing' )
+}

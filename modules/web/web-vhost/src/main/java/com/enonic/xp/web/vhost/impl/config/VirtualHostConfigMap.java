@@ -1,6 +1,8 @@
 package com.enonic.xp.web.vhost.impl.config;
 
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -8,9 +10,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
-import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMappings;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -34,15 +36,15 @@ final class VirtualHostConfigMap
         return getBoolean( "enabled", false );
     }
 
-    public VirtualHostMappings buildMappings()
+    public List<VirtualHost> buildMappings()
     {
-        final VirtualHostMappings mappings = new VirtualHostMappings();
-        for ( final String name : findMappingNames() )
-        {
-            mappings.add( buildMapping( name ) );
-        }
-
-        return mappings;
+        return findMappingNames().stream().
+            map( this::buildMapping ).
+            sorted( Comparator.comparing( VirtualHost::getHost ).
+                thenComparing( VirtualHost::getSource,
+                               ( virtualHost, otherVirtualHost ) -> Integer.compare( otherVirtualHost.length(), virtualHost.length() ) ).
+                thenComparing( VirtualHost::getSource ) ).
+            collect( Collectors.toList() );
     }
 
     private VirtualHostMapping buildMapping( final String name )
@@ -108,7 +110,7 @@ final class VirtualHostConfigMap
         return value != null ? "true".equals( value ) : defValue;
     }
 
-    private Iterable<String> findMappingNames()
+    private Set<String> findMappingNames()
     {
         final Set<String> result = new HashSet<>();
 

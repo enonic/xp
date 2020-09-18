@@ -88,6 +88,7 @@ include 'lib:lib-admin'
 include 'lib:lib-cluster'
 include 'lib:lib-auditlog'
 include 'lib:lib-project'
+include 'lib:lib-vhost'
 
 include 'launcher:launcher-api'
 include 'launcher:launcher-impl'
