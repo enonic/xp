@@ -1,5 +1,6 @@
 package com.enonic.xp.web.vhost.impl.config;
 
+import java.util.List;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
@@ -7,22 +8,23 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMappings;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostService;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.web.vhost")
-public final class VirtualHostConfigImpl
-    implements VirtualHostConfig
+public final class VirtualHostServiceImpl
+    implements VirtualHostService
 {
-    private static final Logger LOG = LoggerFactory.getLogger( VirtualHostConfigImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( VirtualHostServiceImpl.class );
 
     private boolean enabled;
 
-    private VirtualHostMappings mappings;
+    private List<VirtualHost> virtualHosts;
 
-    public VirtualHostConfigImpl()
+    public VirtualHostServiceImpl()
     {
         this.enabled = false;
-        this.mappings = new VirtualHostMappings();
+        this.virtualHosts = List.of();
     }
 
     @Override
@@ -32,9 +34,9 @@ public final class VirtualHostConfigImpl
     }
 
     @Override
-    public VirtualHostMappings getMappings()
+    public List<VirtualHost> getVirtualHosts()
     {
-        return this.mappings;
+        return this.virtualHosts;
     }
 
     @Activate
@@ -42,7 +44,7 @@ public final class VirtualHostConfigImpl
     {
         final VirtualHostConfigMap configMap = new VirtualHostConfigMap( config );
         this.enabled = configMap.isEnabled();
-        this.mappings = configMap.buildMappings();
+        this.virtualHosts = List.copyOf( configMap.buildMappings() );
 
         if ( this.enabled )
         {

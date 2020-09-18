@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -15,8 +16,10 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
+import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
-import com.enonic.xp.web.vhost.impl.config.VirtualHostConfig;
+import com.enonic.xp.web.vhost.VirtualHostResolver;
+import com.enonic.xp.web.vhost.VirtualHostService;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
@@ -28,16 +31,26 @@ public final class VirtualHostFilter
 {
     private static final Logger LOG = LoggerFactory.getLogger( VirtualHostFilter.class );
 
-    private VirtualHostConfig config;
+    private VirtualHostService virtualHostConfigService;
+
+    private VirtualHostResolver virtualHostResolver;
+
+    @Activate
+    public VirtualHostFilter( @Reference final VirtualHostService virtualHostService,
+                              @Reference final VirtualHostResolver virtualHostResolver )
+    {
+        this.virtualHostConfigService = virtualHostService;
+        this.virtualHostResolver = virtualHostResolver;
+    }
 
     @Override
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
-        if ( config.isEnabled() )
+        if ( virtualHostConfigService.isEnabled() )
         {
-            final VirtualHostMapping virtualHostMapping = this.config.getMappings().resolve( req );
-            if ( virtualHostMapping == null )
+            final VirtualHost virtualHost = virtualHostResolver.resolveVirtualHost( req );
+            if ( virtualHost == null )
             {
                 LOG.warn(
                     "Virtual host mapping could not be resolved for host [" + req.getServerName() + "] and path [" + req.getRequestURI() +
@@ -46,8 +59,8 @@ public final class VirtualHostFilter
             }
             else
             {
-                VirtualHostHelper.setVirtualHost( req, virtualHostMapping );
-                final String targetPath = virtualHostMapping.getFullTargetPath( req );
+                VirtualHostHelper.setVirtualHost( req, virtualHost );
+                final String targetPath = VirtualHostInternalHelper.getFullTargetPath( virtualHost, req );
 
                 final RequestDispatcher dispatcher = req.getRequestDispatcher( targetPath );
                 dispatcher.forward( req, res );
@@ -76,9 +89,4 @@ public final class VirtualHostFilter
         return virtualHostMapping;
     }
 
-    @Reference
-    public void setConfig( final VirtualHostConfig config )
-    {
-        this.config = config;
-    }
 }
