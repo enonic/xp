@@ -8,9 +8,9 @@ public class ExportListenerImpl
 {
     private final ProgressReporter progressReporter;
 
-    private int total = 0;
+    private int total;
 
-    private int current = 0;
+    private long current;
 
     public ExportListenerImpl( final ProgressReporter progressReporter )
     {
@@ -20,8 +20,8 @@ public class ExportListenerImpl
     @Override
     public void nodeExported( final long count )
     {
-        current += count;
-        progressReporter.progress( current, total );
+        current = Math.addExact( current, count );
+        progressReporter.progress( Math.toIntExact( current ), total );
     }
 
     @Override

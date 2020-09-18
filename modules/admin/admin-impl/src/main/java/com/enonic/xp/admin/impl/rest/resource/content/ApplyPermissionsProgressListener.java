@@ -8,9 +8,9 @@ public final class ApplyPermissionsProgressListener
 {
     private final ProgressReporter progressReporter;
 
-    private int total = 0;
+    private int total;
 
-    private float progressCount = 0;
+    private long current;
 
     public ApplyPermissionsProgressListener( final ProgressReporter progressReporter )
     {
@@ -26,14 +26,14 @@ public final class ApplyPermissionsProgressListener
     @Override
     public void permissionsApplied( final int count )
     {
-        progressCount += count;
-        progressReporter.progress( Math.round( progressCount ), total );
+        current = Math.addExact( current, count );
+        progressReporter.progress( Math.toIntExact( current ), total );
     }
 
     @Override
     public void notEnoughRights( final int count )
     {
-        progressCount += count;
-        progressReporter.progress( Math.round( progressCount ), total );
+        current = Math.addExact( current, count );
+        progressReporter.progress( Math.toIntExact( current ), total );
     }
 }
