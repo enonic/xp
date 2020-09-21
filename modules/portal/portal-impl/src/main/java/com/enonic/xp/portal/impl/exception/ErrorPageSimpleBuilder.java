@@ -19,6 +19,7 @@ public class ErrorPageSimpleBuilder
         return this;
     }
 
+    @Override
     public String build()
     {
         final HtmlBuilder html = new HtmlBuilder();

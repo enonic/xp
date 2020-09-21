@@ -1,8 +1,6 @@
 package com.enonic.xp.launcher.impl.framework;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.IntConsumer;
 
 import org.junit.jupiter.api.Test;
@@ -22,7 +20,6 @@ class FrameworkLifecycleServiceTest
 
     @Test
     void singleCall()
-        throws Exception
     {
         int rnd = ThreadLocalRandom.current().nextInt();
 
@@ -36,8 +33,6 @@ class FrameworkLifecycleServiceTest
     @Test
     void multipleCalls()
     {
-        AtomicReference<CompletableFuture<Integer>> ref = new AtomicReference<>();
-
         final FrameworkLifecycleService frameworkLifecycleService = new FrameworkLifecycleService( consumer, Runnable::run );
 
         frameworkLifecycleService.accept( 1 );

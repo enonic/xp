@@ -83,6 +83,7 @@ public class ReindexRunnableTask
             return this;
         }
 
+        @Override
         public ReindexRunnableTask build()
         {
             return new ReindexRunnableTask( this );
