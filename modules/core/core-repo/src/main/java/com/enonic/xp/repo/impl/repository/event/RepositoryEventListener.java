@@ -1,5 +1,8 @@
 package com.enonic.xp.repo.impl.repository.event;
 
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,31 +14,28 @@ import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.RepositoryService;
 
+@Component(immediate = true)
 public class RepositoryEventListener
     implements EventListener
 {
     private static final Logger LOG = LoggerFactory.getLogger( RepositoryEventListener.class );
 
-    private RepositoryRestoredHandler repositoryRestoredHandler;
+    private final RepositoryRestoredHandler repositoryRestoredHandler;
 
-    private RepositoryInvalidateByIdHandler repositoryInvalidateByIdHandler;
+    private final RepositoryInvalidateByIdHandler repositoryInvalidateByIdHandler;
 
-    private RepositoryRestoreInitializedHandler repositoryRestoreInitializedHandler;
+    private final RepositoryRestoreInitializedHandler repositoryRestoreInitializedHandler;
 
-    private RepositoryEventListener( final Builder builder )
+    @Activate
+    public RepositoryEventListener( @Reference final RepositoryService repositoryService,
+                                    @Reference final NodeStorageService storageService )
     {
         this.repositoryRestoredHandler = RepositoryRestoredHandler.create().
-            repositoryService( builder.repositoryService ).
-            nodeStorageService( builder.storageService ).
+            repositoryService( repositoryService ).
+            nodeStorageService( storageService ).
             build();
-        this.repositoryInvalidateByIdHandler = new RepositoryInvalidateByIdHandler( builder.repositoryService, builder.storageService );
-        this.repositoryRestoreInitializedHandler =
-            new RepositoryRestoreInitializedHandler( builder.repositoryService, builder.storageService );
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
+        this.repositoryInvalidateByIdHandler = new RepositoryInvalidateByIdHandler( repositoryService, storageService );
+        this.repositoryRestoreInitializedHandler = new RepositoryRestoreInitializedHandler( repositoryService, storageService );
     }
 
     @Override
@@ -47,10 +47,7 @@ public class RepositoryEventListener
     @Override
     public void onEvent( final Event event )
     {
-        if ( event != null )
-        {
-            doHandleEvent( event );
-        }
+        doHandleEvent( event );
     }
 
     private void doHandleEvent( final Event event )
@@ -66,11 +63,6 @@ public class RepositoryEventListener
                 handleEventType( event, repositoryRestoreInitializedHandler );
                 break;
             case RepositoryEvents.UPDATED_EVENT_TYPE:
-                if ( !event.isLocalOrigin() )
-                {
-                    handleEventType( event, repositoryInvalidateByIdHandler );
-                }
-                break;
             case RepositoryEvents.DELETED_EVENT_TYPE:
                 if ( !event.isLocalOrigin() )
                 {
@@ -89,34 +81,6 @@ public class RepositoryEventListener
         catch ( Exception e )
         {
             LOG.error( "Not able to handle repository-event", e );
-        }
-    }
-
-    public static final class Builder
-    {
-        private NodeStorageService storageService;
-
-        private RepositoryService repositoryService;
-
-        private Builder()
-        {
-        }
-
-        public Builder storageService( final NodeStorageService storageService )
-        {
-            this.storageService = storageService;
-            return this;
-        }
-
-        public Builder repositoryService( final RepositoryService repositoryService )
-        {
-            this.repositoryService = repositoryService;
-            return this;
-        }
-
-        public RepositoryEventListener build()
-        {
-            return new RepositoryEventListener( this );
         }
     }
 }

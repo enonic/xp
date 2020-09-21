@@ -139,32 +139,30 @@ public class AbstractIssueServiceTest
         storageService.setIndexDataService(indexedDataService);
 
         NodeSearchServiceImpl searchService = new NodeSearchServiceImpl();
-        searchService.setSearchDao(searchDao);
+        searchService.setSearchDao( searchDao );
 
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
-        nodeRepositoryService.setIndexServiceInternal(indexServiceInternal);
+        nodeRepositoryService.setIndexServiceInternal( indexServiceInternal );
 
         final IndexServiceInternalImpl elasticsearchIndexService = new IndexServiceInternalImpl();
         elasticsearchIndexService.setClient( client );
 
         final RepositoryEntryServiceImpl repositoryEntryService = new RepositoryEntryServiceImpl();
         repositoryEntryService.setIndexServiceInternal( elasticsearchIndexService );
-        repositoryEntryService.setNodeStorageService(storageService);
-        repositoryEntryService.setNodeSearchService(searchService);
+        repositoryEntryService.setNodeStorageService( storageService );
+        repositoryEntryService.setNodeSearchService( searchService );
         repositoryEntryService.setEventPublisher( eventPublisher );
         repositoryEntryService.setBinaryService( binaryService );
 
-        repositoryService = new RepositoryServiceImpl();
-        repositoryService.setRepositoryEntryService( repositoryEntryService );
-        repositoryService.setIndexServiceInternal( elasticsearchIndexService );
-        repositoryService.setNodeRepositoryService( nodeRepositoryService );
-        repositoryService.setNodeStorageService(storageService);
+        repositoryService =
+            new RepositoryServiceImpl( repositoryEntryService, elasticsearchIndexService, nodeRepositoryService, storageService,
+                                       searchService );
         repositoryService.initialize();
 
         nodeService = new NodeServiceImpl();
-        nodeService.setIndexServiceInternal(indexServiceInternal);
-        nodeService.setNodeStorageService(storageService);
-        nodeService.setNodeSearchService(searchService);
+        nodeService.setIndexServiceInternal( indexServiceInternal );
+        nodeService.setNodeStorageService( storageService );
+        nodeService.setNodeSearchService( searchService );
         nodeService.setEventPublisher( eventPublisher );
         nodeService.setBinaryService( binaryService );
         nodeService.setRepositoryService( repositoryService );

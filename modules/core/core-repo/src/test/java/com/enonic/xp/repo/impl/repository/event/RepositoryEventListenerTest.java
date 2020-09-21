@@ -24,10 +24,7 @@ public class RepositoryEventListenerTest
         this.storageService = Mockito.mock( NodeStorageService.class );
         this.repositoryService = Mockito.mock( RepositoryService.class );
 
-        repositoryEventListener = RepositoryEventListener.create().
-            storageService( storageService ).
-            repositoryService( repositoryService ).
-            build();
+        repositoryEventListener = new RepositoryEventListener( repositoryService, storageService );
     }
 
     @Test

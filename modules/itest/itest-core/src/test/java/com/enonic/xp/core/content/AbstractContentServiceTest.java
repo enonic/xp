@@ -244,12 +244,9 @@ public class AbstractContentServiceTest
         repositoryEntryService.setEventPublisher( eventPublisher );
         repositoryEntryService.setBinaryService( binaryService );
 
-        RepositoryServiceImpl repositoryService = new RepositoryServiceImpl();
-        repositoryService.setRepositoryEntryService( repositoryEntryService );
-        repositoryService.setIndexServiceInternal( elasticsearchIndexService );
-        repositoryService.setNodeRepositoryService( nodeRepositoryService );
-        repositoryService.setNodeStorageService( storageService );
-        repositoryService.setNodeSearchService( searchService );
+        final RepositoryServiceImpl repositoryService =
+            new RepositoryServiceImpl( repositoryEntryService, elasticsearchIndexService, nodeRepositoryService, storageService,
+                                       searchService );
         repositoryService.initialize();
 
         nodeService = new NodeServiceImpl();
@@ -299,18 +296,13 @@ public class AbstractContentServiceTest
         final ContentAuditLogSupportImpl contentAuditLogSupport =
             new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutorImpl(), auditLogService );
 
-        final SecurityServiceImpl securityService = new SecurityServiceImpl();
-        securityService.setNodeService( nodeService );
-        securityService.setIndexService( indexService );
+        final SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, indexService );
         securityService.initialize();
 
         final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
 
-        final ProjectServiceImpl projectService = new ProjectServiceImpl();
-        projectService.setIndexService( indexService );
-        projectService.setRepositoryService( repositoryService );
-        projectService.setNodeService( nodeService );
-        projectService.setProjectPermissionsContextManager( projectAccessContextManager );
+        final ProjectServiceImpl projectService =
+            new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectAccessContextManager );
         projectService.initialize();
 
         contentService.setNodeService( nodeService );

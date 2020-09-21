@@ -81,11 +81,7 @@ public class AuditLogServiceImplTest
         Mockito.when( config.isEnabled() ).thenReturn( true );
         Mockito.when( config.isOutputLogs() ).thenReturn( true );
 
-        auditLogService = new AuditLogServiceImpl();
-        auditLogService.setNodeService( nodeService );
-        auditLogService.setIndexService( indexService );
-        auditLogService.setRepositoryService( repositoryService );
-        auditLogService.setConfig( config );
+        auditLogService = new AuditLogServiceImpl( config, indexService, repositoryService, nodeService );
         auditLogService.initialize();
     }
 

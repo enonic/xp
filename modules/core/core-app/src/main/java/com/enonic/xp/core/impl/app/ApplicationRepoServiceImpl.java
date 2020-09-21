@@ -1,10 +1,5 @@
 package com.enonic.xp.core.impl.app;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.Application;
@@ -23,19 +18,22 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 
-@Component
 public class ApplicationRepoServiceImpl
     implements ApplicationRepoService
 {
     static final NodePath APPLICATION_PATH = NodePath.create( NodePath.ROOT, "/applications" ).build();
 
-    private NodeService nodeService;
+    private final NodeService nodeService;
 
-    private IndexService indexService;
+    private final IndexService indexService;
 
-    @SuppressWarnings("unused")
-    @Activate
-    public void initialize( final BundleContext context )
+    public ApplicationRepoServiceImpl( final NodeService nodeService, final IndexService indexService )
+    {
+        this.nodeService = nodeService;
+        this.indexService = indexService;
+    }
+
+    public void initialize()
     {
         ApplicationRepoInitializer.create().
             setIndexService( indexService ).
@@ -118,17 +116,5 @@ public class ApplicationRepoServiceImpl
     private Node doGetNodeByName( final String applicationName )
     {
         return this.nodeService.getByPath( NodePath.create( APPLICATION_PATH, applicationName ).build() );
-    }
-
-    @Reference
-    public void setNodeService( final NodeService nodeService )
-    {
-        this.nodeService = nodeService;
-    }
-
-    @Reference
-    public void setIndexService( final IndexService indexService )
-    {
-        this.indexService = indexService;
     }
 }

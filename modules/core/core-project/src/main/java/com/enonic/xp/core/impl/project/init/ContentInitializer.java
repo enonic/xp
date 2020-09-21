@@ -134,7 +134,7 @@ public final class ContentInitializer
                 childOrder( CONTENT_DEFAULT_CHILD_ORDER ).
                 build() );
 
-            LOG.info( "Created content root-node: " + contentRoot.path() );
+            LOG.info( "Created content root-node: {}", contentRoot );
 
             nodeService.refresh( RefreshMode.ALL );
 
