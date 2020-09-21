@@ -91,6 +91,7 @@ final class ErrorPageRichBuilder
         return this;
     }
 
+    @Override
     public String build()
     {
         final HtmlBuilder html = new HtmlBuilder();

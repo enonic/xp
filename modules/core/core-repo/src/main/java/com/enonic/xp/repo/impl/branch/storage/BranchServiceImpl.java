@@ -302,7 +302,6 @@ public class BranchServiceImpl
 
         final GetBranchEntriesMethod getBranchEntriesMethod = GetBranchEntriesMethod.create().
             context( context ).
-            pathCache( this.pathCache ).
             returnFields( BRANCH_RETURN_FIELDS ).
             storageDao( this.storageDao ).
             build();

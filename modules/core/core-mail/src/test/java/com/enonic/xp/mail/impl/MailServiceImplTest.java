@@ -3,6 +3,7 @@ package com.enonic.xp.mail.impl;
 import java.util.List;
 
 import javax.mail.Message;
+import javax.mail.internet.MimeMessage;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +44,7 @@ public class MailServiceImplTest
     public void sendTest()
         throws Exception
     {
-        this.mailService.send( createMockMessage() );
+        this.mailService.send( this::createMockMessage );
 
         List<Message> inbox = Mailbox.get( "testuser@mockserver.com" );
         assertEquals( 1, inbox.size() );
@@ -56,16 +57,15 @@ public class MailServiceImplTest
 
         MailServiceImpl mailService = new MailServiceImpl();
 
-        MailMessage mockMessage = createMockMessage();
-        assertThrows(MailException.class, () -> mailService.send(mockMessage));
+        MailMessage mockMessage = this::createMockMessage;
+        assertThrows( MailException.class, () -> mailService.send( mockMessage ) );
     }
 
-    private MailMessage createMockMessage()
+    private void createMockMessage( MimeMessage msg )
+        throws Exception
     {
-        return msg -> {
-            msg.setRecipients( Message.RecipientType.TO, "testuser@mockserver.com" );
-            msg.setSubject( "Some Subject" );
-            msg.setText( "sometext" );
-        };
+        msg.setRecipients( Message.RecipientType.TO, "testuser@mockserver.com" );
+        msg.setSubject( "Some Subject" );
+        msg.setText( "sometext" );
     }
 }

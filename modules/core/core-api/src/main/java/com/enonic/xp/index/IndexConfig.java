@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class IndexConfig
+public final class IndexConfig
     implements Comparable<IndexConfig>
 {
     public static final IndexConfig NONE = IndexConfig.create().
