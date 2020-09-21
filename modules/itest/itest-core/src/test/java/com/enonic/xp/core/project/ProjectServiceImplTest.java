@@ -132,22 +132,15 @@ class ProjectServiceImplTest
     {
         super.setUpNode();
 
-        securityService = new SecurityServiceImpl();
-        securityService.setNodeService( this.nodeService );
-        securityService.setIndexService( indexService );
+        securityService = new SecurityServiceImpl( this.nodeService, indexService );
 
         ADMIN_CONTEXT.runWith( () -> {
             securityService.initialize();
 
             final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
 
-            projectService = new ProjectServiceImpl();
-            projectService.setIndexService( indexService );
-            projectService.setNodeService( nodeService );
-            projectService.setRepositoryService( repositoryService );
-            projectService.setProjectPermissionsContextManager( projectAccessContextManager );
-
-            projectService.setSecurityService( securityService );
+            projectService =
+                new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectAccessContextManager );
         } );
     }
 

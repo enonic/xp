@@ -11,9 +11,6 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,23 +51,32 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
-@Component(immediate = true)
 public class ProjectServiceImpl
     implements ProjectService
 {
     private static final Logger LOG = LoggerFactory.getLogger( ProjectServiceImpl.class );
 
-    private RepositoryService repositoryService;
+    private final RepositoryService repositoryService;
 
-    private IndexService indexService;
+    private final IndexService indexService;
 
-    private NodeService nodeService;
+    private final NodeService nodeService;
 
-    private SecurityService securityService;
+    private final SecurityService securityService;
 
-    private ProjectPermissionsContextManager projectPermissionsContextManager;
+    private final ProjectPermissionsContextManager projectPermissionsContextManager;
 
-    @Activate
+    public ProjectServiceImpl( final RepositoryService repositoryService, final IndexService indexService, final NodeService nodeService,
+                               final SecurityService securityService,
+                               final ProjectPermissionsContextManager projectPermissionsContextManager )
+    {
+        this.repositoryService = repositoryService;
+        this.indexService = indexService;
+        this.nodeService = nodeService;
+        this.securityService = securityService;
+        this.projectPermissionsContextManager = projectPermissionsContextManager;
+    }
+
     public void initialize()
     {
         adminContext().runWith( () -> doCreate( CreateProjectParams.create().
@@ -452,35 +458,5 @@ public class ProjectServiceImpl
                 principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ).
                 build() ).
             build();
-    }
-
-    @Reference
-    public void setRepositoryService( final RepositoryService repositoryService )
-    {
-        this.repositoryService = repositoryService;
-    }
-
-    @Reference
-    public void setIndexService( final IndexService indexService )
-    {
-        this.indexService = indexService;
-    }
-
-    @Reference
-    public void setNodeService( final NodeService nodeService )
-    {
-        this.nodeService = nodeService;
-    }
-
-    @Reference
-    public void setSecurityService( final SecurityService securityService )
-    {
-        this.securityService = securityService;
-    }
-
-    @Reference
-    public void setProjectPermissionsContextManager( final ProjectPermissionsContextManager projectPermissionsContextManager )
-    {
-        this.projectPermissionsContextManager = projectPermissionsContextManager;
     }
 }

@@ -1,8 +1,5 @@
 package com.enonic.xp.core.impl.audit;
 
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,21 +14,28 @@ import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repository.RepositoryService;
 
-@Component(immediate = true)
 public class AuditLogServiceImpl
     implements AuditLogService
 {
     private static final Logger LOG = LoggerFactory.getLogger( AuditLogService.class );
 
-    private AuditLogConfig config;
+    private final AuditLogConfig config;
 
-    private IndexService indexService;
+    private final IndexService indexService;
 
-    private RepositoryService repositoryService;
+    private final RepositoryService repositoryService;
 
-    private NodeService nodeService;
+    private final NodeService nodeService;
 
-    @Activate
+    public AuditLogServiceImpl( final AuditLogConfig config, final IndexService indexService, final RepositoryService repositoryService,
+                                final NodeService nodeService )
+    {
+        this.config = config;
+        this.indexService = indexService;
+        this.repositoryService = repositoryService;
+        this.nodeService = nodeService;
+    }
+
     public void initialize()
     {
         AuditLogRepoInitializer.create().
@@ -93,29 +97,4 @@ public class AuditLogServiceImpl
             build().
             execute();
     }
-
-    @Reference
-    public void setRepositoryService( final RepositoryService repositoryService )
-    {
-        this.repositoryService = repositoryService;
-    }
-
-    @Reference
-    public void setIndexService( final IndexService indexService )
-    {
-        this.indexService = indexService;
-    }
-
-    @Reference
-    public void setNodeService( final NodeService nodeService )
-    {
-        this.nodeService = nodeService;
-    }
-
-    @Reference
-    public void setConfig( final AuditLogConfig config )
-    {
-        this.config = config;
-    }
-
 }

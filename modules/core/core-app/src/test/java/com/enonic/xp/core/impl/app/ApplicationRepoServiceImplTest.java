@@ -34,9 +34,7 @@ public class ApplicationRepoServiceImplTest
     {
         this.rootTestUrl = new File( "./src/test/resources" ).toURI().toURL();
 
-        this.service = new ApplicationRepoServiceImpl();
-        this.service.setIndexService( this.indexService );
-        this.service.setNodeService( this.nodeService );
+        this.service = new ApplicationRepoServiceImpl( this.nodeService, this.indexService );
     }
 
     @Test

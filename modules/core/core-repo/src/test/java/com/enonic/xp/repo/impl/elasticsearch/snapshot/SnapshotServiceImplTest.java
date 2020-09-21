@@ -46,9 +46,9 @@ public class SnapshotServiceImplTest
     {
         for (String repository : client.admin().cluster().prepareGetRepositories().execute().actionGet().repositories().stream().map(RepositoryMetaData::name).collect(Collectors.toList())) {
             for (String snapshot : client.admin().cluster().prepareGetSnapshots(repository).execute().actionGet().getSnapshots().stream().map(SnapshotInfo::name).collect(Collectors.toList())) {
-                client.admin().cluster().prepareDeleteSnapshot(repository, snapshot).execute().actionGet();
+                client.admin().cluster().prepareDeleteSnapshot( repository, snapshot ).execute().actionGet();
             }
-            client.admin().cluster().prepareDeleteRepository(repository).execute().actionGet();
+            client.admin().cluster().prepareDeleteRepository( repository ).execute().actionGet();
         }
 
         this.snapshotService = new SnapshotServiceImpl();
@@ -56,12 +56,9 @@ public class SnapshotServiceImplTest
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
         nodeRepositoryService.setIndexServiceInternal( this.indexServiceInternal );
 
-        this.repositoryService = new RepositoryServiceImpl();
-        repositoryService.setIndexServiceInternal( this.indexServiceInternal );
-        repositoryService.setNodeStorageService( this.storageService );
-        repositoryService.setNodeSearchService( this.searchService );
-        repositoryService.setNodeRepositoryService( nodeRepositoryService );
-        repositoryService.setRepositoryEntryService( this.repositoryEntryService );
+        this.repositoryService =
+            new RepositoryServiceImpl( this.repositoryEntryService, this.indexServiceInternal, nodeRepositoryService, this.storageService,
+                                       this.searchService );
 
         eventPublisher = Mockito.mock( EventPublisher.class );
 

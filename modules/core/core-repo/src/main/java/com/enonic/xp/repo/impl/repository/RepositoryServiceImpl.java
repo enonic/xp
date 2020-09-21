@@ -4,9 +4,6 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,8 +15,6 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.event.Event;
-import com.enonic.xp.event.EventListener;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
@@ -29,7 +24,6 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.DeleteNodeByIdCommand;
 import com.enonic.xp.repo.impl.node.RefreshCommand;
-import com.enonic.xp.repo.impl.repository.event.RepositoryEventListener;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.BranchNotFoundException;
@@ -50,35 +44,36 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
-@Component(immediate = true)
 public class RepositoryServiceImpl
-    implements RepositoryService, EventListener
+    implements RepositoryService
 {
     private static final Logger LOG = LoggerFactory.getLogger( RepositoryServiceImpl.class );
 
     private final ConcurrentMap<RepositoryId, Repository> repositoryMap = new ConcurrentHashMap<>();
 
-    private RepositoryEntryService repositoryEntryService;
+    private final RepositoryEntryService repositoryEntryService;
 
-    private IndexServiceInternal indexServiceInternal;
+    private final IndexServiceInternal indexServiceInternal;
 
-    private NodeRepositoryService nodeRepositoryService;
+    private final NodeRepositoryService nodeRepositoryService;
 
-    private NodeStorageService nodeStorageService;
+    private final NodeStorageService nodeStorageService;
 
-    private NodeSearchService nodeSearchService;
+    private final NodeSearchService nodeSearchService;
 
-    private RepositoryEventListener repositoryEventListener;
+    public RepositoryServiceImpl( final RepositoryEntryService repositoryEntryService, final IndexServiceInternal indexServiceInternal,
+                                  final NodeRepositoryService nodeRepositoryService, final NodeStorageService nodeStorageService,
+                                  final NodeSearchService nodeSearchService )
+    {
+        this.repositoryEntryService = repositoryEntryService;
+        this.indexServiceInternal = indexServiceInternal;
+        this.nodeRepositoryService = nodeRepositoryService;
+        this.nodeStorageService = nodeStorageService;
+        this.nodeSearchService = nodeSearchService;
+    }
 
-    @SuppressWarnings("unused")
-    @Activate
     public void initialize()
     {
-        this.repositoryEventListener = RepositoryEventListener.create().
-            repositoryService( this ).
-            storageService( nodeStorageService ).
-            build();
-
         SystemRepoInitializer.create().
             setIndexServiceInternal( indexServiceInternal ).
             setRepositoryService( this ).
@@ -370,7 +365,7 @@ public class RepositoryServiceImpl
             return null;
         } );
 
-        LOG.info( "Created root node with id [" + rootNode.id() + "] in repository [" + params.getRepositoryId() + "]" );
+        LOG.info( "Created root node with id [{}] in repository [{}]", rootNode.id(), params.getRepositoryId() );
     }
 
     private void pushRootNode( final Repository currentRepo, final Branch branch )
@@ -411,47 +406,5 @@ public class RepositoryServiceImpl
             indexServiceInternal( this.indexServiceInternal ).
             build().
             execute();
-    }
-
-    @Reference
-    public void setRepositoryEntryService( final RepositoryEntryService repositoryEntryService )
-    {
-        this.repositoryEntryService = repositoryEntryService;
-    }
-
-    @Reference
-    public void setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )
-    {
-        this.indexServiceInternal = indexServiceInternal;
-    }
-
-    @Reference
-    public void setNodeRepositoryService( final NodeRepositoryService nodeRepositoryService )
-    {
-        this.nodeRepositoryService = nodeRepositoryService;
-    }
-
-    @Reference
-    public void setNodeStorageService( final NodeStorageService nodeStorageService )
-    {
-        this.nodeStorageService = nodeStorageService;
-    }
-
-    @Reference
-    public void setNodeSearchService( final NodeSearchService nodeSearchService )
-    {
-        this.nodeSearchService = nodeSearchService;
-    }
-
-    @Override
-    public int getOrder()
-    {
-        return repositoryEventListener.getOrder();
-    }
-
-    @Override
-    public void onEvent( final Event event )
-    {
-        repositoryEventListener.onEvent( event );
     }
 }

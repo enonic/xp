@@ -272,12 +272,9 @@ public abstract class AbstractNodeTest
         this.repositoryEntryService.setNodeSearchService( this.searchService );
         this.repositoryEntryService.setBinaryService( this.binaryService );
 
-        this.repositoryService = new RepositoryServiceImpl();
-        this.repositoryService.setRepositoryEntryService( this.repositoryEntryService );
-        this.repositoryService.setIndexServiceInternal( this.indexServiceInternal );
-        this.repositoryService.setNodeRepositoryService( nodeRepositoryService );
-        this.repositoryService.setNodeStorageService( this.storageService );
-        this.repositoryService.setNodeSearchService( this.searchService );
+        this.repositoryService =
+            new RepositoryServiceImpl( this.repositoryEntryService, this.indexServiceInternal, nodeRepositoryService, this.storageService,
+                                       this.searchService );
 
         this.nodeService.setRepositoryService( this.repositoryService );
     }
