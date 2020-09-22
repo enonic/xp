@@ -12,6 +12,12 @@ public class ApplicationClusterEvents
 
     public static final String INSTALLED = "installed";
 
+    public static final String START = "start";
+
+    public static final String STOP = "stop";
+
+    public static final String UNINSTALL = "uninstall";
+
     public static final String UNINSTALLED = "uninstalled";
 
     public static final String STATE_CHANGE = "state";
@@ -33,32 +39,50 @@ public class ApplicationClusterEvents
 
     public static Event uninstalled( final ApplicationKey applicationKey )
     {
-        return Event.create( EVENT_TYPE ).
-            distributed( true ).
-            value( EVENT_TYPE_KEY, UNINSTALLED ).
-            value( APPLICATION_KEY_PARAM, applicationKey.getName() ).
-            localOrigin( true ).
-            build();
+        return doCreateEvent( applicationKey, UNINSTALLED );
+    }
+
+    public static Event uninstall( final ApplicationKey applicationKey )
+    {
+        return doCreateEvent( applicationKey, UNINSTALL );
+    }
+
+    public static Event start( final ApplicationKey applicationKey )
+    {
+        return doCreateEvent( applicationKey, START );
+    }
+
+    public static Event stop( final ApplicationKey applicationKey )
+    {
+        return doCreateEvent( applicationKey, STOP );
     }
 
     public static Event started( final ApplicationKey applicationKey )
     {
-        return doCreateStateEvent( applicationKey, STATE_CHANGE, true );
+        return doCreateStateEvent( applicationKey, true );
     }
 
     public static Event stopped( final ApplicationKey applicationKey )
     {
-        return doCreateStateEvent( applicationKey, STATE_CHANGE, false );
+        return doCreateStateEvent( applicationKey, false );
     }
 
-    private static Event doCreateStateEvent( final ApplicationKey applicationKey, final String eventType, final boolean value )
+    private static Event doCreateEvent( final ApplicationKey applicationKey, final String eventType )
     {
         return Event.create( EVENT_TYPE ).
             distributed( true ).
             value( EVENT_TYPE_KEY, eventType ).
             value( APPLICATION_KEY_PARAM, applicationKey.getName() ).
+            build();
+    }
+
+    private static Event doCreateStateEvent( final ApplicationKey applicationKey, final boolean value )
+    {
+        return Event.create( EVENT_TYPE ).
+            distributed( true ).
+            value( EVENT_TYPE_KEY, STATE_CHANGE ).
+            value( APPLICATION_KEY_PARAM, applicationKey.getName() ).
             value( STARTED_PARAM, value ).
-            localOrigin( true ).
             build();
     }
 }

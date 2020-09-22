@@ -36,6 +36,7 @@ public interface ApplicationService
 
     void uninstallApplication( final ApplicationKey key, final boolean triggerEvent );
 
+    @Deprecated
     void publishUninstalledEvent( final ApplicationKey key );
 
     @Deprecated
