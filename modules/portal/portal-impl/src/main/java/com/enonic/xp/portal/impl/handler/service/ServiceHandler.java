@@ -14,6 +14,7 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.service.ServiceDescriptorService;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandler;
@@ -46,7 +47,7 @@ public final class ServiceHandler
         final Matcher matcher = PATTERN.matcher( restPath );
         if ( !matcher.find() )
         {
-            throw notFound( "Not a valid service url pattern" );
+            throw WebException.notFound( "Not a valid service url pattern" );
         }
 
         final PortalRequest portalRequest =

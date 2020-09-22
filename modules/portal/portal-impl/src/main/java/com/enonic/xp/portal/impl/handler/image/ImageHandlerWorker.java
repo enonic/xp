@@ -27,6 +27,7 @@ import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -69,19 +70,20 @@ final class ImageHandlerWorker
         final Media imageContent = getImage( this.contentId );
         if ( !contentNameMatch( imageContent.getName(), name ) )
         {
-            throw notFound( "Image [%s] not found for content [%s]", name, this.contentId );
+            throw WebException.notFound( String.format( "Image [%s] not found for content [%s]", name, this.contentId ) );
         }
 
         final Attachment attachment = imageContent.getMediaAttachment();
         if ( attachment == null )
         {
-            throw notFound( "Attachment [%s] not found", imageContent.getName().toString() );
+            throw WebException.notFound( String.format( "Attachment [%s] not found", imageContent.getName() ) );
         }
 
         final ByteSource binary = this.contentService.getBinary( this.contentId, attachment.getBinaryReference() );
         if ( binary == null )
         {
-            throw notFound( "Binary [%s] not found for content [%s]", attachment.getBinaryReference(), this.contentId );
+            throw WebException.notFound(
+                String.format( "Binary [%s] not found for content [%s]", attachment.getBinaryReference(), this.contentId ) );
         }
 
         if ( request.getMethod() == HttpMethod.OPTIONS )
@@ -196,23 +198,23 @@ final class ImageHandlerWorker
         {
             if ( this.contentService.contentExists( contentId ) )
             {
-                throw forbidden( "You don't have permission to access [%s]", contentId );
+                throw WebException.forbidden( String.format( "You don't have permission to access [%s]", contentId ) );
             }
             else
             {
-                throw notFound( "Content with id [%s] not found", contentId.toString() );
+                throw WebException.notFound( String.format( "Content with id [%s] not found", contentId ) );
             }
         }
 
         if ( !( content instanceof Media ) )
         {
-            throw notFound( "Content with id [%s] is not an Image", contentId.toString() );
+            throw WebException.notFound( String.format( "Content with id [%s] is not an Image", contentId ) );
         }
 
         final Media media = (Media) content;
         if ( !media.isImage() )
         {
-            throw notFound( "Content with id [%s] is not an Image", contentId.toString() );
+            throw WebException.notFound( String.format( "Content with id [%s] is not an Image", contentId ) );
         }
 
         return media;

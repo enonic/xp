@@ -23,6 +23,7 @@ import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.web.WebException;
 
 final class ComponentHandlerWorker
     extends RenderHandlerWorker
@@ -100,7 +101,7 @@ final class ComponentHandlerWorker
 
         if ( component == null )
         {
-            throw notFound( "Page component for [%s] not found", this.componentPath );
+            throw WebException.notFound( String.format( "Page component for [%s] not found", this.componentPath ) );
         }
 
         final Content effectiveContent = Content.create( content ).

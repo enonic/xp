@@ -8,6 +8,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.web.WebException;
 
 public abstract class ControllerHandlerWorker
     extends PortalHandlerWorker<PortalRequest>
@@ -34,11 +35,11 @@ public abstract class ControllerHandlerWorker
 
         if ( contentExists( contentSelector ) )
         {
-            throw forbidden( "You don't have permission to access [%s]", contentSelector );
+            throw WebException.forbidden( String.format( "You don't have permission to access [%s]", contentSelector ) );
         }
         else
         {
-            throw notFound( "Page [%s] not found", contentSelector );
+            throw WebException.notFound( String.format( "Page [%s] not found", contentSelector ) );
         }
     }
 
@@ -95,7 +96,7 @@ public abstract class ControllerHandlerWorker
             return site;
         }
 
-        throw notFound( "Site for content [%s] not found", content.getPath() );
+        throw WebException.notFound( String.format( "Site for content [%s] not found", content.getPath() ) );
     }
 
     protected final Site getSiteOrNull( final Content content )

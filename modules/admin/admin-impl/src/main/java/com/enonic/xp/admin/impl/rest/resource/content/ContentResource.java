@@ -167,7 +167,6 @@ import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repository.IndexException;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -420,9 +419,8 @@ public final class ContentResource
     {
         if ( contentNameIsOccupied( json.getRenameContentParams() ) )
         {
-            throw JaxRsExceptions.newException( Response.Status.CONFLICT,
-                                                "Content [%s] could not be updated. A content with that name already exists",
-                                                json.getRenameContentParams().getNewName().toString() );
+            throw new WebApplicationException( String.format( "Content [%s] could not be updated. A content with that name already exists",
+                                                              json.getRenameContentParams().getNewName() ), Response.Status.CONFLICT );
         }
         validatePublishInfo( json );
 
@@ -452,9 +450,10 @@ public final class ContentResource
         catch ( ContentAlreadyExistsException e )
         {
             // catching to throw exception with better message and other error code
-            throw JaxRsExceptions.newException( Response.Status.CONFLICT,
-                                                "Content could not be renamed to [%s]. A content with that name already exists",
-                                                json.getRenameContentParams().getNewName().toString() );
+            throw new WebApplicationException(
+                String.format( "Content could not be renamed to [%s]. A content with that name already exists",
+                               json.getRenameContentParams().getNewName() ), e, Response.Status.CONFLICT );
+
         }
     }
 
@@ -749,8 +748,9 @@ public final class ContentResource
             }
             else
             {
-                throw JaxRsExceptions.badRequest( "Not allowed to reorder children manually, current parentOrder = [%s].",
-                                                  content.getChildOrder().toString() );
+                throw new WebApplicationException(
+                    String.format( "Not allowed to reorder children manually, current parentOrder = [%s].", content.getChildOrder() ),
+                    Response.Status.BAD_REQUEST );
             }
         }
 
@@ -791,7 +791,7 @@ public final class ContentResource
 
         if ( content == null )
         {
-            throw JaxRsExceptions.notFound( String.format( "Content [%s] was not found", idParam ) );
+            throw new WebApplicationException( String.format( "Content [%s] was not found", idParam ), Response.Status.NOT_FOUND );
         }
         else if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {
@@ -815,7 +815,8 @@ public final class ContentResource
 
         if ( contents == null )
         {
-            throw JaxRsExceptions.notFound( String.format( "Contents [%s] was not found", params.getContentIds() ) );
+            throw new WebApplicationException( String.format( "Contents [%s] was not found", params.getContentIds() ),
+                                               Response.Status.NOT_FOUND );
         }
         final ContentListMetaData metaData = ContentListMetaData.create().
             totalHits( contents.getSize() ).
@@ -859,7 +860,7 @@ public final class ContentResource
 
         if ( content == null )
         {
-            throw JaxRsExceptions.notFound( String.format( "Content [%s] was not found", pathParam ) );
+            throw new WebApplicationException( String.format( "Content [%s] was not found", pathParam ), Response.Status.NOT_FOUND );
         }
         else if ( EXPAND_NONE.equalsIgnoreCase( expandParam ) )
         {
@@ -1445,8 +1446,9 @@ public final class ContentResource
 
         if ( versionedContent == null )
         {
-            throw JaxRsExceptions.notFound( "Content with contentKey [%s] and versionId [%s] not found", params.getContentKey(),
-                                            params.getVersionId() );
+            throw new WebApplicationException(
+                String.format( "Content with contentKey [%s] and versionId [%s] not found", params.getContentKey(), params.getVersionId() ),
+                Response.Status.NOT_FOUND );
         }
 
         final Content revertedContent = contentService.update( prepareUpdateContentParams( versionedContent, contentVersionId ) );

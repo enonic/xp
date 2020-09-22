@@ -43,7 +43,7 @@ final class WidgetHandlerWorker
         final WidgetDescriptor widgetDescriptor = widgetDescriptorService.getByKey( descriptorKey );
         if ( widgetDescriptor == null )
         {
-            throw notFound( "Widget [%s] not found", descriptorKey.toString() );
+            throw WebException.notFound( String.format( "Widget [%s] not found", descriptorKey ) );
         }
 
         //Checks if the access to WidgetDescriptor is allowed
@@ -52,7 +52,7 @@ final class WidgetHandlerWorker
             getPrincipals();
         if ( !widgetDescriptor.isAccessAllowed( principals ) )
         {
-            throw forbidden( "You don't have permission to access [%s]", descriptorKey.toString() );
+            throw WebException.forbidden( String.format( "You don't have permission to access [%s]", descriptorKey ) );
         }
 
         //Renders the widget

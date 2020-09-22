@@ -80,7 +80,7 @@ public final class StatusServlet
         final StatusReporter reporter = this.reporters.get( name );
         if ( reporter == null )
         {
-            serializeError( res, 404, "Reporter [%s] not found", name );
+            serializeError( res, 404, String.format( "Reporter [%s] not found", name ) );
             return;
         }
 
@@ -121,12 +121,12 @@ public final class StatusServlet
         out.close();
     }
 
-    private void serializeError( final HttpServletResponse res, final int status, final String message, final Object... args )
+    private void serializeError( final HttpServletResponse res, final int status, final String message )
         throws IOException
     {
         final ObjectNode json = JsonNodeFactory.instance.objectNode();
         json.put( "status", status );
-        json.put( "message", args.length > 0 ? String.format( message, args ) : message );
+        json.put( "message", message );
 
         serializeJson( res, status, json );
     }

@@ -3,8 +3,8 @@ package com.enonic.xp.launcher;
 public final class LauncherException
     extends RuntimeException
 {
-    public LauncherException( final String message, final Object... args )
+    public LauncherException( final String message )
     {
-        super( String.format( message, args ) );
+        super( message );
     }
 }

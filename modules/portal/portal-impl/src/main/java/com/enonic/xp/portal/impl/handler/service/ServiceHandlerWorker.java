@@ -28,6 +28,7 @@ import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -61,7 +62,7 @@ final class ServiceHandlerWorker
         final ServiceDescriptor serviceDescriptor = serviceDescriptorService.getByKey( descriptorKey );
         if ( serviceDescriptor == null )
         {
-            throw notFound( "Service [%s] not found", descriptorKey.toString() );
+            throw WebException.notFound( String.format( "Service [%s] not found", descriptorKey ) );
         }
 
         //Checks if the access to ServiceDescriptor is allowed
@@ -70,7 +71,7 @@ final class ServiceHandlerWorker
             getPrincipals();
         if ( !serviceDescriptor.isAccessAllowed( principals ) )
         {
-            throw forbidden( "You don't have permission to access [%s]", descriptorKey.toString() );
+            throw WebException.forbidden( String.format( "You don't have permission to access [%s]", descriptorKey ) );
         }
 
         //Retrieves the current content and site
@@ -84,7 +85,7 @@ final class ServiceHandlerWorker
             final PropertyTree siteConfig = forcedSite.getSiteConfig( applicationKey );
             if ( siteConfig == null )
             {
-                throw forbidden( "Service [%s] forbidden for this site", descriptorKey.toString() );
+                throw WebException.forbidden( String.format( "Service [%s] forbidden for this site", descriptorKey ) );
             }
         }
 
@@ -92,7 +93,7 @@ final class ServiceHandlerWorker
         final ApplicationKey baseApplicationKey = getBaseApplicationKey();
         if ( baseApplicationKey != null && !baseApplicationKey.equals( applicationKey ) )
         {
-            throw forbidden( "Service [%s] forbidden for this application", descriptorKey.toString() );
+            throw WebException.forbidden( String.format( "Service [%s] forbidden for this application", descriptorKey ) );
         }
 
         //Prepares the request

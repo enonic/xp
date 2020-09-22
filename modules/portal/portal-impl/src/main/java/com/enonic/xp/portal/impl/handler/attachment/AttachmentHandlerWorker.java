@@ -17,6 +17,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 
 import static com.enonic.xp.web.servlet.ServletRequestUrlHelper.contentDispositionAttachment;
 
@@ -85,11 +86,11 @@ final class AttachmentHandlerWorker
         {
             if ( this.contentService.contentExists( contentId ) )
             {
-                throw forbidden( "You don't have permission to access [%s]", contentId );
+                throw WebException.forbidden( String.format( "You don't have permission to access [%s]", contentId ) );
             }
             else
             {
-                throw notFound( "Content with id [%s] not found", contentId.toString() );
+                throw WebException.notFound( String.format( "Content with id [%s] not found", contentId.toString() ) );
             }
         }
 
@@ -113,7 +114,7 @@ final class AttachmentHandlerWorker
         final ByteSource binary = this.contentService.getBinary( id, attachment.getBinaryReference() );
         if ( binary == null )
         {
-            throw notFound( "Binary [%s] not found for [%s]", attachment.getBinaryReference(), id );
+            throw WebException.notFound( String.format( "Binary [%s] not found for [%s]", attachment.getBinaryReference(), id ) );
         }
 
         return binary;
@@ -128,6 +129,6 @@ final class AttachmentHandlerWorker
             return attachment;
         }
 
-        throw notFound( "Attachment [%s] not found for [%s]", name, content.getPath() );
+        throw WebException.notFound( String.format( "Attachment [%s] not found for [%s]", name, content.getPath() ) );
     }
 }

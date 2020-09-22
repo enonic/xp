@@ -10,6 +10,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
@@ -55,7 +56,7 @@ final class MappingFilterHandlerWorker
         final Resource resource = this.resourceService.getResource( mappingDescriptor.getFilter() );
         if ( !resource.exists() )
         {
-            throw notFound( "Filter [%s] not found", mappingDescriptor.getFilter().toString() );
+            throw WebException.notFound( String.format( "Filter [%s] not found", mappingDescriptor.getFilter() ) );
         }
         return this.filterScriptFactory.fromScript( resource.getKey() );
     }

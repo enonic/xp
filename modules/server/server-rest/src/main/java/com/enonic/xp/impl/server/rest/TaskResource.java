@@ -5,13 +5,14 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
@@ -36,7 +37,7 @@ public final class TaskResource
 
         if ( taskInfo == null )
         {
-            throw JaxRsExceptions.notFound( String.format( "Task [%s] was not found", taskIdString ) );
+            throw new WebApplicationException( String.format( "Task [%s] was not found", taskIdString ), Response.Status.NOT_FOUND );
         }
 
         return new TaskInfoJson( taskInfo );

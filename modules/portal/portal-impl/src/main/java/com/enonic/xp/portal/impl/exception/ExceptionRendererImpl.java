@@ -47,8 +47,6 @@ public final class ExceptionRendererImpl
 
     private static final String DEFAULT_HANDLER = "handleError";
 
-    private static final String STATUS_HANDLER = "handle%d";
-
     private static final String SITE_ERROR_SCRIPT_PATH = "site/error/error.js";
 
     private static final String GENERIC_ERROR_SCRIPT_PATH = "error/error.js";
@@ -90,7 +88,7 @@ public final class ExceptionRendererImpl
             final HttpStatus httpStatus = cause.getStatus();
             if ( httpStatus != null )
             {
-                final String handlerMethod = String.format( STATUS_HANDLER, httpStatus.value() );
+                final String handlerMethod = "handle" + httpStatus.value();
                 final PortalResponse statusCustomError = renderCustomError( portalRequest, cause, handlerMethod );
                 if ( statusCustomError != null )
                 {

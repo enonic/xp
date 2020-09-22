@@ -3,6 +3,7 @@ package com.enonic.xp.jaxrs;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+@Deprecated
 public final class JaxRsExceptions
 {
     public static WebApplicationException badRequest( final String message, final Object... args )
@@ -17,7 +18,6 @@ public final class JaxRsExceptions
 
     public static WebApplicationException newException( final Response.Status status, final String message, final Object... args )
     {
-        final String formatted = args.length > 0 ? String.format( message, args ) : message;
-        return new WebApplicationException( formatted, status );
+        return new WebApplicationException( String.format( message, args ), status );
     }
 }

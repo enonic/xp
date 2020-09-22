@@ -15,6 +15,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -74,7 +75,7 @@ final class MappingHandlerWorker
         final Resource resource = this.resourceService.getResource( mappingDescriptor.getController() );
         if ( !resource.exists() )
         {
-            throw notFound( "Controller [%s] not found", mappingDescriptor.getController().toString() );
+            throw WebException.notFound( String.format( "Controller [%s] not found", mappingDescriptor.getController() ) );
         }
         return this.controllerScriptFactory.fromScript( resource.getKey() );
     }

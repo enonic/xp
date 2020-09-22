@@ -8,6 +8,7 @@ import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.web.WebException;
 
 final class IdentityHandlerWorker
     extends ControllerHandlerWorker
@@ -43,7 +44,8 @@ final class IdentityHandlerWorker
 
         if ( portalResponse == null )
         {
-            throw notFound( "ID Provider function [%s] not found for id provider [%s]", idProviderFunction, idProviderKey );
+            throw WebException.notFound(
+                String.format( "ID Provider function [%s] not found for id provider [%s]", idProviderFunction, idProviderKey ) );
         }
         else
         {
