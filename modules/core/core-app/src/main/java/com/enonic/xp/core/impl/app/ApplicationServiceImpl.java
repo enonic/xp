@@ -306,6 +306,10 @@ public final class ApplicationServiceImpl
 
     private void doUninstallApplication( final ApplicationKey applicationKey, final boolean triggerEvent )
     {
+        if ( triggerEvent )
+        {
+            this.eventPublisher.publish( ApplicationClusterEvents.uninstall( applicationKey ) );
+        }
         registry.uninstallApplication( applicationKey );
 
         final boolean wasLocal = localApplicationSet.remove( applicationKey );
@@ -336,6 +340,10 @@ public final class ApplicationServiceImpl
 
     private void doStartApplication( final ApplicationKey applicationKey, final boolean triggerEvent, final boolean throwOnInvalidVersion )
     {
+        if ( triggerEvent )
+        {
+            this.eventPublisher.publish( ApplicationClusterEvents.start( applicationKey ) );
+        }
         final boolean started = this.registry.startApplication( applicationKey, throwOnInvalidVersion );
         if ( started )
         {
@@ -352,6 +360,10 @@ public final class ApplicationServiceImpl
 
     private void doStopApplication( final ApplicationKey applicationKey, final boolean triggerEvent )
     {
+        if ( triggerEvent )
+        {
+            this.eventPublisher.publish( ApplicationClusterEvents.stop( applicationKey ) );
+        }
         this.registry.stopApplication( applicationKey );
 
         this.eventPublisher.publish( ApplicationEvents.stopped( applicationKey ) );

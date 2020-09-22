@@ -1,9 +1,13 @@
 package com.enonic.xp.core.impl.app.event;
 
-import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationInstallationParams;
 import com.enonic.xp.app.ApplicationKey;
@@ -17,100 +21,86 @@ import com.enonic.xp.node.NodeId;
 public class ApplicationClusterEventListener
     implements EventListener
 {
-    private ApplicationService applicationService;
+    private static final Logger LOG = LoggerFactory.getLogger( ApplicationClusterEventListener.class );
+
+    private final ApplicationService applicationService;
+
+    @Activate
+    public ApplicationClusterEventListener( @Reference final ApplicationService applicationService )
+    {
+        this.applicationService = applicationService;
+    }
 
     @Override
     public void onEvent( final Event event )
     {
-        if ( event != null )
+        if ( !event.isLocalOrigin() )
         {
-            if ( event.isLocalOrigin() )
-            {
-                return;
-            }
-
             doHandleEvent( event );
         }
     }
 
     private void doHandleEvent( final Event event )
     {
-        final String type = event.getType();
-
-        if ( type.equals( ApplicationClusterEvents.EVENT_TYPE ) )
+        if ( ApplicationClusterEvents.EVENT_TYPE.equals( event.getType() ) )
         {
-            final String eventSubType = event.getValueAs( String.class, ApplicationClusterEvents.EVENT_TYPE_KEY ).get();
-
-            switch ( eventSubType )
-            {
-                case ApplicationClusterEvents.INSTALLED:
-                    handleInstalledEvent( event );
-                    break;
-                case ApplicationClusterEvents.STATE_CHANGE:
-                    handleStateChangedEvent( event );
-                    break;
-                case ApplicationClusterEvents.UNINSTALLED:
-                    handleUninstalledEvent( event );
-                    break;
-            }
+            event.getValueAs( String.class, ApplicationClusterEvents.EVENT_TYPE_KEY ).
+                ifPresent( eventSubType -> {
+                    switch ( eventSubType )
+                    {
+                        case ApplicationClusterEvents.INSTALLED:
+                            handleInstalledEvent( event );
+                            break;
+                        case ApplicationClusterEvents.UNINSTALL:
+                            handleUninstallEvent( event );
+                            break;
+                        case ApplicationClusterEvents.START:
+                            handleStartEvent( event );
+                            break;
+                        case ApplicationClusterEvents.STOP:
+                            handleStopEvent( event );
+                            break;
+                        default:
+                            LOG.debug( "Ignoring {} {}", ApplicationClusterEvents.EVENT_TYPE, eventSubType );
+                            break;
+                    }
+                } );
         }
     }
 
     private void handleInstalledEvent( final Event event )
     {
-        final Optional<String> valueAs = event.getValueAs( String.class, ApplicationClusterEvents.NODE_ID_PARAM );
-
-        if ( valueAs.isPresent() )
-        {
-            final ApplicationInstallationParams params = ApplicationInstallationParams.create().
-                start( false ).
-                triggerEvent( false ).
-                build();
-            ApplicationHelper.runAsAdmin( () -> this.applicationService.installStoredApplication( NodeId.from( valueAs.get() ), params ) );
-        }
+        event.getValueAs( String.class, ApplicationClusterEvents.NODE_ID_PARAM ).
+            map( NodeId::from ).
+            ifPresent( nodeId -> {
+                final ApplicationInstallationParams params = ApplicationInstallationParams.create().
+                    start( false ).
+                    triggerEvent( false ).
+                    build();
+                ApplicationHelper.runAsAdmin( () -> this.applicationService.installStoredApplication( nodeId, params ) );
+            } );
     }
 
-    private void handleUninstalledEvent( final Event event )
+    private void handleUninstallEvent( final Event event )
     {
-        final Optional<String> appKey = event.getValueAs( String.class, ApplicationClusterEvents.APPLICATION_KEY_PARAM );
-
-        if ( appKey.isPresent() )
-        {
-            final ApplicationKey applicationKey = ApplicationKey.from( appKey.get() );
-            if ( !this.applicationService.isLocalApplication( applicationKey ) )
-            {
-                ApplicationHelper.runAsAdmin(
-                    () -> this.applicationService.uninstallApplication( ApplicationKey.from( appKey.get() ), false ) );
-            }
-        }
+        handleEvent( event, applicationKey -> this.applicationService.uninstallApplication( applicationKey, false ) );
     }
 
-    private void handleStateChangedEvent( final Event event )
+    private void handleStartEvent( final Event event )
     {
-        final Optional<String> appKey = event.getValueAs( String.class, ApplicationClusterEvents.APPLICATION_KEY_PARAM );
-        final Optional<Boolean> started = event.getValueAs( Boolean.class, ApplicationClusterEvents.STARTED_PARAM );
-
-        if ( appKey.isPresent() && started.isPresent() )
-        {
-            final ApplicationKey applicationKey = ApplicationKey.from( appKey.get() );
-            if ( !this.applicationService.isLocalApplication( applicationKey ) )
-            {
-                if ( started.get() )
-                {
-
-                    ApplicationHelper.runAsAdmin( () -> this.applicationService.startApplication( applicationKey, false ) );
-                }
-                else
-                {
-                    ApplicationHelper.runAsAdmin( () -> this.applicationService.stopApplication( applicationKey, false ) );
-                }
-            }
-        }
+        handleEvent( event, applicationKey -> this.applicationService.startApplication( applicationKey, false ) );
     }
 
-    @Reference
-    public void setApplicationService( final ApplicationService applicationService )
+    private void handleStopEvent( final Event event )
     {
-        this.applicationService = applicationService;
+        handleEvent( event, applicationKey -> this.applicationService.stopApplication( applicationKey, false ) );
+    }
+
+    private void handleEvent( final Event event, final Consumer<ApplicationKey> callback )
+    {
+        event.getValueAs( String.class, ApplicationClusterEvents.APPLICATION_KEY_PARAM ).
+            map( ApplicationKey::from ).
+            filter( Predicate.not( this.applicationService::isLocalApplication ) ).
+            ifPresent( applicationKey -> ApplicationHelper.runAsAdmin( () -> callback.accept( applicationKey ) ) );
     }
 }
