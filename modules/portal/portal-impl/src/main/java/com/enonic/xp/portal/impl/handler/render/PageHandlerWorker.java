@@ -25,6 +25,7 @@ import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.Reference;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 
 final class PageHandlerWorker
     extends RenderHandlerWorker
@@ -47,7 +48,7 @@ final class PageHandlerWorker
         final ContentPath contentPath = this.request.getContentPath();
         if ( ContentConstants.CONTENT_ROOT_PARENT.toString().equals( contentPath.toString() ) )
         {
-            throw notFound( "Page [%s] not found", contentPath );
+            throw WebException.notFound( String.format( "Page [%s] not found", contentPath ) );
         }
 
         final Content content = getContent( getContentSelector() );
@@ -132,7 +133,7 @@ final class PageHandlerWorker
         final Reference target = shortcut == null ? null : shortcut.getReference();
         if ( target == null || target.getNodeId() == null )
         {
-            throw notFound( "Missing shortcut target" );
+            throw WebException.notFound( String.format( "Missing shortcut target" ) );
         }
 
         final PageUrlParams pageUrlParams = new PageUrlParams().id( target.toString() ).portalRequest( this.request );
@@ -153,7 +154,7 @@ final class PageHandlerWorker
         final PageDescriptor pageDescriptor = this.pageDescriptorService.getByKey( descriptorKey );
         if ( pageDescriptor == null )
         {
-            throw notFound( "Page descriptor [%s] not found", descriptorKey.getName() );
+            throw WebException.notFound( String.format( "Page descriptor [%s] not found", descriptorKey.getName() ) );
         }
 
         return pageDescriptor;

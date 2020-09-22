@@ -37,7 +37,8 @@ final class EnvironmentImpl
     {
         if ( dir == null )
         {
-            throw new LauncherException( "[%s] directory not set. Please set [%s] system property variable.", message, prop );
+            throw new LauncherException(
+                String.format( "[%s] directory not set. Please set [%s] system property variable.", message, prop ) );
         }
     }
 

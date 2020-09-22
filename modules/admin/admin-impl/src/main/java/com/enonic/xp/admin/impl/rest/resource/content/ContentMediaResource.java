@@ -29,7 +29,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
@@ -101,7 +100,7 @@ public final class ContentMediaResource
         final Attachment attachment = resolveAttachment( identifier, contentId );
         if ( attachment == null )
         {
-            throw JaxRsExceptions.notFound( String.format( "Content [%s] has no attachments", contentId ) );
+            throw new WebApplicationException( String.format( "Content [%s] has no attachments", contentId ), Response.Status.NOT_FOUND );
         }
         else if ( !download && !attachmentAllowsPreview( attachment ) )
         {
@@ -133,7 +132,7 @@ public final class ContentMediaResource
 
         if ( content == null )
         {
-            throw JaxRsExceptions.notFound( String.format( "Content [%s] was not found", contentId ) );
+            throw new WebApplicationException( String.format( "Content [%s] was not found", contentId ), Response.Status.NOT_FOUND );
         }
 
         final String decodedIdentifier =

@@ -17,6 +17,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -55,7 +56,6 @@ import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.idprovider.IdProviderDescriptorMode;
 import com.enonic.xp.idprovider.IdProviderDescriptorService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.jaxrs.JaxRsExceptions;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.Group;
@@ -118,7 +118,7 @@ public final class SecurityResource
         final IdProvider idProvider = securityService.getIdProvider( idProviderKey );
         if ( idProvider == null )
         {
-            throw JaxRsExceptions.notFound( String.format( "Id Provider [%s] not found", keyParam ) );
+            throw new WebApplicationException( String.format( "Id Provider [%s] not found", keyParam ), Response.Status.NOT_FOUND );
         }
 
         final IdProviderDescriptorMode idProviderMode = retrieveIdProviderMode( idProvider );
@@ -405,9 +405,9 @@ public final class SecurityResource
         final PrincipalKey principalKey = PrincipalKey.from( keyParam );
         final Optional<? extends Principal> principalResult = securityService.getPrincipal( principalKey );
 
-        if ( !principalResult.isPresent() )
+        if ( principalResult.isEmpty() )
         {
-            throw JaxRsExceptions.notFound( String.format( "Principal [%s] was not found", keyParam ) );
+            throw new WebApplicationException( String.format( "Principal [%s] was not found", keyParam ), Response.Status.NOT_FOUND );
         }
 
         final Principal principal = principalResult.get();

@@ -12,6 +12,7 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.handler.ControllerHandlerWorker;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.web.WebException;
 
 abstract class RenderHandlerWorker
     extends ControllerHandlerWorker
@@ -29,7 +30,7 @@ abstract class RenderHandlerWorker
     {
         if ( !content.hasPage() )
         {
-            throw notFound( "Content [%s] is not a page", content.getPath().toString() );
+            throw WebException.notFound( String.format( "Content [%s] is not a page", content.getPath().toString() ) );
         }
 
         return content.getPage();
@@ -39,13 +40,13 @@ abstract class RenderHandlerWorker
     {
         if ( page.getTemplate() == null )
         {
-            throw notFound( "No template set for content" );
+            throw WebException.notFound( String.format( "No template set for content" ) );
         }
 
         final PageTemplate pageTemplate = this.pageTemplateService.getByKey( page.getTemplate() );
         if ( pageTemplate == null )
         {
-            throw notFound( "Page template [%s] not found", page.getTemplate() );
+            throw WebException.notFound( String.format( "Page template [%s] not found", page.getTemplate() ) );
         }
 
         return pageTemplate;
@@ -62,7 +63,7 @@ abstract class RenderHandlerWorker
         if ( pageTemplate == null && ( this.request.getMode() != RenderMode.EDIT ) )
         {
             // we can render default empty page in Live-Edit, for selecting controller when page customized
-            throw notFound( "No template found for content" );
+            throw WebException.notFound( String.format( "No template found for content" ) );
         }
 
         return pageTemplate;
@@ -73,7 +74,7 @@ abstract class RenderHandlerWorker
         final PageDescriptor pageDescriptor = this.pageDescriptorService.getByKey( pageTemplate.getController() );
         if ( pageDescriptor == null )
         {
-            throw notFound( "Page descriptor for template [%s] not found", pageTemplate.getName() );
+            throw WebException.notFound( String.format( "Page descriptor for template [%s] not found", pageTemplate.getName() ) );
         }
 
         return pageDescriptor;

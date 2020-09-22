@@ -53,7 +53,7 @@ public class IdentityHandler
 
         if ( !matcher.find() )
         {
-            throw notFound( "Not a valid idprovider url pattern" );
+            throw WebException.notFound( "Not a valid idprovider url pattern" );
         }
 
         final IdProviderKey idProviderKey = IdProviderKey.from( matcher.group( ID_PROVIDER_GROUP_INDEX ) );
@@ -115,7 +115,7 @@ public class IdentityHandler
             final String ticket = removeParameter( req, "_ticket" );
             if ( ticket == null )
             {
-                throw badRequest( "Missing ticket parameter" );
+                throw WebException.badRequest( "Missing ticket parameter" );
             }
 
             final String jSessionId = getJSessionId();

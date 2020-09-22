@@ -27,6 +27,6 @@ public final class RequirementChecker
 
     private String javaVersionRequirementsMessage( final JavaVersion version )
     {
-        throw new LauncherException( "Java 11 is required. You are running %s.", version );
+        throw new LauncherException( String.format( "Java 11 is required. You are running %s.", version ) );
     }
 }

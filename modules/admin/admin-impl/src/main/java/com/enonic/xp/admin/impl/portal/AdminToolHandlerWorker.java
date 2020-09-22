@@ -11,6 +11,7 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.ControllerHandlerWorker;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.web.WebException;
 
 final class AdminToolHandlerWorker
     extends ControllerHandlerWorker
@@ -35,7 +36,7 @@ final class AdminToolHandlerWorker
         final AdminToolDescriptor adminToolDescriptor = adminToolDescriptorService.getByKey( descriptorKey );
         if ( adminToolDescriptor == null )
         {
-            throw notFound( "Admin application [%s] not found", descriptorKey.toString() );
+            throw WebException.notFound( String.format( "Admin application [%s] not found", descriptorKey ) );
         }
 
         //Checks if the access to AdminToolDescriptor is allowed
@@ -44,7 +45,7 @@ final class AdminToolHandlerWorker
             getPrincipals();
         if ( !adminToolDescriptor.isAccessAllowed( principals ) )
         {
-            throw forbidden( "You don't have permission to access [%s]", descriptorKey.toString() );
+            throw WebException.forbidden( String.format( "You don't have permission to access [%s]", descriptorKey ) );
         }
 
         //Renders the Admin application
