@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
-import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +51,6 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-@Component(immediate = true)
 public class ParentProjectSynchronizer
 {
     private static final Logger LOG = LoggerFactory.getLogger( ParentProjectSynchronizer.class );
