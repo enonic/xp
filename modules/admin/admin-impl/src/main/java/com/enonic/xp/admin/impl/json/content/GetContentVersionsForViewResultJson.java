@@ -90,7 +90,8 @@ public class GetContentVersionsForViewResultJson
         while ( iterator.hasNext() )
         {
             final ContentVersion contentVersion = iterator.next();
-            if ( Math.abs( previouslyAdded.getModified().toEpochMilli() - contentVersion.getModified().toEpochMilli() ) > msRangeFilter )
+            if ( Math.abs( previouslyAdded.getModified().toEpochMilli() - contentVersion.getModified().toEpochMilli() ) > msRangeFilter ||
+                contentVersion.getPublishInfo() != null )
             {
                 filteredContentVersions.add( contentVersion );
                 previouslyAdded = contentVersion;

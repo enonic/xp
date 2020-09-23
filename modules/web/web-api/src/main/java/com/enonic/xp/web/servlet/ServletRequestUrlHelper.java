@@ -12,13 +12,16 @@ import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 
 @PublicApi
 public final class ServletRequestUrlHelper
 {
     static final String X_FORWARDED_PROTO = HttpHeaders.X_FORWARDED_PROTO;
 
-    static final String X_FORWARDED_HOST = "X-Forwarded-Host";
+    static final String X_FORWARDED_HOST = HttpHeaders.X_FORWARDED_HOST;
+
+    static final String X_FORWARDED_PORT = HttpHeaders.X_FORWARDED_PORT;
 
     static final String X_FORWARDED_FOR = HttpHeaders.X_FORWARDED_FOR;
 
@@ -56,11 +59,7 @@ public final class ServletRequestUrlHelper
     public static String getScheme( final HttpServletRequest req )
     {
         String scheme = req.getHeader( X_FORWARDED_PROTO );
-        if ( scheme == null )
-        {
-            scheme = req.getScheme();
-        }
-        return scheme;
+        return nullToEmpty( scheme ).isBlank() ? req.getScheme() : getFirstForwarded( scheme );
     }
 
     public static String getHost()
@@ -80,8 +79,7 @@ public final class ServletRequestUrlHelper
 
     public static int getPort( final HttpServletRequest req )
     {
-        final HostAndPort hostAndPort = getHostAndPort( req );
-        return hostAndPort.getPortOrDefault( -1 );
+        return getHostAndPort( req ).getPortOrDefault( -1 );
     }
 
     public static HostAndPort getHostAndPort()
@@ -92,23 +90,43 @@ public final class ServletRequestUrlHelper
     public static HostAndPort getHostAndPort( final HttpServletRequest req )
     {
         final String xForwardedHost = req.getHeader( X_FORWARDED_HOST );
-        if ( xForwardedHost != null )
+        if ( nullToEmpty( xForwardedHost ).isBlank() )
         {
-            final HostAndPort hostAndPort = HostAndPort.fromString( xForwardedHost );
-            return hostAndPort.withDefaultPort( req.getServerPort() );
+            return HostAndPort.fromParts( req.getServerName(), req.getServerPort() );
         }
+        else
+        {
+            final HostAndPort hostAndPort = HostAndPort.fromString( getFirstForwarded( xForwardedHost ) );
 
-        return HostAndPort.fromParts( req.getServerName(), req.getServerPort() );
+            final String xForwardedPort = req.getHeader( X_FORWARDED_PORT );
+            if ( nullToEmpty( xForwardedPort ).isBlank() )
+            {
+                return hostAndPort;
+            }
+            else
+            {
+                return hostAndPort.withDefaultPort( Integer.parseInt( getFirstForwarded( xForwardedPort ) ) );
+            }
+        }
     }
 
     public static String getRemoteAddress( final HttpServletRequest req )
     {
-        final String xForwardedHost = req.getHeader( X_FORWARDED_FOR );
-        if ( xForwardedHost != null )
+        final String xForwardedFor = req.getHeader( X_FORWARDED_FOR );
+        if ( nullToEmpty( xForwardedFor ).isBlank() )
         {
-            return xForwardedHost.contains( "," ) ? xForwardedHost.substring( 0, xForwardedHost.indexOf( "," ) ) : xForwardedHost;
+            return req.getRemoteAddr();
         }
-        return req.getRemoteAddr();
+        else
+        {
+            return getFirstForwarded( xForwardedFor );
+        }
+    }
+
+    private static String getFirstForwarded( final String xForwarded )
+    {
+        final int firstCommaIndex = xForwarded.indexOf( "," );
+        return firstCommaIndex == -1 ? xForwarded : xForwarded.substring( 0, firstCommaIndex );
     }
 
     public static String getPath()
@@ -177,10 +195,10 @@ public final class ServletRequestUrlHelper
 
     private static boolean needPortNumber( final String scheme, final int port )
     {
-        final boolean isNegative = port < 0;
+        final boolean isUndefined = port < 0;
         final boolean isHttp = "http".equals( scheme ) && ( 80 == port );
         final boolean isHttps = "https".equals( scheme ) && ( 443 == port );
-        return !( isNegative || isHttp || isHttps );
+        return !( isUndefined || isHttp || isHttps );
     }
 
     public static UriRewritingResult rewriteUri( final String uri )

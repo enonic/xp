@@ -17,6 +17,7 @@ import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 
 @Component(configurationPid = "com.enonic.xp.cluster")
 public class ClusterConfigImpl
@@ -87,14 +88,14 @@ public class ClusterConfigImpl
     @Override
     public String networkPublishHost()
     {
-        final String host = this.config.get( "network.publish.host" );
-        return host == null ? null : networkInterfaceResolver.resolveAddress( host );
+        final String host = nullToEmpty( this.config.get( "network.publish.host" ) );
+        return host.isBlank() ? null : networkInterfaceResolver.resolveAddress( host );
     }
 
     @Override
     public String networkHost()
     {
-        final String host = this.config.get( "network.host" );
-        return host == null ? null : networkInterfaceResolver.resolveAddress( host );
+        final String host = nullToEmpty( this.config.get( "network.host" ) );
+        return host.isBlank() ? null : networkInterfaceResolver.resolveAddress( host );
     }
 }

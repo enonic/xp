@@ -1,13 +1,13 @@
 package com.enonic.xp.core.impl.hazelcast;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -17,7 +17,6 @@ import com.hazelcast.kubernetes.HazelcastKubernetesDiscoveryStrategyFactory;
 import com.hazelcast.spi.properties.GroupProperty;
 
 import com.enonic.xp.cluster.ClusterConfig;
-import com.enonic.xp.cluster.NodeDiscovery;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -26,14 +25,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class HazelcastConfigServiceImplTest
 {
-    @Mock
+    @Mock(stubOnly = true, answer = Answers.RETURNS_DEEP_STUBS)
     private ClusterConfig clusterConfig;
 
     private HazelcastConfig hazelcastConfig;
@@ -45,16 +43,6 @@ class HazelcastConfigServiceImplTest
     {
         hazelcastConfig = mock( HazelcastConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         hazelcastConfigService = new HazelcastConfigServiceImpl( clusterConfig, hazelcastConfig );
-    }
-
-    private void configureDefaults()
-        throws UnknownHostException
-    {
-        lenient().when( clusterConfig.networkHost() ).thenReturn( "127.0.0.1" );
-        lenient().when( clusterConfig.networkPublishHost() ).thenReturn( "127.0.0.1" );
-        final NodeDiscovery nodeDiscovery = mock( NodeDiscovery.class );
-        lenient().when( nodeDiscovery.get() ).thenReturn( List.of( InetAddress.getByName( "127.0.0.1" ) ) );
-        lenient().when( clusterConfig.discovery() ).thenReturn( nodeDiscovery );
     }
 
     @Test
@@ -72,31 +60,33 @@ class HazelcastConfigServiceImplTest
     }
 
     @Test
-    void configure_default()
+    void configure_clusterConfigDefaults_enabled()
         throws Exception
     {
-        when( clusterConfig.networkHost() ).thenReturn( "127.0.0.1" );
-        when( clusterConfig.networkPublishHost() ).thenReturn( "127.0.0.1" );
-        final NodeDiscovery nodeDiscovery = mock( NodeDiscovery.class );
-        when( nodeDiscovery.get() ).thenReturn( List.of( InetAddress.getByName( "127.0.0.1" ) ) );
-        when( clusterConfig.discovery() ).thenReturn( nodeDiscovery );
+        when( clusterConfig.networkHost() ).thenReturn( "127.0.1.1" );
+        when( clusterConfig.networkPublishHost() ).thenReturn( "127.0.2.1" );
+        when( clusterConfig.discovery().get() ).
+            thenReturn( List.of( InetAddress.getByName( "127.0.0.1" ), InetAddress.getByName( "127.0.1.1" ) ) );
 
         final Config config = hazelcastConfigService.configure();
 
         assertAll( () -> assertEquals( "true", config.getProperty( GroupProperty.PHONE_HOME_ENABLED.getName() ) ),
-                   () -> assertEquals( "127.0.0.1", config.getProperty( "hazelcast.local.localAddress" ) ),
-                   () -> assertEquals( "127.0.0.1", config.getProperty( "hazelcast.local.publicAddress" ) ),
                    () -> assertEquals( "true", config.getProperty( GroupProperty.SOCKET_BIND_ANY.getName() ) ),
-                   () -> assertIterableEquals( List.of( "127.0.0.1" ), config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers() ),
-                   () -> assertNull( config.getNetworkConfig().getRestApiConfig() ) );
+                   () -> assertEquals( "127.0.2.1", config.getNetworkConfig().getPublicAddress() ),
+                   () -> assertIterableEquals( List.of( "127.0.0.1", "127.0.1.1" ),
+                                               config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers() ),
+                   () -> assertNull( config.getNetworkConfig().getRestApiConfig() ),
+                   () -> assertTrue( config.getNetworkConfig().getInterfaces().isEnabled() ),
+                   () -> assertThat( config.getNetworkConfig().getInterfaces().getInterfaces() ).containsExactlyInAnyOrder( "127.0.1.1" ) );
     }
 
     @Test
     void configure_interfaces()
         throws Exception
     {
-        configureDefaults();
+        when( clusterConfig.discovery().get() ).thenReturn( List.of( InetAddress.getByName( "127.0.0.1" ) ) );
 
+        when( hazelcastConfig.clusterConfigDefaults() ).thenReturn( false );
         when( hazelcastConfig.network_interfaces_enabled() ).thenReturn( true );
         when( hazelcastConfig.network_interfaces() ).thenReturn( "127.0.0.1,127.0.0.2" );
         final Config config = hazelcastConfigService.configure();
@@ -109,7 +99,8 @@ class HazelcastConfigServiceImplTest
     void configure_restClient_enabled()
         throws Exception
     {
-        configureDefaults();
+        when( clusterConfig.networkHost() ).thenReturn( "127.0.0.1" );
+        when( clusterConfig.discovery().get() ).thenReturn( List.of( InetAddress.getByName( "127.0.0.1" ) ) );
 
         when( hazelcastConfig.network_restApi_enabled() ).thenReturn( true );
         when( hazelcastConfig.network_restApi_restEndpointGroups() ).thenReturn( "WAN, DATA" );
@@ -121,10 +112,9 @@ class HazelcastConfigServiceImplTest
 
     @Test
     void configure_kubernetes_enabled()
-        throws Exception
     {
-        configureDefaults();
-
+        when( hazelcastConfig.clusterConfigDefaults() ).thenReturn( false );
+        when( hazelcastConfig.network_join_tcpIp_enabled() ).thenReturn( false );
         when( hazelcastConfig.network_join_kubernetes_enabled() ).thenReturn( true );
         when( hazelcastConfig.network_join_kubernetes_serviceDns() ).thenReturn( "some.service.local" );
         final Config config = hazelcastConfigService.configure();
@@ -143,9 +133,7 @@ class HazelcastConfigServiceImplTest
 
         final Config config = hazelcastConfigService.configure();
 
-        assertAll( () -> assertNull( config.getProperty( "hazelcast.local.localAddress" ) ),
-                   () -> assertNull( config.getProperty( "hazelcast.local.publicAddress" ) ),
-                   () -> assertEquals( "true", config.getProperty( GroupProperty.SOCKET_BIND_ANY.getName() ) ),
+        assertAll( () -> assertEquals( "true", config.getProperty( GroupProperty.SOCKET_BIND_ANY.getName() ) ),
                    () -> assertIterableEquals( List.of( "127.0.0.2", "127.0.0.3" ),
                                                config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers() ) );
     }

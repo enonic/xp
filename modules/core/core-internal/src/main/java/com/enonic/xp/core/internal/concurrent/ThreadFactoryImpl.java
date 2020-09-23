@@ -1,5 +1,6 @@
 package com.enonic.xp.core.internal.concurrent;
 
+import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
@@ -56,7 +57,7 @@ final class ThreadFactoryImpl
     {
         final Thread thread = Executors.defaultThreadFactory().newThread( r );
 
-        thread.setName( String.format( namePattern, count.getAndIncrement() ) );
+        thread.setName( String.format( Locale.ROOT, namePattern, count.getAndIncrement() ) );
 
         if ( uncaughtExceptionHandler != null )
         {

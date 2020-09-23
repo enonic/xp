@@ -60,19 +60,26 @@ public class HazelcastConfigServiceImpl
 
         config.setProperty( GroupProperty.SHUTDOWNHOOK_ENABLED.getName(), String.valueOf( false ) );
 
-        config.setProperty( GroupProperty.INITIAL_MIN_CLUSTER_SIZE.getName(), String.valueOf( hazelcastConfig.system_hazelcast_initial_min_cluster_size() ) );
+        config.setProperty( GroupProperty.INITIAL_MIN_CLUSTER_SIZE.getName(),
+                            String.valueOf( hazelcastConfig.system_hazelcast_initial_min_cluster_size() ) );
 
-        config.setProperty( GroupProperty.MAX_NO_HEARTBEAT_SECONDS.getName(), String.valueOf( hazelcastConfig.system_hazelcast_max_no_heartbeat_seconds() ) );
+        config.setProperty( GroupProperty.MAX_NO_HEARTBEAT_SECONDS.getName(),
+                            String.valueOf( hazelcastConfig.system_hazelcast_max_no_heartbeat_seconds() ) );
 
-        config.setProperty( GroupProperty.HEARTBEAT_INTERVAL_SECONDS.getName(), String.valueOf( hazelcastConfig.system_hazelcast_heartbeat_interval_seconds() ) );
+        config.setProperty( GroupProperty.HEARTBEAT_INTERVAL_SECONDS.getName(),
+                            String.valueOf( hazelcastConfig.system_hazelcast_heartbeat_interval_seconds() ) );
 
-        config.setProperty( GroupProperty.MASTERSHIP_CLAIM_TIMEOUT_SECONDS.getName(), String.valueOf( hazelcastConfig.system_hazelcast_mastership_claim_timeout_seconds() ) );
+        config.setProperty( GroupProperty.MASTERSHIP_CLAIM_TIMEOUT_SECONDS.getName(),
+                            String.valueOf( hazelcastConfig.system_hazelcast_mastership_claim_timeout_seconds() ) );
 
-        config.setProperty( GroupProperty.PHONE_HOME_ENABLED.getName(), String.valueOf( hazelcastConfig.system_hazelcast_phone_home_enabled() ) );
+        config.setProperty( GroupProperty.PHONE_HOME_ENABLED.getName(),
+                            String.valueOf( hazelcastConfig.system_hazelcast_phone_home_enabled() ) );
 
-        config.setProperty( GroupProperty.WAIT_SECONDS_BEFORE_JOIN.getName(), String.valueOf( hazelcastConfig.hazelcast_wait_seconds_before_join() ) );
+        config.setProperty( GroupProperty.WAIT_SECONDS_BEFORE_JOIN.getName(),
+                            String.valueOf( hazelcastConfig.hazelcast_wait_seconds_before_join() ) );
 
-        config.setProperty( GroupProperty.MAX_WAIT_SECONDS_BEFORE_JOIN.getName(), String.valueOf( hazelcastConfig.hazelcast_max_wait_seconds_before_join() ) );
+        config.setProperty( GroupProperty.MAX_WAIT_SECONDS_BEFORE_JOIN.getName(),
+                            String.valueOf( hazelcastConfig.hazelcast_max_wait_seconds_before_join() ) );
 
         config.setClassLoader( HazelcastConfigServiceImpl.class.getClassLoader() );
 
@@ -102,8 +109,7 @@ public class HazelcastConfigServiceImpl
 
         if ( hazelcastConfig.clusterConfigDefaults() )
         {
-            config.setProperty( "hazelcast.local.localAddress", clusterConfig.networkHost() );
-            config.setProperty( "hazelcast.local.publicAddress", clusterConfig.networkPublishHost() );
+            networkConfig.setPublicAddress( clusterConfig.networkPublishHost() );
         }
         else
         {
@@ -142,16 +148,25 @@ public class HazelcastConfigServiceImpl
 
     private void configureInterfaces( Config config )
     {
-        if ( hazelcastConfig.network_interfaces_enabled() )
+        if ( hazelcastConfig.clusterConfigDefaults() )
         {
             InterfacesConfig interfacesConfig = config.getNetworkConfig().getInterfaces();
             interfacesConfig.setEnabled( true );
-            final String interfacesStr = requireNonNullElse( hazelcastConfig.network_interfaces(), "" ).trim();
-            List<String> interfaces = Arrays.stream( interfacesStr.split( "," ) ).
-                filter( Predicate.not( String::isBlank ) ).
-                map( String::trim ).
-                collect( Collectors.toUnmodifiableList() );
-            interfacesConfig.setInterfaces( interfaces );
+            interfacesConfig.setInterfaces( List.of( clusterConfig.networkHost() ) );
+        }
+        else
+        {
+            if ( hazelcastConfig.network_interfaces_enabled() )
+            {
+                InterfacesConfig interfacesConfig = config.getNetworkConfig().getInterfaces();
+                interfacesConfig.setEnabled( true );
+                final String interfacesStr = requireNonNullElse( hazelcastConfig.network_interfaces(), "" ).trim();
+                List<String> interfaces = Arrays.stream( interfacesStr.split( "," ) ).
+                    filter( Predicate.not( String::isBlank ) ).
+                    map( String::trim ).
+                    collect( Collectors.toUnmodifiableList() );
+                interfacesConfig.setInterfaces( interfaces );
+            }
         }
     }
 

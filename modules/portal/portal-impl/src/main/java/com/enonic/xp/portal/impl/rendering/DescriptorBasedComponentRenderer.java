@@ -79,7 +79,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
             if ( renderMode == RenderMode.EDIT && contentType != null && contentType.withoutParameters().type().equals( "text" ) )
             {
                 final Object bodyObj = portalResponse.getBody();
-                if ( ( bodyObj == null ) || bodyObj instanceof String && nullToEmpty( (String) bodyObj ).isBlank() )
+                if ( bodyObj == null || ( bodyObj instanceof String && nullToEmpty( (String) bodyObj ).isBlank() ) )
                 {
                     if ( portalResponse.getStatus().equals( HttpStatus.METHOD_NOT_ALLOWED ) )
                     {

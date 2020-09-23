@@ -20,9 +20,11 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 
 public class UnpublishContentCommand
@@ -141,25 +143,38 @@ public class UnpublishContentCommand
                     {
                         PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
 
-                        if(publishInfo.hasProperty( ContentPropertyNames.PUBLISH_FROM ))
+                        if ( publishInfo.hasProperty( ContentPropertyNames.PUBLISH_FROM ) )
                         {
                             publishInfo.removeProperty( ContentPropertyNames.PUBLISH_FROM );
                         }
 
-                        if(publishInfo.hasProperty( ContentPropertyNames.PUBLISH_TO ))
+                        if ( publishInfo.hasProperty( ContentPropertyNames.PUBLISH_TO ) )
                         {
                             publishInfo.removeProperty( ContentPropertyNames.PUBLISH_TO );
                         }
 
-                        if (publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ).compareTo( Instant.now()) > 0 ) {
+                        if ( publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST ).compareTo( Instant.now() ) > 0 )
+                        {
                             publishInfo.removeProperty( ContentPropertyNames.PUBLISH_FIRST );
                         }
                     }
                 } ).
                 id( NodeId.from( contentId ) ).
                 build() );
+
+            commitUnpublishedNode( contentId );
         }
         return null;
+    }
+
+    private void commitUnpublishedNode( final ContentId contentId )
+    {
+        final NodeCommitEntry commitEntry = NodeCommitEntry.create().
+            message( ContentConstants.UNPUBLISH_COMMIT_PREFIX ).
+            build();
+
+        nodeService.refresh( RefreshMode.ALL );
+        nodeService.commit( commitEntry, NodeIds.from( contentId.toString() ) );
     }
 
     public static class Builder

@@ -316,6 +316,7 @@ RepoConnection.prototype.query = function (params) {
  * @param {object} [params.filters] Query filters
  * @param {string} [params.sort='_score DESC'] Sorting expression.
  * @param {string} [params.aggregations] Aggregations expression.
+ * @param {string} [params.highlight] Highlighting parameters.
  * @param {boolean} [params.explain=false] Return score calculation explanation.
  * @returns {object} Result of query.
  */

@@ -67,12 +67,7 @@ public final class Event
 
     public <T> Optional<T> getValueAs( final Class<T> type, final String key )
     {
-        Optional<Object> value = this.getValue( key );
-        if ( value.isPresent() )
-        {
-            return Optional.of( Converters.convert( this.getValue( key ).get(), type ) );
-        }
-        return Optional.empty();
+        return this.getValue( key ).map( o -> Converters.convert( o, type ) );
     }
 
     public boolean isType( final String type )

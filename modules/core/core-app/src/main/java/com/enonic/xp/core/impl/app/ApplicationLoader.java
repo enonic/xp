@@ -33,9 +33,8 @@ public class ApplicationLoader
             {
                 int totalLength = connection.getContentLength();
                 int bytesRead;
-                float totalRead = 0;
+                int totalRead = 0;
                 int lastPct = 0;
-                int currentPct;
                 byte[] buffer = new byte[8192];
                 os = new ByteArrayOutputStream();
 
@@ -44,7 +43,7 @@ public class ApplicationLoader
                     os.write( buffer, 0, bytesRead );
                     totalRead += bytesRead;
 
-                    currentPct = (int) ( ( totalRead / totalLength ) * 100 );
+                    int currentPct = (int) Math.min( 100, Math.round( totalRead * 100. / totalLength ) );
 
                     if ( lastPct != currentPct )
                     {

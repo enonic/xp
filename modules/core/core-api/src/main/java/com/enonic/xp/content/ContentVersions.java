@@ -1,10 +1,10 @@
 package com.enonic.xp.content;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.List;
 
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -12,13 +12,13 @@ import com.enonic.xp.annotation.PublicApi;
 public class ContentVersions
     implements Iterable<ContentVersion>
 {
-    private final ImmutableSortedSet<ContentVersion> contentVersions;
+    private final ImmutableList<ContentVersion> contentVersions;
 
     private final ContentId contentId;
 
     private ContentVersions( Builder builder )
     {
-        contentVersions = ImmutableSortedSet.copyOf( builder.contentVersions );
+        contentVersions = ImmutableList.sortedCopyOf( ContentVersionDateComparator.INSTANCE, builder.contentVersions );
         contentId = builder.contentId;
     }
 
@@ -41,7 +41,7 @@ public class ContentVersions
 
     public static final class Builder
     {
-        private SortedSet<ContentVersion> contentVersions = new TreeSet<>();
+        private List<ContentVersion> contentVersions = new ArrayList<>();
 
         private ContentId contentId;
 

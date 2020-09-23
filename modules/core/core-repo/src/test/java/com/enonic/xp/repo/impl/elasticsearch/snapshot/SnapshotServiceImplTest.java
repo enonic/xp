@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SnapshotServiceImplTest
     extends AbstractNodeTest
@@ -46,9 +47,9 @@ public class SnapshotServiceImplTest
     {
         for (String repository : client.admin().cluster().prepareGetRepositories().execute().actionGet().repositories().stream().map(RepositoryMetaData::name).collect(Collectors.toList())) {
             for (String snapshot : client.admin().cluster().prepareGetSnapshots(repository).execute().actionGet().getSnapshots().stream().map(SnapshotInfo::name).collect(Collectors.toList())) {
-                client.admin().cluster().prepareDeleteSnapshot(repository, snapshot).execute().actionGet();
+                client.admin().cluster().prepareDeleteSnapshot( repository, snapshot ).execute().actionGet();
             }
-            client.admin().cluster().prepareDeleteRepository(repository).execute().actionGet();
+            client.admin().cluster().prepareDeleteRepository( repository ).execute().actionGet();
         }
 
         this.snapshotService = new SnapshotServiceImpl();
@@ -56,12 +57,9 @@ public class SnapshotServiceImplTest
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
         nodeRepositoryService.setIndexServiceInternal( this.indexServiceInternal );
 
-        this.repositoryService = new RepositoryServiceImpl();
-        repositoryService.setIndexServiceInternal( this.indexServiceInternal );
-        repositoryService.setNodeStorageService( this.storageService );
-        repositoryService.setNodeSearchService( this.searchService );
-        repositoryService.setNodeRepositoryService( nodeRepositoryService );
-        repositoryService.setRepositoryEntryService( this.repositoryEntryService );
+        this.repositoryService =
+            new RepositoryServiceImpl( this.repositoryEntryService, this.indexServiceInternal, nodeRepositoryService, this.storageService,
+                                       this.searchService );
 
         eventPublisher = Mockito.mock( EventPublisher.class );
 
@@ -141,9 +139,37 @@ public class SnapshotServiceImplTest
             snapshotName( "my-snapshot" ).
             build() );
 
-        assertNotNull( this.repositoryService.get( newRepoId ) );
-        assertNotNull( this.repositoryService.get( SystemConstants.SYSTEM_REPO_ID ) );
-        assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO_ID ) );
+        assertTrue( this.repositoryService.isInitialized( newRepoId ) );
+        assertTrue( this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO_ID ) );
+        assertTrue( this.repositoryService.isInitialized( ContentConstants.CONTENT_REPO_ID ) );
+    }
+
+    @Test
+    public void restore_all()
+    {
+        NodeHelper.runAsAdmin( () -> {
+            final RepositoryId newRepoId = RepositoryId.from( "new-repo" );
+            this.repositoryService.createRepository( CreateRepositoryParams.create().
+                repositoryId( newRepoId ).
+                build() );
+
+            assertNotNull( this.repositoryService.get( newRepoId ) );
+
+            this.snapshotService.snapshot( SnapshotParams.create().
+                snapshotName( "my-snapshot" ).
+                build() );
+
+            this.repositoryService.deleteRepository( DeleteRepositoryParams.from( newRepoId ) );
+            assertNull( this.repositoryService.get( newRepoId ) );
+
+            this.snapshotService.restore( RestoreParams.create().
+                snapshotName( "my-snapshot" ).
+                build() );
+
+            assertTrue( this.repositoryService.isInitialized( newRepoId ) );
+            assertTrue( this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO_ID ) );
+            assertTrue( this.repositoryService.isInitialized( ContentConstants.CONTENT_REPO_ID ) );
+        } );
     }
 
     @Test

@@ -2026,12 +2026,12 @@ public class ContentResourceTest
 
         Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
 
-        ContentVersion contentVersion = ContentVersion.create().
+        ContentVersion contentVersion1 = ContentVersion.create().
             id( ContentVersionId.from( "a" ) ).
             modified( Instant.now() ).
             modifier( PrincipalKey.ofAnonymous() ).
             publishInfo( ContentVersionPublishInfo.create().
-                message( "My version" ).
+                message( "My version 1" ).
                 publisher( PrincipalKey.ofAnonymous() ).
                 timestamp( Instant.ofEpochSecond( 1562056003L ) ).
                 contentPublishInfo( ContentPublishInfo.create().
@@ -2042,21 +2042,42 @@ public class ContentResourceTest
                 build() ).
             build();
 
+        ContentVersion contentVersion2 = ContentVersion.create().
+            id( ContentVersionId.from( "b" ) ).
+            modified( contentVersion1.getModified() ).
+            modifier( PrincipalKey.ofAnonymous() ).
+            publishInfo( ContentVersionPublishInfo.create().
+                message( "My version 2" ).
+                publisher( PrincipalKey.ofAnonymous() ).
+                timestamp( Instant.ofEpochSecond( 1562056004L ) ).
+                contentPublishInfo( ContentPublishInfo.create().
+                    first( Instant.now() ).
+                    build() ).
+                build() ).
+            build();
+
         Mockito.when( securityService.getPrincipal( PrincipalKey.ofAnonymous() ) ).thenReturn( (Optional) Optional.of( User.ANONYMOUS ) );
 
         final ContentPrincipalsResolver contentPrincipalsResolver = new ContentPrincipalsResolver( securityService );
         Mockito.when( securityService.getUser( PrincipalKey.ofAnonymous() ) ).thenReturn( Optional.of( User.ANONYMOUS ) );
 
-        FindContentVersionsParams params = FindContentVersionsParams.create().contentId( content.getId() ).from( 0 ).size( 10 ).build();
-        FindContentVersionsResult getVersionsResult = FindContentVersionsResult.create().contentVersions(
-            ContentVersions.create().contentId( content.getId() ).add( contentVersion ).build() ).build();
+        final FindContentVersionsParams params =
+            FindContentVersionsParams.create().contentId( content.getId() ).from( 0 ).size( 10 ).build();
+        final FindContentVersionsResult getVersionsResult = FindContentVersionsResult.create().
+            contentVersions( ContentVersions.create().
+                contentId( content.getId() ).
+                add( contentVersion1 ).
+                add( contentVersion2 ).
+                build() ).
+            build();
 
         Mockito.when( contentService.getVersions( params ) ).thenReturn( getVersionsResult );
 
         GetContentVersionsResultJson result =
             contentResource.getContentVersions( new GetContentVersionsJson( 0, 10, content.getId().toString() ) );
 
-        assertEquals( new ContentVersionJson( contentVersion, contentPrincipalsResolver ), result.getContentVersions().toArray()[0] );
+        assertEquals( new ContentVersionJson( contentVersion2, contentPrincipalsResolver ), result.getContentVersions().toArray()[0] );
+        assertEquals( new ContentVersionJson( contentVersion1, contentPrincipalsResolver ), result.getContentVersions().toArray()[1] );
 
     }
 

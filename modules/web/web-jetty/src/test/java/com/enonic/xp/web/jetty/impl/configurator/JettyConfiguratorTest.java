@@ -3,7 +3,8 @@ package com.enonic.xp.web.jetty.impl.configurator;
 import org.junit.jupiter.api.BeforeEach;
 
 import com.enonic.xp.web.jetty.impl.JettyConfig;
-import com.enonic.xp.web.jetty.impl.JettyConfigMockFactory;
+
+import static org.mockito.Mockito.mock;
 
 public abstract class JettyConfiguratorTest<T>
 {
@@ -16,7 +17,7 @@ public abstract class JettyConfiguratorTest<T>
     @BeforeEach
     public final void setup()
     {
-        this.config = new JettyConfigMockFactory().newConfig();
+        this.config = mock( JettyConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         this.configurator = newConfigurator();
         this.object = setupObject();
     }

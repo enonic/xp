@@ -49,7 +49,6 @@ public class ServletRequestUrlHelperTest
         assertEquals( "http", ServletRequestUrlHelper.getScheme() );
         assertEquals( "localhost", ServletRequestUrlHelper.getHost() );
         assertEquals( 80, ServletRequestUrlHelper.getPort() );
-        assertEquals( "localhost:80", ServletRequestUrlHelper.getHostAndPort().toString() );
         assertEquals( "http://localhost", ServletRequestUrlHelper.getServerUrl() );
     }
 
@@ -62,7 +61,6 @@ public class ServletRequestUrlHelperTest
 
         assertEquals( "https", ServletRequestUrlHelper.getScheme() );
         assertEquals( "localhost", ServletRequestUrlHelper.getHost() );
-        assertEquals( "localhost:443", ServletRequestUrlHelper.getHostAndPort().toString() );
         assertEquals( 443, ServletRequestUrlHelper.getPort() );
         assertEquals( "https://localhost", ServletRequestUrlHelper.getServerUrl() );
     }
@@ -76,7 +74,6 @@ public class ServletRequestUrlHelperTest
 
         assertEquals( "http", ServletRequestUrlHelper.getScheme() );
         assertEquals( "localhost", ServletRequestUrlHelper.getHost() );
-        assertEquals( "localhost:8080", ServletRequestUrlHelper.getHostAndPort().toString() );
         assertEquals( 8080, ServletRequestUrlHelper.getPort() );
         assertEquals( "http://localhost:8080", ServletRequestUrlHelper.getServerUrl() );
     }
@@ -92,7 +89,6 @@ public class ServletRequestUrlHelperTest
 
         assertEquals( "https", ServletRequestUrlHelper.getScheme() );
         assertEquals( "127.0.0.1", ServletRequestUrlHelper.getHost() );
-        assertEquals( "127.0.0.1:123", ServletRequestUrlHelper.getHostAndPort().toString() );
         assertEquals( 123, ServletRequestUrlHelper.getPort() );
         assertEquals( "https://127.0.0.1:123", ServletRequestUrlHelper.getServerUrl() );
     }
@@ -108,9 +104,34 @@ public class ServletRequestUrlHelperTest
 
         assertEquals( "https", ServletRequestUrlHelper.getScheme() );
         assertEquals( "127.0.0.1", ServletRequestUrlHelper.getHost() );
-        assertEquals( "127.0.0.1:8080", ServletRequestUrlHelper.getHostAndPort().toString() );
-        assertEquals( 8080, ServletRequestUrlHelper.getPort() );
-        assertEquals( "https://127.0.0.1:8080", ServletRequestUrlHelper.getServerUrl() );
+        assertEquals( -1, ServletRequestUrlHelper.getPort() );
+        assertEquals( "https://127.0.0.1", ServletRequestUrlHelper.getServerUrl() );
+    }
+
+    @Test
+    public void createServerUrl_x_forwarded_host_header_multi()
+    {
+        this.req.setServerName( "localhost" );
+        this.req.setServerPort( 8080 );
+        this.req.addHeader( ServletRequestUrlHelper.X_FORWARDED_HOST, "host1:4000, host2" );
+
+        assertEquals( "host1", ServletRequestUrlHelper.getHost( this.req ) );
+        assertEquals( 4000, ServletRequestUrlHelper.getPort( this.req ) );
+        assertEquals( "http://host1:4000", ServletRequestUrlHelper.getServerUrl() );
+    }
+
+    @Test
+    public void createServerUrl_various_x_forwarded_headers()
+    {
+        this.req.setServerName( "localhost" );
+        this.req.setServerPort( 8080 );
+        this.req.addHeader( ServletRequestUrlHelper.X_FORWARDED_PROTO, "https" );
+        this.req.addHeader( ServletRequestUrlHelper.X_FORWARDED_HOST, "host1, host2" );
+        this.req.addHeader( ServletRequestUrlHelper.X_FORWARDED_PORT, "4200, 9090" );
+
+        assertEquals( "host1", ServletRequestUrlHelper.getHost( this.req ) );
+        assertEquals( 4200, ServletRequestUrlHelper.getPort( this.req ) );
+        assertEquals( "https://host1:4200", ServletRequestUrlHelper.getServerUrl() );
     }
 
     @Test

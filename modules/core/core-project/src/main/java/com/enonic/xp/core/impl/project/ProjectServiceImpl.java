@@ -11,9 +11,6 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +20,6 @@ import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentSerializer;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -56,64 +52,77 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
-@Component(immediate = true)
 public class ProjectServiceImpl
     implements ProjectService
 {
     private static final Logger LOG = LoggerFactory.getLogger( ProjectServiceImpl.class );
 
-    private RepositoryService repositoryService;
+    private final RepositoryService repositoryService;
 
-    private IndexService indexService;
+    private final IndexService indexService;
 
-    private NodeService nodeService;
+    private final NodeService nodeService;
 
-    private SecurityService securityService;
+    private final SecurityService securityService;
+
+    private final ProjectPermissionsContextManager projectPermissionsContextManager;
 
     private EventPublisher eventPublisher;
 
-    private ProjectPermissionsContextManager projectPermissionsContextManager;
+    public ProjectServiceImpl( final RepositoryService repositoryService, final IndexService indexService, final NodeService nodeService,
+                               final SecurityService securityService,
+                               final ProjectPermissionsContextManager projectPermissionsContextManager, final EventPublisher eventPublisher )
+    {
+        this.repositoryService = repositoryService;
+        this.indexService = indexService;
+        this.nodeService = nodeService;
+        this.securityService = securityService;
+        this.projectPermissionsContextManager = projectPermissionsContextManager;
+        this.eventPublisher = eventPublisher;
+    }
 
-    @Activate
     public void initialize()
     {
-        adminContext().runWith( () -> {
-            if ( doGet( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) ) == null )
-            {
-                doCreate( CreateProjectParams.create().
-                    name( ProjectConstants.DEFAULT_PROJECT.getName() ).
-                    displayName( ProjectConstants.DEFAULT_PROJECT.getDisplayName() ).
-                    description( ProjectConstants.DEFAULT_PROJECT.getDescription() ).
-                    build() );
-            }
-        } );
+        adminContext().runWith( () -> doCreate( CreateProjectParams.create().
+            name( ProjectConstants.DEFAULT_PROJECT.getName() ).
+            displayName( ProjectConstants.DEFAULT_PROJECT.getDisplayName() ).
+            description( ProjectConstants.DEFAULT_PROJECT.getDescription() ).
+            build() ) );
     }
 
     @Override
     public Project create( CreateProjectParams params )
     {
-        return callWithCreateContext( ( () -> {
+        return callWithCreateContext( () -> {
+            if ( repositoryService.isInitialized( params.getName().getRepoId() ) )
+            {
+                throw new ProjectAlreadyExistsException( params.getName() );
+            }
             final Project result = doCreate( params );
+
+            CreateProjectRolesCommand.create().
+                securityService( securityService ).
+                projectName( params.getName() ).
+                projectDisplayName( params.getDisplayName() ).
+                build().
+                execute();
+
+            eventPublisher.publish( ProjectEvents.created( params.getName() ) );
+
             LOG.debug( "Project created: " + params.getName() );
 
             return result;
-        } ) );
+        } );
     }
 
     private Project doCreate( final CreateProjectParams params )
     {
-        if ( repositoryService.isInitialized( params.getName().getRepoId() ) )
-        {
-            throw new ProjectAlreadyExistsException( params.getName() );
-        }
-
-        final ContentInitializer.Builder contentInitializer = ContentInitializer.create();
-
-        contentInitializer.
+        ContentInitializer.create().
             setIndexService( indexService ).
             setNodeService( nodeService ).
             setRepositoryService( repositoryService ).
             repositoryId( params.getName().getRepoId() ).
+            setData( createProjectData( params ) ).
             accessControlList( CreateProjectRootAccessListCommand.create().
                 projectName( params.getName() ).
                 build().
@@ -134,41 +143,18 @@ public class ProjectServiceImpl
             build().
             initialize();
 
-        if ( !ProjectConstants.DEFAULT_PROJECT_NAME.equals( params.getName() ) )
-        {
-            CreateProjectRolesCommand.create().
-                securityService( securityService ).
-                projectName( params.getName() ).
-                projectDisplayName( params.getDisplayName() ).
-                build().
-                execute();
-        }
-
-        final ModifyProjectParams modifyProjectParams = ModifyProjectParams.create( params ).build();
-        doModify( modifyProjectParams );
-
-        final UpdateRepositoryParams updateParams = UpdateRepositoryParams.create().
-            repositoryId( params.getName().getRepoId() ).
-            editor( editableRepository -> modifyProjectParent( params.getParent(), editableRepository.data ) ).
-            build();
-
-        final Repository updatedRepository = repositoryService.updateRepository( updateParams );
-
-        eventPublisher.publish( ProjectEvents.created( params.getName() ) );
-
-        return Project.from( updatedRepository );
-
+        return Project.from( repositoryService.get( params.getName().getRepoId() ) );
     }
 
     @Override
     public Project modify( ModifyProjectParams params )
     {
-        return callWithUpdateContext( ( () -> {
+        return callWithUpdateContext(  () -> {
             final Project result = doModify( params );
             LOG.debug( "Project updated: " + params.getName() );
 
             return result;
-        } ), params.getName() );
+        }, params.getName() );
     }
 
     private Project doModify( final ModifyProjectParams params )
@@ -196,12 +182,12 @@ public class ProjectServiceImpl
     @Override
     public void modifyIcon( final ModifyProjectIconParams params )
     {
-        callWithUpdateContext( ( () -> {
+        callWithUpdateContext( () -> {
             doModifyIcon( params );
             LOG.debug( "Icon for project updated: " + params.getName() );
 
             return true;
-        } ), params.getName() );
+        }, params.getName() );
     }
 
     private void doModifyIcon( final ModifyProjectIconParams params )
@@ -230,9 +216,10 @@ public class ProjectServiceImpl
         repositoryService.updateRepository( updateParams );
     }
 
+    @Override
     public ByteSource getIcon( final ProjectName projectName )
     {
-        return callWithGetContext( ( () -> doGetIcon( projectName ) ), projectName );
+        return callWithGetContext( () -> doGetIcon( projectName ), projectName );
     }
 
     private ByteSource doGetIcon( final ProjectName projectName )
@@ -355,6 +342,18 @@ public class ProjectServiceImpl
             securityService( securityService ).
             build().
             execute();
+    }
+
+    private PropertyTree createProjectData( final CreateProjectParams params )
+    {
+        PropertyTree data = new PropertyTree();
+
+        final PropertySet projectData = data.addSet( ProjectConstants.PROJECT_DATA_SET_NAME );
+
+        projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
+        projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
+
+        return data;
     }
 
     private PropertyTree modifyProjectData( final ModifyProjectParams params, final PropertyTree data )
@@ -482,41 +481,5 @@ public class ProjectServiceImpl
                 principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ).
                 build() ).
             build();
-    }
-
-    @Reference
-    public void setRepositoryService( final RepositoryService repositoryService )
-    {
-        this.repositoryService = repositoryService;
-    }
-
-    @Reference
-    public void setIndexService( final IndexService indexService )
-    {
-        this.indexService = indexService;
-    }
-
-    @Reference
-    public void setNodeService( final NodeService nodeService )
-    {
-        this.nodeService = nodeService;
-    }
-
-    @Reference
-    public void setSecurityService( final SecurityService securityService )
-    {
-        this.securityService = securityService;
-    }
-
-    @Reference
-    public void setEventPublisher( final EventPublisher eventPublisher )
-    {
-        this.eventPublisher = eventPublisher;
-    }
-
-    @Reference
-    public void setProjectPermissionsContextManager( final ProjectPermissionsContextManager projectPermissionsContextManager )
-    {
-        this.projectPermissionsContextManager = projectPermissionsContextManager;
     }
 }

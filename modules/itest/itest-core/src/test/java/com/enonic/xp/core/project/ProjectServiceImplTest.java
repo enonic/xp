@@ -132,23 +132,15 @@ class ProjectServiceImplTest
     {
         super.setUpNode();
 
-        securityService = new SecurityServiceImpl();
-        securityService.setNodeService( this.nodeService );
-        securityService.setIndexService( indexService );
+        securityService = new SecurityServiceImpl( this.nodeService, indexService );
 
         ADMIN_CONTEXT.runWith( () -> {
             securityService.initialize();
 
             final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
 
-            projectService = new ProjectServiceImpl();
-            projectService.setIndexService( indexService );
-            projectService.setNodeService( nodeService );
-            projectService.setRepositoryService( repositoryService );
-            projectService.setProjectPermissionsContextManager( projectAccessContextManager );
-            projectService.setEventPublisher( Mockito.mock( EventPublisher.class ) );
-
-            projectService.setSecurityService( securityService );
+            projectService =
+                new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectAccessContextManager, eventPublisher );
         } );
     }
 
@@ -722,9 +714,7 @@ class ProjectServiceImplTest
             }
         } );
 
-        final RuntimeException ex = Assertions.assertThrows( RuntimeException.class, () -> projectService.getIcon( project.getName() ) );
-        assertEquals( "Denied [user:system:test-user] user access to [test-project] project for [get] operation", ex.getMessage() );
-
+        Assertions.assertThrows( ProjectAccessException.class, () -> projectService.getIcon( project.getName() ) );
     }
 
     @Test
@@ -828,11 +818,6 @@ class ProjectServiceImplTest
         return ADMIN_CONTEXT.callWith( () -> doCreateProject( name, projectPermissions ) );
     }
 
-    private Project doCreateProjectAsAdmin( final ProjectName name, final ProjectPermissions projectPermissions, final ProjectName parent )
-    {
-        return ADMIN_CONTEXT.callWith( () -> doCreateProject( name, projectPermissions ) );
-    }
-
     private Project doCreateProject( final ProjectName name )
     {
         return doCreateProject( name, ProjectPermissions.create().
@@ -842,6 +827,11 @@ class ProjectServiceImplTest
             build() );
     }
 
+    private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions )
+    {
+        return this.doCreateProject( name, projectPermissions, false, null );
+    }
+
     private Project doCreateProject( final ProjectName name, final String displayName, final String description )
     {
         return this.projectService.create( CreateProjectParams.create().
@@ -849,11 +839,6 @@ class ProjectServiceImplTest
             description( description ).
             displayName( displayName ).
             build() );
-    }
-
-    private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions )
-    {
-        return this.doCreateProject( name, projectPermissions, false, null );
     }
 
     private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions, final boolean forceInitialization,

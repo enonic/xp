@@ -8,13 +8,17 @@ import org.elasticsearch.common.settings.Settings;
 
 import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
+import com.enonic.xp.repository.RepositoryIds;
 
 public class SnapshotExecutor
     extends AbstractSnapshotExecutor
 {
+    final RepositoryIds repositories;
+
     private SnapshotExecutor( final Builder builder )
     {
         super( builder );
+        repositories = builder.repositories;
     }
 
     public SnapshotResult execute()
@@ -43,8 +47,17 @@ public class SnapshotExecutor
     public static final class Builder
         extends AbstractSnapshotExecutor.Builder<Builder>
     {
+        private RepositoryIds repositories;
+
         private Builder()
         {
+        }
+
+        @SuppressWarnings("unchecked")
+        public Builder repositories( final RepositoryIds repositories )
+        {
+            this.repositories = repositories;
+            return this;
         }
 
         public SnapshotExecutor build()

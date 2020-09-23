@@ -28,10 +28,7 @@ public class AuditLogServiceImplDisabledTest
         Mockito.when( indexService.isMaster() ).thenReturn( true );
         RepositoryService repositoryService = Mockito.mock( RepositoryService.class );
 
-        auditLogService = new AuditLogServiceImpl();
-        auditLogService.setIndexService( indexService );
-        auditLogService.setRepositoryService( repositoryService );
-        auditLogService.setConfig( config );
+        auditLogService = new AuditLogServiceImpl( config, indexService, repositoryService, null );
         auditLogService.initialize();
     }
 

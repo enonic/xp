@@ -14,7 +14,6 @@ public class ContentVersionTest
     @Test
     public void testEquals()
     {
-
         final Instant now1 = Instant.now();
 
         final ContentVersion version1 = ContentVersion.create().
@@ -49,44 +48,6 @@ public class ContentVersionTest
 
         assertNotEquals( version1.getId(), version2.getId() );
         assertNotEquals( version1.getModified(), version2.getModified() );
-
-    }
-
-    @Test
-    public void testCompareTo()
-    {
-        final Instant now1 = Instant.now();
-
-        final ContentVersion version1 = ContentVersion.create().
-            id( ContentVersionId.from( "a" ) ).
-            modified( now1 ).
-            modifier( PrincipalKey.ofAnonymous() ).
-            displayName( "contentVersion" ).
-            comment( "comment" ).
-            build();
-
-        final ContentVersion version1Same = ContentVersion.create().
-            id( ContentVersionId.from( "a" ) ).
-            modified( now1 ).
-            modifier( PrincipalKey.ofAnonymous() ).
-            displayName( "contentVersion" ).
-            comment( "comment" ).
-            build();
-
-        assertEquals( 0, version1.compareTo( version1Same ) );
-
-        final Instant now2 = now1.plusMillis( 1000 );
-
-        final ContentVersion version2 = ContentVersion.create().
-            id( ContentVersionId.from( "b" ) ).
-            modified( now2 ).
-            modifier( PrincipalKey.ofAnonymous() ).
-            displayName( "contentVersion" ).
-            comment( "comment" ).
-            build();
-
-        assertEquals( 1, version1.compareTo( version2 ) );
-        assertEquals( -1, version2.compareTo( version1 ) );
 
     }
 }

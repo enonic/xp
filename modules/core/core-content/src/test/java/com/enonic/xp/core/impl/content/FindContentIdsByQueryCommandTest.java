@@ -81,6 +81,7 @@ public class FindContentIdsByQueryCommandTest
 
         Assertions.assertFalse( result.getSort().isEmpty() );
         Assertions.assertEquals( 1, result.getSort().size() );
+        Assertions.assertEquals( 1, result.getScore().size() );
     }
 
 }

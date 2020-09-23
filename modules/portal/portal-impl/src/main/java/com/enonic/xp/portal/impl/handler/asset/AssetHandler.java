@@ -12,6 +12,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandler;
@@ -40,7 +41,7 @@ public final class AssetHandler
 
         if ( !matcher.find() )
         {
-            throw notFound( "Not a valid asset url pattern" );
+            throw WebException.notFound( "Not a valid asset url pattern" );
         }
 
         final AssetHandlerWorker worker = new AssetHandlerWorker( webRequest );

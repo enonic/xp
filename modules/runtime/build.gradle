@@ -17,7 +17,7 @@ ext {
     bundleCopySpecs = []
 }
 
-addBundle( 'com.sun.activation:jakarta.activation:1.2.1', 4 )
+addBundle( 'com.sun.activation:jakarta.activation:1.2.2', 4 )
 addBundle( "com.sun.mail:jakarta.mail:${jakartaMailVersion}", 4 )
 addBundle( "jakarta.annotation:jakarta.annotation-api:${jakartaAnnotationApiVersion}", 4 )
 addBundle( "jakarta.validation:jakarta.validation-api:2.0.2", 4 )
@@ -29,8 +29,8 @@ addBundle( 'com.sun.xml.bind:jaxb-impl:2.2.11', 4 )
 // Core bundles
 addBundle( 'org.apache.felix:org.apache.felix.metatype:1.2.2', 5 )
 addBundle( 'org.apache.felix:org.apache.felix.eventadmin:1.5.0', 5 )
-addBundle( 'org.apache.felix:org.apache.felix.configadmin:1.9.16', 5 )
-addBundle( 'org.apache.felix:org.apache.felix.scr:2.1.16', 5 )
+addBundle( 'org.apache.felix:org.apache.felix.configadmin:1.9.18', 5 )
+addBundle( 'org.apache.felix:org.apache.felix.scr:2.1.20', 5 )
 addBundle( 'org.osgi:org.osgi.util.promise:1.1.1', 5 )
 addBundle( 'org.osgi:org.osgi.util.function:1.1.0', 5 )
 
@@ -40,7 +40,7 @@ addBundle( "org.slf4j:log4j-over-slf4j:${slf4jVersion}", 6 )
 addBundle( "org.jboss.logging:jboss-logging:3.3.2.Final", 6 )
 
 // Java Cryptography Extension
-addBundle( 'org.bouncycastle:bcprov-jdk15on:1.54', 6 )
+addBundle( 'org.bouncycastle:bcprov-jdk15on:1.66', 6 )
 
 // Library dependencies
 addBundle( 'com.google.guava:guava:26.0-jre', 8 )

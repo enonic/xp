@@ -12,6 +12,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 
 final class AssetHandlerWorker
@@ -64,7 +65,8 @@ final class AssetHandlerWorker
         this.resource = this.resourceService.getResource( ResourceKey.from( this.applicationKey, ROOT_ASSET_PREFIX + this.name ) );
         if ( !this.resource.exists() )
         {
-            throw notFound( "Resource [%s] not found", ResourceKey.from( this.applicationKey, ROOT_ASSET_PREFIX + this.name ) );
+            throw WebException.notFound(
+                String.format( "Resource [%s] not found", ResourceKey.from( this.applicationKey, ROOT_ASSET_PREFIX + this.name ) ) );
         }
     }
 }

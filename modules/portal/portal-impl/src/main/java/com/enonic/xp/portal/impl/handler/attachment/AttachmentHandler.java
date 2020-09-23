@@ -14,6 +14,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandler;
@@ -49,7 +50,7 @@ public final class AttachmentHandler
 
         if ( !matcher.find() )
         {
-            throw notFound( "Not a valid attachment url pattern" );
+            throw WebException.notFound( "Not a valid attachment url pattern" );
         }
 
         final AttachmentHandlerWorker worker = new AttachmentHandlerWorker( (PortalRequest) webRequest );

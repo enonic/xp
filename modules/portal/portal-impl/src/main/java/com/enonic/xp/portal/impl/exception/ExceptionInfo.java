@@ -7,6 +7,7 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.server.RunMode;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 
@@ -21,6 +22,8 @@ final class ExceptionInfo
     private Throwable cause;
 
     private ResourceService resourceService;
+
+    private RunMode runMode;
 
     private ExceptionInfo( final HttpStatus status )
     {
@@ -56,6 +59,12 @@ final class ExceptionInfo
     public ExceptionInfo message( final String message )
     {
         this.message = message;
+        return this;
+    }
+
+    public ExceptionInfo runMode( final RunMode runMode )
+    {
+        this.runMode = runMode;
         return this;
     }
 
@@ -98,12 +107,12 @@ final class ExceptionInfo
 
     public PortalResponse toHtmlResponse()
     {
-        final ErrorPageBuilder builder = new ErrorPageBuilder().
+        final ErrorPageBuilder builder = runMode == RunMode.DEV ? new ErrorPageRichBuilder().
             cause( this.cause ).
             description( getDescription() ).
             resourceService( this.resourceService ).
             status( this.status.value() ).
-            title( getReasonPhrase() );
+            title( getReasonPhrase() ) : new ErrorPageSimpleBuilder().status( this.status.value() ).title( getReasonPhrase() );
 
         final String html = builder.build();
         return PortalResponse.create().

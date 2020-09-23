@@ -1,32 +1,24 @@
 package com.enonic.xp.server;
 
-import java.util.Properties;
-
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RunModeTest
+class RunModeTest
 {
     @Test
-    public void testInfo()
-        throws Exception
+    void testInfo()
     {
-        final Properties props = new Properties();
+        assertEquals( RunMode.PROD, RunMode.get( "prod" ) );
 
-        props.put( "xp.runMode", "prod" );
-        assertEquals( RunMode.PROD, RunMode.get( props ) );
+        assertEquals( RunMode.PROD, RunMode.get( "PROD" ) );
 
-        props.put( "xp.runMode", "PROD" );
-        assertEquals( RunMode.PROD, RunMode.get( props ) );
+        assertEquals( RunMode.DEV, RunMode.get( "dev" ) );
 
-        props.put( "xp.runMode", "dev" );
-        assertEquals( RunMode.DEV, RunMode.get( props ) );
+        assertEquals( RunMode.DEV, RunMode.get( "DEV" ) );
 
-        props.put( "xp.runMode", "DEV" );
-        assertEquals( RunMode.DEV, RunMode.get( props ) );
+        assertEquals( RunMode.PROD, RunMode.get( "other" ) );
 
-        props.put( "xp.runMode", "other" );
-        assertEquals( RunMode.PROD, RunMode.get( props ) );
+        assertEquals( RunMode.PROD, RunMode.get( null ) );
     }
 }

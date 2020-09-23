@@ -1,10 +1,11 @@
 package com.enonic.xp.core.content;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.UnmodifiableIterator;
 
 import com.enonic.xp.branch.Branches;
@@ -19,6 +20,7 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
@@ -27,6 +29,8 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentServiceImplTest_versions
@@ -97,7 +101,7 @@ public class ContentServiceImplTest_versions
                 branches( Branches.from( CTX_DEFAULT.getBranch(), CTX_OTHER.getBranch() ) ).
                 build() );
 
-        final ImmutableSortedSet<ActiveContentVersionEntry> activeContentVersions = activeVersions.getActiveContentVersions();
+        final ImmutableList<ActiveContentVersionEntry> activeContentVersions = activeVersions.getActiveContentVersions();
 
         assertEquals( 2, activeContentVersions.size() );
 
@@ -137,6 +141,42 @@ public class ContentServiceImplTest_versions
         assertEquals( WorkflowState.IN_PROGRESS, retrievedWorkflowInfo.getState() );
         assertEquals( WorkflowCheckState.APPROVED, retrievedWorkflowInfo.getChecks().get( "checkName1" ) );
         assertEquals( WorkflowCheckState.PENDING, retrievedWorkflowInfo.getChecks().get( "checkName2" ) );
+    }
+
+    @Test
+    public void get_published_versions()
+        throws Exception
+    {
+        final Content content = this.contentService.create( CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "content" ).
+            parent( ContentPath.ROOT ).
+            name( "myContent" ).
+            type( ContentTypeName.folder() ).
+            build() );
+
+        this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( CTX_OTHER.getBranch() ).
+            build() );
+
+        this.contentService.unpublishContent( UnpublishContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            unpublishBranch( CTX_OTHER.getBranch() ).
+            build() );
+
+        final FindContentVersionsResult result = this.contentService.getVersions( FindContentVersionsParams.create().
+            contentId( content.getId() ).
+            build() );
+
+        assertEquals( 3, result.getHits() );
+        assertEquals( 3, result.getTotalHits() );
+
+        final Iterator<ContentVersion> versions = result.getContentVersions().iterator();
+
+        assertNotNull( versions.next().getPublishInfo() );
+        assertNotNull( versions.next().getPublishInfo() );
+        assertNull( versions.next().getPublishInfo() );
     }
 }
 

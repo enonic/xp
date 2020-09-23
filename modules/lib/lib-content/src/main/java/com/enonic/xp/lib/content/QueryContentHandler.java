@@ -102,7 +102,7 @@ public final class QueryContentHandler
         }
 
         return new ContentsResultMapper( contents, findQueryResult.getTotalHits(), findQueryResult.getAggregations(),
-                                         findQueryResult.getHighlight(), findQueryResult.getSort() );
+                                         findQueryResult.getHighlight(), findQueryResult.getSort(), findQueryResult.getScore() );
     }
 
     public void setStart( final Integer start )

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
-import javax.ws.rs.core.Response;
 
 import com.google.common.net.MediaType;
 
@@ -124,7 +123,7 @@ public final class PortalResponseSerializer
             return;
         }
 
-        builder.status( HttpStatus.from( Response.Status.SEE_OTHER.getStatusCode() ) );
+        builder.status( HttpStatus.SEE_OTHER );
         builder.header( "Location", redirect );
     }
 

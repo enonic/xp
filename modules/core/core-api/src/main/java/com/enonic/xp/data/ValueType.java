@@ -88,8 +88,16 @@ public abstract class ValueType<T>
 
     private ValueTypeException convertError( final Object value, final String reason )
     {
-        final java.lang.String message = "Value of type [%s] cannot be converted to [%s]" + ( ( reason != null ) ? ": %s" : "" );
-        throw new ValueTypeException( message, value.getClass().getName(), getName(), reason );
+        if ( reason != null )
+        {
+            throw new ValueTypeException(
+                String.format( "Value of type [%s] cannot be converted to [%s]: %s", value.getClass().getName(), getName(), reason ) );
+        }
+        else
+        {
+            throw new ValueTypeException(
+                String.format( "Value of type [%s] cannot be converted to [%s]", value.getClass().getName(), getName() ) );
+        }
     }
 
     /**

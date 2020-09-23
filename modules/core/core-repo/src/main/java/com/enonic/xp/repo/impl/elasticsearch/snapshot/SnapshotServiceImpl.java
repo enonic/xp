@@ -101,14 +101,20 @@ public class SnapshotServiceImpl
 
         validateSnapshot( snapshotName );
 
-        final RepositoryIds repositoriesToRestore =
-            RepositoryIds.from( Optional.ofNullable( restoreParams.getRepositoryId() ).map( Set::of ).orElseGet( this::getRepositories ) );
+        final RepositoryIds repositoriesToClose = RepositoryIds.from( Optional.ofNullable( restoreParams.getRepositoryId() ).
+            map( Set::of ).
+            orElseGet( this::getRepositories ) );
+
+        final RepositoryIds repositoriesToRestore = RepositoryIds.from( Optional.ofNullable( restoreParams.getRepositoryId() ).
+            map( Set::of ).
+            orElse( Set.of() ) );
 
         this.eventPublisher.publish( RepositoryEvents.restoreInitialized() );
 
         final RestoreResult result = SnapshotRestoreExecutor.create().
             snapshotName( snapshotName ).
-            repositories( repositoriesToRestore ).
+            repositoriesToClose( repositoriesToClose ).
+            repositoriesToRestore( repositoriesToRestore ).
             client( this.client ).
             snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME ).
             indexServiceInternal( this.indexServiceInternal ).

@@ -14,20 +14,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AuditLogRepoInitializerTest
 {
-
     AuditLogServiceImpl auditLogService;
 
     @BeforeEach
     public void setUp()
-        throws Exception
     {
-        auditLogService = new AuditLogServiceImpl();
-
         RepositoryService repositoryService = Mockito.mock( RepositoryService.class );
-        auditLogService.setRepositoryService( repositoryService );
-
         IndexService indexService = Mockito.mock( IndexService.class );
-        auditLogService.setIndexService( indexService );
+
+        AuditLogConfig config = Mockito.mock( AuditLogConfig.class );
+        Mockito.when( config.isEnabled() ).thenReturn( true );
+        Mockito.when( config.isOutputLogs() ).thenReturn( true );
+
+        auditLogService = new AuditLogServiceImpl( config, indexService, repositoryService, null );
 
         Mockito.when( indexService.isMaster() ).thenReturn( true );
         Mockito.when( indexService.waitForYellowStatus() ).thenReturn( true );
@@ -38,11 +37,6 @@ public class AuditLogRepoInitializerTest
     @Test
     public void do_initialize()
     {
-        AuditLogConfig config = Mockito.mock( AuditLogConfig.class );
-        Mockito.when( config.isEnabled() ).thenReturn( true );
-        Mockito.when( config.isOutputLogs() ).thenReturn( true );
-
-        auditLogService.setConfig( config );
         auditLogService.initialize();
         assertNotNull( auditLogService.getConfig() );
     }

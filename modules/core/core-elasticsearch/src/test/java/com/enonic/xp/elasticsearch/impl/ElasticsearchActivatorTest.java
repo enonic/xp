@@ -1,7 +1,6 @@
 package com.enonic.xp.elasticsearch.impl;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -17,19 +16,29 @@ import org.elasticsearch.transport.TransportService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Answers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterNodeId;
-import com.enonic.xp.cluster.NodeDiscovery;
+
+import static org.mockito.Mockito.when;
 
 @Tag("elasticsearch")
-public class ElasticsearchActivatorTest
+@ExtendWith(MockitoExtension.class)
+class ElasticsearchActivatorTest
 {
+    @Mock
     private BundleContext context;
+
+    @Mock(stubOnly = true, answer = Answers.RETURNS_DEEP_STUBS)
+    private ClusterConfig clusterConfig;
 
     private ElasticsearchActivator activator;
 
@@ -49,56 +58,19 @@ public class ElasticsearchActivatorTest
     private ServiceRegistration<Client> clientServiceRegistration;
 
     @BeforeEach
-    public void setup()
+    void setup()
         throws Exception
     {
-        this.context = Mockito.mock( BundleContext.class );
         this.activator = new ElasticsearchActivator();
-        this.activator.setClusterConfig( new ClusterConfig()
-        {
-            @Override
-            public NodeDiscovery discovery()
-            {
-                return () -> {
-                    final InetAddress local1;
-                    final InetAddress local2;
-                    try
-                    {
-                        local1 = InetAddress.getByName( "localhost" );
-                        local2 = InetAddress.getByName( "127.1.0.1" );
-                    }
-                    catch ( UnknownHostException e )
-                    {
-                        throw new RuntimeException( e );
-                    }
-                    return List.of( local1, local2 );
-                };
-            }
 
-            @Override
-            public ClusterNodeId name()
-            {
-                return ClusterNodeId.from( "ClusterNodeId" );
-            }
+        when( clusterConfig.isEnabled() ).thenReturn( true );
+        when( clusterConfig.discovery().get() ).
+            thenReturn( List.of( InetAddress.getByName( "localhost" ), InetAddress.getByName( "127.1.0.1" ) ) );
+        when( clusterConfig.name() ).thenReturn( ClusterNodeId.from( "local-node" ) );
+        when( clusterConfig.networkHost() ).thenReturn( "127.0.0.1" );
+        when( clusterConfig.networkPublishHost() ).thenReturn( "127.0.0.1" );
 
-            @Override
-            public boolean isEnabled()
-            {
-                return true;
-            }
-
-            @Override
-            public String networkPublishHost()
-            {
-                return "127.0.0.1";
-            }
-
-            @Override
-            public String networkHost()
-            {
-                return "127.0.0.1";
-            }
-        } );
+        this.activator.setClusterConfig( clusterConfig );
 
         final Path homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) ).toAbsolutePath();
         System.setProperty( "xp.home", homeDir.toString() );
@@ -112,8 +84,7 @@ public class ElasticsearchActivatorTest
     }
 
     @Test
-    public void testLifeCycle()
-        throws Exception
+    void testLifeCycle()
     {
         final Map<String, String> map = new HashMap<>();
 

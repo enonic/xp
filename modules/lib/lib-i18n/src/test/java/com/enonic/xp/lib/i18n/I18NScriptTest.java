@@ -7,7 +7,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Ignore;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -21,7 +20,6 @@ import com.enonic.xp.testing.ScriptRunnerSupport;
 
 import static org.mockito.ArgumentMatchers.any;
 
-@Ignore("Concourse issue")
 public class I18NScriptTest
     extends ScriptRunnerSupport
 {

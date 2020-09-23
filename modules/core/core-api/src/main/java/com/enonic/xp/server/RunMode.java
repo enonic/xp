@@ -1,27 +1,16 @@
 package com.enonic.xp.server;
 
-import java.util.Properties;
-
 public enum RunMode
 {
-    DEV,
-    PROD;
+    DEV, PROD;
 
     public static RunMode get()
     {
-        return get( System.getProperties() );
+        return get( System.getProperty( "xp.runMode" ) );
     }
 
-    protected static RunMode get( final Properties props )
+    protected static RunMode get( final String value )
     {
-        try
-        {
-            final String value = props.getProperty( "xp.runMode", RunMode.PROD.toString() );
-            return RunMode.valueOf( value.toUpperCase() );
-        }
-        catch ( final Exception e )
-        {
-            return RunMode.PROD;
-        }
+        return DEV.name().equalsIgnoreCase( value ) ? DEV : PROD;
     }
 }

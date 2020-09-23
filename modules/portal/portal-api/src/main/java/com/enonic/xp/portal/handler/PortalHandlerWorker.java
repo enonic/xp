@@ -18,11 +18,13 @@ public abstract class PortalHandlerWorker<WebRequestType extends WebRequest>
     public abstract PortalResponse execute()
         throws Exception;
 
+    @Deprecated
     protected final WebException notFound( final String message, final Object... args )
     {
         return WebException.notFound( String.format( message, args ) );
     }
 
+    @Deprecated
     protected final WebException forbidden( final String message, final Object... args )
     {
         return WebException.forbidden( String.format( message, args ) );

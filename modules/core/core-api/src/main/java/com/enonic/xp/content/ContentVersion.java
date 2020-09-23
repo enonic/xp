@@ -75,6 +75,7 @@ public class ContentVersion
         return new Builder();
     }
 
+    @Deprecated
     @Override
     public int compareTo( final ContentVersion o )
     {

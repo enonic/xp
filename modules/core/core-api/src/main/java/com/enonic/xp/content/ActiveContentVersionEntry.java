@@ -32,6 +32,7 @@ public class ActiveContentVersionEntry
         return branch;
     }
 
+    @Deprecated
     @Override
     public int compareTo( final ActiveContentVersionEntry o )
     {

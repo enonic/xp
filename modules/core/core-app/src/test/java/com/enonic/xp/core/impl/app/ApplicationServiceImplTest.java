@@ -41,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -125,9 +126,36 @@ public class ApplicationServiceImplTest
 
         applicationRegistry.installApplication( bundle );
 
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+
         assertEquals( Bundle.INSTALLED, bundle.getState() );
-        this.service.startApplication( ApplicationKey.from( "app1" ), false );
+        this.service.startApplication( applicationKey, true );
         assertEquals( Bundle.ACTIVE, bundle.getState() );
+
+        verify( this.eventPublisher, times( 1 ) ).publish(
+            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.start( applicationKey ) ) ) );
+        verify( this.eventPublisher, times( 1 ) ).publish(
+            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.started( applicationKey ) ) ) );
+    }
+
+    @Test
+    public void start_application_no_triggerEvent()
+        throws Exception
+    {
+        final Bundle bundle = deployBundle( "app1", true );
+
+        applicationRegistry.installApplication( bundle );
+
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+
+        assertEquals( Bundle.INSTALLED, bundle.getState() );
+        this.service.startApplication( applicationKey, false );
+        assertEquals( Bundle.ACTIVE, bundle.getState() );
+
+        verify( this.eventPublisher, never() ).publish(
+            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.start( applicationKey ) ) ) );
+        verify( this.eventPublisher, never() ).publish(
+            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.started( applicationKey ) ) ) );
     }
 
     @Test
@@ -197,8 +225,35 @@ public class ApplicationServiceImplTest
         bundle.start();
 
         assertEquals( Bundle.ACTIVE, bundle.getState() );
-        this.service.stopApplication( ApplicationKey.from( "app1" ), false );
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+        this.service.stopApplication( applicationKey, true );
         assertEquals( Bundle.RESOLVED, bundle.getState() );
+
+        verify( this.eventPublisher, times( 1 ) ).publish(
+            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.stop( applicationKey ) ) ) );
+        verify( this.eventPublisher, times( 1 ) ).publish(
+            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.stopped( applicationKey ) ) ) );
+    }
+
+    @Test
+    public void stop_application_no_triggerEvent()
+        throws Exception
+    {
+        final Bundle bundle = deployBundle( "app1", true );
+
+        applicationRegistry.installApplication( bundle );
+
+        bundle.start();
+
+        assertEquals( Bundle.ACTIVE, bundle.getState() );
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+        this.service.stopApplication( applicationKey, false );
+        assertEquals( Bundle.RESOLVED, bundle.getState() );
+
+        verify( this.eventPublisher, never() ).publish(
+            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.stop( applicationKey ) ) ) );
+        verify( this.eventPublisher, never() ).publish(
+            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.stopped( applicationKey ) ) ) );
     }
 
     @Test
@@ -272,8 +327,8 @@ public class ApplicationServiceImplTest
         assertTrue( this.service.isLocalApplication( application.getKey() ) );
         assertEquals( application, this.service.getInstalledApplication( application.getKey() ) );
 
-        verifyInstalledEvents( applicationNode, Mockito.never() );
-        verifyStartedEvent( application.getKey(), Mockito.never() );
+        verifyInstalledEvents( applicationNode, never() );
+        verifyStartedEvent( application.getKey(), never() );
     }
 
     @Test
@@ -362,8 +417,8 @@ public class ApplicationServiceImplTest
         assertTrue( this.service.isLocalApplication( updatedApplication.getKey() ) );
         assertEquals( updatedApplication, this.service.getInstalledApplication( updatedApplication.getKey() ) );
 
-        verifyInstalledEvents( node, Mockito.never() );
-        verifyStartedEvent( updatedApplication.getKey(), Mockito.never() );
+        verifyInstalledEvents( node, never() );
+        verifyStartedEvent( updatedApplication.getKey(), never() );
     }
 
     @Test
@@ -395,8 +450,8 @@ public class ApplicationServiceImplTest
         assertFalse( this.service.isLocalApplication( application.getKey() ) );
         assertEquals( application, this.service.getInstalledApplication( application.getKey() ) );
 
-        verifyInstalledEvents( node, Mockito.never() );
-        verifyStartedEvent( application.getKey(), Mockito.never() );
+        verifyInstalledEvents( node, never() );
+        verifyStartedEvent( application.getKey(), never() );
     }
 
     @Test
@@ -424,8 +479,8 @@ public class ApplicationServiceImplTest
         assertFalse( this.service.isLocalApplication( applicationKey ) );
         assertNotNull( this.service.getInstalledApplication( applicationKey ) );
 
-        verifyInstalledEvents( node, Mockito.never() );
-        verifyStartedEvent( applicationKey, Mockito.never() );
+        verifyInstalledEvents( node, never() );
+        verifyStartedEvent( applicationKey, never() );
     }
 
 
@@ -450,7 +505,9 @@ public class ApplicationServiceImplTest
 
         assertNull( this.service.getInstalledApplication( application.getKey() ) );
 
-        Mockito.verify( this.eventPublisher, times( 1 ) ).publish(
+        verify( this.eventPublisher, times( 1 ) ).publish(
+            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstall( application.getKey() ) ) ) );
+        verify( this.eventPublisher, times( 1 ) ).publish(
             Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstalled( application.getKey() ) ) ) );
     }
 
@@ -475,7 +532,9 @@ public class ApplicationServiceImplTest
         this.service.uninstallApplication( application.getKey(), false );
         assertNull( this.service.getInstalledApplication( application.getKey() ) );
 
-        Mockito.verify( this.eventPublisher, Mockito.never() ).publish(
+        verify( this.eventPublisher, never() ).publish(
+            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstall( application.getKey() ) ) ) );
+        verify( this.eventPublisher, never() ).publish(
             Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstalled( application.getKey() ) ) ) );
     }
 
@@ -600,14 +659,16 @@ public class ApplicationServiceImplTest
 
     private void verifyInstalledEvents( final Node node, final VerificationMode never )
     {
-        Mockito.verify( this.eventPublisher, never ).publish(
+        verify( this.eventPublisher, never ).publish(
             Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.installed( node ) ) ) );
     }
 
 
     private void verifyStartedEvent( final ApplicationKey applicationKey, final VerificationMode never )
     {
-        Mockito.verify( this.eventPublisher, never ).publish(
+        verify( this.eventPublisher, never ).publish(
+            Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.start( applicationKey ) ) ) );
+        verify( this.eventPublisher, never ).publish(
             Mockito.argThat( new ApplicationEventMatcher( ApplicationClusterEvents.started( applicationKey ) ) ) );
     }
 

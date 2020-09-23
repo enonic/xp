@@ -1,23 +1,27 @@
 package com.enonic.xp.content;
 
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
 public class GetActiveContentVersionsResult
 {
-    private final ImmutableSortedSet<ActiveContentVersionEntry> activeContentVersions;
+    private final ImmutableList<ActiveContentVersionEntry> activeContentVersions;
 
     private GetActiveContentVersionsResult( final Builder builder )
     {
-        this.activeContentVersions = ImmutableSortedSet.copyOf( builder.activeContentVersions );
+        this.activeContentVersions = ImmutableList.sortedCopyOf( Comparator.
+                                                                     comparing( ActiveContentVersionEntry::getContentVersion, ContentVersionDateComparator.INSTANCE ).
+                                                                     thenComparing( ( ActiveContentVersionEntry activeContentVersionEntry ) -> activeContentVersionEntry.getBranch().getValue() ),
+                                                                 builder.activeContentVersions );
     }
 
-    public ImmutableSortedSet<ActiveContentVersionEntry> getActiveContentVersions()
+    public ImmutableList<ActiveContentVersionEntry> getActiveContentVersions()
     {
         return activeContentVersions;
     }
@@ -29,7 +33,7 @@ public class GetActiveContentVersionsResult
 
     public static final class Builder
     {
-        private final SortedSet<ActiveContentVersionEntry> activeContentVersions = new TreeSet<>();
+        private final List<ActiveContentVersionEntry> activeContentVersions = new ArrayList<>();
 
         private Builder()
         {

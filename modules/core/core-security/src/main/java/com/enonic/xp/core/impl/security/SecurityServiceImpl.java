@@ -14,14 +14,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.primitives.Ints;
@@ -102,12 +97,10 @@ import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 import static com.enonic.xp.core.impl.security.SecurityInitializer.DEFAULT_ID_PROVIDER_ACL;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-@Component(immediate = true)
 public final class SecurityServiceImpl
     implements SecurityService
 {
-    private static final ImmutableSet<PrincipalKey> FORBIDDEN_FROM_RELATIONSHIP =
-        ImmutableSet.of( RoleKeys.EVERYONE, RoleKeys.AUTHENTICATED );
+    private static final Set<PrincipalKey> FORBIDDEN_FROM_RELATIONSHIP = Set.of( RoleKeys.EVERYONE, RoleKeys.AUTHENTICATED );
 
     private static final String SU_PASSWORD_PROPERTY_KEY = "xp.suPassword";
 
@@ -122,20 +115,21 @@ public final class SecurityServiceImpl
 
     private final Striped<Lock> userEmailLocks = Striped.lazyWeakLock( 100 );
 
-    private NodeService nodeService;
+    private final NodeService nodeService;
 
-    private IndexService indexService;
+    private final IndexService indexService;
 
     private String suPasswordHashing;
 
     private String suPasswordValue;
 
-    public SecurityServiceImpl()
+    public SecurityServiceImpl( final NodeService nodeService, final IndexService indexService )
     {
+        this.nodeService = nodeService;
+        this.indexService = indexService;
         this.clock = Clock.systemUTC();
     }
 
-    @Activate
     public void initialize()
     {
         initializeSuPassword();
@@ -1186,17 +1180,5 @@ public final class SecurityServiceImpl
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.ANONYMOUS ).build();
         return ContextBuilder.from( SecurityConstants.CONTEXT_SECURITY ).authInfo( authInfo ).build();
-    }
-
-    @Reference
-    public void setNodeService( final NodeService nodeService )
-    {
-        this.nodeService = nodeService;
-    }
-
-    @Reference
-    public void setIndexService( final IndexService indexService )
-    {
-        this.indexService = indexService;
     }
 }

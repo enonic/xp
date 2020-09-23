@@ -64,14 +64,23 @@ final class NodeSettingsBuilder
 
     private Settings buildSettings( final Configuration config )
     {
-        return Settings.settingsBuilder().
+        final Settings.Builder builder = Settings.settingsBuilder().
             put( config.asMap() ).
             put( COMMON_NODE_NAME_OPTION, this.clusterConfig.name().toString() ).
             put( ES_ZEN_UNICAST_HOST_OPTION, createZenUnicastHostString( config ) ).
-            put( COMMON_NETWORK_PUBLISH_HOST_OPTION, this.clusterConfig.networkPublishHost() ).
-            put( COMMON_NETWORK_HOST_OPTION, this.clusterConfig.networkHost() ).
-            put( ES_NODE_LOCAL, !this.clusterConfig.isEnabled() ).
-            build();
+            put( ES_NODE_LOCAL, !this.clusterConfig.isEnabled() );
+
+        final String networkHost = this.clusterConfig.networkHost();
+        if ( !isNullOrEmpty( networkHost ) )
+        {
+            builder.put( COMMON_NETWORK_HOST_OPTION, networkHost );
+        }
+        final String networkPublishHost = this.clusterConfig.networkPublishHost();
+        if ( !isNullOrEmpty( networkPublishHost ) )
+        {
+            builder.put( COMMON_NETWORK_PUBLISH_HOST_OPTION, networkPublishHost );
+        }
+        return builder.build();
     }
 
     private String createZenUnicastHostString( final Configuration source )

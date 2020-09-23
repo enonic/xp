@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.app;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInstallationParams;
@@ -15,26 +14,29 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 
-public class ApplicationClusterEventListenerTest
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+class ApplicationClusterEventListenerTest
     extends BundleBasedTest
 {
-
     private ApplicationClusterEventListener applicationClusterEventListener;
 
     private ApplicationService applicationService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
-        applicationClusterEventListener = new ApplicationClusterEventListener();
-        applicationService = Mockito.mock( ApplicationService.class );
-        applicationClusterEventListener.setApplicationService( applicationService );
+        applicationService = mock( ApplicationService.class );
+        applicationClusterEventListener = new ApplicationClusterEventListener( applicationService );
     }
 
     @Test
-    public void installed()
-        throws Exception
+    void installed()
     {
         final Node node = Node.create().
             name( "myNode" ).
@@ -42,12 +44,10 @@ public class ApplicationClusterEventListenerTest
             parentPath( NodePath.ROOT ).
             build();
 
-        final Application application = Mockito.mock( Application.class );
-        Mockito.when( application.getKey() ).
-            thenReturn( ApplicationKey.from( "appKey" ) );
+        final Application application = mock( Application.class );
+        when( application.getKey() ).thenReturn( ApplicationKey.from( "appKey" ) );
 
-        Mockito.when( applicationService.installStoredApplication( node.id() ) ).
-            thenReturn( application );
+        when( applicationService.installStoredApplication( eq( node.id() ), any() ) ).thenReturn( application );
 
         this.applicationClusterEventListener.onEvent( Event.create( ApplicationClusterEvents.EVENT_TYPE ).
             localOrigin( false ).
@@ -55,7 +55,58 @@ public class ApplicationClusterEventListenerTest
             value( ApplicationClusterEvents.EVENT_TYPE_KEY, ApplicationClusterEvents.INSTALLED ).
             build() );
 
-        Mockito.verify( this.applicationService, Mockito.times( 1 ) ).
+        verify( this.applicationService, times( 1 ) ).
             installStoredApplication( node.id(), ApplicationInstallationParams.create().start( false ).triggerEvent( false ).build() );
+    }
+
+    @Test
+    void start()
+    {
+        final Application application = mock( Application.class );
+        final ApplicationKey appKey = ApplicationKey.from( "appKey" );
+        when( application.getKey() ).thenReturn( appKey );
+
+        this.applicationClusterEventListener.onEvent( Event.create( ApplicationClusterEvents.EVENT_TYPE ).
+            localOrigin( false ).
+            value( ApplicationClusterEvents.EVENT_TYPE_KEY, ApplicationClusterEvents.START ).
+            value( ApplicationClusterEvents.APPLICATION_KEY_PARAM, appKey ).
+            build() );
+
+        verify( this.applicationService, times( 1 ) ).
+            startApplication( appKey, false );
+    }
+
+    @Test
+    void stop()
+    {
+        final Application application = mock( Application.class );
+        final ApplicationKey appKey = ApplicationKey.from( "appKey" );
+        when( application.getKey() ).thenReturn( appKey );
+
+        this.applicationClusterEventListener.onEvent( Event.create( ApplicationClusterEvents.EVENT_TYPE ).
+            localOrigin( false ).
+            value( ApplicationClusterEvents.EVENT_TYPE_KEY, ApplicationClusterEvents.STOP ).
+            value( ApplicationClusterEvents.APPLICATION_KEY_PARAM, appKey ).
+            build() );
+
+        verify( this.applicationService, times( 1 ) ).
+            stopApplication( appKey, false );
+    }
+
+    @Test
+    void uninstall()
+    {
+        final Application application = mock( Application.class );
+        final ApplicationKey appKey = ApplicationKey.from( "appKey" );
+        when( application.getKey() ).thenReturn( appKey );
+
+        this.applicationClusterEventListener.onEvent( Event.create( ApplicationClusterEvents.EVENT_TYPE ).
+            localOrigin( false ).
+            value( ApplicationClusterEvents.EVENT_TYPE_KEY, ApplicationClusterEvents.UNINSTALL ).
+            value( ApplicationClusterEvents.APPLICATION_KEY_PARAM, appKey ).
+            build() );
+
+        verify( this.applicationService, times( 1 ) ).
+            uninstallApplication( appKey, false );
     }
 }
