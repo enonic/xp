@@ -5,6 +5,7 @@ import java.util.concurrent.Executors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,12 @@ public class ParentProjectSyncActivator
                 build(), Duration.ofMinutes( 0 ), delay, e -> LOG.warn( "Error while project sync.", e ), e -> LOG.error(
                 "Error while project sync, no further attempts will be made.", e ) );
         }
+    }
+
+    @Deactivate
+    public void deactivate()
+    {
+        this.recurringJobScheduler.shutdownNow();
     }
 
     @Reference

@@ -1,11 +1,13 @@
 package com.enonic.xp.core.impl.content;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,13 @@ public class ProjectContentEventListener
     {
         this.simpleExecutor = new SimpleExecutor( Executors::newSingleThreadExecutor, "project-node-sync-thread",
                                                   e -> LOG.error( "Project node sync failed", e ) );
+    }
+
+    @Deactivate
+    public void deactivate()
+    {
+        this.simpleExecutor.shutdownAndAwaitTermination( Duration.ZERO, neverCommenced -> {
+        } );
     }
 
     @Override
