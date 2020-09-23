@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotAction;
@@ -10,41 +11,49 @@ import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotR
 import com.enonic.xp.node.RestoreResult;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
+import com.enonic.xp.repository.RepositoryIds;
 
 public class SnapshotRestoreExecutor
     extends AbstractSnapshotExecutor
 {
     private final IndexServiceInternal indexServiceInternal;
 
+    private final RepositoryIds repositoriesToClose;
+
+    private final RepositoryIds repositoriesToRestore;
+
     private SnapshotRestoreExecutor( final Builder builder )
     {
         super( builder );
         this.indexServiceInternal = builder.indexServiceInternal;
+        this.repositoriesToClose = builder.repositoriesToClose;
+        this.repositoriesToRestore = builder.repositoriesToRestore;
     }
 
     public RestoreResult execute()
     {
-        final String[] indices = IndexNameResolver.resolveIndexNames( repositories ).toArray( String[]::new );
+        final String[] indicesToClose = IndexNameResolver.resolveIndexNames( repositoriesToClose ).toArray( String[]::new );
+        final String[] indicesToRestore = IndexNameResolver.resolveIndexNames( repositoriesToRestore ).toArray( String[]::new );
 
-        indexServiceInternal.closeIndices( indices );
+        indexServiceInternal.closeIndices( indicesToClose );
         try
         {
-            final RestoreSnapshotResponse response = executeRestoreRequest( indices );
+            final RestoreSnapshotResponse response = executeRestoreRequest( indicesToRestore );
             return RestoreResultFactory.create( response, null );
         }
         catch ( ElasticsearchException e )
         {
             return RestoreResult.create().
                 repositoryId( null ).
-                indices( Arrays.asList( indices ) ).
+                indices( List.of( indicesToRestore ) ).
                 failed( true ).
                 name( snapshotName ).
-                message( "Could not restore snapshot: " + e.toString() + " for indices: " + Arrays.asList( indices ) ).
+                message( "Could not restore snapshot: " + e.toString() + " for indices: " + Arrays.asList( indicesToClose ) ).
                 build();
         }
         finally
         {
-            indexServiceInternal.openIndices( indices );
+            indexServiceInternal.openIndices( indicesToClose );
         }
     }
 
@@ -73,9 +82,25 @@ public class SnapshotRestoreExecutor
     {
         private IndexServiceInternal indexServiceInternal;
 
+        private RepositoryIds repositoriesToClose;
+
+        private RepositoryIds repositoriesToRestore;
+
         public Builder indexServiceInternal( final IndexServiceInternal indexServiceInternal )
         {
             this.indexServiceInternal = indexServiceInternal;
+            return this;
+        }
+
+        public Builder repositoriesToClose( final RepositoryIds repositories )
+        {
+            this.repositoriesToClose = repositories;
+            return this;
+        }
+
+        public Builder repositoriesToRestore( final RepositoryIds repositories )
+        {
+            this.repositoriesToRestore = repositories;
             return this;
         }
 
