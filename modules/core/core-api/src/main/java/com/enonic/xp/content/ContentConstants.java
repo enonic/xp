@@ -93,6 +93,8 @@ public class ContentConstants
 
     public static final String PUBLISH_COMMIT_PREFIX = "COM_ENONIC_XP_CONTENT_PUBLISH";
 
+    public static final String UNPUBLISH_COMMIT_PREFIX = "COM_ENONIC_XP_CONTENT_UNPUBLISH";
+
     public static final String PUBLISH_COMMIT_PREFIX_DELIMITER = " ";
 
 }

@@ -77,21 +77,25 @@ class ContentVersionFactory
         {
             final NodeCommitEntry nodeCommitEntry = nodeService.getCommit( nodeCommitId );
 
-            if ( nodeCommitEntry != null && nodeCommitEntry.getMessage().startsWith( ContentConstants.PUBLISH_COMMIT_PREFIX ) )
+            if ( nodeCommitEntry != null )
             {
-                final ContentVersionPublishInfo.Builder builder = ContentVersionPublishInfo.create().
-                    message( getMessage( nodeCommitEntry ) ).
-                    publisher( nodeCommitEntry.getCommitter() ).
-                    timestamp( nodeCommitEntry.getTimestamp() );
-
-                final ContentPublishInfo contentPublishInfo = publishInfoSerializer.serialize( nodeVersionData );
-
-                if ( contentPublishInfo != null )
+                if ( nodeCommitEntry.getMessage().startsWith( ContentConstants.PUBLISH_COMMIT_PREFIX ) ||
+                    nodeCommitEntry.getMessage().startsWith( ContentConstants.UNPUBLISH_COMMIT_PREFIX ) )
                 {
-                    builder.contentPublishInfo( contentPublishInfo );
-                }
+                    final ContentVersionPublishInfo.Builder builder = ContentVersionPublishInfo.create().
+                        message( getMessage( nodeCommitEntry ) ).
+                        publisher( nodeCommitEntry.getCommitter() ).
+                        timestamp( nodeCommitEntry.getTimestamp() );
 
-                return builder.build();
+                    final ContentPublishInfo contentPublishInfo = publishInfoSerializer.serialize( nodeVersionData );
+
+                    if ( contentPublishInfo != null )
+                    {
+                        builder.contentPublishInfo( contentPublishInfo );
+                    }
+
+                    return builder.build();
+                }
             }
         }
         return null;

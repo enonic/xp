@@ -7,12 +7,11 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class ContentVersionTest
+public class ContentVersionDateComparatorTest
 {
     @Test
-    public void testEquals()
+    public void testComparison()
     {
         final Instant now1 = Instant.now();
 
@@ -24,10 +23,15 @@ public class ContentVersionTest
             comment( "comment" ).
             build();
 
-        assertEquals( version1, version1 );
-        assertEquals( version1.hashCode(), version1.hashCode() );
+        final ContentVersion version1Same = ContentVersion.create().
+            id( ContentVersionId.from( "a" ) ).
+            modified( now1 ).
+            modifier( PrincipalKey.ofAnonymous() ).
+            displayName( "contentVersion" ).
+            comment( "comment" ).
+            build();
 
-        assertNotEquals( version1, null );
+        assertEquals( 0, ContentVersionDateComparator.INSTANCE.compare( version1, version1Same ) );
 
         final Instant now2 = now1.plusMillis( 1000 );
 
@@ -39,15 +43,8 @@ public class ContentVersionTest
             comment( "comment" ).
             build();
 
-        assertNotEquals( version1, version2 );
-        assertNotEquals( version1.hashCode(), version2.hashCode() );
-
-        assertEquals( version1.getModifier(), version2.getModifier() );
-        assertEquals( version1.getComment(), version2.getComment() );
-        assertEquals( version1.getDisplayName(), version2.getDisplayName() );
-
-        assertNotEquals( version1.getId(), version2.getId() );
-        assertNotEquals( version1.getModified(), version2.getModified() );
+        assertEquals( 1, ContentVersionDateComparator.INSTANCE.compare( version1, version2 ) );
+        assertEquals( -1, ContentVersionDateComparator.INSTANCE.compare( version2, version1 ) );
 
     }
 }
