@@ -352,7 +352,10 @@ public class ProjectServiceImpl
 
         projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
         projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
-
+        if ( params.getParent() != null )
+        {
+            projectData.setString( ProjectConstants.PROJECT_PARENTS_PROPERTY, params.getParent().toString() );
+        }
         return data;
     }
 
@@ -367,23 +370,6 @@ public class ProjectServiceImpl
 
         projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
         projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
-
-        return data;
-    }
-
-    private PropertyTree modifyProjectParent( final ProjectName parent, final PropertyTree data )
-    {
-        PropertySet projectData = data.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
-
-        if ( projectData != null )
-        {
-            projectData.removeProperty( ProjectConstants.PROJECT_PARENTS_PROPERTY );
-            if ( parent != null )
-            {
-                projectData.setString( ProjectConstants.PROJECT_PARENTS_PROPERTY, parent.toString() );
-
-            }
-        }
 
         return data;
     }

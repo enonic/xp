@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -47,6 +48,9 @@ class ProjectServiceActivatorTest
     @Mock(stubOnly = true)
     ProjectPermissionsContextManager projectPermissionsContextManager;
 
+    @Mock(stubOnly = true)
+    EventPublisher eventPublisher;
+
     @BeforeEach
     void setUp()
     {
@@ -61,7 +65,8 @@ class ProjectServiceActivatorTest
     void lifecycle()
     {
         final ProjectServiceActivator activator =
-            new ProjectServiceActivator( repositoryService, indexService, nodeService, securityService, projectPermissionsContextManager );
+            new ProjectServiceActivator( repositoryService, indexService, nodeService, securityService, projectPermissionsContextManager,
+                                         eventPublisher );
 
         when( bundleContext.registerService( same( ProjectService.class ), any( ProjectService.class ), isNull() ) ).
             thenReturn( service );
