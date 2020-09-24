@@ -29,6 +29,8 @@ public class FindNodesByParentParams
 
     private final Consumer batchCallback;
 
+    private final Integer batchSize;
+
     private FindNodesByParentParams( Builder builder )
     {
         Preconditions.checkArgument( builder.parentPath == null || builder.parentId == null,
@@ -42,6 +44,7 @@ public class FindNodesByParentParams
         countOnly = builder.countOnly;
         recursive = builder.recursive;
         batchCallback = builder.batchCallback;
+        batchSize = builder.batchSize;
     }
 
     public NodePath getParentPath()
@@ -90,6 +93,11 @@ public class FindNodesByParentParams
         return batchCallback;
     }
 
+    @Deprecated
+    public Integer batchSize() {
+        return batchSize;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -114,6 +122,8 @@ public class FindNodesByParentParams
         private boolean recursive = false;
 
         private Consumer batchCallback;
+
+        private Integer batchSize;
 
         private Builder()
         {
@@ -172,6 +182,13 @@ public class FindNodesByParentParams
         public Builder batchCallback( final Consumer batchCallback )
         {
             this.batchCallback = batchCallback;
+            return this;
+        }
+
+        @Deprecated
+        public Builder batchSize( final Integer batchSize )
+        {
+            this.batchSize = batchSize;
             return this;
         }
 
