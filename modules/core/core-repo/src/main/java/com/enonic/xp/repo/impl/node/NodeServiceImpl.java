@@ -270,6 +270,7 @@ public class NodeServiceImpl
                 searchService( this.nodeSearchService ).
                 storageService( this.nodeStorageService ).
                 batchCallback( params.getBatchCallback() ).
+                batchSize( params.getSize() ).
                 build().
                 execute();
         }

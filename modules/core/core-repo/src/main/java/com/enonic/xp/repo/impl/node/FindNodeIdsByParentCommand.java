@@ -42,6 +42,8 @@ public class FindNodeIdsByParentCommand
 
     private final Consumer batchCallback;
 
+    private Integer batchSize;
+
     private FindNodeIdsByParentCommand( final Builder builder )
     {
         super( builder );
@@ -54,6 +56,7 @@ public class FindNodeIdsByParentCommand
         countOnly = builder.countOnly;
         recursive = builder.recursive;
         batchCallback = builder.batchCallback;
+        batchSize = builder.batchSize;
     }
 
     public static Builder create()
@@ -108,6 +111,10 @@ public class FindNodeIdsByParentCommand
             setOrderExpressions( order.getOrderExpressions() ).
             accurateScoring( true ).
             batchCallback( batchCallback );
+
+        if (batchSize != null) {
+            builder.batchSize(batchSize);
+        }
 
         if ( !recursive )
         {
@@ -180,6 +187,8 @@ public class FindNodeIdsByParentCommand
 
         private Consumer batchCallback;
 
+        private Integer batchSize;
+
         public Builder()
         {
             super();
@@ -249,6 +258,13 @@ public class FindNodeIdsByParentCommand
         public Builder batchCallback( final Consumer batchCallback )
         {
             this.batchCallback = batchCallback;
+            return this;
+        }
+
+        @Deprecated
+        public Builder batchSize(final Integer batchSize )
+        {
+            this.batchSize = batchSize;
             return this;
         }
     }

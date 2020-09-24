@@ -137,6 +137,7 @@ class RepoDumper
             parentId( rootNode.id() ).
             childOrder( ChildOrder.from( "_path asc" ) ).
             recursive( true ).
+            batchSize( 10 ).
             batchCallback( result -> this.handleBatchCallback( (SearchResult) result, branchDumpResult, nodeIdsAccumulator ) );
 
         this.nodeService.findByParent( builder.build() );
