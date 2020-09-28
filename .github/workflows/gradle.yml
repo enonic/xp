@@ -69,7 +69,7 @@ jobs:
 
       - name: Commit and push new version
         if: steps.publish_vars.outputs.release == 'true'
-        uses: EndBug/add-and-commit@v4
+        uses: EndBug/add-and-commit@v5
         with:
           add: ./gradle.properties
           message: 'Updated to next SNAPSHOT version'
