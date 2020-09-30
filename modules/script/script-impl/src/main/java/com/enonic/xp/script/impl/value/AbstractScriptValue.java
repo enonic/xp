@@ -90,6 +90,12 @@ abstract class AbstractScriptValue
     }
 
     @Override
+    public Map<String, Object> getMapIncludeNullValues()
+    {
+        return Collections.emptyMap();
+    }
+
+    @Override
     public ScriptValue call( final Object... args )
     {
         return null;

@@ -66,6 +66,11 @@ public final class PortalResponseSerializer
 
     public PortalResponse serialize()
     {
+        return serialize( false );
+    }
+
+    public PortalResponse serialize(boolean includeNullValues)
+    {
         PortalResponse.Builder builder = PortalResponse.create();
         builder.status( this.defaultStatus );
 
@@ -76,7 +81,7 @@ public final class PortalResponseSerializer
 
         populateStatus( builder, value.getMember( "status" ) );
         populateContentType( builder, value.getMember( "contentType" ) );
-        populateBody( builder, value.getMember( "body" ) );
+        populateBody( builder, value.getMember( "body" ), includeNullValues );
         populateHeaders( builder, value.getMember( "headers" ) );
         populateContributions( builder, value.getMember( "pageContributions" ) );
         populateCookies( builder, value.getMember( "cookies" ) );
@@ -127,7 +132,7 @@ public final class PortalResponseSerializer
         builder.header( "Location", redirect );
     }
 
-    private void populateBody( final PortalResponse.Builder builder, final ScriptValue value )
+    private void populateBody( final PortalResponse.Builder builder, final ScriptValue value, final boolean includeNullValues )
     {
         if ( this.overrideBody != null )
         {
@@ -148,7 +153,14 @@ public final class PortalResponseSerializer
 
         if ( value.isObject() )
         {
-            builder.body( value.getMap() );
+            if ( includeNullValues )
+            {
+                builder.body( value.getMapIncludeNullValues() );
+            }
+            else
+            {
+                builder.body( value.getMap() );
+            }
             return;
         }
 

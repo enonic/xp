@@ -51,4 +51,12 @@ final class ObjectScriptValue
         final JsObjectConverter converter = new JsObjectConverter( this.factory.getJavascriptHelper() );
         return converter.toMap( this.value );
     }
+
+    @Override
+    public Map<String, Object> getMapIncludeNullValues()
+    {
+        final JsObjectConverter converter = new JsObjectConverter( this.factory.getJavascriptHelper(), true );
+        return converter.toMap( this.value );
+    }
+
 }

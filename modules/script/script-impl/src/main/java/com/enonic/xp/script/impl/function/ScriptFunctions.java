@@ -21,6 +21,8 @@ public final class ScriptFunctions
 
     private final JsObjectConverter converter;
 
+    private final JsObjectConverter converterIncludeNullValues;
+
     private final ScriptLogger logger;
 
     public ScriptFunctions( final ResourceKey script, final ScriptExecutor executor )
@@ -34,6 +36,7 @@ public final class ScriptFunctions
 
         this.scriptBeanFactory = new ScriptBeanFactoryImpl( this.executor.getClassLoader(), beanContext );
         this.converter = new JsObjectConverter( this.executor.getJavascriptHelper() );
+        this.converterIncludeNullValues = new JsObjectConverter( this.executor.getJavascriptHelper(), true );
         this.logger = new ScriptLogger( this.script, this.executor.getJavascriptHelper() );
     }
 
@@ -76,6 +79,11 @@ public final class ScriptFunctions
     public Object toNativeObject( final Object value )
     {
         return this.converter.toJs( value );
+    }
+
+    public Object toNativeObjectIncludeNullValues( final Object value )
+    {
+        return this.converterIncludeNullValues.toJs( value );
     }
 
     public Object nullOrValue( final Object value )

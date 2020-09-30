@@ -35,5 +35,7 @@ public interface ScriptValue
 
     Map<String, Object> getMap();
 
+    Map<String, Object> getMapIncludeNullValues();
+
     ScriptValue call( Object... args );
 }

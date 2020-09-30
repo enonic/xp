@@ -15,9 +15,17 @@ public final class JsObjectConverter
 {
     private final JavascriptHelper helper;
 
+    private final Boolean includeNullValues;
+
     public JsObjectConverter( final JavascriptHelper helper )
     {
+        this( helper, false );
+    }
+
+    public JsObjectConverter( final JavascriptHelper helper, final Boolean includeNullValues )
+    {
         this.helper = helper;
+        this.includeNullValues = includeNullValues != null ? includeNullValues : false;
     }
 
     public Object toJs( final Object value )
@@ -48,7 +56,7 @@ public final class JsObjectConverter
 
     private Object toJs( final MapSerializable value )
     {
-        final ScriptMapGenerator generator = new ScriptMapGenerator( this.helper );
+        final ScriptMapGenerator generator = new ScriptMapGenerator( this.helper, this.includeNullValues );
         value.serialize( generator );
         return generator.getRoot();
     }
@@ -130,7 +138,12 @@ public final class JsObjectConverter
         for ( final Map.Entry<String, Object> entry : source.entrySet() )
         {
             final Object converted = toObject( entry.getValue() );
-            if ( converted != null )
+
+            if ( includeNullValues )
+            {
+                result.put( entry.getKey(), converted );
+            }
+            else if ( converted != null )
             {
                 result.put( entry.getKey(), converted );
             }

@@ -7,9 +7,18 @@ final class ScriptMapGenerator
 {
     private final JavascriptHelper helper;
 
+    private final Boolean includeNullValues;
+
     ScriptMapGenerator( final JavascriptHelper helper )
     {
+        this( helper, false );
+    }
+
+    ScriptMapGenerator( final JavascriptHelper helper, final Boolean includeNullValues )
+    {
         this.helper = helper;
+        this.includeNullValues = includeNullValues != null ? includeNullValues : false;
+
         initRoot();
     }
 
@@ -40,7 +49,11 @@ final class ScriptMapGenerator
     @Override
     protected void putInMap( final Object map, final String key, final Object value )
     {
-        if ( value != null )
+        if ( includeNullValues )
+        {
+            NashornHelper.addToNativeObject( map, key, value );
+        }
+        else if ( value != null )
         {
             NashornHelper.addToNativeObject( map, key, value );
         }
