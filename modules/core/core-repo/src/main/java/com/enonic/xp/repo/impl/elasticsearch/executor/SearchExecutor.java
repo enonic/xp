@@ -70,7 +70,7 @@ public class SearchExecutor
             client( this.client ).
             resolvedSize( resolveSize( query ) ).
             build().
-            create();
+            createSearchRequest();
 
         //System.out.println( "######################\n\r" + searchRequestBuilder.toString() );
 
