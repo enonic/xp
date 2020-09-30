@@ -6,14 +6,9 @@ import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.search.sort.SortBuilder;
 
-import com.google.common.collect.ImmutableSet;
-
-import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.result.SearchResultFactory;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repository.IndexException;
@@ -77,39 +72,6 @@ abstract class AbstractExecutor
         }
 
         return queryAsString;
-    }
-
-    SearchRequestBuilder createScrollRequest( final ElasticsearchQuery query )
-    {
-        final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexNames() ).
-            setTypes( query.getIndexTypes() ).
-            setScroll( DEFAULT_SCROLL_TIME ).
-            setQuery( query.getQuery() ).
-            setPostFilter( query.getFilter() ).
-            setFrom( query.getFrom() ).
-            setSize( query.getBatchSize() ).
-            addFields( query.getReturnFields().getReturnFieldNames() );
-
-        query.getSortBuilders().forEach( searchRequestBuilder::addSort );
-
-        final ImmutableSet<SortBuilder> sortBuilders = query.getSortBuilders();
-
-        SearchType searchType;
-
-        if ( sortBuilders.isEmpty() )
-        {
-            searchType = SearchType.SCAN;
-        }
-        else
-        {
-            searchType = SearchType.DEFAULT;
-
-            sortBuilders.forEach( searchRequestBuilder::addSort );
-        }
-
-        searchRequestBuilder.
-            setSearchType( searchType );
-        return searchRequestBuilder;
     }
 
     void clearScroll( final SearchResponse scrollResp )

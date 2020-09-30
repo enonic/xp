@@ -1,10 +1,11 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-import org.elasticsearch.action.search.SearchAction;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.unit.TimeValue;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.node.SearchOptimizer;
@@ -26,11 +27,14 @@ public class SearchRequestBuilderFactory
 
     private final Client client;
 
+    private final TimeValue scrollTime;
+
     private SearchRequestBuilderFactory( final Builder builder )
     {
         resolvedSize = builder.resolvedSize;
         query = builder.query;
         client = builder.client;
+        scrollTime = builder.scrollTime;
     }
 
     public static Builder newFactory()
@@ -38,36 +42,54 @@ public class SearchRequestBuilderFactory
         return new Builder();
     }
 
-    public SearchRequestBuilder create()
+    public SearchRequestBuilder createScrollRequest()
     {
-        final SearchType searchType =
-            query.getSearchOptimizer().equals( SearchOptimizer.ACCURACY ) ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT;
+        final SearchRequestBuilder searchRequestBuilder = initRequestBuilder();
 
-        final SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client, SearchAction.INSTANCE ).
+        searchRequestBuilder.
+            setScroll( scrollTime ).
+            setSearchType( query.getSortBuilders().isEmpty() ? SearchType.SCAN : SearchType.DEFAULT );
+
+        return searchRequestBuilder;
+    }
+
+    public SearchRequestBuilder createSearchRequest()
+    {
+        final SearchRequestBuilder searchRequestBuilder = initRequestBuilder();
+
+        searchRequestBuilder.
             setExplain( query.isExplain() ).
-            setIndices( query.getIndexNames() ).
-            setTypes( query.getIndexTypes() ).
-            setSearchType( searchType ).
-            setQuery( query.getQuery() ).
-            setPostFilter( query.getFilter() ).
-            setFrom( query.getFrom() ).
-            setPreference( SearchPreference.LOCAL.getName() ).
-            setSize( resolvedSize );
-
-        query.getSortBuilders().forEach( searchRequestBuilder::addSort );
+            setSearchType(
+                query.getSearchOptimizer().equals( SearchOptimizer.ACCURACY ) ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT ).
+            setPreference( SearchPreference.LOCAL.getName() );
 
         query.getAggregations().forEach( searchRequestBuilder::addAggregation );
         query.getSuggestions().forEach( searchRequestBuilder::addSuggestion );
+
+        return searchRequestBuilder;
+    }
+
+    private SearchRequestBuilder initRequestBuilder()
+    {
+        final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexNames() );
+
+        searchRequestBuilder.setTypes( query.getIndexTypes() ).
+            setQuery( query.getQuery() ).
+            setPostFilter( query.getFilter() ).
+            setFrom( query.getFrom() ).
+            setSize( resolvedSize );
+
+        if ( query.getReturnFields() != null && query.getReturnFields().isNotEmpty() )
+        {
+            searchRequestBuilder.addFields( query.getReturnFields().getReturnFieldNames() );
+        }
 
         if ( query.getHighlight() != null )
         {
             setHighlightSettings( searchRequestBuilder, query.getHighlight() );
         }
 
-        if ( query.getReturnFields() != null && query.getReturnFields().isNotEmpty() )
-        {
-            searchRequestBuilder.addFields( query.getReturnFields().getReturnFieldNames() );
-        }
+        query.getSortBuilders().forEach( searchRequestBuilder::addSort );
 
         return searchRequestBuilder;
     }
@@ -141,6 +163,8 @@ public class SearchRequestBuilderFactory
 
         private Client client;
 
+        private TimeValue scrollTime;
+
         private Builder()
         {
         }
@@ -163,8 +187,22 @@ public class SearchRequestBuilderFactory
             return this;
         }
 
+        public Builder scrollTime( final TimeValue scrollTime )
+        {
+            this.scrollTime = scrollTime;
+            return this;
+        }
+
+        private void validate()
+        {
+            Preconditions.checkNotNull( query, "query must be set." );
+            Preconditions.checkNotNull( client, "client must be set." );
+            Preconditions.checkNotNull( resolvedSize, "resolvedSize must be set." );
+        }
+
         public SearchRequestBuilderFactory build()
         {
+            validate();
             return new SearchRequestBuilderFactory( this );
         }
     }

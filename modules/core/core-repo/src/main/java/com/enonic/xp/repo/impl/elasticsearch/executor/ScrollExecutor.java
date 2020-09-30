@@ -9,6 +9,7 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.repo.impl.elasticsearch.SearchRequestBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.result.SearchHitsFactory;
 import com.enonic.xp.repo.impl.search.result.SearchHits;
@@ -33,7 +34,13 @@ class ScrollExecutor
 
     public SearchResult execute( final ElasticsearchQuery query )
     {
-        final SearchRequestBuilder searchRequestBuilder = createScrollRequest( query );
+        final SearchRequestBuilder searchRequestBuilder = SearchRequestBuilderFactory.newFactory().
+            query( query ).
+            client( this.client ).
+            resolvedSize( query.getBatchSize() ).
+            scrollTime( DEFAULT_SCROLL_TIME ).
+            build().
+            createScrollRequest();
 
         SearchResponse scrollResp = searchRequestBuilder.
             execute().

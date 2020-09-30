@@ -17,6 +17,7 @@ import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.repo.impl.ReturnFields;
+import com.enonic.xp.repo.impl.elasticsearch.SearchRequestBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.FilterBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
@@ -69,7 +70,15 @@ public class CopyExecutor
 
     public void execute()
     {
-        final SearchRequestBuilder searchRequestBuilder = createScrollRequest( createQuery() );
+        final ElasticsearchQuery query = createQuery();
+
+        final SearchRequestBuilder searchRequestBuilder = SearchRequestBuilderFactory.newFactory().
+            query( query ).
+            client( this.client ).
+            resolvedSize( query.getBatchSize() ).
+            scrollTime( DEFAULT_SCROLL_TIME ).
+            build().
+            createScrollRequest();
 
         SearchResponse scrollResp = searchRequestBuilder.
             execute().
