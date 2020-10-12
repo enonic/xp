@@ -9,6 +9,8 @@ function editor(c) {
     c.data.myCheckbox = false;
     c.data['myTime'] = '11:00';
     c.publish.from = '2016-11-03T10:01:34Z';
+    c.publish.to = '2016-11-03T11:01:34Z';
+    c.publish.first = '2016-11-03T10:00:34Z';
     c.workflow.state = 'READY';
     c.workflow.checks = {
         'Review by marketing': 'APPROVED'
@@ -66,7 +68,9 @@ var expected = {
         }
     },
     'publish': {
-        'from': '2016-11-03T10:01:34Z'
+        'from': '2016-11-03T10:01:34Z',
+        'to': '2016-11-03T11:01:34Z',
+        'first': '2016-11-03T10:00:34Z'
     },
     'workflow': {
         'state': 'READY',

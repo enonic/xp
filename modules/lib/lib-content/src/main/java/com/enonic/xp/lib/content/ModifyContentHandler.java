@@ -124,6 +124,7 @@ public final class ModifyContentHandler
         return ContentPublishInfo.create().
             from( getInstant( value, "from" ) ).
             to( getInstant( value, "to" ) ).
+            first( getInstant( value, "first" ) ).
             build();
     }
 
