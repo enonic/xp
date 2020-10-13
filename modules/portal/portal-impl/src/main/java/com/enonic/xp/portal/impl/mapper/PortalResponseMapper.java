@@ -68,27 +68,27 @@ public final class PortalResponseMapper
             {
                 gen.value( "value", cookie.getValue() );
             }
-            else if ( cookie.getPath() != null )
+            if ( cookie.getPath() != null )
             {
                 gen.value( "path", cookie.getPath() );
             }
-            else if ( cookie.getDomain() != null )
+            if ( cookie.getDomain() != null )
             {
                 gen.value( "domain", cookie.getDomain() );
             }
-            else if ( cookie.getComment() != null )
+            if ( cookie.getComment() != null )
             {
                 gen.value( "comment", cookie.getComment() );
             }
-            else if ( cookie.getMaxAge() != -1 )
+            if ( cookie.getMaxAge() >= 0 )
             {
                 gen.value( "maxAge", cookie.getMaxAge() );
             }
-            else if ( cookie.getSecure() )
+            if ( cookie.getSecure() )
             {
                 gen.value( "secure", cookie.getSecure() );
             }
-            else if ( cookie.isHttpOnly() )
+            if ( cookie.isHttpOnly() )
             {
                 gen.value( "httpOnly", cookie.isHttpOnly() );
             }

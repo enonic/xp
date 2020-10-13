@@ -1,0 +1,27 @@
+{
+  "status" : 200,
+  "contentType" : "text/plain; charset=utf-8",
+  "postProcess" : true,
+  "headers" : { },
+  "pageContributions" : { },
+  "cookies" : {
+    "simple" : {
+      "value" : "value"
+    },
+    "complex" : {
+      "value" : "some value",
+      "path" : "/admin",
+      "domain" : "enonic.com",
+      "comment" : "some comment",
+      "maxAge" : 100,
+      "secure" : true,
+      "httpOnly" : true
+    },
+    "toDelete" : {
+      "value" : "value",
+      "maxAge" : 0
+    }
+  },
+  "applyFilters" : true,
+  "body" : null
+}

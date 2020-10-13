@@ -1,50 +1,19 @@
 package com.enonic.xp.portal.impl.mapper;
 
-import java.net.URL;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.ContentFixtures;
-import com.enonic.xp.script.serializer.JsonMapGenerator;
-import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.portal.impl.MapSerializableAssert;
 import com.enonic.xp.web.HttpMethod;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PortalRequestMapperTest
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper().
-        enable( SerializationFeature.INDENT_OUTPUT ).
-        enable( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS );
-
     private PortalRequest portalRequest;
 
-    private void assertJson( final String name, final MapSerializable value )
-        throws Exception
-    {
-        final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
-        final URL url = getClass().getResource( resource );
-
-        assertNotNull( url, "File [" + resource + "] not found" );
-        final JsonNode expectedJson = MAPPER.readTree( url );
-
-        final JsonMapGenerator generator = new JsonMapGenerator();
-        value.serialize( generator );
-        final JsonNode actualJson = (JsonNode) generator.getRoot();
-
-        final String expectedStr = MAPPER.writeValueAsString( expectedJson );
-        final String actualStr = MAPPER.writeValueAsString( actualJson );
-
-        assertEquals( expectedStr, actualStr );
-    }
+    private final MapSerializableAssert assertHelper = new MapSerializableAssert( PortalRequestMapperTest.class );
 
     @BeforeEach
     public void setup()
@@ -79,7 +48,7 @@ public class PortalRequestMapperTest
     public void testSimple()
         throws Exception
     {
-        assertJson( "simple", new PortalRequestMapper( this.portalRequest ) );
+        assertHelper.assertJson( "request-simple.json", new PortalRequestMapper( this.portalRequest ) );
     }
 
     @Test
@@ -89,7 +58,7 @@ public class PortalRequestMapperTest
         this.portalRequest.getCookies().put( "a", "1" );
         this.portalRequest.getCookies().put( "b", "2" );
 
-        assertJson( "cookies", new PortalRequestMapper( this.portalRequest ) );
+        assertHelper.assertJson( "request-cookies.json", new PortalRequestMapper( this.portalRequest ) );
     }
 
     @Test
@@ -100,6 +69,6 @@ public class PortalRequestMapperTest
         this.portalRequest.setContentType( "text/plain" );
         this.portalRequest.setBody( "Hello World" );
 
-        assertJson( "body", new PortalRequestMapper( this.portalRequest ) );
+        assertHelper.assertJson( "request-body.json", new PortalRequestMapper( this.portalRequest ) );
     }
 }
