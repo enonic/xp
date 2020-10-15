@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ITopic;
+import com.hazelcast.core.Member;
 import com.hazelcast.core.Message;
 
 import com.enonic.xp.event.Event;
@@ -17,7 +18,9 @@ import com.enonic.xp.event.EventPublisher;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.notNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,6 +64,21 @@ class ClusterEventReceiverTest
         assertEquals( eventForwarded.getTimestamp(), event.getTimestamp() );
         assertFalse( eventForwarded.isDistributed() );
         assertEquals( eventForwarded.getData(), event.getData() );
+    }
+
+    @Test
+    void testLocalMemberIgnored()
+    {
+        final ClusterEventReceiver clusterEventReceiver = new ClusterEventReceiver( hazelcastInstance, eventPublisher );
+        final Event event = Event.create( "eventType" ).build();
+
+        final Member publishingMember = mock( Member.class );
+        when( publishingMember.localMember() ).thenReturn( true );
+
+        Message<Event> message = new Message<>( "", event, System.currentTimeMillis(), publishingMember );
+        clusterEventReceiver.onMessage( message );
+
+        verifyNoInteractions( this.eventPublisher );
     }
 
     @Test
