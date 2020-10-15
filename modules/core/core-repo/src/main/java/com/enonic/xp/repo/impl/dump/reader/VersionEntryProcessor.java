@@ -72,9 +72,11 @@ public class VersionEntryProcessor
             }
             catch ( Exception e )
             {
-                result.error( EntryLoadError.error(
+                final String message =
                     String.format( "Cannot load version with id %s, path %s: %s", versionsDumpEntry.getNodeId(), version.getNodePath(),
-                                   e.getMessage() ) ) );
+                                   e.getMessage() );
+                result.error( EntryLoadError.error( message ) );
+                LOG.error( message, e );
             }
         }
     }

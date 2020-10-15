@@ -76,8 +76,9 @@ public class BranchEntryProcessor
         }
         catch ( Exception e )
         {
-            result.error( EntryLoadError.error(
-                String.format( "Cannot load node with id %s, path %s: %s", node.id(), node.path(), e.getMessage() ) ) );
+            final String message = String.format( "Cannot load node with id %s, path %s: %s", node.id(), node.path(), e.getMessage() );
+            result.error( EntryLoadError.error( message ) );
+            LOG.error( message, e );
         }
     }
 
