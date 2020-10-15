@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ITopic;
+import com.hazelcast.core.Member;
 import com.hazelcast.core.Message;
 import com.hazelcast.core.MessageListener;
 
@@ -45,10 +46,14 @@ public final class ClusterEventReceiver
     @Override
     public void onMessage( final Message<Event> message )
     {
-        final Event forwardedEvent = Event.create( message.getMessageObject() ).
-            distributed( false ).
-            localOrigin( false ).
-            build();
-        this.eventPublisher.publish( forwardedEvent );
+        final Member publishingMember = message.getPublishingMember();
+        if ( publishingMember == null || !publishingMember.localMember() )
+        {
+            final Event forwardedEvent = Event.create( message.getMessageObject() ).
+                distributed( false ).
+                localOrigin( false ).
+                build();
+            this.eventPublisher.publish( forwardedEvent );
+        }
     }
 }
