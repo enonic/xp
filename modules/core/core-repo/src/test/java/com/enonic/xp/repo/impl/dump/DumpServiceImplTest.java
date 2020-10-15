@@ -4,6 +4,7 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
@@ -15,6 +16,7 @@ import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
 
@@ -41,6 +43,8 @@ import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.node.AttachedBinaries;
+import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
@@ -63,15 +67,15 @@ import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repo.impl.dump.reader.FileDumpReader;
 import com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre5.Pre5ContentConstants;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.repo.impl.node.RenameNodeCommand;
+import com.enonic.xp.repo.impl.repository.UpdateRepositoryEntryParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
-import com.enonic.xp.repository.DeleteBranchParams;
-import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
@@ -115,7 +119,9 @@ public class DumpServiceImplTest
         this.dumpService = new DumpServiceImpl( bundleContext, eventPublisher );
         this.dumpService.setBlobStore( this.blobStore );
         this.dumpService.setNodeService( this.nodeService );
-        this.dumpService.setRepositoryService( this.repositoryService );
+        this.dumpService.setNodeRepositoryService( this.nodeRepositoryService );
+        this.dumpService.setNodeStorageService( this.storageService );
+        this.dumpService.setRepositoryEntryService( this.repositoryEntryService );
         this.dumpService.setBasePath( temporaryFolder );
     }
 
@@ -148,7 +154,7 @@ public class DumpServiceImplTest
             dumpName( "testDump" ).
             build() ) );
 
-        final Repositories newRepos = NodeHelper.runAsAdmin( () -> this.repositoryService.list() );
+        final Repositories newRepos = NodeHelper.runAsAdmin( this::doListRepositories );
 
         assertEquals( RepositoryIds.from( RepositoryId.from( "com.enonic.cms.default" ), RepositoryId.from( "system-repo" ),
                                           RepositoryId.from( "system.auditlog" ) ), newRepos.getIds() );
@@ -201,28 +207,20 @@ public class DumpServiceImplTest
                 build() ).
             build();
 
-        final Repository newRepoInsideDump =
-            NodeHelper.runAsAdmin( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
-                repositoryId( RepositoryId.from( "new-repo-inside-dump" ) ).
-                rootChildOrder( ChildOrder.manualOrder() ).
-                rootPermissions( newRepoACL ).
-                build() ) );
+        final Repository newRepoInsideDump = NodeHelper.runAsAdmin(
+            () -> doCreateRepository( RepositoryId.from( "new-repo-inside-dump" ), newRepoACL, ChildOrder.manualOrder() ) );
 
         NodeHelper.runAsAdmin( () -> doDump( SystemDumpParams.create().dumpName( "myTestDump" ).
             build() ) );
 
-        final Repository newRepoOutsideDump =
-            NodeHelper.runAsAdmin( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
-                repositoryId( RepositoryId.from( "new-repo-outside-dump" ) ).
-                rootChildOrder( ChildOrder.manualOrder() ).
-                rootPermissions( newRepoACL ).
-                build() ) );
+        final Repository newRepoOutsideDump = NodeHelper.runAsAdmin(
+            () -> doCreateRepository( RepositoryId.from( "new-repo-outside-dump" ), newRepoACL, ChildOrder.manualOrder() ) );
 
-        final Repositories oldRepos = NodeHelper.runAsAdmin( () -> this.repositoryService.list() );
+        final Repositories oldRepos = NodeHelper.runAsAdmin( this::doListRepositories );
 
         NodeHelper.runAsAdmin( this::doLoad );
 
-        final Repositories newRepos = NodeHelper.runAsAdmin( () -> this.repositoryService.list() );
+        final Repositories newRepos = NodeHelper.runAsAdmin( this::doListRepositories );
 
         assertEquals( 5, oldRepos.getIds().getSize() );
         assertEquals( 4, newRepos.getIds().getSize() );
@@ -235,11 +233,11 @@ public class DumpServiceImplTest
     public void repositories_loaded()
         throws Exception
     {
-        final Repositories repositoriesBefore = NodeHelper.runAsAdmin( () -> this.repositoryService.list() );
+        final Repositories repositoriesBefore = NodeHelper.runAsAdmin( this::doListRepositories );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
 
-        final Repositories repositoriesAfter = NodeHelper.runAsAdmin( () -> this.repositoryService.list() );
+        final Repositories repositoriesAfter = NodeHelper.runAsAdmin( this::doListRepositories );
 
         assertEquals( repositoriesBefore.getIds(), repositoriesAfter.getIds() );
     }
@@ -271,6 +269,48 @@ public class DumpServiceImplTest
         assertEquals( node.getNodeState(), currentStoredNode.getNodeState() );
         assertEquals( node.getNodeType(), currentStoredNode.getNodeType() );
         assertEquals( node.data(), currentStoredNode.data() );
+    }
+
+    @Test
+    public void dumpAndLoadWithAttachments()
+        throws Exception
+    {
+        NodeHelper.runAsAdmin( () -> {
+            final Repository newRepo =
+                NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "new-repo" ), AccessControlList.create().
+                    add( AccessControlEntry.create().
+                        principal( RoleKeys.EVERYONE ).
+                        allowAll().
+                        build() ).
+                    build(), ChildOrder.manualOrder() ) );
+
+            final PropertyTree data = new PropertyTree();
+            data.addBinaryReference( "attachmentName", BinaryReference.from( "image.png" ) );
+
+            final UpdateRepositoryEntryParams updateParams = UpdateRepositoryEntryParams.create().
+                repositoryId( newRepo.getId() ).
+                repositoryData( data ).
+                attachments( ImmutableList.of(
+                    new BinaryAttachment( BinaryReference.from( "image.png" ), ByteSource.wrap( "attachmentName".getBytes() ) ) ) ).
+                build();
+
+            repositoryEntryService.updateRepositoryEntry( updateParams );
+        } );
+
+        NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
+            dumpName( "testDump" ).
+            build() ) );
+
+        NodeHelper.runAsAdmin( () -> {
+            dumpDeleteAndLoad( true );
+
+            final AttachedBinaries attachedBinaries =
+                repositoryEntryService.getRepositoryEntry( RepositoryId.from( "new-repo" ) ).getAttachments();
+
+            assertEquals( 1, attachedBinaries.getSize() );
+            assertNotNull( attachedBinaries.getByBinaryReference( BinaryReference.from( "image.png" ) ) );
+        } );
+
     }
 
     @Test
@@ -328,11 +368,8 @@ public class DumpServiceImplTest
                 build() ).
             build();
 
-        final Repository newRepo = NodeHelper.runAsAdmin( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
-            repositoryId( RepositoryId.from( "my-new-repo" ) ).
-            rootChildOrder( ChildOrder.manualOrder() ).
-            rootPermissions( newRepoACL ).
-            build() ) );
+        final Repository newRepo =
+            NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "my-new-repo" ), newRepoACL, ChildOrder.manualOrder() ) );
 
         final Context newContext = ContextBuilder.from( ContextAccessor.current() ).
             repositoryId( newRepo.getId() ).
@@ -361,14 +398,15 @@ public class DumpServiceImplTest
                 dumpName( "testDump" ).
                 build() );
 
-            this.repositoryService.deleteBranch( DeleteBranchParams.from( branch ) );
-            assertFalse( this.repositoryService.get( currentRepoId ).getBranches().contains( branch ) );
+            this.repositoryEntryService.removeBranchFromRepositoryEntry( currentRepoId, branch );
+
+            assertFalse( this.repositoryEntryService.getRepositoryEntry( currentRepoId ).getBranches().contains( branch ) );
 
             this.dumpService.load( SystemLoadParams.create().
                 dumpName( "testDump" ).
                 build() );
 
-            assertTrue( this.repositoryService.get( currentRepoId ).getBranches().contains( branch ) );
+            assertTrue( this.repositoryEntryService.getRepositoryEntry( currentRepoId ).getBranches().contains( branch ) );
             assertNotNull( this.nodeService.getById( node.id() ) );
         } );
     }
@@ -600,15 +638,13 @@ public class DumpServiceImplTest
     @Test
     public void number_of_versions_in_other_repo()
     {
-        final Repository myRepo = NodeHelper.runAsAdmin( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
-            repositoryId( RepositoryId.from( "myrepo" ) ).
-            rootPermissions( AccessControlList.create().
+        final Repository myRepo =
+            NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "myrepo" ), AccessControlList.create().
                 add( AccessControlEntry.create().
                     principal( CTX_DEFAULT.getAuthInfo().getUser().getKey() ).
                     allowAll().
                     build() ).
-                build() ).
-            build() ) );
+                build(), null ) );
 
         final Context myRepoContext = ContextBuilder.from( ContextAccessor.current() ).
             repositoryId( myRepo.getId() ).
@@ -843,7 +879,7 @@ public class DumpServiceImplTest
         final RepoDumpResult repoDumpResult = updatedMeta.getSystemDumpResult().get( ContentConstants.CONTENT_REPO_ID );
         assertNotNull( repoDumpResult );
 
-        assertNull( repositoryService.get( Pre5ContentConstants.CONTENT_REPO_ID ) );
+        assertNull( repositoryEntryService.getRepositoryEntry( Pre5ContentConstants.CONTENT_REPO_ID ) );
     }
 
     private void checkCommitUpgrade( final NodeId nodeId )
@@ -1044,19 +1080,18 @@ public class DumpServiceImplTest
     {
         doDump( params );
 
-        repositoryService.list().
+        doListRepositories().
             stream().
             map( Repository::getId ).
             filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).
                 or( Predicate.isEqual( AUDIT_LOG_REPO_ID ) ).negate() ).
-            map( DeleteRepositoryParams::from ).
-            forEach( repositoryService::deleteRepository );
+            forEach( this::doDeleteRepository );
 
         // Then delete all system repositories
-        repositoryService.deleteRepository( DeleteRepositoryParams.from( RepositoryId.from( "system.auditlog" ) ) );
+        doDeleteRepository( RepositoryId.from( "system.auditlog" ) );
 
         // system-repo must be deleted last
-        repositoryService.deleteRepository( DeleteRepositoryParams.from( SystemConstants.SYSTEM_REPO_ID ) );
+        doDeleteRepository( SystemConstants.SYSTEM_REPO_ID );
 
         if ( clearBlobStore )
         {
@@ -1083,6 +1118,68 @@ public class DumpServiceImplTest
     private void doDump( final SystemDumpParams params )
     {
         this.dumpService.dump( params );
+    }
+
+    private Repository doCreateRepository( final RepositoryId repositoryId, final AccessControlList permissions,
+                                           final ChildOrder childOrder )
+    {
+        final CreateRepositoryParams params = CreateRepositoryParams.create().
+            repositoryId( repositoryId ).
+            data( new PropertyTree() ).
+            build();
+
+        this.nodeRepositoryService.create( params );
+
+        final Repository createRepositoryParams = Repository.create().
+            id( repositoryId ).
+            branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
+            build();
+
+        this.repositoryEntryService.createRepositoryEntry( createRepositoryParams );
+
+        final Repository repo = this.repositoryEntryService.getRepositoryEntry( repositoryId );
+
+        createRootNode( repositoryId, permissions, childOrder );
+
+        return repo;
+    }
+
+    private void createRootNode( final RepositoryId repositoryId, final AccessControlList permissions, final ChildOrder childOrder )
+    {
+        final Context rootNodeContext = ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( repositoryId ).
+            branch( RepositoryConstants.MASTER_BRANCH ).
+            build();
+
+        final InternalContext rootNodeInternalContext = InternalContext.create( rootNodeContext ).build();
+
+        this.storageService.store( Node.createRoot().
+            permissions( permissions != null ? permissions : RepositoryConstants.DEFAULT_REPO_PERMISSIONS ).
+            inheritPermissions( false ).
+            childOrder( childOrder != null ? childOrder : RepositoryConstants.DEFAULT_CHILD_ORDER ).
+            build(), rootNodeInternalContext );
+
+        rootNodeContext.runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
+    }
+
+    private void doDeleteRepository( final RepositoryId repositoryId )
+    {
+        this.repositoryEntryService.deleteRepositoryEntry( repositoryId );
+        this.nodeRepositoryService.delete( repositoryId );
+
+        this.storageService.invalidate();
+    }
+
+    private Repositories doListRepositories()
+    {
+        final ImmutableList.Builder<Repository> repositories = ImmutableList.builder();
+
+        repositoryEntryService.findRepositoryEntryIds().stream().
+            map( repositoryEntryService::getRepositoryEntry ).
+            filter( Objects::nonNull ).
+            forEach( repositories::add );
+
+        return Repositories.from( repositories.build() );
     }
 
     private Node updateNode( final Node node )

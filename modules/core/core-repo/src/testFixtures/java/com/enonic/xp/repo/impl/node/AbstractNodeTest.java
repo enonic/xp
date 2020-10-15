@@ -143,6 +143,8 @@ public abstract class AbstractNodeTest
 
     protected IndexDataServiceImpl indexedDataService;
 
+    protected NodeRepositoryServiceImpl nodeRepositoryService;
+
     protected RepositoryEntryServiceImpl repositoryEntryService;
 
     protected RepositoryServiceImpl repositoryService;
@@ -262,8 +264,8 @@ public abstract class AbstractNodeTest
         nodeService.setBinaryService( this.binaryService );
         nodeService.setEventPublisher( eventPublisher );
 
-        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
-        nodeRepositoryService.setIndexServiceInternal( this.indexServiceInternal );
+        this.nodeRepositoryService = new NodeRepositoryServiceImpl();
+        this.nodeRepositoryService.setIndexServiceInternal( this.indexServiceInternal );
 
         this.repositoryEntryService = new RepositoryEntryServiceImpl();
         this.repositoryEntryService.setIndexServiceInternal( this.indexServiceInternal );
