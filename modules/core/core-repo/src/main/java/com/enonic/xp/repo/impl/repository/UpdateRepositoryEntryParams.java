@@ -71,7 +71,7 @@ public final class UpdateRepositoryEntryParams
             return this;
         }
 
-        UpdateRepositoryEntryParams build()
+        public UpdateRepositoryEntryParams build()
         {
             return new UpdateRepositoryEntryParams( this );
         }

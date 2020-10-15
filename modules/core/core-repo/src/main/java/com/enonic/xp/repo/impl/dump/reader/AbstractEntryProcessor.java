@@ -70,7 +70,7 @@ class AbstractEntryProcessor
     {
         final String message = String.format( "Failed to load binary for nodeId %s, blobKey %s", nodeVersion.getId(), binary.getBlobKey() );
         result.error( EntryLoadError.error( message ) );
-        LOG.error( "Cannot load binary, missing in existing blobStore, and not present in dump: " + binary.getBlobKey(), e );
+        LOG.error( message, e );
     }
 
     void reportVersionError( final EntryLoadResult.Builder result, final VersionMeta meta )
@@ -78,6 +78,7 @@ class AbstractEntryProcessor
         final String message =
             String.format( "Failed to load version for node with path %s, blobKey %s", meta.getNodePath(), meta.getVersion() );
         result.error( EntryLoadError.error( message ) );
+        LOG.error( message );
     }
 
 

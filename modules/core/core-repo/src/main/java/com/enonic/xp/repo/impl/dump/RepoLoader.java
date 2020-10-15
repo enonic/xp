@@ -13,17 +13,16 @@ import com.enonic.xp.repo.impl.dump.reader.BranchEntryProcessor;
 import com.enonic.xp.repo.impl.dump.reader.CommitEntryProcessor;
 import com.enonic.xp.repo.impl.dump.reader.DumpReader;
 import com.enonic.xp.repo.impl.dump.reader.VersionEntryProcessor;
-import com.enonic.xp.repository.CreateBranchParams;
+import com.enonic.xp.repo.impl.repository.RepositoryEntryService;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositoryService;
 
 class RepoLoader
 {
     private final RepositoryId repositoryId;
 
-    private final RepositoryService repositoryService;
+    private final RepositoryEntryService repositoryEntryService;
 
     private final NodeService nodeService;
 
@@ -40,7 +39,7 @@ class RepoLoader
     private RepoLoader( final Builder builder )
     {
         repositoryId = builder.repositoryId;
-        repositoryService = builder.repositoryService;
+        repositoryEntryService = builder.repositoryEntryService;
         nodeService = builder.nodeService;
         reader = builder.reader;
         this.includeVersions = builder.includeVersions;
@@ -119,14 +118,14 @@ class RepoLoader
 
     private void verifyOrCreateBranch( final Branch branch )
     {
-        final Repository currentRepo = this.repositoryService.get( this.repositoryId );
+        final Repository currentRepo = this.repositoryEntryService.getRepositoryEntry( this.repositoryId );
 
         if ( currentRepo.getBranches().contains( branch ) )
         {
             return;
         }
 
-        this.repositoryService.createBranch( CreateBranchParams.from( branch ) );
+        this.repositoryEntryService.addBranchToRepositoryEntry( repositoryId, branch );
     }
 
     public static Builder create()
@@ -138,7 +137,7 @@ class RepoLoader
     {
         private RepositoryId repositoryId;
 
-        private RepositoryService repositoryService;
+        private RepositoryEntryService repositoryEntryService;
 
         private NodeService nodeService;
 
@@ -158,9 +157,9 @@ class RepoLoader
             return this;
         }
 
-        public Builder repositoryService( final RepositoryService val )
+        public Builder repositoryEntryService( final RepositoryEntryService val )
         {
-            repositoryService = val;
+            repositoryEntryService = val;
             return this;
         }
 

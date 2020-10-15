@@ -2,6 +2,9 @@ package com.enonic.xp.repo.impl.dump.reader;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.node.ImportNodeCommitParams;
@@ -11,6 +14,8 @@ public class CommitEntryProcessor
     extends AbstractEntryProcessor
     implements LineProcessor<EntryLoadResult>
 {
+    private static final Logger LOG = LoggerFactory.getLogger( CommitEntryProcessor.class );
+
     private EntryLoadResult result;
 
     private CommitEntryProcessor( final Builder builder )
@@ -48,8 +53,9 @@ public class CommitEntryProcessor
         }
         catch ( Exception e )
         {
-            result.error( EntryLoadError.error(
-                String.format( "Cannot load commit with id %s: %s", commitDumpEntry.getNodeCommitId(), e.getMessage() ) ) );
+            final String message = String.format( "Cannot load commit with id %s: %s", commitDumpEntry.getNodeCommitId(), e.getMessage() );
+            result.error( EntryLoadError.error( message ) );
+            LOG.error( message, e );
         }
     }
 
