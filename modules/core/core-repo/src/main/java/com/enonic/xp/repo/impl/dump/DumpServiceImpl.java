@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
@@ -18,6 +19,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.branch.Branches;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.DumpUpgradeResult;
@@ -30,7 +35,11 @@ import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.home.HomeDir;
+import com.enonic.xp.node.AttachedBinaries;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.repo.impl.dump.model.DumpMeta;
@@ -49,13 +58,14 @@ import com.enonic.xp.repo.impl.dump.upgrade.indexaccesssegments.IndexAccessSegme
 import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repo.impl.dump.writer.FileDumpWriter;
 import com.enonic.xp.repo.impl.dump.writer.ZipDumpWriter;
+import com.enonic.xp.repo.impl.repository.RepositoryEntryService;
+import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.CreateRepositoryParams;
-import com.enonic.xp.repository.DeleteRepositoryParams;
-import com.enonic.xp.repository.Repositories;
+import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.util.Version;
@@ -75,7 +85,11 @@ public class DumpServiceImpl
 
     private NodeService nodeService;
 
-    private RepositoryService repositoryService;
+    private RepositoryEntryService repositoryEntryService;
+
+    private NodeRepositoryService nodeRepositoryService;
+
+    private NodeStorageService nodeStorageService;
 
     private final EventPublisher eventPublisher;
 
@@ -209,7 +223,8 @@ public class DumpServiceImpl
             : FileDumpWriter.create( basePath, params.getDumpName(), blobStore );
         try (writer)
         {
-            final Repositories repositories = this.repositoryService.list();
+            final List<Repository> repositories = repositoryEntryService.findRepositoryEntryIds().stream().
+                map( repositoryEntryService::getRepositoryEntry ).filter( Objects::nonNull ).collect( Collectors.toList() );
 
             if ( params.getListener() != null )
             {
@@ -297,14 +312,14 @@ public class DumpServiceImpl
 
             final boolean includeVersions = params.isIncludeVersions();
 
-            final RepositorySettings currentSystemSettings = repositoryService.get( SystemConstants.SYSTEM_REPO_ID ).getSettings();
+            final RepositorySettings currentSystemSettings =
+                repositoryEntryService.getRepositoryEntry( SystemConstants.SYSTEM_REPO_ID ).getSettings();
 
-            final RepositorySettings currentAuditLogSettings = repositoryService.get( AUDIT_LOG_REPO_ID ).getSettings();
+            final RepositorySettings currentAuditLogSettings = repositoryEntryService.getRepositoryEntry( AUDIT_LOG_REPO_ID ).getSettings();
 
             // First delete all non-system repositories
-            repositoryService.list().
+            repositoryEntryService.findRepositoryEntryIds().
                 stream().
-                map( Repository::getId ).
                 filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).or( Predicate.isEqual( AUDIT_LOG_REPO_ID ) ).negate() ).
                 forEach( this::doDeleteRepository );
 
@@ -314,23 +329,22 @@ public class DumpServiceImpl
             // system-repo must be deleted last
             doDeleteRepository( SystemConstants.SYSTEM_REPO_ID );
 
-            // Repository Service has invalid cache. Clear it fully
-            repositoryService.invalidateAll();
-
             // Load system repo to be able to read repository settings and data
-            initAndLoad( includeVersions, results, dumpReader, SystemConstants.SYSTEM_REPO_ID, currentSystemSettings, null );
-            // Now Repository Service an fetch correct entries
+            initAndLoad( includeVersions, results, dumpReader, SystemConstants.SYSTEM_REPO_ID, currentSystemSettings, null,
+                         AttachedBinaries.empty() );
 
             if ( dumpRepositories.contains( AUDIT_LOG_REPO_ID ) )
             {
                 // Dump contains audit-log repository. Do a normal load.
                 initAndLoad( includeVersions, results, dumpReader, AUDIT_LOG_REPO_ID,
-                             repositoryService.get( AUDIT_LOG_REPO_ID ).getSettings(), new PropertyTree() );
+                             repositoryEntryService.getRepositoryEntry( AUDIT_LOG_REPO_ID ).getSettings(), new PropertyTree(),
+                             AttachedBinaries.empty() );
             }
             else
             {
-                // If it is a pre 7.2 dump it does not contain audit-log repo. It should be recreated with existing settings
-                initializeRepo( AUDIT_LOG_REPO_ID, currentAuditLogSettings, null );
+                // If it is a pre 7.2 dump it does not contain audit-log repo. It should be recreated with current settings
+                initializeRepo( AUDIT_LOG_REPO_ID, currentAuditLogSettings, null, AttachedBinaries.empty() );
+                createRootNode( AUDIT_LOG_REPO_ID );
             }
 
             // Load non-system repositories
@@ -338,10 +352,11 @@ public class DumpServiceImpl
                 stream().
                 filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).or( Predicate.isEqual( AUDIT_LOG_REPO_ID ) ).negate() ).
                 forEach( repositoryId -> {
-                    final Repository repository = repositoryService.get( repositoryId );
+                    final Repository repository = repositoryEntryService.getRepositoryEntry( repositoryId );
                     final RepositorySettings settings = repository.getSettings();
                     final PropertyTree data = repository.getData();
-                    initAndLoad( includeVersions, results, dumpReader, repositoryId, settings, data );
+                    final AttachedBinaries attachedBinaries = repository.getAttachments();
+                    initAndLoad( includeVersions, results, dumpReader, repositoryId, settings, data, attachedBinaries );
                 } );
 
             this.eventPublisher.publish( RepositoryEvents.restored() );
@@ -381,27 +396,60 @@ public class DumpServiceImpl
     }
 
     void initAndLoad( final boolean includeVersions, final SystemLoadResult.Builder results, final DumpReader dumpReader,
-                      final RepositoryId repository, RepositorySettings settings, PropertyTree data )
+                      final RepositoryId repository, RepositorySettings settings, PropertyTree data, AttachedBinaries attachedBinaries )
     {
-        initializeRepo( repository, settings, data );
+        initializeRepo( repository, settings, data, attachedBinaries );
         doLoadRepository( repository, includeVersions, dumpReader, results );
     }
 
     private void doDeleteRepository( final RepositoryId repositoryId )
     {
         LOG.info( "Deleting repository [" + repositoryId + "]" );
-        this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repositoryId ) );
+
+        this.repositoryEntryService.deleteRepositoryEntry( repositoryId );
+        this.nodeRepositoryService.delete( repositoryId );
+
+        this.nodeStorageService.invalidate();
     }
 
-    private void initializeRepo( final RepositoryId repository, RepositorySettings settings, PropertyTree data )
+    private void initializeRepo( final RepositoryId repositoryId, RepositorySettings settings, PropertyTree data,
+                                 AttachedBinaries attachedBinaries )
     {
-        final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
-            repositoryId( repository ).
+        final CreateRepositoryParams params = CreateRepositoryParams.create().
+            repositoryId( repositoryId ).
             repositorySettings( settings ).
             data( data ).
             build();
 
-        this.repositoryService.createRepository( createRepositoryParams );
+        this.nodeRepositoryService.create( params );
+
+        final Repository createRepositoryParams = Repository.create().
+            id( repositoryId ).
+            settings( settings ).
+            data( data ).
+            branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
+            attachments( attachedBinaries ).
+            build();
+
+        this.repositoryEntryService.createRepositoryEntry( createRepositoryParams );
+    }
+
+    private void createRootNode( final RepositoryId repositoryId )
+    {
+        final Context rootNodeContext = ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( repositoryId ).
+            branch( RepositoryConstants.MASTER_BRANCH ).
+            build();
+
+        final InternalContext rootNodeInternalContext = InternalContext.create( rootNodeContext ).build();
+
+        this.nodeStorageService.store( Node.createRoot().
+            permissions( RepositoryConstants.DEFAULT_REPO_PERMISSIONS ).
+            inheritPermissions( false ).
+            childOrder( RepositoryConstants.DEFAULT_CHILD_ORDER ).
+            build(), rootNodeInternalContext );
+
+        rootNodeContext.runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
     }
 
     private void doLoadRepository( final RepositoryId repositoryId, final boolean includeVersions, final DumpReader dumpReader,
@@ -414,7 +462,7 @@ public class DumpServiceImpl
             nodeService( this.nodeService ).
             blobStore( this.blobStore ).
             includeVersions( includeVersions ).
-            repositoryService( this.repositoryService ).
+            repositoryEntryService( this.repositoryEntryService ).
             repositoryId( repositoryId ).
             build().
             execute() );
@@ -445,9 +493,21 @@ public class DumpServiceImpl
     }
 
     @Reference
-    public void setRepositoryService( final RepositoryService repositoryService )
+    public void setRepositoryEntryService( final RepositoryEntryService repositoryEntryService )
     {
-        this.repositoryService = repositoryService;
+        this.repositoryEntryService = repositoryEntryService;
+    }
+
+    @Reference
+    public void setNodeRepositoryService( final NodeRepositoryService nodeRepositoryService )
+    {
+        this.nodeRepositoryService = nodeRepositoryService;
+    }
+
+    @Reference
+    public void setNodeStorageService( final NodeStorageService nodeStorageService )
+    {
+        this.nodeStorageService = nodeStorageService;
     }
 
     public void setBasePath( final Path basePath )
