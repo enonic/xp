@@ -59,23 +59,6 @@ jobs:
           release_name: Enonic XP Runtime ${{ steps.publish_vars.outputs.version }}
           prerelease: ${{ steps.publish_vars.outputs.prerelease == 'true' }}
 
-      - name: Write new snapshot version
-        if: steps.publish_vars.outputs.release == 'true'
-        uses: christian-draeger/write-properties@1.0.1
-        with:
-          path: './gradle.properties'
-          property: 'version'
-          value: ${{ steps.publish_vars.outputs.nextSnapshot }}
-
-      - name: Commit and push new version
-        if: steps.publish_vars.outputs.release == 'true'
-        uses: EndBug/add-and-commit@v5.1.0
-        with:
-          add: ./gradle.properties
-          message: 'Updated to next SNAPSHOT version'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   dispatch:
     needs: build
     strategy:
