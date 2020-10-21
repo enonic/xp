@@ -14,14 +14,12 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ProjectSynchronizer;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.concurrent.SimpleExecutor;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
-import com.enonic.xp.media.MediaInfoService;
-import com.enonic.xp.project.ParentProjectSynchronizer;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
@@ -32,18 +30,16 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component(immediate = true)
-public class ProjectContentEventListener
+public final class ProjectContentEventListener
     implements EventListener
 {
     private static final Logger LOG = LoggerFactory.getLogger( ProjectContentEventListener.class );
 
     private ProjectService projectService;
 
-    private ContentService contentService;
-
-    private MediaInfoService mediaInfoService;
-
     private SimpleExecutor simpleExecutor;
+
+    private ProjectSynchronizer projectSynchronizer;
 
     @Activate
     public void activate()
@@ -118,40 +114,33 @@ public class ProjectContentEventListener
                 stream().
                 filter( project -> currentProjectName.equals( project.getParent() ) ).
                 forEach( targetProject -> {
-                    final ParentProjectSynchronizer parentProjectSynchronizer = ParentProjectSynchronizer.create().
-                        targetProject( targetProject ).
-                        sourceProject( sourceProject ).
-                        contentService( contentService ).
-                        mediaInfoService( mediaInfoService ).
-                        build();
-
                     final ContentId contentId = ContentId.from( nodeMap.get( "id" ) );
 
                     switch ( type )
                     {
                         case "node.created":
-                            parentProjectSynchronizer.syncCreated( contentId );
+                            projectSynchronizer.syncCreated( contentId, sourceProject, targetProject );
                             break;
                         case "node.updated":
-                            parentProjectSynchronizer.syncUpdated( contentId );
+                            projectSynchronizer.syncUpdated( contentId, sourceProject, targetProject );
                             break;
                         case "node.pushed":
-                            parentProjectSynchronizer.syncUpdated( contentId );
+                            projectSynchronizer.syncUpdated( contentId, sourceProject, targetProject );
                             break;
                         case "node.manualOrderUpdated":
-                            parentProjectSynchronizer.syncManualOrderUpdated( contentId );
+                            projectSynchronizer.syncManualOrderUpdated( contentId, sourceProject, targetProject );
                             break;
                         case "node.sorted":
-                            parentProjectSynchronizer.syncSorted( contentId );
+                            projectSynchronizer.syncSorted( contentId, sourceProject, targetProject );
                             break;
                         case "node.renamed":
-                            parentProjectSynchronizer.syncRenamed( contentId );
+                            projectSynchronizer.syncRenamed( contentId, sourceProject, targetProject );
                             break;
                         case "node.moved":
-                            parentProjectSynchronizer.syncMoved( contentId );
+                            projectSynchronizer.syncMoved( contentId, sourceProject, targetProject );
                             break;
                         case "node.deleted":
-                            parentProjectSynchronizer.syncDeleted( contentId );
+                            projectSynchronizer.syncDeleted( contentId, sourceProject, targetProject );
                             break;
                     }
 
@@ -162,19 +151,13 @@ public class ProjectContentEventListener
                 filter( project -> project.getName().equals( sourceProject.getParent() ) ).
                 forEach( parentProject -> {
 
-                    final ParentProjectSynchronizer parentProjectSynchronizer = ParentProjectSynchronizer.create().
-                        targetProject( sourceProject ).
-                        sourceProject( parentProject ).
-                        contentService( contentService ).
-                        mediaInfoService( mediaInfoService ).
-                        build();
 
                     final ContentId contentId = ContentId.from( nodeMap.get( "id" ) );
 
                     switch ( type )
                     {
                         case "node.deleted":
-                            parentProjectSynchronizer.syncWithChildren( contentId );
+                            projectSynchronizer.syncWithChildren( contentId, parentProject, sourceProject );
                             break;
                     }
 
@@ -208,14 +191,8 @@ public class ProjectContentEventListener
     }
 
     @Reference
-    public void setMediaInfoService( final MediaInfoService mediaInfoService )
+    public void setProjectSynchronizer( final ProjectSynchronizer projectSynchronizer )
     {
-        this.mediaInfoService = mediaInfoService;
-    }
-
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
+        this.projectSynchronizer = projectSynchronizer;
     }
 }

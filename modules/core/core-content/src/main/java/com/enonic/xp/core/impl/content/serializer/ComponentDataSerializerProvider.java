@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.content.serializer;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.region.ComponentType;
 import com.enonic.xp.region.FragmentComponentType;
 import com.enonic.xp.region.ImageComponentType;
@@ -80,8 +79,6 @@ public final class ComponentDataSerializerProvider
 
         private LayoutDescriptorService layoutDescriptorService;
 
-        private ContentService contentService;
-
         public Builder partDescriptorService( final PartDescriptorService value )
         {
             this.partDescriptorService = value;
@@ -94,17 +91,10 @@ public final class ComponentDataSerializerProvider
             return this;
         }
 
-        public Builder contentService( final ContentService value )
-        {
-            this.contentService = value;
-            return this;
-        }
-
         void validate()
         {
             Preconditions.checkNotNull( partDescriptorService );
             Preconditions.checkNotNull( layoutDescriptorService );
-            Preconditions.checkNotNull( contentService );
         }
 
         public ComponentDataSerializerProvider build()

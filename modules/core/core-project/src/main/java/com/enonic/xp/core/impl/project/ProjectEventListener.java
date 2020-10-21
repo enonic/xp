@@ -1,23 +1,24 @@
 package com.enonic.xp.core.impl.project;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ProjectSynchronizer;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.concurrent.SimpleExecutor;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
-import com.enonic.xp.media.MediaInfoService;
-import com.enonic.xp.project.ParentProjectSynchronizer;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
@@ -27,24 +28,29 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component(immediate = true)
-public class ProjectEventListener
+public final class ProjectEventListener
     implements EventListener
 {
     private static final Logger LOG = LoggerFactory.getLogger( ProjectEventListener.class );
 
     private ProjectService projectService;
 
-    private ContentService contentService;
-
-    private MediaInfoService mediaInfoService;
-
     private SimpleExecutor simpleExecutor;
+
+    private ProjectSynchronizer projectSynchronizer;
 
     @Activate
     public void activate()
     {
         this.simpleExecutor = new SimpleExecutor( Executors::newSingleThreadExecutor, "project-node-sync-thread",
                                                   e -> LOG.error( "Project node sync failed", e ) );
+    }
+
+    @Deactivate
+    public void deactivate()
+    {
+        this.simpleExecutor.shutdownAndAwaitTermination( Duration.ZERO, neverCommenced -> {
+        } );
     }
 
     @Override
@@ -84,13 +90,7 @@ public class ProjectEventListener
 
             if ( parentProject != null )
             {
-                ParentProjectSynchronizer.create().
-                    contentService( contentService ).
-                    mediaInfoService( mediaInfoService ).
-                    targetProject( project ).
-                    sourceProject( parentProject ).
-                    build().
-                    syncRoot();
+                projectSynchronizer.syncWithChildren( ContentPath.ROOT, parentProject, project );
             }
         }
     }
@@ -126,14 +126,8 @@ public class ProjectEventListener
     }
 
     @Reference
-    public void setMediaInfoService( final MediaInfoService mediaInfoService )
+    public void setProjectSynchronizer( final ProjectSynchronizer projectSynchronizer )
     {
-        this.mediaInfoService = mediaInfoService;
-    }
-
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
+        this.projectSynchronizer = projectSynchronizer;
     }
 }

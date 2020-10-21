@@ -10,13 +10,12 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ProjectSynchronizer;
 import com.enonic.xp.core.internal.concurrent.SimpleRecurringJobScheduler;
-import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.project.ProjectService;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.content")
-public class ParentProjectSyncActivator
+public final class ParentProjectSyncActivator
 {
     private static final Logger LOG = LoggerFactory.getLogger( ParentProjectSyncActivator.class );
 
@@ -24,9 +23,7 @@ public class ParentProjectSyncActivator
 
     private ProjectService projectService;
 
-    private ContentService contentService;
-
-    private MediaInfoService mediaInfoService;
+    private ProjectSynchronizer projectSynchronizer;
 
     @Activate
     public void initialize( final ContentConfig config )
@@ -38,9 +35,8 @@ public class ParentProjectSyncActivator
         if ( !delay.isZero() )
         {
             this.recurringJobScheduler.scheduleWithFixedDelay( ParentProjectSyncTask.create().
-                contentService( this.contentService ).
                 projectService( this.projectService ).
-                mediaInfoService( this.mediaInfoService ).
+                projectSynchronizer( this.projectSynchronizer ).
                 build(), Duration.ofMinutes( 0 ), delay, e -> LOG.warn( "Error while project sync.", e ), e -> LOG.error(
                 "Error while project sync, no further attempts will be made.", e ) );
         }
@@ -59,15 +55,9 @@ public class ParentProjectSyncActivator
     }
 
     @Reference
-    public void setContentService( final ContentService contentService )
+    public void setProjectSynchronizer( final ProjectSynchronizer projectSynchronizer )
     {
-        this.contentService = contentService;
-    }
-
-    @Reference
-    public void setMediaInfoService( final MediaInfoService mediaInfoService )
-    {
-        this.mediaInfoService = mediaInfoService;
+        this.projectSynchronizer = projectSynchronizer;
     }
 
 }

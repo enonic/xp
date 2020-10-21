@@ -1,4 +1,4 @@
-package com.enonic.xp.project;
+package com.enonic.xp.core.impl.content;
 
 import java.util.EnumSet;
 import java.util.LinkedList;
@@ -6,6 +6,8 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +33,7 @@ import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.ProjectSynchronizer;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
@@ -44,6 +47,7 @@ import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.InsertManualStrategy;
+import com.enonic.xp.project.Project;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -51,24 +55,27 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-public class ParentProjectSynchronizer
+@Component
+public final class ParentProjectSynchronizer
+    implements ProjectSynchronizer
 {
     private static final Logger LOG = LoggerFactory.getLogger( ParentProjectSynchronizer.class );
 
-    private final ContentService contentService;
+    public Context sourceContext;
 
-    private final MediaInfoService mediaInfoService;
+    private Context targetContext;
 
-    private final Context targetContext;
+    private ContentService contentService;
 
-    private final Context sourceContext;
+    private MediaInfoService mediaInfoService;
 
-    private ParentProjectSynchronizer( final Builder builder )
+    private void initContext( final Project sourceProject, final Project targetProject )
     {
-        this.contentService = builder.contentService;
-        this.mediaInfoService = builder.mediaInfoService;
-        final Project sourceProject = builder.sourceProject;
-        final Project targetProject = builder.targetProject;
+        Preconditions.checkNotNull( targetProject.getParent(),
+                                    "target project [" + targetProject.getName() + "] has no parent to import from." );
+
+        Preconditions.checkArgument( sourceProject.getName().equals( targetProject.getParent() ),
+                                     "[" + sourceProject.getName() + "] is not a parent project for [" + targetProject.getName() + "]." );
 
         this.targetContext = ContextBuilder.from( ContextAccessor.current() ).
             repositoryId( targetProject.getName().getRepoId() ).
@@ -83,41 +90,65 @@ public class ParentProjectSynchronizer
             build();
     }
 
-    public static ParentProjectSynchronizer.Builder create()
+    public void sync( final ContentId contentId, final Project sourceProject, final Project targetProject )
     {
-        return new Builder();
-    }
-
-    public void sync( final ContentId contentId )
-    {
+        initContext( sourceProject, targetProject );
         sourceContext.runWith( () -> this.doSync( contentService.getById( contentId ) ) );
     }
 
-    public void syncRoot()
+   /* public void syncRoot( final Project sourceProject, final Project targetProject )
     {
+        initContext( sourceProject, targetProject );
+
         final Content sourceRoot = sourceContext.callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
 
-        this.syncWithChildren( sourceRoot.getId() );
-        this.cleanDeletedContent();
+        this.syncWithChildren( sourceRoot.getId(), sourceProject, targetProject );
+        this.cleanDeletedContent(targe);
+    }*/
+
+    public void syncWithChildren( final ContentId contentId, final Project sourceProject, final Project targetProject )
+    {
+        initContext( sourceProject, targetProject );
+
+        sourceContext.runWith( () -> {
+            if ( contentService.contentExists( contentId ) )
+            {
+                doSyncWithChildren( contentService.getById( contentId ), sourceProject, targetProject );
+            }
+        } );
+
     }
 
-    public void syncWithChildren( final ContentId contentId )
+    public void syncWithChildren( final ContentPath contentPath, final Project sourceProject, final Project targetProject )
     {
+        initContext( sourceProject, targetProject );
+
+        sourceContext.runWith( () -> {
+            if ( contentService.contentExists( contentPath ) )
+            {
+                doSyncWithChildren( contentService.getByPath( contentPath ), sourceProject, targetProject );
+            }
+        } );
+
+    }
+
+    private void doSyncWithChildren( final Content sourceContent, final Project sourceProject, final Project targetProject )
+    {
+        initContext( sourceProject, targetProject );
+
         final Queue<Content> queue = new LinkedList();
 
         sourceContext.runWith( () -> {
 
-            if ( contentService.contentExists( contentId ) )
+            queue.add( sourceContent );
+
+            final Content root = contentService.getByPath( ContentPath.ROOT );
+
+            if ( !root.getId().equals( sourceContent.getId() ) )
             {
-                final Content sourceContent = contentService.getById( contentId );
-                queue.add( sourceContent );
-
-                if ( !( "/content".equals( sourceContent.getPath().toString() ) || "/".equals( sourceContent.getPath().toString() ) ) )
-                {
-                    this.doSync( sourceContent );
-                }
-
+                this.doSync( sourceContent );
             }
+
             while ( queue.size() > 0 )
             {
                 final Content currentContent = queue.poll();
@@ -143,33 +174,19 @@ public class ParentProjectSynchronizer
                 }
             }
         } );
-    }
 
-    private void cleanDeletedContent()
-    {
         targetContext.runWith( () -> {
-            final Content targetRoot = contentService.getByPath( ContentPath.ROOT );
-            final Queue<Content> queue = new LinkedList( Set.of( targetRoot ) );
-
-            while ( queue.size() > 0 )
+            if ( contentService.contentExists( sourceContent.getId() ) )
             {
-                final Content currentContent = queue.poll();
-                this.doSyncDeleted( currentContent );
+                cleanDeletedContents( contentService.getById( sourceContent.getId() ) );
+                return;
+            }
 
-                if ( currentContent.hasChildren() )
-                {
-                    final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create().
-                        parentId( currentContent.getId() ).
-                        recursive( false ).
-                        childOrder( currentContent.getChildOrder() ).
-                        size( -1 ).
-                        build() );
+            final Content root = sourceContext.callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
 
-                    for ( final Content content : result.getContents() )
-                    {
-                        queue.offer( content );
-                    }
-                }
+            if ( root.getId().equals( sourceContent.getId() ) )
+            {
+                cleanDeletedContents( contentService.getByPath( ContentPath.ROOT ) );
             }
         } );
     }
@@ -200,8 +217,10 @@ public class ParentProjectSynchronizer
         } );
     }
 
-    public Content syncRenamed( final ContentId contentId )
+    public Content syncRenamed( final ContentId contentId, final Project sourceProject, final Project targetProject )
     {
+        initContext( sourceProject, targetProject );
+
         return sourceContext.callWith( () -> {
             final Content sourceContent = contentService.getById( contentId );
 
@@ -244,8 +263,10 @@ public class ParentProjectSynchronizer
         return ContentPath.from( parentPath, newName );
     }
 
-    public Content syncMoved( final ContentId contentId )
+    public Content syncMoved( final ContentId contentId, final Project sourceProject, final Project targetProject )
     {
+        initContext( sourceProject, targetProject );
+
         return sourceContext.callWith( () -> {
             final Content sourceContent = contentService.getById( contentId );
 
@@ -262,11 +283,11 @@ public class ParentProjectSynchronizer
         if ( isToSyncParent( targetContent ) )
         {
             final Content sourceParent = sourceContext.callWith( () -> contentService.getByPath( sourceContent.getParentPath() ) );
+            final Content sourceRoot = sourceContext.callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
+
             final ContentPath targetParentPath = targetContext.callWith( () -> contentService.contentExists( sourceParent.getId() )
                 ? contentService.getById( sourceParent.getId() ).getPath()
-                : ( "/content".equals( sourceParent.getPath().toString() ) || "/".equals( sourceParent.getPath().toString() ) )
-                    ? ContentPath.ROOT
-                    : null );
+                : sourceRoot.getId().equals( sourceParent.getId() ) ? ContentPath.ROOT : null );
 
             if ( targetParentPath != null )
             {
@@ -287,8 +308,10 @@ public class ParentProjectSynchronizer
         return targetContent;
     }
 
-    public Content syncUpdated( final ContentId contentId )
+    public Content syncUpdated( final ContentId contentId, final Project sourceProject, final Project targetProject )
     {
+        initContext( sourceProject, targetProject );
+
         return sourceContext.callWith( () -> {
             final Content sourceContent = contentService.getById( contentId );
 
@@ -323,8 +346,10 @@ public class ParentProjectSynchronizer
         return targetContent;
     }
 
-    public Content syncSorted( final ContentId contentId )
+    public Content syncSorted( final ContentId contentId, final Project sourceProject, final Project targetProject )
     {
+        initContext( sourceProject, targetProject );
+
         return sourceContext.callWith( () -> {
             final Content sourceContent = contentService.getById( contentId );
 
@@ -360,8 +385,10 @@ public class ParentProjectSynchronizer
         return targetContent;
     }
 
-    public boolean syncDeleted( final ContentId contentId )
+    public boolean syncDeleted( final ContentId contentId, final Project sourceProject, final Project targetProject )
     {
+        initContext( sourceProject, targetProject );
+
         return targetContext.callWith( () -> {
             if ( contentService.contentExists( contentId ) )
             {
@@ -392,8 +419,10 @@ public class ParentProjectSynchronizer
         return false;
     }
 
-    public Content syncManualOrderUpdated( final ContentId contentId )
+    public Content syncManualOrderUpdated( final ContentId contentId, final Project sourceProject, final Project targetProject )
     {
+        initContext( sourceProject, targetProject );
+
         return sourceContext.callWith( () -> {
             final Content sourceContent = contentService.getById( contentId );
 
@@ -420,8 +449,10 @@ public class ParentProjectSynchronizer
         return targetContent;
     }
 
-    public Content syncCreated( final ContentId contentId )
+    public Content syncCreated( final ContentId contentId, final Project sourceProject, final Project targetProject )
     {
+        initContext( sourceProject, targetProject );
+
         return sourceContext.callWith( () -> {
             final Content sourceContent = contentService.getById( contentId );
             return targetContext.callWith( () -> {
@@ -476,6 +507,34 @@ public class ParentProjectSynchronizer
             LOG.warn( "content [{}] already exists.", sourceContent.getId() );
         }
         return null;
+    }
+
+    private void cleanDeletedContents( final Content targetContent )
+    {
+        targetContext.runWith( () -> {
+            final Queue<Content> queue = new LinkedList( Set.of( targetContent ) );
+
+            while ( queue.size() > 0 )
+            {
+                final Content currentContent = queue.poll();
+                this.doSyncDeleted( currentContent );
+
+                if ( currentContent.hasChildren() )
+                {
+                    final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create().
+                        parentId( currentContent.getId() ).
+                        recursive( false ).
+                        childOrder( currentContent.getChildOrder() ).
+                        size( -1 ).
+                        build() );
+
+                    for ( final Content content : result.getContents() )
+                    {
+                        queue.offer( content );
+                    }
+                }
+            }
+        } );
     }
 
     private boolean isContentSyncable( final Content sourceContent, final Content targetContent )
@@ -677,8 +736,6 @@ public class ParentProjectSynchronizer
                 createAttachments( CreateAttachments.from( createAttachment ) );
 
         }
-
-
     }
 
     private AuthenticationInfo adminAuthInfo()
@@ -692,64 +749,15 @@ public class ParentProjectSynchronizer
             build();
     }
 
-    public static final class Builder
+    @Reference
+    public void setContentService( final ContentService contentService )
     {
-        private ContentService contentService;
+        this.contentService = contentService;
+    }
 
-        private MediaInfoService mediaInfoService;
-
-        private Project targetProject;
-
-        private Project sourceProject;
-
-        private Builder()
-        {
-        }
-
-        private void validate()
-        {
-            Preconditions.checkNotNull( contentService, "contentService must be set." );
-            Preconditions.checkNotNull( mediaInfoService, "mediaInfoService must be set." );
-            Preconditions.checkNotNull( sourceProject, "sourceProject must be set." );
-            Preconditions.checkNotNull( targetProject, "targetProject must be set." );
-            Preconditions.checkNotNull( targetProject.getParent(),
-                                        "target project [" + targetProject.getName() + "] has no parent to import from." );
-
-            if ( !sourceProject.getName().equals( targetProject.getParent() ) )
-            {
-                throw new IllegalArgumentException(
-                    "[" + sourceProject.getName() + "] is not a parent project for [" + targetProject.getName() + "]." );
-            }
-        }
-
-        public Builder contentService( final ContentService contentService )
-        {
-            this.contentService = contentService;
-            return this;
-        }
-
-        public Builder mediaInfoService( final MediaInfoService mediaInfoService )
-        {
-            this.mediaInfoService = mediaInfoService;
-            return this;
-        }
-
-        public Builder targetProject( final Project targetProject )
-        {
-            this.targetProject = targetProject;
-            return this;
-        }
-
-        public Builder sourceProject( final Project sourceProject )
-        {
-            this.sourceProject = sourceProject;
-            return this;
-        }
-
-        public ParentProjectSynchronizer build()
-        {
-            validate();
-            return new ParentProjectSynchronizer( this );
-        }
+    @Reference
+    public void setMediaInfoService( final MediaInfoService mediaInfoService )
+    {
+        this.mediaInfoService = mediaInfoService;
     }
 }

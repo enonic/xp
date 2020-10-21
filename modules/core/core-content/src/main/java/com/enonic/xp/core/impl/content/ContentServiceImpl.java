@@ -68,6 +68,7 @@ import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.content.ImportContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
+import com.enonic.xp.content.ProjectSynchronizer;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PublishStatus;
 import com.enonic.xp.content.PushContentParams;
@@ -126,7 +127,7 @@ import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
-@Component(immediate = true)
+@Component
 public class ContentServiceImpl
     implements ContentService
 {
@@ -168,11 +169,12 @@ public class ContentServiceImpl
 
     private ProjectService projectService;
 
+    private ProjectSynchronizer projectSynchronizer;
+
     @Activate
     public void initialize()
     {
         this.contentDataSerializer = ContentDataSerializer.create().
-            contentService( this ).
             layoutDescriptorService( layoutDescriptorService ).
             pageDescriptorService( pageDescriptorService ).
             partDescriptorService( partDescriptorService ).
@@ -1216,6 +1218,7 @@ public class ContentServiceImpl
             contentTypeService( contentTypeService ).
             eventPublisher( eventPublisher ).
             translator( translator ).
+            projectSynchronizer( projectSynchronizer ).
             build().
             execute();
     }
@@ -1342,9 +1345,15 @@ public class ContentServiceImpl
     @Reference
     public void setProjectService( final ProjectService projectService )
     {
-        //Many starters depend on ContentService avaialbe only when default cms repo is fully initialized.
+        //Many starters depend on ContentService available only when default cms repo is fully initialized.
         // Starting from 7.3 Initialization happens in ProjectService, so we need a dependency.
         this.projectService = projectService;
+    }
+
+    @Reference
+    public void setProjectSynchronizer( final ProjectSynchronizer projectSynchronizer )
+    {
+        this.projectSynchronizer = projectSynchronizer;
     }
 
 }

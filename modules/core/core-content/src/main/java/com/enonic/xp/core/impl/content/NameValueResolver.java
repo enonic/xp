@@ -1,4 +1,4 @@
-package com.enonic.xp.project;
+package com.enonic.xp.core.impl.content;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 

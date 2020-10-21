@@ -5,17 +5,20 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ProjectSynchronizer;
 import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.media.MediaInfoService;
-import com.enonic.xp.project.ParentProjectSynchronizer;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
@@ -36,6 +39,9 @@ final class ResetContentInheritCommand
 
     private final MediaInfoService mediaInfoService;
 
+    private ProjectSynchronizer projectSynchronizer;
+
+
     private ResetContentInheritCommand( final Builder builder )
     {
         super( builder );
@@ -43,6 +49,7 @@ final class ResetContentInheritCommand
         this.mediaInfoService = builder.mediaInfoService;
         this.contentService = builder.contentService;
         this.projectService = builder.projectService;
+        this.projectSynchronizer = builder.projectSynchronizer;
     }
 
     public static Builder create( final ResetContentInheritParams params )
@@ -77,8 +84,7 @@ final class ResetContentInheritCommand
 
                     contentService.update( updateParams );
 
-                    final ParentProjectSynchronizer synchronizer = createSynchronizer( params.getProjectName() );
-                    synchronizer.sync( content.getId() );
+                    syncContent( content.getId(), params.getProjectName() );
                 }
             }
         } );
@@ -89,7 +95,7 @@ final class ResetContentInheritCommand
         return EnumSet.copyOf( Stream.concat( oldTypes.stream(), newTypes.stream() ).collect( Collectors.toSet() ) );
     }
 
-    private ParentProjectSynchronizer createSynchronizer( final ProjectName targetProjectName )
+    private void syncContent( final ContentId contentId, final ProjectName targetProjectName )
     {
         final Project targetProject = createAdminContext().callWith( () -> projectService.get( targetProjectName ) );
 
@@ -108,17 +114,8 @@ final class ResetContentInheritCommand
         {
             throw new IllegalArgumentException( String.format( "Project with name [%s] doesn't exist", targetProject.getParent() ) );
         }
-        return doCreateSynchronizer( sourceProject, targetProject );
-    }
 
-    private ParentProjectSynchronizer doCreateSynchronizer( final Project sourceProject, final Project targetProject )
-    {
-        return ParentProjectSynchronizer.create().
-            contentService( contentService ).
-            mediaInfoService( mediaInfoService ).
-            sourceProject( sourceProject ).
-            targetProject( targetProject ).
-            build();
+        projectSynchronizer.sync( contentId, sourceProject, targetProject );
     }
 
     private Context createAdminContext()
@@ -151,6 +148,8 @@ final class ResetContentInheritCommand
 
         private ContentService contentService;
 
+        private ProjectSynchronizer projectSynchronizer;
+
         private Builder( final ResetContentInheritParams params )
         {
             this.params = params;
@@ -174,9 +173,20 @@ final class ResetContentInheritCommand
             return this;
         }
 
+        public Builder projectSynchronizer( final ProjectSynchronizer projectSynchronizer )
+        {
+            this.projectSynchronizer = projectSynchronizer;
+            return this;
+        }
+
         @Override
         void validate()
         {
+            Preconditions.checkNotNull( this.projectService, "projectService must be set." );
+            Preconditions.checkNotNull( this.contentService, "contentService must be set." );
+            Preconditions.checkNotNull( this.mediaInfoService, "contentService must be set." );
+            Preconditions.checkNotNull( this.projectSynchronizer, "projectSynchronizer must be set." );
+
             super.validate();
         }
 

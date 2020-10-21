@@ -22,7 +22,6 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
@@ -85,7 +84,6 @@ public class ContentDataSerializer
             pageDescriptorService( builder.pageDescriptorService ).
             partDescriptorService( builder.partDescriptorService ).
             layoutDescriptorService( builder.layoutDescriptorService ).
-            contentService( builder.contentService ).
             build();
 
         this.extraDataSerializer = new ExtraDataSerializer();
@@ -499,8 +497,6 @@ public class ContentDataSerializer
 
         private LayoutDescriptorService layoutDescriptorService;
 
-        private ContentService contentService;
-
         public Builder pageDescriptorService( final PageDescriptorService value )
         {
             this.pageDescriptorService = value;
@@ -519,18 +515,11 @@ public class ContentDataSerializer
             return this;
         }
 
-        public Builder contentService( final ContentService value )
-        {
-            this.contentService = value;
-            return this;
-        }
-
         void validate()
         {
             Preconditions.checkNotNull( pageDescriptorService );
             Preconditions.checkNotNull( partDescriptorService );
             Preconditions.checkNotNull( layoutDescriptorService );
-            Preconditions.checkNotNull( contentService );
         }
 
         public ContentDataSerializer build()
