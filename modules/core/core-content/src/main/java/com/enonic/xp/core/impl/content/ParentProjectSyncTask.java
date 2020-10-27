@@ -3,8 +3,6 @@ package com.enonic.xp.core.impl.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ProjectSynchronizer;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.project.Project;
@@ -19,12 +17,12 @@ final class ParentProjectSyncTask
 {
     private final ProjectService projectService;
 
-    private ProjectSynchronizer projectSynchronizer;
+    private final ContentSynchronizer contentSynchronizer;
 
     public ParentProjectSyncTask( final Builder builder )
     {
         this.projectService = builder.projectService;
-        this.projectSynchronizer = builder.projectSynchronizer;
+        this.contentSynchronizer = builder.contentSynchronizer;
     }
 
     public static Builder create()
@@ -61,7 +59,10 @@ final class ParentProjectSyncTask
 
     private void doSync( final Project sourceProject, final Project targetProject )
     {
-        projectSynchronizer.syncWithChildren( ContentPath.ROOT, sourceProject, targetProject );
+        contentSynchronizer.sync( ContentSyncParams.create().
+            sourceProject( sourceProject.getName() ).
+            targetProject( targetProject.getName() ).
+            build() );
     }
 
     private Context createAdminContext()
@@ -87,7 +88,7 @@ final class ParentProjectSyncTask
     {
         private ProjectService projectService;
 
-        private ProjectSynchronizer projectSynchronizer;
+        private ContentSynchronizer contentSynchronizer;
 
         private Builder()
         {
@@ -99,16 +100,16 @@ final class ParentProjectSyncTask
             return this;
         }
 
-        public Builder projectSynchronizer( final ProjectSynchronizer projectSynchronizer )
+        public Builder contentSynchronizer( final ContentSynchronizer contentSynchronizer )
         {
-            this.projectSynchronizer = projectSynchronizer;
+            this.contentSynchronizer = contentSynchronizer;
             return this;
         }
 
         private void validate()
         {
             Preconditions.checkNotNull( this.projectService, "projectService must be set." );
-            Preconditions.checkNotNull( this.projectSynchronizer, "factory must be set." );
+            Preconditions.checkNotNull( this.contentSynchronizer, "contentSynchronizer must be set." );
         }
 
         public ParentProjectSyncTask build()

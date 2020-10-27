@@ -12,13 +12,11 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.ProjectSynchronizer;
 import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
@@ -28,7 +26,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 
-final class ResetContentInheritCommand
+final class ResetContentInheritanceCommand
     extends AbstractContentCommand
 {
     private final ResetContentInheritParams params;
@@ -37,19 +35,16 @@ final class ResetContentInheritCommand
 
     private final ProjectService projectService;
 
-    private final MediaInfoService mediaInfoService;
-
-    private ProjectSynchronizer projectSynchronizer;
+    private ContentSynchronizer contentSynchronizer;
 
 
-    private ResetContentInheritCommand( final Builder builder )
+    private ResetContentInheritanceCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.mediaInfoService = builder.mediaInfoService;
         this.contentService = builder.contentService;
         this.projectService = builder.projectService;
-        this.projectSynchronizer = builder.projectSynchronizer;
+        this.contentSynchronizer = builder.contentSynchronizer;
     }
 
     public static Builder create( final ResetContentInheritParams params )
@@ -115,7 +110,12 @@ final class ResetContentInheritCommand
             throw new IllegalArgumentException( String.format( "Project with name [%s] doesn't exist", targetProject.getParent() ) );
         }
 
-        projectSynchronizer.sync( contentId, sourceProject, targetProject );
+        contentSynchronizer.sync( ContentSyncParams.create().
+            contentId( contentId ).
+            sourceProject( sourceProject.getName() ).
+            targetProject( targetProject.getName() ).
+            includeChildren( false ).
+            build() );
     }
 
     private Context createAdminContext()
@@ -142,23 +142,15 @@ final class ResetContentInheritCommand
     {
         private final ResetContentInheritParams params;
 
-        private MediaInfoService mediaInfoService;
-
         private ProjectService projectService;
 
         private ContentService contentService;
 
-        private ProjectSynchronizer projectSynchronizer;
+        private ContentSynchronizer contentSynchronizer;
 
         private Builder( final ResetContentInheritParams params )
         {
             this.params = params;
-        }
-
-        public Builder mediaInfoService( final MediaInfoService value )
-        {
-            this.mediaInfoService = value;
-            return this;
         }
 
         public Builder projectService( final ProjectService value )
@@ -173,9 +165,9 @@ final class ResetContentInheritCommand
             return this;
         }
 
-        public Builder projectSynchronizer( final ProjectSynchronizer projectSynchronizer )
+        public Builder contentSynchronizer( final ContentSynchronizer contentSynchronizer )
         {
-            this.projectSynchronizer = projectSynchronizer;
+            this.contentSynchronizer = contentSynchronizer;
             return this;
         }
 
@@ -184,16 +176,15 @@ final class ResetContentInheritCommand
         {
             Preconditions.checkNotNull( this.projectService, "projectService must be set." );
             Preconditions.checkNotNull( this.contentService, "contentService must be set." );
-            Preconditions.checkNotNull( this.mediaInfoService, "contentService must be set." );
-            Preconditions.checkNotNull( this.projectSynchronizer, "projectSynchronizer must be set." );
+            Preconditions.checkNotNull( this.contentSynchronizer, "contentSynchronizer must be set." );
 
             super.validate();
         }
 
-        public ResetContentInheritCommand build()
+        public ResetContentInheritanceCommand build()
         {
             validate();
-            return new ResetContentInheritCommand( this );
+            return new ResetContentInheritanceCommand( this );
         }
     }
 

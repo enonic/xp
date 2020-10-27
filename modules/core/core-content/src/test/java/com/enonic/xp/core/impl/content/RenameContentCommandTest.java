@@ -76,7 +76,6 @@ public class RenameContentCommandTest
         this.contentProcessors = Mockito.mock( ContentProcessors.class );
 
         this.contentDataSerializer = ContentDataSerializer.create().
-            contentService( contentService ).
             layoutDescriptorService( layoutDescriptorService ).
             pageDescriptorService( pageDescriptorService ).
             partDescriptorService( partDescriptorService ).

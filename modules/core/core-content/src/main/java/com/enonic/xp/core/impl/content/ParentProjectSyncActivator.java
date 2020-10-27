@@ -10,7 +10,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.content.ProjectSynchronizer;
 import com.enonic.xp.core.internal.concurrent.SimpleRecurringJobScheduler;
 import com.enonic.xp.project.ProjectService;
 
@@ -21,13 +20,11 @@ public final class ParentProjectSyncActivator
 
     private SimpleRecurringJobScheduler recurringJobScheduler;
 
-    private ProjectService projectService;
-
-    private ProjectSynchronizer projectSynchronizer;
-
     @Activate
-    public void initialize( final ContentConfig config )
+    public ParentProjectSyncActivator( final ContentConfig config, @Reference final ProjectService projectService,
+                                       @Reference final ContentSynchronizer contentSynchronizer )
     {
+
         this.recurringJobScheduler =
             new SimpleRecurringJobScheduler( Executors::newSingleThreadScheduledExecutor, "parent-project-synchronizer-thread" );
 
@@ -35,8 +32,8 @@ public final class ParentProjectSyncActivator
         if ( !delay.isZero() )
         {
             this.recurringJobScheduler.scheduleWithFixedDelay( ParentProjectSyncTask.create().
-                projectService( this.projectService ).
-                projectSynchronizer( this.projectSynchronizer ).
+                projectService( projectService ).
+                contentSynchronizer( contentSynchronizer ).
                 build(), Duration.ofMinutes( 0 ), delay, e -> LOG.warn( "Error while project sync.", e ), e -> LOG.error(
                 "Error while project sync, no further attempts will be made.", e ) );
         }
@@ -47,17 +44,4 @@ public final class ParentProjectSyncActivator
     {
         this.recurringJobScheduler.shutdownNow();
     }
-
-    @Reference
-    public void setProjectService( final ProjectService projectService )
-    {
-        this.projectService = projectService;
-    }
-
-    @Reference
-    public void setProjectSynchronizer( final ProjectSynchronizer projectSynchronizer )
-    {
-        this.projectSynchronizer = projectSynchronizer;
-    }
-
 }

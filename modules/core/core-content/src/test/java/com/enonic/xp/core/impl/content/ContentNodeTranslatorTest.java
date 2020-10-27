@@ -8,7 +8,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertySet;
@@ -34,14 +33,6 @@ public class ContentNodeTranslatorTest
 
     private NodeService nodeService;
 
-    private PartDescriptorService partDescriptorService;
-
-    private LayoutDescriptorService layoutDescriptorService;
-
-    private ContentService contentService;
-
-    private PageDescriptorService pageDescriptorService;
-
     public static final NodeId ID_1 = NodeId.from( "id1" );
 
     public static final NodeId ID_2 = NodeId.from( "id2" );
@@ -53,13 +44,11 @@ public class ContentNodeTranslatorTest
         throws Exception
     {
         this.nodeService = Mockito.mock( NodeService.class );
-        this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
-        this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
-        this.contentService = Mockito.mock( ContentService.class );
-        this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
+        final PartDescriptorService partDescriptorService = Mockito.mock( PartDescriptorService.class );
+        final LayoutDescriptorService layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
+        final PageDescriptorService pageDescriptorService = Mockito.mock( PageDescriptorService.class );
 
         final ContentDataSerializer contentDataSerializer = ContentDataSerializer.create().
-            contentService( contentService ).
             layoutDescriptorService( layoutDescriptorService ).
             pageDescriptorService( pageDescriptorService ).
             partDescriptorService( partDescriptorService ).

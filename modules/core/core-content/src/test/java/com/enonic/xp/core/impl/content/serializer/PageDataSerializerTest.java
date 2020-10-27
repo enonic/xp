@@ -49,7 +49,6 @@ public class PageDataSerializerTest
             pageDescriptorService( pageDescriptorService ).
             partDescriptorService( partDescriptorService ).
             layoutDescriptorService( layoutDescriptorService ).
-            contentService( contentService ).
             build();
     }
 

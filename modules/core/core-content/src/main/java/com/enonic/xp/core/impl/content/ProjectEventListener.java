@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.project;
+package com.enonic.xp.core.impl.content;
 
 import java.time.Duration;
 import java.util.Map;
@@ -12,8 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ProjectSynchronizer;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.concurrent.SimpleExecutor;
@@ -37,11 +35,14 @@ public final class ProjectEventListener
 
     private SimpleExecutor simpleExecutor;
 
-    private ProjectSynchronizer projectSynchronizer;
+    private ContentSynchronizer contentSynchronizer;
 
     @Activate
-    public void activate()
+    public ProjectEventListener( @Reference final ProjectService projectService, @Reference final ContentSynchronizer contentSynchronizer )
     {
+        this.projectService = projectService;
+        this.contentSynchronizer = contentSynchronizer;
+
         this.simpleExecutor = new SimpleExecutor( Executors::newSingleThreadExecutor, "project-node-sync-thread",
                                                   e -> LOG.error( "Project node sync failed", e ) );
     }
@@ -74,7 +75,7 @@ public final class ProjectEventListener
     private void handleProjectEvent( final Event event )
     {
         final Map<String, Object> nodes = event.getData();
-        final String projectName = (String) nodes.get( ProjectEvents.PROJECT_NAME_KEY );
+        final String projectName = (String) nodes.get( "name" );
 
         this.simpleExecutor.execute( () -> createAdminContext().runWith( () -> handleProjectCreated( ProjectName.from( projectName ) ) ) );
 
@@ -90,14 +91,17 @@ public final class ProjectEventListener
 
             if ( parentProject != null )
             {
-                projectSynchronizer.syncWithChildren( ContentPath.ROOT, parentProject, project );
+                contentSynchronizer.sync( ContentSyncParams.create().
+                    sourceProject( parentProject.getName() ).
+                    targetProject( project.getName() ).
+                    build() );
             }
         }
     }
 
     private boolean isAllowedProjectEvent( final String type )
     {
-        return ProjectEvents.CREATED_EVENT_TYPE.equals( type );
+        return "project.created".equals( type );
     }
 
     private Context createAdminContext()
@@ -117,17 +121,5 @@ public final class ProjectEventListener
                 login( PrincipalKey.ofSuperUser().getId() ).
                 build() ).
             build();
-    }
-
-    @Reference
-    public void setProjectService( final ProjectService projectService )
-    {
-        this.projectService = projectService;
-    }
-
-    @Reference
-    public void setProjectSynchronizer( final ProjectSynchronizer projectSynchronizer )
-    {
-        this.projectSynchronizer = projectSynchronizer;
     }
 }
