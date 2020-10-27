@@ -1,14 +1,19 @@
 package com.enonic.xp.content;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Locale;
+import java.util.Set;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -16,6 +21,8 @@ import com.enonic.xp.security.acl.AccessControlList;
 @PublicApi
 public class CreateContentTranslatorParams
 {
+    private final ContentId contentId;
+
     private final PropertyTree data;
 
     private final ExtraDatas extraDatas;
@@ -56,10 +63,19 @@ public class CreateContentTranslatorParams
 
     private final WorkflowInfo workflowInfo;
 
+    private final Set<ContentInheritType> inherit;
+
+    private final ProjectName originProject;
+
+    private final Page page;
+
+    private final Long manualOrderValue;
+
     private CreateContentTranslatorParams( Builder builder )
     {
         final Instant now = Instant.now();
 
+        this.contentId = builder.contentId;
         this.data = builder.data;
         this.extraDatas = builder.extraDatas;
         this.type = builder.type;
@@ -80,6 +96,10 @@ public class CreateContentTranslatorParams
         this.contentPublishInfo = builder.contentPublishInfo;
         this.processedIds = builder.processedIds;
         this.workflowInfo = builder.workflowInfo;
+        this.inherit = builder.inherit.build();
+        this.originProject = builder.originProject;
+        this.page = builder.page;
+        this.manualOrderValue = builder.manualOrderValue;
     }
 
     public static Builder create( final CreateContentParams source )
@@ -90,6 +110,11 @@ public class CreateContentTranslatorParams
     public static Builder create()
     {
         return new Builder();
+    }
+
+    public ContentId getContentId()
+    {
+        return contentId;
     }
 
     public PropertyTree getData()
@@ -192,8 +217,30 @@ public class CreateContentTranslatorParams
         return workflowInfo;
     }
 
+    public Set<ContentInheritType> getInherit()
+    {
+        return inherit;
+    }
+
+    public ProjectName getOriginProject()
+    {
+        return originProject;
+    }
+
+    public Page getPage()
+    {
+        return page;
+    }
+
+    public Long getManualOrderValue()
+    {
+        return manualOrderValue;
+    }
+
     public static final class Builder
     {
+        private ContentId contentId;
+
         private PropertyTree data;
 
         private ExtraDatas extraDatas;
@@ -228,12 +275,21 @@ public class CreateContentTranslatorParams
 
         private WorkflowInfo workflowInfo;
 
+        private ImmutableSet.Builder<ContentInheritType> inherit = ImmutableSet.builder();
+
+        private ProjectName originProject;
+
+        private Page page;
+
+        private Long manualOrderValue;
+
         private Builder()
         {
         }
 
         private Builder( final CreateContentParams params )
         {
+            this.contentId = params.getContentId();
             this.data = params.getData();
             this.extraDatas = params.getExtraDatas();
             this.type = params.getType();
@@ -249,6 +305,16 @@ public class CreateContentTranslatorParams
             this.contentPublishInfo = params.getContentPublishInfo();
             this.processedIds = params.getProcessedIds();
             this.workflowInfo = params.getWorkflowInfo();
+            this.inherit.addAll( params.getInherit() );
+            this.originProject = params.getOriginProject();
+            this.page = params.getPage();
+            this.manualOrderValue = params.getManualOrderValue();
+        }
+
+        public Builder contentId( final ContentId contentId )
+        {
+            this.contentId = contentId;
+            return this;
         }
 
         public Builder contentData( final PropertyTree data )
@@ -356,6 +422,30 @@ public class CreateContentTranslatorParams
         public Builder workflowInfo( final WorkflowInfo workflowInfo )
         {
             this.workflowInfo = workflowInfo;
+            return this;
+        }
+
+        public Builder inherit( final Collection<ContentInheritType> inherit )
+        {
+            this.inherit.addAll( inherit );
+            return this;
+        }
+
+        public Builder originProject( final ProjectName originProject )
+        {
+            this.originProject = originProject;
+            return this;
+        }
+
+        public Builder page( final Page page )
+        {
+            this.page = page;
+            return this;
+        }
+
+        public Builder manualOrderValue( final Long manualOrderValue )
+        {
+            this.manualOrderValue = manualOrderValue;
             return this;
         }
 

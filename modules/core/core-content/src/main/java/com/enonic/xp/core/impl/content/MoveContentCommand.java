@@ -16,6 +16,7 @@ import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -27,7 +28,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 
 final class MoveContentCommand
-    extends AbstractContentCommand
+    extends AbstractCreatingOrUpdatingContentCommand
     implements MoveNodeListener
 {
     private final MoveContentParams params;
@@ -99,19 +100,27 @@ final class MoveContentCommand
                 sourceNode.path() );
         }
 
-        final Node movedNode = nodeService.move( sourceNodeId, nodePath, this );
+        final MoveNodeParams.Builder builder = MoveNodeParams.create().
+            nodeId( sourceNodeId ).
+            parentNodePath( nodePath ).
+            moveListener( this );
+
+        if ( params.stopInherit() )
+        {
+            builder.processor( new MoveContentProcessor() );
+        }
+
+        final Node movedNode = nodeService.move( builder.build() );
 
         final Content movedContent = translator.fromNode( movedNode, true );
 
-        String contentName = movedContent.getDisplayName();
-        ContentId contentId = movedContent.getId();
+        final String contentName = movedContent.getDisplayName();
+        final ContentId contentId = movedContent.getId();
 
-        final MoveContentsResult result = MoveContentsResult.create().
+        return MoveContentsResult.create().
             setContentName( contentName ).
             addMoved( contentId ).
             build();
-
-        return result;
     }
 
     private void verifyIntegrity( ContentPath destinationPath )
@@ -144,11 +153,19 @@ final class MoveContentCommand
     }
 
     public static class Builder
-        extends AbstractContentCommand.Builder<Builder>
+        extends AbstractCreatingOrUpdatingContentCommand.Builder<Builder>
     {
         private final MoveContentParams params;
 
         private ContentService contentService;
+
+       /* private PageDescriptorService pageDescriptorService;
+
+        private PartDescriptorService partDescriptorService;
+
+        private LayoutDescriptorService layoutDescriptorService;
+
+        private ContentDataSerializer contentDataSerializer;*/
 
         private MoveContentListener moveContentListener;
 
@@ -162,6 +179,30 @@ final class MoveContentCommand
             this.contentService = contentService;
             return this;
         }
+
+       /* Builder pageDescriptorService( final PageDescriptorService value )
+        {
+            this.pageDescriptorService = value;
+            return this;
+        }
+
+        Builder partDescriptorService( final PartDescriptorService value )
+        {
+            this.partDescriptorService = value;
+            return this;
+        }
+
+        Builder layoutDescriptorService( final LayoutDescriptorService value )
+        {
+            this.layoutDescriptorService = value;
+            return this;
+        }
+
+        Builder contentDataSerializer( final ContentDataSerializer value )
+        {
+            this.contentDataSerializer = value;
+            return this;
+        }*/
 
         public Builder moveListener( final MoveContentListener moveContentListener )
         {

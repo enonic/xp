@@ -1,8 +1,10 @@
 package com.enonic.xp.content;
 
 import java.time.Instant;
+import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
@@ -15,6 +17,7 @@ import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -67,6 +70,10 @@ public class Content
 
     private final boolean inheritPermissions;
 
+    private final Set<ContentInheritType> inherit;
+
+    private final ProjectName originProject;
+
     private final Locale language;
 
     private final ContentState contentState;
@@ -74,6 +81,8 @@ public class Content
     private final ContentIds processedReferences;
 
     private final WorkflowInfo workflowInfo;
+
+    private final Long manualOrderValue;
 
     protected Content( final Builder builder )
     {
@@ -111,6 +120,8 @@ public class Content
         this.page = builder.page;
         this.thumbnail = builder.thumbnail;
         this.hasChildren = builder.hasChildren;
+        this.inherit = builder.inherit;
+        this.originProject = builder.originProject;
         this.childOrder = builder.childOrder;
         this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
@@ -118,6 +129,7 @@ public class Content
         this.contentState = builder.contentState == null ? ContentState.DEFAULT : builder.contentState;
         this.processedReferences = builder.processedReferences.build();
         this.workflowInfo = builder.workflowInfo == null ? WorkflowInfo.ready() : builder.workflowInfo;
+        this.manualOrderValue = builder.manualOrderValue;
     }
 
     public static Builder create( final ContentTypeName type )
@@ -268,6 +280,16 @@ public class Content
         return this.hasChildren;
     }
 
+    public Set<ContentInheritType> getInherit()
+    {
+        return inherit;
+    }
+
+    public ProjectName getOriginProject()
+    {
+        return originProject;
+    }
+
     public boolean isSite()
     {
         return this instanceof Site;
@@ -333,6 +355,11 @@ public class Content
         return workflowInfo;
     }
 
+    public Long getManualOrderValue()
+    {
+        return manualOrderValue;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -347,38 +374,27 @@ public class Content
 
         final Content other = (Content) o;
 
-        return Objects.equals( id, other.id ) &&
-            Objects.equals( name, other.name ) &&
-            Objects.equals( parentPath, other.parentPath ) &&
-            Objects.equals( displayName, other.displayName ) &&
-            Objects.equals( type, other.type ) &&
-            Objects.equals( valid, other.valid ) &&
-            Objects.equals( modifier, other.modifier ) &&
-            Objects.equals( creator, other.creator ) &&
-            Objects.equals( owner, other.owner ) &&
-            Objects.equals( createdTime, other.createdTime ) &&
-            Objects.equals( modifiedTime, other.modifiedTime ) &&
-            Objects.equals( hasChildren, other.hasChildren ) &&
-            Objects.equals( inheritPermissions, other.inheritPermissions ) &&
-            Objects.equals( childOrder, other.childOrder ) &&
-            Objects.equals( thumbnail, other.thumbnail ) &&
-            Objects.equals( permissions, other.permissions ) &&
-            Objects.equals( attachments, other.attachments ) &&
-            Objects.equals( data, other.data ) &&
-            Objects.equals( extraDatas, other.extraDatas ) &&
-            Objects.equals( page, other.page ) &&
-            Objects.equals( language, other.language ) &&
-            Objects.equals( contentState, other.contentState ) && Objects.equals( publishInfo, other.publishInfo ) &&
-            Objects.equals( processedReferences, other.processedReferences ) &&
-            Objects.equals( workflowInfo, other.workflowInfo );
+        return Objects.equals( id, other.id ) && Objects.equals( name, other.name ) && Objects.equals( parentPath, other.parentPath ) &&
+            Objects.equals( displayName, other.displayName ) && Objects.equals( type, other.type ) &&
+            Objects.equals( valid, other.valid ) && Objects.equals( modifier, other.modifier ) &&
+            Objects.equals( creator, other.creator ) && Objects.equals( owner, other.owner ) &&
+            Objects.equals( createdTime, other.createdTime ) && Objects.equals( modifiedTime, other.modifiedTime ) &&
+            Objects.equals( hasChildren, other.hasChildren ) && Objects.equals( inherit, other.inherit ) &&
+            Objects.equals( originProject, other.originProject ) && Objects.equals( inheritPermissions, other.inheritPermissions ) &&
+            Objects.equals( childOrder, other.childOrder ) && Objects.equals( thumbnail, other.thumbnail ) &&
+            Objects.equals( permissions, other.permissions ) && Objects.equals( attachments, other.attachments ) &&
+            Objects.equals( data, other.data ) && Objects.equals( extraDatas, other.extraDatas ) && Objects.equals( page, other.page ) &&
+            Objects.equals( language, other.language ) && Objects.equals( contentState, other.contentState ) &&
+            Objects.equals( publishInfo, other.publishInfo ) && Objects.equals( processedReferences, other.processedReferences ) &&
+            Objects.equals( workflowInfo, other.workflowInfo ) && Objects.equals( manualOrderValue, other.manualOrderValue );
     }
 
     @Override
     public int hashCode()
     {
         return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
-                             hasChildren, inheritPermissions, childOrder, thumbnail, permissions, attachments, data, extraDatas, page,
-                             language, contentState, publishInfo, processedReferences, workflowInfo );
+                             hasChildren, inherit, originProject, inheritPermissions, childOrder, thumbnail, permissions, attachments, data,
+                             extraDatas, page, language, contentState, publishInfo, processedReferences, workflowInfo, manualOrderValue );
     }
 
     public static class Builder<BUILDER extends Builder>
@@ -419,6 +435,10 @@ public class Content
 
         protected boolean hasChildren;
 
+        protected EnumSet<ContentInheritType> inherit = EnumSet.noneOf( ContentInheritType.class );
+
+        protected ProjectName originProject;
+
         protected ChildOrder childOrder;
 
         protected AccessControlList permissions;
@@ -432,6 +452,8 @@ public class Content
         protected ContentIds.Builder processedReferences;
 
         protected WorkflowInfo workflowInfo;
+
+        protected Long manualOrderValue;
 
         protected Builder()
         {
@@ -459,6 +481,8 @@ public class Content
             this.creator = source.creator;
             this.modifier = source.modifier;
             this.hasChildren = source.hasChildren;
+            this.inherit.addAll( source.inherit );
+            this.originProject = source.originProject;
             this.page = source.page != null ? source.page.copy() : null;
             this.thumbnail = source.thumbnail;
             this.childOrder = source.childOrder;
@@ -469,6 +493,7 @@ public class Content
             this.publishInfo = source.publishInfo;
             this.processedReferences = ContentIds.create().addAll( source.processedReferences );
             this.workflowInfo = source.workflowInfo;
+            this.manualOrderValue = source.manualOrderValue;
         }
 
         public BUILDER parentPath( final ContentPath path )
@@ -608,6 +633,21 @@ public class Content
             return (BUILDER) this;
         }
 
+        public BUILDER setInherit( final Set<ContentInheritType> inherit )
+        {
+            if ( inherit != null )
+            {
+                this.inherit = inherit.isEmpty() ? EnumSet.noneOf( ContentInheritType.class ) : EnumSet.copyOf( inherit );
+            }
+            return (BUILDER) this;
+        }
+
+        public BUILDER originProject( final ProjectName originProject )
+        {
+            this.originProject = originProject;
+            return (BUILDER) this;
+        }
+
         public BUILDER childOrder( final ChildOrder childOrder )
         {
             this.childOrder = childOrder;
@@ -665,6 +705,12 @@ public class Content
         public BUILDER workflowInfo( final WorkflowInfo workflowInfo )
         {
             this.workflowInfo = workflowInfo;
+            return (BUILDER) this;
+        }
+
+        public BUILDER manualOrderValue( final Long manualOrderValue )
+        {
+            this.manualOrderValue = manualOrderValue;
             return (BUILDER) this;
         }
 

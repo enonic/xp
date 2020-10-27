@@ -90,6 +90,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ResetContentInheritJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.RevertContentJson;
@@ -1466,6 +1467,12 @@ public final class ContentResource
         return null;
     }
 
+    @POST
+    @Path("restoreInherit")
+    public void restoreInherit( final ResetContentInheritJson paramsJson )
+    {
+        this.contentService.restoreInherit( paramsJson.toParams() );
+    }
 
     private UpdateContentParams prepareUpdateContentParams( final Content versionedContent, final ContentVersionId contentVersionId )
     {

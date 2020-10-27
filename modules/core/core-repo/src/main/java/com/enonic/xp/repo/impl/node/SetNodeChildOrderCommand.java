@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeQuery;
@@ -30,11 +31,14 @@ public class SetNodeChildOrderCommand
 
     private final ChildOrder childOrder;
 
+    private final NodeDataProcessor processor;
+
     private SetNodeChildOrderCommand( final Builder builder )
     {
         super( builder );
         this.nodeId = builder.nodeId;
         this.childOrder = builder.childOrder;
+        this.processor = builder.processor;
     }
 
     public static Builder create()
@@ -59,6 +63,7 @@ public class SetNodeChildOrderCommand
 
         final Node editedNode = Node.create( parentNode ).
             childOrder( childOrder ).
+            data( processor.process( parentNode.data() ) ).
             timestamp( Instant.now( CLOCK ) ).
             build();
 
@@ -112,6 +117,8 @@ public class SetNodeChildOrderCommand
 
         private ChildOrder childOrder;
 
+        private NodeDataProcessor processor = ( n ) -> n;
+
         private Builder()
         {
         }
@@ -128,15 +135,23 @@ public class SetNodeChildOrderCommand
             return this;
         }
 
+        public Builder processor( final NodeDataProcessor processor )
+        {
+            this.processor = processor;
+            return this;
+        }
+
         @Override
         void validate()
         {
             super.validate();
             Preconditions.checkNotNull( nodeId );
+            Preconditions.checkNotNull( processor );
         }
 
         public SetNodeChildOrderCommand build()
         {
+            validate();
             return new SetNodeChildOrderCommand( this );
         }
     }

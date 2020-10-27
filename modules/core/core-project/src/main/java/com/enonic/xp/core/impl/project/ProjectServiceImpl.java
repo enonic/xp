@@ -27,6 +27,7 @@ import com.enonic.xp.core.impl.project.init.ContentInitializer;
 import com.enonic.xp.core.impl.project.init.IssueInitializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.BinaryAttachment;
@@ -66,15 +67,19 @@ public class ProjectServiceImpl
 
     private final ProjectPermissionsContextManager projectPermissionsContextManager;
 
+    private EventPublisher eventPublisher;
+
     public ProjectServiceImpl( final RepositoryService repositoryService, final IndexService indexService, final NodeService nodeService,
                                final SecurityService securityService,
-                               final ProjectPermissionsContextManager projectPermissionsContextManager )
+                               final ProjectPermissionsContextManager projectPermissionsContextManager,
+                               final EventPublisher eventPublisher )
     {
         this.repositoryService = repositoryService;
         this.indexService = indexService;
         this.nodeService = nodeService;
         this.securityService = securityService;
         this.projectPermissionsContextManager = projectPermissionsContextManager;
+        this.eventPublisher = eventPublisher;
     }
 
     public void initialize()
@@ -102,6 +107,8 @@ public class ProjectServiceImpl
                 projectDisplayName( params.getDisplayName() ).
                 build().
                 execute();
+
+            eventPublisher.publish( ProjectEvents.created( params.getName() ) );
 
             LOG.debug( "Project created: " + params.getName() );
 
@@ -346,7 +353,10 @@ public class ProjectServiceImpl
 
         projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, params.getDescription() );
         projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, params.getDisplayName() );
-
+        if ( params.getParent() != null )
+        {
+            projectData.setString( ProjectConstants.PROJECT_PARENTS_PROPERTY, params.getParent().toString() );
+        }
         return data;
     }
 

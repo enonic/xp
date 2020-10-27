@@ -21,13 +21,7 @@ public final class ProjectConstants
 
     public static final String PROJECT_ICON_PROPERTY = "icon";
 
-    public static final String PROJECT_ACCESS_LEVEL_OWNER_PROPERTY = "owner";
-
-    public static final String PROJECT_ACCESS_LEVEL_EDITOR_PROPERTY = "editor";
-
-    public static final String PROJECT_ACCESS_LEVEL_AUTHOR_PROPERTY = "author";
-
-    public static final String PROJECT_ACCESS_LEVEL_CONTRIBUTOR_PROPERTY = "contributor";
+    public static final String PROJECT_PARENTS_PROPERTY = "parents";
 
     public static final ProjectName DEFAULT_PROJECT_NAME = ProjectName.from( ContentConstants.CONTENT_REPO_ID );
 

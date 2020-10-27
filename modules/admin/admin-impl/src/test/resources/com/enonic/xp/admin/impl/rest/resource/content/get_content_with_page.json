@@ -5,63 +5,64 @@
     "createdTime": "2013-08-23T12:55:09.162Z",
     "creator": "user:system:admin",
     "data": [
-        {
-            "name": "myProperty",
-            "type": "String",
-            "values": [
-                {
-                    "v": "myValue"
-                }
-            ]
-        }
+      {
+        "name": "myProperty",
+        "type": "String",
+        "values": [
+          {
+            "v": "myValue"
+          }
+        ]
+      }
     ],
-    "deletable": true,
-    "displayName": "My Content",
-    "editable": true,
-    "hasChildren": false,
-    "iconUrl": "/admin/rest/schema/content/icon/myapplication:my_type?hash=f95b70fdc3088560732a5ac135644506",
-    "id": "aaa",
-    "inheritPermissions": true,
-    "isPage": true,
-    "isRoot": true,
-    "isValid": true,
-    "language": "en",
-    "meta": [
+  "deletable": true,
+  "displayName": "My Content",
+  "editable": true,
+  "hasChildren": false,
+  "iconUrl": "/admin/rest/schema/content/icon/myapplication:my_type?hash=f95b70fdc3088560732a5ac135644506",
+  "id": "aaa",
+  "inherit": [],
+  "inheritPermissions": true,
+  "isPage": true,
+  "isRoot": true,
+  "isValid": true,
+  "language": "en",
+  "meta": [
+    {
+      "data": [
         {
-            "data": [
-                {
-                    "name": "myProperty",
-                    "type": "Long",
-                    "values": [
-                        {
-                            "v": 1
-                        }
-                    ]
-                }
-            ],
-            "name": "myApplication:myField"
-        }
-    ],
-    "modifiedTime": "2013-08-23T12:55:09.162Z",
-    "modifier": "user:system:admin",
-    "name": "my_a_content",
-    "owner": "user:myStore:me",
-    "page": {
-        "config": [
+          "name": "myProperty",
+          "type": "Long",
+          "values": [
             {
-                "name": "background-color",
-                "type": "String",
-                "values": [
-                    {
-                        "v": "blue"
-                    }
-                ]
+              "v": 1
             }
-        ],
-        "controller": null,
-        "customized" : false,
-        "fragment": null,
-        "regions": [
+          ]
+        }
+      ],
+      "name": "myApplication:myField"
+    }
+  ],
+  "modifiedTime": "2013-08-23T12:55:09.162Z",
+  "modifier": "user:system:admin",
+  "name": "my_a_content",
+  "owner": "user:myStore:me",
+  "page": {
+    "config": [
+      {
+        "name": "background-color",
+        "type": "String",
+        "values": [
+          {
+            "v": "blue"
+          }
+        ]
+      }
+    ],
+    "controller": null,
+    "customized": false,
+    "fragment": null,
+    "regions": [
             {
                 "components": [
                     {

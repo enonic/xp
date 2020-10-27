@@ -64,6 +64,8 @@ import com.enonic.xp.content.GetPublishStatusResult;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
+import com.enonic.xp.content.ImportContentParams;
+import com.enonic.xp.content.ImportContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PublishContentResult;
@@ -74,6 +76,7 @@ import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.ReprocessContentParams;
+import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
@@ -163,6 +166,8 @@ public class ContentServiceImpl
 
     private ContentAuditLogSupport contentAuditLogSupport;
 
+    private ProjectService projectService;
+
     @Activate
     public void initialize()
     {
@@ -248,7 +253,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( content instanceof Site )
+        if ( content instanceof Site && params.createSiteTemplateFolder() )
         {
             this.create( CreateContentParams.create().
                 owner( content.getOwner() ).
@@ -712,6 +717,8 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentService( this ).
+            xDataService( this.xDataService ).
+            siteService( this.siteService ).
             moveListener( params.getMoveContentListener() ).
             build().
             execute();
@@ -930,10 +937,16 @@ public class ContentServiceImpl
     {
         try
         {
-            final Node node = nodeService.setChildOrder( SetNodeChildOrderParams.create().
+            final SetNodeChildOrderParams.Builder builder = SetNodeChildOrderParams.create().
                 nodeId( NodeId.from( params.getContentId() ) ).
-                childOrder( params.getChildOrder() ).
-                build() );
+                childOrder( params.getChildOrder() );
+
+            if ( params.stopInherit() )
+            {
+                builder.processor( new SetContentChildOrderProcessor() );
+            }
+
+            final Node node = nodeService.setChildOrder( builder.build() );
 
             final Content content = translator.fromNode( node, true );
 
@@ -959,6 +972,11 @@ public class ContentServiceImpl
                 nodeId( NodeId.from( param.getContentToMove() ) ).
                 moveBefore( param.getContentToMoveBefore() == null ? null : NodeId.from( param.getContentToMoveBefore() ) ).
                 build() );
+        }
+
+        if ( params.stopInherit() )
+        {
+            builder.processor( new SetContentChildOrderProcessor() );
         }
 
         final ReorderChildNodesResult reorderChildNodesResult = this.nodeService.reorderChildren( builder.build() );
@@ -1174,6 +1192,35 @@ public class ContentServiceImpl
     }
 
     @Override
+    public ImportContentResult importContent( final ImportContentParams params )
+    {
+        return ImportContentCommand.create().
+            params( params ).
+            nodeService( nodeService ).
+            contentTypeService( contentTypeService ).
+            contentDataSerializer( contentDataSerializer ).
+            eventPublisher( eventPublisher ).
+            translator( translator ).
+            build().
+            execute();
+    }
+
+    @Override
+    public void restoreInherit( final ResetContentInheritParams params )
+    {
+        ResetContentInheritCommand.create( params ).
+            contentService( this ).
+            projectService( projectService ).
+            mediaInfoService( mediaInfoService ).
+            nodeService( nodeService ).
+            contentTypeService( contentTypeService ).
+            eventPublisher( eventPublisher ).
+            translator( translator ).
+            build().
+            execute();
+    }
+
+    @Override
     @Deprecated
     public InputStream getBinaryInputStream( final ContentId contentId, final BinaryReference binaryReference )
     {
@@ -1297,5 +1344,7 @@ public class ContentServiceImpl
     {
         //Many starters depend on ContentService avaialbe only when default cms repo is fully initialized.
         // Starting from 7.3 Initialization happens in ProjectService, so we need a dependency.
+        this.projectService = projectService;
     }
+
 }

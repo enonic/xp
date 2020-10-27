@@ -100,6 +100,7 @@ import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentDependenciesAggregation;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
@@ -697,6 +698,22 @@ public class ContentResourceTest
     }
 
     @Test
+    public void create_content_inherit()
+        throws Exception
+    {
+        Content content = createContent( "content-id", "content-path", "myapplication:content-type",
+                                         Set.of( ContentInheritType.CONTENT, ContentInheritType.PARENT, ContentInheritType.NAME,
+                                                 ContentInheritType.SORT ) );
+        Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ) ) ).thenReturn( content );
+
+        String jsonString = request().path( "content/create" ).
+            entity( readFromFile( "create_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "create_content_inherit_success.json", jsonString );
+    }
+
+    @Test
     public void update_content_new_name_occurred()
         throws Exception
     {
@@ -761,6 +778,23 @@ public class ContentResourceTest
         Mockito.verify( contentService, Mockito.times( 0 ) ).rename( Mockito.isA( RenameContentParams.class ) );
 
         assertJson( "update_content_success.json", jsonString );
+    }
+
+    @Test
+    public void update_content_inherit_success()
+        throws Exception
+    {
+        Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
+        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
+        Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
+        Mockito.when( contentService.getPermissionsById( content.getId() ) ).thenReturn( AccessControlList.empty() );
+        String jsonString = request().path( "content/update" ).
+            entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        Mockito.verify( contentService, Mockito.times( 0 ) ).rename( Mockito.isA( RenameContentParams.class ) );
+
+        assertJson( "update_content_inherit_success.json", jsonString );
     }
 
     @Test
@@ -2455,6 +2489,11 @@ public class ContentResourceTest
     private Content createContent( final String id, final String name, final String contentTypeName )
     {
         return this.createContent( id, ContentPath.ROOT, name, contentTypeName );
+    }
+
+    private Content createContent( final String id, final String name, final String contentTypeName, final Set<ContentInheritType> inherit )
+    {
+        return Content.create( this.createContent( id, ContentPath.ROOT, name, contentTypeName ) ).setInherit( inherit ).build();
     }
 
     private Site createSite( final String id, final String name, final String contentTypeName, SiteConfigs siteConfigs )

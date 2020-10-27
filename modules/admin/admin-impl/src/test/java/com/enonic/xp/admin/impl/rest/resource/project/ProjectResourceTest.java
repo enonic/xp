@@ -106,9 +106,9 @@ public class ProjectResourceTest
             label( "small" ).
             build() );
 
-        final Project project2 = createProject( "project2", "project2", null, null );
+        final Project project2 = createProject( "project2", "project2", null, null, "parent1" );
         final Project project3 = createProject( "project3", null, null, null );
-        final Project project4 = createProject( "project4", "project4", null, null );
+        final Project project4 = createProject( "project4", "project4", null, null, "parent2" );
 
         mockRootContent();
 
@@ -133,6 +133,47 @@ public class ProjectResourceTest
         String jsonString = request().path( "project/list" ).get().getAsString();
 
         assertJson( "list_projects.json", jsonString );
+    }
+
+    @Test
+    public void fetch_projects_by_content_id()
+        throws Exception
+    {
+        final Project project1 = createProject( "project1", "project name 1", "project description 1", null, "base" );
+
+        final Project project2 = createProject( "project2", "project2", null, null, "parent1" );
+        final Project project3 = createProject( "project3", null, null, null );
+        final Project project4 = createProject( "project4", "project4", null, null, "parent2" );
+
+        mockRootContent();
+
+        Mockito.when( projectService.list() ).thenReturn(
+            Projects.create().addAll( List.of( project1, project2, project3, project4 ) ).build() );
+
+        Mockito.when( contentService.contentExists( ContentId.from( "123" ) ) ).
+            thenReturn( true ).
+            thenReturn( false ).
+            thenReturn( true ).
+            thenReturn( false );
+
+        Mockito.when( projectService.getPermissions( ProjectName.from( "project1" ) ) ).
+            thenReturn( ProjectPermissions.create().addOwner( PrincipalKey.from( "user:system:owner" ) ).build() );
+
+        Mockito.when( projectService.getPermissions( ProjectName.from( "project2" ) ) ).
+            thenReturn( ProjectPermissions.create().addEditor( PrincipalKey.from( "user:system:editor" ) ).build() );
+
+        Mockito.when( projectService.getPermissions( ProjectName.from( "project3" ) ) ).
+            thenReturn( ProjectPermissions.create().addAuthor( PrincipalKey.from( "user:system:author" ) ).build() );
+
+        Mockito.when( projectService.getPermissions( ProjectName.from( "project4" ) ) ).
+            thenReturn( ProjectPermissions.create().addAuthor( PrincipalKey.from( "user:system:contributor" ) ).build() );
+
+        final String jsonString = request().path( "project/fetchByContentId" ).
+            queryParam( "contentId", "123" ).
+            get().
+            getAsString();
+
+        assertJson( "fetch_by_content_id_projects.json", jsonString );
     }
 
     @Test
@@ -172,6 +213,30 @@ public class ProjectResourceTest
             post().getAsString();
 
         assertJson( "create_project_success.json", jsonString );
+    }
+
+    @Test
+    public void create_project_with_parents()
+        throws Exception
+    {
+        final Project project = createProject( "project1", "project name 1", "project description 1", Attachment.create().
+            name( "logo.png" ).
+            mimeType( "image/png" ).
+            label( "small" ).
+            build(), "parent1" );
+
+        mockRootContent();
+        Mockito.when( projectService.create( Mockito.isA( CreateProjectParams.class ) ) ).thenReturn( project );
+        Mockito.when( projectService.modifyPermissions( Mockito.eq( project.getName() ), Mockito.isA( ProjectPermissions.class ) ) ).
+            thenAnswer( i -> i.getArguments()[1] );
+
+        mockProjectPermissions( project.getName() );
+
+        String jsonString = request().path( "project/create" ).
+            entity( readFromFile( "create_project_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "create_project_with_parents.json", jsonString );
     }
 
     @Test
@@ -354,6 +419,18 @@ public class ProjectResourceTest
             displayName( displayName ).
             description( description ).
             icon( icon ).
+            build();
+    }
+
+    private Project createProject( final String name, final String displayName, final String description, final Attachment icon,
+                                   final String parent )
+    {
+        return Project.create().
+            name( ProjectName.from( name ) ).
+            displayName( displayName ).
+            description( description ).
+            icon( icon ).
+            parent( ProjectName.from( parent ) ).
             build();
     }
 

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.project.ProjectName;
 
-public final class CreateOrModifyProjectParamsJson
+public final class CreateProjectParamsJson
 {
     private final ProjectName name;
 
@@ -13,13 +13,16 @@ public final class CreateOrModifyProjectParamsJson
 
     private final String description;
 
+    private final ProjectName parent;
+
     @JsonCreator
-    CreateOrModifyProjectParamsJson( @JsonProperty("name") final String name, @JsonProperty("displayName") final String displayName,
-                                     @JsonProperty("description") final String description )
+    CreateProjectParamsJson( @JsonProperty("name") final String name, @JsonProperty("displayName") final String displayName,
+                             @JsonProperty("description") final String description, @JsonProperty("parent") final String parent )
     {
         this.name = ProjectName.from( name );
         this.displayName = displayName;
         this.description = description;
+        this.parent = parent == null || parent.isBlank() ? null : ProjectName.from( parent );
     }
 
     public ProjectName getName()
@@ -35,5 +38,10 @@ public final class CreateOrModifyProjectParamsJson
     public String getDescription()
     {
         return description;
+    }
+
+    public ProjectName getParent()
+    {
+        return parent;
     }
 }

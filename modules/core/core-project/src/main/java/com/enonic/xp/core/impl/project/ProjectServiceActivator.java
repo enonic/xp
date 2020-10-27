@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.project.ProjectService;
@@ -26,25 +27,30 @@ public class ProjectServiceActivator
 
     private final ProjectPermissionsContextManager projectPermissionsContextManager;
 
+    private final EventPublisher eventPublisher;
+
     private ServiceRegistration<ProjectService> service;
 
     @Activate
     public ProjectServiceActivator( @Reference final RepositoryService repositoryService, @Reference final IndexService indexService,
                                     @Reference final NodeService nodeService, @Reference final SecurityService securityService,
-                                    @Reference final ProjectPermissionsContextManager projectPermissionsContextManager )
+                                    @Reference final ProjectPermissionsContextManager projectPermissionsContextManager,
+                                    @Reference final EventPublisher eventPublisher )
     {
         this.repositoryService = repositoryService;
         this.indexService = indexService;
         this.nodeService = nodeService;
         this.securityService = securityService;
         this.projectPermissionsContextManager = projectPermissionsContextManager;
+        this.eventPublisher = eventPublisher;
     }
 
     @Activate
     public void activate( final BundleContext context )
     {
         final ProjectServiceImpl projectService =
-            new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectPermissionsContextManager );
+            new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectPermissionsContextManager,
+                                    eventPublisher );
         projectService.initialize();
         service = context.registerService( ProjectService.class, projectService, null );
     }

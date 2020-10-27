@@ -11,6 +11,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -20,6 +21,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 
@@ -32,6 +34,8 @@ public class MoveContentCommandTest
     private final NodeService nodeService = Mockito.mock( NodeService.class );
 
     private final ContentService contentService = Mockito.mock( ContentService.class );
+
+    private final XDataService xDataService = Mockito.mock( XDataService.class );
 
     private final ContentNodeTranslator translator = Mockito.mock( ContentNodeTranslator.class );
 
@@ -55,6 +59,7 @@ public class MoveContentCommandTest
             contentTypeService( this.contentTypeService ).
             nodeService( this.nodeService ).
             contentService( this.contentService ).
+            xDataService( this.xDataService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build();
@@ -87,13 +92,14 @@ public class MoveContentCommandTest
             contentService( this.contentService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
+            xDataService( this.xDataService ).
             build();
 
         final Node mockNode = Node.create().parentPath( NodePath.ROOT ).build();
 
         Mockito.when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
 
-        Mockito.when( nodeService.move( Mockito.any( NodeId.class ), Mockito.any(), Mockito.any() ) ).thenReturn( mockNode );
+        Mockito.when( nodeService.move( Mockito.any( MoveNodeParams.class ) ) ).thenReturn( mockNode );
 
         Mockito.when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
         Mockito.when( translator.fromNode( mockNode, false ) ).thenReturn( existingContent );
@@ -111,7 +117,7 @@ public class MoveContentCommandTest
 
         // exercise
         command.execute();
-        Mockito.verify( nodeService, Mockito.times( 1 ) ).move( Mockito.any( NodeId.class ), Mockito.any(), Mockito.any() );
+        Mockito.verify( nodeService, Mockito.times( 1 ) ).move( Mockito.any( MoveNodeParams.class ) );
 
     }
 
@@ -132,6 +138,7 @@ public class MoveContentCommandTest
         final MoveContentCommand command = MoveContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
             nodeService( this.nodeService ).
+            xDataService( this.xDataService ).
             contentService( this.contentService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).

@@ -302,7 +302,8 @@ public class AbstractContentServiceTest
         final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
 
         final ProjectServiceImpl projectService =
-            new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectAccessContextManager );
+            new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectAccessContextManager,
+                                    eventPublisher );
         projectService.initialize();
 
         contentService.setNodeService( nodeService );

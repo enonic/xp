@@ -15,6 +15,8 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.InsertManualStrategy;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -70,7 +72,9 @@ public class CreateNodeParamsFactory
         final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties(
             contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.DATA ) ) ).build();
 
-        final Page page = contentAsData.hasProperty( COMPONENTS ) ? contentDataSerializer.fromPageData( contentAsData.getRoot() ) : null;
+        final Page page = params.getPage() != null
+            ? params.getPage()
+            : contentAsData.hasProperty( COMPONENTS ) ? contentDataSerializer.fromPageData( contentAsData.getRoot() ) : null;
 
         final ExtraDatas extraData = extraDataSet != null ? contentDataSerializer.fromExtraData( extraDataSet ) : null;
 
@@ -103,6 +107,7 @@ public class CreateNodeParamsFactory
         final IndexConfigDocument indexConfigDocument = indexConfigFactoryBuilder.build().produce();
 
         final CreateNodeParams.Builder builder = CreateNodeParams.create().
+            setNodeId( params.getContentId() == null ? null : NodeId.from( params.getContentId().toString() ) ).
             name( resolveNodeName( params.getName() ) ).
             parent( ContentNodeHelper.translateContentParentToNodeParentPath( params.getParent() ) ).
             data( contentAsData ).
@@ -110,7 +115,9 @@ public class CreateNodeParamsFactory
             permissions( params.getPermissions() ).
             inheritPermissions( params.isInheritPermissions() ).
             childOrder( params.getChildOrder() ).
-            nodeType( ContentConstants.CONTENT_NODE_COLLECTION );
+            nodeType( ContentConstants.CONTENT_NODE_COLLECTION ).
+            manualOrderValue( params.getManualOrderValue() ).
+            insertManualStrategy( InsertManualStrategy.MANUAL );
 
         for ( final CreateAttachment attachment : params.getCreateAttachments() )
         {

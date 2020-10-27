@@ -80,10 +80,10 @@ public interface ContentService
 
     FindContentIdsByQueryResult find( ContentQuery query );
 
-    Contents findByApplicationKey( ApplicationKey key);
+    Contents findByApplicationKey( ApplicationKey key );
 
     @Deprecated
-    ContentPaths findContentPaths( ContentQuery query);
+    ContentPaths findContentPaths( ContentQuery query );
 
     CompareContentResult compare( CompareContentParams params );
 
@@ -95,7 +95,7 @@ public interface ContentService
 
     GetActiveContentVersionsResult getActiveVersions( GetActiveContentVersionsParams params );
 
-    ContentVersion getActiveVersion(GetActiveContentVersionParams params);
+    ContentVersion getActiveVersion( GetActiveContentVersionParams params );
 
     SetActiveContentVersionResult setActiveContentVersion( ContentId contentId, ContentVersionId versionId );
 
@@ -123,5 +123,9 @@ public interface ContentService
     Content getByIdAndVersionId( final ContentId contentId, final ContentVersionId versionId );
 
     Content getByPathAndVersionId( final ContentPath contentPath, final ContentVersionId versionId );
+
+    ImportContentResult importContent( final ImportContentParams params );
+
+    void restoreInherit( final ResetContentInheritParams params );
 
 }
