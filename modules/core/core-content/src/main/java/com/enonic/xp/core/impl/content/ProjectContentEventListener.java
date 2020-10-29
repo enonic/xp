@@ -14,14 +14,11 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.concurrent.SimpleExecutor;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
-import com.enonic.xp.media.MediaInfoService;
-import com.enonic.xp.project.ParentProjectSynchronizer;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
@@ -32,22 +29,24 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component(immediate = true)
-public class ProjectContentEventListener
+public final class ProjectContentEventListener
     implements EventListener
 {
     private static final Logger LOG = LoggerFactory.getLogger( ProjectContentEventListener.class );
 
     private ProjectService projectService;
 
-    private ContentService contentService;
-
-    private MediaInfoService mediaInfoService;
+    private ContentEventsSynchronizer contentSynchronizer;
 
     private SimpleExecutor simpleExecutor;
 
     @Activate
-    public void activate()
+    public ProjectContentEventListener( @Reference final ProjectService projectService,
+                                        @Reference final ContentEventsSynchronizer contentSynchronizer )
     {
+        this.projectService = projectService;
+        this.contentSynchronizer = contentSynchronizer;
+
         this.simpleExecutor = new SimpleExecutor( Executors::newSingleThreadExecutor, "project-node-sync-thread",
                                                   e -> LOG.error( "Project node sync failed", e ) );
     }
@@ -62,17 +61,14 @@ public class ProjectContentEventListener
     @Override
     public void onEvent( final Event event )
     {
-        if ( event != null )
+        if ( !event.isLocalOrigin() )
         {
-            if ( !event.isLocalOrigin() )
-            {
-                return;
-            }
+            return;
+        }
 
-            if ( this.isAllowedContentEvent( event.getType() ) )
-            {
-                this.handleContentEvent( event );
-            }
+        if ( this.isAllowedContentEvent( event.getType() ) )
+        {
+            this.handleContentEvent( event );
         }
     }
 
@@ -118,43 +114,45 @@ public class ProjectContentEventListener
                 stream().
                 filter( project -> currentProjectName.equals( project.getParent() ) ).
                 forEach( targetProject -> {
-                    final ParentProjectSynchronizer parentProjectSynchronizer = ParentProjectSynchronizer.create().
-                        targetProject( targetProject ).
-                        sourceProject( sourceProject ).
-                        contentService( contentService ).
-                        mediaInfoService( mediaInfoService ).
-                        build();
-
                     final ContentId contentId = ContentId.from( nodeMap.get( "id" ) );
+
+                    final ContentEventsSyncParams.Builder paramsBuilder =
+                        ContentEventsSyncParams.create().contentId( contentId ).sourceProject( sourceProject.getName() ).targetProject(
+                            targetProject.getName() );
 
                     switch ( type )
                     {
                         case "node.created":
-                            parentProjectSynchronizer.syncCreated( contentId );
+                            paramsBuilder.addSyncEventType( ContentSyncEventType.CREATED );
                             break;
                         case "node.updated":
-                            parentProjectSynchronizer.syncUpdated( contentId );
-                            break;
                         case "node.pushed":
-                            parentProjectSynchronizer.syncUpdated( contentId );
+                            paramsBuilder.addSyncEventType( ContentSyncEventType.UPDATED );
                             break;
                         case "node.manualOrderUpdated":
-                            parentProjectSynchronizer.syncManualOrderUpdated( contentId );
+                            paramsBuilder.addSyncEventType( ContentSyncEventType.MANUAL_ORDER_UPDATED );
                             break;
                         case "node.sorted":
-                            parentProjectSynchronizer.syncSorted( contentId );
+                            paramsBuilder.addSyncEventType( ContentSyncEventType.SORTED );
                             break;
                         case "node.renamed":
-                            parentProjectSynchronizer.syncRenamed( contentId );
+                            paramsBuilder.addSyncEventType( ContentSyncEventType.RENAMED );
                             break;
                         case "node.moved":
-                            parentProjectSynchronizer.syncMoved( contentId );
+                            paramsBuilder.addSyncEventType( ContentSyncEventType.MOVED );
                             break;
                         case "node.deleted":
-                            parentProjectSynchronizer.syncDeleted( contentId );
+                            paramsBuilder.addSyncEventType( ContentSyncEventType.DELETED );
+                            break;
+                        default:
+                            LOG.debug( "Ignoring node type: {}", type );
                             break;
                     }
-
+                    final ContentEventsSyncParams params = paramsBuilder.build();
+                    if ( !params.getSyncTypes().isEmpty() )
+                    {
+                        contentSynchronizer.sync( params );
+                    }
                 } );
 
             this.projectService.list().
@@ -162,20 +160,15 @@ public class ProjectContentEventListener
                 filter( project -> project.getName().equals( sourceProject.getParent() ) ).
                 forEach( parentProject -> {
 
-                    final ParentProjectSynchronizer parentProjectSynchronizer = ParentProjectSynchronizer.create().
-                        targetProject( sourceProject ).
-                        sourceProject( parentProject ).
-                        contentService( contentService ).
-                        mediaInfoService( mediaInfoService ).
-                        build();
-
                     final ContentId contentId = ContentId.from( nodeMap.get( "id" ) );
 
-                    switch ( type )
+                    if ( "node.deleted".equals( type ) )
                     {
-                        case "node.deleted":
-                            parentProjectSynchronizer.syncWithChildren( contentId );
-                            break;
+                        contentSynchronizer.sync( ContentSyncParams.create().
+                            contentId( contentId ).
+                            sourceProject( parentProject.getName() ).
+                            targetProject( sourceProject.getName() ).
+                            build() );
                     }
 
                 } );
@@ -199,23 +192,5 @@ public class ProjectContentEventListener
                 login( PrincipalKey.ofSuperUser().getId() ).
                 build() ).
             build();
-    }
-
-    @Reference
-    public void setProjectService( final ProjectService projectService )
-    {
-        this.projectService = projectService;
-    }
-
-    @Reference
-    public void setMediaInfoService( final MediaInfoService mediaInfoService )
-    {
-        this.mediaInfoService = mediaInfoService;
-    }
-
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
     }
 }

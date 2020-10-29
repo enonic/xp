@@ -21,7 +21,6 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 
@@ -34,8 +33,6 @@ public class MoveContentCommandTest
     private final NodeService nodeService = Mockito.mock( NodeService.class );
 
     private final ContentService contentService = Mockito.mock( ContentService.class );
-
-    private final XDataService xDataService = Mockito.mock( XDataService.class );
 
     private final ContentNodeTranslator translator = Mockito.mock( ContentNodeTranslator.class );
 
@@ -59,7 +56,6 @@ public class MoveContentCommandTest
             contentTypeService( this.contentTypeService ).
             nodeService( this.nodeService ).
             contentService( this.contentService ).
-            xDataService( this.xDataService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build();
@@ -92,7 +88,6 @@ public class MoveContentCommandTest
             contentService( this.contentService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
-            xDataService( this.xDataService ).
             build();
 
         final Node mockNode = Node.create().parentPath( NodePath.ROOT ).build();
@@ -138,7 +133,6 @@ public class MoveContentCommandTest
         final MoveContentCommand command = MoveContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
             nodeService( this.nodeService ).
-            xDataService( this.xDataService ).
             contentService( this.contentService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).

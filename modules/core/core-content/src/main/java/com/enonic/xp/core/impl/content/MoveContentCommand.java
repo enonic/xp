@@ -28,7 +28,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 
 final class MoveContentCommand
-    extends AbstractCreatingOrUpdatingContentCommand
+    extends AbstractContentCommand
     implements MoveNodeListener
 {
     private final MoveContentParams params;
@@ -153,19 +153,11 @@ final class MoveContentCommand
     }
 
     public static class Builder
-        extends AbstractCreatingOrUpdatingContentCommand.Builder<Builder>
+        extends AbstractContentCommand.Builder<Builder>
     {
         private final MoveContentParams params;
 
         private ContentService contentService;
-
-       /* private PageDescriptorService pageDescriptorService;
-
-        private PartDescriptorService partDescriptorService;
-
-        private LayoutDescriptorService layoutDescriptorService;
-
-        private ContentDataSerializer contentDataSerializer;*/
 
         private MoveContentListener moveContentListener;
 
@@ -179,30 +171,6 @@ final class MoveContentCommand
             this.contentService = contentService;
             return this;
         }
-
-       /* Builder pageDescriptorService( final PageDescriptorService value )
-        {
-            this.pageDescriptorService = value;
-            return this;
-        }
-
-        Builder partDescriptorService( final PartDescriptorService value )
-        {
-            this.partDescriptorService = value;
-            return this;
-        }
-
-        Builder layoutDescriptorService( final LayoutDescriptorService value )
-        {
-            this.layoutDescriptorService = value;
-            return this;
-        }
-
-        Builder contentDataSerializer( final ContentDataSerializer value )
-        {
-            this.contentDataSerializer = value;
-            return this;
-        }*/
 
         public Builder moveListener( final MoveContentListener moveContentListener )
         {

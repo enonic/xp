@@ -6,12 +6,9 @@ public class ImportContentResult
 {
     private final Content content;
 
-    private final boolean preExisting;
-
     private ImportContentResult( Builder builder )
     {
         this.content = builder.content;
-        this.preExisting = builder.preExisting;
     }
 
     public static Builder create()
@@ -24,16 +21,9 @@ public class ImportContentResult
         return content;
     }
 
-    public boolean isPreExisting()
-    {
-        return preExisting;
-    }
-
     public static final class Builder
     {
         private Content content;
-
-        private boolean preExisting;
 
         private Builder()
         {
@@ -42,12 +32,6 @@ public class ImportContentResult
         public Builder content( final Content content )
         {
             this.content = content;
-            return this;
-        }
-
-        public Builder preExisting( final boolean preExisting )
-        {
-            this.preExisting = preExisting;
             return this;
         }
 

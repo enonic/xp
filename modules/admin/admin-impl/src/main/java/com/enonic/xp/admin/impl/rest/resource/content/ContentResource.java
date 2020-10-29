@@ -159,6 +159,7 @@ import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.SyncContentService;
 import com.enonic.xp.content.UndoPendingDeleteContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
@@ -243,6 +244,8 @@ public final class ContentResource
     private TaskService taskService;
 
     private ContentTypeService contentTypeService;
+
+    private SyncContentService syncContentService;
 
     @POST
     @Path("create")
@@ -1471,7 +1474,7 @@ public final class ContentResource
     @Path("restoreInherit")
     public void restoreInherit( final ResetContentInheritJson paramsJson )
     {
-        this.contentService.restoreInherit( paramsJson.toParams() );
+        this.syncContentService.resetInheritance( paramsJson.toParams() );
     }
 
     private UpdateContentParams prepareUpdateContentParams( final Content versionedContent, final ContentVersionId contentVersionId )
@@ -1698,5 +1701,11 @@ public final class ContentResource
     public void setComponentNameResolver( final ComponentNameResolver componentNameResolver )
     {
         this.componentNameResolver = componentNameResolver;
+    }
+
+    @Reference
+    public void setSyncContentService( final SyncContentService syncContentService )
+    {
+        this.syncContentService = syncContentService;
     }
 }

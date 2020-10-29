@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -19,7 +18,6 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
@@ -147,35 +145,6 @@ public class ContentServiceImplTest_update
         assertEquals( "value-updated", storedContent.getData().getString( "testString" ) );
         assertEquals( "value", storedContent.getData().getString( "testString2" ) );
     }
-
-    @Test
-    public void update_content_inherit()
-        throws Exception
-    {
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "This is my content" ).
-            parent( ContentPath.ROOT ).
-            inherit( Set.of( ContentInheritType.CONTENT, ContentInheritType.PARENT, ContentInheritType.NAME, ContentInheritType.SORT ) ).
-            type( ContentTypeName.folder() ).
-            build();
-
-        final Content content = this.contentService.create( createContentParams );
-
-        final UpdateContentParams updateContentParams = new UpdateContentParams();
-        updateContentParams.
-            contentId( content.getId() ).
-            editor( edit -> {
-            } );
-
-        this.contentService.update( updateContentParams );
-
-        final Content storedContent = this.contentService.getById( content.getId() );
-
-        assertTrue( storedContent.getInherit().contains( ContentInheritType.PARENT ) );
-        assertTrue( storedContent.getInherit().contains( ContentInheritType.SORT ) );
-    }
-
 
     @Test
     public void update_incorrect_content_data()

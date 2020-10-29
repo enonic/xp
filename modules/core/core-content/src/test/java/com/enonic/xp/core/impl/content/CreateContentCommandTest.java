@@ -14,7 +14,6 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.core.impl.content.processor.ContentProcessors;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
@@ -65,8 +64,6 @@ public class CreateContentCommandTest
 
     private LayoutDescriptorService layoutDescriptorService;
 
-    private ContentService contentService;
-
     private ContentNodeTranslator translator;
 
     private EventPublisher eventPublisher;
@@ -85,10 +82,8 @@ public class CreateContentCommandTest
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
         this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
-        this.contentService = Mockito.mock( ContentService.class );
 
         this.contentDataSerializer = ContentDataSerializer.create().
-            contentService( contentService ).
             layoutDescriptorService( layoutDescriptorService ).
             pageDescriptorService( pageDescriptorService ).
             partDescriptorService( partDescriptorService ).

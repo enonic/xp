@@ -52,7 +52,6 @@ final class ImportContentCommand
 
         return ImportContentResult.create().
             content( translator.fromNode( result.getNode(), false ) ).
-            preExisting( result.isPreExisting() ).
             build();
     }
 

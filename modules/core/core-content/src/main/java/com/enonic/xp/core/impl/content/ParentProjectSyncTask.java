@@ -3,11 +3,8 @@ package com.enonic.xp.core.impl.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.media.MediaInfoService;
-import com.enonic.xp.project.ParentProjectSynchronizer;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.PrincipalKey;
@@ -15,20 +12,17 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-public class ParentProjectSyncTask
+final class ParentProjectSyncTask
     implements Runnable
 {
     private final ProjectService projectService;
 
-    private final ContentService contentService;
-
-    private final MediaInfoService mediaInfoService;
+    private final ContentSynchronizer contentSynchronizer;
 
     public ParentProjectSyncTask( final Builder builder )
     {
         this.projectService = builder.projectService;
-        this.contentService = builder.contentService;
-        this.mediaInfoService = builder.mediaInfoService;
+        this.contentSynchronizer = builder.contentSynchronizer;
     }
 
     public static Builder create()
@@ -65,14 +59,10 @@ public class ParentProjectSyncTask
 
     private void doSync( final Project sourceProject, final Project targetProject )
     {
-        final ParentProjectSynchronizer parentProjectSynchronizer = ParentProjectSynchronizer.create().
-            targetProject( targetProject ).
-            sourceProject( sourceProject ).
-            contentService( contentService ).
-            mediaInfoService( mediaInfoService ).
-            build();
-
-        parentProjectSynchronizer.syncRoot();
+        contentSynchronizer.sync( ContentSyncParams.create().
+            sourceProject( sourceProject.getName() ).
+            targetProject( targetProject.getName() ).
+            build() );
     }
 
     private Context createAdminContext()
@@ -98,9 +88,7 @@ public class ParentProjectSyncTask
     {
         private ProjectService projectService;
 
-        private ContentService contentService;
-
-        private MediaInfoService mediaInfoService;
+        private ContentSynchronizer contentSynchronizer;
 
         private Builder()
         {
@@ -112,22 +100,16 @@ public class ParentProjectSyncTask
             return this;
         }
 
-        public Builder contentService( final ContentService contentService )
+        public Builder contentSynchronizer( final ContentSynchronizer contentSynchronizer )
         {
-            this.contentService = contentService;
-            return this;
-        }
-
-        public Builder mediaInfoService( final MediaInfoService mediaInfoService )
-        {
-            this.mediaInfoService = mediaInfoService;
+            this.contentSynchronizer = contentSynchronizer;
             return this;
         }
 
         private void validate()
         {
             Preconditions.checkNotNull( this.projectService, "projectService must be set." );
-            Preconditions.checkNotNull( this.contentService, "contentService must be set." );
+            Preconditions.checkNotNull( this.contentSynchronizer, "contentSynchronizer must be set." );
         }
 
         public ParentProjectSyncTask build()

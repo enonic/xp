@@ -1,4 +1,4 @@
-package com.enonic.xp.project;
+package com.enonic.xp.core.impl.content;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -25,10 +25,6 @@ abstract class NameValueResolver
         String baseName;
 
         private String separator;
-
-        private NewName()
-        {
-        }
 
         private static String normalizeName( final String name )
         {

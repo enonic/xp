@@ -76,7 +76,6 @@ import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.ReprocessContentParams;
-import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
@@ -126,7 +125,7 @@ import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
-@Component(immediate = true)
+@Component
 public class ContentServiceImpl
     implements ContentService
 {
@@ -166,13 +165,10 @@ public class ContentServiceImpl
 
     private ContentAuditLogSupport contentAuditLogSupport;
 
-    private ProjectService projectService;
-
     @Activate
     public void initialize()
     {
         this.contentDataSerializer = ContentDataSerializer.create().
-            contentService( this ).
             layoutDescriptorService( layoutDescriptorService ).
             pageDescriptorService( pageDescriptorService ).
             partDescriptorService( partDescriptorService ).
@@ -253,7 +249,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-        if ( content instanceof Site && params.createSiteTemplateFolder() )
+        if ( content instanceof Site )
         {
             this.create( CreateContentParams.create().
                 owner( content.getOwner() ).
@@ -717,8 +713,6 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentService( this ).
-            xDataService( this.xDataService ).
-            siteService( this.siteService ).
             moveListener( params.getMoveContentListener() ).
             build().
             execute();
@@ -1206,21 +1200,6 @@ public class ContentServiceImpl
     }
 
     @Override
-    public void restoreInherit( final ResetContentInheritParams params )
-    {
-        ResetContentInheritCommand.create( params ).
-            contentService( this ).
-            projectService( projectService ).
-            mediaInfoService( mediaInfoService ).
-            nodeService( nodeService ).
-            contentTypeService( contentTypeService ).
-            eventPublisher( eventPublisher ).
-            translator( translator ).
-            build().
-            execute();
-    }
-
-    @Override
     @Deprecated
     public InputStream getBinaryInputStream( final ContentId contentId, final BinaryReference binaryReference )
     {
@@ -1342,9 +1321,8 @@ public class ContentServiceImpl
     @Reference
     public void setProjectService( final ProjectService projectService )
     {
-        //Many starters depend on ContentService avaialbe only when default cms repo is fully initialized.
+        //Many starters depend on ContentService available only when default cms repo is fully initialized.
         // Starting from 7.3 Initialization happens in ProjectService, so we need a dependency.
-        this.projectService = projectService;
     }
 
 }

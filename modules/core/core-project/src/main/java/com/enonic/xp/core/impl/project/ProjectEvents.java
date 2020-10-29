@@ -7,7 +7,7 @@ public class ProjectEvents
 {
     public static final String PROJECT_NAME_KEY = "name";
 
-    public final static String CREATED_EVENT_TYPE = "project.created";
+    public static final String CREATED_EVENT_TYPE = "project.created";
 
     public static Event created( final ProjectName projectName )
     {

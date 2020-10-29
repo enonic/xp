@@ -1,17 +1,13 @@
 package com.enonic.xp.content;
 
-import java.util.Collection;
 import java.util.Locale;
-import java.util.Set;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.page.Page;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -20,8 +16,6 @@ import com.enonic.xp.security.acl.AccessControlList;
 @PublicApi
 public final class CreateContentParams
 {
-    private final ContentId contentId;
-
     private final PropertyTree data;
 
     private final ExtraDatas extraDatas;
@@ -48,8 +42,6 @@ public final class CreateContentParams
 
     private final Locale language;
 
-    private final boolean useParentLanguage;
-
     private final boolean refresh;
 
     private final ContentPublishInfo contentPublishInfo;
@@ -58,20 +50,13 @@ public final class CreateContentParams
 
     private final WorkflowInfo workflowInfo;
 
-    private final boolean createSiteTemplateFolder;
-
-    private final Set<ContentInheritType> inherit;
-
     private final ProjectName originProject;
-
-    private final Page page;
 
     private final Long manualOrderValue;
 
     private CreateContentParams( Builder builder )
     {
         this.data = builder.data;
-        this.contentId = builder.contentId;
         this.extraDatas = builder.extraDatas;
         this.type = builder.type;
         this.owner = builder.owner;
@@ -84,15 +69,11 @@ public final class CreateContentParams
         this.createAttachments = builder.createAttachments;
         this.childOrder = builder.childOrder;
         this.language = builder.language;
-        this.useParentLanguage = builder.useParentLanguage;
         this.refresh = builder.refresh;
         this.contentPublishInfo = builder.contentPublishInfo;
         this.processedIds = builder.processedIds.build();
         this.workflowInfo = builder.workflowInfo;
-        this.createSiteTemplateFolder = builder.createSiteTemplateFolder;
-        this.inherit = builder.inherit.build();
         this.originProject = builder.originProject;
-        this.page = builder.page;
         this.manualOrderValue = builder.manualOrderValue;
     }
 
@@ -104,11 +85,6 @@ public final class CreateContentParams
     public static Builder create( final CreateContentParams source )
     {
         return new Builder( source );
-    }
-
-    public ContentId getContentId()
-    {
-        return contentId;
     }
 
     public PropertyTree getData()
@@ -176,11 +152,6 @@ public final class CreateContentParams
         return language;
     }
 
-    public boolean useParentLanguage()
-    {
-        return useParentLanguage;
-    }
-
     public ContentPublishInfo getContentPublishInfo()
     {
         return contentPublishInfo;
@@ -201,24 +172,9 @@ public final class CreateContentParams
         return workflowInfo;
     }
 
-    public boolean createSiteTemplateFolder()
-    {
-        return createSiteTemplateFolder;
-    }
-
-    public Set<ContentInheritType> getInherit()
-    {
-        return inherit;
-    }
-
     public ProjectName getOriginProject()
     {
         return originProject;
-    }
-
-    public Page getPage()
-    {
-        return page;
     }
 
     public Long getManualOrderValue()
@@ -228,8 +184,6 @@ public final class CreateContentParams
 
     public static final class Builder
     {
-        private ContentId contentId;
-
         private PropertyTree data;
 
         private ExtraDatas extraDatas;
@@ -256,8 +210,6 @@ public final class CreateContentParams
 
         private Locale language;
 
-        private boolean useParentLanguage = true;
-
         private ContentPublishInfo contentPublishInfo;
 
         private boolean refresh = true;
@@ -266,13 +218,7 @@ public final class CreateContentParams
 
         private WorkflowInfo workflowInfo;
 
-        private boolean createSiteTemplateFolder = true;
-
-        private ImmutableSet.Builder<ContentInheritType> inherit = ImmutableSet.builder();
-
         private ProjectName originProject;
-
-        private Page page;
 
         private Long manualOrderValue;
 
@@ -282,7 +228,6 @@ public final class CreateContentParams
 
         private Builder( final CreateContentParams source )
         {
-            this.contentId = source.contentId;
             this.data = source.data;
             this.extraDatas = source.extraDatas;
             this.type = source.type;
@@ -296,20 +241,10 @@ public final class CreateContentParams
             this.createAttachments = source.createAttachments;
             this.childOrder = source.childOrder;
             this.language = source.language;
-            this.useParentLanguage = source.useParentLanguage;
             this.contentPublishInfo = source.contentPublishInfo;
             this.workflowInfo = source.workflowInfo;
-            this.createSiteTemplateFolder = source.createSiteTemplateFolder;
-            this.inherit.addAll( source.inherit );
             this.originProject = source.originProject;
-            this.page = source.page;
             this.manualOrderValue = source.manualOrderValue;
-        }
-
-        public Builder contentId( final ContentId contentId )
-        {
-            this.contentId = contentId;
-            return this;
         }
 
         public Builder contentData( final PropertyTree data )
@@ -397,12 +332,6 @@ public final class CreateContentParams
             return this;
         }
 
-        public Builder useParentLanguage( final boolean useParentLanguage )
-        {
-            this.useParentLanguage = useParentLanguage;
-            return this;
-        }
-
         public Builder refresh( final boolean refresh )
         {
             this.refresh = refresh;
@@ -427,27 +356,9 @@ public final class CreateContentParams
             return this;
         }
 
-        public Builder createSiteTemplateFolder( final boolean createSiteTemplateFolder )
-        {
-            this.createSiteTemplateFolder = createSiteTemplateFolder;
-            return this;
-        }
-
-        public Builder inherit( final Collection<ContentInheritType> inherit )
-        {
-            this.inherit.addAll( inherit );
-            return this;
-        }
-
         public Builder originProject( final ProjectName originProject )
         {
             this.originProject = originProject;
-            return this;
-        }
-
-        public Builder page( final Page page )
-        {
-            this.page = page;
             return this;
         }
 

@@ -56,10 +56,8 @@ public final class CreateProjectHandler
             build().
             execute();
 
-        final Project fetchedProject = this.projectService.get( project.getName() );
-
         return ProjectMapper.create().
-            setProject( fetchedProject ).
+            setProject( project ).
             setLanguage( modifiedLanguage ).
             setProjectPermissions( modifiedPermissions ).
             setIsPublic( modifiedIsPublic ).

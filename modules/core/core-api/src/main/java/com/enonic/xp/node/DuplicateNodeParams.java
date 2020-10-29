@@ -42,7 +42,6 @@ public class DuplicateNodeParams
         return processor;
     }
 
-    @Deprecated
     public NodeDataProcessor getDataProcessor()
     {
         return dataProcessor;
@@ -87,7 +86,6 @@ public class DuplicateNodeParams
             return this;
         }
 
-        @Deprecated
         public Builder dataProcessor( final NodeDataProcessor dataProcessor )
         {
             this.dataProcessor = dataProcessor;

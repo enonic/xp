@@ -326,7 +326,7 @@ final class CreateContentCommand
     private Locale getDefaultLanguage( final CreateContentParams createContentParams )
     {
         ContentPath parentPath = createContentParams.getParent();
-        if ( createContentParams.getLanguage() == null && createContentParams.useParentLanguage() )
+        if ( createContentParams.getLanguage() == null )
         {
             final Node parent = nodeService.getByPath( ContentNodeHelper.translateContentParentToNodeParentPath( parentPath ) );
 

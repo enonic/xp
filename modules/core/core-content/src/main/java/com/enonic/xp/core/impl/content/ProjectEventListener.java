@@ -1,23 +1,22 @@
-package com.enonic.xp.core.impl.project;
+package com.enonic.xp.core.impl.content;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.concurrent.SimpleExecutor;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
-import com.enonic.xp.media.MediaInfoService;
-import com.enonic.xp.project.ParentProjectSynchronizer;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
@@ -27,48 +26,53 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component(immediate = true)
-public class ProjectEventListener
+public final class ProjectEventListener
     implements EventListener
 {
     private static final Logger LOG = LoggerFactory.getLogger( ProjectEventListener.class );
 
     private ProjectService projectService;
 
-    private ContentService contentService;
-
-    private MediaInfoService mediaInfoService;
-
     private SimpleExecutor simpleExecutor;
 
+    private ContentSynchronizer contentSynchronizer;
+
     @Activate
-    public void activate()
+    public ProjectEventListener( @Reference final ProjectService projectService, @Reference final ContentSynchronizer contentSynchronizer )
     {
+        this.projectService = projectService;
+        this.contentSynchronizer = contentSynchronizer;
+
         this.simpleExecutor = new SimpleExecutor( Executors::newSingleThreadExecutor, "project-node-sync-thread",
                                                   e -> LOG.error( "Project node sync failed", e ) );
+    }
+
+    @Deactivate
+    public void deactivate()
+    {
+        this.simpleExecutor.shutdownAndAwaitTermination( Duration.ZERO, neverCommenced -> {
+        } );
     }
 
     @Override
     public void onEvent( final Event event )
     {
-        if ( event != null )
+        if ( !event.isLocalOrigin() )
         {
-            if ( !event.isLocalOrigin() )
-            {
-                return;
-            }
+            return;
+        }
 
-            if ( this.isAllowedProjectEvent( event.getType() ) )
-            {
-                this.handleProjectEvent( event );
+        if ( this.isAllowedProjectEvent( event.getType() ) )
+        {
+            this.handleProjectEvent( event );
 
-            }
         }
     }
 
     private void handleProjectEvent( final Event event )
     {
         final Map<String, Object> nodes = event.getData();
-        final String projectName = (String) nodes.get( ProjectEvents.PROJECT_NAME_KEY );
+        final String projectName = (String) nodes.get( "name" );
 
         this.simpleExecutor.execute( () -> createAdminContext().runWith( () -> handleProjectCreated( ProjectName.from( projectName ) ) ) );
 
@@ -84,20 +88,17 @@ public class ProjectEventListener
 
             if ( parentProject != null )
             {
-                ParentProjectSynchronizer.create().
-                    contentService( contentService ).
-                    mediaInfoService( mediaInfoService ).
-                    targetProject( project ).
-                    sourceProject( parentProject ).
-                    build().
-                    syncRoot();
+                contentSynchronizer.sync( ContentSyncParams.create().
+                    sourceProject( parentProject.getName() ).
+                    targetProject( project.getName() ).
+                    build() );
             }
         }
     }
 
     private boolean isAllowedProjectEvent( final String type )
     {
-        return ProjectEvents.CREATED_EVENT_TYPE.equals( type );
+        return "project.created".equals( type );
     }
 
     private Context createAdminContext()
@@ -117,23 +118,5 @@ public class ProjectEventListener
                 login( PrincipalKey.ofSuperUser().getId() ).
                 build() ).
             build();
-    }
-
-    @Reference
-    public void setProjectService( final ProjectService projectService )
-    {
-        this.projectService = projectService;
-    }
-
-    @Reference
-    public void setMediaInfoService( final MediaInfoService mediaInfoService )
-    {
-        this.mediaInfoService = mediaInfoService;
-    }
-
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
     }
 }

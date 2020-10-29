@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.page.DescriptorKey;
@@ -48,7 +47,6 @@ final class PageDataSerializer
         this.pageDescriptorService = builder.pageDescriptorService;
 
         this.componentDataSerializerProvider = ComponentDataSerializerProvider.create().
-            contentService( builder.contentService ).
             layoutDescriptorService( builder.layoutDescriptorService ).
             partDescriptorService( builder.partDescriptorService ).
             build();
@@ -242,8 +240,6 @@ final class PageDataSerializer
 
         private LayoutDescriptorService layoutDescriptorService;
 
-        private ContentService contentService;
-
         public Builder pageDescriptorService( final PageDescriptorService value )
         {
             this.pageDescriptorService = value;
@@ -262,18 +258,11 @@ final class PageDataSerializer
             return this;
         }
 
-        public Builder contentService( final ContentService value )
-        {
-            this.contentService = value;
-            return this;
-        }
-
         void validate()
         {
             Preconditions.checkNotNull( pageDescriptorService );
             Preconditions.checkNotNull( partDescriptorService );
             Preconditions.checkNotNull( layoutDescriptorService );
-            Preconditions.checkNotNull( contentService );
         }
 
         public PageDataSerializer build()
