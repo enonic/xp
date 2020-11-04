@@ -6,6 +6,7 @@ import java.time.Instant;
 import javax.ws.rs.core.MediaType;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.osgi.framework.Version;
 
@@ -27,6 +28,17 @@ public class ApplicationResourceTest
     extends ServerRestTestSupport
 {
     private ApplicationService applicationService;
+
+    @Override
+    protected ApplicationResource getResourceInstance()
+    {
+        applicationService = Mockito.mock( ApplicationService.class );
+
+        final ApplicationResource resource = new ApplicationResource();
+        resource.setApplicationService( applicationService );
+
+        return resource;
+    }
 
     @Test
     public void install()
@@ -90,21 +102,10 @@ public class ApplicationResourceTest
 
         MultipartForm multipartForm = Mockito.mock( MultipartForm.class );
 
-        final RuntimeException ex = assertThrows(RuntimeException.class, () -> {
+        final RuntimeException ex = assertThrows( RuntimeException.class, () -> {
             resource.install( multipartForm );
-        });
-        assertEquals( "Missing file item", ex.getMessage());
-    }
-
-    @Override
-    protected ApplicationResource getResourceInstance()
-    {
-        applicationService = Mockito.mock( ApplicationService.class );
-
-        final ApplicationResource resource = new ApplicationResource();
-        resource.setApplicationService( applicationService );
-
-        return resource;
+        } );
+        assertEquals( "Missing file item", ex.getMessage() );
     }
 
     @Test
@@ -147,7 +148,7 @@ public class ApplicationResourceTest
             new RuntimeException() );
 
         String jsonString = request().path( "app/installUrl" ).
-            entity( "{\"URL\":\""+application.getUrl()+"\"}", MediaType.APPLICATION_JSON_TYPE ).
+            entity( "{\"URL\":\"" + application.getUrl() + "\"}", MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
         assertEquals( "{\"applicationInstalledJson\":null,\"failure\":\"Failed to process application from http://enonic.net\"}",
@@ -158,14 +159,58 @@ public class ApplicationResourceTest
     public void install_invalid_url()
         throws Exception
     {
-        Application application = createApplication("invalid url");
+        Application application = createApplication( "invalid url" );
 
         String jsonString = request().path( "app/installUrl" ).
-            entity( "{\"URL\":\""+application.getUrl()+"\"}", MediaType.APPLICATION_JSON_TYPE ).
+            entity( "{\"URL\":\"" + application.getUrl() + "\"}", MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
-        assertEquals( "{\"applicationInstalledJson\":null,\"failure\":\"Failed to upload application from invalid url\"}",
-                      jsonString );
+        assertEquals( "{\"applicationInstalledJson\":null,\"failure\":\"Failed to upload application from invalid url\"}", jsonString );
+    }
+
+    @Test
+    public void test_start_application()
+        throws Exception
+    {
+        final Application application = createApplication();
+
+        request().path( "app/start" ).
+            entity( "{\"key\": \"" + application.getKey() + "\" }", MediaType.APPLICATION_JSON_TYPE ).
+            post();
+
+        final InOrder inOrder = Mockito.inOrder( applicationService );
+        inOrder.verify( this.applicationService ).startApplication( application.getKey(), true );
+        inOrder.verifyNoMoreInteractions();
+    }
+
+    @Test
+    public void test_stop_application()
+        throws Exception
+    {
+        final Application application = createApplication();
+
+        request().path( "app/stop" ).
+            entity( "{\"key\": \"" + application.getKey() + "\" }", MediaType.APPLICATION_JSON_TYPE ).
+            post();
+
+        final InOrder inOrder = Mockito.inOrder( applicationService );
+        inOrder.verify( this.applicationService ).stopApplication( application.getKey(), true );
+        inOrder.verifyNoMoreInteractions();
+    }
+
+    @Test
+    public void test_uninstall_application()
+        throws Exception
+    {
+        final Application application = createApplication();
+
+        request().path( "app/uninstall" ).
+            entity( "{\"key\": \"" + application.getKey() + "\" }", MediaType.APPLICATION_JSON_TYPE ).
+            post();
+
+        final InOrder inOrder = Mockito.inOrder( applicationService );
+        inOrder.verify( this.applicationService ).uninstallApplication( application.getKey(), true );
+        inOrder.verifyNoMoreInteractions();
     }
 
     private Application createApplication()

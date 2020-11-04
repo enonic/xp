@@ -19,10 +19,12 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallParams;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallResultJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstalledJson;
+import com.enonic.xp.impl.server.rest.model.ApplicationParams;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.multipart.MultipartForm;
@@ -45,7 +47,6 @@ public final class ApplicationResource
     @Path("install")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public ApplicationInstallResultJson install( final MultipartForm form )
-        throws Exception
     {
         final MultipartItem appFile = form.get( "file" );
 
@@ -63,7 +64,6 @@ public final class ApplicationResource
     @Path("installUrl")
     @Consumes(MediaType.APPLICATION_JSON)
     public ApplicationInstallResultJson installUrl( final ApplicationInstallParams params )
-        throws Exception
     {
         final String urlString = params.getURL();
         final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
@@ -74,9 +74,7 @@ public final class ApplicationResource
 
             if ( ALLOWED_PROTOCOLS.contains( url.getProtocol() ) )
             {
-                ApplicationInstallResultJson json = installApplication( url );
-
-                return json;
+                return installApplication( url );
             }
             else
             {
@@ -93,6 +91,30 @@ public final class ApplicationResource
             result.setFailure( failure );
             return result;
         }
+    }
+
+    @POST
+    @Path("uninstall")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void uninstall( final ApplicationParams params )
+    {
+        this.applicationService.uninstallApplication( ApplicationKey.from( params.getKey() ), true );
+    }
+
+    @POST
+    @Path("start")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void start( final ApplicationParams params )
+    {
+        this.applicationService.startApplication( ApplicationKey.from( params.getKey() ), true );
+    }
+
+    @POST
+    @Path("stop")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void stop( final ApplicationParams params )
+    {
+        this.applicationService.stopApplication( ApplicationKey.from( params.getKey() ), true );
     }
 
     private ApplicationInstallResultJson installApplication( final URL url )
