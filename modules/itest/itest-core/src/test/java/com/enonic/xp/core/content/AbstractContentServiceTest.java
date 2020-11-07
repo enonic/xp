@@ -172,6 +172,12 @@ public class AbstractContentServiceTest
 
     protected AuditLogService auditLogService;
 
+    protected MediaInfoServiceImpl mediaInfoService;
+
+    protected RepositoryServiceImpl repositoryService;
+
+    protected IndexServiceImpl indexService;
+
     private ExecutorService executorService;
 
     @BeforeEach
@@ -210,7 +216,7 @@ public class AbstractContentServiceTest
         IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl();
         indexServiceInternal.setClient( client );
 
-        IndexServiceImpl indexService = new IndexServiceImpl();
+        indexService = new IndexServiceImpl();
         indexService.setIndexServiceInternal( indexServiceInternal );
 
         NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl();
@@ -244,7 +250,7 @@ public class AbstractContentServiceTest
         repositoryEntryService.setEventPublisher( eventPublisher );
         repositoryEntryService.setBinaryService( binaryService );
 
-        final RepositoryServiceImpl repositoryService =
+        repositoryService =
             new RepositoryServiceImpl( repositoryEntryService, elasticsearchIndexService, nodeRepositoryService, storageService,
                                        searchService );
         repositoryService.initialize();
@@ -274,7 +280,7 @@ public class AbstractContentServiceTest
         Mockito.when( extractor.extract( Mockito.isA( ByteSource.class ) ) ).
             thenReturn( extractedData );
 
-        final MediaInfoServiceImpl mediaInfoService = new MediaInfoServiceImpl();
+        mediaInfoService = new MediaInfoServiceImpl();
         mediaInfoService.setBinaryExtractor( extractor );
 
         final ResourceService resourceService = Mockito.mock( ResourceService.class );

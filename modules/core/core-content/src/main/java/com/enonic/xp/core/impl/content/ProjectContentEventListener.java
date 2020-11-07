@@ -74,21 +74,14 @@ public final class ProjectContentEventListener
 
     private void handleContentEvent( final Event event )
     {
-        try
-        {
-            final List<Map<String, String>> nodes = (List<Map<String, String>>) event.getData().get( "nodes" );
+        final List<Map<String, String>> nodes = (List<Map<String, String>>) event.getData().get( "nodes" );
 
-            nodes.forEach( nodeMap -> {
-                if ( nodeMap.get( "path" ).startsWith( "/content/" ) )
-                {
-                    this.simpleExecutor.execute( () -> handleContentEvent( nodeMap, event.getType() ) );
-                }
-            } );
-        }
-        catch ( Exception e )
-        {
-            LOG.error( "Not able to handle node-event", e );
-        }
+        nodes.forEach( nodeMap -> {
+            if ( nodeMap.get( "path" ).startsWith( "/content/" ) )
+            {
+                this.simpleExecutor.execute( () -> handleContentEvent( nodeMap, event.getType() ) );
+            }
+        } );
     }
 
     private boolean isAllowedContentEvent( final String type )
