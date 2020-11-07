@@ -4,8 +4,10 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.RenameContentParams;
 
 final class MovedEventSyncCommand
     extends AbstractContentEventSyncCommand
@@ -38,13 +40,21 @@ final class MovedEventSyncCommand
                 {
                     if ( !targetParentPath.equals( params.getTargetContent().getParentPath() ) )
                     {
-                        final MoveContentParams moveContentParams = MoveContentParams.create().
+                        final ContentPath newPath = buildNewPath( targetParentPath, params.getTargetContent().getName() );
+
+                        if ( !params.getTargetContent().getPath().equals( newPath ) )
+                        {
+                            contentService.rename( RenameContentParams.create().
+                                contentId( params.getTargetContent().getId() ).
+                                newName( ContentName.from( newPath.getName() ) ).
+                                build() );
+                        }
+
+                        contentService.move( MoveContentParams.create().
                             contentId( params.getTargetContent().getId() ).
                             parentContentPath( targetParentPath ).
                             stopInherit( false ).
-                            build();
-
-                        contentService.move( moveContentParams );
+                            build() );
 
                     }
                 }
