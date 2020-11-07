@@ -87,8 +87,8 @@ public final class ProjectContentEventListener
     private boolean isAllowedContentEvent( final String type )
     {
         return "node.created".equals( type ) || "node.updated".equals( type ) || "node.pushed".equals( type ) ||
-            "node.renamed".equals( type ) || "node.moved".equals( type ) || "node.deleted".equals( type ) || "node.sorted".equals( type ) ||
-            "node.manualOrderUpdated".equals( type );
+            "node.duplicated".equals( type ) || "node.renamed".equals( type ) || "node.moved".equals( type ) ||
+            "node.deleted".equals( type ) || "node.sorted".equals( type ) || "node.manualOrderUpdated".equals( type );
     }
 
     private void handleContentEvent( final Map<String, String> nodeMap, final String type )
@@ -116,6 +116,7 @@ public final class ProjectContentEventListener
                     switch ( type )
                     {
                         case "node.created":
+                        case "node.duplicated":
                             paramsBuilder.addSyncEventType( ContentSyncEventType.CREATED );
                             break;
                         case "node.updated":
