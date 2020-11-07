@@ -283,6 +283,29 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
+    public void testMovedToExistedPath()
+        throws InterruptedException
+    {
+        final Content sourceContent1 = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceContent2 = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content2" ) );
+
+        handleEvents();
+
+        targetContext.callWith( () -> createContent( sourceContent2.getPath(), "content" ) );
+
+        sourceContext.runWith( () -> contentService.move( MoveContentParams.create().
+            contentId( sourceContent1.getId() ).
+            parentContentPath( sourceContent2.getPath() ).
+            build() ) );
+
+        handleEvents();
+
+        final Content targetMovedContent = targetContext.callWith( () -> contentService.getById( sourceContent1.getId() ) );
+
+        assertEquals( "/content2/content-1", targetMovedContent.getPath().toString() );
+    }
+
+    @Test
     public void testSorted()
         throws InterruptedException
     {
