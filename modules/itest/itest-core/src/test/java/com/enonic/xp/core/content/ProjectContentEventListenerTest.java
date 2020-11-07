@@ -17,11 +17,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.FindContentByParentParams;
@@ -110,6 +112,28 @@ public class ProjectContentEventListenerTest
         targetContext.runWith( () -> {
             final Content targetContent = contentService.getById( sourceContent.getId() );
             assertEquals( "localName-1", targetContent.getName().toString() );
+        } );
+    }
+
+    @Test
+    public void testSyncDuplicateWithExistedLocalName()
+        throws InterruptedException
+    {
+        targetContext.callWith( () -> createContent( ContentPath.ROOT, "localName-copy" ) );
+        targetContext.callWith( () -> createContent( ContentPath.ROOT, "localName-copy-1" ) );
+
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "localName" ) );
+
+        handleEvents();
+
+        final ContentId duplicatedContentId = sourceContext.callWith( () -> contentService.duplicate(
+            DuplicateContentParams.create().contentId( sourceContent.getId() ).build() ).getDuplicatedContents().first() );
+
+        handleEvents();
+
+        targetContext.runWith( () -> {
+            final Content duplicatedTargetContent = contentService.getById( duplicatedContentId );
+            assertEquals( "localName-copy-1-1", duplicatedTargetContent.getName().toString() );
         } );
     }
 
