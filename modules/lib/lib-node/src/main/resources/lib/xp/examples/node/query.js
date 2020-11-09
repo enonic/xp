@@ -74,7 +74,7 @@ var result = repo.query({
     highlight: {
         encoder: 'html',
         fragmenter: 'simple',
-        fragmenterSize: 5,
+        fragmenterSize: parseInt("5"),
         noMatchSize: 5,
         numberOfFragments: 5,
         order: 'score',
@@ -86,7 +86,7 @@ var result = repo.query({
             displayName: {
                 fragmenter: 'span',
                 fragmenterSize: 6,
-                noMatchSize: 6,
+                noMatchSize: parseInt("6"),
                 numberOfFragments: 6,
                 order: 'none',
                 preTag: '<c>',

@@ -2,6 +2,7 @@ package com.enonic.xp.lib.content;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 import com.enonic.xp.query.highlight.HighlightPropertySettings;
 import com.enonic.xp.query.highlight.HighlightQuery;
@@ -64,9 +65,15 @@ import com.enonic.xp.query.highlight.constants.TagsSchema;
                                                                     final Map<String, Object> propertyMap )
     {
         return builder.fragmenter( Fragmenter.from( (String) propertyMap.get( "fragmenter" ) ) ).
-            fragmentSize( (Integer) propertyMap.get( "fragmentSize" ) ).
-            noMatchSize( (Integer) propertyMap.get( "noMatchSize" ) ).
-            numOfFragments( (Integer) propertyMap.get( "numberOfFragments" ) ).
+            fragmentSize( Optional.ofNullable( (Number) propertyMap.get( "fragmentSize" ) ).
+                map( Number::intValue ).
+                orElse( null ) ).
+            noMatchSize( Optional.ofNullable( (Number) propertyMap.get( "noMatchSize" ) ).
+                map( Number::intValue ).
+                orElse( null ) ).
+            numOfFragments( Optional.ofNullable( (Number) propertyMap.get( "numberOfFragments" ) ).
+                map( Number::intValue ).
+                orElse( null ) ).
             order( Order.from( (String) propertyMap.get( "order" ) ) ).
             addPreTags(
                 propertyMap.get( "preTag" ) == null ? Collections.emptyList() : Collections.singletonList( propertyMap.get( "preTag" ) ) ).

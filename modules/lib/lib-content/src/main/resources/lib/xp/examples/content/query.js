@@ -258,6 +258,8 @@ var expected = {
         }
     },
     'highlight': {
+        'fragmenterSize': 5,
+        'noMatchSize': parseInt("5"),
         '123': {
             'property1': [
                 'fragment1_2',
