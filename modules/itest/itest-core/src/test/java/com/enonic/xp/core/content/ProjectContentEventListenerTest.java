@@ -134,6 +134,8 @@ public class ProjectContentEventListenerTest
         targetContext.runWith( () -> {
             final Content duplicatedTargetContent = contentService.getById( duplicatedContentId );
             assertEquals( "localName-copy-1-1", duplicatedTargetContent.getName().toString() );
+            assertEquals( 3, duplicatedTargetContent.getInherit().size() );
+            assertFalse( duplicatedTargetContent.getInherit().contains( ContentInheritType.NAME ) );
         } );
     }
 

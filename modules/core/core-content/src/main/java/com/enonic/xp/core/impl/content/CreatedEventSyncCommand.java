@@ -45,8 +45,7 @@ final class CreatedEventSyncCommand
 
                         if ( params.getSourceContent().getParentPath().isRoot() )
                         {
-                            contentService.importContent(
-                                createImportParams( params, buildNewPath( ContentPath.ROOT, params.getSourceContent().getName() ), null ) );
+                            contentService.importContent( createImportParams( params, ContentPath.ROOT, null ) );
                             return;
                         }
 
@@ -54,9 +53,10 @@ final class CreatedEventSyncCommand
                         {
                             final Content targetParent = contentService.getById( parentId );
 
-                            contentService.importContent(
-                                createImportParams( params, buildNewPath( targetParent.getPath(), params.getSourceContent().getName() ),
-                                                    targetParent.getChildOrder().isManualOrder() ? InsertManualStrategy.MANUAL : null ) );
+                            contentService.importContent( createImportParams( params, targetParent.getPath(),
+                                                                              targetParent.getChildOrder().isManualOrder()
+                                                                                  ? InsertManualStrategy.MANUAL
+                                                                                  : null ) );
                         }
                     } );
                 }
@@ -69,7 +69,7 @@ final class CreatedEventSyncCommand
         }
     }
 
-    private ImportContentParams createImportParams( final ContentEventSyncCommandParams params, final ContentPath targetPath,
+    private ImportContentParams createImportParams( final ContentEventSyncCommandParams params, final ContentPath parentPath,
                                                     final InsertManualStrategy insertManualStrategy )
     {
         final BinaryAttachments.Builder builder = BinaryAttachments.create();
@@ -81,7 +81,12 @@ final class CreatedEventSyncCommand
                 builder.add( new BinaryAttachment( attachment.getBinaryReference(), binary ) );
             } );
 
-        final EnumSet<ContentInheritType> inheritTypes = EnumSet.allOf( ContentInheritType.class );
+        final ContentPath targetPath = buildNewPath( parentPath, params.getSourceContent().getName() );
+
+        final EnumSet<ContentInheritType> inheritTypes = params.getSourceContent().getName().toString().
+            equals( targetPath.getName() )
+            ? EnumSet.allOf( ContentInheritType.class )
+            : EnumSet.complementOf( EnumSet.of( ContentInheritType.NAME ) );
 
         return ImportContentParams.create().
             importContent( params.getSourceContent() ).
