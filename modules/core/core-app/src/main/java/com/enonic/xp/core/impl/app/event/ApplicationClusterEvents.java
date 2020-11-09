@@ -34,6 +34,7 @@ public class ApplicationClusterEvents
             distributed( true ).
             value( EVENT_TYPE_KEY, INSTALLED ).
             value( NODE_ID_PARAM, applicationNode.id() ).
+            value( APPLICATION_KEY_PARAM, applicationNode.name() ).
             build();
     }
 
