@@ -16,9 +16,9 @@ import com.enonic.xp.query.parser.QueryParser;
 
 public class ContentQueryJsonToContentQueryConverter
 {
-    final private ContentQueryJson contentQueryJson;
+    private final ContentQueryJson contentQueryJson;
 
-    final private ContentService contentService;
+    private final ContentService contentService;
 
     private ContentQueryJsonToContentQueryConverter( final Builder builder )
     {

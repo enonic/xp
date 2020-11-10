@@ -24,7 +24,7 @@ public abstract class AbstractRunnableTask
         return new TaskResultJson( taskId );
     }
 
-    public static abstract class Builder<T extends Builder>
+    public abstract static class Builder<T extends Builder>
     {
 
         private String description;

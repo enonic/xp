@@ -27,7 +27,7 @@ public abstract class ComponentDescriptor
         super( builder.key );
 
         Preconditions.checkNotNull( builder.config, "config cannot be null" );
-        this.displayName = builder.displayName == null || builder.displayName.trim().isEmpty() ? builder.name : builder.displayName;
+        this.displayName = builder.displayName == null || builder.displayName.isBlank() ? builder.name : builder.displayName;
         this.displayNameI18nKey = builder.displayNameI18nKey;
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;

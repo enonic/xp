@@ -26,7 +26,7 @@ public final class ContentTypeHandler
 
     public ContentTypeMapper getContentType()
     {
-        if ( name == null || name.trim().isEmpty() )
+        if ( name == null || name.isBlank() )
         {
             return null;
         }

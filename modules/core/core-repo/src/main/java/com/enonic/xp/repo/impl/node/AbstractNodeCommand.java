@@ -84,7 +84,7 @@ abstract class AbstractNodeCommand
         }
     }
 
-    public static abstract class Builder<B extends Builder>
+    public abstract static class Builder<B extends Builder>
     {
         IndexServiceInternal indexServiceInternal;
 

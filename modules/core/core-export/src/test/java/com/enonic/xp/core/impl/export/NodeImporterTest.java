@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import java.util.Objects;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
@@ -377,7 +376,6 @@ public class NodeImporterTest
         assertNotNull( attachedBinary.getBlobKey() );
     }
 
-    @Disabled
     @Test
     public void import_special_characters()
         throws Exception

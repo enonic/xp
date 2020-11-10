@@ -81,7 +81,7 @@ public abstract class AbstractNodeHandler
 
     public abstract Object execute();
 
-    public static abstract class Builder<B extends Builder>
+    public abstract static class Builder<B extends Builder>
     {
         private NodeService nodeService;
 

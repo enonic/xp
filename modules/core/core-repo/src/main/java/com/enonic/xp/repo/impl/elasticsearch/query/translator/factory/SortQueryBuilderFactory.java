@@ -17,12 +17,12 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFiel
 public class SortQueryBuilderFactory
     extends AbstractBuilderFactory
 {
+    private static final boolean IGNORE_UNMAPPED = true;
+
     public SortQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
     {
         super( fieldNameResolver );
     }
-
-    private static final boolean IGNORE_UNMAPPED = true;
 
     public List<SortBuilder> create( final Collection<OrderExpr> orderExpressions )
     {

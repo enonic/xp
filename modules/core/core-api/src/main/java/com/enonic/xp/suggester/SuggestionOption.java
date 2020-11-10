@@ -22,7 +22,7 @@ public abstract class SuggestionOption
         return score;
     }
 
-    public static abstract class Builder<T extends Builder>
+    public abstract static class Builder<T extends Builder>
     {
         private String text;
 

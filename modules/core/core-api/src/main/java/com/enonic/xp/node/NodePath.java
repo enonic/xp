@@ -279,7 +279,7 @@ public final class NodePath
 
     public static final class Element
     {
-        private String name;
+        private final String name;
 
         public Element( final String name )
         {
@@ -300,7 +300,7 @@ public final class NodePath
 
             final Element element = (Element) o;
 
-            return Objects.equals( this.name.toLowerCase(), element.name.toLowerCase() );
+            return this.name.equalsIgnoreCase( element.name );
         }
 
         @Override

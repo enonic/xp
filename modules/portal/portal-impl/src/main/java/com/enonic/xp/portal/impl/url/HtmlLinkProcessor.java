@@ -82,12 +82,17 @@ public class HtmlLinkProcessor
 
     private static final String IMAGE_NO_SCALING = "full";
 
+    public static final Pattern CONTENT_PATTERN = Pattern.compile(
+        "(?:href|src)=(\"((" + CONTENT_TYPE + "|" + MEDIA_TYPE + "|" + IMAGE_TYPE + ")://(?:(" + DOWNLOAD_MODE + "|" + INLINE_MODE +
+            ")/)?([0-9a-z-/]+)(\\?[^\"]+)?)\")", Pattern.MULTILINE | Pattern.UNIX_LINES );
 
-    private ContentService contentService;
+    private static final Pattern ASPECT_RATIO_PATTEN = Pattern.compile( "^(?<horizontalProportion>\\d+):(?<verticalProportion>\\d+)$" );
 
-    private StyleDescriptorService styleDescriptorService;
+    private final ContentService contentService;
 
-    private PortalUrlService portalUrlService;
+    private final StyleDescriptorService styleDescriptorService;
+
+    private final PortalUrlService portalUrlService;
 
     public HtmlLinkProcessor( final ContentService contentService, final StyleDescriptorService styleDescriptorService,
                               final PortalUrlService portalUrlService )
@@ -96,12 +101,6 @@ public class HtmlLinkProcessor
         this.styleDescriptorService = styleDescriptorService;
         this.portalUrlService = portalUrlService;
     }
-
-    public static final Pattern CONTENT_PATTERN = Pattern.compile(
-        "(?:href|src)=(\"((" + CONTENT_TYPE + "|" + MEDIA_TYPE + "|" + IMAGE_TYPE + ")://(?:(" + DOWNLOAD_MODE + "|" + INLINE_MODE +
-            ")/)?([0-9a-z-/]+)(\\?[^\"]+)?)\")", Pattern.MULTILINE | Pattern.UNIX_LINES );
-
-    private static final Pattern ASPECT_RATIO_PATTEN = Pattern.compile( "^(?<horizontalProportion>\\d+):(?<verticalProportion>\\d+)$" );
 
     public String process( final String text, final String urlType, final PortalRequest portalRequest )
     {
