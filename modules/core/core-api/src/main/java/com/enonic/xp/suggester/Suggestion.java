@@ -27,7 +27,7 @@ public abstract class Suggestion<ENTRY extends SuggestionEntry>
         return entries;
     }
 
-    public static abstract class Builder<T extends Builder, ENTRY extends SuggestionEntry>
+    public abstract static class Builder<T extends Builder, ENTRY extends SuggestionEntry>
     {
         private final String name;
 

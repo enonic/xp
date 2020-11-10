@@ -57,7 +57,7 @@ public final class FindPrincipalsHandler
 
     public void setIdProvider( final String idProvider )
     {
-        if ( idProvider == null || idProvider.trim().isEmpty() )
+        if ( idProvider == null || idProvider.isBlank() )
         {
             this.idProvider = null;
             return;

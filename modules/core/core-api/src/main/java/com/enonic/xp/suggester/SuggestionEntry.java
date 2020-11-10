@@ -48,7 +48,7 @@ public abstract class SuggestionEntry<OPTION extends SuggestionOption>
         throw new UnsupportedOperationException( "Must be implemented in inheritors" );
     }
 
-    public static abstract class Builder<T extends Builder, OPTION extends SuggestionOption>
+    public abstract static class Builder<T extends Builder, OPTION extends SuggestionOption>
     {
         private String text;
 

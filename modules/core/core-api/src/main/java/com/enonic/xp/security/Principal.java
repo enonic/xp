@@ -81,7 +81,7 @@ public abstract class Principal
         return Objects.hash( key, displayName, modifiedTime );
     }
 
-    public static abstract class Builder<B>
+    public abstract static class Builder<B>
     {
         PrincipalKey key;
 

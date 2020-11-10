@@ -11,7 +11,7 @@ final class FormValidator
         validateFormItems( form, items );
     }
 
-    static private void validateFormItems( final Iterable<FormItem> formItems, Map<FormItemPath, FormItem> items )
+    private static void validateFormItems( final Iterable<FormItem> formItems, Map<FormItemPath, FormItem> items )
     {
         for ( FormItem item : formItems )
         {

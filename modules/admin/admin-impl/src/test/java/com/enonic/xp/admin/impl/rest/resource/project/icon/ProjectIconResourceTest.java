@@ -19,8 +19,6 @@ import com.enonic.xp.jaxrs.impl.MockRestResponse;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
-import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

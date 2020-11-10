@@ -158,7 +158,7 @@ public class AbstractQuery
         return searchOptimizer;
     }
 
-    public static abstract class Builder<B extends Builder>
+    public abstract static class Builder<B extends Builder>
     {
         private final Filters.Builder postFilters = Filters.create();
 

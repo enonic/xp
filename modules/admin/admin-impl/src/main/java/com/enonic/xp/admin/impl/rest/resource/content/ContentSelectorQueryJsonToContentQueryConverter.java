@@ -28,15 +28,15 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class ContentSelectorQueryJsonToContentQueryConverter
 {
-    final private ContentSelectorQueryJson contentQueryJson;
+    private final ContentSelectorQueryJson contentQueryJson;
 
-    final private ContentService contentService;
+    private final ContentService contentService;
 
-    final private ContentTypeNameWildcardResolver contentTypeWildcardResolver;
+    private final ContentTypeNameWildcardResolver contentTypeWildcardResolver;
 
-    final private RelationshipTypeService relationshipTypeService;
+    private final RelationshipTypeService relationshipTypeService;
 
-    final private Content content;
+    private final Content content;
 
     private Site parentSite;
 

@@ -36,7 +36,7 @@ public abstract class Aggregation
         return new BucketAggregation.Builder( name );
     }
 
-    public static abstract class Builder<T extends Builder>
+    public abstract static class Builder<T extends Builder>
     {
         public Builder( final String name )
         {

@@ -15,6 +15,7 @@ import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.UpdateNodeParams;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GetActiveNodeVersionsCommandTest
@@ -71,7 +72,7 @@ public class GetActiveNodeVersionsCommandTest
         draft = result2.getNodeVersions().get( WS_DEFAULT );
         master = result2.getNodeVersions().get( WS_OTHER );
 
-        assertTrue( !draft.equals( master ) );
+        assertFalse( draft.equals( master ) );
         assertTrue( draft.getTimestamp().isAfter( master.getTimestamp() ) );
     }
 

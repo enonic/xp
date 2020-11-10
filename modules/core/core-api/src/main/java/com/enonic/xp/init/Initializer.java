@@ -79,7 +79,7 @@ public abstract class Initializer
 
     protected abstract String getInitializationSubject();
 
-    public static abstract class Builder<T extends Builder>
+    public abstract static class Builder<T extends Builder>
     {
         private Long initializationCheckPeriod;
 

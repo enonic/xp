@@ -21,7 +21,6 @@ import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
 
 import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.REST_ROOT;
