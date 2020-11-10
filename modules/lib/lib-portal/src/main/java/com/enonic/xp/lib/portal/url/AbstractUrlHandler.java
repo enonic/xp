@@ -7,7 +7,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
@@ -99,7 +98,7 @@ public abstract class AbstractUrlHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        this.request = PortalRequestAccessor.get();
+        this.request = context.getBinding( PortalRequest.class ).get();
         this.urlService = context.getService( PortalUrlService.class ).get();
     }
 }

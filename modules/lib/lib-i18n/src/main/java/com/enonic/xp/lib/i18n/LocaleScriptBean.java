@@ -8,7 +8,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -22,6 +21,8 @@ public final class LocaleScriptBean
     implements ScriptBean
 {
     private Supplier<LocaleService> localeService;
+
+    private Supplier<PortalRequest> portalRequest;
 
     private ApplicationKey application;
 
@@ -89,7 +90,7 @@ public final class LocaleScriptBean
         }
         else
         {
-            final PortalRequest req = getRequest();
+            final PortalRequest req = portalRequest.get();
             return req != null ? req.getApplicationKey() : ApplicationKey.from( LocaleScriptBean.class );
         }
     }
@@ -101,7 +102,7 @@ public final class LocaleScriptBean
 
     private Locale resolveLocaleFromSite()
     {
-        final PortalRequest request = getRequest();
+        final PortalRequest request = portalRequest.get();
         if ( request == null )
         {
             return null;
@@ -141,10 +142,6 @@ public final class LocaleScriptBean
     public void initialize( final BeanContext context )
     {
         this.localeService = context.getService( LocaleService.class );
-    }
-
-    private PortalRequest getRequest()
-    {
-        return PortalRequestAccessor.get();
+        this.portalRequest = context.getBinding( PortalRequest.class );
     }
 }

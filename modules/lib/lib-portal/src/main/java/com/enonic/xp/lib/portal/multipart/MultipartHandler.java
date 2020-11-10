@@ -6,7 +6,6 @@ import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.web.multipart.MultipartForm;
@@ -71,7 +70,7 @@ public final class MultipartHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        final PortalRequest request = PortalRequestAccessor.get();
+        final PortalRequest request = context.getBinding( PortalRequest.class ).get();
         final MultipartService service = context.getService( MultipartService.class ).get();
         this.form = service.parse( request.getRawRequest() );
     }

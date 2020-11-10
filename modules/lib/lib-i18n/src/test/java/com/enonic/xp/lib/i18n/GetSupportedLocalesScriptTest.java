@@ -4,7 +4,6 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import org.junit.Ignore;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -16,7 +15,6 @@ import com.enonic.xp.testing.ScriptRunnerSupport;
 
 import static org.mockito.ArgumentMatchers.any;
 
-@Ignore("Concourse issue")
 public class GetSupportedLocalesScriptTest
     extends ScriptRunnerSupport
 {
@@ -38,7 +36,7 @@ public class GetSupportedLocalesScriptTest
         locales.add( new Locale( "en" ) );
         locales.add( new Locale( "es" ) );
         locales.add( new Locale( "ca" ) );
-        Mockito.when( localeService.getLocales( any( ApplicationKey.class ), any( String[].class ) ) ).thenReturn( locales );
+        Mockito.when( localeService.getLocales( any( ApplicationKey.class ), any() ) ).thenReturn( locales );
 
         addService( LocaleService.class, localeService );
 

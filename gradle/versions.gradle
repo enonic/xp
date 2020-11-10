@@ -14,5 +14,5 @@ ext {
     tikaVersion = '1.23'
     resteasyVersion = '3.13.0.Final'
     hazelcastVersion = '3.12.7'
-    mockitoVersion = '3.5.10'
+    mockitoVersion = '3.6.0'
 }

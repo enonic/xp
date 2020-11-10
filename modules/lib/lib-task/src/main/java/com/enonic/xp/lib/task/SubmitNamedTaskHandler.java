@@ -12,7 +12,6 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.lib.common.FormJsonToPropertyTreeTranslator;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
@@ -32,6 +31,8 @@ public final class SubmitNamedTaskHandler
     private Supplier<MixinService> mixinServiceSupplier;
 
     private Supplier<TaskDescriptorService> taskDescriptorServiceSupplier;
+
+    private Supplier<PortalRequest> requestSupplier;
 
     private String name;
 
@@ -79,7 +80,7 @@ public final class SubmitNamedTaskHandler
 
     private ApplicationKey getApplication()
     {
-        PortalRequest portalRequest = PortalRequestAccessor.get();
+        PortalRequest portalRequest = requestSupplier.get();
         if ( portalRequest != null )
         {
             return portalRequest.getApplicationKey();
@@ -112,6 +113,7 @@ public final class SubmitNamedTaskHandler
     @Override
     public void initialize( final BeanContext context )
     {
+        requestSupplier = context.getBinding( PortalRequest.class );
         taskServiceSupplier = context.getService( TaskService.class );
         mixinServiceSupplier = context.getService( MixinService.class );
         taskDescriptorServiceSupplier = context.getService( TaskDescriptorService.class );

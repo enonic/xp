@@ -6,8 +6,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.After;
-import org.junit.Ignore;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -15,18 +13,14 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.testing.ScriptRunnerSupport;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
-@Ignore("Concourse issue")
 public class LocalizeNoHttpTest
     extends ScriptRunnerSupport
 {
-    private PortalRequest portalRequest;
-
     @Override
     public String getScriptTestFile()
     {
@@ -42,25 +36,13 @@ public class LocalizeNoHttpTest
 
         final Set<Locale> locales = new LinkedHashSet<>();
         locales.add( new Locale( "en" ) );
-        Mockito.when(
-            localeService.getLocales( eq( ApplicationKey.from( "com.enonic.myapplication" ) ), any( String[].class ) ) ).thenReturn(
-            locales );
+        Mockito.when( localeService.getLocales( eq( ApplicationKey.from( "com.enonic.myapplication" ) ), any() ) ).thenReturn( locales );
 
         final MessageBundle bundle = Mockito.mock( MessageBundle.class, this::answer );
-        Mockito.when( localeService.getBundle( eq( ApplicationKey.from( "com.enonic.myapplication" ) ), Mockito.any( Locale.class ),
-                                               any() ) ).
+        Mockito.when( localeService.getBundle( eq( ApplicationKey.from( "com.enonic.myapplication" ) ), any(), any() ) ).
             thenReturn( bundle );
 
         addService( LocaleService.class, localeService );
-    }
-
-    @After
-    public void tearDown()
-    {
-        if ( this.portalRequest != null )
-        {
-            PortalRequestAccessor.set( this.portalRequest );
-        }
     }
 
     private Object answer( final InvocationOnMock invocation )
@@ -77,10 +59,8 @@ public class LocalizeNoHttpTest
         return null;
     }
 
-    public void removeRequest()
+    protected PortalRequest createPortalRequest()
     {
-        this.portalRequest = PortalRequestAccessor.get();
-        PortalRequestAccessor.remove();
+        return null;
     }
-
 }

@@ -4,5 +4,5 @@ dependencies {
 
     testImplementation project( ':tools:testing' )
 
-    testRuntimeOnly "org.junit.vintage:junit-vintage-engine"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${junitJupiterVersion}"
 }
