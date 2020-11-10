@@ -3,6 +3,7 @@ package com.enonic.xp.lib.node;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.aggregation.AggregationQuery;
@@ -125,7 +126,9 @@ final class QueryAggregationParams
     {
         final String fieldName = (String) paramsMap.get( "field" );
         final String orderExpr = ( (String) paramsMap.getOrDefault( "order", "" ) ).trim();
-        final int size = (int) paramsMap.getOrDefault( "size", 10 );
+        final Integer size = Optional.ofNullable( (Number) paramsMap.get( "size" ) ).
+            map( Number::intValue ).
+            orElse( 10 );
 
         final int index = orderExpr.indexOf( " " );
         final String orderTypeStr = index == -1 ? orderExpr : orderExpr.substring( 0, index );
@@ -261,23 +264,9 @@ final class QueryAggregationParams
         final List<DistanceRange> ranges = new ArrayList<>();
         for ( Map<String, Object> rangeParams : rangeListParams )
         {
-            Double from, to;
-            if ( rangeParams.getOrDefault( "from", null ) != null )
-            {
-                from = ( (Integer) rangeParams.getOrDefault( "from", null ) ).doubleValue();
-            }
-            else
-            {
-                from = null;
-            }
-            if ( rangeParams.getOrDefault( "to", null ) != null )
-            {
-                to = ( (Integer) rangeParams.getOrDefault( "to", null ) ).doubleValue();
-            }
-            else
-            {
-                to = null;
-            }
+            final Double from = getDouble( rangeParams, "from" );
+            final Double to = getDouble( rangeParams, "to" );
+
             final DistanceRange range = DistanceRange.create().from( from ).to( to ).build();
             ranges.add( range );
         }

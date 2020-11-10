@@ -55,7 +55,7 @@ var result = contentLib.query({
                     histogram: {
                         field: 'data.price',
                         interval: 1000000,
-                        extendedBoundMin: 1000000,
+                        extendedBoundMin: parseInt('1000000', 10),
                         extendedBoundMax: 3000000,
                         minDocCount: 0,
                         order: '_key desc'
@@ -100,7 +100,7 @@ var result = contentLib.query({
     highlight: {
         encoder: 'html',
         fragmenter: 'simple',
-        fragmentSize: 5,
+        fragmentSize: parseInt('5', 10),
         noMatchSize: 5,
         numberOfFragments: 5,
         order: 'score',
@@ -112,7 +112,7 @@ var result = contentLib.query({
             displayName: {
                 fragmenter: 'span',
                 fragmentSize: 6,
-                noMatchSize: 6,
+                noMatchSize: parseInt('6', 10),
                 numberOfFragments: 6,
                 order: 'none',
                 preTag: '<a>',
