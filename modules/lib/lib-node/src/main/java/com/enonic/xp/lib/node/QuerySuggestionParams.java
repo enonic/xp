@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.node;
 
 import java.util.Map;
+import java.util.Optional;
 
 import com.enonic.xp.query.suggester.SuggestionQueries;
 import com.enonic.xp.query.suggester.SuggestionQuery;
@@ -44,13 +45,13 @@ final class QuerySuggestionParams
             final String sort = (String) termParamsMap.get( "sort" );
             final String suggestMode = (String) termParamsMap.get( "suggestMode" );
             final String stringDistance = (String) termParamsMap.get( "stringDistance" );
-            final Integer size = (Integer) termParamsMap.get( "size" );
-            final Integer maxEdits = (Integer) termParamsMap.get( "maxEdits" );
-            final Integer prefixLength = (Integer) termParamsMap.get( "prefixLength" );
-            final Integer minWordLength = (Integer) termParamsMap.get( "minWordLength" );
-            final Integer maxInspections = (Integer) termParamsMap.get( "maxInspections" );
-            final Float minDocFreq = (Float) termParamsMap.get( "minDocFreq" );
-            final Float maxTermFreq = (Float) termParamsMap.get( "maxTermFreq" );
+            final Integer size = getInteger( termParamsMap, "size" );
+            final Integer maxEdits = getInteger( termParamsMap, "maxEdits" );
+            final Integer prefixLength = getInteger( termParamsMap, "prefixLength" );
+            final Integer minWordLength = getInteger( termParamsMap, "minWordLength" );
+            final Integer maxInspections = getInteger( termParamsMap, "maxInspections" );
+            final Float minDocFreq = getFloat( termParamsMap, "minDocFreq" );
+            final Float maxTermFreq = getFloat( termParamsMap, "maxTermFreq" );
 
             return TermSuggestionQuery.create( name ).
                 field( field ).
@@ -70,6 +71,20 @@ final class QuerySuggestionParams
         }
 
         return null;
+    }
+
+    private Integer getInteger( final Map<String, Object> propertyMap, final String property )
+    {
+        return Optional.ofNullable( (Number) propertyMap.get( property ) ).
+            map( Number::intValue ).
+            orElse( null );
+    }
+
+    private Float getFloat( final Map<String, Object> propertyMap, final String property )
+    {
+        return Optional.ofNullable( (Number) propertyMap.get( property ) ).
+            map( Number::floatValue ).
+            orElse( null );
     }
 }
 
