@@ -41,11 +41,10 @@ public class I18NScriptTest
         locales.add( new Locale( "en" ) );
         locales.add( new Locale( "es" ) );
         locales.add( new Locale( "ca" ) );
-        Mockito.when( localeService.getLocales( any( ApplicationKey.class ), any( String[].class ) ) ).thenReturn( locales );
+        Mockito.when( localeService.getLocales( any( ApplicationKey.class ), any() ) ).thenReturn( locales );
 
         final MessageBundle bundle = Mockito.mock( MessageBundle.class, this::answer );
-        Mockito.when(
-            localeService.getBundle( Mockito.any( ApplicationKey.class ), Mockito.any( Locale.class ), any() ) ).
+        Mockito.when( localeService.getBundle( any( ApplicationKey.class ), any( Locale.class ), any() ) ).
             thenReturn( bundle );
 
         addService( LocaleService.class, localeService );

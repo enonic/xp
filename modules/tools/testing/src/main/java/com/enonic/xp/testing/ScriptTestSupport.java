@@ -140,7 +140,7 @@ public abstract class ScriptTestSupport
         return new MockBeanContext( key, this.serviceRegistry );
     }
 
-    private PortalRequest createPortalRequest()
+    protected PortalRequest createPortalRequest()
     {
         final PortalRequest request = new PortalRequest();
 
