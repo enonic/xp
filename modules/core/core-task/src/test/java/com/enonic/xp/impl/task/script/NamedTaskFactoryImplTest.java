@@ -23,51 +23,53 @@ import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.impl.standard.ScriptRuntimeFactoryImpl;
 import com.enonic.xp.task.RunnableTask;
-import com.enonic.xp.task.TaskDescriptor;
+import com.enonic.xp.task.TaskDescriptorService;
 import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
-public class NamedTaskScriptFactoryTest
+class NamedTaskFactoryImplTest
 {
-    private NamedTaskScriptFactory namedTaskScriptFactory;
+    private NamedTaskScriptFactoryImpl namedTaskScriptFactory;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         final PortalScriptService portalScriptService = setupPortalScriptService();
 
-        namedTaskScriptFactory = new NamedTaskScriptFactory();
-        namedTaskScriptFactory.setScriptService( portalScriptService );
+        TaskDescriptorService taskDescriptorService = mock( TaskDescriptorService.class );
+        namedTaskScriptFactory = new NamedTaskScriptFactoryImpl( portalScriptService, taskDescriptorService );
     }
 
     private PortalScriptService setupPortalScriptService()
     {
-        final BundleContext bundleContext = Mockito.mock( BundleContext.class );
+        final BundleContext bundleContext = mock( BundleContext.class );
 
-        final Bundle bundle = Mockito.mock( Bundle.class );
+        final Bundle bundle = mock( Bundle.class );
         Mockito.when( bundle.getBundleContext() ).thenReturn( bundleContext );
 
-        final Application application = Mockito.mock( Application.class );
+        final Application application = mock( Application.class );
         Mockito.when( application.getBundle() ).thenReturn( bundle );
         Mockito.when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
         Mockito.when( application.isStarted() ).thenReturn( true );
         Mockito.when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
 
-        final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
+        final ApplicationService applicationService = mock( ApplicationService.class );
         Mockito.when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
 
-        ResourceService resourceService = Mockito.mock( ResourceService.class );
+        ResourceService resourceService = mock( ResourceService.class );
         final Answer<Object> getResource = invocation -> {
             final ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
             final URL resourceUrl =
-                NamedTaskScriptFactoryTest.class.getResource( "/" + resourceKey.getApplicationKey() + resourceKey.getPath() );
+                NamedTaskFactoryImplTest.class.getResource( "/" + resourceKey.getApplicationKey() + resourceKey.getPath() );
             return new UrlResource( resourceKey, resourceUrl );
         };
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( getResource );
 
-        final ScriptAsyncService scriptAsyncService = Mockito.mock( ScriptAsyncService.class );
+        final ScriptAsyncService scriptAsyncService = mock( ScriptAsyncService.class );
 
         final ScriptRuntimeFactoryImpl runtimeFactory =
             new ScriptRuntimeFactoryImpl( applicationService, resourceService, scriptAsyncService );
@@ -79,31 +81,24 @@ public class NamedTaskScriptFactoryTest
     }
 
     @Test
-    public void createExisting()
-        throws Exception
+    void createExisting()
     {
-        final TaskDescriptor taskDescriptor = TaskDescriptor.create().key( DescriptorKey.from( "myapplication:mytask" ) ).build();
-        final RunnableTask runnableTask = namedTaskScriptFactory.create( taskDescriptor, new PropertyTree() );
+        final RunnableTask runnableTask = namedTaskScriptFactory.create( DescriptorKey.from( "myapplication:mytask" ), new PropertyTree() );
         assertNotNull( runnableTask );
         runnableTask.run( TaskId.from( "123" ), null );
     }
 
     @Test
-    public void createMissingRunExport()
-        throws Exception
+    void createMissingRunExport()
     {
-        final TaskDescriptor taskDescriptor = TaskDescriptor.create().key( DescriptorKey.from( "myapplication:mytask2" ) ).build();
-        final RunnableTask runnableTask = namedTaskScriptFactory.create( taskDescriptor, new PropertyTree() );
-        assertNull( runnableTask );
+        assertThrows( TaskNotFoundException.class,
+                      () -> namedTaskScriptFactory.create( DescriptorKey.from( "myapplication:mytask2" ), new PropertyTree() ) );
     }
 
     @Test
-    public void createNotExisting()
-        throws Exception
+    void createNotExisting()
     {
-        final TaskDescriptor taskDescriptor = TaskDescriptor.create().key( DescriptorKey.from( "myapplication:mytask3" ) ).build();
-        final RunnableTask runnableTask = namedTaskScriptFactory.create( taskDescriptor, new PropertyTree() );
-        assertNull( runnableTask );
+        assertThrows( TaskNotFoundException.class,
+                      () -> namedTaskScriptFactory.create( DescriptorKey.from( "myapplication:mytask3" ), new PropertyTree() ) );
     }
-
 }

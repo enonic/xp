@@ -1,5 +1,6 @@
 package com.enonic.xp.repository;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
@@ -8,7 +9,10 @@ import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
 public final class RepositoryId
+    implements Serializable
 {
+    private static final long serialVersionUID = 0;
+
     public static final String VALID_REPOSITORY_ID_REGEX = "([a-z0-9\\-:])([a-z0-9_\\-\\.:])*";
 
     private final String value;

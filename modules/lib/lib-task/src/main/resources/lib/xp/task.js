@@ -66,6 +66,7 @@ exports.submit = function (params) {
  * @param {string} params.name Name of the task to execute.
  * @param {object} [params.config] Configuration parameters to pass to the task to be executed.
  * The object must be valid according to the schema defined in the form of the task descriptor XML.
+ * @param {boolean} [params.offload=false] Set to true if task can be offloaded to other nodes in cluster.
  * @returns {string} Id of the task that will be executed.
  */
 exports.submitNamed = function (params) {
@@ -75,6 +76,7 @@ exports.submitNamed = function (params) {
 
     bean.name = __.nullOrValue(params.name);
     bean.config = __.toScriptValue(params.config);
+    bean.offload = params.offload;
 
     return bean.submit();
 };

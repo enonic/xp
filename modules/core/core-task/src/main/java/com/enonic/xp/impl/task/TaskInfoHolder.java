@@ -4,29 +4,21 @@ import java.time.Instant;
 
 import com.enonic.xp.task.TaskInfo;
 
-final class TaskContext
+final class TaskInfoHolder
 {
     private final TaskInfo taskInfo;
 
-    private final Instant submitTime;
-
     private final Instant doneTime;
 
-    private TaskContext( final Builder builder )
+    private TaskInfoHolder( final Builder builder )
     {
         taskInfo = builder.taskInfo;
-        submitTime = builder.submitTime;
         doneTime = builder.doneTime;
     }
 
     public TaskInfo getTaskInfo()
     {
         return taskInfo;
-    }
-
-    public Instant getSubmitTime()
-    {
-        return submitTime;
     }
 
     public Instant getDoneTime()
@@ -48,18 +40,15 @@ final class TaskContext
     {
         private TaskInfo taskInfo;
 
-        private Instant submitTime;
-
         private Instant doneTime;
 
         private Builder()
         {
         }
 
-        private Builder( final TaskContext source )
+        private Builder( final TaskInfoHolder source )
         {
             taskInfo = source.taskInfo;
-            submitTime = source.submitTime;
             doneTime = source.doneTime;
         }
 
@@ -69,21 +58,15 @@ final class TaskContext
             return this;
         }
 
-        public Builder submitTime( final Instant submitTime )
-        {
-            this.submitTime = submitTime;
-            return this;
-        }
-
         public Builder doneTime( final Instant doneTime )
         {
             this.doneTime = doneTime;
             return this;
         }
 
-        public TaskContext build()
+        public TaskInfoHolder build()
         {
-            return new TaskContext( this );
+            return new TaskInfoHolder( this );
         }
     }
 }

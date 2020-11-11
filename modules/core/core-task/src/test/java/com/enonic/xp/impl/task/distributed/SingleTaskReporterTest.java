@@ -2,7 +2,6 @@ package com.enonic.xp.impl.task.distributed;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.impl.task.TaskManager;
 import com.enonic.xp.task.TaskId;
 
 import static org.mockito.ArgumentMatchers.eq;

@@ -3,7 +3,6 @@ package com.enonic.xp.impl.task.distributed;
 import java.util.List;
 import java.util.Optional;
 
-import com.enonic.xp.impl.task.TaskManager;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 

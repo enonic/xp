@@ -16,6 +16,7 @@ import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskDescriptorService;
 import com.enonic.xp.task.TaskId;
@@ -36,6 +37,8 @@ public final class SubmitNamedTaskHandler
 
     private String name;
 
+    private boolean offload;
+
     private Map<String, Object> config;
 
     public void setName( final String name )
@@ -46,6 +49,11 @@ public final class SubmitNamedTaskHandler
     public void setConfig( final ScriptValue config )
     {
         this.config = config != null ? config.getMap() : null;
+    }
+
+    public void setOffload( final boolean offload )
+    {
+        this.offload = offload;
     }
 
     public String submit()
@@ -73,7 +81,12 @@ public final class SubmitNamedTaskHandler
         final TaskDescriptor descriptor = taskDescriptorService.getTasks().filter( ( td ) -> td.getKey().equals( taskKey ) ).first();
         final Form taskDescriptorConfig = descriptor == null ? Form.create().build() : descriptor.getConfig();
         final PropertyTree configParams = translateToPropertyTree( config, taskDescriptorConfig );
-        final TaskId taskId = taskService.submitTask( taskKey, configParams );
+        final SubmitTaskParams params = SubmitTaskParams.create().
+            descriptorKey( taskKey ).
+            config( configParams ).
+            offload( offload ).
+            build();
+        final TaskId taskId = taskService.submitTask( params );
 
         return taskId.toString();
     }

@@ -3,17 +3,15 @@ package com.enonic.xp.impl.task.script;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.task.ProgressReporter;
-import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskProgressReporterContext;
 
-public final class NamedTaskScript
-    implements RunnableTask
+final class NamedTaskScript
+    implements NamedTask
 {
     private static final Logger LOG = LoggerFactory.getLogger( NamedTaskScript.class );
 
@@ -53,8 +51,8 @@ public final class NamedTaskScript
         }
     }
 
-    public ApplicationKey getApplication()
+    public TaskDescriptor getTaskDescriptor()
     {
-        return this.taskDescriptor.getApplicationKey();
+        return this.taskDescriptor;
     }
 }

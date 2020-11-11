@@ -2,7 +2,6 @@ package com.enonic.xp.impl.task.distributed;
 
 import java.util.List;
 
-import com.enonic.xp.impl.task.TaskManager;
 import com.enonic.xp.task.TaskInfo;
 
 public final class AllTasksReporter
