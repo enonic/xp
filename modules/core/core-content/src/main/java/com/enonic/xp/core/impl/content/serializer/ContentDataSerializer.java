@@ -108,8 +108,7 @@ public class ContentDataSerializer
             ? null
             : params.getOwner().toString() );
         contentAsData.ifNotNull().addString( LANGUAGE, params.getLanguage() != null ? params.getLanguage().toLanguageTag() : null );
-        contentAsData.ifNotNull().addString( ORIGIN_PROJECT,
-                                             params.getOriginProject() != null ? params.getOriginProject().toString() : null );
+
         contentAsData.addSet( DATA, params.getData().getRoot().copy( contentAsData.getTree() ) );
 
         addPublishInfo( contentAsData, params.getContentPublishInfo() );

@@ -8,7 +8,6 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -50,10 +49,6 @@ public final class CreateContentParams
 
     private final WorkflowInfo workflowInfo;
 
-    private final ProjectName originProject;
-
-    private final Long manualOrderValue;
-
     private CreateContentParams( Builder builder )
     {
         this.data = builder.data;
@@ -73,8 +68,6 @@ public final class CreateContentParams
         this.contentPublishInfo = builder.contentPublishInfo;
         this.processedIds = builder.processedIds.build();
         this.workflowInfo = builder.workflowInfo;
-        this.originProject = builder.originProject;
-        this.manualOrderValue = builder.manualOrderValue;
     }
 
     public static Builder create()
@@ -172,16 +165,6 @@ public final class CreateContentParams
         return workflowInfo;
     }
 
-    public ProjectName getOriginProject()
-    {
-        return originProject;
-    }
-
-    public Long getManualOrderValue()
-    {
-        return manualOrderValue;
-    }
-
     public static final class Builder
     {
         private PropertyTree data;
@@ -218,10 +201,6 @@ public final class CreateContentParams
 
         private WorkflowInfo workflowInfo;
 
-        private ProjectName originProject;
-
-        private Long manualOrderValue;
-
         private Builder()
         {
         }
@@ -243,8 +222,6 @@ public final class CreateContentParams
             this.language = source.language;
             this.contentPublishInfo = source.contentPublishInfo;
             this.workflowInfo = source.workflowInfo;
-            this.originProject = source.originProject;
-            this.manualOrderValue = source.manualOrderValue;
         }
 
         public Builder contentData( final PropertyTree data )
@@ -353,18 +330,6 @@ public final class CreateContentParams
         public Builder workflowInfo( final WorkflowInfo workflowInfo )
         {
             this.workflowInfo = workflowInfo;
-            return this;
-        }
-
-        public Builder originProject( final ProjectName originProject )
-        {
-            this.originProject = originProject;
-            return this;
-        }
-
-        public Builder manualOrderValue( final Long manualOrderValue )
-        {
-            this.manualOrderValue = manualOrderValue;
             return this;
         }
 

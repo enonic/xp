@@ -22,8 +22,8 @@ public final class ResetContentInheritJson
     private final Set<ContentInheritType> inherit;
 
     @JsonCreator
-    ResetContentInheritJson( @JsonProperty("contentId") final String contentId, @JsonProperty("project") final String projectName,
-                             @JsonProperty("inherit") final List<String> inherit )
+    public ResetContentInheritJson( @JsonProperty("contentId") final String contentId, @JsonProperty("project") final String projectName,
+                                    @JsonProperty("inherit") final List<String> inherit )
     {
         this.contentId = ContentId.from( contentId );
         this.projectName = ProjectName.from( projectName );

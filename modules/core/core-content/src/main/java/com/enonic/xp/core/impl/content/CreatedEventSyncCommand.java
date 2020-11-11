@@ -17,6 +17,7 @@ import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.InsertManualStrategy;
+import com.enonic.xp.project.ProjectName;
 
 final class CreatedEventSyncCommand
     extends AbstractContentEventSyncCommand
@@ -93,6 +94,7 @@ final class CreatedEventSyncCommand
             targetPath( targetPath ).
             binaryAttachments( builder.build() ).
             inherit( inheritTypes ).
+            originProject( ProjectName.from( params.getSourceContext().getRepositoryId() ) ).
             importPermissions( false ).
             dryRun( false ).
             insertManualStrategy( insertManualStrategy ).

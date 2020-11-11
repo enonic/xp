@@ -80,7 +80,13 @@ public abstract class AbstractContentSynchronizerTest
 
     protected MediaInfoServiceImpl mediaInfoService;
 
+    protected PageDescriptorService pageDescriptorService;
+
     protected PartDescriptorService partDescriptorService;
+
+    protected LayoutDescriptorService layoutDescriptorService;
+
+    protected ContentTypeServiceImpl contentTypeService;
 
     protected Context sourceContext;
 
@@ -156,11 +162,11 @@ public abstract class AbstractContentSynchronizerTest
         MixinService mixinService = Mockito.mock( MixinService.class );
         Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
-        PageDescriptorService pageDescriptorService = Mockito.mock( PageDescriptorService.class );
+        pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         partDescriptorService = Mockito.mock( PartDescriptorService.class );
-        LayoutDescriptorService layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
+        layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
 
-        ContentTypeServiceImpl contentTypeService = new ContentTypeServiceImpl();
+        contentTypeService = new ContentTypeServiceImpl();
         contentTypeService.setMixinService( mixinService );
 
         final ResourceService resourceService = Mockito.mock( ResourceService.class );
