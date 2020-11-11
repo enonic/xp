@@ -91,7 +91,8 @@ public final class AuthenticationInfo
     {
         this.authenticated = ois.readBoolean();
         this.principals = PrincipalKeys.from( ois.readUTF().split( "," ) );
-        this.user = deserializeUser( ois );
+        final User deserializedUser = deserializeUser( ois );
+        this.user = this.authenticated ? deserializedUser : null;
     }
 
     private void writeObject( ObjectOutputStream oos )
@@ -100,7 +101,7 @@ public final class AuthenticationInfo
         oos.writeBoolean( authenticated );
         String principalKeys = principals.stream().map( PrincipalKey::toString ).collect( Collectors.joining( "," ) );
         oos.writeUTF( principalKeys );
-        serializeUser( oos, this.user );
+        serializeUser( oos, authenticated ? this.user : User.ANONYMOUS );
     }
 
     private void serializeUser( final ObjectOutputStream oos, final User user )
@@ -156,7 +157,7 @@ public final class AuthenticationInfo
 
         private final ImmutableSet.Builder<PrincipalKey> principals;
 
-        private boolean authenticated;
+        private final boolean authenticated;
 
         private Builder( final boolean authenticated )
         {

@@ -1,25 +1,30 @@
 package com.enonic.xp.impl.task;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.osgi.framework.Bundle;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.descriptor.Descriptors;
-import com.enonic.xp.impl.task.script.NamedTaskScriptFactory;
+import com.enonic.xp.impl.task.distributed.DescribedTask;
+import com.enonic.xp.impl.task.distributed.TaskManager;
+import com.enonic.xp.impl.task.osgi.OsgiSupportMock;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.RunnableTask;
-import com.enonic.xp.task.TaskDescriptor;
-import com.enonic.xp.task.TaskDescriptorService;
+import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -28,58 +33,120 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TaskServiceImplTest
 {
-
     @Mock
-    private TaskManager taskManager;
+    TaskManager taskManager;
 
-    @Mock
-    private TaskDescriptorService taskDescriptorService;
+    @Captor
+    ArgumentCaptor<DescribedTask> describedTaskCaptor;
 
-    @Mock
-    private NamedTaskScriptFactory namedTaskScriptFactory;
+    TaskConfig taskConfig;
 
-    private TaskServiceImpl taskService;
+    TaskServiceImpl taskService;
+
+    Bundle bundle;
 
     @BeforeEach
     void setUp()
     {
-        taskService = new TaskServiceImpl( taskManager, taskDescriptorService, namedTaskScriptFactory );
+        bundle = OsgiSupportMock.mockBundle();
+
+        taskConfig = mock( TaskConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+
+        taskService = new TaskServiceImpl( taskManager );
+        taskService.activate( taskConfig );
+    }
+
+    @AfterEach
+    void tearDown()
+    {
+        OsgiSupportMock.reset();
     }
 
     @Test
     void submitTask_runnableTask()
     {
-        final TaskId someTaskId = TaskId.from( "someId" );
-        when( taskManager.submitTask( any( RunnableTask.class ), eq( "someDescription" ), eq( "" ) ) ).thenReturn( someTaskId );
+        when( bundle.getSymbolicName() ).thenReturn( "some.app" );
 
         final TaskId taskId = taskService.submitTask( mock( RunnableTask.class ), "someDescription" );
-
-        assertEquals( taskId, someTaskId );
+        verify( taskManager ).submitTask( describedTaskCaptor.capture() );
+        final DescribedTask argument = describedTaskCaptor.getValue();
+        assertEquals( "someDescription", argument.getDescription() );
+        assertEquals( taskId, argument.getTaskId() );
     }
 
     @Test
     void submitTask_DescriptorKey()
     {
-        final TaskId someTaskId = TaskId.from( "someId" );
         final DescriptorKey descriptorKey = DescriptorKey.from( "module:my-admin-tool" );
         final PropertyTree config = new PropertyTree();
 
-        final TaskDescriptor taskDescriptor = TaskDescriptor.create().
-            description( "someDescription" ).
-            key( descriptorKey ).
-            build();
-
-        when( taskDescriptorService.getTasks( ApplicationKey.from( "module" ) ) ).thenReturn( Descriptors.from( taskDescriptor ) );
-
-        final RunnableTask runnableTask = mock( RunnableTask.class );
-
-        when( namedTaskScriptFactory.create( same( taskDescriptor ), same( config ) ) ).thenReturn( runnableTask );
-
-        when( taskManager.submitTask( same( runnableTask ), eq( "someDescription" ), eq( descriptorKey.toString() ) ) ).
-            thenReturn( someTaskId );
         final TaskId taskId = taskService.submitTask( descriptorKey, config );
+        verify( taskManager ).submitTask( describedTaskCaptor.capture() );
+        describedTaskCaptor.getValue();
+        final DescribedTask argument = describedTaskCaptor.getValue();
+        assertEquals( taskId, argument.getTaskId() );
+    }
 
-        assertEquals( taskId, someTaskId );
+    @Test
+    void submitTask_DescriptorKey_offload_to_local()
+    {
+        final DescriptorKey descriptorKey = DescriptorKey.from( "module:my-admin-tool" );
+
+        final TaskId taskId = taskService.submitTask( SubmitTaskParams.create().descriptorKey( descriptorKey ).offload( true ).build() );
+        verify( taskManager ).submitTask( describedTaskCaptor.capture() );
+        describedTaskCaptor.getValue();
+        final DescribedTask argument = describedTaskCaptor.getValue();
+        assertEquals( taskId, argument.getTaskId() );
+    }
+
+    @Test
+    void submitTask_DescriptorKey_offload_to_clustered()
+    {
+        final DescriptorKey descriptorKey = DescriptorKey.from( "module:my-admin-tool" );
+
+        final TaskManager clusteredTaskManager = mock( TaskManager.class );
+        taskService.setClusteredTaskManager( clusteredTaskManager );
+
+        final TaskId taskId = taskService.submitTask( SubmitTaskParams.create().descriptorKey( descriptorKey ).offload( true ).build() );
+
+        verify( clusteredTaskManager ).submitTask( describedTaskCaptor.capture() );
+        describedTaskCaptor.getValue();
+        final DescribedTask argument = describedTaskCaptor.getValue();
+        assertEquals( taskId, argument.getTaskId() );
+    }
+
+    @Test
+    void submitTask_DescriptorKey_offload_to_clustered_wait_success()
+    {
+        final DescriptorKey descriptorKey = DescriptorKey.from( "module:my-admin-tool" );
+
+        final TaskManager clusteredTaskManager = mock( TaskManager.class );
+
+        when( taskConfig.offload_acceptInbound() ).thenReturn( false );
+        taskService.activate( taskConfig );
+
+        CompletableFuture.runAsync( () -> taskService.setClusteredTaskManager( clusteredTaskManager ),
+                                    CompletableFuture.delayedExecutor( 1, TimeUnit.SECONDS ) );
+
+        final TaskId taskId = taskService.submitTask( SubmitTaskParams.create().descriptorKey( descriptorKey ).offload( true ).build() );
+
+        verify( clusteredTaskManager ).submitTask( describedTaskCaptor.capture() );
+        describedTaskCaptor.getValue();
+        final DescribedTask argument = describedTaskCaptor.getValue();
+        assertEquals( taskId, argument.getTaskId() );
+    }
+
+    @Test
+    void submitTask_DescriptorKey_offload_to_clustered_wait_fail()
+    {
+        final DescriptorKey descriptorKey = DescriptorKey.from( "module:my-admin-tool" );
+
+        when( taskConfig.offload_acceptInbound() ).thenReturn( false );
+        taskService.activate( taskConfig );
+
+        assertThrows( RuntimeException.class, () -> {
+            taskService.submitTask( SubmitTaskParams.create().descriptorKey( descriptorKey ).offload( true ).build() );
+        } );
     }
 
     @Test
@@ -91,20 +158,20 @@ class TaskServiceImplTest
 
         verify( taskManager ).getTaskInfo( eq( someTaskId1 ) );
 
-        final ClusteredTaskManager clusteredTaskManager = mock( ClusteredTaskManager.class );
+        final TaskManager taskManager = mock( TaskManager.class );
 
-        taskService.setClusteredTaskManager( clusteredTaskManager );
+        taskService.setClusteredTaskManager( taskManager );
 
         taskService.getAllTasks();
 
-        verify( clusteredTaskManager ).getAllTasks();
+        verify( taskManager ).getAllTasks();
 
-        taskService.unsetClusteredTaskManager( clusteredTaskManager );
+        taskService.unsetClusteredTaskManager( taskManager );
 
         taskService.getRunningTasks();
 
-        verifyNoMoreInteractions( clusteredTaskManager );
+        verifyNoMoreInteractions( taskManager );
 
-        verify( taskManager ).getRunningTasks();
+        verify( this.taskManager ).getRunningTasks();
     }
 }

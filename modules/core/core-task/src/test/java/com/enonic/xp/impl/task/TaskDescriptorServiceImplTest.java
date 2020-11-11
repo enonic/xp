@@ -2,7 +2,9 @@ package com.enonic.xp.impl.task;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
@@ -13,32 +15,32 @@ import com.enonic.xp.task.TaskDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.when;
 
-public class TaskDescriptorServiceImplTest
+@ExtendWith(MockitoExtension.class)
+class TaskDescriptorServiceImplTest
 {
+    @Mock
     private DescriptorService descriptorService;
 
     private TaskDescriptorServiceImpl service;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
-        this.descriptorService = Mockito.mock( DescriptorService.class );
-
         this.service = new TaskDescriptorServiceImpl();
         this.service.setDescriptorService( this.descriptorService );
     }
 
     @Test
-    public void getTasks()
-        throws Exception
+    void getTasks()
     {
         final TaskDescriptor desc1 = TaskDescriptor.create().key( DescriptorKey.from( "app:a" ) ).build();
 
         final TaskDescriptor desc2 = TaskDescriptor.create().key( DescriptorKey.from( "app:b" ) ).build();
 
         final Descriptors<TaskDescriptor> real = Descriptors.from( desc1, desc2 );
-        Mockito.when( this.descriptorService.getAll( TaskDescriptor.class ) ).thenReturn( real );
+        when( this.descriptorService.getAll( TaskDescriptor.class ) ).thenReturn( real );
 
         final Descriptors<TaskDescriptor> result1 = this.service.getTasks();
         assertNotNull( result1 );
@@ -46,18 +48,29 @@ public class TaskDescriptorServiceImplTest
     }
 
     @Test
-    public void getTasksByApp()
-        throws Exception
+    void getTasksByApp()
     {
         final TaskDescriptor desc1 = TaskDescriptor.create().key( DescriptorKey.from( "app:a" ) ).build();
 
         final TaskDescriptor desc2 = TaskDescriptor.create().key( DescriptorKey.from( "app:b" ) ).build();
 
         final Descriptors<TaskDescriptor> real = Descriptors.from( desc1, desc2 );
-        Mockito.when( this.descriptorService.get( TaskDescriptor.class, ApplicationKeys.from( "app" ) ) ).thenReturn( real );
+        when( this.descriptorService.get( TaskDescriptor.class, ApplicationKeys.from( "app" ) ) ).thenReturn( real );
 
         final Descriptors<TaskDescriptor> result = this.service.getTasks( ApplicationKey.from( "app" ) );
         assertNotNull( result );
         assertEquals( 2, result.getSize() );
+    }
+
+    @Test
+    void getTask()
+    {
+        final DescriptorKey key = DescriptorKey.from( "app:a" );
+        final TaskDescriptor desc = TaskDescriptor.create().key( key ).build();
+
+        when( this.descriptorService.get( TaskDescriptor.class, key ) ).thenReturn( desc );
+
+        final TaskDescriptor result = this.service.getTask( key );
+        assertNotNull( result );
     }
 }

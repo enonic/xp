@@ -13,6 +13,8 @@ public interface TaskService
 
     TaskId submitTask( DescriptorKey key, PropertyTree config );
 
+    TaskId submitTask( SubmitTaskParams params );
+
     TaskInfo getTaskInfo( TaskId taskId );
 
     List<TaskInfo> getAllTasks();

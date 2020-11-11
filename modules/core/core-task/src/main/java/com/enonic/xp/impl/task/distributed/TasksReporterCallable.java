@@ -4,8 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import com.enonic.xp.impl.task.OsgiSupport;
-import com.enonic.xp.impl.task.TaskManager;
+import com.enonic.xp.impl.task.osgi.OsgiSupport;
 import com.enonic.xp.task.TaskInfo;
 
 public final class TasksReporterCallable
@@ -23,6 +22,6 @@ public final class TasksReporterCallable
     @Override
     public List<TaskInfo> call()
     {
-        return OsgiSupport.withService( TaskManager.class, function, List.of() );
+        return OsgiSupport.withServiceOrElse( TaskManager.class, "(local=true)", function, List.of() );
     }
 }

@@ -4,33 +4,45 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Answers;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IExecutorService;
 import com.hazelcast.core.Member;
+import com.hazelcast.core.MemberSelector;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.impl.task.distributed.DescribedTask;
+import com.enonic.xp.impl.task.distributed.OffloadedTaskCallable;
 import com.enonic.xp.impl.task.distributed.TasksReporterCallable;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ClusteredTaskManagerImplTest
 {
-    @Mock
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private HazelcastInstance hazelcastInstance;
 
     @Mock
@@ -38,12 +50,16 @@ class ClusteredTaskManagerImplTest
 
     private ClusteredTaskManagerImpl clusteredTaskManager;
 
+
+    TaskConfig config;
+
     @BeforeEach
     void setUp()
     {
-        clusteredTaskManager = new ClusteredTaskManagerImpl( hazelcastInstance );
+        config = mock( TaskConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( hazelcastInstance.getExecutorService( ClusteredTaskManagerImpl.ACTION ) ).thenReturn( executorService );
-        clusteredTaskManager.activate();
+        clusteredTaskManager = new ClusteredTaskManagerImpl( hazelcastInstance );
+        clusteredTaskManager.activate( config );
     }
 
     @Test
@@ -106,5 +122,37 @@ class ClusteredTaskManagerImplTest
 
         assertNotNull( taskInfos );
         assertEquals( taskInfos.stream().map( TaskInfo::getId ).collect( Collectors.toSet() ), Set.of( taskId1, taskId2 ) );
+    }
+
+    @Test
+    void submitTask()
+        throws Exception
+    {
+        final DescribedTask task = mock( DescribedTask.class );
+        when( task.getApplicationKey() ).thenReturn( ApplicationKey.from( "some.app" ) );
+
+        final Future<Void> future = mock( Future.class );
+        when( executorService.submit( any( OffloadedTaskCallable.class ), any( MemberSelector.class ) ) ).thenReturn( future );
+        clusteredTaskManager.submitTask( task );
+        final ArgumentCaptor<MemberSelector> argumentCaptor = ArgumentCaptor.forClass( MemberSelector.class );
+        verify( executorService ).submit( any( OffloadedTaskCallable.class ), argumentCaptor.capture() );
+
+        final Member memberSelectable = mock( Member.class );
+        when( memberSelectable.getBooleanAttribute( "tasks-enabled" ) ).thenReturn( true );
+        when( memberSelectable.getBooleanAttribute( "tasks-enabled-some.app" ) ).thenReturn( true );
+
+        final Member memberDoesNotAcceptOffload = mock( Member.class );
+        when( memberDoesNotAcceptOffload.getBooleanAttribute( "tasks-enabled" ) ).thenReturn( false );
+
+        final Member memberDoesNotHaveApp = mock( Member.class );
+        when( memberDoesNotHaveApp.getBooleanAttribute( "tasks-enabled" ) ).thenReturn( true );
+        when( memberDoesNotHaveApp.getBooleanAttribute( "tasks-enabled-some.app" ) ).thenReturn( null );
+
+        final MemberSelector memberSelector = argumentCaptor.getValue();
+        assertTrue( memberSelector.select( memberSelectable ) );
+        assertFalse( memberSelector.select( memberDoesNotAcceptOffload ) );
+        assertFalse( memberSelector.select( memberDoesNotHaveApp ) );
+
+        verify( future ).get( anyLong(), any( TimeUnit.class ) );
     }
 }

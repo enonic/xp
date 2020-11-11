@@ -196,6 +196,18 @@ public class AuthenticationInfoTest
         assertEquals( deserializedObject, info );
     }
 
+    @Test
+    void testSerializationUnauthenticated()
+        throws Exception
+    {
+        final AuthenticationInfo info = AuthenticationInfo.unAuthenticated();
+
+        final byte[] serializedObject = serialize( info );
+        final AuthenticationInfo deserializedObject = (AuthenticationInfo) deserialize( serializedObject );
+
+        assertEquals( deserializedObject, info );
+    }
+
     private static byte[] serialize( Serializable serializable )
         throws IOException
     {

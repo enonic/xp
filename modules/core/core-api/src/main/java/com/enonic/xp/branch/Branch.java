@@ -1,5 +1,7 @@
 package com.enonic.xp.branch;
 
+import java.io.Serializable;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -8,7 +10,10 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 @PublicApi
 public final class Branch
+    implements Serializable
 {
+    private static final long serialVersionUID = 0;
+
     private static final String VALID_REPOSITORY_ID_REGEX = "([a-zA-Z0-9\\-:])([a-zA-Z0-9_\\-\\.:])*";
 
     private final String value;

@@ -7,6 +7,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.descriptor.DescriptorService;
 import com.enonic.xp.descriptor.Descriptors;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskDescriptorService;
 
@@ -26,6 +27,12 @@ public class TaskDescriptorServiceImpl
     public Descriptors<TaskDescriptor> getTasks( final ApplicationKey app )
     {
         return this.descriptorService.get( TaskDescriptor.class, ApplicationKeys.from( app ) );
+    }
+
+    @Override
+    public TaskDescriptor getTask( final DescriptorKey key )
+    {
+        return this.descriptorService.get( TaskDescriptor.class, key );
     }
 
     @Reference

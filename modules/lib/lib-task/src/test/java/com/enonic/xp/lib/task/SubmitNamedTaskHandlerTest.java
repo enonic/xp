@@ -3,13 +3,13 @@ package com.enonic.xp.lib.task;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskDescriptorService;
 import com.enonic.xp.task.TaskId;
@@ -18,14 +18,10 @@ import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.mockito.ArgumentMatchers.any;
 
-public class SubmitNamedTaskHandlerTest
+class SubmitNamedTaskHandlerTest
     extends ScriptTestSupport
 {
     private TaskService taskService;
-
-    private TaskDescriptorService taskDescriptorService;
-
-    private MixinService mixinService;
 
     @Override
     public void initialize()
@@ -34,9 +30,9 @@ public class SubmitNamedTaskHandlerTest
         super.initialize();
         taskService = Mockito.mock( TaskService.class );
         addService( TaskService.class, taskService );
-        taskDescriptorService = Mockito.mock( TaskDescriptorService.class );
+        final TaskDescriptorService taskDescriptorService = Mockito.mock( TaskDescriptorService.class );
         addService( TaskDescriptorService.class, taskDescriptorService );
-        mixinService = Mockito.mock( MixinService.class );
+        final MixinService mixinService = Mockito.mock( MixinService.class );
         addService( MixinService.class, mixinService );
 
         final Form cfg1 = Form.create().
@@ -65,27 +61,26 @@ public class SubmitNamedTaskHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         final TaskId taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
-        Mockito.when( this.taskService.submitTask( any( DescriptorKey.class ), any( PropertyTree.class ) ) ).thenReturn( taskId );
+        Mockito.when( this.taskService.submitTask( any( SubmitTaskParams.class ) ) ).
+            thenReturn( taskId );
 
         runScript( "/lib/xp/examples/task/submitNamed.js" );
     }
 
     @Test
-    public void testSubmitNamedTask()
-        throws Exception
+    void testSubmitNamedTask()
     {
-        Mockito.when( this.taskService.submitTask( any( DescriptorKey.class ), any( PropertyTree.class ) ) ).thenReturn(
-            TaskId.from( "123" ) );
+        Mockito.when( this.taskService.submitTask( any( SubmitTaskParams.class ) ) ).
+            thenReturn( TaskId.from( "123" ) );
 
         runFunction( "/test/submitNamed-test.js", "submitTask" );
     }
 
     @Test
-    public void submitTaskFromApp()
-        throws Exception
+    void submitTaskFromApp()
     {
         final MockTaskService mockTaskMan = new MockTaskService();
         mockTaskMan.taskId = TaskId.from( "123" );
