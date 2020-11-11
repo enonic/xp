@@ -66,6 +66,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ResetContentInheritJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.RevertContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteContentJson;
@@ -136,10 +137,12 @@ import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.SyncContentService;
 import com.enonic.xp.content.UndoPendingDeleteContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
@@ -236,6 +239,8 @@ public class ContentResourceTest
 
     private PartDescriptorService partDescriptorService;
 
+    private SyncContentService syncContentService;
+
     @Override
     protected ContentResource getResourceInstance()
     {
@@ -264,6 +269,9 @@ public class ContentResourceTest
 
         layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
         partDescriptorService = Mockito.mock( PartDescriptorService.class );
+
+        syncContentService = Mockito.mock( SyncContentService.class );
+        resource.setSyncContentService( syncContentService );
 
         final ComponentNameResolverImpl componentNameResolver = new ComponentNameResolverImpl();
         componentNameResolver.setContentService( contentService );
@@ -2438,6 +2446,24 @@ public class ContentResourceTest
         Mockito.verify( this.contentService, Mockito.times( 1 ) ).
             getByPathAndVersionId( any( ContentPath.class ), any( ContentVersionId.class ) );
         Mockito.verifyNoMoreInteractions( contentService );
+    }
+
+    @Test
+    public void testRestoreInherit()
+    {
+        final ContentResource instance = getResourceInstance();
+        final ResetContentInheritJson params = new ResetContentInheritJson( "contentId", "test-project", List.of( "NAME", "PARENT" ) );
+
+        final ArgumentCaptor<ResetContentInheritParams> captor = ArgumentCaptor.forClass( ResetContentInheritParams.class );
+
+        instance.restoreInherit( params );
+
+        Mockito.verify( this.syncContentService, Mockito.times( 1 ) ).
+            resetInheritance( captor.capture() );
+
+        assertEquals( params.toParams().getContentId(), captor.getValue().getContentId() );
+        assertEquals( params.toParams().getInherit(), captor.getValue().getInherit() );
+        assertEquals( params.toParams().getProjectName(), captor.getValue().getProjectName() );
     }
 
     private ContentTreeSelectorQueryJson initContentTreeSelectorQueryJson( final ContentPath parentPath )

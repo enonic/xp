@@ -9,7 +9,6 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -57,10 +56,6 @@ public class CreateContentTranslatorParams
 
     private final WorkflowInfo workflowInfo;
 
-    private final ProjectName originProject;
-
-    private final Long manualOrderValue;
-
     private CreateContentTranslatorParams( Builder builder )
     {
         final Instant now = Instant.now();
@@ -85,8 +80,6 @@ public class CreateContentTranslatorParams
         this.contentPublishInfo = builder.contentPublishInfo;
         this.processedIds = builder.processedIds;
         this.workflowInfo = builder.workflowInfo;
-        this.originProject = builder.originProject;
-        this.manualOrderValue = builder.manualOrderValue;
     }
 
     public static Builder create( final CreateContentParams source )
@@ -199,16 +192,6 @@ public class CreateContentTranslatorParams
         return workflowInfo;
     }
 
-    public ProjectName getOriginProject()
-    {
-        return originProject;
-    }
-
-    public Long getManualOrderValue()
-    {
-        return manualOrderValue;
-    }
-
     public static final class Builder
     {
         private PropertyTree data;
@@ -245,10 +228,6 @@ public class CreateContentTranslatorParams
 
         private WorkflowInfo workflowInfo;
 
-        private ProjectName originProject;
-
-        private Long manualOrderValue;
-
         private Builder()
         {
         }
@@ -270,8 +249,6 @@ public class CreateContentTranslatorParams
             this.contentPublishInfo = params.getContentPublishInfo();
             this.processedIds = params.getProcessedIds();
             this.workflowInfo = params.getWorkflowInfo();
-            this.originProject = params.getOriginProject();
-            this.manualOrderValue = params.getManualOrderValue();
         }
 
         public Builder contentData( final PropertyTree data )
@@ -379,18 +356,6 @@ public class CreateContentTranslatorParams
         public Builder workflowInfo( final WorkflowInfo workflowInfo )
         {
             this.workflowInfo = workflowInfo;
-            return this;
-        }
-
-        public Builder originProject( final ProjectName originProject )
-        {
-            this.originProject = originProject;
-            return this;
-        }
-
-        public Builder manualOrderValue( final Long manualOrderValue )
-        {
-            this.manualOrderValue = manualOrderValue;
             return this;
         }
 

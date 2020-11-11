@@ -1,8 +1,6 @@
 package com.enonic.xp.core.content;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
@@ -13,15 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.ExtraData;
@@ -36,7 +30,6 @@ import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
 import com.enonic.xp.core.impl.content.ProjectContentEventListener;
 import com.enonic.xp.data.PropertyTree;
@@ -97,6 +90,7 @@ public class ProjectContentEventListenerTest
         final Content targetContent = targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
 
         compareSynched( sourceContent, targetContent );
+        assertEquals( sourceProject.getName(), targetContent.getOriginProject() );
     }
 
     @Test
@@ -136,6 +130,27 @@ public class ProjectContentEventListenerTest
             assertEquals( "localName-copy-1-1", duplicatedTargetContent.getName().toString() );
             assertEquals( 3, duplicatedTargetContent.getInherit().size() );
             assertFalse( duplicatedTargetContent.getInherit().contains( ContentInheritType.NAME ) );
+        } );
+    }
+
+    @Test
+    public void testDuplicateInherited()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "localName" ) );
+
+        handleEvents();
+
+        final ContentId duplicatedContentId = targetContext.callWith( () -> contentService.duplicate( DuplicateContentParams.create().
+            contentId( sourceContent.getId() ).
+            build() ).
+            getDuplicatedContents().
+            first() );
+
+        targetContext.runWith( () -> {
+            final Content duplicatedTargetContent = contentService.getById( duplicatedContentId );
+            assertEquals( "localName-copy", duplicatedTargetContent.getName().toString() );
+            assertTrue( duplicatedTargetContent.getInherit().isEmpty() );
         } );
     }
 
@@ -429,6 +444,63 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
+    public void testManualOrderLocally()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
+        final Content sourceChild2 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child2" ) );
+        final Content sourceChild3 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child3" ) );
+
+        handleEvents();
+
+        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
+            contentId( sourceContent.getId() ).
+            childOrder( ChildOrder.from( "_name DESC" ) ).
+            build() ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
+            contentId( sourceContent.getId() ).
+            childOrder( ChildOrder.manualOrder() ).
+            build() ) );
+
+        targetContext.runWith( () -> contentService.reorderChildren( ReorderChildContentsParams.create().
+            contentId( sourceContent.getId() ).
+            add( ReorderChildParams.create().
+                contentToMove( sourceChild2.getId() ).
+                contentToMoveBefore( sourceChild3.getId() ).
+                build() ).
+            add( ReorderChildParams.create().
+                contentToMove( sourceChild1.getId() ).
+                contentToMoveBefore( sourceChild3.getId() ).
+                build() ).
+            build() ) );
+
+        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
+            contentId( sourceContent.getId() ).
+            childOrder( ChildOrder.from( "_name DESC" ) ).
+            build() ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> {
+            final FindContentByParentResult result =
+                contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() );
+
+            final Iterator<Content> iterator = result.getContents().iterator();
+
+            assertEquals( sourceChild2.getId(), iterator.next().getId() );
+            assertEquals( sourceChild1.getId(), iterator.next().getId() );
+            assertEquals( sourceChild3.getId(), iterator.next().getId() );
+
+            assertTrue( contentService.getById( sourceContent.getId() ).getChildOrder().isManualOrder() );
+        } );
+
+    }
+
+    @Test
     public void testRenamed()
         throws InterruptedException
     {
@@ -613,71 +685,4 @@ public class ProjectContentEventListenerTest
         Thread.sleep( 1000 );
 
     }
-
-    private Event event( String type, Contents contents )
-    {
-        return Event.create( type ).
-            distributed( true ).
-            value( "nodes", contentsToList( contents ) ).build();
-    }
-
-    private ImmutableList contentsToList( final Contents contents )
-    {
-        List<ImmutableMap> list = new ArrayList<>();
-        contents.stream().
-            map( this::contentToMap ).
-            forEach( list::add );
-
-        return ImmutableList.copyOf( list );
-    }
-
-
-    private ImmutableMap contentToMap( final Content content )
-    {
-        return ImmutableMap.builder().
-            put( "id", content.getId().toString() ).
-            put( "path", "/content/" + content.getPath().asRelative().toString() ).
-            put( "branch", ContextAccessor.current().getBranch().getValue() ).
-            put( "repo", ContextAccessor.current().getRepositoryId().toString() ).
-            build();
-    }
-
-
-  /*  private Content createContent( final ContentPath parent, final String name )
-    {
-        final PropertyTree data = new PropertyTree();
-        data.addStrings( "stringField", "stringValue" );
-
-        final CreateContentParams createParent = CreateContentParams.create().
-            contentData( data ).
-            name( name ).
-            displayName( name ).
-            parent( parent ).
-            type( ContentTypeName.folder() ).
-            build();
-
-        return this.contentService.create( createParent );
-    }
-
-    private void compareSynched( final Content sourceContent, final Content targetContent )
-    {
-        assertEquals( sourceContent.getId(), targetContent.getId() );
-        assertEquals( sourceContent.getName(), targetContent.getName() );
-        assertEquals( sourceContent.getDisplayName(), targetContent.getDisplayName() );
-        assertEquals( sourceContent.getData(), targetContent.getData() );
-        assertEquals( sourceContent.getPath(), targetContent.getPath() );
-        assertEquals( sourceContent.getAllExtraData(), targetContent.getAllExtraData() );
-        assertEquals( sourceContent.getAttachments(), targetContent.getAttachments() );
-        assertEquals( sourceContent.getOwner(), targetContent.getOwner() );
-        assertEquals( sourceContent.getLanguage(), targetContent.getLanguage() );
-        assertEquals( sourceContent.getWorkflowInfo(), targetContent.getWorkflowInfo() );
-        assertEquals( sourceContent.getPage(), targetContent.getPage() );
-        assertEquals( sourceContent.isValid(), targetContent.isValid() );
-        assertEquals( sourceContent.inheritsPermissions(), targetContent.inheritsPermissions() );
-        assertEquals( sourceContent.getCreatedTime(), targetContent.getCreatedTime() );
-
-        assertNotEquals( sourceContent.getPermissions(), targetContent.getPermissions() );
-
-        assertTrue( targetContent.getInherit().containsAll( EnumSet.allOf( ContentInheritType.class ) ) );
-    }*/
 }

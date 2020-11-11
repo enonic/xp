@@ -13,6 +13,8 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 
+import static com.enonic.xp.content.ContentPropertyNames.ORIGIN_PROJECT;
+
 public class ImportContentFactory
 {
     private final ImportContentParams params;
@@ -41,6 +43,11 @@ public class ImportContentFactory
                 stream().
                 map( Enum::name ).
                 collect( Collectors.toSet() ) );
+        }
+
+        if ( params.getOriginProject() != null )
+        {
+            nodeData.addString( ORIGIN_PROJECT, params.getOriginProject().toString() );
         }
 
         return Node.create().
