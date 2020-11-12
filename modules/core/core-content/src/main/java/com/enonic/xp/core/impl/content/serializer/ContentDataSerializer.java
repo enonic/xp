@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.google.common.base.Preconditions;
 
@@ -16,9 +19,9 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
@@ -29,6 +32,7 @@ import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -44,9 +48,11 @@ import static com.enonic.xp.content.ContentPropertyNames.CREATOR;
 import static com.enonic.xp.content.ContentPropertyNames.DATA;
 import static com.enonic.xp.content.ContentPropertyNames.DISPLAY_NAME;
 import static com.enonic.xp.content.ContentPropertyNames.EXTRA_DATA;
+import static com.enonic.xp.content.ContentPropertyNames.INHERIT;
 import static com.enonic.xp.content.ContentPropertyNames.LANGUAGE;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIER;
+import static com.enonic.xp.content.ContentPropertyNames.ORIGIN_PROJECT;
 import static com.enonic.xp.content.ContentPropertyNames.OWNER;
 import static com.enonic.xp.content.ContentPropertyNames.PROCESSED_REFERENCES;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_FIRST;
@@ -78,7 +84,6 @@ public class ContentDataSerializer
             pageDescriptorService( builder.pageDescriptorService ).
             partDescriptorService( builder.partDescriptorService ).
             layoutDescriptorService( builder.layoutDescriptorService ).
-            contentService( builder.contentService ).
             build();
 
         this.extraDataSerializer = new ExtraDataSerializer();
@@ -103,6 +108,7 @@ public class ContentDataSerializer
             ? null
             : params.getOwner().toString() );
         contentAsData.ifNotNull().addString( LANGUAGE, params.getLanguage() != null ? params.getLanguage().toLanguageTag() : null );
+
         contentAsData.addSet( DATA, params.getData().getRoot().copy( contentAsData.getTree() ) );
 
         addPublishInfo( contentAsData, params.getContentPublishInfo() );
@@ -132,7 +138,7 @@ public class ContentDataSerializer
 
         final Content content = params.getEditedContent();
 
-        addMetadata( params, contentAsData, content );
+        addMetadata( contentAsData, content, params.getModifier() );
         contentAsData.addSet( DATA, content.getData().getRoot().copy( contentAsData.getTree() ) );
 
         if ( content.hasExtraData() )
@@ -152,6 +158,37 @@ public class ContentDataSerializer
         addProcessedReferences( contentAsData, content.getProcessedReferences() );
 
         return newPropertyTree;
+    }
+
+    public PropertyTree toNodeData( final Content content )
+    {
+        final PropertyTree propertyTree = new PropertyTree();
+
+        final PropertySet contentAsData = propertyTree.getRoot();
+
+        addMetadata( contentAsData, content, content.getModifier() );
+
+        contentAsData.addSet( DATA, content.getData().getRoot().copy( contentAsData.getTree() ) );
+        final ExtraDatas extraData = content.getAllExtraData();
+
+        if ( extraData != null && !extraData.isEmpty() )
+        {
+            extraDataSerializer.toData( extraData, contentAsData );
+        }
+
+        if ( content.getPage() != null )
+        {
+            pageDataSerializer.toData( content.getPage(), contentAsData );
+        }
+
+        if ( content.getAttachments() != null )
+        {
+            applyAttachmentsAsData( content.getAttachments(), contentAsData );
+        }
+
+        addProcessedReferences( contentAsData, content.getProcessedReferences() );
+
+        return propertyTree;
     }
 
     public void toPageData( final Page page, final PropertySet parent )
@@ -187,11 +224,13 @@ public class ContentDataSerializer
         extractPublishInfo( contentAsSet, builder );
         extractProcessedReferences( contentAsSet, builder );
         extractWorkflowInfo( contentAsSet, builder );
+        extractInherit( contentAsSet, builder );
+        extractOriginProject( contentAsSet, builder );
 
         return builder;
     }
 
-    private void addMetadata( final UpdateContentTranslatorParams params, final PropertySet contentAsData, final Content content )
+    private void addMetadata( final PropertySet contentAsData, final Content content, final PrincipalKey modifier )
     {
         contentAsData.setBoolean( ContentPropertyNames.VALID, content.isValid() );
         contentAsData.ifNotNull().addString( DISPLAY_NAME, content.getDisplayName() );
@@ -199,11 +238,14 @@ public class ContentDataSerializer
         contentAsData.ifNotNull().addString( OWNER, content.getOwner() != null ? content.getOwner().toString() : null );
         contentAsData.ifNotNull().addString( LANGUAGE, content.getLanguage() != null ? content.getLanguage().toLanguageTag() : null );
         contentAsData.ifNotNull().addInstant( MODIFIED_TIME, content.getModifiedTime() );
-        contentAsData.ifNotNull().addString( MODIFIER, params.getModifier().toString() );
+        contentAsData.ifNotNull().addString( MODIFIER, modifier.toString() );
         contentAsData.ifNotNull().addString( CREATOR, content.getCreator().toString() );
         contentAsData.ifNotNull().addInstant( CREATED_TIME, content.getCreatedTime() );
+        contentAsData.ifNotNull().addString( ORIGIN_PROJECT,
+                                             content.getOriginProject() != null ? content.getOriginProject().toString() : null );
         addPublishInfo( contentAsData, content.getPublishInfo() );
         addWorkflowInfo( contentAsData, content.getWorkflowInfo() );
+        addInherit( contentAsData, content.getInherit() );
     }
 
     private void addProcessedReferences( final PropertySet contentAsData, final ContentIds processedIds )
@@ -238,6 +280,17 @@ public class ContentDataSerializer
 
             final PropertySet workflowInfoChecks = workflowInfo.addSet( WORKFLOW_INFO_CHECKS );
             data.getChecks().forEach( ( key, value ) -> workflowInfoChecks.addString( key, value.toString() ) );
+        }
+    }
+
+    private void addInherit( final PropertySet contentAsData, final Set<ContentInheritType> inherit )
+    {
+        if ( inherit != null )
+        {
+            contentAsData.ifNotNull().addStrings( INHERIT, inherit.
+                stream().
+                map( Enum::name ).
+                collect( Collectors.toSet() ) );
         }
     }
 
@@ -323,6 +376,23 @@ public class ContentDataSerializer
         final PropertySet workflowInfoSet = contentAsSet.getSet( WORKFLOW_INFO );
         final WorkflowInfo workflowInfo = workflowInfoSerializer.extract( workflowInfoSet );
         builder.workflowInfo( workflowInfo );
+    }
+
+    private void extractInherit( final PropertySet contentAsSet, final Content.Builder builder )
+    {
+        builder.setInherit( StreamSupport.
+            stream( contentAsSet.getStrings( INHERIT ).spliterator(), false ).
+            map( ContentInheritType::valueOf ).
+            collect( Collectors.toSet() ) );
+    }
+
+    private void extractOriginProject( final PropertySet contentAsSet, final Content.Builder builder )
+    {
+        final String originProject = contentAsSet.getString( ORIGIN_PROJECT );
+        if ( !isNullOrEmpty( originProject ) )
+        {
+            builder.originProject( ProjectName.from( originProject ) );
+        }
     }
 
     private Attachments dataToAttachments( final Iterable<PropertySet> attachmentSets )
@@ -420,8 +490,6 @@ public class ContentDataSerializer
 
         private LayoutDescriptorService layoutDescriptorService;
 
-        private ContentService contentService;
-
         public Builder pageDescriptorService( final PageDescriptorService value )
         {
             this.pageDescriptorService = value;
@@ -440,18 +508,11 @@ public class ContentDataSerializer
             return this;
         }
 
-        public Builder contentService( final ContentService value )
-        {
-            this.contentService = value;
-            return this;
-        }
-
         void validate()
         {
             Preconditions.checkNotNull( pageDescriptorService );
             Preconditions.checkNotNull( partDescriptorService );
             Preconditions.checkNotNull( layoutDescriptorService );
-            Preconditions.checkNotNull( contentService );
         }
 
         public ContentDataSerializer build()

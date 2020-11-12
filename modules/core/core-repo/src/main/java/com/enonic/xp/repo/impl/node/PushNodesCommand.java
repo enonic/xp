@@ -28,7 +28,7 @@ import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.storage.MoveNodeParams;
+import com.enonic.xp.repo.impl.storage.StoreMovedNodeParams;
 import com.enonic.xp.security.acl.Permission;
 
 public class PushNodesCommand
@@ -205,7 +205,7 @@ public class PushNodesCommand
                     build().
                     execute();
 
-                this.nodeStorageService.move( MoveNodeParams.create().
+                this.nodeStorageService.move( StoreMovedNodeParams.create().
                     updateMetadataOnly( true ).
                     nodeVersionId( child.getVersionId() ).
                     node( childNode ).

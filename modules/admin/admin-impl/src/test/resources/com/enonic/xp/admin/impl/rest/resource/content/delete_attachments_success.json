@@ -11,6 +11,7 @@
   "hasChildren": false,
   "iconUrl": "/admin/rest/schema/content/icon/base:folder?hash=f95b70fdc3088560732a5ac135644506",
   "id": "123",
+  "inherit": [],
   "inheritPermissions": true,
   "isPage": false,
   "isRoot": true,

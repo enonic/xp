@@ -16,6 +16,7 @@ import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -99,19 +100,27 @@ final class MoveContentCommand
                 sourceNode.path() );
         }
 
-        final Node movedNode = nodeService.move( sourceNodeId, nodePath, this );
+        final MoveNodeParams.Builder builder = MoveNodeParams.create().
+            nodeId( sourceNodeId ).
+            parentNodePath( nodePath ).
+            moveListener( this );
+
+        if ( params.stopInherit() )
+        {
+            builder.processor( new MoveContentProcessor() );
+        }
+
+        final Node movedNode = nodeService.move( builder.build() );
 
         final Content movedContent = translator.fromNode( movedNode, true );
 
-        String contentName = movedContent.getDisplayName();
-        ContentId contentId = movedContent.getId();
+        final String contentName = movedContent.getDisplayName();
+        final ContentId contentId = movedContent.getId();
 
-        final MoveContentsResult result = MoveContentsResult.create().
+        return MoveContentsResult.create().
             setContentName( contentName ).
             addMoved( contentId ).
             build();
-
-        return result;
     }
 
     private void verifyIntegrity( ContentPath destinationPath )

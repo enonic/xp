@@ -13,7 +13,6 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
@@ -232,19 +231,15 @@ public class ContentDataSerializerTest
 
     private ContentDataSerializer createContentDataSerializer()
     {
-        final ContentService contentService = Mockito.mock( ContentService.class );
         final PageDescriptorService pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         final PartDescriptorService partDescriptorService = Mockito.mock( PartDescriptorService.class );
         final LayoutDescriptorService layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
 
-        final ContentDataSerializer contentDataSerializer = ContentDataSerializer.create().
+        return ContentDataSerializer.create().
             partDescriptorService( partDescriptorService ).
             pageDescriptorService( pageDescriptorService ).
             layoutDescriptorService( layoutDescriptorService ).
-            contentService( contentService ).
             build();
-
-        return contentDataSerializer;
     }
 
     @Test

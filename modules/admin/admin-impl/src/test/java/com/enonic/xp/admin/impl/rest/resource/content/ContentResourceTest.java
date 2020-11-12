@@ -66,6 +66,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ResetContentInheritJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.RevertContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteContentJson;
@@ -100,6 +101,7 @@ import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentDependenciesAggregation;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
@@ -135,10 +137,12 @@ import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.SyncContentService;
 import com.enonic.xp.content.UndoPendingDeleteContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
@@ -235,6 +239,8 @@ public class ContentResourceTest
 
     private PartDescriptorService partDescriptorService;
 
+    private SyncContentService syncContentService;
+
     @Override
     protected ContentResource getResourceInstance()
     {
@@ -263,6 +269,9 @@ public class ContentResourceTest
 
         layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
         partDescriptorService = Mockito.mock( PartDescriptorService.class );
+
+        syncContentService = Mockito.mock( SyncContentService.class );
+        resource.setSyncContentService( syncContentService );
 
         final ComponentNameResolverImpl componentNameResolver = new ComponentNameResolverImpl();
         componentNameResolver.setContentService( contentService );
@@ -697,6 +706,22 @@ public class ContentResourceTest
     }
 
     @Test
+    public void create_content_inherit()
+        throws Exception
+    {
+        Content content = createContent( "content-id", "content-path", "myapplication:content-type",
+                                         Set.of( ContentInheritType.CONTENT, ContentInheritType.PARENT, ContentInheritType.NAME,
+                                                 ContentInheritType.SORT ) );
+        Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ) ) ).thenReturn( content );
+
+        String jsonString = request().path( "content/create" ).
+            entity( readFromFile( "create_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        assertJson( "create_content_inherit_success.json", jsonString );
+    }
+
+    @Test
     public void update_content_new_name_occurred()
         throws Exception
     {
@@ -761,6 +786,23 @@ public class ContentResourceTest
         Mockito.verify( contentService, Mockito.times( 0 ) ).rename( Mockito.isA( RenameContentParams.class ) );
 
         assertJson( "update_content_success.json", jsonString );
+    }
+
+    @Test
+    public void update_content_inherit_success()
+        throws Exception
+    {
+        Content content = createContent( "content-id", "content-name", "myapplication:content-type" );
+        Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenReturn( content );
+        Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
+        Mockito.when( contentService.getPermissionsById( content.getId() ) ).thenReturn( AccessControlList.empty() );
+        String jsonString = request().path( "content/update" ).
+            entity( readFromFile( "update_content_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            post().getAsString();
+
+        Mockito.verify( contentService, Mockito.times( 0 ) ).rename( Mockito.isA( RenameContentParams.class ) );
+
+        assertJson( "update_content_inherit_success.json", jsonString );
     }
 
     @Test
@@ -2406,6 +2448,24 @@ public class ContentResourceTest
         Mockito.verifyNoMoreInteractions( contentService );
     }
 
+    @Test
+    public void testRestoreInherit()
+    {
+        final ContentResource instance = getResourceInstance();
+        final ResetContentInheritJson params = new ResetContentInheritJson( "contentId", "test-project", List.of( "NAME", "PARENT" ) );
+
+        final ArgumentCaptor<ResetContentInheritParams> captor = ArgumentCaptor.forClass( ResetContentInheritParams.class );
+
+        instance.restoreInherit( params );
+
+        Mockito.verify( this.syncContentService, Mockito.times( 1 ) ).
+            resetInheritance( captor.capture() );
+
+        assertEquals( params.toParams().getContentId(), captor.getValue().getContentId() );
+        assertEquals( params.toParams().getInherit(), captor.getValue().getInherit() );
+        assertEquals( params.toParams().getProjectName(), captor.getValue().getProjectName() );
+    }
+
     private ContentTreeSelectorQueryJson initContentTreeSelectorQueryJson( final ContentPath parentPath )
     {
         final ContentTreeSelectorQueryJson json = Mockito.mock( ContentTreeSelectorQueryJson.class );
@@ -2455,6 +2515,11 @@ public class ContentResourceTest
     private Content createContent( final String id, final String name, final String contentTypeName )
     {
         return this.createContent( id, ContentPath.ROOT, name, contentTypeName );
+    }
+
+    private Content createContent( final String id, final String name, final String contentTypeName, final Set<ContentInheritType> inherit )
+    {
+        return Content.create( this.createContent( id, ContentPath.ROOT, name, contentTypeName ) ).setInherit( inherit ).build();
     }
 
     private Site createSite( final String id, final String name, final String contentTypeName, SiteConfigs siteConfigs )

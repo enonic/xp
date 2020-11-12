@@ -34,6 +34,7 @@ import com.enonic.xp.node.ImportNodeVersionParams;
 import com.enonic.xp.node.LoadNodeParams;
 import com.enonic.xp.node.LoadNodeResult;
 import com.enonic.xp.node.MoveNodeListener;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
@@ -168,8 +169,8 @@ public class NodeServiceImpl
 
         if ( node == null )
         {
-            throw new NodeNotFoundException(
-                "Node with id " + id + " and versionId " + versionId + " not found in branch " + ContextAccessor.current().getBranch().getValue() );
+            throw new NodeNotFoundException( "Node with id " + id + " and versionId " + versionId + " not found in branch " +
+                                                 ContextAccessor.current().getBranch().getValue() );
         }
 
         return node;
@@ -275,8 +276,8 @@ public class NodeServiceImpl
 
         if ( node == null )
         {
-            throw new NodeNotFoundException(
-                "Node with path " + path + " and versionId " + versionId + " not found in branch " + ContextAccessor.current().getBranch().getValue() );
+            throw new NodeNotFoundException( "Node with path " + path + " and versionId " + versionId + " not found in branch " +
+                                                 ContextAccessor.current().getBranch().getValue() );
         }
 
         return node;
@@ -609,14 +610,25 @@ public class NodeServiceImpl
     @Override
     public Node move( final NodeId nodeId, final NodePath parentNodePath, final MoveNodeListener moveListener )
     {
+        return move( MoveNodeParams.create().
+            nodeId( nodeId ).
+            parentNodePath( parentNodePath ).
+            moveListener( moveListener ).
+            build() );
+    }
+
+    @Override
+    public Node move( final MoveNodeParams params )
+    {
         verifyContext();
         final MoveNodeResult moveNodeResult = MoveNodeCommand.create().
-            id( nodeId ).
-            newParent( parentNodePath ).
+            id( params.getNodeId() ).
+            newParent( params.getParentNodePath() ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
-            moveListener( moveListener ).
+            moveListener( params.getMoveListener() ).
+            processor( params.getProcessor() ).
             build().
             execute();
 
@@ -798,6 +810,7 @@ public class NodeServiceImpl
             searchService( this.nodeSearchService ).
             childOrder( params.getChildOrder() ).
             nodeId( params.getNodeId() ).
+            processor( params.getProcessor() ).
             build().
             execute();
 
@@ -823,6 +836,12 @@ public class NodeServiceImpl
         for ( Node parentNode : reorderChildNodesResult.getParentNodes() )
         {
             this.eventPublisher.publish( NodeEvents.sorted( parentNode ) );
+        }
+
+        refresh( RefreshMode.SEARCH );
+        for ( NodeId nodeId : reorderChildNodesResult.getNodeIds() )
+        {
+            this.eventPublisher.publish( NodeEvents.manualOrderUpdated( getById( nodeId ) ) );
         }
 
         return reorderChildNodesResult;

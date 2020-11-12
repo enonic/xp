@@ -31,7 +31,6 @@ public class RegionDataSerializerTest
     public void setUp()
     {
         this.regionSerializer = new RegionDataSerializer( ComponentDataSerializerProvider.create().
-            contentService( contentService ).
             layoutDescriptorService( layoutDescriptorService ).
             partDescriptorService( partDescriptorService ).
             build() );

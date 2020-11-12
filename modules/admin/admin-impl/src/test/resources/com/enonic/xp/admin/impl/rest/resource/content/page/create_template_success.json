@@ -21,6 +21,7 @@
   "hasChildren": false,
   "iconUrl": "/admin/rest/schema/content/icon/portal:page-template",
   "id": "template-id",
+  "inherit": [],
   "inheritPermissions": true,
   "isPage": true,
   "isRoot": false,

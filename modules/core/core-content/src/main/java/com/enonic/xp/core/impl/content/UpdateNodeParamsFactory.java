@@ -99,6 +99,7 @@ public class UpdateNodeParamsFactory
         return editableNode -> {
             editableNode.indexConfigDocument = indexConfigFactory.produce();
             editableNode.data = nodeData;
+            editableNode.manualOrderValue = content.getManualOrderValue();
             editableNode.permissions = content.getPermissions();
             editableNode.inheritPermissions = content.inheritsPermissions();
         };

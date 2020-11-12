@@ -64,6 +64,8 @@ import com.enonic.xp.content.GetPublishStatusResult;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
+import com.enonic.xp.content.ImportContentParams;
+import com.enonic.xp.content.ImportContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PublishContentResult;
@@ -123,7 +125,7 @@ import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
-@Component(immediate = true)
+@Component
 public class ContentServiceImpl
     implements ContentService
 {
@@ -167,7 +169,6 @@ public class ContentServiceImpl
     public void initialize()
     {
         this.contentDataSerializer = ContentDataSerializer.create().
-            contentService( this ).
             layoutDescriptorService( layoutDescriptorService ).
             pageDescriptorService( pageDescriptorService ).
             partDescriptorService( partDescriptorService ).
@@ -930,10 +931,16 @@ public class ContentServiceImpl
     {
         try
         {
-            final Node node = nodeService.setChildOrder( SetNodeChildOrderParams.create().
+            final SetNodeChildOrderParams.Builder builder = SetNodeChildOrderParams.create().
                 nodeId( NodeId.from( params.getContentId() ) ).
-                childOrder( params.getChildOrder() ).
-                build() );
+                childOrder( params.getChildOrder() );
+
+            if ( params.stopInherit() )
+            {
+                builder.processor( new SetContentChildOrderProcessor() );
+            }
+
+            final Node node = nodeService.setChildOrder( builder.build() );
 
             final Content content = translator.fromNode( node, true );
 
@@ -959,6 +966,11 @@ public class ContentServiceImpl
                 nodeId( NodeId.from( param.getContentToMove() ) ).
                 moveBefore( param.getContentToMoveBefore() == null ? null : NodeId.from( param.getContentToMoveBefore() ) ).
                 build() );
+        }
+
+        if ( params.stopInherit() )
+        {
+            builder.processor( new SetContentChildOrderProcessor() );
         }
 
         final ReorderChildNodesResult reorderChildNodesResult = this.nodeService.reorderChildren( builder.build() );
@@ -1174,6 +1186,20 @@ public class ContentServiceImpl
     }
 
     @Override
+    public ImportContentResult importContent( final ImportContentParams params )
+    {
+        return ImportContentCommand.create().
+            params( params ).
+            nodeService( nodeService ).
+            contentTypeService( contentTypeService ).
+            contentDataSerializer( contentDataSerializer ).
+            eventPublisher( eventPublisher ).
+            translator( translator ).
+            build().
+            execute();
+    }
+
+    @Override
     @Deprecated
     public InputStream getBinaryInputStream( final ContentId contentId, final BinaryReference binaryReference )
     {
@@ -1295,7 +1321,8 @@ public class ContentServiceImpl
     @Reference
     public void setProjectService( final ProjectService projectService )
     {
-        //Many starters depend on ContentService avaialbe only when default cms repo is fully initialized.
+        //Many starters depend on ContentService available only when default cms repo is fully initialized.
         // Starting from 7.3 Initialization happens in ProjectService, so we need a dependency.
     }
+
 }

@@ -11,6 +11,8 @@ public class DuplicateNodeParams
 
     private final DuplicateNodeProcessor processor;
 
+    private final NodeDataProcessor dataProcessor;
+
     private final DuplicateNodeListener duplicateListener;
 
     private final Boolean includeChildren;
@@ -19,6 +21,7 @@ public class DuplicateNodeParams
     {
         nodeId = builder.nodeId;
         processor = builder.processor;
+        dataProcessor = builder.dataProcessor;
         duplicateListener = builder.duplicateListener;
         includeChildren = builder.includeChildren;
     }
@@ -33,9 +36,15 @@ public class DuplicateNodeParams
         return nodeId;
     }
 
+    @Deprecated
     public DuplicateNodeProcessor getProcessor()
     {
         return processor;
+    }
+
+    public NodeDataProcessor getDataProcessor()
+    {
+        return dataProcessor;
     }
 
     public DuplicateNodeListener getDuplicateListener()
@@ -54,6 +63,8 @@ public class DuplicateNodeParams
 
         private DuplicateNodeProcessor processor;
 
+        private NodeDataProcessor dataProcessor;
+
         private DuplicateNodeListener duplicateListener;
 
         private Boolean includeChildren = true;
@@ -68,9 +79,16 @@ public class DuplicateNodeParams
             return this;
         }
 
+        @Deprecated
         public Builder processor( final DuplicateNodeProcessor processor )
         {
             this.processor = processor;
+            return this;
+        }
+
+        public Builder dataProcessor( final NodeDataProcessor dataProcessor )
+        {
+            this.dataProcessor = dataProcessor;
             return this;
         }
 

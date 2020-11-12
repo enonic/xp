@@ -125,7 +125,6 @@ class ProjectServiceImplTest
 
     private SecurityServiceImpl securityService;
 
-
     @BeforeEach
     protected void setUpNode()
         throws Exception
@@ -140,7 +139,8 @@ class ProjectServiceImplTest
             final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
 
             projectService =
-                new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectAccessContextManager );
+                new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectAccessContextManager,
+                                        eventPublisher );
         } );
     }
 
@@ -195,7 +195,7 @@ class ProjectServiceImplTest
 
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
 
-        final Project project = ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), null, true ) );
+        final Project project = ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), null, true, null ) );
         assertNotNull( project );
         assertEquals( "test-project", project.getName().toString() );
 
@@ -638,6 +638,18 @@ class ProjectServiceImplTest
     }
 
     @Test
+    void create_parent()
+    {
+
+        ADMIN_CONTEXT.runWith( () -> {
+            doCreateProject( ProjectName.from( "test-project" ), null, true, ProjectName.from( "parent" ) );
+            final Project modifiedProject = projectService.get( ProjectName.from( "test-project" ) );
+
+            assertEquals( ProjectName.from( "parent" ), modifiedProject.getParent() );
+        } );
+    }
+
+    @Test
     void modify_icon()
     {
         doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
@@ -817,27 +829,26 @@ class ProjectServiceImplTest
 
     private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions )
     {
-        return this.doCreateProject( name, projectPermissions, false );
+        return this.doCreateProject( name, projectPermissions, false, null );
     }
 
     private Project doCreateProject( final ProjectName name, final String displayName, final String description )
     {
-        final Project project = this.projectService.create( CreateProjectParams.create().
+        return this.projectService.create( CreateProjectParams.create().
             name( name ).
             description( description ).
             displayName( displayName ).
             build() );
-
-        return project;
     }
 
-    private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions,
-                                     final boolean forceInitialization )
+    private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions, final boolean forceInitialization,
+                                     final ProjectName parent )
     {
         final Project project = this.projectService.create( CreateProjectParams.create().
             name( name ).
             description( "description" ).
             displayName( "Project display name" ).
+            parent( parent ).
             forceInitialization( forceInitialization ).
             build() );
 

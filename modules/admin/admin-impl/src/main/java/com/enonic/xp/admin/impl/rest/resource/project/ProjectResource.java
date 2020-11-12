@@ -23,16 +23,21 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.xp.admin.impl.rest.resource.project.json.CreateOrModifyProjectParamsJson;
+import com.enonic.xp.admin.impl.rest.resource.project.json.CreateProjectParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.DeleteProjectParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyLanguageParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyPermissionsParamsJson;
+import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyProjectParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyReadAccessParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectPermissionsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectsJson;
 import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ModifyProjectIconParams;
@@ -70,7 +75,7 @@ public final class ProjectResource
 
     @POST
     @Path("create")
-    public ProjectJson create( final CreateOrModifyProjectParamsJson json )
+    public ProjectJson create( final CreateProjectParamsJson json )
         throws Exception
     {
         final Project project = projectService.create( createParams( json ) );
@@ -79,10 +84,10 @@ public final class ProjectResource
 
     @POST
     @Path("modify")
-    public ProjectJson modify( final CreateOrModifyProjectParamsJson json )
+    public ProjectJson modify( final ModifyProjectParamsJson json )
         throws Exception
     {
-        final Project modifiedProject = this.projectService.modify( modifyParams( json ) );
+        final Project modifiedProject = this.projectService.modify( createParams( json ) );
 
         if ( ProjectConstants.DEFAULT_PROJECT_NAME.equals( modifiedProject.getName() ) )
         {
@@ -154,6 +159,24 @@ public final class ProjectResource
     }
 
     @GET
+    @Path("fetchByContentId")
+    public ProjectsJson fetchByContentId( @QueryParam("contentId") final String contentIdString )
+    {
+        final ContentId contentId = ContentId.from( contentIdString );
+
+        final List<ProjectJson> projects = this.projectService.list().stream().
+            filter( project -> ContextBuilder.from( ContextAccessor.current() ).
+                repositoryId( project.getName().getRepoId() ).
+                branch( ContentConstants.BRANCH_DRAFT ).
+                build().
+                callWith( () -> contentService.contentExists( contentId ) ) ).
+            map( this::doCreateJson ).
+            collect( Collectors.toList() );
+
+        return new ProjectsJson( projects );
+    }
+
+    @GET
     @Path("get")
     public ProjectJson get( final @QueryParam("name") String projectNameValue )
     {
@@ -161,22 +184,24 @@ public final class ProjectResource
         return doCreateJson( this.projectService.get( projectName ) );
     }
 
-    private CreateProjectParams createParams( final CreateOrModifyProjectParamsJson json )
+    private CreateProjectParams createParams( final CreateProjectParamsJson json )
     {
         return CreateProjectParams.create().
             name( json.getName() ).
             displayName( json.getDisplayName() ).
             description( json.getDescription() ).
+            parent( json.getParent() ).
             forceInitialization( true ).
             build();
     }
 
-    private ModifyProjectParams modifyParams( final CreateOrModifyProjectParamsJson json )
+    private ModifyProjectParams createParams( final ModifyProjectParamsJson json )
     {
         return ModifyProjectParams.create().
             name( json.getName() ).
+            displayName( json.getDisplayName() ).
             description( json.getDescription() ).
-            displayName( json.getDisplayName() ).build();
+            build();
     }
 
     private CreateAttachment createIcon( final MultipartForm form )

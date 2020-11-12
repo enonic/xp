@@ -33,6 +33,32 @@ exports.createProject = function () {
     assert.assertJsonEquals(createProjectExpected, result);
 };
 
+var createProjectWithParentExpected = {
+    'id': 'myproject',
+    'displayName': 'project display name',
+    'description': 'project description',
+    'parent': 'testparent',
+    'language': 'no',
+    'permissions': {},
+    'readAccess': {
+        'public': true
+    }
+};
+
+exports.createProjectWithParent = function () {
+    var result = project.create({
+        id: 'myproject',
+        displayName: 'project display name',
+        description: 'project description',
+        language: 'no',
+        parent: 'testparent',
+        readAccess: {public: true},
+        permissions: {}
+    });
+
+    assert.assertJsonEquals(createProjectWithParentExpected, result);
+};
+
 var createProjectWithoutLanguageExpected = {
     id: 'myproject',
     displayName: 'project display name',

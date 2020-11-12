@@ -11,6 +11,7 @@
       },
       "language": "en",
       "name": "project1",
+      "parent": null,
       "permissions": {
         "author": [],
         "contributor": [],
@@ -30,6 +31,7 @@
       "icon": null,
       "language": "en",
       "name": "project2",
+      "parent": "parent1",
       "permissions": {
         "author": [],
         "contributor": [],
@@ -49,6 +51,7 @@
       "icon": null,
       "language": "en",
       "name": "project3",
+      "parent": null,
       "permissions": {
         "author": [
           "user:system:author"
@@ -68,6 +71,7 @@
       "icon": null,
       "language": "en",
       "name": "project4",
+      "parent": "parent2",
       "permissions": {
         "author": [],
         "contributor": [

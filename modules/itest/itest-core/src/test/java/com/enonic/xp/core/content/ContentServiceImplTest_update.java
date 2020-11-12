@@ -146,7 +146,6 @@ public class ContentServiceImplTest_update
         assertEquals( "value", storedContent.getData().getString( "testString2" ) );
     }
 
-
     @Test
     public void update_incorrect_content_data()
         throws Exception

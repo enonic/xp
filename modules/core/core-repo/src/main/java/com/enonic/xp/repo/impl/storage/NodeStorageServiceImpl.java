@@ -151,7 +151,7 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public Node move( final MoveNodeParams params, final InternalContext context )
+    public Node move( final StoreMovedNodeParams params, final InternalContext context )
     {
         final NodeVersionKey nodeVersionKey;
         final NodeBranchEntry nodeBranchEntry = this.branchService.get( params.getNode().id(), context );

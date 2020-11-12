@@ -11,10 +11,13 @@ public class RenameNodeParams
 
     private final NodeName newNodeName;
 
+    private final NodeDataProcessor processor;
+
     private RenameNodeParams( Builder builder )
     {
         nodeId = builder.nodeId;
         newNodeName = builder.newNodeName;
+        processor = builder.processor;
     }
 
     public static Builder create()
@@ -32,11 +35,18 @@ public class RenameNodeParams
         return newNodeName;
     }
 
+    public NodeDataProcessor getProcessor()
+    {
+        return processor;
+    }
+
     public static final class Builder
     {
         private NodeId nodeId;
 
         private NodeName newNodeName;
+
+        private NodeDataProcessor processor = ( n ) -> n;
 
         private Builder()
         {
@@ -54,10 +64,17 @@ public class RenameNodeParams
             return this;
         }
 
+        public Builder processor( final NodeDataProcessor processor )
+        {
+            this.processor = processor;
+            return this;
+        }
+
         private void validate()
         {
             Preconditions.checkNotNull( this.nodeId, "id cannot be null" );
             Preconditions.checkNotNull( this.newNodeName, "name cannot be null" );
+            Preconditions.checkNotNull( this.processor, "processor cannot be null" );
         }
 
         public RenameNodeParams build()

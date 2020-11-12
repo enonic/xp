@@ -41,7 +41,10 @@ public interface NodeService
 
     Node duplicate( DuplicateNodeParams params );
 
+    @Deprecated
     Node move( NodeId nodeId, NodePath parentNodePath, MoveNodeListener moveListener );
+
+    Node move( MoveNodeParams params );
 
     Nodes move( NodeIds nodeIds, NodePath parentNodePath, MoveNodeListener moveListener );
 

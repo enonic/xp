@@ -1,0 +1,688 @@
+package com.enonic.xp.core.content;
+
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Set;
+import java.util.concurrent.RejectedExecutionException;
+
+import org.assertj.core.util.Sets;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentInheritType;
+import com.enonic.xp.content.ContentName;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.DuplicateContentParams;
+import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.FindContentByParentParams;
+import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.RenameContentParams;
+import com.enonic.xp.content.ReorderChildContentsParams;
+import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
+import com.enonic.xp.core.impl.content.ProjectContentEventListener;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.event.Event;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageRegions;
+import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.PartDescriptor;
+import com.enonic.xp.region.Region;
+import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.security.PrincipalKey;
+
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
+import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class ProjectContentEventListenerTest
+    extends AbstractContentSynchronizerTest
+{
+    private ProjectContentEventListener listener;
+
+    private ArgumentCaptor<Event> eventCaptor;
+
+    private Set<Event> handledEvents;
+
+
+    @BeforeEach
+    protected void setUpNode()
+        throws Exception
+    {
+        super.setUpNode();
+
+        final ParentContentSynchronizer synchronizer = new ParentContentSynchronizer( contentService, mediaInfoService );
+        listener = new ProjectContentEventListener( this.projectService, synchronizer );
+
+        eventCaptor = ArgumentCaptor.forClass( Event.class );
+        handledEvents = Sets.newHashSet();
+    }
+
+    @Test
+    public void testCreated()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+
+        handleEvents();
+
+        final Content targetContent = targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+
+        compareSynched( sourceContent, targetContent );
+        assertEquals( sourceProject.getName(), targetContent.getOriginProject() );
+    }
+
+    @Test
+    public void testSyncCreateWithExistedLocalName()
+        throws InterruptedException
+    {
+        targetContext.callWith( () -> createContent( ContentPath.ROOT, "localName" ) );
+
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "localName" ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> {
+            final Content targetContent = contentService.getById( sourceContent.getId() );
+            assertEquals( "localName-1", targetContent.getName().toString() );
+        } );
+    }
+
+    @Test
+    public void testSyncDuplicateWithExistedLocalName()
+        throws InterruptedException
+    {
+        targetContext.callWith( () -> createContent( ContentPath.ROOT, "localName-copy" ) );
+        targetContext.callWith( () -> createContent( ContentPath.ROOT, "localName-copy-1" ) );
+
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "localName" ) );
+
+        handleEvents();
+
+        final ContentId duplicatedContentId = sourceContext.callWith( () -> contentService.duplicate(
+            DuplicateContentParams.create().contentId( sourceContent.getId() ).build() ).getDuplicatedContents().first() );
+
+        handleEvents();
+
+        targetContext.runWith( () -> {
+            final Content duplicatedTargetContent = contentService.getById( duplicatedContentId );
+            assertEquals( "localName-copy-1-1", duplicatedTargetContent.getName().toString() );
+            assertEquals( 3, duplicatedTargetContent.getInherit().size() );
+            assertFalse( duplicatedTargetContent.getInherit().contains( ContentInheritType.NAME ) );
+        } );
+    }
+
+    @Test
+    public void testDuplicateInherited()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "localName" ) );
+
+        handleEvents();
+
+        final ContentId duplicatedContentId = targetContext.callWith( () -> contentService.duplicate( DuplicateContentParams.create().
+            contentId( sourceContent.getId() ).
+            build() ).
+            getDuplicatedContents().
+            first() );
+
+        targetContext.runWith( () -> {
+            final Content duplicatedTargetContent = contentService.getById( duplicatedContentId );
+            assertEquals( "localName-copy", duplicatedTargetContent.getName().toString() );
+            assertTrue( duplicatedTargetContent.getInherit().isEmpty() );
+        } );
+    }
+
+    @Test
+    public void testUpdated()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+
+        final Content updatedContent = sourceContext.callWith( () -> {
+
+            final Content updated = contentService.update( new UpdateContentParams().
+                contentId( sourceContent.getId() ).
+                editor( ( edit -> {
+                    edit.data = new PropertyTree();
+                    edit.displayName = "newDisplayName";
+                    edit.extraDatas = ExtraDatas.create().
+                        add( createExtraData() ).
+                        build();
+                    edit.owner = PrincipalKey.from( "user:system:newOwner" );
+                    edit.language = Locale.forLanguageTag( "no" );
+                    edit.page = createPage();
+
+                } ) ) );
+
+            return updated;
+
+        } );
+
+        handleEvents();
+
+        final Content targetContent = targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+
+        compareSynched( updatedContent, targetContent );
+        assertEquals( 4, targetContent.getInherit().size() );
+    }
+
+
+    @Test
+    public void testUpdatedFromReadyToInProgress()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+
+        sourceContext.callWith( () -> {
+
+            contentService.update( new UpdateContentParams().
+                contentId( sourceContent.getId() ).
+                editor( ( edit -> edit.workflowInfo = WorkflowInfo.create().state( WorkflowState.READY ).build() ) ) );
+
+            handleEvents();
+
+            final Content sourceContentReady = contentService.update( new UpdateContentParams().
+                contentId( sourceContent.getId() ).
+                editor( ( edit -> edit.workflowInfo = WorkflowInfo.create().state( WorkflowState.IN_PROGRESS ).build() ) ) );
+
+            handleEvents();
+
+            return sourceContentReady;
+
+        } );
+
+        final Content targetContent = targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+
+        assertEquals( WorkflowState.READY, targetContent.getWorkflowInfo().getState() );
+    }
+
+    @Test
+    public void testUpdatedLocally()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+
+        handleEvents();
+
+        final Content updatedInChild = targetContext.callWith( () -> contentService.update( new UpdateContentParams().
+            contentId( sourceContent.getId() ).
+            editor( ( edit -> edit.data = new PropertyTree() ) ) ) );
+
+        assertEquals( 2, updatedInChild.getInherit().size() );
+        assertFalse( updatedInChild.getInherit().contains( ContentInheritType.CONTENT ) );
+        assertFalse( updatedInChild.getInherit().contains( ContentInheritType.NAME ) );
+
+        final Content updatedInParent = sourceContext.callWith( () -> contentService.update( new UpdateContentParams().
+            contentId( sourceContent.getId() ).
+            editor( ( edit -> edit.displayName = "new source display name" ) ) ) );
+
+        handleEvents();
+
+        assertNotEquals( updatedInParent.getDisplayName(),
+                         targetContext.callWith( () -> contentService.getById( updatedInChild.getId() ).getDisplayName() ) );
+    }
+
+    @Test
+    public void testMoved()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child" ) );
+        final Content sourceFolder = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "folder" ) );
+
+        handleEvents();
+
+        sourceContext.runWith( () -> contentService.move( MoveContentParams.create().
+            contentId( sourceContent.getId() ).
+            parentContentPath( sourceFolder.getPath() ).
+            build() ) );
+
+        handleEvents();
+
+        final Content targetContent = targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+        final Content targetChild = targetContext.callWith( () -> contentService.getById( sourceChild.getId() ) );
+
+        assertEquals( "/folder/content", targetContent.getPath().toString() );
+        assertEquals( "/folder/content/child", targetChild.getPath().toString() );
+    }
+
+    @Test
+    public void testMovedLocally()
+        throws InterruptedException
+    {
+        final Content sourceContent1 = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
+        final Content sourceContent2 = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content2" ) );
+        final Content sourceContent3 = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content3" ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> contentService.move( MoveContentParams.create().
+            contentId( sourceContent1.getId() ).
+            parentContentPath( sourceContent2.getPath() ).
+            build() ) );
+
+        final Content targetMovedContent = targetContext.callWith( () -> contentService.getById( sourceContent1.getId() ) );
+
+        assertEquals( 3, targetMovedContent.getInherit().size() );
+        assertFalse( targetMovedContent.getInherit().contains( ContentInheritType.PARENT ) );
+
+        sourceContext.runWith( () -> contentService.move( MoveContentParams.create().
+            contentId( sourceContent1.getId() ).
+            parentContentPath( sourceContent3.getPath() ).
+            build() ) );
+
+        assertEquals( "/content3/content1",
+                      sourceContext.callWith( () -> contentService.getById( sourceContent1.getId() ) ).getPath().toString() );
+        assertEquals( "/content2/content1",
+                      targetContext.callWith( () -> contentService.getById( sourceContent1.getId() ) ).getPath().toString() );
+    }
+
+    @Test
+    public void testMovedToExistedPath()
+        throws InterruptedException
+    {
+        final Content sourceContent1 = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceContent2 = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content2" ) );
+
+        handleEvents();
+
+        targetContext.callWith( () -> createContent( sourceContent2.getPath(), "content" ) );
+
+        sourceContext.runWith( () -> contentService.move( MoveContentParams.create().
+            contentId( sourceContent1.getId() ).
+            parentContentPath( sourceContent2.getPath() ).
+            build() ) );
+
+        handleEvents();
+
+        final Content targetMovedContent = targetContext.callWith( () -> contentService.getById( sourceContent1.getId() ) );
+
+        assertEquals( "/content2/content-1", targetMovedContent.getPath().toString() );
+    }
+
+    @Test
+    public void testSorted()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
+        final Content sourceChild2 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child2" ) );
+        final Content sourceChild3 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child3" ) );
+
+        handleEvents();
+
+        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
+            contentId( sourceContent.getId() ).
+            childOrder( ChildOrder.from( "_name DESC" ) ).
+            build() ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> {
+            final FindContentByParentResult result =
+                contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() );
+
+            final Iterator<Content> iterator = result.getContents().iterator();
+
+            assertEquals( sourceChild3.getId(), iterator.next().getId() );
+            assertEquals( sourceChild2.getId(), iterator.next().getId() );
+            assertEquals( sourceChild1.getId(), iterator.next().getId() );
+        } );
+
+    }
+
+    @Test
+    public void testSortedLocally()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+
+        handleEvents();
+
+        final Content sortedInChild = targetContext.callWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
+            contentId( sourceContent.getId() ).
+            childOrder( ChildOrder.from( "_name DESC" ) ).
+            build() ) );
+
+        assertEquals( 3, sortedInChild.getInherit().size() );
+        assertFalse( sortedInChild.getInherit().contains( ContentInheritType.SORT ) );
+
+        final Content sortedInParent = sourceContext.callWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
+            contentId( sourceContent.getId() ).
+            childOrder( ChildOrder.from( "_name ASC" ) ).
+            build() ) );
+
+        handleEvents();
+
+        assertNotEquals( sortedInParent.getChildOrder(), targetContext.callWith( () -> contentService.getById( sortedInChild.getId() ) ) );
+
+    }
+
+    @Test
+    public void testManualOrderUpdated()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
+        final Content sourceChild2 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child2" ) );
+        final Content sourceChild3 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child3" ) );
+
+        handleEvents();
+
+        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
+            contentId( sourceContent.getId() ).
+            childOrder( ChildOrder.from( "_name DESC" ) ).
+            build() ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> {
+            final FindContentByParentResult result =
+                contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() );
+
+            final Iterator<Content> iterator = result.getContents().iterator();
+
+            assertEquals( sourceChild3.getId(), iterator.next().getId() );
+            assertEquals( sourceChild2.getId(), iterator.next().getId() );
+            assertEquals( sourceChild1.getId(), iterator.next().getId() );
+        } );
+
+        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
+            contentId( sourceContent.getId() ).
+            childOrder( ChildOrder.manualOrder() ).
+            build() ) );
+
+        handleEvents();
+
+        sourceContext.runWith( () -> contentService.reorderChildren( ReorderChildContentsParams.create().
+            contentId( sourceContent.getId() ).
+            add( ReorderChildParams.create().
+                contentToMove( sourceChild2.getId() ).
+                contentToMoveBefore( sourceChild3.getId() ).
+                build() ).
+            add( ReorderChildParams.create().
+                contentToMove( sourceChild1.getId() ).
+                contentToMoveBefore( sourceChild3.getId() ).
+                build() ).
+            build() ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> {
+            final FindContentByParentResult result =
+                contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() );
+
+            final Iterator<Content> iterator = result.getContents().iterator();
+
+            assertEquals( sourceChild2.getId(), iterator.next().getId() );
+            assertEquals( sourceChild1.getId(), iterator.next().getId() );
+            assertEquals( sourceChild3.getId(), iterator.next().getId() );
+        } );
+
+    }
+
+    @Test
+    public void testManualOrderLocally()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
+        final Content sourceChild2 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child2" ) );
+        final Content sourceChild3 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child3" ) );
+
+        handleEvents();
+
+        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
+            contentId( sourceContent.getId() ).
+            childOrder( ChildOrder.from( "_name DESC" ) ).
+            build() ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
+            contentId( sourceContent.getId() ).
+            childOrder( ChildOrder.manualOrder() ).
+            build() ) );
+
+        targetContext.runWith( () -> contentService.reorderChildren( ReorderChildContentsParams.create().
+            contentId( sourceContent.getId() ).
+            add( ReorderChildParams.create().
+                contentToMove( sourceChild2.getId() ).
+                contentToMoveBefore( sourceChild3.getId() ).
+                build() ).
+            add( ReorderChildParams.create().
+                contentToMove( sourceChild1.getId() ).
+                contentToMoveBefore( sourceChild3.getId() ).
+                build() ).
+            build() ) );
+
+        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
+            contentId( sourceContent.getId() ).
+            childOrder( ChildOrder.from( "_name DESC" ) ).
+            build() ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> {
+            final FindContentByParentResult result =
+                contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() );
+
+            final Iterator<Content> iterator = result.getContents().iterator();
+
+            assertEquals( sourceChild2.getId(), iterator.next().getId() );
+            assertEquals( sourceChild1.getId(), iterator.next().getId() );
+            assertEquals( sourceChild3.getId(), iterator.next().getId() );
+
+            assertTrue( contentService.getById( sourceContent.getId() ).getChildOrder().isManualOrder() );
+        } );
+
+    }
+
+    @Test
+    public void testRenamed()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
+        final Content sourceChild2 = sourceContext.callWith( () -> createContent( sourceChild1.getPath(), "child2" ) );
+
+        handleEvents();
+
+        sourceContext.runWith( () -> contentService.rename( RenameContentParams.create().
+            contentId( sourceContent.getId() ).
+            newName( ContentName.from( "content-new" ) ).
+            build() ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> {
+            assertEquals( "/content-new", contentService.getById( sourceContent.getId() ).getPath().toString() );
+            assertEquals( "/content-new/child1", contentService.getById( sourceChild1.getId() ).getPath().toString() );
+            assertEquals( "/content-new/child1/child2", contentService.getById( sourceChild2.getId() ).getPath().toString() );
+        } );
+
+        sourceContext.runWith( () -> contentService.rename( RenameContentParams.create().
+            contentId( sourceChild1.getId() ).
+            newName( ContentName.from( "child1-new" ) ).
+            build() ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> {
+            assertEquals( "/content-new", contentService.getById( sourceContent.getId() ).getPath().toString() );
+            assertEquals( "/content-new/child1-new", contentService.getById( sourceChild1.getId() ).getPath().toString() );
+            assertEquals( "/content-new/child1-new/child2", contentService.getById( sourceChild2.getId() ).getPath().toString() );
+        } );
+
+        sourceContext.runWith( () -> contentService.rename( RenameContentParams.create().
+            contentId( sourceChild2.getId() ).
+            newName( ContentName.from( "child2-new" ) ).
+            build() ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> {
+            assertEquals( "/content-new", contentService.getById( sourceContent.getId() ).getPath().toString() );
+            assertEquals( "/content-new/child1-new", contentService.getById( sourceChild1.getId() ).getPath().toString() );
+            assertEquals( "/content-new/child1-new/child2-new", contentService.getById( sourceChild2.getId() ).getPath().toString() );
+        } );
+    }
+
+    @Test
+    public void testRenameToExisted()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> {
+            createContent( ContentPath.ROOT, "newName" );
+        } );
+
+        sourceContext.runWith( () -> {
+            contentService.rename( RenameContentParams.create().
+                contentId( sourceContent.getId() ).
+                newName( ContentName.from( "newName" ) ).
+                build() );
+        } );
+        handleEvents();
+
+        assertEquals( "newName-1", targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) ).getName().toString() );
+    }
+
+    @Test
+    public void testDeleted()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
+        final Content sourceChild2 = sourceContext.callWith( () -> createContent( sourceChild1.getPath(), "child2" ) );
+
+        handleEvents();
+
+        sourceContext.runWith( () -> contentService.deleteWithoutFetch( DeleteContentParams.create().
+            contentPath( sourceContent.getPath() ).
+            build() ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> {
+            assertFalse( contentService.contentExists( sourceContent.getId() ) );
+            assertFalse( contentService.contentExists( sourceChild1.getId() ) );
+            assertFalse( contentService.contentExists( sourceChild2.getId() ) );
+        } );
+    }
+
+    @Test
+    public void testDeletedInherited()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
+        final Content sourceChild2 = sourceContext.callWith( () -> createContent( sourceChild1.getPath(), "child2" ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> contentService.deleteWithoutFetch( DeleteContentParams.create().
+            contentPath( sourceContent.getPath() ).
+            build() ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> {
+            assertTrue( contentService.contentExists( sourceContent.getId() ) );
+            assertTrue( contentService.contentExists( sourceChild1.getId() ) );
+            assertTrue( contentService.contentExists( sourceChild2.getId() ) );
+        } );
+    }
+
+    @Test
+    public void testDeactivated()
+    {
+        listener.deactivate();
+        sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+
+        assertThrows( RejectedExecutionException.class, this::handleEvents );
+    }
+
+    private ExtraData createExtraData()
+    {
+        final PropertyTree mediaData = new PropertyTree();
+        mediaData.setLong( IMAGE_INFO_PIXEL_SIZE, 300L );
+        mediaData.setLong( IMAGE_INFO_IMAGE_HEIGHT, 200L );
+        mediaData.setLong( IMAGE_INFO_IMAGE_WIDTH, 300L );
+        mediaData.setLong( MEDIA_INFO_BYTE_SIZE, 100000L );
+
+        return new ExtraData( XDataName.from( "myApp:xData" ), mediaData );
+    }
+
+    private Page createPage()
+    {
+        PropertyTree componentConfig = new PropertyTree();
+        componentConfig.setString( "my-prop", "value" );
+
+        PartComponent component = PartComponent.create().
+            descriptor( DescriptorKey.from( "mainapplication:partTemplateName" ) ).
+            config( componentConfig ).
+            build();
+
+        Region region = Region.create().
+            name( "my-region" ).
+            add( component ).
+            build();
+
+        PageRegions regions = PageRegions.create().
+            add( region ).
+            build();
+
+        PropertyTree pageConfig = new PropertyTree();
+        pageConfig.setString( "background-color", "blue" );
+
+        Mockito.when( partDescriptorService.getByKey( DescriptorKey.from( "mainapplication:partTemplateName" ) ) ).thenReturn(
+            PartDescriptor.create().
+                key( DescriptorKey.from( "mainapplication:partTemplateName" ) ).
+                displayName( "my-component" ).
+                config( Form.create().build() ).
+                build() );
+
+        return Page.create().
+            template( PageTemplateKey.from( "mypagetemplate" ) ).
+            regions( regions ).
+            build();
+    }
+
+    private void handleEvents()
+        throws InterruptedException
+    {
+        Mockito.verify( eventPublisher, Mockito.atLeastOnce() ).publish( eventCaptor.capture() );
+        eventCaptor.getAllValues().stream().
+            filter( event -> !handledEvents.contains( event ) ).
+            forEach( listener::onEvent );
+        handledEvents.addAll( eventCaptor.getAllValues() );
+        Thread.sleep( 1000 );
+
+    }
+}
