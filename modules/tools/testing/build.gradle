@@ -5,7 +5,7 @@ dependencies {
     compile project( ':web:web-api' )
     compile project( ':portal:portal-api' )
     compile project( ':script:script-impl' )
-    compile 'junit:junit:4.13'
+    compile 'junit:junit:4.13.1'
     implementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     compile "org.mockito:mockito-core:${mockitoVersion}"
     compile 'org.hamcrest:hamcrest-library:1.3'
