@@ -3,7 +3,6 @@ package com.enonic.xp.admin.impl.rest.resource.application;
 import java.net.URL;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,11 +19,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
-import com.enonic.xp.admin.impl.rest.resource.application.json.MarketAppVersionInfoJson;
-import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationJson;
-import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationsJson;
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.admin.tool.AdminToolDescriptors;
@@ -79,8 +74,6 @@ public class ApplicationResourceTest
     private ApplicationInfoService applicationInfoService;
 
     private SiteService siteService;
-
-    private MarketService marketService;
 
     private IdProviderDescriptorService idProviderDescriptorService;
 
@@ -403,31 +396,6 @@ public class ApplicationResourceTest
     }
 
     @Test
-    public void get_market_applications()
-        throws Exception
-    {
-        final MarketApplicationJson marketApplicationJson = new MarketApplicationJson();
-        marketApplicationJson.setName( "app1" );
-        marketApplicationJson.setDisplayName( "market application displayname" );
-        marketApplicationJson.setDescription( "market application description" );
-        marketApplicationJson.setIconUrl( "http://market.enonic.com/app1" );
-        marketApplicationJson.setVersions( Collections.singletonMap( "1", new MarketAppVersionInfoJson() ) );
-        marketApplicationJson.setLatestVersion( "version-1.0" );
-
-        final MarketApplicationsJson json = new MarketApplicationsJson();
-        json.add( "appKey", marketApplicationJson );
-
-        Mockito.when( this.marketService.get( Arrays.asList( "a", "b" ), "version-1.0", 0, 10 ) ).thenReturn( json );
-
-        String response = request().
-            path( "application/getMarketApplications" ).
-            entity( "{\"version\":\"version-1.0\", \"start\":\"0\", \"count\":\"10\", \"ids\":[\"a\",\"b\"]}",
-                    MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
-        assertJson( "get_market_applications.json", response );
-    }
-
-    @Test
     public void get_icon_default()
         throws Exception
     {
@@ -707,7 +675,6 @@ public class ApplicationResourceTest
         this.applicationDescriptorService = Mockito.mock( ApplicationDescriptorService.class );
         this.applicationInfoService = Mockito.mock( ApplicationInfoService.class );
         this.siteService = Mockito.mock( SiteService.class );
-        this.marketService = Mockito.mock( MarketService.class );
         this.idProviderDescriptorService = Mockito.mock( IdProviderDescriptorService.class );
         this.resourceService = Mockito.mock( ResourceService.class );
         this.portalScriptService = Mockito.mock( PortalScriptService.class );
@@ -722,7 +689,6 @@ public class ApplicationResourceTest
         final ApplicationResource resource = new ApplicationResource();
         resource.setApplicationService( this.applicationService );
         resource.setSiteService( this.siteService );
-        resource.setMarketService( this.marketService );
         resource.setIdProviderDescriptorService( this.idProviderDescriptorService );
         resource.setApplicationDescriptorService( this.applicationDescriptorService );
         resource.setApplicationInfoService( this.applicationInfoService );
