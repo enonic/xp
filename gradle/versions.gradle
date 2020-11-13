@@ -1,7 +1,7 @@
 ext {
     slf4jVersion = '1.7.30' // When updated also change version in system.properties 'internal.osgi.system.packages'
     felixVersion = '6.0.3'
-    jettyVersion = '9.4.31.v20200723'
+    jettyVersion = '9.4.34.v20201102'
     jacksonVersion = '2.11.3'
     junitJupiterVersion = '5.7.0'
     dropwizardMetricsVersion = '4.1.12.1'
