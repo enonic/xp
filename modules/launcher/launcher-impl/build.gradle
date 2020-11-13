@@ -5,7 +5,7 @@ dependencies {
     compile "org.apache.felix:org.apache.felix.framework:${felixVersion}"
     implementation 'org.apache.felix:org.apache.felix.utils:1.11.4'
 
-    runtimeOnly ('org.apache.felix:org.apache.felix.log:1.2.2') {
+    runtimeOnly ('org.apache.felix:org.apache.felix.log:1.2.4') {
         exclude group: 'org.osgi'
     }
     runtimeOnly 'org.apache.felix:org.apache.felix.logback:1.0.2'
