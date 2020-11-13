@@ -30,7 +30,7 @@ addBundle( 'com.sun.xml.bind:jaxb-impl:2.2.11', 4 )
 addBundle( 'org.apache.felix:org.apache.felix.metatype:1.2.2', 5 )
 addBundle( 'org.apache.felix:org.apache.felix.eventadmin:1.5.0', 5 )
 addBundle( 'org.apache.felix:org.apache.felix.configadmin:1.9.18', 5 )
-addBundle( 'org.apache.felix:org.apache.felix.scr:2.1.20', 5 )
+addBundle( 'org.apache.felix:org.apache.felix.scr:2.1.24', 5 )
 addBundle( 'org.osgi:org.osgi.util.promise:1.1.1', 5 )
 addBundle( 'org.osgi:org.osgi.util.function:1.1.0', 5 )
 
