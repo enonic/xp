@@ -15,6 +15,7 @@ import org.mockito.Answers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.osgi.framework.BundleContext;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IExecutorService;
@@ -42,6 +43,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ClusteredTaskManagerImplTest
 {
+    @Mock
+    BundleContext bundleContext;
+
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private HazelcastInstance hazelcastInstance;
 
@@ -58,7 +62,7 @@ class ClusteredTaskManagerImplTest
     {
         config = mock( TaskConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( hazelcastInstance.getExecutorService( ClusteredTaskManagerImpl.ACTION ) ).thenReturn( executorService );
-        clusteredTaskManager = new ClusteredTaskManagerImpl( hazelcastInstance );
+        clusteredTaskManager = new ClusteredTaskManagerImpl( bundleContext, hazelcastInstance );
         clusteredTaskManager.activate( config );
     }
 

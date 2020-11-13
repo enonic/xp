@@ -9,8 +9,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
@@ -39,27 +41,38 @@ public final class ClusteredTaskManagerImpl
 
     private final HazelcastInstance hazelcastInstance;
 
+    private final MemberAttributesApplier memberAttributesApplier;
+
     private IExecutorService executorService;
 
     private volatile long outboundTimeoutNs;
 
     @Activate
-    public ClusteredTaskManagerImpl( @Reference final HazelcastInstance hazelcastInstance )
+    public ClusteredTaskManagerImpl( final BundleContext bundleContext, @Reference final HazelcastInstance hazelcastInstance )
     {
         this.hazelcastInstance = hazelcastInstance;
+        this.memberAttributesApplier = new MemberAttributesApplier( bundleContext, hazelcastInstance );
     }
 
     @Activate
     public void activate( final TaskConfig config )
     {
-        outboundTimeoutNs = Duration.parse( config.offload_outboundTimeout() ).toNanos();
+        outboundTimeoutNs = Duration.parse( config.clustered_timeout() ).toNanos();
         executorService = hazelcastInstance.getExecutorService( ClusteredTaskManagerImpl.ACTION );
+        this.memberAttributesApplier.activate( config );
     }
 
     @Modified
     public void modify( final TaskConfig config )
     {
-        outboundTimeoutNs = Duration.parse( config.offload_outboundTimeout() ).toNanos();
+        outboundTimeoutNs = Duration.parse( config.clustered_timeout() ).toNanos();
+        this.memberAttributesApplier.modify( config );
+    }
+
+    @Deactivate
+    public void deactivate()
+    {
+        this.memberAttributesApplier.deactivate();
     }
 
     @Override
@@ -143,11 +156,5 @@ public final class ClusteredTaskManagerImpl
                 Boolean.TRUE.equals(
                     member.getBooleanAttribute( MemberAttributesApplier.TASKS_ENABLED_ATTRIBUTE_PREFIX + task.getApplicationKey() ) );
         }
-    }
-
-    public void setMemberAttributesApplier( @Reference final MemberAttributesApplier memberAttributesApplier )
-    {
-        // Bogus dependency to make sure memberAttributesApplier got activated first.
-        // Hopefully OSGi R8 Conditions will make it simpler.
     }
 }
