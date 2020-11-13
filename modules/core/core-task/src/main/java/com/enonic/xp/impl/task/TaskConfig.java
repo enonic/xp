@@ -4,5 +4,5 @@ public @interface TaskConfig
 {
     boolean offload_acceptInbound() default true;
 
-    String offload_outboundTimeout() default "PT5S";
+    String clustered_timeout() default "PT5S";
 }
