@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.Striped;
 
-import com.enonic.xp.admin.impl.market.MarketService;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInfoJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstallParams;
@@ -41,9 +40,7 @@ import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationInstal
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationListParams;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ApplicationSuccessJson;
-import com.enonic.xp.admin.impl.rest.resource.application.json.GetMarketApplicationsJson;
 import com.enonic.xp.admin.impl.rest.resource.application.json.ListApplicationJson;
-import com.enonic.xp.admin.impl.rest.resource.application.json.MarketApplicationsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.page.part.PartDescriptorIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconUrlResolver;
@@ -111,8 +108,6 @@ public final class ApplicationResource
     private ApplicationDescriptorService applicationDescriptorService;
 
     private SiteService siteService;
-
-    private MarketService marketService;
 
     private IdProviderDescriptorService idProviderDescriptorService;
 
@@ -451,21 +446,6 @@ public final class ApplicationResource
         return result;
     }
 
-    @POST
-    @Path("getMarketApplications")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public MarketApplicationsJson getMarketApplications( final GetMarketApplicationsJson params )
-        throws Exception
-    {
-        final String version = params.getVersion();
-        final int start = params.getStart();
-        final int count = params.getCount();
-        final List<String> ids = params.getIds();
-
-        return this.marketService.get( ids, version, start, count );
-    }
-
-
     @GET
     @Path("getSiteApplications")
     public ListApplicationJson getSiteApplications( @QueryParam("query") final String query )
@@ -640,12 +620,6 @@ public final class ApplicationResource
     public void setSiteService( final SiteService siteService )
     {
         this.siteService = siteService;
-    }
-
-    @Reference
-    public void setMarketService( final MarketService marketService )
-    {
-        this.marketService = marketService;
     }
 
     @Reference

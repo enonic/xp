@@ -17,7 +17,6 @@ import com.enonic.xp.content.PushContentException;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.exception.NotFoundException;
-import com.enonic.xp.market.MarketException;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -48,11 +47,6 @@ public final class JsonExceptionMapper
         if ( cause instanceof PushContentException )
         {
             return toErrorInfo( cause, Response.Status.BAD_REQUEST.getStatusCode() );
-        }
-
-        if ( cause instanceof MarketException )
-        {
-            return toErrorInfo( cause, ( (MarketException) cause ).getHttpErrorCode() );
         }
 
         return toErrorInfo( cause, Response.Status.INTERNAL_SERVER_ERROR.getStatusCode() );

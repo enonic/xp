@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.content.PushContentException;
-import com.enonic.xp.market.MarketException;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceNotFoundException;
 
@@ -82,13 +81,6 @@ public class JsonExceptionMapperTest
     {
         final Response res = this.mapper.toResponse( new PushContentException( "test" ) );
         assertEquals( 400, res.getStatus() );
-    }
-
-    @Test
-    public void testToResponse_MarketException()
-    {
-        final Response res = this.mapper.toResponse( new MarketException( "test", 404 ) );
-        assertEquals( 404, res.getStatus() );
     }
 
     @Test
