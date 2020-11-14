@@ -4,6 +4,10 @@ apply plugin: 'jacoco'
 
 def defaultEncoding = 'UTF-8'
 
+def integration = gradle.sharedServices.registerIfAbsent("integration", BuildService) {
+    maxParallelUsages = 1
+}
+
 compileJava {
     options.encoding = defaultEncoding
     options.compilerArgs = ['-Xlint:-options'] // , '-Xlint:unchecked', '-Xlint:deprecation']
@@ -50,6 +54,7 @@ test {
 }
 
 task integrationTest(type: Test) {
+    usesService(integration)
     description = 'Runs integration tests.'
     group = 'verification'
 
