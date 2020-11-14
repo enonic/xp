@@ -4,7 +4,7 @@ ext {
     jettyVersion = '9.4.34.v20201102'
     jacksonVersion = '2.11.3'
     junitJupiterVersion = '5.7.0'
-    dropwizardMetricsVersion = '4.1.12.1'
+    dropwizardMetricsVersion = '4.1.15'
     commonsLangVersion = '2.6'
     commonsIoVersion = '2.8.0'
     commonsCompressVersion = '1.20'
