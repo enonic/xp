@@ -27,7 +27,7 @@ class MemberAttributesApplier
 
     public void activate( final TaskConfig config )
     {
-        localMember.setBooleanAttribute( TASKS_ENABLED_ATTRIBUTE_KEY, config.offload_acceptInbound() );
+        localMember.setBooleanAttribute( TASKS_ENABLED_ATTRIBUTE_KEY, config.distributable_acceptInbound() );
         super.open();
     }
 
@@ -39,7 +39,7 @@ class MemberAttributesApplier
 
     public void modify( final TaskConfig config )
     {
-        localMember.setBooleanAttribute( TASKS_ENABLED_ATTRIBUTE_KEY, config.offload_acceptInbound() );
+        localMember.setBooleanAttribute( TASKS_ENABLED_ATTRIBUTE_KEY, config.distributable_acceptInbound() );
     }
 
     @Override

@@ -1,45 +1,33 @@
 package com.enonic.xp.lib.task;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.Form;
-import com.enonic.xp.lib.common.FormJsonToPropertyTreeTranslator;
+import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.task.SubmitTaskParams;
-import com.enonic.xp.task.TaskDescriptor;
-import com.enonic.xp.task.TaskDescriptorService;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
 public final class SubmitNamedTaskHandler
     implements ScriptBean
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     private Supplier<TaskService> taskServiceSupplier;
-
-    private Supplier<MixinService> mixinServiceSupplier;
-
-    private Supplier<TaskDescriptorService> taskDescriptorServiceSupplier;
 
     private Supplier<PortalRequest> requestSupplier;
 
+    private Supplier<PropertyTreeMarshallerService> propertyTreeMarshallerServiceSupplier;
+
     private String name;
 
-    private boolean offload;
-
-    private Map<String, Object> config;
+    private ScriptValue config;
 
     public void setName( final String name )
     {
@@ -48,12 +36,7 @@ public final class SubmitNamedTaskHandler
 
     public void setConfig( final ScriptValue config )
     {
-        this.config = config != null ? config.getMap() : null;
-    }
-
-    public void setOffload( final boolean offload )
-    {
-        this.offload = offload;
+        this.config = config;
     }
 
     public String submit()
@@ -76,15 +59,13 @@ public final class SubmitNamedTaskHandler
         }
 
         final TaskService taskService = taskServiceSupplier.get();
-        final TaskDescriptorService taskDescriptorService = taskDescriptorServiceSupplier.get();
 
-        final TaskDescriptor descriptor = taskDescriptorService.getTasks().filter( ( td ) -> td.getKey().equals( taskKey ) ).first();
-        final Form taskDescriptorConfig = descriptor == null ? Form.create().build() : descriptor.getConfig();
-        final PropertyTree configParams = translateToPropertyTree( config, taskDescriptorConfig );
+        PropertyTree data = propertyTreeMarshallerServiceSupplier.get().
+            marshal( Optional.ofNullable( config ).map( ScriptValue::getMap ).orElse( Map.of() ) );
+
         final SubmitTaskParams params = SubmitTaskParams.create().
             descriptorKey( taskKey ).
-            config( configParams ).
-            offload( offload ).
+            data( data ).
             build();
         final TaskId taskId = taskService.submitTask( params );
 
@@ -104,31 +85,11 @@ public final class SubmitNamedTaskHandler
         }
     }
 
-    private JsonNode createJson( final Map<String, Object> value )
-    {
-        return MAPPER.valueToTree( value );
-    }
-
-    private PropertyTree translateToPropertyTree( final Map<String, Object> configValues, final Form form )
-    {
-        if ( configValues == null )
-        {
-            return new PropertyTree();
-        }
-        return new FormJsonToPropertyTreeTranslator( inlineMixins( form ), true ).translate( createJson( configValues ) );
-    }
-
-    private Form inlineMixins( final Form form )
-    {
-        return mixinServiceSupplier.get().inlineFormItems( form );
-    }
-
     @Override
     public void initialize( final BeanContext context )
     {
         requestSupplier = context.getBinding( PortalRequest.class );
         taskServiceSupplier = context.getService( TaskService.class );
-        mixinServiceSupplier = context.getService( MixinService.class );
-        taskDescriptorServiceSupplier = context.getService( TaskDescriptorService.class );
+        propertyTreeMarshallerServiceSupplier = context.getService( PropertyTreeMarshallerService.class );
     }
 }

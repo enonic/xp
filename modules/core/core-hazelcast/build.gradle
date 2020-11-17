@@ -16,6 +16,8 @@ jar {
              'com.enonic.xp.event;resolution:=optional' + ',' +
              'com.enonic.xp.data;resolution:=optional' + ',' +
                  'com.enonic.xp.task;resolution:=optional' + ',' +
+                 'com.enonic.xp.app;resolution:=optional' + ',' +
+                 'com.enonic.xp.page;resolution:=optional' + ',' +
                  'com.enonic.xp.repository;resolution:=optional' + ',' +
                  'com.enonic.xp.branch;resolution:=optional' + ',' +
                  'com.enonic.xp.security.auth;resolution:=optional' + ',' +

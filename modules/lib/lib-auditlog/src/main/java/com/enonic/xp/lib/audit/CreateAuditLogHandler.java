@@ -3,26 +3,24 @@ package com.enonic.xp.lib.audit;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.AuditLogUri;
 import com.enonic.xp.audit.AuditLogUris;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.lib.audit.mapper.AuditLogMapper;
-import com.enonic.xp.lib.common.FormJsonToPropertyTreeTranslator;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.security.PrincipalKey;
 
 public class CreateAuditLogHandler
     extends BaseAuditLogHandler
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     private String type;
 
     private Instant time;
@@ -34,6 +32,8 @@ public class CreateAuditLogHandler
     private AuditLogUris objectUris;
 
     private PropertyTree data;
+
+    private Supplier<PropertyTreeMarshallerService> propertyTreeMarshallerServiceSupplier;
 
     @Override
     protected Object doExecute()
@@ -83,16 +83,14 @@ public class CreateAuditLogHandler
 
     public void setData( final ScriptValue data )
     {
-        if ( data == null || data.getMap() == null )
-        {
-            return;
-        }
-
-        this.data = new FormJsonToPropertyTreeTranslator( null, false ).translate( createJson( data.getMap() ) );
+        this.data = propertyTreeMarshallerServiceSupplier.get().
+            marshal( Optional.ofNullable( data ).map( ScriptValue::getMap ).orElse( Map.of() ) );
     }
 
-    private JsonNode createJson( final Map<?, ?> value )
+    @Override
+    public void initialize( final BeanContext context )
     {
-        return MAPPER.valueToTree( value );
+        super.initialize( context );
+        propertyTreeMarshallerServiceSupplier = context.getService( PropertyTreeMarshallerService.class );
     }
 }

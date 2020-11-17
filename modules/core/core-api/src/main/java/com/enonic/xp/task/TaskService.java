@@ -11,6 +11,7 @@ public interface TaskService
 {
     TaskId submitTask( RunnableTask runnable, String description );
 
+    @Deprecated
     TaskId submitTask( DescriptorKey key, PropertyTree config );
 
     TaskId submitTask( SubmitTaskParams params );

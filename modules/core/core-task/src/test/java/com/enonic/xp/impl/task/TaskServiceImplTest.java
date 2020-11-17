@@ -17,9 +17,12 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.task.distributed.DescribedTask;
 import com.enonic.xp.impl.task.distributed.TaskManager;
 import com.enonic.xp.impl.task.osgi.OsgiSupportMock;
+import com.enonic.xp.impl.task.script.NamedTask;
+import com.enonic.xp.impl.task.script.NamedTaskFactory;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.SubmitTaskParams;
+import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,6 +38,9 @@ class TaskServiceImplTest
 {
     @Mock
     TaskManager taskManager;
+
+    @Mock
+    NamedTaskFactory namedTaskFactory;
 
     @Captor
     ArgumentCaptor<DescribedTask> describedTaskCaptor;
@@ -52,7 +58,7 @@ class TaskServiceImplTest
 
         taskConfig = mock( TaskConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
 
-        taskService = new TaskServiceImpl( taskManager );
+        taskService = new TaskServiceImpl( taskManager, namedTaskFactory );
         taskService.activate( taskConfig );
     }
 
@@ -80,6 +86,11 @@ class TaskServiceImplTest
         final DescriptorKey descriptorKey = DescriptorKey.from( "module:my-admin-tool" );
         final PropertyTree config = new PropertyTree();
 
+        final NamedTask namedTask = mock( NamedTask.class );
+        when( namedTaskFactory.createLegacy( descriptorKey, config ) ).thenReturn( namedTask );
+        when( namedTask.getTaskDescriptor() ).
+            thenReturn( TaskDescriptor.create().key( descriptorKey ).description( "task description" ).build() );
+
         final TaskId taskId = taskService.submitTask( descriptorKey, config );
         verify( taskManager ).submitTask( describedTaskCaptor.capture() );
         describedTaskCaptor.getValue();
@@ -92,7 +103,7 @@ class TaskServiceImplTest
     {
         final DescriptorKey descriptorKey = DescriptorKey.from( "module:my-admin-tool" );
 
-        final TaskId taskId = taskService.submitTask( SubmitTaskParams.create().descriptorKey( descriptorKey ).offload( true ).build() );
+        final TaskId taskId = taskService.submitTask( SubmitTaskParams.create().descriptorKey( descriptorKey ).build() );
         verify( taskManager ).submitTask( describedTaskCaptor.capture() );
         describedTaskCaptor.getValue();
         final DescribedTask argument = describedTaskCaptor.getValue();
@@ -107,7 +118,7 @@ class TaskServiceImplTest
         final TaskManager clusteredTaskManager = mock( TaskManager.class );
         taskService.setClusteredTaskManager( clusteredTaskManager );
 
-        final TaskId taskId = taskService.submitTask( SubmitTaskParams.create().descriptorKey( descriptorKey ).offload( true ).build() );
+        final TaskId taskId = taskService.submitTask( SubmitTaskParams.create().descriptorKey( descriptorKey ).build() );
 
         verify( clusteredTaskManager ).submitTask( describedTaskCaptor.capture() );
         describedTaskCaptor.getValue();
@@ -122,13 +133,13 @@ class TaskServiceImplTest
 
         final TaskManager clusteredTaskManager = mock( TaskManager.class );
 
-        when( taskConfig.offload_acceptInbound() ).thenReturn( false );
+        when( taskConfig.distributable_acceptInbound() ).thenReturn( false );
         taskService.activate( taskConfig );
 
         CompletableFuture.runAsync( () -> taskService.setClusteredTaskManager( clusteredTaskManager ),
                                     CompletableFuture.delayedExecutor( 1, TimeUnit.SECONDS ) );
 
-        final TaskId taskId = taskService.submitTask( SubmitTaskParams.create().descriptorKey( descriptorKey ).offload( true ).build() );
+        final TaskId taskId = taskService.submitTask( SubmitTaskParams.create().descriptorKey( descriptorKey ).build() );
 
         verify( clusteredTaskManager ).submitTask( describedTaskCaptor.capture() );
         describedTaskCaptor.getValue();
@@ -141,11 +152,11 @@ class TaskServiceImplTest
     {
         final DescriptorKey descriptorKey = DescriptorKey.from( "module:my-admin-tool" );
 
-        when( taskConfig.offload_acceptInbound() ).thenReturn( false );
+        when( taskConfig.distributable_acceptInbound() ).thenReturn( false );
         taskService.activate( taskConfig );
 
         assertThrows( RuntimeException.class, () -> {
-            taskService.submitTask( SubmitTaskParams.create().descriptorKey( descriptorKey ).offload( true ).build() );
+            taskService.submitTask( SubmitTaskParams.create().descriptorKey( descriptorKey ).build() );
         } );
     }
 

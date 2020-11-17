@@ -48,7 +48,7 @@ class MemberAttributesApplierTest
 
         verify( localMember ).setBooleanAttribute( "tasks-enabled", true );
 
-        when( config.offload_acceptInbound() ).thenReturn( false );
+        when( config.distributable_acceptInbound() ).thenReturn( false );
         memberAttributesApplier.modify( config );
         verify( localMember ).setBooleanAttribute( "tasks-enabled", false );
 

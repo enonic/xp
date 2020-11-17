@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.common;
+package com.enonic.xp.core.impl.form;
 
 import java.net.URL;
 

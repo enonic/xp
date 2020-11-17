@@ -1,5 +1,7 @@
 package com.enonic.xp.app;
 
+import java.io.Serializable;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -10,7 +12,10 @@ import com.enonic.xp.util.CharacterChecker;
 
 @PublicApi
 public final class ApplicationKey
+    implements Serializable
 {
+    private static final long serialVersionUID = 0;
+
     public static final ApplicationKey SYSTEM = ApplicationKey.from( "system" );
 
     public static final ApplicationKey MEDIA_MOD = ApplicationKey.from( "media" );

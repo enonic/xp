@@ -3,9 +3,11 @@ package com.enonic.xp.lib.task;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.core.impl.PropertyTreeMarshallerServiceFactory;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.schema.mixin.MixinService;
@@ -58,6 +60,8 @@ class SubmitNamedTaskHandlerTest
         Mockito.when( taskDescriptorService.getTasks() ).thenReturn( Descriptors.from( desc1, desc2, desc3 ) );
 
         Mockito.when( mixinService.inlineFormItems( any( Form.class ) ) ).thenAnswer( invocation -> invocation.getArguments()[0] );
+
+        addService( PropertyTreeMarshallerService.class, PropertyTreeMarshallerServiceFactory.newInstance( mixinService ) );
     }
 
     @Test

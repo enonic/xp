@@ -11,9 +11,8 @@ import com.enonic.xp.impl.task.script.NamedTaskFactory;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
-import com.enonic.xp.task.TaskNotFoundException;
 
-public final class DescribedNamedTask
+public final class DistributableTask
     implements DescribedTask, Serializable
 {
     private static final long serialVersionUID = 0;
@@ -22,17 +21,20 @@ public final class DescribedNamedTask
 
     private final String name;
 
-    private final PropertyTree config;
+    private final DescriptorKey key;
+
+    private final PropertyTree data;
 
     private final TaskContext context;
 
     private transient NamedTask namedTask;
 
-    public DescribedNamedTask( final DescriptorKey key, final PropertyTree config, final TaskContext context )
+    public DistributableTask( final DescriptorKey key, final PropertyTree data, final TaskContext context )
     {
         this.taskId = TaskId.from( UUID.randomUUID().toString() );
         this.name = key.toString();
-        this.config = config;
+        this.key = key;
+        this.data = data;
         this.context = context;
     }
 
@@ -54,17 +56,16 @@ public final class DescribedNamedTask
     }
 
     @Override
+    public ApplicationKey getApplicationKey()
+    {
+        return key.getApplicationKey();
+    }
+
+    @Override
     public String getDescription()
     {
         initNamedTask();
         return namedTask.getTaskDescriptor().getDescription();
-    }
-
-    @Override
-    public ApplicationKey getApplicationKey()
-    {
-        initNamedTask();
-        return namedTask.getTaskDescriptor().getApplicationKey();
     }
 
     @Override
@@ -79,11 +80,7 @@ public final class DescribedNamedTask
         if ( namedTask == null )
         {
             final DescriptorKey descriptorKey = DescriptorKey.from( name );
-            namedTask = OsgiSupport.withService( NamedTaskFactory.class, ntsf -> ntsf.create( descriptorKey, config ) );
-            if ( namedTask == null )
-            {
-                throw new TaskNotFoundException( descriptorKey );
-            }
+            namedTask = OsgiSupport.withService( NamedTaskFactory.class, ntsf -> ntsf.create( descriptorKey, data ) );
         }
     }
 }

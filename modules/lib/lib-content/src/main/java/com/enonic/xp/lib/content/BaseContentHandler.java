@@ -1,12 +1,11 @@
 package com.enonic.xp.lib.content;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -17,13 +16,11 @@ import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.Form;
-import com.enonic.xp.lib.common.FormJsonToPropertyTreeTranslator;
+import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataService;
@@ -34,17 +31,16 @@ import com.enonic.xp.site.SiteService;
 public abstract class BaseContentHandler
     extends BaseContextHandler
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     private ContentTypeService contentTypeService;
-
-    private MixinService mixinService;
 
     private XDataService xDataService;
 
     protected SiteService siteService;
 
-    PropertyTree translateToPropertyTree( final JsonNode json, final ApplicationKey applicationKey, final ContentTypeName contentTypeName )
+    private Supplier<PropertyTreeMarshallerService> propertyTreeMarshallerService;
+
+    private PropertyTree translateToPropertyTree( final Map<String, ?> json, final ApplicationKey applicationKey,
+                                                  final ContentTypeName contentTypeName )
     {
         final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
 
@@ -53,11 +49,11 @@ public abstract class BaseContentHandler
             throw new IllegalArgumentException( "Site descriptor not found [" + applicationKey + "]" );
         }
 
-        return new FormJsonToPropertyTreeTranslator( inlineMixins( siteDescriptor.getForm() ),
-                                                     strictContentValidation( contentTypeName ) ).translate( json );
+        return propertyTreeMarshallerService.get().marshal( json, siteDescriptor.getForm(), strictContentValidation( contentTypeName ) );
     }
 
-    PropertyTree translateToPropertyTree( final JsonNode json, final XDataName xDataName, final ContentTypeName contentTypeName )
+    private PropertyTree translateToPropertyTree( final Map<String, ?> json, final XDataName xDataName,
+                                                  final ContentTypeName contentTypeName )
     {
         final XData xData = this.xDataService.getByName( xDataName );
 
@@ -66,11 +62,10 @@ public abstract class BaseContentHandler
             throw new IllegalArgumentException( "XData not found [" + xDataName + "]" );
         }
 
-        return new FormJsonToPropertyTreeTranslator( inlineMixins( xData.getForm() ),
-                                                     strictContentValidation( contentTypeName ) ).translate( json );
+        return propertyTreeMarshallerService.get().marshal( json, xData.getForm(), strictContentValidation( contentTypeName ) );
     }
 
-    PropertyTree translateToPropertyTree( final JsonNode json, final ContentTypeName contentTypeName )
+    private PropertyTree translateToPropertyTree( final Map<String, ?> json, final ContentTypeName contentTypeName )
     {
         final ContentType contentType = this.contentTypeService.getByName( GetContentTypeParams.from( contentTypeName ) );
 
@@ -79,8 +74,7 @@ public abstract class BaseContentHandler
             throw new IllegalArgumentException( "Content type not found [" + contentTypeName + "]" );
         }
 
-        return new FormJsonToPropertyTreeTranslator( inlineMixins( contentType.getForm() ),
-                                                     strictContentValidation( contentTypeName ) ).translate( json );
+        return propertyTreeMarshallerService.get().marshal( json, contentType.getForm(), strictContentValidation( contentTypeName ) );
     }
 
     ExtraDatas createExtraDatas( final Map<String, Object> mapValue, final ContentTypeName contentTypeName )
@@ -128,14 +122,14 @@ public abstract class BaseContentHandler
         return null;
     }
 
-    PropertyTree createPropertyTree( final Map<?, ?> value, final XDataName xDataName, final ContentTypeName contentTypeName )
+    PropertyTree createPropertyTree( final Map<String, ?> value, final XDataName xDataName, final ContentTypeName contentTypeName )
     {
         if ( value == null )
         {
             return null;
         }
 
-        return this.translateToPropertyTree( createJson( value ), xDataName, contentTypeName );
+        return this.translateToPropertyTree( value, xDataName, contentTypeName );
     }
 
     PropertyTree createPropertyTree( final Map<String, Object> value, final ContentTypeName contentTypeName )
@@ -145,13 +139,12 @@ public abstract class BaseContentHandler
             return null;
         }
 
-        final ObjectNode root = createJson( value );
-
-        if ( root.has( ContentPropertyNames.SITECONFIG ) )
+        if ( value.containsKey( ContentPropertyNames.SITECONFIG ) )
         {
-            root.remove( ContentPropertyNames.SITECONFIG );
+            Map<String, Object> newValue = new LinkedHashMap<>( value );
+            newValue.remove( ContentPropertyNames.SITECONFIG );
 
-            final PropertyTree result = this.translateToPropertyTree( root, contentTypeName );
+            final PropertyTree result = this.translateToPropertyTree( newValue, contentTypeName );
             final List<PropertySet> siteConfigs = createSiteConfigSets( value.get( ContentPropertyNames.SITECONFIG ), contentTypeName );
 
             if ( siteConfigs != null )
@@ -164,7 +157,7 @@ public abstract class BaseContentHandler
             return result;
         }
 
-        return this.translateToPropertyTree( createJson( value ), contentTypeName );
+        return this.translateToPropertyTree( value, contentTypeName );
     }
 
     List<PropertySet> createSiteConfigSets( final Object siteConfig, final ContentTypeName contentTypeName )
@@ -194,16 +187,15 @@ public abstract class BaseContentHandler
             collect( Collectors.toList() );
     }
 
-    private PropertySet createSitePropertySet( final Map siteConfig, final ContentTypeName contentTypeName )
+    private PropertySet createSitePropertySet( final Map<String, Object> siteConfig, final ContentTypeName contentTypeName )
     {
         if ( siteConfig == null )
         {
             return null;
         }
 
-        final ObjectNode appConfigNode = createJson( siteConfig );
-        final ApplicationKey applicationKey = ApplicationKey.from( appConfigNode.get( "applicationKey" ).asText() );
-        final ObjectNode appConfigData = (ObjectNode) appConfigNode.get( "config" );
+        final ApplicationKey applicationKey = ApplicationKey.from( siteConfig.get( "applicationKey" ).toString() );
+        final Map<String, ?> appConfigData = (Map<String, ?>) siteConfig.get( "config" );
 
         if ( appConfigData == null )
         {
@@ -218,11 +210,6 @@ public abstract class BaseContentHandler
         return propertySet;
     }
 
-    private Form inlineMixins( final Form form )
-    {
-        return this.mixinService.inlineFormItems( form );
-    }
-
     boolean strictContentValidation( final ContentTypeName contentTypeName )
     {
         return !contentTypeName.isUnstructured() && strictDataValidation();
@@ -231,11 +218,6 @@ public abstract class BaseContentHandler
     boolean strictDataValidation()
     {
         return true;
-    }
-
-    ObjectNode createJson( final Map<?, ?> value )
-    {
-        return MAPPER.valueToTree( value );
     }
 
     protected WorkflowInfo createWorkflowInfo( Map<String, Object> map )
@@ -265,8 +247,8 @@ public abstract class BaseContentHandler
     {
         super.initialize( context );
         this.contentTypeService = context.getService( ContentTypeService.class ).get();
-        this.mixinService = context.getService( MixinService.class ).get();
         this.xDataService = context.getService( XDataService.class ).get();
         this.siteService = context.getService( SiteService.class ).get();
+        this.propertyTreeMarshallerService = context.getService( PropertyTreeMarshallerService.class );
     }
 }

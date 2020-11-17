@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 public class ModifyContentHandlerTest
@@ -239,7 +240,7 @@ public class ModifyContentHandlerTest
             build();
 
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
-        when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
+        when( this.contentTypeService.getByName( eq( getContentType ) ) ).thenReturn( contentType );
 
         final XData xData1 = XData.create().
             name( XDataName.from( "com.enonic.myapplication:myschema" ) ).
@@ -249,7 +250,7 @@ public class ModifyContentHandlerTest
                 inputType( InputTypeName.DOUBLE ).
                 build() ).
             build();
-        when( this.xDataService.getByName( Mockito.eq( xData1.getName() ) ) ).thenReturn( xData1 );
+        when( this.xDataService.getByName( eq( xData1.getName() ) ) ).thenReturn( xData1 );
 
         final XData xData2 = XData.create().
             name( XDataName.from( "com.enonic.myapplication:other" ) ).
@@ -259,8 +260,8 @@ public class ModifyContentHandlerTest
                 inputType( InputTypeName.TEXT_LINE ).
                 build() ).
             build();
-        when( this.xDataService.getByName( Mockito.eq( xData1.getName() ) ) ).thenReturn( xData1 );
-        when( this.xDataService.getByName( Mockito.eq( xData2.getName() ) ) ).thenReturn( xData2 );
+        when( this.xDataService.getByName( eq( xData1.getName() ) ) ).thenReturn( xData1 );
+        when( this.xDataService.getByName( eq( xData2.getName() ) ) ).thenReturn( xData2 );
         when( this.mixinService.inlineFormItems( any( Form.class ) ) ).then( returnsFirstArg() );
     }
 
