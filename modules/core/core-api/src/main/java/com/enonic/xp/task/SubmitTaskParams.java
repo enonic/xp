@@ -9,15 +9,12 @@ public final class SubmitTaskParams
 {
     private final DescriptorKey descriptorKey;
 
-    private final PropertyTree config;
-
-    private final boolean offload;
+    private final PropertyTree data;
 
     private SubmitTaskParams( final Builder builder )
     {
         this.descriptorKey = Objects.requireNonNull( builder.descriptorKey, "descriptor key is required" );
-        this.config = builder.config;
-        this.offload = builder.offload;
+        this.data = builder.data;
     }
 
     public DescriptorKey getDescriptorKey()
@@ -25,14 +22,9 @@ public final class SubmitTaskParams
         return descriptorKey;
     }
 
-    public PropertyTree getConfig()
+    public PropertyTree getData()
     {
-        return config;
-    }
-
-    public boolean isOffload()
-    {
-        return offload;
+        return data;
     }
 
     public static Builder create()
@@ -44,9 +36,7 @@ public final class SubmitTaskParams
     {
         private DescriptorKey descriptorKey;
 
-        private PropertyTree config;
-
-        private boolean offload;
+        private PropertyTree data;
 
         private Builder()
         {
@@ -58,15 +48,9 @@ public final class SubmitTaskParams
             return this;
         }
 
-        public Builder config( final PropertyTree config )
+        public Builder data( final PropertyTree data )
         {
-            this.config = config;
-            return this;
-        }
-
-        public Builder offload( final boolean offload )
-        {
-            this.offload = offload;
+            this.data = data;
             return this;
         }
 

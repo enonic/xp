@@ -3,6 +3,8 @@ package com.enonic.xp.lib.content;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.core.impl.PropertyTreeMarshallerServiceFactory;
+import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.xdata.XDataService;
@@ -22,6 +24,8 @@ public abstract class BaseContentHandlerTest
 
     protected SiteService siteService;
 
+    protected PropertyTreeMarshallerService propertyTreeMarshallerService;
+
     @Override
     public void initialize()
         throws Exception
@@ -33,10 +37,12 @@ public abstract class BaseContentHandlerTest
         this.mixinService = Mockito.mock( MixinService.class );
         this.xDataService = Mockito.mock( XDataService.class );
         this.siteService = Mockito.mock( SiteService.class );
+        this.propertyTreeMarshallerService = PropertyTreeMarshallerServiceFactory.newInstance( mixinService );
         addService( ContentService.class, this.contentService );
         addService( MixinService.class, this.mixinService );
         addService( ContentTypeService.class, this.contentTypeService );
         addService( XDataService.class, this.xDataService );
         addService( SiteService.class, this.siteService );
+        addService( PropertyTreeMarshallerService.class, this.propertyTreeMarshallerService );
     }
 }

@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.common;
+package com.enonic.xp.core.impl.form;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -130,20 +130,19 @@ public final class FormJsonToPropertyTreeTranslator
         {
             PropertySet propertySet = new PropertySet();
             value.fields().
-                forEachRemaining( ( field ) ->
-                                  {
-                                      if ( field.getValue().isArray() )
-                                      {
-                                          for ( final JsonNode arrayNode : field.getValue() )
-                                          {
-                                              propertySet.addProperty( field.getKey(), resolveCoreValue( arrayNode ) );
-                                          }
-                                      }
-                                      else
-                                      {
-                                          propertySet.addProperty( field.getKey(), resolveCoreValue( field.getValue() ) );
-                                      }
-                                  } );
+                forEachRemaining( ( field ) -> {
+                    if ( field.getValue().isArray() )
+                    {
+                        for ( final JsonNode arrayNode : field.getValue() )
+                        {
+                            propertySet.addProperty( field.getKey(), resolveCoreValue( arrayNode ) );
+                        }
+                    }
+                    else
+                    {
+                        propertySet.addProperty( field.getKey(), resolveCoreValue( field.getValue() ) );
+                    }
+                } );
             return ValueFactory.newPropertySet( propertySet );
         }
 
@@ -183,7 +182,8 @@ public final class FormJsonToPropertyTreeTranslator
 
     private boolean isOptionSetSelection( final String key, final Property parentProperty )
     {
-        return OPTION_SET_SELECTION_ARRAY_NAME.equals( key ) && this.form.getFormItem( resolveInputPath( parentProperty.getName(), parentProperty.getParent().getProperty() ) ) instanceof FormOptionSet;
+        return OPTION_SET_SELECTION_ARRAY_NAME.equals( key ) && this.form.getFormItem(
+            resolveInputPath( parentProperty.getName(), parentProperty.getParent().getProperty() ) ) instanceof FormOptionSet;
     }
 
 }

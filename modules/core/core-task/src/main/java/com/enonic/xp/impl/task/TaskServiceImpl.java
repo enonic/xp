@@ -18,9 +18,12 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.concurrent.DynamicReference;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.impl.task.distributed.DescribedNamedTask;
+import com.enonic.xp.impl.task.distributed.DescribedTask;
+import com.enonic.xp.impl.task.distributed.DistributableTask;
 import com.enonic.xp.impl.task.distributed.TaskContext;
 import com.enonic.xp.impl.task.distributed.TaskManager;
+import com.enonic.xp.impl.task.script.NamedTask;
+import com.enonic.xp.impl.task.script.NamedTaskFactory;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.SubmitTaskParams;
@@ -38,69 +41,67 @@ public final class TaskServiceImpl
 
     private final DynamicReference<TaskManager> clusteredTaskManagerRef = new DynamicReference<>();
 
+    private final NamedTaskFactory namedTaskFactory;
+
     private volatile boolean acceptOffloaded;
 
     @Activate
-    public TaskServiceImpl( @Reference(target = "(local=true)") final TaskManager localTaskManager )
+    public TaskServiceImpl( @Reference(target = "(local=true)") final TaskManager localTaskManager,
+                            @Reference final NamedTaskFactory namedTaskFactory )
     {
         this.localTaskManager = localTaskManager;
+        this.namedTaskFactory = namedTaskFactory;
     }
 
     @Activate
     @Modified
     public void activate( final TaskConfig config )
     {
-        acceptOffloaded = config.offload_acceptInbound();
+        acceptOffloaded = config.distributable_acceptInbound();
     }
 
     @Override
     public TaskId submitTask( final RunnableTask runnable, final String description )
     {
         final DescribedTaskImpl task = new DescribedTaskImpl( runnable, description, buildContext() );
-        localTaskManager.submitTask( task );
-        return task.getTaskId();
+        return submitLocal( task );
     }
 
     @Override
     public TaskId submitTask( final DescriptorKey key, final PropertyTree config )
     {
-        return submitTask( SubmitTaskParams.create().descriptorKey( key ).config( config ).build() );
+        final NamedTask namedTask = namedTaskFactory.createLegacy( key, config );
+        final DescribedTaskImpl task = new DescribedTaskImpl( namedTask, buildContext() );
+        return submitLocal( task );
     }
 
     @Override
     public TaskId submitTask( SubmitTaskParams params )
     {
         TaskManager taskManager;
-        if ( params.isOffload() )
+        taskManager = clusteredTaskManagerRef.getNow( null );
+        if ( taskManager == null )
         {
-            taskManager = clusteredTaskManagerRef.getNow( null );
-            if ( taskManager == null )
+            if ( acceptOffloaded )
             {
-                if ( acceptOffloaded )
+                LOG.debug( "Clustered task manager is unavailable, falling back to local task manager." );
+                taskManager = localTaskManager;
+            }
+            else
+            {
+                try
                 {
-                    LOG.debug( "Clustered task manager is unavailable, falling back to local task manager." );
-                    taskManager = localTaskManager;
+                    LOG.info( "Clustered task manager is unavailable, waiting..." );
+                    taskManager = clusteredTaskManagerRef.get( 5, TimeUnit.SECONDS );
                 }
-                else
+                catch ( InterruptedException | TimeoutException e )
                 {
-                    try
-                    {
-                        LOG.info( "Clustered task manager is unavailable, waiting..." );
-                        taskManager = clusteredTaskManagerRef.get( 5, TimeUnit.SECONDS );
-                    }
-                    catch ( InterruptedException | TimeoutException e )
-                    {
-                        throw new RuntimeException( e );
-                    }
+                    throw new RuntimeException( e );
                 }
             }
         }
-        else
-        {
-            taskManager = localTaskManager;
-        }
 
-        final DescribedNamedTask task = new DescribedNamedTask( params.getDescriptorKey(), params.getConfig(), buildContext() );
+        final DistributableTask task = new DistributableTask( params.getDescriptorKey(), params.getData(), buildContext() );
 
         taskManager.submitTask( task );
         return task.getTaskId();
@@ -112,6 +113,11 @@ public final class TaskServiceImpl
         return new TaskContext( userContext.getBranch(), userContext.getRepositoryId(), userContext.getAuthInfo() );
     }
 
+    private TaskId submitLocal( final DescribedTask task )
+    {
+        localTaskManager.submitTask( task );
+        return task.getTaskId();
+    }
 
     @Override
     public TaskInfo getTaskInfo( final TaskId taskId )

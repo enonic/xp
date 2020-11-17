@@ -5,5 +5,7 @@ import com.enonic.xp.page.DescriptorKey;
 
 public interface NamedTaskFactory
 {
-    NamedTask create( final DescriptorKey key, final PropertyTree config );
+    NamedTask create( final DescriptorKey key, final PropertyTree data );
+
+    NamedTask createLegacy( final DescriptorKey key, final PropertyTree data );
 }

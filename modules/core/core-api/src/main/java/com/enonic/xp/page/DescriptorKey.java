@@ -1,5 +1,6 @@
 package com.enonic.xp.page;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
@@ -10,7 +11,10 @@ import com.enonic.xp.util.CharacterChecker;
 
 @PublicApi
 public final class DescriptorKey
+    implements Serializable
 {
+    private static final long serialVersionUID = 0;
+
     protected static final String SEPARATOR = ":";
 
     private final ApplicationKey applicationKey;

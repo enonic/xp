@@ -59,7 +59,7 @@ public class JsonToPropertyTreeTranslatorTest
     {
         final JsonNode node = loadJson( "allInputTypes" );
 
-        final PropertyTree data = new FormJsonToPropertyTreeTranslator( null, false ).translate( node );
+        final PropertyTree data = JsonToPropertyTreeTranslator.translate( node );
 
         final Property property = data.getProperty( "checkbox" );
 
@@ -74,7 +74,7 @@ public class JsonToPropertyTreeTranslatorTest
         final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
         final URL url = getClass().getResource( resource );
 
-        assertNotNull( url, "File [" + resource + "] not found");
+        assertNotNull( url, "File [" + resource + "] not found" );
         return MAPPER.readTree( url );
     }
 }

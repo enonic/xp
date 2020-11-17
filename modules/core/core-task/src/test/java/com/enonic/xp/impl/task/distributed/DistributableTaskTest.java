@@ -33,7 +33,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class DescribedNamedTaskTest
+class DistributableTaskTest
 {
     private static final TaskContext TEST_TASK_CONTEXT =
         new TaskContext( Branch.from( "master" ), RepositoryId.from( "test" ), AuthenticationInfo.unAuthenticated() );
@@ -75,7 +75,7 @@ class DescribedNamedTaskTest
         when( namedTaskFactory.create( descriptorKey, config ) ).thenReturn( namedTask );
         when( namedTask.getTaskDescriptor() ).
             thenReturn( TaskDescriptor.create().key( descriptorKey ).description( "task description" ).build() );
-        final DescribedNamedTask describedTask = new DescribedNamedTask( descriptorKey, config, TEST_TASK_CONTEXT );
+        final DistributableTask describedTask = new DistributableTask( descriptorKey, config, TEST_TASK_CONTEXT );
         assertAll( () -> assertEquals( "app:a", describedTask.getName() ), () -> assertNotNull( describedTask.getTaskId() ),
                    () -> assertNotNull( describedTask.getTaskContext() ),
                    () -> assertEquals( "task description", describedTask.getDescription() ),
@@ -91,7 +91,7 @@ class DescribedNamedTaskTest
         final PropertyTree config = new PropertyTree();
         when( namedTaskFactory.create( descriptorKey, config ) ).thenReturn( namedTask );
 
-        final DescribedNamedTask describedTask = new DescribedNamedTask( descriptorKey, config, TEST_TASK_CONTEXT );
+        final DistributableTask describedTask = new DistributableTask( descriptorKey, config, TEST_TASK_CONTEXT );
         describedTask.run( mock( ProgressReporter.class ) );
         verify( namedTask ).run( any( TaskId.class ), any( ProgressReporter.class ) );
     }

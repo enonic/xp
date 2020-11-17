@@ -6,8 +6,10 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.impl.task.distributed.DescribedTask;
 import com.enonic.xp.impl.task.distributed.TaskContext;
 import com.enonic.xp.impl.task.osgi.OsgiSupport;
+import com.enonic.xp.impl.task.script.NamedTask;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
+import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskId;
 
 public class DescribedTaskImpl
@@ -23,13 +25,29 @@ public class DescribedTaskImpl
 
     private final ApplicationKey applicationKey;
 
+    private final String name;
+
     public DescribedTaskImpl( final RunnableTask runnableTask, final String description, final TaskContext context )
     {
         this.runnableTask = runnableTask;
-        this.description = description;
         this.taskId = TaskId.from( UUID.randomUUID().toString() );
         this.context = context;
+
+        this.description = description;
         this.applicationKey = ApplicationKey.from( OsgiSupport.getBundle( runnableTask.getClass() ) );
+        this.name = "";
+    }
+
+    public DescribedTaskImpl( final NamedTask namedTask, final TaskContext context )
+    {
+        this.runnableTask = namedTask;
+        this.taskId = TaskId.from( UUID.randomUUID().toString() );
+        this.context = context;
+
+        final TaskDescriptor taskDescriptor = namedTask.getTaskDescriptor();
+        this.description = taskDescriptor.getDescription();
+        this.applicationKey = taskDescriptor.getApplicationKey();
+        this.name = taskDescriptor.getKey().toString();
     }
 
     @Override
@@ -47,7 +65,7 @@ public class DescribedTaskImpl
     @Override
     public String getName()
     {
-        return "";
+        return name;
     }
 
     @Override

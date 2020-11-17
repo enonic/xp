@@ -4,5 +4,6 @@ dependencies {
     compileOnly project( ':portal:portal-api' )
     compile project( ':lib:lib-common' )
 
+    testImplementation( testFixtures( project( ':core:core-schema' ) ) )
     testImplementation project( ':tools:testing' )
 }
