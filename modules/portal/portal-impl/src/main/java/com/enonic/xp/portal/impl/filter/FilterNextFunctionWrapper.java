@@ -11,6 +11,7 @@ import com.enonic.xp.portal.impl.mapper.PortalResponseMapper;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
@@ -59,6 +60,10 @@ public final class FilterNextFunctionWrapper
             final WebResponse newResponse = webHandlerChain.handle( portalRequest, response );
             final PortalResponseMapper response = new PortalResponseMapper( (PortalResponse) newResponse );
             return toNativeObject.apply( response );
+        }
+        catch ( ResourceProblemException | WebException e )
+        {
+            throw e;
         }
         catch ( Exception e )
         {
