@@ -4,6 +4,7 @@ import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -169,6 +170,34 @@ public class FilterScriptImplTest
             assertEquals( 3, e.getLineNumber() );
             assertEquals( "Filter 'next' function was called multiple times", e.getMessage() );
         }
+    }
+
+    @Test
+    public void testResourceException()
+        throws Exception
+    {
+        WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );
+        Mockito.when( webHandlerChain.handle( Mockito.any(), Mockito.any() ) ).thenThrow( ResourceProblemException.class );
+
+        Assertions.assertThrows( ResourceProblemException.class, () -> execute( "myapplication:/filter/callnext.js", webHandlerChain ) );
+
+        Mockito.verify( webHandlerChain, Mockito.times( 1 ) ).handle( Mockito.any(), Mockito.any() );
+    }
+
+    @Test
+    public void testHandleException()
+        throws Exception
+    {
+        WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );
+        Mockito.when( webHandlerChain.handle( Mockito.any(), Mockito.any() ) ).thenThrow( Exception.class );
+
+        final ResourceProblemException exception = Assertions.assertThrows( ResourceProblemException.class,
+                                                                            () -> execute( "myapplication:/filter/callnext.js",
+                                                                                           webHandlerChain ) );
+
+        assertEquals( "Error executing filter script: myapplication:/filter/callnext.js", exception.getMessage() );
+
+        Mockito.verify( webHandlerChain, Mockito.times( 1 ) ).handle( Mockito.any(), Mockito.any() );
     }
 
     protected final void execute( final String script, final WebHandlerChain webHandlerChain )
