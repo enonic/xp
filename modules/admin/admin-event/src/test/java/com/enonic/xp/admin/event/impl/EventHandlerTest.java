@@ -2,14 +2,13 @@ package com.enonic.xp.admin.event.impl;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.websocket.Endpoint;
 import javax.websocket.Session;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.websocket.WebSocketService;
@@ -19,8 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
-public class EventHandlerTest
+class EventHandlerTest
 {
     private EventHandler handler;
 
@@ -28,31 +32,29 @@ public class EventHandlerTest
 
     private WebSocketService webSocketService;
 
-    private MockHttpServletRequest req;
+    private HttpServletRequest req;
 
-    private MockHttpServletResponse res;
+    private HttpServletResponse res;
 
     @BeforeEach
-    public void setup()
-        throws Exception
+    void setup()
     {
-        this.webSocketService = Mockito.mock( WebSocketService.class );
-        this.endpointFactory = new EventEndpointFactory( Mockito.mock( WebsocketManager.class ) );
+        this.webSocketService = mock( WebSocketService.class );
+        this.endpointFactory = new EventEndpointFactory( mock( WebsocketManager.class ) );
         this.handler = new EventHandler( this.webSocketService, this.endpointFactory );
 
-        this.req = new MockHttpServletRequest();
-        this.res = new MockHttpServletResponse();
+        this.req = mock( HttpServletRequest.class, withSettings().verboseLogging() );
+        this.res = mock( HttpServletResponse.class, withSettings().verboseLogging() );
     }
 
     @Test
-    public void testSubProtocols()
+    void testSubProtocols()
     {
         assertEquals( List.of( "text" ), endpointFactory.getSubProtocols() );
     }
 
     @Test
-    public void testNewEndpoint()
-        throws Exception
+    void testNewEndpoint()
     {
         final Endpoint e1 = endpointFactory.newEndpoint();
         assertNotNull( e1 );
@@ -64,7 +66,7 @@ public class EventHandlerTest
     }
 
     @Test
-    public void openCloseSocket()
+    void openCloseSocket()
     {
         final EventEndpoint socket = (EventEndpoint) endpointFactory.newEndpoint();
         assertFalse( socket.isOpen() );
@@ -86,45 +88,44 @@ public class EventHandlerTest
 
     private Session mockSession()
     {
-        final Session session = Mockito.mock( Session.class );
-        Mockito.when( session.isOpen() ).thenReturn( true );
+        final Session session = mock( Session.class );
+        when( session.isOpen() ).thenReturn( true );
         return session;
     }
 
     @Test
-    public void testNotAllowed()
+    void testNotAllowed()
         throws Exception
     {
-        this.req.setMethod( "GET" );
+        when( req.getMethod() ).thenReturn( "GET" );
         this.handler.service( this.req, this.res );
 
-        assertEquals( 403, this.res.getStatus() );
+        verify( res ).sendError( 403 );
     }
 
     @Test
-    public void testNotUpgrade()
+    void testNotUpgrade()
         throws Exception
     {
-        this.req.setMethod( "GET" );
-        this.req.addUserRole( RoleKeys.ADMIN_LOGIN.getId() );
-        Mockito.when( this.webSocketService.isUpgradeRequest( this.req, this.res ) ).thenReturn( false );
+        when( req.getMethod() ).thenReturn( "GET" );
+        when( req.isUserInRole( RoleKeys.ADMIN_LOGIN.getId() ) ).thenReturn( true );
+        when( this.webSocketService.isUpgradeRequest( this.req, this.res ) ).thenReturn( false );
 
         this.handler.service( this.req, this.res );
+        verify( res ).sendError( 404 );
 
-        assertEquals( 404, this.res.getStatus() );
     }
 
     @Test
-    public void testUpgrade()
+    void testUpgrade()
         throws Exception
     {
-        this.req.setMethod( "GET" );
-        this.req.addUserRole( RoleKeys.ADMIN_LOGIN.getId() );
-        Mockito.when( this.webSocketService.isUpgradeRequest( this.req, this.res ) ).thenReturn( true );
+        when( req.getMethod() ).thenReturn( "GET" );
+        when( req.isUserInRole( RoleKeys.ADMIN_LOGIN.getId() ) ).thenReturn( true );
+        when( this.webSocketService.isUpgradeRequest( this.req, this.res ) ).thenReturn( true );
 
         this.handler.service( this.req, this.res );
 
-        assertEquals( 200, this.res.getStatus() );
-        Mockito.verify( this.webSocketService, Mockito.times( 1 ) ).acceptWebSocket( this.req, this.res, this.endpointFactory );
+        verify( this.webSocketService, times( 1 ) ).acceptWebSocket( this.req, this.res, this.endpointFactory );
     }
 }

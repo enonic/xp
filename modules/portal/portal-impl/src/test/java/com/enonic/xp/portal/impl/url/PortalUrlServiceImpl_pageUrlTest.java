@@ -1,8 +1,9 @@
 package com.enonic.xp.portal.impl.url;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
@@ -13,6 +14,8 @@ import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PortalUrlServiceImpl_pageUrlTest
     extends AbstractPortalUrlServiceImplTest
@@ -105,7 +108,10 @@ public class PortalUrlServiceImpl_pageUrlTest
             portalRequest( this.portalRequest ).
             param( "a", 3 );
 
-        MockHttpServletRequest req = new MockHttpServletRequest();
+        HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getScheme() ).thenReturn( "http" );
+        when( req.getServerPort() ).thenReturn( 80 );
         ServletRequestHolder.setRequest( req );
 
         final String url = this.service.pageUrl( params );

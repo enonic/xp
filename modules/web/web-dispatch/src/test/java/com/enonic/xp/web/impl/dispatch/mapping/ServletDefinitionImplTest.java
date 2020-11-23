@@ -4,17 +4,19 @@ import java.util.ArrayList;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.enonic.xp.web.dispatch.MappingBuilder;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ServletDefinitionImplTest
     extends ResourceDefinitionImplTest<Servlet, ServletDefinition>
@@ -67,14 +69,14 @@ public class ServletDefinitionImplTest
         final ServletDefinition def = newDefinition();
         def.init( this.context );
 
-        final MockHttpServletRequest req = new MockHttpServletRequest();
+        final HttpServletRequest req = mock( HttpServletRequest.class );
         final HttpServletResponse res = Mockito.mock( HttpServletResponse.class );
 
-        req.setRequestURI( "/b" );
+        when( req.getRequestURI() ).thenReturn( "/b" );
         assertFalse( def.service( req, res ) );
         Mockito.verify( this.resource, Mockito.times( 0 ) ).service( req, res );
 
-        req.setRequestURI( "/a/b/c" );
+        when( req.getRequestURI() ).thenReturn( "/a/b/c" );
         assertTrue( def.service( req, res ) );
         Mockito.verify( this.resource, Mockito.times( 1 ) ).service( req, res );
     }

@@ -2,17 +2,17 @@ package com.enonic.xp.web.impl.context;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.xp.context.ContextAccessor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.mock;
 
 public class ContextFilterTest
 {
@@ -24,9 +24,9 @@ public class ContextFilterTest
 
         assertNull( ContextAccessor.current().getLocalScope().getSession() );
 
-        final MockHttpServletRequest req = new MockHttpServletRequest();
-        final MockHttpServletResponse res = new MockHttpServletResponse();
-        final FilterChain chain = Mockito.mock( FilterChain.class );
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        final HttpServletResponse res = mock( HttpServletResponse.class );
+        final FilterChain chain = mock( FilterChain.class );
 
         filter.doFilter( req, res, chain );
 

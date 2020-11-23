@@ -3,12 +3,12 @@ package com.enonic.xp.web.impl.auth;
 import java.util.Base64;
 
 import javax.servlet.FilterChain;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.google.common.net.HttpHeaders;
 
@@ -20,11 +20,13 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static org.mockito.Mockito.when;
+
 public class BasicAuthFilterTest
 {
     private BasicAuthFilter filter;
 
-    private MockHttpServletRequest request;
+    private HttpServletRequest request;
 
     private HttpServletResponse response;
 
@@ -35,7 +37,7 @@ public class BasicAuthFilterTest
     @BeforeEach
     public void setup()
     {
-        this.request = new MockHttpServletRequest();
+        this.request = Mockito.mock( HttpServletRequest.class );
         this.response = Mockito.mock( HttpServletResponse.class );
         this.chain = Mockito.mock( FilterChain.class );
         this.securityService = Mockito.mock( SecurityService.class );
@@ -46,18 +48,18 @@ public class BasicAuthFilterTest
         final IdProviderKey idProviderKey = IdProviderKey.from( "store" );
         final IdProvider idProvider = IdProvider.create().key( idProviderKey ).build();
         final IdProviders idProviders = IdProviders.from( idProvider );
-        Mockito.when( this.securityService.getIdProviders() ).thenReturn( idProviders );
+        when( this.securityService.getIdProviders() ).thenReturn( idProviders );
     }
 
     private void rightAuthentication()
     {
         final User user = User.create().login( "user" ).key( PrincipalKey.ofUser( IdProviderKey.from( "store" ), "user" ) ).build();
-        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( AuthenticationInfo.create().user( user ).build() );
+        when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( AuthenticationInfo.create().user( user ).build() );
     }
 
     private void wrongAuthentication()
     {
-        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( AuthenticationInfo.unAuthenticated() );
+        when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( AuthenticationInfo.unAuthenticated() );
     }
 
     private void doFilter()
@@ -74,7 +76,7 @@ public class BasicAuthFilterTest
 
     private void setAuthHeader( final String value )
     {
-        this.request.addHeader( HttpHeaders.AUTHORIZATION, value );
+        when( request.getHeader( HttpHeaders.AUTHORIZATION ) ).thenReturn( value );
     }
 
     private String base64( final String value )

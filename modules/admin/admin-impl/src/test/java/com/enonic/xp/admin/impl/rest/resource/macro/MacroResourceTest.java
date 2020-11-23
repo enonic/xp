@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.macro;
 
 import java.io.InputStream;
 import java.time.Instant;
+import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.app.ApplicationKey;
@@ -44,6 +44,8 @@ import com.enonic.xp.site.SiteConfigs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class MacroResourceTest
     extends AdminResourceTestSupport
@@ -219,7 +221,11 @@ public class MacroResourceTest
         Mockito.when( this.contentService.getByPath( any() ) ).thenReturn( site );
         Mockito.when( this.contentService.getNearestSite( any() ) ).thenReturn( site );
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        final HttpServletRequest mockRequest = mock( HttpServletRequest.class );
+        when( mockRequest.getServerName() ).thenReturn( "localhost" );
+        when( mockRequest.getScheme() ).thenReturn( "http" );
+        when( mockRequest.getServerPort() ).thenReturn( 80 );
+        when( mockRequest.getHeaderNames() ).thenReturn( Collections.emptyEnumeration() );
         ResteasyProviderFactory.getContextDataMap().put( HttpServletRequest.class, mockRequest );
 
         String response = request().path( "macro/preview" ).

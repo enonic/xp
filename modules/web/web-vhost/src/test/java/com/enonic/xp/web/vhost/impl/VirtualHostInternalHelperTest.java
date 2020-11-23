@@ -1,11 +1,14 @@
 package com.enonic.xp.web.vhost.impl;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class VirtualHostInternalHelperTest
 {
@@ -19,8 +22,8 @@ public class VirtualHostInternalHelperTest
         virtualHostMapping.setSource( "/a" );
         virtualHostMapping.setTarget( "/b/c" );
 
-        final MockHttpServletRequest req = new MockHttpServletRequest();
-        req.setRequestURI( "/a/other/service" );
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getRequestURI() ).thenReturn( "/a/other/service" );
 
         final String fullTarget = VirtualHostInternalHelper.getFullTargetPath( virtualHostMapping, req );
 

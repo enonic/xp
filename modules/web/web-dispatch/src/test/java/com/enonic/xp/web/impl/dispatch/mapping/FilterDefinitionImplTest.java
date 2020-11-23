@@ -5,17 +5,19 @@ import java.util.ArrayList;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.enonic.xp.web.dispatch.MappingBuilder;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class FilterDefinitionImplTest
     extends ResourceDefinitionImplTest<Filter, FilterDefinition>
@@ -23,7 +25,7 @@ public class FilterDefinitionImplTest
     @Override
     Filter newResource()
     {
-        return Mockito.mock( Filter.class );
+        return mock( Filter.class );
     }
 
     @Override
@@ -68,15 +70,15 @@ public class FilterDefinitionImplTest
         final FilterDefinition def = newDefinition();
         def.init( this.context );
 
-        final MockHttpServletRequest req = new MockHttpServletRequest();
-        final HttpServletResponse res = Mockito.mock( HttpServletResponse.class );
-        final FilterChain chain = Mockito.mock( FilterChain.class );
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        final HttpServletResponse res = mock( HttpServletResponse.class );
+        final FilterChain chain = mock( FilterChain.class );
 
-        req.setRequestURI( "/b" );
+        when( req.getRequestURI() ).thenReturn( "/b" );
         assertFalse( def.doFilter( req, res, chain ) );
         Mockito.verify( this.resource, Mockito.times( 0 ) ).doFilter( req, res, chain );
 
-        req.setRequestURI( "/a/b/c" );
+        when( req.getRequestURI() ).thenReturn( "/a/b/c" );
         assertTrue( def.doFilter( req, res, chain ) );
         Mockito.verify( this.resource, Mockito.times( 1 ) ).doFilter( req, res, chain );
     }

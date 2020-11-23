@@ -36,7 +36,7 @@ public abstract class OncePerRequestFilter
 
     private boolean isAlreadyHandled( final HttpServletRequest req )
     {
-        return req.getAttribute( this.flag ) == Boolean.TRUE;
+        return Boolean.TRUE.equals( req.getAttribute( this.flag ) );
     }
 
     private void setAlreadyHandledFlag( final HttpServletRequest req )

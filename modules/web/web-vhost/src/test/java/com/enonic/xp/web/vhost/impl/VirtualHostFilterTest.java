@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.FilterChain;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
@@ -21,6 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class VirtualHostFilterTest
 {
@@ -28,9 +32,9 @@ public class VirtualHostFilterTest
 
     private VirtualHostService virtualHostService;
 
-    private MockHttpServletRequest req;
+    private HttpServletRequest req;
 
-    private MockHttpServletResponse res;
+    private HttpServletResponse res;
 
     private List<VirtualHost> virtualHosts;
 
@@ -39,16 +43,16 @@ public class VirtualHostFilterTest
     @BeforeEach
     public void setup()
     {
-        this.req = Mockito.spy( new MockHttpServletRequest() );
-        this.res = new MockHttpServletResponse();
-        this.chain = Mockito.mock( FilterChain.class );
+        this.req = mock( HttpServletRequest.class );
+        this.res = mock( HttpServletResponse.class );
+        this.chain = mock( FilterChain.class );
 
         this.virtualHosts = new ArrayList<>();
-        this.virtualHostService = Mockito.mock( VirtualHostService.class );
+        this.virtualHostService = mock( VirtualHostService.class );
 
         final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
 
-        Mockito.when( virtualHostService.getVirtualHosts() ).thenReturn( this.virtualHosts );
+        when( virtualHostService.getVirtualHosts() ).thenReturn( this.virtualHosts );
 
         this.filter = new VirtualHostFilter( virtualHostService, virtualHostResolver );
     }
@@ -57,22 +61,22 @@ public class VirtualHostFilterTest
     public void testNotEnabled()
         throws Exception
     {
-        Mockito.when( this.virtualHostService.isEnabled() ).thenReturn( false );
+        when( this.virtualHostService.isEnabled() ).thenReturn( false );
         this.filter.doFilter( this.req, this.res, this.chain );
 
-        Mockito.verify( this.chain, Mockito.times( 1 ) ).doFilter( this.req, this.res );
+        verify( this.chain, times( 1 ) ).doFilter( this.req, this.res );
     }
 
     @Test
     public void testNoMapping()
         throws Exception
     {
-        Mockito.when( this.virtualHostService.isEnabled() ).thenReturn( true );
+        when( this.virtualHostService.isEnabled() ).thenReturn( true );
         this.filter.doFilter( this.req, this.res, this.chain );
 
-        Mockito.verify( this.chain, Mockito.times( 0 ) ).doFilter( this.req, this.res );
+        verify( this.chain, times( 0 ) ).doFilter( this.req, this.res );
         assertFalse( VirtualHostHelper.hasVirtualHost( this.req ) );
-        assertEquals( 404, this.res.getStatus() );
+        verify( res ).setStatus( 404 );
     }
 
     @Test
@@ -81,12 +85,13 @@ public class VirtualHostFilterTest
     {
         addMapping();
 
-        Mockito.when( this.virtualHostService.isEnabled() ).thenReturn( true );
+        when( this.virtualHostService.isEnabled() ).thenReturn( true );
+
         this.filter.doFilter( this.req, this.res, this.chain );
 
-        Mockito.verify( this.chain, Mockito.times( 0 ) ).doFilter( this.req, this.res );
+        verify( this.chain, times( 0 ) ).doFilter( this.req, this.res );
         assertFalse( VirtualHostHelper.hasVirtualHost( this.req ) );
-        assertEquals( 404, this.res.getStatus() );
+        verify( res ).setStatus( 404 );
     }
 
     @Test
@@ -94,15 +99,19 @@ public class VirtualHostFilterTest
         throws Exception
     {
         addMapping();
-        Mockito.when( this.virtualHostService.isEnabled() ).thenReturn( true );
+        when( this.virtualHostService.isEnabled() ).thenReturn( true );
 
-        this.req.setServerName( "enonic.com" );
-        this.req.setRequestURI( "/rest/status" );
+        when( req.getServerName() ).thenReturn( "enonic.com" );
+        when( req.getRequestURI() ).thenReturn( "/rest/status" );
+
+        final RequestDispatcher requestDispatcher = mock( RequestDispatcher.class );
+        when( req.getRequestDispatcher( "/admin/rest/status" ) ).thenReturn( requestDispatcher );
+        when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHosts.get( 0 ) );
 
         this.filter.doFilter( this.req, this.res, this.chain );
 
-        Mockito.verify( this.chain, Mockito.times( 0 ) ).doFilter( this.req, this.res );
-        Mockito.verify( this.req, Mockito.times( 1 ) ).getRequestDispatcher( "/admin/rest/status" );
+        verify( this.chain, times( 0 ) ).doFilter( this.req, this.res );
+        verify( requestDispatcher ).forward( this.req, this.res );
         assertTrue( VirtualHostHelper.hasVirtualHost( this.req ) );
 
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( this.req );

@@ -5,8 +5,6 @@ import java.net.http.WebSocket;
 import java.util.concurrent.ExecutionException;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
@@ -19,13 +17,7 @@ public class WebSocketServiceImplTest
 {
     private TestEndpoint endpoint;
 
-    private TestWebSocketServlet servlet;
-
     private WebSocketServiceImpl service;
-
-    private MockHttpServletRequest req;
-
-    private MockHttpServletResponse res;
 
     @Override
     protected void configure()
@@ -38,14 +30,11 @@ public class WebSocketServiceImplTest
         this.service = new WebSocketServiceImpl( config, this.server.getHandler().getServletContext() );
         this.service.activate();
 
-        this.servlet = new TestWebSocketServlet();
-        this.servlet.service = this.service;
-        this.servlet.endpoint = this.endpoint;
+        TestWebSocketServlet servlet = new TestWebSocketServlet();
+        servlet.service = this.service;
+        servlet.endpoint = this.endpoint;
 
-        addServlet( this.servlet, "/ws" );
-
-        this.req = new MockHttpServletRequest();
-        this.res = new MockHttpServletResponse();
+        addServlet( servlet, "/ws" );
     }
 
     @Override
@@ -59,15 +48,6 @@ public class WebSocketServiceImplTest
         throws ExecutionException, InterruptedException
     {
         return client.newWebSocketBuilder().buildAsync( URI.create( "ws://localhost:" + this.server.getPort() + "/ws" ), listener ).get();
-    }
-
-    @Test
-    public void testNotSocket()
-        throws Exception
-    {
-        this.req.setMethod( "GET" );
-        this.servlet.service( this.req, this.res );
-        assertEquals( 404, this.res.getStatus() );
     }
 
     @Test

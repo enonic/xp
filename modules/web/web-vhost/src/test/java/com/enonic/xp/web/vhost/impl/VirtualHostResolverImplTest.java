@@ -3,10 +3,11 @@ package com.enonic.xp.web.vhost.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostResolver;
@@ -16,10 +17,11 @@ import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class VirtualHostResolverImplTest
 {
-
     private VirtualHostMapping virtualHostMapping;
 
     private VirtualHostResolver virtualHostResolver;
@@ -42,9 +44,9 @@ public class VirtualHostResolverImplTest
         this.virtualHostMapping.setSource( "/" );
         this.virtualHostMapping.setTarget( "/a" );
 
-        final MockHttpServletRequest req = new MockHttpServletRequest();
-        req.setServerName( "localhost" );
-        req.setRequestURI( "/a/b" );
+        HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getRequestURI() ).thenReturn( "/a/b" );
 
         assertNull( virtualHostResolver.resolveVirtualHost( req ) );
     }
@@ -56,9 +58,9 @@ public class VirtualHostResolverImplTest
         this.virtualHostMapping.setSource( "/b" );
         this.virtualHostMapping.setTarget( "/a" );
 
-        final MockHttpServletRequest req = new MockHttpServletRequest();
-        req.setServerName( "foo.no" );
-        req.setRequestURI( "/a" );
+        HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getServerName() ).thenReturn( "foo.no" );
+        when( req.getRequestURI() ).thenReturn( "/a" );
 
         assertNull( virtualHostResolver.resolveVirtualHost( req ) );
     }
@@ -70,9 +72,9 @@ public class VirtualHostResolverImplTest
         this.virtualHostMapping.setSource( "/" );
         this.virtualHostMapping.setTarget( "/a" );
 
-        final MockHttpServletRequest req = new MockHttpServletRequest();
-        req.setServerName( "foo.no" );
-        req.setRequestURI( "/a/b" );
+        HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getServerName() ).thenReturn( "foo.no" );
+        when( req.getRequestURI() ).thenReturn( "/a/b" );
 
         assertNotNull( virtualHostResolver.resolveVirtualHost( req ) );
     }
@@ -89,8 +91,8 @@ public class VirtualHostResolverImplTest
 
         Mockito.when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
 
-        final MockHttpServletRequest req = new MockHttpServletRequest();
-        req.setServerName( "enonic.com" );
+        HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getServerName() ).thenReturn( "enonic.com" );
 
         final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
 
@@ -112,8 +114,8 @@ public class VirtualHostResolverImplTest
 
         Mockito.when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
 
-        final MockHttpServletRequest req = new MockHttpServletRequest();
-        req.setServerName( "foo.no" );
+        HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getServerName() ).thenReturn( "foo.no" );
 
         final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
 
