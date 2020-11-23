@@ -61,8 +61,6 @@ class ElasticsearchActivatorTest
     void setup()
         throws Exception
     {
-        this.activator = new ElasticsearchActivator();
-
         when( clusterConfig.isEnabled() ).thenReturn( true );
         when( clusterConfig.discovery().get() ).
             thenReturn( List.of( InetAddress.getByName( "localhost" ), InetAddress.getByName( "127.1.0.1" ) ) );
@@ -70,7 +68,7 @@ class ElasticsearchActivatorTest
         when( clusterConfig.networkHost() ).thenReturn( "127.0.0.1" );
         when( clusterConfig.networkPublishHost() ).thenReturn( "127.0.0.1" );
 
-        this.activator.setClusterConfig( clusterConfig );
+        this.activator = new ElasticsearchActivator( clusterConfig );
 
         final Path homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) ).toAbsolutePath();
         System.setProperty( "xp.home", homeDir.toString() );
