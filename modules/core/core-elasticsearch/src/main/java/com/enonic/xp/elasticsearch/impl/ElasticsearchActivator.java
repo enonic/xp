@@ -21,6 +21,7 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.cluster.ClusterConfig;
+import com.enonic.xp.core.internal.Condition;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.elasticsearch")
 public final class ElasticsearchActivator
@@ -39,12 +40,17 @@ public final class ElasticsearchActivator
 
     private ServiceRegistration<TransportService> transportServiceReg;
 
-    private ClusterConfig clusterConfig;
+    private final ClusterConfig clusterConfig;
 
-    @SuppressWarnings("WeakerAccess")
-    public ElasticsearchActivator()
+    @Reference(target = "(" + Condition.CONDITION_ID + "=HazelcastActivatorActivated)")
+    @SuppressWarnings("unused")
+    private Condition condition;
+
+    @Activate
+    public ElasticsearchActivator( @Reference final ClusterConfig clusterConfig )
     {
         ESLoggerFactory.setDefaultFactory( new Slf4jESLoggerFactory() );
+        this.clusterConfig = clusterConfig;
     }
 
     @Activate
@@ -80,13 +86,6 @@ public final class ElasticsearchActivator
         this.clusterAdminClientReg.unregister();
         this.clientServiceRegistration.unregister();
         this.node.close();
-    }
-
-    @Reference
-    @SuppressWarnings("WeakerAccess")
-    public void setClusterConfig( final ClusterConfig clusterConfig )
-    {
-        this.clusterConfig = clusterConfig;
     }
 }
 

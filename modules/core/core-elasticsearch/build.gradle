@@ -2,6 +2,7 @@ apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
     compile project( ':core:core-api' )
+    implementation project( ':core:core-internal' )
     compile ('org.elasticsearch:elasticsearch:2.4.6') {
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-cbor'
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-yaml'
