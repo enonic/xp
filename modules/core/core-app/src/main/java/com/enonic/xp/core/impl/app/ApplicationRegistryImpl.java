@@ -134,6 +134,10 @@ public class ApplicationRegistryImpl
     public void uninstallApplication( final ApplicationKey applicationKey )
     {
         applications.computeIfPresent( applicationKey, ( key, existingApp ) -> {
+            if ( existingApp.isSystem() )
+            {
+                return existingApp;
+            }
             final Bundle bundle = existingApp.getBundle();
             final boolean started = bundle.getState() == Bundle.ACTIVE;
             if ( started )
@@ -165,6 +169,10 @@ public class ApplicationRegistryImpl
     public void stopApplication( final ApplicationKey applicationKey )
     {
         applications.computeIfPresent( applicationKey, ( key, existingApp ) -> {
+            if ( existingApp.isSystem() )
+            {
+                return existingApp;
+            }
             final Bundle bundle = existingApp.getBundle();
             final boolean started = bundle.getState() == Bundle.ACTIVE;
             if ( started )
@@ -198,7 +206,7 @@ public class ApplicationRegistryImpl
         final ApplicationImpl application = applications.get( applicationKey );
         if ( application == null )
         {
-            throw new RuntimeException( "Application not found " + applicationKey );
+            return false;
         }
         final Bundle bundle = application.getBundle();
         if ( bundle.getState() == Bundle.ACTIVE )
