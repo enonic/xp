@@ -4,10 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
@@ -23,6 +24,8 @@ import com.enonic.xp.style.StyleDescriptors;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PortalUrlServiceImpl_processHtmlTest
     extends AbstractPortalUrlServiceImplTest
@@ -263,7 +266,10 @@ public class PortalUrlServiceImpl_processHtmlTest
             portalRequest( this.portalRequest ).
             value( "<a href=\"content://" + content.getId() + "\">Content</a>" );
 
-        MockHttpServletRequest req = new MockHttpServletRequest();
+        HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getScheme() ).thenReturn( "http" );
+        when( req.getServerPort() ).thenReturn( 80 );
         ServletRequestHolder.setRequest( req );
 
         //Checks that the page URL of the content is returned

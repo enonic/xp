@@ -5,8 +5,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
+
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class OncePerRequestFilterTest
 {
@@ -29,13 +35,13 @@ public class OncePerRequestFilterTest
     {
         final OncePerRequestFilter filter = newFiler();
 
-        final HttpServletRequest req = new MockHttpServletRequest();
-        final HttpServletResponse res = Mockito.mock( HttpServletResponse.class );
-        final FilterChain chain = Mockito.mock( FilterChain.class );
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        final HttpServletResponse res = mock( HttpServletResponse.class );
+        final FilterChain chain = mock( FilterChain.class );
 
         filter.doFilter( req, res, chain );
-        Mockito.verify( chain, Mockito.times( 0 ) ).doFilter( req, res );
-        Mockito.verify( filter, Mockito.times( 1 ) ).doHandle( req, res, chain );
+        verify( chain, Mockito.times( 0 ) ).doFilter( req, res );
+        verify( filter, Mockito.times( 1 ) ).doHandle( req, res, chain );
     }
 
     @Test
@@ -44,19 +50,25 @@ public class OncePerRequestFilterTest
     {
         final OncePerRequestFilter filter = newFiler();
 
-        final HttpServletRequest req = new MockHttpServletRequest();
-        final HttpServletResponse res = Mockito.mock( HttpServletResponse.class );
-        final FilterChain chain = Mockito.mock( FilterChain.class );
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        final HttpServletResponse res = mock( HttpServletResponse.class );
+        final FilterChain chain = mock( FilterChain.class );
 
         filter.doFilter( req, res, chain );
-        Mockito.verify( chain, Mockito.times( 0 ) ).doFilter( req, res );
-        Mockito.verify( filter, Mockito.times( 1 ) ).doHandle( req, res, chain );
+        verify( chain, Mockito.times( 0 ) ).doFilter( req, res );
+        verify( filter, Mockito.times( 1 ) ).doHandle( req, res, chain );
 
-        Mockito.reset( chain );
-        Mockito.reset( filter );
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass( String.class );
 
+        verify( req ).setAttribute( captor.capture(), eq( Boolean.TRUE ) );
+
+        final String attributeName = captor.getValue();
+        reset( chain );
+        reset( filter );
+
+        when( req.getAttribute( attributeName ) ).thenReturn( Boolean.TRUE );
         filter.doFilter( req, res, chain );
-        Mockito.verify( chain, Mockito.times( 1 ) ).doFilter( req, res );
-        Mockito.verify( filter, Mockito.times( 0 ) ).doHandle( req, res, chain );
+        verify( chain, Mockito.times( 1 ) ).doFilter( req, res );
+        verify( filter, Mockito.times( 0 ) ).doHandle( req, res, chain );
     }
 }

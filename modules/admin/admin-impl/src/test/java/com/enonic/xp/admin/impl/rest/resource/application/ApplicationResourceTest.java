@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 import org.osgi.framework.Version;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.ByteSource;
@@ -61,6 +60,8 @@ import com.enonic.xp.web.multipart.MultipartItem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
@@ -130,12 +131,12 @@ public class ApplicationResourceTest
 
         Mockito.when( this.applicationInfoService.getApplicationInfo( applicationKey ) ).thenReturn( applicationInfo );
 
-        final Resource resource = Mockito.mock( Resource.class );
+        final Resource resource = mock( Resource.class );
         Mockito.when( resource.exists() ).thenReturn( true );
         Mockito.when( resource.getKey() ).thenReturn( resourceKey );
         Mockito.when( this.resourceService.getResource( resourceKey ) ).thenReturn( resource );
 
-        final ScriptExports scriptExports = Mockito.mock( ScriptExports.class );
+        final ScriptExports scriptExports = mock( ScriptExports.class );
         Mockito.when( scriptExports.hasMethod( "get" ) ).thenReturn( true );
         Mockito.when( this.portalScriptService.execute( resourceKey ) ).thenReturn( scriptExports );
 
@@ -145,7 +146,10 @@ public class ApplicationResourceTest
         Mockito.when( this.adminToolDescriptorService.getByApplication( applicationKey ) ).thenReturn( adminToolDescriptors );
         Mockito.when( this.adminToolDescriptorService.generateAdminToolUri( any(), any() ) ).thenReturn( "url/to/tool" );
 
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        final HttpServletRequest mockRequest = mock( HttpServletRequest.class );
+        when( mockRequest.getServerName() ).thenReturn( "localhost" );
+        when( mockRequest.getScheme() ).thenReturn( "http" );
+        when( mockRequest.getServerPort() ).thenReturn( 80 );
         ResteasyProviderFactory.getContextDataMap().put( HttpServletRequest.class, mockRequest );
 
         final String response = request().
@@ -262,7 +266,7 @@ public class ApplicationResourceTest
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
         Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
-        final MessageBundle messageBundle = Mockito.mock( MessageBundle.class );
+        final MessageBundle messageBundle = mock( MessageBundle.class );
         Mockito.when( messageBundle.localize( "key.label" ) ).thenReturn( "translated.label" );
         Mockito.when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
 
@@ -488,11 +492,11 @@ public class ApplicationResourceTest
         final ApplicationKey applicationKey = ApplicationKey.from( "testapplication" );
         Mockito.doThrow( new ApplicationInstallException( "" ) ).when( this.applicationService ).uninstallApplication( applicationKey,
                                                                                                                        true );
-        assertThrows(ApplicationInstallException.class, () -> {
+        assertThrows( ApplicationInstallException.class, () -> {
             request().
-                    path("application/uninstall").
-                    entity("{\"key\":[\"" + applicationKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE).
-                    post().getAsString();
+                path( "application/uninstall" ).
+                entity( "{\"key\":[\"" + applicationKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
+                post().getAsString();
         } );
     }
 
@@ -514,14 +518,15 @@ public class ApplicationResourceTest
     public void test_install_empty()
         throws Exception
     {
-        final MultipartForm form = Mockito.mock( MultipartForm.class );
+        final MultipartForm form = mock( MultipartForm.class );
         Mockito.when( form.get( "file" ) ).thenReturn( null );
 
         Mockito.when( this.multipartService.parse( any() ) ).thenReturn( form );
 
-        assertThrows(RuntimeException.class, () -> {
-            request().path("application/install").multipart("file", "file.jar", new byte[]{0, 1, 2}, MediaType.MULTIPART_FORM_DATA_TYPE).
-                    post();
+        assertThrows( RuntimeException.class, () -> {
+            request().path( "application/install" ).multipart( "file", "file.jar", new byte[]{0, 1, 2},
+                                                               MediaType.MULTIPART_FORM_DATA_TYPE ).
+                post();
         } );
     }
 
@@ -529,7 +534,7 @@ public class ApplicationResourceTest
     public void test_install_invalid()
         throws Exception
     {
-        final MultipartForm form = Mockito.mock( MultipartForm.class );
+        final MultipartForm form = mock( MultipartForm.class );
 
         final MultipartItem file = createItem( "file", 10, "jar", "image/png" );
 
@@ -551,7 +556,7 @@ public class ApplicationResourceTest
         throws Exception
     {
 
-        final MultipartForm form = Mockito.mock( MultipartForm.class );
+        final MultipartForm form = mock( MultipartForm.class );
 
         final MultipartItem file = createItem( "file", 10, "jar", "image/png" );
 
@@ -572,7 +577,7 @@ public class ApplicationResourceTest
 
     private Application createApplication()
     {
-        final Application application = Mockito.mock( Application.class );
+        final Application application = mock( Application.class );
         Mockito.when( application.getKey() ).thenReturn( ApplicationKey.from( "testapplication" ) );
         Mockito.when( application.getVersion() ).thenReturn( new Version( 1, 0, 0 ) );
         Mockito.when( application.getDisplayName() ).thenReturn( "application display name" );
@@ -603,7 +608,7 @@ public class ApplicationResourceTest
 
     private Application createEmptyApplication()
     {
-        final Application application = Mockito.mock( Application.class );
+        final Application application = mock( Application.class );
         Mockito.when( application.getDisplayName() ).thenReturn( "empty name" );
         Mockito.when( application.getKey() ).thenReturn( ApplicationKey.from( "empty_testapplication" ) );
         return application;
@@ -662,7 +667,7 @@ public class ApplicationResourceTest
 
     private MultipartItem createItem( final String name, final String fileName, final long size, final String ext, final String type )
     {
-        final MultipartItem item = Mockito.mock( MultipartItem.class );
+        final MultipartItem item = mock( MultipartItem.class );
         Mockito.when( item.getName() ).thenReturn( name );
         Mockito.when( item.getFileName() ).thenReturn( fileName + "." + ext );
         Mockito.when( item.getContentType() ).thenReturn( com.google.common.net.MediaType.parse( type ) );
@@ -674,20 +679,20 @@ public class ApplicationResourceTest
     @Override
     protected Object getResourceInstance()
     {
-        this.applicationService = Mockito.mock( ApplicationService.class );
-        this.applicationDescriptorService = Mockito.mock( ApplicationDescriptorService.class );
-        this.applicationInfoService = Mockito.mock( ApplicationInfoService.class );
-        this.siteService = Mockito.mock( SiteService.class );
-        this.idProviderDescriptorService = Mockito.mock( IdProviderDescriptorService.class );
-        this.resourceService = Mockito.mock( ResourceService.class );
-        this.portalScriptService = Mockito.mock( PortalScriptService.class );
-        this.relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
-        this.macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
-        this.contentTypeService = Mockito.mock( ContentTypeService.class );
-        this.localeService = Mockito.mock( LocaleService.class );
-        this.widgetDescriptorService = Mockito.mock( WidgetDescriptorService.class );
-        this.adminToolDescriptorService = Mockito.mock( AdminToolDescriptorService.class );
-        this.mixinService = Mockito.mock( MixinService.class );
+        this.applicationService = mock( ApplicationService.class );
+        this.applicationDescriptorService = mock( ApplicationDescriptorService.class );
+        this.applicationInfoService = mock( ApplicationInfoService.class );
+        this.siteService = mock( SiteService.class );
+        this.idProviderDescriptorService = mock( IdProviderDescriptorService.class );
+        this.resourceService = mock( ResourceService.class );
+        this.portalScriptService = mock( PortalScriptService.class );
+        this.relationshipTypeService = mock( RelationshipTypeService.class );
+        this.macroDescriptorService = mock( MacroDescriptorService.class );
+        this.contentTypeService = mock( ContentTypeService.class );
+        this.localeService = mock( LocaleService.class );
+        this.widgetDescriptorService = mock( WidgetDescriptorService.class );
+        this.adminToolDescriptorService = mock( AdminToolDescriptorService.class );
+        this.mixinService = mock( MixinService.class );
 
         final ApplicationResource resource = new ApplicationResource();
         resource.setApplicationService( this.applicationService );

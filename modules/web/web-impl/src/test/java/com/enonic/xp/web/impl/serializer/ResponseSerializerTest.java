@@ -5,10 +5,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.google.common.io.Resources;
 import com.google.common.net.MediaType;
@@ -20,8 +21,14 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class ResponseSerializerTest
 {
@@ -31,22 +38,27 @@ public class ResponseSerializerTest
     {
         final WebRequest req = new WebRequest();
         req.setMethod( HttpMethod.GET );
+        final String string_body = "String body";
+
         final WebResponse resp = WebResponse.create().
             status( HttpStatus.ACCEPTED ).
             contentType( MediaType.PLAIN_TEXT_UTF_8 ).
             header( "header-test", "header-value" ).
             cookie( new Cookie( "cookie-name", "cookie-value" ) ).
-            body( "String body" ).
+            body( string_body ).
             build();
         final ResponseSerializer serializer = new ResponseSerializer( req, resp );
 
-        final MockHttpServletResponse httpResponse = new MockHttpServletResponse();
+        final HttpServletResponse httpResponse = mock( HttpServletResponse.class );
+        final ServletOutputStream servletOutputStream = mock( ServletOutputStream.class );
+        when( httpResponse.getOutputStream() ).thenReturn( servletOutputStream );
         serializer.serialize( httpResponse );
 
-        assertEquals( 202, httpResponse.getStatus() );
-        assertEquals( "header-value", httpResponse.getHeader( "header-test" ) );
-        assertEquals( "text/plain; charset=utf-8", httpResponse.getContentType() );
-        assertEquals( "String body", httpResponse.getContentAsString() );
+        verify( httpResponse ).setHeader( "header-test", "header-value" );
+        verify( httpResponse ).setStatus( 202 );
+        verify( httpResponse ).setContentType( "text/plain; charset=utf-8" );
+        verify( httpResponse ).setContentLength( 11 );
+        verify( servletOutputStream ).write( string_body.getBytes( StandardCharsets.UTF_8 ) );
     }
 
     @Test
@@ -55,22 +67,27 @@ public class ResponseSerializerTest
     {
         final WebRequest req = new WebRequest();
         req.setMethod( HttpMethod.GET );
+        final byte[] body_bytes = "String body".getBytes( StandardCharsets.UTF_8 );
         final WebResponse resp = WebResponse.create().
             status( HttpStatus.ACCEPTED ).
             contentType( MediaType.PLAIN_TEXT_UTF_8 ).
             header( "header-test", "header-value" ).
             cookie( new Cookie( "cookie-name", "cookie-value" ) ).
-            body( "String body".getBytes( StandardCharsets.UTF_8 ) ).
+            body( body_bytes ).
             build();
         final ResponseSerializer serializer = new ResponseSerializer( req, resp );
 
-        final MockHttpServletResponse httpResponse = new MockHttpServletResponse();
+        final HttpServletResponse httpResponse = mock( HttpServletResponse.class );
+        final ServletOutputStream servletOutputStream = mock( ServletOutputStream.class );
+        when( httpResponse.getOutputStream() ).thenReturn( servletOutputStream );
+
         serializer.serialize( httpResponse );
 
-        assertEquals( 202, httpResponse.getStatus() );
-        assertEquals( "header-value", httpResponse.getHeader( "header-test" ) );
-        assertEquals( "text/plain; charset=utf-8", httpResponse.getContentType() );
-        assertArrayEquals( "String body".getBytes( StandardCharsets.UTF_8 ), httpResponse.getContentAsByteArray() );
+        verify( httpResponse ).setHeader( "header-test", "header-value" );
+        verify( httpResponse ).setStatus( 202 );
+        verify( httpResponse ).setContentType( "text/plain; charset=utf-8" );
+        verify( httpResponse ).setContentLength( 11 );
+        verify( servletOutputStream ).write( body_bytes );
     }
 
     @Test
@@ -88,13 +105,17 @@ public class ResponseSerializerTest
             build();
         final ResponseSerializer serializer = new ResponseSerializer( req, resp );
 
-        final MockHttpServletResponse httpResponse = new MockHttpServletResponse();
+        final HttpServletResponse httpResponse = mock( HttpServletResponse.class );
+        final ServletOutputStream servletOutputStream = mock( ServletOutputStream.class );
+        when( httpResponse.getOutputStream() ).thenReturn( servletOutputStream );
+
         serializer.serialize( httpResponse );
 
-        assertEquals( 202, httpResponse.getStatus() );
-        assertEquals( "header-value", httpResponse.getHeader( "header-test" ) );
-        assertEquals( "text/plain; charset=utf-8", httpResponse.getContentType() );
-        assertArrayEquals( "String body".getBytes( StandardCharsets.UTF_8 ), httpResponse.getContentAsByteArray() );
+        verify( httpResponse ).setHeader( "header-test", "header-value" );
+        verify( httpResponse ).setStatus( 202 );
+        verify( httpResponse ).setContentType( "text/plain; charset=utf-8" );
+        verify( httpResponse, times( 0 ) ).setContentLength( anyInt() );
+        verify( servletOutputStream ).write( any( byte[].class ), eq( 0 ), eq( 11 ) );
     }
 
     @Test
@@ -115,13 +136,17 @@ public class ResponseSerializerTest
             build();
         final ResponseSerializer serializer = new ResponseSerializer( req, resp );
 
-        final MockHttpServletResponse httpResponse = new MockHttpServletResponse();
+        final HttpServletResponse httpResponse = mock( HttpServletResponse.class );
+        final ServletOutputStream servletOutputStream = mock( ServletOutputStream.class );
+        when( httpResponse.getOutputStream() ).thenReturn( servletOutputStream );
+
         serializer.serialize( httpResponse );
 
-        assertEquals( 202, httpResponse.getStatus() );
-        assertEquals( "header-value", httpResponse.getHeader( "header-test" ) );
-        assertEquals( "text/plain; charset=utf-8", httpResponse.getContentType() );
-        assertArrayEquals( "String body".getBytes( StandardCharsets.UTF_8 ), httpResponse.getContentAsByteArray() );
+        verify( httpResponse ).setHeader( "header-test", "header-value" );
+        verify( httpResponse ).setStatus( 202 );
+        verify( httpResponse ).setContentType( "text/plain; charset=utf-8" );
+        verify( httpResponse ).setContentLength( 11 );
+        verify( servletOutputStream ).write( any( byte[].class ) );
     }
 
     @Test
@@ -144,13 +169,17 @@ public class ResponseSerializerTest
             build();
         final ResponseSerializer serializer = new ResponseSerializer( req, resp );
 
-        final MockHttpServletResponse httpResponse = new MockHttpServletResponse();
+        final HttpServletResponse httpResponse = mock( HttpServletResponse.class );
+        final ServletOutputStream servletOutputStream = mock( ServletOutputStream.class );
+        when( httpResponse.getOutputStream() ).thenReturn( servletOutputStream );
+
         serializer.serialize( httpResponse );
 
-        assertEquals( 202, httpResponse.getStatus() );
-        assertEquals( "header-value", httpResponse.getHeader( "header-test" ) );
-        assertEquals( "text/plain; charset=utf-8", httpResponse.getContentType() );
-        assertEquals( "{\"key1\":\"value1\",\"key2\":true,\"key3\":42}", httpResponse.getContentAsString() );
+        verify( httpResponse ).setHeader( "header-test", "header-value" );
+        verify( httpResponse ).setStatus( 202 );
+        verify( httpResponse ).setContentType( "text/plain; charset=utf-8" );
+        verify( httpResponse ).setContentLength( 39 );
+        verify( servletOutputStream ).write( any( byte[].class ) );
     }
 
     @Test
@@ -168,13 +197,15 @@ public class ResponseSerializerTest
             build();
         final ResponseSerializer serializer = new ResponseSerializer( req, resp );
 
-        final MockHttpServletResponse httpResponse = new MockHttpServletResponse();
+        final HttpServletResponse httpResponse = mock( HttpServletResponse.class );
+
         serializer.serialize( httpResponse );
 
-        assertEquals( 202, httpResponse.getStatus() );
-        assertEquals( "header-value", httpResponse.getHeader( "header-test" ) );
-        assertEquals( "text/plain; charset=utf-8", httpResponse.getContentType() );
-        assertEquals( "", httpResponse.getContentAsString() );
+        verify( httpResponse ).setHeader( "header-test", "header-value" );
+        verify( httpResponse ).setStatus( 202 );
+        verify( httpResponse ).setContentType( "text/plain; charset=utf-8" );
+        verify( httpResponse ).setContentLength( 11 );
+        verify( httpResponse, times( 0 ) ).getOutputStream();
     }
 
     @Test
@@ -190,11 +221,12 @@ public class ResponseSerializerTest
             build();
         final ResponseSerializer serializer = new ResponseSerializer( req, resp );
 
-        final MockHttpServletResponse httpResponse = new MockHttpServletResponse();
-        httpResponse.setCommitted( true );
+        final HttpServletResponse httpResponse = mock( HttpServletResponse.class );
+        when( httpResponse.isCommitted() ).thenReturn( true );
+
         serializer.serialize( httpResponse );
 
-        assertEquals( 200, httpResponse.getStatus() );
-        assertEquals( "", httpResponse.getContentAsString() );
+        verify( httpResponse ).isCommitted();
+        verifyNoMoreInteractions( httpResponse );
     }
 }

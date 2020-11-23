@@ -2,9 +2,10 @@ package com.enonic.xp.portal.impl.url;
 
 import java.time.Instant;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -14,9 +15,10 @@ import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.vhost.VirtualHost;
-import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class PortalUrlServiceImpl_assetUrlTest
     extends AbstractPortalUrlServiceImplTest
@@ -85,10 +87,9 @@ public class PortalUrlServiceImpl_assetUrlTest
 
         //Mocks a virtual host and the HTTP request
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
-        MockHttpServletRequest req = new MockHttpServletRequest();
+        HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
         ServletRequestHolder.setRequest( req );
-
-        VirtualHostHelper.setVirtualHost( req, virtualHost );
 
         //Calls the method with a virtual mapping /main -> /
         Mockito.when( virtualHost.getSource() ).thenReturn( "/main" );
@@ -138,7 +139,11 @@ public class PortalUrlServiceImpl_assetUrlTest
             portalRequest( this.portalRequest ).
             path( "css/my.css" );
 
-        MockHttpServletRequest req = new MockHttpServletRequest();
+        HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getScheme() ).thenReturn( "http" );
+        when( req.getServerPort() ).thenReturn( 80 );
+
         ServletRequestHolder.setRequest( req );
 
         final String url = this.service.assetUrl( params );
