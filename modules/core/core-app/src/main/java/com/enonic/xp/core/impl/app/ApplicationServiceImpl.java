@@ -12,6 +12,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,15 +52,28 @@ public final class ApplicationServiceImpl
 
     private final ApplicationLoader applicationLoader;
 
+    private final AppFilterService appFilterService;
+
     @Activate
     public ApplicationServiceImpl( final BundleContext context, @Reference final ApplicationRegistry applicationRegistry,
-                                   @Reference final ApplicationRepoService repoService, @Reference final EventPublisher eventPublisher )
+                                   @Reference final ApplicationRepoService repoService, @Reference final EventPublisher eventPublisher,
+                                   @Reference final AppFilterService appFilterService )
     {
         this.context = context;
         this.registry = applicationRegistry;
         this.repoService = repoService;
         this.eventPublisher = eventPublisher;
         this.applicationLoader = new ApplicationLoader( eventPublisher::publish );
+        this.appFilterService = appFilterService;
+    }
+
+    @Deactivate
+    public void deactivate()
+    {
+        for ( ApplicationKey applicationKey : registry.getKeys() )
+        {
+            registry.uninstallApplication( applicationKey );
+        }
     }
 
     @Override
@@ -101,7 +115,7 @@ public final class ApplicationServiceImpl
     @Override
     public Application installGlobalApplication( final URL url )
     {
-        return ApplicationHelper.callWithContext( () -> doInstallGlobalApplicationFromUrl( url ) );
+        return ApplicationHelper.callWithContext( () -> doInstallGlobalApplication( applicationLoader.load( url ) ) );
     }
 
     @Override
@@ -189,18 +203,16 @@ public final class ApplicationServiceImpl
     {
     }
 
-    private Application doInstallGlobalApplicationFromUrl( final URL url )
-    {
-        final ByteSource byteSource = applicationLoader.load( url );
-
-        return doInstallGlobalApplication( byteSource );
-    }
-
     private Application doInstallGlobalApplication( final ByteSource byteSource )
     {
-        final Application application = installOrUpdateApplication( byteSource, false, true );
+        final ApplicationKey applicationKey = getApplicationKey( byteSource );
+        if ( !appFilterService.accept( applicationKey ) )
+        {
+            throw new ApplicationInstallException( String.format( "Application %s is not permitted on this instance", applicationKey ) );
+        }
 
-        final ApplicationKey applicationKey = application.getKey();
+        final Application application = installOrUpdateApplication( byteSource, applicationKey, false, true );
+
         LOG.info( "Global Application [{}] installed successfully", applicationKey );
 
         doPublishInstalledEvent( applicationKey );
@@ -212,9 +224,10 @@ public final class ApplicationServiceImpl
 
     private Application doInstallLocalApplication( final ByteSource byteSource )
     {
-        final Application application = installOrUpdateApplication( byteSource, true, false );
+        final ApplicationKey applicationKey = getApplicationKey( byteSource );
 
-        final ApplicationKey applicationKey = application.getKey();
+        final Application application = installOrUpdateApplication( byteSource, applicationKey, true, false );
+
         LOG.info( "Local application [{}] installed successfully", applicationKey );
 
         doStartApplication( applicationKey, false, false );
@@ -226,6 +239,10 @@ public final class ApplicationServiceImpl
     {
         final Application application = doInstallStoredApplication( nodeId );
 
+        if ( application == null )
+        {
+            return null;
+        }
         final ApplicationKey applicationKey = application.getKey();
         LOG.info( "Stored application [{}] installed successfully", applicationKey );
 
@@ -238,7 +255,6 @@ public final class ApplicationServiceImpl
         {
             doStartApplication( applicationKey, params.isTriggerEvent(), false );
         }
-
         return application;
     }
 
@@ -248,7 +264,11 @@ public final class ApplicationServiceImpl
 
         if ( applicationNode != null )
         {
-            doInstallStoredApplication( applicationNode.id() );
+            final Application application = doInstallStoredApplication( applicationNode.id() );
+            if ( application == null )
+            {
+                return;
+            }
             LOG.info( "Stored application [{}] installed successfully", applicationKey );
 
             if ( storedApplicationIsStarted( applicationNode ) )
@@ -271,7 +291,10 @@ public final class ApplicationServiceImpl
             try
             {
                 final Application application = doInstallStoredApplication( applicationNode.id() );
-
+                if ( application == null )
+                {
+                    continue;
+                }
                 final ApplicationKey applicationKey = application.getKey();
                 LOG.info( "Stored application [{}] installed successfully", applicationKey );
 
@@ -301,7 +324,14 @@ public final class ApplicationServiceImpl
             throw new ApplicationInstallException( "Cannot install application with id [" + nodeId + "], source not found" );
         }
 
-        return installOrUpdateApplication( byteSource, false, false );
+        final ApplicationKey applicationKey = getApplicationKey( byteSource );
+        if ( !appFilterService.accept( applicationKey ) )
+        {
+            LOG.info( "Application {} is not permitted on this instance", applicationKey );
+            return null;
+        }
+
+        return installOrUpdateApplication( byteSource, applicationKey, false, false );
     }
 
     private void doUninstallApplication( final ApplicationKey applicationKey, final boolean triggerEvent )
@@ -374,10 +404,9 @@ public final class ApplicationServiceImpl
         }
     }
 
-    private Application installOrUpdateApplication( final ByteSource byteSource, final boolean local, final boolean updateRepository )
+    private Application installOrUpdateApplication( final ByteSource byteSource, ApplicationKey applicationKey, final boolean local,
+                                                    final boolean updateRepository )
     {
-        final ApplicationKey applicationKey = getApplicationKey( byteSource );
-
         final Application existingApplication = this.registry.get( applicationKey );
 
         if ( existingApplication != null )
