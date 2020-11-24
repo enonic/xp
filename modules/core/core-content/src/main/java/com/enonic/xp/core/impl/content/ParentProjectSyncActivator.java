@@ -19,28 +19,25 @@ public final class ParentProjectSyncActivator
 {
     private static final Logger LOG = LoggerFactory.getLogger( ParentProjectSyncActivator.class );
 
-    private SimpleRecurringJobScheduler recurringJobScheduler;
+    private final SimpleRecurringJobScheduler recurringJobScheduler;
 
     @Activate
     public ParentProjectSyncActivator( final ContentConfig config, @Reference final ProjectService projectService,
                                        @Reference final IndexService indexService,
                                        @Reference final ContentSynchronizer contentSynchronizer )
     {
+        this.recurringJobScheduler =
+            new SimpleRecurringJobScheduler( Executors::newSingleThreadScheduledExecutor, "parent-project-synchronizer-thread" );
 
-        if ( indexService.isMaster() )
+        final Duration delay = Duration.parse( config.content_sync_period() );
+        if ( !delay.isZero() )
         {
-            this.recurringJobScheduler =
-                new SimpleRecurringJobScheduler( Executors::newSingleThreadScheduledExecutor, "parent-project-synchronizer-thread" );
-
-            final Duration delay = Duration.parse( config.content_sync_period() );
-            if ( !delay.isZero() )
-            {
-                this.recurringJobScheduler.scheduleWithFixedDelay( ParentProjectSyncTask.create().
-                    projectService( projectService ).
-                    contentSynchronizer( contentSynchronizer ).
-                    build(), Duration.ofMinutes( 0 ), delay, e -> LOG.warn( "Error while project sync.", e ), e -> LOG.error(
-                    "Error while project sync, no further attempts will be made.", e ) );
-            }
+            this.recurringJobScheduler.scheduleWithFixedDelay( ParentProjectSyncTask.create().
+                projectService( projectService ).
+                indexService( indexService ).
+                contentSynchronizer( contentSynchronizer ).
+                build(), Duration.ofMinutes( 0 ), delay, e -> LOG.warn( "Error while project sync.", e ), e -> LOG.error(
+                "Error while project sync, no further attempts will be made.", e ) );
         }
     }
 

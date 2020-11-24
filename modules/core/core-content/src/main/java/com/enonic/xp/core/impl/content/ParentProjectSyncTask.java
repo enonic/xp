@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.index.IndexService;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.PrincipalKey;
@@ -17,11 +18,14 @@ final class ParentProjectSyncTask
 {
     private final ProjectService projectService;
 
+    private final IndexService indexService;
+
     private final ContentSynchronizer contentSynchronizer;
 
     public ParentProjectSyncTask( final Builder builder )
     {
         this.projectService = builder.projectService;
+        this.indexService = builder.indexService;
         this.contentSynchronizer = builder.contentSynchronizer;
     }
 
@@ -33,28 +37,30 @@ final class ParentProjectSyncTask
     @Override
     public void run()
     {
-        createAdminContext().runWith( () -> this.projectService.list().
-            stream().
-            filter( project -> project.getParent() != null ).
-            sorted( ( o1, o2 ) -> {
+        if ( indexService.isMaster() )
+        {
+            createAdminContext().runWith( () -> this.projectService.list().
+                stream().
+                filter( project -> project.getParent() != null ).
+                sorted( ( o1, o2 ) -> {
 
-                if ( o2.getName().equals( o1.getParent() ) )
-                {
-                    return 1;
-                }
+                    if ( o2.getName().equals( o1.getParent() ) )
+                    {
+                        return 1;
+                    }
 
-                if ( o1.getName().equals( o2.getParent() ) )
-                {
-                    return -1;
-                }
+                    if ( o1.getName().equals( o2.getParent() ) )
+                    {
+                        return -1;
+                    }
 
-                return 0;
-            } ).
-            forEach( project -> {
-                Project parentProject = this.projectService.get( project.getParent() );
-                doSync( parentProject, project );
-            } ) );
-
+                    return 0;
+                } ).
+                forEach( project -> {
+                    Project parentProject = this.projectService.get( project.getParent() );
+                    doSync( parentProject, project );
+                } ) );
+        }
     }
 
     private void doSync( final Project sourceProject, final Project targetProject )
@@ -88,6 +94,8 @@ final class ParentProjectSyncTask
     {
         private ProjectService projectService;
 
+        private IndexService indexService;
+
         private ContentSynchronizer contentSynchronizer;
 
         private Builder()
@@ -100,6 +108,12 @@ final class ParentProjectSyncTask
             return this;
         }
 
+        public Builder indexService( final IndexService indexService )
+        {
+            this.indexService = indexService;
+            return this;
+        }
+
         public Builder contentSynchronizer( final ContentSynchronizer contentSynchronizer )
         {
             this.contentSynchronizer = contentSynchronizer;
@@ -108,6 +122,7 @@ final class ParentProjectSyncTask
 
         private void validate()
         {
+            Preconditions.checkNotNull( this.indexService, "indexService must be set." );
             Preconditions.checkNotNull( this.projectService, "projectService must be set." );
             Preconditions.checkNotNull( this.contentSynchronizer, "contentSynchronizer must be set." );
         }
