@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.content;
 import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -17,36 +16,30 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
 
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
-public class ParentProjectSyncActivatorTest
+class ParentProjectSyncActivatorTest
 {
+    @Mock
+    IndexService indexService;
 
     @Mock
-    private IndexService indexService;
+    ContentSynchronizer contentSynchronizer;
 
     @Mock
-    private ContentSynchronizer contentSynchronizer;
+    ProjectService projectService;
 
     @Mock
-    private ProjectService projectService;
-
-    @Mock
-    private ContentConfig contentConfig;
-
-    @BeforeEach
-    public void init()
-    {
-
-        Mockito.when( contentConfig.content_sync_period() ).thenReturn( "PT1S" );
-        Mockito.when( indexService.isMaster() ).thenReturn( true );
-
-
-    }
+    ContentConfig contentConfig;
 
     @Test
-    public void testSync()
+    void sync()
         throws Exception
     {
+        when( contentConfig.content_sync_period() ).thenReturn( "PT1S" );
+        when( indexService.isMaster() ).thenReturn( true );
+
         final Project source = Project.create().
             name( ProjectName.from( "source" ) ).
             build();
@@ -61,10 +54,10 @@ public class ParentProjectSyncActivatorTest
             parent( ProjectName.from( "target1" ) ).
             build();
 
-        Mockito.when( projectService.get( source.getName() ) ).thenReturn( source );
-        Mockito.when( projectService.get( target1.getName() ) ).thenReturn( target1 );
+        when( projectService.get( source.getName() ) ).thenReturn( source );
+        when( projectService.get( target1.getName() ) ).thenReturn( target1 );
 
-        Mockito.when( projectService.list() ).thenReturn( Projects.create().
+        when( projectService.list() ).thenReturn( Projects.create().
             addAll( Set.of( source, target1, target2 ) ).
             build() );
 
@@ -84,9 +77,11 @@ public class ParentProjectSyncActivatorTest
     }
 
     @Test
-    public void testDeactivate()
+    void deactivate()
         throws Exception
     {
+        when( contentConfig.content_sync_period() ).thenReturn( "PT1S" );
+
         final ParentProjectSyncActivator activator =
             new ParentProjectSyncActivator( contentConfig, projectService, indexService, contentSynchronizer );
 
