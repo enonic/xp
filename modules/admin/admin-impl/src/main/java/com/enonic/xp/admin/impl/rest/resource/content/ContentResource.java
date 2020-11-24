@@ -652,7 +652,9 @@ public final class ContentResource
             setAllPublishable( isAllPublishable ).
             setAllPendingDelete( isAllPendingDelete ).
             setContainsInvalid( !notValidContentIds.isEmpty() ).
+            setInvalidContents( notValidContentIds ).
             setContainsNotReady( !notReadyContentIds.isEmpty() ).
+            setNotReadyContents( notReadyContentIds ).
             build();
     }
 
