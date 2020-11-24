@@ -22,6 +22,10 @@ public class ResolvePublishContentResultJson
 
     private final Boolean containsNotReady;
 
+    private final List<ContentIdJson> invalidContents;
+
+    private final List<ContentIdJson> notReadyContents;
+
     private ResolvePublishContentResultJson( Builder builder )
     {
         requestedContents = builder.requestedContents.stream().map( ContentIdJson::new ).collect( Collectors.toList() );
@@ -31,6 +35,8 @@ public class ResolvePublishContentResultJson
         allPublishable = builder.allPublishable;
         allPendingDelete = builder.allPendingDelete;
         containsNotReady = builder.containsNotReady;
+        invalidContents = builder.invalidContents.stream().map( ContentIdJson::new ).collect( Collectors.toList() );
+        notReadyContents = builder.notReadyContents.stream().map( ContentIdJson::new ).collect( Collectors.toList() );
     }
 
     public static Builder create()
@@ -76,6 +82,16 @@ public class ResolvePublishContentResultJson
         return containsNotReady;
     }
 
+    public List<ContentIdJson> getInvalidContents()
+    {
+        return invalidContents;
+    }
+
+    public List<ContentIdJson> getNotReadyContents()
+    {
+        return notReadyContents;
+    }
+
     public static final class Builder
     {
 
@@ -92,6 +108,10 @@ public class ResolvePublishContentResultJson
         private Boolean allPendingDelete;
 
         private Boolean containsNotReady;
+
+        private ContentIds invalidContents;
+
+        private ContentIds notReadyContents;
 
         private Builder()
         {
@@ -136,6 +156,18 @@ public class ResolvePublishContentResultJson
         public Builder setContainsNotReady( final Boolean containsNotReady )
         {
             this.containsNotReady = containsNotReady;
+            return this;
+        }
+
+        public Builder setInvalidContents( final ContentIds items )
+        {
+            this.invalidContents = items;
+            return this;
+        }
+
+        public Builder setNotReadyContents( final ContentIds items )
+        {
+            this.notReadyContents = items;
             return this;
         }
 

@@ -1,13 +1,19 @@
 {
   "allPendingDelete": false,
-  "allPublishable" : false,
+  "allPublishable": false,
   "containsInvalid": true,
-  "containsNotReady" : false,
+  "containsNotReady": false,
   "dependentContents": [
     {
       "id": "dependant-contentId"
     }
   ],
+  "invalidContents": [
+    {
+      "id": "dependant-contentId"
+    }
+  ],
+  "notReadyContents": [],
   "requestedContents": [
     {
       "id": "requested-contentId"
