@@ -115,7 +115,13 @@ public final class ApplicationServiceImpl
     @Override
     public Application installGlobalApplication( final URL url )
     {
-        return ApplicationHelper.callWithContext( () -> doInstallGlobalApplication( applicationLoader.load( url ) ) );
+        return installGlobalApplication( url, null );
+    }
+
+    @Override
+    public Application installGlobalApplication( final URL url, final byte[] sha512 )
+    {
+        return ApplicationHelper.callWithContext( () -> doInstallGlobalApplication( applicationLoader.load( url, sha512 ) ) );
     }
 
     @Override

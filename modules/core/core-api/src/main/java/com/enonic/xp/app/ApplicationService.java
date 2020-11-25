@@ -25,6 +25,8 @@ public interface ApplicationService
 
     Application installGlobalApplication( final URL url );
 
+    Application installGlobalApplication( final URL url, byte[] sha512 );
+
     Application installGlobalApplication( final ByteSource byteSource, final String applicationName );
 
     Application installLocalApplication( final ByteSource byteSource, final String applicationName );

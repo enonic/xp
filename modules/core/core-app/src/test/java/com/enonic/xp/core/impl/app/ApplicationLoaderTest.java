@@ -17,7 +17,9 @@ import com.google.common.io.ByteSource;
 import com.sun.net.httpserver.HttpServer;
 
 import com.enonic.xp.event.Event;
+import com.enonic.xp.util.HexEncoder;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.verify;
@@ -39,7 +41,6 @@ class ApplicationLoaderTest
         server = HttpServer.create( new InetSocketAddress( 0 ), 0 );
         server.start();
         appUrl = "http://localhost:" + this.server.getAddress().getPort();
-
     }
 
     @AfterEach
@@ -62,9 +63,49 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        final ByteSource byteSource = new ApplicationLoader( eventListener ).load( new URL( appUrl ) );
+        final ByteSource byteSource = new ApplicationLoader( eventListener ).load( new URL( appUrl ), null );
 
         verify( eventListener ).accept( notNull() );
         assertTrue( byteSource.contentEquals( ByteSource.wrap( bytes ) ) );
+    }
+
+    @Test
+    void load_with_sha512()
+        throws Exception
+    {
+        final byte[] bytes = "this is a test".getBytes( StandardCharsets.UTF_8 );
+        final byte[] sha512 = HexEncoder.fromHex(
+            "7d0a8468ed220400c0b8e6f335baa7e070ce880a37e2ac5995b9a97b809026de626da636ac7365249bb974c719edf543b52ed286646f437dc7f810cc2068375c" );
+
+        this.server.createContext( "/", exchange -> {
+
+            exchange.sendResponseHeaders( 200, 0 );
+            OutputStream os = exchange.getResponseBody();
+            os.write( bytes );
+            exchange.close();
+        } );
+
+        final ByteSource byteSource = new ApplicationLoader( eventListener ).load( new URL( appUrl ), sha512 );
+
+        verify( eventListener ).accept( notNull() );
+        assertTrue( byteSource.contentEquals( ByteSource.wrap( bytes ) ) );
+    }
+
+    @Test
+    void load_with_sha512_wrong()
+    {
+        final byte[] bytes = "this is a test".getBytes( StandardCharsets.UTF_8 );
+        final byte[] sha512 = HexEncoder.fromHex(
+            "0d0a8468ed220400c0b8e6f335baa7e070ce880a37e2ac5995b9a97b809026de626da636ac7365249bb974c719edf543b52ed286646f437dc7f810cc2068375c" );
+
+        this.server.createContext( "/", exchange -> {
+
+            exchange.sendResponseHeaders( 200, 0 );
+            OutputStream os = exchange.getResponseBody();
+            os.write( bytes );
+            exchange.close();
+        } );
+
+        assertThrows( IllegalArgumentException.class, () -> new ApplicationLoader( eventListener ).load( new URL( appUrl ), sha512 ) );
     }
 }
