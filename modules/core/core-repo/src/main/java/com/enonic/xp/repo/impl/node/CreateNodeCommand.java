@@ -16,7 +16,6 @@ import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeBinaryReferenceException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIdExistsException;
@@ -215,15 +214,11 @@ public final class CreateNodeCommand
 
         NodePath nodePath = NodePath.create( params.getParent(), params.getName() ).build();
 
-        final boolean exists = CheckNodeExistsCommand.create( this ).
+        CheckNodeExistsCommand.create( this ).
             nodePath( nodePath ).
+            throwIfExists().
             build().
             execute();
-
-        if ( exists )
-        {
-            throw new NodeAlreadyExistAtPathException( nodePath );
-        }
     }
 
     public static class Builder

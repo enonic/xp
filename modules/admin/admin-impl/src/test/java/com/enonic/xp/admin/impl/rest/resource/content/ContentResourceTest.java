@@ -88,6 +88,7 @@ import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.content.CompareContentResult;
@@ -164,6 +165,7 @@ import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -1011,7 +1013,7 @@ public class ContentResourceTest
         Mockito.when( contentService.getById( Mockito.any() ) ).thenReturn( content );
 
         Mockito.when( contentService.rename( Mockito.any() ) ).thenThrow(
-            new ContentAlreadyExistsException( ContentPath.from( "/path" ) ) );
+            new ContentAlreadyExistsException( ContentPath.from( "/path" ), RepositoryId.from( "some.repo" ), Branch.from( "draft" ) ) );
         Mockito.when( contentService.getByPath( Mockito.any() ) ).thenThrow( ContentNotFoundException.class );
 
         Mockito.when( contentService.getPermissionsById( content.getId() ) ).thenReturn( AccessControlList.empty() );

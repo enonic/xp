@@ -10,7 +10,6 @@ import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeDataProcessor;
@@ -281,15 +280,11 @@ public class MoveNodeCommand
     {
         final NodePath newNodePath = NodePath.create( newParentPath, newNodeName.toString() ).build();
 
-        final boolean exists = CheckNodeExistsCommand.create( this ).
+        CheckNodeExistsCommand.create( this ).
             nodePath( newNodePath ).
+            throwIfExists().
             build().
             execute();
-
-        if ( exists )
-        {
-            throw new NodeAlreadyExistAtPathException( new NodePath( newParentPath, newNodeName ) );
-        }
     }
 
     public static class Builder

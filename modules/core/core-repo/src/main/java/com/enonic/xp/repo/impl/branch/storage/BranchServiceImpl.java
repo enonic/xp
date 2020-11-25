@@ -127,7 +127,7 @@ public class BranchServiceImpl
         if ( branchDocumentId != null &&
             !branchDocumentId.equals( BranchDocumentId.from( nodeBranchEntry.getNodeId(), context.getBranch() ) ) )
         {
-            throw new NodeAlreadyExistAtPathException( nodeBranchEntry.getNodePath() );
+            throw new NodeAlreadyExistAtPathException( nodeBranchEntry.getNodePath(), context.getRepositoryId(), context.getBranch() );
         }
     }
 

@@ -21,6 +21,7 @@ import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.task.AbstractRunnableTaskTest;
@@ -137,7 +138,8 @@ public class MoveRunnableTaskTest
             thenThrow( new ContentAccessException( User.ANONYMOUS, contents.get( 0 ).getPath(), Permission.MODIFY ) ).
             thenReturn( MoveContentsResult.create().addMoved( contents.get( 0 ).getId() ).setContentName(
                 contents.get( 1 ).getDisplayName() ).build() ).
-            thenThrow( new ContentAlreadyExistsException( contents.get( 2 ).getPath() ) );
+            thenThrow( new ContentAlreadyExistsException( contents.get( 2 ).getPath(), RepositoryId.from( "some.repo" ),
+                                                          Branch.from( "draft" ) ) );
 
         createAndRunTask();
 
@@ -198,8 +200,10 @@ public class MoveRunnableTaskTest
             thenThrow( new ContentNotFoundException( contents.get( 1 ).getPath(), Branch.from( "master" ) ) ).
             thenThrow( new ContentAccessException( User.ANONYMOUS, contents.get( 2 ).getPath(), Permission.MODIFY ) ).
             thenThrow( new ContentAlreadyMovedException( "Content already moved", contents.get( 3 ).getPath() ) ).
-            thenThrow( new ContentAlreadyExistsException( contents.get( 4 ).getPath() ) ).
-            thenThrow( new ContentAlreadyExistsException( contents.get( 5 ).getPath() ) ).
+            thenThrow( new ContentAlreadyExistsException( contents.get( 4 ).getPath(), RepositoryId.from( "some.repo" ),
+                                                          Branch.from( "draft" ) ) ).
+            thenThrow( new ContentAlreadyExistsException( contents.get( 5 ).getPath(), RepositoryId.from( "some.repo" ),
+                                                          Branch.from( "draft" ) ) ).
             thenReturn( MoveContentsResult.create().addMoved( contents.get( 6 ).getId() ).setContentName(
                 contents.get( 6 ).getDisplayName() ).build() ).
             thenThrow( new ContentAccessException( User.ANONYMOUS, contents.get( 7 ).getPath(), Permission.READ ) ).

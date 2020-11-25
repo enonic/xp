@@ -10,6 +10,8 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.RenameContentParams;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 
 public final class MoveContentHandler
@@ -48,11 +50,13 @@ public final class MoveContentHandler
         if ( target.endsWith( "/" ) )
         {
             // move as child of target path, keep same name
+            // /a/b -> /c/d/ => /c/d/b
             return move( sourceId, ContentPath.from( target ).asAbsolute() );
         }
         else if ( !target.startsWith( "/" ) )
         {
             // just rename, keep same parent path
+            // /a/b -> c => /a/c
             return rename( sourceId, target );
         }
         else
@@ -63,12 +67,15 @@ public final class MoveContentHandler
             if ( targetParent.equals( sourcePath.getParentPath() ) )
             {
                 // just rename, target path has same parent as source
+                // /a/b -> /a/c => /a/c
                 return rename( sourceId, targetPath.getName() );
             }
 
+            // /a/b -> /c/d => /c/d
             if ( contentService.contentExists( targetPath ) )
             {
-                throw new ContentAlreadyExistsException( targetPath );
+                final Context currentContext = ContextAccessor.current();
+                throw new ContentAlreadyExistsException( targetPath, currentContext.getRepositoryId(), currentContext.getBranch() );
             }
 
             // needs to be first renamed to temporary unique name to avoid clashing with siblings with same target name in source parent or with siblings with source name in target parent

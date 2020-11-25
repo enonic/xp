@@ -70,7 +70,7 @@ final class MoveContentCommand
         }
         catch ( NodeAlreadyExistAtPathException e )
         {
-            throw new ContentAlreadyExistsException( ContentPath.from( e.getNode().toString() ) );
+            throw new ContentAlreadyExistsException( ContentPath.from( e.getNode().toString() ), e.getRepositoryId(), e.getBranch() );
         }
         catch ( NodeAccessException e )
         {
