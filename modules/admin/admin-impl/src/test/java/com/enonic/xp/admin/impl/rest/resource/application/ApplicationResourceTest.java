@@ -61,6 +61,8 @@ import com.enonic.xp.web.multipart.MultipartItem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class ApplicationResourceTest
     extends AdminResourceTestSupport
@@ -141,7 +143,7 @@ public class ApplicationResourceTest
 
         final AdminToolDescriptors adminToolDescriptors = createAdminToolDescriptors();
         Mockito.when( this.adminToolDescriptorService.getByApplication( applicationKey ) ).thenReturn( adminToolDescriptors );
-        Mockito.when( this.adminToolDescriptorService.generateAdminToolUri( Mockito.any(), Mockito.any() ) ).thenReturn( "url/to/tool" );
+        Mockito.when( this.adminToolDescriptorService.generateAdminToolUri( any(), any() ) ).thenReturn( "url/to/tool" );
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         ResteasyProviderFactory.getContextDataMap().put( HttpServletRequest.class, mockRequest );
@@ -267,7 +269,7 @@ public class ApplicationResourceTest
         Mockito.when( messageBundle.localize( "site.config.helpText" ) ).thenReturn( "translated.site.helpText" );
         Mockito.when( messageBundle.localize( "site.config.label" ) ).thenReturn( "translated.site.label" );
 
-        Mockito.when( this.localeService.getBundle( Mockito.any(), Mockito.any() ) ).thenReturn( messageBundle );
+        Mockito.when( this.localeService.getBundle( any(), any() ) ).thenReturn( messageBundle );
 
         Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
@@ -469,7 +471,8 @@ public class ApplicationResourceTest
         throws Exception
     {
         final Application application = createApplication();
-        Mockito.when( this.applicationService.installGlobalApplication( new URL( application.getUrl() ) ) ).thenReturn( application );
+        Mockito.when( this.applicationService.installGlobalApplication( eq( new URL( application.getUrl() ) ), any() ) ).thenReturn(
+            application );
 
         String response = request().
             path( "application/installUrl" ).
@@ -514,7 +517,7 @@ public class ApplicationResourceTest
         final MultipartForm form = Mockito.mock( MultipartForm.class );
         Mockito.when( form.get( "file" ) ).thenReturn( null );
 
-        Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
+        Mockito.when( this.multipartService.parse( any() ) ).thenReturn( form );
 
         assertThrows(RuntimeException.class, () -> {
             request().path("application/install").multipart("file", "file.jar", new byte[]{0, 1, 2}, MediaType.MULTIPART_FORM_DATA_TYPE).
@@ -532,7 +535,7 @@ public class ApplicationResourceTest
 
         Mockito.when( form.iterator() ).thenReturn( List.of( file ).iterator() );
         Mockito.when( form.get( "file" ) ).thenReturn( file );
-        Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
+        Mockito.when( this.multipartService.parse( any() ) ).thenReturn( form );
 
         Mockito.when( this.applicationService.installGlobalApplication( file.getBytes(), "file.jar" ) ).thenThrow( new RuntimeException() );
 
@@ -554,7 +557,7 @@ public class ApplicationResourceTest
 
         Mockito.when( form.iterator() ).thenReturn( List.of( file ).iterator() );
         Mockito.when( form.get( "file" ) ).thenReturn( file );
-        Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
+        Mockito.when( this.multipartService.parse( any() ) ).thenReturn( form );
 
         final Application application = createApplication();
 

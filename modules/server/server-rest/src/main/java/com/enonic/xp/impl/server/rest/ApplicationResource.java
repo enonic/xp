@@ -2,6 +2,7 @@ package com.enonic.xp.impl.server.rest;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
@@ -27,6 +28,7 @@ import com.enonic.xp.impl.server.rest.model.ApplicationInstalledJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationParams;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.util.HexEncoder;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
@@ -65,7 +67,8 @@ public final class ApplicationResource
     @Consumes(MediaType.APPLICATION_JSON)
     public ApplicationInstallResultJson installUrl( final ApplicationInstallParams params )
     {
-        final String urlString = params.getURL();
+        final String urlString = params.getUrl();
+        final byte[] sha512 = Optional.ofNullable( params.getSha512() ).map( HexEncoder::fromHex ).orElse( null );
         final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
         String failure;
         try
@@ -74,7 +77,7 @@ public final class ApplicationResource
 
             if ( ALLOWED_PROTOCOLS.contains( url.getProtocol() ) )
             {
-                return installApplication( url );
+                return installApplication( url, sha512 );
             }
             else
             {
@@ -117,13 +120,13 @@ public final class ApplicationResource
         this.applicationService.stopApplication( ApplicationKey.from( params.getKey() ), true );
     }
 
-    private ApplicationInstallResultJson installApplication( final URL url )
+    private ApplicationInstallResultJson installApplication( final URL url, byte[] sha512 )
     {
         final ApplicationInstallResultJson result = new ApplicationInstallResultJson();
 
         try
         {
-            final Application application = this.applicationService.installGlobalApplication( url );
+            final Application application = this.applicationService.installGlobalApplication( url, sha512 );
 
             result.setApplicationInstalledJson( new ApplicationInstalledJson( application, false ) );
         }

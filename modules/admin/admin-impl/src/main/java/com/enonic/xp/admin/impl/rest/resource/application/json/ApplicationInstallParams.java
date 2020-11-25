@@ -5,11 +5,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ApplicationInstallParams
 {
     @JsonProperty("URL")
-    private String URL;
+    private String url;
 
+    private String sha512;
 
-    public String getURL()
+    public String getUrl()
     {
-        return URL;
+        return url;
+    }
+
+    public String getSha512()
+    {
+        return sha512;
     }
 }

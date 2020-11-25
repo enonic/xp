@@ -22,6 +22,7 @@ import com.enonic.xp.web.multipart.MultipartItem;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
 public class ApplicationResourceTest
@@ -114,7 +115,8 @@ public class ApplicationResourceTest
     {
         Application application = createApplication();
 
-        Mockito.when( this.applicationService.installGlobalApplication( new URL( application.getUrl() ) ) ).thenReturn( application );
+        Mockito.when( this.applicationService.installGlobalApplication( eq( new URL( application.getUrl() ) ), any() ) ).thenReturn(
+            application );
 
         String jsonString = request().path( "app/installUrl" ).
             entity( "{\"URL\":\"http://enonic.net\"}", MediaType.APPLICATION_JSON_TYPE ).
@@ -144,7 +146,7 @@ public class ApplicationResourceTest
     {
         Application application = createApplication();
 
-        Mockito.when( this.applicationService.installGlobalApplication( new URL( application.getUrl() ) ) ).thenThrow(
+        Mockito.when( this.applicationService.installGlobalApplication( eq( new URL( application.getUrl() ) ), any() ) ).thenThrow(
             new RuntimeException() );
 
         String jsonString = request().path( "app/installUrl" ).
