@@ -10,6 +10,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentId;
@@ -18,6 +19,7 @@ import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -39,7 +41,8 @@ public class CreateMediaHandlerTest
     public void createMedia()
         throws Exception
     {
-        Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer( mock -> createContent( (CreateMediaParams) mock.getArguments()[0] ) );
+        Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer(
+            mock -> createContent( (CreateMediaParams) mock.getArguments()[0] ) );
 
         runFunction( "/test/CreateMediaHandlerTest.js", "createMedia" );
 
@@ -117,7 +120,9 @@ public class CreateMediaHandlerTest
     public void createMediaAutoGenerateNameWithExistingName()
         throws Exception
     {
-        final ContentAlreadyExistsException exception = new ContentAlreadyExistsException( ContentPath.from( "/a/b/my-content.jpg" ) );
+        final ContentAlreadyExistsException exception =
+            new ContentAlreadyExistsException( ContentPath.from( "/a/b/my-content.jpg" ), RepositoryId.from( "some.repo" ),
+                                               Branch.from( "draft" ) );
         Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenThrow( exception ).
             thenAnswer( mock -> createContent( (CreateMediaParams) mock.getArguments()[0] ) );
 

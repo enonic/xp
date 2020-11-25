@@ -133,7 +133,8 @@ final class CreateContentCommand
         catch ( NodeAlreadyExistAtPathException e )
         {
             throw new ContentAlreadyExistsException(
-                ContentPath.from( createContentTranslatorParams.getParent(), createContentTranslatorParams.getName().toString() ) );
+                ContentPath.from( createContentTranslatorParams.getParent(), createContentTranslatorParams.getName().toString() ),
+                e.getRepositoryId(), e.getBranch() );
         }
         catch ( NodeAccessException e )
         {

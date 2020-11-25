@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.OperationNotPermittedException;
@@ -47,6 +48,58 @@ public class RenameNodeCommandTest
         final Node renamedNode = getNodeById( createdNode.id() );
 
         assertEquals( "my-node-edited", renamedNode.name().toString() );
+    }
+
+    @Test
+    public void rename_to_same()
+    {
+        // it wasn't specified anywhere, but RenameNodeCommand was initially written to
+        // allow node to be renamed to self.
+        final Node createdNode = createNode( CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        RenameNodeCommand.create().
+            params( RenameNodeParams.create().
+                nodeId( createdNode.id() ).
+                nodeName( NodeName.from( "my-node" ) ).
+                build() ).
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
+            build().
+            execute();
+
+        final Node renamedNode = getNodeById( createdNode.id() );
+
+        assertEquals( "my-node", renamedNode.name().toString() );
+    }
+
+    @Test
+    public void rename_to_existing_fails()
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        createNode( CreateNodeParams.create().
+            name( "my-node-existing" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        final RenameNodeCommand command = RenameNodeCommand.create().
+            params( RenameNodeParams.create().
+                nodeId( createdNode.id() ).
+                nodeName( NodeName.from( "my-node-existing" ) ).
+                build() ).
+            indexServiceInternal( this.indexServiceInternal ).
+            storageService( this.storageService ).
+            searchService( this.searchService ).
+            build();
+
+        assertThrows( NodeAlreadyExistAtPathException.class, command::execute );
     }
 
     @Test
@@ -174,7 +227,7 @@ public class RenameNodeCommandTest
     public void cannot_rename_root_node()
         throws Exception
     {
-        assertThrows(OperationNotPermittedException.class, () -> RenameNodeCommand.create().
+        assertThrows( OperationNotPermittedException.class, () -> RenameNodeCommand.create().
             params( RenameNodeParams.create().
                 nodeId( Node.ROOT_UUID ).
                 nodeName( NodeName.from( "my-node-edited" ) ).

@@ -59,7 +59,7 @@ final class RenameContentCommand
         catch ( final NodeAlreadyExistAtPathException e )
         {
             final ContentPath path = translateNodePathToContentPath( e.getNode() );
-            throw new ContentAlreadyExistsException( path );
+            throw new ContentAlreadyExistsException( path, e.getRepositoryId(), e.getBranch() );
         }
     }
 

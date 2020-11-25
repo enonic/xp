@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
@@ -39,7 +38,9 @@ public final class RenameNodeCommand
             throw new OperationNotPermittedException( "Not allowed to rename root-node" );
         }
 
-        final NodePath parentPath = verifyNodeNotExistAtNewPath( nodeToBeRenamed );
+        final NodePath parentPath = nodeToBeRenamed.parentPath().asAbsolute();
+
+        verifyNodeNotExistAtNewPath( nodeToBeRenamed );
 
         return MoveNodeCommand.create( this ).
             id( params.getNodeId() ).
@@ -50,21 +51,17 @@ public final class RenameNodeCommand
             execute();
     }
 
-    private NodePath verifyNodeNotExistAtNewPath( final Node nodeToBeRenamed )
+    private void verifyNodeNotExistAtNewPath( final Node nodeToBeRenamed )
     {
         final NodePath parentPath = nodeToBeRenamed.parentPath().asAbsolute();
         final NodePath targetPath = new NodePath( parentPath, params.getNewNodeName() );
-        final Node existingNodeAtTargetPath = GetNodeByPathCommand.create( this ).
+
+        CheckNodeExistsCommand.create( this ).
             nodePath( targetPath ).
+            throwIfExists().
+            skipThrowIfSameId( nodeToBeRenamed.id() ).
             build().
             execute();
-
-        if ( ( existingNodeAtTargetPath != null ) && !nodeToBeRenamed.id().equals( existingNodeAtTargetPath.id() ) )
-        {
-            throw new NodeAlreadyExistAtPathException( targetPath );
-        }
-
-        return parentPath;
     }
 
 

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentId;
@@ -17,6 +18,7 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
@@ -158,7 +160,9 @@ public class CreateContentHandlerTest
     public void createContentAlreadyExists()
         throws Exception
     {
-        final Exception alreadyExistException = new ContentAlreadyExistsException( ContentPath.from( "/a/b/mycontent" ) );
+        final Exception alreadyExistException =
+            new ContentAlreadyExistsException( ContentPath.from( "/a/b/mycontent" ), RepositoryId.from( "some.repo" ),
+                                               Branch.from( "draft" ) );
         when( this.contentService.create( any( CreateContentParams.class ) ) ).thenThrow( alreadyExistException );
 
         final ContentType contentType = ContentType.create().
