@@ -21,6 +21,7 @@
   "modifiedTime": null,
   "modifier": "user:system:admin",
   "name": "content-name",
+  "originProject" : null,
   "owner": "user:myStore:me",
   "page": {
     "config": [

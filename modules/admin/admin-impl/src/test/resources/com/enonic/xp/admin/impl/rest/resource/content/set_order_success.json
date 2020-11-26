@@ -36,6 +36,7 @@
   "modifiedTime": "2013-08-23T12:55:09.162Z",
   "modifier": "user:system:admin",
   "name": "content-name",
+  "originProject" : null,
   "owner": "user:myStore:me",
   "page": null,
   "path": "/content-name",
