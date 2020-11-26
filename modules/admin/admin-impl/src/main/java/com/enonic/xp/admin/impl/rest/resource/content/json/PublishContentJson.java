@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class PublishContentJson
 {
@@ -13,6 +14,9 @@ public class PublishContentJson
     private PublishScheduleJson schedule;
 
     private String message;
+
+    private Set<PublishDependencyExcludeState> excludeStates =
+        Set.of( PublishDependencyExcludeState.INVALID, PublishDependencyExcludeState.IN_PROGRESS );
 
     public Set<String> getExcludeChildrenIds()
     {
@@ -62,5 +66,17 @@ public class PublishContentJson
     public void setMessage( final String message )
     {
         this.message = message;
+    }
+
+    public Set<PublishDependencyExcludeState> getExcludeStates()
+    {
+        return excludeStates;
+    }
+
+    public void setExcludeStates( final Set<String> excludeStates )
+    {
+        this.excludeStates = excludeStates != null ? excludeStates.stream().
+            map( PublishDependencyExcludeState::valueOf ).
+            collect( Collectors.toSet() ) : Set.of();
     }
 }

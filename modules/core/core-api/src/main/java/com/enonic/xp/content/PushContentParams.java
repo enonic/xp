@@ -1,5 +1,6 @@
 package com.enonic.xp.content;
 
+import java.util.EnumSet;
 import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -28,6 +29,10 @@ public class PushContentParams
 
     private final String message;
 
+    private final boolean excludeInvalid;
+
+    private final EnumSet<WorkflowState> excludeWorkflowStates;
+
     private PushContentParams( Builder builder )
     {
         contentIds = builder.contentIds;
@@ -40,6 +45,8 @@ public class PushContentParams
         publishContentListener = builder.publishContentListener;
         deleteContentListener = builder.deleteContentListener;
         message = builder.message;
+        excludeInvalid = builder.excludeInvalid;
+        excludeWorkflowStates = builder.excludeWorkflowStates;
     }
 
     public static Builder create()
@@ -98,6 +105,16 @@ public class PushContentParams
         return message;
     }
 
+    public boolean isExcludeInvalid()
+    {
+        return excludeInvalid;
+    }
+
+    public EnumSet<WorkflowState> getExcludeWorkflowStates()
+    {
+        return excludeWorkflowStates;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -114,14 +131,15 @@ public class PushContentParams
             Objects.equals( excludeChildrenIds, that.excludeChildrenIds ) && Objects.equals( contentIds, that.contentIds ) &&
             Objects.equals( excludedContentIds, that.excludedContentIds ) && Objects.equals( target, that.target ) &&
             Objects.equals( publishContentListener, that.publishContentListener ) &&
-            Objects.equals( deleteContentListener, that.deleteContentListener ) && Objects.equals( message, that.message );
+            Objects.equals( deleteContentListener, that.deleteContentListener ) && Objects.equals( message, that.message ) &&
+            Objects.equals( excludeWorkflowStates, that.excludeWorkflowStates ) && Objects.equals( excludeInvalid, that.excludeInvalid );
     }
 
     @Override
     public int hashCode()
     {
         return Objects.hash( contentIds, excludedContentIds, includeChildren, excludeChildrenIds, target, includeDependencies,
-                             publishContentListener, deleteContentListener, message );
+                             publishContentListener, deleteContentListener, message, excludeWorkflowStates, excludeInvalid );
     }
 
     public static final class Builder
@@ -145,6 +163,10 @@ public class PushContentParams
         private DeleteContentListener deleteContentListener;
 
         private String message;
+
+        private boolean excludeInvalid = false;
+
+        private EnumSet<WorkflowState> excludeWorkflowStates = EnumSet.noneOf( WorkflowState.class );
 
         private Builder()
         {
@@ -209,6 +231,18 @@ public class PushContentParams
         public Builder message( final String message )
         {
             this.message = message;
+            return this;
+        }
+
+        public Builder excludeInvalid( boolean excludeInvalid )
+        {
+            this.excludeInvalid = excludeInvalid;
+            return this;
+        }
+
+        public Builder excludeWorkflowStates( EnumSet<WorkflowState> workflowStates )
+        {
+            this.excludeWorkflowStates = workflowStates;
             return this;
         }
 

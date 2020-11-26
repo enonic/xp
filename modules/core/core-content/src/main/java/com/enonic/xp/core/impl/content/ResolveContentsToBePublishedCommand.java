@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -10,10 +11,15 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
+import com.enonic.xp.query.filter.BooleanFilter;
+import com.enonic.xp.query.filter.Filter;
+import com.enonic.xp.query.filter.ValueFilter;
 
 public class ResolveContentsToBePublishedCommand
     extends AbstractContentCommand
@@ -30,6 +36,10 @@ public class ResolveContentsToBePublishedCommand
 
     private final boolean includeDependencies;
 
+    private final boolean excludeInvalid;
+
+    private final EnumSet<WorkflowState> excludeWorkflowStates;
+
     private ResolveContentsToBePublishedCommand( final Builder builder )
     {
         super( builder );
@@ -39,6 +49,8 @@ public class ResolveContentsToBePublishedCommand
         this.resultBuilder = CompareContentResults.create();
         this.excludeChildrenIds = builder.excludeChildrenIds;
         this.includeDependencies = builder.includeDependencies;
+        this.excludeInvalid = builder.excludeInvalid;
+        this.excludeWorkflowStates = builder.excludeWorkflowStates;
     }
 
     public static Builder create()
@@ -77,9 +89,39 @@ public class ResolveContentsToBePublishedCommand
             includeDependencies( this.includeDependencies ).
             nodeId( NodeId.from( contentId.toString() ) ).
             excludedNodeIds( nodeIds ).
+            excludeFilter( createExcludeFilter() ).
             branch( this.target ).
             statusesToStopDependenciesSearch( Set.of( CompareStatus.EQUAL ) ).
             build() );
+    }
+
+    private Filter createExcludeFilter()
+    {
+        final BooleanFilter.Builder filterBuilder = BooleanFilter.create();
+
+        if ( this.excludeInvalid )
+        {
+            filterBuilder.mustNot( ValueFilter.create().
+                fieldName( "valid" ).
+                addValue( ValueFactory.newBoolean( false ) ).
+                build() ).
+                build();
+        }
+
+        if ( !this.excludeWorkflowStates.isEmpty() )
+        {
+            this.excludeWorkflowStates.stream().map( Enum::name ).forEach( state -> {
+                filterBuilder.mustNot( ValueFilter.create().
+                    fieldName( "workflow.state" ).
+                    addValue( ValueFactory.newString( state ) ).
+                    build() );
+            } );
+        }
+
+        final BooleanFilter filter = filterBuilder.build();
+
+        return !filter.getMustNot().isEmpty() ? filter : null;
+
     }
 
     public static class Builder
@@ -94,6 +136,10 @@ public class ResolveContentsToBePublishedCommand
         private Branch target;
 
         private boolean includeDependencies = true;
+
+        private boolean excludeInvalid = false;
+
+        private EnumSet<WorkflowState> excludeWorkflowStates = EnumSet.noneOf( WorkflowState.class );
 
         public Builder contentIds( final ContentIds contentIds )
         {
@@ -122,6 +168,18 @@ public class ResolveContentsToBePublishedCommand
         public Builder includeDependencies( final boolean includeDependencies )
         {
             this.includeDependencies = includeDependencies;
+            return this;
+        }
+
+        public Builder excludeInvalid( boolean excludeInvalid )
+        {
+            this.excludeInvalid = excludeInvalid;
+            return this;
+        }
+
+        public Builder excludeWorkflowStates( EnumSet<WorkflowState> workflowStates )
+        {
+            this.excludeWorkflowStates = workflowStates;
             return this;
         }
 

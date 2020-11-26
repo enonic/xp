@@ -1,14 +1,20 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
+import java.util.EnumSet;
+
+import com.google.common.collect.ImmutableSet;
+
 import com.enonic.xp.admin.impl.rest.resource.content.DeleteContentProgressListener;
 import com.enonic.xp.admin.impl.rest.resource.content.PublishContentProgressListener;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.PublishDependencyExcludeState;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PublishContentResult;
+import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
@@ -26,7 +32,8 @@ public class PublishRunnableTask
     }
 
 
-    public PublishContentJson getParams() {
+    public PublishContentJson getParams()
+    {
         return params;
     }
 
@@ -45,6 +52,17 @@ public class PublishRunnableTask
 
         PublishRunnableTaskResult.Builder resultBuilder = PublishRunnableTaskResult.create();
 
+        final ImmutableSet.Builder<WorkflowState> excludeWorkflowStatesBuilder = ImmutableSet.builder();
+
+        if ( params.getExcludeStates().contains( PublishDependencyExcludeState.IN_PROGRESS ) )
+        {
+            excludeWorkflowStatesBuilder.add( WorkflowState.IN_PROGRESS );
+        }
+
+        final ImmutableSet<WorkflowState> excludeWorkflowStates = excludeWorkflowStatesBuilder.build();
+        final boolean excludeInvalid = params.getExcludeStates().contains( PublishDependencyExcludeState.INVALID );
+
+        //Resolves the publish dependencies
         try
         {
             final PublishContentResult result = contentService.publish( PushContentParams.create().
@@ -52,6 +70,9 @@ public class PublishRunnableTask
                 contentIds( contentIds ).
                 excludedContentIds( excludeContentIds ).
                 excludeChildrenIds( excludeChildrenIds ).
+                excludeInvalid( excludeInvalid ).
+                excludeWorkflowStates(
+                    !excludeWorkflowStates.isEmpty() ? EnumSet.copyOf( excludeWorkflowStates ) : EnumSet.noneOf( WorkflowState.class ) ).
                 contentPublishInfo( contentPublishInfo ).
                 includeDependencies( true ).
                 pushListener( new PublishContentProgressListener( progressReporter ) ).

@@ -1,6 +1,7 @@
 package com.enonic.xp.core.content;
 
 import java.time.Instant;
+import java.util.EnumSet;
 import java.util.Iterator;
 
 import org.junit.jupiter.api.Disabled;
@@ -27,6 +28,7 @@ import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
+import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.data.PropertySet;
@@ -48,10 +50,17 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class ContentServiceImplTest_publish
     extends AbstractContentServiceTest
 {
-
     private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
-    private Content content1, content2, content1_1, content1_2_offline, content2_1;
+    private Content content1;
+
+    private Content content2;
+
+    private Content content11;
+
+    private Content content21;
+
+    private Content content211;
 
     @Test
     public void push_one_content()
@@ -212,8 +221,8 @@ public class ContentServiceImplTest_publish
         createContentTree2();
 
         final PushContentParams pushParams = PushContentParams.create().
-            contentIds( ContentIds.from( content1_1.getId() ) ).
-            excludeChildrenIds( ContentIds.from( content1_1.getId() ) ).
+            contentIds( ContentIds.from( content11.getId() ) ).
+            excludeChildrenIds( ContentIds.from( content11.getId() ) ).
             target( WS_OTHER ).
             build();
 
@@ -252,7 +261,7 @@ public class ContentServiceImplTest_publish
 
         final PushContentParams pushParams = PushContentParams.create().
             contentIds( ContentIds.from( content1.getId() ) ).
-            excludedContentIds( ContentIds.from( content1_1.getId() ) ).
+            excludedContentIds( ContentIds.from( content11.getId() ) ).
             excludeChildrenIds( ContentIds.from( content1.getId() ) ).
             target( WS_OTHER ).
             build();
@@ -274,7 +283,7 @@ public class ContentServiceImplTest_publish
         this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
             displayName( "content1_1_1" ).
-            parent( content1_1.getPath() ).
+            parent( content11.getPath() ).
             type( ContentTypeName.folder() ).
             build() );
 
@@ -282,13 +291,79 @@ public class ContentServiceImplTest_publish
 
         final PushContentParams pushParams = PushContentParams.create().
             contentIds( ContentIds.from( content1.getId(), content2.getId() ) ).
-            excludedContentIds( ContentIds.from( content1_1.getId() ) ).
+            excludedContentIds( ContentIds.from( content11.getId() ) ).
             target( WS_OTHER ).
             build();
 
         final PublishContentResult result = this.contentService.publish( pushParams );
 
-        assertPushed( result, ContentIds.from( content1.getId(), content2.getId(), content2_1.getId() ) );
+        assertPushed( result, ContentIds.from( content1.getId(), content2.getId(), content21.getId() ) );
+    }
+
+    @Test
+    public void exclude_invalid_direct_reference()
+    {
+        createContentTree2();
+
+        // make content invalid
+        contentService.update( new UpdateContentParams().
+            contentId( content211.getId() ).
+            editor( edit -> edit.data = new PropertyTree() ) );
+
+        refresh();
+
+        PushContentParams pushParams = PushContentParams.create().
+            contentIds( ContentIds.from( content11.getId() ) ).
+            target( WS_OTHER ).
+            build();
+
+        PublishContentResult result = this.contentService.publish( pushParams );
+        assertEquals( 5, result.getFailedContents().getSize() );
+        assertEquals( 0, result.getPushedContents().getSize() );
+
+        pushParams = PushContentParams.create().
+            contentIds( ContentIds.from( content11.getId() ) ).
+            target( WS_OTHER ).
+            excludeInvalid( true ).
+            build();
+
+        result = this.contentService.publish( pushParams );
+        assertEquals( 2, result.getPushedContents().getSize() );
+        assertEquals( 0, result.getFailedContents().getSize() );
+    }
+
+    @Test
+    public void exclude_in_progress_direct_reference()
+    {
+        createContentTree2();
+
+        // make content invalid
+        contentService.update( new UpdateContentParams().
+            contentId( content211.getId() ).
+            editor( edit -> edit.workflowInfo = WorkflowInfo.create().
+                state( WorkflowState.IN_PROGRESS ).
+                build() ) );
+
+        refresh();
+
+        PushContentParams pushParams = PushContentParams.create().
+            contentIds( ContentIds.from( content11.getId() ) ).
+            target( WS_OTHER ).
+            build();
+
+        PublishContentResult result = this.contentService.publish( pushParams );
+        assertEquals( 5, result.getFailedContents().getSize() );
+        assertEquals( 0, result.getPushedContents().getSize() );
+
+        pushParams = PushContentParams.create().
+            contentIds( ContentIds.from( content11.getId() ) ).
+            target( WS_OTHER ).
+            excludeWorkflowStates( EnumSet.of( WorkflowState.IN_PROGRESS ) ).
+            build();
+
+        result = this.contentService.publish( pushParams );
+        assertEquals( 2, result.getPushedContents().getSize() );
+        assertEquals( 0, result.getFailedContents().getSize() );
     }
 
 
@@ -316,7 +391,7 @@ public class ContentServiceImplTest_publish
 
         assertEquals( 2, result.getPushedContents().getSize() );
         assertTrue( result.getPushedContents().contains( content1.getId() ) );
-        assertTrue( result.getPushedContents().contains( content1_1.getId() ) );
+        assertTrue( result.getPushedContents().contains( content11.getId() ) );
     }
 
     /**
@@ -338,7 +413,7 @@ public class ContentServiceImplTest_publish
             build() );
 
         final MoveContentParams params = MoveContentParams.create().
-            contentId( content2_1.getId() ).
+            contentId( content21.getId() ).
             parentContentPath( content1.getPath() ).
             build();
 
@@ -349,7 +424,7 @@ public class ContentServiceImplTest_publish
             build() );
 
         final Content movedContent =
-            this.contentService.getByPath( ContentPath.from( content1.getPath(), content2_1.getName().toString() ) );
+            this.contentService.getByPath( ContentPath.from( content1.getPath(), content21.getName().toString() ) );
 
         assertNotNull( movedContent );
     }
@@ -541,7 +616,7 @@ public class ContentServiceImplTest_publish
     {
         final MoveContentParams params = MoveContentParams.create().
             contentId( contentId ).
-            parentContentPath( ContentPath.from( newParent )  ).
+            parentContentPath( ContentPath.from( newParent ) ).
             build();
         this.contentService.move( params );
     }
@@ -588,14 +663,14 @@ public class ContentServiceImplTest_publish
             type( ContentTypeName.folder() ).
             build() );
 
-        this.content1_1 = this.contentService.create( CreateContentParams.create().
+        this.content11 = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
             displayName( "content1_1" ).
             parent( content1.getPath() ).
             type( ContentTypeName.folder() ).
             build() );
 
-        this.content1_2_offline = this.contentService.create( CreateContentParams.create().
+        this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
             displayName( "content1_2_offline" ).
             parent( content1.getPath() ).
@@ -604,9 +679,9 @@ public class ContentServiceImplTest_publish
             build() );
 
         final PropertyTree data = new PropertyTree();
-        data.addReference( "myRef", Reference.from( content1_1.getId().toString() ) );
+        data.addReference( "myRef", Reference.from( content11.getId().toString() ) );
 
-        this.content2_1 = this.contentService.create( CreateContentParams.create().
+        this.content21 = this.contentService.create( CreateContentParams.create().
             contentData( data ).
             displayName( "content2_1" ).
             parent( content2.getPath() ).
@@ -640,24 +715,28 @@ public class ContentServiceImplTest_publish
             type( ContentTypeName.folder() ).
             build() );
 
-        this.content2_1 = this.contentService.create( CreateContentParams.create().
+        this.content21 = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
             displayName( "content2_1" ).
             parent( content2.getPath() ).
             type( ContentTypeName.folder() ).
             build() );
 
-        final Content content2_1_1 = this.contentService.create( CreateContentParams.create().
+        final PropertyTree validShortcutData = new PropertyTree();
+        validShortcutData.addReference( "target", Reference.from( "123" ) );
+
+        this.content211 = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
             displayName( "content2_1_1" ).
-            parent( content2_1.getPath() ).
-            type( ContentTypeName.folder() ).
+            parent( content21.getPath() ).
+            contentData( validShortcutData ).
+            type( ContentTypeName.shortcut() ).
             build() );
 
         final PropertyTree data = new PropertyTree();
-        data.addReference( "myRef", Reference.from( content2_1_1.getId().toString() ) );
+        data.addReference( "myRef", Reference.from( content211.getId().toString() ) );
 
-        this.content1_1 = this.contentService.create( CreateContentParams.create().
+        this.content11 = this.contentService.create( CreateContentParams.create().
             contentData( data ).
             displayName( "content1_1" ).
             parent( content1.getPath() ).

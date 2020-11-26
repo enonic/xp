@@ -387,6 +387,8 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             contentIds( params.getContentIds() ).
             excludedContentIds( params.getExcludedContentIds() ).
+            excludeInvalid( params.isExcludeInvalid() ).
+            excludeWorkflowStates( params.getExcludeWorkflowStates() ).
             target( params.getTarget() ).
             contentPublishInfo( params.getContentPublishInfo() ).
             excludeChildrenIds( getExcludeChildrenIds( params ) ).
@@ -426,6 +428,8 @@ public class ContentServiceImpl
             contentIds( params.getContentIds() ).
             excludedContentIds( params.getExcludedContentIds() ).
             excludeChildrenIds( params.getExcludeChildrenIds() ).
+            excludeInvalid( params.isExcludeInvalid() ).
+            excludeWorkflowStates( params.getExcludeWorkflowStates() ).
             target( params.getTarget() ).
             build().
             execute();

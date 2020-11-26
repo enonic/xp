@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.EnumSet;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
@@ -16,8 +17,9 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.DeleteContentListener;
-import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.PublishContentResult;
+import com.enonic.xp.content.PushContentListener;
+import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -59,6 +61,10 @@ public class PublishContentCommand
 
     private final String message;
 
+    private final boolean excludeInvalid;
+
+    private final EnumSet<WorkflowState> excludeWorkflowStates;
+
     private PublishContentCommand( final Builder builder )
     {
         super( builder );
@@ -72,6 +78,8 @@ public class PublishContentCommand
         this.publishContentListener = builder.publishContentListener;
         this.deleteNodeListener = builder.deleteNodeListener;
         this.message = builder.message;
+        this.excludeInvalid = builder.excludeInvalid;
+        this.excludeWorkflowStates = builder.excludeWorkflowStates;
     }
 
     public static Builder create()
@@ -137,6 +145,8 @@ public class PublishContentCommand
             contentIds( this.contentIds ).
             excludedContentIds( this.excludedContentIds ).
             excludeChildrenIds( this.excludeChildrenIds ).
+            excludeInvalid( this.excludeInvalid ).
+            excludeWorkflowStates( excludeWorkflowStates ).
             includeDependencies( this.includeDependencies ).
             target( this.target ).
             contentTypeService( this.contentTypeService ).
@@ -293,6 +303,10 @@ public class PublishContentCommand
 
         private String message;
 
+        private boolean excludeInvalid = false;
+
+        private EnumSet<WorkflowState> excludeWorkflowStates = EnumSet.noneOf( WorkflowState.class );
+
         public Builder contentIds( final ContentIds contentIds )
         {
             this.contentIds = contentIds;
@@ -357,6 +371,19 @@ public class PublishContentCommand
             return this;
         }
 
+        public Builder excludeInvalid( boolean excludeInvalid )
+        {
+            this.excludeInvalid = excludeInvalid;
+            return this;
+        }
+
+        public Builder excludeWorkflowStates( EnumSet<WorkflowState> workflowStates )
+        {
+            this.excludeWorkflowStates = workflowStates;
+            return this;
+        }
+
+
         @Override
         void validate()
         {
@@ -380,6 +407,7 @@ public class PublishContentCommand
             validate();
             return new PublishContentCommand( this );
         }
+
 
     }
 }

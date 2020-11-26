@@ -1,9 +1,8 @@
 {
   "ids": [
-    "requested-contentId"
+    "content-id"
   ],
-  "excludedIds": [],
-  "excludeChildrenIds": [],
+  "message": "my message",
   "excludeStates": [
     "INVALID",
     "IN_PROGRESS"

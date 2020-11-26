@@ -65,6 +65,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.PublishDependencyExcludeState;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResetContentInheritJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.RevertContentJson;
@@ -910,14 +911,14 @@ public class ContentResourceTest
     }
 
     @Test
-    public void publish_content_with_message()
+    public void publish_content_with_params()
         throws Exception
     {
         ArgumentCaptor<PublishRunnableTask> captor = ArgumentCaptor.forClass( PublishRunnableTask.class );
         Mockito.when( taskService.submitTask( Mockito.any(), Mockito.anyString() ) ).thenReturn( TaskId.from( "1" ) );
 
         final MockRestResponse res = request().path( "content/publish" ).
-            entity( readFromFile( "publish_content_with_message.json" ), MediaType.APPLICATION_JSON_TYPE ).
+            entity( readFromFile( "publish_content_with_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post();
 
         Mockito.verify( taskService ).submitTask( captor.capture(), Mockito.anyString() );
@@ -925,6 +926,8 @@ public class ContentResourceTest
 
         assertEquals( 200, res.getStatus() );
         assertEquals( params.getMessage(), "my message" );
+        assertTrue( params.getExcludeStates().contains( PublishDependencyExcludeState.IN_PROGRESS ) );
+        assertTrue( params.getExcludeStates().contains( PublishDependencyExcludeState.INVALID ) );
     }
 
     @Test

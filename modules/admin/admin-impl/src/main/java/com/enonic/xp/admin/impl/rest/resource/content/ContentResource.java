@@ -88,6 +88,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MarkAsReadyJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.PublishDependencyExcludeState;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResetContentInheritJson;
@@ -164,6 +165,7 @@ import com.enonic.xp.content.UndoPendingDeleteContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
@@ -589,13 +591,20 @@ public final class ContentResource
         final ContentIds excludeContentIds = ContentIds.from( params.getExcludedIds() );
         final ContentIds excludeChildrenIds = ContentIds.from( params.getExcludeChildrenIds() );
 
-        //Resolves the publish dependencies
-        final CompareContentResults compareResults = contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create().
+        final ResolvePublishDependenciesParams.Builder resolveDependenciesParams = ResolvePublishDependenciesParams.create().
             target( ContentConstants.BRANCH_MASTER ).
             contentIds( requestedContentIds ).
             excludedContentIds( excludeContentIds ).
             excludeChildrenIds( excludeChildrenIds ).
-            build() );
+            excludeInvalid( params.getExcludeStates().contains( PublishDependencyExcludeState.INVALID ) );
+
+        if ( params.getExcludeStates().contains( PublishDependencyExcludeState.IN_PROGRESS ) )
+        {
+            resolveDependenciesParams.setExcludeWorkflowStates( Set.of( WorkflowState.IN_PROGRESS ) );
+        }
+
+        //Resolves the publish dependencies
+        final CompareContentResults compareResults = contentService.resolvePublishDependencies( resolveDependenciesParams.build() );
 
         //Resolved the dependent ContentPublishItem
         final ContentIds dependentContentIds = ContentIds.from( compareResults.contentIds().

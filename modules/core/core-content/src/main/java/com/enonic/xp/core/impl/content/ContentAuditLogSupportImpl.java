@@ -41,6 +41,7 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -303,6 +304,15 @@ public class ContentAuditLogSupportImpl
             paramsSet.addStrings( "excludeChildrenIds", params.getExcludeChildrenIds().stream().
                 map( ContentId::toString ).collect( Collectors.toList() ) );
         }
+
+        if ( params.getExcludeWorkflowStates() != null )
+        {
+            paramsSet.addStrings( "excludeWorkflowStates", params.getExcludeWorkflowStates().stream().
+                map( WorkflowState::name ).collect( Collectors.toList() ) );
+        }
+
+        paramsSet.addBoolean( "excludeInvalid", params.isExcludeInvalid() );
+
         if ( params.getContentPublishInfo() != null )
         {
             final ContentPublishInfo contentPublishInfo = params.getContentPublishInfo();

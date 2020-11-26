@@ -26,9 +26,12 @@ import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ResolveSyncWorkResult;
+import com.enonic.xp.query.filter.Filter;
+import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 
@@ -53,6 +56,8 @@ public class ResolveSyncWorkCommand
 
     private final Set<CompareStatus> statusesToStopDependenciesSearch;
 
+    private final Filter excludeFilter;
+
     private static final Logger LOG = LoggerFactory.getLogger( ResolveSyncWorkCommand.class );
 
     private ResolveSyncWorkCommand( final Builder builder )
@@ -66,6 +71,7 @@ public class ResolveSyncWorkCommand
         this.includeDependencies = builder.includeDependencies;
         this.initialDiffFilter = builder.initialDiffFilter;
         this.statusesToStopDependenciesSearch = builder.statusesToStopDependenciesSearch;
+        this.excludeFilter = builder.excludeFilter;
 
         final Node publishRootNode = doGetById( builder.nodeId );
 
@@ -136,6 +142,8 @@ public class ResolveSyncWorkCommand
             filter( ( nodeId ) -> !this.excludedIds.contains( nodeId ) ).
             collect( Collectors.toSet() ) );
 
+        nodeIds = applyExcludeFilter( nodeIds );
+
         if ( this.initialDiffFilter != null )
         {
             nodeIds = this.initialDiffFilter.apply( nodeIds );
@@ -174,7 +182,7 @@ public class ResolveSyncWorkCommand
     private NodeIds getNodeDependencies( final NodeIds initialDiff )
     {
 
-        return FindNodesDependenciesCommand.create( this ).
+        return applyExcludeFilter( FindNodesDependenciesCommand.create( this ).
             nodeIds( initialDiff ).
             excludedIds( excludedIds ).
             recursive( true ).
@@ -196,20 +204,21 @@ public class ResolveSyncWorkCommand
                 return filteredNodeIds.build();
             } ).
             build().
-            execute();
+            execute() );
     }
 
     private void addNewAndMovedParents( final Set<NodeComparison> comparisons )
     {
-        final NodePaths parentPaths = getPathsFromComparisons( comparisons );
+        final NodePaths parentPaths = getParentPathsFromComparisons( comparisons );
 
-        final NodeIds parentIds = getParentIdsFromPaths( parentPaths );
+        final NodeIds parentIds = getIdsFromPaths( parentPaths );
 
         final NodeIds.Builder filteredParentIdsBuilder = NodeIds.create();
         getFilteredNewAndMovedParentComparisons( parentIds ).
             stream().
             map( NodeComparison::getNodeId ).
             forEach( filteredParentIdsBuilder::add );
+
         final NodeIds filteredParentIds = filteredParentIdsBuilder.build();
 
         final NodeIds parentsDependencies = includeDependencies ? getNodeDependencies( filteredParentIds ) : NodeIds.empty();
@@ -243,26 +252,26 @@ public class ResolveSyncWorkCommand
             collect( Collectors.toSet() );
     }
 
-    private NodeIds getParentIdsFromPaths( final NodePaths parentPaths )
+    private NodeIds getIdsFromPaths( final NodePaths paths )
     {
-        final NodeIds.Builder parentIdBuilder = NodeIds.create();
+        final NodeIds.Builder idBuilder = NodeIds.create();
 
-        for ( final NodePath parent : parentPaths )
+        for ( final NodePath path : paths )
         {
-            final NodeId parentId = this.nodeStorageService.getIdForPath( parent, InternalContext.from( ContextAccessor.current() ) );
+            final NodeId id = this.nodeStorageService.getIdForPath( path, InternalContext.from( ContextAccessor.current() ) );
 
-            if ( parentId == null )
+            if ( id == null )
             {
-                throw new NodeNotFoundException( "Cannot find parent with path [" + parent + "]" );
+                throw new NodeNotFoundException( "Cannot find parent with path [" + path + "]" );
             }
 
-            parentIdBuilder.add( parentId );
+            idBuilder.add( id );
         }
 
-        return parentIdBuilder.build();
+        return idBuilder.build();
     }
 
-    private NodePaths getPathsFromComparisons( final Set<NodeComparison> comparisons )
+    private NodePaths getParentPathsFromComparisons( final Set<NodeComparison> comparisons )
     {
         final NodePaths.Builder parentPathsBuilder = NodePaths.create();
 
@@ -312,6 +321,31 @@ public class ResolveSyncWorkCommand
             collect( Collectors.toSet() );
     }
 
+    private NodeIds applyExcludeFilter( final NodeIds nodeIds )
+    {
+        if ( this.excludeFilter != null )
+        {
+            final NodeQuery.Builder nodeQueryBuilder = NodeQuery.create().
+                addQueryFilter( this.excludeFilter ).
+                addQueryFilter( IdFilter.create().
+                    fieldName( NodeIndexPath.ID.getPath() ).
+                    values( nodeIds ).
+                    build() ).
+                from( 0 ).
+                size( -1 );
+
+            return FindNodesByQueryCommand.create().
+                searchService( this.nodeSearchService ).
+                storageService( this.nodeStorageService ).
+                indexServiceInternal( this.indexServiceInternal ).
+                query( nodeQueryBuilder.build() ).
+                build().
+                execute().
+                getNodeIds();
+        }
+        return nodeIds;
+    }
+
     private void markChildrenForDeletion( final NodeComparison comparison )
     {
         final FindNodesByParentResult result = FindNodeIdsByParentCommand.create( this ).
@@ -349,7 +383,6 @@ public class ResolveSyncWorkCommand
             parentPathsBuilder.addNodePath( parentPath );
         }
     }
-
 
     private void addToResult( final NodeComparison comparison )
     {
@@ -400,6 +433,8 @@ public class ResolveSyncWorkCommand
 
         private Set<CompareStatus> statusesToStopDependenciesSearch;
 
+        private Filter excludeFilter;
+
         private Builder()
         {
         }
@@ -446,6 +481,12 @@ public class ResolveSyncWorkCommand
         public Builder statusesToStopDependenciesSearch( final Set<CompareStatus> statusesToStopDependenciesSearch )
         {
             this.statusesToStopDependenciesSearch = statusesToStopDependenciesSearch;
+            return this;
+        }
+
+        public Builder excludeFilter( Filter excludeFilter )
+        {
+            this.excludeFilter = excludeFilter;
             return this;
         }
 

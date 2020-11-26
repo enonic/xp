@@ -1,33 +1,41 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
 import java.util.Collections;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.PublishDependencyExcludeState;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.PublishContentResult;
+import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.task.AbstractRunnableTaskTest;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PublishRunnableTaskTest
     extends AbstractRunnableTaskTest
 {
     private PublishContentJson params;
 
+    private ArgumentCaptor<PushContentParams> publishCaptor;
+
     @BeforeEach
     public void setUp()
         throws Exception
     {
         this.params = Mockito.mock( PublishContentJson.class );
+        this.publishCaptor = ArgumentCaptor.forClass( PushContentParams.class );
     }
 
     @Override
@@ -78,6 +86,22 @@ public class PublishRunnableTaskTest
         assertEquals(
             "{\"state\":\"WARNING\",\"message\":\"2 items are published ( \\\"content2\\\" deleted ). Item \\\"content3\\\" could not be published.\"}",
             resultMessage );
+    }
+
+    @Test
+    public void exclude_in_progress()
+        throws Exception
+    {
+        Mockito.when( params.getExcludeStates() ).thenReturn( Set.of( PublishDependencyExcludeState.IN_PROGRESS ) );
+
+        Mockito.when( contentService.publish( publishCaptor.capture() ) ).thenReturn( PublishContentResult.create().
+            build() );
+
+        final PublishRunnableTask task = createAndRunTask();
+        task.createTaskResult();
+
+        assertTrue( publishCaptor.getAllValues().get( 0 ).getExcludeWorkflowStates().contains( WorkflowState.IN_PROGRESS ) );
+
     }
 
     private String runTask( final PublishContentResult result )

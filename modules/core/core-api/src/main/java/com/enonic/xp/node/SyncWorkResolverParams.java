@@ -6,6 +6,7 @@ import java.util.function.Function;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.query.filter.Filter;
 
 @PublicApi
 public class SyncWorkResolverParams
@@ -24,6 +25,8 @@ public class SyncWorkResolverParams
 
     private final Set<CompareStatus> statusesToStopDependenciesSearch;
 
+    private final Filter excludeFilter;
+
     private SyncWorkResolverParams( Builder builder )
     {
         branch = builder.branch;
@@ -33,6 +36,7 @@ public class SyncWorkResolverParams
         this.includeDependencies = builder.includeDependencies;
         this.initialDiffFilter = builder.initialDiffFilter;
         this.statusesToStopDependenciesSearch = builder.statusesToStopDependenciesSearch;
+        this.excludeFilter = builder.excludeFilter;
     }
 
     public Branch getBranch()
@@ -70,6 +74,11 @@ public class SyncWorkResolverParams
         return statusesToStopDependenciesSearch;
     }
 
+    public Filter getExcludeFilter()
+    {
+        return excludeFilter;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -90,6 +99,8 @@ public class SyncWorkResolverParams
         private Set<CompareStatus> statusesToStopDependenciesSearch;
 
         private Function<NodeIds, NodeIds> initialDiffFilter;
+
+        private Filter excludeFilter;
 
         private Builder()
         {
@@ -128,6 +139,12 @@ public class SyncWorkResolverParams
         public Builder initialDiffFilter( final Function<NodeIds, NodeIds> initialDiffFilter )
         {
             this.initialDiffFilter = initialDiffFilter;
+            return this;
+        }
+
+        public Builder excludeFilter( final Filter excludeFilter )
+        {
+            this.excludeFilter = excludeFilter;
             return this;
         }
 

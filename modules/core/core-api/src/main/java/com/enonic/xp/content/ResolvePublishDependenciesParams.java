@@ -1,5 +1,8 @@
 package com.enonic.xp.content;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
@@ -8,11 +11,16 @@ public class ResolvePublishDependenciesParams
 {
     private final ContentIds contentIds;
 
+    private final Branch target;
+
     private final ContentIds excludedContentIds;
 
     private final ContentIds excludeChildrenIds;
 
-    private final Branch target;
+    private final boolean excludeInvalid;
+
+    private final EnumSet<WorkflowState> excludeWorkflowStates;
+
 
     private ResolvePublishDependenciesParams( Builder builder )
     {
@@ -20,6 +28,8 @@ public class ResolvePublishDependenciesParams
         target = builder.target;
         excludeChildrenIds = builder.excludeChildrenIds;
         excludedContentIds = builder.excludedContentIds;
+        excludeInvalid = builder.excludeInvalid;
+        excludeWorkflowStates = builder.excludeWorkflowStates;
     }
 
     public static Builder create()
@@ -47,6 +57,16 @@ public class ResolvePublishDependenciesParams
         return target;
     }
 
+    public boolean isExcludeInvalid()
+    {
+        return excludeInvalid;
+    }
+
+    public EnumSet<WorkflowState> getExcludeWorkflowStates()
+    {
+        return excludeWorkflowStates;
+    }
+
     public static final class Builder
     {
         private ContentIds contentIds;
@@ -56,6 +76,10 @@ public class ResolvePublishDependenciesParams
         private ContentIds excludeChildrenIds;
 
         private Branch target;
+
+        private boolean excludeInvalid = false;
+
+        private EnumSet<WorkflowState> excludeWorkflowStates = EnumSet.noneOf( WorkflowState.class );
 
         private Builder()
         {
@@ -82,6 +106,21 @@ public class ResolvePublishDependenciesParams
         public Builder target( Branch target )
         {
             this.target = target;
+            return this;
+        }
+
+        public Builder excludeInvalid( boolean excludeInvalid )
+        {
+            this.excludeInvalid = excludeInvalid;
+            return this;
+        }
+
+        public Builder setExcludeWorkflowStates( Set<WorkflowState> workflowStates )
+        {
+            if ( !workflowStates.isEmpty() )
+            {
+                this.excludeWorkflowStates = EnumSet.copyOf( workflowStates );
+            }
             return this;
         }
 
