@@ -31,6 +31,7 @@
   "modifiedTime": null,
   "modifier": null,
   "name": "template-myapplication-2",
+  "originProject" : null,
   "owner": "user:myStore:me",
   "page": {
     "config": [],

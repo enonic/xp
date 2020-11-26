@@ -159,6 +159,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.PartDescriptor;
@@ -711,7 +712,7 @@ public class ContentResourceTest
     {
         Content content = createContent( "content-id", "content-path", "myapplication:content-type",
                                          Set.of( ContentInheritType.CONTENT, ContentInheritType.PARENT, ContentInheritType.NAME,
-                                                 ContentInheritType.SORT ) );
+                                                 ContentInheritType.SORT ), ProjectName.from( "origin" ) );
         Mockito.when( contentService.create( Mockito.isA( CreateContentParams.class ) ) ).thenReturn( content );
 
         String jsonString = request().path( "content/create" ).
@@ -2517,9 +2518,11 @@ public class ContentResourceTest
         return this.createContent( id, ContentPath.ROOT, name, contentTypeName );
     }
 
-    private Content createContent( final String id, final String name, final String contentTypeName, final Set<ContentInheritType> inherit )
+    private Content createContent( final String id, final String name, final String contentTypeName, final Set<ContentInheritType> inherit,
+                                   final ProjectName originProjectName )
     {
-        return Content.create( this.createContent( id, ContentPath.ROOT, name, contentTypeName ) ).setInherit( inherit ).build();
+        return Content.create( this.createContent( id, ContentPath.ROOT, name, contentTypeName ) ).setInherit( inherit ).originProject(
+            originProjectName ).build();
     }
 
     private Site createSite( final String id, final String name, final String contentTypeName, SiteConfigs siteConfigs )

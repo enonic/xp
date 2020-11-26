@@ -37,6 +37,8 @@ public class ContentSummaryJson
 
     private final ContentWorkflowInfoJson workflow;
 
+    private final String originProject;
+
     public ContentSummaryJson( final Content content, final ContentIconUrlResolver iconUrlResolver )
     {
         super( content.getId() );
@@ -53,6 +55,7 @@ public class ContentSummaryJson
         this.contentState = content.getContentState().toString();
         this.publish = content.getPublishInfo() != null ? new ContentPublishInfoJson( content.getPublishInfo() ) : null;
         this.workflow = content.getWorkflowInfo() != null ? new ContentWorkflowInfoJson( content.getWorkflowInfo() ) : null;
+        this.originProject = content.getOriginProject() != null ? content.getOriginProject().toString() : null;
     }
 
     public String getIconUrl()
@@ -162,6 +165,11 @@ public class ContentSummaryJson
     public String getContentState()
     {
         return this.contentState;
+    }
+
+    public String getOriginProject()
+    {
+        return this.originProject;
     }
 
     @Override
