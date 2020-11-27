@@ -10,12 +10,10 @@ import javax.servlet.http.HttpServlet;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.web.dispatch.ServletMapping;
 import com.enonic.xp.web.impl.dispatch.mapping.ServletDefinition;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ServletPipelineImplTest
     extends ResourcePipelineImplTest<ServletDefinition, ServletPipelineImpl>
@@ -45,12 +43,12 @@ public class ServletPipelineImplTest
     {
         final MyServlet servlet = new MyServlet();
 
-        assertEquals( 0, Lists.newArrayList( this.pipeline ).size() );
+        assertThat( this.pipeline.list.snapshot() ).isEmpty();
         this.pipeline.addServlet( servlet, Map.of() );
 
         this.pipeline.activate( new HashMap<>() );
 
-        assertEquals( 1, Lists.newArrayList( this.pipeline ).size() );
+        assertThat( this.pipeline.list.snapshot().size() ).isEqualTo( 1 );
         this.pipeline.removeServlet( servlet );
     }
 
@@ -60,12 +58,12 @@ public class ServletPipelineImplTest
         final ServletMapping mapping = Mockito.mock( ServletMapping.class );
         Mockito.when( mapping.getResource() ).thenReturn( Mockito.mock( Servlet.class ) );
 
-        assertEquals( 0, Lists.newArrayList( this.pipeline ).size() );
+        assertThat( this.pipeline.list.snapshot() ).isEmpty();
         this.pipeline.addMapping( mapping );
 
         this.pipeline.activate( new HashMap<>() );
 
-        assertEquals( 1, Lists.newArrayList( this.pipeline ).size() );
+        assertThat( this.pipeline.list.snapshot().size() ).isEqualTo( 1 );
         this.pipeline.removeMapping( mapping );
     }
 

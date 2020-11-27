@@ -1,6 +1,6 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
-import java.util.Iterator;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -10,6 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
+import com.enonic.xp.core.internal.concurrent.AtomicSortedList;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
 
@@ -20,7 +21,7 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
 
     private final Map<Object, T> map = new ConcurrentHashMap<>();
 
-    final List<T> list = new CopyOnWriteArrayList<>();
+    final AtomicSortedList<T> list = new AtomicSortedList<>( Comparator.comparingInt( T::getOrder ) );
 
     private Optional<String> connector;
 
@@ -31,7 +32,7 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
         throws ServletException
     {
         this.context = context;
-        this.list.forEach( r -> r.init( this.context ) );
+        this.list.snapshot().forEach( r -> r.init( this.context ) );
     }
 
     protected void activate( Map<String, Object> properties )
@@ -48,7 +49,7 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
     @Override
     public final void destroy()
     {
-        this.list.forEach( ResourceDefinition::destroy );
+        this.list.snapshot().forEach( ResourceDefinition::destroy );
     }
 
     final void add( final T def )
@@ -77,7 +78,6 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
 
         this.map.put( def.getResource(), def );
         this.list.add( def );
-        sortList();
 
         if ( this.context != null )
         {
@@ -104,22 +104,6 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
         return connectorProperty == null
             ? List.of()
             : connectorProperty instanceof String[] ? List.of( (String[]) connectorProperty ) : List.of( (String) connectorProperty );
-    }
-
-    @Override
-    public final Iterator<T> iterator()
-    {
-        return this.list.iterator();
-    }
-
-    private void sortList()
-    {
-        this.list.sort( this::compare );
-    }
-
-    private int compare( final T def1, final T def2 )
-    {
-        return def1.getOrder() - def2.getOrder();
     }
 
     boolean sameConnector( final T def )
