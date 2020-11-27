@@ -1,34 +1,33 @@
 package com.enonic.xp.jaxrs.impl;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Application;
 
 import org.jboss.resteasy.spi.UnhandledException;
-
-import com.google.common.collect.ImmutableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.jaxrs.JaxRsComponent;
 
 final class JaxRsServlet
     extends HttpServlet
 {
-    private JaxRsDispatcher dispatcher;
+    private static final Logger LOG = LoggerFactory.getLogger( JaxRsServlet.class );
 
-    private final JaxRsApplication app;
+    private final Set<JaxRsComponent> singletons = ConcurrentHashMap.newKeySet();
 
-    private boolean needsRefresh;
+    private volatile JaxRsDispatcher dispatcher;
 
-    JaxRsServlet()
-    {
-        this.needsRefresh = true;
-        this.app = new JaxRsApplication();
-    }
+    private volatile boolean needsRefresh = true;
 
     @Override
     public void service( final HttpServletRequest req, final HttpServletResponse res )
@@ -38,8 +37,7 @@ final class JaxRsServlet
 
         try
         {
-            refreshIfNeeded( req.getServletContext() );
-            this.dispatcher.service( req.getMethod(), req, res, true );
+            getDispatcher( req.getServletContext() ).service( req.getMethod(), req, res, true );
         }
         catch ( final UnhandledException e )
         {
@@ -47,59 +45,88 @@ final class JaxRsServlet
             {
                 throw e;
             }
+            else
+            {
+                LOG.warn( "UnhandledException in JaxRsServlet", e );
+            }
         }
     }
 
     @Override
-    public void destroy()
+    public synchronized void destroy()
     {
-        if ( this.dispatcher != null )
+        final JaxRsDispatcher dispatcher = this.dispatcher;
+        if ( dispatcher != null )
         {
-            this.dispatcher.destroy();
+            dispatcher.destroy();
         }
     }
 
-    private void refreshIfNeeded( final ServletContext context )
+    private JaxRsDispatcher getDispatcher( final ServletContext context )
         throws ServletException
     {
-        if ( !this.needsRefresh )
+        final JaxRsDispatcher dispatcher = this.dispatcher;
+        if ( dispatcher == null || this.needsRefresh )
         {
-            return;
+            return refresh( context );
         }
-
-        refresh( context );
+        else
+        {
+            return dispatcher;
+        }
     }
 
-    private synchronized void refresh( final ServletContext context )
+    private synchronized JaxRsDispatcher refresh( final ServletContext context )
         throws ServletException
     {
-        final JaxRsDispatcher newDispatcher = new JaxRsDispatcher( this.app );
-        newDispatcher.init( context );
-
-        final JaxRsDispatcher oldDispatcher = this.dispatcher;
-        this.dispatcher = newDispatcher;
-        this.needsRefresh = false;
-
-        if ( oldDispatcher != null )
+        if ( this.needsRefresh )
         {
-            oldDispatcher.destroy();
+            final JaxRsDispatcher newDispatcher = new JaxRsDispatcher( new JaxRsApplication( singletons ) );
+            newDispatcher.init( context );
+
+            final JaxRsDispatcher oldDispatcher = this.dispatcher;
+            this.dispatcher = newDispatcher;
+
+            if ( oldDispatcher != null )
+            {
+                oldDispatcher.destroy();
+            }
+            this.needsRefresh = false;
         }
+        return this.dispatcher;
     }
 
-    void addComponent( final JaxRsComponent component )
+    synchronized void addComponent( final JaxRsComponent component )
     {
-        this.app.addSingleton( component );
+        this.singletons.add( component );
         this.needsRefresh = true;
     }
 
-    void removeComponent( final JaxRsComponent component )
+    synchronized void removeComponent( final JaxRsComponent component )
     {
-        this.app.removeSingleton( component );
+        this.singletons.remove( component );
         this.needsRefresh = true;
     }
 
-    List<JaxRsComponent> getComponents()
+    private static class JaxRsApplication
+        extends Application
     {
-        return ImmutableList.copyOf( this.app.getComponents() );
+        final Set<Object> singletons;
+
+        JaxRsApplication( final Set<JaxRsComponent> singletons )
+        {
+            this.singletons = new HashSet<>( singletons );
+        }
+
+        @Override
+        public Set<Object> getSingletons()
+        {
+            return singletons;
+        }
+    }
+
+    Set<JaxRsComponent> getComponents()
+    {
+        return Set.copyOf( singletons );
     }
 }
