@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.MoveContentParams;
@@ -204,6 +205,36 @@ public class ParentContentSynchronizerTest
 
         assertThrows( ContentNotFoundException.class, () -> syncCreated( sourceChild.getId() ) );
 
+    }
+
+    @Test
+    public void testCreatedWithSetOriginProject()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setString( ContentPropertyNames.ORIGIN_PROJECT, "first" );
+
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( data ).
+            displayName( "This is my content" ).
+            createAttachments( CreateAttachments.create().
+                add( CreateAttachment.create().
+                    byteSource( ByteSource.wrap( "bytes".getBytes() ) ).
+                    label( "attachment" ).
+                    name( "attachmentName" ).
+                    mimeType( "image/png" ).
+                    build() ).
+                build() ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content sourceContent = sourceContext.callWith( () -> this.contentService.create( createContentParams ) );
+        final Content targetContent = syncCreated( sourceContent.getId() );
+
+        compareSynched( sourceContent, targetContent );
+
+        assertEquals( "source_project", targetContent.getOriginProject().toString() );
     }
 
     @Test
