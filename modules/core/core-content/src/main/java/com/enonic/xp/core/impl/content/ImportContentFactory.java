@@ -47,7 +47,11 @@ public class ImportContentFactory
 
         if ( params.getOriginProject() != null )
         {
-            nodeData.addString( ORIGIN_PROJECT, params.getOriginProject().toString() );
+            nodeData.setString( ORIGIN_PROJECT, params.getOriginProject().toString() );
+        }
+        else
+        {
+            nodeData.removeProperty( ORIGIN_PROJECT );
         }
 
         return Node.create().
