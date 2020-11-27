@@ -1,18 +1,15 @@
 package com.enonic.xp.jaxrs.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.ws.rs.core.Application;
 
 import org.jboss.resteasy.core.SynchronousDispatcher;
 import org.jboss.resteasy.logging.Logger;
 import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters;
 import org.jboss.resteasy.plugins.server.servlet.ServletBootstrap;
 import org.jboss.resteasy.plugins.server.servlet.ServletContainerDispatcher;
-import org.jboss.resteasy.util.GetRestful;
 
 final class JaxRsDispatcher
     extends ServletContainerDispatcher
@@ -22,9 +19,9 @@ final class JaxRsDispatcher
         Logger.setLoggerType( Logger.LoggerType.SLF4J );
     }
 
-    private final JaxRsApplication app;
+    private final Application app;
 
-    JaxRsDispatcher( final JaxRsApplication app )
+    JaxRsDispatcher( final Application app )
     {
         this.app = app;
     }
@@ -62,32 +59,6 @@ final class JaxRsDispatcher
         responseFactory.setDispatcher( synchronousDispatcher );
         synchronousDispatcher.getDefaultContextObjects().put( ServletConfig.class, config );
 
-        applyApplication();
-    }
-
-    private void applyApplication()
-    {
-        final List<Object> resourceList = new ArrayList<>();
-        final List<Object> providerList = new ArrayList<>();
-
-        for ( final Object object : this.app.getSingletons() )
-        {
-            if ( isRootResource( object ) )
-            {
-                resourceList.add( object );
-            }
-            else
-            {
-                providerList.add( object );
-            }
-        }
-
-        providerList.forEach( this.providerFactory::registerProviderInstance );
-        resourceList.forEach( this.dispatcher.getRegistry()::addSingletonResource );
-    }
-
-    private boolean isRootResource( final Object instance )
-    {
-        return GetRestful.isRootResource( instance.getClass() );
+        processApplication( app );
     }
 }

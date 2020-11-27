@@ -13,7 +13,14 @@ import com.enonic.xp.web.dispatch.DispatchConstants;
 @Component(immediate = true)
 public final class AdminRestActivator
 {
-    private JaxRsService service;
+    private final JaxRsService service;
+
+    @Activate
+    public AdminRestActivator( @Reference final JaxRsServiceFactory factory )
+    {
+        this.service = factory.newService( "admin", "/admin/rest", DispatchConstants.XP_CONNECTOR );
+        this.service.add( new CmsResourceDynamicFeature() );
+    }
 
     @Activate
     public void activate()
@@ -25,12 +32,5 @@ public final class AdminRestActivator
     public void deactivate()
     {
         this.service.destroy();
-    }
-
-    @Reference
-    public void setJaxRsServiceFactory( final JaxRsServiceFactory factory )
-    {
-        this.service = factory.newService( "admin", "/admin/rest", DispatchConstants.XP_CONNECTOR );
-        this.service.add( new CmsResourceDynamicFeature() );
     }
 }

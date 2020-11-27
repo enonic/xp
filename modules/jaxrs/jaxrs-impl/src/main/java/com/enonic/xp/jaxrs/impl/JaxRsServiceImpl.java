@@ -1,6 +1,7 @@
 package com.enonic.xp.jaxrs.impl;
 
 import java.util.Iterator;
+import java.util.Objects;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -26,15 +27,15 @@ final class JaxRsServiceImpl
 
     private final JaxRsServlet servlet;
 
-    private final ServiceTracker tracker;
+    private final ServiceTracker<JaxRsComponent, JaxRsComponent> tracker;
 
     private ServiceRegistration<ServletMapping> registration;
 
     JaxRsServiceImpl( final BundleContext context, final String group, final String path, final String connector )
     {
         this.context = context;
-        this.group = group;
-        this.path = path;
+        this.group = Objects.requireNonNull( group );
+        this.path = Objects.requireNonNull( path );
         this.connector = connector;
         this.servlet = new JaxRsServlet();
         this.tracker = new ServiceTracker<>( this.context, JaxRsComponent.class, this );
@@ -81,15 +82,15 @@ final class JaxRsServiceImpl
     @Override
     public JaxRsComponent addingService( final ServiceReference<JaxRsComponent> reference )
     {
-        if ( !isInGroup( reference ) )
+        if ( !group.equals( reference.getProperty( "group" ) ) )
         {
             return null;
         }
 
-        final JaxRsComponent component = this.context.getService( reference );
+        final JaxRsComponent component = context.getService( reference );
         if ( component != null )
         {
-            add( component );
+            this.servlet.addComponent( component );
         }
         return component;
     }
@@ -103,14 +104,8 @@ final class JaxRsServiceImpl
     @Override
     public void removedService( final ServiceReference<JaxRsComponent> reference, final JaxRsComponent component )
     {
+        this.servlet.removeComponent( component );
+
         this.context.ungetService( reference );
-
-        remove( component );
-    }
-
-    private boolean isInGroup( final ServiceReference<JaxRsComponent> reference )
-    {
-        final Object value = reference.getProperty( "group" );
-        return value != null && value.equals( this.group );
     }
 }
