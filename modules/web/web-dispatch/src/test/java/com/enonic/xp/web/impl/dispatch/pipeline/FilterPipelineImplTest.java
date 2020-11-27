@@ -15,12 +15,10 @@ import javax.servlet.annotation.WebFilter;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.web.dispatch.FilterMapping;
 import com.enonic.xp.web.impl.dispatch.mapping.FilterDefinition;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class FilterPipelineImplTest
     extends ResourcePipelineImplTest<FilterDefinition, FilterPipelineImpl>
@@ -69,12 +67,12 @@ public class FilterPipelineImplTest
     {
         final MyFilter filter = new MyFilter();
 
-        assertEquals( 0, Lists.newArrayList( this.pipeline ).size() );
+        assertThat( this.pipeline.list.snapshot() ).isEmpty();
         this.pipeline.addFilter( filter, Map.of() );
 
         this.pipeline.activate( new HashMap<>() );
 
-        assertEquals( 1, Lists.newArrayList( this.pipeline ).size() );
+        assertThat( this.pipeline.list.snapshot().size() ).isEqualTo( 1 );
         this.pipeline.removeFilter( filter );
     }
 
@@ -84,12 +82,12 @@ public class FilterPipelineImplTest
         final FilterMapping mapping = Mockito.mock( FilterMapping.class );
         Mockito.when( mapping.getResource() ).thenReturn( Mockito.mock( Filter.class ) );
 
-        assertEquals( 0, Lists.newArrayList( this.pipeline ).size() );
+        assertThat( this.pipeline.list.snapshot() ).isEmpty();
         this.pipeline.addMapping( mapping );
 
         this.pipeline.activate( new HashMap<>() );
 
-        assertEquals( 1, Lists.newArrayList( this.pipeline ).size() );
+        assertThat( this.pipeline.list.snapshot().size() ).isEqualTo( 1 );
         this.pipeline.removeMapping( mapping );
     }
 

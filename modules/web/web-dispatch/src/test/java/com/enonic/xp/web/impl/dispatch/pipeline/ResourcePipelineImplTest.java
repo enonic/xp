@@ -10,11 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.Lists;
-
 import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, P extends ResourcePipelineImpl<D>>
 {
@@ -43,7 +41,7 @@ public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, 
     public void testAddNull()
     {
         this.pipeline.add( null );
-        assertEquals( 0, Lists.newArrayList( this.pipeline ).size() );
+        assertThat( this.pipeline.list.snapshot() ).isEmpty();
     }
 
     @Test

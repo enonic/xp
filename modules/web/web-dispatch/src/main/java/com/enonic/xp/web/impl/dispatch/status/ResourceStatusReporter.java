@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.osgi.framework.ServiceReference;
 
@@ -14,6 +13,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import com.enonic.xp.core.internal.concurrent.AtomicSortedList;
 import com.enonic.xp.status.JsonStatusReporter;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
@@ -25,7 +25,7 @@ public abstract class ResourceStatusReporter<T extends ResourceDefinition>
 
     private final Map<Object, T> map = new ConcurrentHashMap<>();
 
-    private final List<T> list = new CopyOnWriteArrayList<>();
+    private final AtomicSortedList<T> list = new AtomicSortedList<>( Comparator.comparingInt( T::getOrder ) );
 
     ResourceStatusReporter( final String name )
     {
@@ -42,7 +42,7 @@ public abstract class ResourceStatusReporter<T extends ResourceDefinition>
     public final JsonNode getReport()
     {
         final ArrayNode json = JsonNodeFactory.instance.arrayNode();
-        for ( final ResourceDefinition<?> def : getDefinitions() )
+        for ( final ResourceDefinition<?> def : this.list.snapshot() )
         {
             final ObjectNode node = json.addObject();
             node.put( "order", def.getOrder() );
@@ -60,8 +60,6 @@ public abstract class ResourceStatusReporter<T extends ResourceDefinition>
     {
         this.map.put( def.getResource(), def );
         this.list.add( def );
-
-        this.list.sort( Comparator.comparingInt( T::getOrder ) );
     }
 
     void remove( final Object key )
@@ -104,10 +102,5 @@ public abstract class ResourceStatusReporter<T extends ResourceDefinition>
         return connectorProperty == null
             ? List.of()
             : connectorProperty instanceof String[] ? List.of( (String[]) connectorProperty ) : List.of( (String) connectorProperty );
-    }
-
-    Iterable<? extends ResourceDefinition> getDefinitions()
-    {
-        return this.list;
     }
 }

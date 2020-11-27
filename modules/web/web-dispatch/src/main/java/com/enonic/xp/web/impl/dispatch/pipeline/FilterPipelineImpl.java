@@ -35,7 +35,7 @@ public class FilterPipelineImpl
     public void filter( final HttpServletRequest req, final HttpServletResponse res, final ServletPipeline servletPipeline )
         throws ServletException, IOException
     {
-        final FilterChainImpl chain = new FilterChainImpl( this.list, servletPipeline );
+        final FilterChainImpl chain = new FilterChainImpl( this.list.snapshot(), servletPipeline );
         chain.doFilter( req, res );
     }
 

@@ -35,7 +35,7 @@ public final class ServletPipelineImpl
     public void service( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
-        for ( final ServletDefinition def : this.list )
+        for ( final ServletDefinition def : this.list.snapshot() )
         {
             if ( def.service( req, res ) )
             {
