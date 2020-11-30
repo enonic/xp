@@ -23,6 +23,7 @@ public class DuplicateContentProcessor
         data.setString( ContentPropertyNames.OWNER, user.getKey().toString() );
         data.setString( ContentPropertyNames.CREATOR, user.getKey().toString() );
         data.setString( ContentPropertyNames.MODIFIER, user.getKey().toString() );
+
         if ( data.hasProperty( ContentPropertyNames.PUBLISH_INFO ) )
         {
             data.removeProperty( ContentPropertyNames.PUBLISH_INFO );
@@ -31,6 +32,11 @@ public class DuplicateContentProcessor
         if ( data.hasProperty( ContentPropertyNames.INHERIT ) )
         {
             data.removeProperties( ContentPropertyNames.INHERIT );
+        }
+
+        if ( data.hasProperty( ContentPropertyNames.ORIGIN_PROJECT ) )
+        {
+            data.removeProperty( ContentPropertyNames.ORIGIN_PROJECT );
         }
 
         return data;

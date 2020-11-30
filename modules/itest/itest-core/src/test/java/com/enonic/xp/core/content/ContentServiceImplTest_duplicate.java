@@ -8,7 +8,9 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
@@ -17,6 +19,8 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -29,6 +33,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentServiceImplTest_duplicate
@@ -114,6 +119,38 @@ public class ContentServiceImplTest_duplicate
         assertEquals( otherUser.getKey(), duplicateContent.getModifier() );
         assertEquals( otherUser.getKey(), duplicateContent.getOwner() );
         assertEquals( otherUser.getKey(), duplicateContent.getCreator() );
+    }
+
+    @Test
+    public void data_removed_on_duplicate()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "rootContent" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            permissions( AccessControlList.create().
+                build() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        this.nodeService.update( UpdateNodeParams.create().
+            id( NodeId.from( content.getId() ) ).
+            editor( toBeEdited -> {
+                toBeEdited.data.addSet( ContentPropertyNames.PUBLISH_INFO, new PropertySet() );
+                toBeEdited.data.addString( ContentPropertyNames.ORIGIN_PROJECT, "some-project" );
+                toBeEdited.data.addStrings( ContentPropertyNames.INHERIT, ContentInheritType.CONTENT.name(),
+                                            ContentInheritType.NAME.name() );
+            } ).
+            build() );
+
+        final Content duplicateContent = doDuplicateContent( content );
+
+        assertNull( duplicateContent.getPublishInfo() );
+        assertNull( duplicateContent.getOriginProject() );
+        assertTrue( duplicateContent.getInherit().isEmpty() );
     }
 
     private Content doDuplicateContent( final Content content )
