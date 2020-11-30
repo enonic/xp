@@ -76,7 +76,11 @@ public class SseEntryPoint
     @Context
     public void setSse( final Sse sse )
     {
-        this.contextHolder = new SseContextHolder( sse );
+        final SseContextHolder ctx = contextHolder;
+        if ( ctx == null )
+        {
+            this.contextHolder = new SseContextHolder( sse );
+        }
     }
 
     @GET
@@ -88,10 +92,8 @@ public class SseEntryPoint
 
         if ( ctx == null )
         {
-            return;
+            throw new IllegalStateException( "No SSE context" );
         }
-
-        ctx.broadcaster.register( sseEventSink );
 
         final OutboundSseEvent sseEvent = ctx.sse.newEventBuilder().
             name( "list" ).
@@ -102,6 +104,8 @@ public class SseEntryPoint
                 collect( Collectors.toList() ) ) ).build();
 
         sseEventSink.send( sseEvent );
+
+        ctx.broadcaster.register( sseEventSink );
     }
 
     @Override
