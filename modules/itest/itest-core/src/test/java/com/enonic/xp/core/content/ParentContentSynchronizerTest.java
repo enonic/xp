@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
@@ -26,8 +27,10 @@ import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.util.BinaryReferences;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -251,6 +254,46 @@ public class ParentContentSynchronizerTest
 
         assertNotEquals( targetContent.getData(), targetContentUpdated.getData() );
         assertNotEquals( targetContent.getModifiedTime(), targetContentUpdated.getModifiedTime() );
+    }
+
+    @Test
+    public void updateBinaryChanged()
+        throws Exception
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
+        syncCreated( sourceContent.getId() );
+
+        sourceContext.runWith( () -> {
+            contentService.update( new UpdateContentParams().
+                contentId( sourceContent.getId() ).
+                createAttachments( CreateAttachments.create().
+                    add( CreateAttachment.create().
+                        name( AttachmentNames.THUMBNAIL ).
+                        byteSource( ByteSource.wrap( "this is image".getBytes() ) ).
+                        mimeType( "image/png" ).
+                        text( "This is the image" ).
+                        build() ).
+                    build() ).
+                editor( edit -> {
+                } ) );
+        } );
+
+        final Content targetContentWithThumbnail = syncUpdated( sourceContent.getId() );
+
+        assertTrue( targetContentWithThumbnail.hasThumbnail() );
+
+        sourceContext.runWith( () -> {
+            contentService.update( new UpdateContentParams().
+                contentId( sourceContent.getId() ).
+                removeAttachments( BinaryReferences.from( AttachmentNames.THUMBNAIL ) ).
+                editor( edit -> {
+                } ) );
+        } );
+
+        final Content targetContentWithoutThumbnail = syncUpdated( sourceContent.getId() );
+
+        assertFalse( targetContentWithoutThumbnail.hasThumbnail() );
+
     }
 
     @Test
