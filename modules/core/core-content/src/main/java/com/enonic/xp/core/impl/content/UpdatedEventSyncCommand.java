@@ -21,6 +21,7 @@ import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.util.BinaryReferences;
 
 final class UpdatedEventSyncCommand
     extends AbstractContentEventSyncCommand
@@ -87,27 +88,34 @@ final class UpdatedEventSyncCommand
 
     private void doSyncThumbnail( final ContentEventSyncCommandParams params, final UpdateContentParams updateParams )
     {
-        if ( params.getSourceContent().hasThumbnail() &&
-            !params.getSourceContent().getThumbnail().equals( params.getTargetContent().getThumbnail() ) )
+        if ( !Objects.equals( params.getSourceContent().getThumbnail(), params.getTargetContent().getThumbnail() ) )
         {
             final Thumbnail sourceThumbnail = params.getSourceContent().getThumbnail();
 
-            final ByteSource sourceBinary = params.getSourceContext().callWith(
-                () -> contentService.getBinary( params.getSourceContent().getId(), sourceThumbnail.getBinaryReference() ) );
-
-            final CreateAttachment createThumbnail = CreateAttachment.create().
-                name( AttachmentNames.THUMBNAIL ).
-                mimeType( sourceThumbnail.getMimeType() ).
-                byteSource( sourceBinary ).
-                build();
-
-            final CreateAttachments.Builder createAttachments = CreateAttachments.create().add( createThumbnail );
-            if ( updateParams.getCreateAttachments() != null )
+            if ( sourceThumbnail != null )
             {
-                createAttachments.add( updateParams.getCreateAttachments() );
-            }
+                final ByteSource sourceBinary = params.getSourceContext().callWith(
+                    () -> contentService.getBinary( params.getSourceContent().getId(), sourceThumbnail.getBinaryReference() ) );
 
-            updateParams.createAttachments( createAttachments.build() );
+                final CreateAttachment createThumbnail = CreateAttachment.create().
+                    name( AttachmentNames.THUMBNAIL ).
+                    mimeType( sourceThumbnail.getMimeType() ).
+                    byteSource( sourceBinary ).
+                    build();
+
+                final CreateAttachments.Builder createAttachments = CreateAttachments.create().add( createThumbnail );
+                if ( updateParams.getCreateAttachments() != null )
+                {
+                    createAttachments.add( updateParams.getCreateAttachments() );
+                }
+
+                updateParams.createAttachments( createAttachments.build() );
+            }
+            else
+            {
+                final Thumbnail targetThumbnail = params.getTargetContent().getThumbnail();
+                updateParams.removeAttachments( BinaryReferences.from( targetThumbnail.getBinaryReference() ) );
+            }
         }
     }
 
