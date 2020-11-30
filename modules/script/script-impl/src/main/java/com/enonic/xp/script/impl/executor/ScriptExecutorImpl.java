@@ -4,8 +4,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
+import java.util.concurrent.TimeoutException;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
@@ -13,7 +12,6 @@ import javax.script.ScriptEngine;
 import javax.script.SimpleBindings;
 
 import com.google.common.io.Files;
-import com.google.common.util.concurrent.Striped;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
@@ -36,8 +34,6 @@ import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
 import com.enonic.xp.server.RunMode;
 
-import static com.google.common.base.Strings.nullToEmpty;
-
 public final class ScriptExecutorImpl
     implements ScriptExecutor
 {
@@ -51,7 +47,7 @@ public final class ScriptExecutorImpl
 
     private final ScriptSettings scriptSettings;
 
-    private final ScriptExportsCache exportsCache = new ScriptExportsCache();
+    private final ScriptExportsCache exportsCache;
 
     private final ClassLoader classLoader;
 
@@ -65,13 +61,9 @@ public final class ScriptExecutorImpl
 
     private final Map<ResourceKey, Runnable> disposers = new ConcurrentHashMap<>();
 
-    private final RunMode runMode;
-
     private final ScriptValueFactory scriptValueFactory;
 
     private final JavascriptHelper javascriptHelper;
-
-    private static final Striped<Lock> REQUIRE_LOCKS = Striped.lazyWeakLock( 1000 );
 
     public ScriptExecutorImpl( final Executor asyncExecutor, final ScriptSettings scriptSettings, final ClassLoader classLoader,
                                final ServiceRegistry serviceRegistry, final ResourceService resourceService, final Application application,
@@ -84,9 +76,9 @@ public final class ScriptExecutorImpl
         this.serviceRegistry = serviceRegistry;
         this.resourceService = resourceService;
         this.application = application;
-        this.runMode = runMode;
         this.javascriptHelper = new JavascriptHelperFactory( this.engine ).create();
         this.scriptValueFactory = new ScriptValueFactoryImpl( this.javascriptHelper );
+        this.exportsCache = new ScriptExportsCache( runMode, resourceService::getResource, this::runDisposers );
 
         final Bindings global = new SimpleBindings();
         global.putAll( this.scriptSettings.getGlobalVariables() );
@@ -105,29 +97,15 @@ public final class ScriptExecutorImpl
     @Override
     public ScriptExports executeMain( final ResourceKey key )
     {
-        expireCacheIfNeeded();
+        exportsCache.expireCacheIfNeeded();
         return doExecuteMain( key );
     }
 
     @Override
     public CompletableFuture<ScriptExports> executeMainAsync( final ResourceKey key )
     {
-        expireCacheIfNeeded();
+        exportsCache.expireCacheIfNeeded();
         return CompletableFuture.completedFuture( key ).thenApplyAsync( this::doExecuteMain, asyncExecutor );
-    }
-
-    private void expireCacheIfNeeded()
-    {
-        if ( this.runMode != RunMode.DEV )
-        {
-            return;
-        }
-
-        if ( this.exportsCache.isExpired() )
-        {
-            this.exportsCache.clear();
-            runDisposers();
-        }
     }
 
     private ScriptExports doExecuteMain( final ResourceKey key )
@@ -146,41 +124,11 @@ public final class ScriptExecutorImpl
             return mock;
         }
 
-        Object cached = this.exportsCache.get( key );
-        if ( cached != null )
-        {
-            return cached;
-        }
-
-        final Lock lock = REQUIRE_LOCKS.get( key );
         try
         {
-            if ( lock.tryLock( 5, TimeUnit.MINUTES ) )
-            {
-                try
-                {
-                    cached = this.exportsCache.get( key );
-                    final Resource resource = loadIfNeeded( key, cached );
-                    if ( resource == null )
-                    {
-                        return cached;
-                    }
-
-                    final Object result = requireJsOrJson( resource );
-                    this.exportsCache.put( resource, result );
-                    return result;
-                }
-                finally
-                {
-                    lock.unlock();
-                }
-            }
-            else
-            {
-                throw new RuntimeException( "Script require failed: [" + key + "]" );
-            }
+            return exportsCache.getOrCompute( key, this::requireJsOrJson );
         }
-        catch ( InterruptedException e )
+        catch ( InterruptedException | TimeoutException e )
         {
             throw new RuntimeException( "Script require failed: [" + key + "]", e );
         }
@@ -244,19 +192,9 @@ public final class ScriptExecutorImpl
         }
     }
 
-    private Resource loadResource( final ResourceKey key )
+    private Object requireJsOrJson( final Resource resource )
     {
-        return this.resourceService.getResource( key );
-    }
-
-    private Resource loadIfNeeded( final ResourceKey key, final Object cached )
-    {
-        if ( cached == null )
-        {
-            return loadResource( key );
-        }
-
-        return null;
+        return "json".equals( resource.getKey().getExtension() ) ? requireJson( resource ) : requireJs( resource );
     }
 
     private Object requireJs( final Resource resource )
@@ -265,21 +203,7 @@ public final class ScriptExecutorImpl
         bindings.put( ScriptEngine.FILENAME, getFileName( resource ) );
 
         final ScriptObjectMirror func = doExecute( bindings, resource );
-        final Object result = executeRequire( resource.getKey(), func );
-
-        this.exportsCache.put( resource, result );
-        return result;
-    }
-
-    private Object requireJsOrJson( final Resource resource )
-    {
-        final String ext = nullToEmpty( resource.getKey().getExtension() );
-        if ( ext.equals( "json" ) )
-        {
-            return requireJson( resource );
-        }
-
-        return requireJs( resource );
+        return executeRequire( resource.getKey(), func );
     }
 
     private Object requireJson( final Resource resource )
