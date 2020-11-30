@@ -25,6 +25,7 @@ import com.enonic.xp.impl.server.rest.model.ListApplicationJson;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -199,7 +200,7 @@ public class SseEntryPointTest
     {
         final SseEventSink eventSink = mock( SseEventSink.class );
 
-        listener.subscribe( eventSink );
+        assertThrows( IllegalStateException.class, () -> listener.subscribe( eventSink ) );
     }
 
     @Test
