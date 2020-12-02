@@ -3,6 +3,7 @@ package com.enonic.xp.portal;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.portal.postprocess.HtmlTag;
@@ -33,7 +34,7 @@ public final class PortalResponse
 
     public ImmutableList<String> getContributions( final HtmlTag tag )
     {
-        return this.contributions.containsKey( tag ) ? this.contributions.get( tag ) : ImmutableList.of();
+        return this.contributions.get( tag );
     }
 
     public boolean hasContributions()
@@ -45,7 +46,6 @@ public final class PortalResponse
     {
         return new Builder();
     }
-
 
     public boolean applyFilters()
     {
@@ -67,26 +67,24 @@ public final class PortalResponse
     {
         private boolean postProcess = true;
 
-        private ImmutableListMultimap.Builder<HtmlTag, String> contributions;
+        private ImmutableListMultimap.Builder<HtmlTag, String> contributions = ImmutableListMultimap.builder();
 
         private boolean applyFilters = true;
 
         private Builder()
         {
-            clearContributions();
         }
 
         private Builder( final WebResponse source )
         {
             super( source );
-            clearContributions();
         }
 
         private Builder( final PortalResponse source )
         {
             super( source );
             this.postProcess = source.postProcess;
-            contributions( source.contributions );
+            putAllContributions( source.contributions );
             this.applyFilters = source.applyFilters;
         }
 
@@ -98,31 +96,19 @@ public final class PortalResponse
 
         public Builder contributions( final ListMultimap<HtmlTag, String> contributions )
         {
-            if ( this.contributions == null )
-            {
-                clearContributions();
-            }
-            this.contributions.putAll( contributions );
+            putAllContributions( contributions );
             return this;
         }
 
         public Builder contribution( final HtmlTag tag, final String value )
         {
-            if ( this.contributions == null )
-            {
-                clearContributions();
-            }
             this.contributions.put( tag, value );
             return this;
         }
 
         public Builder contributionsFrom( final PortalResponse portalResponse )
         {
-            if ( this.contributions == null )
-            {
-                clearContributions();
-            }
-            this.contributions.putAll( portalResponse.contributions );
+            putAllContributions( portalResponse.contributions );
             return this;
         }
 
@@ -142,6 +128,11 @@ public final class PortalResponse
         public PortalResponse build()
         {
             return new PortalResponse( this );
+        }
+
+        private void putAllContributions( final Multimap<HtmlTag, String> contributions )
+        {
+            this.contributions.putAll( contributions );
         }
     }
 }

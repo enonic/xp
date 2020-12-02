@@ -1,7 +1,10 @@
 package com.enonic.xp.web;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.http.Cookie;
 
@@ -31,24 +34,24 @@ public class WebResponse
 
     private final WebSocketConfig webSocket;
 
-    protected WebResponse( final Builder builder )
+    protected WebResponse( final Builder<?> builder )
     {
         this.status = builder.status;
         this.contentType = builder.contentType;
         this.body = builder.body;
-        this.headers = builder.headers.build();
+        this.headers = ImmutableSortedMap.copyOf( builder.headers, String.CASE_INSENSITIVE_ORDER );
         this.cookies = builder.cookies.build();
         this.webSocket = builder.webSocket;
     }
 
-    public static Builder create()
+    public static Builder<?> create()
     {
-        return new Builder();
+        return new Builder<>();
     }
 
-    public static Builder create( final WebResponse source )
+    public static Builder<?> create( final WebResponse source )
     {
-        return new Builder( source );
+        return new Builder<>( source );
     }
 
     public HttpStatus getStatus()
@@ -102,33 +105,31 @@ public class WebResponse
         return this.webSocket;
     }
 
-    public static class Builder<T extends Builder>
+    public static class Builder<T extends Builder<T>>
     {
         private Object body;
 
-        private ImmutableMap.Builder<String, String> headers;
+        private Map<String, String> headers = new HashMap<>();
 
         private MediaType contentType = MediaType.PLAIN_TEXT_UTF_8;
 
         private HttpStatus status = HttpStatus.OK;
 
-        private ImmutableList.Builder<Cookie> cookies;
+        private ImmutableList.Builder<Cookie> cookies = ImmutableList.builder();
 
         private WebSocketConfig webSocket;
 
         protected Builder()
         {
-            clearHeaders();
-            clearCookies();
         }
 
         protected Builder( final WebResponse source )
         {
             this.body = source.body;
-            headers( source.headers );
+            putAllHeaders( source.headers );
             this.contentType = source.contentType;
             this.status = source.status;
-            cookies( source.cookies );
+            addAllCookies( source.cookies );
             this.webSocket = source.webSocket;
         }
 
@@ -140,46 +141,30 @@ public class WebResponse
 
         public T headers( final Map<String, String> headers )
         {
-            if ( this.headers == null )
-            {
-                clearHeaders();
-            }
-            this.headers.putAll( headers );
+            putAllHeaders( headers );
             return (T) this;
         }
 
         public T header( final String key, final String value )
         {
-            if ( this.headers == null )
-            {
-                clearHeaders();
-            }
-            this.headers.put( key, value );
+            putHeader( key, value );
             return (T) this;
         }
 
         public T clearHeaders()
         {
-            headers = ImmutableSortedMap.orderedBy( String.CASE_INSENSITIVE_ORDER );
+            headers = new HashMap<>();
             return (T) this;
         }
 
         public T cookies( final List<Cookie> cookies )
         {
-            if ( this.cookies == null )
-            {
-                clearCookies();
-            }
-            this.cookies.addAll( cookies );
+            addAllCookies( cookies );
             return (T) this;
         }
 
         public T cookie( final Cookie cookie )
         {
-            if ( this.cookies == null )
-            {
-                clearCookies();
-            }
             this.cookies.add( cookie );
             return (T) this;
         }
@@ -212,6 +197,20 @@ public class WebResponse
         {
             return new WebResponse( this );
         }
-    }
 
+        private void putAllHeaders( final Map<String, String> headers )
+        {
+            headers.forEach( this::putHeader );
+        }
+
+        private void putHeader( final String key, final String value )
+        {
+            this.headers.put( key.toLowerCase( Locale.ROOT ), Objects.requireNonNull( value ) );
+        }
+
+        public void addAllCookies( final List<Cookie> cookies )
+        {
+            this.cookies.addAll( cookies );
+        }
+    }
 }
