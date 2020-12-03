@@ -1,5 +1,8 @@
 package com.enonic.xp.inputtype;
 
+import java.util.Locale;
+import java.util.Objects;
+
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -51,9 +54,13 @@ public final class InputTypeName
 
     private final String name;
 
+    private final String lowercaseName;
+
     private InputTypeName( final String name )
     {
+        Objects.requireNonNull( name, "InputTypeName can't be null" );
         this.name = name;
+        this.lowercaseName = name.toLowerCase( Locale.ROOT );
     }
 
     @Override
@@ -63,20 +70,18 @@ public final class InputTypeName
         {
             return true;
         }
-        if ( o == null || getClass() != o.getClass() )
+        if ( !( o instanceof InputTypeName ) )
         {
             return false;
         }
-
         final InputTypeName that = (InputTypeName) o;
-
-        return name != null ? name.toLowerCase().equals( that.name != null ? that.name.toLowerCase() : null ) : that.name == null;
+        return lowercaseName.equals( that.lowercaseName );
     }
 
     @Override
     public int hashCode()
     {
-        return name != null ? name.hashCode() : 0;
+        return lowercaseName.hashCode();
     }
 
     @Override

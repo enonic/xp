@@ -2,44 +2,27 @@ package com.enonic.xp.inputtype;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import nl.jqno.equalsverifier.EqualsVerifier;
 
-public class InputTypeNameTest
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class InputTypeNameTest
 {
     @Test
-    public void tostring()
+    public void toString_keeps_case()
     {
         assertEquals( "TextArea", InputTypeName.from( "TextArea" ).toString() );
     }
 
     @Test
-    public void null_entry()
-        throws Exception
+    public void equalsContract()
     {
-        assertFalse( InputTypeName.from( "fisk" ).equals( null ) );
-    }
-
-    @Test
-    public void null_value()
-        throws Exception
-    {
-        assertFalse( InputTypeName.from( "fisk" ).equals( InputTypeName.from( null ) ) );
-    }
-
-
-    @Test
-    public void null_value_2()
-        throws Exception
-    {
-        assertFalse( InputTypeName.from( null ).equals( InputTypeName.from( "fisk" ) ) );
+        EqualsVerifier.forClass( InputTypeName.class ).withIgnoredFields( "name" ).withNonnullFields( "lowercaseName" ).verify();
     }
 
     @Test
     public void case_insensitive()
-        throws Exception
     {
-        assertTrue( InputTypeName.from( "HtmlArea" ).equals( InputTypeName.from( "htmlarea" ) ) );
+        assertEquals( InputTypeName.from( "htmlarea" ), InputTypeName.from( "HtmlArea" ) );
     }
 }
