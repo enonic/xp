@@ -303,3 +303,9 @@ exports.getByIdAndVersionId_notFound = function () {
 
     assert.assertNull(result);
 };
+
+exports.getByIdInLayer = function () {
+    return content.get({
+        key: 'mycontentId'
+    });
+};

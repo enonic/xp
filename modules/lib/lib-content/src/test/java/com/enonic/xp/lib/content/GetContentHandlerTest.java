@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.content;
 
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -9,6 +10,7 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.script.ScriptValue;
 
 public class GetContentHandlerTest
     extends BaseContentHandlerTest
@@ -20,8 +22,9 @@ public class GetContentHandlerTest
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
         Mockito.when( this.contentService.getByPathAndVersionId( Mockito.any( ContentPath.class ),
                                                                  Mockito.any( ContentVersionId.class ) ) ).thenReturn( content );
-        Mockito.when( this.contentService.getByIdAndVersionId( Mockito.any( ContentId.class ),
-                                                               Mockito.any( ContentVersionId.class ) ) ).thenReturn(content );
+        Mockito.when(
+            this.contentService.getByIdAndVersionId( Mockito.any( ContentId.class ), Mockito.any( ContentVersionId.class ) ) ).thenReturn(
+            content );
 
         runScript( "/lib/xp/examples/content/get.js" );
     }
@@ -122,6 +125,22 @@ public class GetContentHandlerTest
             new ContentNotFoundException( path, versionId, ContextAccessor.current().getBranch() ) );
 
         runFunction( "/test/GetContentHandlerTest.js", "getByPathAndVersionId_notFound" );
+    }
+
+    @Test
+    public void getByIdInLayer()
+    {
+        final Content content = TestDataFixtures.newExampleLayerContentBuilder().build();
+
+        final ContentId contentId = ContentId.from( "mycontentId" );
+        Mockito.when( this.contentService.getById( contentId ) ).thenReturn( content );
+
+        final ScriptValue result = runFunction( "/test/GetContentHandlerTest.js", "getByIdInLayer" );
+
+        Assert.assertEquals( 2, result.getMember( "inherit" ).getArray().size() );
+        Assert.assertEquals( "CONTENT", result.getMember( "inherit" ).getArray().get( 0 ).getValue() );
+        Assert.assertEquals( "NAME", result.getMember( "inherit" ).getArray().get( 1 ).getValue() );
+        Assert.assertEquals( "origin", result.getMember( "originProject" ).getValue() );
     }
 
 }

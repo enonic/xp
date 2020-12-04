@@ -512,3 +512,20 @@ exports.getOutboundDependencies = function (params) {
 
     return __.toNativeObject(bean.execute());
 };
+
+/** Resets dropped inherit flags back.
+ *
+ * @param {object} params JSON parameters.
+ * @param {string} params.key Path or id of the content.
+ * @param {string} params.projectName name of project with content.
+ * @param {string[]} params.inherit flags to be reset.
+ */
+exports.resetInheritance = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.ResetInheritanceHandler');
+
+    bean.key = required(params, 'key');
+    bean.projectName = required(params, 'projectName');
+    bean.inherit = required(params, 'inherit');
+
+    return __.toNativeObject(bean.execute());
+};
