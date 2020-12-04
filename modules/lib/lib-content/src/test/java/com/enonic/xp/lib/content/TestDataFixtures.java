@@ -6,11 +6,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.Contents;
@@ -21,6 +23,7 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.ImageComponent;
 import com.enonic.xp.region.LayoutComponent;
@@ -96,6 +99,13 @@ public final class TestDataFixtures
         builder.childOrder( ChildOrder.from( "_ts DESC, _name ASC" ) );
 
         return builder;
+    }
+
+    public static Content.Builder newExampleLayerContentBuilder()
+    {
+        return newExampleContentBuilder().
+            originProject( ProjectName.from( "origin" ) ).
+            setInherit( Set.of( ContentInheritType.NAME, ContentInheritType.CONTENT ) );
     }
 
     public static Content newSmallContent()

@@ -2,6 +2,7 @@ package com.enonic.xp.lib.content.mapper;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -9,6 +10,7 @@ import com.google.common.collect.ListMultimap;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.WorkflowCheckState;
@@ -59,6 +61,7 @@ public final class ContentMapper
         gen.value( "hasChildren", value.hasChildren() );
         gen.value( "language", value.getLanguage() );
         gen.value( "valid", value.isValid() );
+        gen.value( "originProject", value.getOriginProject() );
         if ( value.getChildOrder() != null )
         {
             gen.value( "childOrder", value.getChildOrder().toString() );
@@ -79,6 +82,7 @@ public final class ContentMapper
         serializeAttachments( gen, value.getAttachments() );
         serializePublishInfo( gen, value.getPublishInfo() );
         serializeWorkflowInfo( gen, value.getWorkflowInfo() );
+        serializeInherit( gen, value.getInherit() );
     }
 
     private void serializeData( final MapGenerator gen, final PropertyTree value )
@@ -166,6 +170,16 @@ public final class ContentMapper
             new AttachmentsMapper( value ).serialize( gen );
         }
         gen.end();
+    }
+
+    private void serializeInherit( final MapGenerator gen, final Set<ContentInheritType> value )
+    {
+        if ( !value.isEmpty() )
+        {
+            gen.array( "inherit" );
+            value.forEach( gen::value );
+            gen.end();
+        }
     }
 
     @Override
