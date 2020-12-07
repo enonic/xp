@@ -4,10 +4,13 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import org.apache.commons.lang.text.StrSubstitutor;
+import com.enonic.xp.core.internal.Interpolator;
 
+@Deprecated
 public final class StringTemplate
 {
+    private static final Interpolator INTERPOLATOR = new Interpolator( "{{", "}}", '\\' );
+
     private final String template;
 
     public StringTemplate( final String template )
@@ -17,11 +20,10 @@ public final class StringTemplate
 
     public String apply( final Map<String, String> model )
     {
-        final StrSubstitutor substitutor = new StrSubstitutor( model, "{{", "}}", '\\' );
-        return substitutor.replace( this.template );
+        return INTERPOLATOR.interpolate( this.template, model::get );
     }
 
-    public static StringTemplate load( final Class context, final String name )
+    public static StringTemplate load( final Class<?> context, final String name )
     {
         final InputStream stream = context.getResourceAsStream( name );
         if ( stream == null )

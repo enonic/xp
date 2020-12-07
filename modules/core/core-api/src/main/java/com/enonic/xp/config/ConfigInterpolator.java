@@ -3,11 +3,11 @@ package com.enonic.xp.config;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Function;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.text.StrLookup;
-import org.apache.commons.lang.text.StrSubstitutor;
 import org.osgi.framework.BundleContext;
+
+import com.enonic.xp.core.internal.Interpolator;
 
 public final class ConfigInterpolator
 {
@@ -98,21 +98,12 @@ public final class ConfigInterpolator
 
     private void doInterpolate( final Map<String, String> map )
     {
-        final StrLookup lookup = new StrLookup()
-        {
-            @Override
-            public String lookup( final String key )
-            {
-                return lookupValue( key, map );
-            }
-        };
-
-        final StrSubstitutor substitutor = new StrSubstitutor( lookup );
+        final Function<String, String> lookup = key -> lookupValue( key, map );
         for ( final Map.Entry<String, String> entry : map.entrySet() )
         {
             final String key = entry.getKey();
-            final String value = substitutor.replace( entry.getValue() );
-            map.put( key, StringUtils.trim( value ) );
+            final String value = Interpolator.classic().interpolate( entry.getValue(), lookup ).trim();
+            map.put( key, value );
         }
     }
 }

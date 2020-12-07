@@ -16,6 +16,7 @@ public class ConfigInterpolatorTest
     private Configuration newConfig()
     {
         return ConfigBuilder.create().
+            add( "key10", "${key1} ${key2} ${key3} ${key4} ${key5} ${key6} ${key7}" ).
             add( "key1", "value1" ).
             add( "key2", "other ${key1}" ).
             add( "key3", "unknown ${other}" ).
@@ -78,6 +79,8 @@ public class ConfigInterpolatorTest
         assertEquals( "other value1 env fromEnv", config.get( "key5" ) );
         assertEquals( "${systemProp}", config.get( "key6" ) );
         assertEquals( "${bundleProp}", config.get( "key7" ) );
+        assertEquals( "value1 other value1 unknown ${other} env fromEnv other value1 env fromEnv ${systemProp} ${bundleProp}",
+                      config.get( "key10" ) );
     }
 
     @Test

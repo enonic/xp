@@ -2,7 +2,6 @@ package com.enonic.xp.admin.impl.rest.resource.issue;
 
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,6 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang.text.StrSubstitutor;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -40,6 +38,7 @@ import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.context.LocalScope;
+import com.enonic.xp.core.internal.Interpolator;
 import com.enonic.xp.issue.CreateIssueCommentParams;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.CreatePublishRequestIssueParams;
@@ -432,11 +431,8 @@ public class IssueResourceTest
         FindIssueCommentsResult result = FindIssueCommentsResult.create().hits( 1 ).totalHits( 3 ).comments( comments ).build();
         Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn( result );
 
-        final Map params = new HashMap<>();
-        params.put( "id", issue.getId().toString() );
-        params.put( "createdTime", createdTime );
-
-        final String expected = new StrSubstitutor( params ).replace( readFromFile( "get_issue_result.json" ) );
+        final Map<String, String> params = Map.of( "id", issue.getId().toString() );
+        final String expected = Interpolator.classic().interpolate( readFromFile( "get_issue_result.json" ), params::get );
 
         String jsonString = request().path( "issue/id" ).
             queryParam( "id", issue.getId().toString() ).
@@ -457,11 +453,8 @@ public class IssueResourceTest
         FindIssueCommentsResult result = FindIssueCommentsResult.create().hits( 1 ).totalHits( 3 ).comments( comments ).build();
         Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn( result );
 
-        final Map params = new HashMap<>();
-        params.put( "id", issue.getId().toString() );
-        params.put( "createdTime", createdTime );
-
-        final String expected = new StrSubstitutor( params ).replace( readFromFile( "get_issue_scheduled_result.json" ) );
+        final Map<String, String> params = Map.of( "id", issue.getId().toString() );
+        final String expected = Interpolator.classic().interpolate( readFromFile( "get_issue_scheduled_result.json" ), params::get );
 
         String jsonString = request().path( "issue/id" ).
             queryParam( "id", issue.getId().toString() ).
@@ -474,18 +467,14 @@ public class IssueResourceTest
     public void test_getIssues()
         throws Exception
     {
-        final Instant createdTime = Instant.now();
         final Issue issue = createIssue();
 
         Mockito.when( this.issueService.getIssue( issue.getId() ) ).thenReturn( issue );
         Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn(
             FindIssueCommentsResult.create().build() );
 
-        final Map params = new HashMap<>();
-        params.put( "id", issue.getId().toString() );
-        params.put( "createdTime", createdTime );
-
-        final String expected = new StrSubstitutor( params ).replace( readFromFile( "get_issues_result.json" ) );
+        final Map<String, String> params = Map.of( "id", issue.getId().toString() );
+        final String expected = Interpolator.classic().interpolate( readFromFile( "get_issues_result.json" ), params::get );
 
         String jsonString = request().path( "issue/getIssues" ).
             entity( "{\"ids\":[\"" + issue.getId() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
@@ -653,11 +642,8 @@ public class IssueResourceTest
 
         Mockito.when( this.issueService.findComments( Mockito.any( IssueCommentQuery.class ) ) ).thenReturn( result );
 
-        final Map params = new HashMap<>();
-        params.put( "createdTime", comment.getCreated() );
-        params.put( "id", comment.getId() );
-
-        final String expected = new StrSubstitutor( params ).replace( readFromFile( "get_issue_comments_result.json" ) );
+        final Map<String, String> params = Map.of( "createdTime", comment.getCreated().toString(), "id", comment.getId().toString() );
+        final String expected = Interpolator.classic().interpolate( readFromFile( "get_issue_comments_result.json" ), params::get );
 
         String jsonString = request().path( "issue/comment/list" ).
             entity( "{\"issue\":\"" + issue.getName() + "\"}", MediaType.APPLICATION_JSON_TYPE ).
