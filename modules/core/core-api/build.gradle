@@ -14,7 +14,7 @@ dependencies {
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
     compile "com.sun.mail:jakarta.mail:${jakartaMailVersion}"
     compile "io.dropwizard.metrics:metrics-core:${dropwizardMetricsVersion}"
-    implementation project( ':core:core-internal' )
+    compileOnly project( ':core:core-internal' )
 
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
@@ -24,7 +24,7 @@ dependencies {
 
 jar {
     bnd( 'Bundle-Name': 'Enonic XP Core - Api',
-         'Export-Package': 'com.enonic.xp.*' )
+         'Export-Package': '!com.enonic.xp.core.internal.*,com.enonic.xp.*' )
 }
 
 sourceSets {
