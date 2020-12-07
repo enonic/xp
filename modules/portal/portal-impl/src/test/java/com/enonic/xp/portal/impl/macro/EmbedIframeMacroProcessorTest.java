@@ -16,7 +16,7 @@ public class EmbedIframeMacroProcessorTest
     public void testProcessWithMissingBody()
     {
         assertEquals( "Expected an &lt;iframe&gt; element in Embed macro",
-                      macroProcessor.process( makeContext( null, RenderMode.EDIT ) ).getBody() );
+                      macroProcessor.process( makeContext( "", RenderMode.EDIT ) ).getBody() );
     }
 
     @Test

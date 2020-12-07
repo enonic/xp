@@ -14,7 +14,7 @@ import com.enonic.xp.util.Reference;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class HtmlStripperTest
+class HtmlStripperTest
 {
     private HtmlStripper htmlStripper;
 
@@ -25,30 +25,30 @@ public class HtmlStripperTest
     }
 
     @Test
-    public void processEmpty()
+    void processEmpty()
     {
         assertNull( this.htmlStripper.process( null ) );
         assertEquals( ValueFactory.newString( "" ), this.htmlStripper.process( ValueFactory.newString( "" ) ) );
-        assertEquals( ValueFactory.newString( " " ), this.htmlStripper.process( ValueFactory.newString( "<tag/>" ) ) );
+        assertEquals( ValueFactory.newString( "" ), this.htmlStripper.process( ValueFactory.newString( "<tag/>" ) ) );
     }
 
     @Test
-    public void process()
+    void process()
     {
         assertEquals( ValueFactory.newString( "ValueWithoutTags" ),
                       this.htmlStripper.process( ValueFactory.newString( "ValueWithoutTags" ) ) );
-        assertEquals( ValueFactory.newString( " Value " ), this.htmlStripper.process( ValueFactory.newString( "<a>Value</a>" ) ) );
-        assertEquals( ValueFactory.newString( " TextBefore TextBetween TextAfter " ), this.htmlStripper.process( ValueFactory.newString(
+        assertEquals( ValueFactory.newString( "Value" ), this.htmlStripper.process( ValueFactory.newString( "<a>Value</a>" ) ) );
+        assertEquals( ValueFactory.newString( "TextBeforeTextBetweenTextAfter" ), this.htmlStripper.process( ValueFactory.newString(
             "<!-- Comment -->TextBefore<tag param=\"paramValue\">TextBetween</tag>TextAfter<EmptyNode/><SecondEmptyNode/>" ) ) );
     }
 
     @Test
-    public void processDifferentTypes()
+    void processDifferentTypes()
     {
         Value valueToProcess = ValueFactory.newString( "abc<tag>def</tag><secondtag/>" );
-        assertEquals( ValueFactory.newString( "abc def " ), this.htmlStripper.process( valueToProcess ) );
+        assertEquals( ValueFactory.newString( "abcdef" ), this.htmlStripper.process( valueToProcess ) );
         valueToProcess = ValueFactory.newXml( "<xml>xmlValue</xml>" );
-        assertEquals( ValueFactory.newXml( " xmlValue " ), this.htmlStripper.process( valueToProcess ) );
+        assertEquals( ValueFactory.newXml( "xmlValue" ), this.htmlStripper.process( valueToProcess ) );
 
         valueToProcess = ValueFactory.newBoolean( false );
         assertEquals( valueToProcess, this.htmlStripper.process( valueToProcess ) );
@@ -67,11 +67,21 @@ public class HtmlStripperTest
     }
 
     @Test
-    public void processEscapedCharacters()
+    void processEscapedCharacters()
     {
         Value valueToProcess = ValueFactory.newString( "&lt;tag value=\"&aelig;&oslash;&aring;\"/&gt;" );
         assertEquals( ValueFactory.newString( "<tag value=\"æøå\"/>" ), this.htmlStripper.process( valueToProcess ) );
         valueToProcess = ValueFactory.newXml( "&lt;tag value=\"&aelig;&oslash;&aring;\"/&gt;" );
         assertEquals( ValueFactory.newXml( "<tag value=\"æøå\"/>" ), this.htmlStripper.process( valueToProcess ) );
+    }
+
+    @Test
+    void cornerCases()
+    {
+        Value valueToProcess = ValueFactory.newString( "<span>Test</span> <a about=\">\" href=\"#\">valid html</a>" );
+        assertEquals( ValueFactory.newString( "Test valid html" ), this.htmlStripper.process( valueToProcess ) );
+
+        valueToProcess = ValueFactory.newString( "Hey<p>I&apos;m so <b>happy</b>!</p>" );
+        assertEquals( ValueFactory.newString( "Hey I'm so happy!" ), this.htmlStripper.process( valueToProcess ) );
     }
 }

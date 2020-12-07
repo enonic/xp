@@ -2,9 +2,9 @@ package com.enonic.xp.portal.impl.macro;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.osgi.service.component.annotations.Component;
 
+import com.enonic.xp.core.internal.HtmlHelper;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.macro.MacroContext;
@@ -13,7 +13,7 @@ import com.enonic.xp.portal.macro.MacroContext;
 public class EmbedIframeMacroProcessor
     implements BuiltInMacroProcessor
 {
-    private static final Pattern IFRAME_PATTERN = Pattern.compile( "(<iframe.*</iframe>)|(&lt;iframe.*&lt;/iframe&gt;)" );
+    private static final Pattern IFRAME_PATTERN = Pattern.compile( "^<iframe.*</iframe>$" );
 
     @Override
     public String getName()
@@ -24,12 +24,13 @@ public class EmbedIframeMacroProcessor
     @Override
     public PortalResponse process( final MacroContext macroContext )
     {
-        if ( !isIframeHtml( macroContext.getBody() ) )
+        final String body = HtmlHelper.unescape( macroContext.getBody() );
+        if ( isIframeHtml( body ) )
         {
-            return generateNonIframeResponse( macroContext );
+            return generateResponse( body );
         }
+        return generateNonIframeResponse( macroContext );
 
-        return generateResponse( StringEscapeUtils.unescapeHtml( macroContext.getBody() ) );
     }
 
     private PortalResponse generateNonIframeResponse( final MacroContext macroContext )
@@ -49,7 +50,7 @@ public class EmbedIframeMacroProcessor
 
     private boolean isIframeHtml( final String body )
     {
-        return body != null && IFRAME_PATTERN.matcher( body ).find();
+        return IFRAME_PATTERN.matcher( body ).matches();
     }
 
     private RenderMode getRenderingMode( final MacroContext macroContext )
