@@ -138,6 +138,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://github.com/jparsec/jparsec/blob/master/LICENSE
 
+    jsoup
+    MIT License
+    https://jsoup.org/license
+
     Logback Libraries
     Eclipse Public License 1.0
     https://logback.qos.ch/license.html
