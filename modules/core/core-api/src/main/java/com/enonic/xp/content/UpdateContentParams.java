@@ -40,6 +40,7 @@ public final class UpdateContentParams
         return this;
     }
 
+    @Deprecated
     public UpdateContentParams modifier( final PrincipalKey modifier )
     {
         this.modifier = modifier;
@@ -89,6 +90,7 @@ public final class UpdateContentParams
         return this.editor;
     }
 
+    @Deprecated
     public PrincipalKey getModifier()
     {
         return modifier;

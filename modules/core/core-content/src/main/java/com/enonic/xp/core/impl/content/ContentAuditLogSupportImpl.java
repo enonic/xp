@@ -177,8 +177,11 @@ public class ContentAuditLogSupportImpl
         final PropertySet paramsSet = data.addSet( "params" );
         final PropertySet resultSet = data.addSet( "result" );
 
+        final PrincipalKey modifier =
+            rootContext.getAuthInfo().getUser() != null ? rootContext.getAuthInfo().getUser().getKey() : PrincipalKey.ofAnonymous();
+
         paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
-        paramsSet.addString( "modifier", nullToNull( params.getModifier() ) );
+        paramsSet.addString( "modifier", nullToNull( modifier ) );
         paramsSet.addBoolean( "clearAttachments", params.isClearAttachments() );
         paramsSet.addBoolean( "requireValid", params.isRequireValid() );
 
@@ -609,7 +612,7 @@ public class ContentAuditLogSupportImpl
     private void log( final String type, final PropertyTree data, final AuditLogUris uris, final Context rootContext )
     {
         final PrincipalKey userPrincipalKey =
-            rootContext.getAuthInfo().getUser() != null ? rootContext.getAuthInfo().getUser().getKey() : User.ANONYMOUS.getKey();
+            rootContext.getAuthInfo().getUser() != null ? rootContext.getAuthInfo().getUser().getKey() : PrincipalKey.ofAnonymous();
 
         final LogAuditLogParams logParams = LogAuditLogParams.create().
             type( type ).
