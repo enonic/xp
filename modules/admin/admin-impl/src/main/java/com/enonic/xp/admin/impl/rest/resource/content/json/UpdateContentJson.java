@@ -62,7 +62,6 @@ public final class UpdateContentJson
         this.updateContentParams = new UpdateContentParams().
             requireValid( Boolean.parseBoolean( requireValid ) ).
             contentId( ContentId.from( contentId ) ).
-            modifier( PrincipalKey.ofAnonymous() ).
             editor( edit -> {
                 edit.data = contentData;
                 edit.extraDatas = extraDatas;
