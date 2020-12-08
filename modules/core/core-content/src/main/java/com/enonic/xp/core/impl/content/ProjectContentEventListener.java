@@ -21,6 +21,7 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectNotFoundException;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;

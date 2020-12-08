@@ -1,9 +1,8 @@
-package com.enonic.xp.core.impl.content;
+package com.enonic.xp.project;
 
 import java.text.MessageFormat;
 
 import com.enonic.xp.exception.NotFoundException;
-import com.enonic.xp.project.ProjectName;
 
 public final class ProjectNotFoundException
     extends NotFoundException

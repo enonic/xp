@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.ArrayDeque;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -144,7 +144,7 @@ public final class ParentContentSynchronizer
 
     private void doSyncWithChildren( final Content sourceContent )
     {
-        final Queue<Content> queue = new LinkedList();
+        final Queue<Content> queue = new ArrayDeque();
 
         sourceContext.runWith( () -> {
 
@@ -235,7 +235,7 @@ public final class ParentContentSynchronizer
     private void cleanDeletedContents( final Content targetContent )
     {
         targetContext.runWith( () -> {
-            final Queue<Content> queue = new LinkedList( Set.of( targetContent ) );
+            final Queue<Content> queue = new ArrayDeque<>( Set.of( targetContent ) );
 
             while ( queue.size() > 0 )
             {

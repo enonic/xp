@@ -32,6 +32,7 @@ import com.enonic.xp.project.ModifyProjectIconParams;
 import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
+import com.enonic.xp.project.ProjectGraph;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectRole;
@@ -54,6 +55,8 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -805,6 +808,37 @@ class ProjectServiceImplTest
             assertEquals( "Default project permissions cannot be modified.", ex.getMessage() );
 
         } );
+    }
+
+    @Test
+    void graph()
+    {
+        final Project project1 = ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( "project1" ), null, true, null ) );
+        final Project project2 =
+            ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( "project2" ), null, true, project1.getName() ) );
+        final Project project3 =
+            ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( "project3" ), null, true, project2.getName() ) );
+        final Project project4 =
+            ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( "project4" ), null, true, project2.getName() ) );
+        final Project project5 =
+            ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( "project5" ), null, true, project4.getName() ) );
+
+        final ProjectGraph graph1 = ADMIN_CONTEXT.callWith( () -> projectService.graph( project1.getName() ) );
+
+        assertEquals( 5, graph1.getSize() );
+        assertThat( graph1.getList() ).
+            extracting( "name", "parent" ).
+            containsExactly( tuple( project1.getName(), null ), tuple( project2.getName(), project1.getName() ),
+                             tuple( project4.getName(), project2.getName() ), tuple( project3.getName(), project2.getName() ),
+                             tuple( project5.getName(), project4.getName() ) );
+
+        final ProjectGraph graph2 = ADMIN_CONTEXT.callWith( () -> projectService.graph( project4.getName() ) );
+
+        assertEquals( 4, graph2.getSize() );
+        assertThat( graph2.getList() ).
+            extracting( "name", "parent" ).
+            containsExactly( tuple( project1.getName(), null ), tuple( project2.getName(), project1.getName() ),
+                             tuple( project4.getName(), project2.getName() ), tuple( project5.getName(), project4.getName() ) );
     }
 
     private Project doCreateProjectAsAdmin( final ProjectName name )

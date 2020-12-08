@@ -6,8 +6,13 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -37,7 +42,10 @@ import com.enonic.xp.project.ModifyProjectIconParams;
 import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
+import com.enonic.xp.project.ProjectGraph;
+import com.enonic.xp.project.ProjectGraphEntry;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectNotFoundException;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.ProjectService;
@@ -252,6 +260,67 @@ public class ProjectServiceImpl
         } );
     }
 
+    @Override
+    public ProjectGraph graph( final ProjectName projectName )
+    {
+        final ProjectGraph.Builder graph = ProjectGraph.create();
+        final Project targetProject;
+
+        try
+        {
+            targetProject = this.get( projectName );
+
+            if ( targetProject == null )
+            {
+                throw new ProjectNotFoundException( projectName );
+            }
+        }
+        catch ( ProjectAccessException e )
+        {
+            throw new ProjectNotFoundException( e.getProjectName() );
+        }
+
+        final Projects projects = adminContext().callWith( this::doList );
+
+        Project project = targetProject;
+
+        final List<Project> parents = new ArrayList<>();
+
+        while ( project.getParent() != null )
+        {
+            project = getProject( projects, project.getParent() );
+            parents.add( project );
+        }
+
+        Collections.reverse( parents );
+
+        parents.add( targetProject );
+
+        parents.forEach( p -> graph.add( ProjectGraphEntry.create().
+            name( p.getName() ).
+            parent( p.getParent() ).
+            build() ) );
+
+        final Queue<Project> children = new ArrayDeque<>();
+        children.add( targetProject );
+
+        while ( !children.isEmpty() )
+        {
+            final Project current = children.poll();
+            projects.stream().
+                filter( p -> current.getName().equals( p.getParent() ) ).
+                forEach( p -> {
+                    children.offer( p );
+                    graph.add( ProjectGraphEntry.create().
+                        name( p.getName() ).
+                        parent( p.getParent() ).
+                        build() );
+                } );
+        }
+
+        return graph.build();
+    }
+
     private Projects doList()
     {
         return Projects.from( this.repositoryService.list() );
@@ -433,6 +502,14 @@ public class ProjectServiceImpl
         final BigDecimal newHeight = height.multiply( scale ).setScale( 0, RoundingMode.UP );
 
         return ImageHelper.getScaledInstance( source, newWidth.intValue(), newHeight.intValue() );
+    }
+
+    private Project getProject( final Projects projects, final ProjectName name )
+    {
+        return projects.stream().
+            filter( project -> project.getName().equals( name ) ).
+            findFirst().
+            orElseThrow( () -> new ProjectNotFoundException( name ) );
     }
 
     private <T> T callWithCreateContext( final Callable<T> runnable )

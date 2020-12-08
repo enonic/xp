@@ -1,0 +1,16 @@
+{
+  "entries": [
+    {
+      "name": "project1",
+      "parent": null
+    },
+    {
+      "name": "project2",
+      "parent": "project1"
+    },
+    {
+      "name": "project3",
+      "parent": "project2"
+    }
+  ]
+}
