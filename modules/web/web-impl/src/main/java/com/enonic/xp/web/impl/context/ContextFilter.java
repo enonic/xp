@@ -30,7 +30,7 @@ public final class ContextFilter
         context.getLocalScope().setSession( new SessionWrapper( req ) );
 
         context.callWith( () -> {
-            chain.doFilter( new HttpRequestDelegate( req ), res );
+            chain.doFilter( req, res );
             return null;
         } );
     }

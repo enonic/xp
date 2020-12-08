@@ -10,14 +10,14 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.context.ContextAccessor;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 
-public class ContextFilterTest
+class ContextFilterTest
 {
     @Test
-    public void testHandle()
+    void testHandle()
         throws Exception
     {
         final ContextFilter filter = new ContextFilter();
@@ -32,6 +32,6 @@ public class ContextFilterTest
 
         final ArgumentCaptor<HttpServletRequest> reqArg = ArgumentCaptor.forClass( HttpServletRequest.class );
         Mockito.verify( chain, Mockito.times( 1 ) ).doFilter( reqArg.capture(), Mockito.eq( res ) );
-        assertEquals( HttpRequestDelegate.class, reqArg.getValue().getClass() );
+        assertSame( req, reqArg.getValue() );
     }
 }

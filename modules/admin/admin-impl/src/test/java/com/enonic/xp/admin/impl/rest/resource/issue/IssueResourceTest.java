@@ -487,7 +487,12 @@ public class IssueResourceTest
     public void test_update()
     {
         final Issue issue = createIssue();
-        final User admin = User.create().login( "admin" ).displayName( "Admin" ).email( "admin@email.com" ).build();
+        final User admin = User.create().
+            key( PrincipalKey.from( "user:system:admin" ) ).
+            login( "admin" ).
+            displayName( "Admin" ).
+            email( "admin@email.com" ).
+            build();
         final UpdateIssueJson params =
             new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Open", false, false, Arrays.asList( "user:system:admin" ),
                                  createPublishRequest(), null );
@@ -510,7 +515,12 @@ public class IssueResourceTest
     public void test_update_with_publish_schedule()
     {
         final Issue issue = createPublishRequestIssue();
-        final User admin = User.create().login( "admin" ).displayName( "Admin" ).email( "admin@email.com" ).build();
+        final User admin = User.create().
+            key( PrincipalKey.from( "user:system:admin" ) ).
+            login( "admin" ).
+            displayName( "Admin" ).
+            email( "admin@email.com" ).
+            build();
         final UpdateIssueJson params =
             new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Open", false, false, Arrays.asList( "user:system:admin" ),
                                  createPublishRequest(), createPublishRequestSchedule() );
@@ -554,7 +564,12 @@ public class IssueResourceTest
     public void test_update_is_autoSave()
     {
         final Issue issue = createIssue();
-        final User admin = User.create().login( "admin" ).displayName( "Admin" ).email( "admin@email.com" ).build();
+        final User admin = User.create().
+            key( PrincipalKey.from( "user:system:admin" ) ).
+            login( "admin" ).
+            displayName( "Admin" ).
+            email( "admin@email.com" ).
+            build();
         final UpdateIssueJson params =
             new UpdateIssueJson( issue.getId().toString(), "title", "desc", "Closed", true, true, Arrays.asList( "user:system:admin" ),
                                  createPublishRequest(), null );

@@ -16,14 +16,10 @@ public final class ProjectAccessException
     public ProjectAccessException( final User user, final ProjectName projectName, final String operation )
     {
         super( projectName != null
-                   ? MessageFormat.format( "Denied [{0}]{1} user access to [{2}] project for [{3}] operation",
-                                           user != null ? user.getKey() : "unknown",
-                                           user != null && user.getDisplayName() != null ? "'' " + user.getDisplayName() + "''" : "",
-                                           projectName, operation )
-                   : MessageFormat.format( "Denied [{0}]{1} user access for [{2}] operation",
-                                           user != null ? user.getKey().toString() : "unknown",
-                                           user != null && user.getDisplayName() != null ? "'' " + user.getDisplayName() + "''" : "",
-                                           operation ) );
+                   ? MessageFormat.format( "Denied [{0}] user access to [{1}] project for [{2}] operation",
+                                           user != null ? user.getKey() : "unknown", projectName, operation )
+                   : MessageFormat.format( "Denied [{0}] user access for [{1}] operation",
+                                           user != null ? user.getKey().toString() : "unknown", operation ) );
         this.user = user;
         this.projectName = projectName;
     }

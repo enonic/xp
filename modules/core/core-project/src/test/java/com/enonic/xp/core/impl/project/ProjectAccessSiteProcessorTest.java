@@ -128,15 +128,12 @@ public class ProjectAccessSiteProcessorTest
 
     private ProcessUpdateParams createProcessUpdateParams( String oldValue, String newValue )
     {
-        final User modifier = this.createUser();
-
         final Content originalContent = this.createContent( oldValue );
         final Content editedContent = this.createContent( newValue );
 
         return ProcessUpdateParams.create().
             originalContent( originalContent ).
             editedContent( editedContent ).
-            modifier( modifier ).
             contentType( this.createSiteContentType() ).
             build();
     }
@@ -161,10 +158,5 @@ public class ProjectAccessSiteProcessorTest
         data.setSet( "siteConfig", this.createSiteConfig( siteConfigBgColor ) );
         return Content.create( ContentTypeName.site() ).name( "Site content" ).parentPath( ContentPath.ROOT ).data( data ).id(
             ContentId.from( "content-id" ) ).build();
-    }
-
-    private User createUser()
-    {
-        return User.create().email( "user@email.com" ).login( "userlogin" ).build();
     }
 }

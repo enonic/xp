@@ -42,8 +42,8 @@ public final class IdProviderFilter
 
         //Wraps the response to handle 403 errors
         final IdProviderResponseWrapper responseWrapper = new IdProviderResponseWrapper( idProviderControllerService, req, res );
-        chain.doFilter( req, responseWrapper );
-
+        final IdProviderRequestWrapper requestWrapper = new IdProviderRequestWrapper( req );
+        chain.doFilter( requestWrapper, responseWrapper );
     }
 
     @Reference
