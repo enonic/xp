@@ -29,6 +29,7 @@ import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyLanguageParamsJ
 import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyPermissionsParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyProjectParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyReadAccessParamsJson;
+import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectGraphJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectPermissionsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ProjectsJson;
@@ -44,6 +45,7 @@ import com.enonic.xp.project.ModifyProjectIconParams;
 import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
+import com.enonic.xp.project.ProjectGraph;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
@@ -182,6 +184,14 @@ public final class ProjectResource
     {
         final ProjectName projectName = ProjectName.from( projectNameValue );
         return doCreateJson( this.projectService.get( projectName ) );
+    }
+
+    @GET
+    @Path("getTree")
+    public ProjectGraphJson getTree( final @QueryParam("name") String projectNameValue )
+    {
+        final ProjectGraph graph = this.projectService.graph( ProjectName.from( projectNameValue ) );
+        return new ProjectGraphJson( graph );
     }
 
     private CreateProjectParams createParams( final CreateProjectParamsJson json )

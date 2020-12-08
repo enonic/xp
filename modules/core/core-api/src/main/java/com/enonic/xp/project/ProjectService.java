@@ -13,9 +13,11 @@ public interface ProjectService
 
     void modifyIcon( final ModifyProjectIconParams params );
 
-    ByteSource getIcon( final ProjectName projectName);
+    ByteSource getIcon( final ProjectName projectName );
 
     Projects list();
+
+    ProjectGraph graph( final ProjectName projectName );
 
     Project get( final ProjectName projectName );
 

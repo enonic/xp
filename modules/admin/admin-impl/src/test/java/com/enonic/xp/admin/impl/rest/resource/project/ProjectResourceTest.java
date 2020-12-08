@@ -33,6 +33,8 @@ import com.enonic.xp.project.ModifyProjectIconParams;
 import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectConstants;
+import com.enonic.xp.project.ProjectGraph;
+import com.enonic.xp.project.ProjectGraphEntry;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
@@ -133,6 +135,33 @@ public class ProjectResourceTest
         String jsonString = request().path( "project/list" ).get().getAsString();
 
         assertJson( "list_projects.json", jsonString );
+    }
+
+    @Test
+    public void getTree()
+        throws Exception
+    {
+        final Project project1 = createProject( "project1", null );
+        final Project project2 = createProject( "project2", "project1" );
+        final Project project3 = createProject( "project3", "project2" );
+
+        Mockito.when( projectService.graph( project1.getName() ) ).thenReturn( ProjectGraph.create().
+            add( ProjectGraphEntry.create().
+                name( project1.getName() ).
+                parent( null ).
+                build() ).
+            add( ProjectGraphEntry.create().
+                name( project2.getName() ).
+                parent( project1.getName() ).
+                build() ).
+            add( ProjectGraphEntry.create().
+                name( project3.getName() ).
+                parent( project2.getName() ).
+                build() ).
+            build() );
+
+        assertJson( "project_tree.json",
+                    request().path( "project/getTree" ).queryParam( "name", project1.getName().toString() ).get().getAsString() );
     }
 
     @Test
@@ -422,6 +451,11 @@ public class ProjectResourceTest
             build();
     }
 
+    private Project createProject( final String name, final String parent )
+    {
+        return createProject( name, name, null, null, parent );
+    }
+
     private Project createProject( final String name, final String displayName, final String description, final Attachment icon,
                                    final String parent )
     {
@@ -430,7 +464,7 @@ public class ProjectResourceTest
             displayName( displayName ).
             description( description ).
             icon( icon ).
-            parent( ProjectName.from( parent ) ).
+            parent( parent != null ? ProjectName.from( parent ) : null ).
             build();
     }
 
