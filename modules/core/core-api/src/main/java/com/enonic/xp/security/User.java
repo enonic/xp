@@ -9,16 +9,12 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.mail.EmailValidator;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.util.Objects.requireNonNull;
 
 @PublicApi
 public final class User
     extends Principal
 {
-
     public static final User ANONYMOUS = User.create().
         key( PrincipalKey.ofAnonymous() ).
         displayName( "Anonymous User" ).
@@ -38,15 +34,9 @@ public final class User
     private User( final Builder builder )
     {
         super( builder );
-        checkNotNull( builder.login, "login is required for a User" );
-
-        if ( !isNullOrEmpty( builder.email ) )
-        {
-            checkArgument( EmailValidator.isValid( builder.email ), "Email [" + builder.email + "] is not valid" );
-        }
 
         this.email = builder.email;
-        this.login = requireNonNull( builder.login );
+        this.login = builder.login;
         this.loginDisabled = builder.loginDisabled;
         this.authenticationHash = builder.authenticationHash;
         this.profile = builder.profile;
@@ -145,6 +135,10 @@ public final class User
         public Builder login( final String value )
         {
             this.login = value;
+            if ( this.displayName == null )
+            {
+                this.displayName = login;
+            }
             return this;
         }
 
@@ -177,10 +171,16 @@ public final class User
         {
             super.validate();
             Preconditions.checkArgument( this.key.isUser(), "Invalid Principal Type for User: " + this.key.getType() );
+            Preconditions.checkNotNull( this.login, "login is required for a User" );
+            if ( !isNullOrEmpty( this.email ) )
+            {
+                Preconditions.checkArgument( EmailValidator.isValid( this.email ), "Email [" + this.email + "] is not valid" );
+            }
         }
 
         public User build()
         {
+            validate();
             return new User( this );
         }
     }

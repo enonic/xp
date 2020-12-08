@@ -22,7 +22,7 @@ public class NodePermissionsResolverTest
 
     private static final IdProviderKey ID_PROVIDER_KEY = IdProviderKey.from( "us" );
 
-    private static final PrincipalKey USER_A = PrincipalKey.ofGroup( ID_PROVIDER_KEY, "userA" );
+    private static final PrincipalKey USER_A = PrincipalKey.ofUser( ID_PROVIDER_KEY, "userA" );
 
     private static final PrincipalKey GROUP_B = PrincipalKey.ofGroup( ID_PROVIDER_KEY, "groupB" );
 

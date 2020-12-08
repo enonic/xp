@@ -1,10 +1,13 @@
 package com.enonic.xp.portal.impl.mapper;
 
+import java.security.Principal;
+
 import javax.websocket.CloseReason;
 import javax.websocket.Session;
 
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.security.User;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 
 public final class WebSocketEventMapper
@@ -64,6 +67,24 @@ public final class WebSocketEventMapper
         gen.value( "id", session.getId() );
         gen.value( "path", session.getRequestURI().getPath() );
         MapperHelper.serializeMultimap( "params", gen, session.getRequestParameterMap() );
+        serializeUser( gen, session.getUserPrincipal() );
         gen.end();
+    }
+
+    private void serializeUser( final MapGenerator gen, Principal principal )
+    {
+        if ( principal instanceof User )
+        {
+            gen.map( "user" );
+            User user = (User) principal;
+            gen.value( "key", user.getKey() );
+            gen.value( "displayName", user.getDisplayName() );
+            gen.value( "modifiedTime", user.getModifiedTime() );
+            gen.value( "disabled", user.isDisabled() );
+            gen.value( "email", user.getEmail() );
+            gen.value( "login", user.getLogin() );
+            gen.value( "idProvider", user.getKey().getIdProviderKey() );
+            gen.end();
+        }
     }
 }

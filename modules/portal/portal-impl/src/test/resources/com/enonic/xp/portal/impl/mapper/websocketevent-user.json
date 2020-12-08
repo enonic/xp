@@ -1,0 +1,18 @@
+{
+  "type": "message",
+  "session": {
+    "id": "1",
+    "path": "/ws",
+    "params": {},
+    "user": {
+      "key": "user:system:anonymous",
+      "displayName": "Anonymous User",
+      "modifiedTime": null,
+      "disabled": false,
+      "email": null,
+      "login": "anonymous",
+      "idProvider": "system"
+    }
+  },
+  "data": {}
+}

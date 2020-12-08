@@ -7,10 +7,9 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 @PublicApi
 public abstract class Principal
+    implements java.security.Principal
 {
     private final PrincipalKey key;
 
@@ -20,15 +19,7 @@ public abstract class Principal
 
     private final String description;
 
-    Principal( final PrincipalKey principalKey, final String displayName, final Instant modifiedTime, final String description )
-    {
-        this.key = checkNotNull( principalKey, "Principal key cannot be null" );
-        this.displayName = checkNotNull( displayName, "Principal display name cannot be null" );
-        this.modifiedTime = modifiedTime;
-        this.description = description;
-    }
-
-    Principal( final Builder builder )
+    Principal( final Builder<?> builder )
     {
         key = builder.key;
         displayName = builder.displayName;
@@ -57,6 +48,12 @@ public abstract class Principal
     }
 
     @Override
+    public String getName()
+    {
+        return key.getId();
+    }
+
+    @Override
     public boolean equals( final Object o )
     {
         if ( this == o )
@@ -70,8 +67,7 @@ public abstract class Principal
 
         final Principal other = (Principal) o;
 
-        return Objects.equals( key, other.key ) &&
-            Objects.equals( displayName, other.displayName ) &&
+        return Objects.equals( key, other.key ) && Objects.equals( displayName, other.displayName ) &&
             Objects.equals( modifiedTime, other.modifiedTime );
     }
 
@@ -81,7 +77,13 @@ public abstract class Principal
         return Objects.hash( key, displayName, modifiedTime );
     }
 
-    public abstract static class Builder<B>
+    @Override
+    public String toString()
+    {
+        return key.toString();
+    }
+
+    public abstract static class Builder<B extends Builder<B>>
     {
         PrincipalKey key;
 
@@ -110,7 +112,6 @@ public abstract class Principal
             return (B) this;
         }
 
-
         @SuppressWarnings("unchecked")
         public B displayName( final String displayName )
         {
@@ -118,6 +119,7 @@ public abstract class Principal
             return (B) this;
         }
 
+        @SuppressWarnings("unchecked")
         public B modifiedTime( final Instant modifiedTime )
         {
             this.modifiedTime = modifiedTime;
@@ -133,8 +135,8 @@ public abstract class Principal
 
         void validate()
         {
-            Preconditions.checkNotNull( key );
-            Preconditions.checkNotNull( displayName );
+            Preconditions.checkNotNull( key, "Principal key cannot be null" );
+            Preconditions.checkNotNull( displayName, "Principal display name cannot be null" );
         }
     }
 }
