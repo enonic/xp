@@ -27,9 +27,9 @@ final class WebSocketEntryImpl
 
     private final WebSocketRegistry registry;
 
-    private Session session;
+    private final Set<String> groups = ConcurrentHashMap.newKeySet();
 
-    private final Set<String> groups;
+    private Session session;
 
     private final String traceParentId;
 
@@ -37,7 +37,6 @@ final class WebSocketEntryImpl
 
     WebSocketEntryImpl( final WebSocketEndpoint endpoint, final WebSocketRegistry registry )
     {
-        this.groups = ConcurrentHashMap.newKeySet();
         this.endpoint = endpoint;
         this.registry = registry;
 
