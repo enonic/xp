@@ -18,6 +18,11 @@ public final class WebSocketManagerBean
         this.webSocketManager.sendToGroup( group, message );
     }
 
+    public long getGroupSize( final String group )
+    {
+        return this.webSocketManager.getGroupSize( group );
+    }
+
     public void send( final String id, final String message )
     {
         this.webSocketManager.send( id, message );

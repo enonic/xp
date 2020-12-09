@@ -6,6 +6,8 @@ public interface WebSocketManager
 
     void sendToGroup( String group, String message );
 
+    long getGroupSize( String group );
+
     void addToGroup( String group, String id );
 
     void removeFromGroup( String group, String id );

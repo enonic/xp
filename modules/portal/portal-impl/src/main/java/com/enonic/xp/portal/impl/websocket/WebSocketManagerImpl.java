@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.websocket;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -17,10 +18,12 @@ public final class WebSocketManagerImpl
 {
     private final WebSocketRegistryImpl registry;
 
-    private WebSocketService webSocketService;
+    private final WebSocketService webSocketService;
 
-    public WebSocketManagerImpl()
+    @Activate
+    public WebSocketManagerImpl( @Reference final WebSocketService webSocketService )
     {
+        this.webSocketService = webSocketService;
         this.registry = new WebSocketRegistryImpl();
     }
 
@@ -57,6 +60,12 @@ public final class WebSocketManagerImpl
     }
 
     @Override
+    public long getGroupSize( final String group )
+    {
+        return this.registry.getByGroup( group ).count();
+    }
+
+    @Override
     public void addToGroup( final String group, final String id )
     {
         final WebSocketEntry entry = this.registry.getById( id );
@@ -74,11 +83,5 @@ public final class WebSocketManagerImpl
         {
             entry.removeGroup( group );
         }
-    }
-
-    @Reference
-    public void setWebSocketService( final WebSocketService webSocketService )
-    {
-        this.webSocketService = webSocketService;
     }
 }

@@ -58,3 +58,15 @@ exports.sendToGroup = function (group, message) {
     var bean = __.newBean('com.enonic.xp.lib.websocket.WebSocketManagerBean');
     bean.sendToGroup(group, message);
 };
+
+/**
+ * Get number of all sockets in group.
+ *
+ * @example-ref examples/websocket/addToGroup.js
+ *
+ * @param {string} group Group name.
+ */
+exports.getGroupSize = function (group) {
+    var bean = __.newBean('com.enonic.xp.lib.websocket.WebSocketManagerBean');
+    return bean.getGroupSize(group);
+};

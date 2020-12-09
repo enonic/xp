@@ -1,18 +1,13 @@
 package com.enonic.xp.portal.impl.websocket;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Stream;
 
 final class WebSocketRegistryImpl
     implements WebSocketRegistry
 {
-    private final Map<String, WebSocketEntry> map;
-
-    public WebSocketRegistryImpl()
-    {
-        this.map = new ConcurrentHashMap<>();
-    }
+    private final ConcurrentMap<String, WebSocketEntry> map = new ConcurrentHashMap<>();
 
     @Override
     public void add( final WebSocketEntry entry )
