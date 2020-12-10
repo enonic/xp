@@ -1,14 +1,21 @@
 package com.enonic.xp.index;
 
-import com.enonic.xp.core.internal.HtmlHelper;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringEscapeUtils;
+
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
 
-final class HtmlStripper
+    final class HtmlStripper
     implements IndexValueProcessor
 {
     public static final String NAME = "htmlStripper";
+
+    private static final Pattern XML_TAG_PATTERN = Pattern.compile( "(?:<[^>]*>)+", Pattern.MULTILINE );
 
     @Override
     public Value process( final Value value )
@@ -18,15 +25,18 @@ final class HtmlStripper
             return value;
         }
 
-        final String htmlStripped = HtmlHelper.htmlToText( value.asString() );
+        final Matcher matcher = XML_TAG_PATTERN.matcher( value.toString() );
+        final String strippedHtml = matcher.replaceAll( " " );
+        final String unescapedHtml = StringEscapeUtils.unescapeHtml( strippedHtml );
 
-        if ( ValueTypes.XML.equals( value.getType() ) )
+        final ValueType valueType = value.getType();
+        if ( valueType.equals( ValueTypes.XML ) )
         {
-            return ValueFactory.newXml( htmlStripped );
+            return ValueFactory.newXml( unescapedHtml );
         }
         else
         {
-            return ValueFactory.newString( htmlStripped );
+            return ValueFactory.newString( unescapedHtml );
         }
     }
 
@@ -62,4 +72,6 @@ final class HtmlStripper
     {
         return NAME.hashCode();
     }
+
+
 }

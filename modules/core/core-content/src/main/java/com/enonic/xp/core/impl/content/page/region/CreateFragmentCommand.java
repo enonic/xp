@@ -2,6 +2,8 @@ package com.enonic.xp.core.impl.content.page.region;
 
 import java.util.stream.IntStream;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
@@ -12,7 +14,6 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.core.internal.HtmlHelper;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.page.Page;
@@ -112,7 +113,8 @@ final class CreateFragmentCommand
     private String doGenerateDisplayName( final TextComponent textComponent )
     {
         final String html = textComponent.getText();
-        String text = HtmlHelper.htmlToText( html );
+        String text = StringEscapeUtils.unescapeHtml( html.replaceAll( "\\<[^>]*>", "" ) ).trim();
+        text = text.replaceAll( "(\\t|\\r?\\n)+", " " ).trim();
         return text.isEmpty() ? textComponent.getName().toString() : abbreviate( text, 40 );
     }
 
