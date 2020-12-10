@@ -1,9 +1,10 @@
 package com.enonic.xp.impl.macro;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.core.internal.HtmlHelper;
 import com.enonic.xp.macro.Macro;
 
 /**
@@ -129,7 +130,7 @@ public final class MacroParser
         match( '=' );
         ws();
         match( '"' );
-        final String value = HtmlHelper.unescape( parseAttributeValue() );
+        final String value = StringEscapeUtils.unescapeHtml( parseAttributeValue() );
         match( '"' );
         this.attributes.put( name, value );
     }

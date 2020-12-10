@@ -1,11 +1,9 @@
 apply from: "$rootDir/gradle/osgi.gradle"
 
 dependencies {
-    implementation 'org.jsoup:jsoup:1.13.1'
 }
 
 jar {
     bnd( 'Bundle-Name': 'Enonic XP Core - Internal',
-         'Export-Package': 'com.enonic.xp.core.internal.*',
-         'Private-Package': 'org.jsoup.*')
+         'Export-Package': 'com.enonic.xp.core.internal.*')
 }
