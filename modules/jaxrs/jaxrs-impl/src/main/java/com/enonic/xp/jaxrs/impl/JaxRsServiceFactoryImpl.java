@@ -7,7 +7,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.jaxrs.JaxRsService;
 import com.enonic.xp.jaxrs.JaxRsServiceFactory;
-import com.enonic.xp.jaxrs.impl.security.SecurityFeature;
 import com.enonic.xp.web.multipart.MultipartService;
 
 @Component
@@ -28,7 +27,6 @@ public final class JaxRsServiceFactoryImpl
     public JaxRsService newService( final String group, final String path, final String connector )
     {
         final JaxRsService service = new JaxRsServiceImpl( this.context, group, path, connector );
-        service.add( new SecurityFeature() );
         service.add( new CommonFeature( this.multipartService ) );
         return service;
     }
