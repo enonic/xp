@@ -38,7 +38,7 @@ public class WebDispatcherServletTest
         this.servlet = new WebDispatcherServlet( new WebDispatcherImpl() );
         this.servlet.addWebHandler( this.handler );
         this.servlet.setExceptionMapper( new ExceptionMapperImpl() );
-        this.servlet.setExceptionRenderer( new ExceptionRendererImpl() );
+        this.servlet.setExceptionRenderer( new ExceptionRendererImpl( null, null, null, null, null ) );
         this.servlet.setWebSocketContextFactory( Mockito.mock( WebSocketContextFactory.class ) );
         this.servlet.setResponseSerializationService( new ResponseSerializationServiceImpl() );
 

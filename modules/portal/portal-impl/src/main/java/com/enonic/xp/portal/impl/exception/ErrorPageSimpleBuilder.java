@@ -7,6 +7,8 @@ public class ErrorPageSimpleBuilder
 
     private String title;
 
+    private String tip;
+
     public ErrorPageSimpleBuilder status( final int value )
     {
         this.statusCode = value;
@@ -16,6 +18,12 @@ public class ErrorPageSimpleBuilder
     public ErrorPageSimpleBuilder title( final String value )
     {
         this.title = value;
+        return this;
+    }
+
+    public ErrorPageSimpleBuilder tip( final String value )
+    {
+        this.tip = value;
         return this;
     }
 
@@ -30,10 +38,13 @@ public class ErrorPageSimpleBuilder
                                        "margin: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; color: lightgray; } " +
                                        "h1 { font-size: 3em; margin: 0; } h3 { font-size: 1.5em; }" ).close();
         html.close();
-        html.open( "body" ).
-            open( "h1" ).escapedText( "D'oh!" ).close().
-            open( "h3" ).escapedText( this.statusCode + " - " + this.title ).
-            close();
+        final HtmlBuilder htmlBuilder = html.open( "body" );
+        htmlBuilder.open( "h1" ).escapedText( "D'oh!" ).close();
+        htmlBuilder.open( "h3" ).escapedText( this.statusCode + " - " + this.title ).close();
+        if ( tip != null )
+        {
+            htmlBuilder.open( "h4" ).escapedText( tip ).close();
+        }
         html.close();
         html.close();
         return html.toString();
