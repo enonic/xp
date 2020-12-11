@@ -47,6 +47,7 @@ final class JaxRsDispatcher
     {
         final ServletConfigImpl config = new ServletConfigImpl( "jaxrs", context );
         config.setInitParameter( ResteasyContextParameters.RESTEASY_SERVLET_MAPPING_PREFIX, "/" );
+        config.setInitParameter( ResteasyContextParameters.RESTEASY_ROLE_BASED_SECURITY, "true" );
 
         final ServletBootstrap bootstrap = new ServletBootstrap( config );
         final RequestFactoryImpl requestFactory = new RequestFactoryImpl( context );
