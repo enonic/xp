@@ -14,7 +14,7 @@ dependencies {
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
     compile "com.sun.mail:jakarta.mail:${jakartaMailVersion}"
     compile "io.dropwizard.metrics:metrics-core:${dropwizardMetricsVersion}"
-    compileOnly project( ':core:core-internal' )
+    implementation project( ':core:core-internal' )
 
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
