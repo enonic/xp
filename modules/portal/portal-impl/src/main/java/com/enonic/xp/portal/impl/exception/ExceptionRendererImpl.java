@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
@@ -53,32 +55,45 @@ public final class ExceptionRendererImpl
 
     private static final List<String> SITE_ERROR_SCRIPT_PATHS = List.of( SITE_ERROR_SCRIPT_PATH, GENERIC_ERROR_SCRIPT_PATH );
 
-    private ResourceService resourceService;
+    private final ResourceService resourceService;
 
-    private ErrorHandlerScriptFactory errorHandlerScriptFactory;
+    private final ErrorHandlerScriptFactory errorHandlerScriptFactory;
 
-    private ContentService contentService;
+    private final ContentService contentService;
 
-    private IdProviderControllerService idProviderControllerService;
+    private final IdProviderControllerService idProviderControllerService;
 
-    private PostProcessor postProcessor;
+    private final PostProcessor postProcessor;
 
     private final RunMode runMode;
 
-    public ExceptionRendererImpl( final RunMode runMode )
+
+    ExceptionRendererImpl( final ResourceService resourceService, final ErrorHandlerScriptFactory errorHandlerScriptFactory,
+                           final ContentService contentService, final IdProviderControllerService idProviderControllerService,
+                           final PostProcessor postProcessor, final RunMode runMode )
     {
+        this.resourceService = resourceService;
+        this.errorHandlerScriptFactory = errorHandlerScriptFactory;
+        this.contentService = contentService;
+        this.idProviderControllerService = idProviderControllerService;
+        this.postProcessor = postProcessor;
         this.runMode = runMode;
     }
 
-    public ExceptionRendererImpl()
+    @Activate
+    public ExceptionRendererImpl( @Reference final ResourceService resourceService,
+                                  @Reference final ErrorHandlerScriptFactory errorHandlerScriptFactory,
+                                  @Reference final ContentService contentService,
+                                  @Reference final IdProviderControllerService idProviderControllerService,
+                                  @Reference final PostProcessor postProcessor )
     {
-        this( RunMode.get() );
+        this( resourceService, errorHandlerScriptFactory, contentService, idProviderControllerService, postProcessor, RunMode.get() );
     }
 
     @Override
     public PortalResponse render( final WebRequest webRequest, final WebException cause )
     {
-
+        String tip = null;
         final ExceptionInfo info = toErrorInfo( cause );
         logIfNeeded( info );
 
@@ -110,9 +125,15 @@ public final class ExceptionRendererImpl
                 logIfNeeded( toErrorInfo( cause ) );
                 return defaultCustomError;
             }
+
+            if ( "/site".equals( portalRequest.getBaseUri() ) && ContentConstants.BRANCH_MASTER.equals( portalRequest.getBranch() ) &&
+                HttpStatus.NOT_FOUND.equals( cause.getStatus() ) )
+            {
+                tip = "Tip: Did you remember to publish the site?";
+            }
         }
 
-        return renderInternalErrorPage( webRequest, cause );
+        return renderInternalErrorPage( webRequest, tip, cause );
     }
 
     private PortalResponse renderCustomError( final PortalRequest req, final WebException cause, final String handlerMethod )
@@ -309,9 +330,13 @@ public final class ExceptionRendererImpl
         return null;
     }
 
-    private PortalResponse renderInternalErrorPage( final WebRequest req, final WebException cause )
+    private PortalResponse renderInternalErrorPage( final WebRequest req, String tip, final WebException cause )
     {
-        final ExceptionInfo info = toErrorInfo( cause );
+        final ExceptionInfo info = ExceptionInfo.create( cause.getStatus() ).
+            runMode( runMode ).
+            cause( cause ).
+            tip( tip );
+
         logIfNeeded( info );
         return info.toResponse( req );
     }
@@ -342,35 +367,4 @@ public final class ExceptionRendererImpl
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         return authInfo.isAuthenticated();
     }
-
-    @Reference
-    public void setResourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
-    }
-
-    @Reference
-    public void setErrorHandlerScriptFactory( final ErrorHandlerScriptFactory value )
-    {
-        this.errorHandlerScriptFactory = value;
-    }
-
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
-    }
-
-    @Reference
-    public void setIdProviderControllerService( final IdProviderControllerService idProviderControllerService )
-    {
-        this.idProviderControllerService = idProviderControllerService;
-    }
-
-    @Reference
-    public void setPostProcessor( final PostProcessor postProcessor )
-    {
-        this.postProcessor = postProcessor;
-    }
-
 }

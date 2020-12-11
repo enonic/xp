@@ -31,6 +31,7 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -60,11 +61,8 @@ class ExceptionRendererImplTest
         this.contentService = mock( ContentService.class );
         this.errorHandlerScriptFactory = mock( ErrorHandlerScriptFactory.class );
         this.postProcessor = new MockPostProcessor();
-        this.renderer = new ExceptionRendererImpl( RunMode.DEV );
-        this.renderer.setResourceService( resourceService );
-        this.renderer.setContentService( contentService );
-        this.renderer.setErrorHandlerScriptFactory( errorHandlerScriptFactory );
-        this.renderer.setPostProcessor( this.postProcessor );
+        this.renderer =
+            new ExceptionRendererImpl( resourceService, errorHandlerScriptFactory, contentService, null, postProcessor, RunMode.DEV );
         this.request = new PortalRequest();
 
         final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
@@ -97,6 +95,26 @@ class ExceptionRendererImplTest
 
         // Should not show exception
         assertTrue( body.contains( ExceptionRendererImplTest.class.getName() ) );
+    }
+
+    @Test
+    void render_with_tip()
+    {
+        this.renderer = new ExceptionRendererImpl( resourceService, errorHandlerScriptFactory, contentService, null, postProcessor );
+
+        this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
+        this.request.setBaseUri( "/site" );
+        this.request.setBranch( Branch.from( "master" ) );
+
+        final PortalResponse res = this.renderer.render( this.request, new WebException( HttpStatus.NOT_FOUND, "Custom message" ) );
+
+        assertEquals( HttpStatus.NOT_FOUND, res.getStatus() );
+        assertEquals( MediaType.HTML_UTF_8.withoutParameters(), res.getContentType() );
+
+        final String body = res.getBody().toString();
+        assertThat( body ).contains( "404 - Not Found" );
+        assertThat( body ).doesNotContain( "Custom message" );
+        assertThat( body ).contains( "Tip: Did you remember to publish the site?" );
     }
 
     @Test

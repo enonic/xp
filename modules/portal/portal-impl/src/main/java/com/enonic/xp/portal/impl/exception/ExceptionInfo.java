@@ -19,6 +19,8 @@ final class ExceptionInfo
 
     private String message;
 
+    private String tip;
+
     private Throwable cause;
 
     private ResourceService resourceService;
@@ -59,6 +61,12 @@ final class ExceptionInfo
     public ExceptionInfo message( final String message )
     {
         this.message = message;
+        return this;
+    }
+
+    public ExceptionInfo tip( final String tip )
+    {
+        this.tip = tip;
         return this;
     }
 
@@ -107,12 +115,20 @@ final class ExceptionInfo
 
     public PortalResponse toHtmlResponse()
     {
-        final ErrorPageBuilder builder = runMode == RunMode.DEV ? new ErrorPageRichBuilder().
-            cause( this.cause ).
-            description( getDescription() ).
-            resourceService( this.resourceService ).
-            status( this.status.value() ).
-            title( getReasonPhrase() ) : new ErrorPageSimpleBuilder().status( this.status.value() ).title( getReasonPhrase() );
+        final ErrorPageBuilder builder;
+        if ( runMode == RunMode.DEV )
+        {
+            builder = new ErrorPageRichBuilder().
+                cause( this.cause ).
+                description( getDescription() ).
+                resourceService( this.resourceService ).
+                status( this.status.value() ).
+                title( getReasonPhrase() );
+        }
+        else
+        {
+            builder = new ErrorPageSimpleBuilder().status( this.status.value() ).tip( tip ).title( getReasonPhrase() );
+        }
 
         final String html = builder.build();
         return PortalResponse.create().
