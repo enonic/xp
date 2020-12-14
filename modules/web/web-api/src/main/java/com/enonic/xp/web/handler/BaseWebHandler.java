@@ -23,9 +23,9 @@ public abstract class BaseWebHandler
 {
     private static final int DEFAULT_ORDER = 0;
 
-    private int order;
+    private final int order;
 
-    private EnumSet<HttpMethod> methodsAllowed;
+    private final EnumSet<HttpMethod> methodsAllowed;
 
     public BaseWebHandler()
     {
