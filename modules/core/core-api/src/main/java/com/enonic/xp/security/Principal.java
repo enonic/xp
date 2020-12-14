@@ -83,7 +83,7 @@ public abstract class Principal
         return key.toString();
     }
 
-    public abstract static class Builder<B extends Builder<B>>
+    public abstract static class Builder<B>
     {
         PrincipalKey key;
 
