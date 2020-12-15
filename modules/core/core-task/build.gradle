@@ -1,11 +1,9 @@
-apply from: "$rootDir/gradle/osgi.gradle"
-
 dependencies {
     compile project( ':core:core-api' )
     compile project( ':script:script-api' )
     compile project( ':portal:portal-api' )
     implementation project( ':core:core-internal' )
-    compile "com.hazelcast:hazelcast:${hazelcastVersion}"
+    implementation "com.hazelcast:hazelcast:${hazelcastVersion}"
 
     testImplementation( project(":script:script-impl")  )
     testImplementation( project(":portal:portal-impl")  )

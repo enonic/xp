@@ -1,15 +1,13 @@
-apply from: "$rootDir/gradle/osgi.gradle"
-
 dependencies {
-    compile ( "org.jboss.resteasy:resteasy-jaxrs:${resteasyVersion}" ) {
+    implementation ( "org.jboss.resteasy:resteasy-jaxrs:${resteasyVersion}" ) {
         exclude group: 'org.jboss.spec.javax.annotation'
         exclude group: 'org.jboss.spec.javax.xml.bind'
         exclude group: 'org.jboss.spec.javax.ws.rs'
         exclude group: 'org.apache.httpcomponents'
         exclude group: 'com.github.stephenc.jcip'
     }
-    compile "jakarta.annotation:jakarta.annotation-api:${jakartaAnnotationApiVersion}"
-    compile "jakarta.ws.rs:jakarta.ws.rs-api:${jaxrsApiVersion}"
+    implementation "jakarta.annotation:jakarta.annotation-api:${jakartaAnnotationApiVersion}"
+    implementation "jakarta.ws.rs:jakarta.ws.rs-api:${jaxrsApiVersion}"
 }
 
 jar {

@@ -1,8 +1,6 @@
-apply from: "$rootDir/gradle/osgi.gradle"
-
 dependencies {
     compile project( ':core:core-api' )
-    compile 'com.jhlabs:filters:2.0.235-1'
+    implementation 'com.jhlabs:filters:2.0.235-1'
 }
 
 jar {
