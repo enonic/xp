@@ -125,7 +125,7 @@ final class CreateContentCommand
 
             if ( params.isRefresh() )
             {
-                nodeService.refresh( RefreshMode.SEARCH );
+                nodeService.refresh( RefreshMode.ALL );
             }
 
             return translator.fromNode( createdNode, false );

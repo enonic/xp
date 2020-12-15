@@ -533,4 +533,34 @@ public class ContentServiceImplTest_update
         assertEquals( content.getId().toString(), logResultSet.getString( "id" ) );
         assertEquals( content.getPath().toString(), logResultSet.getString( "path" ) );
     }
+
+    @Test
+    public void update_stable_refresh()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "This is my content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        for ( int i = 0; i < 1000; i++ )
+        {
+            final WorkflowInfo workflowInfo = i % 2 == 0 ? WorkflowInfo.ready() : WorkflowInfo.inProgress();
+
+            final UpdateContentParams updateContentParams = new UpdateContentParams();
+            updateContentParams.contentId( content.getId() ).
+                editor( edit -> {
+                    edit.workflowInfo = workflowInfo;
+                } );
+
+            this.contentService.update( updateContentParams );
+
+            assertEquals( workflowInfo, this.contentService.getByPath( content.getPath() ).getWorkflowInfo() );
+            assertEquals( workflowInfo, this.contentService.getById( content.getId() ).getWorkflowInfo() );
+        }
+    }
 }
