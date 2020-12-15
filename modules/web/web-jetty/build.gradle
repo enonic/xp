@@ -1,22 +1,22 @@
-apply from: "$rootDir/gradle/osgi.gradle"
-
 dependencies {
     compile project( ':web:web-api' )
     implementation project( ':core:core-internal' )
-    compile "org.eclipse.jetty:jetty-server:${jettyVersion}"
-    compile "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
-    compile "org.eclipse.jetty:jetty-servlets:${jettyVersion}"
-    compile "org.eclipse.jetty:jetty-jmx:${jettyVersion}"
-    compile "org.eclipse.jetty.websocket:websocket-server:${jettyVersion}"
-    compile "org.eclipse.jetty.websocket:websocket-servlet:${jettyVersion}"
-    compile ("org.eclipse.jetty.websocket:javax-websocket-server-impl:${jettyVersion}") {
+    implementation "org.eclipse.jetty:jetty-server:${jettyVersion}"
+    implementation "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
+    implementation "org.eclipse.jetty:jetty-servlets:${jettyVersion}"
+    implementation "org.eclipse.jetty:jetty-jmx:${jettyVersion}"
+    implementation "org.eclipse.jetty.websocket:websocket-server:${jettyVersion}"
+    implementation "org.eclipse.jetty.websocket:websocket-servlet:${jettyVersion}"
+    implementation ("org.eclipse.jetty.websocket:javax-websocket-server-impl:${jettyVersion}") {
         exclude group: 'javax.annotation'
     }
-    compile "jakarta.annotation:jakarta.annotation-api:${jakartaAnnotationApiVersion}"
+    implementation "jakarta.annotation:jakarta.annotation-api:${jakartaAnnotationApiVersion}"
     implementation "io.dropwizard.metrics:metrics-jetty9:${dropwizardMetricsVersion}"
 
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testFixturesImplementation "org.eclipse.jetty:jetty-server:${jettyVersion}"
+    testFixturesImplementation "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
 
     testImplementation( testFixtures( project(":core:core-api") ) )
 }

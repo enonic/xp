@@ -1,8 +1,6 @@
-apply from: "$rootDir/gradle/osgi.gradle"
-
 dependencies {
     compile project( ':jaxrs:jaxrs-api' )
-    compile "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:${jacksonVersion}"
     implementation ( "org.jboss.resteasy:resteasy-jaxrs:${resteasyVersion}" ) {
         exclude group: 'org.jboss.spec.javax.annotation'
         exclude group: 'org.jboss.spec.javax.xml.bind'

@@ -1,5 +1,3 @@
-apply from: "$rootDir/gradle/osgi.gradle"
-
 dependencies {
     compile project( ':core:core-api' )
     compile ('org.elasticsearch:elasticsearch:2.4.6') {
@@ -12,7 +10,7 @@ dependencies {
     runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${jacksonVersion}"
     runtimeOnly "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${jacksonVersion}"
 
-    compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
+    implementation "org.apache.commons:commons-compress:${commonsCompressVersion}"
 
     testFixturesImplementation( project(":core:core-audit") )
     testFixturesImplementation( testFixtures( project(":core:core-blobstore") ) )

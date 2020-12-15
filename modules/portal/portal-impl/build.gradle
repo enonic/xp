@@ -1,11 +1,9 @@
-apply from: "$rootDir/gradle/osgi.gradle"
-
 dependencies {
     compile project( ':web:web-api' )
     compile project( ':portal:portal-api' )
     compile project( ':portal:portal-owasp' )
     implementation project( ':core:core-internal' )
-    compile 'org.attoparser:attoparser:1.3'
+    implementation 'org.attoparser:attoparser:1.3'
 
     testImplementation( project( ':core:core-macro' ) )
     testImplementation( project( ':script:script-impl' ) )

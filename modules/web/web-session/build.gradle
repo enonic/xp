@@ -1,9 +1,7 @@
-apply from: "$rootDir/gradle/osgi.gradle"
-
 dependencies {
-    compile project( ':web:web-api' )
-    compile "org.eclipse.jetty:jetty-hazelcast:${jettyVersion}"
-    compile "com.hazelcast:hazelcast-client:${hazelcastVersion}"
+    implementation project( ':web:web-api' )
+    implementation "org.eclipse.jetty:jetty-hazelcast:${jettyVersion}"
+    implementation "com.hazelcast:hazelcast-client:${hazelcastVersion}"
 }
 
 jar {

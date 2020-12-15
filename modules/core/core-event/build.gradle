@@ -1,9 +1,7 @@
-apply from: "$rootDir/gradle/osgi.gradle"
-
 dependencies {
     compile project( ':core:core-api' )
     implementation project( ':core:core-internal' )
-    compile "com.hazelcast:hazelcast:${hazelcastVersion}"
+    implementation "com.hazelcast:hazelcast:${hazelcastVersion}"
 }
 
 jar {

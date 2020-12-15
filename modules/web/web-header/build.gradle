@@ -1,8 +1,6 @@
-apply from: "$rootDir/gradle/osgi.gradle"
-
 dependencies {
     compile project( ':web:web-api' )
-    compile "org.eclipse.jetty:jetty-servlets:${jettyVersion}"
+    implementation "org.eclipse.jetty:jetty-servlets:${jettyVersion}"
 }
 
 jar {

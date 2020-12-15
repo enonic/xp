@@ -1,11 +1,15 @@
-apply plugin: 'java-base'
-apply plugin: 'build-dashboard'
-apply plugin: 'com.github.jk1.dependency-license-report'
+plugins {
+    id 'java-base'
+    id 'jacoco'
+    id 'com.github.jk1.dependency-license-report'
+    id "com.github.ben-manes.versions"
+    id "com.enonic.defaults"
+    id 'biz.aQute.bnd.builder' apply false
+}
 
 ext {
     leafProjects = subprojects.findAll { p -> p.subprojects.empty }
     javaProjects = leafProjects - project( ':runtime' ) - project( ':docs' )
-    mavenPublishProjects = leafProjects
 }
 
 allprojects {
@@ -14,17 +18,10 @@ allprojects {
     repositories {
         mavenLocal()
         jcenter()
-        maven {
-            url 'https://repo.enonic.com/public'
-        }
     }
 
     apply plugin: 'com.enonic.defaults'
     apply from: "$rootDir/gradle/versions.gradle"
-}
-
-configure( mavenPublishProjects ) {
-    apply from: "$rootDir/gradle/maven-publish.gradle"
 }
 
 configure( javaProjects ) {
@@ -32,7 +29,6 @@ configure( javaProjects ) {
 }
 
 configure( rootProject ) {
-    apply from: "$rootDir/gradle/coverage.gradle"
     apply from: "$rootDir/gradle/ci.gradle"
     apply from: "$rootDir/gradle/tools.gradle"
 }
