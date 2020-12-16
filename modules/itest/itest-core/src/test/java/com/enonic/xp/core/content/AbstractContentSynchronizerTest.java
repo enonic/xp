@@ -198,7 +198,6 @@ public abstract class AbstractContentSynchronizerTest
 
     protected Content createContent( final ContentPath parent )
     {
-
         return createContent( parent, "name" );
     }
 

@@ -11,12 +11,16 @@ import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.core.impl.content.ContentEventsSyncParams;
 import com.enonic.xp.core.impl.content.ContentSyncEventType;
 import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
 import com.enonic.xp.core.impl.content.SyncContentServiceImpl;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -67,6 +71,39 @@ public class SyncContentServiceImplTest
             final Content changed = contentService.getById( source.getId() );
 
             assertTrue( changed.getInherit().contains( ContentInheritType.SORT ) );
+            assertEquals( ChildOrder.from( "modifiedtime DESC" ), changed.getChildOrder() );
+        } );
+
+    }
+
+    @Test
+    public void testWorkflowInfo()
+        throws Exception
+    {
+        final Content source = sourceContext.callWith( () -> createContent( ContentPath.ROOT ) );
+
+        syncCreated( source.getId() );
+
+        targetContext.runWith( () -> {
+            contentService.update( new UpdateContentParams().
+                contentId( source.getId() ).
+                editor( edit -> {
+                    edit.workflowInfo = WorkflowInfo.ready();
+                    edit.data = new PropertyTree();
+                } ) );
+        } );
+
+        syncContentService.resetInheritance( ResetContentInheritParams.create().
+            contentId( source.getId() ).
+            inherit( EnumSet.of( ContentInheritType.CONTENT ) ).
+            projectName( targetProject.getName() ).
+            build() );
+
+        targetContext.runWith( () -> {
+            final Content changed = contentService.getById( source.getId() );
+
+            assertTrue( changed.getInherit().contains( ContentInheritType.CONTENT ) );
+            assertTrue( changed.getData().hasProperty( "stringField" ) );
         } );
 
     }

@@ -14,6 +14,7 @@ import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -75,7 +76,10 @@ final class ResetContentInheritanceCommand
                         contentId( content.getId() ).
                         modifier( content.getModifier() ).
                         stopInherit( false ).
-                        editor( edit -> edit.inherit = processInherit( edit.inherit, typesToReset ) );
+                        editor( edit -> {
+                            edit.inherit = processInherit( edit.inherit, typesToReset );
+                            edit.workflowInfo = WorkflowInfo.inProgress();
+                        } );
 
                     contentService.update( updateParams );
 
