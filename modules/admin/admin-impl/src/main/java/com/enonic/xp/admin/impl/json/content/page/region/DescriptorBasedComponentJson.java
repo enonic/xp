@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.json.content.page.region;
 
 
 import java.util.List;
+import java.util.Objects;
 
 import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
 import com.enonic.xp.data.PropertyArrayJson;
@@ -22,7 +23,7 @@ public abstract class DescriptorBasedComponentJson<COMPONENT extends DescriptorB
 
     public String getDescriptor()
     {
-        return getComponent().getDescriptor() != null ? getComponent().getDescriptor().toString() : null;
+        return Objects.toString( getComponent().getDescriptor(), null );
     }
 
     public List<PropertyArrayJson> getConfig()
