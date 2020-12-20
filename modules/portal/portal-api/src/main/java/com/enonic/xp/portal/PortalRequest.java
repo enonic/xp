@@ -19,19 +19,15 @@ import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 public final class PortalRequest
     extends WebRequest
 {
-    private static final Branch DEFAULT_BRANCH = ContentConstants.BRANCH_DRAFT;
+    private RenderMode mode = RenderMode.LIVE;
 
-    private static final RepositoryId DEFAULT_REPOSITORY_ID = ContentConstants.CONTENT_REPO_ID;
+    private RepositoryId repositoryId = ContentConstants.CONTENT_REPO_ID;
 
-    private RenderMode mode;
+    private Branch branch = ContentConstants.BRANCH_DRAFT;
 
-    private RepositoryId repositoryId;
+    private ContentPath contentPath = ContentPath.ROOT;
 
-    private Branch branch;
-
-    private ContentPath contentPath;
-
-    private String baseUri;
+    private String baseUri = "";
 
     private String contextPath;
 
@@ -53,14 +49,6 @@ public final class PortalRequest
 
     public PortalRequest()
     {
-    }
-
-    {
-        this.baseUri = "";
-        this.contentPath = ContentPath.from( "/" );
-        this.mode = RenderMode.LIVE;
-        this.branch = DEFAULT_BRANCH;
-        this.repositoryId = DEFAULT_REPOSITORY_ID;
     }
 
     public PortalRequest( final WebRequest webRequest )
