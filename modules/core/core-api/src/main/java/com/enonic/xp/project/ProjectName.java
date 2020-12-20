@@ -18,7 +18,7 @@ public final class ProjectName
     private ProjectName( final String value )
     {
         Preconditions.checkNotNull( value, "Project name cannot be null" );
-        Preconditions.checkArgument( !value.trim().isEmpty(), "Project name cannot be blank" );
+        Preconditions.checkArgument( !value.isBlank(), "Project name cannot be blank" );
         Preconditions.checkArgument( VALID_PROJECT_NAME_PATTERN.matcher( value ).matches(), "Project name format incorrect: " + value );
         this.value = value;
     }

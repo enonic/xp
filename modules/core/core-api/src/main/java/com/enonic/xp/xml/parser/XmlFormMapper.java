@@ -239,7 +239,7 @@ public final class XmlFormMapper
     private String getLabel( final DomElement element, final String defaultValue )
     {
         String label = element.getChildValue( "label" );
-        if ( label != null && label.trim().isEmpty() )
+        if ( label != null && label.isBlank() )
         {
             label = null;
         }
@@ -254,7 +254,7 @@ public final class XmlFormMapper
     private String getHelpText( final DomElement element, final String defaultValue )
     {
         String helpText = element.getChildValue( "help-text" );
-        if ( helpText != null && helpText.trim().isEmpty() )
+        if ( helpText != null && helpText.isBlank() )
         {
             helpText = null;
         }

@@ -20,7 +20,7 @@ public final class RepositoryId
     private RepositoryId( final String value )
     {
         Preconditions.checkNotNull( value, "RepositoryId cannot be null" );
-        Preconditions.checkArgument( !value.trim().isEmpty(), "RepositoryId cannot be blank" );
+        Preconditions.checkArgument( !value.isBlank(), "RepositoryId cannot be blank" );
         Preconditions.checkArgument( value.matches( "^" + VALID_REPOSITORY_ID_REGEX + "$" ), "RepositoryId format incorrect: " + value );
         this.value = value;
     }

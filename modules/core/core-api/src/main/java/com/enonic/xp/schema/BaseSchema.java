@@ -36,8 +36,7 @@ public abstract class BaseSchema<T extends BaseSchemaName>
     protected BaseSchema( final Builder builder )
     {
         this.name = (T) builder.name;
-        this.displayName =
-            builder.displayName == null || builder.displayName.trim().isEmpty() ? builder.name.getLocalName() : builder.displayName;
+        this.displayName = builder.displayName == null || builder.displayName.isBlank() ? builder.name.getLocalName() : builder.displayName;
         this.displayNameI18nKey = builder.displayNameI18nKey;
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;

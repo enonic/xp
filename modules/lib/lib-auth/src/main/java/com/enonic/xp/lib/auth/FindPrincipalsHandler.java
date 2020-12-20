@@ -34,7 +34,7 @@ public final class FindPrincipalsHandler
 
     public void setType( final String type )
     {
-        if ( type == null || type.trim().isEmpty() )
+        if ( type == null || type.isBlank() )
         {
             this.type = null;
             return;

@@ -18,7 +18,7 @@ public final class TaskId
     private TaskId( final String value )
     {
         Preconditions.checkNotNull( value, "TaskId cannot be null" );
-        Preconditions.checkArgument( !value.trim().isEmpty(), "TaskId cannot be blank" );
+        Preconditions.checkArgument( !value.isBlank(), "TaskId cannot be blank" );
         this.value = value;
     }
 
