@@ -60,10 +60,11 @@ import com.enonic.xp.web.multipart.MultipartItem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ApplicationResourceTest
     extends AdminResourceTestSupport
@@ -104,15 +105,14 @@ public class ApplicationResourceTest
     {
         final Application application = createApplication();
         final Applications applications = Applications.from( application );
-        Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
+        when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
-        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
+        when( this.siteService.getDescriptor( isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
         final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
-        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
-            idProviderDescriptor );
+        when( this.idProviderDescriptorService.getDescriptor( isA( ApplicationKey.class ) ) ).thenReturn( idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
-        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
-        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+        when( this.applicationDescriptorService.get( isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+        when( mixinService.inlineFormItems( isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().
             path( "application/list" ).
@@ -129,22 +129,22 @@ public class ApplicationResourceTest
 
         final ApplicationInfo applicationInfo = ApplicationInfo.create().build();
 
-        Mockito.when( this.applicationInfoService.getApplicationInfo( applicationKey ) ).thenReturn( applicationInfo );
+        when( this.applicationInfoService.getApplicationInfo( applicationKey ) ).thenReturn( applicationInfo );
 
         final Resource resource = mock( Resource.class );
-        Mockito.when( resource.exists() ).thenReturn( true );
-        Mockito.when( resource.getKey() ).thenReturn( resourceKey );
-        Mockito.when( this.resourceService.getResource( resourceKey ) ).thenReturn( resource );
+        when( resource.exists() ).thenReturn( true );
+        when( resource.getKey() ).thenReturn( resourceKey );
+        when( this.resourceService.getResource( resourceKey ) ).thenReturn( resource );
 
         final ScriptExports scriptExports = mock( ScriptExports.class );
-        Mockito.when( scriptExports.hasMethod( "get" ) ).thenReturn( true );
-        Mockito.when( this.portalScriptService.execute( resourceKey ) ).thenReturn( scriptExports );
+        when( scriptExports.hasMethod( "get" ) ).thenReturn( true );
+        when( this.portalScriptService.execute( resourceKey ) ).thenReturn( scriptExports );
 
-        Mockito.when( this.widgetDescriptorService.getByApplication( applicationKey ) ).thenReturn( createWidgetDescriptors() );
+        when( this.widgetDescriptorService.getByApplication( applicationKey ) ).thenReturn( createWidgetDescriptors() );
 
         final AdminToolDescriptors adminToolDescriptors = createAdminToolDescriptors();
-        Mockito.when( this.adminToolDescriptorService.getByApplication( applicationKey ) ).thenReturn( adminToolDescriptors );
-        Mockito.when( this.adminToolDescriptorService.generateAdminToolUri( any(), any() ) ).thenReturn( "url/to/tool" );
+        when( this.adminToolDescriptorService.getByApplication( applicationKey ) ).thenReturn( adminToolDescriptors );
+        when( this.adminToolDescriptorService.generateAdminToolUri( any(), any() ) ).thenReturn( "url/to/tool" );
 
         final HttpServletRequest mockRequest = mock( HttpServletRequest.class );
         when( mockRequest.getServerName() ).thenReturn( "localhost" );
@@ -169,15 +169,14 @@ public class ApplicationResourceTest
     {
         final Application application = createApplication();
         final Applications applications = Applications.from( application, createEmptyApplication() );
-        Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
+        when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
-        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
+        when( this.siteService.getDescriptor( isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
         final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
-        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
-            idProviderDescriptor );
+        when( this.idProviderDescriptorService.getDescriptor( isA( ApplicationKey.class ) ) ).thenReturn( idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
-        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
-        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+        when( this.applicationDescriptorService.get( isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+        when( mixinService.inlineFormItems( isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().
             path( "application/list" ).
@@ -192,14 +191,13 @@ public class ApplicationResourceTest
     {
         final Application application = createApplication();
         final Applications applications = Applications.from( application, createEmptyApplication() );
-        Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
+        when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
-        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
+        when( this.siteService.getDescriptor( isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
         final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
-        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
-            idProviderDescriptor );
+        when( this.idProviderDescriptorService.getDescriptor( isA( ApplicationKey.class ) ) ).thenReturn( idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
-        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+        when( this.applicationDescriptorService.get( isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
         String response = request().
             path( "application/list" ).
@@ -214,14 +212,13 @@ public class ApplicationResourceTest
     {
         final Application application = createApplication();
         final Applications applications = Applications.from( application );
-        Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
+        when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
-        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
+        when( this.siteService.getDescriptor( isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
         final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
-        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
-            idProviderDescriptor );
+        when( this.idProviderDescriptorService.getDescriptor( isA( ApplicationKey.class ) ) ).thenReturn( idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
-        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+        when( this.applicationDescriptorService.get( isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
         String response = request().
             path( "application/listKeys" ).
@@ -234,16 +231,15 @@ public class ApplicationResourceTest
         throws Exception
     {
         final Application application = createApplication();
-        Mockito.when( this.applicationService.getInstalledApplication( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( application );
+        when( this.applicationService.getInstalledApplication( isA( ApplicationKey.class ) ) ).thenReturn( application );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
-        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
+        when( this.siteService.getDescriptor( isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
         final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
-        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
-            idProviderDescriptor );
+        when( this.idProviderDescriptorService.getDescriptor( isA( ApplicationKey.class ) ) ).thenReturn( idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
-        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+        when( this.applicationDescriptorService.get( isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
-        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+        when( mixinService.inlineFormItems( isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().
             path( "application" ).
@@ -257,25 +253,24 @@ public class ApplicationResourceTest
         throws Exception
     {
         final Application application = createApplication();
-        Mockito.when( this.applicationService.getInstalledApplication( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( application );
+        when( this.applicationService.getInstalledApplication( isA( ApplicationKey.class ) ) ).thenReturn( application );
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
-        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
+        when( this.siteService.getDescriptor( isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
         final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
-        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
-            idProviderDescriptor );
+        when( this.idProviderDescriptorService.getDescriptor( isA( ApplicationKey.class ) ) ).thenReturn( idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
-        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+        when( this.applicationDescriptorService.get( isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
         final MessageBundle messageBundle = mock( MessageBundle.class );
-        Mockito.when( messageBundle.localize( "key.label" ) ).thenReturn( "translated.label" );
-        Mockito.when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
+        when( messageBundle.localize( "key.label" ) ).thenReturn( "translated.label" );
+        when( messageBundle.localize( "key.help-text" ) ).thenReturn( "translated.helpText" );
 
-        Mockito.when( messageBundle.localize( "site.config.helpText" ) ).thenReturn( "translated.site.helpText" );
-        Mockito.when( messageBundle.localize( "site.config.label" ) ).thenReturn( "translated.site.label" );
+        when( messageBundle.localize( "site.config.helpText" ) ).thenReturn( "translated.site.helpText" );
+        when( messageBundle.localize( "site.config.label" ) ).thenReturn( "translated.site.label" );
 
-        Mockito.when( this.localeService.getBundle( any(), any() ) ).thenReturn( messageBundle );
+        when( this.localeService.getBundle( any(), any() ) ).thenReturn( messageBundle );
 
-        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+        when( mixinService.inlineFormItems( isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().
             path( "application" ).
@@ -314,14 +309,13 @@ public class ApplicationResourceTest
     {
         final Application application = createApplication();
         final Applications applications = Applications.from( application );
-        Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
+        when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
         final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
-        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
-            idProviderDescriptor );
+        when( this.idProviderDescriptorService.getDescriptor( isA( ApplicationKey.class ) ) ).thenReturn( idProviderDescriptor );
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
-        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+        when( this.applicationDescriptorService.get( isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
-        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+        when( mixinService.inlineFormItems( isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().
             path( "application/getIdProviderApplications" ).
@@ -345,16 +339,15 @@ public class ApplicationResourceTest
         throws Exception
     {
         final Application application = createApplication();
-        Mockito.when( this.applicationService.getInstalledApplication( application.getKey() ) ).thenReturn( application );
+        when( this.applicationService.getInstalledApplication( application.getKey() ) ).thenReturn( application );
 
         final IdProviderDescriptor idProviderDescriptor = createIdProviderDescriptor();
-        Mockito.when( this.idProviderDescriptorService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn(
-            idProviderDescriptor );
+        when( this.idProviderDescriptorService.getDescriptor( isA( ApplicationKey.class ) ) ).thenReturn( idProviderDescriptor );
 
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
-        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+        when( this.applicationDescriptorService.get( isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
-        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+        when( mixinService.inlineFormItems( isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().
             path( "application/getIdProviderApplication" ).
@@ -369,15 +362,15 @@ public class ApplicationResourceTest
     {
         final Application application = createApplication();
         final Applications applications = Applications.from( application );
-        Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
+        when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
 
         final SiteDescriptor siteDescriptor = createSiteDescriptor();
-        Mockito.when( this.siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
+        when( this.siteService.getDescriptor( isA( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
 
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor();
-        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+        when( this.applicationDescriptorService.get( isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
-        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+        when( mixinService.inlineFormItems( isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         String response = request().
             path( "application/getSiteApplications" ).
@@ -392,7 +385,7 @@ public class ApplicationResourceTest
     {
         final Application application = createApplication();
         final Applications applications = Applications.from( application );
-        Mockito.when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
+        when( this.applicationService.getInstalledApplications() ).thenReturn( applications );
 
         String response = request().
             path( "application/getSiteApplications" ).
@@ -423,7 +416,7 @@ public class ApplicationResourceTest
         final Icon icon = Icon.from( new byte[]{0, 1, 2}, "image/png", Instant.now() );
 
         final ApplicationDescriptor appDescriptor = createApplicationDescriptor( icon );
-        Mockito.when( this.applicationDescriptorService.get( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
+        when( this.applicationDescriptorService.get( isA( ApplicationKey.class ) ) ).thenReturn( appDescriptor );
 
         byte[] response = request().
             path( "application/icon/applicationKey" ).
@@ -475,8 +468,7 @@ public class ApplicationResourceTest
         throws Exception
     {
         final Application application = createApplication();
-        Mockito.when( this.applicationService.installGlobalApplication( eq( new URL( application.getUrl() ) ), any() ) ).thenReturn(
-            application );
+        when( this.applicationService.installGlobalApplication( eq( new URL( application.getUrl() ) ), any() ) ).thenReturn( application );
 
         String response = request().
             path( "application/installUrl" ).
@@ -519,9 +511,9 @@ public class ApplicationResourceTest
         throws Exception
     {
         final MultipartForm form = mock( MultipartForm.class );
-        Mockito.when( form.get( "file" ) ).thenReturn( null );
+        when( form.get( "file" ) ).thenReturn( null );
 
-        Mockito.when( this.multipartService.parse( any() ) ).thenReturn( form );
+        when( this.multipartService.parse( any() ) ).thenReturn( form );
 
         assertThrows( RuntimeException.class, () -> {
             request().path( "application/install" ).multipart( "file", "file.jar", new byte[]{0, 1, 2},
@@ -538,11 +530,11 @@ public class ApplicationResourceTest
 
         final MultipartItem file = createItem( "file", 10, "jar", "image/png" );
 
-        Mockito.when( form.iterator() ).thenReturn( List.of( file ).iterator() );
-        Mockito.when( form.get( "file" ) ).thenReturn( file );
-        Mockito.when( this.multipartService.parse( any() ) ).thenReturn( form );
+        when( form.iterator() ).thenReturn( List.of( file ).iterator() );
+        when( form.get( "file" ) ).thenReturn( file );
+        when( this.multipartService.parse( any() ) ).thenReturn( form );
 
-        Mockito.when( this.applicationService.installGlobalApplication( file.getBytes(), "file.jar" ) ).thenThrow( new RuntimeException() );
+        when( this.applicationService.installGlobalApplication( file.getBytes(), "file.jar" ) ).thenThrow( new RuntimeException() );
 
         String response = request().
             path( "application/install" ).multipart( "file", "file.jar", new byte[]{0, 1, 2}, MediaType.MULTIPART_FORM_DATA_TYPE ).
@@ -560,13 +552,13 @@ public class ApplicationResourceTest
 
         final MultipartItem file = createItem( "file", 10, "jar", "image/png" );
 
-        Mockito.when( form.iterator() ).thenReturn( List.of( file ).iterator() );
-        Mockito.when( form.get( "file" ) ).thenReturn( file );
-        Mockito.when( this.multipartService.parse( any() ) ).thenReturn( form );
+        when( form.iterator() ).thenReturn( List.of( file ).iterator() );
+        when( form.get( "file" ) ).thenReturn( file );
+        when( this.multipartService.parse( any() ) ).thenReturn( form );
 
         final Application application = createApplication();
 
-        Mockito.when( this.applicationService.installGlobalApplication( file.getBytes(), "file.jar" ) ).thenReturn( application );
+        when( this.applicationService.installGlobalApplication( file.getBytes(), "file.jar" ) ).thenReturn( application );
 
         String response = request().
             path( "application/install" ).multipart( "file", "file.jar", new byte[]{0, 1, 2}, MediaType.MULTIPART_FORM_DATA_TYPE ).
@@ -578,16 +570,16 @@ public class ApplicationResourceTest
     private Application createApplication()
     {
         final Application application = mock( Application.class );
-        Mockito.when( application.getKey() ).thenReturn( ApplicationKey.from( "testapplication" ) );
-        Mockito.when( application.getVersion() ).thenReturn( new Version( 1, 0, 0 ) );
-        Mockito.when( application.getDisplayName() ).thenReturn( "application display name" );
-        Mockito.when( application.getUrl() ).thenReturn( "http://enonic.net" );
-        Mockito.when( application.getVendorName() ).thenReturn( "Enonic" );
-        Mockito.when( application.getVendorUrl() ).thenReturn( "https://www.enonic.com" );
-        Mockito.when( application.getMinSystemVersion() ).thenReturn( "5.0" );
-        Mockito.when( application.getMaxSystemVersion() ).thenReturn( "5.1" );
-        Mockito.when( application.isStarted() ).thenReturn( true );
-        Mockito.when( application.getModifiedTime() ).thenReturn( Instant.parse( "2012-01-01T00:00:00.00Z" ) );
+        when( application.getKey() ).thenReturn( ApplicationKey.from( "testapplication" ) );
+        when( application.getVersion() ).thenReturn( new Version( 1, 0, 0 ) );
+        when( application.getDisplayName() ).thenReturn( "application display name" );
+        when( application.getUrl() ).thenReturn( "http://enonic.net" );
+        when( application.getVendorName() ).thenReturn( "Enonic" );
+        when( application.getVendorUrl() ).thenReturn( "https://www.enonic.com" );
+        when( application.getMinSystemVersion() ).thenReturn( "5.0" );
+        when( application.getMaxSystemVersion() ).thenReturn( "5.1" );
+        when( application.isStarted() ).thenReturn( true );
+        when( application.getModifiedTime() ).thenReturn( Instant.parse( "2012-01-01T00:00:00.00Z" ) );
 
         return application;
     }
@@ -609,8 +601,8 @@ public class ApplicationResourceTest
     private Application createEmptyApplication()
     {
         final Application application = mock( Application.class );
-        Mockito.when( application.getDisplayName() ).thenReturn( "empty name" );
-        Mockito.when( application.getKey() ).thenReturn( ApplicationKey.from( "empty_testapplication" ) );
+        when( application.getDisplayName() ).thenReturn( "empty name" );
+        when( application.getKey() ).thenReturn( ApplicationKey.from( "empty_testapplication" ) );
         return application;
     }
 
@@ -655,7 +647,7 @@ public class ApplicationResourceTest
             displayName( "My tool" ).
             build();
 
-        Mockito.when( this.adminToolDescriptorService.getIconByKey( adminToolDescriptor.getKey() ) ).thenReturn( "icon-source" );
+        when( this.adminToolDescriptorService.getIconByKey( adminToolDescriptor.getKey() ) ).thenReturn( "icon-source" );
 
         return AdminToolDescriptors.from( adminToolDescriptor );
     }
@@ -668,11 +660,11 @@ public class ApplicationResourceTest
     private MultipartItem createItem( final String name, final String fileName, final long size, final String ext, final String type )
     {
         final MultipartItem item = mock( MultipartItem.class );
-        Mockito.when( item.getName() ).thenReturn( name );
-        Mockito.when( item.getFileName() ).thenReturn( fileName + "." + ext );
-        Mockito.when( item.getContentType() ).thenReturn( com.google.common.net.MediaType.parse( type ) );
-        Mockito.when( item.getSize() ).thenReturn( size );
-        Mockito.when( item.getBytes() ).thenReturn( ByteSource.wrap( name.getBytes() ) );
+        when( item.getName() ).thenReturn( name );
+        when( item.getFileName() ).thenReturn( fileName + "." + ext );
+        when( item.getContentType() ).thenReturn( com.google.common.net.MediaType.parse( type ) );
+        when( item.getSize() ).thenReturn( size );
+        when( item.getBytes() ).thenReturn( ByteSource.wrap( name.getBytes() ) );
         return item;
     }
 

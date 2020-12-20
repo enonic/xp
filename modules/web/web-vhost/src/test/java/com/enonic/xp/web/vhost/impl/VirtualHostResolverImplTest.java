@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostResolver;
@@ -31,8 +30,8 @@ public class VirtualHostResolverImplTest
     {
         this.virtualHostMapping = new VirtualHostMapping( "mymapping" );
 
-        final VirtualHostService virtualHostService = Mockito.mock( VirtualHostService.class );
-        Mockito.when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( this.virtualHostMapping ) );
+        final VirtualHostService virtualHostService = mock( VirtualHostService.class );
+        when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( this.virtualHostMapping ) );
 
         this.virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
     }
@@ -87,9 +86,9 @@ public class VirtualHostResolverImplTest
         virtualHosts.add( createVirtualHostMapping( "a", "localhost", "/", "/other/a" ) );
         virtualHosts.add( createVirtualHostMapping( "b", "enonic.com", "/", "/other/d" ) );
 
-        final VirtualHostService virtualHostService = Mockito.mock( VirtualHostService.class );
+        final VirtualHostService virtualHostService = mock( VirtualHostService.class );
 
-        Mockito.when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
+        when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "enonic.com" );
@@ -110,9 +109,9 @@ public class VirtualHostResolverImplTest
         virtualHosts.add( createVirtualHostMapping( "a", "localhost", "/", "/other/a" ) );
         virtualHosts.add( createVirtualHostMapping( "b", "enonic.com", "/", "/other/d" ) );
 
-        final VirtualHostService virtualHostService = Mockito.mock( VirtualHostService.class );
+        final VirtualHostService virtualHostService = mock( VirtualHostService.class );
 
-        Mockito.when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
+        when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "foo.no" );

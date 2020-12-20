@@ -8,14 +8,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.web.dispatch.MappingBuilder;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class ServletDefinitionImplTest
@@ -24,7 +27,7 @@ public class ServletDefinitionImplTest
     @Override
     Servlet newResource()
     {
-        return Mockito.mock( Servlet.class );
+        return mock( Servlet.class );
     }
 
     @Override
@@ -46,20 +49,20 @@ public class ServletDefinitionImplTest
     void verifyInit( final int times )
         throws Exception
     {
-        Mockito.verify( this.resource, Mockito.times( times ) ).init( Mockito.any() );
+        verify( this.resource, times( times ) ).init( any() );
     }
 
     @Override
     void verifyDestroy( final int times )
     {
-        Mockito.verify( this.resource, Mockito.times( times ) ).destroy();
+        verify( this.resource, times( times ) ).destroy();
     }
 
     @Override
     void setupInitException()
         throws Exception
     {
-        Mockito.doThrow( new ServletException( "test" ) ).when( this.resource ).init( Mockito.any() );
+        doThrow( new ServletException( "test" ) ).when( this.resource ).init( any() );
     }
 
     @Test
@@ -70,14 +73,14 @@ public class ServletDefinitionImplTest
         def.init( this.context );
 
         final HttpServletRequest req = mock( HttpServletRequest.class );
-        final HttpServletResponse res = Mockito.mock( HttpServletResponse.class );
+        final HttpServletResponse res = mock( HttpServletResponse.class );
 
         when( req.getRequestURI() ).thenReturn( "/b" );
         assertFalse( def.service( req, res ) );
-        Mockito.verify( this.resource, Mockito.times( 0 ) ).service( req, res );
+        verify( this.resource, times( 0 ) ).service( req, res );
 
         when( req.getRequestURI() ).thenReturn( "/a/b/c" );
         assertTrue( def.service( req, res ) );
-        Mockito.verify( this.resource, Mockito.times( 1 ) ).service( req, res );
+        verify( this.resource, times( 1 ) ).service( req, res );
     }
 }
