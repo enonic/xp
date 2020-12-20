@@ -1,8 +1,5 @@
 package com.enonic.xp.core.impl.content.index.processor;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -47,7 +44,7 @@ public class XDataConfigProcessorTest
     public void test_data()
         throws Exception
     {
-        final PatternIndexConfigDocument result = processForms( Arrays.asList( Form.create().build() ) );
+        final PatternIndexConfigDocument result = processForms( Form.create().build() );
 
         assertEquals( 1, result.getPathIndexConfigs().size() );
         assertEquals( IndexConfig.BY_TYPE, result.getConfigForPath( PropertyPath.from( EXTRA_DATA ) ) );
@@ -68,7 +65,7 @@ public class XDataConfigProcessorTest
             addFormItem( myTextLine ).
             build();
 
-        final PatternIndexConfigDocument result = processForms( Arrays.asList( form ) );
+        final PatternIndexConfigDocument result = processForms( form );
 
         assertEquals( 2, result.getPathIndexConfigs().size() );
         assertEquals( "htmlStripper",
@@ -77,18 +74,13 @@ public class XDataConfigProcessorTest
 
     }
 
-    private PatternIndexConfigDocument processForms( final List<Form> forms )
+    private PatternIndexConfigDocument processForms( final Form... forms )
     {
-        if ( forms == null && forms.size() > 0 )
-        {
-            return PatternIndexConfigDocument.create().build();
-        }
-
         final XDatas.Builder xDatasBuilder = XDatas.create();
 
-        for ( int i = 0; i < forms.size(); i++ )
+        for ( int i = 0; i < forms.length; i++ )
         {
-            xDatasBuilder.add( XData.create().form( forms.get( i ) ).name( XDataName.from( "appName:localName" + i ) ).build() );
+            xDatasBuilder.add( XData.create().form( forms[i] ).name( XDataName.from( "appName:localName" + i ) ).build() );
         }
 
         final XDatas xDatas = xDatasBuilder.build();
