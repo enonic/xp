@@ -16,7 +16,7 @@ public abstract class BaseXmlSerializerTest
         throws Exception
     {
         final InputStream stream =
-            Objects.requireNonNull( getClass().getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
+            Objects.requireNonNull( getClass().getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
         try (stream)
         {
             final String xml = new String( stream.readAllBytes(), StandardCharsets.UTF_8 );

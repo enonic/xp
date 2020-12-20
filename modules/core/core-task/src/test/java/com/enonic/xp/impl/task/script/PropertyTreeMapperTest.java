@@ -115,7 +115,7 @@ public class PropertyTreeMapperTest
         final String resource = name + ".json";
         final URL url = getClass().getResource( resource );
 
-        assertNotNull( url, "File [" + resource + "] not found" );
+        assertNotNull( url, "File [" + resource + "] not found" );
         final JsonNode expectedJson = MAPPER.readTree( url );
 
         final JsonMapGenerator generator = new JsonMapGenerator();

@@ -34,7 +34,7 @@ public class MacroContextMapperTest
         final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
         final URL url = getClass().getResource( resource );
 
-        assertNotNull( url, "File [" + resource + "] not found" );
+        assertNotNull( url, "File [" + resource + "] not found" );
         final JsonNode expectedJson = MAPPER.readTree( url );
 
         final JsonMapGenerator generator = new JsonMapGenerator();

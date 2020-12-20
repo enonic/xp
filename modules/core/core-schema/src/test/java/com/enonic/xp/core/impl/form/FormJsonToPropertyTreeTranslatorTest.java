@@ -161,7 +161,7 @@ public class FormJsonToPropertyTreeTranslatorTest
         final String resource = "/" + getClass().getName().replace( '.', '/' ) + "-" + name + ".json";
         final URL url = getClass().getResource( resource );
 
-        assertNotNull( url, "File [" + resource + "] not found" );
+        assertNotNull( url, "File [" + resource + "] not found" );
         return MAPPER.readTree( url );
     }
 

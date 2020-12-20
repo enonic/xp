@@ -165,7 +165,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
     private String load( final String name )
     {
         final InputStream stream =
-            Objects.requireNonNull( IssueMailMessageGenerator.class.getResourceAsStream( name ), "Resource file [" + name + "] not found" );
+            Objects.requireNonNull( IssueMailMessageGenerator.class.getResourceAsStream( name ), "Resource file [" + name + "] not found" );
         try (stream)
         {
             return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );

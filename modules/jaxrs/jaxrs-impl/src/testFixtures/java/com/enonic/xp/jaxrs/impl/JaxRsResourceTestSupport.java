@@ -112,7 +112,7 @@ public abstract class JaxRsResourceTestSupport
         throws Exception
     {
         final InputStream stream =
-            Objects.requireNonNull( getClass().getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
+            Objects.requireNonNull( getClass().getResourceAsStream( fileName ), "Resource file [" + fileName + "] not found" );
         try (stream)
         {
             return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );

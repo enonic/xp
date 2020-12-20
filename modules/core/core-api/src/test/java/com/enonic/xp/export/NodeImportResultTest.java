@@ -46,7 +46,7 @@ public class NodeImportResultTest
         expected += "addedNodes=[/], ";
         expected += "updateNodes=[/], ";
         expected += "importErrors=[ImportError{exception=java.lang.Exception, message='null'}], ";
-        expected += "exportedBinaries=[path [binary ref]]";
+        expected += "exportedBinaries=[path [binary ref]]";
         expected += "}";
 
         assertEquals( expected, result.toString() );
