@@ -146,6 +146,7 @@ public final class LocalTaskManagerImpl
                 break;
             default:
                 eventPublisher.publish( TaskEvents.updated( updatedInfo ) );
+                break;
         }
     }
 

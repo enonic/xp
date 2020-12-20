@@ -155,6 +155,7 @@ public class HtmlLinkProcessor
                         final String attachmentUrl = portalUrlService.attachmentUrl( attachmentUrlParams );
 
                         processedHtml = processedHtml.replaceFirst( Pattern.quote( match ), "\"" + attachmentUrl + "\"" );
+                        break;
                 }
             }
         }
