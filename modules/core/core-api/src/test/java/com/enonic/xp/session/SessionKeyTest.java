@@ -2,9 +2,9 @@ package com.enonic.xp.session;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import nl.jqno.equalsverifier.EqualsVerifier;
+
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class SessionKeyTest
 {
@@ -14,13 +14,7 @@ public class SessionKeyTest
         final SessionKey key1 = SessionKey.from( "1" );
         final SessionKey key2 = SessionKey.from( "2" );
 
-        assertEquals( key1, key1 );
-        assertEquals( key2, key2 );
-        assertTrue( !key1.equals( key2 ) );
-
-        assertEquals( key1.hashCode(), key1.hashCode() );
-        assertFalse( key1.hashCode() == key2.hashCode() );
-
+        assertNotEquals( key1, key2 );
     }
 
     @Test
@@ -29,11 +23,12 @@ public class SessionKeyTest
         final SessionKey key1 = SessionKey.generate();
         final SessionKey key2 = SessionKey.generate();
 
-        assertEquals( key1, key1 );
-        assertEquals( key2, key2 );
-        assertTrue( !key1.equals( key2 ) );
+        assertNotEquals( key1, key2 );
+    }
 
-        assertEquals( key1.hashCode(), key1.hashCode() );
-        assertFalse( key1.hashCode() == key2.hashCode() );
+    @Test
+    public void equalsContract()
+    {
+        EqualsVerifier.forClass( SessionKey.class ).withNonnullFields( "value" ).verify();
     }
 }
