@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
+import org.osgi.framework.Bundle;
 
 import com.google.common.io.ByteSource;
 import com.google.common.net.HttpHeaders;
@@ -30,10 +31,16 @@ import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.core.impl.site.SiteServiceImpl;
+import com.enonic.xp.core.internal.concurrent.RecurringJob;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.impl.task.LocalTaskManagerImpl;
+import com.enonic.xp.impl.task.TaskManagerCleanupScheduler;
+import com.enonic.xp.impl.task.TaskServiceImpl;
+import com.enonic.xp.impl.task.osgi.OsgiSupportMock;
+import com.enonic.xp.impl.task.script.NamedTaskFactory;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.Project;
@@ -55,6 +62,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public abstract class AbstractContentSynchronizerTest
     extends AbstractNodeTest
@@ -88,6 +96,8 @@ public abstract class AbstractContentSynchronizerTest
 
     protected ContentTypeServiceImpl contentTypeService;
 
+    protected TaskServiceImpl taskService;
+
     protected Context sourceContext;
 
     protected Context targetContext;
@@ -103,6 +113,7 @@ public abstract class AbstractContentSynchronizerTest
 
         setUpProjectService();
         setUpContentService();
+        setupTaskService();
     }
 
     private void setUpProjectService()
@@ -142,8 +153,7 @@ public abstract class AbstractContentSynchronizerTest
 
     private void setUpContentService()
     {
-
-        Map<String, List<String>> metadata = new HashMap<>();
+        final Map<String, List<String>> metadata = new HashMap<>();
         metadata.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpg" ) );
 
         final ExtractedData extractedData = ExtractedData.create().
@@ -194,6 +204,32 @@ public abstract class AbstractContentSynchronizerTest
         } );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
         contentService.initialize();
+    }
+
+    private void setupTaskService()
+    {
+        final Bundle bundle = OsgiSupportMock.mockBundle();
+        Mockito.when( bundle.getSymbolicName() ).thenReturn( "testBundle" );
+
+        final LocalTaskManagerImpl taskMan = new LocalTaskManagerImpl( Runnable::run, new TaskManagerCleanupSchedulerMock(), event -> {
+        } );
+        taskMan.activate();
+
+        NamedTaskFactory namedTaskFactory = mock( NamedTaskFactory.class );
+
+        this.taskService = new TaskServiceImpl( taskMan, namedTaskFactory );
+    }
+
+    private static class TaskManagerCleanupSchedulerMock
+        implements TaskManagerCleanupScheduler
+    {
+
+        @Override
+        public RecurringJob scheduleWithFixedDelay( final Runnable command )
+        {
+            command.run();
+            return mock( RecurringJob.class );
+        }
     }
 
     protected Content createContent( final ContentPath parent )

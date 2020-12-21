@@ -12,13 +12,17 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.content.SyncContentService;
+import com.enonic.xp.impl.server.rest.task.ProjectsSyncTask;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class ContentResourceTest
     extends ServerRestTestSupport
@@ -136,15 +140,34 @@ public class ContentResourceTest
         assertEquals( "{\"taskId\":\"task-id\"}", result );
     }
 
+    @Test
+    public void sync()
+        throws Exception
+    {
+        Mockito.when( taskService.submitTask( Mockito.isA( ProjectsSyncTask.class ), eq( "Sync all projects" ) ) ).thenReturn(
+            TaskId.from( "task-id" ) );
+
+        final MockRestResponse result = request().path( "content/syncAll" ).
+            entity( "", MediaType.APPLICATION_JSON_TYPE ).
+            post();
+
+        assertEquals( "{\"taskId\":\"task-id\"}", result.getDataAsString() );
+    }
+
     @Override
     protected Object getResourceInstance()
     {
         this.contentService = Mockito.mock( ContentService.class );
         this.taskService = Mockito.mock( TaskService.class );
 
+        final ProjectService projectService = Mockito.mock( ProjectService.class );
+        final SyncContentService syncContentService = Mockito.mock( SyncContentService.class );
+
         final ContentResource resource = new ContentResource();
         resource.setContentService( contentService );
         resource.setTaskService( taskService );
+        resource.setProjectService( projectService );
+        resource.setSyncContentService( syncContentService );
         return resource;
     }
 

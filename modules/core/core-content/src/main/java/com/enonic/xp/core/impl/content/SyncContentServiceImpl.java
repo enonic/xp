@@ -5,6 +5,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SyncContentService;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
@@ -20,19 +21,19 @@ import com.enonic.xp.schema.content.ContentTypeService;
 public class SyncContentServiceImpl
     implements SyncContentService
 {
-    private ContentService contentService;
+    private final ContentService contentService;
 
-    private ContentTypeService contentTypeService;
+    private final ContentTypeService contentTypeService;
 
-    private NodeService nodeService;
+    private final NodeService nodeService;
 
-    private EventPublisher eventPublisher;
+    private final EventPublisher eventPublisher;
 
-    private ContentNodeTranslator translator;
+    private final ContentNodeTranslator translator;
 
-    private ProjectService projectService;
+    private final ProjectService projectService;
 
-    private ContentSynchronizer contentSynchronizer;
+    private final ContentSynchronizer contentSynchronizer;
 
     @Activate
     public SyncContentServiceImpl( @Reference final ContentTypeService contentTypeService, @Reference final NodeService nodeService,
@@ -70,6 +71,16 @@ public class SyncContentServiceImpl
             eventPublisher( eventPublisher ).
             translator( translator ).
             contentSynchronizer( contentSynchronizer ).
+            build().
+            execute();
+    }
+
+    @Override
+    public void syncProject( final ProjectSyncParams params )
+    {
+        ProjectSyncCommand.create( params ).
+            contentSynchronizer( contentSynchronizer ).
+            projectService( projectService ).
             build().
             execute();
     }

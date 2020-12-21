@@ -21,11 +21,15 @@ import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.content.SyncContentService;
 import com.enonic.xp.impl.server.rest.model.ReprocessContentRequestJson;
 import com.enonic.xp.impl.server.rest.model.ReprocessContentResultJson;
+import com.enonic.xp.impl.server.rest.task.ProjectsSyncTask;
 import com.enonic.xp.impl.server.rest.task.ReprocessRunnableTask;
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 
@@ -40,6 +44,10 @@ public final class ContentResource
     private ContentService contentService;
 
     private TaskService taskService;
+
+    private ProjectService projectService;
+
+    private SyncContentService syncContentService;
 
     private static final Logger LOG = LoggerFactory.getLogger( ContentResource.class );
 
@@ -120,6 +128,18 @@ public final class ContentResource
             createTaskResult();
     }
 
+    @POST
+    @Path("syncAll")
+    public TaskResultJson syncAll()
+    {
+        final TaskId taskId = taskService.submitTask( ProjectsSyncTask.create().
+            projectService( projectService ).
+            syncContentService( syncContentService ).
+            build(), "Sync all projects" );
+
+        return new TaskResultJson( taskId );
+    }
+
     @SuppressWarnings("UnusedDeclaration")
     @Reference
     public void setContentService( final ContentService contentService )
@@ -133,4 +153,17 @@ public final class ContentResource
     {
         this.taskService = taskService;
     }
+
+    @Reference
+    public void setSyncContentService( final SyncContentService syncContentService )
+    {
+        this.syncContentService = syncContentService;
+    }
+
+    @Reference
+    public void setProjectService( final ProjectService projectService )
+    {
+        this.projectService = projectService;
+    }
+
 }

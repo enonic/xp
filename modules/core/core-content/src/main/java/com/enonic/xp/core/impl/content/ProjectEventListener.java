@@ -1,12 +1,9 @@
 package com.enonic.xp.core.impl.content;
 
-import java.time.Duration;
 import java.util.Map;
-import java.util.concurrent.Executors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.internal.concurrent.SimpleExecutor;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.project.Project;
@@ -24,6 +20,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.task.TaskService;
 
 @Component(immediate = true)
 public final class ProjectEventListener
@@ -31,27 +28,19 @@ public final class ProjectEventListener
 {
     private static final Logger LOG = LoggerFactory.getLogger( ProjectEventListener.class );
 
-    private ProjectService projectService;
+    private final ProjectService projectService;
 
-    private SimpleExecutor simpleExecutor;
+    private final TaskService taskService;
 
-    private ContentSynchronizer contentSynchronizer;
+    private final ContentSynchronizer contentSynchronizer;
 
     @Activate
-    public ProjectEventListener( @Reference final ProjectService projectService, @Reference final ContentSynchronizer contentSynchronizer )
+    public ProjectEventListener( @Reference final ProjectService projectService, @Reference final TaskService taskService,
+                                 @Reference final ContentSynchronizer contentSynchronizer )
     {
         this.projectService = projectService;
+        this.taskService = taskService;
         this.contentSynchronizer = contentSynchronizer;
-
-        this.simpleExecutor = new SimpleExecutor( Executors::newSingleThreadExecutor, "project-node-sync-thread",
-                                                  e -> LOG.error( "Project node sync failed", e ) );
-    }
-
-    @Deactivate
-    public void deactivate()
-    {
-        this.simpleExecutor.shutdownAndAwaitTermination( Duration.ZERO, neverCommenced -> {
-        } );
     }
 
     @Override
@@ -74,7 +63,7 @@ public final class ProjectEventListener
         final Map<String, Object> nodes = event.getData();
         final String projectName = (String) nodes.get( "name" );
 
-        this.simpleExecutor.execute( () -> createAdminContext().runWith( () -> handleProjectCreated( ProjectName.from( projectName ) ) ) );
+        createAdminContext().runWith( () -> handleProjectCreated( ProjectName.from( projectName ) ) );
 
     }
 
@@ -88,10 +77,14 @@ public final class ProjectEventListener
 
             if ( parentProject != null )
             {
-                contentSynchronizer.sync( ContentSyncParams.create().
+                final ContentSyncTask syncTask = ContentSyncTask.create().
                     sourceProject( parentProject.getName() ).
                     targetProject( project.getName() ).
-                    build() );
+                    contentSynchronizer( contentSynchronizer ).
+                    build();
+
+                taskService.submitTask( syncTask,
+                                        String.format( "sync [%s] project from parent [%s]", project.getName(), parentProject.getName() ) );
             }
         }
     }

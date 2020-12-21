@@ -1,7 +1,6 @@
 package com.enonic.xp.core.content;
 
 import java.util.Set;
-import java.util.concurrent.RejectedExecutionException;
 
 import org.assertj.core.util.Sets;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +34,7 @@ public class ProjectEventListenerTest
         super.setUpNode();
 
         final ParentContentSynchronizer synchronizer = new ParentContentSynchronizer( contentService, mediaInfoService );
-        listener = new ProjectEventListener( this.projectService, synchronizer );
+        listener = new ProjectEventListener( this.projectService, this.taskService, synchronizer );
 
         eventCaptor = ArgumentCaptor.forClass( Event.class );
         handledEvents = Sets.newHashSet();
@@ -69,17 +68,6 @@ public class ProjectEventListenerTest
 
         compareSynched( sourceChild1, targetChild1 );
         compareSynched( sourceChild2, targetChild2 );
-    }
-
-    @Test
-    public void testDeactivated()
-    {
-        sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
-
-        listener.deactivate();
-
-        assertThrows( RejectedExecutionException.class, this::handleEvents );
-
     }
 
     @Test
