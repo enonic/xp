@@ -1,5 +1,5 @@
 dependencies {
-    compile project( ':web:web-api' )
+    implementation project( ':web:web-api' )
     implementation project( ':core:core-internal' )
 
     testImplementation( testFixtures( project(":web:web-jetty") ) )

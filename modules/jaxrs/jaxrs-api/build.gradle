@@ -1,7 +1,7 @@
 dependencies {
-    compile project( ':web:web-api' )
-    compile "jakarta.ws.rs:jakarta.ws.rs-api:${jaxrsApiVersion}"
-    compile "jakarta.annotation:jakarta.annotation-api:${jakartaAnnotationApiVersion}"
+    api project( ':web:web-api' )
+    api "jakarta.ws.rs:jakarta.ws.rs-api:${jaxrsApiVersion}"
+    api "jakarta.annotation:jakarta.annotation-api:${jakartaAnnotationApiVersion}"
 }
 
 jar {

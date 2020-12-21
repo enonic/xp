@@ -1,6 +1,6 @@
 dependencies {
-    compile project( ':web:web-api' )
-    compile project( ':script:script-api' )
+    api project( ':web:web-api' )
+    api project( ':script:script-api' )
 }
 
 jar {

@@ -1,5 +1,5 @@
 dependencies {
-    compile project( ':jaxrs:jaxrs-api' )
+    implementation project( ':jaxrs:jaxrs-api' )
 
     testImplementation( testFixtures( project(":jaxrs:jaxrs-impl") ) )
     testImplementation( testFixtures( project(":core:core-api") ) )

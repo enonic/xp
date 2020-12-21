@@ -28,7 +28,6 @@ import com.enonic.xp.launcher.impl.config.ConfigProperties;
 import static java.util.Objects.requireNonNullElse;
 
 public class FrameworkService
-    implements SharedConstants
 {
     private static final Logger LOG = LoggerFactory.getLogger( FrameworkService.class );
 
@@ -75,7 +74,7 @@ public class FrameworkService
         updateSystemPackagesExtra();
 
         final Map<String, Object> map = new HashMap<>();
-        map.put( LOG_LOGGER_PROP, new FrameworkLogger() );
+        map.put( SharedConstants.LOG_LOGGER_PROP, new FrameworkLogger() );
         map.putAll( this.config );
 
         this.felix = new Felix( map );
@@ -83,16 +82,16 @@ public class FrameworkService
 
     private void updateBootDelegation()
     {
-        final String internalProp = requireNonNullElse( config.get( INTERNAL_OSGI_BOOT_DELEGATION ), "" );
-        final String frameworkProp = requireNonNullElse( config.get( FRAMEWORK_BOOTDELEGATION ), "" );
-        this.config.put( FRAMEWORK_BOOTDELEGATION, joinPackages( internalProp, frameworkProp ) );
+        final String internalProp = requireNonNullElse( config.get( SharedConstants.INTERNAL_OSGI_BOOT_DELEGATION ), "" );
+        final String frameworkProp = requireNonNullElse( config.get( SharedConstants.FRAMEWORK_BOOTDELEGATION ), "" );
+        this.config.put( SharedConstants.FRAMEWORK_BOOTDELEGATION, joinPackages( internalProp, frameworkProp ) );
     }
 
     private void updateSystemPackagesExtra()
     {
-        final String internalProp = requireNonNullElse( this.config.get( INTERNAL_OSGI_SYSTEM_PACKAGES ), "" );
-        final String frameworkProp = requireNonNullElse( this.config.get( FRAMEWORK_SYSTEMPACKAGES_EXTRA ), "" );
-        this.config.put( FRAMEWORK_SYSTEMPACKAGES_EXTRA, joinPackages( internalProp, frameworkProp ) );
+        final String internalProp = requireNonNullElse( this.config.get( SharedConstants.INTERNAL_OSGI_SYSTEM_PACKAGES ), "" );
+        final String frameworkProp = requireNonNullElse( this.config.get( SharedConstants.FRAMEWORK_SYSTEMPACKAGES_EXTRA ), "" );
+        this.config.put( SharedConstants.FRAMEWORK_SYSTEMPACKAGES_EXTRA, joinPackages( internalProp, frameworkProp ) );
     }
 
     private String joinPackages( final String v1, final String v2 )
@@ -144,13 +143,13 @@ public class FrameworkService
 
     private void setBundleStartLevel()
     {
-        final int level = Integer.parseInt( this.config.get( XP_OSGI_STARTLEVEL_BUNDLE ) );
+        final int level = Integer.parseInt( this.config.get( SharedConstants.XP_OSGI_STARTLEVEL_BUNDLE ) );
         getStartLevelService().setInitialBundleStartLevel( level );
     }
 
     private void setRunningStartLevel()
     {
-        final int level = Integer.parseInt( this.config.get( XP_OSGI_STARTLEVEL ) );
+        final int level = Integer.parseInt( this.config.get( SharedConstants.XP_OSGI_STARTLEVEL ) );
         setStartLevel( level, event -> serverStarted() );
     }
 

@@ -65,7 +65,6 @@ addBundle( "com.hazelcast:hazelcast-client:${hazelcastVersion}", 8 )
 addBundle( "com.hazelcast:hazelcast-kubernetes:1.5.3", 8 )
 addBundle( 'org.jparsec:jparsec:3.1', 8 )
 addBundle( project( ':repack:repack-elasticsearch' ), 8 )
-addBundle( project( ':repack:repack-resteasy' ), 8 )
 
 addBundle( project( ':core:core-internal' ), 9 )
 

@@ -1,7 +1,5 @@
 dependencies {
-    compile project( ':core:core-api' )
-    compile project( ':script:script-api' )
-    compile project( ':portal:portal-api' )
+    implementation project( ':portal:portal-api' )
     implementation project( ':core:core-internal' )
     implementation "com.hazelcast:hazelcast:${hazelcastVersion}"
 
@@ -10,6 +8,7 @@ dependencies {
     testImplementation( testFixtures( project(":core:core-api") ) )
     testImplementation( testFixtures( project(":core:core-app") ) )
 
+    testFixturesApi "org.osgi:osgi.core:${osgiVersion}"
     testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
 }
 

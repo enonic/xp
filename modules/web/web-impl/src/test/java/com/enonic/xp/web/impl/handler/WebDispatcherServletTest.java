@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.portal.impl.exception.ExceptionRendererImpl;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebResponse;
@@ -38,7 +37,7 @@ public class WebDispatcherServletTest
         this.servlet = new WebDispatcherServlet( new WebDispatcherImpl() );
         this.servlet.addWebHandler( this.handler );
         this.servlet.setExceptionMapper( new ExceptionMapperImpl() );
-        this.servlet.setExceptionRenderer( new ExceptionRendererImpl( null, null, null, null, null ) );
+        this.servlet.setExceptionRenderer( ( req, cause ) -> WebResponse.create().status( HttpStatus.NOT_FOUND ).build() );
         this.servlet.setWebSocketContextFactory( Mockito.mock( WebSocketContextFactory.class ) );
         this.servlet.setResponseSerializationService( new ResponseSerializationServiceImpl() );
 

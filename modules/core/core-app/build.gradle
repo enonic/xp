@@ -1,8 +1,9 @@
 dependencies {
-    compile project( ':core:core-api' )
+    implementation project( ':core:core-api' )
     implementation project( ':core:core-internal' )
 
-    testFixturesApi(  'org.ops4j.pax.tinybundles:tinybundles:3.0.0' )
+    testFixturesApi project( ':core:core-api' )
+    testFixturesApi( 'org.ops4j.pax.tinybundles:tinybundles:3.0.0' )
     testFixturesImplementation "org.apache.felix:org.apache.felix.framework:${felixVersion}"
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"

@@ -1,6 +1,5 @@
 dependencies {
-    compile project( ':core:core-api' )
-    compile project( ':web:web-api' )
+    implementation project( ':web:web-api' )
     implementation "io.dropwizard.metrics:metrics-jvm:${dropwizardMetricsVersion}"
     implementation "io.dropwizard.metrics:metrics-json:${dropwizardMetricsVersion}"
 

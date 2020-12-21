@@ -1,5 +1,5 @@
 dependencies {
-    compile project( ':core:core-api' )
+    implementation project( ':core:core-api' )
     compile ('org.elasticsearch:elasticsearch:2.4.6') {
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-cbor'
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-yaml'
@@ -12,6 +12,7 @@ dependencies {
 
     implementation "org.apache.commons:commons-compress:${commonsCompressVersion}"
 
+    testFixturesApi project( ':core:core-api' )
     testFixturesImplementation( project(":core:core-audit") )
     testFixturesImplementation( testFixtures( project(":core:core-blobstore") ) )
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"

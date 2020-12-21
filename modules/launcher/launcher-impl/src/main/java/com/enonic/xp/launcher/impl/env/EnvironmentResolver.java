@@ -8,7 +8,6 @@ import java.util.stream.Stream;
 import com.enonic.xp.launcher.impl.SharedConstants;
 
 public final class EnvironmentResolver
-    implements SharedConstants
 {
     private final SystemProperties properties;
 
@@ -27,7 +26,7 @@ public final class EnvironmentResolver
 
     private File resolveInstallDir()
     {
-        final String path = this.properties.get( XP_INSTALL_DIR );
+        final String path = this.properties.get( SharedConstants.XP_INSTALL_DIR );
         if ( path == null || path.isEmpty() )
         {
             return null;
@@ -38,8 +37,8 @@ public final class EnvironmentResolver
 
     private File resolveHomeDir( final File installDir )
     {
-        final String propValue = Objects.requireNonNullElse( this.properties.get( XP_HOME_DIR ), "" );
-        final String envValue = Objects.requireNonNullElse( this.properties.getEnv( XP_HOME_DIR_ENV ), "" );
+        final String propValue = Objects.requireNonNullElse( this.properties.get( SharedConstants.XP_HOME_DIR ), "" );
+        final String envValue = Objects.requireNonNullElse( this.properties.getEnv( SharedConstants.XP_HOME_DIR_ENV ), "" );
 
         return Stream.of( propValue, envValue ).filter( Predicate.not( String::isEmpty ) ).findFirst().
             map( File::new ).orElseGet( () -> installDir != null ? new File( installDir, "home" ) : null );

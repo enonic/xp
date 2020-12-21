@@ -1,5 +1,5 @@
 dependencies {
-    compile project( ':jaxrs:jaxrs-api' )
+    implementation project( ':jaxrs:jaxrs-api' )
     implementation "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:${jacksonVersion}"
     implementation ( "org.jboss.resteasy:resteasy-jaxrs:${resteasyVersion}" ) {
         exclude group: 'org.jboss.spec.javax.annotation'
@@ -9,6 +9,7 @@ dependencies {
         exclude group: 'com.github.stephenc.jcip'
     }
 
+    testFixturesApi project( ':jaxrs:jaxrs-api' )
     testFixturesImplementation ( "org.jboss.resteasy:resteasy-jaxrs:${resteasyVersion}" ) {
         exclude group: 'org.jboss.spec.javax.annotation'
         exclude group: 'org.jboss.spec.javax.xml.bind'
@@ -24,5 +25,10 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP JaxRs - Impl' )
+    bnd( 'Bundle-Name': 'Enonic XP JaxRs - Impl',
+         'Export-Package': 'javax.ws.rs.*',
+         'Import-Package': '*;resolution:=optional',
+         'Private-Package': 'org.jboss.resteasy.*' + ',' +
+             'org.reactivestreams.*' + ',' +
+             'META-INF.services.*;-split-package:=merge-first' )
 }

@@ -1,14 +1,7 @@
 dependencies {
-    compile project( ':admin:admin-api' )
+    implementation project( ':admin:admin-api' )
     implementation project( ':core:core-internal' )
 
-    testImplementation ( "org.jboss.resteasy:resteasy-jaxrs:${resteasyVersion}" ) {
-        exclude group: 'org.jboss.spec.javax.annotation'
-        exclude group: 'org.jboss.spec.javax.xml.bind'
-        exclude group: 'org.jboss.spec.javax.ws.rs'
-        exclude group: 'org.apache.httpcomponents'
-        exclude group: 'com.github.stephenc.jcip'
-    }
     testImplementation( testFixtures( project(":core:core-api") ) )
     testImplementation( testFixtures( project(":core:core-app") ) )
     testImplementation( testFixtures( project(":web:web-api") ) )

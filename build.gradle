@@ -16,7 +16,6 @@ allprojects {
     group = 'com.enonic.xp'
 
     repositories {
-        mavenLocal()
         jcenter()
     }
 
