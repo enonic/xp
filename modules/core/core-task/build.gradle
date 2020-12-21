@@ -9,6 +9,8 @@ dependencies {
     testImplementation( project(":portal:portal-impl")  )
     testImplementation( testFixtures( project(":core:core-api") ) )
     testImplementation( testFixtures( project(":core:core-app") ) )
+
+    testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
 }
 
 jar {

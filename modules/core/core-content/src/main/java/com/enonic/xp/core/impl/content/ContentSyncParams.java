@@ -58,25 +58,25 @@ public final class ContentSyncParams
 
         private boolean includeChildren = true;
 
-        public Builder contentId( ContentId contentId )
+        public Builder contentId( final ContentId contentId )
         {
             this.contentId = contentId;
             return this;
         }
 
-        public Builder sourceProject( ProjectName sourceProject )
+        public Builder sourceProject( final ProjectName sourceProject )
         {
             this.sourceProject = sourceProject;
             return this;
         }
 
-        public Builder targetProject( ProjectName targetProject )
+        public Builder targetProject( final ProjectName targetProject )
         {
             this.targetProject = targetProject;
             return this;
         }
 
-        public Builder includeChildren( boolean includeChildren )
+        public Builder includeChildren( final boolean includeChildren )
         {
             this.includeChildren = includeChildren;
             return this;

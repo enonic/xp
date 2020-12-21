@@ -6,4 +6,6 @@ import com.enonic.xp.annotation.PublicApi;
 public interface SyncContentService
 {
     void resetInheritance( final ResetContentInheritParams params );
+
+    void syncProject( final ProjectSyncParams params );
 }

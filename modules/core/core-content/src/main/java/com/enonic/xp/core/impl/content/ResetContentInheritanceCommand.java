@@ -105,7 +105,7 @@ final class ResetContentInheritanceCommand
 
         if ( targetProject.getParent() == null )
         {
-            throw new IllegalArgumentException( String.format( "Project with name [%s] has no parent", targetProject.getParent() ) );
+            throw new IllegalArgumentException( String.format( "Project with name [%s] has no parent", targetProject.getName() ) );
         }
         final Project sourceProject = createAdminContext().callWith( () -> projectService.get( targetProject.getParent() ) );
 

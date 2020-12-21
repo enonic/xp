@@ -8,7 +8,9 @@ dependencies {
     compile project( ':core:core-site' )
     compile project( ':core:core-project' )
 
-    testImplementation( testFixtures( project(":core:core-blobstore") ) )
-    testImplementation( testFixtures( project(":core:core-repo") ) )
-    testImplementation( testFixtures( project(":core:core-security") ) )
+    testImplementation( testFixtures( project( ":core:core-blobstore" ) ) )
+    testImplementation( testFixtures( project( ":core:core-repo" ) ) )
+    testImplementation( testFixtures( project( ":core:core-security" ) ) )
+    testImplementation( testFixtures( project( ":core:core-task" ) ) )
+    testImplementation( testFixtures( project( ":core:core-internal" ) ) )
 }
