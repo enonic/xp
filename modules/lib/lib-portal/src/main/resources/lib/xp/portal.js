@@ -56,7 +56,7 @@ exports.imageUrl = function (params) {
  * @param {object} params Input parameters as JSON.
  * @param {string} [params.id] Id to the page.
  * @param {string} [params.path] Path to the page.
- * @param {string} [params.component] Path to the component. If not set, the current path is set.
+ * @param {string} [params.component] Path to the component. If not set, the current path is set.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
@@ -75,9 +75,9 @@ exports.componentUrl = function (params) {
  * @param {object} params Input parameters as JSON.
  * @param {string} [params.id] Id to the content holding the attachment.
  * @param {string} [params.path] Path to the content holding the attachment.
- * @param {string} [params.name] Name to the attachment.
- * @param {string} [params.label=source] Label of the attachment.
- * @param {boolean} [params.download=false] Set to true if the disposition header should be set to attachment.
+ * @param {string} [params.name] Name to the attachment.
+ * @param {string} [params.label=source] Label of the attachment.
+ * @param {boolean} [params.download=false] Set to true if the disposition header should be set to attachment.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *

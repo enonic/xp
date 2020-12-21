@@ -37,7 +37,7 @@ public final class TaskInfo
     {
         Preconditions.checkNotNull( builder.id, "TaskId cannot be null" );
         id = builder.id;
-        name = builder.name == null || builder.name.trim().isEmpty() ? "task-" + builder.id.toString() : builder.name;
+        name = builder.name == null || builder.name.isBlank() ? "task-" + builder.id.toString() : builder.name;
         state = builder.state == null ? TaskState.WAITING : builder.state;
         description = builder.description == null ? "" : builder.description;
         progress = builder.progress == null ? TaskProgress.EMPTY : builder.progress;

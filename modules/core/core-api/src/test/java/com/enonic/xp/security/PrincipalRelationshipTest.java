@@ -2,9 +2,10 @@ package com.enonic.xp.security;
 
 import org.junit.jupiter.api.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PrincipalRelationshipTest
 {
@@ -106,19 +107,8 @@ public class PrincipalRelationshipTest
     }
 
     @Test
-    public void testEquals()
-        throws Exception
+    void equalsContract()
     {
-        PrincipalRelationship rel = PrincipalRelationship.from( PrincipalKey.ofGroup( IdProviderKey.system(), "group" ) ).
-            to( PrincipalKey.ofUser( IdProviderKey.system(), "user" ) );
-        PrincipalRelationship rel2 = PrincipalRelationship.from( PrincipalKey.ofGroup( IdProviderKey.system(), "group" ) ).
-            to( PrincipalKey.ofUser( IdProviderKey.system(), "user" ) );
-
-        assertTrue( rel != rel2 );
-        assertTrue( rel.getTo() != rel2.getTo() );
-        assertTrue( rel.getFrom() != rel2.getFrom() );
-        assertEquals( rel, rel2 );
-        assertEquals( rel.hashCode(), rel2.hashCode() );
+        EqualsVerifier.forClass( PrincipalRelationship.class ).verify();
     }
-
 }

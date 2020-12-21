@@ -1,7 +1,5 @@
 package com.enonic.xp.lib.repo;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

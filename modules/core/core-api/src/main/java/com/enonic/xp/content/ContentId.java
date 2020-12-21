@@ -36,7 +36,7 @@ public final class ContentId
     public static ContentId from( final String id )
     {
         Preconditions.checkNotNull( id, "ContentId cannot be null" );
-        Preconditions.checkArgument( !id.trim().isEmpty(), "ContentId cannot be blank" );
+        Preconditions.checkArgument( !id.isBlank(), "ContentId cannot be blank" );
         return new ContentId( id );
     }
 

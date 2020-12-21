@@ -61,7 +61,7 @@ public class ContentNodeTranslator
             }
             catch ( final Exception e )
             {
-                LOG.error( "Failed to translate node '" + node.path() + "' [" + node.id().toString() + "] to content", e );
+                LOG.error( "Failed to translate node '" + node.path() + "' [" + node.id().toString() + "] to content", e );
             }
         }
 

@@ -113,7 +113,7 @@ public class NodeImportResult
 
         public Builder addBinary( final String path, final BinaryReference binaryReference )
         {
-            this.exportedBinaries.add( path + " [" + binaryReference + "]" );
+            this.exportedBinaries.add( path + " [" + binaryReference + "]" );
             return this;
         }
 

@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
@@ -153,19 +152,19 @@ public class ServletRequestUrlHelperTest
         final VirtualHost vhost = mock( VirtualHost.class );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( vhost );
 
-        Mockito.when( vhost.getTarget() ).thenReturn( "/" );
-        Mockito.when( vhost.getSource() ).thenReturn( "/admin" );
+        when( vhost.getTarget() ).thenReturn( "/" );
+        when( vhost.getSource() ).thenReturn( "/admin" );
 
         final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( "/path/to/page" );
         assertEquals( "/admin/path/to/page", rewritingResult.getRewrittenUri() );
         assertFalse( rewritingResult.isOutOfScope() );
 
-        Mockito.when( vhost.getTarget() ).thenReturn( "/root/to/site" );
+        when( vhost.getTarget() ).thenReturn( "/root/to/site" );
         final UriRewritingResult rewritingResult2 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" );
         assertEquals( "/path/to/page", rewritingResult2.getRewrittenUri() );
         assertTrue( rewritingResult2.isOutOfScope() );
 
-        Mockito.when( vhost.getTarget() ).thenReturn( "/path/to" );
+        when( vhost.getTarget() ).thenReturn( "/path/to" );
         final UriRewritingResult rewritingResult3 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" );
         assertEquals( "/admin/page", rewritingResult3.getRewrittenUri() );
         assertFalse( rewritingResult3.isOutOfScope() );

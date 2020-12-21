@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.json.issue;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -72,13 +73,13 @@ public class IssueJson
 
     public String getCreator()
     {
-        return this.issue.getCreator() != null ? this.issue.getCreator().toString() : null;
+        return Objects.toString( this.issue.getCreator(), null );
 
     }
 
     public String getModifier()
     {
-        return this.issue.getModifier() != null ? this.issue.getModifier().toString() : null;
+        return Objects.toString( this.issue.getModifier(), null );
     }
 
     public List<String> getApproverIds()

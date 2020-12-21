@@ -1,5 +1,6 @@
 package com.enonic.xp.session;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -11,7 +12,7 @@ public final class SessionKey
 
     private SessionKey( final String value )
     {
-        this.value = value;
+        this.value = Objects.requireNonNull( value );
     }
 
     @Override

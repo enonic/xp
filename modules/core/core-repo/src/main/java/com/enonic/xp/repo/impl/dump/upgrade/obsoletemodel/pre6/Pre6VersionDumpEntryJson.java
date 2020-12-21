@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.dump.upgrade.obsoletemodel.pre6;
 
 
 import java.time.Instant;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -66,8 +67,8 @@ public class Pre6VersionDumpEntryJson
     {
         return Pre6VersionDumpEntryJson.create().
             nodePath( meta.getNodePath().toString() ).
-            timestamp( meta.getTimestamp() != null ? meta.getTimestamp().toString() : null ).
-            version( meta.getVersion() != null ? meta.getVersion().toString() : null ).
+            timestamp( Objects.toString( meta.getTimestamp(), null ) ).
+            version( Objects.toString( meta.getVersion(), null ) ).
             nodeBlobKey( meta.getNodeVersionKey().getNodeBlobKey().toString() ).
             indexConfigBlobKey( meta.getNodeVersionKey().getIndexConfigBlobKey().toString() ).
             accessControlBlobKey( meta.getNodeVersionKey().getAccessControlBlobKey().toString() ).

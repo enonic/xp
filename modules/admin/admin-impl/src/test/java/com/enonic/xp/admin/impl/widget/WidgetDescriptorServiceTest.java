@@ -22,6 +22,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WidgetDescriptorServiceTest
@@ -150,7 +151,7 @@ public class WidgetDescriptorServiceTest
         throws Exception
     {
         final WidgetDescriptor allowedWidget = this.service.getByKey( DescriptorKey.from( "app:d" ) );
-        assertTrue( allowedWidget == widgetDescriptor4 );
+        assertSame( allowedWidget, widgetDescriptor4 );
 
         final WidgetDescriptor unknownWidget = this.service.getByKey( DescriptorKey.from( "app:unknown" ) );
         assertNull( unknownWidget );

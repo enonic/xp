@@ -97,6 +97,7 @@ public final class LoginHandler
                 case SESSION:
                 default:
                     createSession( authInfo );
+                    break;
             }
 
             return new LoginResultMapper( authInfo );

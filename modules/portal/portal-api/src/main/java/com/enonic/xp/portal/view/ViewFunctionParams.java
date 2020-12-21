@@ -82,7 +82,7 @@ public final class ViewFunctionParams
             return value;
         }
 
-        throw new IllegalArgumentException( "Parameter [" + name + "] is required for view function [" + this.name + "]" );
+        throw new IllegalArgumentException( "Parameter [" + name + "] is required for view function [" + this.name + "]" );
     }
 
     public <T> T getValue( final String name, final Class<T> source, final T defValue )

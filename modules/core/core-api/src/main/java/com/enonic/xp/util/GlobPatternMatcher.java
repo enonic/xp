@@ -133,6 +133,7 @@ public class GlobPatternMatcher
                     break;
                 default:
                     sb.append( ch );
+                    break;
             }
         }
         return sb.toString();
