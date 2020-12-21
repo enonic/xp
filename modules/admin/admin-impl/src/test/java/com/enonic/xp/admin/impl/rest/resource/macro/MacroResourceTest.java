@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
@@ -226,7 +225,7 @@ public class MacroResourceTest
         when( mockRequest.getScheme() ).thenReturn( "http" );
         when( mockRequest.getServerPort() ).thenReturn( 80 );
         when( mockRequest.getHeaderNames() ).thenReturn( Collections.emptyEnumeration() );
-        ResteasyProviderFactory.getContextDataMap().put( HttpServletRequest.class, mockRequest );
+        this.setHttpRequest( mockRequest );
 
         String response = request().path( "macro/preview" ).
             entity( readFromFile( "preview_macro_params.json" ), MediaType.APPLICATION_JSON_TYPE ).

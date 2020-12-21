@@ -1,5 +1,5 @@
 dependencies {
-    compile project( ':core:core-api' )
+    implementation project( ':core:core-api' )
 
     testImplementation ('org.jvnet.mock-javamail:mock-javamail:1.9') {
         exclude group: 'javax.mail'

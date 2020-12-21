@@ -29,17 +29,7 @@ final class JaxRsDispatcher
     void init( final ServletContext context )
         throws ServletException
     {
-        final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader( ServletContainerDispatcher.class.getClassLoader() );
-
-        try
-        {
-            doInit( context );
-        }
-        finally
-        {
-            Thread.currentThread().setContextClassLoader( oldLoader );
-        }
+        doInit( context );
     }
 
     private void doInit( final ServletContext context )

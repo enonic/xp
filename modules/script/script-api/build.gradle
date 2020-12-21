@@ -1,5 +1,5 @@
 dependencies {
-    compile project( ':core:core-api' )
+    api project( ':core:core-api' )
 }
 
 jar {

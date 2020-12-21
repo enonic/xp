@@ -1,5 +1,5 @@
 dependencies {
-    compile ('com.google.guava:guava:26.0-jre') {
+    api ('com.google.guava:guava:26.0-jre') {
         exclude group: 'com.google.code.findbugs'
     }
     compile "commons-lang:commons-lang:${commonsLangVersion}" // remove in XP 8
@@ -7,8 +7,8 @@ dependencies {
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
     compile 'org.jparsec:jparsec:3.1'
     compile "commons-io:commons-io:${commonsIoVersion}" // remove in XP 8
-    compile 'org.osgi:osgi.core:7.0.0'
-    compile 'org.osgi:osgi.cmpn:7.0.0'
+    api "org.osgi:osgi.core:${osgiVersion}"
+    compile "org.osgi:osgi.cmpn:${osgiVersion}"
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
     compile "com.sun.mail:jakarta.mail:${jakartaMailVersion}"
     compile "io.dropwizard.metrics:metrics-core:${dropwizardMetricsVersion}"

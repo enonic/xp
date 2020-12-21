@@ -1,8 +1,8 @@
 dependencies {
-    compile project( ':launcher:launcher-api' )
-    implementation 'org.osgi:osgi.core:7.0.0'
-    implementation 'org.osgi:osgi.cmpn:7.0.0'
-    compile "org.apache.felix:org.apache.felix.framework:${felixVersion}"
+    implementation project( ':launcher:launcher-api' )
+    implementation "org.osgi:osgi.core:${osgiVersion}"
+    implementation "org.osgi:osgi.cmpn:${osgiVersion}"
+    implementation "org.apache.felix:org.apache.felix.framework:${felixVersion}"
     implementation 'org.apache.felix:org.apache.felix.utils:1.11.6'
 
     runtimeOnly ('org.apache.felix:org.apache.felix.log:1.2.4') {

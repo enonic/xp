@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.resteasy.core.Dispatcher;
 import org.jboss.resteasy.mock.MockDispatcherFactory;
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -151,5 +152,10 @@ public abstract class JaxRsResourceTestSupport
     protected final RestRequestBuilder request()
     {
         return new RestRequestBuilder( this.dispatcher ).path( this.basePath );
+    }
+
+    protected void setHttpRequest( final HttpServletRequest request )
+    {
+        ResteasyProviderFactory.getContextDataMap().put( HttpServletRequest.class, request );
     }
 }

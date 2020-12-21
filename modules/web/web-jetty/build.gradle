@@ -1,5 +1,5 @@
 dependencies {
-    compile project( ':web:web-api' )
+    implementation project( ':web:web-api' )
     implementation project( ':core:core-internal' )
     implementation "org.eclipse.jetty:jetty-server:${jettyVersion}"
     implementation "org.eclipse.jetty:jetty-servlet:${jettyVersion}"
@@ -13,6 +13,7 @@ dependencies {
     implementation "jakarta.annotation:jakarta.annotation-api:${jakartaAnnotationApiVersion}"
     implementation "io.dropwizard.metrics:metrics-jetty9:${dropwizardMetricsVersion}"
 
+    testFixturesApi( project(":web:web-api") )
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
     testFixturesImplementation "org.eclipse.jetty:jetty-server:${jettyVersion}"

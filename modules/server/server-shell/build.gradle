@@ -1,5 +1,5 @@
 dependencies {
-    compile project( ':core:core-api' )
+    implementation project( ':core:core-api' )
     implementation 'org.apache.felix:org.apache.felix.gogo.command:0.16.0'
     implementation 'org.apache.felix:org.apache.felix.gogo.runtime:0.16.2'
     implementation 'org.apache.felix:org.apache.felix.gogo.shell:0.12.0'

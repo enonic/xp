@@ -1,6 +1,6 @@
 dependencies {
-    compile project( ':portal:portal-api' )
-    compile project( ':jaxrs:jaxrs-api' )
+    api project( ':portal:portal-api' )
+    api project( ':jaxrs:jaxrs-api' )
 }
 
 jar {

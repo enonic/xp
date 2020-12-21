@@ -1,3 +1,4 @@
 dependencies {
-    compile project( ':launcher:launcher-impl' )
+    implementation project( ':launcher:launcher-api' )
+    implementation project( ':launcher:launcher-impl' )
 }

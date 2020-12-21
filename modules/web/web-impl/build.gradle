@@ -1,7 +1,6 @@
 dependencies {
-    compile project( ':web:web-api' )
+    implementation project( ':web:web-api' )
 
-    testImplementation( project(":portal:portal-impl" ) )
     testImplementation( testFixtures( project(":web:web-jetty") ) )
 }
 

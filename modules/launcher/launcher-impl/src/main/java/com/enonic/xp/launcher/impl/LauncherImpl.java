@@ -21,7 +21,7 @@ import com.enonic.xp.launcher.impl.provision.ProvisionActivator;
 import com.enonic.xp.launcher.impl.util.BannerPrinter;
 
 public final class LauncherImpl
-    implements SharedConstants, Launcher
+    implements Launcher
 {
     private final String[] args;
 
@@ -166,7 +166,7 @@ public final class LauncherImpl
 
     private void setRunMode( final String mode )
     {
-        System.setProperty( XP_RUN_MODE, mode );
+        System.setProperty( SharedConstants.XP_RUN_MODE, mode );
     }
 
     @Override

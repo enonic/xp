@@ -8,7 +8,7 @@ import com.enonic.xp.launcher.LauncherException;
 import com.enonic.xp.launcher.impl.SharedConstants;
 
 final class EnvironmentImpl
-    implements Environment, SharedConstants
+    implements Environment
 {
     protected File homeDir;
 
@@ -29,8 +29,8 @@ final class EnvironmentImpl
     @Override
     public void validate()
     {
-        checkDir( "Install", XP_INSTALL_DIR, this.installDir );
-        checkDir( "Home", XP_HOME_DIR, this.homeDir );
+        checkDir( "Install", SharedConstants.XP_INSTALL_DIR, this.installDir );
+        checkDir( "Home", SharedConstants.XP_HOME_DIR, this.homeDir );
     }
 
     private void checkDir( final String message, final String prop, final File dir )
@@ -46,8 +46,8 @@ final class EnvironmentImpl
     public Map<String, String> getAsMap()
     {
         final Map<String, String> map = new HashMap<>();
-        map.put( XP_HOME_DIR, this.homeDir.getAbsolutePath() );
-        map.put( XP_INSTALL_DIR, this.installDir.getAbsolutePath() );
+        map.put( SharedConstants.XP_HOME_DIR, this.homeDir.getAbsolutePath() );
+        map.put( SharedConstants.XP_INSTALL_DIR, this.installDir.getAbsolutePath() );
         return map;
     }
 }

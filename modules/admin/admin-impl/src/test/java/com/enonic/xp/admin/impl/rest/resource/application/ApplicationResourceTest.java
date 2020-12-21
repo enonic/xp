@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
@@ -150,7 +149,7 @@ public class ApplicationResourceTest
         when( mockRequest.getServerName() ).thenReturn( "localhost" );
         when( mockRequest.getScheme() ).thenReturn( "http" );
         when( mockRequest.getServerPort() ).thenReturn( 80 );
-        ResteasyProviderFactory.getContextDataMap().put( HttpServletRequest.class, mockRequest );
+        this.setHttpRequest( mockRequest );
 
         final String response = request().
             path( "application/info" ).

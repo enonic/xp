@@ -1,5 +1,5 @@
 dependencies {
-    compile project( ':core:core-api' )
+    implementation project( ':core:core-api' )
     implementation project( ':core:core-internal' )
 
     testFixturesApi( testFixtures( project(":core:core-app") ) )

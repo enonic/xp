@@ -12,11 +12,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
-import com.enonic.xp.launcher.impl.SharedConstants;
 import com.enonic.xp.launcher.impl.env.Environment;
 
 public final class ConfigLoader
-    implements SharedConstants
 {
     private static final String CONFIG_FILE = "system.properties";
 
