@@ -13,6 +13,8 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.web.impl.dispatch.mapping.FilterDefinition;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class FilterChainImplTest
 {
     private ServletPipeline servletPipeline;
@@ -46,8 +48,8 @@ public class FilterChainImplTest
 
     @Test
     public void doFilter_not_http()
-        throws Exception
     {
-        this.chain.doFilter( Mockito.mock( ServletRequest.class ), Mockito.mock( ServletResponse.class ) );
+        assertThrows( ClassCastException.class,
+                      () -> this.chain.doFilter( Mockito.mock( ServletRequest.class ), Mockito.mock( ServletResponse.class ) ) );
     }
 }
