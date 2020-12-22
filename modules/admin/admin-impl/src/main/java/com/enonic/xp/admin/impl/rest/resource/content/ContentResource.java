@@ -1188,10 +1188,9 @@ public final class ContentResource
         final Set<ContentPath> layerPaths = targetContentPaths.stream().
             filter( path -> parentPath == null || path.isChildOf( parentPath ) ).
             map( path -> path.getAncestorPath( path.elementCount() - parentPathSize - 1 ) ).
-
             collect( Collectors.toSet() );
 
-        if ( layerPaths.size() == 0 )
+        if ( layerPaths.isEmpty() )
         {
             return ContentTreeSelectorListJson.empty();
         }
@@ -1200,26 +1199,27 @@ public final class ContentResource
             ? ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER
             : contentQueryJson.getChildOrder() != null ? contentQueryJson.getChildOrder() : ContentConstants.DEFAULT_CHILD_ORDER;
 
-        final FindContentIdsByQueryResult findLayerContentsResult = ContentQueryWithChildren.create().
-            contentService( this.contentService ).
-            contentsPaths( ContentPaths.from( layerPaths ) ).
-            order( layerOrder ).
-            from( from ).
-            size( size ).
-            build().
-            findOrdered();
+        final FindContentByParentResult findLayerContentsResult = contentService.findByParent( FindContentByParentParams.create().
+            parentPath( parentPath != null ? parentPath : ContentPath.from( "/" ) ).
+            childOrder( layerOrder ).
+            size( -1 ).
+            build() );
 
-        final List<ContentPath> relativeTargetContentPaths =
-            targetContentPaths.stream().map( ContentPath::asRelative ).collect( Collectors.toList() );
+        final List<Content> layersContents = findLayerContentsResult.getContents().
+            stream().
+            filter( content -> layerPaths.contains( content.getPath() ) ).
+            collect( Collectors.toList() );
 
-        final List<ContentTreeSelectorJson> resultItems =
-            contentService.getByIds( new GetContentByIdsParams( findLayerContentsResult.getContentIds() ) ).
-                stream().
-                map( content -> new ContentTreeSelectorJson(
-                    new ContentJson( content, contentIconUrlResolver, principalsResolver, componentNameResolver ),
-                    relativeTargetContentPaths.contains( content.getPath().asRelative() ),
-                    relativeTargetContentPaths.stream().anyMatch( path -> path.isChildOf( content.getPath().asRelative() ) ) ) ).
-                collect( Collectors.toList() );
+        final List<ContentPath> relativeTargetContentPaths = targetContentPaths.stream().
+            map( ContentPath::asRelative ).
+            collect( Collectors.toList() );
+
+        final List<ContentTreeSelectorJson> resultItems = layersContents.stream().
+            map( content -> new ContentTreeSelectorJson(
+                new ContentJson( content, contentIconUrlResolver, principalsResolver, componentNameResolver ),
+                relativeTargetContentPaths.contains( content.getPath().asRelative() ),
+                relativeTargetContentPaths.stream().anyMatch( path -> path.isChildOf( content.getPath().asRelative() ) ) ) ).
+            collect( Collectors.toList() );
 
         final ContentListMetaData metaData = ContentListMetaData.create().hits( findLayerContentsResult.getHits() ).totalHits(
             findLayerContentsResult.getTotalHits() ).build();

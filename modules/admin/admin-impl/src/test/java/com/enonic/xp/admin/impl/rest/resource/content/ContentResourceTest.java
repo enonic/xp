@@ -1426,34 +1426,46 @@ public class ContentResourceTest
         Content content3 = createContent( "content-id3", content2.getPath(), "content-name3", "myapplication:content-type" );
         Content content4 = createContent( "content-id4", content3.getPath(), "content-name4", "myapplication:content-type" );
 
-        Mockito.when( this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( content1.getId() ) ) ) ).thenReturn(
-            Contents.from( content1 ) );
-        Mockito.when( this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( content2.getId() ) ) ) ).thenReturn(
-            Contents.from( content2 ) );
-        Mockito.when( this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( content3.getId() ) ) ) ).thenReturn(
-            Contents.from( content3 ) );
-        Mockito.when( this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( content4.getId() ) ) ) ).thenReturn(
-            Contents.from( content4 ) );
+        Mockito.when( this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( content1.getId() ) ) ) ).
+            thenReturn( Contents.from( content1 ) );
+        Mockito.when( this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( content2.getId() ) ) ) ).
+            thenReturn( Contents.from( content2 ) );
+        Mockito.when( this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( content3.getId() ) ) ) ).
+            thenReturn( Contents.from( content3 ) );
+        Mockito.when( this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( content4.getId() ) ) ) ).
+            thenReturn( Contents.from( content4 ) );
 
         Mockito.when( this.contentService.findContentPaths( Mockito.isA( ContentQuery.class ) ) ).
             thenReturn( ContentPaths.from( content4.getPath() ) );
 
-        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).
-            thenReturn( FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content1.getId() ) ).build() );
+        Mockito.doReturn( FindContentByParentResult.create().
+            totalHits( 1L ).
+            contents( Contents.from( content1 ) ).
+            build() ).
+            when( this.contentService ).
+            findByParent( Mockito.isA( FindContentByParentParams.class ) );
 
         ContentTreeSelectorQueryJson json = initContentTreeSelectorQueryJson( null );
         ContentTreeSelectorListJson result = contentResource.treeSelectorQuery( json );
         assertEquals( result.getItems().get( 0 ).getContent().getId(), content1.getId().toString() );
 
-        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).
-            thenReturn( FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content2.getId() ) ).build() );
+        Mockito.doReturn( FindContentByParentResult.create().
+            totalHits( 1L ).
+            contents( Contents.from( content2 ) ).
+            build() ).
+            when( this.contentService ).
+            findByParent( Mockito.isA( FindContentByParentParams.class ) );
 
         json = initContentTreeSelectorQueryJson( content1.getPath() );
         result = contentResource.treeSelectorQuery( json );
         assertEquals( result.getItems().get( 0 ).getContent().getId(), content2.getId().toString() );
 
-        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).
-            thenReturn( FindContentIdsByQueryResult.create().totalHits( 1L ).contents( ContentIds.from( content3.getId() ) ).build() );
+        Mockito.doReturn( FindContentByParentResult.create().
+            totalHits( 1L ).
+            contents( Contents.from( content3 ) ).
+            build() ).
+            when( this.contentService ).
+            findByParent( Mockito.isA( FindContentByParentParams.class ) );
 
         json = initContentTreeSelectorQueryJson( content2.getPath() );
         result = contentResource.treeSelectorQuery( json );
