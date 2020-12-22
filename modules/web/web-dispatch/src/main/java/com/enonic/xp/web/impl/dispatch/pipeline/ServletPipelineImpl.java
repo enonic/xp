@@ -23,12 +23,10 @@ public final class ServletPipelineImpl
     extends ResourcePipelineImpl<ServletDefinition>
     implements ServletPipeline
 {
-
-    @Override
     @Activate
-    protected void activate( Map<String, Object> properties )
+    public ServletPipelineImpl( final Map<String, ?> properties )
     {
-        super.activate( properties );
+        super( properties );
     }
 
     @Override
@@ -42,6 +40,7 @@ public final class ServletPipelineImpl
                 return;
             }
         }
+        res.sendError( HttpServletResponse.SC_SERVICE_UNAVAILABLE );
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)

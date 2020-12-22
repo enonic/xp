@@ -2,7 +2,9 @@ package com.enonic.xp.web.impl.dispatch;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -13,8 +15,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.dispatch.DispatchServlet;
@@ -36,9 +36,8 @@ public final class DispatchServletImpl
     @Activate
     public DispatchServletImpl( final Map<String, ?> properties )
     {
-        String connectorValue = (String) properties.get( DispatchConstants.CONNECTOR_PROPERTY );
-        Preconditions.checkNotNull( connectorValue, "Connector property must not be null" );
-        this.connector = connectorValue;
+        final String connectorValue = (String) properties.get( DispatchConstants.CONNECTOR_PROPERTY );
+        this.connector = Objects.requireNonNull( connectorValue, "Connector property must not be null" );
     }
 
     @Override
@@ -69,7 +68,7 @@ public final class DispatchServletImpl
     public void removeFilterPipeline( final FilterPipeline filterPipeline )
     {
         final FilterPipeline currentFilterPipeline = this.filterPipeline;
-        if ( currentFilterPipeline != null && currentFilterPipeline.equals( filterPipeline ) )
+        if ( currentFilterPipeline == filterPipeline )
         {
             this.filterPipeline = null;
         }
@@ -87,7 +86,7 @@ public final class DispatchServletImpl
     public void removeServletPipeline( final ServletPipeline servletPipeline )
     {
         final ServletPipeline currentServletPipeline = this.servletPipeline;
-        if ( currentServletPipeline != null && currentServletPipeline.equals( servletPipeline ) )
+        if ( currentServletPipeline == servletPipeline )
         {
             this.servletPipeline = null;
         }
@@ -97,8 +96,9 @@ public final class DispatchServletImpl
     public void init()
         throws ServletException
     {
-        this.filterPipeline.init( getServletContext() );
-        this.servletPipeline.init( getServletContext() );
+        final ServletContext servletContext = getServletContext();
+        this.filterPipeline.init( servletContext );
+        this.servletPipeline.init( servletContext );
     }
 
     @Override

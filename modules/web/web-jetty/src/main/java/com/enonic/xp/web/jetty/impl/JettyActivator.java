@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.session.SessionHandler;
@@ -21,7 +20,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.codahale.metrics.jetty9.InstrumentedHandler;
 import com.codahale.metrics.jetty9.InstrumentedQueuedThreadPool;
 
 import com.enonic.xp.core.internal.Dictionaries;
@@ -66,6 +64,7 @@ public final class JettyActivator
         this.config = config;
         this.bundleContext = bundleContext;
         this.jettySessionStoreConfigurator = jettySessionStoreConfigurator;
+        fixJettyVersion();
         dispatchServlets.stream().map( this::initServletContextHandler ).forEach( contexts::addHandler );
     }
 
@@ -73,10 +72,8 @@ public final class JettyActivator
     public void activate()
         throws Exception
     {
-        fixJettyVersion();
-
+        createServer();
         start();
-        publishXpServletContext();
     }
 
 
@@ -84,26 +81,7 @@ public final class JettyActivator
     public void deactivate()
         throws Exception
     {
-        unpublishXpServletContext();
         stop();
-    }
-
-    private void unpublishXpServletContext()
-    {
-        if ( xpServletContextReg != null )
-        {
-            xpServletContextReg.unregister();
-        }
-    }
-
-    private void publishXpServletContext()
-    {
-        if ( xpServletContext != null )
-        {
-            xpServletContextReg = bundleContext.registerService( ServletContext.class, xpServletContext,
-                                                                 Dictionaries.of( DispatchConstants.CONNECTOR_PROPERTY,
-                                                                                  DispatchConstants.XP_CONNECTOR ) );
-        }
     }
 
     private void fixJettyVersion()
@@ -120,43 +98,48 @@ public final class JettyActivator
     private void start()
         throws Exception
     {
-        final Server server = createServer();
+        this.server.start();
+
+        this.serverServiceRegistration = bundleContext.registerService( Server.class, this.server, null );
+
+        if ( xpServletContext != null )
+        {
+            xpServletContextReg = bundleContext.registerService( ServletContext.class, xpServletContext,
+                                                                 Dictionaries.of( DispatchConstants.CONNECTOR_PROPERTY,
+                                                                                  DispatchConstants.XP_CONNECTOR ) );
+        }
+        LOG.info( "Started Jetty" );
+        LOG.info( "Listening on ports [{}](xp), [{}](management) and [{}](monitoring)", config.http_xp_port(),
+                  config.http_management_port(), config.http_monitor_port() );
+    }
+
+    private void createServer()
+    {
+        final int maxThreads = config.threadPool_maxThreads();
+        final int minThreads = config.threadPool_minThreads();
+        final int idleTimeout = config.threadPool_idleTimeout();
+
+        Metrics.removeAll( InstrumentedQueuedThreadPool.class );
+        final QueuedThreadPool threadPool = new InstrumentedQueuedThreadPool( Metrics.registry(), maxThreads, minThreads, idleTimeout );
+        final Server server = new Server( threadPool );
 
         jettySessionStoreConfigurator.configure( server );
         new HttpConfigurator().configure( this.config, server );
         new RequestLogConfigurator().configure( this.config, server );
         new ErrorHandlerConfigurator().configure( RunMode.get(), server );
 
-        Metrics.removeAll( Handler.class );
-        final InstrumentedHandler instrumentedHandler = new InstrumentedHandler( Metrics.registry(), Handler.class.getName() );
-        instrumentedHandler.setHandler( contexts );
+        server.setHandler( contexts );
 
-        server.setHandler( instrumentedHandler );
-
-        server.start();
         this.server = server;
-
-        this.serverServiceRegistration = bundleContext.registerService( Server.class, this.server, null );
-
-        LOG.info( "Started Jetty" );
-        LOG.info( "Listening on ports [{}](xp), [{}](management) and [{}](monitoring)", config.http_xp_port(),
-                  config.http_management_port(), config.http_monitor_port() );
-    }
-
-    private Server createServer()
-    {
-        final int maxThreads = config.threadPool_maxThreads();
-        final int minThreads = config.threadPool_minThreads();
-        final int idleTimeout = config.threadPool_idleTimeout();
-
-        Metrics.removeAll( QueuedThreadPool.class );
-        final QueuedThreadPool threadPool = new InstrumentedQueuedThreadPool( Metrics.registry(), maxThreads, minThreads, idleTimeout );
-        return new Server( threadPool );
     }
 
     private void stop()
         throws Exception
     {
+        if ( xpServletContextReg != null )
+        {
+            xpServletContextReg.unregister();
+        }
         if ( this.serverServiceRegistration != null )
         {
             this.serverServiceRegistration.unregister();

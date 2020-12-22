@@ -1,7 +1,6 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -15,6 +14,7 @@ import javax.servlet.annotation.WebFilter;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.dispatch.FilterMapping;
 import com.enonic.xp.web.impl.dispatch.mapping.FilterDefinition;
 
@@ -51,7 +51,7 @@ public class FilterPipelineImplTest
     @Override
     FilterPipelineImpl newPipeline()
     {
-        return new FilterPipelineImpl();
+        return new FilterPipelineImpl( Map.of( DispatchConstants.CONNECTOR_PROPERTY, "xp" ) );
     }
 
     @Override
@@ -70,8 +70,6 @@ public class FilterPipelineImplTest
         assertThat( this.pipeline.list.snapshot() ).isEmpty();
         this.pipeline.addFilter( filter, Map.of() );
 
-        this.pipeline.activate( new HashMap<>() );
-
         assertThat( this.pipeline.list.snapshot().size() ).isEqualTo( 1 );
         this.pipeline.removeFilter( filter );
     }
@@ -84,8 +82,6 @@ public class FilterPipelineImplTest
 
         assertThat( this.pipeline.list.snapshot() ).isEmpty();
         this.pipeline.addMapping( mapping );
-
-        this.pipeline.activate( new HashMap<>() );
 
         assertThat( this.pipeline.list.snapshot().size() ).isEqualTo( 1 );
         this.pipeline.removeMapping( mapping );

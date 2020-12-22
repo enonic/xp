@@ -1,7 +1,5 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
-import java.util.HashMap;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,8 +50,6 @@ public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, 
         this.pipeline.add( def1 );
         Mockito.verify( def1, Mockito.times( 0 ) ).init( Mockito.any() );
 
-        this.pipeline.activate( new HashMap<>() );
-
         this.pipeline.init( this.context );
         Mockito.verify( def1, Mockito.times( 1 ) ).init( this.context );
 
@@ -67,8 +63,6 @@ public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, 
     {
         final D def = newDefinition();
         this.pipeline.add( def );
-
-        this.pipeline.activate( new HashMap<>() );
 
         this.pipeline.destroy();
         Mockito.verify( def, Mockito.times( 1 ) ).destroy();

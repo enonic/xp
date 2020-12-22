@@ -23,12 +23,10 @@ public class FilterPipelineImpl
     extends ResourcePipelineImpl<FilterDefinition>
     implements FilterPipeline
 {
-
-    @Override
     @Activate
-    protected void activate( Map<String, Object> properties )
+    public FilterPipelineImpl( final Map<String, ?> properties )
     {
-        super.activate( properties );
+        super( properties );
     }
 
     @Override

@@ -3,9 +3,8 @@ package com.enonic.xp.web.impl.dispatch.pipeline;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -17,33 +16,26 @@ import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
 public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
     implements ResourcePipeline<T>
 {
-    private ServletContext context;
+    private volatile ServletContext context;
 
     private final Map<Object, T> map = new ConcurrentHashMap<>();
 
     final AtomicSortedList<T> list = new AtomicSortedList<>( Comparator.comparingInt( T::getOrder ) );
 
-    private Optional<String> connector;
+    private final String connector;
 
-    private final List<T> resourceQueue = new CopyOnWriteArrayList<>();
+    public ResourcePipelineImpl( final Map<String, ?> properties )
+    {
+        final String connectorValue = (String) properties.get( DispatchConstants.CONNECTOR_PROPERTY );
+        this.connector = Objects.requireNonNull( connectorValue, "Connector property must not be null" );
+    }
 
     @Override
     public final void init( final ServletContext context )
         throws ServletException
     {
-        this.context = context;
+        this.context = Objects.requireNonNull( context );
         this.list.snapshot().forEach( r -> r.init( this.context ) );
-    }
-
-    protected void activate( Map<String, Object> properties )
-    {
-        connector = Optional.ofNullable( (String) properties.get( DispatchConstants.CONNECTOR_PROPERTY ) );
-
-        if ( resourceQueue.size() > 0 )
-        {
-            resourceQueue.forEach( this::initResource );
-            resourceQueue.clear();
-        }
     }
 
     @Override
@@ -54,24 +46,7 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
 
     final void add( final T def )
     {
-        if ( def == null )
-        {
-            return;
-        }
-
-        if ( this.connector == null )
-        {
-            resourceQueue.add( def );
-            return;
-        }
-
-        initResource( def );
-    }
-
-    void initResource( final T def )
-    {
-
-        if ( !sameConnector( def ) )
+        if ( def == null || !sameConnector( def ) )
         {
             return;
         }
@@ -97,7 +72,7 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
         def.destroy();
     }
 
-    protected List<String> getConnectorsFromProperty( final Map<String, ?> props )
+    protected final List<String> getConnectorsFromProperty( final Map<String, ?> props )
     {
         final Object connectorProperty = props.get( DispatchConstants.CONNECTOR_PROPERTY );
 
@@ -106,16 +81,9 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
             : connectorProperty instanceof String[] ? List.of( (String[]) connectorProperty ) : List.of( (String) connectorProperty );
     }
 
-    boolean sameConnector( final T def )
+    private boolean sameConnector( final T def )
     {
-        final List<String> value = def.getConnectors();
-
-        if ( value.isEmpty() || this.connector.isEmpty() )
-        {
-            return true;
-        }
-
-        return value.contains( this.connector.get() );
+        final List<String> connectors = def.getConnectors();
+        return connectors.isEmpty() || connectors.contains( this.connector );
     }
-
 }
