@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
+import com.enonic.xp.admin.impl.rest.resource.content.task.ProjectsSyncTask;
 import com.enonic.xp.admin.impl.rest.resource.project.json.CreateProjectParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.DeleteProjectParamsJson;
 import com.enonic.xp.admin.impl.rest.resource.project.json.ModifyLanguageParamsJson;
@@ -37,6 +38,7 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.SyncContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
@@ -51,6 +53,7 @@ import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.HttpStatus;
@@ -74,6 +77,8 @@ public final class ProjectResource
     private TaskService taskService;
 
     private ContentService contentService;
+
+    private SyncContentService syncContentService;
 
     @POST
     @Path("create")
@@ -192,6 +197,18 @@ public final class ProjectResource
     {
         final ProjectGraph graph = this.projectService.graph( ProjectName.from( projectNameValue ) );
         return new ProjectGraphJson( graph );
+    }
+
+    @POST
+    @Path("syncAll")
+    public TaskResultJson syncAll()
+    {
+        final TaskId taskId = taskService.submitTask( ProjectsSyncTask.create().
+            projectService( projectService ).
+            syncContentService( syncContentService ).
+            build(), "Sync all projects" );
+
+        return new TaskResultJson( taskId );
     }
 
     private CreateProjectParams createParams( final CreateProjectParamsJson json )
@@ -322,5 +339,11 @@ public final class ProjectResource
     public void setTaskService( final TaskService taskService )
     {
         this.taskService = taskService;
+    }
+
+    @Reference
+    public void setSyncContentService( final SyncContentService syncContentService )
+    {
+        this.syncContentService = syncContentService;
     }
 }

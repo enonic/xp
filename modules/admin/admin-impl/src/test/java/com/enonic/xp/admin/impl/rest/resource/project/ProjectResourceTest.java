@@ -16,6 +16,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.task.ApplyPermissionsRunnableTask;
+import com.enonic.xp.admin.impl.rest.resource.content.task.ProjectsSyncTask;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentEditor;
@@ -25,6 +26,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.SyncContentService;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
@@ -41,6 +43,7 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
@@ -49,6 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class ProjectResourceTest
     extends AdminResourceTestSupport
@@ -65,11 +69,13 @@ public class ProjectResourceTest
         projectService = Mockito.mock( ProjectService.class );
         contentService = Mockito.mock( ContentService.class );
         taskService = Mockito.mock( TaskService.class );
+        final SyncContentService syncContentService = Mockito.mock( SyncContentService.class );
 
         final ProjectResource resource = new ProjectResource();
         resource.setProjectService( projectService );
         resource.setContentService( contentService );
         resource.setTaskService( taskService );
+        resource.setSyncContentService( syncContentService );
 
         return resource;
     }
@@ -439,6 +445,20 @@ public class ProjectResourceTest
             post();
 
         assertEquals( 405, mockRestResponse.getStatus() );
+    }
+
+    @Test
+    public void sync()
+        throws Exception
+    {
+        Mockito.when( taskService.submitTask( Mockito.isA( ProjectsSyncTask.class ), eq( "Sync all projects" ) ) ).thenReturn(
+            TaskId.from( "task-id" ) );
+
+        final MockRestResponse result = request().path( "project/syncAll" ).
+            entity( "", MediaType.APPLICATION_JSON_TYPE ).
+            post();
+
+        assertEquals( "{\"taskId\":\"task-id\"}", result.getDataAsString() );
     }
 
     private Project createProject( final String name, final String displayName, final String description, final Attachment icon )
