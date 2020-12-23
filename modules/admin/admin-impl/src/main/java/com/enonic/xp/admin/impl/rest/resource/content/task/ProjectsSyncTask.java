@@ -1,11 +1,19 @@
 package com.enonic.xp.admin.impl.rest.resource.content.task;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Queue;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.SyncContentService;
 import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.project.Projects;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
@@ -31,23 +39,9 @@ public final class ProjectsSyncTask
     @Override
     public void run( final TaskId taskId, final ProgressReporter progressReporter )
     {
-        this.projectService.list().
+        sortProjects( this.projectService.list() ).
             stream().
             filter( project -> project.getParent() != null ).
-            sorted( ( o1, o2 ) -> {
-
-                if ( o2.getName().equals( o1.getParent() ) )
-                {
-                    return 1;
-                }
-
-                if ( o1.getName().equals( o2.getParent() ) )
-                {
-                    return -1;
-                }
-
-                return 0;
-            } ).
             forEach( this::doSync );
     }
 
@@ -56,6 +50,49 @@ public final class ProjectsSyncTask
         syncContentService.syncProject( ProjectSyncParams.create().
             targetProject( targetProject.getName() ).
             build() );
+    }
+
+    private List<Project> sortProjects( final Projects projects )
+    {
+        final List<Project> result = new ArrayList<>();
+        final Queue<Project> queue = new ArrayDeque<>( projects.getList() );
+
+        ProjectName currentParent = null;
+        int currentParentCounter = 0;
+        int loopSize = queue.size();
+
+        while ( !queue.isEmpty() )
+        {
+            if ( loopSize == 0 )
+            {
+                if ( currentParentCounter < result.size() )
+                {
+                    currentParent = result.get( currentParentCounter ).getName();
+                    currentParentCounter++;
+                }
+                else
+                {  // projects with invalid parent in queue
+                    currentParent = queue.peek().getParent();
+                }
+
+                loopSize = queue.size();
+
+            }
+
+            loopSize--;
+
+            final Project current = queue.poll();
+            if ( Objects.equals( current.getParent(), currentParent ) )
+            {
+                result.add( current );
+            }
+            else
+            {
+                queue.offer( current );
+            }
+        }
+
+        return result;
     }
 
     public static class Builder
