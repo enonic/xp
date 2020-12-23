@@ -1,11 +1,15 @@
 package com.enonic.xp.impl.server.rest.task;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.SyncContentService;
@@ -16,62 +20,115 @@ import com.enonic.xp.project.Projects;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
-public class ProjectsSyncTaskTest
+@ExtendWith(MockitoExtension.class)
+class ProjectsSyncTaskTest
 {
+    @Mock(stubOnly = true)
     private ProjectService projectService;
 
+    @Mock
     private SyncContentService syncContentService;
 
+    @Captor
     private ArgumentCaptor<ProjectSyncParams> paramsCaptor;
 
-
-    @BeforeEach
-    public void setUp()
-        throws Exception
-    {
-        this.projectService = Mockito.mock( ProjectService.class );
-        this.syncContentService = Mockito.mock( SyncContentService.class );
-
-        this.paramsCaptor = ArgumentCaptor.forClass( ProjectSyncParams.class );
-    }
-
-    private ProjectsSyncTask createAndRunTask()
-    {
-        final ProjectsSyncTask task = ProjectsSyncTask.create().
-            projectService( projectService ).
-            syncContentService( syncContentService ).
-            build();
-
-        final ProgressReporter progressReporter = Mockito.mock( ProgressReporter.class );
-
-        task.run( TaskId.from( "taskId" ), progressReporter );
-
-        return task;
-    }
-
     @Test
-    public void syncAll()
+    void syncAll()
     {
         final Project parent = createProject( "parent", null );
         final Project child1 = createProject( "child1", "parent" );
         final Project child2 = createProject( "child2", "child1" );
 
-        Mockito.when( projectService.list() ).thenReturn( Projects.create().addAll( Set.of( parent, child2, child1 ) ).build() );
-        Mockito.when( projectService.get( parent.getName() ) ).thenReturn( parent );
-        Mockito.when( projectService.get( child1.getName() ) ).thenReturn( child1 );
-        Mockito.when( projectService.get( child2.getName() ) ).thenReturn( child2 );
+        when( projectService.list() ).thenReturn( Projects.create().addAll( Set.of( parent, child1, child2 ) ).build() );
 
-        createAndRunTask();
+        ProjectsSyncTask.create().
+            projectService( projectService ).
+            syncContentService( syncContentService ).
+            build().
+            run( TaskId.from( "taskId" ), mock( ProgressReporter.class, withSettings().stubOnly() ) );
 
-        Mockito.verify( syncContentService, Mockito.times( 2 ) ).syncProject( paramsCaptor.capture() );
+        verify( syncContentService, times( 2 ) ).syncProject( paramsCaptor.capture() );
 
-        assertEquals( child1.getName(), paramsCaptor.getAllValues().get( 0 ).getTargetProject() );
+        final List<ProjectName> syncProjects = paramsCaptor.getAllValues().
+            stream().
+            map( ProjectSyncParams::getTargetProject ).
+            collect( Collectors.toList() );
 
-        assertEquals( child2.getName(), paramsCaptor.getAllValues().get( 1 ).getTargetProject() );
+        assertThat( syncProjects ).containsExactly( child1.getName(), child2.getName() );
     }
 
+    @Test
+    void order()
+    {
+        final Projects projects = Projects.create().addAll(
+            Set.of( createProject( "turkey-tr-tr", "turkey-tr" ), createProject( "enonic-common", null ),
+                    createProject( "corporate", "enonic-common" ), createProject( "corporate-no", "corporate" ),
+                    createProject( "countries", "enonic-common" ), createProject( "denmark", "countries" ),
+                    createProject( "without-actual-parent1", "unknown-parent1" ), createProject( "denmark-de", "denmark" ),
+                    createProject( "sweden", "countries" ), createProject( "sweden-sw", "sweden" ),
+                    createProject( "sweden-sw-sw", "sweden-sw" ), createProject( "root1", null ), createProject( "child1", "root1" ),
+                    createProject( "without-actual-parent2", "unknown-parent2" ), createProject( "turkey", "countries" ),
+                    createProject( "turkey-tr", "turkey" ) ) ).
+            build();
+
+        when( projectService.list() ).thenReturn( projects );
+
+        ProjectsSyncTask.create().
+            projectService( projectService ).
+            syncContentService( syncContentService ).
+            build().
+            run( TaskId.from( "taskId" ), mock( ProgressReporter.class, withSettings().stubOnly() ) );
+
+        verify( syncContentService, times( 14 ) ).syncProject( paramsCaptor.capture() );
+
+        final List<ProjectName> syncProjects = paramsCaptor.getAllValues().
+            stream().
+            map( ProjectSyncParams::getTargetProject ).
+            collect( Collectors.toList() );
+
+        assertAll( () -> assertThat( syncProjects.indexOf( ProjectName.from( "turkey-tr-tr" ) ) ).
+                       isGreaterThan( syncProjects.indexOf( ProjectName.from( "turkey-tr" ) ) ),
+
+                   () -> assertThat( syncProjects.indexOf( ProjectName.from( "turkey-tr" ) ) ).
+                       isGreaterThan( syncProjects.indexOf( ProjectName.from( "turkey" ) ) ),
+
+                   () -> assertThat( syncProjects.indexOf( ProjectName.from( "turkey" ) ) ).
+                       isGreaterThan( syncProjects.indexOf( ProjectName.from( "countries" ) ) ),
+
+                   () -> assertThat( syncProjects.indexOf( ProjectName.from( "corporate-no" ) ) ).
+                       isGreaterThan( syncProjects.indexOf( ProjectName.from( "corporate" ) ) ),
+
+                   () -> assertThat( syncProjects.indexOf( ProjectName.from( "denmark-de" ) ) ).
+                       isGreaterThan( syncProjects.indexOf( ProjectName.from( "denmark" ) ) ),
+
+                   () -> assertThat( syncProjects.indexOf( ProjectName.from( "denmark" ) ) ).
+                       isGreaterThan( syncProjects.indexOf( ProjectName.from( "countries" ) ) ),
+
+                   () -> assertThat( syncProjects.indexOf( ProjectName.from( "sweden-sw-sw" ) ) ).
+                       isGreaterThan( syncProjects.indexOf( ProjectName.from( "sweden-sw" ) ) ),
+
+                   () -> assertThat( syncProjects.indexOf( ProjectName.from( "sweden-sw" ) ) ).
+                       isGreaterThan( syncProjects.indexOf( ProjectName.from( "sweden" ) ) ),
+
+                   () -> assertThat( syncProjects.indexOf( ProjectName.from( "sweden" ) ) ).
+                       isGreaterThan( syncProjects.indexOf( ProjectName.from( "countries" ) ) ),
+
+                   () -> assertThat( syncProjects.indexOf( ProjectName.from( "child1" ) ) ).
+                       isGreaterThan( syncProjects.indexOf( ProjectName.from( "root1" ) ) ),
+
+                   () -> assertThat( syncProjects.indexOf( ProjectName.from( "without-actual-parent1" ) ) ).isGreaterThanOrEqualTo( 12 ),
+                   () -> assertThat( syncProjects.indexOf( ProjectName.from( "without-actual-parent2" ) ) ).isGreaterThanOrEqualTo( 12 ),
+
+                   () -> assertThat( syncProjects ).doesNotContain( ProjectName.from( "enoic-common" ), ProjectName.from( "root1" ) ) );
+    }
 
     private Project createProject( final String name, final String parent )
     {
@@ -82,5 +139,4 @@ public class ProjectsSyncTaskTest
             description( name ).
             build();
     }
-
 }
