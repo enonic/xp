@@ -15,6 +15,7 @@ import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.SetNodeStateParams;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -446,6 +447,28 @@ public class PushNodesCommandTest
                        WS_OTHER );
 
         assertEquals( 7, result.getSuccessful().getSize() );
+    }
+
+    @Test
+    public void push_after_update()
+        throws Exception
+    {
+        final Node node = createNode( CreateNodeParams.create().
+            parent( NodePath.ROOT ).
+            name( "node1" ).
+            setNodeId( NodeId.from( "node1" ) ).
+            build() );
+
+        updateNode( UpdateNodeParams.create().
+            id( node.id() ).
+            editor( toUpdate -> toUpdate.data.addString( "newString", "newValue" ) ).
+            build() );
+
+        pushNodes( NodeIds.from( node.id() ), WS_OTHER );
+
+        final Node pushedNode = CTX_OTHER.callWith( () -> nodeService.getById( node.id() ) );
+
+        assertEquals( "newValue", pushedNode.data().getString( "newString" ) );
     }
 
     @Test
