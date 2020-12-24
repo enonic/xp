@@ -57,16 +57,14 @@ public class PushNodesCommand
     {
         final Context context = ContextAccessor.current();
 
+        refresh();
+
         final NodeBranchEntries nodeBranchEntries = getNodeBranchEntries();
         final NodeComparisons comparisons = getNodeComparisons( nodeBranchEntries );
 
         final InternalPushNodesResult.Builder builder = pushNodes( context, nodeBranchEntries, comparisons );
 
-        RefreshCommand.create().
-            refreshMode( RefreshMode.ALL ).
-            indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
+        refresh();
 
         return builder.build();
     }
@@ -271,6 +269,15 @@ public class PushNodesCommand
         }
 
         return targetContext.build();
+    }
+
+    private void refresh()
+    {
+        RefreshCommand.create().
+            refreshMode( RefreshMode.ALL ).
+            indexServiceInternal( this.indexServiceInternal ).
+            build().
+            execute();
     }
 
     public static class Builder
