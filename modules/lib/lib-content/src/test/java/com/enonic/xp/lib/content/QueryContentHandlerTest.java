@@ -1,7 +1,9 @@
 package com.enonic.xp.lib.content;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
@@ -16,6 +18,7 @@ import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.aggregation.Buckets;
 import com.enonic.xp.aggregation.DateRangeBucket;
 import com.enonic.xp.aggregation.NumericRangeBucket;
+import com.enonic.xp.aggregation.SingleValueMetricAggregation;
 import com.enonic.xp.aggregation.StatsAggregation;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -25,11 +28,13 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.highlight.HighlightedProperty;
 import com.enonic.xp.lib.content.mapper.ContentsResultMapper;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.sortvalues.SortValuesProperty;
 
 public class QueryContentHandlerTest
@@ -172,5 +177,74 @@ public class QueryContentHandlerTest
         Mockito.when( this.contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.empty() );
 
         runFunction( "/test/QueryContentHandlerTest.js", "queryEmpty" );
+    }
+
+    @Test
+    public void testMinAggregation()
+    {
+        final SingleValueMetricAggregation minAgg = SingleValueMetricAggregation.create( "minPrice" ).value( 10.0 ).build();
+        setUpForMetricsAggregations( minAgg );
+        runFunction( "/test/QueryContentHandlerTest_MinAggregation.js", "queryWithAggregations" );
+    }
+
+    @Test
+    public void testMaxAggregation()
+    {
+        final SingleValueMetricAggregation maxAgg = SingleValueMetricAggregation.create( "maxPrice" ).value( 50.0 ).build();
+        setUpForMetricsAggregations( maxAgg );
+        runFunction( "/test/QueryContentHandlerTest_MaxAggregation.js", "queryWithAggregations" );
+    }
+
+    @Test
+    public void testValueCountAggregation()
+    {
+        final SingleValueMetricAggregation countAgg = SingleValueMetricAggregation.create( "countProductsWithPrice" ).value( 5 ).build();
+        setUpForMetricsAggregations( countAgg );
+        runFunction( "/test/QueryContentHandlerTest_ValueCountAggregation.js", "queryWithAggregations" );
+    }
+
+    private void setUpForMetricsAggregations( final SingleValueMetricAggregation aggregation )
+    {
+        final List<Content> toAddContents = new ArrayList<>();
+        for ( int i = 1; i <= 5; i++ )
+        {
+            final PropertyTree data = new PropertyTree();
+            data.addString( "category", "books" );
+            data.addString( "productName", "product " + i );
+            data.addDouble( "price", 10.0 * i );
+
+            final Content content = Content.create().
+                id( ContentId.from( "id" + i ) ).
+                name( "name" + i ).
+                displayName( "My Content " + i ).
+                parentPath( ContentPath.from( "/a/b" ) ).
+                modifier( PrincipalKey.from( "user:system:admin" ) ).
+                modifiedTime( Instant.ofEpochSecond( 0 ) ).
+                creator( PrincipalKey.from( "user:system:admin" ) ).
+                createdTime( Instant.ofEpochSecond( 0 ) ).
+                data( data ).
+                build();
+
+            toAddContents.add( content );
+        }
+
+        final Buckets bucket = Buckets.create().
+            add( Bucket.create().
+                key( "books" ).
+                docCount( 5 ).
+                addAggregations( Aggregations.from( aggregation ) ).
+                build() ).build();
+
+        final Contents contents = Contents.from( toAddContents );
+
+        final FindContentIdsByQueryResult findResult = FindContentIdsByQueryResult.create().
+            hits( contents.getSize() ).
+            totalHits( 5 ).
+            contents( contents.getIds() ).
+            aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "products" ).buckets( bucket ).build() ) ).
+            build();
+
+        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findResult );
+        Mockito.when( this.contentService.getByIds( Mockito.isA( GetContentByIdsParams.class ) ) ).thenReturn( contents );
     }
 }
