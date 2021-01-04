@@ -1,7 +1,9 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.EnumSet;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +12,7 @@ import org.mockito.invocation.InvocationOnMock;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
@@ -44,6 +47,7 @@ import com.enonic.xp.site.SiteService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -340,6 +344,41 @@ public class CreateContentCommandTest
     }
 
     @Test
+    public void createContentWithProjectLanguage()
+    {
+
+        mockContentRootNode( "no" );
+        mockContentNode( "parent", "/content", "en", EnumSet.of( ContentInheritType.CONTENT ) );
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().superType( ContentTypeName.folder() ).name( ContentTypeName.folder() ).build() );
+
+        final CreateContentParams params = CreateContentParams.create().
+            type( ContentTypeName.folder() ).
+            name( "name" ).
+            parent( ContentPath.from( "/parent" ) ).
+            contentData( new PropertyTree() ).
+            displayName( "displayName" ).
+            build();
+
+        final CreateContentCommand command = createContentCommand( params );
+
+        Content content = command.execute();
+        assertEquals( "no", content.getLanguage().getLanguage() );
+
+        mockContentRootNode( null );
+
+        content = command.execute();
+        assertNull( content.getLanguage() );
+
+        mockContentNode( "parent", "/content", "en", EnumSet.noneOf( ContentInheritType.class ) );
+
+        content = command.execute();
+        assertEquals( "en", content.getLanguage().getLanguage() );
+
+    }
+
+    @Test
     public void createTemplateFolderInsideSite()
     {
         final PropertyTree parentNodeData = new PropertyTree();
@@ -509,10 +548,16 @@ public class CreateContentCommandTest
 
     private void mockContentRootNode()
     {
+        mockContentRootNode( null );
+    }
+
+    private void mockContentRootNode( final String language )
+    {
 
         final PropertyTree tree = new PropertyTree();
         tree.addString( ContentPropertyNames.TYPE, "folder" );
         tree.addString( ContentPropertyNames.CREATOR, "user:system:user1" );
+        tree.addString( ContentPropertyNames.LANGUAGE, language );
         tree.addSet( ContentPropertyNames.DATA, new PropertySet() );
 
         final Node contentRootNode = Node.create().
@@ -524,6 +569,27 @@ public class CreateContentCommandTest
             build();
 
         Mockito.when( nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) ).thenReturn( contentRootNode );
+
+    }
+
+    private void mockContentNode( final String name, final String parentPath, final String language,
+                                  final EnumSet<ContentInheritType> inherit )
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setSet( ContentPropertyNames.DATA, new PropertySet() );
+        data.setString( ContentPropertyNames.CREATOR, "user:myidprovider:user1" );
+        data.setString( ContentPropertyNames.TYPE, ContentTypeName.folder().toString() );
+        data.setString( ContentPropertyNames.LANGUAGE, language );
+        data.addStrings( ContentPropertyNames.INHERIT, inherit.stream().map( ContentInheritType::name ).collect( Collectors.toList() ) );
+
+        final Node contentNode = Node.create().
+            id( NodeId.from( "id1" ) ).
+            name( name ).
+            parentPath( NodePath.create( parentPath ).build() ).
+            data( data ).
+            build();
+
+        Mockito.when( nodeService.getByPath( contentNode.path() ) ).thenReturn( contentNode );
 
     }
 
