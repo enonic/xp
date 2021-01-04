@@ -17,7 +17,10 @@ import com.enonic.xp.query.aggregation.HistogramAggregationQuery;
 import com.enonic.xp.query.aggregation.NumericRange;
 import com.enonic.xp.query.aggregation.NumericRangeAggregationQuery;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
+import com.enonic.xp.query.aggregation.metric.MaxAggregationQuery;
+import com.enonic.xp.query.aggregation.metric.MinAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.StatsAggregationQuery;
+import com.enonic.xp.query.aggregation.metric.ValueCountAggregationQuery;
 import com.enonic.xp.util.GeoPoint;
 
 import static com.enonic.xp.query.aggregation.HistogramAggregationQuery.Order.COUNT_ASC;
@@ -107,6 +110,25 @@ final class QueryAggregationParams
             final GeoDistanceAggregationQuery.Builder geoDistanceAggregationQuery =
                 geoDistanceAggregationFromParams( name, geoDistanceParamsMap );
             return geoDistanceAggregationQuery.build();
+        }
+        else if ( aggregationQueryMap.containsKey( "min" ) )
+        {
+            final Map<String, Object> minParamsMap = (Map<String, Object>) aggregationQueryMap.get( "min" );
+            final MinAggregationQuery.Builder minAggregationQuery = minAggregationFromParams( name, minParamsMap );
+            return minAggregationQuery.build();
+        }
+        else if ( aggregationQueryMap.containsKey( "max" ) )
+        {
+            final Map<String, Object> maxParamsMap = (Map<String, Object>) aggregationQueryMap.get( "max" );
+            final MaxAggregationQuery.Builder maxAggregationQuery = maxAggregationFromParams( name, maxParamsMap );
+            return maxAggregationQuery.build();
+        }
+        else if ( aggregationQueryMap.containsKey( "count" ) )
+        {
+            final Map<String, Object> valueCountParamsMap = (Map<String, Object>) aggregationQueryMap.get( "count" );
+            final ValueCountAggregationQuery.Builder valueCountAggregationQuery =
+                valueCountAggregationFromParams( name, valueCountParamsMap );
+            return valueCountAggregationQuery.build();
         }
 
         return null;
@@ -282,6 +304,27 @@ final class QueryAggregationParams
     {
         final String fieldName = (String) paramsMap.get( "field" );
         return StatsAggregationQuery.create( name ).
+            fieldName( fieldName );
+    }
+
+    private MinAggregationQuery.Builder minAggregationFromParams( final String name, final Map<String, Object> paramsMap )
+    {
+        final String fieldName = (String) paramsMap.get( "field" );
+        return MinAggregationQuery.create( name ).
+            fieldName( fieldName );
+    }
+
+    private MaxAggregationQuery.Builder maxAggregationFromParams( final String name, final Map<String, Object> paramsMap )
+    {
+        final String fieldName = (String) paramsMap.get( "field" );
+        return MaxAggregationQuery.create( name ).
+            fieldName( fieldName );
+    }
+
+    private ValueCountAggregationQuery.Builder valueCountAggregationFromParams( final String name, final Map<String, Object> paramsMap )
+    {
+        final String fieldName = (String) paramsMap.get( "field" );
+        return ValueCountAggregationQuery.create( name ).
             fieldName( fieldName );
     }
 
