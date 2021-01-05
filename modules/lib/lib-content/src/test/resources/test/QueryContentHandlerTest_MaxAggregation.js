@@ -161,7 +161,8 @@ exports.queryWithAggregations = function() {
               'terms': {
                   'field': 'data.category',
                   'order': '_count asc',
-                  'size': 10
+                  'size': 10,
+                  'minDocCount': 2
                   },
               'aggregations': {
                   'maxPrice': {
