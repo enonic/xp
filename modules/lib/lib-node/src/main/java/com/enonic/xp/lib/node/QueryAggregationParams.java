@@ -151,6 +151,7 @@ final class QueryAggregationParams
         final Integer size = Optional.ofNullable( (Number) paramsMap.get( "size" ) ).
             map( Number::intValue ).
             orElse( 10 );
+        final Long minDocCount = getLong( paramsMap, "minDocCount" );
 
         final int index = orderExpr.indexOf( " " );
         final String orderTypeStr = index == -1 ? orderExpr : orderExpr.substring( 0, index );
@@ -171,11 +172,18 @@ final class QueryAggregationParams
             orderType = null;
         }
 
-        return TermsAggregationQuery.create( name ).
+        final TermsAggregationQuery.Builder builder = TermsAggregationQuery.create( name ).
             fieldName( fieldName ).
             size( size ).
             orderType( orderType ).
             orderDirection( orderDirection );
+
+        if ( minDocCount != null )
+        {
+            builder.minDoccount( minDocCount );
+        }
+
+        return builder;
     }
 
     private HistogramAggregationQuery.Builder histogramAggregationFromParams( final String name, final Map<String, Object> paramsMap )

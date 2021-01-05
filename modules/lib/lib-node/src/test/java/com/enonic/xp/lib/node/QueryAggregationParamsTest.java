@@ -7,16 +7,19 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.query.aggregation.AggregationQueries;
+import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.MaxAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.MinAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.ValueCountAggregationQuery;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class QueryAggregationParamsTest
 {
     @Test
-    public void test()
+    public void testMetricAggregations()
     {
         final Map<String, Object> aggregations = new HashMap<>();
         aggregations.put( "maxPrice", createMetricAggregationAsMap( "max", "fieldName1" ) );
@@ -44,6 +47,55 @@ public class QueryAggregationParamsTest
                 assertEquals( "fieldName3", ( (ValueCountAggregationQuery) aggregationQuery ).getFieldName() );
             }
         } );
+    }
+
+    @Test
+    public void testTermsAggregation()
+    {
+        final Map<String, Object> termsAggregation = new HashMap<>();
+
+        termsAggregation.put( "field", "fieldName" );
+        termsAggregation.put( "order", "_count desc" );
+        termsAggregation.put( "size", 10 );
+        termsAggregation.put( "minDocCount", 5 );
+
+        final Map<String, Object> aggregations = new HashMap<>();
+        aggregations.put( "aggName", Collections.singletonMap( "terms", termsAggregation ) );
+
+        final AggregationQueries result = new QueryAggregationParams().getAggregations( aggregations );
+
+        assertEquals( 1, result.getSize() );
+        assertTrue( result.first() instanceof TermsAggregationQuery );
+
+        final TermsAggregationQuery query = (TermsAggregationQuery) result.first();
+
+        assertNotNull( query );
+        assertEquals( "fieldName", query.getFieldName() );
+        assertEquals( 5, query.getMinDocCount() );
+    }
+
+    @Test
+    public void testTermsAggregationWithoutMinDocCount()
+    {
+        final Map<String, Object> termsAggregation = new HashMap<>();
+
+        termsAggregation.put( "field", "fieldName" );
+        termsAggregation.put( "order", "_count desc" );
+        termsAggregation.put( "size", 10 );
+
+        final Map<String, Object> aggregations = new HashMap<>();
+        aggregations.put( "aggName", Collections.singletonMap( "terms", termsAggregation ) );
+
+        final AggregationQueries result = new QueryAggregationParams().getAggregations( aggregations );
+
+        assertEquals( 1, result.getSize() );
+        assertTrue( result.first() instanceof TermsAggregationQuery );
+
+        final TermsAggregationQuery query = (TermsAggregationQuery) result.first();
+
+        assertNotNull( query );
+        assertEquals( "fieldName", query.getFieldName() );
+        assertEquals( 1, query.getMinDocCount() );
     }
 
     private Map<String, Object> createMetricAggregationAsMap( final String name, final String fieldName )
