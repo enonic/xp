@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
@@ -30,6 +32,7 @@ import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.core.impl.content.validate.ValidationError;
 import com.enonic.xp.core.impl.content.validate.ValidationErrors;
+import com.enonic.xp.data.Property;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
@@ -331,7 +334,24 @@ final class CreateContentCommand
         {
             final Node parent = nodeService.getByPath( ContentNodeHelper.translateContentParentToNodeParentPath( parentPath ) );
 
-            final String language = parent.data().getString( ContentPropertyNames.LANGUAGE );
+            final List<Property> inheritProperties = parent.data().getProperties( ContentPropertyNames.INHERIT );
+            final boolean inherited = inheritProperties.stream().
+                anyMatch( property -> ContentInheritType.CONTENT.name().equals( property.getString() ) );
+
+            final String language;
+
+            if ( inherited )
+            {
+                final Node contentRootNode =
+                    runAsAdmin( () -> this.nodeService.getByPath( ContentNodeHelper.translateContentPathToNodePath( ContentPath.ROOT ) ) );
+
+                language = contentRootNode.data().getString( ContentPropertyNames.LANGUAGE );
+            }
+            else
+            {
+                language = parent.data().getString( ContentPropertyNames.LANGUAGE );
+            }
+
             return language != null ? Locale.forLanguageTag( language ) : null;
         }
         else
