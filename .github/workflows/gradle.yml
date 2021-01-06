@@ -23,7 +23,7 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
         run: ./gradlew ci --scan
-      - uses: codecov/codecov-action@v1.2.0
+      - uses: codecov/codecov-action@v1.2.1
       - uses: codacy/codacy-coverage-reporter-action@master
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
