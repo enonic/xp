@@ -4,6 +4,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.node.NodeCommitQuery;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.repo.impl.ReturnFields;
@@ -51,7 +52,10 @@ public class NodeSearchServiceImpl
         final SearchRequest searchRequest = SearchRequest.create().
             searchSource( source ).
             query( query ).
-            returnFields( returnFields ).
+            returnFields( query.isWithPath() ? ReturnFields.create().
+                addAll( returnFields.getSet() ).
+                add( NodeIndexPath.PATH ).
+                build() : returnFields ).
             build();
 
         return searchDao.search( searchRequest );

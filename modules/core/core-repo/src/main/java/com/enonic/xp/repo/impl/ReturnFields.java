@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -10,23 +11,55 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public class ReturnFields
     extends AbstractImmutableEntitySet<ReturnField>
 {
-    private ReturnFields( final ImmutableSet<ReturnField> set )
+    private ReturnFields( final Builder builder )
     {
-        super( set );
+        super( builder.set.build() );
     }
 
     public static ReturnFields empty()
     {
-        return new ReturnFields( ImmutableSet.of() );
+        return create().build();
     }
 
     public static ReturnFields from( final IndexPath... indexPath )
     {
-        return new ReturnFields( Arrays.stream( indexPath ).map( ReturnField::new ).collect( ImmutableSet.toImmutableSet() ) );
+        final ReturnFields.Builder result = ReturnFields.create();
+
+        Arrays.stream( indexPath ).
+            forEach( result::add );
+
+        return result.build();
     }
 
     public String[] getReturnFieldNames()
     {
         return this.set.stream().map( ReturnField::getPath ).toArray( String[]::new );
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private final ImmutableSet.Builder<ReturnField> set = ImmutableSet.builder();
+
+        public Builder add( final IndexPath indexPath )
+        {
+            this.set.add( new ReturnField( indexPath ) );
+            return this;
+        }
+
+        public Builder addAll( final Collection<ReturnField> returnFields )
+        {
+            this.set.addAll( returnFields );
+            return this;
+        }
+
+        public ReturnFields build()
+        {
+            return new ReturnFields( this );
+        }
     }
 }

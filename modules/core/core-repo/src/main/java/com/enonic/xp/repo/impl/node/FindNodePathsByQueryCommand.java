@@ -10,6 +10,7 @@ import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
+@Deprecated
 public class FindNodePathsByQueryCommand
     extends AbstractNodeCommand
 {

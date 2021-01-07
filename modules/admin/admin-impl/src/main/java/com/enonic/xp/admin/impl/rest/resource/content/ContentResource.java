@@ -1234,7 +1234,8 @@ public final class ContentResource
 
     private ContentPaths findContentPathsBySelectorQuery( final ContentSelectorQueryJson contentQueryJson )
     {
-        return contentService.findContentPaths( makeConverterFromSelectorQuery( contentQueryJson ).createQuery() );
+        return contentService.findPaths( makeConverterFromSelectorQuery( contentQueryJson ).createQuery() ).
+            getContentPaths();
     }
 
     private ContentSelectorQueryJsonToContentQueryConverter makeConverterFromSelectorQuery(

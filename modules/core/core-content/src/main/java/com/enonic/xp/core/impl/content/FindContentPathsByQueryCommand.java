@@ -1,10 +1,14 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.stream.Collectors;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.FindContentPathsByQueryParams;
-import com.enonic.xp.node.FindNodePathsByQueryResult;
+import com.enonic.xp.content.FindContentPathsByQueryResult;
+import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeQuery;
 
 final class FindContentPathsByQueryCommand
@@ -23,15 +27,24 @@ final class FindContentPathsByQueryCommand
         return new Builder();
     }
 
-    public ContentPaths execute()
+    public FindContentPathsByQueryResult execute()
     {
         final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( this.params.getContentQuery() ).
             addQueryFilters( createFilters() ).
+            withPath( true ).
             build();
 
-        final FindNodePathsByQueryResult result = nodeService.findNodePathsByQuery( nodeQuery );
+        final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
 
-        return ContentNodeHelper.translateNodePathsToContentPaths( result.getPaths() );
+        return FindContentPathsByQueryResult.create().
+            contentPaths( ContentPaths.from( result.getNodeHits().
+                stream().
+                map( NodeHit::getNodePath ).
+                map( ContentNodeHelper::translateNodePathToContentPath ).
+                collect( Collectors.toSet() ) ) ).
+            hits( result.getHits() ).
+            totalHits( result.getTotalHits() ).
+            build();
     }
 
     public static final class Builder

@@ -5,6 +5,7 @@ import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
+@Deprecated
 class FindNodePathsByQueryResultFactory
 {
     static FindNodePathsByQueryResult create( final SearchResult result )

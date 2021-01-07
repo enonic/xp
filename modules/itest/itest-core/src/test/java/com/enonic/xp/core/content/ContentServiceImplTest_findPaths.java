@@ -10,7 +10,7 @@ import com.enonic.xp.query.parser.QueryParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ContentServiceImplTest_findContentPaths
+public class ContentServiceImplTest_findPaths
     extends AbstractContentServiceTest
 {
     @Test
@@ -21,7 +21,7 @@ public class ContentServiceImplTest_findContentPaths
             queryExpr( QueryParser.parse( "" ) ).
             build();
 
-        assertEquals( ContentPaths.empty(), contentService.findContentPaths( query ) );
+        assertEquals( ContentPaths.empty(), contentService.findPaths( query ).getContentPaths() );
     }
 
     @Test
@@ -38,7 +38,7 @@ public class ContentServiceImplTest_findContentPaths
             queryExpr( QueryParser.parse( "_path = '/content" + child1.getPath().asAbsolute() + "'" ) ).
             build();
 
-        assertEquals( ContentPaths.from( child1.getPath() ), contentService.findContentPaths( query ) );
+        assertEquals( ContentPaths.from( child1.getPath() ), contentService.findPaths( query ).getContentPaths() );
     }
 
     @Test
@@ -55,14 +55,14 @@ public class ContentServiceImplTest_findContentPaths
             queryExpr( QueryParser.parse( "" ) ).
             build();
 
-        assertEquals( contentService.findContentPaths( query ),
-                      ContentPaths.from( site.getPath(), child1.getPath(), child2.getPath(), child3.getPath() ) );
+        assertEquals( ContentPaths.from( site.getPath(), child1.getPath(), child2.getPath(), child3.getPath() ),
+                      contentService.findPaths( query ).getContentPaths() );
 
         query = ContentQuery.create().
             queryExpr( QueryParser.parse(
                 "_path in ('/content" + child1.getPath().asAbsolute() + "', '/content" + child2.getPath().asAbsolute() + "')" ) ).
             build();
 
-        assertEquals( contentService.findContentPaths( query ), ContentPaths.from( child1.getPath(), child2.getPath() ) );
+        assertEquals( ContentPaths.from( child1.getPath(), child2.getPath() ), contentService.findPaths( query ).getContentPaths() );
     }
 }

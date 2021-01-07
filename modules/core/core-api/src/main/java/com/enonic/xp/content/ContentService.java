@@ -85,6 +85,8 @@ public interface ContentService
     @Deprecated
     ContentPaths findContentPaths( ContentQuery query );
 
+    FindContentPathsByQueryResult findPaths( ContentQuery query );
+
     CompareContentResult compare( CompareContentParams params );
 
     CompareContentResults compare( CompareContentsParams params );
