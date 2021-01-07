@@ -14,6 +14,7 @@ import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
@@ -56,7 +57,7 @@ public class UnpublishRunnableTask
 
         final ContentIds childrenIds = ContentQueryWithChildren.create().
             contentService( this.contentService ).
-            contentsIds( contentIds ).
+            contentsPaths( contentService.getByIds( new GetContentByIdsParams( contentIds ) ).getPaths() ).
             size( -1 ).
             build().
             find().
