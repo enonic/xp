@@ -955,15 +955,24 @@ public final class SecurityServiceImpl
     @Override
     public void deletePrincipal( final PrincipalKey principalKey )
     {
-        final NodeIds deletedNodes = callWithContext( () -> {
-            doRemoveRelationships( principalKey );
-            doRemoveMemberships( principalKey );
+        final NodeIds deletedNodes;
+        try
+        {
+            deletedNodes = callWithContext( () -> {
+                doRemoveRelationships( principalKey );
+                doRemoveMemberships( principalKey );
 
-            final NodeIds nodes = this.nodeService.deleteByPath( principalKey.toPath() );
-            this.nodeService.refresh( RefreshMode.SEARCH );
-            return nodes;
-        } );
-        if ( deletedNodes == null && deletedNodes.getSize() > 0 )
+                final NodeIds nodes = this.nodeService.deleteByPath( principalKey.toPath() );
+                this.nodeService.refresh( RefreshMode.SEARCH );
+                return nodes;
+            } );
+        }
+        catch ( NodeNotFoundException e ) // catch doRemoveRelationships and doRemoveMemberships leak of permissions
+        {
+            throw new PrincipalNotFoundException( principalKey );
+        }
+
+        if ( deletedNodes.isEmpty() )
         {
             throw new PrincipalNotFoundException( principalKey );
         }

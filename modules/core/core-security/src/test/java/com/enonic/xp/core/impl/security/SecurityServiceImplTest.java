@@ -37,6 +37,7 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalAlreadyExistsException;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.PrincipalNotFoundException;
 import com.enonic.xp.security.PrincipalQuery;
 import com.enonic.xp.security.PrincipalQueryResult;
 import com.enonic.xp.security.PrincipalRelationship;
@@ -534,6 +535,35 @@ public class SecurityServiceImplTest
             assertEquals( "description", updatedRoleResult.getDescription() );
             assertEquals( "description", updatedRole.getDescription() );
         } );
+    }
+
+    @Test
+    public void testDeleteNonExistPrincipal()
+        throws Exception
+    {
+        runAsAdmin( () -> {
+            assertThrows( PrincipalNotFoundException.class,
+                          () -> securityService.deletePrincipal( PrincipalKey.from( "user:system:invalid" ) ) );
+        } );
+    }
+
+    @Test
+    public void testDeletePrincipalWithoutPermissions()
+        throws Exception
+    {
+        final CreateUserParams createUser = CreateUserParams.create().
+            userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) ).
+            displayName( "User 1" ).
+            email( "user1@enonic.com" ).
+            login( "User1" ).
+            build();
+
+        runAsAdmin( () -> {
+            securityService.createUser( createUser );
+            refresh();
+        } );
+
+        assertThrows( PrincipalNotFoundException.class, () -> securityService.deletePrincipal( createUser.getKey() ) );
     }
 
     @Test
