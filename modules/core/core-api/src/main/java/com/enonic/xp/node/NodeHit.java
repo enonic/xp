@@ -8,6 +8,8 @@ public class NodeHit
 {
     private final NodeId nodeId;
 
+    private final NodePath nodePath;
+
     private final float score;
 
     private final QueryExplanation explanation;
@@ -19,6 +21,7 @@ public class NodeHit
     private NodeHit( final Builder builder )
     {
         nodeId = builder.nodeId;
+        nodePath = builder.nodePath;
         score = builder.score;
         explanation = builder.explanation;
         highlight = builder.highlight.build();
@@ -33,6 +36,11 @@ public class NodeHit
     public NodeId getNodeId()
     {
         return nodeId;
+    }
+
+    public NodePath getNodePath()
+    {
+        return nodePath;
     }
 
     public float getScore()
@@ -59,6 +67,8 @@ public class NodeHit
     {
         private NodeId nodeId;
 
+        private NodePath nodePath;
+
         private float score;
 
         private QueryExplanation explanation;
@@ -74,6 +84,12 @@ public class NodeHit
         public Builder nodeId( final NodeId val )
         {
             nodeId = val;
+            return this;
+        }
+
+        public Builder nodePath( final NodePath val )
+        {
+            nodePath = val;
             return this;
         }
 

@@ -14,12 +14,15 @@ public class NodeQuery
 
     private final boolean accurateScoring;
 
+    private final boolean withPath;
+
     private NodeQuery( final Builder builder )
     {
         super( builder );
         this.parent = builder.parent;
         this.path = builder.path;
         this.accurateScoring = builder.accurateScoring;
+        this.withPath = builder.withPath;
     }
 
     public NodePath getParent()
@@ -37,6 +40,11 @@ public class NodeQuery
         return accurateScoring;
     }
 
+    public boolean isWithPath()
+    {
+        return withPath;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -50,6 +58,8 @@ public class NodeQuery
         private NodePath path;
 
         private boolean accurateScoring = false;
+
+        private boolean withPath = false;
 
         public Builder()
         {
@@ -71,6 +81,12 @@ public class NodeQuery
         public Builder accurateScoring( final boolean accurateScoring )
         {
             this.accurateScoring = accurateScoring;
+            return this;
+        }
+
+        public Builder withPath( final boolean withPath )
+        {
+            this.withPath = withPath;
             return this;
         }
 

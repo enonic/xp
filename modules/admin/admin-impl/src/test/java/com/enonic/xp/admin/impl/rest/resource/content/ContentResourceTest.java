@@ -123,6 +123,7 @@ import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
+import com.enonic.xp.content.FindContentPathsByQueryResult;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.GetActiveContentVersionParams;
@@ -1409,10 +1410,12 @@ public class ContentResourceTest
     {
         ContentResource contentResource = getResourceInstance();
 
-        Mockito.when( this.contentService.findContentPaths( Mockito.isA( ContentQuery.class ) ) ).thenReturn( ContentPaths.empty() );
+        Mockito.when( this.contentService.findPaths( Mockito.isA( ContentQuery.class ) ) ).
+            thenReturn( FindContentPathsByQueryResult.create().build() );
 
         ContentTreeSelectorQueryJson json = initContentTreeSelectorQueryJson( null );
         ContentTreeSelectorListJson result = contentResource.treeSelectorQuery( json );
+
         assertEquals( ContentTreeSelectorListJson.empty(), result );
     }
 
@@ -1435,8 +1438,12 @@ public class ContentResourceTest
         Mockito.when( this.contentService.getByIds( new GetContentByIdsParams( ContentIds.from( content4.getId() ) ) ) ).
             thenReturn( Contents.from( content4 ) );
 
-        Mockito.when( this.contentService.findContentPaths( Mockito.isA( ContentQuery.class ) ) ).
-            thenReturn( ContentPaths.from( content4.getPath() ) );
+        Mockito.when( this.contentService.findPaths( Mockito.isA( ContentQuery.class ) ) ).
+            thenReturn( FindContentPathsByQueryResult.create().
+                contentPaths( ContentPaths.from( content4.getPath() ) ).
+                hits( 1 ).
+                totalHits( 1 ).
+                build() );
 
         Mockito.doReturn( FindContentByParentResult.create().
             totalHits( 1L ).
