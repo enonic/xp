@@ -19,6 +19,7 @@ dependencies {
     testFixturesImplementation "org.eclipse.jetty:jetty-client:${jettyVersion}"
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testFixturesImplementation ( testFixtures( project( ':core:core-api' ) ) )
 
     testImplementation( testFixtures( project(":web:web-jetty") ) )
 }

@@ -12,6 +12,7 @@ public class SecurityConstants
     @Deprecated
     public static final Repository SECURITY_REPO = SystemConstants.SYSTEM_REPO;
 
+    @Deprecated
     public static final Context CONTEXT_SECURITY = ContextBuilder.create().
         branch( BRANCH_SECURITY ).
         repositoryId( SystemConstants.SYSTEM_REPO_ID ).

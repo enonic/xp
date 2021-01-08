@@ -19,6 +19,11 @@ final class LocalScopeImpl
         this.attributes = new HashMap<>();
     }
 
+    LocalScopeImpl( final HashMap<String, Object> attributes )
+    {
+        this.attributes = attributes;
+    }
+
     @Override
     public Session getSession()
     {

@@ -12,8 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -40,7 +38,6 @@ import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -51,11 +48,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public class AbstractIssueServiceTest
     extends AbstractElasticsearchIntegrationTest
 {
-
-    protected static final Repository TEST_REPO = Repository.create().
-            id( RepositoryId.from( "com.enonic.cms.default" ) ).
-            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-            build();
+    public static final RepositoryId TEST_REPO_ID = RepositoryId.from( "com.enonic.cms.default" );
 
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
@@ -68,12 +61,6 @@ public class AbstractIssueServiceTest
 
     protected static final Branch WS_DEFAULT = Branch.create().
         value( "draft" ).
-        build();
-
-    protected static final Context CTX_DEFAULT = ContextBuilder.create().
-        branch( WS_DEFAULT ).
-        repositoryId( TEST_REPO.getId() ).
-        authInfo( TEST_DEFAULT_USER_AUTHINFO ).
         build();
 
     protected IssueServiceImpl issueService;
@@ -96,7 +83,13 @@ public class AbstractIssueServiceTest
 
         deleteAllIndices();
 
-        ContextAccessor.INSTANCE.set( CTX_DEFAULT );
+        final Context ctx = ContextBuilder.create().
+            branch( WS_DEFAULT ).
+            repositoryId( TEST_REPO_ID ).
+            authInfo( TEST_DEFAULT_USER_AUTHINFO ).
+            build();
+
+        ContextAccessor.INSTANCE.set( ctx );
 
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 

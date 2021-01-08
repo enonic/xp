@@ -2,8 +2,8 @@ package com.enonic.xp.context;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.session.SessionKey;
-import com.enonic.xp.session.SimpleSession;
+import com.enonic.xp.session.Session;
+import com.enonic.xp.session.SessionMock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -53,7 +53,7 @@ public class LocalScopeImplTest
     @Test
     public void testAttributeByKey_session()
     {
-        final SimpleSession session = new SimpleSession( SessionKey.generate() );
+        final Session session = new SessionMock();
         session.setAttribute( "key1", "value1" );
 
         final LocalScopeImpl context = new LocalScopeImpl();
@@ -68,7 +68,7 @@ public class LocalScopeImplTest
     public void testAttributeByType_session()
     {
         final SampleValue value = new SampleValue();
-        final SimpleSession session = new SimpleSession( SessionKey.generate() );
+        final Session session = new SessionMock();
         session.setAttribute( value );
 
         final LocalScopeImpl context = new LocalScopeImpl();

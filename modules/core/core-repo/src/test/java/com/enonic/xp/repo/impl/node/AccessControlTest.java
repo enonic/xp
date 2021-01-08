@@ -89,7 +89,7 @@ public class AccessControlTest
 
         final Node node = this.nodeService.create( params );
 
-        final Context anonContext = ContextBuilder.from( CTX_DEFAULT ).
+        final Context anonContext = ContextBuilder.from( ctxDefault() ).
             authInfo( AuthenticationInfo.create().
                 user( User.ANONYMOUS ).
                 build() ).
@@ -97,7 +97,7 @@ public class AccessControlTest
 
         assertNull( anonContext.callWith( () -> getNode( node.id() ) ) );
 
-        final Context anonContextWithAdminUserRole = ContextBuilder.from( CTX_DEFAULT ).
+        final Context anonContextWithAdminUserRole = ContextBuilder.from( ctxDefault() ).
             authInfo( AuthenticationInfo.create().
                 principals( RoleKeys.ADMIN ).
                 user( User.ANONYMOUS ).

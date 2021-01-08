@@ -57,7 +57,7 @@ public class RepoDumperLoadTest
             writer( writer ).
             includeBinaries( true ).
             includeVersions( true ).
-            repository( this.repositoryService.get( CTX_DEFAULT.getRepositoryId() ) ).
+            repository( this.repositoryService.get( TEST_REPO_ID ) ).
             build().
             execute() );
     }

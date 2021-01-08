@@ -88,7 +88,7 @@ public class FindNodesWithVersionDifferenceCommandTest
     public void same_version()
         throws Exception
     {
-        final Node node = CTX_DEFAULT.callWith( () -> createNode( CreateNodeParams.create().
+        final Node node = ctxDefault().callWith( () -> createNode( CreateNodeParams.create().
             name( "mynode" ).
             parent( NodePath.ROOT ).
             build() ) );
@@ -130,7 +130,7 @@ public class FindNodesWithVersionDifferenceCommandTest
         doPushNode( WS_OTHER, rootNode );
         doPushNode( WS_OTHER, node );
 
-        CTX_OTHER.runWith( () -> doUpdateNode( node ) );
+        ctxOther().runWith( () -> doUpdateNode( node ) );
 
         assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
         assertEquals( 1, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
@@ -182,7 +182,7 @@ public class FindNodesWithVersionDifferenceCommandTest
 
         assertEquals( 0, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
 
-        CTX_OTHER.runWith( () -> doMoveNode( node, node2 ) );
+        ctxOther().runWith( () -> doMoveNode( node, node2 ) );
 
         assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
         assertEquals( 1, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );
@@ -249,10 +249,10 @@ public class FindNodesWithVersionDifferenceCommandTest
 
         pushNodes( WS_OTHER, node1.id(), node1_1_1_1.id(), node1_1_1.id(), node1_1.id(), node2.id() );
 
-        CTX_OTHER.runWith( () -> doUpdateNode( node1_1_1_1 ) );
-        CTX_OTHER.runWith( () -> doUpdateNode( node1_1_1 ) );
-        CTX_OTHER.runWith( () -> doUpdateNode( node1_1 ) );
-        CTX_OTHER.runWith( () -> doUpdateNode( node1 ) );
+        ctxOther().runWith( () -> doUpdateNode( node1_1_1_1 ) );
+        ctxOther().runWith( () -> doUpdateNode( node1_1_1 ) );
+        ctxOther().runWith( () -> doUpdateNode( node1_1 ) );
+        ctxOther().runWith( () -> doUpdateNode( node1 ) );
 
         NodeVersionDiffResult result = getDiff( WS_DEFAULT, WS_OTHER, node1.path() );
 
@@ -302,7 +302,7 @@ public class FindNodesWithVersionDifferenceCommandTest
 
         assertEquals( 0, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
 
-        CTX_OTHER.runWith( () -> doDeleteNode( node.id() ) );
+        ctxOther().runWith( () -> doDeleteNode( node.id() ) );
 
         assertEquals( 1, getDiff( WS_DEFAULT, WS_OTHER ).getNodesWithDifferences().getSize() );
         assertEquals( 1, getDiff( WS_OTHER, WS_DEFAULT ).getNodesWithDifferences().getSize() );

@@ -8,6 +8,7 @@ dependencies {
     testImplementation( project( ':core:core-macro' ) )
     testImplementation( project( ':script:script-impl' ) )
     testImplementation( project( ':web:web-impl' ) )
+    testImplementation( testFixtures( project(":core:core-api") ) )
     testImplementation( testFixtures( project(":web:web-api") ) )
 }
 

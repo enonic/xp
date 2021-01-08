@@ -39,7 +39,7 @@ public class ResolveSyncWorkPerformanceTest
 
         final ResolveSyncWorkResult resolvedNodes = ResolveSyncWorkCommand.create().
             nodeId( rootNode.id() ).
-            target( CTX_OTHER.getBranch() ).
+            target( WS_OTHER ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

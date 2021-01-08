@@ -17,7 +17,7 @@ final class ContextImpl
 
     private final LocalScope localScope;
 
-    public ContextImpl( final ImmutableMap<String, Object> attributes, final LocalScope localScope )
+    ContextImpl( final ImmutableMap<String, Object> attributes, final LocalScope localScope )
     {
         this.attributes = attributes;
         this.localScope = localScope;

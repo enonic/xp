@@ -2,6 +2,8 @@ package com.enonic.xp.context;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -9,17 +11,19 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.session.Session;
 
 @PublicApi
 public final class ContextBuilder
 {
-    private LocalScope localScope;
-
     private final Map<String, Object> attributes;
 
-    private ContextBuilder()
+    private LocalScope localScope;
+
+    private ContextBuilder( final Map<String, Object> attributes, final LocalScope localScope )
     {
-        this.attributes = new HashMap<>();
+        this.attributes = attributes;
+        this.localScope = localScope;
     }
 
     public ContextBuilder repositoryId( final String value )
@@ -58,46 +62,42 @@ public final class ContextBuilder
         return attribute( value.getClass().getName(), value );
     }
 
+    @Deprecated
     public ContextBuilder detachSession()
     {
-        if ( this.localScope != null && this.localScope.getSession() != null )
-        {
-            final Map<String, Object> sessionAttributes = this.localScope.getSession().getAttributes();
-            final Map<String, Object> localScopeAttributes = this.localScope.getAttributes();
-            this.localScope = new LocalScopeImpl();
-
-            for ( Map.Entry<String, Object> attribute : sessionAttributes.entrySet() )
-            {
-                this.localScope.setAttribute( attribute.getKey(), attribute.getValue() );
-            }
-            for ( Map.Entry<String, Object> attribute : localScopeAttributes.entrySet() )
-            {
-                this.localScope.setAttribute( attribute.getKey(), attribute.getValue() );
-            }
-        }
+        this.localScope = new LocalScopeImpl( mergeLocalScopeAttributes( this.localScope ) );
         return this;
     }
 
     public Context build()
     {
-        if ( this.localScope == null )
-        {
-            this.localScope = new LocalScopeImpl();
-        }
-
         return new ContextImpl( ImmutableMap.copyOf( this.attributes ), this.localScope );
     }
 
     public static ContextBuilder create()
     {
-        return new ContextBuilder();
+        return new ContextBuilder( new HashMap<>(), new LocalScopeImpl() );
     }
 
     public static ContextBuilder from( final Context parent )
     {
-        final ContextBuilder builder = new ContextBuilder();
-        builder.localScope = parent.getLocalScope();
-        builder.attributes.putAll( parent.getAttributes() );
-        return builder;
+        return new ContextBuilder( new HashMap<>( parent.getAttributes() ), parent.getLocalScope() );
+    }
+
+    public static ContextBuilder copyOf( final Context context )
+    {
+        return new ContextBuilder( new HashMap<>( context.getAttributes() ),
+                                   new LocalScopeImpl( mergeLocalScopeAttributes( context.getLocalScope() ) ) );
+    }
+
+    private static HashMap<String, Object> mergeLocalScopeAttributes( final LocalScope localScope )
+    {
+        final Map<String, Object> localAttributes = localScope.getAttributes();
+        final Session session = localScope.getSession();
+        final Map<String, Object> sessionAttributes = session == null ? Map.of() : session.getAttributes();
+
+        return Stream.of( localAttributes, sessionAttributes ).
+            flatMap( map -> map.entrySet().stream() ).
+            collect( Collectors.toMap( Map.Entry::getKey, Map.Entry::getValue, ( v1, v2 ) -> v1, HashMap::new ) );
     }
 }

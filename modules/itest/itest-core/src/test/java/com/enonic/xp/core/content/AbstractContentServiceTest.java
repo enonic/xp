@@ -27,7 +27,6 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -87,7 +86,6 @@ import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
@@ -110,10 +108,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AbstractContentServiceTest
     extends AbstractElasticsearchIntegrationTest
 {
-    protected static final Repository TEST_REPO = Repository.create().
-        id( RepositoryId.from( "com.enonic.cms.default" ) ).
-        branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-        build();
+    public static final RepositoryId TEST_REPO_ID = RepositoryId.from( "com.enonic.cms.default" );
 
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
@@ -124,38 +119,12 @@ public class AbstractContentServiceTest
         user( TEST_DEFAULT_USER ).
         build();
 
-    public static final Context MASTER_CONTEXT = ContextBuilder.create().
-        branch( ContentConstants.BRANCH_MASTER ).
-        repositoryId( ContentConstants.CONTENT_REPO_ID ).
-        build();
-
-    public static final Context AUTHORIZED_MASTER_CONTEXT = ContextBuilder.create().
-        branch( ContentConstants.BRANCH_MASTER ).
-        repositoryId( ContentConstants.CONTENT_REPO_ID ).
-        authInfo( AuthenticationInfo.create().
-            principals( RoleKeys.ADMIN ).
-            user( ContentInitializer.SUPER_USER ).
-            build() ).
-        build();
-
     protected static final Branch WS_DEFAULT = Branch.create().
         value( "draft" ).
         build();
 
     protected static final Branch WS_OTHER = Branch.create().
         value( "master" ).
-        build();
-
-    protected static final Context CTX_DEFAULT = ContextBuilder.create().
-        branch( WS_DEFAULT ).
-        repositoryId( TEST_REPO.getId() ).
-        authInfo( TEST_DEFAULT_USER_AUTHINFO ).
-        build();
-
-    protected static final Context CTX_OTHER = ContextBuilder.create().
-        branch( WS_OTHER ).
-        repositoryId( TEST_REPO.getId() ).
-        authInfo( TEST_DEFAULT_USER_AUTHINFO ).
         build();
 
     protected ContentServiceImpl contentService;
@@ -180,6 +149,44 @@ public class AbstractContentServiceTest
 
     private ExecutorService executorService;
 
+    protected static Context ctxDefault()
+    {
+        return ContextBuilder.create().
+            branch( WS_DEFAULT ).
+            repositoryId( TEST_REPO_ID ).
+            authInfo( TEST_DEFAULT_USER_AUTHINFO ).
+            build();
+    }
+
+    protected static Context ctxOther()
+    {
+        return ContextBuilder.create().
+            branch( WS_OTHER ).
+            repositoryId( TEST_REPO_ID ).
+            authInfo( TEST_DEFAULT_USER_AUTHINFO ).
+            build();
+    }
+
+    public static Context masterContext()
+    {
+        return ContextBuilder.create().
+            branch( ContentConstants.BRANCH_MASTER ).
+            repositoryId( ContentConstants.CONTENT_REPO_ID ).
+            build();
+    }
+
+    public static Context authorizedMasterContext()
+    {
+        return ContextBuilder.create().
+            branch( ContentConstants.BRANCH_MASTER ).
+            repositoryId( ContentConstants.CONTENT_REPO_ID ).
+            authInfo( AuthenticationInfo.create().
+                principals( RoleKeys.ADMIN ).
+                user( ContentInitializer.SUPER_USER ).
+                build() ).
+            build();
+    }
+
     @BeforeEach
     public void setUpAbstractContentServiceTest()
         throws Exception
@@ -188,7 +195,7 @@ public class AbstractContentServiceTest
 
         deleteAllIndices();
 
-        ContextAccessor.INSTANCE.set( CTX_DEFAULT );
+        ContextAccessor.INSTANCE.set( ctxDefault() );
 
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 

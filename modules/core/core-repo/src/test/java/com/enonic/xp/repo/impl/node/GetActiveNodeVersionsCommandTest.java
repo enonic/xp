@@ -57,7 +57,7 @@ public class GetActiveNodeVersionsCommandTest
 
         assertEquals( draft, master );
 
-        updateNode( node, CTX_DEFAULT );
+        updateNode( node, ctxDefault() );
 
         final GetActiveNodeVersionsResult result2 = GetActiveNodeVersionsCommand.create().
             storageService( this.storageService ).

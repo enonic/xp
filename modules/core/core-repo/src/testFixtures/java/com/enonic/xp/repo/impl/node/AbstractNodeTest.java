@@ -63,7 +63,6 @@ import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
@@ -81,10 +80,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public abstract class AbstractNodeTest
     extends AbstractElasticsearchIntegrationTest
 {
-    protected static final Repository TEST_REPO = Repository.create().
-        id( RepositoryId.from( "com.enonic.cms.default" ) ).
-        branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-        build();
+    protected static final RepositoryId TEST_REPO_ID = RepositoryId.from( "com.enonic.cms.default" );
+
+    protected static final Branches TEST_REPO_BRANCHES = Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER );
 
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
@@ -100,18 +98,6 @@ public abstract class AbstractNodeTest
 
     protected static final Branch WS_OTHER = Branch.create().
         value( "master" ).
-        build();
-
-    protected static final Context CTX_DEFAULT = ContextBuilder.create().
-        branch( WS_DEFAULT ).
-        repositoryId( TEST_REPO.getId() ).
-        authInfo( TEST_DEFAULT_USER_AUTHINFO ).
-        build();
-
-    protected static final Context CTX_OTHER = ContextBuilder.create().
-        branch( WS_OTHER ).
-        repositoryId( TEST_REPO.getId() ).
-        authInfo( TEST_DEFAULT_USER_AUTHINFO ).
         build();
 
     protected static final RepositoryId AUDIT_LOG_REPO_ID = AuditLogConstants.AUDIT_LOG_REPO_ID;
@@ -159,6 +145,24 @@ public abstract class AbstractNodeTest
 
     protected IndexServiceImpl indexService;
 
+    protected static Context ctxDefault()
+    {
+        return ContextBuilder.create().
+            branch( WS_DEFAULT ).
+            repositoryId( TEST_REPO_ID ).
+            authInfo( TEST_DEFAULT_USER_AUTHINFO ).
+            build();
+    }
+
+    protected static Context ctxOther()
+    {
+        return ContextBuilder.create().
+            branch( WS_OTHER ).
+            repositoryId( TEST_REPO_ID ).
+            authInfo( TEST_DEFAULT_USER_AUTHINFO ).
+            build();
+    }
+
     @BeforeEach
     protected void setUpNode()
         throws Exception
@@ -173,7 +177,7 @@ public abstract class AbstractNodeTest
         System.setProperty( "xp.home", temporaryFolder.toFile().getPath() );
         System.setProperty( "mapper.allow_dots_in_name", "true" );
 
-        ContextAccessor.INSTANCE.set( CTX_DEFAULT );
+        ContextAccessor.INSTANCE.set( ctxDefault() );
 
         this.blobStore = new MemoryBlobStore();
 
@@ -235,7 +239,7 @@ public abstract class AbstractNodeTest
 
         bootstrap();
 
-        createRepository( TEST_REPO );
+        createTestRepository();
         waitForClusterHealth();
     }
 
@@ -281,7 +285,7 @@ public abstract class AbstractNodeTest
         this.nodeService.setRepositoryService( this.repositoryService );
     }
 
-    private void createRepository( final Repository repository )
+    private void createTestRepository()
     {
         final AccessControlList rootPermissions = AccessControlList.of( AccessControlEntry.create().
             principal( TEST_DEFAULT_USER.getKey() ).
@@ -296,11 +300,11 @@ public abstract class AbstractNodeTest
             build().
             callWith( () -> {
                 this.repositoryService.createRepository( CreateRepositoryParams.create().
-                    repositoryId( repository.getId() ).
+                    repositoryId( TEST_REPO_ID ).
                     rootPermissions( rootPermissions ).
                     build() );
 
-                repository.getBranches().
+                TEST_REPO_BRANCHES.
                     stream().
                     filter( branch -> !RepositoryConstants.MASTER_BRANCH.equals( branch ) ).
                     forEach( branch -> {
@@ -457,7 +461,7 @@ public abstract class AbstractNodeTest
 
     protected void printContentRepoIndex()
     {
-        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO.getId() ), WS_DEFAULT.getValue() );
+        printAllIndexContent( IndexNameResolver.resolveSearchIndexName( TEST_REPO_ID ), WS_DEFAULT.getValue() );
     }
 
     protected void printSearchIndex( final RepositoryId repositoryId, final Branch branch )
@@ -473,12 +477,12 @@ public abstract class AbstractNodeTest
 
     protected void printVersionIndex()
     {
-        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.VERSION.getName() );
+        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( TEST_REPO_ID ), IndexType.VERSION.getName() );
     }
 
     protected void printCommitIndex()
     {
-        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( CTX_DEFAULT.getRepositoryId() ), IndexType.COMMIT.getName() );
+        printAllIndexContent( IndexNameResolver.resolveStorageIndexName( TEST_REPO_ID ), IndexType.COMMIT.getName() );
     }
 
     protected PushNodesResult pushNodes( final Branch target, final NodeId... nodeIds )

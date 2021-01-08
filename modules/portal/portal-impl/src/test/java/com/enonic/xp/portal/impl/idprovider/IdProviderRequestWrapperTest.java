@@ -17,8 +17,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.Session;
-import com.enonic.xp.session.SessionKey;
-import com.enonic.xp.session.SimpleSession;
+import com.enonic.xp.session.SessionMock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -36,7 +35,7 @@ class IdProviderRequestWrapperTest
         final User user = User.create().key( PrincipalKey.ofUser( IdProviderKey.createDefault(), "userId" ) ).login( "usr" ).build();
         final AuthenticationInfo authenticationInfo = AuthenticationInfo.create().user( user ).build();
         final Context context = ContextBuilder.create().build();
-        final Session session = new SimpleSession( SessionKey.generate() );
+        final Session session = new SessionMock();
         context.getLocalScope().setSession( session );
         session.setAttribute( authenticationInfo );
 
@@ -52,7 +51,7 @@ class IdProviderRequestWrapperTest
         final AuthenticationInfo authenticationInfo = AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN ).build();
 
         final Context context = ContextBuilder.create().build();
-        final Session session = new SimpleSession( SessionKey.generate() );
+        final Session session = new SessionMock();
         context.getLocalScope().setSession( session );
         session.setAttribute( authenticationInfo );
         final Boolean isAdmin = context.callWith( () -> new IdProviderRequestWrapper( request ).isUserInRole( RoleKeys.ADMIN.getId() ) );
