@@ -77,6 +77,7 @@ import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.UpdateGroupParams;
 import com.enonic.xp.security.UpdateIdProviderParams;
 import com.enonic.xp.security.UpdateRoleParams;
@@ -1168,7 +1169,11 @@ public final class SecurityServiceImpl
     private Context getContext()
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        return ContextBuilder.from( SecurityConstants.CONTEXT_SECURITY ).authInfo( authInfo ).build();
+        return ContextBuilder.create().
+            branch( SecurityConstants.BRANCH_SECURITY ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
+            authInfo( authInfo ).
+            build();
     }
 
     private <T> T callAsAuthenticated( Callable<T> runnable )
@@ -1179,6 +1184,8 @@ public final class SecurityServiceImpl
     private Context getAuthenticatedContext()
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.ANONYMOUS ).build();
-        return ContextBuilder.from( SecurityConstants.CONTEXT_SECURITY ).authInfo( authInfo ).build();
+        return ContextBuilder.create().
+            branch( SecurityConstants.BRANCH_SECURITY ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).authInfo( authInfo ).build();
     }
 }

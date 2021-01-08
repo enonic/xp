@@ -74,8 +74,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.session.SessionKey;
-import com.enonic.xp.session.SimpleSession;
+import com.enonic.xp.session.SessionMock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -782,7 +781,7 @@ public class IssueResourceTest
         final LocalScope localScope = ContextAccessor.current().getLocalScope();
         final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN ).build();
         localScope.setAttribute( authInfo );
-        localScope.setSession( new SimpleSession( SessionKey.generate() ) );
+        localScope.setSession( new SessionMock() );
     }
 
     private ProjectPermissions createProjectPermissions()

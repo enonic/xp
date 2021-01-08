@@ -72,11 +72,11 @@ class VersionTableVacuumTaskTest
     void version_deleted_in_all_branches()
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
-        pushNodes( NodeIds.from( node1.id() ), CTX_OTHER.getBranch() );
+        pushNodes( NodeIds.from( node1.id() ), WS_OTHER );
         refresh();
 
         this.nodeService.deleteById( node1.id() );
-        CTX_OTHER.runWith( () -> this.nodeService.deleteById( node1.id() ) );
+        ctxOther().runWith( () -> this.nodeService.deleteById( node1.id() ) );
 
         refresh();
         assertVersions( node1.id(), 1 );
@@ -96,7 +96,7 @@ class VersionTableVacuumTaskTest
     void version_not_deleted_in_all_branches()
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
-        pushNodes( NodeIds.from( node1.id() ), CTX_OTHER.getBranch() );
+        pushNodes( NodeIds.from( node1.id() ), WS_OTHER );
         refresh();
 
         this.nodeService.deleteById( node1.id() );

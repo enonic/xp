@@ -104,7 +104,9 @@ final class SecurityInitializer
             principals( RoleKeys.ADMIN ).
             user( admin ).
             build();
-        return ContextBuilder.from( SecurityConstants.CONTEXT_SECURITY ).
+        return ContextBuilder.create().
+            branch( SecurityConstants.BRANCH_SECURITY ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             authInfo( authInfo ).
             build();
     }

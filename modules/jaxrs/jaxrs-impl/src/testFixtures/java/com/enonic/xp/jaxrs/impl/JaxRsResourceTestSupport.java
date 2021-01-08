@@ -26,8 +26,7 @@ import com.enonic.xp.jaxrs.impl.json.JsonObjectProvider;
 import com.enonic.xp.jaxrs.impl.multipart.MultipartFormReader;
 import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.session.Session;
-import com.enonic.xp.session.SessionKey;
-import com.enonic.xp.session.SimpleSession;
+import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.web.multipart.MultipartService;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
@@ -59,8 +58,7 @@ public abstract class JaxRsResourceTestSupport
 
         ContextAccessor.INSTANCE.remove();
 
-        final SimpleSession session = new SimpleSession( SessionKey.generate() );
-        ContextAccessor.current().getLocalScope().setSession( session );
+        ContextAccessor.current().getLocalScope().setSession( new SessionMock() );
     }
 
     @AfterEach

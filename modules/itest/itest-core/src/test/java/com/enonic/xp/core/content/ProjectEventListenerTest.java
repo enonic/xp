@@ -76,7 +76,7 @@ public class ProjectEventListenerTest
     {
         final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
-        ADMIN_CONTEXT.runWith( () -> listener.onEvent( Event.create( ProjectEvents.CREATED_EVENT_TYPE ).
+        adminContext().runWith( () -> listener.onEvent( Event.create( ProjectEvents.CREATED_EVENT_TYPE ).
             value( ProjectEvents.PROJECT_NAME_KEY, targetProject.getName() ).
             localOrigin( false ).
             build() ) );

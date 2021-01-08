@@ -33,7 +33,7 @@ public class PushNodesCommandTest
         throws Exception
     {
         this.createDefaultRootNode();
-        CTX_OTHER.callWith( this::createDefaultRootNode );
+        ctxOther().callWith( this::createDefaultRootNode );
     }
 
     @Test
@@ -45,13 +45,13 @@ public class PushNodesCommandTest
             name( "my-node" ).
             build() );
 
-        Node testWsNode = CTX_OTHER.callWith( () -> getNodeById( node.id() ) );
+        Node testWsNode = ctxOther().callWith( () -> getNodeById( node.id() ) );
 
         assertTrue( testWsNode == null );
 
         pushNodes( NodeIds.from( node.id() ), WS_OTHER );
 
-        testWsNode = CTX_OTHER.callWith( () -> getNodeById( node.id() ) );
+        testWsNode = ctxOther().callWith( () -> getNodeById( node.id() ) );
 
         assertTrue( testWsNode != null );
     }
@@ -73,7 +73,7 @@ public class PushNodesCommandTest
         pushNodes( NodeIds.from( node.id() ), WS_OTHER );
         pushNodes( NodeIds.from( child.id() ), WS_OTHER );
 
-        final Node prodNode = CTX_OTHER.callWith( () -> getNodeById( child.id() ) );
+        final Node prodNode = ctxOther().callWith( () -> getNodeById( child.id() ) );
 
         assertTrue( prodNode != null );
     }
@@ -100,7 +100,7 @@ public class PushNodesCommandTest
         final PushNodesResult result = pushNodes( NodeIds.from( node.id() ), WS_OTHER );
         assertEquals( 1, result.getSuccessful().getSize() );
 
-        final FindNodesByQueryResult allNodesInOther = CTX_OTHER.callWith( () -> FindNodesByQueryCommand.create().
+        final FindNodesByQueryResult allNodesInOther = ctxOther().callWith( () -> FindNodesByQueryCommand.create().
             query( NodeQuery.create().build() ).
             indexServiceInternal( this.indexServiceInternal ).
             searchService( this.searchService ).
@@ -147,7 +147,7 @@ public class PushNodesCommandTest
             name( "my-node" ).
             build() );
 
-        CTX_OTHER.callWith( () -> createNode( CreateNodeParams.create().
+        ctxOther().callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
@@ -243,7 +243,7 @@ public class PushNodesCommandTest
 
         assertTrue( result.getFailed().isEmpty() );
 
-        CTX_OTHER.runWith( () -> {
+        ctxOther().runWith( () -> {
             assertNotNull( getNodeById( node.id() ) );
             assertNotNull( getNodeById( child1.id() ) );
             assertNotNull( getNodeById( child1_1.id() ) );
@@ -320,7 +320,7 @@ public class PushNodesCommandTest
 
         assertNull( getNodeByPathInOther( NodePath.create( node1.path(), child1.name().toString() ).build() ) );
 
-        Node child1Node = CTX_OTHER.callWith( () -> getNodeById( child1.id() ) );
+        Node child1Node = ctxOther().callWith( () -> getNodeById( child1.id() ) );
         assertNotNull( getNodeByPathInOther( NodePath.create( child1Node.path(), child1_1.name().toString() ).build() ) );
     }
 
@@ -466,7 +466,7 @@ public class PushNodesCommandTest
 
         pushNodes( NodeIds.from( node.id() ), WS_OTHER );
 
-        final Node pushedNode = CTX_OTHER.callWith( () -> nodeService.getById( node.id() ) );
+        final Node pushedNode = ctxOther().callWith( () -> nodeService.getById( node.id() ) );
 
         assertEquals( "newValue", pushedNode.data().getString( "newString" ) );
     }
@@ -490,7 +490,7 @@ public class PushNodesCommandTest
         pushNodes( NodeIds.from( node.id() ), WS_OTHER );
         pushNodes( NodeIds.from( child.id() ), WS_OTHER );
 
-        final Node prodNode = CTX_OTHER.callWith( () -> getNodeById( child.id() ) );
+        final Node prodNode = ctxOther().callWith( () -> getNodeById( child.id() ) );
 
         assertTrue( prodNode != null );
     }
@@ -536,7 +536,7 @@ public class PushNodesCommandTest
 
     private Node getNodeByPathInOther( final NodePath nodePath )
     {
-        return CTX_OTHER.callWith( () -> getNodeByPath( nodePath ) );
+        return ctxOther().callWith( () -> getNodeByPath( nodePath ) );
     }
 
 

@@ -187,8 +187,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.session.SessionKey;
-import com.enonic.xp.session.SimpleSession;
+import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
@@ -1290,7 +1289,7 @@ public class ContentResourceTest
 
         final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN ).build();
         localScope.setAttribute( authInfo );
-        localScope.setSession( new SimpleSession( SessionKey.generate() ) );
+        localScope.setSession( new SessionMock() );
 
         //checking that admin has all requested permissions
         String jsonString = request().
@@ -1326,7 +1325,7 @@ public class ContentResourceTest
         final AuthenticationInfo authInfo =
             AuthenticationInfo.create().user( user ).principals( RoleKeys.EVERYONE, RoleKeys.AUTHENTICATED ).build();
         localScope.setAttribute( authInfo );
-        localScope.setSession( new SimpleSession( SessionKey.generate() ) );
+        localScope.setSession( new SessionMock() );
 
         final AccessControlList nodePermissions = AccessControlList.create().
             add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( CREATE ).build() ).
@@ -1377,7 +1376,7 @@ public class ContentResourceTest
         final AuthenticationInfo authInfo =
             AuthenticationInfo.create().user( user ).principals( RoleKeys.EVERYONE, RoleKeys.AUTHENTICATED ).build();
         localScope.setAttribute( authInfo );
-        localScope.setSession( new SimpleSession( SessionKey.generate() ) );
+        localScope.setSession( new SessionMock() );
 
         final AccessControlList nodePermissions1 = AccessControlList.create().
             add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( READ ).build() ).

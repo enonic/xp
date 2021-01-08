@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeComparison;
@@ -20,22 +19,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class CompareNodeCommandTest
     extends AbstractNodeTest
 {
-    private final Context draft = CTX_DEFAULT;
-
-    private final Context master = CTX_OTHER;
-
     @Test
     public void status_new()
         throws Exception
     {
-        draft.callWith( this::createDefaultRootNode );
+        ctxDefault().callWith( this::createDefaultRootNode );
 
-        final Node createdNode = draft.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = ctxDefault().callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
-        final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
+        final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.NEW, comparison.getCompareStatus() );
     }
@@ -44,14 +39,14 @@ public class CompareNodeCommandTest
     public void status_new_target()
         throws Exception
     {
-        master.callWith( this::createDefaultRootNode );
+        ctxOther().callWith( this::createDefaultRootNode );
 
-        final Node createdNode = master.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = ctxOther().callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
-        final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
+        final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.NEW_TARGET, comparison.getCompareStatus() );
     }
@@ -60,15 +55,15 @@ public class CompareNodeCommandTest
     public void status_capital_node_id()
         throws Exception
     {
-        master.callWith( this::createDefaultRootNode );
+        ctxOther().callWith( this::createDefaultRootNode );
 
-        final Node createdNode = master.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = ctxOther().callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             setNodeId( NodeId.from( "MyNodeId" ) ).
             build() ) );
 
-        final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
+        final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.NEW_TARGET, comparison.getCompareStatus() );
     }
@@ -77,18 +72,18 @@ public class CompareNodeCommandTest
     public void status_deleted_stage_yields_new_in_target()
         throws Exception
     {
-        master.callWith( this::createDefaultRootNode );
+        ctxOther().callWith( this::createDefaultRootNode );
 
-        final Node createdNode = master.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = ctxOther().callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
-        assertNotNull( master.callWith( () -> getNodeById( createdNode.id() ) ) );
+        assertNotNull( ctxOther().callWith( () -> getNodeById( createdNode.id() ) ) );
 
-        master.runWith( () -> doPushNode( WS_DEFAULT, createdNode ) );
+        ctxOther().runWith( () -> doPushNode( WS_DEFAULT, createdNode ) );
 
-        assertNotNull( draft.callWith( () -> getNodeById( createdNode.id() ) ) );
+        assertNotNull( ctxDefault().callWith( () -> getNodeById( createdNode.id() ) ) );
 
         DeleteNodeByIdCommand.create().
             nodeId( createdNode.id() ).
@@ -98,7 +93,7 @@ public class CompareNodeCommandTest
             build().
             execute();
 
-        final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
+        final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.NEW_TARGET, comparison.getCompareStatus() );
     }
@@ -108,16 +103,16 @@ public class CompareNodeCommandTest
     public void status_equal()
         throws Exception
     {
-        draft.callWith( this::createDefaultRootNode );
+        ctxDefault().callWith( this::createDefaultRootNode );
 
-        final Node createdNode = draft.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = ctxDefault().callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
-        draft.runWith( () -> doPushNode( WS_OTHER, createdNode ) );
+        ctxDefault().runWith( () -> doPushNode( WS_OTHER, createdNode ) );
 
-        final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
+        final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.EQUAL, comparison.getCompareStatus() );
     }
@@ -126,20 +121,20 @@ public class CompareNodeCommandTest
     public void status_newer()
         throws Exception
     {
-        draft.callWith( this::createDefaultRootNode );
+        ctxDefault().callWith( this::createDefaultRootNode );
 
-        final Node createdNode = draft.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = ctxDefault().callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
-        draft.runWith( () -> doPushNode( WS_OTHER, createdNode ) );
+        ctxDefault().runWith( () -> doPushNode( WS_OTHER, createdNode ) );
         refresh();
 
-        draft.runWith( () -> doUpdateNode( createdNode ) );
+        ctxDefault().runWith( () -> doUpdateNode( createdNode ) );
         refresh();
 
-        final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
+        final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.NEWER, comparison.getCompareStatus() );
     }
@@ -148,20 +143,20 @@ public class CompareNodeCommandTest
     public void status_older()
         throws Exception
     {
-        draft.callWith( this::createDefaultRootNode );
+        ctxDefault().callWith( this::createDefaultRootNode );
 
-        final Node createdNode = draft.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = ctxDefault().callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
-        draft.runWith( () -> doPushNode( WS_OTHER, createdNode ) );
+        ctxDefault().runWith( () -> doPushNode( WS_OTHER, createdNode ) );
         refresh();
 
-        master.runWith( () -> doUpdateNode( createdNode ) );
+        ctxOther().runWith( () -> doUpdateNode( createdNode ) );
         refresh();
 
-        final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
+        final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.OLDER, comparison.getCompareStatus() );
     }
@@ -171,22 +166,22 @@ public class CompareNodeCommandTest
     public void status_moved_source()
         throws Exception
     {
-        draft.callWith( this::createDefaultRootNode );
+        ctxDefault().callWith( this::createDefaultRootNode );
 
-        final Node createdNode = draft.callWith( () -> createNode( CreateNodeParams.create().
+        final Node createdNode = ctxDefault().callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-node" ).
             build() ) );
 
-        final Node mySecondNode = draft.callWith( () -> createNode( CreateNodeParams.create().
+        final Node mySecondNode = ctxDefault().callWith( () -> createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
             name( "my-second-node" ).
             build() ) );
 
-        draft.runWith( () -> doPushNode( WS_OTHER, createdNode ) );
+        ctxDefault().runWith( () -> doPushNode( WS_OTHER, createdNode ) );
         refresh();
 
-        draft.runWith( () -> MoveNodeCommand.create().
+        ctxDefault().runWith( () -> MoveNodeCommand.create().
             id( createdNode.id() ).
             newParent( mySecondNode.path() ).
             indexServiceInternal( this.indexServiceInternal ).
@@ -195,7 +190,7 @@ public class CompareNodeCommandTest
             build().
             execute() );
 
-        final NodeComparison comparison = draft.callWith( () -> doCompare( WS_OTHER, createdNode ) );
+        final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
         assertEquals( CompareStatus.MOVED, comparison.getCompareStatus() );
     }

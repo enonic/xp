@@ -100,29 +100,41 @@ class ProjectServiceImplTest
         user( REPO_TEST_OWNER ).
         build();
 
-    private static final Context ADMIN_CONTEXT = ContextBuilder.create().
-        branch( "master" ).
-        repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-        authInfo( REPO_TEST_ADMIN_USER_AUTHINFO ).
-        build();
+    private static Context adminContext()
+    {
+        return ContextBuilder.create().
+            branch( "master" ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
+            authInfo( REPO_TEST_ADMIN_USER_AUTHINFO ).
+            build();
+    }
 
-    private static final Context CONTENT_ADMIN_CONTEXT = ContextBuilder.create().
-        branch( "master" ).
-        repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-        authInfo( REPO_TEST_CONTENT_ADMIN_AUTHINFO ).
-        build();
+    private static Context contentAdminContext()
+    {
+        return ContextBuilder.create().
+            branch( "master" ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
+            authInfo( REPO_TEST_CONTENT_ADMIN_AUTHINFO ).
+            build();
+    }
 
-    private static final Context CONTENT_MANAGER_CONTEXT = ContextBuilder.create().
-        branch( "master" ).
-        repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-        authInfo( REPO_TEST_CONTENT_MANAGER_AUTHINFO ).
-        build();
+    private static Context contentManagerContext()
+    {
+        return ContextBuilder.create().
+            branch( "master" ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
+            authInfo( REPO_TEST_CONTENT_MANAGER_AUTHINFO ).
+            build();
+    }
 
-    private static final Context CONTENT_CUSTOM_MANAGER_CONTEXT = ContextBuilder.create().
-        branch( "master" ).
-        repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-        authInfo( REPO_TEST_CUSTOM_MANAGER_AUTHINFO ).
-        build();
+    private static Context contentCustomManagerContext()
+    {
+        return ContextBuilder.create().
+            branch( "master" ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
+            authInfo( REPO_TEST_CUSTOM_MANAGER_AUTHINFO ).
+            build();
+    }
 
     private ProjectServiceImpl projectService;
 
@@ -136,7 +148,7 @@ class ProjectServiceImplTest
 
         securityService = new SecurityServiceImpl( this.nodeService, indexService );
 
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
             securityService.initialize();
 
             final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
@@ -157,10 +169,10 @@ class ProjectServiceImplTest
         assertEquals( "test-project", project.getName().toString() );
 
         final NodeBranchEntry nodeBranchEntry =
-            this.branchService.get( Node.ROOT_UUID, InternalContext.create( ADMIN_CONTEXT ).repositoryId( projectRepoId ).build() );
+            this.branchService.get( Node.ROOT_UUID, InternalContext.create( adminContext() ).repositoryId( projectRepoId ).build() );
         assertNotNull( nodeBranchEntry );
 
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
             final Repository pro = repositoryService.get( projectRepoId );
             assertNotNull( pro );
         } );
@@ -180,9 +192,9 @@ class ProjectServiceImplTest
         projectData.setString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY, displayName );
         projectData.setString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY, description );
 
-        ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), displayName, description ) );
+        adminContext().callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), displayName, description ) );
 
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
             final Repository projectRepo = repositoryService.get( projectRepoId );
             assertEquals( data, projectRepo.getData() );
         } );
@@ -198,15 +210,15 @@ class ProjectServiceImplTest
 
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
 
-        final Project project = ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), null, true, null ) );
+        final Project project = adminContext().callWith( () -> doCreateProject( ProjectName.from( projectRepoId ), null, true, null ) );
         assertNotNull( project );
         assertEquals( "test-project", project.getName().toString() );
 
         final NodeBranchEntry nodeBranchEntry =
-            this.branchService.get( Node.ROOT_UUID, InternalContext.create( ADMIN_CONTEXT ).repositoryId( projectRepoId ).build() );
+            this.branchService.get( Node.ROOT_UUID, InternalContext.create( adminContext() ).repositoryId( projectRepoId ).build() );
         assertNotNull( nodeBranchEntry );
 
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
             final Repository pro = repositoryService.get( projectRepoId );
             assertNotNull( pro );
         } );
@@ -217,7 +229,7 @@ class ProjectServiceImplTest
     {
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
 
-        final Project project = CONTENT_ADMIN_CONTEXT.
+        final Project project = contentAdminContext().
             callWith( () -> doCreateProject( ProjectName.from( projectRepoId ) ) );
 
         assertNotNull( project );
@@ -239,7 +251,7 @@ class ProjectServiceImplTest
     {
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
 
-        CONTENT_CUSTOM_MANAGER_CONTEXT.runWith( () -> {
+        contentCustomManagerContext().runWith( () -> {
             final RuntimeException ex =
                 Assertions.assertThrows( RuntimeException.class, () -> doCreateProject( ProjectName.from( projectRepoId ) ) );
 
@@ -267,7 +279,7 @@ class ProjectServiceImplTest
     {
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
 
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
             final User user1 = securityService.createUser( CreateUserParams.create().
                 userKey( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
                 displayName( "user1" ).
@@ -303,10 +315,10 @@ class ProjectServiceImplTest
 
         doCreateProjectAsAdmin( projectName );
 
-        List.of( ContextBuilder.from( ADMIN_CONTEXT ).
+        List.of( ContextBuilder.from( adminContext() ).
             branch( ContentConstants.BRANCH_DRAFT ).
             repositoryId( projectRepoId ).
-            build(), ContextBuilder.from( ADMIN_CONTEXT ).
+            build(), ContextBuilder.from( adminContext() ).
             branch( ContentConstants.BRANCH_MASTER ).
             repositoryId( projectRepoId ).
             build() ).
@@ -339,7 +351,7 @@ class ProjectServiceImplTest
 
         doCreateProjectAsAdmin( projectName );
 
-        ContextBuilder.from( ADMIN_CONTEXT ).
+        ContextBuilder.from( adminContext() ).
             branch( ContentConstants.BRANCH_DRAFT ).
             repositoryId( projectRepoId ).
             build().runWith( () -> {
@@ -368,7 +380,7 @@ class ProjectServiceImplTest
         final ProjectName projectName = ProjectName.from( "test-project" );
         doCreateProjectAsAdmin( projectName );
 
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
 
             assertNotNull( this.projectService.get( projectName ) );
 
@@ -385,7 +397,7 @@ class ProjectServiceImplTest
         final ProjectName projectName = ProjectName.from( "test-project" );
         doCreateProjectAsAdmin( projectName );
 
-        CONTENT_ADMIN_CONTEXT.runWith( () -> {
+        contentAdminContext().runWith( () -> {
             assertNotNull( this.projectService.get( projectName ) );
 
             this.projectService.delete( projectName );
@@ -399,9 +411,9 @@ class ProjectServiceImplTest
     {
         final ProjectName projectName = ProjectName.from( "test-project" );
         doCreateProjectAsAdmin( projectName );
-        ADMIN_CONTEXT.runWith( () -> assertNotNull( this.projectService.get( projectName ) ) );
+        adminContext().runWith( () -> assertNotNull( this.projectService.get( projectName ) ) );
 
-        CONTENT_CUSTOM_MANAGER_CONTEXT.runWith( () -> {
+        contentCustomManagerContext().runWith( () -> {
 
             final RuntimeException ex = Assertions.assertThrows( RuntimeException.class, () -> projectService.delete( projectName ) );
 
@@ -415,7 +427,7 @@ class ProjectServiceImplTest
         final ProjectName projectName = ProjectName.from( "test-project" );
         doCreateProjectAsAdmin( projectName );
 
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
             assertNotNull( this.projectService.get( projectName ) );
         } );
 
@@ -427,7 +439,7 @@ class ProjectServiceImplTest
     @Test
     void delete_default_project_as_admin()
     {
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
             assertNotNull( this.projectService.get( ProjectConstants.DEFAULT_PROJECT_NAME ) );
 
             final RuntimeException ex =
@@ -442,7 +454,7 @@ class ProjectServiceImplTest
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
         doCreateProjectAsAdmin( ProjectName.from( projectRepoId ) );
 
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
             this.projectService.delete( ProjectName.from( projectRepoId ) );
 
             assertTrue( securityService.getRole( PrincipalKey.ofRole( "cms.project.test-project.owner" ) ).isEmpty() );
@@ -461,7 +473,7 @@ class ProjectServiceImplTest
         doCreateProjectAsAdmin( ProjectName.from( "test-project2" ) );
         doCreateProjectAsAdmin( ProjectName.from( "test-project3" ) );
 
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
             assertEquals( 4, projectService.list().getSize() );
 
             this.projectService.delete( ProjectName.from( "test-project2" ) );
@@ -477,7 +489,7 @@ class ProjectServiceImplTest
         doCreateProjectAsAdmin( ProjectName.from( "test-project2" ) );
         doCreateProjectAsAdmin( ProjectName.from( "test-project3" ) );
 
-        CONTENT_ADMIN_CONTEXT.runWith( () -> {
+        contentAdminContext().runWith( () -> {
             final Projects projects = projectService.list();
             assertEquals( 4, projects.getSize() );
             assertTrue(
@@ -490,7 +502,7 @@ class ProjectServiceImplTest
     {
         doCreateProjectAsAdmin( ProjectName.from( "test-project1" ) );
 
-        CONTENT_MANAGER_CONTEXT.runWith( () -> {
+        contentManagerContext().runWith( () -> {
             final Projects projects = projectService.list();
             assertEquals( 1, projects.getSize() );
             assertTrue(
@@ -512,14 +524,14 @@ class ProjectServiceImplTest
         doCreateProjectAsAdmin( ProjectName.from( "test-project5" ),
                                 ProjectPermissions.create().addContributor( REPO_TEST_OWNER.getKey() ).build() );
 
-        final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( CONTENT_CUSTOM_MANAGER_CONTEXT.getAuthInfo() ).
+        final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( REPO_TEST_CUSTOM_MANAGER_AUTHINFO ).
             principals( ProjectAccessHelper.createRoleKey( ProjectName.from( "test-project2" ), ProjectRole.OWNER ),
                         ProjectAccessHelper.createRoleKey( ProjectName.from( "test-project3" ), ProjectRole.EDITOR ),
                         ProjectAccessHelper.createRoleKey( ProjectName.from( "test-project4" ), ProjectRole.AUTHOR ),
                         ProjectAccessHelper.createRoleKey( ProjectName.from( "test-project5" ), ProjectRole.CONTRIBUTOR ) ).
             build();
 
-        ContextBuilder.from( CONTENT_CUSTOM_MANAGER_CONTEXT ).
+        ContextBuilder.from( contentCustomManagerContext() ).
             authInfo( authenticationInfo ).
             build().
             runWith( () -> {
@@ -547,7 +559,7 @@ class ProjectServiceImplTest
     {
         final Project createdProject = doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
             assertProjectEquals( createdProject, projectService.get( createdProject.getName() ) );
         } );
 
@@ -558,7 +570,7 @@ class ProjectServiceImplTest
     {
         final Project createdProject = doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
-        CONTENT_ADMIN_CONTEXT.runWith( () -> {
+        contentAdminContext().runWith( () -> {
             assertProjectEquals( createdProject, projectService.get( createdProject.getName() ) );
         } );
 
@@ -569,7 +581,7 @@ class ProjectServiceImplTest
     {
         final Project createdProject = doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
-        CONTENT_MANAGER_CONTEXT.runWith( () -> {
+        contentManagerContext().runWith( () -> {
             final RuntimeException ex =
                 Assertions.assertThrows( RuntimeException.class, () -> projectService.get( createdProject.getName() ) );
             assertEquals( "Denied [user:system:repo-test-user] user access to [test-project] project for [get] operation",
@@ -584,7 +596,7 @@ class ProjectServiceImplTest
     {
         final Project createdProject = doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
-        CONTENT_CUSTOM_MANAGER_CONTEXT.runWith( () -> {
+        contentCustomManagerContext().runWith( () -> {
             assertProjectEquals( createdProject, projectService.get( createdProject.getName() ) );
         } );
     }
@@ -603,7 +615,7 @@ class ProjectServiceImplTest
     @Test
     void get_empty_default_project_data()
     {
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
 
             final Project pro = projectService.get( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) );
             assertEquals( ProjectConstants.DEFAULT_PROJECT, pro );
@@ -614,7 +626,7 @@ class ProjectServiceImplTest
     @Test
     void get_default_project()
     {
-        CONTENT_CUSTOM_MANAGER_CONTEXT.runWith( () -> {
+        contentCustomManagerContext().runWith( () -> {
             final Project defaultProject = projectService.get( ProjectConstants.DEFAULT_PROJECT_NAME );
             assertNotNull( defaultProject );
         } );
@@ -625,7 +637,7 @@ class ProjectServiceImplTest
     {
         doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
             projectService.modify( ModifyProjectParams.create().
                 name( ProjectName.from( "test-project" ) ).
                 description( "new description" ).
@@ -644,7 +656,7 @@ class ProjectServiceImplTest
     void create_parent()
     {
 
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
             doCreateProject( ProjectName.from( "test-project" ), null, true, ProjectName.from( "parent" ) );
             final Project modifiedProject = projectService.get( ProjectName.from( "test-project" ) );
 
@@ -657,7 +669,7 @@ class ProjectServiceImplTest
     {
         doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
             projectService.modifyIcon( ModifyProjectIconParams.create().
                 name( ProjectName.from( "test-project" ) ).
                 icon( CreateAttachment.create().
@@ -694,7 +706,7 @@ class ProjectServiceImplTest
         final Project project = doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 
         final ByteSource source = ByteSource.wrap( "new bytes".getBytes() );
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
             assertNull( projectService.getIcon( project.getName() ) );
 
             projectService.modifyIcon( ModifyProjectIconParams.create().
@@ -726,7 +738,7 @@ class ProjectServiceImplTest
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
         doCreateProjectAsAdmin( ProjectName.from( projectRepoId ) );
 
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
             securityService.deletePrincipal( PrincipalKey.ofRole( "cms.project.test-project.owner" ) );
 
             projectService.modify( ModifyProjectParams.create().
@@ -759,7 +771,7 @@ class ProjectServiceImplTest
     {
         final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
 
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
             final User user1 = securityService.createUser( CreateUserParams.create().
                 userKey( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
                 displayName( "user1" ).
@@ -793,7 +805,7 @@ class ProjectServiceImplTest
     @Test
     void modify_default_project_permissions()
     {
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
             final User user1 = securityService.createUser( CreateUserParams.create().
                 userKey( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
                 displayName( "user1" ).
@@ -813,17 +825,17 @@ class ProjectServiceImplTest
     @Test
     void graph()
     {
-        final Project project1 = ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( "project1" ), null, true, null ) );
+        final Project project1 = adminContext().callWith( () -> doCreateProject( ProjectName.from( "project1" ), null, true, null ) );
         final Project project2 =
-            ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( "project2" ), null, true, project1.getName() ) );
+            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project2" ), null, true, project1.getName() ) );
         final Project project3 =
-            ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( "project3" ), null, true, project2.getName() ) );
+            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project3" ), null, true, project2.getName() ) );
         final Project project4 =
-            ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( "project4" ), null, true, project2.getName() ) );
+            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project4" ), null, true, project2.getName() ) );
         final Project project5 =
-            ADMIN_CONTEXT.callWith( () -> doCreateProject( ProjectName.from( "project5" ), null, true, project4.getName() ) );
+            adminContext().callWith( () -> doCreateProject( ProjectName.from( "project5" ), null, true, project4.getName() ) );
 
-        final ProjectGraph graph1 = ADMIN_CONTEXT.callWith( () -> projectService.graph( project1.getName() ) );
+        final ProjectGraph graph1 = adminContext().callWith( () -> projectService.graph( project1.getName() ) );
 
         assertEquals( 5, graph1.getSize() );
         assertThat( graph1.getList() ).
@@ -832,7 +844,7 @@ class ProjectServiceImplTest
                              tuple( project4.getName(), project2.getName() ), tuple( project3.getName(), project2.getName() ),
                              tuple( project5.getName(), project4.getName() ) );
 
-        final ProjectGraph graph2 = ADMIN_CONTEXT.callWith( () -> projectService.graph( project4.getName() ) );
+        final ProjectGraph graph2 = adminContext().callWith( () -> projectService.graph( project4.getName() ) );
 
         assertEquals( 4, graph2.getSize() );
         assertThat( graph2.getList() ).
@@ -843,13 +855,13 @@ class ProjectServiceImplTest
 
     private Project doCreateProjectAsAdmin( final ProjectName name )
     {
-        return ADMIN_CONTEXT.callWith( () -> doCreateProject( name ) );
+        return adminContext().callWith( () -> doCreateProject( name ) );
 
     }
 
     private Project doCreateProjectAsAdmin( final ProjectName name, final ProjectPermissions projectPermissions )
     {
-        return ADMIN_CONTEXT.callWith( () -> doCreateProject( name, projectPermissions ) );
+        return adminContext().callWith( () -> doCreateProject( name, projectPermissions ) );
     }
 
     private Project doCreateProject( final ProjectName name )

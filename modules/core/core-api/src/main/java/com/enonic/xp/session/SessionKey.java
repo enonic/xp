@@ -38,6 +38,7 @@ public final class SessionKey
         return new SessionKey( value );
     }
 
+    @Deprecated
     public static SessionKey generate()
     {
         return new SessionKey( UUID.randomUUID().toString() );

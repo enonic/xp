@@ -18,8 +18,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.session.Session;
-import com.enonic.xp.session.SessionKey;
-import com.enonic.xp.session.SimpleSession;
+import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,8 +37,7 @@ public class LoginHandlerTest
         this.securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, this.securityService );
 
-        final SimpleSession session = new SimpleSession( SessionKey.generate() );
-        ContextAccessor.current().getLocalScope().setSession( session );
+        ContextAccessor.current().getLocalScope().setSession( new SessionMock() );
     }
 
     @AfterEach

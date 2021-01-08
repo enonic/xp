@@ -76,7 +76,7 @@ public class ContentAuditLogSupportImpl
     @Override
     public void createSite( final CreateSiteParams params, final Site site )
     {
-        final Context context = ContextAccessor.current();
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         executor.execute( () -> doCreateSite( params, site, context ) );
     }
@@ -100,7 +100,7 @@ public class ContentAuditLogSupportImpl
     @Override
     public void createContent( final CreateContentParams params, final Content content )
     {
-        final Context context = ContextAccessor.current();
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         executor.execute( () -> doCreateContent( params, content, context ) );
     }
@@ -136,7 +136,7 @@ public class ContentAuditLogSupportImpl
     @Override
     public void createMedia( final CreateMediaParams params, final Content content )
     {
-        final Context context = ContextAccessor.current();
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         executor.execute( () -> doCreateMedia( params, content, context ) );
     }
@@ -165,7 +165,7 @@ public class ContentAuditLogSupportImpl
     @Override
     public void update( final UpdateContentParams params, final Content content )
     {
-        final Context context = ContextAccessor.current();
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         executor.execute( () -> doUpdate( params, content, context ) );
     }
@@ -192,7 +192,7 @@ public class ContentAuditLogSupportImpl
     @Override
     public void update( final UpdateMediaParams params, final Content content )
     {
-        final Context context = ContextAccessor.current();
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         executor.execute( () -> doUpdate( params, content, context ) );
     }
@@ -221,7 +221,7 @@ public class ContentAuditLogSupportImpl
     @Override
     public void delete( final DeleteContentParams params, final DeleteContentsResult contents )
     {
-        final Context context = ContextAccessor.current();
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         executor.execute( () -> doDelete( params, contents, context ) );
     }
@@ -247,7 +247,7 @@ public class ContentAuditLogSupportImpl
     @Override
     public void undoPendingDelete( final UndoPendingDeleteContentParams params, final Contents contents )
     {
-        final Context context = ContextAccessor.current();
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         executor.execute( () -> doUndoPendingDelete( params, contents, context ) );
     }
@@ -274,7 +274,7 @@ public class ContentAuditLogSupportImpl
     @Override
     public void publish( final PushContentParams params, final PublishContentResult result )
     {
-        final Context context = ContextAccessor.current();
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         executor.execute( () -> doPublish( params, result, context ) );
     }
@@ -330,7 +330,7 @@ public class ContentAuditLogSupportImpl
     @Override
     public void unpublishContent( final UnpublishContentParams params, final UnpublishContentsResult result )
     {
-        final Context context = ContextAccessor.current();
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         executor.execute( () -> doUnpublishContent( params, result, context ) );
     }
@@ -362,7 +362,7 @@ public class ContentAuditLogSupportImpl
     @Override
     public void duplicate( final DuplicateContentParams params, final DuplicateContentsResult result )
     {
-        final Context context = ContextAccessor.current();
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         executor.execute( () -> doDuplicate( params, result, context ) );
     }
@@ -394,7 +394,7 @@ public class ContentAuditLogSupportImpl
     @Override
     public void move( final MoveContentParams params, MoveContentsResult result )
     {
-        final Context context = ContextAccessor.current();
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         executor.execute( () -> doMove( params, result, context ) );
     }
@@ -420,7 +420,7 @@ public class ContentAuditLogSupportImpl
     @Override
     public void rename( final RenameContentParams params, final Content content )
     {
-        final Context context = ContextAccessor.current();
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         executor.execute( () -> doRename( params, content, context ) );
     }
@@ -442,7 +442,7 @@ public class ContentAuditLogSupportImpl
     @Override
     public void setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
     {
-        final Context context = ContextAccessor.current();
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         executor.execute( () -> doSetActiveContentVersion( contentId, versionId, context ) );
     }
@@ -465,7 +465,7 @@ public class ContentAuditLogSupportImpl
     @Override
     public void setChildOrder( final SetContentChildOrderParams params, final Content content )
     {
-        final Context context = ContextAccessor.current();
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         executor.execute( () -> doSetChildOrder( params, content, context ) );
     }
@@ -487,7 +487,7 @@ public class ContentAuditLogSupportImpl
     @Override
     public void reorderChildren( final ReorderChildContentsParams params, final ReorderChildContentsResult result )
     {
-        final Context context = ContextAccessor.current();
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         executor.execute( () -> doReorderChildren( params, result, context ) );
     }
@@ -510,7 +510,7 @@ public class ContentAuditLogSupportImpl
     @Override
     public void applyPermissions( final ApplyContentPermissionsParams params, final ApplyContentPermissionsResult result )
     {
-        final Context context = ContextAccessor.current();
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         executor.execute( () -> doApplyPermissions( params, result, context ) );
     }
@@ -541,7 +541,7 @@ public class ContentAuditLogSupportImpl
     @Override
     public void reprocess( final Content content )
     {
-        final Context context = ContextAccessor.current();
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         executor.execute( () -> doReprocess( content, context ) );
     }

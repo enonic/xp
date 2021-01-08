@@ -139,7 +139,7 @@ public class ContentServiceImplTest_delete
 
         final PublishContentResult result = this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            target( CTX_OTHER.getBranch() ).
+            target( WS_OTHER ).
             build() );
 
         assertEquals( 1, result.getPushedContents().getSize() );
@@ -205,7 +205,7 @@ public class ContentServiceImplTest_delete
         //Publishes the content
         final PushContentParams pushParams = PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            target( CTX_OTHER.getBranch() ).
+            target( WS_OTHER ).
             build();
 
         refresh();
@@ -254,7 +254,7 @@ public class ContentServiceImplTest_delete
 
         final PublishContentResult result = this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( parent.getId() ) ).
-            target( CTX_OTHER.getBranch() ).
+            target( WS_OTHER ).
             build() );
         assertEquals( 2, result.getPushedContents().getSize() );
 
@@ -314,7 +314,7 @@ public class ContentServiceImplTest_delete
 
         final Content content = this.contentService.create( params );
 
-        final Content contentOther = CTX_OTHER.callWith( () -> this.contentService.create( params ) );
+        final Content contentOther = ctxOther().callWith( () -> this.contentService.create( params ) );
 
         //Deletes the content
         final DeleteContentsResult deletedContents =
@@ -322,7 +322,7 @@ public class ContentServiceImplTest_delete
         assertNotNull( deletedContents );
         assertEquals( 1, deletedContents.getDeletedContents().getSize() );
 
-        final DeleteContentsResult deletedOther = CTX_OTHER.callWith(
+        final DeleteContentsResult deletedOther = ctxOther().callWith(
             () -> this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( contentOther.getPath() ).build() ) );
 
         assertNotNull( deletedOther );
