@@ -5,21 +5,21 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.session.SessionKey;
-import com.enonic.xp.session.SimpleSession;
+import com.enonic.xp.session.Session;
+import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 public class GetUserHandlerTest
     extends ScriptTestSupport
 {
-    private SimpleSession session;
+    private Session session;
 
     @Override
     public void initialize()
         throws Exception
     {
         super.initialize();
-        this.session = new SimpleSession( SessionKey.generate() );
+        this.session = new SessionMock();
         ContextAccessor.current().getLocalScope().removeAttribute( AuthenticationInfo.class );
         ContextAccessor.current().getLocalScope().setSession( session );
     }

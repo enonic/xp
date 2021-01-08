@@ -8,8 +8,8 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.session.SessionKey;
-import com.enonic.xp.session.SimpleSession;
+import com.enonic.xp.session.Session;
+import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.mockito.ArgumentMatchers.eq;
@@ -19,7 +19,7 @@ public class ChangePasswordHandlerTest
 {
     private SecurityService securityService;
 
-    private SimpleSession session;
+    private Session session;
 
     @Override
     public void initialize()
@@ -29,7 +29,7 @@ public class ChangePasswordHandlerTest
         this.securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, this.securityService );
 
-        this.session = new SimpleSession( SessionKey.generate() );
+        this.session = new SessionMock();
         ContextAccessor.current().getLocalScope().setSession( session );
     }
 

@@ -80,7 +80,7 @@ public class ContentServiceImplTest_getNearestSite
     public void child_of_site_pending_publish_master()
         throws Exception
     {
-        assertThrows(ContentNotFoundException.class, () -> AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+        assertThrows( ContentNotFoundException.class, () -> authorizedMasterContext().callWith( () -> {
             final Content site = createSite();
 
             final Content child = createContent( site.getPath(), ContentPublishInfo.create().
@@ -88,14 +88,14 @@ public class ContentServiceImplTest_getNearestSite
                 build() );
 
             return this.contentService.getNearestSite( child.getId() );
-        } ));
+        } ) );
     }
 
     @Test
     public void deep_child_of_site_pending_publish_master()
         throws Exception
     {
-        assertThrows(ContentNotFoundException.class, () -> AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+        assertThrows( ContentNotFoundException.class, () -> authorizedMasterContext().callWith( () -> {
             final Content site = createSite();
 
             final Content childLevel1 = createContent( site.getPath() );
@@ -114,7 +114,7 @@ public class ContentServiceImplTest_getNearestSite
     public void child_of_site_published_master()
         throws Exception
     {
-        assertThrows(ContentNotFoundException.class, () -> AUTHORIZED_MASTER_CONTEXT.callWith( () -> {
+        assertThrows( ContentNotFoundException.class, () -> authorizedMasterContext().callWith( () -> {
             final Content site = createSite();
 
             final Content child = createContent( site.getPath(), ContentPublishInfo.create().

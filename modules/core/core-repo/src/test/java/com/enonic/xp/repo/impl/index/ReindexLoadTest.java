@@ -50,8 +50,8 @@ public class ReindexLoadTest
         refresh();
 
         final ReindexResult result = this.indexService.reindex( ReindexParams.create().
-            addBranch( CTX_DEFAULT.getBranch() ).
-            repositoryId( CTX_DEFAULT.getRepositoryId() ).
+            addBranch( WS_DEFAULT ).
+            repositoryId( TEST_REPO_ID ).
             initialize( true ).
             build() );
 

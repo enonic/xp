@@ -102,7 +102,7 @@ public class ContentServiceImplTest_undoPendingDelete
     {
         return this.contentService.undoPendingDelete( UndoPendingDeleteContentParams.create().
             contentIds( contentIds ).
-            target( CTX_OTHER.getBranch() ).
+            target( WS_OTHER ).
             build() );
     }
 

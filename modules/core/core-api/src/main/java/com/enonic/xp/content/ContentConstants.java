@@ -56,11 +56,13 @@ public class ContentConstants
         branches( Branches.from( BRANCH_DRAFT, BRANCH_MASTER ) ).
         build();
 
+    @Deprecated
     public static final Context CONTEXT_DRAFT = ContextBuilder.create().
         branch( BRANCH_DRAFT ).
         repositoryId( CONTENT_REPO_ID ).
         build();
 
+    @Deprecated
     public static final Context CONTEXT_MASTER = ContextBuilder.create().
         branch( BRANCH_MASTER ).
         repositoryId( CONTENT_REPO_ID ).

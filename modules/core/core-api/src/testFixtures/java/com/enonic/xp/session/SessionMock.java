@@ -1,23 +1,16 @@
 package com.enonic.xp.session;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.common.collect.ImmutableMap;
 
-@Deprecated
-public final class SimpleSession
+public class SessionMock
     implements Session
 {
-    private final SessionKey key;
+    private final SessionKey key = SessionKey.from( "mock-session" );
 
-    private final Map<String, Object> attributes;
-
-    public SimpleSession( final SessionKey key )
-    {
-        this.key = key;
-        this.attributes = new HashMap<>();
-    }
+    private final Map<String, Object> attributes = new ConcurrentHashMap<>();
 
     @Override
     public SessionKey getKey()

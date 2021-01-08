@@ -79,7 +79,7 @@ public class ContentServiceImplTest_versions
 
         this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            target( CTX_OTHER.getBranch() ).
+            target( WS_OTHER ).
             build() );
 
         // Two versions, since publish adds one version
@@ -98,7 +98,7 @@ public class ContentServiceImplTest_versions
         final GetActiveContentVersionsResult activeVersions =
             this.contentService.getActiveVersions( GetActiveContentVersionsParams.create().
                 contentId( content.getId() ).
-                branches( Branches.from( CTX_DEFAULT.getBranch(), CTX_OTHER.getBranch() ) ).
+                branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).
                 build() );
 
         final ImmutableList<ActiveContentVersionEntry> activeContentVersions = activeVersions.getActiveContentVersions();
@@ -157,12 +157,12 @@ public class ContentServiceImplTest_versions
 
         this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            target( CTX_OTHER.getBranch() ).
+            target( WS_OTHER ).
             build() );
 
         this.contentService.unpublishContent( UnpublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            unpublishBranch( CTX_OTHER.getBranch() ).
+            unpublishBranch( WS_OTHER ).
             build() );
 
         final FindContentVersionsResult result = this.contentService.getVersions( FindContentVersionsParams.create().

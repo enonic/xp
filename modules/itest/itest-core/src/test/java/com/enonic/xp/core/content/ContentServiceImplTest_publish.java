@@ -69,7 +69,7 @@ public class ContentServiceImplTest_publish
 
         final PublishContentResult push = this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            target( CTX_OTHER.getBranch() ).
+            target( WS_OTHER ).
             includeDependencies( false ).
             build() );
 
@@ -97,7 +97,7 @@ public class ContentServiceImplTest_publish
 
         final PublishContentResult push = this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            target( CTX_OTHER.getBranch() ).
+            target( WS_OTHER ).
             includeDependencies( false ).
             build() );
 
@@ -402,7 +402,7 @@ public class ContentServiceImplTest_publish
 
         System.out.println( "After initial push:" );
         printContentTree( getByPath( ContentPath.ROOT ).getId() );
-        printContentTree( getByPath( ContentPath.ROOT ).getId(), CTX_OTHER );
+        printContentTree( getByPath( ContentPath.ROOT ).getId(), ctxOther() );
 
         doRename( a.getId(), "a_old" );
         doRename( b.getId(), "a" );
@@ -415,7 +415,7 @@ public class ContentServiceImplTest_publish
         System.out.println();
         System.out.println( "After second push:" );
         printContentTree( getByPath( ContentPath.ROOT ).getId() );
-        printContentTree( getByPath( ContentPath.ROOT ).getId(), CTX_OTHER );
+        printContentTree( getByPath( ContentPath.ROOT ).getId(), ctxOther() );
 
         assertStatus( b.getId(), CompareStatus.EQUAL );
     }
@@ -486,7 +486,7 @@ public class ContentServiceImplTest_publish
 
         final PublishContentResult push = this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            target( CTX_OTHER.getBranch() ).
+            target( WS_OTHER ).
             includeDependencies( false ).
             build() );
 
@@ -509,7 +509,7 @@ public class ContentServiceImplTest_publish
 
     private Content getInMaster( final ContentId contentId )
     {
-        return CTX_OTHER.callWith( () -> this.contentService.getById( contentId ) );
+        return ctxOther().callWith( () -> this.contentService.getById( contentId ) );
     }
 
     private Content getByPath( final ContentPath path )

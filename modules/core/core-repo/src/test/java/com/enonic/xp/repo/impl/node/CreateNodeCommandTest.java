@@ -276,19 +276,19 @@ public class CreateNodeCommandTest
     public void create_node_with_same_path_in_two_branches_then_delete()
         throws Exception
     {
-        final Node defaultNode = CTX_DEFAULT.callWith( () -> createNode( CreateNodeParams.create().
+        final Node defaultNode = ctxDefault().callWith( () -> createNode( CreateNodeParams.create().
             name( "myNode" ).
             parent( NodePath.ROOT ).
             build() ) );
 
-        CTX_OTHER.callWith( this::createDefaultRootNode );
+        ctxOther().callWith( this::createDefaultRootNode );
 
-        CTX_OTHER.callWith( () -> createNode( CreateNodeParams.create().
+        ctxOther().callWith( () -> createNode( CreateNodeParams.create().
             name( "myNode" ).
             parent( NodePath.ROOT ).
             build() ) );
 
-        CTX_OTHER.callWith( () -> doDeleteNode( defaultNode.id() ) );
+        ctxOther().callWith( () -> doDeleteNode( defaultNode.id() ) );
 
         doDeleteNode( defaultNode.id() );
     }

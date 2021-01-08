@@ -102,7 +102,10 @@ public class SystemRepoInitializer
     {
         final User admin = User.create().key( SUPER_USER ).login( SUPER_USER.getId() ).build();
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( admin ).build();
-        return ContextBuilder.from( SecurityConstants.CONTEXT_SECURITY ).authInfo( authInfo ).build();
+        return ContextBuilder.create().
+            branch( SecurityConstants.BRANCH_SECURITY ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
+            authInfo( authInfo ).build();
     }
 
     public static Builder create()

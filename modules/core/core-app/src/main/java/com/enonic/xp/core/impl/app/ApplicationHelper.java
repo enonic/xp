@@ -17,7 +17,7 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.security.SystemConstants;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -117,33 +117,39 @@ public final class ApplicationHelper
 
     public static <T> T runAsAdmin( final Callable<T> callable )
     {
-        return ContextBuilder.from( ApplicationConstants.CONTEXT_APPLICATIONS ).
-            authInfo( ApplicationConstants.APPLICATION_SU_AUTH_INFO ).
-            build().
-            callWith( callable );
+        return createAdminContext().callWith( callable );
     }
 
     public static void runAsAdmin( final Runnable runnable )
     {
-        ContextBuilder.from( ApplicationConstants.CONTEXT_APPLICATIONS ).
+        createAdminContext().runWith( runnable );
+    }
+
+    private static Context createAdminContext()
+    {
+        return ContextBuilder.create().
+            branch( SystemConstants.BRANCH_SYSTEM ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             authInfo( ApplicationConstants.APPLICATION_SU_AUTH_INFO ).
-            build().
-            runWith( runnable );
+            build();
     }
 
     static <T> T callWithContext( Callable<T> runnable )
     {
-        return getContext().callWith( runnable );
+        return createContext().callWith( runnable );
     }
 
     static void runWithContext( Runnable runnable )
     {
-        getContext().runWith( runnable );
+        createContext().runWith( runnable );
     }
 
-    private static Context getContext()
+    private static Context createContext()
     {
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        return ContextBuilder.from( ApplicationConstants.CONTEXT_APPLICATIONS ).authInfo( authInfo ).build();
+        return ContextBuilder.create().
+            branch( SystemConstants.BRANCH_SYSTEM ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
+            authInfo( ContextAccessor.current().getAuthInfo() ).
+            build();
     }
 }

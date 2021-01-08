@@ -48,7 +48,7 @@ public class RepoDumperTest
 
         doDump( writer );
 
-        final List<BranchDumpEntry> dumpEntries = writer.get( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch() );
+        final List<BranchDumpEntry> dumpEntries = writer.get( TEST_REPO_ID, ctxDefault().getBranch() );
 
         assertEquals( 5, dumpEntries.size() );
     }
@@ -68,7 +68,7 @@ public class RepoDumperTest
 
         doDump( writer );
 
-        final List<BranchDumpEntry> dumpEntries = writer.get( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch() );
+        final List<BranchDumpEntry> dumpEntries = writer.get( TEST_REPO_ID, ctxDefault().getBranch() );
 
         assertEquals( 2, dumpEntries.size() );
         // 2 versions for the root node on draft and master + 2 versions of the node
@@ -144,7 +144,7 @@ public class RepoDumperTest
             writer( writer ).
             includeBinaries( true ).
             includeVersions( true ).
-            repository( this.repositoryService.get( CTX_DEFAULT.getRepositoryId() ) ).
+            repository( this.repositoryService.get( TEST_REPO_ID ) ).
             build().
             execute() );
     }

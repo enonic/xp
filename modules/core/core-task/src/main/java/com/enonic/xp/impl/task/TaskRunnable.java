@@ -55,7 +55,7 @@ final class TaskRunnable
         progressReporter.running();
         try
         {
-            getContext().runWith( () -> runnableTask.run( progressReporter ) );
+            newContext().runWith( () -> runnableTask.run( progressReporter ) );
             progressReporter.finished();
         }
         catch ( Throwable t )
@@ -65,7 +65,7 @@ final class TaskRunnable
         }
     }
 
-    private Context getContext()
+    private Context newContext()
     {
         final TaskContext taskContext = runnableTask.getTaskContext();
         return ContextBuilder.create().
