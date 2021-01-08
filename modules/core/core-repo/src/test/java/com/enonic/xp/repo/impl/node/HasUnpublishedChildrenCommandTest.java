@@ -45,7 +45,7 @@ public class HasUnpublishedChildrenCommandTest
         final Node node1 = createNode( NodePath.ROOT, "node1" );
         final Node node1_1 = createNode( node1.path(), "node1_1" );
 
-        pushNodes( CTX_OTHER.getBranch(), node1.id() );
+        pushNodes( WS_OTHER, node1.id() );
 
         refresh();
 
@@ -57,7 +57,7 @@ public class HasUnpublishedChildrenCommandTest
     {
         return HasUnpublishedChildrenCommand.create().
             parent( node1.id() ).
-            target( CTX_OTHER.getBranch() ).
+            target( WS_OTHER ).
             storageService( this.storageService ).
             indexServiceInternal( this.indexServiceInternal ).
             searchService( this.searchService ).

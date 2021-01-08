@@ -66,8 +66,8 @@ public class IndexServiceImplTest
         refresh();
 
         final ReindexResult result = this.indexService.reindex( ReindexParams.create().
-            addBranch( CTX_DEFAULT.getBranch() ).
-            repositoryId( CTX_DEFAULT.getRepositoryId() ).
+            addBranch( WS_DEFAULT ).
+            repositoryId( TEST_REPO_ID ).
             initialize( true ).
             build() );
 
@@ -91,8 +91,8 @@ public class IndexServiceImplTest
         refresh();
 
         final ReindexResult result = this.indexService.reindex( ReindexParams.create().
-            addBranch( CTX_DEFAULT.getBranch() ).
-            repositoryId( CTX_DEFAULT.getRepositoryId() ).
+            addBranch( WS_DEFAULT ).
+            repositoryId( TEST_REPO_ID ).
             initialize( false ).
             build() );
 
@@ -113,13 +113,13 @@ public class IndexServiceImplTest
 
         refresh();
 
-        this.indexService.purgeSearchIndex( new PurgeIndexParams( CTX_DEFAULT.getRepositoryId() ) );
+        this.indexService.purgeSearchIndex( new PurgeIndexParams( TEST_REPO_ID ) );
 
         assertNull( queryForNode( node.id() ) );
 
         final ReindexResult result = this.indexService.reindex( ReindexParams.create().
-            addBranch( CTX_DEFAULT.getBranch() ).
-            repositoryId( CTX_DEFAULT.getRepositoryId() ).
+            addBranch( WS_DEFAULT ).
+            repositoryId( TEST_REPO_ID ).
             initialize( false ).
             build() );
 
@@ -144,7 +144,7 @@ public class IndexServiceImplTest
 
         PushNodesCommand.create().
             ids( NodeIds.from( node.id() ) ).
-            target( CTX_OTHER.getBranch() ).
+            target( WS_OTHER ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -154,35 +154,35 @@ public class IndexServiceImplTest
         refresh();
 
         assertNotNull( queryForNode( node.id() ) );
-        assertNotNull( CTX_OTHER.callWith( () -> queryForNode( node.id() ) ) );
+        assertNotNull( ctxOther().callWith( () -> queryForNode( node.id() ) ) );
 
-        this.indexService.purgeSearchIndex( new PurgeIndexParams( CTX_DEFAULT.getRepositoryId() ) );
+        this.indexService.purgeSearchIndex( new PurgeIndexParams( TEST_REPO_ID ) );
 
         refresh();
 
         assertNull( queryForNode( node.id() ) );
 
         this.indexService.reindex( ReindexParams.create().
-            addBranch( CTX_DEFAULT.getBranch() ).
-            repositoryId( CTX_DEFAULT.getRepositoryId() ).
+            addBranch( WS_DEFAULT ).
+            repositoryId( TEST_REPO_ID ).
             initialize( false ).
             build() );
 
         refresh();
 
         assertNotNull( queryForNode( node.id() ) );
-        assertNull( CTX_OTHER.callWith( () -> queryForNode( node.id() ) ) );
+        assertNull( ctxOther().callWith( () -> queryForNode( node.id() ) ) );
 
         this.indexService.reindex( ReindexParams.create().
-            addBranch( CTX_OTHER.getBranch() ).
-            repositoryId( CTX_DEFAULT.getRepositoryId() ).
+            addBranch( WS_OTHER ).
+            repositoryId( TEST_REPO_ID ).
             initialize( true ).
             build() );
 
         refresh();
 
         assertNull( queryForNode( node.id() ) );
-        assertNotNull( CTX_OTHER.callWith( () -> queryForNode( node.id() ) ) );
+        assertNotNull( ctxOther().callWith( () -> queryForNode( node.id() ) ) );
     }
 
     @Test
@@ -297,7 +297,7 @@ public class IndexServiceImplTest
         throws Exception
     {
         final UpdateIndexSettingsResult result = this.indexService.updateIndexSettings( UpdateIndexSettingsParams.create().
-            repository( TEST_REPO.getId() ).
+            repository( TEST_REPO_ID ).
             settings( "{\"index\": {\"number_of_replicas\": 2}}" ).
             build() );
 
@@ -308,7 +308,7 @@ public class IndexServiceImplTest
     public void getIndexSettings_empty()
         throws Exception
     {
-        final IndexSettings indexSettings = this.indexService.getIndexSettings( TEST_REPO.getId(), IndexType.SEARCH );
+        final IndexSettings indexSettings = this.indexService.getIndexSettings( TEST_REPO_ID, IndexType.SEARCH );
 
         assertNull( indexSettings.getNode().get( "index.invalid_path" ) );
     }
@@ -318,11 +318,11 @@ public class IndexServiceImplTest
         throws Exception
     {
         this.indexService.updateIndexSettings( UpdateIndexSettingsParams.create().
-            repository( TEST_REPO.getId() ).
+            repository( TEST_REPO_ID ).
             settings( "{\"index\": {\"number_of_replicas\": 2}}" ).
             build() );
 
-        final IndexSettings indexSettings = this.indexService.getIndexSettings( TEST_REPO.getId(), IndexType.SEARCH );
+        final IndexSettings indexSettings = this.indexService.getIndexSettings( TEST_REPO_ID, IndexType.SEARCH );
 
         assertEquals( "\"2\"", indexSettings.getNode().get( "index.number_of_replicas" ).toString() );
     }

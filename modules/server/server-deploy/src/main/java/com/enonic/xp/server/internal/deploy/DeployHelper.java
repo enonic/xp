@@ -3,7 +3,6 @@ package com.enonic.xp.server.internal.deploy;
 import java.util.concurrent.Callable;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
@@ -22,11 +21,6 @@ final class DeployHelper
 
     private static final User APPLICATION_SUPER_USER = User.create().key( APPLICATION_SUPER_USER_KEY ).login( "node" ).build();
 
-    private static final Context CONTEXT_APPLICATIONS = ContextBuilder.create().
-        branch( BRANCH_APPLICATIONS ).
-        repositoryId( APPLICATIONS_REPO_ID ).
-        build();
-
     private static final AuthenticationInfo APPLICATION_SU_AUTH_INFO = AuthenticationInfo.create().
         principals( APPLICATION_SUPER_USER_KEY, RoleKeys.ADMIN ).
         user( APPLICATION_SUPER_USER ).
@@ -34,7 +28,9 @@ final class DeployHelper
 
     static <T> T runAsAdmin( final Callable<T> callable )
     {
-        return ContextBuilder.from( CONTEXT_APPLICATIONS ).
+        return ContextBuilder.create().
+            branch( BRANCH_APPLICATIONS ).
+            repositoryId( APPLICATIONS_REPO_ID ).
             authInfo( APPLICATION_SU_AUTH_INFO ).
             build().
             callWith( callable );
@@ -42,7 +38,9 @@ final class DeployHelper
 
     static void runAsAdmin( final Runnable runnable )
     {
-        ContextBuilder.from( CONTEXT_APPLICATIONS ).
+        ContextBuilder.create().
+            branch( BRANCH_APPLICATIONS ).
+            repositoryId( APPLICATIONS_REPO_ID ).
             authInfo( APPLICATION_SU_AUTH_INFO ).
             build().
             runWith( runnable );

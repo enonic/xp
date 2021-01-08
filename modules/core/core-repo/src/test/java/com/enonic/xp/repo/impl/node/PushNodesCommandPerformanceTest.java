@@ -40,7 +40,7 @@ public class PushNodesCommandPerformanceTest
 
         final ResolveSyncWorkResult syncWork = ResolveSyncWorkCommand.create().
             nodeId( rootNode.id() ).
-            target( CTX_OTHER.getBranch() ).
+            target( WS_OTHER ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -51,7 +51,7 @@ public class PushNodesCommandPerformanceTest
 
         final PushNodesResult result = PushNodesCommand.create().
             ids( syncWork.getNodeComparisons().getNodeIds() ).
-            target( CTX_OTHER.getBranch() ).
+            target( WS_OTHER ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

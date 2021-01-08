@@ -5,22 +5,21 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.session.SessionKey;
-import com.enonic.xp.session.SimpleSession;
+import com.enonic.xp.session.SessionMock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class ContextBuilderTest
+class ContextBuilderTest
 {
     private static final class SampleValue
     {
     }
 
     @Test
-    public void testBuild()
+    void testBuild()
     {
         final ContextBuilder builder = ContextBuilder.create();
         builder.repositoryId( "repository" );
@@ -44,7 +43,7 @@ public class ContextBuilderTest
     }
 
     @Test
-    public void testBuildFrom()
+    void testBuildFrom()
     {
         final Context old = ContextBuilder.create().
             repositoryId( "repository" ).
@@ -87,8 +86,7 @@ public class ContextBuilderTest
     }
 
     @Test
-    public void detachSession()
-        throws Exception
+    void detachSession()
     {
         final Context oldCtx = ContextBuilder.create().
             attribute( "key1", "value1" ).
@@ -96,7 +94,7 @@ public class ContextBuilderTest
 
         oldCtx.getLocalScope().setAttribute( Branch.from( "draft" ) );
         oldCtx.getLocalScope().setAttribute( RepositoryId.from( "repository" ) );
-        oldCtx.getLocalScope().setSession( new SimpleSession( SessionKey.generate() ) );
+        oldCtx.getLocalScope().setSession( new SessionMock() );
         oldCtx.getLocalScope().getSession().setAttribute( "sessionKey", "sessionValue" );
 
         assertNotNull( oldCtx.getLocalScope().getSession() );
@@ -112,5 +110,28 @@ public class ContextBuilderTest
         assertEquals( "repository", newContext.getRepositoryId().toString() );
         assertEquals( "draft", newContext.getBranch().toString() );
         assertEquals( "sessionValue", newContext.getAttribute( "sessionKey" ) );
+    }
+
+    @Test
+    void copyOf()
+    {
+        final Context oldCtx = ContextBuilder.create().attribute( "key1", "value1" ).build();
+
+        oldCtx.getLocalScope().setAttribute( RepositoryId.from( "repository" ) );
+
+        oldCtx.getLocalScope().setSession( new SessionMock() );
+
+        oldCtx.getLocalScope().setAttribute( "duplicateKey", "localValue" );
+        oldCtx.getLocalScope().getSession().setAttribute( "duplicateKey", "sessionValue" );
+
+        oldCtx.getLocalScope().getSession().setAttribute( "sessionKey", "anotherSessionValue" );
+
+        final Context newContext = ContextBuilder.copyOf( oldCtx ).build();
+
+        assertNull( newContext.getLocalScope().getSession() );
+
+        assertEquals( "repository", newContext.getRepositoryId().toString() );
+        assertEquals( "localValue", newContext.getAttribute( "duplicateKey" ) );
+        assertEquals( "anotherSessionValue", newContext.getAttribute( "sessionKey" ) );
     }
 }

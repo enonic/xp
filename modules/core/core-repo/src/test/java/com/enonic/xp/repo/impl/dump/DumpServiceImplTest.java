@@ -143,8 +143,8 @@ public class DumpServiceImplTest
             build() ) );
 
         // 4 of node, 1 of root
-        assertEquals( 5, systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).getVersions() );
-        final BranchDumpResult branchDumpResult = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
+        assertEquals( 5, systemDumpResult.get( TEST_REPO_ID ).getVersions() );
+        final BranchDumpResult branchDumpResult = systemDumpResult.get( TEST_REPO_ID ).get( WS_DEFAULT );
 
         assertEquals( 2, branchDumpResult.getSuccessful() );
 
@@ -252,7 +252,7 @@ public class DumpServiceImplTest
             dumpName( "testDump" ).
             build() ) );
 
-        final BranchDumpResult result = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
+        final BranchDumpResult result = systemDumpResult.get( TEST_REPO_ID ).get( WS_DEFAULT );
         assertNotNull( result );
         assertEquals( 2, result.getSuccessful() );
 
@@ -324,7 +324,7 @@ public class DumpServiceImplTest
             dumpName( "testDump" ).
             build() ) );
 
-        final BranchDumpResult result = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
+        final BranchDumpResult result = systemDumpResult.get( TEST_REPO_ID ).get( WS_DEFAULT );
         assertNotNull( result );
         assertEquals( 2, result.getSuccessful() );
 
@@ -351,8 +351,8 @@ public class DumpServiceImplTest
             build() ) );
 
         // 4 of node, 1 of root
-        assertEquals( 5, systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).getVersions() );
-        final BranchDumpResult branchDumpResult = systemDumpResult.get( CTX_DEFAULT.getRepositoryId() ).get( CTX_DEFAULT.getBranch() );
+        assertEquals( 5, systemDumpResult.get( TEST_REPO_ID ).getVersions() );
+        final BranchDumpResult branchDumpResult = systemDumpResult.get( TEST_REPO_ID ).get( WS_DEFAULT );
 
         assertEquals( 2, branchDumpResult.getSuccessful() );
     }
@@ -390,8 +390,8 @@ public class DumpServiceImplTest
         throws Exception
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
-        final Branch branch = CTX_DEFAULT.getBranch();
-        final RepositoryId currentRepoId = CTX_DEFAULT.getRepositoryId();
+        final Branch branch = WS_DEFAULT;
+        final RepositoryId currentRepoId = TEST_REPO_ID;
 
         NodeHelper.runAsAdmin( () -> {
             doDump( SystemDumpParams.create().
@@ -443,7 +443,7 @@ public class DumpServiceImplTest
         throws Exception
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
-        this.nodeService.push( NodeIds.from( node.id() ), CTX_OTHER.getBranch() );
+        this.nodeService.push( NodeIds.from( node.id() ), WS_OTHER );
         refresh();
 
         final NodeVersionQueryResult versionsBeforeDump = this.nodeService.findVersions( GetNodeVersionsParams.create().
@@ -472,7 +472,7 @@ public class DumpServiceImplTest
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
         updateNode( node );
-        this.nodeService.push( NodeIds.from( node.id() ), CTX_OTHER.getBranch() );
+        this.nodeService.push( NodeIds.from( node.id() ), WS_OTHER );
         updateNode( node );
         updateNode( node );
         refresh();
@@ -496,7 +496,7 @@ public class DumpServiceImplTest
         throws Exception
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
-        this.nodeService.push( NodeIds.from( node.id() ), CTX_OTHER.getBranch() );
+        this.nodeService.push( NodeIds.from( node.id() ), WS_OTHER );
         updateNode( node );
         refresh();
 
@@ -504,18 +504,18 @@ public class DumpServiceImplTest
         refresh();
 
         final GetActiveNodeVersionsResult activeVersions = this.nodeService.getActiveVersions( GetActiveNodeVersionsParams.create().
-            branches( Branches.from( CTX_DEFAULT.getBranch(), CTX_OTHER.getBranch() ) ).
+            branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).
             nodeId( node.id() ).
             build() );
 
-        final Node defaultBranchNode = CTX_DEFAULT.callWith( () -> this.nodeService.getById( node.id() ) );
-        final Node otherBranchNode = CTX_OTHER.callWith( () -> this.nodeService.getById( node.id() ) );
+        final Node defaultBranchNode = ctxDefault().callWith( () -> this.nodeService.getById( node.id() ) );
+        final Node otherBranchNode = ctxOther().callWith( () -> this.nodeService.getById( node.id() ) );
 
         final ImmutableMap<Branch, NodeVersionMetadata> activeVersionsMap = activeVersions.getNodeVersions();
 
         assertEquals( 2, activeVersionsMap.size() );
-        assertEquals( defaultBranchNode.getNodeVersionId(), activeVersionsMap.get( CTX_DEFAULT.getBranch() ).getNodeVersionId() );
-        assertEquals( otherBranchNode.getNodeVersionId(), activeVersionsMap.get( CTX_OTHER.getBranch() ).getNodeVersionId() );
+        assertEquals( defaultBranchNode.getNodeVersionId(), activeVersionsMap.get( WS_DEFAULT ).getNodeVersionId() );
+        assertEquals( otherBranchNode.getNodeVersionId(), activeVersionsMap.get( WS_OTHER ).getNodeVersionId() );
     }
 
     @Test
@@ -523,7 +523,7 @@ public class DumpServiceImplTest
         throws Exception
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
-        this.nodeService.push( NodeIds.from( node.id() ), CTX_OTHER.getBranch() );
+        this.nodeService.push( NodeIds.from( node.id() ), WS_OTHER );
         updateNode( node );
         refresh();
 
@@ -531,7 +531,7 @@ public class DumpServiceImplTest
         refresh();
 
         final GetActiveNodeVersionsResult activeVersions = this.nodeService.getActiveVersions( GetActiveNodeVersionsParams.create().
-            branches( Branches.from( CTX_DEFAULT.getBranch(), CTX_OTHER.getBranch() ) ).
+            branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).
             nodeId( node.id() ).
             build() );
 
@@ -562,7 +562,7 @@ public class DumpServiceImplTest
             build().
             execute();
 
-        this.nodeService.push( NodeIds.from( node.id() ), CTX_OTHER.getBranch() );
+        this.nodeService.push( NodeIds.from( node.id() ), WS_OTHER );
         updateNode( node );
         refresh();
 
@@ -641,7 +641,7 @@ public class DumpServiceImplTest
         final Repository myRepo =
             NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "myrepo" ), AccessControlList.create().
                 add( AccessControlEntry.create().
-                    principal( CTX_DEFAULT.getAuthInfo().getUser().getKey() ).
+                    principal( ctxDefault().getAuthInfo().getUser().getKey() ).
                     allowAll().
                     build() ).
                 build(), null ) );
@@ -727,8 +727,8 @@ public class DumpServiceImplTest
             listener( systemDumpListener ).
             build() ) );
 
-        Mockito.verify( systemDumpListener ).dumpingBranch( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch(), 2 );
-        Mockito.verify( systemDumpListener ).dumpingBranch( CTX_OTHER.getRepositoryId(), CTX_OTHER.getBranch(), 1 );
+        Mockito.verify( systemDumpListener ).dumpingBranch( TEST_REPO_ID, WS_DEFAULT, 2 );
+        Mockito.verify( systemDumpListener ).dumpingBranch( TEST_REPO_ID, WS_OTHER, 1 );
         Mockito.verify( systemDumpListener ).dumpingBranch( AUDIT_LOG_REPO_ID, AUDIT_LOG_BRANCH, 1 );
         Mockito.verify( systemDumpListener ).dumpingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 5 );
         Mockito.verify( systemDumpListener, Mockito.times( 9 ) ).nodeDumped();
@@ -740,10 +740,10 @@ public class DumpServiceImplTest
             listener( systemLoadListener ).
             build() ) );
 
-        Mockito.verify( systemLoadListener ).loadingBranch( CTX_DEFAULT.getRepositoryId(), CTX_DEFAULT.getBranch(), 2L );
-        Mockito.verify( systemLoadListener ).loadingVersions( CTX_DEFAULT.getRepositoryId() );
-        Mockito.verify( systemLoadListener ).loadingBranch( CTX_OTHER.getRepositoryId(), CTX_OTHER.getBranch(), 1L );
-        Mockito.verify( systemLoadListener ).loadingVersions( CTX_OTHER.getRepositoryId() );
+        Mockito.verify( systemLoadListener ).loadingBranch( TEST_REPO_ID, ctxDefault().getBranch(), 2L );
+        Mockito.verify( systemLoadListener ).loadingVersions( TEST_REPO_ID );
+        Mockito.verify( systemLoadListener ).loadingBranch( TEST_REPO_ID, WS_OTHER, 1L );
+        Mockito.verify( systemLoadListener ).loadingVersions( TEST_REPO_ID );
         Mockito.verify( systemLoadListener ).loadingBranch( AUDIT_LOG_REPO_ID, AUDIT_LOG_BRANCH, 1L );
         Mockito.verify( systemLoadListener ).loadingVersions( AUDIT_LOG_REPO_ID );
         Mockito.verify( systemLoadListener ).loadingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 5L );

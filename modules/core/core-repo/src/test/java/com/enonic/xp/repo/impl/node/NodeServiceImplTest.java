@@ -150,7 +150,7 @@ public class NodeServiceImplTest
                 principals( RoleKeys.CONTENT_MANAGER_ADMIN ).
                 build() ).
             branch( WS_DEFAULT ).
-            repositoryId( TEST_REPO.getId() ).
+            repositoryId( TEST_REPO_ID ).
             build();
 
         context.runWith( () -> assertNotNull( this.nodeService.getByPath( NodePath.ROOT ) ) );

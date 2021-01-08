@@ -21,8 +21,7 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
-import com.enonic.xp.session.SessionKey;
-import com.enonic.xp.session.SimpleSession;
+import com.enonic.xp.session.SessionMock;
 
 public class AuthResourceTest
     extends AdminResourceTestSupport
@@ -178,7 +177,7 @@ public class AuthResourceTest
 
         final AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN_LOGIN ).build();
         localScope.setAttribute( authInfo );
-        localScope.setSession( new SimpleSession( SessionKey.generate() ) );
+        localScope.setSession( new SessionMock() );
 
         String jsonString = request().path( "auth/authenticated" ).get().getAsString();
 

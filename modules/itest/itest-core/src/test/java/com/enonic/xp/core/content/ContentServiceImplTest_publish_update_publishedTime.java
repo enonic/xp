@@ -126,7 +126,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
     {
         this.contentService.publish( PushContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
-            target( CTX_OTHER.getBranch() ).
+            target( WS_OTHER ).
             includeDependencies( false ).
             build() );
     }

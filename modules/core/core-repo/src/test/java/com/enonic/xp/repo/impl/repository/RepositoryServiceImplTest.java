@@ -51,11 +51,14 @@ class RepositoryServiceImplTest
         user( REPO_TEST_DEFAULT_USER ).
         build();
 
-    private static final Context ADMIN_CONTEXT = ContextBuilder.create().
-        branch( "master" ).
-        repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-        authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).
-        build();
+    private static Context createAdminContext()
+    {
+        return ContextBuilder.create().
+            branch( "master" ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
+            authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).
+            build();
+    }
 
     @Test
     void create()
@@ -129,7 +132,7 @@ class RepositoryServiceImplTest
             } ).
             build() ) );
 
-        ADMIN_CONTEXT.runWith( () -> {
+        createAdminContext().runWith( () -> {
             repositoryService.invalidateAll();
         } );
 
@@ -146,7 +149,7 @@ class RepositoryServiceImplTest
         assertNotNull( repo );
         assertEquals( RepositoryId.from( "fisk" ), repo.getId() );
 
-        final Node rootNode = ADMIN_CONTEXT.callWith( () -> this.nodeService.getRoot() );
+        final Node rootNode = createAdminContext().callWith( () -> this.nodeService.getRoot() );
         final AccessControlList acl = rootNode.getPermissions();
 
         System.out.println( acl.toString() );
@@ -157,7 +160,7 @@ class RepositoryServiceImplTest
     {
         final Repository repo = doCreateRepo( "fisk" );
 
-        final Repository persistedRepo = ADMIN_CONTEXT.callWith( () -> this.repositoryService.get( repo.getId() ) );
+        final Repository persistedRepo = createAdminContext().callWith( () -> this.repositoryService.get( repo.getId() ) );
         assertNotNull( persistedRepo );
     }
 
@@ -165,8 +168,8 @@ class RepositoryServiceImplTest
     void delete_branch()
     {
         final Node myNode = createNode( NodePath.ROOT, "myNode" );
-        NodeHelper.runAsAdmin( () -> this.repositoryService.deleteBranch( DeleteBranchParams.from( CTX_DEFAULT.getBranch() ) ) );
-        NodeHelper.runAsAdmin( () -> this.repositoryService.createBranch( CreateBranchParams.from( CTX_DEFAULT.getBranch().toString() ) ) );
+        NodeHelper.runAsAdmin( () -> this.repositoryService.deleteBranch( DeleteBranchParams.from( WS_DEFAULT ) ) );
+        NodeHelper.runAsAdmin( () -> this.repositoryService.createBranch( CreateBranchParams.from( WS_DEFAULT ) ) );
         assertNull( getNode( myNode.id() ) );
     }
 
@@ -214,7 +217,7 @@ class RepositoryServiceImplTest
             build().
             runWith( () -> createNode( NodePath.ROOT, "fisk" ) );
 
-        ADMIN_CONTEXT.callWith( () -> this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repo.getId() ) ) );
+        createAdminContext().callWith( () -> this.repositoryService.deleteRepository( DeleteRepositoryParams.from( repo.getId() ) ) );
 
         final Repository repoRecreated = doCreateRepo( "fisk" );
 
@@ -232,7 +235,7 @@ class RepositoryServiceImplTest
 
     private Repository doCreateRepo( final String id, final PropertyTree data )
     {
-        return ADMIN_CONTEXT.callWith( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
+        return createAdminContext().callWith( () -> this.repositoryService.createRepository( CreateRepositoryParams.create().
             repositoryId( RepositoryId.from( id ) ).
             rootPermissions( AccessControlList.create().
                 add( AccessControlEntry.create().
@@ -246,7 +249,7 @@ class RepositoryServiceImplTest
 
     private Repository getPersistedRepoWithoutCache( String id )
     {
-        return ADMIN_CONTEXT.callWith( () -> {
+        return createAdminContext().callWith( () -> {
             repositoryService.invalidateAll();
             return this.repositoryService.get( RepositoryId.from( id ) );
         } );

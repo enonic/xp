@@ -29,8 +29,8 @@ public class ImportNodeCommandTest
     public void setUp()
         throws Exception
     {
-        CTX_DEFAULT.callWith( this::createDefaultRootNode );
-        CTX_OTHER.callWith( this::createDefaultRootNode );
+        ctxDefault().callWith( this::createDefaultRootNode );
+        ctxOther().callWith( this::createDefaultRootNode );
     }
 
     @Test
@@ -52,7 +52,7 @@ public class ImportNodeCommandTest
     public void created_nodes_with_id_and_timestamp_should_be_equal()
         throws Exception
     {
-        CTX_DEFAULT.callWith( () -> importNode( Node.create().
+        ctxDefault().callWith( () -> importNode( Node.create().
             id( NodeId.from( "abc" ) ).
             name( "myNode" ).
             parentPath( NodePath.ROOT ).
@@ -60,7 +60,7 @@ public class ImportNodeCommandTest
             timestamp( Instant.parse( "2014-01-01T10:00:00Z" ) ).
             build() ) );
 
-        CTX_OTHER.callWith( () -> importNode( Node.create().
+        ctxOther().callWith( () -> importNode( Node.create().
             id( NodeId.from( "abc" ) ).
             name( "myNode" ).
             parentPath( NodePath.ROOT ).
@@ -70,7 +70,7 @@ public class ImportNodeCommandTest
 
         final NodeComparison comparison = CompareNodeCommand.create().
             nodeId( NodeId.from( "abc" ) ).
-            target( CTX_OTHER.getBranch() ).
+            target( WS_OTHER ).
             storageService( this.storageService ).
             build().
             execute();

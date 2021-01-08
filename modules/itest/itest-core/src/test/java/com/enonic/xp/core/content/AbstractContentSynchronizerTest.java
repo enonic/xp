@@ -76,12 +76,6 @@ public abstract class AbstractContentSynchronizerTest
         user( REPO_TEST_DEFAULT_USER ).
         build();
 
-    protected static final Context ADMIN_CONTEXT = ContextBuilder.create().
-        branch( "master" ).
-        repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-        authInfo( REPO_TEST_ADMIN_USER_AUTHINFO ).
-        build();
-
     protected ProjectServiceImpl projectService;
 
     protected ContentServiceImpl contentService;
@@ -106,6 +100,15 @@ public abstract class AbstractContentSynchronizerTest
 
     protected Project targetProject;
 
+    protected static Context adminContext()
+    {
+        return ContextBuilder.create().
+            branch( "master" ).
+            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
+            authInfo( REPO_TEST_ADMIN_USER_AUTHINFO ).
+            build();
+    }
+
     protected void setUpNode()
         throws Exception
     {
@@ -118,7 +121,7 @@ public abstract class AbstractContentSynchronizerTest
 
     private void setUpProjectService()
     {
-        ADMIN_CONTEXT.runWith( () -> {
+        adminContext().runWith( () -> {
             SecurityServiceImpl securityService = new SecurityServiceImpl( this.nodeService, indexService );
 
             securityService.initialize();
