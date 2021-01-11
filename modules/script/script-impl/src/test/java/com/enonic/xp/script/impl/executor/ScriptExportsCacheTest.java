@@ -110,4 +110,29 @@ class ScriptExportsCacheTest
         verify( requireFunction, times( 2 ) ).apply( resource );
         verifyNoMoreInteractions( requireFunction );
     }
+
+    @Test
+    void expireCacheIfNeeded_one_expired_clears_all()
+        throws Exception
+    {
+        final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "some.app" ), "some0.js" );
+        final Resource resource = mock( Resource.class );
+        when( resource.getTimestamp() ).thenReturn( 1L );
+        when( resourceLookup.apply( resourceKey ) ).thenReturn( resource );
+
+        final ResourceKey resourceKeyExtra = ResourceKey.from( ApplicationKey.from( "some.app" ), "some1.js" );
+        final Resource resourceExtra = mock( Resource.class );
+        when( resourceExtra.getTimestamp() ).thenReturn( 2L, 3L );
+        when( resourceLookup.apply( resourceKeyExtra ) ).thenReturn( resourceExtra );
+
+        final ScriptExportsCache scriptExportsCache = new ScriptExportsCache( RunMode.DEV, resourceLookup, expiredCallback );
+        scriptExportsCache.getOrCompute( resourceKey, requireFunction );
+        scriptExportsCache.getOrCompute( resourceKeyExtra, requireFunction );
+        scriptExportsCache.expireCacheIfNeeded();
+        scriptExportsCache.getOrCompute( resourceKey, requireFunction );
+
+        verify( resourceExtra, times( 2 ) ).getTimestamp();
+        verify( resourceLookup, times( 2 ) ).apply( resourceKey );
+        verify( requireFunction, times( 2 ) ).apply( resource );
+    }
 }

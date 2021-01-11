@@ -89,7 +89,7 @@ final class ScriptExportsCache
 
     private boolean isExpired()
     {
-        return cache.values().stream().map( ScriptExportEntry::isExpired ).findAny().orElse( false );
+        return cache.values().stream().anyMatch( ScriptExportEntry::isExpired );
     }
 
     private static class ScriptExportEntry
