@@ -6,7 +6,7 @@
  *
  * @module node
  */
-
+/* global __*/
 
 var factory = __.newBean('com.enonic.xp.lib.node.NodeHandleFactory');
 
@@ -457,8 +457,8 @@ RepoConnection.prototype.setRootPermissions = function (params) {
  *
  * @example-ref examples/node/commit.js
  *
- * @param {...(string|string[])} keys Node keys to commit. Each argument could be an id, a path or an array of the two. Prefer the usage of ID rather than paths.
- * @param {string} [message] Commit message.
+ * @param {...(string|string[])} params.keys Node keys to commit. Each argument could be an id, a path or an array of the two. Prefer the usage of ID rather than paths.
+ * @param {string} [params.message] Commit message.
  *
  * @returns {object} Commit object.
  */

@@ -10,7 +10,7 @@ try {
     });
     log.info('Branch [' + result.id + '] deleted');
 } catch (e) {
-    if (e.code == 'branchNotFound') {
+    if (e.code === 'branchNotFound') {
         log.error('Branch [test-branch] does not exist');
     } else {
         log.error('Unexpected error: ' + e.message);

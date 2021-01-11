@@ -6,6 +6,7 @@
  *
  * @module task
  */
+/* global __*/
 
 function checkRequired(params, name) {
     if (params[name] === undefined) {

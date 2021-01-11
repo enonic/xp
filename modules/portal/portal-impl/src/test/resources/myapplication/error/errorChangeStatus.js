@@ -4,5 +4,5 @@ exports.handleError = function (err) {
         headers: {
             Location: '/another/page'
         }
-    }
+    };
 };

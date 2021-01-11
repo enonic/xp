@@ -6,6 +6,7 @@
  *
  * @module mail
  */
+/* global __*/
 
 function checkRequired(params, name) {
     if (params[name] === undefined) {

@@ -6,6 +6,7 @@
  *
  * @module content
  */
+/* global __*/
 
 function required(params, name) {
     var value = params[name];

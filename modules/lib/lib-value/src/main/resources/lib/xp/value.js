@@ -6,6 +6,7 @@
  *
  * @module value
  */
+/* global Java*/
 
 
 var GeoPointType = Java.type('com.enonic.xp.util.GeoPoint');

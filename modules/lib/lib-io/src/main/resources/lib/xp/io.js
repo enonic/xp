@@ -6,6 +6,7 @@
  *
  * @module io
  */
+/* global __*/
 
 var bean = __.newBean('com.enonic.xp.lib.io.IOHandlerBean');
 

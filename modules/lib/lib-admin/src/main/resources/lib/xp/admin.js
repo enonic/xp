@@ -6,6 +6,7 @@
  *
  * @module admin
  */
+/* global __*/
 
 var i18n = require('/lib/xp/i18n');
 var portal = require('/lib/xp/portal');

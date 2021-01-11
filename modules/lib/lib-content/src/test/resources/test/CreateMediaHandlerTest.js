@@ -74,7 +74,7 @@ exports.createMediaAutoGenerateName = function () {
         parentPath: '/a/b',
         mimeType: 'text/plain',
         data: TestClass.createByteSource('Hello World'),
-        idGenerator: function () {
+        idGenerator() {
             return String(counter++);
         }
     });

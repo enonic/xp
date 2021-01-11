@@ -5,7 +5,7 @@ exports.submitTask = function () {
 
     var taskId = taskLib.submit({
         description: 'Background task',
-        task: function () {
+        task() {
             // do something
         }
     });
@@ -17,7 +17,7 @@ exports.submitTaskThrowingError = function () {
 
     var taskId = taskLib.submit({
         description: 'Background task',
-        task: function () {
+        task() {
             throw new Error('Something went wrong');
         }
     });

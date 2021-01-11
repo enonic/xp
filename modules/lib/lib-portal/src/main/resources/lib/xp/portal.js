@@ -6,6 +6,7 @@
  *
  * @module portal
  */
+/* global __*/
 
 /**
  * This function generates a URL pointing to a static file.
