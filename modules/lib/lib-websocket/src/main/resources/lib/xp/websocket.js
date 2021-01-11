@@ -6,6 +6,7 @@
  *
  * @module websocket
  */
+/* global __*/
 
 /**
  * Add an id to a socket group.

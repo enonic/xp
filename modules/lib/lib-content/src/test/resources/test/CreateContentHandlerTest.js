@@ -186,7 +186,7 @@ exports.createContentAutoGenerateNameWithExistingName = function () {
         displayName: 'My Content',
         contentType: 'test:myContentType',
         data: {},
-        idGenerator: function () {
+        idGenerator() {
             return String(counter++);
         }
     });

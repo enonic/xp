@@ -6,7 +6,7 @@ var assert = require('/lib/xp/testing');
 eventLib.listener({
     type: 'node.*',
     localOnly: false,
-    callback: function (event) {
+    callback(event) {
         log.info(JSON.stringify(event));
     }
 });

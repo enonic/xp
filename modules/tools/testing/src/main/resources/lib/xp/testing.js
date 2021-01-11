@@ -1,3 +1,5 @@
+/* global __, Java*/
+
 var helper = Java.type('com.enonic.xp.testing.helper.TestHelper');
 
 /**

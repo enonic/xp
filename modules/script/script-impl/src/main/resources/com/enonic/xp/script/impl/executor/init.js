@@ -4,10 +4,10 @@
     module.id = __.script.toString();
 
     Object.defineProperty(module, 'exports', {
-        get: function () {
+        get() {
             return exports;
         },
-        set: function (value) {
+        set(value) {
             exports = value;
         }
     });

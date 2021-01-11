@@ -6,6 +6,7 @@
  *
  * @module context
  */
+/* global __*/
 
 var bean = __.newBean('com.enonic.xp.lib.context.ContextHandlerBean');
 

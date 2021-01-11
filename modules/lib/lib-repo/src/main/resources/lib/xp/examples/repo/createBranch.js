@@ -10,7 +10,7 @@ try {
     });
     log.info('Branch [' + result.id + '] created');
 } catch (e) {
-    if (e.code == 'branchAlreadyExists') {
+    if (e.code === 'branchAlreadyExists') {
         log.error('Branch [features-branch] already exist');
     } else {
         log.error('Unexpected error: ' + e.message);

@@ -6,7 +6,7 @@ exports.testListener = function () {
     eventLib.listener({
         type: 'app*',
         localOnly: false,
-        callback: function (e) {
+        callback(e) {
             event = e;
         }
     });

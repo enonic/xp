@@ -6,7 +6,7 @@ t.mock('/lib/xp/something', {
 });
 
 t.mock('/lib/xp/content', {
-    get: function (params) {
+    get(params) {
         return {
             '_id': 'id'
         }
@@ -14,7 +14,7 @@ t.mock('/lib/xp/content', {
 });
 
 t.mock('/lib/xp/portal.js', {
-    assetUrl: function (params) {
+    assetUrl(params) {
         return 'generated_url';
     }
 });

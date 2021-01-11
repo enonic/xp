@@ -6,6 +6,7 @@
  *
  * @module cluster
  */
+/* global __*/
 
 /**
  * Tests whether the current node is the master node in the cluster.

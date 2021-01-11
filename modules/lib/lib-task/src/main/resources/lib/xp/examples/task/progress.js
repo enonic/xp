@@ -11,7 +11,7 @@ function processItem() {
 // Execute task and keep taskId for polling status
 var taskId = taskLib.submit({
     description: 'Background task',
-    task: function () {
+    task() {
 
         taskLib.progress({info: 'Initializing task'});
 

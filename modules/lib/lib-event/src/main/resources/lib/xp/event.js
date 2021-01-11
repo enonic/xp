@@ -6,6 +6,7 @@
  *
  * @module event
  */
+/* global __*/
 
 /**
  * This function adds a event listener.

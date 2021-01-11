@@ -5,7 +5,7 @@ exports.reportProgress = function () {
 
     var taskId = taskLib.submit({
         description: 'Background task',
-        task: function () {
+        task() {
 
             taskLib.progress({info: 'Starting task'});
 

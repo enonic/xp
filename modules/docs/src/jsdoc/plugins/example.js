@@ -30,7 +30,7 @@ function findExamples(examples, lines) {
 
             current = undefined;
         } else {
-            if (current != undefined) {
+            if (current !== undefined) {
                 current += line + '\n';
             }
         }

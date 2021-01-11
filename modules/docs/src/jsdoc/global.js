@@ -101,7 +101,7 @@ var log = {
      *
      * @param {Array} args... logging arguments.
      */
-    debug: function (args) {
+    debug(args) {
 
     },
 
@@ -110,7 +110,7 @@ var log = {
      *
      * @param {Array} args... logging arguments.
      */
-    info: function (args) {
+    info(args) {
 
     },
 
@@ -119,7 +119,7 @@ var log = {
      *
      * @param {Array} args... logging arguments.
      */
-    warning: function (args) {
+    warning(args) {
 
     },
 
@@ -128,7 +128,7 @@ var log = {
      *
      * @param {Array} args... logging arguments.
      */
-    error: function (args) {
+    error(args) {
 
     }
 };
@@ -152,7 +152,7 @@ var __ = {
      *
      * @param name Classname for bean to create.
      */
-    newBean: function (name) {
+    newBean(name) {
 
     },
 
@@ -161,7 +161,7 @@ var __ = {
      *
      * @param value Value to convert.
      */
-    toScriptValue: function (value) {
+    toScriptValue(value) {
 
     },
 
@@ -170,7 +170,7 @@ var __ = {
      *
      * @param value Value to convert.
      */
-    toNativeObject: function (value) {
+    toNativeObject(value) {
 
     },
 
@@ -180,7 +180,7 @@ var __ = {
      *
      * @param value Value to convert.
      */
-    nullOrValue: function (value) {
+    nullOrValue(value) {
 
     },
 
@@ -190,7 +190,7 @@ var __ = {
      * @param name Name of mock.
      * @param value Value to register.
      */
-    registerMock: function (name, value) {
+    registerMock(name, value) {
 
     },
 
@@ -199,7 +199,7 @@ var __ = {
      *
      * @param func Function to call.
      */
-    disposer: function (func) {
+    disposer(func) {
 
     }
 };

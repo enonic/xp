@@ -150,7 +150,7 @@ var expectedJson = {
     }
 };
 
-function editor(c) {
+function globalEditor(c) {
     c.displayName = 'Modified';
     c.data.a++;
     c.data.z = '99';
@@ -180,7 +180,7 @@ function editor(c) {
 exports.modify_notFound = function () {
     var result = content.modify({
         key: '123456',
-        editor: editor
+        editor: globalEditor
     });
 
     assert.assertNull(result);
@@ -189,7 +189,7 @@ exports.modify_notFound = function () {
 exports.modifyById = function () {
     var result = content.modify({
         key: '123456',
-        editor: editor
+        editor: globalEditor
     });
 
     assert.assertJsonEquals(expectedJson, result);
@@ -198,7 +198,7 @@ exports.modifyById = function () {
 exports.modifyByPath = function () {
     var result = content.modify({
         key: '/a/b/mycontent',
-        editor: editor
+        editor: globalEditor
     });
 
     assert.assertJsonEquals(expectedJson, result);
@@ -208,7 +208,7 @@ exports.modifySiteConfig = function () {
 
     var result = content.modify({
         key: '/a/b/mycontent',
-        editor: function (c) {
+        editor(c) {
             c.data.siteConfig = [];
             c.data.siteConfig[0] = {};
             c.data.siteConfig[0].applicationKey = 'appKey1';
@@ -247,7 +247,7 @@ exports.modifySiteSingleDescriptor = function () {
 
     var result = content.modify({
         key: '/a/b/mycontent',
-        editor: function (c) {
+        editor(c) {
             c.data.siteConfig = {};
             c.data.siteConfig.applicationKey = 'appKey1';
             c.data.siteConfig.config = {};
@@ -276,7 +276,7 @@ exports.modifySiteConfig_strict = function () {
     try {
         content.modify({
             key: '/a/b/mycontent',
-            editor: function (c) {
+            editor(c) {
                 c.data.siteConfig = [];
                 c.data.siteConfig[0] = {};
                 c.data.siteConfig[0].applicationKey = 'appKey1';
@@ -297,8 +297,8 @@ exports.modifyNotMappedXDataFieldName_stricted = function () {
     try {
         var result = content.modify({
             key: '/a/b/mycontent',
-            editor: function (c) {
-                editor(c);
+            editor(c) {
+                globalEditor(c);
                 c.x['com-enonic-myapplication'].other = {
                     name: 'test',
                     notMappedField: 'value'
@@ -321,8 +321,8 @@ exports.modifyNotMappedXDataFieldName_notStricted = function () {
     var result = content.modify({
         key: '/a/b/mycontent',
         requireValid: false,
-        editor: function (c) {
-            editor(c);
+        editor(c) {
+            globalEditor(c);
             c.x['com-enonic-myapplication'].other = {
                 name: 'test',
                 notMappedField: 'value'

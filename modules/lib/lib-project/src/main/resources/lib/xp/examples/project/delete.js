@@ -15,7 +15,7 @@ var deleteProject = function () {
     return projectLib2.delete({
         id: 'my-project'
     });
-}
+};
 
 var result2 = contextLib.run({
     principals: ['role:system.admin']

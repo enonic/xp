@@ -5,7 +5,7 @@ var assert = require('/lib/xp/testing');
 // Execute task and keep taskId for polling status
 var taskId = taskLib.submit({
     description: 'Background task',
-    task: function () {
+    task() {
         longRunningTask();
     }
 });

@@ -17,12 +17,12 @@ exports.testArray = function () {
 exports.testFunction = function () {
     return function (a) {
         return a;
-    }
+    };
 };
 
 exports.testFunctionError = function () {
     return function () {
         throw 'error';
-    }
+    };
 };
 

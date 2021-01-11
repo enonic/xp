@@ -67,7 +67,7 @@ try {
     log.info('Content created with id ' + result2._id);
 
 } catch (e) {
-    if (e.code == 'contentAlreadyExists') {
+    if (e.code === 'contentAlreadyExists') {
         log.error('There is already a content with that name');
     } else {
         log.error('Unexpected error: ' + e.message);

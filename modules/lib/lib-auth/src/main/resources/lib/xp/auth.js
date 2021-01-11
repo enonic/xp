@@ -6,6 +6,7 @@
  *
  * @module auth
  */
+/* global __*/
 
 function required(params, name) {
     var value = params[name];
@@ -430,7 +431,7 @@ exports.findUsers = function (params) {
  *
  * @example-ref examples/auth/createRole.js
  *
- * @param {string} name Role name.
+ * @param {string} params.name Role name.
  * @param {string} params.displayName Role display name.
  * @param {string} params.description as principal description .
  */
