@@ -1000,6 +1000,7 @@ public class NodeServiceImpl
             insertManualStrategy( params.getInsertManualStrategy() ).
             dryRun( params.isDryRun() ).
             importPermissions( params.isImportPermissions() ).
+            importPermissionsOnCreate( params.isImportPermissionsOnCreate() ).
             binaryBlobStore( this.binaryService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
