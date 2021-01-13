@@ -46,6 +46,7 @@ final class ImportContentCommand
             insertManualStrategy( params.getInsertManualStrategy() ).
             dryRun( params.isDryRun() ).
             importPermissions( params.isImportPermissions() ).
+            importPermissionsOnCreate( params.isImportPermissionsOnCreate() ).
             build();
 
         final ImportNodeResult result = nodeService.importNode( importNodeParams );

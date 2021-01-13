@@ -27,6 +27,8 @@ public class ImportContentParams
 
     private final boolean importPermissions;
 
+    private final boolean importPermissionsOnCreate;
+
     private ImportContentParams( Builder builder )
     {
         binaryAttachments = builder.binaryAttachments;
@@ -36,6 +38,7 @@ public class ImportContentParams
         inherit = builder.inherit;
         dryRun = builder.dryRun;
         importPermissions = builder.importPermissions;
+        importPermissionsOnCreate = builder.importPermissionsOnCreate;
         originProject = builder.originProject;
     }
 
@@ -84,6 +87,11 @@ public class ImportContentParams
         return importPermissions;
     }
 
+    public boolean isImportPermissionsOnCreate()
+    {
+        return importPermissionsOnCreate;
+    }
+
     public static final class Builder
     {
         private BinaryAttachments binaryAttachments;
@@ -101,6 +109,8 @@ public class ImportContentParams
         private boolean dryRun;
 
         private boolean importPermissions;
+
+        private boolean importPermissionsOnCreate;
 
         private Builder()
         {
@@ -152,6 +162,12 @@ public class ImportContentParams
         public Builder importPermissions( boolean importPermissions )
         {
             this.importPermissions = importPermissions;
+            return this;
+        }
+
+        public Builder importPermissionsOnCreate( boolean importPermissionsOnCreate )
+        {
+            this.importPermissionsOnCreate = importPermissionsOnCreate;
             return this;
         }
 

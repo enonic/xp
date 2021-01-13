@@ -24,6 +24,8 @@ public class ImportNodeCommand
 
     private final boolean importPermissions;
 
+    private final boolean importPermissionsOnCreate;
+
     private ImportNodeCommand( Builder builder )
     {
         super( builder );
@@ -33,6 +35,7 @@ public class ImportNodeCommand
         this.binaryService = builder.binaryService;
         this.dryRun = builder.dryRun;
         this.importPermissions = builder.importPermissions;
+        this.importPermissionsOnCreate = builder.importPermissionsOnCreate;
 
     }
 
@@ -71,19 +74,22 @@ public class ImportNodeCommand
     {
         if ( this.importNode.isRoot() )
         {
-            final CreateRootNodeParams createRootNodeParams = CreateRootNodeParams.create().
-                permissions( this.importNode.getPermissions() ).
-                childOrder( this.importNode.getChildOrder() ).
-                build();
+            final CreateRootNodeParams.Builder createRootNodeParams = CreateRootNodeParams.create().
+                childOrder( this.importNode.getChildOrder() );
+
+            if ( this.importPermissionsOnCreate )
+            {
+                createRootNodeParams.permissions( this.importNode.getPermissions() );
+            }
 
             return CreateRootNodeCommand.create( this ).
-                params( createRootNodeParams ).
+                params( createRootNodeParams.build() ).
                 build().
                 execute();
         }
         else
         {
-            final CreateNodeParams createNodeParams = CreateNodeParams.create().
+            final CreateNodeParams.Builder createNodeParams = CreateNodeParams.create().
                 setNodeId( this.importNode.id() ).
                 nodeType( this.importNode.getNodeType() ).
                 childOrder( this.importNode.getChildOrder() ).
@@ -94,13 +100,17 @@ public class ImportNodeCommand
                 manualOrderValue( this.importNode.getManualOrderValue() ).
                 name( this.importNode.name().toString() ).
                 parent( this.importNode.parentPath() ).
-                inheritPermissions( this.importNode.inheritsPermissions() ).
-                permissions( this.importNode.getPermissions() ).
-                setNodeId( this.importNode.id() ).
-                build();
+                inheritPermissions( !this.importPermissionsOnCreate || this.importNode.inheritsPermissions() ).
+                setNodeId( this.importNode.id() );
+
+            if ( this.importPermissionsOnCreate )
+            {
+
+                createNodeParams.permissions( this.importNode.getPermissions() );
+            }
 
             return CreateNodeCommand.create( this ).
-                params( createNodeParams ).
+                params( createNodeParams.build() ).
                 timestamp( this.importNode.getTimestamp() ).
                 binaryService( binaryService ).
                 build().
@@ -145,6 +155,8 @@ public class ImportNodeCommand
 
         private boolean importPermissions;
 
+        private boolean importPermissionsOnCreate = true;
+
 
         private Builder()
         {
@@ -183,6 +195,12 @@ public class ImportNodeCommand
         public Builder importPermissions( boolean importPermissions )
         {
             this.importPermissions = importPermissions;
+            return this;
+        }
+
+        public Builder importPermissionsOnCreate( boolean importPermissionsOnCreate )
+        {
+            this.importPermissionsOnCreate = importPermissionsOnCreate;
             return this;
         }
 

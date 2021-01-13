@@ -99,6 +99,7 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
@@ -396,6 +397,17 @@ public class AbstractContentServiceTest
     {
 
         return doCreateContent( parentPath, displayName, data, extraDatas, ContentTypeName.folder() );
+    }
+
+    protected Content createContent( final ContentPath parentPath, final String displayName, final AccessControlList permissions )
+    {
+        final CreateContentParams.Builder builder =
+            createContentBuilder( parentPath, displayName, new PropertyTree(), ExtraDatas.empty(), ContentTypeName.folder() );
+
+        builder.permissions( permissions );
+        builder.inheritPermissions( false );
+
+        return doCreateContent( builder );
     }
 
     private Content doCreateContent( final ContentPath parentPath, final String displayName, final PropertyTree data,
