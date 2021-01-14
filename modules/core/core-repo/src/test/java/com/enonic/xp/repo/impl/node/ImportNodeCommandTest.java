@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.CompareStatus;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.ImportNodeResult;
@@ -129,7 +130,7 @@ public class ImportNodeCommandTest
             repositoryId( RepositoryId.from( "test" ) ).
             build() );
 
-        final ImportNodeResult importNodeResult = ContextBuilder.from( CTX_OTHER ).
+        final ImportNodeResult importNodeResult = ContextBuilder.from( ContextAccessor.current() ).
             repositoryId( "test" ).
             build().
             callWith( () -> importNode( rootNode, false, true ) );
