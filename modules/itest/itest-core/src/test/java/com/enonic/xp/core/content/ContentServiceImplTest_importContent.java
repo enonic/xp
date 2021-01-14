@@ -28,7 +28,7 @@ public class ContentServiceImplTest_importContent
                 build() ).
             build();
 
-        final Content sourceContent = CTX_DEFAULT.callWith( () -> createContent( ContentPath.ROOT, "content1", aclList ) );
+        final Content sourceContent = ctxDefault().callWith( () -> createContent( ContentPath.ROOT, "content1", aclList ) );
 
         final ImportContentParams importContentParams = ImportContentParams.create().
             importContent( sourceContent ).
@@ -36,7 +36,7 @@ public class ContentServiceImplTest_importContent
             importPermissionsOnCreate( true ).
             build();
 
-        final Content importedContent = CTX_OTHER.callWith( () -> this.contentService.importContent( importContentParams ).getContent() );
+        final Content importedContent = ctxOther().callWith( () -> this.contentService.importContent( importContentParams ).getContent() );
 
         assertEquals( sourceContent.getPermissions(), importedContent.getPermissions() );
     }
@@ -53,7 +53,7 @@ public class ContentServiceImplTest_importContent
                 build() ).
             build();
 
-        final Content sourceContent = CTX_DEFAULT.callWith( () -> createContent( ContentPath.ROOT, "content1", aclList ) );
+        final Content sourceContent = ctxDefault().callWith( () -> createContent( ContentPath.ROOT, "content1", aclList ) );
 
         final ImportContentParams importContentParams = ImportContentParams.create().
             importContent( sourceContent ).
@@ -61,7 +61,7 @@ public class ContentServiceImplTest_importContent
             importPermissionsOnCreate( false ).
             build();
 
-        final Content importedContent = CTX_OTHER.callWith( () -> this.contentService.importContent( importContentParams ).getContent() );
+        final Content importedContent = ctxOther().callWith( () -> this.contentService.importContent( importContentParams ).getContent() );
 
         assertNotEquals( sourceContent.getPermissions(), importedContent.getPermissions() );
     }
