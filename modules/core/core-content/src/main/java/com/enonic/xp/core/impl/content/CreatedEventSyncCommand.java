@@ -95,7 +95,7 @@ final class CreatedEventSyncCommand
             binaryAttachments( builder.build() ).
             inherit( inheritTypes ).
             originProject( ProjectName.from( params.getSourceContext().getRepositoryId() ) ).
-            importPermissions( false ).
+            importPermissionsOnCreate( false ).
             dryRun( false ).
             insertManualStrategy( insertManualStrategy ).
             build();
