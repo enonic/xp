@@ -46,6 +46,7 @@ import com.enonic.xp.admin.impl.json.content.ContentsExistJson;
 import com.enonic.xp.admin.impl.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
+import com.enonic.xp.admin.impl.json.content.ResolveForDeleteJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AbstractContentQueryResultJson;
@@ -1881,6 +1882,34 @@ public class ContentResourceTest
 
         assertTrue( result.contains( new ContentIdJson( content1.getId() ) ) );
         assertTrue( result.contains( new ContentIdJson( content2.getId() ) ) );
+    }
+
+    @Test
+    public void resolveForDelete()
+    {
+        final ContentResource contentResource = getResourceInstance();
+
+        final Content content1 = createContent( "content-id1", "content-name1", "myapplication:content-type" );
+        final Content content2 = createContent( "content-id2", content1.getPath(), "content-name2", "myapplication:content-type" );
+
+        Mockito.when( contentService.getByIds( new GetContentByIdsParams( ContentIds.from( "content-id1", "content-id2" ) ) ) ).
+            thenReturn( Contents.from( content1, content2 ) );
+
+        final FindContentIdsByQueryResult findResult = FindContentIdsByQueryResult.create().
+            aggregations( Aggregations.empty() ).
+            hits( 2L ).
+            totalHits( 2L ).
+            contents( ContentIds.from( content1.getId(), content2.getId() ) ).
+            build();
+
+        Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).
+            thenReturn( findResult );
+
+        final ResolveForDeleteJson result =
+            contentResource.resolveForDelete( new ContentIdsJson( List.of( "content-id1", "content-id2" ) ) );
+
+        assertEquals( 2, result.getToDelete().size() );
+        assertEquals( 2, result.getToUnpublish().size() );
     }
 
     @Test

@@ -58,6 +58,7 @@ import com.enonic.xp.admin.impl.json.content.GetActiveContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson;
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
+import com.enonic.xp.admin.impl.json.content.ResolveForDeleteJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentListJson;
@@ -164,6 +165,7 @@ import com.enonic.xp.content.UndoPendingDeleteContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.extractor.BinaryExtractor;
@@ -1112,6 +1114,49 @@ public final class ContentResource
             } ).stream().
             map( ContentIdJson::new ).
             collect( Collectors.toList() );
+    }
+
+    @POST
+    @Path("resolveForDelete")
+    public ResolveForDeleteJson resolveForDelete( final ContentIdsJson params )
+    {
+        final Context masterContext = ContextBuilder.from( ContextAccessor.current() ).
+            branch( ContentConstants.BRANCH_MASTER ).
+            build();
+
+        final Contents draftParents = contentService.getByIds( new GetContentByIdsParams( params.getContentIds() ) );
+
+        final FindContentIdsByQueryResult draftChildren = ContentQueryWithChildren.create().
+            contentService( this.contentService ).
+            contentsPaths( draftParents.getPaths() ).
+            size( GET_ALL_SIZE_FLAG ).
+            build().
+            find();
+
+        final Contents masterAll = masterContext.
+            callWith( () -> contentService.getByIds( new GetContentByIdsParams( ContentIds.create().
+                addAll( draftParents.getIds() ).
+                addAll( draftChildren.getContentIds() ).
+                build() ) ) );
+
+        final FindContentIdsByQueryResult masterChildren = masterContext.callWith( () -> ContentQueryWithChildren.create().
+            contentService( this.contentService ).
+            contentsPaths( ContentPaths.from( draftParents.getPaths() ) ).
+            size( GET_ALL_SIZE_FLAG ).
+            build().
+            find() );
+
+        final ContentIds toDelete = ContentIds.create().
+            addAll( draftParents.getIds() ).
+            addAll( draftChildren.getContentIds() ).
+            build();
+
+        final ContentIds toUnpublish = ContentIds.create().
+            addAll( masterAll.getIds() ).
+            addAll( masterChildren.getContentIds() ).
+            build();
+
+        return new ResolveForDeleteJson( toDelete, toUnpublish );
     }
 
     private Stream<ContentId> filterIdsByStatus( final ContentIds ids, final Collection<CompareStatus> statuses )
