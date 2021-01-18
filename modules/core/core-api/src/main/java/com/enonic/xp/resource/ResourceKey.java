@@ -20,7 +20,7 @@ public final class ResourceKey
     private ResourceKey( final ApplicationKey applicationKey, final String path )
     {
         this.applicationKey = applicationKey;
-        this.path = normalizePath( path );
+        this.path = path;
         this.uri = this.applicationKey.toString() + ":" + this.path;
     }
 
@@ -68,12 +68,17 @@ public final class ResourceKey
 
     public ResourceKey resolve( final String relPath )
     {
-        // absolute path
+        final String path;
         if ( relPath.startsWith( "/" ) )
         {
-            return new ResourceKey( this.applicationKey, relPath );
+            path = relPath;
         }
-        return new ResourceKey( this.applicationKey, this.path + "/" + relPath );
+        else
+        {
+            path = this.path + "/" + relPath;
+        }
+
+        return new ResourceKey( this.applicationKey, normalizePath( path ) );
     }
 
     @Override
@@ -123,6 +128,13 @@ public final class ResourceKey
         Preconditions.checkNotNull( application );
         Preconditions.checkNotNull( path );
 
-        return new ResourceKey( application, path );
+        return new ResourceKey( application, normalizePath( path ) );
+    }
+
+    public static ResourceKey assets( final ApplicationKey application )
+    {
+        Preconditions.checkNotNull( application );
+
+        return new ResourceKey( application, "/assets/" );
     }
 }

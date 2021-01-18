@@ -8,16 +8,14 @@ import java.util.Set;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
-import com.enonic.xp.core.impl.app.resolver.PrefixApplicationUrlResolver;
 
 public class MockApplication
-    implements Application
+    implements ApplicationAdaptor
 {
     private ApplicationKey key;
 
@@ -140,7 +138,7 @@ public class MockApplication
         this.urlResolver = urlResolver;
     }
 
-    public void setClassLoaderUrlResolver( final ClassLoader loader, final String prefix )
+    private void setClassLoaderUrlResolver( final ClassLoader loader, final String prefix )
     {
         final ApplicationUrlResolver resolver = new ClassLoaderApplicationUrlResolver( (URLClassLoader) loader );
         final ApplicationUrlResolver prefixedReslver = new PrefixApplicationUrlResolver( resolver, prefix );
@@ -150,6 +148,11 @@ public class MockApplication
     public void setUrlResolver( final URL root, final String prefix )
     {
         setClassLoaderUrlResolver( new URLClassLoader( new URL[]{root}, null ), prefix );
+    }
+
+    public ApplicationUrlResolver getUrlResolver()
+    {
+        return this.urlResolver;
     }
 
     public void setStarted( final boolean started )

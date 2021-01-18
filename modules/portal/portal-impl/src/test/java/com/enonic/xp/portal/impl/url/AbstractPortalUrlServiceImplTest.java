@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.time.Instant;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
@@ -13,8 +13,13 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
+import com.enonic.xp.util.HashCode;
+
+import static org.mockito.Mockito.when;
 
 public abstract class AbstractPortalUrlServiceImplTest
 {
@@ -26,6 +31,8 @@ public abstract class AbstractPortalUrlServiceImplTest
 
     protected ApplicationService applicationService;
 
+    protected ResourceService resourceService;
+
     protected StyleDescriptorService styleDescriptorService;
 
     @BeforeEach
@@ -33,8 +40,7 @@ public abstract class AbstractPortalUrlServiceImplTest
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
         final Application application = Mockito.mock( Application.class );
-        Mockito.when( application.getKey() ).thenReturn( applicationKey );
-        Mockito.when( application.getModifiedTime() ).thenReturn( Instant.MAX );
+        when( application.getKey() ).thenReturn( applicationKey );
 
         this.portalRequest = new PortalRequest();
         this.portalRequest.setBranch( Branch.from( "draft" ) );
@@ -49,11 +55,15 @@ public abstract class AbstractPortalUrlServiceImplTest
         this.service.setContentService( this.contentService );
 
         this.styleDescriptorService = Mockito.mock( StyleDescriptorService.class );
-        Mockito.when( this.styleDescriptorService.getByApplications( Mockito.any() ) ).thenReturn( StyleDescriptors.empty() );
+        when( this.styleDescriptorService.getByApplications( Mockito.any() ) ).thenReturn( StyleDescriptors.empty() );
         this.service.setStyleDescriptorService( this.styleDescriptorService );
 
         this.applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( this.applicationService.getInstalledApplication( applicationKey ) ).thenReturn( application );
-        this.service.setApplicationService( this.applicationService );
+        when( this.applicationService.getInstalledApplication( applicationKey ) ).thenReturn( application );
+
+        this.resourceService = Mockito.mock( ResourceService.class );
+        when( this.resourceService.resourceHash( ResourceKey.assets( applicationKey ) ) ).
+            thenReturn( Optional.of( HashCode.fromLong( 1 ) ) );
+        this.service.setResourceService( this.resourceService );
     }
 }

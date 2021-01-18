@@ -1,8 +1,11 @@
-package com.enonic.xp.core.impl.app.resolver;
+package com.enonic.xp.core.impl.app;
 
 import java.net.URL;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolverBase;
 
 public final class PrefixApplicationUrlResolver
     extends ApplicationUrlResolverBase

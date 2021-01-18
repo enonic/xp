@@ -9,7 +9,6 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationBundleUtils;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.Configuration;
@@ -21,7 +20,7 @@ import static com.enonic.xp.core.impl.app.ApplicationHelper.X_VENDOR_NAME;
 import static com.enonic.xp.core.impl.app.ApplicationHelper.X_VENDOR_URL;
 
 final class ApplicationImpl
-    implements Application
+    implements ApplicationAdaptor
 {
     private final ApplicationKey key;
 
@@ -148,6 +147,12 @@ final class ApplicationImpl
     public URL resolveFile( final String path )
     {
         return this.urlResolver.findUrl( path );
+    }
+
+    @Override
+    public ApplicationUrlResolver getUrlResolver()
+    {
+        return urlResolver;
     }
 
     @Override
