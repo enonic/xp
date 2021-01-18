@@ -165,6 +165,7 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.index.ChildOrder;
@@ -1084,6 +1085,33 @@ public final class ContentResource
         {
             return result.getContentIds().stream().map( ContentIdJson::new ).collect( Collectors.toList() );
         }
+    }
+
+    @POST
+    @Path("resolveForUnpublish")
+    public List<ContentIdJson> resolveForUnpublish( final ContentIdsJson params )
+    {
+        return ContextBuilder.from( ContextAccessor.current() ).
+            branch( ContentConstants.BRANCH_MASTER ).
+            build().
+            callWith( () -> {
+
+                final Contents parents = contentService.getByIds( new GetContentByIdsParams( params.getContentIds() ) );
+
+                final FindContentIdsByQueryResult children = ContentQueryWithChildren.create().
+                    contentService( this.contentService ).
+                    contentsPaths( parents.getPaths() ).
+                    size( GET_ALL_SIZE_FLAG ).
+                    build().
+                    find();
+
+                return ContentIds.create().
+                    addAll( parents.getIds() ).
+                    addAll( children.getContentIds() ).
+                    build();
+            } ).stream().
+            map( ContentIdJson::new ).
+            collect( Collectors.toList() );
     }
 
     private Stream<ContentId> filterIdsByStatus( final ContentIds ids, final Collection<CompareStatus> statuses )

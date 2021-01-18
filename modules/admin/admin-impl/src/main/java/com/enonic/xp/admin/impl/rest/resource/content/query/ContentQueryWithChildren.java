@@ -2,13 +2,11 @@ package com.enonic.xp.admin.impl.rest.resource.content.query;
 
 import java.util.stream.Collectors;
 
-import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
-import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.ConstraintExpr;
@@ -21,8 +19,6 @@ import com.enonic.xp.query.expr.ValueExpr;
 
 public class ContentQueryWithChildren
 {
-    private final ContentIds contentsIds;
-
     private final ContentPaths contentsPaths;
 
     private final ChildOrder order;
@@ -35,7 +31,6 @@ public class ContentQueryWithChildren
 
     private ContentQueryWithChildren( Builder builder )
     {
-        this.contentsIds = builder.contentsIds.build();
         this.contentsPaths = builder.contentsPaths.build();
         this.order = builder.order;
         this.size = builder.size;
@@ -45,8 +40,6 @@ public class ContentQueryWithChildren
 
     private QueryExpr constructExprToFindChildren()
     {
-        final ContentPaths contentsPaths = this.getPaths();
-
         final FieldExpr fieldExpr = FieldExpr.from( "_path" );
 
         ConstraintExpr expr = null;
@@ -65,8 +58,6 @@ public class ContentQueryWithChildren
 
     private QueryExpr constructExprToFindOrdered()
     {
-        final ContentPaths contentsPaths = this.getPaths();
-
         final FieldExpr fieldExpr = FieldExpr.from( "_path" );
 
         final CompareExpr compareExpr = CompareExpr.in( fieldExpr, contentsPaths.stream().
@@ -75,22 +66,9 @@ public class ContentQueryWithChildren
         return QueryExpr.from( compareExpr, this.order != null ? this.order.getOrderExpressions() : null );
     }
 
-    public ContentPaths getPaths()
-    {
-        if ( !this.contentsPaths.isEmpty() )
-        {
-            return this.contentsPaths;
-        }
-        else if ( !this.contentsIds.isEmpty() )
-        {
-            return contentService.getByIds( new GetContentByIdsParams( contentsIds ) ).getPaths();
-        }
-        return ContentPaths.empty();
-    }
-
     public FindContentIdsByQueryResult find()
     {
-        if ( contentsPaths.getSize() == 0 && contentsIds.getSize() == 0 )
+        if ( contentsPaths.isEmpty() )
         {
             return FindContentIdsByQueryResult.empty();
         }
@@ -101,7 +79,7 @@ public class ContentQueryWithChildren
 
     public FindContentIdsByQueryResult findOrdered()
     {
-        if ( contentsPaths.getSize() == 0 && contentsIds.getSize() == 0 )
+        if ( contentsPaths.isEmpty() )
         {
             return FindContentIdsByQueryResult.empty();
         }
@@ -117,9 +95,7 @@ public class ContentQueryWithChildren
 
     public static class Builder
     {
-        private ContentIds.Builder contentsIds = ContentIds.create();
-
-        private ContentPaths.Builder contentsPaths = ContentPaths.create();
+        private final ContentPaths.Builder contentsPaths = ContentPaths.create();
 
         private ChildOrder order;
 
@@ -131,12 +107,6 @@ public class ContentQueryWithChildren
 
         private Builder()
         {
-        }
-
-        public Builder contentsIds( ContentIds contentsIds )
-        {
-            this.contentsIds.addAll( contentsIds );
-            return this;
         }
 
         public Builder contentsPaths( ContentPaths contentsPaths )
