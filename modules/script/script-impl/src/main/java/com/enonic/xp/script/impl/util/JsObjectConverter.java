@@ -1,6 +1,7 @@
 package com.enonic.xp.script.impl.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +31,11 @@ public final class JsObjectConverter
         if ( value instanceof List )
         {
             return toJs( (List) value );
+        }
+
+        if ( value != null && value.getClass().isArray() && !value.getClass().getComponentType().isPrimitive() )
+        {
+            return toJs( Arrays.asList( (Object[]) value ) );
         }
 
         return value;
