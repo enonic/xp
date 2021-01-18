@@ -67,7 +67,9 @@ public class ApplicationServiceImplTest
     public void initService()
     {
         final BundleContext bundleContext = getBundleContext();
-        this.applicationRegistry = new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub() );
+
+        this.applicationRegistry =
+            new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), new ApplicationFactoryServiceMock() );
         this.eventPublisher = mock( EventPublisher.class );
         this.appFilterService = mock( AppFilterService.class );
         when( appFilterService.accept( any( ApplicationKey.class ) ) ).thenReturn( true );

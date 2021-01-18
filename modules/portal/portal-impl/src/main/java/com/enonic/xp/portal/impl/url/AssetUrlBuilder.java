@@ -1,10 +1,15 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.Objects;
+
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.url.AssetUrlParams;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.server.RunMode;
+import com.enonic.xp.util.HashCode;
 
 final class AssetUrlBuilder
     extends GenericEndpointUrlBuilder<AssetUrlParams>
@@ -19,26 +24,23 @@ final class AssetUrlBuilder
     {
         super.buildUrl( url, params );
 
-        Application application = resolveApplication();
-        String applicationKey = application.getKey().toString();
-        String modifiedTime = Long.toString( application.getModifiedTime().getEpochSecond() );
-        appendPart( url, applicationKey + ":" + modifiedTime );
-
-        appendPart( url, this.params.getPath() );
-    }
-
-    private Application resolveApplication()
-    {
         final ApplicationKey applicationKey = new ApplicationResolver().
             portalRequest( this.portalRequest ).
             application( this.params.getApplication() ).
             resolve();
 
-        final Application application = this.applicationService.getInstalledApplication( applicationKey );
-        if ( application == null )
-        {
-            throw new IllegalArgumentException( "Could not find application [" + applicationKey + "]" );
-        }
-        return application;
+        final String assetsHash = this.resourceService.resourceHash( ResourceKey.assets( applicationKey ) ).map( HashCode::toString ).
+            orElseThrow( () -> new IllegalArgumentException( "Could not find application [" + applicationKey + "]" ) );
+
+        final String fingerprint = RunMode.get() == RunMode.DEV ? Long.toString( stableTime() ) : assetsHash;
+
+        appendPart( url, applicationKey + ":" + fingerprint );
+        appendPart( url, this.params.getPath() );
+    }
+
+    private static long stableTime()
+    {
+        final Long localScopeTime = (Long) ContextAccessor.current().getLocalScope().getAttribute( "__currentTimeMillis" );
+        return Objects.requireNonNullElse( localScopeTime, System.currentTimeMillis() );
     }
 }

@@ -14,6 +14,7 @@ import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
 public abstract class BundleBasedTest
@@ -53,13 +54,18 @@ public abstract class BundleBasedTest
     }
 
     protected final Bundle deploy( final String name, final InputStream in )
-        throws Exception
     {
-        return this.felix.getBundleContext().installBundle( name, in );
+        try
+        {
+            return this.felix.getBundleContext().installBundle( name, in );
+        }
+        catch ( BundleException e )
+        {
+            throw new IllegalStateException( e );
+        }
     }
 
     protected final Bundle deploy( final String name, final TinyBundle bundle )
-        throws Exception
     {
         return deploy( name, bundle.build() );
     }

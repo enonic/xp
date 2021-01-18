@@ -24,7 +24,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.config.Configuration;
-import com.enonic.xp.server.RunMode;
 
 import static java.util.Objects.requireNonNull;
 
@@ -34,21 +33,23 @@ public class ApplicationRegistryImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( ApplicationRegistryImpl.class );
 
-    private final ConcurrentMap<ApplicationKey, ApplicationImpl> applications = new ConcurrentHashMap<>();
+    private final ConcurrentMap<ApplicationKey, ApplicationAdaptor> applications = new ConcurrentHashMap<>();
+
+    private final ApplicationFactoryService applicationFactoryService;
 
     private final ApplicationListenerHub applicationListenerHub;
-
-    private final ApplicationFactory factory = new ApplicationFactory( RunMode.get() );
 
     private final List<ApplicationInvalidator> invalidators = new CopyOnWriteArrayList<>();
 
     private final Version systemVersion;
 
     @Activate
-    public ApplicationRegistryImpl( final BundleContext context, @Reference final ApplicationListenerHub applicationListenerHub )
+    public ApplicationRegistryImpl( final BundleContext context, @Reference final ApplicationListenerHub applicationListenerHub,
+                                    @Reference final ApplicationFactoryService applicationFactoryService )
     {
         this.systemVersion = context.getBundle().getVersion();
         this.applicationListenerHub = applicationListenerHub;
+        this.applicationFactoryService = applicationFactoryService;
     }
 
     @Override
@@ -78,7 +79,7 @@ public class ApplicationRegistryImpl
         // for instance when same Global application got installed on several cluster nodes.
         return applications.computeIfAbsent( applicationKey, key -> {
             LOG.info( "Registering application {} bundle {}", applicationKey, bundle.getBundleId() );
-            return createApp( bundle, null );
+            return applicationFactoryService.getApplication( bundle );
         } );
     }
 
@@ -89,7 +90,7 @@ public class ApplicationRegistryImpl
 
         final ApplicationKey applicationKey = ApplicationKey.from( bundle );
 
-        final ApplicationImpl application = applications.compute( applicationKey, ( key, existingApp ) -> {
+        final ApplicationAdaptor application = applications.compute( applicationKey, ( key, existingApp ) -> {
 
             if ( existingApp != null )
             {
@@ -124,7 +125,13 @@ public class ApplicationRegistryImpl
                 // but they should get configured as soon as their bundles get started.
 
                 LOG.info( "Registering configured application {} bundle {}", applicationKey, bundle.getBundleId() );
-                return createApp( bundle, configuration );
+                final ApplicationAdaptor app = applicationFactoryService.getApplication( bundle );
+                if ( app == null )
+                {
+                    throw new IllegalStateException( "Can't configure application " + app );
+                }
+                app.setConfig( configuration );
+                return app;
             }
         } );
         applicationListenerHub.activated( application );
@@ -203,7 +210,7 @@ public class ApplicationRegistryImpl
     @Override
     public boolean startApplication( final ApplicationKey applicationKey, boolean throwOnInvalidVersion )
     {
-        final ApplicationImpl application = applications.get( applicationKey );
+        final ApplicationAdaptor application = applications.get( applicationKey );
         if ( application == null )
         {
             return false;
@@ -241,14 +248,6 @@ public class ApplicationRegistryImpl
         }
         LOG.info( "Started application {} bundle {}", applicationKey, bundle.getBundleId() );
         return true;
-    }
-
-
-    private ApplicationImpl createApp( final Bundle bundle, final Configuration configuration )
-    {
-        LOG.debug( "Create app {} from bundle {} configured {}", ApplicationKey.from( bundle ), bundle.getBundleId(),
-                   configuration != null );
-        return factory.create( bundle, configuration );
     }
 
     private void callInvalidators( final ApplicationKey key )

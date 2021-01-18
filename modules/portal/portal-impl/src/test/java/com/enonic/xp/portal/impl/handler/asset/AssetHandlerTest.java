@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.handler.asset;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,12 +11,14 @@ import org.mockito.invocation.InvocationOnMock;
 
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.util.HashCode;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -28,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.when;
 
 public class AssetHandlerTest
     extends BaseHandlerTest
@@ -40,6 +44,8 @@ public class AssetHandlerTest
 
     private Resource nullResource;
 
+    ResourceService resourceService;
+
     @BeforeEach
     public final void setup()
         throws Exception
@@ -47,14 +53,13 @@ public class AssetHandlerTest
         this.request = new PortalRequest();
         this.resources = new HashMap<>();
 
-        final ResourceService resourceService = Mockito.mock( ResourceService.class );
-        Mockito.when( resourceService.getResource( Mockito.any() ) ).then( this::getResource );
+        resourceService = Mockito.mock( ResourceService.class );
+        when( resourceService.getResource( Mockito.any() ) ).then( this::getResource );
 
-        this.handler = new AssetHandler();
-        this.handler.setResourceService( resourceService );
+        this.handler = new AssetHandler( resourceService );
 
         this.nullResource = Mockito.mock( Resource.class );
-        Mockito.when( this.nullResource.exists() ).thenReturn( false );
+        when( this.nullResource.exists() ).thenReturn( false );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setEndpointPath( "/_/asset/demo/css/main.css" );
@@ -66,8 +71,8 @@ public class AssetHandlerTest
         final ResourceKey resourceKey = ResourceKey.from( key );
 
         final Resource resource = Mockito.mock( Resource.class );
-        Mockito.when( resource.exists() ).thenReturn( true );
-        Mockito.when( resource.getKey() ).thenReturn( resourceKey );
+        when( resource.exists() ).thenReturn( true );
+        when( resource.getKey() ).thenReturn( resourceKey );
 
         this.resources.put( resourceKey, resource );
         return resource;
@@ -131,10 +136,10 @@ public class AssetHandlerTest
     {
         addResource( "demo:/site/assets/css/main.css" );
 
-        final WebException ex = assertThrows(WebException.class, () -> {
+        final WebException ex = assertThrows( WebException.class, () -> {
             this.handler.handle( this.request, PortalResponse.create().build(), null );
-        });
-        assertEquals( "Resource [demo:/assets/css/main.css] not found", ex.getMessage());
+        } );
+        assertEquals( "Resource [demo:/assets/css/main.css] not found", ex.getMessage() );
     }
 
     @Test
@@ -185,11 +190,29 @@ public class AssetHandlerTest
     }
 
     @Test
-    public void testCacheHeader()
+    public void testCacheHeader_FingerprintDoesntMatch()
         throws Exception
     {
         addResource( "demo:/assets/css/main.css" );
         this.request.setEndpointPath( "/_/asset/demo:123/css/main.css" );
+
+        when( this.resourceService.resourceHash( ResourceKey.assets( ApplicationKey.from( "demo" ) ) ) ).
+            thenReturn( Optional.of( HashCode.fromLong( 1 ) ) );
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertNull( res.getHeaders().get( "Cache-Control" ) );
+    }
+
+    @Test
+    public void testCacheHeader()
+        throws Exception
+    {
+        addResource( "demo:/assets/css/main.css" );
+        this.request.setEndpointPath( "/_/asset/demo:0000000000000001/css/main.css" );
+
+        when( this.resourceService.resourceHash( ResourceKey.assets( ApplicationKey.from( "demo" ) ) ) ).
+            thenReturn( Optional.of( HashCode.fromLong( 1 ) ) );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );

@@ -4,16 +4,18 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.core.impl.app.ApplicationAdaptor;
+import com.enonic.xp.core.impl.app.ApplicationFactoryService;
+import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
@@ -21,6 +23,7 @@ import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.server.RunMode;
+import com.enonic.xp.util.HashCode;
 
 @Component(immediate = true)
 public final class ResourceServiceImpl
@@ -32,18 +35,20 @@ public final class ResourceServiceImpl
 
     private final ProcessingCache cache;
 
-    private ApplicationService applicationService;
+    private final ApplicationFactoryService applicationFactoryService;
 
-    public ResourceServiceImpl()
+    @Activate
+    public ResourceServiceImpl( @Reference final ApplicationFactoryService applicationFactoryService )
     {
         this.cache = new ProcessingCache( this::getResource, RunMode.get() );
+        this.applicationFactoryService = applicationFactoryService;
     }
 
     @Override
     public Resource getResource( final ResourceKey key )
     {
-        return findApplication( key.getApplicationKey() ).
-            map( app -> app.resolveFile( key.getPath() ) ).
+        return findApplicationUrlResolver( key.getApplicationKey() ).
+            map( urlResolver -> urlResolver.findUrl( key.getPath() ) ).
             map( url -> new UrlResource( key, url ) ).
             orElse( new UrlResource( key, null ) );
     }
@@ -68,18 +73,17 @@ public final class ResourceServiceImpl
     {
         final Pattern compiled = Pattern.compile( normalize( pattern ) );
 
-        return ResourceKeys.from( findApplication( key ).
-            map( Application::getFiles ).orElse( Set.of() ).
+        return ResourceKeys.from( findApplicationUrlResolver( key ).
+            map( ApplicationUrlResolver::findFiles ).orElse( Set.of() ).
             stream().
             filter( compiled.asPredicate() ).
             map( name -> ResourceKey.from( key, name ) ).iterator() );
     }
 
-    private Optional<Application> findApplication( final ApplicationKey key )
+    private Optional<ApplicationUrlResolver> findApplicationUrlResolver( final ApplicationKey key )
     {
         final ApplicationKey applicationKey = isSystemApp( key ) ? SYSTEM_APPLICATION_KEY : key;
-        return Optional.ofNullable( applicationService.getInstalledApplication( applicationKey ) ).
-            filter( Application::isStarted );
+        return applicationFactoryService.findActiveApplication( applicationKey ).map( ApplicationAdaptor::getUrlResolver );
     }
 
     private boolean isSystemApp( final ApplicationKey key )
@@ -93,10 +97,16 @@ public final class ResourceServiceImpl
         return this.cache.process( processor );
     }
 
-    @Reference
-    public void setApplicationService( final ApplicationService applicationService )
+    @Override
+    public Optional<HashCode> resourceHash( final ResourceKey key )
     {
-        this.applicationService = applicationService;
+        if ( !key.equals( ResourceKey.assets( key.getApplicationKey() ) ) )
+        {
+            throw new IllegalArgumentException( "Unsupported resource key " + key );
+        }
+        return findApplicationUrlResolver( key.getApplicationKey() ).
+            map( urlResolver -> urlResolver.filesHash( key.getPath() ) ).
+            map( HashCode::fromLong );
     }
 
     @Override

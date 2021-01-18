@@ -4,13 +4,16 @@ import java.util.EnumSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.EndpointHandler;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.server.RunMode;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
@@ -22,13 +25,15 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 public final class AssetHandler
     extends EndpointHandler
 {
-    private static final Pattern PATTERN = Pattern.compile( "([^/^:]+)(:[^/]+)?/(.+)" );
+    private static final Pattern PATTERN = Pattern.compile( "([^/^:]+)(?::([^/]+))?/(.+)" );
 
     private ResourceService resourceService;
 
-    public AssetHandler()
+    @Activate
+    public AssetHandler( @Reference final ResourceService resourceService )
     {
         super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "asset" );
+        this.resourceService = resourceService;
     }
 
     @Override
@@ -44,19 +49,28 @@ public final class AssetHandler
             throw WebException.notFound( "Not a valid asset url pattern" );
         }
 
-        final AssetHandlerWorker worker = new AssetHandlerWorker( webRequest );
         final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
-        worker.cacheable = matcher.group( 2 ) != null;
-        worker.applicationKey = applicationKey;
-        worker.name = matcher.group( 3 );
+        final String fingerprint = matcher.group( 2 );
+        final String path = matcher.group( 3 );
+        final ResourceKey assetsKey = ResourceKey.assets( applicationKey );
+        final String assetPath = assetsKey.getPath() + path;
+        final ResourceKey resourceKey = ResourceKey.from( applicationKey, assetPath );
+
+        final AssetHandlerWorker worker = new AssetHandlerWorker( webRequest );
+
+        worker.resourceKey = resourceKey;
         worker.resourceService = this.resourceService;
+
+        worker.cacheable = fingerprint != null && RunMode.get() != RunMode.DEV && resourceKey.getPath().equals( assetPath ) &&
+            fingerpintMatches( fingerprint, assetsKey );
 
         return worker.execute();
     }
 
-    @Reference
-    public void setResourceService( final ResourceService resourceService )
+    private boolean fingerpintMatches( String providedFingerprint, final ResourceKey assetsKey )
     {
-        this.resourceService = resourceService;
+        return resourceService.resourceHash( assetsKey ).
+            map( hashCode -> hashCode.toString().equals( providedFingerprint ) ).
+            orElse( false );
     }
 }

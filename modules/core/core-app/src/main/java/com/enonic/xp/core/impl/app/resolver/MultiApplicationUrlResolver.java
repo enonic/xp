@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app.resolver;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,6 +13,14 @@ public final class MultiApplicationUrlResolver
     public MultiApplicationUrlResolver( final ApplicationUrlResolver... list )
     {
         this.list = list;
+    }
+
+    @Override
+    public long filesHash( final String path )
+    {
+        return Arrays.stream( list ).
+            mapToLong( resolver -> resolver.filesHash( path ) ).
+            reduce( 1, ( a, b ) -> 31 * a + b );
     }
 
     @Override

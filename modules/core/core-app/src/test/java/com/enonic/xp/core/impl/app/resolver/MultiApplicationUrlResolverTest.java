@@ -6,17 +6,24 @@ import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
-public class MultiApplicationUrlResolverTest
+@ExtendWith(MockitoExtension.class)
+class MultiApplicationUrlResolverTest
 {
+    @Mock
     private ApplicationUrlResolver delegate1;
 
+    @Mock
     private ApplicationUrlResolver delegate2;
 
     private MultiApplicationUrlResolver resolver;
@@ -24,17 +31,14 @@ public class MultiApplicationUrlResolverTest
     @BeforeEach
     public void setup()
     {
-        this.delegate1 = Mockito.mock( ApplicationUrlResolver.class );
-        this.delegate2 = Mockito.mock( ApplicationUrlResolver.class );
-
         this.resolver = new MultiApplicationUrlResolver( this.delegate1, this.delegate2 );
     }
 
     @Test
-    public void testFindFiles()
+    void testFindFiles()
     {
-        Mockito.when( this.delegate1.findFiles() ).thenReturn( Set.of( "a/b/c.txt", "a/other.txt" ) );
-        Mockito.when( this.delegate2.findFiles() ).thenReturn( Set.of( "a/other.txt", "a/b/other.txt" ) );
+        when( this.delegate1.findFiles() ).thenReturn( Set.of( "a/b/c.txt", "a/other.txt" ) );
+        when( this.delegate2.findFiles() ).thenReturn( Set.of( "a/other.txt", "a/b/other.txt" ) );
 
         final Set<String> files = this.resolver.findFiles();
         assertEquals( 3, files.size() );
@@ -45,14 +49,14 @@ public class MultiApplicationUrlResolverTest
     }
 
     @Test
-    public void testFindUrl()
+    void testFindUrl()
         throws Exception
     {
         final URL expected1 = new File( "." ).toURI().toURL();
-        Mockito.when( this.delegate1.findUrl( "a/b.txt" ) ).thenReturn( expected1 );
+        when( this.delegate1.findUrl( "a/b.txt" ) ).thenReturn( expected1 );
 
         final URL expected2 = new File( "." ).toURI().toURL();
-        Mockito.when( this.delegate2.findUrl( "a/other.txt" ) ).thenReturn( expected2 );
+        when( this.delegate2.findUrl( "a/other.txt" ) ).thenReturn( expected2 );
 
         final URL url1 = this.resolver.findUrl( "a/b.txt" );
         assertSame( expected1, url1 );
@@ -62,5 +66,16 @@ public class MultiApplicationUrlResolverTest
 
         final URL url3 = this.resolver.findUrl( "other.txt" );
         assertNull( url3 );
+    }
+
+    @Test
+    void filesHash()
+    {
+        when( this.delegate1.filesHash( "/a" ) ).thenReturn( Long.MIN_VALUE );
+
+        when( this.delegate2.filesHash( "/a" ) ).thenReturn( Long.MAX_VALUE );
+
+        long result = this.resolver.filesHash( "/a" );
+        assertNotEquals( 0, result );
     }
 }

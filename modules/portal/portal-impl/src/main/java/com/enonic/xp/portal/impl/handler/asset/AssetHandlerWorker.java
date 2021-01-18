@@ -3,7 +3,6 @@ package com.enonic.xp.portal.impl.handler.asset;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.Resource;
@@ -18,17 +17,11 @@ import com.enonic.xp.web.WebRequest;
 final class AssetHandlerWorker
     extends PortalHandlerWorker
 {
-    private static final String ROOT_ASSET_PREFIX = "assets/";
-
     protected ResourceService resourceService;
 
-    protected ApplicationKey applicationKey;
-
-    protected String name;
+    protected ResourceKey resourceKey;
 
     protected boolean cacheable;
-
-    private Resource resource;
 
     public AssetHandlerWorker( final WebRequest request )
     {
@@ -39,15 +32,15 @@ final class AssetHandlerWorker
     public PortalResponse execute()
         throws Exception
     {
-        resolveResource();
-
         if ( request.getMethod() == HttpMethod.OPTIONS )
         {
             // it will be handled by default OPTIONS handler in BaseWebHandler
             return PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
         }
 
-        final String type = MediaTypes.instance().fromFile( this.resource.getKey().getName() ).toString();
+        final Resource resource = resolveResource();
+
+        final String type = MediaTypes.instance().fromFile( resource.getKey().getName() ).toString();
         final PortalResponse.Builder portalResponse = PortalResponse.create().
             body( resource ).
             contentType( MediaType.parse( type ) );
@@ -60,13 +53,13 @@ final class AssetHandlerWorker
         return portalResponse.build();
     }
 
-    private void resolveResource()
+    private Resource resolveResource()
     {
-        this.resource = this.resourceService.getResource( ResourceKey.from( this.applicationKey, ROOT_ASSET_PREFIX + this.name ) );
-        if ( !this.resource.exists() )
+        final Resource resource = this.resourceService.getResource( resourceKey );
+        if ( !resource.exists() )
         {
-            throw WebException.notFound(
-                String.format( "Resource [%s] not found", ResourceKey.from( this.applicationKey, ROOT_ASSET_PREFIX + this.name ) ) );
+            throw WebException.notFound( String.format( "Resource [%s] not found", resourceKey ) );
         }
+        return resource;
     }
 }

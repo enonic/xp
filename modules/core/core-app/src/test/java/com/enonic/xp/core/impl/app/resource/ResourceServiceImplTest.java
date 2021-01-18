@@ -2,52 +2,55 @@ package com.enonic.xp.core.impl.app.resource;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.core.impl.app.ApplicationFactoryService;
 import com.enonic.xp.core.impl.app.MockApplication;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceProcessor;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
-public class ResourceServiceImplTest
+class ResourceServiceImplTest
 {
-    public Path temporaryFolder;
+    Path temporaryFolder;
 
-    private ApplicationKey appKey;
+    ApplicationKey appKey;
 
-    private ResourceServiceImpl resourceService;
+    ResourceServiceImpl resourceService;
 
-    private Path appDir;
+    Path appDir;
 
     @BeforeEach
-    public void setup()
+    void setup()
         throws Exception
     {
         //TODO @TempDir JUnit5 suits better, but tests fail due to https://bugs.openjdk.java.net/browse/JDK-6956385
-        temporaryFolder = Files.createTempDirectory("resourceServiceImplTest");
+        temporaryFolder = Files.createTempDirectory( "resourceServiceImplTest" );
 
         this.appDir = Files.createDirectory( this.temporaryFolder.resolve( "myapp" ) );
 
         this.appKey = ApplicationKey.from( "myapp" );
-        final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
+        final ApplicationFactoryService applicationFactoryService = Mockito.mock( ApplicationFactoryService.class );
 
         final MockApplication app = new MockApplication();
         app.setStarted( true );
         app.setUrlResolver( ClassLoaderApplicationUrlResolver.create( this.appDir.toUri().toURL() ) );
 
-        Mockito.when( applicationService.getInstalledApplication( this.appKey ) ).thenReturn( app );
+        when( applicationFactoryService.findActiveApplication( this.appKey ) ).thenReturn( Optional.of( app ) );
 
-        this.resourceService = new ResourceServiceImpl();
-        this.resourceService.setApplicationService( applicationService );
+        this.resourceService = new ResourceServiceImpl( applicationFactoryService );
     }
 
     private void newFile( final String name )
@@ -59,7 +62,7 @@ public class ResourceServiceImplTest
     }
 
     @Test
-    public void testFindFiles()
+    void testFindFiles()
         throws Exception
     {
         newFile( "a.txt" );
@@ -115,9 +118,22 @@ public class ResourceServiceImplTest
     }
 
     @Test
-    public void testProcessResource_notFound()
+    void testProcessResource_notFound()
     {
         final String value = processResource( "segment1", "a.txt", "1" );
         assertNull( value );
+    }
+
+    @Test
+    void resourceHash()
+    {
+        assertThat( this.resourceService.resourceHash( ResourceKey.assets( appKey ) ) ).isNotEmpty();
+    }
+
+    @Test
+    void resourceHash_unsupported()
+    {
+        // API is only open to acept limited set of resources that we know we need hash for.
+        assertThrows( IllegalArgumentException.class, () -> this.resourceService.resourceHash( ResourceKey.from( appKey, "/" ) ) );
     }
 }

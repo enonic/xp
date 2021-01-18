@@ -3,6 +3,12 @@ package com.enonic.xp.core.impl.app.resolver;
 public abstract class ApplicationUrlResolverBase
     implements ApplicationUrlResolver
 {
+    @Override
+    public long filesHash( final String path )
+    {
+        return System.currentTimeMillis();
+    }
+
     protected final String normalizePath( final String path )
     {
         if ( path.startsWith( "/" ) )
