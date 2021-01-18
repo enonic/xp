@@ -1842,6 +1842,39 @@ public class ContentResourceTest
         assertEquals( 1, result.size() );
     }
 
+    @Test
+    public void resolveForUnpublish()
+    {
+        final ContentResource contentResource = getResourceInstance();
+
+        final Content content1 = createContent( "content-id1", "content-name1", "myapplication:content-type" );
+        final Content content2 = createContent( "content-id2", content1.getPath(), "content-name2", "myapplication:content-type" );
+
+        final ArgumentCaptor<ContentQuery> argumentCaptor = ArgumentCaptor.forClass( ContentQuery.class );
+
+        final FindContentIdsByQueryResult findResult = FindContentIdsByQueryResult.create().
+            aggregations( Aggregations.empty() ).
+            hits( 1L ).
+            totalHits( 1L ).
+            contents( ContentIds.from( content2.getId() ) ).
+            build();
+
+        Mockito.when( contentService.getByIds( new GetContentByIdsParams( ContentIds.from( "content-id1" ) ) ) ).
+            thenReturn( Contents.from( content1 ) );
+
+        Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).
+            thenReturn( findResult );
+
+        List<ContentIdJson> result = contentResource.resolveForUnpublish( new ContentIdsJson( List.of( "content-id1" ) ) );
+
+        Mockito.verify( this.contentService, Mockito.times( 1 ) ).find( argumentCaptor.capture() );
+
+        assertEquals( "(_path LIKE '/content/content-name1/*' AND _path NOT IN ('/content/content-name1')) ORDER BY _path ASC",
+                      argumentCaptor.getValue().getQueryExpr().toString() );
+
+        assertTrue( result.contains( new ContentIdJson( content1.getId() ) ) );
+        assertTrue( result.contains( new ContentIdJson( content2.getId() ) ) );
+    }
 
     @Test
     public void query_highlight()

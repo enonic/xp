@@ -10,6 +10,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
@@ -39,7 +40,7 @@ public class MoveRunnableTask
 
         final long childrenIds = ContentQueryWithChildren.create().
             contentService( this.contentService ).
-            contentsIds( contentToMoveList ).
+            contentsPaths( contentService.getByIds( new GetContentByIdsParams( contentToMoveList ) ).getPaths() ).
             build().
             find().
             getTotalHits();

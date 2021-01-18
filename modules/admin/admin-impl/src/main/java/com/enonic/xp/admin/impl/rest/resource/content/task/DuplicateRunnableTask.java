@@ -13,6 +13,7 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
+import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
@@ -48,10 +49,12 @@ public class DuplicateRunnableTask
 
         final int childIdsCount = contentToDuplicateWithChildrenList.stream().map( parentId -> ContentQueryWithChildren.create().
             contentService( this.contentService ).
-            contentsIds( ContentIds.from( parentId ) ).
+            contentsPaths( contentService.getByIds( new GetContentByIdsParams( ContentIds.from( parentId ) ) ).getPaths() ).
             build().
             find().
-            getTotalHits() ).mapToInt( Long::intValue ).sum();
+            getTotalHits() ).
+            mapToInt( Long::intValue ).
+            sum();
 
         listener.setTotal( parentIdsCount + childIdsCount );
 
