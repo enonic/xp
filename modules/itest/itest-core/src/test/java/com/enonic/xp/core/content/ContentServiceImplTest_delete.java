@@ -28,6 +28,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentServiceImplTest_delete
@@ -233,6 +234,323 @@ public class ContentServiceImplTest_delete
     }
 
     @Test
+    public void delete_published_content_with_child_moved_in()
+        throws Exception
+    {
+        //Creates a content with children
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Root Content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final CreateContentParams createMovedContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Content to move" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content contentToMove = this.contentService.create( createMovedContentParams );
+
+        final CreateContentParams createChild1ContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Child1 Content" ).
+            parent( content.getPath() ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content child1Content = this.contentService.create( createChild1ContentParams );
+
+        refresh();
+
+        this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId(), contentToMove.getId() ) ).
+            target( WS_OTHER ).
+            build() );
+
+        refresh();
+
+        this.contentService.move( MoveContentParams.create().
+            contentId( contentToMove.getId() ).
+            parentContentPath( child1Content.getPath() ).
+            build() );
+
+        refresh();
+
+        assertThrows( RuntimeException.class, () -> this.contentService.deleteWithoutFetch( DeleteContentParams.create().
+            contentPath( content.getPath() ).
+            build() ) );
+
+        final DeleteContentsResult result = this.contentService.deleteWithoutFetch( DeleteContentParams.create().
+            contentPath( content.getPath() ).
+            deleteOnline( true ).
+            build() );
+
+        assertEquals( 3, result.getDeletedContents().getSize() );
+    }
+
+    @Test
+    public void delete_published_content_with_child_moved_out()
+        throws Exception
+    {
+        //Creates a content with children
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Root Content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final CreateContentParams createChild1ContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Child1 Content" ).
+            parent( content.getPath() ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content child1Content = this.contentService.create( createChild1ContentParams );
+
+        final CreateContentParams createMovedContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Content to move" ).
+            parent( child1Content.getPath() ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content contentToMove = this.contentService.create( createMovedContentParams );
+
+        refresh();
+
+        this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( contentToMove.getId() ) ).
+            target( WS_OTHER ).
+            build() );
+
+        refresh();
+
+        this.contentService.move( MoveContentParams.create().
+            contentId( contentToMove.getId() ).
+            parentContentPath( ContentPath.ROOT ).
+            build() );
+
+        refresh();
+
+        DeleteContentsResult result = this.contentService.deleteWithoutFetch( DeleteContentParams.create().
+            contentPath( content.getPath() ).
+            build() );
+
+        assertEquals( 2, result.getPendingContents().getSize() );
+
+        result = this.contentService.deleteWithoutFetch( DeleteContentParams.create().
+            contentPath( content.getPath() ).
+            deleteOnline( true ).
+            build() );
+
+        assertEquals( 2, result.getDeletedContents().getSize() );
+    }
+
+    @Test
+    public void publish_pending_content_with_child_moved_inside_the_tree()
+        throws Exception
+    {
+        //Creates a content with children
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Root Content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final CreateContentParams createChild1ContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Child1 Content" ).
+            parent( content.getPath() ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content child1Content = this.contentService.create( createChild1ContentParams );
+
+        final CreateContentParams createMovedContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Content to move" ).
+            parent( child1Content.getPath() ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content contentToMove = this.contentService.create( createMovedContentParams );
+
+        refresh();
+
+        this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( contentToMove.getId() ) ).
+            target( WS_OTHER ).
+            build() );
+
+        refresh();
+
+        this.contentService.move( MoveContentParams.create().
+            contentId( contentToMove.getId() ).
+            parentContentPath( content.getPath() ).
+            build() );
+
+        refresh();
+
+        DeleteContentsResult result = this.contentService.deleteWithoutFetch( DeleteContentParams.create().
+            contentPath( content.getPath() ).
+            build() );
+
+        assertEquals( 3, result.getPendingContents().getSize() );
+
+        final PublishContentResult publishResult = this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( WS_OTHER ).
+            includeDependencies( false ).
+            build() );
+
+        assertEquals( 3, publishResult.getUnpublishedContents().getSize() );
+        assertEquals( 3, publishResult.getDeletedContents().getSize() );
+    }
+
+    @Test
+    public void publish_pending_content_with_child_moved_out_of_tree()
+        throws Exception
+    {
+        //Creates a content with children
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Root Content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final CreateContentParams createChild1ContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Child1 Content" ).
+            parent( content.getPath() ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content child1Content = this.contentService.create( createChild1ContentParams );
+
+        final CreateContentParams createMovedContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Content to move" ).
+            parent( child1Content.getPath() ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content contentToMove = this.contentService.create( createMovedContentParams );
+
+        refresh();
+
+        this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( contentToMove.getId() ) ).
+            target( WS_OTHER ).
+            build() );
+
+        refresh();
+
+        this.contentService.move( MoveContentParams.create().
+            contentId( contentToMove.getId() ).
+            parentContentPath( ContentPath.ROOT ).
+            build() );
+
+        refresh();
+
+        DeleteContentsResult result = this.contentService.deleteWithoutFetch( DeleteContentParams.create().
+            contentPath( content.getPath() ).
+            build() );
+
+        assertEquals( 2, result.getPendingContents().getSize() );
+
+        final PublishContentResult publishResult = this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( WS_OTHER ).
+            includeDependencies( false ).
+            build() );
+
+        assertEquals( 1, publishResult.getPushedContents().getSize() );
+        assertEquals( 2, publishResult.getDeletedContents().getSize() );
+        assertEquals( 2, publishResult.getUnpublishedContents().getSize() );
+    }
+
+    @Test
+    public void publish_pending_content_with_excluded_child_moved_out_of_tree()
+        throws Exception
+    {
+        //Creates a content with children
+        final CreateContentParams createContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Root Content" ).
+            parent( ContentPath.ROOT ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final CreateContentParams createChild1ContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Child1 Content" ).
+            parent( content.getPath() ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content child1Content = this.contentService.create( createChild1ContentParams );
+
+        final CreateContentParams createMovedContentParams = CreateContentParams.create().
+            contentData( new PropertyTree() ).
+            displayName( "Content to move" ).
+            parent( child1Content.getPath() ).
+            type( ContentTypeName.folder() ).
+            build();
+
+        final Content contentToMove = this.contentService.create( createMovedContentParams );
+
+        refresh();
+
+        this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( contentToMove.getId() ) ).
+            target( WS_OTHER ).
+            build() );
+
+        refresh();
+
+        this.contentService.move( MoveContentParams.create().
+            contentId( contentToMove.getId() ).
+            parentContentPath( ContentPath.ROOT ).
+            build() );
+
+        refresh();
+
+        DeleteContentsResult result = this.contentService.deleteWithoutFetch( DeleteContentParams.create().
+            contentPath( content.getPath() ).
+            build() );
+
+        assertEquals( 2, result.getPendingContents().getSize() );
+
+        final PublishContentResult publishResult = this.contentService.publish( PushContentParams.create().
+            contentIds( ContentIds.from( content.getId() ) ).
+            target( WS_OTHER ).
+            includeDependencies( false ).
+            excludedContentIds( ContentIds.from( contentToMove.getId() ) ).
+            build() );
+
+        assertEquals( 0, publishResult.getPushedContents().getSize() );
+        assertEquals( 2, publishResult.getDeletedContents().getSize() );
+        assertEquals( 3, publishResult.getUnpublishedContents().getSize() );
+    }
+
+    @Test
     public void delete_published_content_with_unpublished_children()
         throws Exception
     {
@@ -382,7 +700,7 @@ public class ContentServiceImplTest_delete
             type( ContentTypeName.folder() ).
             build();
 
-        final Content child1Content = this.contentService.create( createChild1ContentParams );
+        this.contentService.create( createChild1ContentParams );
 
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
         this.contentService.deleteWithoutFetch( deleteContentParams );

@@ -1,6 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
 
+import java.util.stream.Stream;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
@@ -74,6 +76,30 @@ final class DeleteContentCommand
             throw new ContentNotFoundException( this.params.getContentPath(), ContextAccessor.current().getBranch() );
         }
 
+        if ( !params.isDeleteOnline() )
+        {
+            final NodeIds draftChildren = this.nodeService.findByParent( FindNodesByParentParams.create().
+                parentId( nodeToDelete.id() ).
+                recursive( true ).
+                build() ).
+                getNodeIds();
+
+            final boolean anyChildIsMovedIn = nodeService.compare( draftChildren, ContentConstants.BRANCH_MASTER ).
+                getComparisons().
+                stream().
+                anyMatch( nodeComparison -> {
+                    final boolean moved = CompareStatus.MOVED.equals( nodeComparison.getCompareStatus() );
+                    return moved && !nodeComparison.getTargetPath().asAbsolute().toString().startsWith( nodePath.asAbsolute().toString() );
+                } );
+
+            if ( anyChildIsMovedIn )
+            {
+                throw new RuntimeException( String.format(
+                    "Cannot make content tree pending delete for [%s], at least one published child is moved in from outside.",
+                    nodeToDelete.id() ) );
+            }
+        }
+
         final DeleteContentsResult deletedContents = doDeleteContent( nodeToDelete.id() );
 
         this.nodeService.refresh( RefreshMode.ALL );
@@ -97,8 +123,7 @@ final class DeleteContentCommand
         }
         else if ( this.params.isDeleteOnline() )
         {
-            final NodeIds nodes = deleteNodeInDraftAndMaster( nodeToDelete );
-            result.addDeleted( ContentIds.from( nodes.getAsStrings() ) );
+            deleteNodeInDraftAndMaster( nodeToDelete, result );
         }
         else
         {
@@ -110,8 +135,7 @@ final class DeleteContentCommand
             result.addPending( ContentId.from( nodeToDelete.toString() ) );
             this.nodesDeleted( 1 );
 
-
-            final NodeIds children = getAllChildren( nodeToDelete );
+            final NodeIds children = getDirectChildren( nodeToDelete );
 
             for ( final NodeId child : children )
             {
@@ -142,17 +166,37 @@ final class DeleteContentCommand
         }
     }
 
-    private NodeIds deleteNodeInDraftAndMaster( final NodeId nodeToDelete )
+    private void deleteNodeInDraftAndMaster( final NodeId nodeToDelete, final DeleteContentsResult.Builder result )
     {
-        final Context currentContext = ContextAccessor.current();
-        final NodeIds draftNodes = deleteNodeInContext( nodeToDelete, currentContext );
-        final NodeIds masterNodes = deleteNodeInContext( nodeToDelete, ContextBuilder.from( currentContext ).
+        final Context draftContext = ContextAccessor.current();
+        final Context masterContext = ContextBuilder.from( draftContext ).
             branch( ContentConstants.BRANCH_MASTER ).
-            build() );
-        return masterNodes != null ? masterNodes : draftNodes;
+            build();
+
+        final Node draftRootNode = nodeService.getById( nodeToDelete );
+
+        final NodeIds draftNodes = deleteNodeInContext( nodeToDelete, draftContext );
+        final NodeIds masterNodes = deleteNodeInContext( nodeToDelete, masterContext );
+
+        result.addDeleted( ContentIds.from( draftNodes.getAsStrings() ) );
+        result.addUnpublished( ContentIds.from( masterNodes.getAsStrings() ) );
+
+        final NodeIds masterIdsByDraftPath = masterContext.callWith( () ->  // to delete master with moved draft from moved tree
+                                                                         this.nodeService.findByParent( FindNodesByParentParams.create().
+                                                                             parentPath( draftRootNode.path() ).
+                                                                             recursive( true ).
+                                                                             build() ).
+                                                                             getNodeIds() );
+
+        Stream.concat( masterIdsByDraftPath.stream(), draftNodes.stream() ).
+            filter( id -> !masterNodes.contains( id ) ).
+            forEach( id -> {
+                deleteNodeInContext( id, masterContext );
+                result.addUnpublished( ContentId.from( id.toString() ) );
+            } );
     }
 
-    private NodeIds getAllChildren( final NodeId nodeToDelete )
+    private NodeIds getDirectChildren( final NodeId nodeToDelete )
     {
         final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( FindNodesByParentParams.create().
             parentId( nodeToDelete ).

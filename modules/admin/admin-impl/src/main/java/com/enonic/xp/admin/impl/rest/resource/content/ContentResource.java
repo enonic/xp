@@ -1114,6 +1114,26 @@ public final class ContentResource
             collect( Collectors.toList() );
     }
 
+    @POST
+    @Path("resolveForDelete")
+    public List<ContentIdJson> resolveForDelete( final ContentIdsJson params )
+    {
+        final Contents parents = contentService.getByIds( new GetContentByIdsParams( params.getContentIds() ) );
+
+        final FindContentIdsByQueryResult children = ContentQueryWithChildren.create().
+            contentService( this.contentService ).
+            contentsPaths( parents.getPaths() ).
+            size( GET_ALL_SIZE_FLAG ).
+            build().
+            find();
+
+        return Stream.concat( parents.getIds().stream(), children.getContentIds().
+            stream().
+            filter( id -> !parents.getIds().contains( id ) ) ).
+            map( ContentIdJson::new ).
+            collect( Collectors.toList() );
+    }
+
     private Stream<ContentId> filterIdsByStatus( final ContentIds ids, final Collection<CompareStatus> statuses )
     {
         final CompareContentResults compareResults =
