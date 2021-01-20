@@ -237,10 +237,12 @@ public class ContentAuditLogSupportImpl
 
         addContents( resultSet, contents.getDeletedContents(), "deletedContents" );
         addContents( resultSet, contents.getPendingContents(), "pendingContents" );
+        addContents( resultSet, contents.getPendingContents(), "unpublishedContents" );
 
         log( "system.content.delete", data, ContentIds.create().
             addAll( contents.getDeletedContents() ).
             addAll( contents.getPendingContents() ).
+            addAll( contents.getUnpublishedContents() ).
             build(), rootContext );
     }
 
@@ -320,10 +322,12 @@ public class ContentAuditLogSupportImpl
         addContents( resultSet, result.getPushedContents(), "pushedContents" );
         addContents( resultSet, result.getDeletedContents(), "deletedContents" );
         addContents( resultSet, result.getFailedContents(), "failedContents" );
+        addContents( resultSet, result.getUnpublishedContents(), "unpublishedContents" );
 
         log( "system.content.publish", data, ContentIds.create().
             addAll( result.getPushedContents() ).
             addAll( result.getDeletedContents() ).
+            addAll( result.getUnpublishedContents() ).
             build(), rootContext );
     }
 

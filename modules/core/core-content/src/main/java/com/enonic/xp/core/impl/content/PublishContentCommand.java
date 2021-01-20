@@ -16,11 +16,10 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.DeleteContentListener;
-import com.enonic.xp.content.PushContentListener;
+import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.PublishContentResult;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -28,7 +27,6 @@ import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
@@ -206,43 +204,44 @@ public class PublishContentCommand
 
     private void doDeleteNodes( final NodeIds nodeIdsToDelete )
     {
-        final ContentIds contentIdsToDelete = ContentNodeHelper.toContentIds( NodeIds.from( nodeIdsToDelete ) );
-        this.resultBuilder.setDeleted( contentIdsToDelete );
+        final ContentIds.Builder deleted = ContentIds.create();
+        final ContentIds.Builder unpublished = ContentIds.create();
 
-        try
-        {
-            if ( nodeIdsToDelete.getSize() == 1 )
+        totalToDelete( nodeIdsToDelete.getSize() );
+
+        nodeIdsToDelete.forEach( ( id ) -> {
+            if ( nodeService.nodeExists( id ) )
             {
-                final Node nodeToDelete = nodeService.getById( nodeIdsToDelete.first() );
+                final Node nodeToDelete = nodeService.getById( id );
                 final ContentPath contentPathToDelete = ContentNodeHelper.translateNodePathToContentPath( nodeToDelete.path() );
-                this.resultBuilder.setDeletedPath( contentPathToDelete );
+
+                final DeleteContentsResult deleteResult = DeleteContentCommand.create().
+                    contentTypeService( contentTypeService ).
+                    nodeService( nodeService ).
+                    translator( translator ).
+                    eventPublisher( eventPublisher ).
+                    params( DeleteContentParams.create().
+                        deleteOnline( true ).
+                        contentPath( contentPathToDelete ).
+                        build() ).
+                    build().
+                    execute();
+
+                deleted.addAll( deleteResult.getDeletedContents() );
+                unpublished.addAll( deleteResult.getUnpublishedContents() );
+
+                if ( nodeIdsToDelete.getSize() == 1 )
+                {
+                    this.resultBuilder.setDeletedPath( contentPathToDelete );
+                }
             }
-
-            totalToDelete( nodeIdsToDelete.getSize() * 2 );
-
-            final Context currentContext = ContextAccessor.current();
-            deleteNodesInContext( nodeIdsToDelete, currentContext, this );
-            deleteNodesInContext( nodeIdsToDelete, ContextBuilder.from( currentContext ).
-                branch( target ).
-                build(), this );
-        }
-        catch ( NodeNotFoundException e )
-        {
-            // node to delete doesn't exist
-        }
-
-        if ( publishContentListener != null )
-        {
-            publishContentListener.contentPushed( contentIdsToDelete.getSize() );
-        }
-    }
-
-    private void deleteNodesInContext( final NodeIds nodeIds, final Context context, final DeleteNodeListener deleteNodeListener )
-    {
-        context.callWith( () -> {
-            nodeIds.forEach( nodeId -> nodeService.deleteById( nodeId, deleteNodeListener ) );
-            return null;
+            nodesDeleted( 1 );
         } );
+
+        nodesPushed( nodeIdsToDelete.getSize() );
+
+        this.resultBuilder.setDeleted( deleted.build() );
+        this.resultBuilder.setUnpublishedContents( unpublished.build() );
     }
 
     @Override
