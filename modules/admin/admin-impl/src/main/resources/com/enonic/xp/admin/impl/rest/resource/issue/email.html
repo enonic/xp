@@ -24,18 +24,17 @@
         </div>
     </div>
     <div style="margin-bottom: 25px;">
-        <a href="${url}">
-            <button title="${id}" style="background-color: ${statusBgColor}; padding: 4px 19px 4px 19px; border: none; cursor: pointer;">
-                <span style="
+        <a href="${url}" style="text-decoration: none">
+                <span title="${id}" style="
+                    background-color: ${statusBgColor};
+                    border: solid 15px ${statusBgColor};
                     color: white;
                     line-height: 24px;
                     font-size: 14px;
                     white-space: pre !important;
                     overflow: hidden;
                     text-overflow: ellipsis;
-                    max-width: 150px;
-                    display: inline-block;">${showDetailsCaption}</span>
-            </button>
+                    ">${showDetailsCaption}</span>
         </a>
     </div>
     <div style="margin-bottom: 40px; font-size: 16px; display: ${comments-block-visibility}">
