@@ -245,7 +245,7 @@ public class IssueNotificationsSenderImplTest
     private void verifyIssueLink( final MimeMessage msg )
         throws Exception
     {
-        assertTrue( msg.getContent().toString().contains( "url#/issue" ) );
+        assertTrue( msg.getContent().toString().contains( "url#/default/issue" ) );
     }
 
     private void verifyIssueLink( final MimeMessage msg, final String link )
