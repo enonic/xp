@@ -154,11 +154,6 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
     {
         final ProjectName projectName = ProjectName.from( ContextAccessor.current().getRepositoryId() );
 
-        if ( projectName.equals( DEFAULT_PROJECT_NAME ) )
-        {
-            return params.getUrl() + "#/issue/" + issueId;
-        }
-
         return params.getUrl() + "#/" + projectName + "/issue/" + issueId;
     }
 
