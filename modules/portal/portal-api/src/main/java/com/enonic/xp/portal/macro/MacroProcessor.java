@@ -6,7 +6,5 @@ import com.enonic.xp.portal.PortalResponse;
 @PublicApi
 public interface MacroProcessor
 {
-
     PortalResponse process( final MacroContext macroContext );
-
 }

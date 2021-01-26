@@ -21,17 +21,17 @@ public interface DumpReader
 {
     RepositoryIds getRepositories();
 
-    Branches getBranches( final RepositoryId repositoryId );
+    Branches getBranches( RepositoryId repositoryId );
 
-    BranchLoadResult loadBranch( final RepositoryId repositoryId, final Branch branch, final LineProcessor<EntryLoadResult> processor );
+    BranchLoadResult loadBranch( RepositoryId repositoryId, Branch branch, LineProcessor<EntryLoadResult> processor );
 
-    VersionsLoadResult loadVersions( final RepositoryId repositoryId, final LineProcessor<EntryLoadResult> processor );
+    VersionsLoadResult loadVersions( RepositoryId repositoryId, LineProcessor<EntryLoadResult> processor );
 
-    CommitsLoadResult loadCommits( final RepositoryId repositoryId, final LineProcessor<EntryLoadResult> processor );
+    CommitsLoadResult loadCommits( RepositoryId repositoryId, LineProcessor<EntryLoadResult> processor );
 
-    NodeVersion get( final RepositoryId repositoryId, final NodeVersionKey blobKey );
+    NodeVersion get( RepositoryId repositoryId, NodeVersionKey blobKey );
 
-    ByteSource getBinary( final RepositoryId repositoryId, final String blobKey );
+    ByteSource getBinary( RepositoryId repositoryId, String blobKey );
 
     DumpMeta getDumpMeta();
 }

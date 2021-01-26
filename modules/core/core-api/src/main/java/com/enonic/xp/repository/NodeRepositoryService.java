@@ -5,10 +5,9 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public interface NodeRepositoryService
 {
-    void create( final CreateRepositoryParams params );
+    void create( CreateRepositoryParams params );
 
-    void delete( final RepositoryId repositoryId );
+    void delete( RepositoryId repositoryId );
 
-    boolean isInitialized( final RepositoryId repositoryId );
-
+    boolean isInitialized( RepositoryId repositoryId );
 }

@@ -38,11 +38,11 @@ abstract class BaseSuggestionFactory<OPTION extends Suggest.Suggestion.Entry.Opt
             build();
     }
 
-    abstract Suggestion.Builder initSuggestionBuilder( final SUGGESTION entry );
+    abstract Suggestion.Builder initSuggestionBuilder( SUGGESTION entry );
 
-    abstract SuggestionEntry.Builder initSuggestionEntryBuilder( final ENTRY entry );
+    abstract SuggestionEntry.Builder initSuggestionEntryBuilder( ENTRY entry );
 
-    abstract SuggestionOption.Builder initSuggestionOptionBuilder( final OPTION option );
+    abstract SuggestionOption.Builder initSuggestionOptionBuilder( OPTION option );
 }
 
 

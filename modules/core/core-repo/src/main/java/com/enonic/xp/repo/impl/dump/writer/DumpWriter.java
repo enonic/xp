@@ -14,23 +14,23 @@ import com.enonic.xp.repository.RepositoryId;
 public interface DumpWriter
     extends Closeable
 {
-    void writeDumpMetaData( final DumpMeta dumpMeta );
+    void writeDumpMetaData( DumpMeta dumpMeta );
 
-    void openBranchMeta( final RepositoryId repositoryId, final Branch branch );
+    void openBranchMeta( RepositoryId repositoryId, Branch branch );
 
-    void openVersionsMeta( final RepositoryId repositoryId );
+    void openVersionsMeta( RepositoryId repositoryId );
 
-    void openCommitsMeta( final RepositoryId repositoryId );
+    void openCommitsMeta( RepositoryId repositoryId );
 
     void closeMeta();
 
-    void writeBranchEntry( final BranchDumpEntry branchDumpEntry );
+    void writeBranchEntry( BranchDumpEntry branchDumpEntry );
 
-    void writeVersionsEntry( final VersionsDumpEntry versionsDumpEntry );
+    void writeVersionsEntry( VersionsDumpEntry versionsDumpEntry );
 
-    void writeCommitEntry( final CommitDumpEntry commitDumpEntry );
+    void writeCommitEntry( CommitDumpEntry commitDumpEntry );
 
-    void writeNodeVersionBlobs( final RepositoryId repositoryId, final NodeVersionKey nodeVersionKey );
+    void writeNodeVersionBlobs( RepositoryId repositoryId, NodeVersionKey nodeVersionKey );
 
-    void writeBinaryBlob( final RepositoryId repositoryId, final BlobKey key );
+    void writeBinaryBlob( RepositoryId repositoryId, BlobKey key );
 }

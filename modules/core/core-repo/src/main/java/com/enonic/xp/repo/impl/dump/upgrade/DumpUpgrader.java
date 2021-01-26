@@ -9,5 +9,5 @@ public interface DumpUpgrader
 
     String getName();
 
-    DumpUpgradeStepResult upgrade( final String dumpName );
+    DumpUpgradeStepResult upgrade( String dumpName );
 }

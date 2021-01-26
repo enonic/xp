@@ -50,7 +50,7 @@ public class FileExportWriter
     {
         this.doCreateDirectories( itemPath.getParent() );
 
-        try (final InputStream in = source.openStream())
+        try (InputStream in = source.openStream())
         {
             Files.copy( in, itemPath );
         }

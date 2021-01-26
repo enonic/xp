@@ -6,9 +6,9 @@ import com.enonic.xp.repository.RepositoryId;
 
 public interface ReindexListener
 {
-    void totalBranches( final long total );
+    void totalBranches( long total );
 
-    void branch( final RepositoryId repoId, final Branch branch, final long total );
+    void branch( RepositoryId repoId, Branch branch, long total );
 
-    void branchEntry( final NodeBranchEntry entry );
+    void branchEntry( NodeBranchEntry entry );
 }

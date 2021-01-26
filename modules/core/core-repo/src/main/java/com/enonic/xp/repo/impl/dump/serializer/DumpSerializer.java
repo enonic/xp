@@ -6,15 +6,15 @@ import com.enonic.xp.repo.impl.dump.model.VersionsDumpEntry;
 
 public interface DumpSerializer
 {
-    byte[] serialize( final BranchDumpEntry branchDumpEntry );
+    byte[] serialize( BranchDumpEntry branchDumpEntry );
 
-    byte[] serialize( final VersionsDumpEntry versionsDumpEntry );
+    byte[] serialize( VersionsDumpEntry versionsDumpEntry );
 
-    byte[] serialize( final CommitDumpEntry commitDumpEntry );
+    byte[] serialize( CommitDumpEntry commitDumpEntry );
 
-    BranchDumpEntry toBranchMetaEntry( final String value );
+    BranchDumpEntry toBranchMetaEntry( String value );
 
-    VersionsDumpEntry toNodeVersionsEntry( final String value );
+    VersionsDumpEntry toNodeVersionsEntry( String value );
 
-    CommitDumpEntry toCommitDumpEntry( final String value );
+    CommitDumpEntry toCommitDumpEntry( String value );
 }

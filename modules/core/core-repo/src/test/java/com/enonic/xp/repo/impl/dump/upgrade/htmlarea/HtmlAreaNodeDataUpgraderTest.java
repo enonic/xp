@@ -102,7 +102,7 @@ public class HtmlAreaNodeDataUpgraderTest
         throws IOException
     {
         final String resourcePrefix = "/" + getClass().getPackage().getName().replace( '.', '/' ) + "/";
-        try (final InputStream stream = getClass().getResourceAsStream( resourcePrefix + resourceName ))
+        try (InputStream stream = getClass().getResourceAsStream( resourcePrefix + resourceName ))
         {
             return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }

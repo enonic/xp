@@ -354,11 +354,11 @@ public class PortalUrlServiceImpl_processHtmlTest
         final String input;
         final String expected;
         //Reads the input and output files
-        try (final InputStream is = this.getClass().getResourceAsStream( inputName ))
+        try (InputStream is = this.getClass().getResourceAsStream( inputName ))
         {
             input = new String( is.readAllBytes(), StandardCharsets.UTF_8 );
         }
-        try (final InputStream is = this.getClass().getResourceAsStream( expectedOutputName ))
+        try (InputStream is = this.getClass().getResourceAsStream( expectedOutputName ))
         {
             expected = new String( is.readAllBytes(), StandardCharsets.UTF_8 );
         }

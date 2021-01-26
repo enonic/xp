@@ -48,5 +48,5 @@ public abstract class InputVisitor
         traverse( set );
     }
 
-    public abstract void visit( final Input input );
+    public abstract void visit( Input input );
 }

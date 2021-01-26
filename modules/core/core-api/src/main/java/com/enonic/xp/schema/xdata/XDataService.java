@@ -15,5 +15,5 @@ public interface XDataService
 
     XDatas getByApplication( ApplicationKey applicationKey );
 
-    XDatas getFromContentType( final ContentType contentType );
+    XDatas getFromContentType( ContentType contentType );
 }

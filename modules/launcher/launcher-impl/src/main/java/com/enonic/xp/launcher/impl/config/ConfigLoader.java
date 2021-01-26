@@ -58,7 +58,7 @@ public final class ConfigLoader
             return new HashMap<>();
         }
 
-        try (final Reader reader = Files.newBufferedReader( file, StandardCharsets.UTF_8 ))
+        try (Reader reader = Files.newBufferedReader( file, StandardCharsets.UTF_8 ))
         {
             return loadProperties( reader );
         }

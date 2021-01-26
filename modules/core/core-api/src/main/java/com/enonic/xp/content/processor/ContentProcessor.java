@@ -4,9 +4,9 @@ import com.enonic.xp.schema.content.ContentType;
 
 public interface ContentProcessor
 {
-    boolean supports( final ContentType contentType );
+    boolean supports( ContentType contentType );
 
-    ProcessCreateResult processCreate( final ProcessCreateParams params );
+    ProcessCreateResult processCreate( ProcessCreateParams params );
 
-    ProcessUpdateResult processUpdate( final ProcessUpdateParams params );
+    ProcessUpdateResult processUpdate( ProcessUpdateParams params );
 }

@@ -24,8 +24,7 @@ public abstract class ModifyProjectPermissionsHandler
         return new ProjectPermissionsMapper( projectPermissions );
     }
 
-    protected abstract ProjectPermissions merge( final ProjectPermissions permissionsBeforeUpdate,
-                                                 final ProjectPermissions paramPermissions );
+    protected abstract ProjectPermissions merge( ProjectPermissions permissionsBeforeUpdate, ProjectPermissions paramPermissions );
 
     public void setId( final String value )
     {

@@ -29,13 +29,13 @@ public interface NodeService
 
     Node getById( NodeId id );
 
-    Node getByIdAndVersionId( final NodeId id, final NodeVersionId versionId );
+    Node getByIdAndVersionId( NodeId id, NodeVersionId versionId );
 
     Nodes getByIds( NodeIds ids );
 
     Node getByPath( NodePath path );
 
-    Node getByPathAndVersionId( final NodePath path, final NodeVersionId versionId );
+    Node getByPathAndVersionId( NodePath path, NodeVersionId versionId );
 
     Nodes getByPaths( NodePaths paths );
 
@@ -101,7 +101,7 @@ public interface NodeService
 
     ImportNodeResult importNode( ImportNodeParams params );
 
-    LoadNodeResult loadNode( final LoadNodeParams params );
+    LoadNodeResult loadNode( LoadNodeParams params );
 
     NodesHasChildrenResult hasChildren( Nodes nodes );
 
@@ -119,8 +119,8 @@ public interface NodeService
 
     boolean hasUnpublishedChildren( NodeId parent, Branch target );
 
-    void importNodeVersion( final ImportNodeVersionParams params );
+    void importNodeVersion( ImportNodeVersionParams params );
 
-    void importNodeCommit( final ImportNodeCommitParams params );
+    void importNodeCommit( ImportNodeCommitParams params );
 
 }

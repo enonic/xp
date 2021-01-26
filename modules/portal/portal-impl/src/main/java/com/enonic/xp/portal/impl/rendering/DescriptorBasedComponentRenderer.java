@@ -157,7 +157,7 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
         return descriptorKey == null ? null : getComponentDescriptor( descriptorKey );
     }
 
-    protected abstract ComponentDescriptor getComponentDescriptor( final DescriptorKey descriptorKey );
+    protected abstract ComponentDescriptor getComponentDescriptor( DescriptorKey descriptorKey );
 
     private RenderMode getRenderingMode( final PortalRequest portalRequest )
     {

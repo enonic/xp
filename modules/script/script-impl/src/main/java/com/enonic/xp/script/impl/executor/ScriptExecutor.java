@@ -35,7 +35,7 @@ public interface ScriptExecutor
 
     void registerMock( String name, Object value );
 
-    void registerDisposer( final ResourceKey key, Runnable callback );
+    void registerDisposer( ResourceKey key, Runnable callback );
 
     void runDisposers();
 }

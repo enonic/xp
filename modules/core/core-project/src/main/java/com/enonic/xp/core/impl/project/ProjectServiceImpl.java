@@ -471,7 +471,7 @@ public class ProjectServiceImpl
                 return new BinaryAttachment( BinaryReference.from( icon.getName() ), icon.getByteSource() );
             }
 
-            try (final InputStream inputStream = source.openStream())
+            try (InputStream inputStream = source.openStream())
             {
                 final BufferedImage bufferedImage = ImageHelper.toBufferedImage( inputStream );
 

@@ -9,9 +9,9 @@ import com.enonic.xp.repo.impl.InternalContext;
 
 public interface VersionService
 {
-    void store( final NodeVersionMetadata nodeVersionMetadata, final InternalContext context );
+    void store( NodeVersionMetadata nodeVersionMetadata, InternalContext context );
 
-    void delete( final Collection<NodeVersionId> nodeVersionIds, final InternalContext context );
+    void delete( Collection<NodeVersionId> nodeVersionIds, InternalContext context );
 
-    NodeVersionMetadata getVersion( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context );
+    NodeVersionMetadata getVersion( NodeId nodeId, NodeVersionId nodeVersionId, InternalContext context );
 }

@@ -6,7 +6,7 @@ import com.enonic.xp.data.Value;
 @PublicApi
 public interface IndexValueProcessor
 {
-    Value process( final Value value );
+    Value process( Value value );
 
     String getName();
 }

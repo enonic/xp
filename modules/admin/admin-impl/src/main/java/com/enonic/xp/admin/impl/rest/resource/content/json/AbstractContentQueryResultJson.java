@@ -36,7 +36,7 @@ public abstract class AbstractContentQueryResultJson<T extends ContentIdJson>
             return (T) this;
         }
 
-        public abstract T addContent( final Content content );
+        public abstract T addContent( Content content );
 
         public T setMetadata( final ContentListMetaData metadata )
         {

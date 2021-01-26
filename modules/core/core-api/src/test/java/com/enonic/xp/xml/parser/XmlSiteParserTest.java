@@ -210,7 +210,7 @@ public class XmlSiteParserTest
     private String loadTestFile( final String fileName, Charset charset )
     {
         final URL url = new ResourceTestHelper( this ).getTestResource( fileName );
-        try (final InputStream stream = url.openStream())
+        try (InputStream stream = url.openStream())
         {
             return new String( stream.readAllBytes(), charset );
         }

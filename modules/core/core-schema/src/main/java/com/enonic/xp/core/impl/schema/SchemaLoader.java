@@ -95,7 +95,7 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
         return keys;
     }
 
-    protected abstract N newName( final ApplicationKey appKey, final String name );
+    protected abstract N newName( ApplicationKey appKey, String name );
 
     private String getLocalName( final ResourceKey key )
     {

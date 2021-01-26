@@ -6,5 +6,5 @@ import com.enonic.xp.app.ApplicationKey;
 @PublicApi
 public interface IdProviderDescriptorService
 {
-    IdProviderDescriptor getDescriptor( final ApplicationKey key );
+    IdProviderDescriptor getDescriptor( ApplicationKey key );
 }

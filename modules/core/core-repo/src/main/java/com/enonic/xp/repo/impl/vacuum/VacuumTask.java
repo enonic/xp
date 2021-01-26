@@ -4,7 +4,7 @@ import com.enonic.xp.vacuum.VacuumTaskResult;
 
 public interface VacuumTask
 {
-    VacuumTaskResult execute( final VacuumTaskParams params );
+    VacuumTaskResult execute( VacuumTaskParams params );
 
     int order();
 

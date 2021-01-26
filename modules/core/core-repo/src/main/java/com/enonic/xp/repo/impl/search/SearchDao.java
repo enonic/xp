@@ -4,7 +4,5 @@ import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public interface SearchDao
 {
-
-    SearchResult search( final SearchRequest searchRequest );
-
+    SearchResult search( SearchRequest searchRequest );
 }

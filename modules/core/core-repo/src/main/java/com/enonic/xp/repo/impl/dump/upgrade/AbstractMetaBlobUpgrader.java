@@ -96,7 +96,7 @@ public abstract class AbstractMetaBlobUpgrader
         }, entriesFile );
     }
 
-    protected abstract void upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent );
+    protected abstract void upgradeVersionEntry( RepositoryId repositoryId, String entryContent );
 
-    protected abstract void upgradeBranchEntry( final RepositoryId repositoryId, final String entryContent );
+    protected abstract void upgradeBranchEntry( RepositoryId repositoryId, String entryContent );
 }

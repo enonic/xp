@@ -14,7 +14,6 @@ import com.enonic.xp.util.BinaryReference;
 @PublicApi
 public interface ContentService
 {
-
     Site create( CreateSiteParams params );
 
     Content create( CreateContentParams params );
@@ -55,7 +54,7 @@ public interface ContentService
 
     ReorderChildContentsResult reorderChildren( ReorderChildContentsParams params );
 
-    Boolean hasUnpublishedChildren( final HasUnpublishedChildrenParams params );
+    Boolean hasUnpublishedChildren( HasUnpublishedChildrenParams params );
 
     ApplyContentPermissionsResult applyPermissions( ApplyContentPermissionsParams params );
 
@@ -122,9 +121,9 @@ public interface ContentService
 
     Content reprocess( ContentId contentId );
 
-    Content getByIdAndVersionId( final ContentId contentId, final ContentVersionId versionId );
+    Content getByIdAndVersionId( ContentId contentId, ContentVersionId versionId );
 
-    Content getByPathAndVersionId( final ContentPath contentPath, final ContentVersionId versionId );
+    Content getByPathAndVersionId( ContentPath contentPath, ContentVersionId versionId );
 
-    ImportContentResult importContent( final ImportContentParams params );
+    ImportContentResult importContent( ImportContentParams params );
 }

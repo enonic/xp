@@ -49,7 +49,7 @@ public abstract class BaseTestBuilderFactory
     protected final String load( final String name )
         throws Exception
     {
-        try (final InputStream stream = getClass().getResourceAsStream( name ))
+        try (InputStream stream = getClass().getResourceAsStream( name ))
         {
             return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }

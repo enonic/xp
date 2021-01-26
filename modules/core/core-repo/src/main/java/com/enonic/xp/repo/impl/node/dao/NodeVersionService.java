@@ -8,9 +8,9 @@ import com.enonic.xp.repo.impl.InternalContext;
 
 public interface NodeVersionService
 {
-    NodeVersionKey store( NodeVersion nodeVersion, final InternalContext context );
+    NodeVersionKey store( NodeVersion nodeVersion, InternalContext context );
 
-    NodeVersion get( final NodeVersionKey nodeVersionKey, final InternalContext context );
+    NodeVersion get( NodeVersionKey nodeVersionKey, InternalContext context );
 
-    NodeVersions get( final NodeVersionKeys nodeVersionKeys, final InternalContext context );
+    NodeVersions get( NodeVersionKeys nodeVersionKeys, InternalContext context );
 }

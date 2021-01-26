@@ -16,5 +16,4 @@ import com.enonic.xp.query.aggregation.AggregationQuery;
 public abstract class AggregationQueryJson
 {
     public abstract AggregationQuery getAggregationQuery();
-
 }

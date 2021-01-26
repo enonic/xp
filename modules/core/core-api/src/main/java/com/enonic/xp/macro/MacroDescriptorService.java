@@ -7,11 +7,11 @@ import com.enonic.xp.app.ApplicationKeys;
 @PublicApi
 public interface MacroDescriptorService
 {
-    MacroDescriptor getByKey( final MacroKey key );
+    MacroDescriptor getByKey( MacroKey key );
 
-    MacroDescriptors getByApplication( final ApplicationKey applicationKey );
+    MacroDescriptors getByApplication( ApplicationKey applicationKey );
 
-    MacroDescriptors getByApplications( final ApplicationKeys applicationKeys );
+    MacroDescriptors getByApplications( ApplicationKeys applicationKeys );
 
     MacroDescriptors getAll();
 }

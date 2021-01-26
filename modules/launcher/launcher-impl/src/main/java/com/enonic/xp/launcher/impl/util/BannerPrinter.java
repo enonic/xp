@@ -71,7 +71,7 @@ public final class BannerPrinter
 
     private String loadBanner()
     {
-        try (final InputStream stream = getClass().getResourceAsStream( "banner.txt" ))
+        try (InputStream stream = getClass().getResourceAsStream( "banner.txt" ))
         {
             return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }

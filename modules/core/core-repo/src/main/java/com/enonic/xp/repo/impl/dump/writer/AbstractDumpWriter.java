@@ -60,7 +60,7 @@ public abstract class AbstractDumpWriter
     {
         final PathRef dumpMetaFile = filePaths.metaDataFile();
 
-        try (final OutputStream outputStream = openMetaFileStream( dumpMetaFile ))
+        try (OutputStream outputStream = openMetaFileStream( dumpMetaFile ))
         {
             outputStream.write( new DumpMetaJsonSerializer().serialize( dumpMeta ) );
         }
@@ -190,7 +190,7 @@ public abstract class AbstractDumpWriter
     {
     }
 
-    protected abstract OutputStream openMetaFileStream( final PathRef metaFile )
+    protected abstract OutputStream openMetaFileStream( PathRef metaFile )
         throws IOException;
 
     private void openTarStream( final PathRef metaPath )

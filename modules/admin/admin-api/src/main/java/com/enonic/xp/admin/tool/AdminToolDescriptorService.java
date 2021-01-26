@@ -8,11 +8,11 @@ import com.enonic.xp.security.PrincipalKeys;
 @PublicApi
 public interface AdminToolDescriptorService
 {
-    AdminToolDescriptors getAllowedAdminToolDescriptors( final PrincipalKeys principalKeys );
+    AdminToolDescriptors getAllowedAdminToolDescriptors( PrincipalKeys principalKeys );
 
-    AdminToolDescriptors getByApplication( final ApplicationKey applicationKey );
+    AdminToolDescriptors getByApplication( ApplicationKey applicationKey );
 
-    AdminToolDescriptor getByKey( final DescriptorKey descriptorKey );
+    AdminToolDescriptor getByKey( DescriptorKey descriptorKey );
 
     String getIconByKey( DescriptorKey descriptorKey );
 

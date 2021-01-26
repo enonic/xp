@@ -5,7 +5,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public interface ExportService
 {
-    NodeExportResult exportNodes( final ExportNodesParams params );
+    NodeExportResult exportNodes( ExportNodesParams params );
 
-    NodeImportResult importNodes( final ImportNodesParams params );
+    NodeImportResult importNodes( ImportNodesParams params );
 }

@@ -79,7 +79,7 @@ public final class Metrics
 
     public static <T> T time( final Timer timer, final Supplier<T> supplier )
     {
-        try (final Timer.Context ignored = timer.time())
+        try (Timer.Context ignored = timer.time())
         {
             return supplier.get();
         }

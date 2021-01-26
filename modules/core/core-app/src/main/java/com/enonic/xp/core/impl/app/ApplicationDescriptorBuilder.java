@@ -42,7 +42,7 @@ final class ApplicationDescriptorBuilder
         if ( hasAppIcon( bundle ) )
         {
             final URL iconUrl = bundle.getResource( APP_ICON_FILENAME );
-            try (final InputStream stream = iconUrl.openStream())
+            try (InputStream stream = iconUrl.openStream())
             {
                 final byte[] iconData = stream.readAllBytes();
                 final Icon icon = Icon.from( iconData, "image/svg+xml", Instant.ofEpochMilli( this.bundle.getLastModified() ) );

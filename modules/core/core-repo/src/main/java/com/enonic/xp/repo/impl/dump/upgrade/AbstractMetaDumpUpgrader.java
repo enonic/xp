@@ -229,7 +229,7 @@ public abstract class AbstractMetaDumpUpgrader
         return entryName;
     }
 
-    protected abstract byte[] upgradeVersionEntry( final RepositoryId repositoryId, final String entryContent );
+    protected abstract byte[] upgradeVersionEntry( RepositoryId repositoryId, String entryContent );
 
-    protected abstract byte[] upgradeBranchEntry( final RepositoryId repositoryId, final String entryContent );
+    protected abstract byte[] upgradeBranchEntry( RepositoryId repositoryId, String entryContent );
 }

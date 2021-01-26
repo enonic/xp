@@ -5,5 +5,5 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public interface GroupEditor
 {
-    void edit( final EditableGroup edit );
+    void edit( EditableGroup edit );
 }

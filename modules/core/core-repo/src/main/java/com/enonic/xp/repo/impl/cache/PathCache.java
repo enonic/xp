@@ -4,11 +4,11 @@ import com.enonic.xp.repo.impl.branch.storage.BranchDocumentId;
 
 public interface PathCache<T>
 {
-    void cache( final CachePath path, final BranchDocumentId branchDocumentId );
+    void cache( CachePath path, BranchDocumentId branchDocumentId );
 
-    void evict( final CachePath path );
+    void evict( CachePath path );
 
     void evictAll();
 
-    T get( final CachePath path );
+    T get( CachePath path );
 }

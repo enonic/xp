@@ -6,18 +6,17 @@ import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 
 public interface StorageDao
 {
-    String store( final StoreRequest request );
+    String store( StoreRequest request );
 
-    void store( final Collection<IndexDocument> indexDocuments );
+    void store( Collection<IndexDocument> indexDocuments );
 
-    boolean delete( final DeleteRequest request );
+    boolean delete( DeleteRequest request );
 
-    void delete( final DeleteRequests request );
+    void delete( DeleteRequests request );
 
-    GetResult getById( final GetByIdRequest request );
+    GetResult getById( GetByIdRequest request );
 
-    GetResults getByIds( final GetByIdsRequest requests );
+    GetResults getByIds( GetByIdsRequest requests );
 
-    void copy( final CopyRequest request );
-
+    void copy( CopyRequest request );
 }

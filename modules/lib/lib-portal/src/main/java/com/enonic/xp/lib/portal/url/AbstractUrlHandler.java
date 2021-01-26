@@ -19,7 +19,7 @@ public abstract class AbstractUrlHandler
 
     protected PortalUrlService urlService;
 
-    protected abstract String buildUrl( final Multimap<String, String> map );
+    protected abstract String buildUrl( Multimap<String, String> map );
 
     public final String createUrl( final ScriptValue params )
     {

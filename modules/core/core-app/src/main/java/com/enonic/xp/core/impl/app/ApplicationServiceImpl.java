@@ -431,7 +431,7 @@ public final class ApplicationServiceImpl
         }
 
         final Application application;
-        try (final InputStream in = byteSource.openStream())
+        try (InputStream in = byteSource.openStream())
         {
             LOG.debug( "Installing application {} bundle", applicationKey );
             final Bundle bundle;

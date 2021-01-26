@@ -15,11 +15,11 @@ public class ExtractedTextCleanerTest
     {
         final String toBeCleaned;
         final String expected;
-        try (final InputStream stream = this.getClass().getResourceAsStream( "linebreaked.txt" ))
+        try (InputStream stream = this.getClass().getResourceAsStream( "linebreaked.txt" ))
         {
             toBeCleaned = new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }
-        try (final InputStream stream = this.getClass().getResourceAsStream( "linebreaked-clean.txt" ))
+        try (InputStream stream = this.getClass().getResourceAsStream( "linebreaked-clean.txt" ))
         {
             expected = new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }
@@ -33,11 +33,11 @@ public class ExtractedTextCleanerTest
     {
         final String toBeCleaned;
         final String expected;
-        try (final InputStream stream = this.getClass().getResourceAsStream( "consecutive-linebreaks.txt" ))
+        try (InputStream stream = this.getClass().getResourceAsStream( "consecutive-linebreaks.txt" ))
         {
             toBeCleaned = new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }
-        try (final InputStream stream = this.getClass().getResourceAsStream( "consecutive-linebreaks-cleaned.txt" ))
+        try (InputStream stream = this.getClass().getResourceAsStream( "consecutive-linebreaks-cleaned.txt" ))
         {
             expected = new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }

@@ -37,7 +37,7 @@ public abstract class BaseImageHelper
 
     protected final byte[] loadDefaultImage( final String imageName )
     {
-        try( final InputStream in = getClass().getResourceAsStream( imageName + ".svg" ) )
+        try (InputStream in = getClass().getResourceAsStream( imageName + ".svg" ))
         {
             if ( in == null )
             {

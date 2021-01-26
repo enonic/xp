@@ -181,7 +181,7 @@ public final class FileBlobStore
     private static List<Path> nioFilesList( Path dir )
         throws IOException
     {
-        try (final Stream<Path> stream = Files.list( dir ))
+        try (Stream<Path> stream = Files.list( dir ))
         {
             return stream.collect( Collectors.toList() );
         }

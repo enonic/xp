@@ -53,7 +53,7 @@ public abstract class BasePortalHandler
         }
     }
 
-    protected abstract PortalRequest createPortalRequest( final WebRequest webRequest, final WebResponse webResponse );
+    protected abstract PortalRequest createPortalRequest( WebRequest webRequest, WebResponse webResponse );
 
     private WebResponse handleError( final WebRequest webRequest, final Exception e )
     {

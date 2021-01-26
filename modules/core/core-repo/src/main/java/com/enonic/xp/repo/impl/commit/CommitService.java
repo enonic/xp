@@ -6,7 +6,7 @@ import com.enonic.xp.repo.impl.InternalContext;
 
 public interface CommitService
 {
-    String store( final NodeCommitEntry nodeBranchEntry, final InternalContext context );
+    String store( NodeCommitEntry nodeBranchEntry, InternalContext context );
 
-    NodeCommitEntry get( final NodeCommitId nodeCommitId, final InternalContext context );
+    NodeCommitEntry get( NodeCommitId nodeCommitId, InternalContext context );
 }

@@ -9,15 +9,15 @@ public interface FilePaths
 
     PathRef repoRootPath();
 
-    PathRef repoPath( final RepositoryId repositoryId );
+    PathRef repoPath( RepositoryId repositoryId );
 
-    PathRef branchRootPath( final RepositoryId repositoryId );
+    PathRef branchRootPath( RepositoryId repositoryId );
 
-    PathRef branchMetaPath( final RepositoryId repositoryId, final Branch branch );
+    PathRef branchMetaPath( RepositoryId repositoryId, Branch branch );
 
-    PathRef versionMetaPath( final RepositoryId repositoryId );
+    PathRef versionMetaPath( RepositoryId repositoryId );
 
-    PathRef commitMetaPath( final RepositoryId repositoryId );
+    PathRef commitMetaPath( RepositoryId repositoryId );
 
     PathRef metaDataFile();
 }

@@ -211,7 +211,7 @@ public class AuthenticationInfoTest
     private static byte[] serialize( Serializable serializable )
         throws IOException
     {
-        try (final ByteArrayOutputStream baos = new ByteArrayOutputStream(); final ObjectOutputStream oos = new ObjectOutputStream( baos ))
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); ObjectOutputStream oos = new ObjectOutputStream( baos ))
         {
             oos.writeObject( serializable );
             return baos.toByteArray();
@@ -221,7 +221,7 @@ public class AuthenticationInfoTest
     private static Object deserialize( byte[] bytes )
         throws IOException, ClassNotFoundException
     {
-        try (final ByteArrayInputStream bais = new ByteArrayInputStream( bytes ); ObjectInputStream ois = new ObjectInputStream( bais ))
+        try (ByteArrayInputStream bais = new ByteArrayInputStream( bytes ); ObjectInputStream ois = new ObjectInputStream( bais ))
         {
             return ois.readObject();
         }

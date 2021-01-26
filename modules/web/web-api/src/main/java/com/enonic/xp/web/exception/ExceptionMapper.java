@@ -5,8 +5,8 @@ import com.enonic.xp.web.WebResponse;
 
 public interface ExceptionMapper
 {
-    WebException map( final Throwable cause );
+    WebException map( Throwable cause );
 
-    void throwIfNeeded( final WebResponse res )
+    void throwIfNeeded( WebResponse res )
         throws WebException;
 }

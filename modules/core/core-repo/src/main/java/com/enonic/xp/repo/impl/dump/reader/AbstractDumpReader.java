@@ -68,7 +68,7 @@ public abstract class AbstractDumpReader
     {
         final PathRef repoRootPath = filePaths.repoRootPath();
 
-        try (final Stream<String> stream = listDirectories( repoRootPath ))
+        try (Stream<String> stream = listDirectories( repoRootPath ))
         {
             return RepositoryIds.from( stream.map( RepositoryId::from ).collect( ImmutableSet.toImmutableSet() ) );
         }
@@ -83,7 +83,7 @@ public abstract class AbstractDumpReader
     {
         final PathRef branchRootPath = filePaths.branchRootPath( repositoryId );
 
-        try (final Stream<String> stream = listDirectories( branchRootPath ))
+        try (Stream<String> stream = listDirectories( branchRootPath ))
         {
             return Branches.from( stream.map( Branch::from ).collect( ImmutableSet.toImmutableSet() ) );
         }
@@ -203,17 +203,17 @@ public abstract class AbstractDumpReader
     {
     }
 
-    protected abstract InputStream openMetaFileStream( final PathRef metaFile )
+    protected abstract InputStream openMetaFileStream( PathRef metaFile )
         throws IOException;
 
-    protected abstract Stream<String> listDirectories( final PathRef repoRootPath )
+    protected abstract Stream<String> listDirectories( PathRef repoRootPath )
         throws IOException;
 
-    protected abstract boolean exists( final PathRef file );
+    protected abstract boolean exists( PathRef file );
 
     private DumpMeta readDumpMetaData()
     {
-        try (final InputStream stream = openMetaFileStream( filePaths.metaDataFile() ))
+        try (InputStream stream = openMetaFileStream( filePaths.metaDataFile() ))
         {
             return new DumpMetaJsonSerializer().toDumpMeta( new String( stream.readAllBytes(), StandardCharsets.UTF_8 ) );
         }
@@ -227,7 +227,7 @@ public abstract class AbstractDumpReader
     {
         final EntriesLoadResult.Builder result = EntriesLoadResult.create();
 
-        try (final TarArchiveInputStream tarInputStream = openStream( tarFile ))
+        try (TarArchiveInputStream tarInputStream = openStream( tarFile ))
         {
             TarArchiveEntry entry = tarInputStream.getNextTarEntry();
             while ( entry != null )

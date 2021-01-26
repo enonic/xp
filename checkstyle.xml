@@ -16,5 +16,6 @@
     <module name="ParameterName"/>
     <module name="MemberName"/>
     <module name="ModifierOrder"/>
+    <module name="RedundantModifier"/>
   </module>
 </module>

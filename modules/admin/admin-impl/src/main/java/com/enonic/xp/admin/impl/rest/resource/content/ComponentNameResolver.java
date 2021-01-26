@@ -6,5 +6,5 @@ import com.enonic.xp.region.ComponentName;
 
 public interface ComponentNameResolver
 {
-    ComponentName resolve( final Component component );
+    ComponentName resolve( Component component );
 }

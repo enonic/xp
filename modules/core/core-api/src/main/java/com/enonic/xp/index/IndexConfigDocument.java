@@ -8,9 +8,9 @@ public interface IndexConfigDocument
 {
     String getAnalyzer();
 
-    IndexConfig getConfigForPath( final PropertyPath dataPath );
+    IndexConfig getConfigForPath( PropertyPath dataPath );
 
-    IndexConfig getConfigForPath( final IndexPath indexPath );
+    IndexConfig getConfigForPath( IndexPath indexPath );
 
     AllTextIndexConfig getAllTextConfig();
 }

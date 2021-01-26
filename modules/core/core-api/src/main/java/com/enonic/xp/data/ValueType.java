@@ -104,5 +104,5 @@ public abstract class ValueType<T>
      * Returns a new Value of this ValueType from object used in JSON.
      * See {@link Value#toJsonValue()}
      */
-    public abstract Value fromJsonValue( final Object object );
+    public abstract Value fromJsonValue( Object object );
 }

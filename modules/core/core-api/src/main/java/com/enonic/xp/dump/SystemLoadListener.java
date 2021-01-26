@@ -5,13 +5,13 @@ import com.enonic.xp.repository.RepositoryId;
 
 public interface SystemLoadListener
 {
-    void totalBranches( final long total );
+    void totalBranches( long total );
 
-    void loadingBranch( final RepositoryId repositoryId, final Branch branch, final Long total );
+    void loadingBranch( RepositoryId repositoryId, Branch branch, Long total );
 
-    void loadingVersions( final RepositoryId repositoryId );
+    void loadingVersions( RepositoryId repositoryId );
 
-    void loadingCommits( final RepositoryId repositoryId );
+    void loadingCommits( RepositoryId repositoryId );
 
     void entryLoaded();
 }

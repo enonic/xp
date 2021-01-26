@@ -9,25 +9,25 @@ import com.enonic.xp.util.BinaryReference;
 @PublicApi
 public interface RepositoryService
 {
-    Repository createRepository( final CreateRepositoryParams params );
+    Repository createRepository( CreateRepositoryParams params );
 
-    Repository updateRepository( final UpdateRepositoryParams params );
+    Repository updateRepository( UpdateRepositoryParams params );
 
-    Branch createBranch( final CreateBranchParams params );
+    Branch createBranch( CreateBranchParams params );
 
     Repositories list();
 
-    boolean isInitialized( final RepositoryId id );
+    boolean isInitialized( RepositoryId id );
 
-    Repository get( final RepositoryId repositoryId );
+    Repository get( RepositoryId repositoryId );
 
-    RepositoryId deleteRepository( final DeleteRepositoryParams params );
+    RepositoryId deleteRepository( DeleteRepositoryParams params );
 
-    Branch deleteBranch( final DeleteBranchParams params );
+    Branch deleteBranch( DeleteBranchParams params );
 
     void invalidateAll();
 
-    void invalidate( final RepositoryId repositoryId );
+    void invalidate( RepositoryId repositoryId );
 
-    ByteSource getBinary( final RepositoryId repositoryId, final BinaryReference binaryReference );
+    ByteSource getBinary( RepositoryId repositoryId, BinaryReference binaryReference );
 }

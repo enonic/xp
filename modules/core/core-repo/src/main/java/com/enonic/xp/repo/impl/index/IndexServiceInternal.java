@@ -10,30 +10,30 @@ import com.enonic.xp.repository.RepositoryId;
 
 public interface IndexServiceInternal
 {
-    void createIndex( final CreateIndexRequest request );
+    void createIndex( CreateIndexRequest request );
 
-    void updateIndex( final String indexName, final UpdateIndexSettings settings );
+    void updateIndex( String indexName, UpdateIndexSettings settings );
 
-    void deleteIndices( final String... indexNames );
+    void deleteIndices( String... indexNames );
 
-    boolean indicesExists( final String... indices );
+    boolean indicesExists( String... indices );
 
-    void closeIndices( final String... indices );
+    void closeIndices( String... indices );
 
-    void openIndices( final String... indices );
+    void openIndices( String... indices );
 
-    void applyMapping( final ApplyMappingRequest request );
+    void applyMapping( ApplyMappingRequest request );
 
     boolean waitForYellowStatus( String... indexNames );
 
-    IndexSettings getIndexSettings( final RepositoryId repositoryId, final IndexType indexType );
+    IndexSettings getIndexSettings( RepositoryId repositoryId, IndexType indexType );
 
-    Map<String, Object> getIndexMapping( final RepositoryId repositoryId, final Branch branch, final IndexType indexType );
+    Map<String, Object> getIndexMapping( RepositoryId repositoryId, Branch branch, IndexType indexType );
 
-    void refresh( final String... indexNames );
+    void refresh( String... indexNames );
 
     boolean isMaster();
 
-    void copy( final NodeId nodeId, final RepositoryId repositoryId, final Branch source, final Branch target );
+    void copy( NodeId nodeId, RepositoryId repositoryId, Branch source, Branch target );
 }
 
