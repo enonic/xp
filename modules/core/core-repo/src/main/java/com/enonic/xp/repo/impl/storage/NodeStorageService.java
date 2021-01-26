@@ -23,63 +23,62 @@ import com.enonic.xp.repo.impl.InternalContext;
 
 public interface NodeStorageService
 {
-    Node move( final StoreMovedNodeParams params, final InternalContext context );
+    Node move( StoreMovedNodeParams params, InternalContext context );
 
-    Node store( final Node node, final InternalContext context );
+    Node store( Node node, InternalContext context );
 
-    Node load( final LoadNodeParams params, final InternalContext context );
+    Node load( LoadNodeParams params, InternalContext context );
 
-    void storeVersion( final StoreNodeVersionParams params, final InternalContext context );
+    void storeVersion( StoreNodeVersionParams params, InternalContext context );
 
-    void storeCommit( final StoreNodeCommitParams params, final InternalContext context );
+    void storeCommit( StoreNodeCommitParams params, InternalContext context );
 
-    void delete( final NodeIds nodeIds, final InternalContext context );
+    void delete( NodeIds nodeIds, InternalContext context );
 
-    Node updateMetadata( final Node node, final InternalContext context );
+    Node updateMetadata( Node node, InternalContext context );
 
-    void updateVersion( final Node node, final NodeVersionId nodeVersionId, final InternalContext context );
+    void updateVersion( Node node, NodeVersionId nodeVersionId, InternalContext context );
 
-    void push( final Node node, final Branch target, final InternalContext context );
+    void push( Node node, Branch target, InternalContext context );
 
-    void push( final PushNodeEntries entries, final PushNodesListener pushListener, final InternalContext context );
+    void push( PushNodeEntries entries, PushNodesListener pushListener, InternalContext context );
 
-    NodeCommitEntry commit( final NodeCommitEntry entry, final RoutableNodeVersionIds routableNodeVersionIds,
-                            final InternalContext context );
+    NodeCommitEntry commit( NodeCommitEntry entry, RoutableNodeVersionIds routableNodeVersionIds, InternalContext context );
 
-    Node get( final NodeId nodeId, final InternalContext context );
+    Node get( NodeId nodeId, InternalContext context );
 
-    Node get( final NodePath nodePath, final InternalContext context );
+    Node get( NodePath nodePath, InternalContext context );
 
-    Nodes get( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context );
+    Nodes get( NodeIds nodeIds, boolean keepOrder, InternalContext context );
 
-    Nodes get( final NodePaths nodePaths, final InternalContext context );
+    Nodes get( NodePaths nodePaths, InternalContext context );
 
-    Node get( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context );
+    Node get( NodeId nodeId, NodeVersionId nodeVersionId, InternalContext context );
 
-    NodeVersion getNodeVersion( final NodeVersionKey nodeVersionKey, final InternalContext context );
+    NodeVersion getNodeVersion( NodeVersionKey nodeVersionKey, InternalContext context );
 
-    NodeBranchEntry getBranchNodeVersion( final NodeId nodeId, final InternalContext context );
+    NodeBranchEntry getBranchNodeVersion( NodeId nodeId, InternalContext context );
 
-    NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context );
+    NodeBranchEntries getBranchNodeVersions( NodeIds nodeIds, boolean keepOrder, InternalContext context );
 
-    NodeVersionMetadata getVersion( final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context );
+    NodeVersionMetadata getVersion( NodeId nodeId, NodeVersionId nodeVersionId, InternalContext context );
 
-    NodeCommitEntry getCommit( final NodeCommitId nodeCommitId, final InternalContext context );
+    NodeCommitEntry getCommit( NodeCommitId nodeCommitId, InternalContext context );
 
-    NodeId getIdForPath( final NodePath nodePath, final InternalContext context );
+    NodeId getIdForPath( NodePath nodePath, InternalContext context );
 
     void invalidate();
 
-    void handleNodeCreated( final NodeId nodeId, final NodePath nodePath, final InternalContext context );
+    void handleNodeCreated( NodeId nodeId, NodePath nodePath, InternalContext context );
 
-    void handleNodeDeleted( final NodeId nodeId, final NodePath nodePath, final InternalContext context );
+    void handleNodeDeleted( NodeId nodeId, NodePath nodePath, InternalContext context );
 
-    void handleNodeMoved( final NodeMovedParams params, final InternalContext context );
+    void handleNodeMoved( NodeMovedParams params, InternalContext context );
 
-    void handleNodePushed( final NodeId nodeId, final NodePath nodePath, final NodePath currentTargetPath, InternalContext nodeContext );
+    void handleNodePushed( NodeId nodeId, NodePath nodePath, NodePath currentTargetPath, InternalContext nodeContext );
 
-    Node getNode(final NodeId nodeId, final NodeVersionId nodeVersionId, final InternalContext context);
+    Node getNode( NodeId nodeId, NodeVersionId nodeVersionId, InternalContext context );
 
-    Node getNode(final NodePath nodePath, final NodeVersionId nodeVersionId, final InternalContext context);
+    Node getNode( NodePath nodePath, NodeVersionId nodeVersionId, InternalContext context );
 
 }

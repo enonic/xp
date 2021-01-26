@@ -27,8 +27,6 @@ import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.security.User;
 
-import static com.enonic.xp.project.ProjectConstants.DEFAULT_PROJECT_NAME;
-
 public abstract class IssueMailMessageGenerator<P extends IssueNotificationParams>
 {
     protected final P params;

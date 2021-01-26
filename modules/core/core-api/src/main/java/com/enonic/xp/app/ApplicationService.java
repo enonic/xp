@@ -19,27 +19,27 @@ public interface ApplicationService
 
     boolean isLocalApplication( ApplicationKey key );
 
-    void startApplication( ApplicationKey key, final boolean triggerEvent );
+    void startApplication( ApplicationKey key, boolean triggerEvent );
 
-    void stopApplication( ApplicationKey key, final boolean triggerEvent );
+    void stopApplication( ApplicationKey key, boolean triggerEvent );
 
-    Application installGlobalApplication( final URL url );
+    Application installGlobalApplication( URL url );
 
-    Application installGlobalApplication( final URL url, byte[] sha512 );
+    Application installGlobalApplication( URL url, byte[] sha512 );
 
-    Application installGlobalApplication( final ByteSource byteSource, final String applicationName );
+    Application installGlobalApplication( ByteSource byteSource, String applicationName );
 
-    Application installLocalApplication( final ByteSource byteSource, final String applicationName );
-
-    @Deprecated
-    Application installStoredApplication( final NodeId nodeId );
-
-    Application installStoredApplication( final NodeId nodeId, final ApplicationInstallationParams params );
-
-    void uninstallApplication( final ApplicationKey key, final boolean triggerEvent );
+    Application installLocalApplication( ByteSource byteSource, String applicationName );
 
     @Deprecated
-    void publishUninstalledEvent( final ApplicationKey key );
+    Application installStoredApplication( NodeId nodeId );
+
+    Application installStoredApplication( NodeId nodeId, ApplicationInstallationParams params );
+
+    void uninstallApplication( ApplicationKey key, boolean triggerEvent );
+
+    @Deprecated
+    void publishUninstalledEvent( ApplicationKey key );
 
     @Deprecated
     void invalidate( ApplicationKey key );
@@ -50,5 +50,5 @@ public interface ApplicationService
     @Deprecated
     void installAllStoredApplications();
 
-    void installAllStoredApplications( final ApplicationInstallationParams params );
+    void installAllStoredApplications( ApplicationInstallationParams params );
 }

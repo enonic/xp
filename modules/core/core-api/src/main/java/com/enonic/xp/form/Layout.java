@@ -39,5 +39,5 @@ public abstract class Layout
         return resolveParentPath();
     }
 
-    public abstract FormItem getFormItem( final String name );
+    public abstract FormItem getFormItem( String name );
 }

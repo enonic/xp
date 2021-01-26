@@ -10,11 +10,11 @@ import com.enonic.xp.node.SnapshotResults;
 
 public interface SnapshotService
 {
-    SnapshotResult snapshot( final SnapshotParams snapshotParams );
+    SnapshotResult snapshot( SnapshotParams snapshotParams );
 
-    RestoreResult restore( final RestoreParams restoreParams );
+    RestoreResult restore( RestoreParams restoreParams );
 
-    DeleteSnapshotsResult delete( final DeleteSnapshotParams params );
+    DeleteSnapshotsResult delete( DeleteSnapshotParams params );
 
     SnapshotResults list();
 }

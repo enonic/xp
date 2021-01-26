@@ -13,15 +13,15 @@ public interface NodeSearchService
 {
     int GET_ALL_SIZE_FLAG = -1;
 
-    SearchResult query( final NodeQuery query, final SearchSource source );
+    SearchResult query( NodeQuery query, SearchSource source );
 
-    SearchResult query( final NodeQuery query, final ReturnFields returnFields, final SearchSource source );
+    SearchResult query( NodeQuery query, ReturnFields returnFields, SearchSource source );
 
-    SearchResult query( final NodeVersionQuery query, final SearchSource source );
+    SearchResult query( NodeVersionQuery query, SearchSource source );
 
-    SearchResult query( final NodeCommitQuery query, final SearchSource source );
+    SearchResult query( NodeCommitQuery query, SearchSource source );
 
-    SearchResult query( final NodeBranchQuery nodeBranchQuery, final SearchSource source );
+    SearchResult query( NodeBranchQuery nodeBranchQuery, SearchSource source );
 
-    SearchResult query( final NodeVersionDiffQuery query, final SearchSource source );
+    SearchResult query( NodeVersionDiffQuery query, SearchSource source );
 }

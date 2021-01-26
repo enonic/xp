@@ -8,9 +8,9 @@ import com.enonic.xp.page.DescriptorKey;
 @PublicApi
 public interface PartDescriptorService
 {
-    PartDescriptor getByKey( final DescriptorKey key );
+    PartDescriptor getByKey( DescriptorKey key );
 
-    PartDescriptors getByApplication( final ApplicationKey applicationKey );
+    PartDescriptors getByApplication( ApplicationKey applicationKey );
 
-    PartDescriptors getByApplications( final ApplicationKeys applicationKeys );
+    PartDescriptors getByApplications( ApplicationKeys applicationKeys );
 }

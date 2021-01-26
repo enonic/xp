@@ -27,7 +27,7 @@ public class CacheBlobRecord
     {
         this.blobKey = blobRecord.getKey();
 
-        try (final InputStream stream = blobRecord.getBytes().openStream())
+        try (InputStream stream = blobRecord.getBytes().openStream())
         {
             this.content = ByteStreams.toByteArray( stream );
         }

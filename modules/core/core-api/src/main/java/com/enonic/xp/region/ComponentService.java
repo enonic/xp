@@ -8,7 +8,7 @@ import com.enonic.xp.page.DescriptorKey;
 public interface ComponentService
 {
     @Deprecated
-    Component getByName( final ApplicationKey applicationKey, final ComponentName name );
+    Component getByName( ApplicationKey applicationKey, ComponentName name );
 
-    Component getByKey( final DescriptorKey descriptorKey );
+    Component getByKey( DescriptorKey descriptorKey );
 }

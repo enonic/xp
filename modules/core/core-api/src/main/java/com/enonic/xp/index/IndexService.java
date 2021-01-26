@@ -13,11 +13,11 @@ public interface IndexService
     // Check if node is master
     boolean isMaster();
 
-    UpdateIndexSettingsResult updateIndexSettings( final UpdateIndexSettingsParams params );
+    UpdateIndexSettingsResult updateIndexSettings( UpdateIndexSettingsParams params );
 
-    IndexSettings getIndexSettings( final RepositoryId repositoryId, final IndexType indexType );
+    IndexSettings getIndexSettings( RepositoryId repositoryId, IndexType indexType );
 
-    Map<String, Object> getIndexMapping( final RepositoryId repositoryId, final Branch branch, final IndexType indexType );
+    Map<String, Object> getIndexMapping( RepositoryId repositoryId, Branch branch, IndexType indexType );
 
     ReindexResult reindex( ReindexParams params );
 

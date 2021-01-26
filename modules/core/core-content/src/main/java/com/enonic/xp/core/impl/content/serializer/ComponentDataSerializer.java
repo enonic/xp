@@ -25,7 +25,7 @@ abstract class ComponentDataSerializer<DATA extends Component>
     }
 
     @Override
-    public abstract DATA fromData( final PropertySet asData );
+    public abstract DATA fromData( PropertySet asData );
 
-    protected abstract void applyComponentToData( final DATA component, final PropertySet asData );
+    protected abstract void applyComponentToData( DATA component, PropertySet asData );
 }

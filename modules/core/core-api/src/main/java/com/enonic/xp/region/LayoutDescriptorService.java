@@ -8,9 +8,9 @@ import com.enonic.xp.page.DescriptorKey;
 @PublicApi
 public interface LayoutDescriptorService
 {
-    LayoutDescriptor getByKey( final DescriptorKey key );
+    LayoutDescriptor getByKey( DescriptorKey key );
 
-    LayoutDescriptors getByApplication( final ApplicationKey applicationKey );
+    LayoutDescriptors getByApplication( ApplicationKey applicationKey );
 
-    LayoutDescriptors getByApplications( final ApplicationKeys applicationKeys );
+    LayoutDescriptors getByApplications( ApplicationKeys applicationKeys );
 }

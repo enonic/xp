@@ -8,7 +8,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public interface VirtualFilePath
 {
-    VirtualFilePath subtractPath( final VirtualFilePath subtract );
+    VirtualFilePath subtractPath( VirtualFilePath subtract );
 
     String getPath();
 
@@ -16,9 +16,9 @@ public interface VirtualFilePath
 
     String getName();
 
-    VirtualFilePath join( final VirtualFilePathImpl... paths );
+    VirtualFilePath join( VirtualFilePathImpl... paths );
 
-    VirtualFilePath join( final String... elements );
+    VirtualFilePath join( String... elements );
 
     Path toLocalPath();
 

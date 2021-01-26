@@ -7,7 +7,7 @@ import com.enonic.xp.blob.Segment;
 
 public interface DumpBlobStore
 {
-    DumpBlobRecord getRecord( final Segment segment, final BlobKey key );
+    DumpBlobRecord getRecord( Segment segment, BlobKey key );
 
-    BlobKey addRecord( final Segment segment, final ByteSource in );
+    BlobKey addRecord( Segment segment, ByteSource in );
 }

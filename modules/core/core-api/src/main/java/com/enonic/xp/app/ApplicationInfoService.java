@@ -16,25 +16,25 @@ import com.enonic.xp.task.TaskDescriptor;
 @PublicApi
 public interface ApplicationInfoService
 {
-    ContentTypes getContentTypes( final ApplicationKey applicationKey );
+    ContentTypes getContentTypes( ApplicationKey applicationKey );
 
-    PageDescriptors getPageDescriptors( final ApplicationKey applicationKey );
+    PageDescriptors getPageDescriptors( ApplicationKey applicationKey );
 
-    PartDescriptors getPartDescriptors( final ApplicationKey applicationKey );
+    PartDescriptors getPartDescriptors( ApplicationKey applicationKey );
 
-    LayoutDescriptors getLayoutDescriptors( final ApplicationKey applicationKey );
+    LayoutDescriptors getLayoutDescriptors( ApplicationKey applicationKey );
 
-    RelationshipTypes getRelationshipTypes( final ApplicationKey applicationKey );
+    RelationshipTypes getRelationshipTypes( ApplicationKey applicationKey );
 
-    MacroDescriptors getMacroDescriptors( final ApplicationKey applicationKey );
+    MacroDescriptors getMacroDescriptors( ApplicationKey applicationKey );
 
-    Descriptors<TaskDescriptor> getTaskDescriptors( final ApplicationKey applicationKey );
+    Descriptors<TaskDescriptor> getTaskDescriptors( ApplicationKey applicationKey );
 
-    Contents getContentReferences( final ApplicationKey applicationKey );
+    Contents getContentReferences( ApplicationKey applicationKey );
 
-    IdProviders getIdProviderReferences( final ApplicationKey applicationKey );
+    IdProviders getIdProviderReferences( ApplicationKey applicationKey );
 
-    IdProviderDescriptor getIdProviderDescriptor( final ApplicationKey applicationKey );
+    IdProviderDescriptor getIdProviderDescriptor( ApplicationKey applicationKey );
 
-    ApplicationInfo getApplicationInfo( final ApplicationKey applicationKey );
+    ApplicationInfo getApplicationInfo( ApplicationKey applicationKey );
 }

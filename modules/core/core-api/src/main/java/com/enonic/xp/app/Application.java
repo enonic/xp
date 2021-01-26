@@ -25,7 +25,7 @@ public interface Application
 
     String getMinSystemVersion();
 
-    boolean includesSystemVersion( final Version version );
+    boolean includesSystemVersion( Version version );
 
     String getUrl();
 

@@ -48,13 +48,13 @@ abstract class TaskMessageGenerator<R extends RunnableTaskResult>
 
     abstract String getNoResultsMessage();
 
-    abstract void appendMessageForMultipleFailure( final StringBuilder builder, final R result );
+    abstract void appendMessageForMultipleFailure( StringBuilder builder, R result );
 
-    abstract void appendMessageForSingleFailure( final StringBuilder builder, final R result );
+    abstract void appendMessageForSingleFailure( StringBuilder builder, R result );
 
-    abstract void appendMessageForMultipleSuccess( final StringBuilder builder, final R result );
+    abstract void appendMessageForMultipleSuccess( StringBuilder builder, R result );
 
-    abstract void appendMessageForSingleSuccess( final StringBuilder builder, final R result );
+    abstract void appendMessageForSingleSuccess( StringBuilder builder, R result );
 
     String getNameOrSize( final List<ContentPath> items )
     {

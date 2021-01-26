@@ -7,7 +7,5 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public interface VirtualHostResolver
 {
-
-    VirtualHost resolveVirtualHost( final HttpServletRequest req );
-
+    VirtualHost resolveVirtualHost( HttpServletRequest req );
 }

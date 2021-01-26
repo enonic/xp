@@ -8,8 +8,7 @@ import com.enonic.xp.repository.RepositoryId;
 
 public interface BinaryService
 {
-    AttachedBinary store( final RepositoryId repositoryId, final BinaryAttachment binaryAttachment );
+    AttachedBinary store( RepositoryId repositoryId, BinaryAttachment binaryAttachment );
 
-    ByteSource get( final RepositoryId repositoryId, final AttachedBinary key );
-
+    ByteSource get( RepositoryId repositoryId, AttachedBinary key );
 }

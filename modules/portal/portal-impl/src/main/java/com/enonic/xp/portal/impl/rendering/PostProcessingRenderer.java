@@ -29,7 +29,7 @@ public abstract class PostProcessingRenderer<R>
         return portalResponse;
     }
 
-    protected abstract PortalResponse doRender( final R component, final PortalRequest portalRequest );
+    protected abstract PortalResponse doRender( R component, PortalRequest portalRequest );
 
     private PortalResponse executeResponseProcessors( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {

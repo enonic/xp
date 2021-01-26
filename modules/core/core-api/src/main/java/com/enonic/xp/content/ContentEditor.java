@@ -5,5 +5,5 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public interface ContentEditor
 {
-    void edit( final EditableContent edit );
+    void edit( EditableContent edit );
 }

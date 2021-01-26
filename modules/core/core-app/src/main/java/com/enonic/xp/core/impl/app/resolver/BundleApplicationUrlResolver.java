@@ -64,7 +64,7 @@ public final class BundleApplicationUrlResolver
         {
             entriesStream( path ).
                 forEach( url -> {
-                    try (final InputStream stream = url.openStream())
+                    try (InputStream stream = url.openStream())
                     {
                         hashingOutputStream.write( url.getFile().getBytes( StandardCharsets.UTF_8 ) );
                         hashingOutputStream.write( 0 );

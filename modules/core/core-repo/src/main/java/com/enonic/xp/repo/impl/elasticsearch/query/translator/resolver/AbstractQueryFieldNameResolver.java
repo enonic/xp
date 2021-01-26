@@ -97,5 +97,5 @@ abstract class AbstractQueryFieldNameResolver
 
     protected abstract List<String> getBuiltInFields();
 
-    protected abstract String appendIndexValueType( final String baseFieldName, final IndexValueTypeInterface indexValueType );
+    protected abstract String appendIndexValueType( String baseFieldName, IndexValueTypeInterface indexValueType );
 }

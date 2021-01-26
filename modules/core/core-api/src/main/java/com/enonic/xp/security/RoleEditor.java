@@ -5,5 +5,5 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public interface RoleEditor
 {
-    void edit( final EditableRole edit );
+    void edit( EditableRole edit );
 }

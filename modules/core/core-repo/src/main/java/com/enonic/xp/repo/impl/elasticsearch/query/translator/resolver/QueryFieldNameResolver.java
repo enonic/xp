@@ -7,16 +7,15 @@ import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 
 public interface QueryFieldNameResolver
 {
-    String resolve( final CompareExpr compareExpr );
+    String resolve( CompareExpr compareExpr );
 
-    String resolve( final ValueFilter valueQueryFilter );
+    String resolve( ValueFilter valueQueryFilter );
 
-    String resolve( final String queryFieldName );
+    String resolve( String queryFieldName );
 
-    String resolve( final String queryFieldName, final IndexValueTypeInterface indexValueType );
+    String resolve( String queryFieldName, IndexValueTypeInterface indexValueType );
 
-    String resolve( final String queryFieldName, final Value value );
+    String resolve( String queryFieldName, Value value );
 
-    String resolveOrderByFieldName( final String queryFieldName );
-
+    String resolveOrderByFieldName( String queryFieldName );
 }

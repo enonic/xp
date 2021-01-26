@@ -14,8 +14,5 @@ import com.enonic.xp.query.filter.Filter;
 
 public abstract class FilterJson
 {
-
     public abstract Filter getFilter();
-
-
 }

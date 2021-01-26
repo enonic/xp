@@ -2,12 +2,11 @@ package com.enonic.xp.admin.impl.rest.resource.issue;
 
 public interface IssueNotificationsSender
 {
-    void notifyIssueCreated( final IssueNotificationParams params );
+    void notifyIssueCreated( IssueNotificationParams params );
 
-    void notifyIssuePublished( final IssuePublishedNotificationParams params );
+    void notifyIssuePublished( IssuePublishedNotificationParams params );
 
-    void notifyIssueUpdated( final IssueUpdatedNotificationParams params );
+    void notifyIssueUpdated( IssueUpdatedNotificationParams params );
 
-    void notifyIssueCommented( final IssueCommentedNotificationParams params );
-
+    void notifyIssueCommented( IssueCommentedNotificationParams params );
 }

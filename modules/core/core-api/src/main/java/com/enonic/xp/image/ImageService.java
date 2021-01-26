@@ -6,7 +6,7 @@ import com.google.common.io.ByteSource;
 
 public interface ImageService
 {
-    ByteSource readImage( final ReadImageParams readImageParams )
+    ByteSource readImage( ReadImageParams readImageParams )
         throws IOException;
 
     @Deprecated

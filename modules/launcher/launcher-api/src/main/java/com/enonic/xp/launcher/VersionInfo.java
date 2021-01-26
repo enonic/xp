@@ -55,7 +55,7 @@ public final class VersionInfo
 
     private static Properties loadProperties()
     {
-        try (final InputStream stream = VersionInfo.class.getResourceAsStream( "/META-INF/build.properties" ))
+        try (InputStream stream = VersionInfo.class.getResourceAsStream( "/META-INF/build.properties" ))
         {
             final Properties props = new Properties();
             props.load( stream );

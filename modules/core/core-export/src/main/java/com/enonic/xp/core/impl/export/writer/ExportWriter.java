@@ -6,11 +6,9 @@ import com.google.common.io.ByteSource;
 
 public interface ExportWriter
 {
-    void createDirectory( final Path path );
+    void createDirectory( Path path );
 
-    void writeElement( final Path path, final String export );
+    void writeElement( Path path, String export );
 
-    void writeSource( final Path itemPath, final ByteSource source );
-
-
+    void writeSource( Path itemPath, ByteSource source );
 }

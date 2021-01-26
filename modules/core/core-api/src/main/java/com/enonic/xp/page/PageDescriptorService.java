@@ -7,9 +7,9 @@ import com.enonic.xp.app.ApplicationKeys;
 @PublicApi
 public interface PageDescriptorService
 {
-    PageDescriptor getByKey( final DescriptorKey key );
+    PageDescriptor getByKey( DescriptorKey key );
 
-    PageDescriptors getByApplication( final ApplicationKey applicationKey );
+    PageDescriptors getByApplication( ApplicationKey applicationKey );
 
-    PageDescriptors getByApplications( final ApplicationKeys applicationKeys );
+    PageDescriptors getByApplications( ApplicationKeys applicationKeys );
 }

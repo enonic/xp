@@ -37,7 +37,7 @@ public abstract class InputTypeBase
     }
 
     @Override
-    public abstract Value createValue( final Value value, final InputTypeConfig config );
+    public abstract Value createValue( Value value, InputTypeConfig config );
 
     @Override
     public Value createDefaultValue( final Input input )

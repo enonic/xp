@@ -41,7 +41,7 @@ public class BinaryExtractorImpl
         final BodyContentHandler handler = new BodyContentHandler( extractorConfig.getBodySizeLimit() );
         final Metadata metadata = new Metadata();
 
-        try (final InputStream stream = source.openStream())
+        try (InputStream stream = source.openStream())
         {
             final AutoDetectParser autoDetectParser = new AutoDetectParser( this.detector, this.parser );
 

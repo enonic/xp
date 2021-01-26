@@ -7,7 +7,7 @@ import com.enonic.xp.repository.RepositoryId;
 
 public interface IndexResourceProvider
 {
-    IndexMapping getMapping( final RepositoryId repositoryId, final IndexType indexType );
+    IndexMapping getMapping( RepositoryId repositoryId, IndexType indexType );
 
-    IndexSettings getSettings( final RepositoryId repositoryId, final IndexType indexType );
+    IndexSettings getSettings( RepositoryId repositoryId, IndexType indexType );
 }

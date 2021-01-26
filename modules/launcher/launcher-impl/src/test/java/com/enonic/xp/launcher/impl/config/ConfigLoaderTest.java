@@ -47,7 +47,7 @@ public class ConfigLoaderTest
         final Path file = this.homeDir.resolve( "config/system.properties" );
         Files.createDirectories( file.getParent() );
 
-        try (final Writer out = Files.newBufferedWriter( file ))
+        try (Writer out = Files.newBufferedWriter( file ))
         {
             props.store( out, "" );
         }

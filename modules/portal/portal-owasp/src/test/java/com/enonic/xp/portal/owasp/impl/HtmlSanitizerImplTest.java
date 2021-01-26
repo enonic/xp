@@ -117,7 +117,7 @@ public class HtmlSanitizerImplTest
     private String readResource( final String resourceName )
         throws Exception
     {
-        try (final InputStream stream = getClass().getResourceAsStream( resourceName ))
+        try (InputStream stream = getClass().getResourceAsStream( resourceName ))
         {
             return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }

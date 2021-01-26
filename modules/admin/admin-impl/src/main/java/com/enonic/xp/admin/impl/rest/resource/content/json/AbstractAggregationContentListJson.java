@@ -57,5 +57,5 @@ public abstract class AbstractAggregationContentListJson<T extends ContentIdJson
     }
 
     @Override
-    protected abstract T createItem( final Content content );
+    protected abstract T createItem( Content content );
 }

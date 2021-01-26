@@ -29,5 +29,5 @@ public interface VirtualFile
 
     boolean exists();
 
-    VirtualFile resolve( final VirtualFilePath path );
+    VirtualFile resolve( VirtualFilePath path );
 }

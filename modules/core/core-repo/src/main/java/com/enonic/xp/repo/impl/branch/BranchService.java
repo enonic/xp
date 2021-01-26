@@ -10,25 +10,25 @@ import com.enonic.xp.repo.impl.InternalContext;
 
 public interface BranchService
 {
-    String store( final NodeBranchEntry nodeBranchEntry, final InternalContext context );
+    String store( NodeBranchEntry nodeBranchEntry, InternalContext context );
 
-    String store( final NodeBranchEntry nodeBranchEntry, final NodePath previousPath, final InternalContext context );
+    String store( NodeBranchEntry nodeBranchEntry, NodePath previousPath, InternalContext context );
 
-    void delete( final NodeId nodeId, final InternalContext context );
+    void delete( NodeId nodeId, InternalContext context );
 
-    void delete( final NodeIds nodeIds, final InternalContext context );
+    void delete( NodeIds nodeIds, InternalContext context );
 
-    NodeBranchEntry get( final NodeId nodeId, final InternalContext context );
+    NodeBranchEntry get( NodeId nodeId, InternalContext context );
 
-    NodeBranchEntries get( final NodeIds nodeIds, final boolean keepOrder, final InternalContext context );
+    NodeBranchEntries get( NodeIds nodeIds, boolean keepOrder, InternalContext context );
 
-    NodeBranchEntry get( final NodePath nodePath, final InternalContext context );
+    NodeBranchEntry get( NodePath nodePath, InternalContext context );
 
-    NodeBranchEntries get( final NodePaths nodePath, final InternalContext context );
+    NodeBranchEntries get( NodePaths nodePath, InternalContext context );
 
-    void cachePath( final NodeId nodeId, final NodePath nodePath, final InternalContext context );
+    void cachePath( NodeId nodeId, NodePath nodePath, InternalContext context );
 
-    void evictPath( final NodePath nodePath, final InternalContext context );
+    void evictPath( NodePath nodePath, InternalContext context );
 
     void evictAllPaths();
 }

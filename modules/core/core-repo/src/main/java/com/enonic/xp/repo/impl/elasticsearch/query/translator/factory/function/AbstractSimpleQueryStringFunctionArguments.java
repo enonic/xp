@@ -112,7 +112,7 @@ public abstract class AbstractSimpleQueryStringFunctionArguments
         this.analyzer = this.resolveAnalyzer( expr != null ? expr.getValue().asString() : "" );
     }
 
-    protected abstract String resolveAnalyzer( final String value );
+    protected abstract String resolveAnalyzer( String value );
 
-    public abstract String resolveQueryFieldName( final String baseFieldName );
+    public abstract String resolveQueryFieldName( String baseFieldName );
 }

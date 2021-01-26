@@ -4,5 +4,5 @@ import com.google.common.io.ByteSource;
 
 public interface BinaryExtractor
 {
-    ExtractedData extract( final ByteSource source );
+    ExtractedData extract( ByteSource source );
 }

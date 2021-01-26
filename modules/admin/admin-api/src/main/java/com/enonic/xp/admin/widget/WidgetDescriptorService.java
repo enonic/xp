@@ -8,11 +8,11 @@ import com.enonic.xp.page.DescriptorKey;
 @PublicApi
 public interface WidgetDescriptorService
 {
-    Descriptors<WidgetDescriptor> getByInterfaces( final String... interfaceName );
+    Descriptors<WidgetDescriptor> getByInterfaces( String... interfaceName );
 
-    Descriptors<WidgetDescriptor> getAllowedByInterfaces( final String... interfaceName );
+    Descriptors<WidgetDescriptor> getAllowedByInterfaces( String... interfaceName );
 
-    Descriptors<WidgetDescriptor> getByApplication( final ApplicationKey applicationKey );
+    Descriptors<WidgetDescriptor> getByApplication( ApplicationKey applicationKey );
 
-    WidgetDescriptor getByKey( final DescriptorKey descriptorKey );
+    WidgetDescriptor getByKey( DescriptorKey descriptorKey );
 }

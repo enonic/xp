@@ -7,23 +7,23 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public interface ProjectService
 {
-    Project create( final CreateProjectParams params );
+    Project create( CreateProjectParams params );
 
-    Project modify( final ModifyProjectParams params );
+    Project modify( ModifyProjectParams params );
 
-    void modifyIcon( final ModifyProjectIconParams params );
+    void modifyIcon( ModifyProjectIconParams params );
 
-    ByteSource getIcon( final ProjectName projectName );
+    ByteSource getIcon( ProjectName projectName );
 
     Projects list();
 
-    ProjectGraph graph( final ProjectName projectName );
+    ProjectGraph graph( ProjectName projectName );
 
-    Project get( final ProjectName projectName );
+    Project get( ProjectName projectName );
 
-    boolean delete( final ProjectName projectName );
+    boolean delete( ProjectName projectName );
 
-    ProjectPermissions modifyPermissions( final ProjectName projectName, final ProjectPermissions projectPermissions );
+    ProjectPermissions modifyPermissions( ProjectName projectName, ProjectPermissions projectPermissions );
 
-    ProjectPermissions getPermissions( final ProjectName projectName );
+    ProjectPermissions getPermissions( ProjectName projectName );
 }

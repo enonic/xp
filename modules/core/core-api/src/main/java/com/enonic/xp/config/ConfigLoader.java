@@ -9,14 +9,14 @@ final class ConfigLoader
 {
     private final Class context;
 
-    public ConfigLoader( final Class context )
+    ConfigLoader( final Class context )
     {
         this.context = context;
     }
 
     public Properties load( final String name )
     {
-        try (final InputStream in = findFile( name ))
+        try (InputStream in = findFile( name ))
         {
             final Properties props = new Properties();
             props.load( in );

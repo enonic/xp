@@ -14,15 +14,15 @@ public interface RepositoryEntryService
 
     RepositoryIds findRepositoryEntryIds();
 
-    Repository getRepositoryEntry( final RepositoryId repositoryId );
+    Repository getRepositoryEntry( RepositoryId repositoryId );
 
-    Repository addBranchToRepositoryEntry( final RepositoryId repositoryId, final Branch branch );
+    Repository addBranchToRepositoryEntry( RepositoryId repositoryId, Branch branch );
 
-    Repository removeBranchFromRepositoryEntry( final RepositoryId repositoryId, final Branch branch );
+    Repository removeBranchFromRepositoryEntry( RepositoryId repositoryId, Branch branch );
 
     Repository updateRepositoryEntry( UpdateRepositoryEntryParams params );
 
     void deleteRepositoryEntry( RepositoryId repositoryId );
 
-    ByteSource getBinary( final AttachedBinary attachedBinary );
+    ByteSource getBinary( AttachedBinary attachedBinary );
 }

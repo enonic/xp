@@ -75,7 +75,7 @@ final class LocalFile
 
         final List<VirtualFile> virtualFiles = new ArrayList<>();
 
-        try (final Stream<Path> list = Files.list( this.path ))
+        try (Stream<Path> list = Files.list( this.path ))
         {
             list.forEach( ( path ) -> virtualFiles.add( VirtualFiles.from( path ) ) );
         }

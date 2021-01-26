@@ -38,7 +38,7 @@ public abstract class XmlModelParserTest
     {
         final URL url = findResource( suffix );
         final String xml;
-        try (final InputStream stream = url.openStream())
+        try (InputStream stream = url.openStream())
         {
             xml = new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }

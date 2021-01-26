@@ -43,11 +43,11 @@ public abstract class AbstractDumpBlobStore
         }
     }
 
-    protected abstract ByteSource getBytes( final Segment segment, final BlobKey key );
+    protected abstract ByteSource getBytes( Segment segment, BlobKey key );
 
-    protected abstract ByteSink getByteSink( final Segment segment, final BlobKey key );
+    protected abstract ByteSink getByteSink( Segment segment, BlobKey key );
 
-    protected abstract void writeRecord( final Segment segment, final BlobKey key, final ByteSource in )
+    protected abstract void writeRecord( Segment segment, BlobKey key, ByteSource in )
         throws IOException;
 
     protected PathRef getBlobRef( final Segment segment, final BlobKey key )

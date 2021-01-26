@@ -87,7 +87,7 @@ public abstract class AbstractDumpUpgrader
 
     public void processEntries( final BiConsumer<String, String> processor, final Path tarFile )
     {
-        try (final TarArchiveInputStream tarInputStream = openStream( tarFile ))
+        try (TarArchiveInputStream tarInputStream = openStream( tarFile ))
         {
             TarArchiveEntry entry = tarInputStream.getNextTarEntry();
             while ( entry != null )

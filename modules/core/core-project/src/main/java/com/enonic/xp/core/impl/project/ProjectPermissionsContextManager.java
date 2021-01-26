@@ -11,14 +11,13 @@ public interface ProjectPermissionsContextManager
 {
     Context initCreateContext();
 
-    Context initDeleteContext( final ProjectName projectName );
+    Context initDeleteContext( ProjectName projectName );
 
     Context initListContext();
 
-    Context initGetContext( final ProjectName projectName );
+    Context initGetContext( ProjectName projectName );
 
-    Context initUpdateContext( final ProjectName projectName );
+    Context initUpdateContext( ProjectName projectName );
 
-    boolean hasAnyProjectRole( final AuthenticationInfo authenticationInfo, final ProjectName projectName,
-                               final Set<ProjectRole> projectRoles );
+    boolean hasAnyProjectRole( AuthenticationInfo authenticationInfo, ProjectName projectName, Set<ProjectRole> projectRoles );
 }

@@ -7,7 +7,7 @@ import com.enonic.xp.page.DescriptorKey;
 @PublicApi
 public interface ServiceDescriptorService
 {
-    ServiceDescriptor getByKey( final DescriptorKey descriptorKey );
+    ServiceDescriptor getByKey( DescriptorKey descriptorKey );
 
-    ServiceDescriptors getByApplication( final ApplicationKey applicationKey );
+    ServiceDescriptors getByApplication( ApplicationKey applicationKey );
 }

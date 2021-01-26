@@ -16,7 +16,7 @@ public class ResourceTestHelper
     public String loadTestFile( final String fileName )
     {
         final URL url = getResource( testInstance.getClass().getSimpleName() + "-" + fileName );
-        try (final InputStream stream = url.openStream())
+        try (InputStream stream = url.openStream())
         {
             return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }
