@@ -15,6 +15,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class AssetHandlerTest
@@ -57,6 +59,7 @@ public class AssetHandlerTest
         when( resourceService.getResource( Mockito.any() ) ).then( this::getResource );
 
         this.handler = new AssetHandler( resourceService );
+        this.handler.activate( mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
         this.nullResource = Mockito.mock( Resource.class );
         when( this.nullResource.exists() ).thenReturn( false );
@@ -217,7 +220,7 @@ public class AssetHandlerTest
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( "public, no-transform, max-age=31536000", res.getHeaders().get( "Cache-Control" ) );
+        assertEquals( "public, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
     }
 
     @Test

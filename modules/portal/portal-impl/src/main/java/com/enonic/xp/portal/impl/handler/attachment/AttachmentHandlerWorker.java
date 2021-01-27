@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler.attachment;
 
 import com.google.common.io.ByteSource;
+import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
@@ -13,28 +14,33 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 
 import static com.enonic.xp.web.servlet.ServletRequestUrlHelper.contentDispositionAttachment;
+import static com.google.common.base.Strings.nullToEmpty;
 
 final class AttachmentHandlerWorker
     extends PortalHandlerWorker<PortalRequest>
 {
-    protected ContentService contentService;
+    ContentService contentService;
 
-    protected ContentId id;
+    ContentId id;
 
-    protected String name;
+    String name;
 
-    protected boolean download;
+    boolean download;
 
-    protected boolean cacheable;
+    String fingerprint;
 
-    public AttachmentHandlerWorker( final PortalRequest request )
+    String privateCacheControlHeaderConfig;
+
+    String publicCacheControlHeaderConfig;
+
+    AttachmentHandlerWorker( final PortalRequest request )
     {
         super( request );
     }
@@ -45,7 +51,8 @@ final class AttachmentHandlerWorker
     {
         final Content content = getContent( this.id );
         final Attachment attachment = resolveAttachment( content, this.name );
-        final ByteSource binary = resolveBinary( this.id, attachment );
+        final BinaryReference binaryReference = attachment.getBinaryReference();
+        final ByteSource binary = resolveBinary( this.id, binaryReference );
 
         if ( request.getMethod() == HttpMethod.OPTIONS )
         {
@@ -66,12 +73,17 @@ final class AttachmentHandlerWorker
         {
             portalResponse.header( "Content-Encoding", "gzip" );
         }
-        if ( this.cacheable )
+
+        if ( !nullToEmpty( this.fingerprint ).isBlank() )
         {
-            final AccessControlEntry publicAccessControlEntry = content.getPermissions().getEntry( RoleKeys.EVERYONE );
-            final boolean everyoneCanRead = publicAccessControlEntry != null && publicAccessControlEntry.isAllowed( Permission.READ );
-            final boolean masterBranch = ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
-            setResponseCacheable( portalResponse, everyoneCanRead && masterBranch );
+            final boolean isPublic = content.getPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ ) &&
+                ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
+            final String cacheControlHeaderConfig = isPublic ? publicCacheControlHeaderConfig : privateCacheControlHeaderConfig;
+
+            if ( !nullToEmpty( cacheControlHeaderConfig ).isBlank() && this.fingerprint.equals( resolveHash( this.id, binaryReference ) ) )
+            {
+                portalResponse.header( HttpHeaders.CACHE_CONTROL, cacheControlHeaderConfig );
+            }
         }
 
         new RangeRequestHelper().handleRangeRequest( request, portalResponse, binary, contentType );
@@ -109,15 +121,20 @@ final class AttachmentHandlerWorker
         }
     }
 
-    private ByteSource resolveBinary( final ContentId id, final Attachment attachment )
+    private ByteSource resolveBinary( final ContentId id, final BinaryReference binaryReference )
     {
-        final ByteSource binary = this.contentService.getBinary( id, attachment.getBinaryReference() );
+        final ByteSource binary = this.contentService.getBinary( id, binaryReference );
         if ( binary == null )
         {
-            throw WebException.notFound( String.format( "Binary [%s] not found for [%s]", attachment.getBinaryReference(), id ) );
+            throw WebException.notFound( String.format( "Binary [%s] not found for [%s]", binaryReference, id ) );
         }
 
         return binary;
+    }
+
+    private String resolveHash( final ContentId contentId, final BinaryReference binaryReference )
+    {
+        return this.contentService.getBinaryKey( contentId, binaryReference );
     }
 
     private Attachment resolveAttachment( final Content content, final String name )

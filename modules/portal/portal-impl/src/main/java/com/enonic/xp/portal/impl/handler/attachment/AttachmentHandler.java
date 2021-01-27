@@ -4,7 +4,9 @@ import java.util.EnumSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.ContentId;
@@ -13,6 +15,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
+import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
@@ -20,17 +23,31 @@ import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = WebHandler.class)
+@Component(immediate = true, service = WebHandler.class, configurationPid = "com.enonic.xp.portal")
 public final class AttachmentHandler
     extends EndpointHandler
 {
-    private static final Pattern PATTERN = Pattern.compile( "([^/]+)/([^/^:]+)(:[^/]+)?/([^/]+)" );
+    private static final Pattern PATTERN = Pattern.compile( "([^/]+)/([^/^:]+)(?::([^/]+))?/([^/]+)" );
 
     private ContentService contentService;
 
-    public AttachmentHandler()
+    private volatile String privateCacheControlHeaderConfig;
+
+    private volatile String publicCacheControlHeaderConfig;
+
+    @Activate
+    public AttachmentHandler( @Reference final ContentService contentService )
     {
         super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "attachment" );
+        this.contentService = contentService;
+    }
+
+    @Activate
+    @Modified
+    public void activate( final PortalConfig config )
+    {
+        privateCacheControlHeaderConfig = config.media_private_cacheControl();
+        publicCacheControlHeaderConfig = config.media_public_cacheControl();
     }
 
     @Override
@@ -57,14 +74,11 @@ public final class AttachmentHandler
         worker.contentService = this.contentService;
         worker.download = "download".equals( matcher.group( 1 ) );
         worker.id = ContentId.from( matcher.group( 2 ) );
-        worker.cacheable = matcher.group( 3 ) != null;
+        worker.fingerprint = matcher.group( 3 );
         worker.name = matcher.group( 4 );
+        worker.privateCacheControlHeaderConfig = this.privateCacheControlHeaderConfig;
+        worker.publicCacheControlHeaderConfig = this.publicCacheControlHeaderConfig;
         return worker.execute();
     }
 
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
-    }
 }

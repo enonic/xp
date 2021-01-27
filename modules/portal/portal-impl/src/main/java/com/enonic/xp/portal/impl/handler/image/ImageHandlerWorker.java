@@ -1,7 +1,11 @@
 package com.enonic.xp.portal.impl.handler.image;
 
+import java.nio.charset.StandardCharsets;
+
+import com.google.common.hash.Hashing;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
+import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
@@ -20,16 +24,16 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.MediaTypes;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
 
 final class ImageHandlerWorker
     extends PortalHandlerWorker<PortalRequest>
@@ -50,15 +54,19 @@ final class ImageHandlerWorker
 
     protected ScaleParams scaleParams;
 
-    protected boolean cacheable;
-
     protected ImageService imageService;
 
     protected ContentService contentService;
 
     protected MediaInfoService mediaInfoService;
 
-    public ImageHandlerWorker( final PortalRequest request )
+    protected String fingerprint;
+
+    protected String privateCacheControlHeaderConfig;
+
+    protected String publicCacheControlHeaderConfig;
+
+    ImageHandlerWorker( final PortalRequest request )
     {
         super( request );
     }
@@ -67,23 +75,24 @@ final class ImageHandlerWorker
     public PortalResponse execute()
         throws Exception
     {
-        final Media imageContent = getImage( this.contentId );
-        if ( !contentNameMatch( imageContent.getName(), name ) )
+        final Media content = getImage( this.contentId );
+        if ( !contentNameMatch( content.getName(), name ) )
         {
             throw WebException.notFound( String.format( "Image [%s] not found for content [%s]", name, this.contentId ) );
         }
 
-        final Attachment attachment = imageContent.getMediaAttachment();
+        final Attachment attachment = content.getMediaAttachment();
         if ( attachment == null )
         {
-            throw WebException.notFound( String.format( "Attachment [%s] not found", imageContent.getName() ) );
+            throw WebException.notFound( String.format( "Attachment [%s] not found", content.getName() ) );
         }
 
-        final ByteSource binary = this.contentService.getBinary( this.contentId, attachment.getBinaryReference() );
+        final BinaryReference binaryReference = attachment.getBinaryReference();
+
+        final ByteSource binary = this.contentService.getBinary( this.contentId, binaryReference );
         if ( binary == null )
         {
-            throw WebException.notFound(
-                String.format( "Binary [%s] not found for content [%s]", attachment.getBinaryReference(), this.contentId ) );
+            throw WebException.notFound( String.format( "Binary [%s] not found for content [%s]", binaryReference, this.contentId ) );
         }
 
         if ( request.getMethod() == HttpMethod.OPTIONS )
@@ -93,9 +102,9 @@ final class ImageHandlerWorker
         }
 
         final String fileExtension = Files.getFileExtension( this.name ).toLowerCase();
-        final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary, imageContent );
+        final ImageOrientation imageOrientation = mediaInfoService.getImageOrientation( binary, content );
 
-        final String mimeType = getMimeType( this.name, imageContent.getName(), attachment );
+        final String mimeType = getMimeType( this.name, content.getName(), attachment );
 
         final PortalResponse.Builder portalResponse = PortalResponse.create().
             contentType( MediaType.parse( mimeType ) );
@@ -113,10 +122,10 @@ final class ImageHandlerWorker
         {
             final ReadImageParams readImageParams = ReadImageParams.newImageParams().
                 contentId( this.contentId ).
-                binaryReference( attachment.getBinaryReference() ).
-                cropping( imageContent.getCropping() ).
+                binaryReference( binaryReference ).
+                cropping( content.getCropping() ).
                 scaleParams( this.scaleParams ).
-                focalPoint( imageContent.getFocalPoint() ).
+                focalPoint( content.getFocalPoint() ).
                 filterParam( this.filterParam ).
                 backgroundColor( getBackgroundColor() ).
                 mimeType( mimeType ).
@@ -127,18 +136,22 @@ final class ImageHandlerWorker
             portalResponse.body( this.imageService.readImage( readImageParams ) );
         }
 
-        if ( cacheable )
+        if ( !nullToEmpty( this.fingerprint ).isBlank() )
         {
-            final AccessControlEntry publicAccessControlEntry = imageContent.getPermissions().getEntry( RoleKeys.EVERYONE );
-            final boolean everyoneCanRead = publicAccessControlEntry != null && publicAccessControlEntry.isAllowed( Permission.READ );
-            final boolean masterBranch = ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
-            setResponseCacheable( portalResponse, everyoneCanRead && masterBranch );
+            final boolean isPublic = content.getPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ ) &&
+                ContentConstants.BRANCH_MASTER.equals( request.getBranch() );
+            final String cacheControlHeaderConfig = isPublic ? publicCacheControlHeaderConfig : privateCacheControlHeaderConfig;
+
+            if ( !nullToEmpty( cacheControlHeaderConfig ).isBlank() && this.fingerprint.equals( resolveHash( content ) ) )
+            {
+                portalResponse.header( HttpHeaders.CACHE_CONTROL, cacheControlHeaderConfig );
+            }
         }
 
         final Trace trace = Tracer.current();
         if ( trace != null )
         {
-            trace.put( "contentPath", imageContent.getPath() );
+            trace.put( "contentPath", content.getPath() );
             trace.put( "type", "image" );
         }
 
@@ -152,25 +165,29 @@ final class ImageHandlerWorker
 
     private int getImageQuality()
     {
-        final int quality = parseImageQuality();
-        return ( quality > 0 ) && ( quality <= 100 ) ? quality : DEFAULT_QUALITY;
-    }
+        if ( this.backgroundParam == null )
+        {
+            return DEFAULT_QUALITY;
+        }
 
-    private int parseImageQuality()
-    {
         try
         {
-            return Integer.parseInt( this.qualityParam );
+            final int quality = Integer.parseInt( this.qualityParam );
+            if ( quality <= 0 || quality > 100 )
+            {
+                throw WebException.badRequest( String.format( "Invalid quality %s", this.qualityParam ) );
+            }
+            return quality;
         }
         catch ( final Exception e )
         {
-            return DEFAULT_QUALITY;
+            throw WebException.badRequest( String.format( "Invalid quality %s", this.qualityParam ) );
         }
     }
 
     private int getBackgroundColor()
     {
-        if ( isNullOrEmpty( this.backgroundParam ) )
+        if ( this.backgroundParam == null )
         {
             return DEFAULT_BACKGROUND;
         }
@@ -183,28 +200,30 @@ final class ImageHandlerWorker
 
         try
         {
-            return Integer.parseInt( color, 16 );
+            return Integer.parseUnsignedInt( color, 16 );
         }
         catch ( final Exception e )
         {
-            return DEFAULT_BACKGROUND;
+            throw WebException.badRequest( String.format( "Invalid background %s", this.qualityParam ) );
         }
+    }
+
+    private String resolveHash( final Media media )
+    {
+        final String binaryKey = this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() );
+        return Hashing.sha1().
+            newHasher().
+            putString( String.valueOf( binaryKey ), StandardCharsets.UTF_8 ).
+            putString( String.valueOf( media.getFocalPoint() ), StandardCharsets.UTF_8 ).
+            putString( String.valueOf( media.getCropping() ), StandardCharsets.UTF_8 ).
+            putString( String.valueOf( media.getOrientation() ), StandardCharsets.UTF_8 ).
+            hash().
+            toString();
     }
 
     private Media getImage( final ContentId contentId )
     {
         final Content content = getContentById( contentId );
-        if ( content == null )
-        {
-            if ( this.contentService.contentExists( contentId ) )
-            {
-                throw WebException.forbidden( String.format( "You don't have permission to access [%s]", contentId ) );
-            }
-            else
-            {
-                throw WebException.notFound( String.format( "Content with id [%s] not found", contentId ) );
-            }
-        }
 
         if ( !( content instanceof Media ) )
         {
@@ -228,7 +247,7 @@ final class ImageHandlerWorker
         }
         catch ( final Exception e )
         {
-            return null;
+            throw WebException.notFound( String.format( "Content with id [%s] not found", contentId ) );
         }
     }
 
