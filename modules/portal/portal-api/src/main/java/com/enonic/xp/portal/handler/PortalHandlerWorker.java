@@ -6,11 +6,11 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 
-public abstract class PortalHandlerWorker<WebRequestType extends WebRequest>
+public abstract class PortalHandlerWorker<T extends WebRequest>
 {
-    protected WebRequestType request;
+    protected T request;
 
-    public PortalHandlerWorker( final WebRequestType request )
+    public PortalHandlerWorker( final T request )
     {
         this.request = request;
     }
@@ -30,6 +30,7 @@ public abstract class PortalHandlerWorker<WebRequestType extends WebRequest>
         return WebException.forbidden( String.format( message, args ) );
     }
 
+    @Deprecated
     protected void setResponseCacheable( final PortalResponse.Builder response, final boolean isPublic )
     {
         final String cacheControlValue = ( isPublic ? "public" : "private" ) + ", max-age=31536000";

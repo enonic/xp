@@ -1,10 +1,10 @@
 package com.enonic.xp.portal.impl.handler.image;
 
+import java.io.IOException;
 import java.time.Instant;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
@@ -12,7 +12,9 @@ import com.google.common.net.MediaType;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
@@ -23,8 +25,13 @@ import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -32,13 +39,21 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-public class ImageHandlerTest
+class ImageHandlerTest
     extends BaseHandlerTest
 {
     private ImageHandler handler;
@@ -52,20 +67,22 @@ public class ImageHandlerTest
     private PortalRequest request;
 
     @BeforeEach
-    public final void setup()
+    final void setup()
         throws Exception
     {
         this.request = new PortalRequest();
-        this.contentService = Mockito.mock( ContentService.class );
-        this.imageService = Mockito.mock( ImageService.class );
-        this.mediaInfoService = Mockito.mock( MediaInfoService.class );
+        this.contentService = mock( ContentService.class );
+        this.imageService = mock( ImageService.class );
+        this.mediaInfoService = mock( MediaInfoService.class );
 
         this.handler = new ImageHandler();
         this.handler.setContentService( this.contentService );
         this.handler.setImageService( this.imageService );
         this.handler.setMediaInfoService( this.mediaInfoService );
+        this.handler.activate( mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
         this.request.setMethod( HttpMethod.GET );
+        this.request.setBranch( ContentConstants.BRANCH_MASTER );
         this.request.setBaseUri( "/site" );
         this.request.setContentPath( ContentPath.from( "/path/to/content" ) );
         this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
@@ -82,15 +99,15 @@ public class ImageHandlerTest
 
         final Content content = createContent( "123456", "path/to/image-name.jpg", attachment );
 
-        Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ) ) ).thenReturn( content );
-        Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ) ) ).thenReturn( content );
+        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
+        when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
 
         final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
 
-        Mockito.when( this.contentService.getBinary( Mockito.isA( ContentId.class ), Mockito.isA( BinaryReference.class ) ) ).
+        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).
             thenReturn( imageBytes );
 
-        Mockito.when( this.imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
+        when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
     }
 
     private void setupContentSvgz()
@@ -104,15 +121,15 @@ public class ImageHandlerTest
 
         final Content content = createContent( "123456", "path/to/image-name.svgz", attachment );
 
-        Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ) ) ).thenReturn( content );
-        Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ) ) ).thenReturn( content );
+        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
+        when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
 
         final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
 
-        Mockito.when( this.contentService.getBinary( Mockito.isA( ContentId.class ), Mockito.isA( BinaryReference.class ) ) ).
+        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).
             thenReturn( imageBytes );
 
-        Mockito.when( this.imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
+        when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
     }
 
     private void setupContentSvg()
@@ -126,15 +143,15 @@ public class ImageHandlerTest
 
         final Content content = createContent( "123456", "path/to/image-name.svg", attachment );
 
-        Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ) ) ).thenReturn( content );
-        Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ) ) ).thenReturn( content );
+        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
+        when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
 
         final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
 
-        Mockito.when( this.contentService.getBinary( Mockito.isA( ContentId.class ), Mockito.isA( BinaryReference.class ) ) ).
+        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).
             thenReturn( imageBytes );
 
-        Mockito.when( this.imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
+        when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
     }
 
     private Content createContent( final String id, final String contentPath, final Attachment... attachments )
@@ -147,6 +164,12 @@ public class ImageHandlerTest
             path( contentPath ).
             createdTime( Instant.now() ).
             type( ContentTypeName.imageMedia() ).
+            permissions( AccessControlList.create().
+                add( AccessControlEntry.create().
+                    principal( RoleKeys.EVERYONE ).
+                    allow( Permission.READ ).
+                    build() ).
+                build() ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
             displayName( "My Content" ).
             modifiedTime( Instant.now() ).
@@ -156,15 +179,36 @@ public class ImageHandlerTest
             build();
     }
 
+    private void mockCachableContent()
+        throws IOException
+    {
+        final Attachment attachment = Attachment.create().
+            name( "image-name.jpg" ).
+            mimeType( "image/jpeg" ).
+            label( "source" ).
+            build();
+
+        final Content content = createContent( "123456", "path/to/image-name.jpg", attachment );
+
+        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
+        when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
+
+        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
+
+        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( imageBytes );
+
+        when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
+    }
+
 
     @Test
-    public void testOrder()
+    void order()
     {
         assertEquals( 0, this.handler.getOrder() );
     }
 
     @Test
-    public void testMatch()
+    void match()
     {
         this.request.setEndpointPath( null );
         assertEquals( false, this.handler.canHandle( this.request ) );
@@ -180,7 +224,7 @@ public class ImageHandlerTest
     }
 
     @Test
-    public void testMethodNotAllowed()
+    void methodNotAllowed()
         throws Exception
     {
         assertMethodNotAllowed( this.handler, HttpMethod.POST, this.request );
@@ -190,7 +234,7 @@ public class ImageHandlerTest
     }
 
     @Test
-    public void testOptions()
+    void options()
         throws Exception
     {
         setupContent();
@@ -205,7 +249,7 @@ public class ImageHandlerTest
     }
 
     @Test
-    public void testNotValidUrlPattern()
+    void notValidUrlPattern()
         throws Exception
     {
         this.request.setEndpointPath( "/_/image/" );
@@ -223,7 +267,7 @@ public class ImageHandlerTest
     }
 
     @Test
-    public void testImageFound()
+    void imageFound()
         throws Exception
     {
         setupContent();
@@ -238,7 +282,7 @@ public class ImageHandlerTest
     }
 
     @Test
-    public void testImageWithFilter()
+    void imageWithFilter()
         throws Exception
     {
         setupContent();
@@ -256,30 +300,24 @@ public class ImageHandlerTest
     }
 
     @Test
-    public void testImageNotFound()
+    void imageNotFound()
         throws Exception
     {
-        this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        when( this.contentService.getById( ContentId.from( "654321" ) ) ).thenThrow( ContentNotFoundException.class );
 
-        try
-        {
-            this.handler.handle( this.request, PortalResponse.create().build(), null );
-            fail( "Should throw exception" );
-        }
-        catch ( final WebException e )
-        {
-            assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
-            assertEquals( "Content with id [123456] not found", e.getMessage() );
-        }
+        this.request.setEndpointPath( "/_/image/654321/scale-100-100/image-name.jpg" );
+        final WebException webException =
+            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        assertEquals( HttpStatus.NOT_FOUND, webException.getStatus() );
+        assertEquals( "Content with id [654321] not found", webException.getMessage() );
     }
 
     @Test
-    public void testImageWithOrientation()
+    void imageWithOrientation()
         throws Exception
     {
         setupContent();
-        Mockito.when( this.mediaInfoService.getImageOrientation( Mockito.any( ByteSource.class ) ) ).thenReturn(
-            ImageOrientation.LeftBottom );
+        when( this.mediaInfoService.getImageOrientation( any( ByteSource.class ) ) ).thenReturn( ImageOrientation.LeftBottom );
 
         this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
         this.request.getParams().put( "filter", "sepia()" );
@@ -294,12 +332,11 @@ public class ImageHandlerTest
     }
 
     @Test
-    public void testSvgImage()
+    void svgImage()
         throws Exception
     {
         setupContentSvg();
-        Mockito.when( this.mediaInfoService.getImageOrientation( Mockito.any( ByteSource.class ) ) ).thenReturn(
-            ImageOrientation.LeftBottom );
+        when( this.mediaInfoService.getImageOrientation( any( ByteSource.class ) ) ).thenReturn( ImageOrientation.LeftBottom );
 
         this.request.setEndpointPath( "/_/image/123456/full/image-name.svg" );
 
@@ -312,12 +349,11 @@ public class ImageHandlerTest
     }
 
     @Test
-    public void testSvgzImage()
+    void svgzImage()
         throws Exception
     {
         setupContentSvgz();
-        Mockito.when( this.mediaInfoService.getImageOrientation( Mockito.any( ByteSource.class ) ) ).thenReturn(
-            ImageOrientation.LeftBottom );
+        when( this.mediaInfoService.getImageOrientation( any( ByteSource.class ) ) ).thenReturn( ImageOrientation.LeftBottom );
 
         this.request.setEndpointPath( "/_/image/123456/full/image-name.svgz" );
 
@@ -330,33 +366,54 @@ public class ImageHandlerTest
     }
 
     @Test
-    public void testGet()
+    void get()
         throws Exception
     {
-        final Attachment attachment = Attachment.create().
-            name( "image-name.jpg" ).
-            mimeType( "image/jpeg" ).
-            label( "source" ).
-            build();
-
-        final Content content = createContent( "123456", "path/to/image-name.jpg", attachment );
-
-        Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ) ) ).thenReturn( content );
-        Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ) ) ).thenReturn( content );
-
-        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
-
-        Mockito.when( this.contentService.getBinary( Mockito.isA( ContentId.class ), Mockito.isA( BinaryReference.class ) ) ).
-            thenReturn( imageBytes );
-
-        Mockito.when( this.imageService.readImage( Mockito.isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
+        mockCachableContent();
 
         this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg.png" );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
-        assertNotNull( res );
-        assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( MediaType.PNG, res.getContentType() );
+        assertAll( () -> assertEquals( HttpStatus.OK, res.getStatus() ), () -> assertEquals( MediaType.PNG, res.getContentType() ),
+                   () -> assertThat( res.getHeaders() ).doesNotContainKey( "Cache-Control" ) );
     }
 
+    @Test
+    void cacheHeader()
+        throws Exception
+    {
+        mockCachableContent();
+
+        this.request.setEndpointPath( "/_/image/123456:bb6d2c0f3112f562ec454654b9aebe7ab47ba865/scale-100-100/image-name.jpg.png" );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+
+        assertEquals( "public, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
+    }
+
+    @Test
+    void cacheHeader_draft_branch()
+        throws Exception
+    {
+        mockCachableContent();
+
+        this.request.setEndpointPath( "/_/image/123456:bb6d2c0f3112f562ec454654b9aebe7ab47ba865/scale-100-100/image-name.jpg.png" );
+
+        this.request.setBranch( ContentConstants.BRANCH_DRAFT );
+        final WebResponse resDraft = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertEquals( "private, max-age=31536000, immutable", resDraft.getHeaders().get( "Cache-Control" ) );
+    }
+
+    @Test
+    void cacheHeader_fingerprint_missmatch()
+        throws Exception
+    {
+        mockCachableContent();
+
+        this.request.setEndpointPath( "/_/image/123456:654321/scale-100-100/image-name.jpg.png" );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+
+        assertThat( res.getHeaders() ).doesNotContainKey( "Cache-Control" );
+    }
 }

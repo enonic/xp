@@ -5,13 +5,13 @@ import java.time.Instant;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
@@ -19,8 +19,13 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -28,14 +33,19 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.BaseHandlerTest;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-public class AttachmentHandlerTest
+class AttachmentHandlerTest
     extends BaseHandlerTest
 {
     private AttachmentHandler handler;
@@ -47,15 +57,17 @@ public class AttachmentHandlerTest
     private ByteSource mediaBytes;
 
     @BeforeEach
-    public final void setup()
+    final void setup()
         throws Exception
     {
-        this.request = new PortalRequest();
-        this.contentService = Mockito.mock( ContentService.class );
-        this.handler = new AttachmentHandler();
-        this.handler.setContentService( this.contentService );
+        this.contentService = mock( ContentService.class );
 
+        this.handler = new AttachmentHandler( this.contentService );
+        this.handler.activate( mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
+
+        this.request = new PortalRequest();
         this.request.setMethod( HttpMethod.GET );
+        this.request.setBranch( ContentConstants.BRANCH_MASTER );
         this.request.setBaseUri( "/site" );
         this.request.setContentPath( ContentPath.from( "/path/to/content" ) );
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
@@ -74,11 +86,13 @@ public class AttachmentHandlerTest
 
         final Media content = createMedia( "123456", "path/to/content", attachment );
 
-        Mockito.when( this.contentService.getById( Mockito.eq( content.getId() ) ) ).thenReturn( content );
-        Mockito.when( this.contentService.getByPath( Mockito.eq( content.getPath() ) ) ).thenReturn( content );
+        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
+        when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
+        when( this.contentService.getBinaryKey( eq( content.getId() ), eq( content.getMediaAttachment().getBinaryReference() ) ) ).
+            thenReturn( "98765" );
 
         this.mediaBytes = ByteSource.wrap( new byte[]{'0', '1', '2', '3', '4', '5', '6'} );
-        Mockito.when( this.contentService.getBinary( Mockito.isA( ContentId.class ), Mockito.isA( BinaryReference.class ) ) ).
+        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).
             thenReturn( this.mediaBytes );
     }
 
@@ -92,6 +106,12 @@ public class AttachmentHandlerTest
             path( contentPath ).
             createdTime( Instant.now() ).
             type( ContentTypeName.imageMedia() ).
+            permissions( AccessControlList.create().
+                add( AccessControlEntry.create().
+                    principal( RoleKeys.EVERYONE ).
+                    allow( Permission.READ ).
+                    build() ).
+                build() ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
             displayName( "My Content" ).
             modifiedTime( Instant.now() ).
@@ -102,13 +122,13 @@ public class AttachmentHandlerTest
     }
 
     @Test
-    public void testOrder()
+    void order()
     {
         assertEquals( 0, this.handler.getOrder() );
     }
 
     @Test
-    public void testMatch()
+    void match()
     {
         this.request.setEndpointPath( null );
         assertEquals( false, this.handler.canHandle( this.request ) );
@@ -124,7 +144,7 @@ public class AttachmentHandlerTest
     }
 
     @Test
-    public void testMethodNotAllowed()
+    void methodNotAllowed()
         throws Exception
     {
         assertMethodNotAllowed( this.handler, HttpMethod.POST, this.request );
@@ -134,7 +154,7 @@ public class AttachmentHandlerTest
     }
 
     @Test
-    public void testOptions()
+    void options()
         throws Exception
     {
         this.request.setEndpointPath( "/_/attachment/download/123456/logo.png" );
@@ -147,7 +167,7 @@ public class AttachmentHandlerTest
     }
 
     @Test
-    public void testNotValidUrlPattern()
+    void notValidUrlPattern()
         throws Exception
     {
         this.request.setEndpointPath( "/_/attachment/" );
@@ -165,7 +185,7 @@ public class AttachmentHandlerTest
     }
 
     @Test
-    public void testInline()
+    void inline()
         throws Exception
     {
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
@@ -179,7 +199,7 @@ public class AttachmentHandlerTest
     }
 
     @Test
-    public void testDownload()
+    void download()
         throws Exception
     {
         this.request.setEndpointPath( "/_/attachment/download/123456/logo.png" );
@@ -193,7 +213,7 @@ public class AttachmentHandlerTest
     }
 
     @Test
-    public void testIdNotFound()
+    void idNotFound()
         throws Exception
     {
         this.request.setEndpointPath( "/_/attachment/download/1/logo.png" );
@@ -211,7 +231,7 @@ public class AttachmentHandlerTest
     }
 
     @Test
-    public void testNameNotFound()
+    void nameNotFound()
         throws Exception
     {
         this.request.setEndpointPath( "/_/attachment/download/123456/other.png" );
@@ -229,7 +249,7 @@ public class AttachmentHandlerTest
     }
 
     @Test
-    public void testByteServing()
+    void byteServing()
         throws Exception
     {
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
@@ -250,7 +270,7 @@ public class AttachmentHandlerTest
     }
 
     @Test
-    public void testByteServingSuffixLength()
+    void byteServingSuffixLength()
         throws Exception
     {
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
@@ -271,7 +291,7 @@ public class AttachmentHandlerTest
     }
 
     @Test
-    public void testByteServingSuffixFrom()
+    void byteServingSuffixFrom()
         throws Exception
     {
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
@@ -292,7 +312,7 @@ public class AttachmentHandlerTest
     }
 
     @Test
-    public void testByteServingLongerThanFile()
+    void byteServingLongerThanFile()
         throws Exception
     {
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
@@ -313,7 +333,7 @@ public class AttachmentHandlerTest
     }
 
     @Test
-    public void testByteServingMultipleRanges()
+    void byteServingMultipleRanges()
         throws Exception
     {
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
@@ -344,7 +364,7 @@ public class AttachmentHandlerTest
     }
 
     @Test
-    public void testByteServingInvalidRange()
+    void byteServingInvalidRange()
         throws Exception
     {
         this.request.setEndpointPath( "/_/attachment/inline/123456/logo.png" );
@@ -357,5 +377,37 @@ public class AttachmentHandlerTest
         assertEquals( "bytes", res.getHeaders().get( "accept-ranges" ) );
 
         assertNull( res.getBody() );
+    }
+
+    @Test
+    void cacheHeader()
+        throws Exception
+    {
+        this.request.setEndpointPath( "/_/attachment/inline/123456:98765/logo.png" );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertEquals( "public, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
+    }
+
+    @Test
+    void cacheHeader_draft_branch()
+        throws Exception
+    {
+        this.request.setBranch( ContentConstants.BRANCH_DRAFT );
+        this.request.setEndpointPath( "/_/attachment/inline/123456:98765/logo.png" );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertEquals( "private, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
+    }
+
+    @Test
+    void cacheHeader_fingerprint_missmatch()
+        throws Exception
+    {
+        this.request.setEndpointPath( "/_/attachment/inline/123456:123456/logo.png" );
+
+        final PortalResponse res = (PortalResponse) this.handler.handle( this.request, PortalResponse.create().build(), null );
+
+        assertThat( res.getHeaders() ).doesNotContainKey( "Cache-Control" );
     }
 }

@@ -6,7 +6,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
-import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.url.ImageUrlParams;
@@ -32,7 +31,7 @@ final class ImageUrlBuilder
         final String name = resolveName( media );
         final String scale = resolveScale();
 
-        appendPart( url, id.toString() + ":" + hash );
+        appendPart( url, id + ":" + hash );
         appendPart( url, scale );
         appendPart( url, name );
 
@@ -56,12 +55,13 @@ final class ImageUrlBuilder
 
     private String resolveHash( final Media media )
     {
-        final Attachment mediaAttachment = media.getMediaAttachment();
-        String binaryKey = this.contentService.getBinaryKey( media.getId(), mediaAttachment.getBinaryReference() );
-        String key = binaryKey + media.getFocalPoint() + media.getCropping() + media.getOrientation();
+        String binaryKey = this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() );
         return Hashing.sha1().
             newHasher().
-            putString( key, StandardCharsets.UTF_8 ).
+            putString( String.valueOf( binaryKey ), StandardCharsets.UTF_8 ).
+            putString( String.valueOf( media.getFocalPoint() ), StandardCharsets.UTF_8 ).
+            putString( String.valueOf( media.getCropping() ), StandardCharsets.UTF_8 ).
+            putString( String.valueOf( media.getOrientation() ), StandardCharsets.UTF_8 ).
             hash().
             toString();
     }
