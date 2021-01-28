@@ -25,7 +25,7 @@ class ApplicationFactoryServiceImplTest
 
         final Bundle bundle = deploy( appName, newBundle( appName, true ) );
 
-        assertNull( service.getApplication( bundle ) );
+        assertNotNull( service.getApplication( bundle ) );
 
         bundle.start();
         assertNotNull( service.getApplication( bundle ) );
