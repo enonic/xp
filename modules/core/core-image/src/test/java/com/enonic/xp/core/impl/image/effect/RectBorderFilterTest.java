@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.core.impl.image.ImageFilter;
+import com.enonic.xp.core.impl.image.ImageFunction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -14,8 +14,8 @@ public class RectBorderFilterTest
     @Test
     public void testBorder()
     {
-        ImageFilter filter = new RectBorderFilter( 10, 10 );
-        BufferedImage result = filter.filter( getTransparent() );
+        ImageFunction filter = newFilters().border( 10, 10 );
+        BufferedImage result = filter.apply( getTransparent() );
 
         int rgb = result.getRGB( 0, 0 );
         int alpha = ( rgb >> 24 ) & 0xff;

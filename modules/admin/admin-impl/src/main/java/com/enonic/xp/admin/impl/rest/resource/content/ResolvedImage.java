@@ -18,11 +18,11 @@ public final class ResolvedImage
         this.gzip = false;
     }
 
-    public ResolvedImage( final Object image, final String mimeType, final String fileName )
+    public ResolvedImage( final Object image, final String mimeType, final boolean gzip )
     {
         this.image = image;
         this.mimeType = mimeType;
-        this.gzip = fileName != null && fileName.toLowerCase().endsWith( ".svgz" );
+        this.gzip = gzip;
     }
 
     public static ResolvedImage unresolved()

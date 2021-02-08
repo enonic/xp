@@ -11,12 +11,13 @@ import javax.imageio.ImageIO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.core.impl.image.command.ScaleWidthFunctionCommand;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ScaleParams;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
 public final class ImageScaleFunctionBuilderImplTest
 {
@@ -34,12 +35,14 @@ public final class ImageScaleFunctionBuilderImplTest
     public void testEmptyParam()
     {
         final ImageScaleFunctionBuilderImpl functionBuilder = new ImageScaleFunctionBuilderImpl();
+        functionBuilder.activate( mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
+
         final ScaleParams scaleParams = new ScaleParams( "width", new Object[]{""} );
-        final ImageScaleFunction scaleFunction = functionBuilder.build( scaleParams, FocalPoint.DEFAULT );
+        final ImageFunction scaleFunction = functionBuilder.build( scaleParams, FocalPoint.DEFAULT );
 
-        BufferedImage scaled = scaleFunction.scale( source );
+        BufferedImage scaled = scaleFunction.apply( source );
 
-        assertEquals( ScaleWidthFunctionCommand.DEF_WIDTH_VALUE, scaled.getWidth() );
+        assertEquals( 100, scaled.getWidth() );
     }
 
 
@@ -47,10 +50,12 @@ public final class ImageScaleFunctionBuilderImplTest
     public void testWidthParam()
     {
         final ImageScaleFunctionBuilderImpl functionBuilder = new ImageScaleFunctionBuilderImpl();
-        final ScaleParams scaleParams = new ScaleParams( "width", new Object[]{"150"} );
-        final ImageScaleFunction scaleFunction = functionBuilder.build( scaleParams, FocalPoint.DEFAULT );
+        functionBuilder.activate( mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
-        BufferedImage scaled = scaleFunction.scale( source );
+        final ScaleParams scaleParams = new ScaleParams( "width", new Object[]{"150"} );
+        final ImageFunction scaleFunction = functionBuilder.build( scaleParams, FocalPoint.DEFAULT );
+
+        BufferedImage scaled = scaleFunction.apply( source );
 
         assertEquals( 150, scaled.getWidth() );
         assertNotEquals( scaled.getWidth(), source.getWidth() );
@@ -60,12 +65,25 @@ public final class ImageScaleFunctionBuilderImplTest
     public void testHeightParam()
     {
         final ImageScaleFunctionBuilderImpl functionBuilder = new ImageScaleFunctionBuilderImpl();
-        final ScaleParams scaleParams = new ScaleParams( "height", new Object[]{"150"} );
-        final ImageScaleFunction scaleFunction = functionBuilder.build( scaleParams, FocalPoint.DEFAULT );
+        functionBuilder.activate( mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
-        BufferedImage scaled = scaleFunction.scale( source );
+        final ScaleParams scaleParams = new ScaleParams( "height", new Object[]{"150"} );
+        final ImageFunction scaleFunction = functionBuilder.build( scaleParams, FocalPoint.DEFAULT );
+
+        BufferedImage scaled = scaleFunction.apply( source );
 
         assertEquals( 150, scaled.getHeight() );
         assertNotEquals( scaled.getHeight(), source.getHeight() );
     }
+
+    @Test
+    public void unknownScaleFunction()
+    {
+        final ImageScaleFunctionBuilderImpl functionBuilder = new ImageScaleFunctionBuilderImpl();
+        functionBuilder.activate( mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
+
+        final ScaleParams scaleParams = new ScaleParams( "fake", new Object[0] );
+        assertThrows( IllegalArgumentException.class, () -> functionBuilder.build( scaleParams, FocalPoint.DEFAULT ) );
+    }
+
 }

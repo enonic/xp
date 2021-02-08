@@ -3,15 +3,13 @@ package com.enonic.xp.core.impl.image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import javax.imageio.ImageIO;
-
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -20,9 +18,7 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.core.impl.image.effect.ScaleMaxFunction;
-import com.enonic.xp.core.impl.image.effect.ScaleSquareFunction;
-import com.enonic.xp.core.impl.image.effect.ScaleWidthFunction;
+import com.enonic.xp.core.impl.image.parser.FilterSetExpr;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
@@ -33,32 +29,36 @@ import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.util.HexEncoder;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 @Component
 public class ImageServiceImpl
     implements ImageService
 {
-    private ContentService contentService;
+    private final ContentService contentService;
 
-    private ImageScaleFunctionBuilder imageScaleFunctionBuilder;
+    private final ImageScaleFunctionBuilder imageScaleFunctionBuilder;
 
-    private ImageFilterBuilder imageFilterBuilder;
+    private final ImageFilterBuilder imageFilterBuilder;
+
+    @Activate
+    public ImageServiceImpl( @Reference final ContentService contentService,
+                             @Reference final ImageScaleFunctionBuilder imageScaleFunctionBuilder,
+                             @Reference final ImageFilterBuilder imageFilterBuilder )
+    {
+        this.contentService = contentService;
+        this.imageScaleFunctionBuilder = imageScaleFunctionBuilder;
+        this.imageFilterBuilder = imageFilterBuilder;
+    }
 
     @Override
     public ByteSource readImage( final ReadImageParams readImageParams )
         throws IOException
     {
-        if ( renderAsSource( readImageParams ) )
-        {
-            return contentService.getBinary( readImageParams.getContentId(), readImageParams.getBinaryReference() );
-        }
-
-        final Path cachedImagePath = getCachedImagePath( readImageParams );
-        return ImmutableFilesHelper.computeIfAbsent( cachedImagePath, () -> createImage( readImageParams ) );
+        NormalizedImageParams normalizedImageParams = new NormalizedImageParams( readImageParams );
+        final Path cachedImagePath = getCachedImagePath( normalizedImageParams );
+        return ImmutableFilesHelper.computeIfAbsent( cachedImagePath, () -> createImage( normalizedImageParams ) );
     }
 
-    private ByteSource createImage( final ReadImageParams readImageParams )
+    private ByteSource createImage( final NormalizedImageParams readImageParams )
         throws IOException
     {
         final ByteSource blob = contentService.getBinary( readImageParams.getContentId(), readImageParams.getBinaryReference() );
@@ -68,25 +68,16 @@ public class ImageServiceImpl
             final BufferedImage bufferedImage = readBufferedImage( blob, readImageParams );
             if ( bufferedImage != null )
             {
-                if ( readImageParams.getMimeType() != null )
-                {
-                    return ByteSource.wrap(
-                        ImageHelper.serializeImage( bufferedImage, readImageParams.getMimeType(), readImageParams.getQuality() ) );
-                }
-                else if ( readImageParams.getFormat() != null )
-                {
-                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    ImageIO.write( bufferedImage, readImageParams.getFormat(), out );
-                    return ByteSource.wrap( out.toByteArray() );
-                }
+                // Previous ImageHelper implementation interpreted 0 as system default quality explicitly,
+                // and anything below 0 as system default due to Exception swallow
+                // New implementation supports 0 value (it means "best compression" for PNG),
+                // but 0 quality in image service need to be retrofitted to "system default", otherwise JPEG with 0 quality
+                // is over-compressed and looks way different from system default compressed image.
+                final int writeImageQuality = readImageParams.getQuality() == 0 ? -1 : readImageParams.getQuality();
+                return ByteSource.wrap( ImageHelper.writeImage( bufferedImage, readImageParams.getFormat(), writeImageQuality ) );
             }
         }
         return null;
-    }
-
-    private boolean renderAsSource( final ReadImageParams params )
-    {
-        return "image/gif".equals( params.getMimeType() ) || "gif".equals( params.getFormat() );
     }
 
     @Deprecated
@@ -97,47 +88,27 @@ public class ImageServiceImpl
         return ImageHelper.getFormatByMimeType( mimeType );
     }
 
-    private Path getCachedImagePath( final ReadImageParams readImageParams )
-        throws IOException
+    private Path getCachedImagePath( final NormalizedImageParams readImageParams )
     {
         final String homeDir = HomeDir.get().toString();
 
         //Cropping string value
-        final String cropping = readImageParams.getCropping() != null ? readImageParams.getCropping().toString() : "no-cropping";
+        final String cropping = readImageParams.getCropping() == null ? "no-cropping" : readImageParams.getCropping().toString();
 
         //Scale string value
-        String scale = "no-scale";
-        if ( readImageParams.getScaleParams() != null )
-        {
-            scale = "scale-" + readImageParams.getScaleParams().toString() + "-" + readImageParams.getFocalPoint().toString();
-        }
-        else if ( readImageParams.getScaleSize() > 0 )
-        {
-            if ( readImageParams.isScaleSquare() )
-            {
-                scale = "scalesquare-" + readImageParams.getScaleSize();
-            }
-            else if ( readImageParams.isScaleWidth() )
-            {
-                scale = "scalewidth-" + readImageParams.getScaleSize();
-            }
-            else
-            {
-                scale = "scalemax-" + readImageParams.getScaleSize();
-            }
-        }
+        final String scale = readImageParams.getScaleParams() == null
+            ? "no-scale"
+            : "scale-" + readImageParams.getScaleParams() + "-" + readImageParams.getFocalPoint();
 
         //Filter string value
-        final String filter = readImageParams.getFilterParam() != null ? readImageParams.getFilterParam() : "no-filter";
+        final String filter = readImageParams.getFilterParam().isEmpty() ? "no-filter" : readImageParams.getFilterParam().toString();
 
-        final String format = readImageParams.getMimeType() == null
-            ? readImageParams.getFormat()
-            : ImageHelper.getFormatByMimeType( readImageParams.getMimeType() );
+        final String format = readImageParams.getFormat();
         //Background string value
         final String background = "background-" + readImageParams.getBackgroundColor();
 
         //Orientating string value
-        final String orientation = "orientation-" + readImageParams.getOrientation().toString();
+        final String orientation = "orientation-" + readImageParams.getOrientation();
 
         //Serialization string value
         final String quality = "quality-" + readImageParams.getQuality();
@@ -152,7 +123,7 @@ public class ImageServiceImpl
                           hash ).toAbsolutePath();
     }
 
-    private BufferedImage readBufferedImage( final ByteSource blob, final ReadImageParams readImageParams )
+    private BufferedImage readBufferedImage( final ByteSource blob, final NormalizedImageParams readImageParams )
         throws IOException
     {
         //Retrieves the buffered image
@@ -173,24 +144,19 @@ public class ImageServiceImpl
             }
 
             //Applies the scaling
-            //TODO If/Else due to a difference of treatment between admin and portal. Should be uniform
             if ( readImageParams.getScaleParams() != null )
             {
                 bufferedImage = applyScalingParams( bufferedImage, readImageParams.getScaleParams(), readImageParams.getFocalPoint() );
             }
-            else if ( readImageParams.getScaleSize() > 0 && ( bufferedImage.getWidth() >= readImageParams.getScaleSize() ) )
-            {
-                bufferedImage = applyScalingFunction( bufferedImage, readImageParams );
-            }
 
             //Applies the filters
-            if ( !isNullOrEmpty( readImageParams.getFilterParam() ) )
+            if ( !readImageParams.getFilterParam().isEmpty() )
             {
                 bufferedImage = applyFilters( bufferedImage, readImageParams.getFilterParam() );
             }
 
             //Applies alpha channel removal
-            if ( !"image/png".equals( readImageParams.getMimeType() ) && !ImageHelper.supportsAlphaChannel( readImageParams.getFormat() ) )
+            if ( !"png".equals( readImageParams.getFormat() ) )
             {
                 bufferedImage = ImageHelper.removeAlphaChannel( bufferedImage, readImageParams.getBackgroundColor() );
             }
@@ -218,33 +184,14 @@ public class ImageServiceImpl
 
     }
 
-
     private BufferedImage applyScalingParams( final BufferedImage sourceImage, final ScaleParams scaleParams, final FocalPoint focalPoint )
     {
-        final ImageScaleFunction imageScaleFunction = imageScaleFunctionBuilder.build( scaleParams, focalPoint );
-        return imageScaleFunction.scale( sourceImage );
+        return imageScaleFunctionBuilder.build( scaleParams, focalPoint ).apply( sourceImage );
     }
 
-    private BufferedImage applyScalingFunction( final BufferedImage bufferedImage, final ReadImageParams readImageParams )
+    private BufferedImage applyFilters( final BufferedImage sourceImage, final FilterSetExpr filterParam )
     {
-        if ( readImageParams.isScaleSquare() )
-        {
-            return new ScaleSquareFunction( readImageParams.getScaleSize() ).scale( bufferedImage );
-        }
-        else if ( readImageParams.isScaleWidth() )
-        {
-            return new ScaleWidthFunction( readImageParams.getScaleSize() ).scale( bufferedImage );
-        }
-        else
-        {
-            return new ScaleMaxFunction( readImageParams.getScaleSize() ).scale( bufferedImage );
-        }
-    }
-
-    private BufferedImage applyFilters( final BufferedImage sourceImage, final String filterParam )
-    {
-        final ImageFilter imageFilter = imageFilterBuilder.build( filterParam );
-        return imageFilter.filter( sourceImage );
+        return imageFilterBuilder.build( filterParam ).apply( sourceImage );
     }
 
     private BufferedImage applyRotation( final BufferedImage bufferedImage, final ImageOrientation orientation )
@@ -300,23 +247,5 @@ public class ImageServiceImpl
         final BufferedImage destinationImage = new BufferedImage( resultWidth, resultHeight, bufferedImage.getType() );
         final AffineTransformOp op = new AffineTransformOp( transform, AffineTransformOp.TYPE_BICUBIC );
         return op.filter( bufferedImage, destinationImage );
-    }
-
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
-    }
-
-    @Reference
-    public void setImageScaleFunctionBuilder( final ImageScaleFunctionBuilder imageScaleFunctionBuilder )
-    {
-        this.imageScaleFunctionBuilder = imageScaleFunctionBuilder;
-    }
-
-    @Reference
-    public void setImageFilterBuilder( final ImageFilterBuilder imageFilterBuilder )
-    {
-        this.imageFilterBuilder = imageFilterBuilder;
     }
 }

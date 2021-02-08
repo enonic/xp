@@ -1,6 +1,8 @@
 package com.enonic.xp.core.impl.image;
 
+import com.enonic.xp.core.impl.image.parser.FilterSetExpr;
+
 public interface ImageFilterBuilder
 {
-    ImageFilter build( String expr );
+    ImageFunction build( FilterSetExpr expr );
 }

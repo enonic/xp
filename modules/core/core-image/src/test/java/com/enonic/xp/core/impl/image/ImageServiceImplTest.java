@@ -19,6 +19,9 @@ import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ImageServiceImplTest
 {
@@ -27,7 +30,7 @@ public class ImageServiceImplTest
 
     private ContentService contentService;
 
-    private ImageFilter imageFilter;
+    private ImageFunction imageFilter;
 
     private ImageServiceImpl imageService;
 
@@ -45,19 +48,20 @@ public class ImageServiceImplTest
 
         contentId = ContentId.from( "contentId" );
         binaryReference = BinaryReference.from( "binaryRef" );
-        contentService = Mockito.mock( ContentService.class );
+        contentService = mock( ContentService.class );
         imageDataOriginal = ByteStreams.toByteArray( getClass().getResourceAsStream( "effect/transparent.png" ) );
-        Mockito.when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
-        Mockito.when( contentService.getBinaryKey( contentId, binaryReference ) ).thenReturn( "binaryKey" );
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
+        when( contentService.getBinaryKey( contentId, binaryReference ) ).thenReturn( "binaryKey" );
 
-        ImageFilterBuilder imageFilterBuilder = Mockito.mock( ImageFilterBuilder.class );
-        imageFilter = Mockito.mock( ImageFilter.class );
-        Mockito.when( imageFilter.filter( Mockito.any() ) ).thenAnswer( invocation -> invocation.getArguments()[0] );
-        Mockito.when( imageFilterBuilder.build( Mockito.any() ) ).thenReturn( imageFilter );
+        ImageFilterBuilder imageFilterBuilder = mock( ImageFilterBuilder.class );
+        imageFilter = mock( ImageFunction.class );
+        when( imageFilter.apply( any() ) ).thenAnswer( invocation -> invocation.getArgument( 0 ) );
+        when( imageFilterBuilder.build( any() ) ).thenReturn( imageFilter );
 
-        imageService = new ImageServiceImpl();
-        imageService.setContentService( contentService );
-        imageService.setImageFilterBuilder( imageFilterBuilder );
+        final ImageScaleFunctionBuilderImpl imageScaleFunctionBuilder = new ImageScaleFunctionBuilderImpl();
+        imageScaleFunctionBuilder.activate( mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
+
+        imageService = new ImageServiceImpl( contentService, imageScaleFunctionBuilder, imageFilterBuilder );
     }
 
     @Test
@@ -103,12 +107,10 @@ public class ImageServiceImplTest
 
         ByteSource imageData = imageService.readImage( readImageParams );
         assertArrayEquals( ByteStreams.toByteArray( getClass().getResourceAsStream( "processed.jpg" ) ), imageData.read() );
-        Mockito.verify( imageFilter ).filter( Mockito.any() );
+        Mockito.verify( imageFilter ).apply( any() );
 
         imageData = imageService.readImage( readImageParams );
         assertArrayEquals( ByteStreams.toByteArray( getClass().getResourceAsStream( "processed.jpg" ) ), imageData.read() );
-        Mockito.verify( imageFilter ).filter( Mockito.any() );
+        Mockito.verify( imageFilter ).apply( any() );
     }
-
-
 }

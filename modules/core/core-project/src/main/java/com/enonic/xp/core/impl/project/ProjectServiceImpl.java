@@ -478,7 +478,8 @@ public class ProjectServiceImpl
                 if ( size > 0 && ( bufferedImage.getWidth() >= size ) )
                 {
                     final BufferedImage scaledImage = scaleWidth( bufferedImage, size );
-                    final ByteSource scaledSource = ByteSource.wrap( ImageHelper.serializeImage( scaledImage, icon.getMimeType(), 0 ) );
+                    final ByteSource scaledSource =
+                        ByteSource.wrap( ImageHelper.writeImage( scaledImage, ImageHelper.getFormatByMimeType( icon.getMimeType() ), -1 ) );
 
                     return new BinaryAttachment( BinaryReference.from( icon.getName() ), scaledSource );
                 }
