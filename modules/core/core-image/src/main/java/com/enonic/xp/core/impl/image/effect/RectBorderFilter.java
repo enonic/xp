@@ -6,14 +6,16 @@ package com.enonic.xp.core.impl.image.effect;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.TexturePaint;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-import com.enonic.xp.core.impl.image.ImageFilter;
+import com.enonic.xp.core.impl.image.ImageFunction;
+import com.enonic.xp.image.ImageHelper;
 
 public final class RectBorderFilter
-    extends BaseImageProcessor implements ImageFilter
+    implements ImageFunction
 {
     private final int size;
 
@@ -26,9 +28,9 @@ public final class RectBorderFilter
     }
 
     @Override
-    public BufferedImage filter( BufferedImage source )
+    public BufferedImage apply( BufferedImage source )
     {
-        BufferedImage dest = createImage( source );
+        BufferedImage dest = ImageHelper.createImage( source, true );
         Graphics2D g = getGraphics( dest );
         g.setPaint( new Color( this.color, false ) );
 
@@ -46,5 +48,12 @@ public final class RectBorderFilter
         g.dispose();
 
         return dest;
+    }
+
+    private static Graphics2D getGraphics( final BufferedImage img )
+    {
+        Graphics2D g = img.createGraphics();
+        g.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+        return g;
     }
 }

@@ -4,61 +4,78 @@
  */
 package com.enonic.xp.core.impl.image;
 
-import org.osgi.service.component.annotations.Component;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import com.enonic.xp.core.impl.image.command.FilterCommand;
-import com.enonic.xp.core.impl.image.command.FilterCommandRegistry;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
+
+import com.enonic.xp.core.impl.image.effect.ImageFilters;
 import com.enonic.xp.core.impl.image.parser.FilterExpr;
-import com.enonic.xp.core.impl.image.parser.FilterExprParser;
 import com.enonic.xp.core.impl.image.parser.FilterSetExpr;
 
-@Component(immediate = true)
+@Component(immediate = true, configurationPid = "com.enonic.xp.image")
 public final class ImageFilterBuilderImpl
     implements ImageFilterBuilder
 {
-    private final FilterExprParser parser;
+    private volatile int maxTotalNumberOfFilters;
 
-    private final FilterCommandRegistry commandRegistry;
+    private volatile Map<String, FilterCommand> imageFilterRegistry;
 
-    public ImageFilterBuilderImpl()
+    @Activate
+    @Modified
+    public void activate( final ImageConfig config )
     {
-        this.parser = new FilterExprParser();
-        this.commandRegistry = new FilterCommandRegistry();
+        maxTotalNumberOfFilters = config.filters_maxTotal();
+        final ImageFilters imageFilters = new ImageFilters();
+
+        Map<String, FilterCommand> map = new HashMap<>();
+        map.put( "block", imageFilters::block );
+        map.put( "blur", imageFilters::blur );
+        map.put( "border", imageFilters::border );
+        map.put( "bump", imageFilters::bump );
+        map.put( "colorize", imageFilters::colorize );
+        map.put( "edge", imageFilters::edge );
+        map.put( "emboss", imageFilters::emboss );
+        map.put( "fliph", imageFilters::fliph );
+        map.put( "flipv", imageFilters::flipv );
+        map.put( "rotate90", imageFilters::rotate90 );
+        map.put( "rotate180", imageFilters::rotate180 );
+        map.put( "rotate270", imageFilters::rotate270 );
+        map.put( "gamma", imageFilters::gamma );
+        map.put( "grayscale", imageFilters::grayscale );
+        map.put( "hsbadjust", imageFilters::hsbadjust );
+        map.put( "hsbcolorize", imageFilters::hsbcolorize );
+        map.put( "invert", imageFilters::invert );
+        map.put( "rgbadjust", imageFilters::rgbadjust );
+        map.put( "rounded", imageFilters::rounded );
+        map.put( "sepia", imageFilters::sepia );
+        map.put( "sharpen", imageFilters::sharpen );
+        imageFilterRegistry = map;
     }
 
-    @Override
-    public ImageFilter build( String expr )
+    public ImageFunction build( final FilterSetExpr set )
     {
-        return build( this.parser.parse( expr ) );
-    }
-
-    private ImageFilter build( FilterSetExpr set )
-    {
-        ImageFilterSet filter = new ImageFilterSet();
-
-        for ( FilterExpr expr : set.getList() )
+        final List<FilterExpr> list = set.getList();
+        if ( list.size() > maxTotalNumberOfFilters )
         {
-            filter.addFilter( build( expr ) );
+            throw new IllegalArgumentException( "Max number of filters exceeded " + list.size() );
         }
 
-        return filter;
+        return new ImageFunctionChain( list.stream().map( this::build ).collect( Collectors.toUnmodifiableList() ) );
     }
 
-    private ImageFilter build( FilterExpr expr )
+    private ImageFunction build( final FilterExpr expr )
     {
-        return createFilter( expr.getName(), expr.getArguments() );
-    }
+        final FilterCommand filterCommand = this.imageFilterRegistry.get( expr.getName() );
+        if ( filterCommand == null )
+        {
+            throw new IllegalArgumentException( "Unknown filter " + expr.getName() );
+        }
 
-    private ImageFilter createFilter( String name, Object[] args )
-    {
-        FilterCommand command = this.commandRegistry.getCommand( name );
-        if ( command != null )
-        {
-            return command.build( args );
-        }
-        else
-        {
-            return null;
-        }
+        return filterCommand.build( expr.getArguments() );
     }
 }

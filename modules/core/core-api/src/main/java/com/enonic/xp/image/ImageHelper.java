@@ -58,6 +58,7 @@ public final class ImageHelper
         }
     }
 
+    @Deprecated
     public static ByteSource toByteSource( final BufferedImage image, final String format )
     {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -91,36 +92,16 @@ public final class ImageHelper
         final Iterator<ImageWriter> i = ImageIO.getImageWritersByMIMEType( mimeType );
         if ( !i.hasNext() )
         {
-            throw new IOException( "The image-based media type " + mimeType + " is not supported for writing" );
+            throw new IllegalArgumentException( "The image-based media type " + mimeType + " is not supported for writing" );
         }
-
         return i.next().getOriginatingProvider().getFormatNames()[0];
     }
 
+    @Deprecated
     public static byte[] serializeImage( final BufferedImage bufferedImage, final String mimeType, final int quality )
         throws IOException
     {
-        final byte[] serializedImage;
-
-        final String format = getFormatByMimeType( mimeType );
-        if ( quality != 0 )
-        {
-            serializedImage = writeImage( bufferedImage, format, quality );
-        }
-        else
-        {
-            serializedImage = writeImage( bufferedImage, format );
-        }
-
-        return serializedImage;
-    }
-
-    private static byte[] writeImage( final BufferedImage bufferedImage, final String format )
-        throws IOException
-    {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ImageIO.write( bufferedImage, format, out );
-        return out.toByteArray();
+        return writeImage( bufferedImage, getFormatByMimeType( mimeType ), quality == 0 ? -1 : quality );
     }
 
     public static byte[] writeImage( final BufferedImage image, final String format, final int quality )
@@ -135,26 +116,26 @@ public final class ImageHelper
         throws IOException
     {
         final ImageWriter writer = getWriterByFormat( format );
-        final MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream( out );
-        writer.setOutput( output );
-        final ImageWriteParam params = writer.getDefaultWriteParam();
-        setCompressionQuality( params, quality );
-        writer.write( null, new IIOImage( image, null, null ), params );
+        try (MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream( out ))
+        {
+            writer.setOutput( output );
+            final ImageWriteParam params = writer.getDefaultWriteParam();
+            setCompressionQuality( params, quality );
+            writer.write( null, new IIOImage( image, null, null ), params );
+        }
         writer.dispose();
-        output.close();
     }
 
     private static void setCompressionQuality( ImageWriteParam params, int quality )
     {
-        if ( quality > 100 )
+        if ( quality == -1 )
         {
-            quality = 100;
+            return;
         }
-
         try
         {
             params.setCompressionMode( ImageWriteParam.MODE_EXPLICIT );
-            params.setCompressionQuality( (float) quality / 100f );
+            params.setCompressionQuality( quality / 100f );
         }
         catch ( Exception e )
         {
@@ -171,7 +152,6 @@ public final class ImageHelper
     {
         return new BufferedImage( width, height, hasAlpha ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB );
     }
-
 
     public static BufferedImage getScaledInstance( BufferedImage img, int targetWidth, int targetHeight )
     {

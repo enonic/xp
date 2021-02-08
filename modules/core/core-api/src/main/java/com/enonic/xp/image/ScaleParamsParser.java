@@ -1,16 +1,18 @@
 package com.enonic.xp.image;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public final class ScaleParamsParser
 {
-    public ScaleParams parse(String value) {
-
+    public ScaleParams parse( final String value )
+    {
         String name = parseName( value );
-        Object[] args = parseArguments( value );
 
         if ( name != null )
         {
+            Object[] args = parseArguments( value );
             return new ScaleParams( name, args );
         }
         else
@@ -33,7 +35,7 @@ public final class ScaleParamsParser
         }
 
         str = str.trim();
-        if ( str.length() > 0 )
+        if ( !str.isEmpty() )
         {
             return str;
         }
@@ -43,43 +45,26 @@ public final class ScaleParamsParser
         }
     }
 
-    private Object[] parseArguments( String str )
+    private static Object[] parseArguments( String str )
     {
-        if ( str == null )
-        {
-            return null;
-        }
-
         String[] args = str.split( "-" );
-        if(args.length == 1)
+        if ( args.length == 1 )
         {
-            return null;
+            return new Object[0];
         }
 
-        ArrayList<Object> list = new ArrayList<>();
-        for(int i = 1 ; i < args.length; i++) {
-            list.add( parseIntegerValue( args[i] ) );
-        }
-
-        return list.toArray( new Object[0] );
+        return Arrays.stream( args ).skip( 1 ).map( ScaleParamsParser::parseIntegerValue ).toArray( Object[]::new );
     }
 
-    private Integer parseIntegerValue( String str )
+    private static Integer parseIntegerValue( final String str )
     {
-        if ( str == null )
+        if ( nullToEmpty( str ).isBlank() )
         {
             return null;
         }
-
-        str = str.trim();
-        if ( str.length() == 0 )
-        {
-            return null;
-        }
-
         try
         {
-            return Integer.valueOf( str );
+            return Integer.valueOf( str.trim() );
         }
         catch ( Exception e )
         {

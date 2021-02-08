@@ -8,6 +8,8 @@ import com.enonic.xp.util.BinaryReference;
 
 public class ReadImageParams
 {
+    private static final int DEFAULT_BACKGROUND_COLOR = 0xFFFFFF;
+
     private final ContentId contentId;
 
     private final BinaryReference binaryReference;
@@ -150,7 +152,7 @@ public class ReadImageParams
 
         private String filterParam;
 
-        private int backgroundColor;
+        private int backgroundColor = DEFAULT_BACKGROUND_COLOR;
 
         private String format;
 
@@ -253,7 +255,9 @@ public class ReadImageParams
         {
             Preconditions.checkNotNull( contentId, "contentId cannot be null" );
             Preconditions.checkNotNull( binaryReference, "binaryReference cannot be null" );
-            Preconditions.checkArgument( mimeType != null || format != null, "mimeType or format must be set" );
+            Preconditions.checkArgument( ( mimeType != null ) == ( format == null ), "mimeType or format must be set, but not both" );
+            Preconditions.checkArgument( quality >= 0 && quality <= 100, "Quality out of bounds 0-100" );
+            Preconditions.checkArgument( backgroundColor >= 0 && backgroundColor <= 0xFFFFFF, "Background color out of bounds 0-0xFFFFFF" );
             return new ReadImageParams( this );
         }
     }

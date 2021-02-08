@@ -42,6 +42,7 @@ import com.enonic.xp.web.handler.BaseHandlerTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -68,7 +69,6 @@ class ImageHandlerTest
 
     @BeforeEach
     final void setup()
-        throws Exception
     {
         this.request = new PortalRequest();
         this.contentService = mock( ContentService.class );
@@ -154,6 +154,28 @@ class ImageHandlerTest
         when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
     }
 
+    private void setupContentGif()
+        throws Exception
+    {
+        final Attachment attachment = Attachment.create().
+            name( "enonic-logo.svg" ).
+            mimeType( "image/gif" ).
+            label( "source" ).
+            build();
+
+        final Content content = createContent( "123456", "path/to/image-name.gif", attachment );
+
+        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
+        when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
+
+        final ByteSource imageBytes = ByteSource.wrap( new byte[0] );
+
+        when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).
+            thenReturn( imageBytes );
+
+        when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
+    }
+
     private Content createContent( final String id, final String contentPath, final Attachment... attachments )
     {
         final PropertyTree data = new PropertyTree();
@@ -211,16 +233,16 @@ class ImageHandlerTest
     void match()
     {
         this.request.setEndpointPath( null );
-        assertEquals( false, this.handler.canHandle( this.request ) );
+        assertFalse( this.handler.canHandle( this.request ) );
 
         this.request.setEndpointPath( "/_/other/123456/scale-100-100/image-name.jpg" );
-        assertEquals( false, this.handler.canHandle( this.request ) );
+        assertFalse( this.handler.canHandle( this.request ) );
 
         this.request.setEndpointPath( "/image/123456/scale-100-100/image-name.jpg" );
-        assertEquals( false, this.handler.canHandle( this.request ) );
+        assertFalse( this.handler.canHandle( this.request ) );
 
         this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
-        assertEquals( true, this.handler.canHandle( this.request ) );
+        assertTrue( this.handler.canHandle( this.request ) );
     }
 
     @Test
@@ -332,6 +354,50 @@ class ImageHandlerTest
     }
 
     @Test
+    void invalidQuality()
+        throws Exception
+    {
+        setupContent();
+        when( this.mediaInfoService.getImageOrientation( any( ByteSource.class ) ) ).thenReturn( ImageOrientation.LeftBottom );
+
+        this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        this.request.getParams().put( "quality", "-1" );
+
+        final WebException webException =
+            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        assertEquals( HttpStatus.BAD_REQUEST, webException.getStatus() );
+    }
+
+    @Test
+    void nameMissmatch()
+        throws Exception
+    {
+        setupContent();
+
+        this.request.setEndpointPath( "/_/image/123456/full/image-name.png" );
+
+        final WebException webException =
+            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        assertEquals( HttpStatus.NOT_FOUND, webException.getStatus() );
+    }
+
+    @Test
+    void gifImage()
+        throws Exception
+    {
+        setupContentGif();
+
+        this.request.setEndpointPath( "/_/image/123456/full/image-name.gif" );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertNotNull( res );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( MediaType.GIF, res.getContentType() );
+        assertTrue( res.getBody() instanceof ByteSource );
+        assertNull( res.getHeaders().get( "Content-Encoding" ) );
+    }
+
+    @Test
     void svgImage()
         throws Exception
     {
@@ -343,7 +409,7 @@ class ImageHandlerTest
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( MediaType.parse( "image/svg+xml" ), res.getContentType() );
+        assertEquals( MediaType.SVG_UTF_8.withoutParameters(), res.getContentType() );
         assertTrue( res.getBody() instanceof ByteSource );
         assertNull( res.getHeaders().get( "Content-Encoding" ) );
     }
@@ -360,7 +426,7 @@ class ImageHandlerTest
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
-        assertEquals( MediaType.parse( "image/svg+xml" ), res.getContentType() );
+        assertEquals( MediaType.SVG_UTF_8.withoutParameters(), res.getContentType() );
         assertTrue( res.getBody() instanceof ByteSource );
         assertEquals( "gzip", res.getHeaders().get( "Content-Encoding" ) );
     }

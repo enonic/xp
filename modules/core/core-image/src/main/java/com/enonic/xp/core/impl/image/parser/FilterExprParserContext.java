@@ -5,9 +5,12 @@
 package com.enonic.xp.core.impl.image.parser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public final class FilterExprParserContext
 {
@@ -22,32 +25,24 @@ public final class FilterExprParserContext
     public FilterExprParserContext( String value )
     {
         this.stringMap = new HashMap<>();
-        this.value = replaceStrings( this.stringMap, value );
+        this.value = replaceStrings( this.stringMap, value.trim() );
     }
 
     public FilterSetExpr parseFilterSet()
     {
-        FilterSetExpr set = new FilterSetExpr();
-        for ( String part : this.value.split( ";" ) )
-        {
-            FilterExpr expr = parseFilter( part );
-            if ( expr != null )
-            {
-                set.add( expr );
-            }
-        }
-
-        return set;
+        return new FilterSetExpr( Arrays.stream( this.value.split( ";" ) ).
+            map( this::parseFilter ).
+            filter( Objects::nonNull ).
+            collect( Collectors.toUnmodifiableList() ) );
     }
 
     private FilterExpr parseFilter( String str )
     {
         String name = parseName( str );
-        Object[] args = parseArguments( str );
 
         if ( name != null )
         {
-            return new FilterExpr( name, args );
+            return new FilterExpr( name, parseArguments( str ) );
         }
         else
         {
@@ -83,7 +78,7 @@ public final class FilterExprParserContext
     {
         if ( str == null )
         {
-            return null;
+            return new Object[0];
         }
 
         int beginPos = str.indexOf( '(' );
@@ -91,13 +86,13 @@ public final class FilterExprParserContext
 
         if ( ( beginPos < 0 ) || ( endPos < 0 ) )
         {
-            return null;
+            return new Object[0];
         }
 
         str = str.substring( beginPos + 1, endPos ).trim();
         if ( str.length() == 0 )
         {
-            return null;
+            return new Object[0];
         }
 
         ArrayList<Object> list = new ArrayList<>();
@@ -106,7 +101,7 @@ public final class FilterExprParserContext
             list.add( parseValue( part ) );
         }
 
-        return list.toArray( new Object[0] );
+        return list.toArray();
     }
 
     private Object parseValue( String str )
@@ -117,7 +112,7 @@ public final class FilterExprParserContext
         }
 
         str = str.trim();
-        if ( str.length() == 0 )
+        if ( str.isEmpty() )
         {
             return null;
         }

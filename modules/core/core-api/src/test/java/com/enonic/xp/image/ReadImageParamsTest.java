@@ -53,8 +53,81 @@ public class ReadImageParamsTest
     public void testWithoutMimeTypeAndFormat()
         throws IOException
     {
-        assertThrows( IllegalArgumentException.class,
-                      () -> ReadImageParams.newImageParams().contentId( ContentId.from( "content-id" ) ).binaryReference(
-                          BinaryReference.from( "ref" ) ).build() );
+        assertThrows( IllegalArgumentException.class, () -> ReadImageParams.newImageParams().
+            contentId( ContentId.from( "content-id" ) ).
+            binaryReference( BinaryReference.from( "ref" ) ).
+            build() );
+    }
+
+    @Test
+    public void testWithBothMimeTypeAndFormat()
+        throws IOException
+    {
+        assertThrows( IllegalArgumentException.class, () -> ReadImageParams.newImageParams().
+            contentId( ContentId.from( "content-id" ) ).
+            binaryReference( BinaryReference.from( "ref" ) ).format( "PNG" ).mimeType( "image/jpeg" ).
+            build() );
+    }
+
+    @Test
+    public void testQuality()
+    {
+        assertThrows( IllegalArgumentException.class, () -> ReadImageParams.newImageParams().
+            contentId( ContentId.from( "content-id" ) ).
+            binaryReference( BinaryReference.from( "ref" ) ).
+            mimeType( "image/png" ).
+            quality( 101 ).
+            build() );
+
+        assertThrows( IllegalArgumentException.class, () -> ReadImageParams.newImageParams().
+            contentId( ContentId.from( "content-id" ) ).
+            binaryReference( BinaryReference.from( "ref" ) ).
+            mimeType( "image/png" ).
+            quality( -1 ).
+            build() );
+
+        assertEquals( 1, ReadImageParams.newImageParams().
+            contentId( ContentId.from( "content-id" ) ).
+            binaryReference( BinaryReference.from( "ref" ) ).
+            mimeType( "image/png" ).
+            quality( 1 ).
+            build().getQuality() );
+
+        assertEquals( 0, ReadImageParams.newImageParams().
+            contentId( ContentId.from( "content-id" ) ).
+            binaryReference( BinaryReference.from( "ref" ) ).
+            mimeType( "image/png" ).
+            build().getQuality() );
+    }
+
+    @Test
+    public void testBackgroundColor()
+    {
+        assertThrows( IllegalArgumentException.class, () -> ReadImageParams.newImageParams().
+            contentId( ContentId.from( "content-id" ) ).
+            binaryReference( BinaryReference.from( "ref" ) ).
+            mimeType( "image/png" ).
+            backgroundColor( Integer.MAX_VALUE ).
+            build() );
+
+        assertThrows( IllegalArgumentException.class, () -> ReadImageParams.newImageParams().
+            contentId( ContentId.from( "content-id" ) ).
+            binaryReference( BinaryReference.from( "ref" ) ).
+            mimeType( "image/png" ).
+            backgroundColor( -1 ).
+            build() );
+
+        assertEquals( 1, ReadImageParams.newImageParams().
+            contentId( ContentId.from( "content-id" ) ).
+            binaryReference( BinaryReference.from( "ref" ) ).
+            mimeType( "image/png" ).
+            backgroundColor( 1 ).
+            build().getBackgroundColor() );
+
+        assertEquals( 0xFFFFFF, ReadImageParams.newImageParams().
+            contentId( ContentId.from( "content-id" ) ).
+            binaryReference( BinaryReference.from( "ref" ) ).
+            mimeType( "image/png" ).
+            build().getBackgroundColor() );
     }
 }

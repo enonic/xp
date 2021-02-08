@@ -32,12 +32,24 @@ public final class HexCoder
         return new String( buffer );
     }
 
-    public static byte[] fromHex( final String value )
+    public static byte[] fromHex( final CharSequence value )
     {
-        byte[] binary = new byte[value.length() / 2];
-        for ( int i = 0; i < binary.length; i++ )
+        int length = value.length();
+        if ( length % 2 != 0 )
         {
-            binary[i] = (byte) Integer.parseInt( value.substring( 2 * i, 2 * i + 2 ), 16 );
+            throw new IllegalArgumentException( "Invalid hex value" );
+        }
+
+        byte[] binary = new byte[length / 2];
+        for ( int i = 0; i < length; i += 2 )
+        {
+            int left = Character.digit( value.charAt( i ), 16 );
+            int right = Character.digit( value.charAt( i + 1 ), 16 );
+            if ( left == -1 || right == -1 )
+            {
+                throw new IllegalArgumentException( "Invalid hex value" );
+            }
+            binary[i / 2] = (byte) ( left << 4 | right );
         }
         return binary;
     }

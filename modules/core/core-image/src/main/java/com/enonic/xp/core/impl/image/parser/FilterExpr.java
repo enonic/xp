@@ -4,16 +4,19 @@
  */
 package com.enonic.xp.core.impl.image.parser;
 
-public final class FilterExpr
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class FilterExpr
 {
     private final String name;
 
     private final Object[] args;
 
-    public FilterExpr( String name, Object[] args )
+    FilterExpr( String name, Object[] args )
     {
         this.name = name;
-        this.args = args != null ? args : new Object[0];
+        this.args = args;
     }
 
     public String getName()
@@ -29,21 +32,9 @@ public final class FilterExpr
     @Override
     public String toString()
     {
-        StringBuilder str = new StringBuilder();
-        str.append( this.name ).append( "(" );
-
-        for ( int i = 0; i < this.args.length; i++ )
-        {
-            if ( i > 0 )
-            {
-                str.append( "," );
-            }
-
-            str.append( encode( this.args[i] ) );
-        }
-
-        str.append( ")" );
-        return str.toString();
+        return this.name + Stream.of( this.args ).
+            map( this::encode ).
+            collect( Collectors.joining( ",", "(", ")" ) );
     }
 
     private String encode( Object arg )

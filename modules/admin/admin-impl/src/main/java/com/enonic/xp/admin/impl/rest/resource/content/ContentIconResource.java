@@ -45,6 +45,9 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public final class ContentIconResource
     implements JaxRsComponent
 {
+    // In sync with ImageHandler
+    private static final int DEFAULT_QUALITY = 85;
+
     private ContentService contentService;
 
     private MediaInfoService mediaInfoService;
@@ -140,12 +143,11 @@ public final class ContentIconResource
     {
         try
         {
-            final boolean isSVG = params.mimeType.equals( "image/svg+xml" );
-
-            if ( isSVG )
+            if ( params.mimeType.equals( "image/svg+xml" ) || params.mimeType.equals( "image/gif" ) )
             {
                 final ByteSource binary = contentService.getBinary( params.id, params.binaryReference );
-                return new ResolvedImage( binary.read(), params.mimeType, params.fileName );
+                final boolean gzip = params.fileName != null && params.fileName.toLowerCase().endsWith( ".svgz" );
+                return new ResolvedImage( binary.read(), params.mimeType, gzip );
             }
             else
             {
@@ -156,6 +158,7 @@ public final class ContentIconResource
                     scaleSize( params.size ).
                     scaleSquare( params.crop ).
                     mimeType( params.mimeType ).
+                    quality( DEFAULT_QUALITY ).
                     orientation( params.imageOrientation ).
                     build();
 

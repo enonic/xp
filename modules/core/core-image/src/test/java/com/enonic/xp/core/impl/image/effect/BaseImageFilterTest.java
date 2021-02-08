@@ -33,4 +33,14 @@ public abstract class BaseImageFilterTest
     {
         return this.transparent;
     }
+
+    ImageScales newScaleFunctions()
+    {
+        return new ImageScales( 8000 );
+    }
+
+    ImageFilters newFilters()
+    {
+        return new ImageFilters();
+    }
 }

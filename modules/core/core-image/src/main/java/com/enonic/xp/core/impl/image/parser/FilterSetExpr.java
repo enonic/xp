@@ -4,16 +4,18 @@
  */
 package com.enonic.xp.core.impl.image.parser;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public final class FilterSetExpr
 {
     private final List<FilterExpr> list;
 
-    public FilterSetExpr()
+    FilterSetExpr( final List<FilterExpr> list )
     {
-        this.list = new ArrayList<>();
+        this.list = list;
     }
 
     public List<FilterExpr> getList()
@@ -21,25 +23,24 @@ public final class FilterSetExpr
         return this.list;
     }
 
-    public void add( FilterExpr expr )
+    public boolean isEmpty()
     {
-        this.list.add( expr );
+        return list.isEmpty();
     }
 
     @Override
     public String toString()
     {
-        StringBuilder str = new StringBuilder();
-        for ( FilterExpr expr : this.list )
-        {
-            if ( str.length() > 0 )
-            {
-                str.append( ";" );
-            }
+        return this.list.stream().map( FilterExpr::toString ).collect( Collectors.joining( ";" ) );
+    }
 
-            str.append( expr.toString() );
+    public static FilterSetExpr parse( final String value )
+    {
+        if ( nullToEmpty( value ).isBlank() )
+        {
+            return new FilterSetExpr( List.of() );
         }
 
-        return str.toString();
+        return new FilterExprParserContext( value ).parseFilterSet();
     }
 }

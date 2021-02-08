@@ -4,22 +4,19 @@ import java.awt.image.BufferedImage;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.core.impl.image.AwtImageFilter;
-import com.enonic.xp.core.impl.image.AwtImageFilterTest;
-import com.enonic.xp.core.impl.image.ImageFilter;
+import com.enonic.xp.core.impl.image.ImageFunction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SepiaFilterTest
-    extends AwtImageFilterTest
+    extends BaseImageFilterTest
 {
     @Test
     public void testOpaqueImage()
     {
-        java.awt.image.ImageFilter operation = new SepiaFilter( 20 );
-        ImageFilter filter = new AwtImageFilter( operation );
+        ImageFunction function = newFilters().sepia( 20 );
 
-        BufferedImage result = filter.filter( getOpaque() );
+        BufferedImage result = function.apply( getOpaque() );
 
         int rgb = result.getRGB( 10, 10 );
         int alpha = ( rgb >> 24 ) & 0xff;
@@ -33,12 +30,11 @@ public class SepiaFilterTest
     @Test
     public void testImageWithTransparentAreas()
     {
-        java.awt.image.ImageFilter operation = new SepiaFilter( 20 );
-        ImageFilter filter = new AwtImageFilter( operation );
+        ImageFunction filter = newFilters().sepia( 20 );
 
-        BufferedImage result = filter.filter( getTransparent() );
+        BufferedImage result = filter.apply( getTransparent() );
 
-        // Uppder left corner is transparent
+        // Upper left corner is transparent
         int rgb = result.getRGB( 10, 10 );
         int alpha = ( rgb >> 24 ) & 0xff;
         assertEquals( 0, alpha );

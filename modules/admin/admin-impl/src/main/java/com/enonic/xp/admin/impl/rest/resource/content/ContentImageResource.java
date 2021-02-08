@@ -51,6 +51,9 @@ import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.REST_ROOT
 public final class ContentImageResource
     implements JaxRsComponent
 {
+    // In sync with ImageHandler
+    private static final int DEFAULT_QUALITY = 85;
+
     private static final ContentImageHelper HELPER = new ContentImageHelper();
 
     private ContentTypeService contentTypeService;
@@ -67,8 +70,7 @@ public final class ContentImageResource
                                      @QueryParam("size") @DefaultValue("0") final int size,
                                      @QueryParam("scaleWidth") @DefaultValue("false") final boolean scaleWidth,
                                      @QueryParam("source") @DefaultValue("false") final boolean source,
-                                     @QueryParam("scale") final String scale,
-                                     @QueryParam("filter") final String filter,
+                                     @QueryParam("scale") final String scale, @QueryParam("filter") final String filter,
                                      @QueryParam("crop") @DefaultValue("true") final boolean crop )
         throws Exception
     {
@@ -125,7 +127,8 @@ public final class ContentImageResource
             {
                 try
                 {
-                    return new ResolvedImage( binary.read(), attachment.getMimeType(), attachment.getName() );
+                    final boolean gzip = attachment.getName() != null && attachment.getName().toLowerCase().endsWith( ".svgz" );
+                    return new ResolvedImage( binary.read(), attachment.getMimeType(), gzip );
                 }
                 catch ( final IOException e )
                 {
@@ -136,9 +139,9 @@ public final class ContentImageResource
         return ResolvedImage.unresolved();
     }
 
-    private ResolvedImage resolveResponseFromContentImageAttachment( final Media media, final int size,
-                                                                     final boolean scaleWidth, final boolean source,
-                                                                     final String scale, final String filter, final boolean crop )
+    private ResolvedImage resolveResponseFromContentImageAttachment( final Media media, final int size, final boolean scaleWidth,
+                                                                     final boolean source, final String scale, final String filter,
+                                                                     final boolean crop )
     {
         final Attachment attachment = media.getMediaAttachment();
         if ( attachment != null )
@@ -148,11 +151,17 @@ public final class ContentImageResource
             {
                 try
                 {
-                    final Cropping cropping = (!source && crop) ? media.getCropping() : null;
+                    final String mimeType = attachment.getMimeType();
+
+                    if ( mimeType.equals( "image/gif" ) )
+                    {
+                        return new ResolvedImage( binary.read(), mimeType );
+                    }
+
+                    final Cropping cropping = ( !source && crop ) ? media.getCropping() : null;
                     final ImageOrientation imageOrientation = source ? null : mediaInfoService.getImageOrientation( binary, media );
                     final FocalPoint focalPoint = source ? null : media.getFocalPoint();
-                    final String filterParam = filter;
-                    final int sizeParam = (size > 0) ? size : (source ? 0 : getOriginalWidth( media ));
+                    final int sizeParam = ( size > 0 ) ? size : ( source ? 0 : getOriginalWidth( media ) );
                     final ScaleParams scaleParam = parseScaleParam( media, scale, sizeParam );
 
                     final ReadImageParams readImageParams = ReadImageParams.newImageParams().
@@ -163,13 +172,14 @@ public final class ContentImageResource
                         focalPoint( focalPoint ).
                         scaleSize( sizeParam ).
                         scaleWidth( scaleWidth ).
-                        mimeType( attachment.getMimeType() ).
+                        mimeType( mimeType ).
+                        quality( DEFAULT_QUALITY ).
                         orientation( imageOrientation ).
-                        filterParam( filterParam ).
+                        filterParam( filter ).
                         build();
 
                     final ByteSource contentImage = imageService.readImage( readImageParams );
-                    return new ResolvedImage( contentImage.read(), attachment.getMimeType() );
+                    return new ResolvedImage( contentImage.read(), mimeType );
                 }
                 catch ( IOException e )
                 {

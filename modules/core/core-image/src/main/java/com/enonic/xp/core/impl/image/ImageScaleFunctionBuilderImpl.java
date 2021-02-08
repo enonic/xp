@@ -1,34 +1,48 @@
 package com.enonic.xp.core.impl.image;
 
-import org.osgi.service.component.annotations.Component;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.enonic.xp.core.impl.image.command.ScaleCommand;
-import com.enonic.xp.core.impl.image.command.ScaleCommandRegistry;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
+
+import com.enonic.xp.core.impl.image.effect.ImageScales;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ScaleParams;
 
-@Component(immediate = true)
+@Component(immediate = true, configurationPid = "com.enonic.xp.image")
 public class ImageScaleFunctionBuilderImpl
     implements ImageScaleFunctionBuilder
 {
-    private final ScaleCommandRegistry scaleCommandRegistry;
+    private volatile Map<String, ScaleCommand> scaleCommandRegistry;
 
-    public ImageScaleFunctionBuilderImpl()
+    @Activate
+    @Modified
+    public void activate( final ImageConfig config )
     {
-        this.scaleCommandRegistry = new ScaleCommandRegistry();
+        final ImageScales scaleFunctions = new ImageScales( config.scale_maxDimension() );
+
+        Map<String, ScaleCommand> map = new HashMap<>();
+        map.put( "height", scaleFunctions::height );
+        map.put( "max", scaleFunctions::max );
+        map.put( "square", scaleFunctions::square );
+        map.put( "wide", scaleFunctions::wide );
+        map.put( "width", scaleFunctions::width );
+        map.put( "block", scaleFunctions::block );
+        map.put( "full", scaleFunctions::full );
+        scaleCommandRegistry = map;
     }
 
     @Override
-    public ImageScaleFunction build( final ScaleParams scaleParams, final FocalPoint focalPoint )
+    public ImageFunction build( final ScaleParams scaleParams, final FocalPoint focalPoint )
     {
-        ScaleCommand scaleCommand = this.scaleCommandRegistry.getCommand( scaleParams.getName() );
-        if ( scaleCommand != null )
+        final ScaleCommand scaleCommand = scaleCommandRegistry.get( scaleParams.getName() );
+
+        if ( scaleCommand == null )
         {
-            return scaleCommand.build( scaleParams.getArguments(), focalPoint );
+            throw new IllegalArgumentException( "Unknown scale " + scaleParams.getName() );
         }
-        else
-        {
-            return null;
-        }
+        return scaleCommand.build( focalPoint, scaleParams.getArguments() );
     }
 }
