@@ -3,7 +3,7 @@ dependencies {
     compile project( ':core:core-app' )
     implementation project( ':core:core-internal' )
     compile project( ':script:script-impl' )
-    compile 'junit:junit:4.13.1'
+    compile 'junit:junit:4.13.2'
     implementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     compile "org.mockito:mockito-core:${mockitoVersion}"
     compile 'org.hamcrest:hamcrest-library:1.3'
