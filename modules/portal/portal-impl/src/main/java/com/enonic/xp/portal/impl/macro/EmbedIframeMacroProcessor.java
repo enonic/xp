@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.impl.macro;
 
-import java.util.regex.Pattern;
-
 import org.osgi.service.component.annotations.Component;
+
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.core.internal.HtmlHelper;
 import com.enonic.xp.portal.PortalResponse;
@@ -13,8 +13,6 @@ import com.enonic.xp.portal.macro.MacroContext;
 public class EmbedIframeMacroProcessor
     implements BuiltInMacroProcessor
 {
-    private static final Pattern IFRAME_PATTERN = Pattern.compile( "^<iframe.*</iframe>$" );
-
     @Override
     public String getName()
     {
@@ -24,37 +22,26 @@ public class EmbedIframeMacroProcessor
     @Override
     public PortalResponse process( final MacroContext macroContext )
     {
-        final String body = HtmlHelper.unescape( macroContext.getBody() );
-        if ( isIframeHtml( body ) )
+        final String macroBody = macroContext.getBody();
+        final String body;
+        if ( isIframeHtml( macroBody ) )
         {
-            return generateResponse( body );
+            body = HtmlHelper.unescape( macroBody );
         }
-        return generateNonIframeResponse( macroContext );
-
-    }
-
-    private PortalResponse generateNonIframeResponse( final MacroContext macroContext )
-    {
-        if ( RenderMode.LIVE.equals( getRenderingMode( macroContext ) ) )
+        else
         {
-            return generateResponse( "" );
+            body = RenderMode.LIVE.equals( macroContext.getRequest().getMode() ) ? "" : "Expected an &lt;iframe&gt; element in Embed macro";
         }
-
-        return generateResponse( "Expected an &lt;iframe&gt; element in Embed macro" );
+        return PortalResponse.create().contentType( MediaType.HTML_UTF_8 ).body( body ).build();
     }
 
-    private PortalResponse generateResponse( final String body )
+    private static boolean isIframeHtml( final String body )
     {
-        return PortalResponse.create().body( body ).build();
-    }
-
-    private boolean isIframeHtml( final String body )
-    {
-        return IFRAME_PATTERN.matcher( body ).matches();
-    }
-
-    private RenderMode getRenderingMode( final MacroContext macroContext )
-    {
-        return macroContext.getRequest() == null ? RenderMode.LIVE : macroContext.getRequest().getMode();
+        if ( body == null )
+        {
+            return false;
+        }
+        // embed tag should be always escaped
+        return body.startsWith( "&lt;iframe" ) && body.endsWith( "&lt;/iframe&gt;" );
     }
 }

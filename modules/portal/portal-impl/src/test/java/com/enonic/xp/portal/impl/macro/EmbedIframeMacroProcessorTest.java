@@ -10,13 +10,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EmbedIframeMacroProcessorTest
 {
-    private EmbedIframeMacroProcessor macroProcessor = new EmbedIframeMacroProcessor();
+    private final EmbedIframeMacroProcessor macroProcessor = new EmbedIframeMacroProcessor();
 
     @Test
     public void testProcessWithMissingBody()
     {
         assertEquals( "Expected an &lt;iframe&gt; element in Embed macro",
                       macroProcessor.process( makeContext( "", RenderMode.EDIT ) ).getBody() );
+        assertEquals( "Expected an &lt;iframe&gt; element in Embed macro",
+                      macroProcessor.process( makeContext( null, RenderMode.EDIT ) ).getBody() );
     }
 
     @Test
@@ -30,7 +32,7 @@ public class EmbedIframeMacroProcessorTest
     public void testProcessSelfClosingIframeTagNotAllowed()
     {
         assertEquals( "Expected an &lt;iframe&gt; element in Embed macro",
-                      macroProcessor.process( makeContext( "<iframe src=\"www.test.url\"/>", RenderMode.EDIT ) ).getBody() );
+                      macroProcessor.process( makeContext( "&lt;iframe src=\"www.test.url\"/&gt;", RenderMode.EDIT ) ).getBody() );
     }
 
     @Test
@@ -47,17 +49,25 @@ public class EmbedIframeMacroProcessorTest
     }
 
     @Test
+    public void testProcessUnscapedIframe()
+    {
+        assertEquals( "", macroProcessor.process( makeContext( "<iframe src=\"www.test.url\"></iframe>", RenderMode.LIVE ) ).getBody() );
+        assertEquals( "Expected an &lt;iframe&gt; element in Embed macro",
+                      macroProcessor.process( makeContext( "<iframe src=\"www.test.url\"></iframe>", RenderMode.EDIT ) ).getBody() );
+    }
+
+    @Test
     public void testProcessIframe1()
     {
-        assertEquals( "<iframe src=\"www.test.url\"></iframe>",
-                      macroProcessor.process( makeContext( "<iframe src=\"www.test.url\"></iframe>", RenderMode.EDIT ) ).getBody() );
+        assertEquals( "<iframe src=\"www.test.url\"></iframe>", macroProcessor.process(
+            makeContext( "&lt;iframe src=\"www.test.url\"&gt;&lt;/iframe&gt;", RenderMode.EDIT ) ).getBody() );
     }
 
     @Test
     public void testProcessIframe2()
     {
         assertEquals( "<iframe width='400px' height='400px' src=\"www.test.url\"></iframe>", macroProcessor.process(
-            makeContext( "<iframe width='400px' height='400px' src=\"www.test.url\"></iframe>", RenderMode.EDIT ) ).getBody() );
+            makeContext( "&lt;iframe width='400px' height='400px' src=\"www.test.url\"&gt;&lt;/iframe&gt;", RenderMode.EDIT ) ).getBody() );
     }
 
     private MacroContext makeContext( final String body, final RenderMode renderMode )
