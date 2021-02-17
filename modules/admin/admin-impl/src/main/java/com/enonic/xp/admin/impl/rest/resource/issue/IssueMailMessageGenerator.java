@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 
+import com.google.common.html.HtmlEscapers;
+
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.Interpolator;
 import com.enonic.xp.issue.IssueComment;
@@ -116,7 +118,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
 
     private String generateMessageBody()
     {
-        final Map<String, String> messageParams = new HashMap<>();
+        final EscapedVariables messageParams = new EscapedVariables();
         final boolean showComments = this.shouldShowComments();
         final String description = params.getIssue().getDescription();
         final boolean isRequest = this.isPublishRequest();
@@ -129,19 +131,19 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
 
         messageParams.put( "id", idString );
         messageParams.put( "index", String.valueOf( params.getIssue().getIndex() ) );
-        messageParams.put( "display-issue-icon", isRequest ? "none" : "block" );
-        messageParams.put( "display-request-icon", isRequest ? "inline-block" : "none" );
-        messageParams.put( "icon-color", isOpen ? "#609E24" : "#777" );
-        messageParams.put( "idShort", idString.substring( 0, 9 ) );
+        messageParams.putUnescaped( "display-issue-icon", isRequest ? "none" : "block" );
+        messageParams.putUnescaped( "display-request-icon", isRequest ? "inline-block" : "none" );
+        messageParams.putUnescaped( "icon-color", isOpen ? "#609E24" : "#777" );
+        messageParams.putUnescaped( "idShort", idString.substring( 0, 9 ) );
         messageParams.put( "title", generateMessageTitle() );
         messageParams.put( "status", params.getIssue().getStatus().toString() );
-        messageParams.put( "statusBgColor", isOpen ? "#2c76e9" : "#777" );
+        messageParams.putUnescaped( "statusBgColor", isOpen ? "#2c76e9" : "#777" );
         messageParams.put( "creator", params.getIssue().getCreator().getId() );
         messageParams.put( "description", description );
         messageParams.put( "url", generateIssueLink( idString ) );
-        messageParams.put( "description-block-visibility", description.length() == 0 ? "none" : "block" );
-        messageParams.put( "comments-block-visibility", showComments ? "block" : "none" );
-        messageParams.put( "comments", generateCommentsHtml() );
+        messageParams.putUnescaped( "description-block-visibility", description.length() == 0 ? "none" : "block" );
+        messageParams.putUnescaped( "comments-block-visibility", showComments ? "block" : "none" );
+        messageParams.putUnescaped( "comments", generateCommentsHtml() );
         messageParams.put( "showDetailsCaption", showDetailsCaption );
         messageParams.put( "latestCommentTitle", latestCommentTitle );
 
@@ -185,7 +187,7 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
 
     private String generateCommentHtml( final IssueComment item, final String template, final DateTimeFormatter fmt )
     {
-        final Map<String, String> itemParams = new HashMap<>();
+        final EscapedVariables itemParams = new EscapedVariables();
         itemParams.put( "displayName", item.getCreatorDisplayName() );
         itemParams.put( "shortName", makeShortName( item.getCreatorDisplayName() ) );
         itemParams.put( "icon", item.getCreator().toString() );
@@ -214,5 +216,25 @@ public abstract class IssueMailMessageGenerator<P extends IssueNotificationParam
         }
 
         return Arrays.stream( nameParts ).map( namePart -> namePart.substring( 0, 1 ).toUpperCase() ).collect( Collectors.joining() );
+    }
+
+    private static class EscapedVariables
+    {
+        final Map<String, String> map = new HashMap<>();
+
+        void put( String key, String value )
+        {
+            map.put( key, HtmlEscapers.htmlEscaper().escape( Objects.requireNonNullElse( value, "" ) ) );
+        }
+
+        void putUnescaped( final String key, final String value )
+        {
+            map.put( key, Objects.requireNonNullElse( value, "" ) );
+        }
+
+        String get( final String key )
+        {
+            return map.get( key );
+        }
     }
 }
