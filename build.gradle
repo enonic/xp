@@ -15,10 +15,6 @@ ext {
 allprojects {
     group = 'com.enonic.xp'
 
-    repositories {
-        jcenter()
-    }
-
     apply plugin: 'com.enonic.defaults'
     apply from: "$rootDir/gradle/versions.gradle"
 }
