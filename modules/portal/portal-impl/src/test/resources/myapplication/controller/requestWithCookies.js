@@ -12,7 +12,8 @@ exports.get = function (req) {
                 comment: 'Some cookie comments',
                 maxAge: 2000,
                 secure: false,
-                httpOnly: false
+                httpOnly: false,
+                sameSite: 'Strict'
             },
             'complex2': {
                 value: 'value2',

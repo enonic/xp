@@ -200,8 +200,8 @@ public final class PortalResponseSerializer
 
         if ( value.isObject() )
         {
-            Cookie cookie = new Cookie( key, "" );
-
+            final Cookie cookie = new Cookie( key, "" );
+            final StringBuilder comment = new StringBuilder();
             for ( final String subKey : value.getKeys() )
             {
                 if ( "value".equals( subKey ) )
@@ -218,7 +218,11 @@ public final class PortalResponseSerializer
                 }
                 else if ( "comment".equals( subKey ) )
                 {
-                    cookie.setComment( value.getMember( subKey ).getValue( String.class ) );
+                    final String commentValue = value.getMember( subKey ).getValue( String.class );
+                    if ( commentValue != null )
+                    {
+                        comment.append( commentValue );
+                    }
                 }
                 else if ( "maxAge".equals( subKey ) )
                 {
@@ -232,7 +236,12 @@ public final class PortalResponseSerializer
                 {
                     cookie.setHttpOnly( value.getMember( subKey ).getValue( Boolean.class ) );
                 }
+                else if ( "sameSite".equals( subKey ) )
+                {
+                    comment.append( SameSiteCommentHelper.convert( value.getMember( subKey ).getValue( String.class ) ) );
+                }
             }
+            cookie.setComment( comment.toString() );
             builder.cookie( cookie );
         }
         else

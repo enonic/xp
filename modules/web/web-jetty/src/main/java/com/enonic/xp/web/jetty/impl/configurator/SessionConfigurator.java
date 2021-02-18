@@ -1,11 +1,15 @@
 package com.enonic.xp.web.jetty.impl.configurator;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import javax.servlet.SessionCookieConfig;
 import javax.servlet.SessionTrackingMode;
 
+import org.eclipse.jetty.http.HttpCookie;
 import org.eclipse.jetty.server.session.SessionHandler;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public final class SessionConfigurator
     extends JettyConfigurator<SessionHandler>
@@ -13,29 +17,27 @@ public final class SessionConfigurator
     @Override
     protected void doConfigure()
     {
-        this.object.setMaxInactiveInterval( getTimeout() );
         this.object.setSessionTrackingModes( Collections.singleton( SessionTrackingMode.COOKIE ) );
         this.object.setCheckingRemoteSessionIdEncoding( true );
-        doConfigure( this.object.getSessionCookieConfig() );
+        this.object.setHttpOnly( true );
+
+        this.object.setSessionCookie( this.config.session_cookieName() );
+        this.object.setMaxInactiveInterval( this.config.session_timeout() * 60 );
+        this.object.setSameSite( parseSameSite( this.config.session_cookieSameSite() ) );
+
+        final SessionCookieConfig cookie = this.object.getSessionCookieConfig();
+        cookie.setSecure( this.config.session_cookieAlwaysSecure() );
     }
 
-    private void doConfigure( final SessionCookieConfig cookie )
+    private static HttpCookie.SameSite parseSameSite( final String value )
     {
-        cookie.setName( getCookieName() );
-        cookie.setDomain( null );
-        cookie.setSecure( false );
-        cookie.setHttpOnly( true );
-        cookie.setPath( null );
-        cookie.setMaxAge( -1 );
-    }
-
-    private int getTimeout()
-    {
-        return this.config.session_timeout() * 60;
-    }
-
-    private String getCookieName()
-    {
-        return this.config.session_cookieName();
+        if ( nullToEmpty( value ).isBlank() )
+        {
+            return null;
+        }
+        return Arrays.stream( HttpCookie.SameSite.values() ).
+            filter( v -> v.getAttributeValue().equals( value ) ).
+            findAny().
+            orElseThrow();
     }
 }
