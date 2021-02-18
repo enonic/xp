@@ -62,6 +62,16 @@ public @interface JettyConfig
     String session_cookieName() default "JSESSIONID";
 
     /**
+     * Session cookie SameSite policy. Lax, Strict, None. Empty means "use browser default".
+     */
+    String session_cookieSameSite() default "Lax";
+
+    /**
+     * If set to true, session cookie marked as Secure on both HTTP and HTTPS.
+     */
+    boolean session_cookieAlwaysSecure() default false;
+
+    /**
      * Multipart store location. Defaults to java temporary directory.
      */
     String multipart_store();
