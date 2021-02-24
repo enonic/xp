@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.export.xml;
 
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.net.URL;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
@@ -13,6 +13,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 
 import com.enonic.xp.export.ImportNodeException;
@@ -39,12 +40,11 @@ public final class XsltTransformer
         }
     }
 
-    public static XsltTransformer create( final URL script, final Map<String, Object> params )
+    public static XsltTransformer create( final ByteSource script, final Map<String, Object> params )
     {
         final TransformerFactory tf = TransformerFactory.newInstance();
         tf.setAttribute( XMLConstants.ACCESS_EXTERNAL_DTD, "" );
         tf.setAttribute( XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "" );
-
         try
         {
             tf.setFeature( XMLConstants.FEATURE_SECURE_PROCESSING, true );
@@ -53,9 +53,10 @@ public final class XsltTransformer
         {
             throw new IllegalStateException( e );
         }
-        try
+
+        try (InputStream inputStream = script.openStream())
         {
-            final Transformer transformer = tf.newTransformer( new StreamSource( script.openStream() ) );
+            final Transformer transformer = tf.newTransformer( new StreamSource( inputStream ) );
             transformer.setOutputProperty( OutputKeys.OMIT_XML_DECLARATION, "yes" );
 
             if ( params != null )
