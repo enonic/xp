@@ -73,7 +73,7 @@ public final class NodeImporter
         this.dryRun = builder.dryRun;
         this.importNodeIds = builder.importNodeIds;
         this.importPermissions = builder.importPermissions;
-        this.transformer = builder.xslt != null ? XsltTransformer.create( builder.xslt.getUrl(), builder.xsltParams ) : null;
+        this.transformer = builder.xslt != null ? XsltTransformer.create( builder.xslt.getByteSource(), builder.xsltParams ) : null;
         this.nodeImportListener = builder.nodeImportListener;
     }
 
@@ -202,7 +202,18 @@ public final class NodeImporter
     {
         final VirtualFile nodeSource = this.exportReader.getNodeSource( nodeFolder );
 
-        final CharSource nodeCharSource = preProcessSource( nodeSource.getPath(), nodeSource.getCharSource() );
+        final CharSource nodeCharSource;
+        try
+        {
+            nodeCharSource = transformer == null
+                ? nodeSource.getCharSource()
+                : CharSource.wrap( this.transformer.transform( nodeSource.getCharSource() ) );
+        }
+        catch ( Exception e )
+        {
+            throw new ImportNodeException( "Error during XSLT pre-processing for node in '" + nodeSource.getUrl() + "'", e );
+        }
+
         final Node.Builder newNodeBuilder = Node.create();
         try
         {
@@ -321,28 +332,6 @@ public final class NodeImporter
         if ( importRoot == null )
         {
             throw new ImportNodeException( "Import root '" + this.importRoot + "' not found" );
-        }
-    }
-
-    private CharSource preProcessSource( final VirtualFilePath path, final CharSource charSource )
-    {
-        if ( this.transformer == null )
-        {
-            return charSource;
-        }
-        final String transformed = this.transform( path, charSource );
-        return CharSource.wrap( transformed );
-    }
-
-    private String transform( final VirtualFilePath path, final CharSource source )
-    {
-        try
-        {
-            return this.transformer.transform( source );
-        }
-        catch ( Exception e )
-        {
-            throw new ImportNodeException( "Error during XSLT pre-processing for node in '" + path.getPath() + "'", e );
         }
     }
 

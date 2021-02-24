@@ -15,10 +15,10 @@ import org.xml.sax.InputSource;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.CharSource;
+import com.google.common.io.Files;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.DomHelper;
 import com.enonic.xp.xml.XmlException;
@@ -45,6 +45,7 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
         return typecastThis();
     }
 
+    @Deprecated
     public final P source( final URL url )
     {
         systemId( url.toString() );
@@ -63,15 +64,17 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
         return typecastThis();
     }
 
+    @Deprecated
     public final P source( final File file )
     {
         try
         {
-            return source( file.toURI().toURL() );
+            systemId( file.toURI().toURL().toString() );
+            return source( Files.asCharSource( file, StandardCharsets.UTF_8 ) );
         }
         catch ( final MalformedURLException e )
         {
-            throw Exceptions.unchecked( e );
+            throw new IllegalArgumentException( e );
         }
     }
 
