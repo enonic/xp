@@ -1,8 +1,6 @@
 package com.enonic.xp.scheduler;
 
 
-import java.util.TimeZone;
-
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -13,9 +11,11 @@ import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class ScheduledJobTest
 {
@@ -25,22 +25,29 @@ public class ScheduledJobTest
         assertThrows( NullPointerException.class, () -> ScheduledJob.create().build() );
 
         final SchedulerName name = SchedulerName.from( "name" );
-        assertEquals( name, ScheduledJob.create().name( name ).build().getName() );
+        assertEquals( name, ScheduledJob.create().
+            name( name ).
+            descriptor( DescriptorKey.from( "app:key" ) ).
+            calendar( mock( ScheduleCalendar.class ) ).
+            build().
+            getName() );
     }
 
     @Test
     public void testEmptyBuilder()
     {
         final ScheduledJob job = ScheduledJob.create().
-            name( SchedulerName.from( "name" ) ).build();
+            name( SchedulerName.from( "name" ) ).
+            descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
+            calendar( mock( ScheduleCalendar.class ) ).
+            build();
 
         assertNull( job.getAuthor() );
-        assertNull( job.getPayload() );
         assertNull( job.getUser() );
-        assertNull( job.getDescriptor() );
         assertNull( job.getDescription() );
-        assertNull( job.getTimeZone() );
-        assertNull( job.getFrequency() );
+        assertNotNull( job.getPayload() );
+        assertNotNull( job.getDescriptor() );
+        assertNotNull( job.getCalendar() );
         assertFalse( job.isEnabled() );
     }
 
@@ -57,10 +64,6 @@ public class ScheduledJobTest
 
         final String description = "description";
 
-        final TimeZone timeZone = TimeZone.getDefault();
-
-        final Frequency frequency = Frequency.create().value( "value" ).build();
-
         final ScheduledJob job = ScheduledJob.create().
             name( SchedulerName.from( "name" ) ).
             author( author ).
@@ -68,8 +71,7 @@ public class ScheduledJobTest
             user( user ).
             descriptor( descriptor ).
             description( description ).
-            timeZone( timeZone ).
-            frequency( frequency ).
+            calendar( mock( ScheduleCalendar.class ) ).
             enabled( true ).
             build();
 
@@ -78,12 +80,7 @@ public class ScheduledJobTest
         assertEquals( user, job.getUser() );
         assertEquals( descriptor, job.getDescriptor() );
         assertEquals( description, job.getDescription() );
-        assertEquals( timeZone, job.getTimeZone() );
-        assertEquals( frequency, job.getFrequency() );
         assertTrue( job.isEnabled() );
-
-
     }
-
 }
 
