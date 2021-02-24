@@ -1,7 +1,5 @@
 package com.enonic.xp.scheduler;
 
-import java.util.TimeZone;
-
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -12,34 +10,46 @@ import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class CreateScheduledJobParamsTest
 {
+
     @Test
     public void testName()
     {
         assertThrows( NullPointerException.class, () -> CreateScheduledJobParams.create().build() );
 
         final SchedulerName name = SchedulerName.from( "schedulerName" );
-        assertEquals( name, CreateScheduledJobParams.create().name( name ).build().getName() );
+        assertEquals( name, CreateScheduledJobParams.create().
+            name( name ).
+            descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
+            calendar( mock( ScheduleCalendar.class ) ).
+            payload( new PropertyTree() ).
+            build().
+            getName() );
     }
 
     @Test
     public void testEmptyBuilder()
     {
         final CreateScheduledJobParams params = CreateScheduledJobParams.create().
-            name( SchedulerName.from( "name" ) ).build();
+            name( SchedulerName.from( "name" ) ).
+            descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
+            calendar( mock( ScheduleCalendar.class ) ).
+            payload( new PropertyTree() ).
+            build();
 
         assertNull( params.getAuthor() );
-        assertNull( params.getPayload() );
         assertNull( params.getUser() );
-        assertNull( params.getDescriptor() );
         assertNull( params.getDescription() );
-        assertNull( params.getTimeZone() );
-        assertNull( params.getFrequency() );
+        assertNotNull( params.getPayload() );
+        assertNotNull( params.getDescriptor() );
+        assertNotNull( params.getCalendar() );
         assertFalse( params.isEnabled() );
     }
 
@@ -56,9 +66,7 @@ public class CreateScheduledJobParamsTest
 
         final String description = "description";
 
-        final TimeZone timeZone = TimeZone.getDefault();
-
-        final Frequency frequency = Frequency.create().value( "value" ).build();
+        final ScheduleCalendar calendar = mock( ScheduleCalendar.class );
 
         final CreateScheduledJobParams params = CreateScheduledJobParams.create().
             name( SchedulerName.from( "name" ) ).
@@ -67,8 +75,7 @@ public class CreateScheduledJobParamsTest
             user( user ).
             descriptor( descriptor ).
             description( description ).
-            timeZone( timeZone ).
-            frequency( frequency ).
+            calendar( calendar ).
             enabled( true ).
             build();
 
@@ -77,8 +84,7 @@ public class CreateScheduledJobParamsTest
         assertEquals( user, params.getUser() );
         assertEquals( descriptor, params.getDescriptor() );
         assertEquals( description, params.getDescription() );
-        assertEquals( timeZone, params.getTimeZone() );
-        assertEquals( frequency, params.getFrequency() );
+        assertEquals( calendar, params.getCalendar() );
         assertTrue( params.isEnabled() );
     }
 }

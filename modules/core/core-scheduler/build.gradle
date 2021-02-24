@@ -1,8 +1,37 @@
+configurations {
+    includeLib { transitive = false }
+}
+
 dependencies {
     implementation project( ':core:core-api' )
     implementation project( ':core:core-internal' )
+    implementation "com.hazelcast:hazelcast:${hazelcastVersion}"
+
+    implementation "com.cronutils:cron-utils:${cronUtilsVersion}"
+    includeLib "com.cronutils:cron-utils:${cronUtilsVersion}"
+
+    testImplementation( testFixtures( project(":core:core-internal") ) )
 }
 
+task copyPropertyFiles( type: Copy ) {
+    def libFile = file( configurations.includeLib.singleFile )
+    def libFiles = zipTree( libFile )
+
+    def propertySpec = copySpec {
+        from libFiles
+        include "CronUtilsI18N*.properties"
+
+    }
+
+    into "${buildDir}/resources/main/properties" with propertySpec
+
+}
+
+processResources.dependsOn copyPropertyFiles
+
+
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Core - Scheduler' )
+    bnd( 'Bundle-Name': 'Enonic XP Core - Scheduler',
+         'Export-Package': 'com.enonic.xp.impl.scheduler.distributed',
+         'Private-Package': 'com.cronutils.*, org.apache.commons.*')
 }
