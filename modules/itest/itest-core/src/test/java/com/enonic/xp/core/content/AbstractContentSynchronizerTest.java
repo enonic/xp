@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.mockito.AdditionalAnswers;
-import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 
 import com.google.common.io.ByteSource;
@@ -32,6 +31,7 @@ import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.core.impl.site.SiteServiceImpl;
 import com.enonic.xp.core.internal.concurrent.RecurringJob;
+import com.enonic.xp.core.internal.osgi.OsgiSupportMock;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
@@ -39,7 +39,6 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.impl.task.LocalTaskManagerImpl;
 import com.enonic.xp.impl.task.TaskManagerCleanupScheduler;
 import com.enonic.xp.impl.task.TaskServiceImpl;
-import com.enonic.xp.impl.task.osgi.OsgiSupportMock;
 import com.enonic.xp.impl.task.script.NamedTaskFactory;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.CreateProjectParams;
@@ -62,7 +61,9 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public abstract class AbstractContentSynchronizerTest
     extends AbstractNodeTest
@@ -163,32 +164,32 @@ public abstract class AbstractContentSynchronizerTest
             metadata( metadata ).
             build();
 
-        final BinaryExtractor extractor = Mockito.mock( BinaryExtractor.class );
-        Mockito.when( extractor.extract( Mockito.isA( ByteSource.class ) ) ).
+        final BinaryExtractor extractor = mock( BinaryExtractor.class );
+        when( extractor.extract( isA( ByteSource.class ) ) ).
             thenReturn( extractedData );
 
         mediaInfoService = new MediaInfoServiceImpl();
         mediaInfoService.setBinaryExtractor( extractor );
 
-        XDataService xDataService = Mockito.mock( XDataService.class );
+        XDataService xDataService = mock( XDataService.class );
 
-        MixinService mixinService = Mockito.mock( MixinService.class );
-        Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+        MixinService mixinService = mock( MixinService.class );
+        when( mixinService.inlineFormItems( isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
-        pageDescriptorService = Mockito.mock( PageDescriptorService.class );
-        partDescriptorService = Mockito.mock( PartDescriptorService.class );
-        layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
+        pageDescriptorService = mock( PageDescriptorService.class );
+        partDescriptorService = mock( PartDescriptorService.class );
+        layoutDescriptorService = mock( LayoutDescriptorService.class );
 
         contentTypeService = new ContentTypeServiceImpl();
         contentTypeService.setMixinService( mixinService );
 
-        final ResourceService resourceService = Mockito.mock( ResourceService.class );
+        final ResourceService resourceService = mock( ResourceService.class );
         final SiteServiceImpl siteService = new SiteServiceImpl();
         siteService.setResourceService( resourceService );
         siteService.setMixinService( mixinService );
 
-        AuditLogService auditLogService = Mockito.mock( AuditLogService.class );
-        final ContentConfig contentConfig = Mockito.mock( ContentConfig.class );
+        final AuditLogService auditLogService = mock( AuditLogService.class );
+        final ContentConfig contentConfig = mock( ContentConfig.class );
 
         final ContentAuditLogSupportImpl contentAuditLogSupport =
             new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutorImpl(), auditLogService );
@@ -208,7 +209,7 @@ public abstract class AbstractContentSynchronizerTest
     private void setupTaskService()
     {
         final Bundle bundle = OsgiSupportMock.mockBundle();
-        Mockito.when( bundle.getSymbolicName() ).thenReturn( "testBundle" );
+        when( bundle.getSymbolicName() ).thenReturn( "testBundle" );
 
         final LocalTaskManagerImpl taskMan = new LocalTaskManagerImpl( Runnable::run, new TaskManagerCleanupSchedulerMock(), event -> {
         } );

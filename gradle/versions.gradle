@@ -16,4 +16,5 @@ ext {
     resteasyVersion = '3.14.0.Final'
     hazelcastVersion = '3.12.7'
     mockitoVersion = '3.7.7'
+    cronUtilsVersion = '9.1.3'
 }
