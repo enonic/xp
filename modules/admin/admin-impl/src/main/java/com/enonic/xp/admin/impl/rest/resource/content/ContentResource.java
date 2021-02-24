@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -37,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
-import com.google.common.io.Resources;
 
 import com.enonic.xp.admin.impl.json.content.AbstractContentListJson;
 import com.enonic.xp.admin.impl.json.content.CompareContentResultsJson;
@@ -208,6 +208,8 @@ import static java.util.Optional.ofNullable;
 public final class ContentResource
     implements JaxRsComponent
 {
+    private static final Set<String> ALLOWED_PROTOCOLS = Set.of( "http", "https" );
+
     public static final String DEFAULT_SORT_FIELD = "modifiedTime";
 
     public static final int GET_ALL_SIZE_FLAG = -1;
@@ -302,8 +304,21 @@ public final class ContentResource
     public ContentJson createMediaFromUrl( final CreateMediaFromUrlJson params )
         throws Exception
     {
-        final Content persistedContent;
+        final URL url = new URL( params.getUrl() );
+        if ( !ALLOWED_PROTOCOLS.contains( url.getProtocol() ) )
+        {
+            throw new IllegalArgumentException( "Illegal protocol" );
+        }
+
         final CreateMediaParams createMediaParams = new CreateMediaParams();
+
+        createMediaParams.name( params.getName() );
+
+        try (InputStream inputStream = url.openStream())
+        {
+            createMediaParams.byteSource( ByteSource.wrap( inputStream.readAllBytes() ) );
+        }
+
         final String parent = params.getParent();
         if ( parent.startsWith( "/" ) )
         {
@@ -315,13 +330,7 @@ public final class ContentResource
             createMediaParams.parent( parentContent.getPath() );
         }
 
-        createMediaParams.name( params.getName() );
-
-        URL url = new URL( params.getUrl() );
-        ByteSource byteSource = Resources.asByteSource( url );
-        createMediaParams.byteSource( byteSource );
-
-        persistedContent = contentService.create( createMediaParams );
+        final Content persistedContent = contentService.create( createMediaParams );
 
         return new ContentJson( persistedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
     }
