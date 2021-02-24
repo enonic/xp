@@ -1,7 +1,5 @@
 package com.enonic.xp.scheduler;
 
-import java.util.TimeZone;
-
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -12,9 +10,11 @@ import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class EditableScheduledJobTest
 {
@@ -28,18 +28,22 @@ public class EditableScheduledJobTest
     public void testEmpty()
     {
         final SchedulerName name = SchedulerName.from( "schedulerName" );
-        final ScheduledJob source = ScheduledJob.create().name( name ).build();
+        final ScheduledJob source = ScheduledJob.create().
+            name( name ).
+            calendar( mock( ScheduleCalendar.class ) ).
+            descriptor( DescriptorKey.from( "app:key" ) ).
+            build();
 
         final ScheduledJob target = new EditableScheduledJob( source ).build();
 
         assertEquals( name, target.getName() );
         assertNull( target.getAuthor() );
-        assertNull( target.getPayload() );
+        assertEquals( 0, target.getPayload().getTotalSize() );
         assertNull( target.getUser() );
-        assertNull( target.getDescriptor() );
         assertNull( target.getDescription() );
-        assertNull( target.getTimeZone() );
-        assertNull( target.getFrequency() );
+        assertNotNull( target.getDescriptor() );
+        assertNotNull( target.getCalendar() );
+        assertNotNull( target.getPayload() );
         assertFalse( source.isEnabled() );
     }
 
@@ -56,10 +60,6 @@ public class EditableScheduledJobTest
 
         final String description = "description";
 
-        final TimeZone timeZone = TimeZone.getDefault();
-
-        final Frequency frequency = Frequency.create().value( "value" ).build();
-
         final ScheduledJob source = ScheduledJob.create().
             name( SchedulerName.from( "name" ) ).
             author( author ).
@@ -67,8 +67,7 @@ public class EditableScheduledJobTest
             user( user ).
             descriptor( descriptor ).
             description( description ).
-            timeZone( timeZone ).
-            frequency( frequency ).
+            calendar( mock( ScheduleCalendar.class ) ).
             enabled( true ).
             build();
 
@@ -80,8 +79,6 @@ public class EditableScheduledJobTest
         assertEquals( source.getUser(), target.getUser() );
         assertEquals( source.getDescriptor(), target.getDescriptor() );
         assertEquals( source.getDescription(), target.getDescription() );
-        assertEquals( source.getTimeZone(), target.getTimeZone() );
-        assertEquals( source.getFrequency(), target.getFrequency() );
         assertEquals( source.isEnabled(), target.isEnabled() );
     }
 
@@ -90,6 +87,8 @@ public class EditableScheduledJobTest
     {
         final ScheduledJob source = ScheduledJob.create().
             name( SchedulerName.from( "name" ) ).
+            descriptor( DescriptorKey.from( "app:key" ) ).
+            calendar( mock( ScheduleCalendar.class ) ).
             build();
 
         final PrincipalKey author = PrincipalKey.ofUser( IdProviderKey.createDefault(), "author" );
@@ -102,18 +101,14 @@ public class EditableScheduledJobTest
 
         final String description = "description";
 
-        final TimeZone timeZone = TimeZone.getDefault();
-
-        final Frequency frequency = Frequency.create().value( "value" ).build();
-
         final EditableScheduledJob editable = new EditableScheduledJob( source );
         editable.author = author;
         editable.payload = payload;
         editable.user = user;
         editable.descriptor = descriptor;
         editable.description = description;
-        editable.timeZone = timeZone;
-        editable.frequency = frequency;
+        editable.calendar = mock( ScheduleCalendar.class );
+
         editable.enabled = true;
 
         final ScheduledJob target = editable.build();
@@ -124,8 +119,6 @@ public class EditableScheduledJobTest
         assertEquals( user, target.getUser() );
         assertEquals( descriptor, target.getDescriptor() );
         assertEquals( description, target.getDescription() );
-        assertEquals( timeZone, target.getTimeZone() );
-        assertEquals( frequency, target.getFrequency() );
         assertTrue( target.isEnabled() );
     }
 }
