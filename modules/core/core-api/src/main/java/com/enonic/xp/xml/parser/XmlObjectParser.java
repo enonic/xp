@@ -7,7 +7,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 
@@ -21,6 +20,7 @@ import com.google.common.io.Resources;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.xml.DomElement;
+import com.enonic.xp.xml.DomHelper;
 import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.schema.SchemaValidator;
 
@@ -90,11 +90,7 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
     private P doParse()
         throws Exception
     {
-        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware( true );
-        factory.setValidating( false );
-
-        final DocumentBuilder builder = factory.newDocumentBuilder();
+        final DocumentBuilder builder = DomHelper.newDocumentBuilder();
 
         final InputSource source = new InputSource();
         source.setSystemId( this.systemId );
