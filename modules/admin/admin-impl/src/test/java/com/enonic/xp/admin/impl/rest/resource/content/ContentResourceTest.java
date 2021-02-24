@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Instant;
@@ -29,6 +30,7 @@ import org.mockito.Mockito;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 import com.google.common.net.HttpHeaders;
+import com.sun.net.httpserver.HttpServer;
 
 import com.enonic.xp.admin.impl.json.aggregation.BucketAggregationJson;
 import com.enonic.xp.admin.impl.json.content.ActiveContentVersionEntryJson;
@@ -2352,19 +2354,53 @@ public class ContentResourceTest
     public void testLoadImage()
         throws Exception
     {
+        HttpServer server = HttpServer.create( new InetSocketAddress( 0 ), 0 );
+        server.start();
+        try
+        {
+            URL imageUrl = new URL( "http://localhost:" + server.getAddress().getPort() );
+
+            server.createContext( "/", exchange -> {
+
+                exchange.sendResponseHeaders( 200, 0 );
+                getClass().getResourceAsStream( "coliseum.jpg" ).transferTo( exchange.getResponseBody() );
+                exchange.close();
+            } );
+
+            final Content content = createContent( "aaa", "my_a_content", "myapplication:my_type" );
+            final String json = "{\"url\": \"" + imageUrl.toString() + "\",\"parent\": \"/content\", \"name\": \"imageToUpload.jpg\"}";
+
+            Mockito.when( contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenReturn( content );
+
+            request().
+                path( "content/createMediaFromUrl" ).
+                entity( json, MediaType.APPLICATION_JSON_TYPE ).
+                post().
+                getAsString();
+
+            Mockito.verify( contentService ).create( Mockito.isA( CreateMediaParams.class ) );
+        }
+        finally
+        {
+            server.stop( 0 );
+        }
+    }
+
+    @Test
+    public void testLoadImageFromFile()
+        throws Exception
+    {
         final Content content = createContent( "aaa", "my_a_content", "myapplication:my_type" );
         final URL url = getClass().getResource( "coliseum.jpg" );
         final String json = "{\"url\": \"" + url.toString() + "\",\"parent\": \"/content\", \"name\": \"imageToUpload.jpg\"}";
 
         Mockito.when( contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenReturn( content );
 
-        request().
+        assertThrows( IllegalArgumentException.class, () -> request().
             path( "content/createMediaFromUrl" ).
             entity( json, MediaType.APPLICATION_JSON_TYPE ).
             post().
-            getAsString();
-
-        Mockito.verify( contentService ).create( Mockito.isA( CreateMediaParams.class ) );
+            getAsString() );
     }
 
     @Test
