@@ -5,8 +5,10 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -40,7 +42,17 @@ public final class XsltTransformer
     public static XsltTransformer create( final URL script, final Map<String, Object> params )
     {
         final TransformerFactory tf = TransformerFactory.newInstance();
+        tf.setAttribute( XMLConstants.ACCESS_EXTERNAL_DTD, "" );
+        tf.setAttribute( XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "" );
 
+        try
+        {
+            tf.setFeature( XMLConstants.FEATURE_SECURE_PROCESSING, true );
+        }
+        catch ( TransformerConfigurationException e )
+        {
+            throw new IllegalStateException( e );
+        }
         try
         {
             final Transformer transformer = tf.newTransformer( new StreamSource( script.openStream() ) );
@@ -58,5 +70,4 @@ public final class XsltTransformer
             throw new ImportNodeException( "Failed to create transformer from path '" + script + "'", e );
         }
     }
-
 }

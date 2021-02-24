@@ -9,10 +9,13 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -31,7 +34,19 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public final class DomHelper
 {
-    private static final DocumentBuilderFactory BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
+    private static final Logger LOG = LoggerFactory.getLogger( DomHelper.class );
+
+    private static final DocumentBuilderFactory BUILDER_FACTORY;
+
+    static
+    {
+        final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+        builderFactory.setNamespaceAware( true );
+        builderFactory.setExpandEntityReferences( false );
+        trySetFeature( builderFactory, XMLConstants.FEATURE_SECURE_PROCESSING, true );
+        trySetFeature( builderFactory, "http://apache.org/xml/features/disallow-doctype-decl", true );
+        BUILDER_FACTORY = builderFactory;
+    }
 
     public static DocumentBuilder newDocumentBuilder()
     {
@@ -187,5 +202,17 @@ public final class DomHelper
     {
         final Element child = getChildElementByTagName( elem, name );
         return ( child != null ? getTextValue( child ) : null );
+    }
+
+    private static void trySetFeature( DocumentBuilderFactory documentBuilderFactory, final String feature, final boolean value )
+    {
+        try
+        {
+            documentBuilderFactory.setFeature( feature, value );
+        }
+        catch ( ParserConfigurationException e )
+        {
+            LOG.warn( "Cannot change feature {}", feature, e );
+        }
     }
 }

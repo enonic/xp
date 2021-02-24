@@ -42,6 +42,8 @@ final class SchemaHandler
         }
 
         final Validator validator = loadSchema().newValidator();
+        validator.setProperty( XMLConstants.ACCESS_EXTERNAL_DTD, "" );
+        validator.setProperty( XMLConstants.ACCESS_EXTERNAL_SCHEMA, "" );
 
         final DOMResult result = new DOMResult();
         validator.validate( source, result );
