@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.enonic.xp.scheduler.ScheduleCalendarType;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,25 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(MockitoExtension.class)
 public class CronCalendarTest
 {
-    private static byte[] serialize( Serializable serializable )
-        throws IOException
-    {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); ObjectOutputStream oos = new ObjectOutputStream( baos ))
-        {
-            oos.writeObject( serializable );
-            return baos.toByteArray();
-        }
-    }
-
-    private static CronCalendar deserialize( byte[] bytes )
-        throws IOException, ClassNotFoundException
-    {
-        try (ByteArrayInputStream bais = new ByteArrayInputStream( bytes ); ObjectInputStream ois = new ObjectInputStream( bais ))
-        {
-            return (CronCalendar) ois.readObject();
-        }
-    }
-
     @Test
     public void createWrongValue()
     {
@@ -48,15 +31,14 @@ public class CronCalendarTest
             build() );
     }
 
-    @Test
-    public void create()
+    private static byte[] serialize( Serializable serializable )
+        throws IOException
     {
-        final CronCalendar calendar = CronCalendar.create().
-            value( "* * * * *" ).
-            timeZone( TimeZone.getDefault() ).
-            build();
-
-        assertTrue( calendar.nextExecution().get().toSeconds() <= 60 );
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); ObjectOutputStream oos = new ObjectOutputStream( baos ))
+        {
+            oos.writeObject( serializable );
+            return baos.toByteArray();
+        }
     }
 
     @Test
@@ -88,8 +70,29 @@ public class CronCalendarTest
                       CronCalendar.create().value( "0 0 1 */6 *" ).timeZone( TimeZone.getDefault() ).build().getDescription() );
     }
 
+    private static CronCalendar deserialize( byte[] bytes )
+        throws IOException, ClassNotFoundException
+    {
+        try (ByteArrayInputStream bais = new ByteArrayInputStream( bytes ); ObjectInputStream ois = new ObjectInputStream( bais ))
+        {
+            return (CronCalendar) ois.readObject();
+        }
+    }
+
     @Test
-    public void taskSerialized()
+    public void create()
+    {
+        final CronCalendar calendar = CronCalendar.create().
+            value( "* * * * *" ).
+            timeZone( TimeZone.getDefault() ).
+            build();
+
+        assertTrue( calendar.nextExecution().get().toSeconds() <= 60 );
+        assertEquals( ScheduleCalendarType.CRON, calendar.getType() );
+    }
+
+    @Test
+    public void calendarSerialized()
         throws Exception
     {
 
@@ -102,7 +105,7 @@ public class CronCalendarTest
 
         final CronCalendar deserializedCalendar = deserialize( serialized );
 
-        assertEquals( calendar.getStringValue(), deserializedCalendar.getStringValue() );
+        assertEquals( calendar.getCronValue(), deserializedCalendar.getCronValue() );
         assertEquals( calendar.getDescription(), deserializedCalendar.getDescription() );
         assertEquals( calendar.getTimeZone(), deserializedCalendar.getTimeZone() );
     }
