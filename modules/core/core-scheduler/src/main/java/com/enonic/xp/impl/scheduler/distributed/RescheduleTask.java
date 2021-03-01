@@ -19,6 +19,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.osgi.OsgiSupport;
+import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.SchedulerName;
 import com.enonic.xp.scheduler.SchedulerService;
@@ -90,6 +91,7 @@ public class RescheduleTask
         final List<ScheduledJob> jobsToSchedule = jobs.
             stream().
             filter( job -> !liveJobNames.contains( job.getName() ) ).
+            filter( job -> !ScheduleCalendarType.ONE_TIME.equals( job.getCalendar().getType() ) || job.getLastRun() == null ).
             filter( ScheduledJob::isEnabled ).
             collect( Collectors.toList() );
 
@@ -100,7 +102,7 @@ public class RescheduleTask
                 {
                     schedulerExecutorService.schedule( SchedulableTask.create().
                         job( job ).
-                        build(), duration.toMillis(), TimeUnit.MILLISECONDS );
+                        build(), duration.isNegative() ? 0 : duration.toMillis(), TimeUnit.MILLISECONDS );
                 }
                 catch ( DuplicateTaskException e )
                 {

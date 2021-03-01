@@ -1,5 +1,6 @@
 package com.enonic.xp.impl.scheduler.serializer;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.TimeZone;
 
@@ -7,18 +8,18 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.scheduler.ScheduledJobPropertyNames;
 import com.enonic.xp.impl.scheduler.distributed.CronCalendar;
+import com.enonic.xp.impl.scheduler.distributed.OneTimeCalendar;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.EditableScheduledJob;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
 import com.enonic.xp.scheduler.ScheduleCalendar;
+import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobEditor;
 import com.enonic.xp.scheduler.SchedulerName;
 import com.enonic.xp.security.PrincipalKey;
-
-import static com.google.common.base.Strings.nullToEmpty;
 
 public class SchedulerSerializer
 {
@@ -110,6 +111,9 @@ public class SchedulerSerializer
             user( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.USER ) ).
                 map( PrincipalKey::from ).
                 orElse( null ) ).
+            lastRun( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.LAST_RUN ) ).
+                map( Instant::parse ).
+                orElse( null ) ).
             build();
     }
 
@@ -125,59 +129,74 @@ public class SchedulerSerializer
 
     private static void addCalendar( final ScheduledJob modifiedJob, final PropertySet data )
     {
-        if ( modifiedJob.getCalendar() != null )
+        final PropertySet calendarSet = new PropertySet();
+
+        switch ( modifiedJob.getCalendar().getType() )
         {
-            final PropertySet calendarSet = new PropertySet();
-
-            if ( modifiedJob.getCalendar() instanceof CronCalendar )
-            {
+            case CRON:
                 final CronCalendar cronCalendar = ( (CronCalendar) modifiedJob.getCalendar() );
-
-                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, cronCalendar.getStringValue() );
+                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, cronCalendar.getCronValue() );
                 calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_TIMEZONE, cronCalendar.getTimeZone().getID() );
-            }
+                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.CRON.name() );
+                break;
 
-            data.addSet( ScheduledJobPropertyNames.CALENDAR, calendarSet );
+            case ONE_TIME:
+                final OneTimeCalendar oneTimeCalendar = ( (OneTimeCalendar) modifiedJob.getCalendar() );
+                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, oneTimeCalendar.getValue() );
+                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.ONE_TIME.name() );
+                break;
+
+            default:
+                throw new IllegalStateException( String.format( "invalid calendar type: '%s'", modifiedJob.getCalendar().getType() ) );
         }
+        data.addSet( ScheduledJobPropertyNames.CALENDAR, calendarSet );
     }
 
     private static void addCalendar( final CreateScheduledJobParams params, final PropertySet data )
     {
         final PropertySet calendarSet = new PropertySet();
-        if ( params.getCalendar() instanceof CronCalendar )
-        {
-            final CronCalendar cronCalendar = (CronCalendar) params.getCalendar();
 
-            calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, cronCalendar.getStringValue() );
-            calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_TIMEZONE, cronCalendar.getTimeZone().getID() );
+        switch ( params.getCalendar().getType() )
+        {
+            case CRON:
+                final CronCalendar cronCalendar = ( (CronCalendar) params.getCalendar() );
+                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, cronCalendar.getCronValue() );
+                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_TIMEZONE, cronCalendar.getTimeZone().getID() );
+                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.CRON.name() );
+                break;
+
+            case ONE_TIME:
+                final OneTimeCalendar oneTimeCalendar = ( (OneTimeCalendar) params.getCalendar() );
+                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, oneTimeCalendar.getValue() );
+                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.ONE_TIME.name() );
+                break;
+
+            default:
+                throw new IllegalStateException( String.format( "invalid calendar type: '%s'", params.getCalendar().getType() ) );
         }
+
         data.addSet( ScheduledJobPropertyNames.CALENDAR, calendarSet );
     }
 
     private static ScheduleCalendar createCalendar( final PropertySet data )
     {
+        final String value = data.getString( ScheduledJobPropertyNames.CALENDAR_VALUE );
+        final String timeZone = data.getString( ScheduledJobPropertyNames.CALENDAR_TIMEZONE );
+        final String type = data.getString( ScheduledJobPropertyNames.CALENDAR_TYPE );
 
-        if ( data != null )
+        final ScheduleCalendarType calendarType = ScheduleCalendarType.valueOf( type );
+
+        switch ( calendarType )
         {
-            final String value = data.getString( ScheduledJobPropertyNames.CALENDAR_VALUE );
-            final String timeZone = data.getString( ScheduledJobPropertyNames.CALENDAR_TIMEZONE );
-
-            if ( CronCalendar.isCronValue( value ) )
-            {
-
-                final CronCalendar.Builder calendar = CronCalendar.create().value( value );
-
-                if ( !nullToEmpty( timeZone ).isBlank() )
-                {
-                    calendar.timeZone( TimeZone.getTimeZone( timeZone ) );
-                }
-
-                return calendar.build();
-            }
-
-            return null; // TODO: return OneTimeCalendar
+            case CRON:
+                return CronCalendar.create().
+                    value( value ).
+                    timeZone( TimeZone.getTimeZone( timeZone ) ).
+                    build();
+            case ONE_TIME:
+                return OneTimeCalendar.create().value( Instant.parse( value ) ).build();
+            default:
+                throw new IllegalArgumentException( String.format( "can't parse [%s] calendar type.", type ) );
         }
-
-        return null;
     }
 }

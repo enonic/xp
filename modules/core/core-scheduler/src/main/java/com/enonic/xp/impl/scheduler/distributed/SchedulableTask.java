@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.scheduler.distributed;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,13 +9,21 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.hazelcast.scheduledexecutor.NamedTask;
 
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.osgi.OsgiSupport;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.impl.scheduler.UpdateLastRunCommand;
+import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.SchedulerName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskService;
 
@@ -48,6 +57,18 @@ public final class SchedulableTask
         return job;
     }
 
+    private static Context adminContext()
+    {
+        return ContextBuilder.from( ContextAccessor.current() ).authInfo( AuthenticationInfo.create().
+            principals( RoleKeys.ADMIN ).
+            user( User.create().
+                key( PrincipalKey.ofSuperUser() ).
+                login( PrincipalKey.ofSuperUser().getId() ).
+                build() ).
+            build() ).
+            build();
+    }
+
     @Override
     public void run()
     {
@@ -57,6 +78,14 @@ public final class SchedulableTask
                 descriptorKey( job.getDescriptor() ).
                 data( job.getPayload() ).
                 build() ) );
+
+            adminContext().runWith( () -> OsgiSupport.withService( NodeService.class, nodeService -> UpdateLastRunCommand.create().
+                nodeService( nodeService ).
+                name( job.getName() ).
+                lastRun( Instant.now() ).
+                build().
+                execute() ) );
+
         }
         catch ( Exception e )
         {
@@ -96,6 +125,8 @@ public final class SchedulableTask
 
         private final String author;
 
+        private final Instant lastRun;
+
         SerializedForm( ScheduledJob job )
         {
             this.name = job.getName().getValue();
@@ -106,6 +137,7 @@ public final class SchedulableTask
             this.payload = job.getPayload();
             this.user = job.getUser() != null ? job.getUser().toString() : null;
             this.author = job.getAuthor() != null ? job.getAuthor().toString() : null;
+            this.lastRun = job.getLastRun();
         }
 
         private Object readResolve()
@@ -120,7 +152,9 @@ public final class SchedulableTask
                     payload( payload ).
                     user( user != null ? PrincipalKey.from( user ) : null ).
                     author( author != null ? PrincipalKey.from( author ) : null ).
-                    build() ).build();
+                    lastRun( lastRun ).
+                    build() ).
+                build();
         }
     }
 

@@ -1,5 +1,8 @@
 package com.enonic.xp.impl.scheduler.distributed;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -173,9 +176,8 @@ public class RescheduleTaskTest
 
         final ScheduledJob job3 = ScheduledJob.create().
             name( SchedulerName.from( "task3" ) ).
-            calendar( CronCalendar.create().
-                value( "* * * * *" ).
-                timeZone( TimeZone.getDefault() ).
+            calendar( OneTimeCalendar.create().
+                value( Instant.now().minus( Duration.of( 1, ChronoUnit.SECONDS ) ) ).
                 build() ).
             descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task3" ) ).
             payload( new PropertyTree() ).

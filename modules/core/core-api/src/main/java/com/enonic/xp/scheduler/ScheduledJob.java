@@ -1,6 +1,7 @@
 package com.enonic.xp.scheduler;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 import com.google.common.base.Preconditions;
 
@@ -31,6 +32,8 @@ public final class ScheduledJob
 
     private final PrincipalKey author;
 
+    private final Instant lastRun;
+
     private ScheduledJob( final Builder builder )
     {
         this.name = builder.name;
@@ -41,6 +44,7 @@ public final class ScheduledJob
         this.payload = builder.payload;
         this.user = builder.user;
         this.author = builder.author;
+        this.lastRun = builder.lastRun;
     }
 
     public static Builder create()
@@ -88,6 +92,11 @@ public final class ScheduledJob
         return author;
     }
 
+    public Instant getLastRun()
+    {
+        return lastRun;
+    }
+
     public static class Builder
     {
         private SchedulerName name;
@@ -105,6 +114,8 @@ public final class ScheduledJob
         private PrincipalKey user;
 
         private PrincipalKey author;
+
+        private Instant lastRun;
 
         public Builder()
         {
@@ -156,6 +167,12 @@ public final class ScheduledJob
         public Builder author( final PrincipalKey author )
         {
             this.author = author;
+            return this;
+        }
+
+        public Builder lastRun( final Instant lastRun )
+        {
+            this.lastRun = lastRun;
             return this;
         }
 
