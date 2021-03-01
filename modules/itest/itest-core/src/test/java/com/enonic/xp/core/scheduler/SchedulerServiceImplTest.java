@@ -1,5 +1,6 @@
 package com.enonic.xp.core.scheduler;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -24,6 +25,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.scheduler.SchedulerServiceImpl;
 import com.enonic.xp.impl.scheduler.distributed.CronCalendar;
+import com.enonic.xp.impl.scheduler.distributed.OneTimeCalendar;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -31,6 +33,8 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
+import com.enonic.xp.scheduler.ScheduleCalendar;
+import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.SchedulerConstants;
 import com.enonic.xp.scheduler.SchedulerName;
@@ -124,13 +128,43 @@ class SchedulerServiceImplTest
 
         assertEquals( name, scheduledJob.getName() );
         assertEquals( descriptor, scheduledJob.getDescriptor() );
-        assertEquals( calendar.getStringValue(), ( (CronCalendar) scheduledJob.getCalendar() ).getStringValue() );
+        assertEquals( calendar.getCronValue(), ( (CronCalendar) scheduledJob.getCalendar() ).getCronValue() );
         assertEquals( calendar.getTimeZone(), ( (CronCalendar) scheduledJob.getCalendar() ).getTimeZone() );
         assertEquals( payload, scheduledJob.getPayload() );
         assertEquals( "description", scheduledJob.getDescription() );
         assertEquals( user, scheduledJob.getUser() );
         assertEquals( author, scheduledJob.getAuthor() );
         assertTrue( scheduledJob.isEnabled() );
+    }
+
+    @Test
+    void createOneTimeJob()
+    {
+        final SchedulerName name = SchedulerName.from( "test" );
+        final DescriptorKey descriptor = DescriptorKey.from( ApplicationKey.from( "com.enonic.app.features" ), "landing" );
+        final ScheduleCalendar calendar = OneTimeCalendar.create().
+            value( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) ).
+            build();
+        final PropertyTree payload = new PropertyTree();
+        payload.addString( "string", "value" );
+        final PrincipalKey author = PrincipalKey.from( "user:system:author" );
+        final PrincipalKey user = PrincipalKey.from( "user:system:user" );
+
+        final CreateScheduledJobParams params = CreateScheduledJobParams.create().
+            name( name ).
+            descriptor( descriptor ).
+            calendar( calendar ).
+            payload( payload ).
+            description( "description" ).
+            enabled( true ).
+            user( user ).
+            author( author ).
+            build();
+
+        final ScheduledJob scheduledJob = adminContext().callWith( () -> schedulerService.create( params ) );
+
+        assertEquals( "2021-02-25T10:44:33.170079900Z", ( (OneTimeCalendar) scheduledJob.getCalendar() ).getValue() );
+        assertEquals( ScheduleCalendarType.ONE_TIME, scheduledJob.getCalendar().getType() );
     }
 
     @Test
@@ -256,9 +290,8 @@ class SchedulerServiceImplTest
                 edit.payload.addString( "string", "value" );
                 edit.author = PrincipalKey.from( "user:provider:author" );
                 edit.user = PrincipalKey.from( "user:provider:user" );
-                edit.calendar = CronCalendar.create().
-                    value( "* * * * 5" ).
-                    timeZone( TimeZone.getTimeZone( "GMT+5:30" ) ).
+                edit.calendar = OneTimeCalendar.create().
+                    value( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) ).
                     build();
             } ).
             build() ) );
@@ -266,8 +299,8 @@ class SchedulerServiceImplTest
         assertEquals( name, modifiedJob.getName() );
         assertEquals( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task2" ), modifiedJob.getDescriptor() );
         assertEquals( "new description", modifiedJob.getDescription() );
-        assertEquals( "* * * * 5", ( (CronCalendar) modifiedJob.getCalendar() ).getStringValue() );
-        assertEquals( "GMT+05:30", ( (CronCalendar) modifiedJob.getCalendar() ).getTimeZone().getID() );
+        assertEquals( "2021-02-25T10:44:33.170079900Z", ( (OneTimeCalendar) modifiedJob.getCalendar() ).getValue() );
+        assertEquals( ScheduleCalendarType.ONE_TIME, modifiedJob.getCalendar().getType() );
         assertEquals( "value", modifiedJob.getPayload().getString( "string" ) );
         assertEquals( PrincipalKey.from( "user:provider:author" ), modifiedJob.getAuthor() );
         assertEquals( PrincipalKey.from( "user:provider:user" ), modifiedJob.getUser() );
@@ -393,7 +426,7 @@ class SchedulerServiceImplTest
 
         assertEquals( name, scheduledJob.getName() );
         assertEquals( descriptor, scheduledJob.getDescriptor() );
-        assertEquals( calendar.getStringValue(), ( (CronCalendar) scheduledJob.getCalendar() ).getStringValue() );
+        assertEquals( calendar.getCronValue(), ( (CronCalendar) scheduledJob.getCalendar() ).getCronValue() );
         assertEquals( calendar.getTimeZone(), ( (CronCalendar) scheduledJob.getCalendar() ).getTimeZone() );
         assertEquals( payload, scheduledJob.getPayload() );
         assertEquals( "description", scheduledJob.getDescription() );

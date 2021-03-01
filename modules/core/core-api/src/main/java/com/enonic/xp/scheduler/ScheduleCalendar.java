@@ -11,4 +11,6 @@ public interface ScheduleCalendar
     extends Serializable
 {
     Optional<Duration> nextExecution();
+
+    ScheduleCalendarType getType();
 }

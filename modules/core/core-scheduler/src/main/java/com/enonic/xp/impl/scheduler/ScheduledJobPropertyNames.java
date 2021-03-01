@@ -14,11 +14,16 @@ public class ScheduledJobPropertyNames
 
     public static final String AUTHOR = "author";
 
+    public static final String LAST_RUN = "lastRun";
+
     public static final String CALENDAR = "calendar";
 
     public static final String CALENDAR_VALUE = "value";
 
     public static final String CALENDAR_TIMEZONE = "timezone";
+
+    public static final String CALENDAR_TYPE = "type";
+
 
     private ScheduledJobPropertyNames()
     {
