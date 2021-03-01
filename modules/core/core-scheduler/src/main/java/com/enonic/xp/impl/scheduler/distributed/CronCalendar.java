@@ -18,6 +18,7 @@ import com.cronutils.parser.CronParser;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.scheduler.ScheduleCalendar;
+import com.enonic.xp.scheduler.ScheduleCalendarType;
 
 public final class CronCalendar
     implements ScheduleCalendar
@@ -71,12 +72,18 @@ public final class CronCalendar
         return this.executionTime.timeToNextExecution( ZonedDateTime.now( timeZone.toZoneId() ) );
     }
 
+    @Override
+    public ScheduleCalendarType getType()
+    {
+        return ScheduleCalendarType.CRON;
+    }
+
     public String getDescription()
     {
         return description;
     }
 
-    public String getStringValue()
+    public String getCronValue()
     {
         return cron.asString();
     }
@@ -102,7 +109,7 @@ public final class CronCalendar
 
         SerializedForm( final CronCalendar calendar )
         {
-            this.value = calendar.getStringValue();
+            this.value = calendar.getCronValue();
             this.timezone = calendar.getTimeZone().getID();
         }
 
