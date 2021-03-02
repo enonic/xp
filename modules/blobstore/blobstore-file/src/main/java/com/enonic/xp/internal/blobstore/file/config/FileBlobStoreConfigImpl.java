@@ -1,6 +1,6 @@
 package com.enonic.xp.internal.blobstore.file.config;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
@@ -49,14 +49,9 @@ public final class FileBlobStoreConfigImpl
     }
 
     @Override
-    public File baseDir()
+    public Path baseDir()
     {
-        return getFileProperty( "baseDir" );
-    }
-
-    private File getFileProperty( final String name )
-    {
-        return new File( this.config.get( name ) );
+        return Path.of( this.config.get( BASE_DIR ) );
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.enonic.xp.launcher.impl.env;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -18,13 +18,12 @@ public final class EnvironmentResolver
 
     public Environment resolve()
     {
-        final EnvironmentImpl env = new EnvironmentImpl();
-        env.installDir = resolveInstallDir();
-        env.homeDir = resolveHomeDir( env.installDir );
-        return env;
+        final Path installDir = resolveInstallDir();
+        final Path homeDir = resolveHomeDir( installDir );
+        return new EnvironmentImpl( installDir, homeDir );
     }
 
-    private File resolveInstallDir()
+    private Path resolveInstallDir()
     {
         final String path = this.properties.get( SharedConstants.XP_INSTALL_DIR );
         if ( path == null || path.isEmpty() )
@@ -32,15 +31,15 @@ public final class EnvironmentResolver
             return null;
         }
 
-        return new File( path );
+        return Path.of( path );
     }
 
-    private File resolveHomeDir( final File installDir )
+    private Path resolveHomeDir( final Path installDir )
     {
         final String propValue = Objects.requireNonNullElse( this.properties.get( SharedConstants.XP_HOME_DIR ), "" );
         final String envValue = Objects.requireNonNullElse( this.properties.getEnv( SharedConstants.XP_HOME_DIR_ENV ), "" );
 
         return Stream.of( propValue, envValue ).filter( Predicate.not( String::isEmpty ) ).findFirst().
-            map( File::new ).orElseGet( () -> installDir != null ? new File( installDir, "home" ) : null );
+            map( Path::of ).orElseGet( () -> installDir != null ? installDir.resolve( "home" ) : null );
     }
 }

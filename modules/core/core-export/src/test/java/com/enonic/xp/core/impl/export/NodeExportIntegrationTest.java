@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.export;
 
 import java.io.File;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.time.Instant;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -25,8 +25,8 @@ import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.BINAR
 import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.NODE_XML_EXPORT_NAME;
 import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.SYSTEM_FOLDER_NAME;
 import static com.enonic.xp.core.impl.export.writer.NodeExportPathResolver.VERSION_FOLDER;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NodeExportIntegrationTest
     extends AbstractNodeTest
@@ -154,7 +154,7 @@ public class NodeExportIntegrationTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
             exportVersions( exportVersions ).
             build().
             execute();
@@ -162,40 +162,34 @@ public class NodeExportIntegrationTest
 
     private void assertExported( final Node node )
     {
-        final String expectedFilePath = "/myExport" + node.path() + "/" + SYSTEM_FOLDER_NAME + "/" + NODE_XML_EXPORT_NAME;
-        assertFileExists( expectedFilePath );
+        assertThat( getBaseFolder( node ).resolve( NODE_XML_EXPORT_NAME ) ).exists();
     }
 
     private void assertVersionExported( final Node exportedNode, final Node exportedVersion )
     {
-        final String baseFolder = getBaseFolder( exportedNode );
-        final String versionsFolder = baseFolder + VERSION_FOLDER + "/";
-        final String versionsDataFolder = versionsFolder + exportedVersion.getNodeVersionId() + "/";
-        assertFileExists( versionsDataFolder + exportedVersion.name() + "/" + NODE_XML_EXPORT_NAME );
+        assertThat( getBaseFolder( exportedNode ).
+            resolve( VERSION_FOLDER ).
+            resolve( exportedVersion.getNodeVersionId().toString() ).
+            resolve( exportedVersion.name().toString() ).resolve( NODE_XML_EXPORT_NAME ) ).exists();
     }
 
     private void assertBinaryExported( final Node node, final BinaryReference ref )
     {
-        final String baseFolder = getBaseFolder( node );
-        assertFileExists( Paths.get( baseFolder, BINARY_FOLDER, ref.toString() ).toString() );
+        final Path baseFolder = getBaseFolder( node );
+        assertThat( baseFolder.resolve( BINARY_FOLDER ).resolve( ref.toString() ) ).exists();
     }
 
     private void assertVersionBinaryExported( final Node exportedNode, final Node exportedVersion, final BinaryReference ref )
     {
-        final String baseFolder = getBaseFolder( exportedNode );
-        final String versionsFolder = baseFolder + VERSION_FOLDER + "/";
-        final String versionsDataFolder = versionsFolder + exportedVersion.getNodeVersionId() + "/";
-        assertFileExists( Paths.get( versionsDataFolder, exportedVersion.name().toString(), BINARY_FOLDER, ref.toString() ).toString() );
+        assertThat( getBaseFolder( exportedNode ).
+            resolve( VERSION_FOLDER ).
+            resolve( exportedVersion.getNodeVersionId().toString() ).
+            resolve( exportedVersion.name().toString() ).resolve( BINARY_FOLDER ).resolve( ref.toString() ) ).exists();
     }
 
-    private String getBaseFolder( final Node node )
+    private Path getBaseFolder( final Node node )
     {
-        return "/myExport" + node.path() + "/" + SYSTEM_FOLDER_NAME + "/";
-    }
-
-    private void assertFileExists( final String path )
-    {
-        assertTrue( new File( this.temporaryFolder.toFile().getPath() + path ).exists(), "file " + path + " not found" );
+        return temporaryFolder.resolve( "myExport" ).resolve( node.path().toString().substring( 1 ) ).resolve( SYSTEM_FOLDER_NAME );
     }
 
     private void printPaths()

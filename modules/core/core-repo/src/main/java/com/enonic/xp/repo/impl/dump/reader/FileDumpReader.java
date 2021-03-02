@@ -6,7 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.repo.impl.dump.DefaultFilePaths;
 import com.enonic.xp.repo.impl.dump.FilePaths;
@@ -34,6 +37,8 @@ public class FileDumpReader
 
     public static FileDumpReader create( final SystemLoadListener listener, Path basePath, final String dumpName, FilePaths filePaths )
     {
+        Preconditions.checkArgument( FileNames.isSafeFileName( dumpName ) );
+
         final Path dumpPath = basePath.resolve( dumpName );
         if ( !Files.isDirectory( dumpPath ) )
         {

@@ -7,8 +7,6 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import com.enonic.xp.launcher.LauncherException;
-
 import static com.enonic.xp.launcher.impl.SharedConstants.XP_HOME_DIR;
 import static com.enonic.xp.launcher.impl.SharedConstants.XP_INSTALL_DIR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,57 +21,44 @@ public class EnvironmentImplTest
     public void testGetAsMap()
         throws Exception
     {
-        final EnvironmentImpl env = new EnvironmentImpl();
-        env.homeDir = Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
-        env.installDir = Files.createDirectory(this.temporaryFolder.resolve( "install" ) ).toFile();
+        final EnvironmentImpl env = new EnvironmentImpl( Files.createDirectory( this.temporaryFolder.resolve( "home" ) ),
+                                                         Files.createDirectory( this.temporaryFolder.resolve( "install" ) ) );
 
         final Map<String, String> map = env.getAsMap();
-        assertEquals( env.homeDir.getAbsolutePath(), map.get( XP_HOME_DIR ) );
-        assertEquals( env.installDir.getAbsolutePath(), map.get( XP_INSTALL_DIR ) );
+        assertEquals( env.getHomeDir().toAbsolutePath().toString(), map.get( XP_HOME_DIR ) );
+        assertEquals( env.getInstallDir().toAbsolutePath().toString(), map.get( XP_INSTALL_DIR ) );
     }
 
     @Test
     public void testValidate_noInstallDir()
-        throws Exception
     {
-        final EnvironmentImpl env = new EnvironmentImpl();
-        assertThrows( LauncherException.class, () -> env.validate());
+        assertThrows( NullPointerException.class,
+                      () -> new EnvironmentImpl( null, Files.createDirectory( this.temporaryFolder.resolve( "home" ) ) ) );
+
     }
 
     @Test
     public void testValidate_noHomeDir()
-        throws Exception
     {
-        final EnvironmentImpl env = new EnvironmentImpl();
-        env.installDir = Files.createDirectory(this.temporaryFolder.resolve( "install" ) ).toFile();
-        assertThrows( LauncherException.class, () -> env.validate() );
-    }
-
-    @Test
-    public void testValidate()
-        throws Exception
-    {
-        final EnvironmentImpl env = new EnvironmentImpl();
-        env.installDir = Files.createDirectory(this.temporaryFolder.resolve( "install" ) ).toFile();
-        env.homeDir = Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
-        env.validate();
+        assertThrows( NullPointerException.class,
+                      () -> new EnvironmentImpl( Files.createDirectory( this.temporaryFolder.resolve( "install" ) ), null ) );
     }
 
     @Test
     public void testGetHomeDir()
         throws Exception
     {
-        final EnvironmentImpl env = new EnvironmentImpl();
-        env.homeDir = Files.createDirectory(this.temporaryFolder.resolve( "home" ) ).toFile();
-        assertEquals( env.homeDir, env.getHomeDir() );
+        final EnvironmentImpl env = new EnvironmentImpl( Files.createDirectory( this.temporaryFolder.resolve( "install" ) ),
+                                                         Files.createDirectory( this.temporaryFolder.resolve( "home" ) ) );
+        assertEquals( env.getHomeDir(), env.getHomeDir() );
     }
 
     @Test
     public void testGetInstallDir()
         throws Exception
     {
-        final EnvironmentImpl env = new EnvironmentImpl();
-        env.installDir = Files.createDirectory(this.temporaryFolder.resolve( "install" ) ).toFile();
-        assertEquals( env.installDir, env.getInstallDir() );
+        final EnvironmentImpl env = new EnvironmentImpl( Files.createDirectory( this.temporaryFolder.resolve( "install" ) ),
+                                                         Files.createDirectory( this.temporaryFolder.resolve( "home" ) ) );
+        assertEquals( env.getInstallDir(), env.getInstallDir() );
     }
 }

@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -33,6 +32,8 @@ import com.enonic.xp.util.HexEncoder;
 public class ImageServiceImpl
     implements ImageService
 {
+    private final Path cacheFolder = HomeDir.get().toPath().resolve( "work" ).resolve( "cache" ).resolve( "img" );
+
     private final ContentService contentService;
 
     private final ImageScaleFunctionBuilder imageScaleFunctionBuilder;
@@ -90,8 +91,6 @@ public class ImageServiceImpl
 
     private Path getCachedImagePath( final NormalizedImageParams readImageParams )
     {
-        final String homeDir = HomeDir.get().toString();
-
         //Cropping string value
         final String cropping = readImageParams.getCropping() == null ? "no-cropping" : readImageParams.getCropping().toString();
 
@@ -119,8 +118,11 @@ public class ImageServiceImpl
                                         readImageParams.getBinaryReference().toString() );
         final HashCode hashCode = Hashing.sha1().hashString( key, StandardCharsets.UTF_8 );
         final String hash = HexEncoder.toHex( hashCode.asBytes() );
-        return Paths.get( homeDir, "work", "cache", "img", hash.substring( 0, 2 ), hash.substring( 2, 4 ), hash.substring( 4, 6 ),
-                          hash ).toAbsolutePath();
+        return cacheFolder.
+            resolve( hash.substring( 0, 2 ) ).
+            resolve( hash.substring( 2, 4 ) ).
+            resolve( hash.substring( 4, 6 ) ).
+            resolve( hash );
     }
 
     private BufferedImage readBufferedImage( final ByteSource blob, final NormalizedImageParams readImageParams )

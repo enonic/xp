@@ -1,7 +1,7 @@
 package com.enonic.xp.launcher.impl.provision;
 
-import java.io.File;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.osgi.framework.Bundle;
@@ -17,11 +17,11 @@ public final class ProvisionActivator
 {
     private static final Logger LOG = LoggerFactory.getLogger( ProvisionActivator.class );
 
-    private final File systemDir;
+    private final Path systemDir;
 
     private BundleContext context;
 
-    public ProvisionActivator( final File systemDir )
+    public ProvisionActivator( final Path systemDir )
     {
         this.systemDir = systemDir;
     }

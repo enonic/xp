@@ -1,8 +1,8 @@
 package com.enonic.xp.launcher.impl.env;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.io.TempDir;
 import static com.enonic.xp.launcher.impl.SharedConstants.XP_HOME_DIR;
 import static com.enonic.xp.launcher.impl.SharedConstants.XP_INSTALL_DIR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class EnvironmentResolverTest
 {
@@ -21,37 +20,29 @@ public class EnvironmentResolverTest
     public void testInstallDir()
         throws Exception
     {
-        final Environment env1 = resolve();
-        assertNull( env1.getInstallDir() );
-        assertNull( env1.getHomeDir() );
+        final Path dir = Files.createDirectories( this.temporaryFolder.resolve( "dir" ) );
 
-        final File dir = Files.createDirectory(this.temporaryFolder.resolve( "dir" ) ).toFile();
-
-        final Environment env2 = resolve( XP_INSTALL_DIR, dir.getAbsolutePath() );
+        final Environment env2 = resolve( Map.of( XP_INSTALL_DIR, dir.toAbsolutePath().toString() ) );
         assertEquals( dir, env2.getInstallDir() );
-        assertEquals( new File( dir, "home" ), env2.getHomeDir() );
+        assertEquals( dir.resolve( "home" ), env2.getHomeDir() );
     }
 
     @Test
     public void testHomeDir()
         throws Exception
     {
-        final Environment env1 = resolve();
-        assertNull( env1.getHomeDir() );
+        final Path dir = Files.createDirectories( this.temporaryFolder.resolve( "dir" ) );
+        final Path dirInstall = Files.createDirectories( this.temporaryFolder.resolve( "dirInstall" ) );
 
-        final File dir = Files.createDirectory(this.temporaryFolder.resolve( "dir" ) ).toFile();
-
-        final Environment env2 = resolve( XP_HOME_DIR, dir.getAbsolutePath() );
+        final Environment env2 =
+            resolve( Map.of( XP_INSTALL_DIR, dirInstall.toAbsolutePath().toString(), XP_HOME_DIR, dir.toAbsolutePath().toString() ) );
         assertEquals( dir, env2.getHomeDir() );
     }
 
-    private Environment resolve( final String... values )
+    private Environment resolve( final Map<String, String> values )
     {
         final SystemProperties props = new SystemProperties();
-        for ( int i = 0; i < values.length; i += 2 )
-        {
-            props.put( values[i], values[i + 1] );
-        }
+        props.putAll( values );
 
         return new EnvironmentResolver( props ).resolve();
     }

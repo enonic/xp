@@ -52,7 +52,7 @@ public final class ConfigLoader
     private Map<String, String> loadFileProperties()
         throws Exception
     {
-        final Path file = this.env.getHomeDir().toPath().resolve( "config" ).resolve( CONFIG_FILE );
+        final Path file = this.env.getHomeDir().resolve( "config" ).resolve( CONFIG_FILE );
         if ( !Files.isRegularFile( file ) )
         {
             return new HashMap<>();

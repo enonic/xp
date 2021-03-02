@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.app.resolver;
 
-import java.io.File;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -52,10 +52,10 @@ class MultiApplicationUrlResolverTest
     void testFindUrl()
         throws Exception
     {
-        final URL expected1 = new File( "." ).toURI().toURL();
+        final URL expected1 = Path.of( "" ).toUri().toURL();
         when( this.delegate1.findUrl( "a/b.txt" ) ).thenReturn( expected1 );
 
-        final URL expected2 = new File( "." ).toURI().toURL();
+        final URL expected2 = Path.of( "" ).toUri().toURL();
         when( this.delegate2.findUrl( "a/other.txt" ) ).thenReturn( expected2 );
 
         final URL url1 = this.resolver.findUrl( "a/b.txt" );

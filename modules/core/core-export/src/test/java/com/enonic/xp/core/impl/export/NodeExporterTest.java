@@ -1,8 +1,6 @@
 package com.enonic.xp.core.impl.export;
 
-import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -25,9 +23,8 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.util.BinaryReference;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NodeExporterTest
 {
@@ -54,14 +51,14 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
             build().
             execute();
 
         assertEquals( 2, result.size() );
 
-        assertFileExists( "/myExport/_/node.xml" );
-        assertFileExists( "/myExport/mynode/_/node.xml" );
+        assertFileExists( "myExport/_/node.xml" );
+        assertFileExists( "myExport/mynode/_/node.xml" );
     }
 
     @Test
@@ -83,22 +80,22 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
             nodeExportListener( nodeExportListener ).
             build().
             execute();
 
         assertEquals( 9, result.size() );
 
-        assertFileExists( "/myExport/_/node.xml" );
-        assertFileExists( "/myExport/mynode/_/node.xml" );
-        assertFileExists( "/myExport/mynode/child1/_/node.xml" );
-        assertFileExists( "/myExport/mynode/child1/child1_1/_/node.xml" );
-        assertFileExists( "/myExport/mynode/child1/child1_2/_/node.xml" );
-        assertFileExists( "/myExport/mynode/child1/child1_2/child1_2_1/_/node.xml" );
-        assertFileExists( "/myExport/mynode/child1/child1_2/child1_2_2/_/node.xml" );
-        assertFileExists( "/myExport/mynode/child2/_/node.xml" );
-        assertFileExists( "/myExport/mynode/child2/child2_1/_/node.xml" );
+        assertFileExists( "myExport/_/node.xml" );
+        assertFileExists( "myExport/mynode/_/node.xml" );
+        assertFileExists( "myExport/mynode/child1/_/node.xml" );
+        assertFileExists( "myExport/mynode/child1/child1_1/_/node.xml" );
+        assertFileExists( "myExport/mynode/child1/child1_2/_/node.xml" );
+        assertFileExists( "myExport/mynode/child1/child1_2/child1_2_1/_/node.xml" );
+        assertFileExists( "myExport/mynode/child1/child1_2/child1_2_2/_/node.xml" );
+        assertFileExists( "myExport/mynode/child2/_/node.xml" );
+        assertFileExists( "myExport/mynode/child2/child2_1/_/node.xml" );
 
         Mockito.verify( nodeExportListener ).
             nodeResolved( 9L );
@@ -128,14 +125,14 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
             build().
             execute();
 
         assertEquals( 8, result.size() );
 
-        assertFileExists( "/myExport/root/_/node.xml" );
-        assertFileExists( "/myExport/root/_/manualChildOrder.txt" );
+        assertFileExists( "myExport/root/_/node.xml" );
+        assertFileExists( "myExport/root/_/manualChildOrder.txt" );
     }
 
 
@@ -155,15 +152,15 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.create( "/mynode/child1/child1_1" ).build() ).
-            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
             build().
             execute();
 
         assertEquals( 3, result.getExportedNodes().getSize() );
 
-        assertFileExists( "/myExport/child1_1/_/node.xml" );
-        assertFileExists( "/myExport/child1_1/child1_1_1/_/node.xml" );
-        assertFileExists( "/myExport/child1_1/child1_1_2/_/node.xml" );
+        assertFileExists( "myExport/child1_1/_/node.xml" );
+        assertFileExists( "myExport/child1_1/child1_1_1/_/node.xml" );
+        assertFileExists( "myExport/child1_1/child1_1_2/_/node.xml" );
     }
 
     @Test
@@ -183,16 +180,16 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.create( "/mynode/child1" ).build() ).
-            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
             build().
             execute();
 
         assertEquals( 4, result.getExportedNodes().getSize() );
 
-        assertFileExists( "/myExport/child1/_/node.xml" );
-        assertFileExists( "/myExport/child1/child1_1/_/node.xml" );
-        assertFileExists( "/myExport/child1/child1_1/child1_1_1/_/node.xml" );
-        assertFileExists( "/myExport/child1/child1_1/child1_1_2/_/node.xml" );
+        assertFileExists( "myExport/child1/_/node.xml" );
+        assertFileExists( "myExport/child1/child1_1/_/node.xml" );
+        assertFileExists( "myExport/child1/child1_1/child1_1_1/_/node.xml" );
+        assertFileExists( "myExport/child1/child1_1/child1_1_2/_/node.xml" );
     }
 
     @Disabled // Wait with this until decided how to handle versions. Only in dump, or in export too?
@@ -218,17 +215,17 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
             build().
             execute();
 
         assertEquals( 2, result.getExportedNodes().getSize() );
         assertEquals( 2, result.getExportedBinaries().size() );
 
-        assertFileExists( "/myExport/_/node.xml" );
-        assertFileExists( "/myExport/my-node/_/node.xml" );
-        assertFileExists( "/myExport/my-node/_/bin/image1.jpg" );
-        assertFileExists( "/myExport/my-node/_/bin/image2.jpg" );
+        assertFileExists( "myExport/_/node.xml" );
+        assertFileExists( "myExport/my-node/_/node.xml" );
+        assertFileExists( "myExport/my-node/_/bin/image1.jpg" );
+        assertFileExists( "myExport/my-node/_/bin/image2.jpg" );
     }
 
     @Test
@@ -239,23 +236,23 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
             build().
             execute();
 
-        assertFileDoesNotExist( "/myExport/export.properties" );
+        assertFileDoesNotExist( "myExport/export.properties" );
 
         NodeExporter.create().
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
             sourceNodePath( NodePath.ROOT ).
             xpVersion( "X.Y.Z-SNAPSHOT" ).
-            rootDirectory( Paths.get( this.temporaryFolder.toString(), "myRoot" ) ).
-            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myRoot/myExport" ) ).
+            rootDirectory( this.temporaryFolder.resolve( "myRoot" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myRoot" ).resolve( "myExport" ) ).
             build().
             execute();
 
-        assertFileExists( "/myRoot/export.properties" );
+        assertFileExists( "myRoot/export.properties" );
     }
 
     @Test
@@ -272,7 +269,7 @@ public class NodeExporterTest
             nodeService( this.nodeService ).
             nodeExportWriter( exportWriter ).
             sourceNodePath( NodePath.ROOT ).
-            targetDirectory( Paths.get( this.temporaryFolder.toString(), "myExport" ) ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
             build().
             execute();
 
@@ -293,11 +290,11 @@ public class NodeExporterTest
 
     private void assertFileExists( final String path )
     {
-        assertTrue( new File( this.temporaryFolder.toFile().getPath() + path ).exists(), "file " + path + " not found" );
+        assertThat( temporaryFolder.resolve( path ) ).exists();
     }
 
     private void assertFileDoesNotExist( final String path )
     {
-        assertFalse( new File( this.temporaryFolder.toFile().getPath() + path ).exists(), "file " + path + " found" );
+        assertThat( temporaryFolder.resolve( path ) ).doesNotExist();
     }
 }

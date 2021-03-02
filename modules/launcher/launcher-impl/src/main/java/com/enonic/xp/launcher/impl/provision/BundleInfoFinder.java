@@ -1,6 +1,7 @@
 package com.enonic.xp.launcher.impl.provision;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,9 +12,9 @@ import java.util.Set;
 
 final class BundleInfoFinder
 {
-    private final File systemDir;
+    private final Path systemDir;
 
-    BundleInfoFinder( final File systemDir )
+    BundleInfoFinder( final Path systemDir )
     {
         this.systemDir = systemDir;
     }
@@ -35,7 +36,7 @@ final class BundleInfoFinder
     private Map<Integer, File> findBundleDirs()
     {
         final Map<Integer, File> result = new HashMap<>();
-        final File[] dirs = this.systemDir.listFiles( this::isDirectory );
+        final File[] dirs = this.systemDir.toFile().listFiles( this::isDirectory );
         if ( dirs == null )
         {
             return result;

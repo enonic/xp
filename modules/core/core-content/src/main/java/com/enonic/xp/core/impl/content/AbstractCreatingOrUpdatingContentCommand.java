@@ -4,9 +4,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessors;
+import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.site.SiteService;
@@ -27,15 +30,18 @@ class AbstractCreatingOrUpdatingContentCommand
 
     final ContentProcessors contentProcessors;
 
-    AbstractCreatingOrUpdatingContentCommand( final Builder builder )
+    final boolean allowUnsafeAttachmentNames;
+
+    AbstractCreatingOrUpdatingContentCommand( final Builder<?> builder )
     {
         super( builder );
         this.xDataService = builder.xDataService;
         this.siteService = builder.siteService;
         this.contentProcessors = builder.contentProcessors;
+        this.allowUnsafeAttachmentNames = builder.allowUnsafeAttachmentNames;
     }
 
-    public static class Builder<B extends Builder>
+    public static class Builder<B extends Builder<B>>
         extends AbstractContentCommand.Builder<B>
     {
         private XDataService xDataService;
@@ -43,6 +49,8 @@ class AbstractCreatingOrUpdatingContentCommand
         private SiteService siteService;
 
         private ContentProcessors contentProcessors;
+
+        private boolean allowUnsafeAttachmentNames;
 
         Builder()
         {
@@ -77,11 +85,32 @@ class AbstractCreatingOrUpdatingContentCommand
             return (B) this;
         }
 
+        @SuppressWarnings("unchecked")
+        B allowUnsafeAttachmentNames( final boolean allowUnsafeAttachmentNames )
+        {
+            this.allowUnsafeAttachmentNames = allowUnsafeAttachmentNames;
+            return (B) this;
+        }
+
         @Override
         void validate()
         {
             super.validate();
             Preconditions.checkNotNull( xDataService, "xDataService cannot be null" );
+        }
+    }
+
+    void validateCreateAttachments( final CreateAttachments createAttachments )
+    {
+        if ( !allowUnsafeAttachmentNames && createAttachments != null )
+        {
+            for ( CreateAttachment attachment : createAttachments )
+            {
+                if ( !FileNames.isSafeFileName( attachment.getName() ) )
+                {
+                    throw new IllegalArgumentException( "Unsafe attachment name " + attachment.getName() );
+                }
+            }
         }
     }
 
@@ -106,8 +135,8 @@ class AbstractCreatingOrUpdatingContentCommand
 
     private boolean isExecutableFileName( final String fileName )
     {
-        return fileName.endsWith( ".exe" ) || fileName.endsWith( ".msi" ) || fileName.endsWith( ".dmg" ) ||
-            fileName.endsWith( ".bat" ) || fileName.endsWith( ".sh" );
+        return fileName.endsWith( ".exe" ) || fileName.endsWith( ".msi" ) || fileName.endsWith( ".dmg" ) || fileName.endsWith( ".bat" ) ||
+            fileName.endsWith( ".sh" );
     }
 }
 

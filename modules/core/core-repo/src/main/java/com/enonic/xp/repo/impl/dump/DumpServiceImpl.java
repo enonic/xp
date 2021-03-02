@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -95,7 +94,7 @@ public class DumpServiceImpl
 
     private final String xpVersion;
 
-    private Path basePath = Paths.get( HomeDir.get().toString(), "data", "dump" );
+    private Path basePath = HomeDir.get().toPath().resolve( "data" ).resolve( "dump" );
 
     @Activate
     public DumpServiceImpl( final BundleContext context, @Reference EventPublisher eventPublisher )

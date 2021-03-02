@@ -32,7 +32,7 @@ public class ConfigLoaderTest
         this.homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) );
 
         final Environment env = Mockito.mock( Environment.class );
-        Mockito.when( env.getHomeDir() ).thenReturn( this.homeDir.toFile() );
+        Mockito.when( env.getHomeDir() ).thenReturn( this.homeDir );
 
         this.configLoader = new ConfigLoader( env );
     }

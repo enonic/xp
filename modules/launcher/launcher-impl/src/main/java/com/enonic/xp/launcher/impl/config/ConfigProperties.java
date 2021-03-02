@@ -1,6 +1,5 @@
 package com.enonic.xp.launcher.impl.config;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,17 +20,5 @@ public final class ConfigProperties
     public void interpolate()
     {
         InterpolationHelper.performSubstitution( this );
-    }
-
-    public boolean getBoolean( final String key )
-    {
-        final String value = get( key );
-        return "true".equals( value );
-    }
-
-    public File getFile( final String key )
-    {
-        final String value = get( key );
-        return value == null || value.isEmpty() ? null : new File( value );
     }
 }

@@ -28,7 +28,7 @@ public class FileBlobStoreProviderTest
     {
         this.provider = new FileBlobStoreProvider();
         this.config = Mockito.mock( FileBlobStoreConfig.class );
-        Mockito.when( this.config.baseDir() ).thenReturn( this.temporaryFolder.toFile() );
+        Mockito.when( this.config.baseDir() ).thenReturn( this.temporaryFolder );
         this.provider.setConfig( this.config );
     }
 

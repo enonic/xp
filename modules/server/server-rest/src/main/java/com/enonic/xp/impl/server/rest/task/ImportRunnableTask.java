@@ -1,10 +1,13 @@
 package com.enonic.xp.impl.server.rest.task;
 
-import java.nio.file.Paths;
+import java.nio.file.Path;
+
+import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeImportResult;
@@ -24,9 +27,13 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.vfs.VirtualFile;
 import com.enonic.xp.vfs.VirtualFiles;
 
+import static com.google.common.base.Strings.nullToEmpty;
+
 public class ImportRunnableTask
     extends AbstractRunnableTask
 {
+    private final Path exportsFolder = HomeDir.get().toPath().resolve( "data" ).resolve( "export" );
+
     private final ImportNodesRequestJson params;
 
     private final ExportService exportService;
@@ -53,12 +60,12 @@ public class ImportRunnableTask
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
         final String xsl = params.getXslSource();
-        final VirtualFile xsltFile = xsl != null ? VirtualFiles.from( getExportDirectory( xsl ) ) : null;
+        final VirtualFile xsltFile = nullToEmpty( xsl ).isEmpty() ? null : VirtualFiles.from( resolveFileInExportsFolder( xsl ) );
         final RepoPath targetRepoPath = params.getTargetRepoPath();
 
         final NodeImportResult result =
             getContext( params.getTargetRepoPath() ).callWith( () -> this.exportService.importNodes( ImportNodesParams.create().
-                source( VirtualFiles.from( getExportDirectory( params.getExportName() ) ) ).
+                source( VirtualFiles.from( resolveFileInExportsFolder( params.getExportName() ) ) ).
                 targetNodePath( targetRepoPath.getNodePath() ).
                 dryRun( params.isDryRun() ).
                 includeNodeIds( params.isImportWithIds() ).
@@ -107,9 +114,10 @@ public class ImportRunnableTask
         }
     }
 
-    private java.nio.file.Path getExportDirectory( final String exportName )
+    private Path resolveFileInExportsFolder( final String fileName )
     {
-        return Paths.get( HomeDir.get().toString(), "data", "export", exportName ).toAbsolutePath();
+        Preconditions.checkArgument( FileNames.isSafeFileName( fileName ) );
+        return exportsFolder.resolve( fileName );
     }
 
     public static class Builder

@@ -19,6 +19,9 @@ import java.util.stream.StreamSupport;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 
+import com.google.common.base.Preconditions;
+
+import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.repo.impl.dump.DefaultFilePaths;
 import com.enonic.xp.repo.impl.dump.PathRef;
@@ -41,6 +44,7 @@ public class ZipDumpReader
 
     public static ZipDumpReader create( SystemLoadListener listener, final Path basePath, final String dumpName )
     {
+        Preconditions.checkArgument( FileNames.isSafeFileName( dumpName ) );
         try
         {
             final SeekableByteChannel seekableByteChannel =

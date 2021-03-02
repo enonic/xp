@@ -23,6 +23,7 @@ class FrameworkServiceTest
         systemProperties.put( "xp.install", temporaryFolder.toString() );
         final EnvironmentResolver environmentResolver = new EnvironmentResolver( systemProperties );
         final ConfigProperties configProperties = new ConfigLoader( environmentResolver.resolve() ).load();
+        configProperties.interpolate();
         final FrameworkService frameworkService = new FrameworkService( configProperties );
 
         frameworkService.start();

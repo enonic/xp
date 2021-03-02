@@ -1,10 +1,13 @@
 package com.enonic.xp.impl.server.rest.task;
 
-import java.nio.file.Paths;
+import java.nio.file.Path;
+
+import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.export.ExportNodesParams;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.NodeExportResult;
@@ -20,6 +23,8 @@ import com.enonic.xp.task.TaskId;
 public class ExportRunnableTask
     extends AbstractRunnableTask
 {
+    private final Path exportsFolder = HomeDir.get().toPath().resolve( "data" ).resolve( "export" );
+
     private final ExportNodesRequestJson params;
 
     private final ExportService exportService;
@@ -60,9 +65,11 @@ public class ExportRunnableTask
             build();
     }
 
-    private java.nio.file.Path getExportDirectory( final String exportName )
+    private Path getExportDirectory( final String exportName )
     {
-        return Paths.get( HomeDir.get().toString(), "data", "export", exportName ).toAbsolutePath();
+        Preconditions.checkArgument( FileNames.isSafeFileName( exportName ) );
+
+        return exportsFolder.resolve( exportName );
     }
 
     public static class Builder

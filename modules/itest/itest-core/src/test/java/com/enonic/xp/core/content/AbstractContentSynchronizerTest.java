@@ -193,20 +193,16 @@ public abstract class AbstractContentSynchronizerTest
         final ContentAuditLogSupportImpl contentAuditLogSupport =
             new ContentAuditLogSupportImpl( contentConfig, new ContentAuditLogExecutorImpl(), auditLogService );
 
-        contentService = new ContentServiceImpl();
-        contentService.setNodeService( nodeService );
+        contentService = new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
         contentService.setSiteService( siteService );
         contentService.setContentTypeService( contentTypeService );
         contentService.setxDataService( xDataService );
-        contentService.setPageDescriptorService( pageDescriptorService );
-        contentService.setPartDescriptorService( partDescriptorService );
-        contentService.setLayoutDescriptorService( layoutDescriptorService );
         contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
-        contentService.initialize();
+        contentService.initialize( mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
     }
 
     private void setupTaskService()

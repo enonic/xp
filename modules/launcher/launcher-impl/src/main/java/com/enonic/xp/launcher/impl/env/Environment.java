@@ -1,15 +1,13 @@
 package com.enonic.xp.launcher.impl.env;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Map;
 
 public interface Environment
 {
-    File getHomeDir();
+    Path getHomeDir();
 
-    File getInstallDir();
-
-    void validate();
+    Path getInstallDir();
 
     Map<String, String> getAsMap();
 }

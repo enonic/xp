@@ -1,7 +1,6 @@
 package com.enonic.xp.vfs;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
@@ -151,11 +150,11 @@ class VirtualFilePathImpl
     @Override
     public Path toLocalPath()
     {
-        Path path = this.absolute ? Paths.get( "/" ) : Paths.get( "" );
+        Path path = this.absolute ? Path.of( "/" ) : Path.of( "" );
 
         for ( final String element : this.elements )
         {
-            path = Paths.get( path.toString(), element );
+            path = Path.of( path.toString(), element );
         }
 
         return path;

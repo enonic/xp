@@ -2,6 +2,7 @@ package com.enonic.xp.home;
 
 
 import java.io.File;
+import java.nio.file.Path;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -10,14 +11,19 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @PublicApi
 public final class HomeDir
 {
-    private final File dir;
+    private final Path dir;
 
-    private HomeDir( final File dir )
+    private HomeDir( final Path dir )
     {
         this.dir = dir;
     }
 
     public File toFile()
+    {
+        return this.dir.toFile();
+    }
+
+    public Path toPath()
     {
         return this.dir;
     }
@@ -36,8 +42,7 @@ public final class HomeDir
             throw new IllegalArgumentException( "Home dir [xp.home] is not set." );
         }
 
-        final File dir = new File( str );
-        return new HomeDir( dir );
+        return new HomeDir( Path.of( str ).toAbsolutePath().normalize() );
     }
 
     private static String getHomeProperty()

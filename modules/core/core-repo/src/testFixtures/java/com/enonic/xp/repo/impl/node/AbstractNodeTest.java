@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -172,7 +171,7 @@ public abstract class AbstractNodeTest
         deleteAllIndices();
 
         final RepoConfiguration repoConfig = Mockito.mock( RepoConfiguration.class );
-        Mockito.when( repoConfig.getSnapshotsDir() ).thenReturn( new File( this.temporaryFolder.toFile(), "repo/snapshots" ) );
+        Mockito.when( repoConfig.getSnapshotsDir() ).thenReturn( this.temporaryFolder.resolve( "repo" ).resolve( "snapshots" ) );
 
         System.setProperty( "xp.home", temporaryFolder.toFile().getPath() );
         System.setProperty( "mapper.allow_dots_in_name", "true" );
