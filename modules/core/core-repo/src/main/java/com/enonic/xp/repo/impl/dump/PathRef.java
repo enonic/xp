@@ -7,7 +7,7 @@ public final class PathRef
 {
     private static final String SEPARATOR = "/";
 
-    private String path;
+    private final String path;
 
     private PathRef( final String path )
     {

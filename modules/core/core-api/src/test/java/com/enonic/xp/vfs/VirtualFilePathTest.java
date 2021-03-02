@@ -1,6 +1,6 @@
 package com.enonic.xp.vfs;
 
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +13,7 @@ public class VirtualFilePathTest
     public void fromPath()
         throws Exception
     {
-        final VirtualFilePath virtualFilePath = VirtualFilePaths.from( Paths.get( "this", "is", "my", "test" ) );
+        final VirtualFilePath virtualFilePath = VirtualFilePaths.from( Path.of( "this", "is", "my", "test" ) );
 
         assertEquals( "this/is/my/test", virtualFilePath.getPath() );
     }

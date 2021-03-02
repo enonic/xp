@@ -105,6 +105,7 @@ import com.enonic.xp.util.Reference;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class AbstractContentServiceTest
     extends AbstractElasticsearchIntegrationTest
@@ -230,8 +231,6 @@ public class AbstractContentServiceTest
         NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl();
         nodeDao.setBlobStore( blobStore );
 
-        contentService = new ContentServiceImpl();
-
         IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl();
         indexedDataService.setStorageDao( storageDao );
 
@@ -320,19 +319,16 @@ public class AbstractContentServiceTest
                                     eventPublisher );
         projectService.initialize();
 
-        contentService.setNodeService( nodeService );
+        contentService = new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
         contentService.setSiteService( siteService );
         contentService.setContentTypeService( contentTypeService );
         contentService.setxDataService( xDataService );
-        contentService.setPageDescriptorService( pageDescriptorService );
-        contentService.setPartDescriptorService( partDescriptorService );
-        contentService.setLayoutDescriptorService( layoutDescriptorService );
         contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
-        contentService.initialize();
+        contentService.initialize( mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
         waitForClusterHealth();
     }

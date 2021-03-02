@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.export;
 
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
@@ -40,8 +40,8 @@ public class ExportServiceImpl
             sourceNodePath( params.getSourceNodePath() ).
             nodeService( this.nodeService ).
             nodeExportWriter( new FileExportWriter() ).
-            rootDirectory( Paths.get( params.getRootDirectory() ) ).
-            targetDirectory( Paths.get( params.getTargetDirectory() ) ).
+            rootDirectory( Path.of( params.getRootDirectory() ) ).
+            targetDirectory( Path.of( params.getTargetDirectory() ) ).
             xpVersion( xpVersion ).
             dryRun( params.isDryRun() ).
             exportNodeIds( params.isIncludeNodeIds() ).

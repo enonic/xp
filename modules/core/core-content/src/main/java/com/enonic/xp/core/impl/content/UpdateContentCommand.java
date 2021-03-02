@@ -82,6 +82,8 @@ final class UpdateContentCommand
     Content execute()
     {
         params.validate();
+        validateCreateAttachments( params.getCreateAttachments() );
+
         try
         {
             return doExecute();

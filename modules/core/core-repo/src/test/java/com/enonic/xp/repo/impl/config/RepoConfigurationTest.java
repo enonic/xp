@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.config;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,10 +34,10 @@ public class RepoConfigurationTest
     @Test
     public void testSnapshotsDir()
     {
-        this.map.put( "snapshots.dir", "/a/b" );
+        this.map.put( "snapshots.dir", "a/b" );
 
         final RepoConfiguration config = createConfig();
-        assertEquals( new File( "/a/b" ), config.getSnapshotsDir() );
+        assertEquals( Path.of( "a/b" ), config.getSnapshotsDir() );
     }
 
 }

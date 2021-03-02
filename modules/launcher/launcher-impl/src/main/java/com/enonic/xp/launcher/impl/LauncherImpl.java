@@ -1,12 +1,11 @@
 package com.enonic.xp.launcher.impl;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.enonic.xp.launcher.Launcher;
-import com.enonic.xp.launcher.LauncherListener;
 import com.enonic.xp.launcher.VersionInfo;
 import com.enonic.xp.launcher.impl.config.ConfigLoader;
 import com.enonic.xp.launcher.impl.config.ConfigProperties;
@@ -35,8 +34,6 @@ public final class LauncherImpl
 
     private FrameworkService framework;
 
-    private LauncherListener listener;
-
     private ExecutorService frameworkLifecycleExecutor;
 
     public LauncherImpl( final String... args )
@@ -57,7 +54,6 @@ public final class LauncherImpl
     {
         final EnvironmentResolver resolver = new EnvironmentResolver( this.systemProperties );
         this.env = resolver.resolve();
-        this.env.validate();
 
         System.getProperties().putAll( this.env.getAsMap() );
     }
@@ -88,7 +84,7 @@ public final class LauncherImpl
 
     private void createFramework()
     {
-        this.framework = new FrameworkService( this.config ).listener( this.listener );
+        this.framework = new FrameworkService( this.config );
 
         addLoggingActivator();
         addProvisionActivator();
@@ -97,7 +93,7 @@ public final class LauncherImpl
 
     private void addProvisionActivator()
     {
-        final File systemDir = new File( this.env.getInstallDir(), "system" );
+        final Path systemDir = this.env.getInstallDir().resolve( "system" );
         final ProvisionActivator activator = new ProvisionActivator( systemDir );
         this.framework.activator( activator );
     }
@@ -167,37 +163,5 @@ public final class LauncherImpl
     private void setRunMode( final String mode )
     {
         System.setProperty( SharedConstants.XP_RUN_MODE, mode );
-    }
-
-    @Override
-    public boolean hasArg( final String value )
-    {
-        for ( final String arg : this.args )
-        {
-            if ( arg.equalsIgnoreCase( value ) )
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    @Override
-    public void setListener( final LauncherListener listener )
-    {
-        this.listener = listener;
-    }
-
-    @Override
-    public String getHttpUrl()
-    {
-        return this.framework.getHttpUrl();
-    }
-
-    @Override
-    public File getHomeDir()
-    {
-        return this.env.getHomeDir();
     }
 }

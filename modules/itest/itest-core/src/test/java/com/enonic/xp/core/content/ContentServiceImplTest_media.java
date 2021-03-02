@@ -12,13 +12,17 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.xdata.XDatas;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ContentServiceImplTest_media
     extends AbstractContentServiceTest
@@ -47,6 +51,46 @@ public class ContentServiceImplTest_media
         assertNotNull( storedContent.getData().getString( ContentPropertyNames.MEDIA ) );
         final Attachments attachments = storedContent.getAttachments();
         assertEquals( 1, attachments.getSize() );
+    }
+
+    @Test
+    public void create_media_image_invalid_file_name()
+        throws Exception
+    {
+        final CreateMediaParams createMediaParams = new CreateMediaParams();
+        // file ending with point is illegal on Windows
+        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
+            name( "cat-small." ).
+            parent( ContentPath.ROOT );
+
+        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
+
+        assertThrows( IllegalArgumentException.class, () -> this.contentService.create( createMediaParams ) );
+    }
+
+    @Test
+    public void create_media_image_invalid_file_name_allowed_by_config()
+        throws Exception
+    {
+        final CreateMediaParams createMediaParams = new CreateMediaParams();
+        // file ending with point is illegal on Windows
+        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
+            name( "cat-small." ).
+            parent( ContentPath.ROOT );
+
+        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
+
+        final ContentConfig contentConfig = mock( ContentConfig.class );
+        when( contentConfig.attachments_allowUnsafeNames() ).thenReturn( true );
+
+        contentService.initialize( contentConfig );
+        final Content content = this.contentService.create( createMediaParams );
+
+        final Content storedContent = this.contentService.getById( content.getId() );
+
+        final Attachments attachments = storedContent.getAttachments();
+        assertEquals( 1, attachments.getSize() );
+        assertEquals( attachments.get( 0 ).getName(), "cat-small." );
     }
 
     @Test
@@ -103,6 +147,29 @@ public class ContentServiceImplTest_media
             assertTrue( attachment.getName().startsWith( "dart-small" ) );
         }
     }
+
+    @Test
+    public void update_media_image_invalid_file_name()
+        throws Exception
+    {
+        final CreateMediaParams createMediaParams = new CreateMediaParams();
+        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
+            name( "Small cat" ).
+            parent( ContentPath.ROOT );
+
+        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
+
+        final Content content = this.contentService.create( createMediaParams );
+
+        // file ending with point is illegal on Windows
+        final UpdateMediaParams updateMediaParams = new UpdateMediaParams().
+            content( content.getId() ).
+            name( "dart-small." ).
+            byteSource( loadImage( "darth-small.jpg" ) );
+
+        assertThrows( IllegalArgumentException.class, () -> this.contentService.update( updateMediaParams ) );
+    }
+
 
     @Test
     public void audit_data()

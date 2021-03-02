@@ -24,7 +24,7 @@ public class BundleInfoFinderTest
         throws Exception
     {
         this.systemDir = Files.createDirectory( this.temporaryFolder.resolve( "system" ) );
-        this.finder = new BundleInfoFinder( this.systemDir.toFile() );
+        this.finder = new BundleInfoFinder( this.systemDir );
     }
 
     @Test

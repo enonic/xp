@@ -12,12 +12,6 @@ import com.enonic.xp.export.ExportNodeException;
 public class FileExportWriter
     implements ExportWriter
 {
-    @Override
-    public void createDirectory( final Path path )
-    {
-        doCreateDirectories( path );
-    }
-
     private void doCreateDirectories( final Path path )
     {
         try

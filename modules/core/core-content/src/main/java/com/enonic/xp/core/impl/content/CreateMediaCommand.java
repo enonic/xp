@@ -113,6 +113,7 @@ final class CreateMediaCommand
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
             contentDataSerializer( this.contentDataSerializer ).
+            allowUnsafeAttachmentNames( this.allowUnsafeAttachmentNames ).
             build();
 
         return createCommand.execute();

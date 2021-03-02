@@ -158,8 +158,10 @@ public class NodeExporter
 
     private Path resolveNodeVersionBasePath( final Node originalNode, final NodeVersionMetadata nodeVersion )
     {
-        final Path dataFolder = resolveNodeDataFolder( originalNode );
-        return NodeExportPathResolver.resolveNodeVersionPath( dataFolder, nodeVersion.getNodeVersionId(), nodeVersion.getNodePath() );
+        return resolveNodeDataFolder( originalNode ).
+            resolve( NodeExportPathResolver.VERSION_FOLDER ).
+            resolve( nodeVersion.getNodeVersionId().toString() ).
+            resolve( nodeVersion.getNodePath().getName() );
     }
 
     private void writeVersion( final Node node, final Path baseFolder )
@@ -177,7 +179,7 @@ public class NodeExporter
 
         if ( !dryRun )
         {
-            final Path nodeXmlPath = NodeExportPathResolver.resolveNodeXmlPath( baseFolder );
+            final Path nodeXmlPath = baseFolder.resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME );
             exportWriter.writeElement( nodeXmlPath, serializedNode );
         }
 
@@ -244,7 +246,9 @@ public class NodeExporter
 
             if ( !dryRun )
             {
-                this.exportWriter.writeSource( NodeExportPathResolver.resolveBinaryPath( nodeDataFolder, reference ), byteSource );
+                this.exportWriter.writeSource( nodeDataFolder.
+                    resolve( NodeExportPathResolver.BINARY_FOLDER ).
+                    resolve( reference.toString() ), byteSource );
             }
 
             result.addBinary( relativeNode.path(), reference );
@@ -265,7 +269,7 @@ public class NodeExporter
             builder.append( node.name().toString() ).append( LINE_SEPARATOR );
         }
 
-        final Path nodeOrderListPath = NodeExportPathResolver.resolveOrderListPath( resolveNodeDataFolder( parent ) );
+        final Path nodeOrderListPath = resolveNodeDataFolder( parent ).resolve( NodeExportPathResolver.ORDER_EXPORT_NAME );
 
         if ( !dryRun )
         {
@@ -277,7 +281,7 @@ public class NodeExporter
     {
         if ( xpVersion != null )
         {
-            final Path exportPropertiesPath = NodeExportPathResolver.resolveExportPropertiesPath( this.rootDirectory );
+            final Path exportPropertiesPath = this.rootDirectory.resolve( NodeExportPathResolver.EXPORT_PROPERTIES_NAME );
 
             if ( !dryRun )
             {
@@ -299,8 +303,22 @@ public class NodeExporter
 
     private Path resolveNodeDataFolder( final Node node )
     {
-        final Path nodeBasePath = NodeExportPathResolver.resolveNodeBasePath( this.targetDirectory, node.path(), sourceNodePath );
-        return NodeExportPathResolver.resolveNodeDataFolder( nodeBasePath );
+        final Path fullNodePath = Path.of( node.path().toString() );
+
+        final Path exportBasePath;
+
+        if ( sourceNodePath.equals( NodePath.ROOT ) )
+        {
+            exportBasePath = Path.of( NodePath.ROOT.toString() );
+        }
+        else
+        {
+            exportBasePath = Path.of( sourceNodePath.getParentPath().toString() );
+        }
+
+        final Path relativePath = exportBasePath.relativize( fullNodePath );
+
+        return this.targetDirectory.resolve( relativePath ).resolve( NodeExportPathResolver.SYSTEM_FOLDER_NAME );
     }
 
     private void addRootNodeNotFoundError()

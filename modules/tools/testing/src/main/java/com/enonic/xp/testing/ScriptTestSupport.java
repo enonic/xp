@@ -1,8 +1,8 @@
 package com.enonic.xp.testing;
 
-import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
 import java.util.concurrent.Executors;
 
 import org.junit.Before;
@@ -202,7 +202,7 @@ public abstract class ScriptTestSupport
     {
         final ApplicationBuilder builder = new ApplicationBuilder();
         builder.classLoader( getClass().getClassLoader() );
-        URL[] resourcesPath = {new File( "src/test/resources" ).toURI().toURL()};
+        URL[] resourcesPath = {Path.of( "src/test/resources" ).toUri().toURL()};
         URLClassLoader loader = new URLClassLoader( resourcesPath, ClassLoader.getPlatformClassLoader() );
         builder.urlResolver( new ClassLoaderApplicationUrlResolver( loader ) );
         builder.config( ConfigBuilder.create().build() );

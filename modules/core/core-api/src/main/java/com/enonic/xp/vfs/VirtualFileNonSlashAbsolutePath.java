@@ -1,9 +1,7 @@
 package com.enonic.xp.vfs;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedList;
-
 
 final class VirtualFileNonSlashAbsolutePath
     extends VirtualFilePathImpl
@@ -32,11 +30,11 @@ final class VirtualFileNonSlashAbsolutePath
     @Override
     public Path toLocalPath()
     {
-        Path path = Paths.get( "" );
+        Path path = Path.of( "" );
 
         for ( final String element : this.elements )
         {
-            path = Paths.get( path.toString(), element );
+            path = Path.of( path.toString(), element );
         }
 
         return path;

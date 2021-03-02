@@ -155,6 +155,7 @@ final class CreateContentCommand
         validateSpecificChecks( params );
         validateContentType( params );
         validatePropertyTree( params );
+        validateCreateAttachments( params.getCreateAttachments() );
     }
 
     private void validateSpecificChecks( final CreateContentParams params )

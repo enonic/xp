@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
@@ -126,7 +127,7 @@ import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
-@Component
+@Component(configurationPid = "com.enonic.xp.content")
 public class ContentServiceImpl
     implements ContentService
 {
@@ -140,7 +141,7 @@ public class ContentServiceImpl
 
     private ContentTypeService contentTypeService;
 
-    private NodeService nodeService;
+    private final NodeService nodeService;
 
     private EventPublisher eventPublisher;
 
@@ -150,25 +151,34 @@ public class ContentServiceImpl
 
     private SiteService siteService;
 
-    private ContentNodeTranslator translator;
+    private final ContentNodeTranslator translator;
 
     private final ContentProcessors contentProcessors = new ContentProcessors();
 
     private FormDefaultValuesProcessor formDefaultValuesProcessor;
 
-    private PageDescriptorService pageDescriptorService;
+    private final PageDescriptorService pageDescriptorService;
 
-    private PartDescriptorService partDescriptorService;
+    private final PartDescriptorService partDescriptorService;
 
-    private LayoutDescriptorService layoutDescriptorService;
+    private final LayoutDescriptorService layoutDescriptorService;
 
-    private ContentDataSerializer contentDataSerializer;
+    private final ContentDataSerializer contentDataSerializer;
 
     private ContentAuditLogSupport contentAuditLogSupport;
 
+    private volatile ContentConfig config;
+
     @Activate
-    public void initialize()
+    public ContentServiceImpl( @Reference final NodeService nodeService, @Reference final PageDescriptorService pageDescriptorService,
+                               @Reference final PartDescriptorService partDescriptorService,
+                               @Reference final LayoutDescriptorService layoutDescriptorService )
     {
+        this.nodeService = nodeService;
+        this.pageDescriptorService = pageDescriptorService;
+        this.partDescriptorService = partDescriptorService;
+        this.layoutDescriptorService = layoutDescriptorService;
+
         this.contentDataSerializer = ContentDataSerializer.create().
             layoutDescriptorService( layoutDescriptorService ).
             pageDescriptorService( pageDescriptorService ).
@@ -176,6 +186,13 @@ public class ContentServiceImpl
             build();
 
         this.translator = new ContentNodeTranslator( nodeService, contentDataSerializer );
+    }
+
+    @Activate
+    @Modified
+    public void initialize( final ContentConfig config )
+    {
+        this.config = config;
     }
 
     @Override
@@ -209,6 +226,7 @@ public class ContentServiceImpl
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
             contentDataSerializer( this.contentDataSerializer ).
+            allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).
             params( createContentParams ).
             build().
             execute();
@@ -246,6 +264,7 @@ public class ContentServiceImpl
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
             contentDataSerializer( this.contentDataSerializer ).
+            allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).
             params( params ).
             build().
             execute();
@@ -289,6 +308,7 @@ public class ContentServiceImpl
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
             contentDataSerializer( this.contentDataSerializer ).
+            allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).
             build().
             execute();
 
@@ -312,6 +332,7 @@ public class ContentServiceImpl
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
             contentDataSerializer( this.contentDataSerializer ).
+            allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).
             build().
             execute();
 
@@ -336,6 +357,7 @@ public class ContentServiceImpl
             xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
             contentDataSerializer( this.contentDataSerializer ).
+            allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).
             build().
             execute();
 
@@ -1262,12 +1284,6 @@ public class ContentServiceImpl
     }
 
     @Reference
-    public void setNodeService( final NodeService nodeService )
-    {
-        this.nodeService = nodeService;
-    }
-
-    @Reference
     public void setEventPublisher( final EventPublisher eventPublisher )
     {
         this.eventPublisher = eventPublisher;
@@ -1307,24 +1323,6 @@ public class ContentServiceImpl
     public void setFormDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
     {
         this.formDefaultValuesProcessor = formDefaultValuesProcessor;
-    }
-
-    @Reference
-    public void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
-    {
-        this.pageDescriptorService = pageDescriptorService;
-    }
-
-    @Reference
-    public void setPartDescriptorService( final PartDescriptorService partDescriptorService )
-    {
-        this.partDescriptorService = partDescriptorService;
-    }
-
-    @Reference
-    public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
-    {
-        this.layoutDescriptorService = layoutDescriptorService;
     }
 
     @Reference

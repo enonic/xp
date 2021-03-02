@@ -13,12 +13,12 @@ public class ResourceResolverTest
     public void resolve_absolute()
         throws Exception
     {
-        touchFile( "/dummy.txt" );
+        touchFile( "dummy.txt" );
 
         final ResourceKey key1 = resolve( "/a/b/c.txt", "/dummy.txt" );
         assertEquals( "/dummy.txt", key1.getPath() );
 
-        touchFile( "/site/dummy.txt" );
+        touchFile( "site/dummy.txt" );
 
         final ResourceKey key2 = resolve( "/a/b/c.txt", "/dummy.txt" );
         assertEquals( "/site/dummy.txt", key2.getPath() );

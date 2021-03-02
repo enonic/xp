@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
@@ -198,7 +198,7 @@ public class SnapshotServiceImpl
             return false;
         }
 
-        final boolean sameAsConfiguredLocation = snapshotRepo.settings().get( "location" ).equals( getSnapshotsDir().getPath() );
+        final boolean sameAsConfiguredLocation = snapshotRepo.settings().get( "location" ).equals( getSnapshotsDir().toString() );
 
         return sameAsConfiguredLocation;
     }
@@ -241,7 +241,7 @@ public class SnapshotServiceImpl
         this.client.admin().cluster().putRepository( requestBuilder.request() ).actionGet();
     }
 
-    private File getSnapshotsDir()
+    private Path getSnapshotsDir()
     {
         return this.configuration.getSnapshotsDir();
     }

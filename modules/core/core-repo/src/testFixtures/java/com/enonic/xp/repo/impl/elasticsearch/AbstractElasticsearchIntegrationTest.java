@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,15 +35,14 @@ public abstract class AbstractElasticsearchIntegrationTest
         return actionGet.isExists();
     }
 
-    protected File getSnapshotsDir() {
+    protected Path getSnapshotsDir()
+    {
         return ElasticsearchFixture.server.getSnapshotsDir();
     }
 
     protected void printAllIndexContent( final String indexName, final String indexType )
     {
-        String termQuery = "{\n" +
-            "  \"query\": { \"match_all\": {} }\n" +
-            "}";
+        String termQuery = "{\n" + "  \"query\": { \"match_all\": {} }\n" + "}";
 
         SearchRequestBuilder searchRequest = new SearchRequestBuilder( client, SearchAction.INSTANCE ).
             setSize( 100 ).

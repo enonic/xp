@@ -1,6 +1,6 @@
 package com.enonic.xp.internal.blobstore.file.config;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.HashMap;
 
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ public class FileBlobStoreConfigImplTest
         config.activate( new HashMap<>() );
 
         assertFalse( config.readThroughEnabled() );
-        assertEquals( new File( "${xp.home}/repo/blob" ), config.baseDir() );
+        assertEquals( Path.of( "${xp.home}/repo/blob" ), config.baseDir() );
         assertEquals( 104857600, config.readThroughSizeThreshold() );
     }
 

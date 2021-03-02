@@ -100,6 +100,7 @@ public class ExportNodesParams
         {
         }
 
+        @Deprecated
         public Builder rootDirectory( final String rootDirectory )
         {
             this.rootDirectory = rootDirectory;

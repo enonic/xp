@@ -50,7 +50,7 @@ public class RequireResolverTest
     public void resolve_relative()
         throws Exception
     {
-        touchFile( "/a/b/dummy.js" );
+        touchFile( "a/b/dummy.js" );
 
         final ResourceKey key2 = resolve( "/a/b/c.js", "dummy" );
         assertEquals( "/a/b/dummy.js", key2.getPath() );

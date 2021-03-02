@@ -12,7 +12,10 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipMethod;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.repo.impl.dump.DefaultFilePaths;
 import com.enonic.xp.repo.impl.dump.FilePaths;
 import com.enonic.xp.repo.impl.dump.PathRef;
@@ -37,6 +40,7 @@ public class ZipDumpWriter
 
     public static ZipDumpWriter create( final Path basePath, final String dumpName, final BlobStore blobStore )
     {
+        Preconditions.checkArgument( FileNames.isSafeFileName( dumpName ) );
         try
         {
             final ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(

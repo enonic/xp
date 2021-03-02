@@ -1,6 +1,5 @@
 package com.enonic.xp.script.impl.function;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -38,14 +37,14 @@ public class ResolverTestSupport
     private Resource loadResource( final ResourceKey key )
         throws Exception
     {
-        final File file = new File( this.temporaryFolder.toFile(), key.getPath() );
-        return new UrlResource( key, file.toURI().toURL() );
+        final String relativeKeyPath = key.getPath().substring( 1 );
+        return new UrlResource( key, this.temporaryFolder.resolve( relativeKeyPath ).toUri().toURL() );
     }
 
     final void touchFile( final String path )
         throws Exception
     {
-        final Path filePath = Path.of( this.temporaryFolder.toString(), path );
+        final Path filePath = this.temporaryFolder.resolve( path );
         Files.createDirectories( filePath.getParent() );
         Files.createFile( filePath );
     }

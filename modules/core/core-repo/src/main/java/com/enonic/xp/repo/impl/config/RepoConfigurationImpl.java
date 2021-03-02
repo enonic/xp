@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.config;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
@@ -17,14 +17,9 @@ public final class RepoConfigurationImpl
     private Configuration config;
 
     @Override
-    public File getSnapshotsDir()
+    public Path getSnapshotsDir()
     {
-        return getFileProperty( "snapshots.dir" );
-    }
-
-    private File getFileProperty( final String name )
-    {
-        return new File( this.config.get( name ) );
+        return Path.of( this.config.get( "snapshots.dir" ) );
     }
 
     @Activate

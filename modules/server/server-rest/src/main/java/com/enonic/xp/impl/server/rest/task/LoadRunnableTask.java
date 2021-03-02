@@ -3,10 +3,13 @@ package com.enonic.xp.impl.server.rest.task;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.dump.BranchLoadResult;
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.RepoLoadResult;
@@ -37,6 +40,8 @@ import com.enonic.xp.vfs.VirtualFiles;
 public class LoadRunnableTask
     extends AbstractRunnableTask
 {
+    private final Path dumpsFolder = HomeDir.get().toPath().resolve( "data" ).resolve( "dump" );
+
     private final SystemLoadRequestJson params;
 
     private final DumpService dumpService;
@@ -119,7 +124,9 @@ public class LoadRunnableTask
 
     private Path getDumpRoot( final String dumpName )
     {
-        return HomeDir.get().toFile().toPath().resolve( "data" ).resolve( "dump" ).resolve( dumpName );
+        Preconditions.checkArgument( FileNames.isSafeFileName( dumpName ) );
+
+        return dumpsFolder.resolve( dumpName );
     }
 
     private RepoLoadResult importSystemRepo( final SystemLoadRequestJson request )

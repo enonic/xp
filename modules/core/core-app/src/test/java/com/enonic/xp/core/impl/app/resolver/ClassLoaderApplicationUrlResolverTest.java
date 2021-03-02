@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.app.resolver;
 
-import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +21,7 @@ public class ClassLoaderApplicationUrlResolverTest
     public void setup()
         throws Exception
     {
-        URL[] resourcesPath = {new File( "src/test/resources" ).toURI().toURL()};
+        URL[] resourcesPath = {Path.of( "src/test/resources" ).toUri().toURL()};
         URLClassLoader loader = new URLClassLoader( resourcesPath, ClassLoader.getSystemClassLoader() );
         this.resolver = new ClassLoaderApplicationUrlResolver( loader );
     }

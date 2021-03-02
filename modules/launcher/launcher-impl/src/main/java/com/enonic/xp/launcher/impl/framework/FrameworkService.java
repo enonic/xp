@@ -21,7 +21,6 @@ import org.osgi.framework.startlevel.FrameworkStartLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.launcher.LauncherListener;
 import com.enonic.xp.launcher.impl.SharedConstants;
 import com.enonic.xp.launcher.impl.config.ConfigProperties;
 
@@ -41,8 +40,6 @@ public class FrameworkService
 
     private volatile Felix felix;
 
-    private volatile LauncherListener listener;
-
     private volatile long startTime;
 
     public FrameworkService( final ConfigProperties config )
@@ -53,12 +50,6 @@ public class FrameworkService
     public FrameworkService activator( final BundleActivator activator )
     {
         this.activators.add( activator );
-        return this;
-    }
-
-    public FrameworkService listener( final LauncherListener listener )
-    {
-        this.listener = listener;
         return this;
     }
 
@@ -156,10 +147,6 @@ public class FrameworkService
     private void serverStarted()
     {
         LOG.info( "Started Enonic XP in {} ms", ( System.currentTimeMillis() - this.startTime ) );
-        if ( this.listener != null )
-        {
-            this.listener.serverStarted();
-        }
     }
 
     public void stop()

@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch;
 
 
 import java.io.File;
+import java.nio.file.Path;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
@@ -70,8 +71,8 @@ public class EmbeddedElasticsearchServer
         node.close();
     }
 
-    public File getSnapshotsDir()
+    public Path getSnapshotsDir()
     {
-        return this.snaphotsDir;
+        return this.snaphotsDir.toPath();
     }
 }
