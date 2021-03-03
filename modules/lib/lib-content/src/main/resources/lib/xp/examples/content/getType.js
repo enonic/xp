@@ -101,7 +101,7 @@ var expected = {
                 'minimum': 0
             },
             'config': {
-                'allowedContentType': [
+                'allowContentType': [
                     {
                         'value': 'com.enonic.myapp:country'
                     }

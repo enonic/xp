@@ -260,7 +260,7 @@ public class ContentTypeHandlerTest
         Input nationality = Input.create().
             name( "nationality" ).
             inputType( InputTypeName.CONTENT_SELECTOR ).
-            inputTypeProperty( InputTypeProperty.create( "allowedContentType", "com.enonic.myapp:country" ).build() ).
+            inputTypeProperty( InputTypeProperty.create( "allowContentType", "com.enonic.myapp:country" ).build() ).
             label( "Nationality" ).
             build();
 
