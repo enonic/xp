@@ -1,8 +1,6 @@
 package com.enonic.xp.admin.impl.json.schema.mixin;
 
 import java.time.Instant;
-import java.util.Collections;
-import java.util.List;
 
 import com.google.common.base.Preconditions;
 
@@ -98,11 +96,6 @@ public class MixinJson
     public String getModifier()
     {
         return mixin.getModifier() != null ? mixin.getModifier().toString() : null;
-    }
-
-    public List<String> getAllowedContentTypes()
-    {
-        return Collections.emptyList();
     }
 
     @Override

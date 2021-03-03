@@ -242,7 +242,7 @@ public class InputValidatorTest
                 label( "Content selector" ).
                 inputType( InputTypeName.CONTENT_SELECTOR ).
                 inputTypeProperty( InputTypeProperty.create( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).build() ).
-                inputTypeProperty( InputTypeProperty.create( "allowedContentType", ContentTypeName.folder().toString() ).build() ).
+                inputTypeProperty( InputTypeProperty.create( "allowContentType", ContentTypeName.folder().toString() ).build() ).
                 build() ).
             addFormItem( Input.create().
                 name( "contentTypeFilter" ).
