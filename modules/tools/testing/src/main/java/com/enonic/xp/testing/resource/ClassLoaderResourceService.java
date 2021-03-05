@@ -44,6 +44,6 @@ public final class ClassLoaderResourceService
     @Override
     public <K, V> V processResource( final ResourceProcessor<K, V> processor )
     {
-        throw new IllegalStateException( "Not implemented" );
+        return processor.process( getResource( processor.toResourceKey() ) );
     }
 }
