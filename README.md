@@ -7,7 +7,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ceca6f602c2a43e7a2f32287e202fe2c)](https://www.codacy.com/app/enonic/xp?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=enonic/xp&amp;utm_campaign=Badge_Grade)
 
 Welcome to the home of Enonic XP. Here you will find all source code for the product. To get started,
-please read our docs here: http://xp.readthedocs.org.
+please read our docs here: https://developer.enonic.com/docs/xp/stable.
 
 ## Building
 
