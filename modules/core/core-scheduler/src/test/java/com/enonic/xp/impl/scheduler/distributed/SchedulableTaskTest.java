@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 import java.util.TimeZone;
 
 import org.junit.jupiter.api.AfterEach;
@@ -37,6 +38,8 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.SchedulerName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.User;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskService;
 
@@ -57,6 +60,9 @@ public class SchedulableTaskTest
     @Mock(stubOnly = true)
     ServiceReference<NodeService> nodeServiceReference;
 
+    @Mock(stubOnly = true)
+    ServiceReference<SecurityService> securityServiceReference;
+
     @Captor
     ArgumentCaptor<SubmitTaskParams> taskCaptor;
 
@@ -65,6 +71,9 @@ public class SchedulableTaskTest
 
     @Mock
     private NodeService nodeService;
+
+    @Mock
+    private SecurityService securityService;
 
     @Mock(stubOnly = true)
     private BundleContext bundleContext;
@@ -96,8 +105,10 @@ public class SchedulableTaskTest
         when( bundle.getBundleContext() ).thenReturn( bundleContext );
         when( bundleContext.getServiceReferences( TaskService.class, null ) ).thenReturn( List.of( taskServiceReference ) );
         when( bundleContext.getServiceReferences( NodeService.class, null ) ).thenReturn( List.of( nodeServiceReference ) );
+        when( bundleContext.getServiceReferences( SecurityService.class, null ) ).thenReturn( List.of( securityServiceReference ) );
         when( bundleContext.getService( taskServiceReference ) ).thenReturn( taskService );
         when( bundleContext.getService( nodeServiceReference ) ).thenReturn( nodeService );
+        when( bundleContext.getService( securityServiceReference ) ).thenReturn( securityService );
     }
 
     @AfterEach
@@ -107,14 +118,54 @@ public class SchedulableTaskTest
     }
 
     @Test
-    public void taskCalled()
+    public void taskCalledWithNonExistUser()
     {
         mockNode();
 
         final PropertyTree taskData = new PropertyTree();
         taskData.addString( "string", "value" );
 
-        final SchedulableTask task = createAndRunTask( SchedulerName.from( "task" ), DescriptorKey.from( "app:key" ), taskData );
+        final SchedulableTask task = createAndRunTask( SchedulerName.from( "task" ), DescriptorKey.from( "app:key" ), taskData,
+                                                       PrincipalKey.from( "user:system:user" ) );
+        assertEquals( "task", task.getName() );
+
+        verify( taskService, times( 1 ) ).submitTask( taskCaptor.capture() );
+
+        assertEquals( DescriptorKey.from( "app:key" ), taskCaptor.getValue().getDescriptorKey() );
+        assertEquals( taskData, taskCaptor.getValue().getData() );
+    }
+
+    @Test
+    public void taskCalledWithSetUser()
+    {
+        mockNode();
+
+        final PropertyTree taskData = new PropertyTree();
+        taskData.addString( "string", "value" );
+
+        final User customUser =
+            User.create().displayName( "Custom" ).key( PrincipalKey.from( "user:system:user" ) ).login( "custom" ).build();
+        when( securityService.getUser( PrincipalKey.from( "user:system:user" ) ) ).thenReturn( Optional.of( customUser ) );
+
+        final SchedulableTask task =
+            createAndRunTask( SchedulerName.from( "task" ), DescriptorKey.from( "app:key" ), taskData, customUser.getKey() );
+        assertEquals( "task", task.getName() );
+
+        verify( taskService, times( 1 ) ).submitTask( taskCaptor.capture() );
+
+        assertEquals( DescriptorKey.from( "app:key" ), taskCaptor.getValue().getDescriptorKey() );
+        assertEquals( taskData, taskCaptor.getValue().getData() );
+    }
+
+    @Test
+    public void taskCalledWithoutSetUser()
+    {
+        mockNode();
+
+        final PropertyTree taskData = new PropertyTree();
+        taskData.addString( "string", "value" );
+
+        final SchedulableTask task = createAndRunTask( SchedulerName.from( "task" ), DescriptorKey.from( "app:key" ), taskData, null );
         assertEquals( "task", task.getName() );
 
         verify( taskService, times( 1 ) ).submitTask( taskCaptor.capture() );
@@ -160,6 +211,12 @@ public class SchedulableTaskTest
 
     private SchedulableTask createAndRunTask( final SchedulerName name, final DescriptorKey descriptor, final PropertyTree data )
     {
+        return createAndRunTask( name, descriptor, data, null );
+    }
+
+    private SchedulableTask createAndRunTask( final SchedulerName name, final DescriptorKey descriptor, final PropertyTree data,
+                                              final PrincipalKey user )
+    {
         final ScheduledJob job = ScheduledJob.create().
             name( name ).
             descriptor( descriptor ).
@@ -169,7 +226,7 @@ public class SchedulableTaskTest
                 timeZone( TimeZone.getTimeZone( ZoneId.systemDefault() ) ).
                 build() ).
             payload( data ).
-            user( PrincipalKey.from( "user:system:user" ) ).
+            user( user ).
             author( PrincipalKey.from( "user:system:author" ) ).
             enabled( true ).
             build();

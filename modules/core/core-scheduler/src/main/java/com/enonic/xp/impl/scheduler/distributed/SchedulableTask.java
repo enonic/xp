@@ -22,6 +22,7 @@ import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.SchedulerName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.SubmitTaskParams;
@@ -74,17 +75,21 @@ public final class SchedulableTask
     {
         try
         {
-            OsgiSupport.withService( TaskService.class, taskService -> taskService.submitTask( SubmitTaskParams.create().
-                descriptorKey( job.getDescriptor() ).
-                data( job.getPayload() ).
-                build() ) );
+            adminContext().runWith( () -> {
+                taskContext().runWith(
+                    () -> OsgiSupport.withService( TaskService.class, taskService -> taskService.submitTask( SubmitTaskParams.create().
+                        descriptorKey( job.getDescriptor() ).
+                        data( job.getPayload() ).
+                        build() ) ) );
 
-            adminContext().runWith( () -> OsgiSupport.withService( NodeService.class, nodeService -> UpdateLastRunCommand.create().
-                nodeService( nodeService ).
-                name( job.getName() ).
-                lastRun( Instant.now() ).
-                build().
-                execute() ) );
+                OsgiSupport.withService( NodeService.class, nodeService -> UpdateLastRunCommand.create().
+                    nodeService( nodeService ).
+                    name( job.getName() ).
+                    lastRun( Instant.now() ).
+                    build().
+                    execute() );
+            } );
+
 
         }
         catch ( Exception e )
@@ -98,6 +103,31 @@ public final class SchedulableTask
         }
 
     }
+
+    private Context taskContext()
+    {
+        Context taskContext = ContextAccessor.current();
+
+        if ( job.getUser() == null )
+        {
+            return taskContext;
+        }
+
+        return OsgiSupport.withService( SecurityService.class, securityService -> securityService.getUser( job.getUser() ) ).
+            map( ( user ) -> {
+                final AuthenticationInfo authInfo = AuthenticationInfo.
+                    copyOf( taskContext.getAuthInfo() ).
+                    user( user ).
+                    build();
+
+                return ContextBuilder.
+                    from( taskContext ).
+                    authInfo( authInfo ).
+                    build();
+            } ).
+            orElse( taskContext );
+    }
+
 
     private Object writeReplace()
     {
