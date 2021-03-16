@@ -3,12 +3,9 @@ package com.enonic.xp.impl.scheduler.distributed;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.ResourceBundle;
 import java.util.TimeZone;
 
-import com.cronutils.descriptor.CronDescriptor;
 import com.cronutils.model.Cron;
 import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinition;
@@ -17,11 +14,11 @@ import com.cronutils.model.time.ExecutionTime;
 import com.cronutils.parser.CronParser;
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.scheduler.ScheduleCalendar;
+import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
 
-public final class CronCalendar
-    implements ScheduleCalendar
+public final class CronCalendarImpl
+    implements CronCalendar
 {
     private static final long serialVersionUID = 0;
 
@@ -29,23 +26,17 @@ public final class CronCalendar
 
     private static final CronParser PARSER = new CronParser( DEFINITION );
 
-    private static final CronDescriptor DESCRIPTOR =
-        new CronDescriptor( ResourceBundle.getBundle( "properties/CronUtilsI18N", Locale.UK ) );
-
     private final Cron cron;
 
     private final TimeZone timeZone;
 
     private final ExecutionTime executionTime;
 
-    private final String description;
-
-    private CronCalendar( final Builder builder )
+    private CronCalendarImpl( final Builder builder )
     {
         this.timeZone = builder.timeZone;
         this.cron = PARSER.parse( builder.value );
         this.executionTime = ExecutionTime.forCron( this.cron );
-        this.description = DESCRIPTOR.describe( this.cron );
     }
 
     public static boolean isCronValue( final String value )
@@ -78,11 +69,6 @@ public final class CronCalendar
         return ScheduleCalendarType.CRON;
     }
 
-    public String getDescription()
-    {
-        return description;
-    }
-
     public String getCronValue()
     {
         return cron.asString();
@@ -107,7 +93,7 @@ public final class CronCalendar
 
         private final String timezone;
 
-        SerializedForm( final CronCalendar calendar )
+        SerializedForm( final CronCalendarImpl calendar )
         {
             this.value = calendar.getCronValue();
             this.timezone = calendar.getTimeZone().getID();
@@ -115,7 +101,7 @@ public final class CronCalendar
 
         private Object readResolve()
         {
-            return CronCalendar.create().
+            return CronCalendarImpl.create().
                 value( value ).
                 timeZone( TimeZone.getTimeZone( timezone ) ).
                 build();
@@ -146,10 +132,10 @@ public final class CronCalendar
             Preconditions.checkNotNull( timeZone, "timeZone must be set." );
         }
 
-        public CronCalendar build()
+        public CronCalendarImpl build()
         {
             validate();
-            return new CronCalendar( this );
+            return new CronCalendarImpl( this );
         }
     }
 }

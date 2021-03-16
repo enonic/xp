@@ -154,7 +154,7 @@ public class RescheduleTaskTest
     {
         final ScheduledJob job1 = ScheduledJob.create().
             name( SchedulerName.from( "task1" ) ).
-            calendar( CronCalendar.create().
+            calendar( CronCalendarImpl.create().
                 value( "* * * * *" ).
                 timeZone( TimeZone.getDefault() ).
                 build() ).
@@ -165,7 +165,7 @@ public class RescheduleTaskTest
 
         final ScheduledJob job2 = ScheduledJob.create().
             name( SchedulerName.from( "task2" ) ).
-            calendar( CronCalendar.create().
+            calendar( CronCalendarImpl.create().
                 value( "* * * * *" ).
                 timeZone( TimeZone.getDefault() ).
                 build() ).
@@ -176,7 +176,7 @@ public class RescheduleTaskTest
 
         final ScheduledJob job3 = ScheduledJob.create().
             name( SchedulerName.from( "task3" ) ).
-            calendar( OneTimeCalendar.create().
+            calendar( OneTimeCalendarImpl.create().
                 value( Instant.now().minus( Duration.of( 1, ChronoUnit.SECONDS ) ) ).
                 build() ).
             descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task3" ) ).
@@ -186,7 +186,7 @@ public class RescheduleTaskTest
 
         final ScheduledJob job4 = ScheduledJob.create().
             name( SchedulerName.from( "task4" ) ).
-            calendar( CronCalendar.create().
+            calendar( CronCalendarImpl.create().
                 value( "* * * * *" ).
                 timeZone( TimeZone.getDefault() ).
                 build() ).
