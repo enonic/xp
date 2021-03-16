@@ -5,10 +5,11 @@ import java.util.TimeZone;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.xp.impl.scheduler.distributed.CronCalendar;
-import com.enonic.xp.impl.scheduler.distributed.OneTimeCalendar;
+import com.enonic.xp.impl.scheduler.distributed.CronCalendarImpl;
+import com.enonic.xp.impl.scheduler.distributed.OneTimeCalendarImpl;
 import com.enonic.xp.scheduler.CalendarService;
-import com.enonic.xp.scheduler.ScheduleCalendar;
+import com.enonic.xp.scheduler.CronCalendar;
+import com.enonic.xp.scheduler.OneTimeCalendar;
 
 @Component(immediate = true)
 public class CalendarServiceImpl
@@ -16,11 +17,11 @@ public class CalendarServiceImpl
 {
 
     @Override
-    public ScheduleCalendar cron( final String value, final TimeZone timeZone )
+    public CronCalendar cron( final String value, final TimeZone timeZone )
     {
-        if ( CronCalendar.isCronValue( value ) )
+        if ( CronCalendarImpl.isCronValue( value ) )
         {
-            return CronCalendar.create().
+            return CronCalendarImpl.create().
                 value( value ).
                 timeZone( timeZone ).
                 build();
@@ -29,9 +30,9 @@ public class CalendarServiceImpl
     }
 
     @Override
-    public ScheduleCalendar oneTime( final Instant value )
+    public OneTimeCalendar oneTime( final Instant value )
     {
-        return OneTimeCalendar.create().
+        return OneTimeCalendarImpl.create().
             value( value ).
             build();
     }

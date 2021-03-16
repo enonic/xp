@@ -8,8 +8,8 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public interface CalendarService
 {
-    ScheduleCalendar cron( String value, TimeZone timeZone );
+    CronCalendar cron( String value, TimeZone timeZone );
 
-    ScheduleCalendar oneTime( Instant value );
+    OneTimeCalendar oneTime( Instant value );
 
 }
