@@ -23,16 +23,17 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.impl.scheduler.CalendarServiceImpl;
 import com.enonic.xp.impl.scheduler.SchedulerServiceImpl;
-import com.enonic.xp.impl.scheduler.distributed.CronCalendar;
-import com.enonic.xp.impl.scheduler.distributed.OneTimeCalendar;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
+import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
+import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
@@ -77,6 +78,8 @@ class SchedulerServiceImplTest
 
     private SchedulerServiceImpl schedulerService;
 
+    private CalendarServiceImpl calendarService;
+
     private static Context adminContext()
     {
         return ContextBuilder.create().
@@ -97,6 +100,8 @@ class SchedulerServiceImplTest
         schedulerService = new SchedulerServiceImpl( indexService, repositoryService, nodeService, hazelcastInstance );
 
         adminContext().runWith( () -> schedulerService.initialize() );
+
+        calendarService = new CalendarServiceImpl();
     }
 
     @Test
@@ -104,10 +109,7 @@ class SchedulerServiceImplTest
     {
         final SchedulerName name = SchedulerName.from( "test" );
         final DescriptorKey descriptor = DescriptorKey.from( ApplicationKey.from( "com.enonic.app.features" ), "landing" );
-        final CronCalendar calendar = CronCalendar.create().
-            value( "* * * * *" ).
-            timeZone( TimeZone.getDefault() ).
-            build();
+        final CronCalendar calendar = calendarService.cron( "* * * * *", TimeZone.getDefault() );
         final PropertyTree payload = new PropertyTree();
         payload.addString( "string", "value" );
         final PrincipalKey author = PrincipalKey.from( "user:system:author" );
@@ -142,11 +144,10 @@ class SchedulerServiceImplTest
     {
         final SchedulerName name = SchedulerName.from( "test" );
         final DescriptorKey descriptor = DescriptorKey.from( ApplicationKey.from( "com.enonic.app.features" ), "landing" );
-        final ScheduleCalendar calendar = OneTimeCalendar.create().
-            value( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) ).
-            build();
+        final ScheduleCalendar calendar = calendarService.oneTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) );
         final PropertyTree payload = new PropertyTree();
         payload.addString( "string", "value" );
+
         final PrincipalKey author = PrincipalKey.from( "user:system:author" );
         final PrincipalKey user = PrincipalKey.from( "user:system:user" );
 
@@ -163,7 +164,7 @@ class SchedulerServiceImplTest
 
         final ScheduledJob scheduledJob = adminContext().callWith( () -> schedulerService.create( params ) );
 
-        assertEquals( "2021-02-25T10:44:33.170079900Z", ( (OneTimeCalendar) scheduledJob.getCalendar() ).getValue() );
+        assertEquals( "2021-02-25T10:44:33.170079900Z", ( (OneTimeCalendar) scheduledJob.getCalendar() ).getValue().toString() );
         assertEquals( ScheduleCalendarType.ONE_TIME, scheduledJob.getCalendar().getType() );
     }
 
@@ -171,10 +172,7 @@ class SchedulerServiceImplTest
     void createWithoutAccess()
     {
         final SchedulerName name = SchedulerName.from( "test" );
-        final CronCalendar calendar = CronCalendar.create().
-            value( "* * * * *" ).
-            timeZone( TimeZone.getDefault() ).
-            build();
+        final CronCalendar calendar = calendarService.cron( "* * * * *", TimeZone.getDefault() );
 
         final CreateScheduledJobParams params = CreateScheduledJobParams.create().
             name( name ).
@@ -190,10 +188,7 @@ class SchedulerServiceImplTest
     void createExisted()
     {
         final SchedulerName name = SchedulerName.from( "test" );
-        final CronCalendar calendar = CronCalendar.create().
-            value( "* * * * *" ).
-            timeZone( TimeZone.getDefault() ).
-            build();
+        final CronCalendar calendar = calendarService.cron( "* * * * *", TimeZone.getDefault() );
 
         final CreateScheduledJobParams params = CreateScheduledJobParams.create().
             name( name ).
@@ -226,10 +221,7 @@ class SchedulerServiceImplTest
         adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
             name( name ).
             descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
-            calendar( CronCalendar.create().
-                value( "* * * * *" ).
-                timeZone( TimeZone.getTimeZone( "GMT+5:30" ) ).
-                build() ).
+            calendar( calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) ) ).
             payload( new PropertyTree() ).
             enabled( true ).
             build() ) );
@@ -248,10 +240,7 @@ class SchedulerServiceImplTest
         adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
             name( name ).
             descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
-            calendar( CronCalendar.create().
-                value( "* * * * *" ).
-                timeZone( TimeZone.getTimeZone( "GMT+5:30" ) ).
-                build() ).
+            calendar( calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) ) ).
             payload( new PropertyTree() ).
             enabled( true ).
             build() ) );
@@ -274,10 +263,7 @@ class SchedulerServiceImplTest
         adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
             name( name ).
             descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
-            calendar( CronCalendar.create().
-                value( "* * * * *" ).
-                timeZone( TimeZone.getTimeZone( "GMT+5:30" ) ).
-                build() ).
+            calendar( calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) ) ).
             payload( new PropertyTree() ).
             build() ) );
 
@@ -290,16 +276,14 @@ class SchedulerServiceImplTest
                 edit.payload.addString( "string", "value" );
                 edit.author = PrincipalKey.from( "user:provider:author" );
                 edit.user = PrincipalKey.from( "user:provider:user" );
-                edit.calendar = OneTimeCalendar.create().
-                    value( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) ).
-                    build();
+                edit.calendar = calendarService.oneTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) );
             } ).
             build() ) );
 
         assertEquals( name, modifiedJob.getName() );
         assertEquals( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task2" ), modifiedJob.getDescriptor() );
         assertEquals( "new description", modifiedJob.getDescription() );
-        assertEquals( "2021-02-25T10:44:33.170079900Z", ( (OneTimeCalendar) modifiedJob.getCalendar() ).getValue() );
+        assertEquals( "2021-02-25T10:44:33.170079900Z", ( (OneTimeCalendar) modifiedJob.getCalendar() ).getValue().toString() );
         assertEquals( ScheduleCalendarType.ONE_TIME, modifiedJob.getCalendar().getType() );
         assertEquals( "value", modifiedJob.getPayload().getString( "string" ) );
         assertEquals( PrincipalKey.from( "user:provider:author" ), modifiedJob.getAuthor() );
@@ -323,10 +307,7 @@ class SchedulerServiceImplTest
         adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
             name( name ).
             descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
-            calendar( CronCalendar.create().
-                value( "* * * * *" ).
-                timeZone( TimeZone.getTimeZone( "GMT+5:30" ) ).
-                build() ).
+            calendar( calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) ) ).
             payload( new PropertyTree() ).
             build() ) );
 
@@ -342,10 +323,7 @@ class SchedulerServiceImplTest
         adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
             name( name ).
             descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
-            calendar( CronCalendar.create().
-                value( "* * * * *" ).
-                timeZone( TimeZone.getTimeZone( "GMT+5:30" ) ).
-                build() ).
+            calendar( calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) ) ).
             payload( new PropertyTree() ).
             build() ) );
 
@@ -364,10 +342,7 @@ class SchedulerServiceImplTest
         adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
             name( name ).
             descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
-            calendar( CronCalendar.create().
-                value( "* * * * *" ).
-                timeZone( TimeZone.getTimeZone( "GMT+5:30" ) ).
-                build() ).
+            calendar( calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) ) ).
             payload( new PropertyTree() ).
             build() ) );
 
@@ -392,10 +367,7 @@ class SchedulerServiceImplTest
         adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
             name( name ).
             descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
-            calendar( CronCalendar.create().
-                value( "* * * * *" ).
-                timeZone( TimeZone.getTimeZone( "GMT+5:30" ) ).
-                build() ).
+            calendar( calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) ) ).
             payload( new PropertyTree() ).
             build() ) );
 
@@ -407,10 +379,7 @@ class SchedulerServiceImplTest
     {
         final SchedulerName name = SchedulerName.from( "test" );
         final DescriptorKey descriptor = DescriptorKey.from( ApplicationKey.from( "com.enonic.app.features" ), "landing" );
-        final CronCalendar calendar = CronCalendar.create().
-            value( "* * * * *" ).
-            timeZone( TimeZone.getDefault() ).
-            build();
+        final CronCalendar calendar = calendarService.cron( "* * * * *", TimeZone.getDefault() );
         final PropertyTree payload = new PropertyTree();
         payload.addString( "string", "value" );
 
@@ -439,10 +408,7 @@ class SchedulerServiceImplTest
 
         final SchedulerName name = SchedulerName.from( "test" );
         final DescriptorKey descriptor = DescriptorKey.from( ApplicationKey.from( "com.enonic.app.features" ), "landing" );
-        final CronCalendar calendar = CronCalendar.create().
-            value( "* * * * *" ).
-            timeZone( TimeZone.getDefault() ).
-            build();
+        final CronCalendar calendar = calendarService.cron( "* * * * *", TimeZone.getDefault() );
         final PropertyTree payload = new PropertyTree();
         payload.addString( "string", "value" );
 
@@ -463,10 +429,7 @@ class SchedulerServiceImplTest
         assertEquals( 0, adminContext().callWith( () -> schedulerService.list() ).size() );
 
         final DescriptorKey descriptor = DescriptorKey.from( ApplicationKey.from( "com.enonic.app.features" ), "landing" );
-        final CronCalendar calendar = CronCalendar.create().
-            value( "* * * * *" ).
-            timeZone( TimeZone.getDefault() ).
-            build();
+        final CronCalendar calendar = calendarService.cron( "* * * * *", TimeZone.getDefault() );
         final PropertyTree payload = new PropertyTree();
         payload.addString( "string", "value" );
 

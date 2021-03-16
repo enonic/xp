@@ -6,17 +6,17 @@ import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.scheduler.ScheduleCalendar;
+import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
 
-public final class OneTimeCalendar
-    implements ScheduleCalendar
+public final class OneTimeCalendarImpl
+    implements OneTimeCalendar
 {
     private static final long serialVersionUID = 0;
 
     private final Instant value;
 
-    private OneTimeCalendar( final Builder builder )
+    private OneTimeCalendarImpl( final Builder builder )
     {
         this.value = builder.value;
     }
@@ -26,9 +26,9 @@ public final class OneTimeCalendar
         return new Builder();
     }
 
-    public String getValue()
+    public Instant getValue()
     {
-        return value.toString();
+        return value;
     }
 
     @Override
@@ -58,10 +58,10 @@ public final class OneTimeCalendar
             Preconditions.checkNotNull( value, "value must be set." );
         }
 
-        public OneTimeCalendar build()
+        public OneTimeCalendarImpl build()
         {
             validate();
-            return new OneTimeCalendar( this );
+            return new OneTimeCalendarImpl( this );
         }
     }
 }

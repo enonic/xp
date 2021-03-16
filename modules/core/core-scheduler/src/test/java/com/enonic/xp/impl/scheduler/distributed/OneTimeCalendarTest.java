@@ -34,19 +34,19 @@ public class OneTimeCalendarTest
         }
     }
 
-    private static OneTimeCalendar deserialize( byte[] bytes )
+    private static OneTimeCalendarImpl deserialize( byte[] bytes )
         throws IOException, ClassNotFoundException
     {
         try (ByteArrayInputStream bais = new ByteArrayInputStream( bytes ); ObjectInputStream ois = new ObjectInputStream( bais ))
         {
-            return (OneTimeCalendar) ois.readObject();
+            return (OneTimeCalendarImpl) ois.readObject();
         }
     }
 
     @Test
     public void createWrongValue()
     {
-        assertThrows( NullPointerException.class, () -> OneTimeCalendar.create().
+        assertThrows( NullPointerException.class, () -> OneTimeCalendarImpl.create().
             value( null ).
             build() );
     }
@@ -54,14 +54,14 @@ public class OneTimeCalendarTest
     @Test
     public void create()
     {
-        OneTimeCalendar calendar = OneTimeCalendar.create().
+        OneTimeCalendarImpl calendar = OneTimeCalendarImpl.create().
             value( Instant.now().plus( Duration.of( 1, ChronoUnit.MINUTES ) ) ).
             build();
 
         assertFalse( calendar.nextExecution().get().isNegative() );
         assertEquals( ScheduleCalendarType.ONE_TIME, calendar.getType() );
 
-        calendar = OneTimeCalendar.create().
+        calendar = OneTimeCalendarImpl.create().
             value( Instant.now().minus( Duration.of( 1, ChronoUnit.SECONDS ) ) ).
             build();
 
@@ -73,13 +73,13 @@ public class OneTimeCalendarTest
         throws Exception
     {
 
-        final OneTimeCalendar calendar = OneTimeCalendar.create().
+        final OneTimeCalendarImpl calendar = OneTimeCalendarImpl.create().
             value( Instant.now() ).
             build();
 
         byte[] serialized = serialize( calendar );
 
-        final OneTimeCalendar deserializedCalendar = deserialize( serialized );
+        final OneTimeCalendarImpl deserializedCalendar = deserialize( serialized );
 
         assertEquals( calendar.getValue(), deserializedCalendar.getValue() );
     }

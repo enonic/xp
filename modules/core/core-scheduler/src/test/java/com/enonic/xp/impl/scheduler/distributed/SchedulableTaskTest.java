@@ -164,7 +164,7 @@ public class SchedulableTaskTest
             name( name ).
             descriptor( descriptor ).
             description( "description" ).
-            calendar( CronCalendar.create().
+            calendar( CronCalendarImpl.create().
                 value( "* * * * *" ).
                 timeZone( TimeZone.getTimeZone( ZoneId.systemDefault() ) ).
                 build() ).
