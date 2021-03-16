@@ -61,8 +61,8 @@ public final class SchedulerName
 
         private void validate()
         {
-            Preconditions.checkNotNull( value, "Scheduler name cannot be null." );
-            Preconditions.checkArgument( !value.isBlank(), "Scheduler name cannot be blank." );
+            Preconditions.checkNotNull( value, "name cannot be null." );
+            Preconditions.checkArgument( !value.isBlank(), "name cannot be blank." );
         }
 
         public SchedulerName build()

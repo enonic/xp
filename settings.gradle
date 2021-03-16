@@ -109,6 +109,7 @@ include 'lib:lib-cluster'
 include 'lib:lib-auditlog'
 include 'lib:lib-project'
 include 'lib:lib-vhost'
+include 'lib:lib-scheduler'
 
 include 'launcher:launcher-api'
 include 'launcher:launcher-impl'

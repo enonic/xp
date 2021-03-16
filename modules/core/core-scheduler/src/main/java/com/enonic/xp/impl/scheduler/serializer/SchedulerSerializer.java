@@ -7,13 +7,15 @@ import java.util.TimeZone;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.scheduler.ScheduledJobPropertyNames;
-import com.enonic.xp.impl.scheduler.distributed.CronCalendar;
-import com.enonic.xp.impl.scheduler.distributed.OneTimeCalendar;
+import com.enonic.xp.impl.scheduler.distributed.CronCalendarImpl;
+import com.enonic.xp.impl.scheduler.distributed.OneTimeCalendarImpl;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
+import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.EditableScheduledJob;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
+import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
@@ -142,7 +144,7 @@ public class SchedulerSerializer
 
             case ONE_TIME:
                 final OneTimeCalendar oneTimeCalendar = ( (OneTimeCalendar) modifiedJob.getCalendar() );
-                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, oneTimeCalendar.getValue() );
+                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, oneTimeCalendar.getValue().toString() );
                 calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.ONE_TIME.name() );
                 break;
 
@@ -167,7 +169,7 @@ public class SchedulerSerializer
 
             case ONE_TIME:
                 final OneTimeCalendar oneTimeCalendar = ( (OneTimeCalendar) params.getCalendar() );
-                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, oneTimeCalendar.getValue() );
+                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, oneTimeCalendar.getValue().toString() );
                 calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.ONE_TIME.name() );
                 break;
 
@@ -189,12 +191,12 @@ public class SchedulerSerializer
         switch ( calendarType )
         {
             case CRON:
-                return CronCalendar.create().
+                return CronCalendarImpl.create().
                     value( value ).
                     timeZone( TimeZone.getTimeZone( timeZone ) ).
                     build();
             case ONE_TIME:
-                return OneTimeCalendar.create().value( Instant.parse( value ) ).build();
+                return OneTimeCalendarImpl.create().value( Instant.parse( value ) ).build();
             default:
                 throw new IllegalArgumentException( String.format( "can't parse [%s] calendar type.", type ) );
         }

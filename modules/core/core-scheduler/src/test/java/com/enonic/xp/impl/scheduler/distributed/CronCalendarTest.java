@@ -22,13 +22,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(MockitoExtension.class)
 public class CronCalendarTest
 {
-    @Test
-    public void createWrongValue()
+    private static CronCalendarImpl deserialize( byte[] bytes )
+        throws IOException, ClassNotFoundException
     {
-        assertThrows( IllegalArgumentException.class, () -> CronCalendar.create().
-            value( "wrong value" ).
-            timeZone( TimeZone.getDefault() ).
-            build() );
+        try (ByteArrayInputStream bais = new ByteArrayInputStream( bytes ); ObjectInputStream ois = new ObjectInputStream( bais ))
+        {
+            return (CronCalendarImpl) ois.readObject();
+        }
     }
 
     private static byte[] serialize( Serializable serializable )
@@ -42,47 +42,32 @@ public class CronCalendarTest
     }
 
     @Test
-    public void testIsCronValue()
+    public void createWrongValue()
     {
-        assertTrue( CronCalendar.isCronValue( "* * * * *" ) );
-        assertTrue( CronCalendar.isCronValue( "1-59/2 * * * *" ) );
-        assertTrue( CronCalendar.isCronValue( "0 9-17 * * *" ) );
-        assertTrue( CronCalendar.isCronValue( "0 0 * * 6,0" ) );
-        assertTrue( CronCalendar.isCronValue( "0 0 1 */6 *" ) );
-
-        assertFalse( CronCalendar.isCronValue( "wrong value" ) );
-        assertFalse( CronCalendar.isCronValue( "* * * * * *" ) );
-        assertFalse( CronCalendar.isCronValue( "* * * * 8" ) );
+        assertThrows( IllegalArgumentException.class, () -> CronCalendarImpl.create().
+            value( "wrong value" ).
+            timeZone( TimeZone.getDefault() ).
+            build() );
     }
 
     @Test
-    public void testDescription()
+    public void testIsCronValue()
     {
-        assertEquals( "every minute",
-                      CronCalendar.create().value( "* * * * *" ).timeZone( TimeZone.getDefault() ).build().getDescription() );
-        assertEquals( "every 2 minutes between 1 and 59",
-                      CronCalendar.create().value( "1-59/2 * * * *" ).timeZone( TimeZone.getDefault() ).build().getDescription() );
-        assertEquals( "every hour between 9 and 17",
-                      CronCalendar.create().value( "0 9-17 * * *" ).timeZone( TimeZone.getDefault() ).build().getDescription() );
-        assertEquals( "at 00:00 at Saturday and Sunday days",
-                      CronCalendar.create().value( "0 0 * * 6,0" ).timeZone( TimeZone.getDefault() ).build().getDescription() );
-        assertEquals( "at 00:00 at 1 day every 6 months",
-                      CronCalendar.create().value( "0 0 1 */6 *" ).timeZone( TimeZone.getDefault() ).build().getDescription() );
-    }
+        assertTrue( CronCalendarImpl.isCronValue( "* * * * *" ) );
+        assertTrue( CronCalendarImpl.isCronValue( "1-59/2 * * * *" ) );
+        assertTrue( CronCalendarImpl.isCronValue( "0 9-17 * * *" ) );
+        assertTrue( CronCalendarImpl.isCronValue( "0 0 * * 6,0" ) );
+        assertTrue( CronCalendarImpl.isCronValue( "0 0 1 */6 *" ) );
 
-    private static CronCalendar deserialize( byte[] bytes )
-        throws IOException, ClassNotFoundException
-    {
-        try (ByteArrayInputStream bais = new ByteArrayInputStream( bytes ); ObjectInputStream ois = new ObjectInputStream( bais ))
-        {
-            return (CronCalendar) ois.readObject();
-        }
+        assertFalse( CronCalendarImpl.isCronValue( "wrong value" ) );
+        assertFalse( CronCalendarImpl.isCronValue( "* * * * * *" ) );
+        assertFalse( CronCalendarImpl.isCronValue( "* * * * 8" ) );
     }
 
     @Test
     public void create()
     {
-        final CronCalendar calendar = CronCalendar.create().
+        final CronCalendarImpl calendar = CronCalendarImpl.create().
             value( "* * * * *" ).
             timeZone( TimeZone.getDefault() ).
             build();
@@ -96,17 +81,16 @@ public class CronCalendarTest
         throws Exception
     {
 
-        final CronCalendar calendar = CronCalendar.create().
+        final CronCalendarImpl calendar = CronCalendarImpl.create().
             value( "* * * * *" ).
             timeZone( TimeZone.getTimeZone( "GMT+5:30" ) ).
             build();
 
         byte[] serialized = serialize( calendar );
 
-        final CronCalendar deserializedCalendar = deserialize( serialized );
+        final CronCalendarImpl deserializedCalendar = deserialize( serialized );
 
         assertEquals( calendar.getCronValue(), deserializedCalendar.getCronValue() );
-        assertEquals( calendar.getDescription(), deserializedCalendar.getDescription() );
         assertEquals( calendar.getTimeZone(), deserializedCalendar.getTimeZone() );
     }
 }
