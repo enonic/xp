@@ -44,10 +44,6 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://github.com/elastic/elasticsearch/blob/master/LICENSE.txt
 
-    GraphQL
-    MIT License
-    https://github.com/graphql-java/graphql-java/blob/master/LICENSE.md
-
     Google Error Prone
     Apache License 2.0
     https://github.com/google/error-prone/blob/master/COPYING
@@ -55,6 +51,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Google Guava
     Apache License 2.0
     https://github.com/google/guava/blob/master/COPYING
+
+    GraphQL
+    MIT License
+    https://github.com/graphql-java/graphql-java/blob/master/LICENSE.md
 
     Hazelcast
     Apache License 2.0
@@ -71,23 +71,6 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     J2ObjC
     Apache License 2.0
     https://github.com/google/j2objc/blob/master/LICENSE
-
-    Jakarta Annotations
-    Eclipse Public License 2.0
-    https://www.eclipse.org/legal/epl-2.0/
-
-    Jakarta Bean Validation
-    Apahce License 2.0
-    https://beanvalidation.org/licensing/
-
-    JAXB
-    Common Development and Distribution License 1.1:
-    https://github.com/javaee/jaxb-v2/blob/master/LICENSE
-    Source code: https://github.com/javaee/jaxb-v2
-
-    JBoss Logging
-    Apache License 2.0
-    http://www.apache.org/licenses/LICENSE-2.0.txt
 
     Jackson Annotations
     Apache License 2.0
@@ -109,6 +92,14 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://github.com/FasterXML/jackson-jaxrs-providers
 
+    Jakarta Annotations
+    Eclipse Public License 2.0
+    https://www.eclipse.org/legal/epl-2.0/
+
+    Jakarta Bean Validation
+    Apahce License 2.0
+    https://beanvalidation.org/licensing/
+
     Jansi
     Apache License 2.0
     https://github.com/fusesource/jansi/blob/master/license.txt
@@ -126,9 +117,19 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://github.com/java-native-access/jna/blob/master/LICENSE
 
+    JAXB
+    Common Development and Distribution License 1.1:
+    https://github.com/javaee/jaxb-v2/blob/master/LICENSE
+    Source code: https://github.com/javaee/jaxb-v2
+
     JAX-RS API
     Common Development and Distribution License 1.1:
     https://github.com/jax-rs/api/blob/master/LICENSE.txt
+    Source code: https://github.com/eclipse-ee4j/jaxrs-api
+
+    JBoss Logging
+    Apache License 2.0
+    http://www.apache.org/licenses/LICENSE-2.0.txt
 
     JMustache
     Michael Bayne personal license
