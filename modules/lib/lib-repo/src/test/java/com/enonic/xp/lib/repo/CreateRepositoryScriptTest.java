@@ -39,4 +39,10 @@ public class CreateRepositoryScriptTest
         runScript( "/lib/xp/examples/repo/create.js" );
         Mockito.verify( this.repositoryService, Mockito.times( 2 ) ).createRepository( Mockito.isA( CreateRepositoryParams.class ) );
     }
+
+    @Test
+    public void testCreate_WithoutDenyPermissions()
+    {
+        runScript( "/test/create-repo.js" );
+    }
 }

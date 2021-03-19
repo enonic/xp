@@ -125,22 +125,27 @@ public class CreateRepositoryHandler
     {
         final String principal = permission.getMember( "principal" ).
             getValue( String.class );
-        final List<Permission> allowedPermissions = permission.getMember( "allow" ).
-            getArray( String.class ).
-            stream().
-            map( Permission::valueOf ).
-            collect( Collectors.toList() );
-        final List<Permission> deniedPermissions = permission.getMember( "deny" ).
-            getArray( String.class ).
-            stream().
-            map( Permission::valueOf ).
-            collect( Collectors.toList() );
+        final List<Permission> allowedPermissions = resolvePermissions( permission.getMember( "allow" ) );
+        final List<Permission> deniedPermissions = resolvePermissions( permission.getMember( "deny" ) );
 
         return AccessControlEntry.create().
             principal( PrincipalKey.from( principal ) ).
             allow( allowedPermissions ).
             deny( deniedPermissions ).
             build();
+    }
+
+    private List<Permission> resolvePermissions( ScriptValue permissions )
+    {
+        if ( permissions == null )
+        {
+            return List.of();
+        }
+
+        return permissions.getArray( String.class ).
+            stream().
+            map( Permission::valueOf ).
+            collect( Collectors.toUnmodifiableList() );
     }
 
     private JsonNode createJson( final Map<?, ?> value )
