@@ -1,8 +1,7 @@
 package com.enonic.xp.core.scheduler;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,9 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.Member;
-import com.hazelcast.scheduledexecutor.IScheduledExecutorService;
 import com.hazelcast.scheduledexecutor.IScheduledFuture;
 import com.hazelcast.scheduledexecutor.ScheduledTaskHandler;
 
@@ -24,6 +20,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.scheduler.CalendarServiceImpl;
+import com.enonic.xp.impl.scheduler.SchedulerExecutorService;
 import com.enonic.xp.impl.scheduler.SchedulerServiceImpl;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -50,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -71,10 +68,8 @@ class SchedulerServiceImplTest
         build();
 
     @Mock
-    private HazelcastInstance hazelcastInstance;
+    private SchedulerExecutorService schedulerExecutorService;
 
-    @Mock
-    private IScheduledExecutorService scheduledExecutorService;
 
     private SchedulerServiceImpl schedulerService;
 
@@ -95,9 +90,7 @@ class SchedulerServiceImplTest
     {
         super.setUpNode();
 
-        when( hazelcastInstance.getScheduledExecutorService( anyString() ) ).thenReturn( scheduledExecutorService );
-
-        schedulerService = new SchedulerServiceImpl( indexService, repositoryService, nodeService, hazelcastInstance );
+        schedulerService = new SchedulerServiceImpl( indexService, repositoryService, nodeService, schedulerExecutorService );
 
         adminContext().runWith( () -> schedulerService.initialize() );
 
@@ -245,14 +238,12 @@ class SchedulerServiceImplTest
             enabled( true ).
             build() ) );
 
-        final IScheduledFuture<?> future = mockFuture( name );
-
         adminContext().callWith( () -> schedulerService.modify( ModifyScheduledJobParams.create().
             name( name ).
             editor( edit -> edit.enabled = false ).
             build() ) );
 
-        verify( future, times( 1 ) ).dispose();
+        verify( schedulerExecutorService, times( 1 ) ).dispose( eq( "test" ) );
     }
 
     @Test
@@ -331,7 +322,7 @@ class SchedulerServiceImplTest
 
         adminContext().callWith( () -> schedulerService.delete( name ) );
 
-        verify( future, times( 1 ) ).dispose();
+        verify( schedulerExecutorService, times( 1 ) ).dispose( eq( "test" ) );
     }
 
     @Test
@@ -462,9 +453,8 @@ class SchedulerServiceImplTest
         when( future.getHandler() ).thenReturn( handler );
         when( handler.getTaskName() ).thenReturn( name.getValue() );
 
-        final Map futures = Map.of( mock( Member.class ), List.of( future ) );
-        when( scheduledExecutorService.getAllScheduledFutures() ).
-            thenReturn( futures );
+        when( schedulerExecutorService.getAllFutures() ).
+            thenReturn( Set.of( name.getValue() ) );
 
         return future;
     }

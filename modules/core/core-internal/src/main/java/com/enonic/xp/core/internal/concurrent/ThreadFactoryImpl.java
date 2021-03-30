@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 /**
  * Thread factory for {@link Executors} which customizes thread naming and {@link Thread.UncaughtExceptionHandler}
  */
-final class ThreadFactoryImpl
+public final class ThreadFactoryImpl
     implements ThreadFactory
 {
     private final AtomicLong count = new AtomicLong( 1 );

@@ -3,10 +3,14 @@ package com.enonic.xp.impl.scheduler.distributed;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,19 +20,19 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.Member;
-import com.hazelcast.scheduledexecutor.IScheduledExecutorService;
 import com.hazelcast.scheduledexecutor.IScheduledFuture;
 import com.hazelcast.scheduledexecutor.ScheduledTaskHandler;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.internal.osgi.OsgiSupportMock;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.impl.scheduler.SchedulerExecutorService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.SchedulerName;
@@ -37,28 +41,30 @@ import com.enonic.xp.scheduler.SchedulerService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class RescheduleTaskTest
 {
     @Mock(stubOnly = true)
     ServiceReference<SchedulerService> serviceReference;
 
+    @Mock(stubOnly = true)
+    ServiceReference<SchedulerExecutorService> executorReference;
+
     @Captor
-    ArgumentCaptor<SchedulableTask> taskCaptor;
+    ArgumentCaptor<SchedulableTaskImpl> taskCaptor;
 
     @Mock
     private SchedulerService schedulerService;
 
     @Mock
-    private IScheduledExecutorService schedulerExecutorService;
-
-    @Mock
-    private HazelcastInstance hazelcastInstance;
+    private SchedulerExecutorService schedulerExecutorService;
 
     @Mock(stubOnly = true)
     private BundleContext bundleContext;
@@ -67,13 +73,15 @@ public class RescheduleTaskTest
     public void setUp()
         throws Exception
     {
-        when( hazelcastInstance.getScheduledExecutorService( isA( String.class ) ) ).thenReturn( schedulerExecutorService );
-
         final Bundle bundle = OsgiSupportMock.mockBundle();
 
         when( bundle.getBundleContext() ).thenReturn( bundleContext );
+
         when( bundleContext.getServiceReferences( SchedulerService.class, null ) ).thenReturn( List.of( serviceReference ) );
+        when( bundleContext.getServiceReferences( SchedulerExecutorService.class, null ) ).thenReturn( List.of( executorReference ) );
+
         when( bundleContext.getService( serviceReference ) ).thenReturn( schedulerService );
+        when( bundleContext.getService( executorReference ) ).thenReturn( schedulerExecutorService );
     }
 
     @AfterEach
@@ -104,7 +112,7 @@ public class RescheduleTaskTest
         mockFutures();
         mockJobs();
 
-        when( schedulerExecutorService.schedule( isA( Runnable.class ), anyLong(), isA( TimeUnit.class ) ) ).
+        when( schedulerExecutorService.schedule( isA( SchedulableTask.class ), anyLong(), isA( TimeUnit.class ) ) ).
             thenThrow( RuntimeException.class ).
             then( a -> null );
 
@@ -120,7 +128,6 @@ public class RescheduleTaskTest
     private RescheduleTask createAndRunTask()
     {
         final RescheduleTask task = new RescheduleTask();
-        task.setHazelcastInstance( hazelcastInstance );
 
         task.run();
 
@@ -129,6 +136,9 @@ public class RescheduleTaskTest
 
     private void mockFutures()
     {
+        final ScheduledTaskHandler handler1 = mock( ScheduledTaskHandler.class );
+        final ScheduledTaskHandler handler2 = mock( ScheduledTaskHandler.class );
+        final ScheduledTaskHandler handler3 = mock( ScheduledTaskHandler.class );
         final ScheduledTaskHandler handler4 = mock( ScheduledTaskHandler.class );
 
         final IScheduledFuture<?> future1 = mock( IScheduledFuture.class );
@@ -136,17 +146,43 @@ public class RescheduleTaskTest
         final IScheduledFuture<?> future3 = mock( IScheduledFuture.class );
         final IScheduledFuture<?> future4 = mock( IScheduledFuture.class );
 
+        when( future1.getHandler() ).thenReturn( handler1 );
+        when( future2.getHandler() ).thenReturn( handler2 );
+        when( future3.getHandler() ).thenReturn( handler3 );
         when( future4.getHandler() ).thenReturn( handler4 );
 
+        when( handler1.getTaskName() ).thenReturn( "task1" );
+        when( handler2.getTaskName() ).thenReturn( "task2" );
+        when( handler3.getTaskName() ).thenReturn( "task3" );
         when( handler4.getTaskName() ).thenReturn( "task4" );
 
         when( future1.isDone() ).thenReturn( true );
         when( future2.isDone() ).thenReturn( true );
         when( future3.isDone() ).thenReturn( true );
 
-        final Map futures = Map.of( mock( Member.class ), List.of( future1, future2 ), mock( Member.class ), List.of( future3, future4 ) );
-        when( schedulerExecutorService.getAllScheduledFutures() ).
-            thenReturn( futures );
+        Map<String, ScheduledFuture<?>> futures = new HashMap<>(
+            Map.of( handler1.getTaskName(), future1, handler2.getTaskName(), future2, handler3.getTaskName(), future3,
+                    handler4.getTaskName(), future4 ) );
+
+        when( schedulerExecutorService.getAllFutures() ).
+            thenAnswer( invocation -> futures.keySet() );
+
+        doAnswer( invocation -> {
+            final Set<String> doneTasks = futures.entrySet().stream().
+                filter( entry -> entry.getValue().isDone() ).
+                map( Map.Entry::getKey ).
+                collect( Collectors.toSet() );
+
+            doneTasks.forEach( futures::remove );
+
+            return doneTasks;
+        } ).when( schedulerExecutorService ).disposeAllDone();
+
+        doAnswer( invocation -> {
+
+            final ScheduledFuture<?> future = futures.remove( (String) invocation.getArgument( 0 ) );
+            return future != null;
+        } ).when( schedulerExecutorService ).dispose( isA( String.class ) );
 
     }
 
