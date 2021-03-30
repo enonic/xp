@@ -1,11 +1,13 @@
 package com.enonic.xp.testing;
 
+import java.io.Closeable;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
-import java.util.concurrent.Executors;
 
+import org.junit.After;
 import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
@@ -33,11 +35,10 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptExports;
+import com.enonic.xp.script.ScriptFixturesFacade;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
-import com.enonic.xp.script.impl.executor.ScriptExecutorImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
-import com.enonic.xp.server.RunMode;
 import com.enonic.xp.testing.mock.MockBeanContext;
 import com.enonic.xp.testing.mock.MockServiceRegistry;
 import com.enonic.xp.testing.mock.MockViewFunctionService;
@@ -88,6 +89,17 @@ public abstract class ScriptTestSupport
         throws Exception
     {
         initialize();
+    }
+
+    @After
+    @AfterEach
+    public final void destroy()
+        throws Exception
+    {
+        if ( executor instanceof Closeable )
+        {
+            ( (Closeable) executor ).close();
+        }
     }
 
     protected void initialize()
@@ -193,8 +205,8 @@ public abstract class ScriptTestSupport
     private ScriptExecutor createExecutor()
         throws Exception
     {
-        return new ScriptExecutorImpl( Executors.newSingleThreadExecutor(), this.scriptSettings.build(), getClass().getClassLoader(),
-                                       this.serviceRegistry, this.resourceService, createApplication(), RunMode.DEV );
+        return ScriptFixturesFacade.getInstance().createExecutor( this.scriptSettings.build(), this.serviceRegistry, this.resourceService,
+                                                    createApplication() );
     }
 
     private Application createApplication()

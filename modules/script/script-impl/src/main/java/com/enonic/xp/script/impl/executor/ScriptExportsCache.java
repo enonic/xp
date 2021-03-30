@@ -12,7 +12,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.server.RunMode;
 
-final class ScriptExportsCache
+public final class ScriptExportsCache<T>
 {
     private final RunMode runMode;
 
@@ -20,21 +20,21 @@ final class ScriptExportsCache
 
     private final Runnable expiredCallback;
 
-    private final Map<ResourceKey, ScriptExportEntry> cache = new ConcurrentHashMap<>();
+    private final Map<ResourceKey, ScriptExportEntry<T>> cache = new ConcurrentHashMap<>();
 
     private final Lock lock = new ReentrantLock();
 
-    ScriptExportsCache( final RunMode runMode, final Function<ResourceKey, Resource> resourceLookup, Runnable expiredCallback )
+    public ScriptExportsCache( final RunMode runMode, final Function<ResourceKey, Resource> resourceLookup, Runnable expiredCallback )
     {
         this.runMode = runMode;
         this.resourceLookup = resourceLookup;
         this.expiredCallback = expiredCallback;
     }
 
-    public Object getOrCompute( final ResourceKey key, final Function<Resource, Object> requireFunction )
+    public T getOrCompute( final ResourceKey key, final Function<Resource, T> requireFunction )
         throws InterruptedException, TimeoutException
     {
-        ScriptExportEntry cached = cache.get( key );
+        ScriptExportEntry<T> cached = cache.get( key );
         if ( cached != null )
         {
             return cached.value;
@@ -50,8 +50,8 @@ final class ScriptExportsCache
                     return cached.value;
                 }
                 final Resource resource = resourceLookup.apply( key );
-                final Object value = requireFunction.apply( resource );
-                cache.put( key, new ScriptExportEntry( resource, value ) );
+                final T value = requireFunction.apply( resource );
+                cache.put( key, new ScriptExportEntry<>( resource, value ) );
                 return value;
             }
             finally
@@ -92,15 +92,15 @@ final class ScriptExportsCache
         return cache.values().stream().anyMatch( ScriptExportEntry::isExpired );
     }
 
-    private static class ScriptExportEntry
+    private static class ScriptExportEntry<T>
     {
         final Resource resource;
 
-        final Object value;
+        final T value;
 
         final long timestamp;
 
-        ScriptExportEntry( final Resource resource, final Object value )
+        ScriptExportEntry( final Resource resource, final T value )
         {
             this.resource = resource;
             this.value = value;

@@ -4,7 +4,7 @@ import javax.script.Bindings;
 
 import jdk.nashorn.api.scripting.AbstractJSObject;
 
-public abstract class AbstractFunction
+abstract class AbstractFunction
     extends AbstractJSObject
 {
     private final String name;

@@ -4,12 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.script.ScriptEngine;
+import javax.script.ScriptException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
-import jdk.nashorn.api.scripting.JSObject;
 
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.util.JavascriptHelperFactory;
@@ -66,8 +64,7 @@ public class ScriptValueFactoryImplTest
     @Test
     public void newValue_function()
     {
-        final JSObject obj = Mockito.mock( JSObject.class );
-        Mockito.when( obj.isFunction() ).thenReturn( true );
+        final Object obj = execute( "var result = function() {}; result;" );
 
         final ScriptValue value = this.factory.newValue( obj );
 
@@ -195,8 +192,14 @@ public class ScriptValueFactoryImplTest
     }
 
     private Object execute( final String script )
-        throws Exception
     {
-        return this.engine.eval( script );
+        try
+        {
+            return this.engine.eval( script );
+        }
+        catch ( ScriptException e )
+        {
+            throw new RuntimeException(e);
+        }
     }
 }

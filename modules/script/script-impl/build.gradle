@@ -2,9 +2,15 @@ dependencies {
     implementation project( ':script:script-api' )
     implementation project( ':core:core-internal' )
 
+    implementation "org.graalvm.js:js:22.1.0.1"
+
     testImplementation( testFixtures( project(":core:core-app") ) )
+
+    testFixturesApi project( ':core:core-api' )
+    testFixturesApi project( ':script:script-api' )
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Script - Impl' )
+    bnd( 'Bundle-Name': 'Enonic XP Script - Impl',
+         'Import-Package': 'jdk.nashorn.api.scripting;resolution:=optional,org.graalvm.polyglot.*;resolution:=optional,*')
 }

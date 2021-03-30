@@ -1,12 +1,14 @@
 package com.enonic.xp.script.impl.util;
 
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
-
-public interface JavascriptHelper
+public interface JavascriptHelper<T>
 {
-    ScriptObjectMirror newJsArray();
+    T newJsArray();
 
-    ScriptObjectMirror newJsObject();
+    T newJsObject();
 
-    ScriptObjectMirror parseJson( String text );
+    T parseJson( String text );
+
+    Object eval(String script);
+
+    ObjectConverter objectConverter();
 }

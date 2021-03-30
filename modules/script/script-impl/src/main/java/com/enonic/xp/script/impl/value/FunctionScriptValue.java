@@ -1,19 +1,21 @@
 package com.enonic.xp.script.impl.value;
 
+import javax.script.Bindings;
+
 import jdk.nashorn.api.scripting.JSObject;
 
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.util.ErrorHelper;
-import com.enonic.xp.script.impl.util.JsObjectConverter;
+import com.enonic.xp.script.impl.util.ObjectConverter;
 
 final class FunctionScriptValue
     extends AbstractScriptValue
 {
-    private final ScriptValueFactory factory;
+    private final ScriptValueFactory<Bindings> factory;
 
     private final JSObject value;
 
-    FunctionScriptValue( final ScriptValueFactory factory, final JSObject value )
+    FunctionScriptValue( final ScriptValueFactory<Bindings> factory, final JSObject value )
     {
         this.factory = factory;
         this.value = value;
@@ -28,7 +30,7 @@ final class FunctionScriptValue
     @Override
     public ScriptValue call( final Object... args )
     {
-        final JsObjectConverter converter = new JsObjectConverter( this.factory.getJavascriptHelper() );
+        final ObjectConverter converter = this.factory.getJavascriptHelper().objectConverter();
         final Object[] convertedArgs = converter.toJsArray( args );
 
         try

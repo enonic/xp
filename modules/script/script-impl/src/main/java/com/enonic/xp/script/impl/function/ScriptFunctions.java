@@ -7,8 +7,8 @@ import com.enonic.xp.script.impl.bean.BeanContextImpl;
 import com.enonic.xp.script.impl.bean.ScriptBeanFactory;
 import com.enonic.xp.script.impl.bean.ScriptBeanFactoryImpl;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
-import com.enonic.xp.script.impl.util.JsObjectConverter;
 import com.enonic.xp.script.impl.util.NashornHelper;
+import com.enonic.xp.script.impl.util.ObjectConverter;
 import com.enonic.xp.script.impl.util.ScriptLogger;
 
 public final class ScriptFunctions
@@ -19,7 +19,7 @@ public final class ScriptFunctions
 
     private final ScriptBeanFactory scriptBeanFactory;
 
-    private final JsObjectConverter converter;
+    private final ObjectConverter converter;
 
     private final ScriptLogger logger;
 
@@ -33,8 +33,8 @@ public final class ScriptFunctions
         beanContext.setResourceKey( this.script );
 
         this.scriptBeanFactory = new ScriptBeanFactoryImpl( this.executor.getClassLoader(), beanContext );
-        this.converter = new JsObjectConverter( this.executor.getJavascriptHelper() );
-        this.logger = new ScriptLogger( this.script, this.executor.getJavascriptHelper() );
+        this.converter = this.executor.getObjectConverter();
+        this.logger = new ScriptLogger( this.script, this.executor.getObjectConverter() );
     }
 
     public ResourceKey getScript()

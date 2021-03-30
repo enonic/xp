@@ -1,5 +1,7 @@
 package com.enonic.xp.script.impl.standard;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -14,10 +16,9 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
-import com.enonic.xp.script.impl.util.JsObjectConverter;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 
-class ScriptRuntimeImpl
+public class ScriptRuntimeImpl
     implements ScriptRuntime
 {
     private static final Logger LOG = LoggerFactory.getLogger( ScriptRuntimeImpl.class );
@@ -26,7 +27,7 @@ class ScriptRuntimeImpl
 
     private final Function<ApplicationKey, ScriptExecutor> scriptExecutorFactory;
 
-    ScriptRuntimeImpl( final Function<ApplicationKey, ScriptExecutor> scriptExecutorFactory )
+    public ScriptRuntimeImpl( final Function<ApplicationKey, ScriptExecutor> scriptExecutorFactory )
     {
         this.scriptExecutorFactory = scriptExecutorFactory;
     }
@@ -56,7 +57,18 @@ class ScriptRuntimeImpl
     public void invalidate( final ApplicationKey key )
     {
         LOG.debug( "Remove Script Executor for {}", key );
-        executors.remove( key );
+        final ScriptExecutor scriptExecutor = executors.remove( key );
+        if ( scriptExecutor instanceof Closeable )
+        {
+            try
+            {
+                ( (Closeable) scriptExecutor ).close();
+            }
+            catch ( IOException e )
+            {
+                LOG.warn( "Could not close Script Executor for {}", key, e );
+            }
+        }
     }
 
     @Override
@@ -70,7 +82,7 @@ class ScriptRuntimeImpl
     public Object toNativeObject( final ResourceKey script, final Object value )
     {
         final ScriptExecutor executor = getExecutor( script.getApplicationKey() );
-        return new JsObjectConverter( executor.getJavascriptHelper() ).toJs( value );
+        return executor.getObjectConverter().toJs( value );
     }
 
     public void runDisposers( final ApplicationKey key )

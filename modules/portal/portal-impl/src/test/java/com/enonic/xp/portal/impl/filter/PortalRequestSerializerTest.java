@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.filter;
 
+import java.io.Closeable;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -7,19 +8,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.script.ScriptEngine;
-
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.script.ScriptFixturesFacade;
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.script.impl.util.JavascriptHelperFactory;
-import com.enonic.xp.script.impl.util.NashornHelper;
 import com.enonic.xp.script.impl.value.ScriptValueFactory;
-import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.web.HttpMethod;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,18 +27,22 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PortalRequestSerializerTest
 {
-    private ScriptValueFactory factory;
-
-    private ScriptEngine engine;
-
+    private ScriptValueFactory<?> factory;
 
     @BeforeEach
     public void setup()
     {
-        this.engine = NashornHelper.getScriptEngine( getClass().getClassLoader() );
+        this.factory = ScriptFixturesFacade.getInstance().scriptValueFactory();
+    }
 
-        final JavascriptHelperFactory factory = new JavascriptHelperFactory( this.engine );
-        this.factory = new ScriptValueFactoryImpl( factory.create() );
+    @AfterEach
+    public void destroy()
+        throws Exception
+    {
+        if ( factory instanceof Closeable )
+        {
+            ( (Closeable) factory ).close();
+        }
     }
 
     @Test
@@ -49,8 +51,7 @@ public class PortalRequestSerializerTest
     {
         final PortalRequest sourceRequest = new PortalRequest();
         final String jsonRequest = readResource( "PortalRequestSerializer_request.json" );
-        final Object obj = execute( "var result = " + jsonRequest + "; result;" );
-        final ScriptValue value = this.factory.newValue( obj );
+        final ScriptValue value = factory.evalValue( "var result = " + jsonRequest + "; result;" );
 
         PortalRequestSerializer reqSerializer = new PortalRequestSerializer( sourceRequest, value );
 
@@ -89,8 +90,7 @@ public class PortalRequestSerializerTest
     {
         final PortalRequest sourceRequest = new PortalRequest();
         final String jsonRequest = readResource( "PortalRequestSerializer_request2.json" );
-        final Object obj = execute( "var result = " + jsonRequest + "; result;" );
-        final ScriptValue value = this.factory.newValue( obj );
+        final ScriptValue value = factory.evalValue( "var result = " + jsonRequest + "; result;" );
 
         PortalRequestSerializer reqSerializer = new PortalRequestSerializer( sourceRequest, value );
 
@@ -119,8 +119,7 @@ public class PortalRequestSerializerTest
         throws Exception
     {
         final PortalRequest sourceRequest = new PortalRequest();
-        final Object obj = execute( "var result = 'response'; result;" );
-        final ScriptValue value = this.factory.newValue( obj );
+        final ScriptValue value = factory.evalValue( "var result = 'response'; result;" );
 
         PortalRequestSerializer reqSerializer = new PortalRequestSerializer( sourceRequest, value );
 
@@ -130,20 +129,22 @@ public class PortalRequestSerializerTest
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void serializeMultiParams()
         throws Exception
     {
         final PortalRequest sourceRequest = new PortalRequest();
         final String jsonRequest = readResource( "PortalRequestSerializer_request3.json" );
-        final Object obj = execute( "var result = " + jsonRequest + "; result;" );
-        final ScriptValue value = this.factory.newValue( obj );
+        final ScriptValue value = factory.evalValue( "var result = " + jsonRequest + "; result;" );
 
         PortalRequestSerializer reqSerializer = new PortalRequestSerializer( sourceRequest, value );
 
         final PortalRequest portalRequest = reqSerializer.serialize();
 
         assertNotNull( portalRequest );
-        assertEquals( Map.of( "key1", "value1", "key2", 42 ), portalRequest.getBody() );
+        final Map<String, Object> bodyAsMap = (Map<String, Object>) portalRequest.getBody();
+        assertEquals( "value1", bodyAsMap.get( "key1" ) );
+        assertEquals( 42, bodyAsMap.get( "key2" ) );
 
         assertEquals( 0, portalRequest.getHeaders().size() );
         assertEquals( 0, portalRequest.getCookies().size() );
@@ -170,8 +171,7 @@ public class PortalRequestSerializerTest
         sourceRequest.getParams().put( "f", "oldF" );
 
         final String jsonRequest = readResource( "PortalRequestSerializer_request4.json" );
-        final Object obj = execute( "var result = " + jsonRequest + "; result;" );
-        final ScriptValue value = this.factory.newValue( obj );
+        final ScriptValue value = factory.evalValue( "var result = " + jsonRequest + "; result;" );
 
         PortalRequestSerializer reqSerializer = new PortalRequestSerializer( sourceRequest, value );
 
@@ -183,12 +183,6 @@ public class PortalRequestSerializerTest
         assertThat( portalRequest.getParams().get( "d" ) ).containsExactly( "oldD" );
         assertFalse( portalRequest.getParams().containsKey( "e" ) );
         assertFalse( portalRequest.getParams().containsKey( "f" ) );
-    }
-
-    private Object execute( final String script )
-        throws Exception
-    {
-        return this.engine.eval( script );
     }
 
     private String readResource( final String resourceName )

@@ -43,6 +43,7 @@ test {
         excludeTags 'elasticsearch'
     }
     systemProperty 'java.awt.headless', 'true'
+    systemProperty 'xp.script-engine', project.findProperty("xp.script-engine")?:'Nashorn'
     maxHeapSize = '2G'
     jvmArgs '-noverify', '-XX:TieredStopAtLevel=1'
 }

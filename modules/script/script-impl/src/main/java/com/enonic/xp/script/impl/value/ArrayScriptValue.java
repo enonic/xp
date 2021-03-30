@@ -10,11 +10,11 @@ import com.enonic.xp.script.ScriptValue;
 final class ArrayScriptValue
     extends AbstractScriptValue
 {
-    private final ScriptValueFactory factory;
+    private final ScriptValueFactory<?> factory;
 
     private final JSObject value;
 
-    ArrayScriptValue( final ScriptValueFactory factory, final JSObject value )
+    ArrayScriptValue( final ScriptValueFactory<?> factory, final JSObject value )
     {
         this.factory = factory;
         this.value = value;
