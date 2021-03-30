@@ -5,9 +5,9 @@ import com.enonic.xp.script.serializer.MapGeneratorBase;
 final class ScriptMapGenerator
     extends MapGeneratorBase
 {
-    private final JavascriptHelper helper;
+    private final JavascriptHelper<?> helper;
 
-    ScriptMapGenerator( final JavascriptHelper helper )
+    ScriptMapGenerator( final JavascriptHelper<?> helper )
     {
         this.helper = helper;
         initRoot();

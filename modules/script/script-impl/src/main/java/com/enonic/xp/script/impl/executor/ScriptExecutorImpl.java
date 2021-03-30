@@ -13,7 +13,7 @@ import javax.script.SimpleBindings;
 
 import com.google.common.io.Files;
 
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import jdk.nashorn.api.scripting.JSObject;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.resource.Resource;
@@ -29,6 +29,7 @@ import com.enonic.xp.script.impl.util.ErrorHelper;
 import com.enonic.xp.script.impl.util.JavascriptHelper;
 import com.enonic.xp.script.impl.util.JavascriptHelperFactory;
 import com.enonic.xp.script.impl.util.NashornHelper;
+import com.enonic.xp.script.impl.util.ObjectConverter;
 import com.enonic.xp.script.impl.value.ScriptValueFactory;
 import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
@@ -47,7 +48,7 @@ public final class ScriptExecutorImpl
 
     private final ScriptSettings scriptSettings;
 
-    private final ScriptExportsCache exportsCache;
+    private final ScriptExportsCache<Object> exportsCache;
 
     private final ClassLoader classLoader;
 
@@ -61,9 +62,9 @@ public final class ScriptExecutorImpl
 
     private final Map<ResourceKey, Runnable> disposers = new ConcurrentHashMap<>();
 
-    private final ScriptValueFactory scriptValueFactory;
+    private final ScriptValueFactory<Bindings> scriptValueFactory;
 
-    private final JavascriptHelper javascriptHelper;
+    private final JavascriptHelper<Bindings> javascriptHelper;
 
     public ScriptExecutorImpl( final Executor asyncExecutor, final ScriptSettings scriptSettings, final ClassLoader classLoader,
                                final ServiceRegistry serviceRegistry, final ResourceService resourceService, final Application application,
@@ -78,7 +79,7 @@ public final class ScriptExecutorImpl
         this.application = application;
         this.javascriptHelper = new JavascriptHelperFactory( this.engine ).create();
         this.scriptValueFactory = new ScriptValueFactoryImpl( this.javascriptHelper );
-        this.exportsCache = new ScriptExportsCache( runMode, resourceService::getResource, this::runDisposers );
+        this.exportsCache = new ScriptExportsCache<>( runMode, resourceService::getResource, this::runDisposers );
 
         final Bindings global = new SimpleBindings();
         global.putAll( this.scriptSettings.getGlobalVariables() );
@@ -86,11 +87,11 @@ public final class ScriptExecutorImpl
         this.engine.setBindings( global, ScriptContext.GLOBAL_SCOPE );
     }
 
-    private ScriptObjectMirror buildAppInfo()
+    private Map<String, Object> buildAppInfo()
     {
         final ApplicationInfoBuilder builder = new ApplicationInfoBuilder();
         builder.application( this.application );
-        builder.javascriptHelper( this.javascriptHelper );
+        builder.mapSupplier( this.javascriptHelper::newJsObject );
         return builder.build();
     }
 
@@ -144,13 +145,13 @@ public final class ScriptExecutorImpl
         return resource.getKey().toString();
     }
 
-    private Object executeRequire( final ResourceKey key, final ScriptObjectMirror func )
+    private Object executeRequire( final ResourceKey key, final JSObject func )
     {
         try
         {
-            final ScriptObjectMirror exports = this.javascriptHelper.newJsObject();
+            final Bindings exports = this.javascriptHelper.newJsObject();
 
-            final ScriptObjectMirror module = this.javascriptHelper.newJsObject();
+            final Bindings module = this.javascriptHelper.newJsObject();
             module.put( "id", key.toString() );
             module.put( "exports", exports );
 
@@ -174,13 +175,13 @@ public final class ScriptExecutorImpl
         return this.scriptValueFactory.newValue( value );
     }
 
-    private ScriptObjectMirror doExecute( final Bindings bindings, final Resource script )
+    private JSObject doExecute( final Bindings bindings, final Resource script )
     {
         try
         {
             final String text = script.readString();
             final String source = PRE_SCRIPT + text + POST_SCRIPT;
-            return (ScriptObjectMirror) this.engine.eval( source, bindings );
+            return (JSObject) this.engine.eval( source, bindings );
         }
         catch ( final Exception e )
         {
@@ -202,7 +203,7 @@ public final class ScriptExecutorImpl
         final SimpleBindings bindings = new SimpleBindings();
         bindings.put( ScriptEngine.FILENAME, getFileName( resource ) );
 
-        final ScriptObjectMirror func = doExecute( bindings, resource );
+        final JSObject func = doExecute( bindings, resource );
         return executeRequire( resource.getKey(), func );
     }
 
@@ -261,9 +262,9 @@ public final class ScriptExecutorImpl
     }
 
     @Override
-    public JavascriptHelper getJavascriptHelper()
+    public ObjectConverter getObjectConverter()
     {
-        return this.javascriptHelper;
+        return this.javascriptHelper.objectConverter();
     }
 
     @Override

@@ -8,15 +8,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import javax.script.Bindings;
+
+import jdk.nashorn.api.scripting.JSObject;
 
 import com.enonic.xp.script.serializer.MapSerializable;
 
 public final class JsObjectConverter
+    implements ObjectConverter
 {
-    private final JavascriptHelper helper;
+    private final JavascriptHelper<?> helper;
 
-    public JsObjectConverter( final JavascriptHelper helper )
+    public JsObjectConverter( final JavascriptHelper<?> helper )
     {
         this.helper = helper;
     }
@@ -77,15 +80,15 @@ public final class JsObjectConverter
 
     private Object toObject( final Object source )
     {
-        if ( source instanceof ScriptObjectMirror )
+        if ( source instanceof JSObject )
         {
-            return toObject( (ScriptObjectMirror) source );
+            return toObject( (JSObject) source );
         }
 
         return source;
     }
 
-    private Object toObject( final ScriptObjectMirror source )
+    private Object toObject( final JSObject source )
     {
         if ( source.isArray() )
         {
@@ -105,7 +108,7 @@ public final class JsObjectConverter
         }
     }
 
-    private List<Object> toList( final ScriptObjectMirror source )
+    private List<Object> toList( final JSObject source )
     {
         final List<Object> result = new ArrayList<>();
         for ( final Object item : source.values() )
@@ -122,15 +125,15 @@ public final class JsObjectConverter
 
     public Map<String, Object> toMap( final Object source )
     {
-        if ( source instanceof ScriptObjectMirror )
+        if ( source instanceof Bindings )
         {
-            return toMap( (ScriptObjectMirror) source );
+            return toMap( (Bindings) source );
         }
 
         return new HashMap<>();
     }
 
-    private Map<String, Object> toMap( final ScriptObjectMirror source )
+    private Map<String, Object> toMap( final Bindings source )
     {
         final Map<String, Object> result = new LinkedHashMap<>();
         for ( final Map.Entry<String, Object> entry : source.entrySet() )
@@ -145,7 +148,7 @@ public final class JsObjectConverter
         return result;
     }
 
-    private Function<Object[], Object> toFunction( final ScriptObjectMirror source )
+    private Function<Object[], Object> toFunction( final JSObject source )
     {
         return arg -> toObject( source.call( null, arg ) );
     }

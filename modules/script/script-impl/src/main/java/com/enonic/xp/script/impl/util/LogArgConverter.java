@@ -6,20 +6,20 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-final class LogArgConverter
+public final class LogArgConverter
 {
     private final ObjectMapper mapper;
 
-    private final JsObjectConverter converter;
+    private final ObjectConverter converter;
 
-    LogArgConverter( final JavascriptHelper helper )
+    public LogArgConverter( final ObjectConverter converter )
     {
         this.mapper = new ObjectMapper();
         this.mapper.disable( SerializationFeature.INDENT_OUTPUT );
-        this.converter = new JsObjectConverter( helper );
+        this.converter = converter;
     }
 
-    Object[] convertArgs( final Object[] args )
+    public Object[] convertArgs( final Object[] args )
     {
         final Object[] target = new Object[args.length];
         for ( int i = 0; i < args.length; i++ )

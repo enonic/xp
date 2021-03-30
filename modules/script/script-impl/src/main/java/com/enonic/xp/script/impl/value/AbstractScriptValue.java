@@ -8,7 +8,7 @@ import java.util.Set;
 
 import com.enonic.xp.script.ScriptValue;
 
-abstract class AbstractScriptValue
+public abstract class AbstractScriptValue
     implements ScriptValue
 {
     @Override

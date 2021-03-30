@@ -8,7 +8,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
-import com.enonic.xp.script.impl.util.JavascriptHelper;
+import com.enonic.xp.script.impl.util.ObjectConverter;
 import com.enonic.xp.script.runtime.ScriptSettings;
 
 public interface ScriptExecutor
@@ -31,7 +31,7 @@ public interface ScriptExecutor
 
     ScriptSettings getScriptSettings();
 
-    JavascriptHelper getJavascriptHelper();
+    ObjectConverter getObjectConverter();
 
     void registerMock( String name, Object value );
 
