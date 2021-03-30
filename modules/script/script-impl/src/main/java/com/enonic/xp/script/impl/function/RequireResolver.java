@@ -7,13 +7,13 @@ import com.google.common.io.Files;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 
-final class RequireResolver
+public final class RequireResolver
 {
     private final ResourceService resourceService;
 
     private final ResourceKey baseKey;
 
-    RequireResolver( final ResourceService resourceService, final ResourceKey baseKey )
+    public RequireResolver( final ResourceService resourceService, final ResourceKey baseKey )
     {
         this.baseKey = baseKey;
         this.resourceService = resourceService;

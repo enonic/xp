@@ -1,16 +1,16 @@
 package com.enonic.xp.script.impl.function;
 
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.config.Configuration;
-import com.enonic.xp.script.impl.util.JavascriptHelper;
 
 public final class ApplicationInfoBuilder
 {
     private Application application;
 
-    private JavascriptHelper javascriptHelper;
+    private Supplier<Map<String, Object>> mapSupplier;
 
     public ApplicationInfoBuilder application( final Application application )
     {
@@ -18,24 +18,24 @@ public final class ApplicationInfoBuilder
         return this;
     }
 
-    public ApplicationInfoBuilder javascriptHelper( final JavascriptHelper javascriptHelper )
+    public ApplicationInfoBuilder mapSupplier( final Supplier<Map<String, Object>> mapSupplier )
     {
-        this.javascriptHelper = javascriptHelper;
+        this.mapSupplier = mapSupplier;
         return this;
     }
 
-    public ScriptObjectMirror build()
+    public Map<String, Object> build()
     {
-        final ScriptObjectMirror result = this.javascriptHelper.newJsObject();
+        final Map<String, Object> result = mapSupplier.get();
         result.put( "name", toString( this.application.getKey() ) );
         result.put( "version", toString( this.application.getVersion() ) );
         result.put( "config", buildConfig() );
         return result;
     }
 
-    private ScriptObjectMirror buildConfig()
+    private Map<String, Object> buildConfig()
     {
-        final ScriptObjectMirror result = this.javascriptHelper.newJsObject();
+        final Map<String, Object> result = mapSupplier.get();
         final Configuration config = this.application.getConfig();
 
         if ( config != null )

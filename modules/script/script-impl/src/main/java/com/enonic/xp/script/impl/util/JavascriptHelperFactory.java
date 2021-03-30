@@ -3,8 +3,9 @@ package com.enonic.xp.script.impl.util;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
+import javax.script.ScriptException;
 
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import jdk.nashorn.api.scripting.JSObject;
 
 public final class JavascriptHelperFactory
 {
@@ -15,31 +16,50 @@ public final class JavascriptHelperFactory
         this.engine = engine;
     }
 
-    public JavascriptHelper create()
+    public JavascriptHelper<Bindings> create()
     {
         final Bindings bindings = this.engine.getBindings( ScriptContext.ENGINE_SCOPE );
-        final ScriptObjectMirror arrayProto = (ScriptObjectMirror) bindings.get( "Array" );
-        final ScriptObjectMirror objectProto = (ScriptObjectMirror) bindings.get( "Object" );
-        final ScriptObjectMirror jsonProto = (ScriptObjectMirror) bindings.get( "JSON" );
+        final JSObject arrayProto = (JSObject) bindings.get( "Array" );
+        final JSObject objectProto = (JSObject) bindings.get( "Object" );
+        final JSObject jsonProto = (JSObject) bindings.get( "JSON" );
 
-        return new JavascriptHelper()
+        return new JavascriptHelper<>()
         {
             @Override
-            public ScriptObjectMirror newJsArray()
+            public Bindings newJsArray()
             {
-                return (ScriptObjectMirror) arrayProto.newObject();
+                return (Bindings) arrayProto.newObject();
             }
 
             @Override
-            public ScriptObjectMirror newJsObject()
+            public Bindings newJsObject()
             {
-                return (ScriptObjectMirror) objectProto.newObject();
+                return (Bindings) objectProto.newObject();
             }
 
             @Override
-            public ScriptObjectMirror parseJson( final String text )
+            public Bindings parseJson( final String text )
             {
-                return (ScriptObjectMirror) jsonProto.callMember( "parse", text );
+                return (Bindings) ( (JSObject) jsonProto.getMember( "parse" ) ).call( null, text );
+            }
+
+            @Override
+            public Object eval( final String script )
+            {
+                try
+                {
+                    return engine.eval( script );
+                }
+                catch ( ScriptException e )
+                {
+                    throw new RuntimeException( e );
+                }
+            }
+
+            @Override
+            public JsObjectConverter objectConverter()
+            {
+                return new JsObjectConverter( this );
             }
         };
     }

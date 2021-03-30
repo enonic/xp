@@ -274,7 +274,7 @@ exports.invalid = function () {
                 }]
         });
     } catch (e) {
-        assert.assertEquals(e.message, 'query must be a String or JSON object');
+        assert.assertEquals('query must be a String or JSON object', e.getMessage());
         return;
     }
 

@@ -3,7 +3,7 @@ package com.enonic.xp.script.impl.function;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 
-final class ResourceResolver
+public final class ResourceResolver
 {
     private static final String SITE_PREFIX = "/site";
 
@@ -11,7 +11,7 @@ final class ResourceResolver
 
     private final ResourceKey baseKey;
 
-    ResourceResolver( final ResourceService resourceService, final ResourceKey baseKey )
+    public ResourceResolver( final ResourceService resourceService, final ResourceKey baseKey )
     {
         this.resourceService = resourceService;
         this.baseKey = baseKey;

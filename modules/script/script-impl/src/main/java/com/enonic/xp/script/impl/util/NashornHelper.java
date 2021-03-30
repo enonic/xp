@@ -25,12 +25,12 @@ public final class NashornHelper
 
     static boolean isNativeArray( final Object value )
     {
-        return ( value instanceof ScriptObjectMirror ) && ( (ScriptObjectMirror) value ).isArray();
+        return ( value instanceof JSObject ) && ( (JSObject) value ).isArray();
     }
 
     static boolean isNativeObject( final Object value )
     {
-        return ( value instanceof ScriptObjectMirror ) && !isNativeArray( value );
+        return ( value instanceof JSObject ) && !isNativeArray( value );
     }
 
     static void addToNativeObject( final Object object, final String key, final Object value )

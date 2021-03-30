@@ -51,7 +51,7 @@ exports.sortEmpty = function () {
             }
         );
     } catch (e) {
-        assert.assertEquals(e.message, 'field must be set');
+        assert.assertEquals('field must be set', e.getMessage());
         return;
     }
 
@@ -73,7 +73,7 @@ exports.invalid = function () {
 
         });
     } catch (e) {
-        assert.assertEquals(e.message, 'sort must be a String, JSON object or array of JSON objects');
+        assert.assertEquals('sort must be a String, JSON object or array of JSON objects', e.getMessage());
         return;
     }
 

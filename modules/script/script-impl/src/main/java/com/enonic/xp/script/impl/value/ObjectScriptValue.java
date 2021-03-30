@@ -3,19 +3,21 @@ package com.enonic.xp.script.impl.value;
 import java.util.Map;
 import java.util.Set;
 
+import javax.script.Bindings;
+
 import jdk.nashorn.api.scripting.JSObject;
 
 import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.script.impl.util.JsObjectConverter;
+import com.enonic.xp.script.impl.util.ObjectConverter;
 
 final class ObjectScriptValue
     extends AbstractScriptValue
 {
-    private final ScriptValueFactory factory;
+    private final ScriptValueFactory<Bindings> factory;
 
     private final JSObject value;
 
-    ObjectScriptValue( final ScriptValueFactory factory, final JSObject value )
+    ObjectScriptValue( final ScriptValueFactory<Bindings> factory, final JSObject value )
     {
         this.factory = factory;
         this.value = value;
@@ -48,7 +50,7 @@ final class ObjectScriptValue
     @Override
     public Map<String, Object> getMap()
     {
-        final JsObjectConverter converter = new JsObjectConverter( this.factory.getJavascriptHelper() );
+        final ObjectConverter converter = this.factory.getJavascriptHelper().objectConverter();
         return converter.toMap( this.value );
     }
 }

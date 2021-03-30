@@ -1,11 +1,10 @@
 package com.enonic.xp.script.impl.util;
 
+import javax.script.Bindings;
 import javax.script.ScriptEngine;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,9 +32,8 @@ public class JsObjectConverterTest
 
         final Object result = instance.toJs( values );
 
-        assertTrue( result instanceof ScriptObjectMirror );
-        assertTrue( ( (ScriptObjectMirror) result ).isArray() );
-        assertEquals( 3, ( (ScriptObjectMirror) result ).size() );
+        assertTrue( NashornHelper.isNativeArray( result ) );
+        assertEquals( 3, ( (Bindings) result ).size() );
     }
 
     @Test

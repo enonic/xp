@@ -25,8 +25,9 @@ import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
+import com.enonic.xp.script.ScriptFixturesFacade;
 import com.enonic.xp.script.impl.async.ScriptAsyncService;
-import com.enonic.xp.script.impl.standard.ScriptRuntimeFactoryImpl;
+import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -79,8 +80,8 @@ public abstract class AbstractControllerTest
 
         final ScriptAsyncService scriptAsyncService = Mockito.mock( ScriptAsyncService.class );
 
-        final ScriptRuntimeFactoryImpl runtimeFactory =
-            new ScriptRuntimeFactoryImpl( applicationService, this.resourceService, scriptAsyncService );
+        final ScriptRuntimeFactory runtimeFactory =
+            ScriptFixturesFacade.getInstance().scriptRuntimeFactory( applicationService, resourceService, scriptAsyncService );
 
         final PortalScriptServiceImpl scriptService = new PortalScriptServiceImpl( runtimeFactory );
         scriptService.initialize();

@@ -6,6 +6,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.condition.Condition;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidationLevel;
@@ -31,6 +32,9 @@ public class ScriptRuntimeFactoryImpl
     private final ResourceService resourceService;
 
     private final ScriptAsyncService scriptAsyncService;
+
+    @Reference(target="(osgi.condition.id=Nashorn)")
+    private Condition nashornCondition;
 
     @Activate
     public ScriptRuntimeFactoryImpl( @Reference final ApplicationService applicationService,

@@ -1,5 +1,7 @@
 package com.enonic.xp.script.impl.value;
 
+import javax.script.Bindings;
+
 import jdk.nashorn.api.scripting.JSObject;
 
 import com.enonic.xp.script.ScriptValue;
@@ -7,19 +9,25 @@ import com.enonic.xp.script.impl.util.JavascriptHelper;
 import com.enonic.xp.script.impl.util.NashornHelper;
 
 public final class ScriptValueFactoryImpl
-    implements ScriptValueFactory
+    implements ScriptValueFactory<Bindings>
 {
-    private final JavascriptHelper helper;
+    private final JavascriptHelper<Bindings> helper;
 
-    public ScriptValueFactoryImpl( final JavascriptHelper helper )
+    public ScriptValueFactoryImpl( final JavascriptHelper<Bindings> helper )
     {
         this.helper = helper;
     }
 
     @Override
-    public JavascriptHelper getJavascriptHelper()
+    public JavascriptHelper<Bindings> getJavascriptHelper()
     {
         return this.helper;
+    }
+
+    @Override
+    public ScriptValue evalValue( final String script )
+    {
+        return newValue( helper.eval( script ) );
     }
 
     @Override
