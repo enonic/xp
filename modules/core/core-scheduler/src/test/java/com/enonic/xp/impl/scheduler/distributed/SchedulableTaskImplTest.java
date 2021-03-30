@@ -52,7 +52,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class SchedulableTaskTest
+public class SchedulableTaskImplTest
 {
     @Mock(stubOnly = true)
     ServiceReference<TaskService> taskServiceReference;
@@ -88,12 +88,12 @@ public class SchedulableTaskTest
         }
     }
 
-    private static SchedulableTask deserialize( byte[] bytes )
+    private static SchedulableTaskImpl deserialize( byte[] bytes )
         throws IOException, ClassNotFoundException
     {
         try (ByteArrayInputStream bais = new ByteArrayInputStream( bytes ); ObjectInputStream ois = new ObjectInputStream( bais ))
         {
-            return (SchedulableTask) ois.readObject();
+            return (SchedulableTaskImpl) ois.readObject();
         }
     }
 
@@ -125,8 +125,8 @@ public class SchedulableTaskTest
         final PropertyTree taskData = new PropertyTree();
         taskData.addString( "string", "value" );
 
-        final SchedulableTask task = createAndRunTask( SchedulerName.from( "task" ), DescriptorKey.from( "app:key" ), taskData,
-                                                       PrincipalKey.from( "user:system:user" ) );
+        final SchedulableTaskImpl task = createAndRunTask( SchedulerName.from( "task" ), DescriptorKey.from( "app:key" ), taskData,
+                                                           PrincipalKey.from( "user:system:user" ) );
         assertEquals( "task", task.getName() );
 
         verify( taskService, times( 1 ) ).submitTask( taskCaptor.capture() );
@@ -147,7 +147,7 @@ public class SchedulableTaskTest
             User.create().displayName( "Custom" ).key( PrincipalKey.from( "user:system:user" ) ).login( "custom" ).build();
         when( securityService.getUser( PrincipalKey.from( "user:system:user" ) ) ).thenReturn( Optional.of( customUser ) );
 
-        final SchedulableTask task =
+        final SchedulableTaskImpl task =
             createAndRunTask( SchedulerName.from( "task" ), DescriptorKey.from( "app:key" ), taskData, customUser.getKey() );
         assertEquals( "task", task.getName() );
 
@@ -165,7 +165,7 @@ public class SchedulableTaskTest
         final PropertyTree taskData = new PropertyTree();
         taskData.addString( "string", "value" );
 
-        final SchedulableTask task = createAndRunTask( SchedulerName.from( "task" ), DescriptorKey.from( "app:key" ), taskData, null );
+        final SchedulableTaskImpl task = createAndRunTask( SchedulerName.from( "task" ), DescriptorKey.from( "app:key" ), taskData, null );
         assertEquals( "task", task.getName() );
 
         verify( taskService, times( 1 ) ).submitTask( taskCaptor.capture() );
@@ -194,11 +194,11 @@ public class SchedulableTaskTest
         final PropertyTree data = new PropertyTree();
         data.addString( "string", "value" );
 
-        final SchedulableTask task = createAndRunTask( SchedulerName.from( "task" ), DescriptorKey.from( "app:key" ), data );
+        final SchedulableTaskImpl task = createAndRunTask( SchedulerName.from( "task" ), DescriptorKey.from( "app:key" ), data );
 
         byte[] serialized = serialize( task );
 
-        final SchedulableTask deserializedTask = deserialize( serialized );
+        final SchedulableTaskImpl deserializedTask = deserialize( serialized );
 
         assertEquals( task.getJob().getName(), deserializedTask.getJob().getName() );
         assertEquals( task.getJob().getPayload(), deserializedTask.getJob().getPayload() );
@@ -209,13 +209,13 @@ public class SchedulableTaskTest
         assertEquals( task.getJob().isEnabled(), deserializedTask.getJob().isEnabled() );
     }
 
-    private SchedulableTask createAndRunTask( final SchedulerName name, final DescriptorKey descriptor, final PropertyTree data )
+    private SchedulableTaskImpl createAndRunTask( final SchedulerName name, final DescriptorKey descriptor, final PropertyTree data )
     {
         return createAndRunTask( name, descriptor, data, null );
     }
 
-    private SchedulableTask createAndRunTask( final SchedulerName name, final DescriptorKey descriptor, final PropertyTree data,
-                                              final PrincipalKey user )
+    private SchedulableTaskImpl createAndRunTask( final SchedulerName name, final DescriptorKey descriptor, final PropertyTree data,
+                                                  final PrincipalKey user )
     {
         final ScheduledJob job = ScheduledJob.create().
             name( name ).
@@ -231,7 +231,7 @@ public class SchedulableTaskTest
             enabled( true ).
             build();
 
-        final SchedulableTask task = SchedulableTask.create().
+        final SchedulableTaskImpl task = SchedulableTaskImpl.create().
             job( job ).
             build();
 

@@ -2,9 +2,6 @@ package com.enonic.xp.impl.scheduler;
 
 import java.util.List;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.scheduledexecutor.IScheduledExecutorService;
-
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repository.RepositoryService;
@@ -23,16 +20,15 @@ public class SchedulerServiceImpl
 
     private final NodeService nodeService;
 
-    private final IScheduledExecutorService schedulerService;
+    private final SchedulerExecutorService schedulerExecutorService;
 
     public SchedulerServiceImpl( final IndexService indexService, final RepositoryService repositoryService, final NodeService nodeService,
-                                 final HazelcastInstance hazelcastInstance )
+                                 final SchedulerExecutorService schedulerExecutorService )
     {
         this.indexService = indexService;
         this.repositoryService = repositoryService;
         this.nodeService = nodeService;
-
-        this.schedulerService = hazelcastInstance.getScheduledExecutorService( "scheduler" );
+        this.schedulerExecutorService = schedulerExecutorService;
     }
 
     public void initialize()
@@ -58,7 +54,7 @@ public class SchedulerServiceImpl
     public ScheduledJob modify( final ModifyScheduledJobParams params )
     {
         UnscheduleJobCommand.create().
-            schedulerService( schedulerService ).
+            schedulerExecutorService( schedulerExecutorService ).
             name( params.getName() ).
             build().
             execute();
@@ -74,7 +70,7 @@ public class SchedulerServiceImpl
     public boolean delete( final SchedulerName name )
     {
         UnscheduleJobCommand.create().
-            schedulerService( schedulerService ).
+            schedulerExecutorService( schedulerExecutorService ).
             name( name ).
             build().
             execute();
