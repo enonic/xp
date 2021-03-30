@@ -1,20 +1,18 @@
 package com.enonic.xp.impl.scheduler;
 
 import com.google.common.base.Preconditions;
-import com.hazelcast.scheduledexecutor.IScheduledExecutorService;
-import com.hazelcast.scheduledexecutor.IScheduledFuture;
 
 import com.enonic.xp.scheduler.SchedulerName;
 
 final class UnscheduleJobCommand
 {
-    private final IScheduledExecutorService schedulerService;
+    private final SchedulerExecutorService schedulerExecutorService;
 
     private final SchedulerName name;
 
     private UnscheduleJobCommand( final Builder builder )
     {
-        this.schedulerService = builder.schedulerService;
+        this.schedulerExecutorService = builder.schedulerExecutorService;
         this.name = builder.name;
     }
 
@@ -25,23 +23,18 @@ final class UnscheduleJobCommand
 
     public void execute()
     {
-        schedulerService.getAllScheduledFutures().
-            values().stream().
-            flatMap( features -> features.stream().
-                filter( future -> name.getValue().equals( future.getHandler().getTaskName() ) ) ).
-            findAny().
-            ifPresent( IScheduledFuture::dispose );
+        schedulerExecutorService.dispose( name.getValue() );
     }
 
     public static class Builder
     {
-        private IScheduledExecutorService schedulerService;
+        private SchedulerExecutorService schedulerExecutorService;
 
         private SchedulerName name;
 
-        public Builder schedulerService( final IScheduledExecutorService schedulerService )
+        public Builder schedulerExecutorService( final SchedulerExecutorService schedulerExecutorService )
         {
-            this.schedulerService = schedulerService;
+            this.schedulerExecutorService = schedulerExecutorService;
             return this;
         }
 
@@ -53,7 +46,7 @@ final class UnscheduleJobCommand
 
         private void validate()
         {
-            Preconditions.checkNotNull( schedulerService, "schedulerService must be set." );
+            Preconditions.checkNotNull( schedulerExecutorService, "schedulerExecutorService must be set." );
             Preconditions.checkNotNull( name, "name must be set." );
         }
 

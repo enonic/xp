@@ -11,10 +11,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.scheduledexecutor.DuplicateTaskException;
-import com.hazelcast.scheduledexecutor.IScheduledExecutorService;
-
 import com.enonic.xp.impl.scheduler.distributed.RescheduleTask;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeService;
@@ -32,44 +28,43 @@ public final class SchedulerServiceActivator
 
     private final NodeService nodeService;
 
-    private final HazelcastInstance hazelcastInstance;
+    private ServiceRegistration<SchedulerService> schedulerServiceReg;
 
-    private ServiceRegistration<SchedulerService> service;
+    private final SchedulerExecutorService schedulerExecutorService;
 
     @Activate
     public SchedulerServiceActivator( @Reference final RepositoryService repositoryService, @Reference final IndexService indexService,
-                                      @Reference final NodeService nodeService, @Reference final HazelcastInstance hazelcastInstance )
+                                      @Reference final NodeService nodeService,
+                                      @Reference final SchedulerExecutorService schedulerExecutorService )
     {
         this.repositoryService = repositoryService;
         this.indexService = indexService;
         this.nodeService = nodeService;
-        this.hazelcastInstance = hazelcastInstance;
+        this.schedulerExecutorService = schedulerExecutorService;
     }
 
     @Activate
     public void activate( final BundleContext context )
     {
         final SchedulerServiceImpl schedulerService =
-            new SchedulerServiceImpl( indexService, repositoryService, nodeService, hazelcastInstance );
+            new SchedulerServiceImpl( indexService, repositoryService, nodeService, schedulerExecutorService );
 
         schedulerService.initialize();
-        service = context.registerService( SchedulerService.class, schedulerService, null );
-
-        final IScheduledExecutorService schedulerExecutorService = hazelcastInstance.getScheduledExecutorService( "scheduler" );
+        this.schedulerServiceReg = context.registerService( SchedulerService.class, schedulerService, null );
 
         try
         {
             schedulerExecutorService.scheduleAtFixedRate( new RescheduleTask(), 0, 1, TimeUnit.SECONDS );
         }
-        catch ( DuplicateTaskException e )
+        catch ( Exception e )
         {
-            LOG.debug( "RescheduleTask has been scheduled already.", e );
+            LOG.debug( "RescheduleTask hasn't been started.", e );
         }
     }
 
     @Deactivate
     public void deactivate()
     {
-        service.unregister();
+        schedulerServiceReg.unregister();
     }
 }
