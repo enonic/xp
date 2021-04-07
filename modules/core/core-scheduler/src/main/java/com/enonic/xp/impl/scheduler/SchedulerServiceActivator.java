@@ -11,11 +11,19 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.impl.scheduler.distributed.RescheduleTask;
 import com.enonic.xp.index.IndexService;
+import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.scheduler.SchedulerService;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component(immediate = true)
 public final class SchedulerServiceActivator
@@ -32,15 +40,19 @@ public final class SchedulerServiceActivator
 
     private final SchedulerExecutorService schedulerExecutorService;
 
+    private final SchedulerConfig schedulerConfig;
+
     @Activate
     public SchedulerServiceActivator( @Reference final RepositoryService repositoryService, @Reference final IndexService indexService,
                                       @Reference final NodeService nodeService,
-                                      @Reference final SchedulerExecutorService schedulerExecutorService )
+                                      @Reference final SchedulerExecutorService schedulerExecutorService,
+                                      @Reference final SchedulerConfig schedulerConfig )
     {
         this.repositoryService = repositoryService;
         this.indexService = indexService;
         this.nodeService = nodeService;
         this.schedulerExecutorService = schedulerExecutorService;
+        this.schedulerConfig = schedulerConfig;
     }
 
     @Activate
@@ -60,6 +72,36 @@ public final class SchedulerServiceActivator
         {
             LOG.debug( "RescheduleTask hasn't been started.", e );
         }
+
+        createConfigJobs( schedulerService );
+
+    }
+
+    private void createConfigJobs( final SchedulerService schedulerService )
+    {
+        adminContext().runWith( () -> schedulerConfig.jobs().forEach( job -> {
+            try
+            {
+                schedulerService.create( job );
+            }
+            catch ( NodeAlreadyExistAtPathException e )
+            {
+                LOG.debug( String.format( "[%s] job already exist.", job.getName().getValue() ), e );
+            }
+        } ) );
+    }
+
+    private static Context adminContext()
+    {
+        return ContextBuilder.from( ContextAccessor.current() ).
+            authInfo( AuthenticationInfo.create().
+                principals( RoleKeys.ADMIN ).
+                user( User.create().
+                    key( PrincipalKey.ofSuperUser() ).
+                    login( PrincipalKey.ofSuperUser().getId() ).
+                    build() ).
+                build() ).
+            build();
     }
 
     @Deactivate
