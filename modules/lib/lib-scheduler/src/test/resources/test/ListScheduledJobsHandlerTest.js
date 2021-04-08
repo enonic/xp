@@ -53,6 +53,21 @@ var result2Expected = [
     }
 ];
 
+function createJob(name, calendar) {
+    scheduler.create({
+        name,
+        descriptor: 'appKey:task',
+        description: 'job description',
+        user: 'user:system:user',
+        author: 'user:system:author',
+        enabled: true,
+        payload: {
+            a: 1
+
+        },
+        calendar
+    });
+}
 
 exports.listJobs = function () {
     assert.assertJsonEquals([], scheduler.list());
@@ -63,19 +78,3 @@ exports.listJobs = function () {
     createJob('job2', {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'});
     assert.assertJsonEquals(result2Expected, scheduler.list());
 };
-
-function createJob(name, calendar) {
-    scheduler.create({
-        name: name,
-        descriptor: 'appKey:task',
-        description: 'job description',
-        user: 'user:system:user',
-        author: 'user:system:author',
-        enabled: true,
-        payload: {
-            a: 1
-
-        },
-        calendar: calendar
-    });
-}

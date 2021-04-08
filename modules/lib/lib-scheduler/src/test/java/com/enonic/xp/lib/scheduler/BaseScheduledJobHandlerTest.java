@@ -23,7 +23,7 @@ import com.enonic.xp.scheduler.ModifyScheduledJobParams;
 import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
-import com.enonic.xp.scheduler.SchedulerName;
+import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.scheduler.SchedulerService;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.testing.ScriptTestSupport;
@@ -41,7 +41,7 @@ public abstract class BaseScheduledJobHandlerTest
 
     private void mockJob()
     {
-        final Map<SchedulerName, ScheduledJob> jobs = Maps.newHashMap();
+        final Map<ScheduledJobName, ScheduledJob> jobs = Maps.newHashMap();
 
         Mockito.when( schedulerService.create( Mockito.isA( CreateScheduledJobParams.class ) ) ).thenAnswer( invocation -> {
             final CreateScheduledJobParams params = invocation.getArgument( 0 );
@@ -75,15 +75,15 @@ public abstract class BaseScheduledJobHandlerTest
             return modifiedJob;
         } );
 
-        Mockito.when( schedulerService.delete( Mockito.isA( SchedulerName.class ) ) ).thenAnswer( invocation -> {
-            final SchedulerName name = invocation.getArgument( 0 );
+        Mockito.when( schedulerService.delete( Mockito.isA( ScheduledJobName.class ) ) ).thenAnswer( invocation -> {
+            final ScheduledJobName name = invocation.getArgument( 0 );
 
             final ScheduledJob job = jobs.remove( name );
 
             return job != null;
         } );
 
-        Mockito.when( schedulerService.get( Mockito.isA( SchedulerName.class ) ) ).thenAnswer(
+        Mockito.when( schedulerService.get( Mockito.isA( ScheduledJobName.class ) ) ).thenAnswer(
             invocation -> jobs.get( invocation.getArgument( 0 ) ) );
 
         Mockito.when( schedulerService.list() ).thenAnswer( invocation -> new ArrayList<>( jobs.values() ) );

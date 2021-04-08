@@ -1,24 +1,27 @@
 package com.enonic.xp.scheduler;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.node.NodeName;
 
 @PublicApi
-public final class SchedulerName
+public final class ScheduledJobName
+    implements Serializable
 {
+    private static final long serialVersionUID = 0;
+
     private final String value;
 
-    private SchedulerName( final Builder builder )
+    private ScheduledJobName( final Builder builder )
     {
         this.value = builder.value;
     }
 
-    public static SchedulerName from( final String schedulerName )
+    public static ScheduledJobName from( final String scheduledJobName )
     {
-        return create().value( schedulerName ).build();
+        return create().value( scheduledJobName ).build();
     }
 
     public static Builder create()
@@ -34,7 +37,7 @@ public final class SchedulerName
     @Override
     public boolean equals( final Object o )
     {
-        return ( o instanceof SchedulerName ) && Objects.equals( this.value, ( (SchedulerName) o ).value );
+        return ( o instanceof ScheduledJobName ) && Objects.equals( this.value, ( (ScheduledJobName) o ).value );
     }
 
     @Override
@@ -61,14 +64,13 @@ public final class SchedulerName
 
         private void validate()
         {
-            Preconditions.checkNotNull( value, "name cannot be null." );
-            Preconditions.checkArgument( !value.isBlank(), "name cannot be blank." );
+            NodeName.from( value );
         }
 
-        public SchedulerName build()
+        public ScheduledJobName build()
         {
             validate();
-            return new SchedulerName( this );
+            return new ScheduledJobName( this );
         }
     }
 }

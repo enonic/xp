@@ -25,7 +25,7 @@ import com.enonic.xp.scheduler.CalendarService;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
-import com.enonic.xp.scheduler.SchedulerName;
+import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.security.PrincipalKey;
 
 @Component(configurationPid = "com.enonic.xp.scheduler")
@@ -68,25 +68,25 @@ public class SchedulerConfigImpl
     {
         final Configuration jobConfig = this.config.subConfig( JOB_PROPERTY_PREFIX );
 
-        final Set<SchedulerName> jobNames = parseNames( jobConfig );
+        final Set<ScheduledJobName> jobNames = parseNames( jobConfig );
 
         return jobNames.stream().
             map( name -> parseProperties( name, jobConfig.subConfig( name.getValue() + "." ) ) ).collect( Collectors.toSet() );
 
     }
 
-    private Set<SchedulerName> parseNames( final Configuration jobConfig )
+    private Set<ScheduledJobName> parseNames( final Configuration jobConfig )
     {
         return jobConfig.asMap().keySet().
             stream().
             map( JOB_NAME_PATTERN::matcher ).
             filter( Matcher::find ).
             map( matcher -> matcher.group( "name" ) ).
-            map( SchedulerName::from ).
+            map( ScheduledJobName::from ).
             collect( Collectors.toSet() );
     }
 
-    private CreateScheduledJobParams parseProperties( final SchedulerName name, final Configuration properties )
+    private CreateScheduledJobParams parseProperties( final ScheduledJobName name, final Configuration properties )
     {
         final CreateScheduledJobParams.Builder job = CreateScheduledJobParams.create().name( name );
 

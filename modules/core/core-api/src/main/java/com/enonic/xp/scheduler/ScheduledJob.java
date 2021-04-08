@@ -16,7 +16,7 @@ public final class ScheduledJob
 {
     private static final long serialVersionUID = 0;
 
-    private final SchedulerName name;
+    private final ScheduledJobName name;
 
     private final String description;
 
@@ -52,7 +52,7 @@ public final class ScheduledJob
         return new Builder();
     }
 
-    public SchedulerName getName()
+    public ScheduledJobName getName()
     {
         return name;
     }
@@ -99,7 +99,7 @@ public final class ScheduledJob
 
     public static class Builder
     {
-        private SchedulerName name;
+        private ScheduledJobName name;
 
         private String description;
 
@@ -117,12 +117,7 @@ public final class ScheduledJob
 
         private Instant lastRun;
 
-        public Builder()
-        {
-            super();
-        }
-
-        public Builder name( final SchedulerName name )
+        public Builder name( final ScheduledJobName name )
         {
             this.name = name;
             return this;

@@ -2,12 +2,12 @@ package com.enonic.xp.lib.scheduler;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.scheduler.SchedulerName;
+import com.enonic.xp.scheduler.ScheduledJobName;
 
 public final class DeleteScheduledJobHandler
     extends BaseSchedulerHandler
 {
-    private SchedulerName name;
+    private ScheduledJobName name;
 
     @Override
     protected Boolean doExecute()
@@ -23,7 +23,7 @@ public final class DeleteScheduledJobHandler
 
     public void setName( final String value )
     {
-        name = SchedulerName.from( value );
+        name = ScheduledJobName.from( value );
     }
 
 }

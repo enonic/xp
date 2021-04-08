@@ -18,7 +18,7 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduledJob;
-import com.enonic.xp.scheduler.SchedulerName;
+import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
@@ -173,7 +173,7 @@ public final class SchedulableTaskImpl
         {
             return SchedulableTaskImpl.create().
                 job( ScheduledJob.create().
-                    name( SchedulerName.from( name ) ).
+                    name( ScheduledJobName.from( name ) ).
                     description( description ).
                     calendar( calendar ).
                     enabled( enabled ).

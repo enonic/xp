@@ -10,12 +10,12 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.scheduler.ScheduledJob;
-import com.enonic.xp.scheduler.SchedulerName;
+import com.enonic.xp.scheduler.ScheduledJobName;
 
 public class UpdateLastRunCommand
     extends AbstractSchedulerCommand
 {
-    private final SchedulerName name;
+    private final ScheduledJobName name;
 
     private final Instant lastRun;
 
@@ -54,7 +54,7 @@ public class UpdateLastRunCommand
     {
         private Instant lastRun;
 
-        private SchedulerName name;
+        private ScheduledJobName name;
 
         private Builder()
         {
@@ -66,7 +66,7 @@ public class UpdateLastRunCommand
             return this;
         }
 
-        public Builder name( final SchedulerName name )
+        public Builder name( final ScheduledJobName name )
         {
             this.name = name;
             return this;

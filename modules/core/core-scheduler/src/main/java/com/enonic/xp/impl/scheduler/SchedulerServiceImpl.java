@@ -8,7 +8,7 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
 import com.enonic.xp.scheduler.ScheduledJob;
-import com.enonic.xp.scheduler.SchedulerName;
+import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.scheduler.SchedulerService;
 
 public class SchedulerServiceImpl
@@ -67,7 +67,7 @@ public class SchedulerServiceImpl
     }
 
     @Override
-    public boolean delete( final SchedulerName name )
+    public boolean delete( final ScheduledJobName name )
     {
         UnscheduleJobCommand.create().
             schedulerExecutorService( schedulerExecutorService ).
@@ -83,7 +83,7 @@ public class SchedulerServiceImpl
     }
 
     @Override
-    public ScheduledJob get( final SchedulerName name )
+    public ScheduledJob get( final ScheduledJobName name )
     {
         return GetScheduledJobCommand.create().
             nodeService( nodeService ).

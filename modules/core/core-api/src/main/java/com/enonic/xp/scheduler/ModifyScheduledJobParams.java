@@ -7,7 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public final class ModifyScheduledJobParams
 {
-    private final SchedulerName name;
+    private final ScheduledJobName name;
 
     private final ScheduledJobEditor editor;
 
@@ -22,7 +22,7 @@ public final class ModifyScheduledJobParams
         return new Builder();
     }
 
-    public SchedulerName getName()
+    public ScheduledJobName getName()
     {
         return name;
     }
@@ -34,11 +34,11 @@ public final class ModifyScheduledJobParams
 
     public static class Builder
     {
-        private SchedulerName name;
+        private ScheduledJobName name;
 
         private ScheduledJobEditor editor;
 
-        public Builder name( final SchedulerName name )
+        public Builder name( final ScheduledJobName name )
         {
             this.name = name;
             return this;
