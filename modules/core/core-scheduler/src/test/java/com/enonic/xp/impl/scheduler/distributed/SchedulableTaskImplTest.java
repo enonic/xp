@@ -36,7 +36,7 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.scheduler.ScheduledJob;
-import com.enonic.xp.scheduler.SchedulerName;
+import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
@@ -125,7 +125,7 @@ public class SchedulableTaskImplTest
         final PropertyTree taskData = new PropertyTree();
         taskData.addString( "string", "value" );
 
-        final SchedulableTaskImpl task = createAndRunTask( SchedulerName.from( "task" ), DescriptorKey.from( "app:key" ), taskData,
+        final SchedulableTaskImpl task = createAndRunTask( ScheduledJobName.from( "task" ), DescriptorKey.from( "app:key" ), taskData,
                                                            PrincipalKey.from( "user:system:user" ) );
         assertEquals( "task", task.getName() );
 
@@ -148,7 +148,7 @@ public class SchedulableTaskImplTest
         when( securityService.getUser( PrincipalKey.from( "user:system:user" ) ) ).thenReturn( Optional.of( customUser ) );
 
         final SchedulableTaskImpl task =
-            createAndRunTask( SchedulerName.from( "task" ), DescriptorKey.from( "app:key" ), taskData, customUser.getKey() );
+            createAndRunTask( ScheduledJobName.from( "task" ), DescriptorKey.from( "app:key" ), taskData, customUser.getKey() );
         assertEquals( "task", task.getName() );
 
         verify( taskService, times( 1 ) ).submitTask( taskCaptor.capture() );
@@ -165,7 +165,8 @@ public class SchedulableTaskImplTest
         final PropertyTree taskData = new PropertyTree();
         taskData.addString( "string", "value" );
 
-        final SchedulableTaskImpl task = createAndRunTask( SchedulerName.from( "task" ), DescriptorKey.from( "app:key" ), taskData, null );
+        final SchedulableTaskImpl task =
+            createAndRunTask( ScheduledJobName.from( "task" ), DescriptorKey.from( "app:key" ), taskData, null );
         assertEquals( "task", task.getName() );
 
         verify( taskService, times( 1 ) ).submitTask( taskCaptor.capture() );
@@ -178,11 +179,11 @@ public class SchedulableTaskImplTest
     public void taskFailed()
     {
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenThrow( RuntimeException.class );
-        createAndRunTask( SchedulerName.from( "task" ), DescriptorKey.from( "app:key" ), new PropertyTree() );
+        createAndRunTask( ScheduledJobName.from( "task" ), DescriptorKey.from( "app:key" ), new PropertyTree() );
 
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenThrow( OutOfMemoryError.class );
         assertThrows( OutOfMemoryError.class,
-                      () -> createAndRunTask( SchedulerName.from( "task" ), DescriptorKey.from( "app:key" ), new PropertyTree() ) );
+                      () -> createAndRunTask( ScheduledJobName.from( "task" ), DescriptorKey.from( "app:key" ), new PropertyTree() ) );
     }
 
     @Test
@@ -194,7 +195,7 @@ public class SchedulableTaskImplTest
         final PropertyTree data = new PropertyTree();
         data.addString( "string", "value" );
 
-        final SchedulableTaskImpl task = createAndRunTask( SchedulerName.from( "task" ), DescriptorKey.from( "app:key" ), data );
+        final SchedulableTaskImpl task = createAndRunTask( ScheduledJobName.from( "task" ), DescriptorKey.from( "app:key" ), data );
 
         byte[] serialized = serialize( task );
 
@@ -209,12 +210,12 @@ public class SchedulableTaskImplTest
         assertEquals( task.getJob().isEnabled(), deserializedTask.getJob().isEnabled() );
     }
 
-    private SchedulableTaskImpl createAndRunTask( final SchedulerName name, final DescriptorKey descriptor, final PropertyTree data )
+    private SchedulableTaskImpl createAndRunTask( final ScheduledJobName name, final DescriptorKey descriptor, final PropertyTree data )
     {
         return createAndRunTask( name, descriptor, data, null );
     }
 
-    private SchedulableTaskImpl createAndRunTask( final SchedulerName name, final DescriptorKey descriptor, final PropertyTree data,
+    private SchedulableTaskImpl createAndRunTask( final ScheduledJobName name, final DescriptorKey descriptor, final PropertyTree data,
                                                   final PrincipalKey user )
     {
         final ScheduledJob job = ScheduledJob.create().

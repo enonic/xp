@@ -6,12 +6,12 @@ import com.enonic.xp.impl.scheduler.serializer.SchedulerSerializer;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.scheduler.ScheduledJob;
-import com.enonic.xp.scheduler.SchedulerName;
+import com.enonic.xp.scheduler.ScheduledJobName;
 
 public class GetScheduledJobCommand
     extends AbstractSchedulerCommand
 {
-    private final SchedulerName name;
+    private final ScheduledJobName name;
 
     private GetScheduledJobCommand( final Builder builder )
     {
@@ -43,13 +43,13 @@ public class GetScheduledJobCommand
     public static final class Builder
         extends AbstractSchedulerCommand.Builder<Builder>
     {
-        private SchedulerName name;
+        private ScheduledJobName name;
 
         private Builder()
         {
         }
 
-        public Builder name( final SchedulerName name )
+        public Builder name( final ScheduledJobName name )
         {
             this.name = name;
             return this;

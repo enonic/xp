@@ -11,9 +11,9 @@ public interface SchedulerService
 
     ScheduledJob modify( ModifyScheduledJobParams params );
 
-    boolean delete( SchedulerName name );
+    boolean delete( ScheduledJobName name );
 
-    ScheduledJob get( SchedulerName name );
+    ScheduledJob get( ScheduledJobName name );
 
     List<ScheduledJob> list();
 }

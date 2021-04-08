@@ -8,7 +8,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.scheduler.EditableScheduledJob;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduledJob;
-import com.enonic.xp.scheduler.SchedulerName;
+import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -31,7 +31,7 @@ public class EditableScheduledJobTest
     @Test
     public void testEmpty()
     {
-        final SchedulerName name = SchedulerName.from( "schedulerName" );
+        final ScheduledJobName name = ScheduledJobName.from( "scheduledJobName" );
         final ScheduledJob source = ScheduledJob.create().
             name( name ).
             calendar( mock( ScheduleCalendar.class ) ).
@@ -65,7 +65,7 @@ public class EditableScheduledJobTest
         final String description = "description";
 
         final ScheduledJob source = ScheduledJob.create().
-            name( SchedulerName.from( "name" ) ).
+            name( ScheduledJobName.from( "name" ) ).
             author( author ).
             payload( payload ).
             user( user ).
@@ -90,7 +90,7 @@ public class EditableScheduledJobTest
     public void testChanged()
     {
         final ScheduledJob source = ScheduledJob.create().
-            name( SchedulerName.from( "name" ) ).
+            name( ScheduledJobName.from( "name" ) ).
             descriptor( DescriptorKey.from( "app:key" ) ).
             calendar( mock( ScheduleCalendar.class ) ).
             build();

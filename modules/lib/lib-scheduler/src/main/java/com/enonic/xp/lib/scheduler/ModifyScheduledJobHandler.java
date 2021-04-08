@@ -10,14 +10,14 @@ import com.enonic.xp.scheduler.EditableScheduledJob;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobEditor;
-import com.enonic.xp.scheduler.SchedulerName;
+import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.security.PrincipalKey;
 
 public final class ModifyScheduledJobHandler
     extends BaseSchedulerHandler
 {
-    private SchedulerName name;
+    private ScheduledJobName name;
 
     private ScriptValue editor;
 
@@ -30,26 +30,36 @@ public final class ModifyScheduledJobHandler
             throw new IllegalArgumentException( String.format( "[%s] job not found.", name.getValue() ) );
         }
 
-        final ModifyScheduledJobParams params =
-            ModifyScheduledJobParams.create().name( name ).editor( newJobEditor( existingJob ) ).build();
+        final ModifyScheduledJobParams params = ModifyScheduledJobParams.create().name( name ).editor( newJobEditor() ).build();
 
         final ScheduledJob modifiedJob = this.schedulerService.get().modify( params );
 
         return ScheduledJobMapper.from( modifiedJob );
     }
 
-    private ScheduledJobEditor newJobEditor( final ScheduledJob existingJob )
+    private ScheduledJobEditor newJobEditor()
     {
         return edit -> {
             final ScriptValue value = this.editor.call( ScheduledJobMapper.from( edit.build() ) );
             if ( value != null )
             {
-                updateJob( edit, value, existingJob );
+                updateJob( edit, value );
             }
         };
     }
 
-    private void updateJob( final EditableScheduledJob target, final ScriptValue params, final ScheduledJob existingJob )
+    private void updateJob( final EditableScheduledJob target, final ScriptValue params )
+    {
+        updateDescriptor( target, params );
+        updatePayload( target, params );
+        updateCalendar( target, params );
+        updateIsEnabled( target, params );
+        updateDescription( target, params );
+        updateUser( target, params );
+        updateAuthor( target, params );
+    }
+
+    private void updateDescriptor( final EditableScheduledJob target, final ScriptValue params )
     {
         if ( params.getKeys().contains( "descriptor" ) )
         {
@@ -60,7 +70,10 @@ public final class ModifyScheduledJobHandler
             }
             target.descriptor = DescriptorKey.from( value.getValue( String.class ) );
         }
+    }
 
+    private void updatePayload( final EditableScheduledJob target, final ScriptValue params )
+    {
         if ( params.getKeys().contains( "payload" ) )
         {
             final ScriptValue value = params.getMember( "payload" );
@@ -70,7 +83,10 @@ public final class ModifyScheduledJobHandler
             }
             target.payload = propertyTreeMarshallerService.get().marshal( params.getMember( "payload" ).getMap() );
         }
+    }
 
+    private void updateCalendar( final EditableScheduledJob target, final ScriptValue params )
+    {
         if ( params.getKeys().contains( "calendar" ) )
         {
             final ScriptValue value = params.getMember( "calendar" );
@@ -80,7 +96,10 @@ public final class ModifyScheduledJobHandler
             }
             target.calendar = buildCalendar( (Map) params.getMember( "calendar" ).getMap() );
         }
+    }
 
+    private void updateIsEnabled( final EditableScheduledJob target, final ScriptValue params )
+    {
         if ( params.getKeys().contains( "enabled" ) )
         {
             final ScriptValue value = params.getMember( "enabled" );
@@ -90,23 +109,33 @@ public final class ModifyScheduledJobHandler
             }
             target.enabled = value.getValue( boolean.class );
         }
+    }
 
+    private void updateDescription( final EditableScheduledJob target, final ScriptValue params )
+    {
         if ( params.getKeys().contains( "description" ) )
         {
             target.description =
                 params.getMember( "description" ) != null ? params.getMember( "description" ).getValue( String.class ) : null;
         }
+    }
+
+    private void updateUser( final EditableScheduledJob target, final ScriptValue params )
+    {
         if ( params.getKeys().contains( "user" ) )
         {
             final ScriptValue value = params.getMember( "user" );
             target.user = value != null ? PrincipalKey.from( value.getValue( String.class ) ) : null;
         }
+    }
+
+    private void updateAuthor( final EditableScheduledJob target, final ScriptValue params )
+    {
         if ( params.getKeys().contains( "author" ) )
         {
             final ScriptValue value = params.getMember( "author" );
             target.author = value != null ? PrincipalKey.from( value.getValue( String.class ) ) : null;
         }
-
     }
 
     @Override
@@ -118,7 +147,7 @@ public final class ModifyScheduledJobHandler
 
     public void setName( final String value )
     {
-        this.name = SchedulerName.from( value );
+        this.name = ScheduledJobName.from( value );
     }
 
     public void setEditor( final ScriptValue editor )

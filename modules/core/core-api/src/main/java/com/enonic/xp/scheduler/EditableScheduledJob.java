@@ -8,7 +8,7 @@ import com.enonic.xp.security.PrincipalKey;
 @PublicApi
 public final class EditableScheduledJob
 {
-    private final SchedulerName name;
+    private final ScheduledJobName name;
 
     public String description;
 

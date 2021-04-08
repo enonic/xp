@@ -34,8 +34,8 @@ import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
+import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.scheduler.SchedulerConstants;
-import com.enonic.xp.scheduler.SchedulerName;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -100,7 +100,7 @@ class SchedulerServiceImplTest
     @Test
     void create()
     {
-        final SchedulerName name = SchedulerName.from( "test" );
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
         final DescriptorKey descriptor = DescriptorKey.from( ApplicationKey.from( "com.enonic.app.features" ), "landing" );
         final CronCalendar calendar = calendarService.cron( "* * * * *", TimeZone.getDefault() );
         final PropertyTree payload = new PropertyTree();
@@ -135,7 +135,7 @@ class SchedulerServiceImplTest
     @Test
     void createOneTimeJob()
     {
-        final SchedulerName name = SchedulerName.from( "test" );
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
         final DescriptorKey descriptor = DescriptorKey.from( ApplicationKey.from( "com.enonic.app.features" ), "landing" );
         final ScheduleCalendar calendar = calendarService.oneTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) );
         final PropertyTree payload = new PropertyTree();
@@ -164,7 +164,7 @@ class SchedulerServiceImplTest
     @Test
     void createWithoutAccess()
     {
-        final SchedulerName name = SchedulerName.from( "test" );
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
         final CronCalendar calendar = calendarService.cron( "* * * * *", TimeZone.getDefault() );
 
         final CreateScheduledJobParams params = CreateScheduledJobParams.create().
@@ -180,7 +180,7 @@ class SchedulerServiceImplTest
     @Test
     void createExisted()
     {
-        final SchedulerName name = SchedulerName.from( "test" );
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
         final CronCalendar calendar = calendarService.cron( "* * * * *", TimeZone.getDefault() );
 
         final CreateScheduledJobParams params = CreateScheduledJobParams.create().
@@ -200,7 +200,7 @@ class SchedulerServiceImplTest
     {
         assertThrows( NodeNotFoundException.class,
                       () -> adminContext().runWith( () -> schedulerService.modify( ModifyScheduledJobParams.create().
-                          name( SchedulerName.from( "nonExist" ) ).
+                          name( ScheduledJobName.from( "nonExist" ) ).
                           editor( edit -> edit.enabled = false ).
                           build() ) ) );
 
@@ -209,7 +209,7 @@ class SchedulerServiceImplTest
     @Test
     void modifyWithoutAccess()
     {
-        final SchedulerName name = SchedulerName.from( "test" );
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
 
         adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
             name( name ).
@@ -228,7 +228,7 @@ class SchedulerServiceImplTest
     @Test
     void modifyWithDispose()
     {
-        final SchedulerName name = SchedulerName.from( "test" );
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
 
         adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
             name( name ).
@@ -249,7 +249,7 @@ class SchedulerServiceImplTest
     @Test
     void modify()
     {
-        final SchedulerName name = SchedulerName.from( "test" );
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
 
         adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
             name( name ).
@@ -284,7 +284,7 @@ class SchedulerServiceImplTest
     @Test
     void deleteNotCreated()
     {
-        final SchedulerName name = SchedulerName.from( "test" );
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
         final boolean deleted = schedulerService.delete( name );
 
         assertFalse( deleted );
@@ -293,7 +293,7 @@ class SchedulerServiceImplTest
     @Test
     void deleteWithoutAccess()
     {
-        final SchedulerName name = SchedulerName.from( "test" );
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
 
         adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
             name( name ).
@@ -309,7 +309,7 @@ class SchedulerServiceImplTest
     @Test
     void deleteWithDispose()
     {
-        final SchedulerName name = SchedulerName.from( "test" );
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
 
         adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
             name( name ).
@@ -318,7 +318,7 @@ class SchedulerServiceImplTest
             payload( new PropertyTree() ).
             build() ) );
 
-        final IScheduledFuture<?> future = mockFuture( name );
+        mockFuture( name );
 
         adminContext().callWith( () -> schedulerService.delete( name ) );
 
@@ -328,7 +328,7 @@ class SchedulerServiceImplTest
     @Test
     void delete()
     {
-        final SchedulerName name = SchedulerName.from( "test" );
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
 
         adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
             name( name ).
@@ -345,7 +345,7 @@ class SchedulerServiceImplTest
     @Test
     void getNotCreated()
     {
-        final SchedulerName name = SchedulerName.from( "test" );
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
 
         assertNull( schedulerService.get( name ) );
     }
@@ -353,7 +353,7 @@ class SchedulerServiceImplTest
     @Test
     void getWithoutAccess()
     {
-        final SchedulerName name = SchedulerName.from( "test" );
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
 
         adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
             name( name ).
@@ -368,7 +368,7 @@ class SchedulerServiceImplTest
     @Test
     void get()
     {
-        final SchedulerName name = SchedulerName.from( "test" );
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
         final DescriptorKey descriptor = DescriptorKey.from( ApplicationKey.from( "com.enonic.app.features" ), "landing" );
         final CronCalendar calendar = calendarService.cron( "* * * * *", TimeZone.getDefault() );
         final PropertyTree payload = new PropertyTree();
@@ -397,7 +397,7 @@ class SchedulerServiceImplTest
     {
         assertEquals( 0, schedulerService.list().size() );
 
-        final SchedulerName name = SchedulerName.from( "test" );
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
         final DescriptorKey descriptor = DescriptorKey.from( ApplicationKey.from( "com.enonic.app.features" ), "landing" );
         final CronCalendar calendar = calendarService.cron( "* * * * *", TimeZone.getDefault() );
         final PropertyTree payload = new PropertyTree();
@@ -425,7 +425,7 @@ class SchedulerServiceImplTest
         payload.addString( "string", "value" );
 
         adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
-            name( SchedulerName.from( "test1" ) ).
+            name( ScheduledJobName.from( "test1" ) ).
             descriptor( descriptor ).
             calendar( calendar ).
             payload( payload ).
@@ -435,7 +435,7 @@ class SchedulerServiceImplTest
         assertEquals( 1, adminContext().callWith( () -> schedulerService.list() ).size() );
 
         adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
-            name( SchedulerName.from( "test2" ) ).
+            name( ScheduledJobName.from( "test2" ) ).
             descriptor( descriptor ).
             calendar( calendar ).
             payload( payload ).
@@ -445,7 +445,7 @@ class SchedulerServiceImplTest
         assertEquals( 2, adminContext().callWith( () -> schedulerService.list() ).size() );
     }
 
-    private IScheduledFuture<?> mockFuture( final SchedulerName name )
+    private IScheduledFuture<?> mockFuture( final ScheduledJobName name )
     {
         final ScheduledTaskHandler handler = mock( ScheduledTaskHandler.class );
         final IScheduledFuture<?> future = mock( IScheduledFuture.class );

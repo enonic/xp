@@ -11,13 +11,13 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduledJob;
-import com.enonic.xp.scheduler.SchedulerName;
+import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.security.PrincipalKey;
 
 public final class CreateScheduledJobHandler
     extends BaseSchedulerHandler
 {
-    private SchedulerName name;
+    private ScheduledJobName name;
 
     private String description;
 
@@ -66,7 +66,7 @@ public final class CreateScheduledJobHandler
 
     public void setName( final String value )
     {
-        this.name = SchedulerName.from( value );
+        this.name = ScheduledJobName.from( value );
     }
 
     public void setDescriptor( final String value )

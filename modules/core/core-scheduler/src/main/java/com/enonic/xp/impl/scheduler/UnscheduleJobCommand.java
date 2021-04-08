@@ -2,13 +2,13 @@ package com.enonic.xp.impl.scheduler;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.scheduler.SchedulerName;
+import com.enonic.xp.scheduler.ScheduledJobName;
 
 final class UnscheduleJobCommand
 {
     private final SchedulerExecutorService schedulerExecutorService;
 
-    private final SchedulerName name;
+    private final ScheduledJobName name;
 
     private UnscheduleJobCommand( final Builder builder )
     {
@@ -30,7 +30,7 @@ final class UnscheduleJobCommand
     {
         private SchedulerExecutorService schedulerExecutorService;
 
-        private SchedulerName name;
+        private ScheduledJobName name;
 
         public Builder schedulerExecutorService( final SchedulerExecutorService schedulerExecutorService )
         {
@@ -38,7 +38,7 @@ final class UnscheduleJobCommand
             return this;
         }
 
-        public Builder name( final SchedulerName name )
+        public Builder name( final ScheduledJobName name )
         {
             this.name = name;
             return this;
