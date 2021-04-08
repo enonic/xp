@@ -73,14 +73,14 @@ public class DoubleTypeTest
     @Test
     public void testValidate_invalidMin()
     {
-        final InputTypeConfig config = InputTypeConfig.create().property( InputTypeProperty.create( "min", "5" ).build( )).build();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( doubleProperty( 2 ), config ));
+        final InputTypeConfig config = InputTypeConfig.create().property( InputTypeProperty.create( "min", "5.0" ).build() ).build();
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( doubleProperty( 2.4 ), config ) );
     }
 
     @Test
     public void testValidate_invalidMax()
     {
-        final InputTypeConfig config = InputTypeConfig.create().property( InputTypeProperty.create( "max", "5" ).build( )).build();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( doubleProperty( 7 ), config ));
+        final InputTypeConfig config = InputTypeConfig.create().property( InputTypeProperty.create( "max", "5.0" ).build() ).build();
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( doubleProperty( 7.3 ), config ) );
     }
 }
