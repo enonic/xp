@@ -53,8 +53,8 @@ final class DoubleType
     {
         try
         {
-            final Long min = config.getValue( "min", Long.class );
-            final Long value = property.getLong();
+            final Double min = config.getValue( "min", Double.class );
+            final Double value = property.getDouble();
 
             if ( min != null && value != null )
             {
@@ -72,8 +72,8 @@ final class DoubleType
     {
         try
         {
-            final Long max = config.getValue( "max", Long.class );
-            final Long value = property.getLong();
+            final Double max = config.getValue( "max", Double.class );
+            final Double value = property.getDouble();
 
             if ( max != null && value != null )
             {
