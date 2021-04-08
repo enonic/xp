@@ -106,8 +106,7 @@ public final class OccurrenceValidator
 
             for ( final FormOptionSetOption option : formOptionSet )
             {
-                if ( ( hasSelectionArray && optionIsSelected( option, selectedItems ) ) ||
-                    ( !hasSelectionArray && option.isDefaultOption() ) )
+                if ( hasSelectionArray && optionIsSelected( option, selectedItems ) )
                 {
                     final List<PropertySet> optionDataSets = new ArrayList<>();
                     optionDataSets.add( optionSetOccurrencePropertySet.getSet( option.getName() ) );
