@@ -35,7 +35,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.scheduler.SchedulerExecutorService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.scheduler.ScheduledJob;
-import com.enonic.xp.scheduler.SchedulerName;
+import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.scheduler.SchedulerService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -189,7 +189,7 @@ public class RescheduleTaskTest
     private void mockJobs()
     {
         final ScheduledJob job1 = ScheduledJob.create().
-            name( SchedulerName.from( "task1" ) ).
+            name( ScheduledJobName.from( "task1" ) ).
             calendar( CronCalendarImpl.create().
                 value( "* * * * *" ).
                 timeZone( TimeZone.getDefault() ).
@@ -200,7 +200,7 @@ public class RescheduleTaskTest
             build();
 
         final ScheduledJob job2 = ScheduledJob.create().
-            name( SchedulerName.from( "task2" ) ).
+            name( ScheduledJobName.from( "task2" ) ).
             calendar( CronCalendarImpl.create().
                 value( "* * * * *" ).
                 timeZone( TimeZone.getDefault() ).
@@ -211,7 +211,7 @@ public class RescheduleTaskTest
             build();
 
         final ScheduledJob job3 = ScheduledJob.create().
-            name( SchedulerName.from( "task3" ) ).
+            name( ScheduledJobName.from( "task3" ) ).
             calendar( OneTimeCalendarImpl.create().
                 value( Instant.now().minus( Duration.of( 1, ChronoUnit.SECONDS ) ) ).
                 build() ).
@@ -221,7 +221,7 @@ public class RescheduleTaskTest
             build();
 
         final ScheduledJob job4 = ScheduledJob.create().
-            name( SchedulerName.from( "task4" ) ).
+            name( ScheduledJobName.from( "task4" ) ).
             calendar( CronCalendarImpl.create().
                 value( "* * * * *" ).
                 timeZone( TimeZone.getDefault() ).

@@ -10,7 +10,7 @@ import com.enonic.xp.security.PrincipalKey;
 @PublicApi
 public final class CreateScheduledJobParams
 {
-    private final SchedulerName name;
+    private final ScheduledJobName name;
 
     private final String description;
 
@@ -43,7 +43,7 @@ public final class CreateScheduledJobParams
         return new Builder();
     }
 
-    public SchedulerName getName()
+    public ScheduledJobName getName()
     {
         return name;
     }
@@ -85,7 +85,7 @@ public final class CreateScheduledJobParams
 
     public static class Builder
     {
-        private SchedulerName name;
+        private ScheduledJobName name;
 
         private String description;
 
@@ -101,12 +101,7 @@ public final class CreateScheduledJobParams
 
         private PrincipalKey author;
 
-        public Builder()
-        {
-            super();
-        }
-
-        public Builder name( final SchedulerName name )
+        public Builder name( final ScheduledJobName name )
         {
             this.name = name;
             return this;

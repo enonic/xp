@@ -20,11 +20,15 @@ import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobEditor;
-import com.enonic.xp.scheduler.SchedulerName;
+import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.security.PrincipalKey;
 
 public class SchedulerSerializer
 {
+
+    private SchedulerSerializer()
+    {
+    }
 
     public static PropertyTree toCreateNodeData( final CreateScheduledJobParams params )
     {
@@ -95,7 +99,7 @@ public class SchedulerSerializer
         final PropertySet data = node.data().getRoot();
 
         return ScheduledJob.create().
-            name( SchedulerName.from( node.name().toString() ) ).
+            name( ScheduledJobName.from( node.name().toString() ) ).
             description( data.getString( ScheduledJobPropertyNames.DESCRIPTION ) ).
             enabled( data.getBoolean( ScheduledJobPropertyNames.ENABLED ) ).
             calendar( Optional.ofNullable( data.getSet( ScheduledJobPropertyNames.CALENDAR ) ).

@@ -24,7 +24,7 @@ public class ScheduledJobTest
     {
         assertThrows( NullPointerException.class, () -> ScheduledJob.create().build() );
 
-        final SchedulerName name = SchedulerName.from( "name" );
+        final ScheduledJobName name = ScheduledJobName.from( "name" );
         assertEquals( name, ScheduledJob.create().
             name( name ).
             descriptor( DescriptorKey.from( "app:key" ) ).
@@ -37,7 +37,7 @@ public class ScheduledJobTest
     public void testEmptyBuilder()
     {
         final ScheduledJob job = ScheduledJob.create().
-            name( SchedulerName.from( "name" ) ).
+            name( ScheduledJobName.from( "name" ) ).
             descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
             calendar( mock( ScheduleCalendar.class ) ).
             build();
@@ -65,7 +65,7 @@ public class ScheduledJobTest
         final String description = "description";
 
         final ScheduledJob job = ScheduledJob.create().
-            name( SchedulerName.from( "name" ) ).
+            name( ScheduledJobName.from( "name" ) ).
             author( author ).
             payload( payload ).
             user( user ).

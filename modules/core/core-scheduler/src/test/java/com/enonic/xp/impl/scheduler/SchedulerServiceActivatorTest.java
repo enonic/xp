@@ -29,7 +29,7 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.scheduler.CalendarService;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
-import com.enonic.xp.scheduler.SchedulerName;
+import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.scheduler.SchedulerService;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -109,7 +109,7 @@ class SchedulerServiceActivatorTest
     void initWithJob()
     {
         final CreateScheduledJobParams jobParams = CreateScheduledJobParams.create().
-            name( SchedulerName.from( "name" ) ).
+            name( ScheduledJobName.from( "name" ) ).
             descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
             calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) ).
             payload( new PropertyTree() ).
@@ -128,7 +128,7 @@ class SchedulerServiceActivatorTest
     void initWithExistJob()
     {
         final CreateScheduledJobParams jobParams = CreateScheduledJobParams.create().
-            name( SchedulerName.from( "name" ) ).
+            name( ScheduledJobName.from( "name" ) ).
             descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
             calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) ).
             payload( new PropertyTree() ).
@@ -149,7 +149,7 @@ class SchedulerServiceActivatorTest
     void initWithInvalidJob()
     {
         final CreateScheduledJobParams jobParams = CreateScheduledJobParams.create().
-            name( SchedulerName.from( "name" ) ).
+            name( ScheduledJobName.from( "name" ) ).
             descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
             calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) ).
             payload( new PropertyTree() ).

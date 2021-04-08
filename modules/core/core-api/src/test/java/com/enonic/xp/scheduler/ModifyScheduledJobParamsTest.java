@@ -13,7 +13,7 @@ public class ModifyScheduledJobParamsTest
     {
         assertThrows( NullPointerException.class, () -> ModifyScheduledJobParams.create().build() );
         assertThrows( NullPointerException.class,
-                      () -> ModifyScheduledJobParams.create().name( SchedulerName.from( "schedulerName" ) ).build() );
+                      () -> ModifyScheduledJobParams.create().name( ScheduledJobName.from( "scheduledJobName" ) ).build() );
         assertThrows( NullPointerException.class, () -> ModifyScheduledJobParams.create().editor( ( edit ) -> {
         } ).build() );
     }
@@ -24,7 +24,7 @@ public class ModifyScheduledJobParamsTest
     {
         final ScheduledJobEditor editor = edit -> {
         };
-        final SchedulerName name = SchedulerName.from( "name" );
+        final ScheduledJobName name = ScheduledJobName.from( "name" );
 
         final ModifyScheduledJobParams params = ModifyScheduledJobParams.create().
             name( name ).

@@ -16,7 +16,7 @@ import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
-import com.enonic.xp.scheduler.SchedulerName;
+import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.scheduler.SchedulerService;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -89,7 +89,7 @@ public class SchedulerResourceTest
         payload.addString( "string", "value" );
 
         final ScheduledJob job1 = ScheduledJob.create().
-            name( SchedulerName.from( "test1" ) ).
+            name( ScheduledJobName.from( "test1" ) ).
             descriptor( descriptor ).
             calendar( cronCalendar ).
             payload( payload ).
@@ -101,7 +101,7 @@ public class SchedulerResourceTest
             build();
 
         final ScheduledJob job2 = ScheduledJob.create().
-            name( SchedulerName.from( "test2" ) ).
+            name( ScheduledJobName.from( "test2" ) ).
             descriptor( descriptor ).
             calendar( oneTimeCalendar ).
             build();

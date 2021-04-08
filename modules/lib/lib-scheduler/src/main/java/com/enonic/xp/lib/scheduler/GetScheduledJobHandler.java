@@ -5,12 +5,12 @@ import java.util.Optional;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.lib.scheduler.mapper.ScheduledJobMapper;
-import com.enonic.xp.scheduler.SchedulerName;
+import com.enonic.xp.scheduler.ScheduledJobName;
 
 public final class GetScheduledJobHandler
     extends BaseSchedulerHandler
 {
-    private SchedulerName name;
+    private ScheduledJobName name;
 
     @Override
     protected ScheduledJobMapper doExecute()
@@ -28,6 +28,6 @@ public final class GetScheduledJobHandler
 
     public void setName( final String value )
     {
-        name = SchedulerName.from( value );
+        name = ScheduledJobName.from( value );
     }
 }

@@ -79,11 +79,6 @@ public final class ScheduledJobMapper
     {
         private ScheduledJob job;
 
-        public Builder()
-        {
-            super();
-        }
-
         public Builder job( final ScheduledJob job )
         {
             this.job = job;
