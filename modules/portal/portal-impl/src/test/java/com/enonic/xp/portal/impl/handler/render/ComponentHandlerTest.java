@@ -138,7 +138,7 @@ public class ComponentHandlerTest
         }
         catch ( final WebException e )
         {
-            assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
+            assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, e.getStatus() );
             assertEquals( "No template found for content", e.getMessage() );
         }
     }
