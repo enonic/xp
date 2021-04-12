@@ -141,7 +141,7 @@ public class PageHandlerTest
         }
         catch ( final WebException e )
         {
-            assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
+            assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, e.getStatus() );
             assertEquals( "Page template [my-page] not found", e.getMessage() );
         }
     }
