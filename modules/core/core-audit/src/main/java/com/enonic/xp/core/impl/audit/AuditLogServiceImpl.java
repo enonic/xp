@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.AuditLogId;
 import com.enonic.xp.audit.AuditLogService;
+import com.enonic.xp.audit.CleanUpAuditLogParams;
+import com.enonic.xp.audit.CleanUpAuditLogResult;
 import com.enonic.xp.audit.FindAuditLogParams;
 import com.enonic.xp.audit.FindAuditLogResult;
 import com.enonic.xp.audit.LogAuditLogParams;
@@ -94,6 +96,17 @@ public class AuditLogServiceImpl
         return FindAuditLogCommand.create().
             nodeService( nodeService ).
             params( params ).
+            build().
+            execute();
+    }
+
+    @Override
+    public CleanUpAuditLogResult cleanUp( final CleanUpAuditLogParams params )
+    {
+        return CleanUpAuditLogCommand.create().
+            nodeService( nodeService ).
+            ageThreshold( params.getAgeThreshold() != null ? params.getAgeThreshold() : config.ageThreshold() ).
+            listener( params.getListener() ).
             build().
             execute();
     }

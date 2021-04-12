@@ -11,9 +11,13 @@ public class AuditLogConfigMap
 
     private static final String OUTPUT_LOGS_PROPERTY = "outputLogs";
 
+    private static final String AGE_THRESHOLD_PROPERTY = "ageThreshold";
+
     private static final boolean ENABLED_DEFAULT_VALUE = true;
 
     private static final boolean OUTPUT_LOGS_DEFAULT_VALUE = false;
+
+    private static final String AGE_THRESHOLD_DEFAULT_VALUE = ""; //infinity
 
     private final Map<String, String> map;
 
@@ -34,4 +38,9 @@ public class AuditLogConfigMap
             : OUTPUT_LOGS_DEFAULT_VALUE;
     }
 
+    public String ageThreshold()
+    {
+        final String ageThreshold = map.get( AGE_THRESHOLD_PROPERTY );
+        return !nullToEmpty( ageThreshold ).isBlank() ? ageThreshold : AGE_THRESHOLD_DEFAULT_VALUE;
+    }
 }
