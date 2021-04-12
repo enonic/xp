@@ -14,6 +14,8 @@ import com.enonic.xp.xml.DomElement;
 public final class XmlContentTypeParser
     extends XmlModelParser<XmlContentTypeParser>
 {
+    private static final XmlInputTypeConfigMapper CONFIG_MAPPER = new XmlInputTypeConfigMapper();
+
     private ContentType.Builder builder;
 
     private ApplicationRelativeResolver resolver;
@@ -53,6 +55,7 @@ public final class XmlContentTypeParser
 
         final XmlFormMapper mapper = new XmlFormMapper( this.currentApplication );
         this.builder.form( mapper.buildForm( root.getChild( "form" ) ) );
+        this.builder.schemaConfig( CONFIG_MAPPER.build( root.getChild( "config" ) ) );
     }
 
     private XDataNames buildMetaData( final DomElement root )
