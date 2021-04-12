@@ -1,6 +1,5 @@
 package com.enonic.xp.impl.scheduler;
 
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -18,7 +17,6 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.scheduler.CalendarService;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
-import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.PrincipalKey;
@@ -56,16 +54,17 @@ class SchedulerConfigImplTest
         properties.put( "job.landing1.user", "user:system:user" );
         properties.put( "job.landing1.author", "user:system:author" );
         properties.put( "job.landing1.payload", "{\"a\":\"valueA\"}" );
-        properties.put( "job.landing1.calendar.type", "cron" );
-        properties.put( "job.landing1.calendar.value", "* * * * *" );
-        properties.put( "job.landing1.calendar.timezone", "GMT+5:30" );
+        properties.put( "job.landing1.cron", "* * * * *" );
+        properties.put( "job.landing1.timezone", "GMT+5:30" );
 
         schedulerConfig = new SchedulerConfigImpl( properties, propertyTreeMarshallerService, calendarService );
         final Set<CreateScheduledJobParams> jobs = schedulerConfig.jobs();
 
-        assertEquals( 1, jobs.size() );
+        assertEquals( 2, jobs.size() );
 
-        final CreateScheduledJobParams job = jobs.stream().findFirst().orElseThrow( RuntimeException::new );
+        final CreateScheduledJobParams job = jobs.stream().
+            filter( params -> params.getName().getValue().equals( "landing1" ) ).
+            findAny().orElseThrow( RuntimeException::new );
 
         assertTrue( job.isEnabled() );
         assertEquals( PrincipalKey.from( "user:system:author" ), job.getAuthor() );
@@ -76,34 +75,29 @@ class SchedulerConfigImplTest
         assertEquals( ScheduleCalendarType.CRON, job.getCalendar().getType() );
         assertEquals( "* * * * *", ( (CronCalendar) job.getCalendar() ).getCronValue() );
         assertEquals( TimeZone.getTimeZone( "GMT+5:30" ), ( (CronCalendar) job.getCalendar() ).getTimeZone() );
-
     }
 
     @Test
-    void oneTimeJob()
+    void defaultJob()
     {
-        Map<String, String> properties = new HashMap<>();
-
-        properties.put( "job.landing1.enabled", "false" );
-        properties.put( "job.landing1.descriptor", "com.enonic.app.features:landing" );
-        properties.put( "job.landing1.calendar.type", "one_time" );
-        properties.put( "job.landing1.calendar.value", "2012-01-01T00:00:00.00Z" );
+        final Map<String, String> properties = new HashMap<>();
 
         schedulerConfig = new SchedulerConfigImpl( properties, propertyTreeMarshallerService, calendarService );
         final Set<CreateScheduledJobParams> jobs = schedulerConfig.jobs();
 
         assertEquals( 1, jobs.size() );
 
-        final CreateScheduledJobParams job = jobs.stream().findFirst().orElseThrow( RuntimeException::new );
+        final CreateScheduledJobParams job = jobs.stream().
+            findAny().orElseThrow( RuntimeException::new );
 
         assertFalse( job.isEnabled() );
         assertNull( job.getAuthor() );
         assertNull( job.getUser() );
-        assertEquals( DescriptorKey.from( "com.enonic.app.features:landing" ), job.getDescriptor() );
-        assertNull( job.getDescription() );
-        assertEquals( 0, job.getPayload().getTotalSize() );
-        assertEquals( ScheduleCalendarType.ONE_TIME, job.getCalendar().getType() );
-        assertEquals( Instant.parse( "2012-01-01T00:00:00.00Z" ), ( (OneTimeCalendar) job.getCalendar() ).getValue() );
+        assertEquals( DescriptorKey.from( "com.enonic.xp.app.system:audit-log-cleanup" ), job.getDescriptor() );
+        assertEquals( ScheduleCalendarType.CRON, job.getCalendar().getType() );
+        assertEquals( "0 5 * * *", ( (CronCalendar) job.getCalendar() ).getCronValue() );
+        assertEquals( 1, job.getPayload().getTotalSize() );
+        assertEquals( "PT2s", job.getPayload().getProperty( "ageThreshold" ).getString() );
     }
 
 
@@ -126,32 +120,13 @@ class SchedulerConfigImplTest
     }
 
     @Test
-    void invalidCalendarProperty()
-    {
-        Map<String, String> properties = new HashMap<>();
-
-        properties.put( "job.landing1.enabled", "true" );
-        properties.put( "job.landing1.descriptor", "com.enonic.app.features:landing" );
-        properties.put( "job.landing1.calendar.type", "one_time" );
-        properties.put( "job.landing1.calendar.value", "2012-01-01T00:00:00.00Z" );
-        properties.put( "job.landing1.calendar.invalid", "abc" );
-
-        schedulerConfig = new SchedulerConfigImpl( properties, propertyTreeMarshallerService, calendarService );
-
-        final RuntimeException ex = assertThrows( RuntimeException.class, () -> schedulerConfig.jobs() );
-        assertEquals( "[invalid] is invalid calendar property.", ex.getMessage() );
-
-    }
-
-    @Test
     void invalidPayload()
     {
         Map<String, String> properties = new HashMap<>();
 
         properties.put( "job.landing1.enabled", "true" );
         properties.put( "job.landing1.descriptor", "com.enonic.app.features:landing" );
-        properties.put( "job.landing1.calendar.type", "one_time" );
-        properties.put( "job.landing1.calendar.value", "2012-01-01T00:00:00.00Z" );
+        properties.put( "job.landing1.cron", "* * * * *" );
         properties.put( "job.landing1.payload", "{'a':'b'}" );
 
         schedulerConfig = new SchedulerConfigImpl( properties, propertyTreeMarshallerService, calendarService );

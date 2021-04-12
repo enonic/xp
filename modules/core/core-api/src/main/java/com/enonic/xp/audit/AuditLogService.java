@@ -10,4 +10,6 @@ public interface AuditLogService
     AuditLog get( AuditLogId id );
 
     FindAuditLogResult find( FindAuditLogParams params );
+
+    CleanUpAuditLogResult cleanUp( CleanUpAuditLogParams params );
 }

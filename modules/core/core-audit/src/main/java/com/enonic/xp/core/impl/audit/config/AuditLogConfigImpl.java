@@ -11,12 +11,13 @@ import org.slf4j.LoggerFactory;
 public class AuditLogConfigImpl
     implements AuditLogConfig
 {
-
     private static final Logger LOG = LoggerFactory.getLogger( AuditLogConfigImpl.class );
 
     private boolean enabled;
 
     private boolean outputLogs;
+
+    private String ageThreshold;
 
     @Activate
     public void configure( final Map<String, String> config )
@@ -25,6 +26,7 @@ public class AuditLogConfigImpl
 
         this.enabled = configMap.isEnabled();
         this.outputLogs = configMap.isOutputLogs();
+        this.ageThreshold = configMap.ageThreshold();
 
         if ( this.enabled )
         {
@@ -42,6 +44,12 @@ public class AuditLogConfigImpl
     public boolean isOutputLogs()
     {
         return outputLogs;
+    }
+
+    @Override
+    public String ageThreshold()
+    {
+        return ageThreshold;
     }
 
 }

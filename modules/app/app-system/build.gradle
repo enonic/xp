@@ -1,3 +1,10 @@
+dependencies {
+    compileOnly project( ':core:core-api' )
+    compileOnly project( ':script:script-api' )
+
+    testImplementation project( ':tools:testing' )
+}
+
 jar {
     bnd( 'Bundle-Name': 'System',
          'X-Bundle-Type': 'system' )
