@@ -26,6 +26,7 @@ jobs:
         run: ./gradlew ci --scan
       - uses: codecov/codecov-action@v1.3.2
       - uses: codacy/codacy-coverage-reporter-action@master
+        if: github.ref == 'refs/heads/master'
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
 
