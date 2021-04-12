@@ -2,11 +2,14 @@ package com.enonic.xp.core.impl.audit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.ArgumentMatchers;
 
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.AuditLogId;
 import com.enonic.xp.audit.AuditLogUris;
+import com.enonic.xp.audit.CleanUpAuditLogListener;
+import com.enonic.xp.audit.CleanUpAuditLogParams;
+import com.enonic.xp.audit.CleanUpAuditLogResult;
 import com.enonic.xp.audit.FindAuditLogParams;
 import com.enonic.xp.audit.FindAuditLogResult;
 import com.enonic.xp.audit.LogAuditLogParams;
@@ -18,6 +21,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeHit;
+import com.enonic.xp.node.NodeHits;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeQuery;
@@ -28,13 +32,22 @@ import com.enonic.xp.repository.RepositoryService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class AuditLogServiceImplTest
 {
+    private NodeService nodeService;
 
     private AuditLogServiceImpl auditLogService;
 
     private LogAuditLogParams auditLogParams;
+
+    private AuditLogConfig config;
 
     @BeforeEach
     public void setUp()
@@ -60,11 +73,11 @@ public class AuditLogServiceImplTest
             data( createNodeParams.getData() ).
             build();
 
-        NodeService nodeService = Mockito.mock( NodeService.class );
-        Mockito.when( nodeService.create( Mockito.any( CreateNodeParams.class ) ) ).thenReturn( node );
-        Mockito.when( nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( node );
-        Mockito.when( nodeService.getByIds( Mockito.any( NodeIds.class ) ) ).thenReturn( Nodes.from( node ) );
-        Mockito.when( nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) ).
+        nodeService = mock( NodeService.class );
+        when( nodeService.create( any( CreateNodeParams.class ) ) ).thenReturn( node );
+        when( nodeService.getById( any( NodeId.class ) ) ).thenReturn( node );
+        when( nodeService.getByIds( any( NodeIds.class ) ) ).thenReturn( Nodes.from( node ) );
+        when( nodeService.findByQuery( any( NodeQuery.class ) ) ).
             thenReturn( FindNodesByQueryResult.create().
                 addNodeHit( NodeHit.create().
                     nodeId( node.id() ).
@@ -72,14 +85,14 @@ public class AuditLogServiceImplTest
                 totalHits( 1 ).
                 hits( 1 ).
                 build() );
-        IndexService indexService = Mockito.mock( IndexService.class );
-        Mockito.when( indexService.isMaster() ).thenReturn( true );
-        Mockito.when( indexService.waitForYellowStatus() ).thenReturn( true );
-        RepositoryService repositoryService = Mockito.mock( RepositoryService.class );
+        IndexService indexService = mock( IndexService.class );
+        when( indexService.isMaster() ).thenReturn( true );
+        when( indexService.waitForYellowStatus() ).thenReturn( true );
+        RepositoryService repositoryService = mock( RepositoryService.class );
 
-        AuditLogConfig config = Mockito.mock( AuditLogConfig.class );
-        Mockito.when( config.isEnabled() ).thenReturn( true );
-        Mockito.when( config.isOutputLogs() ).thenReturn( true );
+        config = mock( AuditLogConfig.class );
+        when( config.isEnabled() ).thenReturn( true );
+        when( config.isOutputLogs() ).thenReturn( true );
 
         auditLogService = new AuditLogServiceImpl( config, indexService, repositoryService, nodeService );
         auditLogService.initialize();
@@ -125,6 +138,101 @@ public class AuditLogServiceImplTest
         assertEquals( 1, result.getCount() );
         assertEquals( 1, result.getTotal() );
         assertLog( result.getHits().first() );
+    }
+
+    @Test
+    public void cleanUpOneEmpty()
+    {
+        when( nodeService.deleteById( ArgumentMatchers.isA( NodeId.class ) ) ).thenAnswer(
+            answer -> NodeIds.from( (NodeId) answer.getArgument( 0 ) ) );
+        when( config.ageThreshold() ).thenReturn( "PT1s" );
+
+        when( nodeService.findByQuery( any( NodeQuery.class ) ) ).
+            thenReturn( FindNodesByQueryResult.create().build() );
+
+        final CleanUpAuditLogListener listener = mock( CleanUpAuditLogListener.class );
+
+        final CleanUpAuditLogResult result = auditLogService.cleanUp( CleanUpAuditLogParams.create().
+            listener( listener ).
+            build() );
+
+        assertEquals( 0, result.getDeleted() );
+        verify( listener, times( 0 ) ).start( anyInt() );
+        verify( listener, times( 0 ) ).processed();
+        verify( listener, times( 0 ) ).finished();
+    }
+
+    @Test
+    public void cleanUpOneBatch()
+    {
+        when( nodeService.deleteById( ArgumentMatchers.isA( NodeId.class ) ) ).thenAnswer(
+            answer -> NodeIds.from( (NodeId) answer.getArgument( 0 ) ) );
+        when( config.ageThreshold() ).thenReturn( "PT1s" );
+
+        final FindNodesByQueryResult.Builder queryResult = FindNodesByQueryResult.create().
+            totalHits( 3 ).
+            hits( 3 );
+
+        createHits( 3 ).forEach( queryResult::addNodeHit );
+
+        when( nodeService.findByQuery( any( NodeQuery.class ) ) ).
+            thenReturn( queryResult.build() ).
+            thenReturn( FindNodesByQueryResult.create().build() );
+
+        final CleanUpAuditLogListener listener = mock( CleanUpAuditLogListener.class );
+
+        final CleanUpAuditLogResult result = auditLogService.cleanUp( CleanUpAuditLogParams.create().
+            listener( listener ).
+            build() );
+
+        assertEquals( 3, result.getDeleted() );
+        verify( listener, times( 1 ) ).start( 10_000 );
+        verify( listener, times( 3 ) ).processed();
+        verify( listener, times( 1 ) ).finished();
+    }
+
+    @Test
+    public void cleanUpMultipleBatch()
+    {
+        when( nodeService.deleteById( ArgumentMatchers.isA( NodeId.class ) ) ).thenAnswer(
+            answer -> NodeIds.from( (NodeId) answer.getArgument( 0 ) ) );
+        when( config.ageThreshold() ).thenReturn( "PT1s" );
+
+        final FindNodesByQueryResult.Builder queryResult1 = FindNodesByQueryResult.create().
+            totalHits( 10500 ).
+            hits( 10000 );
+        createHits( 10000 ).forEach( queryResult1::addNodeHit );
+
+        final FindNodesByQueryResult.Builder queryResult2 = FindNodesByQueryResult.create().
+            totalHits( 10500 ).
+            hits( 500 );
+        createHits( 500 ).forEach( queryResult2::addNodeHit );
+
+        when( nodeService.findByQuery( any( NodeQuery.class ) ) ).
+            thenReturn( queryResult1.build() ).
+            thenReturn( queryResult2.build() ).
+            thenReturn( FindNodesByQueryResult.create().build() );
+
+        final CleanUpAuditLogListener listener = mock( CleanUpAuditLogListener.class );
+
+        final CleanUpAuditLogResult result = auditLogService.cleanUp( CleanUpAuditLogParams.create().
+            listener( listener ).
+            build() );
+
+        assertEquals( 10500, result.getDeleted() );
+        verify( listener, times( 1 ) ).start( 10_000 );
+        verify( listener, times( 10_500 ) ).processed();
+        verify( listener, times( 1 ) ).finished();
+    }
+
+    private NodeHits createHits( final int number )
+    {
+        final NodeHits.Builder hits = NodeHits.create();
+        for ( int i = 1; i <= number; i++ )
+        {
+            hits.add( NodeHit.create().nodeId( NodeId.from( "node-id-" + i ) ).build() );
+        }
+        return hits.build();
     }
 
     private void assertLog( AuditLog log )
