@@ -6,6 +6,7 @@ import com.google.common.base.MoreObjects;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
+import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.xdata.XDataNames;
 
@@ -33,6 +34,8 @@ public final class ContentType
 
     private final String displayNameLabelI18nKey;
 
+    private final InputTypeConfig schemaConfig;
+
     ContentType( final Builder builder )
     {
         super( builder );
@@ -54,6 +57,7 @@ public final class ContentType
         this.xData = builder.xData;
         this.displayNameLabel = builder.displayNameLabel;
         this.displayNameLabelI18nKey = builder.displayNameLabelI18nKey;
+        this.schemaConfig = builder.schemaConfig.build();
     }
 
     public static Builder create()
@@ -121,6 +125,11 @@ public final class ContentType
         return displayNameLabelI18nKey;
     }
 
+    public InputTypeConfig getSchemaConfig()
+    {
+        return schemaConfig;
+    }
+
     @Override
     public String toString()
     {
@@ -164,6 +173,8 @@ public final class ContentType
 
         private String displayNameLabelI18nKey;
 
+        private final InputTypeConfig.Builder schemaConfig = InputTypeConfig.create();
+
         private Builder()
         {
             super();
@@ -191,6 +202,10 @@ public final class ContentType
             this.xData = source.xData;
             this.displayNameLabel = source.displayNameLabel;
             this.displayNameLabelI18nKey = source.displayNameLabelI18nKey;
+            if ( source.schemaConfig != null )
+            {
+                this.schemaConfig.config( source.schemaConfig );
+            }
         }
 
         @Override
@@ -286,6 +301,12 @@ public final class ContentType
         public Builder displayNameLabelI18nKey( final String displayNameLabelI18nKey )
         {
             this.displayNameLabelI18nKey = displayNameLabelI18nKey;
+            return this;
+        }
+
+        public Builder schemaConfig( final InputTypeConfig config )
+        {
+            this.schemaConfig.config( config );
             return this;
         }
 

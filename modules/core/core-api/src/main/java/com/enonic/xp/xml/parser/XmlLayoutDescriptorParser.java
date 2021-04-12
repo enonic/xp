@@ -8,6 +8,8 @@ import com.enonic.xp.xml.DomElement;
 public final class XmlLayoutDescriptorParser
     extends XmlModelParser<XmlLayoutDescriptorParser>
 {
+    private static final XmlInputTypeConfigMapper CONFIG_MAPPER = new XmlInputTypeConfigMapper();
+
     private LayoutDescriptor.Builder builder;
 
     public XmlLayoutDescriptorParser builder( final LayoutDescriptor.Builder builder )
@@ -34,5 +36,6 @@ public final class XmlLayoutDescriptorParser
 
         final XmlRegionDescriptorsMapper regionsMapper = new XmlRegionDescriptorsMapper();
         this.builder.regions( regionsMapper.buildRegions( root.getChild( "regions" ) ) );
+        this.builder.schemaConfig( CONFIG_MAPPER.build( root.getChild( "config" ) ) );
     }
 }
