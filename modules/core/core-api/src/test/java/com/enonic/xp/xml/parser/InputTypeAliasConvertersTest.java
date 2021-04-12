@@ -23,9 +23,9 @@ public class InputTypeAliasConvertersTest
         final String contentType = "allowType";
         final String relationshipType = "relationship";
         final String shouldBeUnchanged = "relationshipX";
-        final String result1 = InputTypeAliasConverters.convert( InputTypeName.CONTENT_SELECTOR, contentType );
-        final String result2 = InputTypeAliasConverters.convert( InputTypeName.CONTENT_SELECTOR, relationshipType );
-        final String result3 = InputTypeAliasConverters.convert( InputTypeName.CONTENT_SELECTOR, shouldBeUnchanged );
+        final String result1 = convert( InputTypeName.CONTENT_SELECTOR, contentType );
+        final String result2 = convert( InputTypeName.CONTENT_SELECTOR, relationshipType );
+        final String result3 = convert( InputTypeName.CONTENT_SELECTOR, shouldBeUnchanged );
 
         assertEquals( "allow-content-type", result1 );
         assertEquals( "relationship-type", result2 );
@@ -38,9 +38,9 @@ public class InputTypeAliasConvertersTest
         final String contentType = "allowType";
         final String relationshipType = "relationship";
         final String shouldBeUnchanged = "relationshipX";
-        final String result1 = InputTypeAliasConverters.convert( InputTypeName.MEDIA_SELECTOR, contentType );
-        final String result2 = InputTypeAliasConverters.convert( InputTypeName.MEDIA_SELECTOR, relationshipType );
-        final String result3 = InputTypeAliasConverters.convert( InputTypeName.MEDIA_SELECTOR, shouldBeUnchanged );
+        final String result1 = convert( InputTypeName.MEDIA_SELECTOR, contentType );
+        final String result2 = convert( InputTypeName.MEDIA_SELECTOR, relationshipType );
+        final String result3 = convert( InputTypeName.MEDIA_SELECTOR, shouldBeUnchanged );
 
         assertEquals( "allow-content-type", result1 );
         assertEquals( "relationship-type", result2 );
@@ -53,9 +53,9 @@ public class InputTypeAliasConvertersTest
         final String contentType = "allowType";
         final String relationshipType = "relationship";
         final String shouldBeUnchanged = "relationshipX";
-        final String result1 = InputTypeAliasConverters.convert( InputTypeName.IMAGE_SELECTOR, contentType );
-        final String result2 = InputTypeAliasConverters.convert( InputTypeName.IMAGE_SELECTOR, relationshipType );
-        final String result3 = InputTypeAliasConverters.convert( InputTypeName.IMAGE_SELECTOR, shouldBeUnchanged );
+        final String result1 = convert( InputTypeName.IMAGE_SELECTOR, contentType );
+        final String result2 = convert( InputTypeName.IMAGE_SELECTOR, relationshipType );
+        final String result3 = convert( InputTypeName.IMAGE_SELECTOR, shouldBeUnchanged );
 
         assertEquals( "allow-content-type", result1 );
         assertEquals( "relationship-type", result2 );
@@ -66,8 +66,13 @@ public class InputTypeAliasConvertersTest
     public void testDefaultConverter()
     {
         final String type = "some-type";
-        final String result = InputTypeAliasConverters.convert( InputTypeName.CONTENT_SELECTOR, type );
+        final String result = convert( InputTypeName.CONTENT_SELECTOR, type );
 
         assertEquals( type, result );
+    }
+
+    public static String convert( final InputTypeName inputTypeName, final String alias )
+    {
+        return InputTypeAliasConverters.getConverter( inputTypeName ).convert( alias );
     }
 }

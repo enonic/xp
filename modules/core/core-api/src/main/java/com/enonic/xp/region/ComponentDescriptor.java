@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
 
@@ -22,6 +23,8 @@ public abstract class ComponentDescriptor
 
     private final Form config;
 
+    private final InputTypeConfig schemaConfig;
+
     protected ComponentDescriptor( final BaseBuilder builder )
     {
         super( builder.key );
@@ -32,6 +35,7 @@ public abstract class ComponentDescriptor
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;
         this.config = builder.config;
+        this.schemaConfig = builder.schemaConfig.build();
     }
 
     public final String getDisplayName()
@@ -59,6 +63,11 @@ public abstract class ComponentDescriptor
         return config;
     }
 
+    public InputTypeConfig getSchemaConfig()
+    {
+        return schemaConfig;
+    }
+
     public abstract ResourceKey getComponentPath();
 
     public abstract static class BaseBuilder<T extends BaseBuilder>
@@ -77,6 +86,8 @@ public abstract class ComponentDescriptor
 
         protected Form config;
 
+        private final InputTypeConfig.Builder schemaConfig = InputTypeConfig.create();
+
         protected BaseBuilder()
         {
         }
@@ -90,6 +101,10 @@ public abstract class ComponentDescriptor
             this.description = descriptor.getDescription();
             this.descriptionI18nKey = descriptor.getDescriptionI18nKey();
             this.config = descriptor.getConfig();
+            if ( descriptor.schemaConfig != null )
+            {
+                this.schemaConfig.config( descriptor.schemaConfig );
+            }
         }
 
         public final T key( final DescriptorKey key )
@@ -125,6 +140,12 @@ public abstract class ComponentDescriptor
         public final T config( final Form value )
         {
             this.config = value;
+            return typecastToBuilder( this );
+        }
+
+        public final T schemaConfig( final InputTypeConfig value )
+        {
+            this.schemaConfig.config( value );
             return typecastToBuilder( this );
         }
 
