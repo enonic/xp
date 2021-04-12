@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
-import com.google.common.base.CaseFormat;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -121,8 +119,6 @@ public class XmlInputTypeConfigMapperTest
     @Test
     public void parseCamelCase()
     {
-        System.out.println( CaseFormat.LOWER_HYPHEN.to( CaseFormat.LOWER_CAMEL, "other-test" ) );
-
         final InputTypeConfig config = build( "camelcase.xml" );
         assertNotNull( config );
         assertEquals( 12, config.getSize() );

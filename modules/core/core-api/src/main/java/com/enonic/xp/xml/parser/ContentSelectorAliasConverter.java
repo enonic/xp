@@ -1,8 +1,5 @@
 package com.enonic.xp.xml.parser;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 final class ContentSelectorAliasConverter
     implements InputTypeAliasConverter
 {

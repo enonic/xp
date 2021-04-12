@@ -8,6 +8,8 @@ import com.enonic.xp.xml.DomElement;
 public final class XmlPartDescriptorParser
     extends XmlModelParser<XmlPartDescriptorParser>
 {
+    private static final XmlInputTypeConfigMapper CONFIG_MAPPER = new XmlInputTypeConfigMapper();
+
     private PartDescriptor.Builder builder;
 
     public XmlPartDescriptorParser builder( final PartDescriptor.Builder builder )
@@ -32,5 +34,6 @@ public final class XmlPartDescriptorParser
 
         final XmlFormMapper mapper = new XmlFormMapper( this.currentApplication );
         this.builder.config( mapper.buildForm( root.getChild( "form" ) ) );
+        this.builder.schemaConfig( CONFIG_MAPPER.build( root.getChild( "config" ) ) );
     }
 }
