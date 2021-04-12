@@ -40,13 +40,13 @@ abstract class RenderHandlerWorker
     {
         if ( page.getTemplate() == null )
         {
-            throw WebException.notFound( String.format( "No template set for content" ) );
+            throw WebException.internalServerError( "No template set for content" );
         }
 
         final PageTemplate pageTemplate = this.pageTemplateService.getByKey( page.getTemplate() );
         if ( pageTemplate == null )
         {
-            throw WebException.notFound( String.format( "Page template [%s] not found", page.getTemplate() ) );
+            throw WebException.internalServerError( String.format( "Page template [%s] not found", page.getTemplate() ) );
         }
 
         return pageTemplate;
