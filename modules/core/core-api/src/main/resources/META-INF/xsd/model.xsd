@@ -191,6 +191,7 @@
       <xs:element minOccurs="0" name="allow-child-content" type="xs:boolean"/>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="x-data" type="xdata"/>
       <xs:element minOccurs="0" name="form" type="form"/>
+      <xs:element minOccurs="0" name="config" type="config"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -216,6 +217,7 @@
       <xs:element minOccurs="0" name="description" type="i18n"/>
       <xs:element minOccurs="0" name="form" type="form"/>
       <xs:element minOccurs="0" name="regions" type="regions"/>
+      <xs:element minOccurs="0" name="config" type="config"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -230,6 +232,7 @@
       <xs:element minOccurs="0" name="description" type="i18n"/>
       <xs:element minOccurs="0" name="form" type="form"/>
       <xs:element minOccurs="0" name="regions" type="regions"/>
+      <xs:element minOccurs="0" name="config" type="config"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -244,6 +247,7 @@
       <xs:element minOccurs="0" name="display-name" type="i18n"/>
       <xs:element minOccurs="0" name="description" type="i18n"/>
       <xs:element minOccurs="0" name="form" type="form"/>
+      <xs:element minOccurs="0" name="config" type="config"/>
     </xs:sequence>
   </xs:complexType>
 
