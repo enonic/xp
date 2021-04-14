@@ -23,9 +23,7 @@ public class LayoutDescriptorServiceTest
     {
         super.initialize();
 
-        this.service = new LayoutDescriptorServiceImpl();
-        this.service.setResourceService( this.resourceService );
-        this.service.setMixinService( this.mixinService );
+        this.service = new LayoutDescriptorServiceImpl( this.descriptorService );
     }
 
     @Test

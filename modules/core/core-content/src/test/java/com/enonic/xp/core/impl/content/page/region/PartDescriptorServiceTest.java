@@ -23,9 +23,7 @@ public class PartDescriptorServiceTest
     {
         super.initialize();
 
-        this.service = new PartDescriptorServiceImpl();
-        this.service.setResourceService( this.resourceService );
-        this.service.setMixinService( this.mixinService );
+        this.service = new PartDescriptorServiceImpl( this.descriptorService );
     }
 
     @Test

@@ -27,9 +27,7 @@ public class DescriptorFacetFactoryImplTest
         this.resourceService = Mockito.mock( ResourceService.class );
         this.applicationService = Mockito.mock( ApplicationService.class );
 
-        this.facetFactory = new DescriptorFacetFactoryImpl();
-        this.facetFactory.setResourceService( this.resourceService );
-        this.facetFactory.setApplicationService( this.applicationService );
+        this.facetFactory = new DescriptorFacetFactoryImpl( this.applicationService, this.resourceService );
 
         this.descriptorLoader = new MyDescriptorLoader();
     }

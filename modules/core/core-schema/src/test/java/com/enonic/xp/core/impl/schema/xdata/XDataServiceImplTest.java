@@ -31,9 +31,7 @@ public class XDataServiceImplTest
         this.service.setApplicationService( this.applicationService );
         this.service.setResourceService( this.resourceService );
 
-        this.contentTypeService = new ContentTypeServiceImpl();
-        this.contentTypeService.setResourceService( this.resourceService );
-        this.contentTypeService.setApplicationService( this.applicationService );
+        this.contentTypeService = new ContentTypeServiceImpl( this.resourceService, this.applicationService, null );
     }
 
     @Test

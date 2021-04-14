@@ -29,10 +29,7 @@ public class ContentTypeServiceTest
         throws Exception
     {
         this.mixinService = Mockito.mock( MixinService.class );
-        this.service = new ContentTypeServiceImpl();
-        this.service.setMixinService( this.mixinService );
-        this.service.setApplicationService( this.applicationService );
-        this.service.setResourceService( this.resourceService );
+        this.service = new ContentTypeServiceImpl( this.resourceService, this.applicationService, this.mixinService );
     }
 
     @Test
