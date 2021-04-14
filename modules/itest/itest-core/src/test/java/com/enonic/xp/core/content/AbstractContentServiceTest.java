@@ -295,8 +295,7 @@ public class AbstractContentServiceTest
         siteService.setResourceService( resourceService );
         siteService.setMixinService( mixinService );
 
-        contentTypeService = new ContentTypeServiceImpl();
-        contentTypeService.setMixinService( mixinService );
+        contentTypeService = new ContentTypeServiceImpl( null, null, mixinService );
 
         PageDescriptorService pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         PartDescriptorService partDescriptorService = Mockito.mock( PartDescriptorService.class );

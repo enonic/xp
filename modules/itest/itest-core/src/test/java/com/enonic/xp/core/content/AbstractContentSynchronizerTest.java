@@ -180,8 +180,7 @@ public abstract class AbstractContentSynchronizerTest
         partDescriptorService = mock( PartDescriptorService.class );
         layoutDescriptorService = mock( LayoutDescriptorService.class );
 
-        contentTypeService = new ContentTypeServiceImpl();
-        contentTypeService.setMixinService( mixinService );
+        contentTypeService = new ContentTypeServiceImpl( null, null, mixinService );
 
         final ResourceService resourceService = mock( ResourceService.class );
         final SiteServiceImpl siteService = new SiteServiceImpl();

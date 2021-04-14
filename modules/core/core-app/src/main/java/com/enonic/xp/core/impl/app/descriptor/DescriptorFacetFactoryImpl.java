@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.app.descriptor;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -12,9 +13,17 @@ import com.enonic.xp.resource.ResourceService;
 public final class DescriptorFacetFactoryImpl
     implements DescriptorFacetFactory
 {
-    private ApplicationService applicationService;
+    private final ApplicationService applicationService;
 
-    private ResourceService resourceService;
+    private final ResourceService resourceService;
+
+    @Activate
+    public DescriptorFacetFactoryImpl( @Reference final ApplicationService applicationService,
+                                       @Reference final ResourceService resourceService )
+    {
+        this.applicationService = applicationService;
+        this.resourceService = resourceService;
+    }
 
     @Override
     public <T extends Descriptor> DescriptorFacet<T> create( final DescriptorLoader<T> loader )
@@ -23,17 +32,5 @@ public final class DescriptorFacetFactoryImpl
         facet.applicationService = this.applicationService;
         facet.resourceService = this.resourceService;
         return facet;
-    }
-
-    @Reference
-    public void setApplicationService( final ApplicationService applicationService )
-    {
-        this.applicationService = applicationService;
-    }
-
-    @Reference
-    public void setResourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
     }
 }

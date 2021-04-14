@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.schema.content;
 
 import java.util.Set;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -23,11 +24,14 @@ public final class ContentTypeServiceImpl
 {
     private final ContentTypeRegistry registry;
 
-    private MixinService mixinService;
+    private final MixinService mixinService;
 
-    public ContentTypeServiceImpl()
+    @Activate
+    public ContentTypeServiceImpl( final @Reference ResourceService resourceService, @Reference final ApplicationService applicationService,
+                                   final @Reference MixinService mixinService )
     {
-        this.registry = new ContentTypeRegistry();
+        this.registry = new ContentTypeRegistry( resourceService, applicationService );
+        this.mixinService = mixinService;
     }
 
     @Override
@@ -68,30 +72,9 @@ public final class ContentTypeServiceImpl
     @Override
     public ContentTypeValidationResult validate( final ContentType type )
     {
-        final ContentTypeSuperTypeValidator validator = ContentTypeSuperTypeValidator.
-            create().
-            contentTypeService( this ).
-            build();
+        final ContentTypeSuperTypeValidator validator = ContentTypeSuperTypeValidator.create().contentTypeService( this ).build();
 
         validator.validate( type.getName(), type.getSuperType() );
         return validator.getResult();
-    }
-
-    @Reference
-    public void setMixinService( final MixinService mixinService )
-    {
-        this.mixinService = mixinService;
-    }
-
-    @Reference
-    public void setResourceService( final ResourceService resourceService )
-    {
-        this.registry.resourceService = resourceService;
-    }
-
-    @Reference
-    public void setApplicationService( final ApplicationService applicationService )
-    {
-        this.registry.applicationService = applicationService;
     }
 }

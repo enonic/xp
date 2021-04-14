@@ -1,9 +1,11 @@
 package com.enonic.xp.core.impl.schema.content;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
+import java.util.function.Function;
 
-import com.enonic.xp.app.ApplicationKey;
+import com.google.common.collect.ImmutableMap;
+
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.core.impl.schema.SchemaHelper;
 import com.enonic.xp.form.Form;
@@ -25,288 +27,166 @@ final class BuiltinContentTypes
     private static final String CONTENT_TYPES_FOLDER = "content-types";
 
     // System Content Types
-    private static final ContentType STRUCTURED = createSystemType( ContentTypeName.structured() ).
-        setFinal( false ).setAbstract( true ).build();
+    private static final ContentType STRUCTURED =
+        createSystemType( ContentTypeName.structured() ).setFinal( false ).setAbstract( true ).build();
 
-    private static final ContentType UNSTRUCTURED = createSystemType( ContentTypeName.unstructured() ).
-        setFinal( false ).setAbstract( false ).build();
+    private static final ContentType UNSTRUCTURED =
+        createSystemType( ContentTypeName.unstructured() ).setFinal( false ).setAbstract( false ).build();
 
-    private static final ContentType FOLDER = createSystemType( ContentTypeName.folder() ).
-        description( "Container of items" ).
-        descriptionI18nKey( "base.folder.description" ).
-        setFinal( false ).
-        setAbstract( false ).
-        build();
+    private static final ContentType FOLDER =
+        createSystemType( ContentTypeName.folder() ).description( "Container of items" ).descriptionI18nKey(
+            "base.folder.description" ).setFinal( false ).setAbstract( false ).build();
 
-    private static final Form SITE_FORM = Form.create().
-        addFormItem( Input.create().
-            name( "description" ).
-            label( "Description" ).
-            labelI18nKey( "portal.site.description.label" ).
-            inputType( InputTypeName.TEXT_AREA ).
-            occurrences( 0, 1 ).
-            build() ).
-        addFormItem( Input.create().
-            name( "siteConfig" ).
-            label( "Applications" ).
-            labelI18nKey( "portal.site.applications.label" ).
-            helpText( "Configure applications used by this site" ).
-            helpTextI18nKey( "portal.site.applications.helpText" ).
-            inputType( InputTypeName.SITE_CONFIGURATOR ).
-            required( false ).
-            multiple( true ).
-            build() ).
-        build();
+    private static final Form SITE_FORM = Form.create().addFormItem(
+        Input.create().name( "description" ).label( "Description" ).labelI18nKey( "portal.site.description.label" ).inputType(
+            InputTypeName.TEXT_AREA ).occurrences( 0, 1 ).build() ).addFormItem(
+        Input.create().name( "siteConfig" ).label( "Applications" ).labelI18nKey( "portal.site.applications.label" ).helpText(
+            "Configure applications used by this site" ).helpTextI18nKey( "portal.site.applications.helpText" ).inputType(
+            InputTypeName.SITE_CONFIGURATOR ).required( false ).multiple( true ).build() ).build();
 
-    private static final Form SHORTCUT_FORM = Form.create().
-        addFormItem( Input.create().
-            name( "target" ).
-            label( "Target" ).
-            labelI18nKey( "base.shortcut.target.label" ).
-            helpText( "Choose shortcut target" ).
-            helpTextI18nKey( "base.shortcut.target.helpText" ).
-            inputType( InputTypeName.CONTENT_SELECTOR ).
-            inputTypeProperty( InputTypeProperty.create( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).build() ).
-            inputTypeConfig( InputTypeConfig.create().property(
-                InputTypeProperty.create( "allowPath", "*" ).build()
-            ).build() ).
-            required( true ).
-            build() ).
-        addFormItem( FormItemSet.create().name( "parameters" ).
-            label( "Parameters" ).
-            labelI18nKey( "base.shortcut.parameters.label" ).
-            helpText( "HTTP Parameters" ).
-            helpTextI18nKey( "base.shortcut.parameters.helpText" ).
-            multiple( true ).required( false ).
-            addFormItem( Input.create().
-                name( "name" ).
-                label( "Name" ).
-                labelI18nKey( "base.shortcut.parameters.name.label" ).
-                helpText( "HTTP parameter name" ).
-                helpTextI18nKey( "base.shortcut.parameters.name.helpText" ).
-                inputType( InputTypeName.TEXT_LINE ).
-                occurrences( 1, 1 ).
-                build() ).
-            addFormItem( Input.create().
-                name( "value" ).
-                label( "Value" ).
-                labelI18nKey( "base.shortcut.parameters.value.label" ).
-                helpText( "HTTP parameter value" ).
-                helpTextI18nKey( "base.shortcut.parameters.value.helpText" ).
-                inputType( InputTypeName.TEXT_LINE ).
-                occurrences( 1, 1 ).
-                build() ).
-            build() ).
-        build();
+    private static final Form SHORTCUT_FORM = Form.create().addFormItem(
+        Input.create().name( "target" ).label( "Target" ).labelI18nKey( "base.shortcut.target.label" ).helpText(
+            "Choose shortcut target" ).helpTextI18nKey( "base.shortcut.target.helpText" ).inputType(
+            InputTypeName.CONTENT_SELECTOR ).inputTypeProperty(
+            InputTypeProperty.create( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).build() ).inputTypeConfig(
+            InputTypeConfig.create().property( InputTypeProperty.create( "allowPath", "*" ).build() ).build() ).required(
+            true ).build() ).addFormItem(
+        FormItemSet.create().name( "parameters" ).label( "Parameters" ).labelI18nKey( "base.shortcut.parameters.label" ).helpText(
+            "HTTP Parameters" ).helpTextI18nKey( "base.shortcut.parameters.helpText" ).multiple( true ).required( false ).addFormItem(
+            Input.create().name( "name" ).label( "Name" ).labelI18nKey( "base.shortcut.parameters.name.label" ).helpText(
+                "HTTP parameter name" ).helpTextI18nKey( "base.shortcut.parameters.name.helpText" ).inputType(
+                InputTypeName.TEXT_LINE ).occurrences( 1, 1 ).build() ).addFormItem(
+            Input.create().name( "value" ).label( "Value" ).labelI18nKey( "base.shortcut.parameters.value.label" ).helpText(
+                "HTTP parameter value" ).helpTextI18nKey( "base.shortcut.parameters.value.helpText" ).inputType(
+                InputTypeName.TEXT_LINE ).occurrences( 1, 1 ).build() ).build() ).build();
 
-    private static final Form MEDIA_IMAGE_FORM = Form.create().
-        addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
-            label( "Image" ).
-            labelI18nKey( "media.image.media.label" ).
-            inputType( InputTypeName.IMAGE_UPLOADER ).build() ).
-        addFormItem( Input.create().name( "caption" ).
-            inputType( InputTypeName.TEXT_AREA ).
-            label( "Caption" ).
-            labelI18nKey( "media.image.caption.label" ).
-            occurrences( 0, 1 ).
-            build() ).
-        addFormItem( Input.create().name( "altText" ).
-            inputType( InputTypeName.TEXT_LINE ).
-            label( "Alternative text" ).
-            labelI18nKey( "media.image.alttext.label" ).
-            occurrences( 0, 1 ).
-            build() ).
-        addFormItem( Input.create().name( "artist" ).
-            inputType( InputTypeName.TAG ).
-            label( "Artist" ).
-            labelI18nKey( "media.image.artist.label" ).
-            occurrences( 0, 0 ).
-            build() ).
-        addFormItem( Input.create().name( "copyright" ).
-            inputType( InputTypeName.TEXT_LINE ).
-            label( "Copyright" ).
-            labelI18nKey( "media.image.copyright.label" ).
-            occurrences( 0, 1 ).
-            build() ).
-        addFormItem( Input.create().name( "tags" ).
-            inputType( InputTypeName.TAG ).
-            label( "Tags" ).
-            labelI18nKey( "media.image.tags.label" ).
-            occurrences( 0, 0 ).
-            build() ).
-        build();
+    private static final Form MEDIA_IMAGE_FORM = Form.create().addFormItem(
+        Input.create().name( ContentPropertyNames.MEDIA ).label( "Image" ).labelI18nKey( "media.image.media.label" ).inputType(
+            InputTypeName.IMAGE_UPLOADER ).build() ).addFormItem(
+        Input.create().name( "caption" ).inputType( InputTypeName.TEXT_AREA ).label( "Caption" ).labelI18nKey(
+            "media.image.caption.label" ).occurrences( 0, 1 ).build() ).addFormItem(
+        Input.create().name( "altText" ).inputType( InputTypeName.TEXT_LINE ).label( "Alternative text" ).labelI18nKey(
+            "media.image.alttext.label" ).occurrences( 0, 1 ).build() ).addFormItem(
+        Input.create().name( "artist" ).inputType( InputTypeName.TAG ).label( "Artist" ).labelI18nKey(
+            "media.image.artist.label" ).occurrences( 0, 0 ).build() ).addFormItem(
+        Input.create().name( "copyright" ).inputType( InputTypeName.TEXT_LINE ).label( "Copyright" ).labelI18nKey(
+            "media.image.copyright.label" ).occurrences( 0, 1 ).build() ).addFormItem(
+        Input.create().name( "tags" ).inputType( InputTypeName.TAG ).label( "Tags" ).labelI18nKey( "media.image.tags.label" ).occurrences(
+            0, 0 ).build() ).build();
 
-    private static final Form MEDIA_VECTOR_FORM = Form.create().
-        addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
-            label( "Media" ).
-            labelI18nKey( "media.vector.media.label" ).
-            inputType( InputTypeName.MEDIA_UPLOADER ).build() ).
-        addFormItem( Input.create().name( "caption" ).
-            inputType( InputTypeName.TEXT_AREA ).
-            label( "Caption" ).
-            labelI18nKey( "media.vector.caption.label" ).
-            occurrences( 0, 1 ).
-            build() ).
-        addFormItem( Input.create().name( "artist" ).
-            inputType( InputTypeName.TAG ).
-            label( "Artist" ).
-            labelI18nKey( "media.vector.artist.label" ).
-            occurrences( 0, 0 ).
-            build() ).
-        addFormItem( Input.create().name( "copyright" ).
-            inputType( InputTypeName.TEXT_LINE ).
-            label( "Copyright" ).
-            labelI18nKey( "media.vector.copyright.label" ).
-            occurrences( 0, 1 ).
-            build() ).
-        addFormItem( Input.create().name( "tags" ).
-            inputType( InputTypeName.TAG ).
-            label( "Tags" ).
-            labelI18nKey( "media.vector.tags.label" ).
-            occurrences( 0, 0 ).
-            build() ).
-        build();
+    private static final Form MEDIA_VECTOR_FORM = Form.create().addFormItem(
+        Input.create().name( ContentPropertyNames.MEDIA ).label( "Media" ).labelI18nKey( "media.vector.media.label" ).inputType(
+            InputTypeName.MEDIA_UPLOADER ).build() ).addFormItem(
+        Input.create().name( "caption" ).inputType( InputTypeName.TEXT_AREA ).label( "Caption" ).labelI18nKey(
+            "media.vector.caption.label" ).occurrences( 0, 1 ).build() ).addFormItem(
+        Input.create().name( "artist" ).inputType( InputTypeName.TAG ).label( "Artist" ).labelI18nKey(
+            "media.vector.artist.label" ).occurrences( 0, 0 ).build() ).addFormItem(
+        Input.create().name( "copyright" ).inputType( InputTypeName.TEXT_LINE ).label( "Copyright" ).labelI18nKey(
+            "media.vector.copyright.label" ).occurrences( 0, 1 ).build() ).addFormItem(
+        Input.create().name( "tags" ).inputType( InputTypeName.TAG ).label( "Tags" ).labelI18nKey( "media.vector.tags.label" ).occurrences(
+            0, 0 ).build() ).build();
 
-    private static final Form MEDIA_DOCUMENT_FORM = Form.create().
-        addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
-            label( "Media" ).
-            labelI18nKey( "media.document.media.label" ).
-            inputType( InputTypeName.MEDIA_UPLOADER ).build() ).
-        addFormItem( Input.create().name( "abstract" ).
-            inputType( InputTypeName.TEXT_AREA ).
-            label( "Abstract" ).
-            labelI18nKey( "media.document.abstract.label" ).
-            occurrences( 0, 1 ).
-            build() ).
-        addFormItem( Input.create().name( "tags" ).
-            inputType( InputTypeName.TAG ).
-            label( "Tags" ).
-            labelI18nKey( "media.document.tags.label" ).
-            occurrences( 0, 0 ).
-            build() ).
-        build();
+    private static final Form MEDIA_DOCUMENT_FORM = Form.create().addFormItem(
+        Input.create().name( ContentPropertyNames.MEDIA ).label( "Media" ).labelI18nKey( "media.document.media.label" ).inputType(
+            InputTypeName.MEDIA_UPLOADER ).build() ).addFormItem(
+        Input.create().name( "abstract" ).inputType( InputTypeName.TEXT_AREA ).label( "Abstract" ).labelI18nKey(
+            "media.document.abstract.label" ).occurrences( 0, 1 ).build() ).addFormItem(
+        Input.create().name( "tags" ).inputType( InputTypeName.TAG ).label( "Tags" ).labelI18nKey(
+            "media.document.tags.label" ).occurrences( 0, 0 ).build() ).build();
 
-    private static final Form MEDIA_DEFAULT_FORM = Form.create().
-        addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
-            label( "Media" ).
-            labelI18nKey( "media.default.media.label" ).
-            inputType( InputTypeName.MEDIA_UPLOADER ).build() ).
-        addFormItem( Input.create().name( "tags" ).
-            inputType( InputTypeName.TAG ).
-            label( "Tags" ).
-            labelI18nKey( "media.default.tags.label" ).
-            occurrences( 0, 0 ).
-            build() ).
-        build();
+    private static final Form MEDIA_DEFAULT_FORM = Form.create().addFormItem(
+        Input.create().name( ContentPropertyNames.MEDIA ).label( "Media" ).labelI18nKey( "media.default.media.label" ).inputType(
+            InputTypeName.MEDIA_UPLOADER ).build() ).addFormItem(
+        Input.create().name( "tags" ).inputType( InputTypeName.TAG ).label( "Tags" ).labelI18nKey( "media.default.tags.label" ).occurrences(
+            0, 0 ).build() ).build();
 
-    private static final ContentType SITE = createSystemType( ContentTypeName.site() ).
-        description( "Root content for sites" ).
-        descriptionI18nKey( "portal.site.description" ).
-        setFinal( true ).
-        setAbstract( false ).
-        form( SITE_FORM ).
-        superType( ContentTypeName.structured() ).
-        build();
+    private static final ContentType SITE =
+        createSystemType( ContentTypeName.site() ).description( "Root content for sites" ).descriptionI18nKey(
+            "portal.site.description" ).setFinal( true ).setAbstract( false ).form( SITE_FORM ).superType(
+            ContentTypeName.structured() ).build();
 
-    private static final ContentType TEMPLATE_FOLDER = createSystemType( ContentTypeName.templateFolder() ).
-        description( "Root content for sites" ).
-        descriptionI18nKey( "portal.template-folder.description" ).
-        setFinal( true ).
-        setAbstract( false ).
-        superType( ContentTypeName.folder() ).
-        build();
+    private static final ContentType TEMPLATE_FOLDER =
+        createSystemType( ContentTypeName.templateFolder() ).description( "Root content for sites" ).descriptionI18nKey(
+            "portal.template-folder.description" ).setFinal( true ).setAbstract( false ).superType( ContentTypeName.folder() ).build();
 
-    private static final Form PAGE_TEMPLATE_FORM = Form.create().
-        addFormItem( Input.create().
-            name( "supports" ).
-            label( "Supports" ).
-            labelI18nKey( "portal.page-template.supports.label" ).
-            helpText( "Choose which content types this page template supports" ).
-            helpTextI18nKey( "portal.page-template.supports.helpText" ).
-            inputType( InputTypeName.CONTENT_TYPE_FILTER ).
-            required( true ).
-            multiple( true ).
-            build() ).
-        build();
+    private static final Form PAGE_TEMPLATE_FORM = Form.create().addFormItem(
+        Input.create().name( "supports" ).label( "Supports" ).labelI18nKey( "portal.page-template.supports.label" ).helpText(
+            "Choose which content types this page template supports" ).helpTextI18nKey(
+            "portal.page-template.supports.helpText" ).inputType( InputTypeName.CONTENT_TYPE_FILTER ).required( true ).multiple(
+            true ).build() ).build();
 
     private static final Form FRAGMENT_FORM = Form.create().build();
 
-    private static final ContentType PAGE_TEMPLATE = createSystemType( ContentTypeName.pageTemplate() ).
-        description( "Predesigned customizable page" ).
-        descriptionI18nKey( "portal.page-template.description" ).
-        allowChildContent( false ).
-        setFinal( false ).
-        setAbstract( false ).
-        form( PAGE_TEMPLATE_FORM ).
-        superType( ContentTypeName.structured() ).
-        build();
+    private static final ContentType PAGE_TEMPLATE =
+        createSystemType( ContentTypeName.pageTemplate() ).description( "Predesigned customizable page" ).descriptionI18nKey(
+            "portal.page-template.description" ).allowChildContent( false ).setFinal( false ).setAbstract( false ).form(
+            PAGE_TEMPLATE_FORM ).superType( ContentTypeName.structured() ).build();
 
-    private static final ContentType SHORTCUT = createSystemType( ContentTypeName.shortcut() ).
-        description( "Redirect to other item" ).
-        descriptionI18nKey( "base.shortcut.description" ).
-        setFinal( true ).
-        setAbstract( false ).
-        form( SHORTCUT_FORM ).
-        superType( ContentTypeName.shortcut() ).
-        build();
+    private static final ContentType SHORTCUT =
+        createSystemType( ContentTypeName.shortcut() ).description( "Redirect to other item" ).descriptionI18nKey(
+            "base.shortcut.description" ).setFinal( true ).setAbstract( false ).form( SHORTCUT_FORM ).superType(
+            ContentTypeName.shortcut() ).build();
 
-    private static final ContentType FRAGMENT = createSystemType( ContentTypeName.fragment() ).
-        allowChildContent( true ).
-        setFinal( true ).
-        setAbstract( false ).
-        form( FRAGMENT_FORM ).
-        superType( ContentTypeName.structured() ).
-        build();
+    private static final ContentType FRAGMENT =
+        createSystemType( ContentTypeName.fragment() ).allowChildContent( true ).setFinal( true ).setAbstract( false ).form(
+            FRAGMENT_FORM ).superType( ContentTypeName.structured() ).build();
 
-    private static final ContentType MEDIA = createSystemType( ContentTypeName.media() ).
-        setFinal( false ).setAbstract( false ).allowChildContent( false ).build();
+    private static final ContentType MEDIA =
+        createSystemType( ContentTypeName.media() ).setFinal( false ).setAbstract( false ).allowChildContent( false ).build();
 
-    private static final ContentType MEDIA_TEXT = createSystemType( ContentTypeName.textMedia() ).superType( ContentTypeName.media() ).
-        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
+    private static final ContentType MEDIA_TEXT =
+        createSystemType( ContentTypeName.textMedia() ).superType( ContentTypeName.media() ).setFinal( true ).setAbstract(
+            false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
 
-    private static final ContentType MEDIA_DATA = createSystemType( ContentTypeName.dataMedia() ).superType( ContentTypeName.media() ).
-        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
+    private static final ContentType MEDIA_DATA =
+        createSystemType( ContentTypeName.dataMedia() ).superType( ContentTypeName.media() ).setFinal( true ).setAbstract(
+            false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
 
-    private static final ContentType MEDIA_AUDIO = createSystemType( ContentTypeName.audioMedia() ).superType( ContentTypeName.media() ).
-        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
+    private static final ContentType MEDIA_AUDIO =
+        createSystemType( ContentTypeName.audioMedia() ).superType( ContentTypeName.media() ).setFinal( true ).setAbstract(
+            false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
 
-    private static final ContentType MEDIA_VIDEO = createSystemType( ContentTypeName.videoMedia() ).superType( ContentTypeName.media() ).
-        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
+    private static final ContentType MEDIA_VIDEO =
+        createSystemType( ContentTypeName.videoMedia() ).superType( ContentTypeName.media() ).setFinal( true ).setAbstract(
+            false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
 
-    private static final ContentType MEDIA_IMAGE = createSystemType( ContentTypeName.imageMedia() ).superType( ContentTypeName.media() ).
-        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_IMAGE_FORM ).
-        xData( XDataNames.from( MediaInfo.IMAGE_INFO_METADATA_NAME, MediaInfo.CAMERA_INFO_METADATA_NAME,
-                                MediaInfo.GPS_INFO_METADATA_NAME ) ).build();
+    private static final ContentType MEDIA_IMAGE =
+        createSystemType( ContentTypeName.imageMedia() ).superType( ContentTypeName.media() ).setFinal( true ).setAbstract(
+            false ).allowChildContent( false ).form( MEDIA_IMAGE_FORM ).xData(
+            XDataNames.from( MediaInfo.IMAGE_INFO_METADATA_NAME, MediaInfo.CAMERA_INFO_METADATA_NAME,
+                             MediaInfo.GPS_INFO_METADATA_NAME ) ).build();
 
-    private static final ContentType MEDIA_VECTOR = createSystemType( ContentTypeName.vectorMedia() ).superType( ContentTypeName.media() ).
-        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_VECTOR_FORM ).build();
+    private static final ContentType MEDIA_VECTOR =
+        createSystemType( ContentTypeName.vectorMedia() ).superType( ContentTypeName.media() ).setFinal( true ).setAbstract(
+            false ).allowChildContent( false ).form( MEDIA_VECTOR_FORM ).build();
 
     private static final ContentType MEDIA_ARCHIVE =
-        createSystemType( ContentTypeName.archiveMedia() ).superType( ContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
+        createSystemType( ContentTypeName.archiveMedia() ).superType( ContentTypeName.media() ).setFinal( true ).setAbstract(
+            false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
 
     private static final ContentType MEDIA_DOCUMENT =
-        createSystemType( ContentTypeName.documentMedia() ).superType( ContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DOCUMENT_FORM ).build();
+        createSystemType( ContentTypeName.documentMedia() ).superType( ContentTypeName.media() ).setFinal( true ).setAbstract(
+            false ).allowChildContent( false ).form( MEDIA_DOCUMENT_FORM ).build();
 
     private static final ContentType MEDIA_SPREADSHEET =
-        createSystemType( ContentTypeName.spreadsheetMedia() ).superType( ContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
+        createSystemType( ContentTypeName.spreadsheetMedia() ).superType( ContentTypeName.media() ).setFinal( true ).setAbstract(
+            false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
 
     private static final ContentType MEDIA_PRESENTATION =
-        createSystemType( ContentTypeName.presentationMedia() ).superType( ContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
+        createSystemType( ContentTypeName.presentationMedia() ).superType( ContentTypeName.media() ).setFinal( true ).setAbstract(
+            false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
 
-    private static final ContentType MEDIA_CODE = createSystemType( ContentTypeName.codeMedia() ).superType( ContentTypeName.media() ).
-        setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
+    private static final ContentType MEDIA_CODE =
+        createSystemType( ContentTypeName.codeMedia() ).superType( ContentTypeName.media() ).setFinal( true ).setAbstract(
+            false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
 
     private static final ContentType MEDIA_EXECUTABLE =
-        createSystemType( ContentTypeName.executableMedia() ).superType( ContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
+        createSystemType( ContentTypeName.executableMedia() ).superType( ContentTypeName.media() ).setFinal( true ).setAbstract(
+            false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
 
     private static final ContentType MEDIA_UNKNOWN =
-        createSystemType( ContentTypeName.unknownMedia() ).superType( ContentTypeName.media() ).
-            setFinal( true ).setAbstract( false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
+        createSystemType( ContentTypeName.unknownMedia() ).superType( ContentTypeName.media() ).setFinal( true ).setAbstract(
+            false ).allowChildContent( false ).form( MEDIA_DEFAULT_FORM ).build();
 
     private static final ContentTypes CONTENT_TYPES =
         ContentTypes.from( UNSTRUCTURED, STRUCTURED, FOLDER, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE,
@@ -318,46 +198,31 @@ final class BuiltinContentTypes
         final String localName = contentTypeName.getLocalName();
         final String displayName = localName.substring( 0, 1 ).toUpperCase() + localName.substring( 1 );
         final String app = contentTypeName.getApplicationKey().getName();
-        return ContentType.create().
-            name( contentTypeName ).
-            displayName( displayName ).
-            displayNameI18nKey( app + "." + localName + ".displayName" ).
-            setBuiltIn();
+        return ContentType.create().name( contentTypeName ).displayName( displayName ).displayNameI18nKey(
+            app + "." + localName + ".displayName" ).setBuiltIn();
     }
 
-    private final ContentTypes contentTypes;
+    private final Map<ContentTypeName, ContentType> map;
 
     public BuiltinContentTypes()
     {
-        this.contentTypes = processTypes( CONTENT_TYPES );
+        this.map = CONTENT_TYPES.stream().map( this::processType ).collect(
+            ImmutableMap.toImmutableMap( ContentType::getName, Function.identity() ) );
     }
 
     private ContentType processType( final ContentType type )
     {
-        return ContentType.create( type ).
-            icon( loadSchemaIcon( CONTENT_TYPES_FOLDER, type.getName().getLocalName() ) ).
-            build();
+        return ContentType.create( type ).icon( loadSchemaIcon( CONTENT_TYPES_FOLDER, type.getName().getLocalName() ) ).build();
     }
 
-    private ContentTypes processTypes( final ContentTypes types )
+    public Collection<ContentType> getAll()
     {
-        final List<ContentType> result = new ArrayList<>();
-        for ( final ContentType type : types )
-        {
-            result.add( processType( type ) );
-        }
-
-        return ContentTypes.from( result );
+        return this.map.values();
     }
 
-    public ContentTypes getAll()
+    public ContentType getContentType( final ContentTypeName contentTypeName )
     {
-        return this.contentTypes;
-    }
-
-    public ContentTypes getByApplication( final ApplicationKey key )
-    {
-        return this.contentTypes.filter( ( type ) -> type.getName().getApplicationKey().equals( key ) );
+        return this.map.get( contentTypeName );
     }
 
     private Icon loadSchemaIcon( final String metaInfFolderName, final String name )

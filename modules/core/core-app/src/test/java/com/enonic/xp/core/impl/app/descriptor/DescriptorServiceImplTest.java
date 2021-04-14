@@ -22,12 +22,9 @@ public class DescriptorServiceImplTest
     protected void initialize()
         throws Exception
     {
-        final DescriptorFacetFactoryImpl facetFactory = new DescriptorFacetFactoryImpl();
-        facetFactory.setApplicationService( this.applicationService );
-        facetFactory.setResourceService( this.resourceService );
+        final DescriptorFacetFactoryImpl facetFactory = new DescriptorFacetFactoryImpl( applicationService, resourceService );
 
-        this.service = new DescriptorServiceImpl();
-        this.service.setFacetFactory( facetFactory );
+        this.service = new DescriptorServiceImpl( facetFactory );
 
         this.loader = new MyDescriptorLoader();
         this.loader.resourceService = this.resourceService;
