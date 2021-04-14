@@ -1,7 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.xdata;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,11 +18,11 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.admin.impl.json.schema.xdata.XDataJson;
 import com.enonic.xp.admin.impl.json.schema.xdata.XDataListJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
-import com.enonic.xp.admin.impl.rest.resource.schema.mixin.ContentTypeNameWildcardResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.MixinIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.MixinIconUrlResolver;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationWildcardMatcher;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
@@ -32,12 +30,10 @@ import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.schema.xdata.XDatas;
 import com.enonic.xp.security.RoleKeys;
@@ -84,11 +80,9 @@ public final class XDataResource
 
         final Map<XData, Boolean> resultXData = new LinkedHashMap<>();
 
-        getContentTypeXData( content ).
-            forEach( xData -> resultXData.putIfAbsent( xData, false ) );
+        getContentTypeXData( content ).forEach( xData -> resultXData.putIfAbsent( xData, false ) );
 
-        getSiteXData( content ).
-            forEach( resultXData::putIfAbsent );
+        getSiteXData( content ).forEach( resultXData::putIfAbsent );
 
         result.addXDatas( createXDataListJson( resultXData ) );
 
@@ -114,17 +108,17 @@ public final class XDataResource
 
     private List<XDataJson> createXDataListJson( final Map<XData, Boolean> xDatas )
     {
-        return xDatas.
-            keySet().
-            stream().
-            map( xData -> XDataJson.create().
-                setXData( xData ).
-                setIconUrlResolver( this.mixinIconUrlResolver ).
-                setLocaleMessageResolver( new LocaleMessageResolver( localeService, xData.getName().getApplicationKey() ) ).
-                setInlineMixinResolver( new InlineMixinResolver( mixinService ) ).
-                setOptional( xDatas.get( xData ) ).build() ).
-            distinct().
-            collect( toList() );
+        return xDatas.keySet()
+            .stream()
+            .map( xData -> XDataJson.create()
+                .setXData( xData )
+                .setIconUrlResolver( this.mixinIconUrlResolver )
+                .setLocaleMessageResolver( new LocaleMessageResolver( localeService, xData.getName().getApplicationKey() ) )
+                .setInlineMixinResolver( new InlineMixinResolver( mixinService ) )
+                .setOptional( xDatas.get( xData ) )
+                .build() )
+            .distinct()
+            .collect( toList() );
     }
 
     private Map<XData, Boolean> getSiteXData( final Content content )
@@ -135,17 +129,13 @@ public final class XDataResource
 
         if ( nearestSite != null )
         {
-            final List<ApplicationKey> applicationKeys = nearestSite.
-                getSiteConfigs().
-                stream().
-                map( SiteConfig::getApplicationKey ).
-                collect( toList() );
+            final List<ApplicationKey> applicationKeys =
+                nearestSite.getSiteConfigs().stream().map( SiteConfig::getApplicationKey ).collect( toList() );
 
-            final List<SiteDescriptor> siteDescriptors = applicationKeys.
-                stream().
-                map( applicationKey -> siteService.getDescriptor( applicationKey ) ).
-                filter( Objects::nonNull ).
-                collect( toList() );
+            final List<SiteDescriptor> siteDescriptors = applicationKeys.stream()
+                .map( applicationKey -> siteService.getDescriptor( applicationKey ) )
+                .filter( Objects::nonNull )
+                .collect( toList() );
 
             siteDescriptors.forEach(
                 siteDescriptor -> result.putAll( this.getXDatasByContentType( siteDescriptor.getXDataMappings(), content.getType() ) ) );
@@ -158,65 +148,21 @@ public final class XDataResource
     {
         final Map<XData, Boolean> result = new LinkedHashMap<>();
 
-        filterXDataMappingsByContentType( xDataMappings, contentTypeName ).
-            forEach( xDataMapping -> {
-                final XData xData = this.xDataService.getByName( xDataMapping.getXDataName() );
-                if ( xData != null )
-                {
-                    result.putIfAbsent( xData, xDataMapping.getOptional() );
-                }
-            } );
+        xDataMappings.stream().filter( xDataMapping -> {
+            final String wildcard = xDataMapping.getAllowContentTypes();
+            final ApplicationKey applicationKey = xDataMapping.getXDataName().getApplicationKey();
 
-        return result;
-    }
-
-    private Boolean isXDataAllowed( final XDataName xDataName, final String allowContentType, final ContentTypeName contentTypeName )
-    {
-
-        if ( nullToEmpty( allowContentType ).isBlank() )
-        {
-            return true;
-        }
-
-        if ( allowContentType.equals( contentTypeName.toString() ) )
-        {
-            return true;
-        }
-
-        final ContentTypeNameWildcardResolver contentTypeNameWildcardResolver =
-            new ContentTypeNameWildcardResolver( this.contentTypeService );
-
-        final List<String> allowContentTypes =
-            nullToEmpty( allowContentType ).isBlank() ? new ArrayList<>() : Collections.singletonList( allowContentType );
-
-        if ( contentTypeNameWildcardResolver.anyTypeHasWildcard( allowContentTypes ) )
-        {
-            final ContentTypeNames validContentTypes = ContentTypeNames.from(
-                contentTypeNameWildcardResolver.resolveWildcards( allowContentTypes, xDataName.getApplicationKey() ) );
-
-            if ( validContentTypes.contains( contentTypeName ) )
+            return nullToEmpty( wildcard ).isBlank() ||
+                new ApplicationWildcardMatcher<>( applicationKey, ContentTypeName::toString ).matches( wildcard, contentTypeName );
+        } ).forEach( xDataMapping -> {
+            final XData xData = this.xDataService.getByName( xDataMapping.getXDataName() );
+            if ( xData != null )
             {
-                return true;
-            }
-        }
-
-        final List<String> validContentTypes = contentTypeNameWildcardResolver.resolveContentTypeName( allowContentType );
-        return validContentTypes.contains( contentTypeName.toString() );
-    }
-
-    private XDataMappings filterXDataMappingsByContentType( final XDataMappings xDataMappings, final ContentTypeName contentTypeName )
-    {
-        final XDataMappings.Builder filteredXDatas = XDataMappings.create();
-
-        xDataMappings.forEach( xDataMapping -> {
-
-            if ( isXDataAllowed( xDataMapping.getXDataName(), xDataMapping.getAllowContentTypes(), contentTypeName ) )
-            {
-                filteredXDatas.add( xDataMapping );
+                result.putIfAbsent( xData, xDataMapping.getOptional() );
             }
         } );
 
-        return filteredXDatas.build();
+        return result;
     }
 
     private XDatas getContentTypeXData( final Content content )

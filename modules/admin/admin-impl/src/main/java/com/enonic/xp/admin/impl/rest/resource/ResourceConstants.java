@@ -4,5 +4,5 @@ public interface ResourceConstants
 {
     String REST_ROOT = "admin/rest/";
 
-    String CMS_PATH = "cms/[^/]+/[^/]+";
+    String CMS_PATH = "cms/([^/]+)/([^/]+)";
 }

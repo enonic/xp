@@ -12,11 +12,10 @@ public class PartDescriptorJson
     private String icon;
 
     public PartDescriptorJson( final PartDescriptor descriptor, final LocaleMessageResolver localeMessageResolver,
-                               final InlineMixinResolver inlineMixinResolver,
-                               final PartDescriptorIconUrlResolver partDescriptorIconUrlResolver )
+                               final InlineMixinResolver inlineMixinResolver )
     {
         super( descriptor, localeMessageResolver, inlineMixinResolver );
-        this.icon = partDescriptorIconUrlResolver.resolve( descriptor );
+        this.icon = new PartDescriptorIconUrlResolver().resolve( descriptor );
     }
 
     public String getIcon()
