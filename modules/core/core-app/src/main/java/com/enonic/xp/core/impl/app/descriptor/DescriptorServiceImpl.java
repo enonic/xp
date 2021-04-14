@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.app.descriptor;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -18,6 +19,12 @@ public final class DescriptorServiceImpl
     implements DescriptorService
 {
     private final DescriptorLoaderMap map = new DescriptorLoaderMap();
+
+    @Activate
+    public DescriptorServiceImpl( @Reference final DescriptorFacetFactory facetFactory )
+    {
+        this.map.facetFactory = facetFactory;
+    }
 
     @Override
     public <T extends Descriptor> T get( final Class<T> type, final DescriptorKey key )
@@ -69,11 +76,5 @@ public final class DescriptorServiceImpl
     public void removeLoader( final DescriptorLoader loader )
     {
         this.map.remove( loader );
-    }
-
-    @Reference
-    public void setFacetFactory( final DescriptorFacetFactory facetFactory )
-    {
-        this.map.facetFactory = facetFactory;
     }
 }

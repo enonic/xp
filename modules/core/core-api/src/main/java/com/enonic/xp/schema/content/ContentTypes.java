@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -18,19 +16,18 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class ContentTypes
     extends AbstractImmutableEntityList<ContentType>
 {
-    private final ImmutableMap<ContentTypeName, ContentType> map;
-
     private ContentTypes( final ImmutableList<ContentType> list )
     {
         super( list );
-        this.map = list.stream().collect( ImmutableMap.toImmutableMap( ContentType::getName, Function.identity() ) );
     }
 
+    @Deprecated
     public ContentTypes add( final ContentType... contentTypes )
     {
         return add( ImmutableList.copyOf( contentTypes ) );
     }
 
+    @Deprecated
     public ContentTypes add( final Iterable<ContentType> contentTypes )
     {
         return add( ImmutableList.copyOf( contentTypes ) );
@@ -45,19 +42,22 @@ public final class ContentTypes
         return new ContentTypes( ImmutableList.copyOf( tmp ) );
     }
 
+    @Deprecated
     public ImmutableSet<ContentTypeName> getNames()
     {
-        return map.keySet();
+        return list.stream().map( ContentType::getName ).collect( ImmutableSet.toImmutableSet() );
     }
 
+    @Deprecated
     public ContentType getContentType( final ContentTypeName contentTypeName )
     {
-        return map.get( contentTypeName );
+        return list.stream().filter( ct -> contentTypeName.equals( ct.getName() ) ).findFirst().orElse( null );
     }
 
+    @Deprecated
     public ContentTypes filter( final Predicate<ContentType> filter )
     {
-        return from( this.map.values().stream().filter( filter ).iterator() );
+        return from( this.list.stream().filter( filter ).iterator() );
     }
 
     public static ContentTypes empty()

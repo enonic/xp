@@ -35,10 +35,7 @@ public class MixinServiceImplTest
         this.service.setApplicationService( this.applicationService );
         this.service.setResourceService( this.resourceService );
 
-        this.contentTypeService = new ContentTypeServiceImpl();
-        this.contentTypeService.setResourceService( this.resourceService );
-        this.contentTypeService.setApplicationService( this.applicationService );
-        this.contentTypeService.setMixinService( this.service );
+        this.contentTypeService = new ContentTypeServiceImpl( this.resourceService, this.applicationService, this.service );
     }
 
     @Test

@@ -2,10 +2,10 @@ package com.enonic.xp.core.impl.schema;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import com.google.common.io.Files;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -18,15 +18,15 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
 {
     private final String path;
 
-    private final String pattern;
-
     private final ResourceService resourceService;
+
+    private final DescriptorKeyLocator descriptorKeyLocator;
 
     public SchemaLoader( final ResourceService resourceService, final String path )
     {
         this.resourceService = resourceService;
         this.path = path;
-        this.pattern = this.path + "/.+\\.xml";
+        this.descriptorKeyLocator = new DescriptorKeyLocator( resourceService, path, false );
     }
 
     public final V get( final N name )
@@ -82,31 +82,9 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
 
     public final Set<N> findNames( final ApplicationKey key )
     {
-        final Set<N> keys = new LinkedHashSet<>();
-        for ( final ResourceKey resource : this.resourceService.findFiles( key, this.pattern ) )
-        {
-            final String localName = getLocalName( resource );
-            if ( localName != null )
-            {
-                keys.add( newName( key, localName ) );
-            }
-        }
-
-        return keys;
+        return descriptorKeyLocator.findKeys( key ).stream().map( dk -> newName( dk.getApplicationKey(), dk.getName() ) ).collect(
+            Collectors.toCollection( LinkedHashSet::new ) );
     }
 
     protected abstract N newName( ApplicationKey appKey, String name );
-
-    private String getLocalName( final ResourceKey key )
-    {
-        final String nameWithExt = key.getName();
-        final String nameWithoutExt = Files.getNameWithoutExtension( nameWithExt );
-
-        if ( key.getPath().equals( this.path + "/" + nameWithoutExt + "/" + nameWithExt ) )
-        {
-            return nameWithoutExt;
-        }
-
-        return null;
-    }
 }

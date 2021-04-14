@@ -28,13 +28,9 @@ public class ComponentServiceTest
         this.service = new ComponentServiceImpl();
         this.service.setResourceService( this.resourceService );
 
-        final LayoutDescriptorServiceImpl layoutDescriptorService = new LayoutDescriptorServiceImpl();
-        layoutDescriptorService.setResourceService( this.resourceService );
-        layoutDescriptorService.setMixinService( this.mixinService );
+        final LayoutDescriptorServiceImpl layoutDescriptorService = new LayoutDescriptorServiceImpl( this.descriptorService );
 
-        final PartDescriptorServiceImpl partDescriptorService = new PartDescriptorServiceImpl();
-        partDescriptorService.setResourceService( this.resourceService );
-        partDescriptorService.setMixinService( this.mixinService );
+        final PartDescriptorServiceImpl partDescriptorService = new PartDescriptorServiceImpl( this.descriptorService );
 
         this.service.setLayoutDescriptorService( layoutDescriptorService );
         this.service.setPartDescriptorService( partDescriptorService );
