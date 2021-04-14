@@ -1,13 +1,10 @@
 package com.enonic.xp.admin.impl.json.content.page.region;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableList;
-
-import com.enonic.xp.admin.impl.rest.resource.content.page.part.PartDescriptorIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
-import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptors;
 
 
@@ -18,23 +15,15 @@ public class PartDescriptorsJson
 
     public PartDescriptorsJson( final List<PartDescriptorJson> descriptorJsonList )
     {
-        this.descriptorJsonList = descriptorJsonList;
+        this.descriptorJsonList = List.copyOf( descriptorJsonList );
     }
 
     public PartDescriptorsJson( final PartDescriptors descriptors, final LocaleMessageResolver localeMessageResolver,
-                                final InlineMixinResolver inlineMixinResolver,
-                                final PartDescriptorIconUrlResolver partDescriptorIconUrlResolver )
+                                final InlineMixinResolver inlineMixinResolver )
     {
-        ImmutableList.Builder<PartDescriptorJson> builder = new ImmutableList.Builder<>();
-        if ( descriptors != null )
-        {
-            for ( PartDescriptor descriptor : descriptors )
-            {
-                builder.add(
-                    new PartDescriptorJson( descriptor, localeMessageResolver, inlineMixinResolver, partDescriptorIconUrlResolver ) );
-            }
-        }
-        this.descriptorJsonList = builder.build();
+        this.descriptorJsonList = descriptors.stream()
+            .map( descriptor -> new PartDescriptorJson( descriptor, localeMessageResolver, inlineMixinResolver ) )
+            .collect( Collectors.toUnmodifiableList() );
     }
 
     public List<PartDescriptorJson> getDescriptors()
