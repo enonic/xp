@@ -14,21 +14,16 @@ import javax.ws.rs.core.MediaType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.ImmutableList;
-
+import com.enonic.xp.admin.impl.json.content.JsonObjectsFactory;
 import com.enonic.xp.admin.impl.json.content.page.region.LayoutDescriptorJson;
 import com.enonic.xp.admin.impl.json.content.page.region.LayoutDescriptorsJson;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
-import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
-import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.LayoutDescriptors;
-import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
 
 @Path(ResourceConstants.REST_ROOT + "content/page/layout/descriptor")
@@ -40,9 +35,7 @@ public final class LayoutDescriptorResource
 {
     private LayoutDescriptorService layoutDescriptorService;
 
-    private LocaleService localeService;
-
-    private MixinService mixinService;
+    private JsonObjectsFactory jsonObjectsFactory;
 
     @GET
     public LayoutDescriptorJson getByKey( @QueryParam("key") final String layoutDescriptorKey )
@@ -50,8 +43,7 @@ public final class LayoutDescriptorResource
         final DescriptorKey key = DescriptorKey.from( layoutDescriptorKey );
         final LayoutDescriptor descriptor = layoutDescriptorService.getByKey( key );
 
-        final LocaleMessageResolver localeMessageResolver = new LocaleMessageResolver( this.localeService, descriptor.getApplicationKey() );
-        return new LayoutDescriptorJson( descriptor, localeMessageResolver, new InlineMixinResolver( mixinService ) );
+        return jsonObjectsFactory.createLayoutDescriptorJson( descriptor );
     }
 
     @GET
@@ -60,9 +52,8 @@ public final class LayoutDescriptorResource
     {
         final LayoutDescriptors descriptors = layoutDescriptorService.getByApplication( ApplicationKey.from( applicationKey ) );
 
-        final LocaleMessageResolver localeMessageResolver =
-            new LocaleMessageResolver( this.localeService, ApplicationKey.from( applicationKey ) );
-        return new LayoutDescriptorsJson( descriptors, localeMessageResolver, new InlineMixinResolver( mixinService ) );
+        return new LayoutDescriptorsJson(
+            descriptors.stream().map( jsonObjectsFactory::createLayoutDescriptorJson ).collect( Collectors.toUnmodifiableList() ) );
     }
 
     @POST
@@ -70,18 +61,9 @@ public final class LayoutDescriptorResource
     @Consumes(MediaType.APPLICATION_JSON)
     public LayoutDescriptorsJson getByApplications( final GetByApplicationsParams params )
     {
-        ImmutableList.Builder<LayoutDescriptorJson> layoutDescriptorsJsonBuilder = new ImmutableList.Builder();
-
-        params.getApplicationKeys().forEach( applicationKey -> {
-            layoutDescriptorsJsonBuilder.addAll( this.layoutDescriptorService.getByApplication( applicationKey ).
-                stream().
-                map( layoutDescriptor -> new LayoutDescriptorJson( layoutDescriptor,
-                                                                   new LocaleMessageResolver( localeService, applicationKey ),
-                                                                   new InlineMixinResolver( mixinService ) ) ).
-                collect( Collectors.toList() ) );
-        } );
-
-        return new LayoutDescriptorsJson( layoutDescriptorsJsonBuilder.build() );
+        final LayoutDescriptors layoutDescriptors = layoutDescriptorService.getByApplications( params.getApplicationKeys() );
+        return new LayoutDescriptorsJson(
+            layoutDescriptors.stream().map( jsonObjectsFactory::createLayoutDescriptorJson ).collect( Collectors.toUnmodifiableList() ) );
     }
 
     @Reference
@@ -91,14 +73,8 @@ public final class LayoutDescriptorResource
     }
 
     @Reference
-    public void setLocaleService( final LocaleService localeService )
+    public void setJsonObjectsFactory( final JsonObjectsFactory jsonObjectsFactory )
     {
-        this.localeService = localeService;
-    }
-
-    @Reference
-    public void setMixinService( final MixinService mixinService )
-    {
-        this.mixinService = mixinService;
+        this.jsonObjectsFactory = jsonObjectsFactory;
     }
 }

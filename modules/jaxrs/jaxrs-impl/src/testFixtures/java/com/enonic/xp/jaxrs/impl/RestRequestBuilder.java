@@ -54,7 +54,6 @@ public final class RestRequestBuilder
     }
 
     public RestRequestBuilder queryParam( final String name, final String value )
-        throws Exception
     {
         final String str = name + "=" + URLEncoder.encode( value, StandardCharsets.UTF_8 );
         if ( this.numParams == 0 )

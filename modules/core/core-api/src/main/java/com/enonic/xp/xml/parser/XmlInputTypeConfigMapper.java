@@ -8,7 +8,6 @@ import org.w3c.dom.Attr;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
-import com.enonic.xp.app.ApplicationWildcardResolver;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
@@ -100,9 +99,9 @@ final class XmlInputTypeConfigMapper
             {
                 return relativeResolver.toServiceUrl( value );
             }
-            else if ( lowerCasedName.endsWith( "contenttype" ) && !new ApplicationWildcardResolver().stringHasWildcard( name ) )
+            else if ( lowerCasedName.endsWith( "contenttype" ) )
             {
-                return relativeResolver.toContentTypeName( value ).toString();
+                return relativeResolver.toContentTypeNameRegexp( value );
             }
             else if ( lowerCasedName.endsWith( "mixintype" ) )
             {

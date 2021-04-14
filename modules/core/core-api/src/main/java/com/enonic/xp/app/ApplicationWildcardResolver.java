@@ -1,5 +1,6 @@
 package com.enonic.xp.app;
 
+@Deprecated
 public class ApplicationWildcardResolver
 {
     public static final String APP_WILDCARD = "${app}";

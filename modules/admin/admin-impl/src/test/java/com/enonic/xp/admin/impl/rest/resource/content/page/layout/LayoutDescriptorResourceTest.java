@@ -6,8 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 
+import com.enonic.xp.admin.impl.json.content.JsonObjectsFactory;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
-import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.i18n.LocaleService;
@@ -37,10 +38,12 @@ public class LayoutDescriptorResourceTest
         localeService = Mockito.mock( LocaleService.class );
         mixinService = Mockito.mock( MixinService.class );
 
+        final JsonObjectsFactory jsonObjectsFactory = new JsonObjectsFactory();
+        jsonObjectsFactory.setLocaleService( localeService );
+        jsonObjectsFactory.setMixinService( mixinService );
         final LayoutDescriptorResource resource = new LayoutDescriptorResource();
         resource.setLayoutDescriptorService( layoutDescriptorService );
-        resource.setLocaleService( localeService );
-        resource.setMixinService( mixinService );
+        resource.setJsonObjectsFactory( jsonObjectsFactory );
 
         return resource;
     }
@@ -145,28 +148,24 @@ public class LayoutDescriptorResourceTest
             key( DescriptorKey.from( "application:fancy-layout" ) ).
             build();
 
-        final LayoutDescriptor layoutDescriptor2 = LayoutDescriptor.create().
-            displayName( "Putty layout" ).
-            description( "description 2" ).
-            config( layoutForm ).
-            regions( RegionDescriptors.create().
-                add( RegionDescriptor.create().name( "top" ).build() ).
-                add( RegionDescriptor.create().name( "bottom" ).build() ).
-                build() ).
-            key( DescriptorKey.from( "application:putty-layout" ) ).
-            build();
+        final LayoutDescriptor layoutDescriptor2 = LayoutDescriptor.create().displayName( "Putty layout" )
+            .description( "description 2" )
+            .config( layoutForm )
+            .regions( RegionDescriptors.create()
+                          .add( RegionDescriptor.create().name( "top" ).build() )
+                          .add( RegionDescriptor.create().name( "bottom" ).build() )
+                          .build() )
+            .key( DescriptorKey.from( "application:putty-layout" ) )
+            .build();
 
-        Mockito.when( layoutDescriptorService.getByApplication( ApplicationKey.from( "application1" ) ) ).thenReturn(
-            LayoutDescriptors.from( layoutDescriptor1 ) );
-        Mockito.when( layoutDescriptorService.getByApplication( ApplicationKey.from( "application2" ) ) ).thenReturn(
-            LayoutDescriptors.from( layoutDescriptor2 ) );
-        Mockito.when( layoutDescriptorService.getByApplication( ApplicationKey.from( "application3" ) ) ).thenReturn(
-            LayoutDescriptors.empty() );
+        Mockito.when( layoutDescriptorService.getByApplications( ApplicationKeys.from( "application1", "application2", "application3" ) ) )
+            .thenReturn( LayoutDescriptors.from( layoutDescriptor1, layoutDescriptor2 ) );
         Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
-        String jsonString = request().path( "content/page/layout/descriptor/list/by_applications" ).
-            entity( readFromFile( "get_by_applications_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
+        String jsonString = request().path( "content/page/layout/descriptor/list/by_applications" )
+            .entity( readFromFile( "get_by_applications_params.json" ), MediaType.APPLICATION_JSON_TYPE )
+            .post()
+            .getAsString();
 
         assertJson( "get_by_applications_success.json", jsonString );
     }
