@@ -19,10 +19,14 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeProperty;
+import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
+import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
 import com.enonic.xp.schema.xdata.XDataName;
@@ -37,6 +41,8 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
 
     private ContentService contentService;
 
+    private ContentTypeService contentTypeService;
+
     private RelationshipTypeService relationshipTypeService;
 
     private final String currentTime = "2013-08-23T12:55:09.162Z";
@@ -45,12 +51,14 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
     public void setUp()
     {
         contentService = Mockito.mock( ContentService.class );
+        contentTypeService = Mockito.mock( ContentTypeService.class );
         relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
     }
 
     @Test
     public void testSelectorQueryWithFewAllowPaths()
     {
+        Mockito.when( contentTypeService.getAll() ).thenReturn( ContentTypes.from( createContentType( "myApplication:comment" ) ) );
 
         final Content content = createContent( "content-id", "my-content", ContentTypeName.folder() );
 
@@ -66,10 +74,11 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
 
         ContentSelectorQueryJson contentQueryJson =
             new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName", contentTypeNames, allowPaths, null );
-        ContentSelectorQueryJsonToContentQueryConverter processor = ContentSelectorQueryJsonToContentQueryConverter.create().
-            contentQueryJson( contentQueryJson ).
-            contentService( contentService ).
-            relationshipTypeService( relationshipTypeService ).
+        ContentSelectorQueryJsonToContentQueryConverter processor = ContentSelectorQueryJsonToContentQueryConverter.create()
+            .contentQueryJson( contentQueryJson )
+            .contentService( contentService )
+            .contentTypeService( contentTypeService )
+            .relationshipTypeService( relationshipTypeService ).
             build();
 
         final ContentQuery contentQuery = processor.createQuery();
@@ -100,10 +109,11 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
 
         ContentSelectorQueryJson contentQueryJson =
             new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName", Collections.emptyList(), allowPaths, null );
-        ContentSelectorQueryJsonToContentQueryConverter processor = ContentSelectorQueryJsonToContentQueryConverter.create().
-            contentQueryJson( contentQueryJson ).
-            contentService( contentService ).
-            relationshipTypeService( relationshipTypeService ).
+        ContentSelectorQueryJsonToContentQueryConverter processor = ContentSelectorQueryJsonToContentQueryConverter.create()
+            .contentQueryJson( contentQueryJson )
+            .contentService( contentService )
+            .contentTypeService( contentTypeService )
+            .relationshipTypeService( relationshipTypeService ).
             build();
 
         final ContentQuery contentQuery = processor.createQuery();
@@ -118,22 +128,25 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
     @Test
     public void testPathWithAllowTypePassedFromJson()
     {
+        Mockito.when( contentTypeService.getAll() )
+            .thenReturn( ContentTypes.from( createContentType( "myApplication:type1" ), createContentType( "myApplication:type2" ) ) );
+
         final Content content = createContent( "content-id", "my-content", ContentTypeName.shortcut() );
 
         final List<String> allowPaths = new ArrayList();
         allowPaths.add( "parent-path/child-path" );
 
-        Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).
-            thenReturn( content );
+        Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).thenReturn( content );
 
         final List<String> allowTypesFromJson = Arrays.asList( "myApplication:type1", "myApplication:type2", "myApplication:type2" );
 
         ContentSelectorQueryJson contentQueryJson =
             new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName", allowTypesFromJson, allowPaths, null );
-        ContentSelectorQueryJsonToContentQueryConverter processor = ContentSelectorQueryJsonToContentQueryConverter.create().
-            contentQueryJson( contentQueryJson ).
-            contentService( contentService ).
-            relationshipTypeService( relationshipTypeService ).
+        ContentSelectorQueryJsonToContentQueryConverter processor = ContentSelectorQueryJsonToContentQueryConverter.create()
+            .contentQueryJson( contentQueryJson )
+            .contentService( contentService )
+            .contentTypeService( contentTypeService )
+            .relationshipTypeService( relationshipTypeService ).
             build();
 
         final ContentQuery contentQuery = processor.createQuery();
@@ -195,16 +208,19 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
 
     private ContentSelectorQueryJsonToContentQueryConverter getProcessor( final ContentSelectorQueryJson json )
     {
-        return ContentSelectorQueryJsonToContentQueryConverter.create().
-            contentQueryJson( json ).
-            contentService( contentService ).
-            relationshipTypeService( relationshipTypeService ).
+        return ContentSelectorQueryJsonToContentQueryConverter.create()
+            .contentQueryJson( json )
+            .contentService( contentService )
+            .contentTypeService( contentTypeService )
+            .relationshipTypeService( relationshipTypeService ).
             build();
     }
 
     @Test
     public void testQueryWithSearch()
     {
+        Mockito.when( contentTypeService.getAll() ).thenReturn( ContentTypes.from( createContentType( "myApplication:comment" ) ) );
+
         final Content content = createContent( "content-id", "my-content", ContentTypeName.shortcut() );
 
         final List<String> allowPaths = new ArrayList();
@@ -331,15 +347,24 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             id( ContentId.from( id ) ).
             parentPath( ContentPath.ROOT ).
             name( name ).
-            valid( true ).
-            createdTime( Instant.parse( this.currentTime ) ).
-            creator( PrincipalKey.from( "user:system:admin" ) ).
-            owner( PrincipalKey.from( "user:myStore:me" ) ).
-            language( Locale.ENGLISH ).
-            displayName( "My Content" ).
-            modifiedTime( Instant.parse( this.currentTime ) ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( ContentTypeName.site() ).
-            build();
+            valid( true ).createdTime( Instant.parse( this.currentTime ) )
+            .creator( PrincipalKey.from( "user:system:admin" ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .language( Locale.ENGLISH )
+            .displayName( "My Content" )
+            .modifiedTime( Instant.parse( this.currentTime ) )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( ContentTypeName.site() )
+            .build();
+    }
+
+    private ContentType createContentType( String name )
+    {
+        return ContentType.create()
+            .superType( ContentTypeName.structured() )
+            .displayName( "My type" )
+            .name( name )
+            .icon( Icon.from( new byte[]{123}, "image/gif", Instant.now() ) )
+            .build();
     }
 }

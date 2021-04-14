@@ -7,7 +7,6 @@ import com.enonic.xp.admin.impl.json.content.page.region.LayoutDescriptorsJson;
 import com.enonic.xp.admin.impl.json.content.page.region.PartDescriptorsJson;
 import com.enonic.xp.admin.impl.json.schema.content.ContentTypeSummaryListJson;
 import com.enonic.xp.admin.impl.json.schema.relationship.RelationshipTypeListJson;
-import com.enonic.xp.admin.impl.rest.resource.content.page.part.PartDescriptorIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.macro.MacroIconUrlResolver;
 import com.enonic.xp.admin.impl.rest.resource.macro.json.MacrosJson;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
@@ -56,7 +55,7 @@ public class ApplicationInfoJson
         this.pages = new PageDescriptorListJson( PageDescriptors.from( builder.applicationInfo.getPages() ), builder.localeMessageResolver,
                                                  builder.inlineMixinResolver );
         this.parts = new PartDescriptorsJson( PartDescriptors.from( builder.applicationInfo.getParts() ), builder.localeMessageResolver,
-                                              builder.inlineMixinResolver, builder.partDescriptorIconUrlResolver );
+                                              builder.inlineMixinResolver );
         this.layouts =
             new LayoutDescriptorsJson( LayoutDescriptors.from( builder.applicationInfo.getLayouts() ), builder.localeMessageResolver,
                                        builder.inlineMixinResolver );
@@ -162,8 +161,6 @@ public class ApplicationInfoJson
 
         private InlineMixinResolver inlineMixinResolver;
 
-        private PartDescriptorIconUrlResolver partDescriptorIconUrlResolver;
-
         private Builder()
         {
         }
@@ -210,12 +207,6 @@ public class ApplicationInfoJson
             return this;
         }
 
-        public Builder setPartDescriptorIconUrlResolver( final PartDescriptorIconUrlResolver partDescriptorIconUrlResolver )
-        {
-            this.partDescriptorIconUrlResolver = partDescriptorIconUrlResolver;
-            return this;
-        }
-
         public Builder setLocaleMessageResolver( final LocaleMessageResolver localeMessageResolver )
         {
             this.localeMessageResolver = localeMessageResolver;
@@ -234,7 +225,6 @@ public class ApplicationInfoJson
             Preconditions.checkNotNull( this.relationshipTypeIconUrlResolver, "relationshipTypeIconUrlResolver cannot be null" );
             Preconditions.checkNotNull( this.macroIconUrlResolver, "macroIconUrlResolver cannot be null" );
             Preconditions.checkNotNull( this.contentTypeIconUrlResolver, "contentTypeIconUrlResolver cannot be null" );
-            Preconditions.checkNotNull( this.partDescriptorIconUrlResolver, "partDescriptorIconUrlResolver cannot be null" );
             Preconditions.checkNotNull( this.inlineMixinResolver, "inlineMixinResolver cannot be null" );
         }
 

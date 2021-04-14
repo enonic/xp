@@ -11,9 +11,8 @@ import com.enonic.xp.schema.content.ContentTypes;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ContentTypeSummaryListJson
-    implements ContentTypeList
 {
-    private final ImmutableList<ContentTypeSummaryJson> list;
+    private final List<ContentTypeSummaryJson> list;
 
     public ContentTypeSummaryListJson( final ContentTypes contentTypes, final ContentTypeIconUrlResolver iconUrlResolver,
                                        final LocaleMessageResolver localeMessageResolver )
@@ -30,9 +29,9 @@ public class ContentTypeSummaryListJson
         this.list = builder.build();
     }
 
-    public ContentTypeSummaryListJson( final ImmutableList<ContentTypeSummaryJson> list )
+    public ContentTypeSummaryListJson( final List<ContentTypeSummaryJson> list )
     {
-        this.list = list;
+        this.list = List.copyOf( list );
     }
 
     public int getTotal()
