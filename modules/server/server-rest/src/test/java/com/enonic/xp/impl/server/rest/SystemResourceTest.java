@@ -10,13 +10,14 @@ import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
 import com.enonic.xp.impl.server.rest.task.DumpRunnableTask;
 import com.enonic.xp.impl.server.rest.task.LoadRunnableTask;
 import com.enonic.xp.impl.server.rest.task.UpgradeRunnableTask;
-import com.enonic.xp.impl.server.rest.task.VacuumRunnableTask;
+import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 
 public class SystemResourceTest
     extends ServerRestTestSupport
@@ -61,8 +62,7 @@ public class SystemResourceTest
     public void vacuum()
         throws Exception
     {
-        Mockito.when( taskService.submitTask( Mockito.isA( VacuumRunnableTask.class ), eq( "vacuum" ) ) ).thenReturn(
-            TaskId.from( "task-id" ) );
+        Mockito.when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "task-id" ) );
 
         final TaskResultJson result = resource.vacuum( null );
         assertEquals( "task-id", result.getTaskId() );

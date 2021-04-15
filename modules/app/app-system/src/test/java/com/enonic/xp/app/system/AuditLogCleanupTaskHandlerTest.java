@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.content;
+package com.enonic.xp.app.system;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

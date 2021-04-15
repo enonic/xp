@@ -152,10 +152,22 @@ class ClusteredTaskManagerImplTest
         when( memberDoesNotHaveApp.getBooleanAttribute( "tasks-enabled" ) ).thenReturn( true );
         when( memberDoesNotHaveApp.getBooleanAttribute( "tasks-enabled-some.app" ) ).thenReturn( null );
 
+        final Member memberDoesAcceptSystemForNonSystemApp = mock( Member.class );
+        when( memberDoesAcceptSystemForNonSystemApp.getBooleanAttribute( "tasks-enabled" ) ).thenReturn( true );
+        when( memberDoesAcceptSystemForNonSystemApp.getBooleanAttribute( "tasks-enabled-some.app" ) ).thenReturn( true );
+
         final MemberSelector memberSelector = argumentCaptor.getValue();
         assertTrue( memberSelector.select( memberSelectable ) );
+        assertTrue( memberSelector.select( memberDoesAcceptSystemForNonSystemApp ) );
         assertFalse( memberSelector.select( memberDoesNotAcceptOffload ) );
         assertFalse( memberSelector.select( memberDoesNotHaveApp ) );
+
+        final Member memberDoesNotAcceptSystemForSystemApp = mock( Member.class );
+        when( memberDoesNotAcceptSystemForSystemApp.getBooleanAttribute( "tasks-enabled" ) ).thenReturn( true );
+        when( memberDoesNotAcceptSystemForSystemApp.getBooleanAttribute( "system-tasks-enabled" ) ).thenReturn( false );
+        when( task.getApplicationKey() ).thenReturn( ApplicationKey.from( "com.enonic.xp.app.system" ) );
+
+        assertFalse( memberSelector.select( memberDoesNotAcceptSystemForSystemApp ) );
 
         verify( future ).get( anyLong(), any( TimeUnit.class ) );
     }

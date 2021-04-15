@@ -22,6 +22,7 @@ import com.hazelcast.core.Member;
 import com.hazelcast.core.MemberSelector;
 import com.hazelcast.util.ExceptionUtil;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.impl.task.distributed.AllTasksReporter;
 import com.enonic.xp.impl.task.distributed.DescribedTask;
 import com.enonic.xp.impl.task.distributed.OffloadedTaskCallable;
@@ -38,6 +39,8 @@ public final class ClusteredTaskManagerImpl
     implements TaskManager
 {
     public static final String ACTION = "xp/task";
+
+    private static final ApplicationKey SYSTEM_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
 
     private final HazelcastInstance hazelcastInstance;
 
@@ -153,8 +156,9 @@ public final class ClusteredTaskManagerImpl
         public boolean select( final Member member )
         {
             return Boolean.TRUE.equals( member.getBooleanAttribute( MemberAttributesApplier.TASKS_ENABLED_ATTRIBUTE_KEY ) ) &&
-                Boolean.TRUE.equals(
-                    member.getBooleanAttribute( MemberAttributesApplier.TASKS_ENABLED_ATTRIBUTE_PREFIX + task.getApplicationKey() ) );
+                ( !SYSTEM_APPLICATION_KEY.equals( task.getApplicationKey() ) ||
+                    member.getBooleanAttribute( MemberAttributesApplier.SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY ) ) && Boolean.TRUE.equals(
+                member.getBooleanAttribute( MemberAttributesApplier.TASKS_ENABLED_ATTRIBUTE_PREFIX + task.getApplicationKey() ) );
         }
     }
 }
