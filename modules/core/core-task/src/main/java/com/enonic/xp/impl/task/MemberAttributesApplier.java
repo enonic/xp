@@ -15,6 +15,8 @@ class MemberAttributesApplier
 {
     static final String TASKS_ENABLED_ATTRIBUTE_KEY = "tasks-enabled";
 
+    static final String SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY = "system-tasks-enabled";
+
     static final String TASKS_ENABLED_ATTRIBUTE_PREFIX = TASKS_ENABLED_ATTRIBUTE_KEY + "-";
 
     private final Member localMember;
@@ -28,6 +30,7 @@ class MemberAttributesApplier
     public void activate( final TaskConfig config )
     {
         localMember.setBooleanAttribute( TASKS_ENABLED_ATTRIBUTE_KEY, config.distributable_acceptInbound() );
+        localMember.setBooleanAttribute( SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY, config.distributable_acceptSystem() );
         super.open();
     }
 
@@ -35,11 +38,13 @@ class MemberAttributesApplier
     {
         super.close();
         localMember.removeAttribute( TASKS_ENABLED_ATTRIBUTE_KEY );
+        localMember.removeAttribute( SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY );
     }
 
     public void modify( final TaskConfig config )
     {
         localMember.setBooleanAttribute( TASKS_ENABLED_ATTRIBUTE_KEY, config.distributable_acceptInbound() );
+        localMember.setBooleanAttribute( SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY, config.distributable_acceptSystem() );
     }
 
     @Override

@@ -48,14 +48,14 @@ class SchedulerConfigImplTest
     {
         Map<String, String> properties = new HashMap<>();
 
-        properties.put( "job.landing1.enabled", "true" );
-        properties.put( "job.landing1.description", "landing1 description" );
-        properties.put( "job.landing1.descriptor", "com.enonic.app.features:landing" );
-        properties.put( "job.landing1.user", "user:system:user" );
-        properties.put( "job.landing1.author", "user:system:author" );
-        properties.put( "job.landing1.payload", "{\"a\":\"valueA\"}" );
-        properties.put( "job.landing1.cron", "* * * * *" );
-        properties.put( "job.landing1.timezone", "GMT+5:30" );
+        properties.put( "init_job.landing1.enabled", "true" );
+        properties.put( "init_job.landing1.description", "landing1 description" );
+        properties.put( "init_job.landing1.descriptor", "com.enonic.app.features:landing" );
+        properties.put( "init_job.landing1.user", "user:system:user" );
+        properties.put( "init_job.landing1.author", "user:system:author" );
+        properties.put( "init_job.landing1.payload", "{\"a\":\"valueA\"}" );
+        properties.put( "init_job.landing1.cron", "* * * * *" );
+        properties.put( "init_job.landing1.timezone", "GMT+5:30" );
 
         schedulerConfig = new SchedulerConfigImpl( properties, propertyTreeMarshallerService, calendarService );
         final Set<CreateScheduledJobParams> jobs = schedulerConfig.jobs();
@@ -106,11 +106,11 @@ class SchedulerConfigImplTest
     {
         Map<String, String> properties = new HashMap<>();
 
-        properties.put( "job.landing1.enabled", "true" );
-        properties.put( "job.landing1.descriptor", "com.enonic.app.features:landing" );
-        properties.put( "job.landing1.calendar.type", "one_time" );
-        properties.put( "job.landing1.calendar.value", "2012-01-01T00:00:00.00Z" );
-        properties.put( "job.landing1.invalid", "some value" );
+        properties.put( "init_job.landing1.enabled", "true" );
+        properties.put( "init_job.landing1.descriptor", "com.enonic.app.features:landing" );
+        properties.put( "init_job.landing1.calendar.type", "one_time" );
+        properties.put( "init_job.landing1.calendar.value", "2012-01-01T00:00:00.00Z" );
+        properties.put( "init_job.landing1.invalid", "some value" );
 
         schedulerConfig = new SchedulerConfigImpl( properties, propertyTreeMarshallerService, calendarService );
 
@@ -124,10 +124,10 @@ class SchedulerConfigImplTest
     {
         Map<String, String> properties = new HashMap<>();
 
-        properties.put( "job.landing1.enabled", "true" );
-        properties.put( "job.landing1.descriptor", "com.enonic.app.features:landing" );
-        properties.put( "job.landing1.cron", "* * * * *" );
-        properties.put( "job.landing1.payload", "{'a':'b'}" );
+        properties.put( "init_job.landing1.enabled", "true" );
+        properties.put( "init_job.landing1.descriptor", "com.enonic.app.features:landing" );
+        properties.put( "init_job.landing1.cron", "* * * * *" );
+        properties.put( "init_job.landing1.payload", "{'a':'b'}" );
 
         schedulerConfig = new SchedulerConfigImpl( properties, propertyTreeMarshallerService, calendarService );
         final RuntimeException ex = assertThrows( RuntimeException.class, () -> schedulerConfig.jobs() );
