@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class VacuumRequestJson
 {
-
     private final String ageThreshold;
 
     private final List<String> tasks;

@@ -1,4 +1,4 @@
-package com.enonic.xp.impl.server.rest.task.listener;
+package com.enonic.xp.app.system.listener;
 
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.vacuum.VacuumListener;

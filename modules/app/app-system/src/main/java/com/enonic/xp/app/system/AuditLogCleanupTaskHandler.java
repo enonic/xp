@@ -26,7 +26,6 @@ public class AuditLogCleanupTaskHandler
             build() );
     }
 
-
     @Override
     public void initialize( final BeanContext context )
     {

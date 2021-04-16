@@ -15,6 +15,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.filter.RangeFilter;
@@ -56,6 +57,7 @@ public class CleanUpAuditLogCommand
 
         final NodeQuery query = createQuery();
 
+        nodeService.refresh( RefreshMode.ALL );
         FindNodesByQueryResult nodesToDelete = nodeService.findByQuery( query );
 
         long hits = nodesToDelete.getHits();

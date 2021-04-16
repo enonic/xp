@@ -30,7 +30,7 @@ import com.enonic.xp.security.PrincipalKey;
 public class SchedulerConfigImpl
     implements SchedulerConfig
 {
-    private static final String JOB_PROPERTY_PREFIX = "job.";
+    private static final String JOB_PROPERTY_PREFIX = "init_job.";
 
     private static final Pattern JOB_NAME_PATTERN = Pattern.compile( "^(?<name>[\\w\\-]+)\\.[\\w]+$" );
 

@@ -19,14 +19,13 @@ import com.enonic.xp.impl.server.rest.model.VacuumRequestJson;
 import com.enonic.xp.impl.server.rest.task.DumpRunnableTask;
 import com.enonic.xp.impl.server.rest.task.LoadRunnableTask;
 import com.enonic.xp.impl.server.rest.task.UpgradeRunnableTask;
-import com.enonic.xp.impl.server.rest.task.VacuumRunnableTask;
+import com.enonic.xp.impl.server.rest.task.VacuumCommand;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
-import com.enonic.xp.vacuum.VacuumService;
 
 @Path("/system")
 @Produces(MediaType.APPLICATION_JSON)
@@ -42,8 +41,6 @@ public final class SystemResource
     private NodeRepositoryService nodeRepositoryService;
 
     private DumpService dumpService;
-
-    private VacuumService vacuumService;
 
     private TaskService taskService;
 
@@ -76,17 +73,16 @@ public final class SystemResource
             createTaskResult();
     }
 
+
     @POST
     @Path("vacuum")
     public TaskResultJson vacuum( final VacuumRequestJson params )
     {
-        return VacuumRunnableTask.create().
-            description( "vacuum" ).
+        return VacuumCommand.create().
             taskService( taskService ).
-            vacuumService( vacuumService ).
-            params(params).
+            params( params ).
             build().
-            createTaskResult();
+            execute();
     }
 
     @POST
@@ -128,13 +124,6 @@ public final class SystemResource
     public void setDumpService( final DumpService dumpService )
     {
         this.dumpService = dumpService;
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    @Reference
-    public void setVacuumService( final VacuumService vacuumService )
-    {
-        this.vacuumService = vacuumService;
     }
 
     @SuppressWarnings("WeakerAccess")

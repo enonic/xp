@@ -24,7 +24,6 @@ public class XmlAdminToolDescriptorParser
     {
         assertTagName( root, "tool" );
         this.builder.displayName( root.getChildValue( "display-name" ) );
-        this.builder.displayName( root.getChildValue( "display-name" ) );
         this.builder.displayNameI18nKey(
             root.getChild( "display-name" ) != null ? root.getChild( "display-name" ).getAttribute( "i18n" ) : null );
 
