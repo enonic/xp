@@ -47,13 +47,17 @@ class MemberAttributesApplierTest
         memberAttributesApplier.activate( config );
 
         verify( localMember ).setBooleanAttribute( "tasks-enabled", true );
+        verify( localMember ).setBooleanAttribute( "system-tasks-enabled", true );
 
         when( config.distributable_acceptInbound() ).thenReturn( false );
+        when( config.distributable_acceptSystem() ).thenReturn( false );
         memberAttributesApplier.modify( config );
         verify( localMember ).setBooleanAttribute( "tasks-enabled", false );
+        verify( localMember ).setBooleanAttribute( "system-tasks-enabled", false );
 
         memberAttributesApplier.deactivate();
         verify( localMember ).removeAttribute( "tasks-enabled" );
+        verify( localMember ).removeAttribute( "system-tasks-enabled" );
     }
 
     @Test
