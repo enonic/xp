@@ -8,7 +8,7 @@ var simpleOneTimeJob = schedulerLib1.create({
     name: 'my-project',
     descriptor: 'appKey:task',
     enabled: true,
-    calendar: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
+    schedule: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
 });
 // END
 
@@ -16,8 +16,12 @@ var expectedOneTimeJob = {
     'name': 'my-project',
     'descriptor': 'appKey:task',
     'enabled': true,
-    'payload': {},
-    'calendar': {
+    'config': {},
+    'creator': 'user:system:creator',
+    'modifier': 'user:system:creator',
+    'createdTime': '2016-11-02T10:36:00Z',
+    'modifiedTime': '2016-11-02T10:36:00Z',
+    'schedule': {
         'value': '2012-01-01T00:00:00Z',
         'type': 'ONE_TIME'
     }
@@ -34,9 +38,8 @@ var extendedOneTimeJob = schedulerLib2.create({
     descriptor: 'appKey:task',
     description: 'job description',
     user: 'user:system:user',
-    author: 'user:system:author',
     enabled: true,
-    payload: {
+    config: {
         a: 1,
         b: 2,
         c: ['1', '2'],
@@ -47,7 +50,7 @@ var extendedOneTimeJob = schedulerLib2.create({
             }
         }
     },
-    calendar: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
+    schedule: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
 });
 // END
 
@@ -56,7 +59,7 @@ var expectedExtendedOneTimeJob = {
     'descriptor': 'appKey:task',
     'description': 'job description',
     'enabled': true,
-    'payload': {
+    'config': {
         'a': 1,
         'b': 2,
         'c': {
@@ -71,8 +74,11 @@ var expectedExtendedOneTimeJob = {
         }
     },
     'user': 'user:system:user',
-    'author': 'user:system:author',
-    'calendar': {
+    'creator': 'user:system:creator',
+    'modifier': 'user:system:creator',
+    'createdTime': '2016-11-02T10:36:00Z',
+    'modifiedTime': '2016-11-02T10:36:00Z',
+    'schedule': {
         'value': '2012-01-01T00:00:00Z',
         'type': 'ONE_TIME'
     }
@@ -89,7 +95,7 @@ var simpleCronJob = schedulerLib3.create({
     name: 'myjob',
     descriptor: 'appKey:task',
     enabled: true,
-    calendar: {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'}
+    schedule: {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'}
 });
 // END
 
@@ -97,8 +103,12 @@ var expectedSimpleCronJob = {
     'name': 'myjob',
     'descriptor': 'appKey:task',
     'enabled': true,
-    'payload': {},
-    'calendar': {
+    'config': {},
+    'creator': 'user:system:creator',
+    'modifier': 'user:system:creator',
+    'createdTime': '2016-11-02T10:36:00Z',
+    'modifiedTime': '2016-11-02T10:36:00Z',
+    'schedule': {
         'value': '* * * * *',
         'timeZone': 'GMT+05:30',
         'type': 'CRON'
@@ -116,9 +126,8 @@ var extendedCronJob = schedulerLib4.create({
     descriptor: 'appKey:task',
     description: 'job description',
     user: 'user:system:user',
-    author: 'user:system:author',
     enabled: true,
-    payload: {
+    config: {
         a: 1,
         b: 2,
         c: ['1', '2'],
@@ -129,7 +138,7 @@ var extendedCronJob = schedulerLib4.create({
             }
         }
     },
-    calendar: {type: 'CRON', value: '* * * * 5', timeZone: 'GMT-2:00'}
+    schedule: {type: 'CRON', value: '* * * * 5', timeZone: 'GMT-2:00'}
 });
 // END
 
@@ -138,7 +147,7 @@ var expectedExtendedCronJob = {
     'descriptor': 'appKey:task',
     'description': 'job description',
     'enabled': true,
-    'payload': {
+    'config': {
         'a': 1,
         'b': 2,
         'c': {
@@ -153,8 +162,11 @@ var expectedExtendedCronJob = {
         }
     },
     'user': 'user:system:user',
-    'author': 'user:system:author',
-    'calendar': {
+    'creator': 'user:system:creator',
+    'modifier': 'user:system:creator',
+    'createdTime': '2016-11-02T10:36:00Z',
+    'modifiedTime': '2016-11-02T10:36:00Z',
+    'schedule': {
         'value': '* * * * 5',
         'timeZone': 'GMT-02:00',
         'type': 'CRON'

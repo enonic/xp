@@ -5,7 +5,7 @@ schedulerLib1.create({
     name: 'myjob1',
     descriptor: 'appKey:task1',
     enabled: false,
-    calendar: {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'}
+    schedule: {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'}
 });
 
 schedulerLib1.create({
@@ -13,12 +13,11 @@ schedulerLib1.create({
     descriptor: 'appKey:task2',
     description: 'job description',
     user: 'user:system:user',
-    author: 'user:system:author',
     enabled: true,
-    payload: {
+    config: {
         a: 1
     },
-    calendar: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
+    schedule: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
 });
 
 // Fetch all existing scheduled jobs
@@ -34,12 +33,15 @@ var expected = [
         'descriptor': 'appKey:task2',
         'description': 'job description',
         'enabled': true,
-        'payload': {
+        'config': {
             'a': 1
         },
         'user': 'user:system:user',
-        'author': 'user:system:author',
-        'calendar': {
+        'creator': 'user:system:creator',
+        'modifier': 'user:system:creator',
+        'createdTime': '2016-11-02T10:36:00Z',
+        'modifiedTime': '2016-11-02T10:36:00Z',
+        'schedule': {
             'value': '2012-01-01T00:00:00Z',
             'type': 'ONE_TIME'
         }
@@ -48,8 +50,12 @@ var expected = [
         'name': 'myjob1',
         'descriptor': 'appKey:task1',
         'enabled': false,
-        'payload': {},
-        'calendar': {
+        'config': {},
+        'creator': 'user:system:creator',
+        'modifier': 'user:system:creator',
+        'createdTime': '2016-11-02T10:36:00Z',
+        'modifiedTime': '2016-11-02T10:36:00Z',
+        'schedule': {
             'value': '* * * * *',
             'timeZone': 'GMT+05:30',
             'type': 'CRON'

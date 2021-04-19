@@ -108,16 +108,13 @@ public class SchedulerConfigImpl
                     case ScheduledJobPropertyNames.ENABLED:
                         job.enabled( Boolean.parseBoolean( value ) );
                         break;
-                    case ScheduledJobPropertyNames.AUTHOR:
-                        job.author( PrincipalKey.from( value ) );
-                        break;
                     case ScheduledJobPropertyNames.USER:
                         job.user( PrincipalKey.from( value ) );
                         break;
-                    case ScheduledJobPropertyNames.PAYLOAD:
+                    case ScheduledJobPropertyNames.CONFIG:
                         try
                         {
-                            job.payload( treeMarshallerService.marshal( MAPPER.readValue( value, HashMap.class ) ) );
+                            job.config( treeMarshallerService.marshal( MAPPER.readValue( value, HashMap.class ) ) );
                         }
                         catch ( JsonProcessingException e )
                         {
@@ -137,7 +134,10 @@ public class SchedulerConfigImpl
         }
         final ScheduleCalendar calendar = calendarService.cron( cronValue, timeZone != null ? timeZone : TimeZone.getDefault() );
 
-        return job.calendar( calendar ).
+        return job.
+            calendar( calendar ).
             build();
     }
+
+
 }

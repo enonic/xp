@@ -52,8 +52,7 @@ class SchedulerConfigImplTest
         properties.put( "init_job.landing1.description", "landing1 description" );
         properties.put( "init_job.landing1.descriptor", "com.enonic.app.features:landing" );
         properties.put( "init_job.landing1.user", "user:system:user" );
-        properties.put( "init_job.landing1.author", "user:system:author" );
-        properties.put( "init_job.landing1.payload", "{\"a\":\"valueA\"}" );
+        properties.put( "init_job.landing1.config", "{\"a\":\"valueA\"}" );
         properties.put( "init_job.landing1.cron", "* * * * *" );
         properties.put( "init_job.landing1.timezone", "GMT+5:30" );
 
@@ -67,11 +66,10 @@ class SchedulerConfigImplTest
             findAny().orElseThrow( RuntimeException::new );
 
         assertTrue( job.isEnabled() );
-        assertEquals( PrincipalKey.from( "user:system:author" ), job.getAuthor() );
         assertEquals( PrincipalKey.from( "user:system:user" ), job.getUser() );
         assertEquals( DescriptorKey.from( "com.enonic.app.features:landing" ), job.getDescriptor() );
         assertEquals( "landing1 description", job.getDescription() );
-        assertEquals( "valueA", job.getPayload().getString( "a" ) );
+        assertEquals( "valueA", job.getConfig().getString( "a" ) );
         assertEquals( ScheduleCalendarType.CRON, job.getCalendar().getType() );
         assertEquals( "* * * * *", ( (CronCalendar) job.getCalendar() ).getCronValue() );
         assertEquals( TimeZone.getTimeZone( "GMT+5:30" ), ( (CronCalendar) job.getCalendar() ).getTimeZone() );
@@ -91,13 +89,12 @@ class SchedulerConfigImplTest
             findAny().orElseThrow( RuntimeException::new );
 
         assertFalse( job.isEnabled() );
-        assertNull( job.getAuthor() );
         assertNull( job.getUser() );
         assertEquals( DescriptorKey.from( "com.enonic.xp.app.system:audit-log-cleanup" ), job.getDescriptor() );
         assertEquals( ScheduleCalendarType.CRON, job.getCalendar().getType() );
         assertEquals( "0 5 * * *", ( (CronCalendar) job.getCalendar() ).getCronValue() );
-        assertEquals( 1, job.getPayload().getTotalSize() );
-        assertEquals( "PT2s", job.getPayload().getProperty( "ageThreshold" ).getString() );
+        assertEquals( 1, job.getConfig().getTotalSize() );
+        assertEquals( "PT2s", job.getConfig().getProperty( "ageThreshold" ).getString() );
     }
 
 
@@ -120,14 +117,14 @@ class SchedulerConfigImplTest
     }
 
     @Test
-    void invalidPayload()
+    void invalidConfig()
     {
         Map<String, String> properties = new HashMap<>();
 
         properties.put( "init_job.landing1.enabled", "true" );
         properties.put( "init_job.landing1.descriptor", "com.enonic.app.features:landing" );
         properties.put( "init_job.landing1.cron", "* * * * *" );
-        properties.put( "init_job.landing1.payload", "{'a':'b'}" );
+        properties.put( "init_job.landing1.config", "{'a':'b'}" );
 
         schedulerConfig = new SchedulerConfigImpl( properties, propertyTreeMarshallerService, calendarService );
         final RuntimeException ex = assertThrows( RuntimeException.class, () -> schedulerConfig.jobs() );

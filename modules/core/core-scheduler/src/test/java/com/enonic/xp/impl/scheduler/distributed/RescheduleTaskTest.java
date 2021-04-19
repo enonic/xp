@@ -37,6 +37,7 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.scheduler.SchedulerService;
+import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -195,8 +196,12 @@ public class RescheduleTaskTest
                 timeZone( TimeZone.getDefault() ).
                 build() ).
             descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
-            payload( new PropertyTree() ).
+            config( new PropertyTree() ).
             enabled( false ).
+            creator( PrincipalKey.from( "user:system:creator" ) ).
+            modifier( PrincipalKey.from( "user:system:creator" ) ).
+            createdTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) ).
+            modifiedTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) ).
             build();
 
         final ScheduledJob job2 = ScheduledJob.create().
@@ -206,8 +211,12 @@ public class RescheduleTaskTest
                 timeZone( TimeZone.getDefault() ).
                 build() ).
             descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task2" ) ).
-            payload( new PropertyTree() ).
+            config( new PropertyTree() ).
             enabled( true ).
+            creator( PrincipalKey.from( "user:system:creator" ) ).
+            modifier( PrincipalKey.from( "user:system:modifier" ) ).
+            createdTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) ).
+            modifiedTime( Instant.parse( "2021-02-25T10:44:53.170079900Z" ) ).
             build();
 
         final ScheduledJob job3 = ScheduledJob.create().
@@ -216,8 +225,12 @@ public class RescheduleTaskTest
                 value( Instant.now().minus( Duration.of( 1, ChronoUnit.SECONDS ) ) ).
                 build() ).
             descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task3" ) ).
-            payload( new PropertyTree() ).
+            config( new PropertyTree() ).
             enabled( true ).
+            creator( PrincipalKey.from( "user:system:creator" ) ).
+            modifier( PrincipalKey.from( "user:system:creator" ) ).
+            createdTime( Instant.parse( "2021-02-26T10:44:33.170079900Z" ) ).
+            modifiedTime( Instant.parse( "2021-02-26T10:44:33.170079900Z" ) ).
             build();
 
         final ScheduledJob job4 = ScheduledJob.create().
@@ -227,7 +240,11 @@ public class RescheduleTaskTest
                 timeZone( TimeZone.getDefault() ).
                 build() ).
             descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task4" ) ).
-            payload( new PropertyTree() ).
+            config( new PropertyTree() ).
+            creator( PrincipalKey.from( "user:system:creator" ) ).
+            modifier( PrincipalKey.from( "user:system:modifier" ) ).
+            createdTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) ).
+            modifiedTime( Instant.parse( "2021-02-25T11:44:33.170079900Z" ) ).
             enabled( true ).
             build();
 

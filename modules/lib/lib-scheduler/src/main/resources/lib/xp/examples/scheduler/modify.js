@@ -6,12 +6,11 @@ schedulerLib1.create({
     descriptor: 'appKey:task',
     description: 'job description',
     user: 'user:system:user',
-    author: 'user:system:author',
     enabled: true,
-    payload: {
+    config: {
         a: 1
     },
-    calendar: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
+    schedule: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
 });
 
 // modifies existing scheduled job
@@ -24,12 +23,11 @@ var result = schedulerLib.modify({
         edit.descriptor = 'appKey:new-task';
         edit.description = 'new job description';
         edit.user = 'user:system:new-user';
-        edit.author = 'user:system:new-author';
         edit.enabled = false;
-        edit.payload = {
+        edit.config = {
             a1: 3
         };
-        edit.calendar = {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'};
+        edit.schedule = {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'};
 
         return edit;
     }
@@ -41,12 +39,15 @@ var expected = {
     'descriptor': 'appKey:new-task',
     'description': 'new job description',
     'enabled': false,
-    'payload': {
+    'config': {
         'a1': 3
     },
     'user': 'user:system:new-user',
-    'author': 'user:system:new-author',
-    'calendar': {
+    'creator': 'user:system:creator',
+    'modifier': 'user:system:modifier',
+    'createdTime': '2016-11-02T10:36:00Z',
+    'modifiedTime': '2021-02-25T10:44:33.170079900Z',
+    'schedule': {
         'value': '* * * * *',
         'timeZone': 'GMT+05:30',
         'type': 'CRON'

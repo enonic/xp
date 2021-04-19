@@ -35,22 +35,20 @@ function nullOrValue(value) {
  * @param {string} params.name unique job name.
  * @param {string} params.description job description.
  * @param {string} params.descriptor descriptor of the task to be scheduled.
- * @param {object} params.payload config of the task to be scheduled.
- * @param {object} params.calendar task time run config.
+ * @param {object} params.config config of the task to be scheduled.
+ * @param {object} params.schedule task time run config.
  * @param {object} params.user Key of the user that submitted the task.
- * @param {object} params.author Key of the task author.
- * @param {boolean} params.enabled job is active or not (default to false).
+ * @param {boolean} params.enabled job is active or not.
  */
 exports.create = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.scheduler.CreateScheduledJobHandler');
 
     bean.name = required(params, 'name');
-    bean.calendar = required(params, 'calendar');
+    bean.schedule = required(params, 'schedule');
     bean.descriptor = required(params, 'descriptor');
     bean.enabled = required(params, 'enabled');
     bean.description = nullOrValue(params.description);
-    bean.payload = nullOrValue(params.payload);
-    bean.author = nullOrValue(params.author);
+    bean.config = nullOrValue(params.config);
     bean.user = nullOrValue(params.user);
 
     return __.toNativeObject(bean.execute());
@@ -65,10 +63,9 @@ exports.create = function (params) {
  * @param {string} params.name unique job name.
  * @param {string} params.description job description.
  * @param {string} params.descriptor descriptor of the task to be scheduled.
- * @param {object} params.payload config of the task to be scheduled.
- * @param {object} params.calendar task time run config.
+ * @param {object} params.config config of the task to be scheduled.
+ * @param {object} params.schedule task time run config.
  * @param {object} params.user Key of the user that submitted the task.
- * @param {object} params.author Key of the task author.
  * @param {boolean} params.enabled job is active or not (default to false).
  */
 exports.modify = function (params) {
