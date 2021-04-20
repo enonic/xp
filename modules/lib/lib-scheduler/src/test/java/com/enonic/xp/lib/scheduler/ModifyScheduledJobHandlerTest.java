@@ -46,12 +46,12 @@ public class ModifyScheduledJobHandlerTest
     }
 
     @Test
-    public void modifyPayloadWithNull()
+    public void modifyConfigWithNull()
         throws Exception
     {
         mockOneTimeCalendar();
 
-        runFunction( "/test/ModifyScheduledJobHandlerTest.js", "modifyPayloadWithNull" );
+        runFunction( "/test/ModifyScheduledJobHandlerTest.js", "modifyConfigWithNull" );
     }
 
     @Test

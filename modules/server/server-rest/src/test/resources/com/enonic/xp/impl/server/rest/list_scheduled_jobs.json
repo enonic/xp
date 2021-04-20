@@ -1,17 +1,11 @@
 [
   {
-    "author": "user:system:author",
     "calendar": {
       "cronValue": "* * * * *",
       "timeZone": "GMT+03:00",
       "type": "CRON"
     },
-    "description": "description",
-    "descriptor": "com.enonic.app.features:landing",
-    "enabled": true,
-    "lastRun": "2012-01-01T00:00:00Z",
-    "name": "test1",
-    "payload": [
+    "config": [
       {
         "name": "string",
         "type": "String",
@@ -22,20 +16,32 @@
         ]
       }
     ],
+    "createdTime": "2010-01-01T00:00:00Z",
+    "creator": "user:system:creator",
+    "description": "description",
+    "descriptor": "com.enonic.app.features:landing",
+    "enabled": true,
+    "lastRun": "2012-01-01T00:00:00Z",
+    "modifiedTime": "2011-02-01T00:00:00Z",
+    "modifier": "user:system:creator",
+    "name": "test1",
     "user": "user:system:user"
   },
   {
-    "author": null,
     "calendar": {
       "type": "ONE_TIME",
       "value": "2016-11-02T10:36:00Z"
     },
+    "config": [],
+    "createdTime": "2010-01-01T00:00:00Z",
+    "creator": "user:system:creator",
     "description": null,
     "descriptor": "com.enonic.app.features:landing",
     "enabled": false,
     "lastRun": null,
+    "modifiedTime": "2011-02-01T00:00:00Z",
+    "modifier": "user:system:creator",
     "name": "test2",
-    "payload": [],
     "user": null
   }
 ]

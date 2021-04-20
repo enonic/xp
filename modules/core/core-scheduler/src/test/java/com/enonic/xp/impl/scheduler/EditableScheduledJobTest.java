@@ -1,5 +1,7 @@
 package com.enonic.xp.impl.scheduler;
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -36,54 +38,65 @@ public class EditableScheduledJobTest
             name( name ).
             calendar( mock( ScheduleCalendar.class ) ).
             descriptor( DescriptorKey.from( "app:key" ) ).
+            creator( PrincipalKey.from( "user:system:creator" ) ).
+            modifier( PrincipalKey.from( "user:system:creator" ) ).
+            createdTime( Instant.parse( "2016-11-02T10:36:00Z" ) ).
+            modifiedTime( Instant.parse( "2016-11-02T10:36:00Z" ) ).
             build();
 
         final ScheduledJob target = new EditableScheduledJob( source ).build();
 
         assertEquals( name, target.getName() );
-        assertNull( target.getAuthor() );
-        assertEquals( 0, target.getPayload().getTotalSize() );
+        assertEquals( 0, target.getConfig().getTotalSize() );
         assertNull( target.getUser() );
         assertNull( target.getDescription() );
         assertNotNull( target.getDescriptor() );
         assertNotNull( target.getCalendar() );
-        assertNotNull( target.getPayload() );
+        assertNotNull( target.getConfig() );
         assertFalse( source.isEnabled() );
     }
 
     @Test
     public void testNotChanged()
     {
-        final PrincipalKey author = PrincipalKey.ofUser( IdProviderKey.createDefault(), "author" );
         final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.createDefault(), "user" );
+
+        final PrincipalKey creator = PrincipalKey.ofUser( IdProviderKey.createDefault(), "creator" );
+        final PrincipalKey modifier = PrincipalKey.ofUser( IdProviderKey.createDefault(), "modifier" );
+        final Instant createdTime = Instant.parse( "2021-02-25T10:44:33.170079900Z" );
+        final Instant modifiedTime = Instant.parse( "2021-03-25T10:44:33.170079900Z" );
 
         final DescriptorKey descriptor = DescriptorKey.from( ApplicationKey.BASE, "descriptor" );
 
-        final PropertyTree payload = new PropertyTree();
-        payload.addString( "property", "value" );
+        final PropertyTree config = new PropertyTree();
+        config.addString( "property", "value" );
 
         final String description = "description";
 
         final ScheduledJob source = ScheduledJob.create().
             name( ScheduledJobName.from( "name" ) ).
-            author( author ).
-            payload( payload ).
+            config( config ).
             user( user ).
             descriptor( descriptor ).
             description( description ).
             calendar( mock( ScheduleCalendar.class ) ).
             enabled( true ).
+            creator( creator ).
+            modifier( modifier ).
+            createdTime( createdTime ).
+            modifiedTime( modifiedTime ).
             build();
 
         final ScheduledJob target = new EditableScheduledJob( source ).build();
 
         assertEquals( source.getName(), target.getName() );
-        assertEquals( source.getAuthor(), target.getAuthor() );
-        assertEquals( source.getPayload(), target.getPayload() );
+        assertEquals( source.getConfig(), target.getConfig() );
         assertEquals( source.getUser(), target.getUser() );
         assertEquals( source.getDescriptor(), target.getDescriptor() );
         assertEquals( source.getDescription(), target.getDescription() );
         assertEquals( source.isEnabled(), target.isEnabled() );
+        assertEquals( source.getCreator(), target.getCreator() );
+        assertEquals( source.getCreatedTime(), target.getCreatedTime() );
     }
 
     @Test
@@ -93,21 +106,23 @@ public class EditableScheduledJobTest
             name( ScheduledJobName.from( "name" ) ).
             descriptor( DescriptorKey.from( "app:key" ) ).
             calendar( mock( ScheduleCalendar.class ) ).
+            creator( PrincipalKey.from( "user:system:creator" ) ).
+            modifier( PrincipalKey.from( "user:system:creator" ) ).
+            createdTime( Instant.parse( "2016-11-02T10:36:00Z" ) ).
+            modifiedTime( Instant.parse( "2016-11-02T10:36:00Z" ) ).
             build();
 
-        final PrincipalKey author = PrincipalKey.ofUser( IdProviderKey.createDefault(), "author" );
         final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.createDefault(), "user" );
 
         final DescriptorKey descriptor = DescriptorKey.from( ApplicationKey.BASE, "descriptor" );
 
-        final PropertyTree payload = new PropertyTree();
-        payload.addString( "property", "value" );
+        final PropertyTree config = new PropertyTree();
+        config.addString( "property", "value" );
 
         final String description = "description";
 
         final EditableScheduledJob editable = new EditableScheduledJob( source );
-        editable.author = author;
-        editable.payload = payload;
+        editable.config = config;
         editable.user = user;
         editable.descriptor = descriptor;
         editable.description = description;
@@ -118,8 +133,7 @@ public class EditableScheduledJobTest
         final ScheduledJob target = editable.build();
 
         assertEquals( source.getName(), target.getName() );
-        assertEquals( author, target.getAuthor() );
-        assertEquals( payload, target.getPayload() );
+        assertEquals( config, target.getConfig() );
         assertEquals( user, target.getUser() );
         assertEquals( descriptor, target.getDescriptor() );
         assertEquals( description, target.getDescription() );

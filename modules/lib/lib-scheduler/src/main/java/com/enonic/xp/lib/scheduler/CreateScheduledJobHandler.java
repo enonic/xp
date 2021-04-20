@@ -21,17 +21,15 @@ public final class CreateScheduledJobHandler
 
     private String description;
 
-    private ScheduleCalendar calendar;
+    private ScheduleCalendar schedule;
 
     private boolean enabled;
 
     private DescriptorKey descriptor;
 
-    private PropertyTree payload;
+    private PropertyTree config;
 
     private PrincipalKey user;
-
-    private PrincipalKey author;
 
     @Override
     protected ScheduledJobMapper doExecute()
@@ -47,11 +45,10 @@ public final class CreateScheduledJobHandler
         return CreateScheduledJobParams.create().
             name( name ).
             descriptor( descriptor ).
-            calendar( calendar ).
+            calendar( schedule ).
             description( description ).
-            payload( payload ).
+            config( config ).
             enabled( enabled ).
-            author( author ).
             user( user ).
             build();
     }
@@ -60,7 +57,7 @@ public final class CreateScheduledJobHandler
     protected void validate()
     {
         Preconditions.checkArgument( name != null && !name.getValue().isBlank(), "name must be set." );
-        Preconditions.checkArgument( calendar != null, "calendar must be set." );
+        Preconditions.checkArgument( schedule != null, "calendar must be set." );
         Preconditions.checkArgument( descriptor != null, "descriptor must be set." );
     }
 
@@ -79,24 +76,19 @@ public final class CreateScheduledJobHandler
         this.description = value;
     }
 
-    public void setCalendar( final Map<String, String> value )
+    public void setSchedule( final Map<String, String> value )
     {
-        this.calendar = buildCalendar( value );
+        this.schedule = buildCalendar( value );
     }
 
-    public void setPayload( final Map<String, Object> value )
+    public void setConfig( final Map<String, Object> value )
     {
-        this.payload = Optional.ofNullable( propertyTreeMarshallerService.get().marshal( value ) ).orElse( null );
+        this.config = Optional.ofNullable( propertyTreeMarshallerService.get().marshal( value ) ).orElse( null );
     }
 
     public void setEnabled( final boolean value )
     {
         this.enabled = value;
-    }
-
-    public void setAuthor( final String value )
-    {
-        this.author = Optional.ofNullable( value ).map( PrincipalKey::from ).orElse( null );
     }
 
     public void setUser( final String value )

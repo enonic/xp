@@ -22,11 +22,17 @@ public class ScheduledJobJson
 
     private final String descriptor;
 
-    private final List<PropertyArrayJson> payload;
+    private final List<PropertyArrayJson> config;
 
     private final String user;
 
-    private final String author;
+    private final String creator;
+
+    private final String modifier;
+
+    private final Instant createdTime;
+
+    private final Instant modifiedTime;
 
     private final Instant lastRun;
 
@@ -37,10 +43,13 @@ public class ScheduledJobJson
         this.descriptor = job.getDescriptor().toString();
         this.calendar = job.getCalendar();
         this.enabled = job.isEnabled();
-        this.payload = PropertyTreeJson.toJson( job.getPayload() );
+        this.config = PropertyTreeJson.toJson( job.getConfig() );
         this.user = Optional.ofNullable( job.getUser() ).map( PrincipalKey::toString ).orElse( null );
-        this.author = Optional.ofNullable( job.getAuthor() ).map( PrincipalKey::toString ).orElse( null );
+        this.creator = Optional.ofNullable( job.getCreator() ).map( PrincipalKey::toString ).orElse( null );
+        this.modifier = Optional.ofNullable( job.getCreator() ).map( PrincipalKey::toString ).orElse( null );
         this.lastRun = job.getLastRun();
+        this.createdTime = job.getCreatedTime();
+        this.modifiedTime = job.getModifiedTime();
     }
 
     public String getName()
@@ -68,9 +77,9 @@ public class ScheduledJobJson
         return descriptor;
     }
 
-    public List<PropertyArrayJson> getPayload()
+    public List<PropertyArrayJson> getConfig()
     {
-        return payload;
+        return config;
     }
 
     public String getUser()
@@ -78,9 +87,24 @@ public class ScheduledJobJson
         return user;
     }
 
-    public String getAuthor()
+    public String getCreator()
     {
-        return author;
+        return creator;
+    }
+
+    public String getModifier()
+    {
+        return modifier;
+    }
+
+    public Instant getCreatedTime()
+    {
+        return createdTime;
+    }
+
+    public Instant getModifiedTime()
+    {
+        return modifiedTime;
     }
 
     public Instant getLastRun()

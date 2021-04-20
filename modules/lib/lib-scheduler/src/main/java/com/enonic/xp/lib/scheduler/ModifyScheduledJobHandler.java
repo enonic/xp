@@ -51,12 +51,11 @@ public final class ModifyScheduledJobHandler
     private void updateJob( final EditableScheduledJob target, final ScriptValue params )
     {
         updateDescriptor( target, params );
-        updatePayload( target, params );
+        updateConfig( target, params );
         updateCalendar( target, params );
         updateIsEnabled( target, params );
         updateDescription( target, params );
         updateUser( target, params );
-        updateAuthor( target, params );
     }
 
     private void updateDescriptor( final EditableScheduledJob target, final ScriptValue params )
@@ -72,29 +71,29 @@ public final class ModifyScheduledJobHandler
         }
     }
 
-    private void updatePayload( final EditableScheduledJob target, final ScriptValue params )
+    private void updateConfig( final EditableScheduledJob target, final ScriptValue params )
     {
-        if ( params.getKeys().contains( "payload" ) )
+        if ( params.getKeys().contains( "config" ) )
         {
-            final ScriptValue value = params.getMember( "payload" );
+            final ScriptValue value = params.getMember( "config" );
             if ( value == null )
             {
-                throw new IllegalArgumentException( "payload cannot be null" );
+                throw new IllegalArgumentException( "config cannot be null" );
             }
-            target.payload = propertyTreeMarshallerService.get().marshal( params.getMember( "payload" ).getMap() );
+            target.config = propertyTreeMarshallerService.get().marshal( params.getMember( "config" ).getMap() );
         }
     }
 
     private void updateCalendar( final EditableScheduledJob target, final ScriptValue params )
     {
-        if ( params.getKeys().contains( "calendar" ) )
+        if ( params.getKeys().contains( "schedule" ) )
         {
-            final ScriptValue value = params.getMember( "calendar" );
+            final ScriptValue value = params.getMember( "schedule" );
             if ( value == null )
             {
-                throw new IllegalArgumentException( "calendar cannot be null" );
+                throw new IllegalArgumentException( "schedule cannot be null" );
             }
-            target.calendar = buildCalendar( (Map) params.getMember( "calendar" ).getMap() );
+            target.calendar = buildCalendar( (Map) params.getMember( "schedule" ).getMap() );
         }
     }
 
@@ -126,15 +125,6 @@ public final class ModifyScheduledJobHandler
         {
             final ScriptValue value = params.getMember( "user" );
             target.user = value != null ? PrincipalKey.from( value.getValue( String.class ) ) : null;
-        }
-    }
-
-    private void updateAuthor( final EditableScheduledJob target, final ScriptValue params )
-    {
-        if ( params.getKeys().contains( "author" ) )
-        {
-            final ScriptValue value = params.getMember( "author" );
-            target.author = value != null ? PrincipalKey.from( value.getValue( String.class ) ) : null;
         }
     }
 

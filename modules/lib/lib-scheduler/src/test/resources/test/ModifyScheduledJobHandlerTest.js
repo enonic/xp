@@ -6,12 +6,15 @@ var resultExpected = {
     'descriptor': 'appKey:new-task',
     'description': 'new job description',
     'enabled': false,
-    'payload': {
+    'config': {
         'a1': 3
     },
     'user': 'user:system:new-user',
-    'author': 'user:system:new-author',
-    'calendar': {
+    'creator': 'user:system:creator',
+    'modifier': 'user:system:modifier',
+    'createdTime': '2016-11-02T10:36:00Z',
+    'modifiedTime': '2021-02-25T10:44:33.170079900Z',
+    'schedule': {
         'value': '* * * * *',
         'timeZone': 'GMT+05:30',
         'type': 'CRON'
@@ -24,9 +27,8 @@ function createJob() {
         descriptor: 'appKey:task',
         description: 'job description',
         user: 'user:system:user',
-        author: 'user:system:author',
         enabled: true,
-        payload: {
+        config: {
             a: 1,
             b: 2,
             c: ['1', '2'],
@@ -37,7 +39,7 @@ function createJob() {
                 }
             }
         },
-        calendar: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
+        schedule: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
     });
 }
 
@@ -50,12 +52,11 @@ exports.modifyJob = function () {
             edit.descriptor = 'appKey:new-task';
             edit.description = 'new job description';
             edit.user = 'user:system:new-user';
-            edit.author = 'user:system:new-author';
             edit.enabled = false;
-            edit.payload = {
+            edit.config = {
                 a1: 3
             };
-            edit.calendar = {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'};
+            edit.schedule = {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'};
 
             return edit;
         }
@@ -68,7 +69,7 @@ var modifyJobWithNullResultExpected = {
     'name': 'myjob',
     'descriptor': 'appKey:task',
     'enabled': true,
-    'payload': {
+    'config': {
         'a': 1,
         'b': 2,
         'c': {
@@ -82,7 +83,11 @@ var modifyJobWithNullResultExpected = {
             }
         }
     },
-    'calendar': {
+    'creator': 'user:system:creator',
+    'modifier': 'user:system:modifier',
+    'createdTime': '2016-11-02T10:36:00Z',
+    'modifiedTime': '2021-02-25T10:44:33.170079900Z',
+    'schedule': {
         'value': '2012-01-01T00:00:00Z',
         'type': 'ONE_TIME'
     }
@@ -96,7 +101,6 @@ exports.modifyJobWithNull = function () {
         editor: (edit) => {
             edit.description = null;
             edit.user = null;
-            edit.author = null;
 
             return edit;
         }
@@ -123,20 +127,20 @@ exports.modifyDescriptorWithNull = function () {
 
 };
 
-exports.modifyPayloadWithNull = function () {
+exports.modifyConfigWithNull = function () {
     createJob();
 
     try {
         var result = scheduler.modify({
             name: 'myjob',
             editor: (edit) => {
-                edit.payload = null;
+                edit.config = null;
 
                 return edit;
             }
         });
     } catch (e) {
-        assert.assertJsonEquals('payload cannot be null', e.message);
+        assert.assertJsonEquals('config cannot be null', e.message);
     }
 
 };
@@ -148,13 +152,13 @@ exports.modifyCalendarWithNull = function () {
         var result = scheduler.modify({
             name: 'myjob',
             editor: (edit) => {
-                edit.calendar = null;
+                edit.schedule = null;
 
                 return edit;
             }
         });
     } catch (e) {
-        assert.assertJsonEquals('calendar cannot be null', e.message);
+        assert.assertJsonEquals('schedule cannot be null', e.message);
     }
 };
 

@@ -29,7 +29,7 @@ public class CreateScheduledJobParamsTest
             name( name ).
             descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
             calendar( mock( ScheduleCalendar.class ) ).
-            payload( new PropertyTree() ).
+            config( new PropertyTree() ).
             build().
             getName() );
     }
@@ -41,13 +41,12 @@ public class CreateScheduledJobParamsTest
             name( ScheduledJobName.from( "name" ) ).
             descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
             calendar( mock( ScheduleCalendar.class ) ).
-            payload( new PropertyTree() ).
+            config( new PropertyTree() ).
             build();
 
-        assertNull( params.getAuthor() );
         assertNull( params.getUser() );
         assertNull( params.getDescription() );
-        assertNotNull( params.getPayload() );
+        assertNotNull( params.getConfig() );
         assertNotNull( params.getDescriptor() );
         assertNotNull( params.getCalendar() );
         assertFalse( params.isEnabled() );
@@ -56,13 +55,12 @@ public class CreateScheduledJobParamsTest
     @Test
     public void testBuilder()
     {
-        final PrincipalKey author = PrincipalKey.ofUser( IdProviderKey.createDefault(), "author" );
         final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.createDefault(), "user" );
 
         final DescriptorKey descriptor = DescriptorKey.from( ApplicationKey.BASE, "descriptor" );
 
-        final PropertyTree payload = new PropertyTree();
-        payload.addString( "property", "value" );
+        final PropertyTree config = new PropertyTree();
+        config.addString( "property", "value" );
 
         final String description = "description";
 
@@ -70,8 +68,7 @@ public class CreateScheduledJobParamsTest
 
         final CreateScheduledJobParams params = CreateScheduledJobParams.create().
             name( ScheduledJobName.from( "name" ) ).
-            author( author ).
-            payload( payload ).
+            config( config ).
             user( user ).
             descriptor( descriptor ).
             description( description ).
@@ -79,8 +76,7 @@ public class CreateScheduledJobParamsTest
             enabled( true ).
             build();
 
-        assertEquals( author, params.getAuthor() );
-        assertEquals( payload, params.getPayload() );
+        assertEquals( config, params.getConfig() );
         assertEquals( user, params.getUser() );
         assertEquals( descriptor, params.getDescriptor() );
         assertEquals( description, params.getDescription() );
