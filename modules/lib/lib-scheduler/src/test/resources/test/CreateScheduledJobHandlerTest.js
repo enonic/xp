@@ -6,7 +6,7 @@ var createOneTimeJobExpected = {
     'descriptor': 'appKey:task',
     'description': 'job description',
     'enabled': true,
-    'payload': {
+    'config': {
         'a': 1,
         'b': 2,
         'c': {
@@ -21,8 +21,11 @@ var createOneTimeJobExpected = {
         }
     },
     'user': 'user:system:user',
-    'author': 'user:system:author',
-    'calendar': {
+    'creator': 'user:system:creator',
+    'modifier': 'user:system:creator',
+    'createdTime': '2016-11-02T10:36:00Z',
+    'modifiedTime': '2016-11-02T10:36:00Z',
+    'schedule': {
         'value': '2012-01-01T00:00:00Z',
         'type': 'ONE_TIME'
     }
@@ -34,9 +37,8 @@ exports.createOneTimeJob = function () {
         descriptor: 'appKey:task',
         description: 'job description',
         user: 'user:system:user',
-        author: 'user:system:author',
         enabled: true,
-        payload: {
+        config: {
             a: 1,
             b: 2,
             c: ['1', '2'],
@@ -47,7 +49,7 @@ exports.createOneTimeJob = function () {
                 }
             }
         },
-        calendar: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
+        schedule: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
     });
 
     assert.assertJsonEquals(createOneTimeJobExpected, result);
@@ -58,7 +60,7 @@ var createCronJobExpected = {
     'descriptor': 'appKey:task',
     'description': 'job description',
     'enabled': true,
-    'payload': {
+    'config': {
         'a': 1,
         'b': 2,
         'c': {
@@ -73,8 +75,11 @@ var createCronJobExpected = {
         }
     },
     'user': 'user:system:user',
-    'author': 'user:system:author',
-    'calendar': {
+    'creator': 'user:system:creator',
+    'modifier': 'user:system:creator',
+    'createdTime': '2016-11-02T10:36:00Z',
+    'modifiedTime': '2016-11-02T10:36:00Z',
+    'schedule': {
         'value': '* * * * *',
         'timeZone': 'GMT+05:30',
         'type': 'CRON'
@@ -87,9 +92,8 @@ exports.createCronJob = function () {
         descriptor: 'appKey:task',
         description: 'job description',
         user: 'user:system:user',
-        author: 'user:system:author',
         enabled: true,
-        payload: {
+        config: {
             a: 1,
             b: 2,
             c: ['1', '2'],
@@ -100,7 +104,7 @@ exports.createCronJob = function () {
                 }
             }
         },
-        calendar: {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'}
+        schedule: {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'}
     });
 
     assert.assertJsonEquals(createCronJobExpected, result);
@@ -113,8 +117,8 @@ exports.createWithoutName = function () {
         scheduler.create({
             descriptor: 'appKey:task',
             enabled: true,
-            payload: {},
-            calendar: {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'}
+            config: {},
+            schedule: {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'}
         });
     } catch (e) {
         assert.assertEquals('Parameter \'name\' is required', e);
@@ -129,10 +133,10 @@ exports.createWithoutCalendar = function () {
             name: 'myjob',
             descriptor: 'appKey:task',
             enabled: true,
-            payload: {}
+            config: {}
         });
     } catch (e) {
-        assert.assertEquals('Parameter \'calendar\' is required', e);
+        assert.assertEquals('Parameter \'schedule\' is required', e);
     }
 };
 
@@ -143,8 +147,8 @@ exports.createWithoutDescriptor = function () {
         scheduler.create({
             name: 'myjob',
             enabled: true,
-            payload: {},
-            calendar: {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'}
+            config: {},
+            schedule: {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'}
         });
     } catch (e) {
         assert.assertEquals('Parameter \'descriptor\' is required', e);
@@ -156,11 +160,14 @@ var withoutUserExpected = {
     'descriptor': 'appKey:task',
     'description': 'job description',
     'enabled': true,
-    'payload': {
+    'config': {
         'a': 1
     },
-    'author': 'user:system:author',
-    'calendar': {
+    'creator': 'user:system:creator',
+    'modifier': 'user:system:creator',
+    'createdTime': '2016-11-02T10:36:00Z',
+    'modifiedTime': '2016-11-02T10:36:00Z',
+    'schedule': {
         'value': '* * * * *',
         'timeZone': 'GMT+05:30',
         'type': 'CRON'
@@ -173,44 +180,45 @@ exports.createWithoutUser = function () {
         name: 'myjob',
         descriptor: 'appKey:task',
         description: 'job description',
-        author: 'user:system:author',
         enabled: true,
-        payload: {
+        config: {
             a: 1
         },
-        calendar: {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'}
+        schedule: {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'}
     });
     assert.assertJsonEquals(withoutUserExpected, result);
 
 };
 
-var withoutPayloadExpected = {
+var withoutConfigExpected = {
     'name': 'myjob',
     'descriptor': 'appKey:task',
     'description': 'job description',
     'enabled': true,
-    'payload': {},
+    'config': {},
     'user': 'user:system:user',
-    'author': 'user:system:author',
-    'calendar': {
+    'creator': 'user:system:creator',
+    'modifier': 'user:system:creator',
+    'createdTime': '2016-11-02T10:36:00Z',
+    'modifiedTime': '2016-11-02T10:36:00Z',
+    'schedule': {
         'value': '* * * * *',
         'timeZone': 'GMT+05:30',
         'type': 'CRON'
     }
 };
 
-exports.createWithoutPayload = function () {
+exports.createWithoutConfig = function () {
 
     var result = scheduler.create({
         name: 'myjob',
         descriptor: 'appKey:task',
         description: 'job description',
-        author: 'user:system:author',
         user: 'user:system:user',
         enabled: true,
-        calendar: {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'}
+        schedule: {type: 'CRON', value: '* * * * *', timeZone: 'GMT+5:30'}
     });
-    assert.assertJsonEquals(withoutPayloadExpected, result);
+    assert.assertJsonEquals(withoutConfigExpected, result);
 
 };
 

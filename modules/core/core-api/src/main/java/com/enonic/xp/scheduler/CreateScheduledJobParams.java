@@ -20,11 +20,9 @@ public final class CreateScheduledJobParams
 
     private final DescriptorKey descriptor;
 
-    private final PropertyTree payload;
+    private final PropertyTree config;
 
     private final PrincipalKey user;
-
-    private final PrincipalKey author;
 
     private CreateScheduledJobParams( final Builder builder )
     {
@@ -33,9 +31,8 @@ public final class CreateScheduledJobParams
         this.calendar = builder.calendar;
         this.enabled = builder.enabled;
         this.descriptor = builder.descriptor;
-        this.payload = builder.payload;
+        this.config = builder.config;
         this.user = builder.user;
-        this.author = builder.author;
     }
 
     public static Builder create()
@@ -68,19 +65,14 @@ public final class CreateScheduledJobParams
         return descriptor;
     }
 
-    public PropertyTree getPayload()
+    public PropertyTree getConfig()
     {
-        return payload;
+        return config;
     }
 
     public PrincipalKey getUser()
     {
         return user;
-    }
-
-    public PrincipalKey getAuthor()
-    {
-        return author;
     }
 
     public static class Builder
@@ -95,11 +87,9 @@ public final class CreateScheduledJobParams
 
         private DescriptorKey descriptor;
 
-        private PropertyTree payload = new PropertyTree();
+        private PropertyTree config = new PropertyTree();
 
         private PrincipalKey user;
-
-        private PrincipalKey author;
 
         public Builder name( final ScheduledJobName name )
         {
@@ -131,9 +121,9 @@ public final class CreateScheduledJobParams
             return this;
         }
 
-        public Builder payload( final PropertyTree payload )
+        public Builder config( final PropertyTree config )
         {
-            this.payload = payload;
+            this.config = config;
             return this;
         }
 
@@ -143,18 +133,12 @@ public final class CreateScheduledJobParams
             return this;
         }
 
-        public Builder author( final PrincipalKey author )
-        {
-            this.author = author;
-            return this;
-        }
-
         private void validate()
         {
             Preconditions.checkNotNull( name, "name must be set." );
             Preconditions.checkNotNull( calendar, "calendar must be set." );
             Preconditions.checkNotNull( descriptor, "descriptor must be set." );
-            Preconditions.checkNotNull( payload, "payload must be set." );
+            Preconditions.checkNotNull( config, "config must be set." );
         }
 
         public CreateScheduledJobParams build()

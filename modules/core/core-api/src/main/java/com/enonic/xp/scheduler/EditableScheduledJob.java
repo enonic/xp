@@ -1,5 +1,7 @@
 package com.enonic.xp.scheduler;
 
+import java.time.Instant;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
@@ -18,11 +20,13 @@ public final class EditableScheduledJob
 
     public DescriptorKey descriptor;
 
-    public PropertyTree payload;
+    public PropertyTree config;
 
     public PrincipalKey user;
 
-    public PrincipalKey author;
+    private final PrincipalKey creator;
+
+    private final Instant createdTime;
 
     public EditableScheduledJob( final ScheduledJob source )
     {
@@ -32,8 +36,9 @@ public final class EditableScheduledJob
         this.enabled = source.isEnabled();
         this.descriptor = source.getDescriptor();
         this.user = source.getUser();
-        this.author = source.getAuthor();
-        this.payload = source.getPayload().copy();
+        this.config = source.getConfig().copy();
+        this.creator = source.getCreator();
+        this.createdTime = source.getCreatedTime();
     }
 
     public ScheduledJob build()
@@ -44,9 +49,10 @@ public final class EditableScheduledJob
             calendar( calendar ).
             enabled( enabled ).
             descriptor( descriptor ).
-            payload( payload ).
+            config( config ).
             user( user ).
-            author( author ).
+            creator( creator ).
+            createdTime( createdTime ).
             build();
     }
 }

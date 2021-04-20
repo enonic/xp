@@ -85,18 +85,22 @@ public class SchedulerResourceTest
             }
         };
 
-        final PropertyTree payload = new PropertyTree();
-        payload.addString( "string", "value" );
+        final PropertyTree config = new PropertyTree();
+        config.addString( "string", "value" );
 
         final ScheduledJob job1 = ScheduledJob.create().
             name( ScheduledJobName.from( "test1" ) ).
             descriptor( descriptor ).
             calendar( cronCalendar ).
-            payload( payload ).
+            config( config ).
             enabled( true ).
             description( "description" ).
-            author( PrincipalKey.from( "user:system:author" ) ).
+            creator( PrincipalKey.from( "user:system:creator" ) ).
+            modifier( PrincipalKey.from( "user:system:modifier" ) ).
             user( PrincipalKey.from( "user:system:user" ) ).
+            lastRun( Instant.parse( "2012-01-01T00:00:00.00Z" ) ).
+            createdTime( Instant.parse( "2010-01-01T00:00:00.00Z" ) ).
+            modifiedTime( Instant.parse( "2011-02-01T00:00:00.00Z" ) ).
             lastRun( Instant.parse( "2012-01-01T00:00:00.00Z" ) ).
             build();
 
@@ -104,6 +108,10 @@ public class SchedulerResourceTest
             name( ScheduledJobName.from( "test2" ) ).
             descriptor( descriptor ).
             calendar( oneTimeCalendar ).
+            creator( PrincipalKey.from( "user:system:creator" ) ).
+            modifier( PrincipalKey.from( "user:system:modifier" ) ).
+            createdTime( Instant.parse( "2010-01-01T00:00:00.00Z" ) ).
+            modifiedTime( Instant.parse( "2011-02-01T00:00:00.00Z" ) ).
             build();
 
         Mockito.when( schedulerService.list() ).thenReturn( List.of( job1, job2 ) );

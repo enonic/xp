@@ -43,24 +43,27 @@ public final class ScheduledJobMapper
         gen.value( "descriptor", job.getDescriptor().toString() );
         gen.value( "description", job.getDescription() );
         gen.value( "enabled", job.isEnabled() );
-        gen.value( "payload", job.getPayload() );
+        gen.value( "config", job.getConfig() );
         gen.value( "user", job.getUser() != null ? job.getUser().toString() : null );
-        gen.value( "author", job.getAuthor() != null ? job.getAuthor().toString() : null );
+        gen.value( "creator", job.getCreator() != null ? job.getCreator().toString() : null );
+        gen.value( "modifier", job.getModifier() != null ? job.getModifier().toString() : null );
+        gen.value( "createdTime", job.getCreatedTime() != null ? job.getCreatedTime().toString() : null );
+        gen.value( "modifiedTime", job.getModifiedTime() != null ? job.getModifiedTime().toString() : null );
 
         serializeCalendar( gen, job.getCalendar() );
-        serializePayload( gen, job.getPayload() );
+        serializeConfig( gen, job.getConfig() );
     }
 
-    private void serializePayload( final MapGenerator gen, final PropertyTree payload )
+    private void serializeConfig( final MapGenerator gen, final PropertyTree config )
     {
-        gen.map( "payload" );
-        new PropertyTreeMapper( payload ).serialize( gen );
+        gen.map( "config" );
+        new PropertyTreeMapper( config ).serialize( gen );
         gen.end();
     }
 
     private void serializeCalendar( final MapGenerator gen, final ScheduleCalendar calendar )
     {
-        gen.map( "calendar" );
+        gen.map( "schedule" );
         switch ( calendar.getType() )
         {
             case ONE_TIME:

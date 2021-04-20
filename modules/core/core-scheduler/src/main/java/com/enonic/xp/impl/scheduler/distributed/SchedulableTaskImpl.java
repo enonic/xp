@@ -66,7 +66,7 @@ public final class SchedulableTaskImpl
                 taskContext().runWith(
                     () -> OsgiSupport.withService( TaskService.class, taskService -> taskService.submitTask( SubmitTaskParams.create().
                         descriptorKey( job.getDescriptor() ).
-                        data( job.getPayload() ).
+                        data( job.getConfig() ).
                         build() ) ) );
 
                 OsgiSupport.withService( NodeService.class, nodeService -> UpdateLastRunCommand.create().
@@ -148,13 +148,19 @@ public final class SchedulableTaskImpl
 
         private final String descriptor;
 
-        private final PropertyTree payload;
+        private final PropertyTree config;
 
         private final String user;
 
-        private final String author;
+        private final String creator;
+
+        private final String modifier;
 
         private final Instant lastRun;
+
+        private final Instant createdTime;
+
+        private final Instant modifiedTime;
 
         SerializedForm( ScheduledJob job )
         {
@@ -163,9 +169,12 @@ public final class SchedulableTaskImpl
             this.calendar = job.getCalendar();
             this.enabled = job.isEnabled();
             this.descriptor = job.getDescriptor() != null ? job.getDescriptor().toString() : null;
-            this.payload = job.getPayload();
+            this.config = job.getConfig();
             this.user = job.getUser() != null ? job.getUser().toString() : null;
-            this.author = job.getAuthor() != null ? job.getAuthor().toString() : null;
+            this.creator = job.getCreator() != null ? job.getCreator().toString() : null;
+            this.modifier = job.getModifier() != null ? job.getModifier().toString() : null;
+            this.createdTime = job.getCreatedTime();
+            this.modifiedTime = job.getModifiedTime();
             this.lastRun = job.getLastRun();
         }
 
@@ -178,9 +187,12 @@ public final class SchedulableTaskImpl
                     calendar( calendar ).
                     enabled( enabled ).
                     descriptor( descriptor != null ? DescriptorKey.from( descriptor ) : null ).
-                    payload( payload ).
+                    config( config ).
                     user( user != null ? PrincipalKey.from( user ) : null ).
-                    author( author != null ? PrincipalKey.from( author ) : null ).
+                    creator( creator != null ? PrincipalKey.from( creator ) : null ).
+                    modifier( modifier != null ? PrincipalKey.from( modifier ) : null ).
+                    createdTime( createdTime ).
+                    modifiedTime( modifiedTime ).
                     lastRun( lastRun ).
                     build() ).
                 build();

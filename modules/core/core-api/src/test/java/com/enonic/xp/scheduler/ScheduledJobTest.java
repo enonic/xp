@@ -1,6 +1,8 @@
 package com.enonic.xp.scheduler;
 
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -29,6 +31,10 @@ public class ScheduledJobTest
             name( name ).
             descriptor( DescriptorKey.from( "app:key" ) ).
             calendar( mock( ScheduleCalendar.class ) ).
+            creator( PrincipalKey.from( "user:system:creator" ) ).
+            modifier( PrincipalKey.from( "user:system:creator" ) ).
+            createdTime( Instant.parse( "2016-11-02T10:36:00Z" ) ).
+            modifiedTime( Instant.parse( "2016-11-02T10:36:00Z" ) ).
             build().
             getName() );
     }
@@ -40,47 +46,63 @@ public class ScheduledJobTest
             name( ScheduledJobName.from( "name" ) ).
             descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
             calendar( mock( ScheduleCalendar.class ) ).
+            creator( PrincipalKey.from( "user:system:creator" ) ).
+            modifier( PrincipalKey.from( "user:system:creator" ) ).
+            createdTime( Instant.parse( "2016-11-02T10:36:00Z" ) ).
+            modifiedTime( Instant.parse( "2016-11-02T10:36:00Z" ) ).
             build();
 
-        assertNull( job.getAuthor() );
         assertNull( job.getUser() );
         assertNull( job.getDescription() );
-        assertNotNull( job.getPayload() );
+        assertNotNull( job.getConfig() );
         assertNotNull( job.getDescriptor() );
         assertNotNull( job.getCalendar() );
+        assertNotNull( job.getCreatedTime() );
+        assertNotNull( job.getModifiedTime() );
+        assertNotNull( job.getCreator() );
+        assertNotNull( job.getModifier() );
         assertFalse( job.isEnabled() );
     }
 
     @Test
     public void testBuilder()
     {
-        final PrincipalKey author = PrincipalKey.ofUser( IdProviderKey.createDefault(), "author" );
         final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.createDefault(), "user" );
+        final PrincipalKey creator = PrincipalKey.ofUser( IdProviderKey.createDefault(), "creator" );
+        final PrincipalKey modifier = PrincipalKey.ofUser( IdProviderKey.createDefault(), "modifier" );
+
+        final Instant createdTime = Instant.parse( "2016-11-02T10:36:00Z" );
+        final Instant modifiedTime = Instant.parse( "2020-11-02T10:36:00Z" );
 
         final DescriptorKey descriptor = DescriptorKey.from( ApplicationKey.BASE, "descriptor" );
 
-        final PropertyTree payload = new PropertyTree();
-        payload.addString( "property", "value" );
+        final PropertyTree config = new PropertyTree();
+        config.addString( "property", "value" );
 
         final String description = "description";
 
         final ScheduledJob job = ScheduledJob.create().
             name( ScheduledJobName.from( "name" ) ).
-            author( author ).
-            payload( payload ).
+            config( config ).
             user( user ).
             descriptor( descriptor ).
             description( description ).
             calendar( mock( ScheduleCalendar.class ) ).
             enabled( true ).
+            creator( creator ).modifier( modifier ).
+            createdTime( createdTime ).
+            modifiedTime( modifiedTime ).
             build();
 
-        assertEquals( author, job.getAuthor() );
-        assertEquals( payload, job.getPayload() );
+        assertEquals( config, job.getConfig() );
         assertEquals( user, job.getUser() );
         assertEquals( descriptor, job.getDescriptor() );
         assertEquals( description, job.getDescription() );
         assertTrue( job.isEnabled() );
+        assertEquals( creator, job.getCreator() );
+        assertEquals( modifier, job.getModifier() );
+        assertEquals( createdTime, job.getCreatedTime() );
+        assertEquals( modifiedTime, job.getModifiedTime() );
     }
 }
 

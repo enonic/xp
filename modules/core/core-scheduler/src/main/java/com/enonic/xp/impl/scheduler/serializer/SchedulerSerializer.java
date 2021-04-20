@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.TimeZone;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.scheduler.ScheduledJobPropertyNames;
@@ -35,28 +36,31 @@ public class SchedulerSerializer
         final PropertyTree tree = new PropertyTree();
         final PropertySet data = tree.getRoot();
 
-        data.ifNotNull().addString( ScheduledJobPropertyNames.DESCRIPTION, params.getDescription() );
-        data.addBoolean( ScheduledJobPropertyNames.ENABLED, params.isEnabled() );
+        data.ifNotNull().setString( ScheduledJobPropertyNames.DESCRIPTION, params.getDescription() );
+        data.setBoolean( ScheduledJobPropertyNames.ENABLED, params.isEnabled() );
 
         addCalendar( params, data );
 
         if ( params.getDescriptor() != null )
         {
-            data.addString( ScheduledJobPropertyNames.DESCRIPTOR, params.getDescriptor().toString() );
+            data.setString( ScheduledJobPropertyNames.DESCRIPTOR, params.getDescriptor().toString() );
         }
-        if ( params.getPayload() != null )
+        if ( params.getConfig() != null )
         {
-            data.addSet( ScheduledJobPropertyNames.PAYLOAD, params.getPayload().getRoot().copy( data.getTree() ) );
-        }
-
-        if ( params.getAuthor() != null )
-        {
-            data.addString( ScheduledJobPropertyNames.AUTHOR, params.getAuthor().toString() );
+            data.setSet( ScheduledJobPropertyNames.CONFIG, params.getConfig().getRoot().copy( data.getTree() ) );
         }
         if ( params.getUser() != null )
         {
-            data.addString( ScheduledJobPropertyNames.USER, params.getUser().toString() );
+            data.setString( ScheduledJobPropertyNames.USER, params.getUser().toString() );
         }
+
+        final Instant now = Instant.now();
+        final PrincipalKey contextUser = ContextAccessor.current().getAuthInfo().getUser().getKey();
+
+        data.setString( ScheduledJobPropertyNames.CREATOR, contextUser.toString() );
+        data.setString( ScheduledJobPropertyNames.MODIFIER, contextUser.toString() );
+        data.setInstant( ScheduledJobPropertyNames.CREATED_TIME, now );
+        data.setInstant( ScheduledJobPropertyNames.MODIFIED_TIME, now );
 
         return tree;
     }
@@ -68,28 +72,29 @@ public class SchedulerSerializer
         final PropertyTree tree = new PropertyTree();
         final PropertySet data = tree.getRoot();
 
-        data.ifNotNull().addString( ScheduledJobPropertyNames.DESCRIPTION, modifiedJob.getDescription() );
-        data.addBoolean( ScheduledJobPropertyNames.ENABLED, modifiedJob.isEnabled() );
+        data.ifNotNull().setString( ScheduledJobPropertyNames.DESCRIPTION, modifiedJob.getDescription() );
+        data.setBoolean( ScheduledJobPropertyNames.ENABLED, modifiedJob.isEnabled() );
 
         addCalendar( modifiedJob, data );
 
         if ( modifiedJob.getDescriptor() != null )
         {
-            data.addString( ScheduledJobPropertyNames.DESCRIPTOR, modifiedJob.getDescriptor().toString() );
+            data.setString( ScheduledJobPropertyNames.DESCRIPTOR, modifiedJob.getDescriptor().toString() );
         }
-        if ( modifiedJob.getPayload() != null )
+        if ( modifiedJob.getConfig() != null )
         {
-            data.addSet( ScheduledJobPropertyNames.PAYLOAD, modifiedJob.getPayload().getRoot().copy( data.getTree() ) );
-        }
-
-        if ( modifiedJob.getAuthor() != null )
-        {
-            data.addString( ScheduledJobPropertyNames.AUTHOR, modifiedJob.getAuthor().toString() );
+            data.setSet( ScheduledJobPropertyNames.CONFIG, modifiedJob.getConfig().getRoot().copy( data.getTree() ) );
         }
         if ( modifiedJob.getUser() != null )
         {
-            data.addString( ScheduledJobPropertyNames.USER, modifiedJob.getUser().toString() );
+            data.setString( ScheduledJobPropertyNames.USER, modifiedJob.getUser().toString() );
         }
+
+        final Instant now = Instant.now();
+        final PrincipalKey contextUser = ContextAccessor.current().getAuthInfo().getUser().getKey();
+
+        data.setString( ScheduledJobPropertyNames.MODIFIER, contextUser.toString() );
+        data.setInstant( ScheduledJobPropertyNames.MODIFIED_TIME, now );
 
         return tree;
     }
@@ -108,16 +113,25 @@ public class SchedulerSerializer
             descriptor( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.DESCRIPTOR ) ).
                 map( DescriptorKey::from ).
                 orElse( null ) ).
-            payload( Optional.ofNullable( data.getSet( ScheduledJobPropertyNames.PAYLOAD ) ).
+            config( Optional.ofNullable( data.getSet( ScheduledJobPropertyNames.CONFIG ) ).
                 map( PropertySet::toTree ).
-                orElse( null ) ).
-            author( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.AUTHOR ) ).
-                map( PrincipalKey::from ).
                 orElse( null ) ).
             user( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.USER ) ).
                 map( PrincipalKey::from ).
                 orElse( null ) ).
             lastRun( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.LAST_RUN ) ).
+                map( Instant::parse ).
+                orElse( null ) ).
+            creator( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.CREATOR ) ).
+                map( PrincipalKey::from ).
+                orElse( null ) ).
+            modifier( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.MODIFIER ) ).
+                map( PrincipalKey::from ).
+                orElse( null ) ).
+            createdTime( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.CREATED_TIME ) ).
+                map( Instant::parse ).
+                orElse( null ) ).
+            modifiedTime( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.MODIFIED_TIME ) ).
                 map( Instant::parse ).
                 orElse( null ) ).
             build();
@@ -141,21 +155,21 @@ public class SchedulerSerializer
         {
             case CRON:
                 final CronCalendar cronCalendar = ( (CronCalendar) modifiedJob.getCalendar() );
-                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, cronCalendar.getCronValue() );
-                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_TIMEZONE, cronCalendar.getTimeZone().getID() );
-                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.CRON.name() );
+                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_VALUE, cronCalendar.getCronValue() );
+                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_TIMEZONE, cronCalendar.getTimeZone().getID() );
+                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.CRON.name() );
                 break;
 
             case ONE_TIME:
                 final OneTimeCalendar oneTimeCalendar = ( (OneTimeCalendar) modifiedJob.getCalendar() );
-                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, oneTimeCalendar.getValue().toString() );
-                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.ONE_TIME.name() );
+                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_VALUE, oneTimeCalendar.getValue().toString() );
+                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.ONE_TIME.name() );
                 break;
 
             default:
                 throw new IllegalStateException( String.format( "invalid calendar type: '%s'", modifiedJob.getCalendar().getType() ) );
         }
-        data.addSet( ScheduledJobPropertyNames.CALENDAR, calendarSet );
+        data.setSet( ScheduledJobPropertyNames.CALENDAR, calendarSet );
     }
 
     private static void addCalendar( final CreateScheduledJobParams params, final PropertySet data )
@@ -166,22 +180,22 @@ public class SchedulerSerializer
         {
             case CRON:
                 final CronCalendar cronCalendar = ( (CronCalendar) params.getCalendar() );
-                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, cronCalendar.getCronValue() );
-                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_TIMEZONE, cronCalendar.getTimeZone().getID() );
-                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.CRON.name() );
+                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_VALUE, cronCalendar.getCronValue() );
+                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_TIMEZONE, cronCalendar.getTimeZone().getID() );
+                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.CRON.name() );
                 break;
 
             case ONE_TIME:
                 final OneTimeCalendar oneTimeCalendar = ( (OneTimeCalendar) params.getCalendar() );
-                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, oneTimeCalendar.getValue().toString() );
-                calendarSet.addString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.ONE_TIME.name() );
+                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_VALUE, oneTimeCalendar.getValue().toString() );
+                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.ONE_TIME.name() );
                 break;
 
             default:
                 throw new IllegalStateException( String.format( "invalid calendar type: '%s'", params.getCalendar().getType() ) );
         }
 
-        data.addSet( ScheduledJobPropertyNames.CALENDAR, calendarSet );
+        data.setSet( ScheduledJobPropertyNames.CALENDAR, calendarSet );
     }
 
     private static ScheduleCalendar createCalendar( final PropertySet data )

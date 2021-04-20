@@ -68,11 +68,11 @@ public class CreateScheduledJobHandlerTest
 
 
     @Test
-    public void createWithoutPayload()
+    public void createWithoutConfig()
         throws Exception
     {
         mockCronCalendar();
 
-        runFunction( "/test/CreateScheduledJobHandlerTest.js", "createWithoutPayload" );
+        runFunction( "/test/CreateScheduledJobHandlerTest.js", "createWithoutConfig" );
     }
 }
