@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
@@ -202,9 +203,8 @@ public class SchedulableTaskImplTest
         final SchedulableTaskImpl deserializedTask = deserialize( serialized );
 
         assertEquals( task.getJob().getName(), deserializedTask.getJob().getName() );
-        assertEquals( task.getJob().getPayload(), deserializedTask.getJob().getPayload() );
+        assertEquals( task.getJob().getConfig(), deserializedTask.getJob().getConfig() );
         assertEquals( task.getJob().getUser(), deserializedTask.getJob().getUser() );
-        assertEquals( task.getJob().getAuthor(), deserializedTask.getJob().getAuthor() );
         assertEquals( task.getJob().getDescriptor(), deserializedTask.getJob().getDescriptor() );
         assertEquals( task.getJob().getDescription(), deserializedTask.getJob().getDescription() );
         assertEquals( task.getJob().isEnabled(), deserializedTask.getJob().isEnabled() );
@@ -226,10 +226,13 @@ public class SchedulableTaskImplTest
                 value( "* * * * *" ).
                 timeZone( TimeZone.getTimeZone( ZoneId.systemDefault() ) ).
                 build() ).
-            payload( data ).
+            config( data ).
             user( user ).
-            author( PrincipalKey.from( "user:system:author" ) ).
             enabled( true ).
+            creator( PrincipalKey.from( "user:system:creator" ) ).
+            modifier( PrincipalKey.from( "user:system:creator" ) ).
+            createdTime( Instant.parse( "2021-02-26T10:44:33.170079900Z" ) ).
+            modifiedTime( Instant.parse( "2021-03-26T10:44:33.170079900Z" ) ).
             build();
 
         final SchedulableTaskImpl task = SchedulableTaskImpl.create().
@@ -252,7 +255,11 @@ public class SchedulableTaskImplTest
         jobData.addString( ScheduledJobPropertyNames.DESCRIPTOR, "app:key" );
         jobData.addBoolean( ScheduledJobPropertyNames.ENABLED, true );
         jobData.addSet( ScheduledJobPropertyNames.CALENDAR, calendar );
-        jobData.addSet( ScheduledJobPropertyNames.PAYLOAD, new PropertySet() );
+        jobData.addSet( ScheduledJobPropertyNames.CONFIG, new PropertySet() );
+        jobData.setString( ScheduledJobPropertyNames.CREATOR, "user:system:creator" );
+        jobData.setString( ScheduledJobPropertyNames.MODIFIER, "user:system:modifier" );
+        jobData.setString( ScheduledJobPropertyNames.CREATED_TIME, "2021-02-26T10:44:33.170079900Z" );
+        jobData.setString( ScheduledJobPropertyNames.MODIFIED_TIME, "2021-03-26T10:44:33.170079900Z" );
 
         final Node job = Node.create().
             id( NodeId.from( "abc" ) ).

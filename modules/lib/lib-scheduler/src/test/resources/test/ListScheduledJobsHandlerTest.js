@@ -7,12 +7,15 @@ var result1Expected = [
         'descriptor': 'appKey:task',
         'description': 'job description',
         'enabled': true,
-        'payload': {
+        'config': {
             'a': 1
         },
         'user': 'user:system:user',
-        'author': 'user:system:author',
-        'calendar': {
+        'creator': 'user:system:creator',
+        'modifier': 'user:system:creator',
+        'createdTime': '2016-11-02T10:36:00Z',
+        'modifiedTime': '2016-11-02T10:36:00Z',
+        'schedule': {
             'value': '2012-01-01T00:00:00Z',
             'type': 'ONE_TIME'
         }
@@ -25,12 +28,15 @@ var result2Expected = [
         'descriptor': 'appKey:task',
         'description': 'job description',
         'enabled': true,
-        'payload': {
+        'config': {
             'a': 1
         },
         'user': 'user:system:user',
-        'author': 'user:system:author',
-        'calendar': {
+        'creator': 'user:system:creator',
+        'modifier': 'user:system:creator',
+        'createdTime': '2016-11-02T10:36:00Z',
+        'modifiedTime': '2016-11-02T10:36:00Z',
+        'schedule': {
             'value': '* * * * *',
             'timeZone': 'GMT+05:30',
             'type': 'CRON'
@@ -41,31 +47,33 @@ var result2Expected = [
         'descriptor': 'appKey:task',
         'description': 'job description',
         'enabled': true,
-        'payload': {
+        'config': {
             'a': 1
         },
         'user': 'user:system:user',
-        'author': 'user:system:author',
-        'calendar': {
+        'creator': 'user:system:creator',
+        'modifier': 'user:system:creator',
+        'createdTime': '2016-11-02T10:36:00Z',
+        'modifiedTime': '2016-11-02T10:36:00Z',
+        'schedule': {
             'value': '2012-01-01T00:00:00Z',
             'type': 'ONE_TIME'
         }
     }
 ];
 
-function createJob(name, calendar) {
+function createJob(name, schedule) {
     scheduler.create({
         name,
         descriptor: 'appKey:task',
         description: 'job description',
         user: 'user:system:user',
-        author: 'user:system:author',
         enabled: true,
-        payload: {
+        config: {
             a: 1
 
         },
-        calendar
+        schedule
     });
 }
 

@@ -26,6 +26,7 @@ import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.scheduler.SchedulerService;
 import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,10 +52,13 @@ public abstract class BaseScheduledJobHandlerTest
                 descriptor( params.getDescriptor() ).
                 description( params.getDescription() ).
                 calendar( params.getCalendar() ).
-                payload( params.getPayload() ).
+                config( params.getConfig() ).
                 enabled( params.isEnabled() ).
                 user( params.getUser() ).
-                author( params.getAuthor() ).
+                creator( PrincipalKey.from( "user:system:creator" ) ).
+                modifier( PrincipalKey.from( "user:system:creator" ) ).
+                createdTime( Instant.parse( "2016-11-02T10:36:00Z" ) ).
+                modifiedTime( Instant.parse( "2016-11-02T10:36:00Z" ) ).
                 build();
 
             jobs.put( job.getName(), job );
@@ -69,7 +73,22 @@ public abstract class BaseScheduledJobHandlerTest
 
             params.getEditor().edit( editableJob );
 
-            final ScheduledJob modifiedJob = editableJob.build();
+            ScheduledJob modifiedJob = editableJob.build();
+
+            modifiedJob = ScheduledJob.create().
+                name( modifiedJob.getName() ).
+                description( modifiedJob.getDescription() ).
+                calendar( modifiedJob.getCalendar() ).
+                enabled( modifiedJob.isEnabled() ).
+                descriptor( modifiedJob.getDescriptor() ).
+                config( modifiedJob.getConfig() ).
+                user( modifiedJob.getUser() ).
+                creator( modifiedJob.getCreator() ).
+                createdTime( modifiedJob.getCreatedTime() ).
+                modifiedTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) ).
+                modifier( PrincipalKey.from( "user:system:modifier" ) ).
+                build();
+
             jobs.put( params.getName(), modifiedJob );
 
             return modifiedJob;

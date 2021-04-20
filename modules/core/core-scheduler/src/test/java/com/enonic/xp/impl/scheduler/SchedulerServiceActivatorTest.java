@@ -112,7 +112,7 @@ class SchedulerServiceActivatorTest
             name( ScheduledJobName.from( "name" ) ).
             descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
             calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) ).
-            payload( new PropertyTree() ).
+            config( new PropertyTree() ).
             build();
 
         mockNode( jobParams );
@@ -131,7 +131,7 @@ class SchedulerServiceActivatorTest
             name( ScheduledJobName.from( "name" ) ).
             descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
             calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) ).
-            payload( new PropertyTree() ).
+            config( new PropertyTree() ).
             build();
 
         when( schedulerConfig.jobs() ).thenReturn( Set.of( jobParams ) );
@@ -152,7 +152,7 @@ class SchedulerServiceActivatorTest
             name( ScheduledJobName.from( "name" ) ).
             descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
             calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) ).
-            payload( new PropertyTree() ).
+            config( new PropertyTree() ).
             build();
 
         when( schedulerConfig.jobs() ).thenReturn( Set.of( jobParams ) );
@@ -175,7 +175,12 @@ class SchedulerServiceActivatorTest
         jobData.addString( ScheduledJobPropertyNames.DESCRIPTOR, params.getDescriptor().toString() );
         jobData.addBoolean( ScheduledJobPropertyNames.ENABLED, params.isEnabled() );
         jobData.addSet( ScheduledJobPropertyNames.CALENDAR, calendar );
-        jobData.addSet( ScheduledJobPropertyNames.PAYLOAD, params.getPayload().getRoot().copy( jobData ) );
+        jobData.addSet( ScheduledJobPropertyNames.CONFIG, params.getConfig().getRoot().copy( jobData ) );
+
+        jobData.setString( ScheduledJobPropertyNames.CREATOR, "user:system:creator" );
+        jobData.setString( ScheduledJobPropertyNames.MODIFIER, "user:system:creator" );
+        jobData.setString( ScheduledJobPropertyNames.CREATED_TIME, "2016-11-02T10:36:00Z" );
+        jobData.setString( ScheduledJobPropertyNames.MODIFIED_TIME, "2016-11-02T10:36:00Z" );
 
         final Node job = Node.create().
             id( NodeId.from( "abc" ) ).

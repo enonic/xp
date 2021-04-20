@@ -26,13 +26,19 @@ public final class ScheduledJob
 
     private final DescriptorKey descriptor;
 
-    private final PropertyTree payload;
+    private final PropertyTree config;
 
     private final PrincipalKey user;
 
-    private final PrincipalKey author;
+    private final PrincipalKey creator;
+
+    private final PrincipalKey modifier;
 
     private final Instant lastRun;
+
+    private final Instant createdTime;
+
+    private final Instant modifiedTime;
 
     private ScheduledJob( final Builder builder )
     {
@@ -41,10 +47,13 @@ public final class ScheduledJob
         this.calendar = builder.calendar;
         this.enabled = builder.enabled;
         this.descriptor = builder.descriptor;
-        this.payload = builder.payload;
+        this.config = builder.config;
         this.user = builder.user;
-        this.author = builder.author;
+        this.creator = builder.creator;
+        this.modifier = builder.modifier;
         this.lastRun = builder.lastRun;
+        this.createdTime = builder.createdTime;
+        this.modifiedTime = builder.modifiedTime;
     }
 
     public static Builder create()
@@ -77,9 +86,9 @@ public final class ScheduledJob
         return descriptor;
     }
 
-    public PropertyTree getPayload()
+    public PropertyTree getConfig()
     {
-        return payload;
+        return config;
     }
 
     public PrincipalKey getUser()
@@ -87,9 +96,24 @@ public final class ScheduledJob
         return user;
     }
 
-    public PrincipalKey getAuthor()
+    public PrincipalKey getCreator()
     {
-        return author;
+        return creator;
+    }
+
+    public PrincipalKey getModifier()
+    {
+        return modifier;
+    }
+
+    public Instant getCreatedTime()
+    {
+        return createdTime;
+    }
+
+    public Instant getModifiedTime()
+    {
+        return modifiedTime;
     }
 
     public Instant getLastRun()
@@ -109,11 +133,17 @@ public final class ScheduledJob
 
         private DescriptorKey descriptor;
 
-        private PropertyTree payload = new PropertyTree();
+        private PropertyTree config = new PropertyTree();
 
         private PrincipalKey user;
 
-        private PrincipalKey author;
+        private PrincipalKey creator;
+
+        private PrincipalKey modifier;
+
+        private Instant createdTime;
+
+        private Instant modifiedTime;
 
         private Instant lastRun;
 
@@ -147,9 +177,9 @@ public final class ScheduledJob
             return this;
         }
 
-        public Builder payload( final PropertyTree payload )
+        public Builder config( final PropertyTree config )
         {
-            this.payload = payload;
+            this.config = config;
             return this;
         }
 
@@ -159,9 +189,27 @@ public final class ScheduledJob
             return this;
         }
 
-        public Builder author( final PrincipalKey author )
+        public Builder creator( final PrincipalKey creator )
         {
-            this.author = author;
+            this.creator = creator;
+            return this;
+        }
+
+        public Builder modifier( final PrincipalKey modifier )
+        {
+            this.modifier = modifier;
+            return this;
+        }
+
+        public Builder createdTime( final Instant createdTime )
+        {
+            this.createdTime = createdTime;
+            return this;
+        }
+
+        public Builder modifiedTime( final Instant modifiedTime )
+        {
+            this.modifiedTime = modifiedTime;
             return this;
         }
 
@@ -176,7 +224,7 @@ public final class ScheduledJob
             Preconditions.checkNotNull( name, "name must be set." );
             Preconditions.checkNotNull( calendar, "calendar must be set." );
             Preconditions.checkNotNull( descriptor, "descriptor must be set." );
-            Preconditions.checkNotNull( payload, "payload must be set." );
+            Preconditions.checkNotNull( config, "config must be set." );
         }
 
         public ScheduledJob build()

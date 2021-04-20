@@ -5,7 +5,7 @@ schedulerLib1.create({
     name: 'myJob',
     descriptor: 'appKey:task',
     enabled: false,
-    calendar: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
+    schedule: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
 });
 
 // Deletes existing scheduled job

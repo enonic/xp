@@ -7,9 +7,8 @@ function createJob() {
         descriptor: 'appKey:task',
         description: 'job description',
         user: 'user:system:user',
-        author: 'user:system:author',
         enabled: true,
-        payload: {
+        config: {
             a: 1,
             b: 2,
             c: ['1', '2'],
@@ -20,7 +19,7 @@ function createJob() {
                 }
             }
         },
-        calendar: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
+        schedule: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
     });
 }
 
