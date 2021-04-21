@@ -22,13 +22,16 @@ public class SchedulerServiceImpl
 
     private final SchedulerExecutorService schedulerExecutorService;
 
+    private final ScheduleAuditLogSupport auditLogSupport;
+
     public SchedulerServiceImpl( final IndexService indexService, final RepositoryService repositoryService, final NodeService nodeService,
-                                 final SchedulerExecutorService schedulerExecutorService )
+                                 final SchedulerExecutorService schedulerExecutorService, final ScheduleAuditLogSupport auditLogSupport )
     {
         this.indexService = indexService;
         this.repositoryService = repositoryService;
         this.nodeService = nodeService;
         this.schedulerExecutorService = schedulerExecutorService;
+        this.auditLogSupport = auditLogSupport;
     }
 
     public void initialize()
@@ -43,11 +46,15 @@ public class SchedulerServiceImpl
     @Override
     public ScheduledJob create( final CreateScheduledJobParams params )
     {
-        return CreateScheduledJobCommand.create().
+        final ScheduledJob job = CreateScheduledJobCommand.create().
             nodeService( nodeService ).
             params( params ).
             build().
             execute();
+
+        auditLogSupport.create( params, job );
+
+        return job;
     }
 
     @Override
@@ -59,11 +66,15 @@ public class SchedulerServiceImpl
             build().
             execute();
 
-        return ModifyScheduledJobCommand.create().
+        final ScheduledJob job = ModifyScheduledJobCommand.create().
             nodeService( nodeService ).
             params( params ).
             build().
             execute();
+
+        auditLogSupport.modify( params, job );
+
+        return job;
     }
 
     @Override
@@ -75,11 +86,15 @@ public class SchedulerServiceImpl
             build().
             execute();
 
-        return DeleteScheduledJobCommand.create().
+        final boolean result = DeleteScheduledJobCommand.create().
             nodeService( nodeService ).
             name( name ).
             build().
             execute();
+
+        auditLogSupport.delete( name, result );
+
+        return result;
     }
 
     @Override
