@@ -735,7 +735,6 @@ public class ContentServiceImpl
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
-            contentService( this ).
             moveListener( params.getMoveContentListener() ).
             build().
             execute();

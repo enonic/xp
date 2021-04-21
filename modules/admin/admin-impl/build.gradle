@@ -6,6 +6,7 @@ dependencies {
     testImplementation( testFixtures( project(":core:core-app") ) )
     testImplementation( testFixtures( project(":web:web-api") ) )
     testImplementation( testFixtures( project(":jaxrs:jaxrs-impl") ) )
+    testImplementation( testFixtures( project(":core:core-schema") ) )
 }
 
 jar {

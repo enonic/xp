@@ -3,10 +3,16 @@ package com.enonic.xp.core.impl.content;
 import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationWildcardMatcher;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -27,10 +33,15 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.RangeFilter;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 
 abstract class AbstractContentCommand
 {
+    private static final Logger LOG = LoggerFactory.getLogger( AbstractContentCommand.class );
+
     final NodeService nodeService;
 
     final ContentTypeService contentTypeService;
@@ -49,16 +60,12 @@ abstract class AbstractContentCommand
 
     Content getContent( final ContentId contentId )
     {
-        return GetContentByIdCommand.create( contentId, this ).
-            build().
-            execute();
+        return GetContentByIdCommand.create( contentId, this ).build().execute();
     }
 
     Content getContent( final ContentPath contentPath )
     {
-        return GetContentByPathCommand.create( contentPath, this ).
-            build().
-            execute();
+        return GetContentByPathCommand.create( contentPath, this ).build().execute();
     }
 
     protected Contents filter( Contents contents )
@@ -82,9 +89,8 @@ abstract class AbstractContentCommand
     protected Contents filterScheduledPublished( Contents contents )
     {
         final Instant now = Instant.now();
-        final List<Content> filteredContentList = contents.stream().
-            filter( content -> !this.contentPendingOrExpired( content, now ) ).
-            collect( Collectors.toList() );
+        final List<Content> filteredContentList =
+            contents.stream().filter( content -> !this.contentPendingOrExpired( content, now ) ).collect( Collectors.toList() );
         return Contents.from( filteredContentList );
     }
 
@@ -109,8 +115,8 @@ abstract class AbstractContentCommand
         if ( publishInfo != null )
         {
             //If publishTo is before the current time or publishFrom after the current time
-            return (publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0) ||
-                (publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0);
+            return ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 ) ||
+                ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 );
         }
         return false;
     }
@@ -125,7 +131,7 @@ abstract class AbstractContentCommand
                 data.getInstant( PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_FROM ) );
             final Instant publishTo =
                 data.getInstant( PropertyPath.from( ContentPropertyNames.PUBLISH_INFO, ContentPropertyNames.PUBLISH_TO ) );
-            return (publishTo != null && publishTo.compareTo( now ) < 0) || (publishFrom != null && publishFrom.compareTo( now ) > 0);
+            return ( publishTo != null && publishTo.compareTo( now ) < 0 ) || ( publishFrom != null && publishFrom.compareTo( now ) > 0 );
         }
         return false;
     }
@@ -134,18 +140,18 @@ abstract class AbstractContentCommand
     {
         if ( shouldFilterScheduledPublished() )
         {
-            final BooleanFilter notPendingFilter = BooleanFilter.create().
-                mustNot( RangeFilter.create().
-                    fieldName( ContentIndexPath.PUBLISH_FROM.getPath() ).
-                    from( ValueFactory.newDateTime( Instant.now() ) ).
-                    build() ).
-                build();
-            final BooleanFilter notExpiredFilter = BooleanFilter.create().
-                mustNot( RangeFilter.create().
-                    fieldName( ContentIndexPath.PUBLISH_TO.getPath() ).
-                    to( ValueFactory.newDateTime( Instant.now() ) ).
-                    build() ).
-                build();
+            final BooleanFilter notPendingFilter = BooleanFilter.create()
+                .mustNot( RangeFilter.create()
+                              .fieldName( ContentIndexPath.PUBLISH_FROM.getPath() )
+                              .from( ValueFactory.newDateTime( Instant.now() ) )
+                              .build() )
+                .build();
+            final BooleanFilter notExpiredFilter = BooleanFilter.create()
+                .mustNot( RangeFilter.create()
+                              .fieldName( ContentIndexPath.PUBLISH_TO.getPath() )
+                              .to( ValueFactory.newDateTime( Instant.now() ) )
+                              .build() )
+                .build();
             return Filters.from( notPendingFilter, notExpiredFilter );
         }
         return Filters.from();
@@ -153,12 +159,67 @@ abstract class AbstractContentCommand
 
     protected <T> T runAsAdmin( final Callable<T> callable )
     {
-        return ContextBuilder.from( ContextAccessor.current() ).
-            authInfo( ContentConstants.CONTENT_SU_AUTH_INFO ).
-            build().
-            callWith( callable );
+        return ContextBuilder.from( ContextAccessor.current() )
+            .authInfo( ContentConstants.CONTENT_SU_AUTH_INFO )
+            .build()
+            .callWith( callable );
     }
 
+    protected void validateParentChildRelations( final ContentPath parentPath, final ContentTypeName typeName )
+    {
+        if ( parentPath.isRoot() )
+        {
+            // root allows anything except page-template and template-folder.
+            if ( typeName.isPageTemplate() || typeName.isTemplateFolder() )
+            {
+                throw new IllegalArgumentException( String.format( "A content with type '%s' cannot be a child of root", typeName ) );
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        final Content parent = getContent( parentPath );
+
+        final ContentTypeName parentTypeName = parent.getType();
+
+        if ( ( typeName.isTemplateFolder() && !parentTypeName.isSite() ) ||
+            ( typeName.isPageTemplate() && !parentTypeName.isTemplateFolder() ) )
+        {
+            throw new IllegalArgumentException(
+                String.format( "A content with type '%s' cannot be a child of '%s' with path %s", typeName, parentTypeName, parentPath ) );
+        }
+
+        final ContentType parentType = contentTypeService.getByName( GetContentTypeParams.from( parentTypeName ) );
+        if ( parentType == null )
+        {
+            LOG.debug( "Bypass validation for unknown content type of parent with path {}", parentPath );
+            return;
+        }
+
+        if ( !parentType.allowChildContent() )
+        {
+            throw new IllegalArgumentException(
+                String.format( "Child content is not allowed in '%s' with path %s", parentTypeName, parentPath ) );
+        }
+
+        final boolean isAllowed =
+            allowContentTypeFilter( parentTypeName.getApplicationKey(), parentType.getAllowChildContentType() ).test( typeName );
+
+        if ( !isAllowed )
+        {
+            throw new IllegalArgumentException(
+                String.format( "A content with type '%s' cannot be a child of '%s' with path %s", typeName, parentTypeName, parentPath ) );
+        }
+    }
+
+    private static Predicate<ContentTypeName> allowContentTypeFilter( final ApplicationKey applicationKey, final List<String> wildcards )
+    {
+        final ApplicationWildcardMatcher<ContentTypeName> wildcardMatcher =
+            new ApplicationWildcardMatcher<>( applicationKey, ContentTypeName::toString );
+        return wildcards.stream().map( wildcardMatcher::createPredicate ).reduce( Predicate::or ).orElse( s -> true );
+    }
 
     public static class Builder<B extends Builder>
     {

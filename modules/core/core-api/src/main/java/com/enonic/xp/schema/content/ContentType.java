@@ -1,6 +1,8 @@
 package com.enonic.xp.schema.content;
 
 
+import java.util.List;
+
 import com.google.common.base.MoreObjects;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -36,6 +38,8 @@ public final class ContentType
 
     private final InputTypeConfig schemaConfig;
 
+    private final List<String> allowChildContentType;
+
     ContentType( final Builder builder )
     {
         super( builder );
@@ -58,6 +62,7 @@ public final class ContentType
         this.displayNameLabel = builder.displayNameLabel;
         this.displayNameLabelI18nKey = builder.displayNameLabelI18nKey;
         this.schemaConfig = builder.schemaConfig.build();
+        this.allowChildContentType = List.copyOf( builder.allowChildContentType );
     }
 
     public static Builder create()
@@ -130,6 +135,11 @@ public final class ContentType
         return schemaConfig;
     }
 
+    public List<String> getAllowChildContentType()
+    {
+        return allowChildContentType;
+    }
+
     @Override
     public String toString()
     {
@@ -173,6 +183,8 @@ public final class ContentType
 
         private String displayNameLabelI18nKey;
 
+        private List<String> allowChildContentType = List.of();
+
         private final InputTypeConfig.Builder schemaConfig = InputTypeConfig.create();
 
         private Builder()
@@ -206,6 +218,7 @@ public final class ContentType
             {
                 this.schemaConfig.config( source.schemaConfig );
             }
+            this.allowChildContentType = source.allowChildContentType;
         }
 
         @Override
@@ -307,6 +320,12 @@ public final class ContentType
         public Builder schemaConfig( final InputTypeConfig config )
         {
             this.schemaConfig.config( config );
+            return this;
+        }
+
+        public Builder allowChildContentType( final List<String> allowChildContentType )
+        {
+            this.allowChildContentType = allowChildContentType;
             return this;
         }
 

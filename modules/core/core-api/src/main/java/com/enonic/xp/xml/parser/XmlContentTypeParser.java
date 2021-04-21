@@ -2,6 +2,7 @@ package com.enonic.xp.xml.parser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationRelativeResolver;
@@ -56,6 +57,8 @@ public final class XmlContentTypeParser
         final XmlFormMapper mapper = new XmlFormMapper( this.currentApplication );
         this.builder.form( mapper.buildForm( root.getChild( "form" ) ) );
         this.builder.schemaConfig( CONFIG_MAPPER.build( root.getChild( "config" ) ) );
+        this.builder.allowChildContentType(
+            root.getChildren( "allow-child-content-type" ).stream().map( DomElement::getValue ).collect( Collectors.toList() ) );
     }
 
     private XDataNames buildMetaData( final DomElement root )
