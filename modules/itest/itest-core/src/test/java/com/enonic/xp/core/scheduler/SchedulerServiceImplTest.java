@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -16,10 +17,14 @@ import com.hazelcast.scheduledexecutor.IScheduledFuture;
 import com.hazelcast.scheduledexecutor.ScheduledTaskHandler;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.scheduler.CalendarServiceImpl;
+import com.enonic.xp.impl.scheduler.ScheduleAuditLogExecutorImpl;
+import com.enonic.xp.impl.scheduler.ScheduleAuditLogSupportImpl;
+import com.enonic.xp.impl.scheduler.SchedulerConfig;
 import com.enonic.xp.impl.scheduler.SchedulerExecutorService;
 import com.enonic.xp.impl.scheduler.SchedulerServiceImpl;
 import com.enonic.xp.node.NodeAccessException;
@@ -70,7 +75,6 @@ class SchedulerServiceImplTest
     @Mock
     private SchedulerExecutorService schedulerExecutorService;
 
-
     private SchedulerServiceImpl schedulerService;
 
     private CalendarServiceImpl calendarService;
@@ -90,7 +94,16 @@ class SchedulerServiceImplTest
     {
         super.setUpNode();
 
-        schedulerService = new SchedulerServiceImpl( indexService, repositoryService, nodeService, schedulerExecutorService );
+        final AuditLogService auditLogService = Mockito.mock( AuditLogService.class );
+
+        final SchedulerConfig schedulerConfig = Mockito.mock( SchedulerConfig.class );
+        Mockito.when( schedulerConfig.auditlogEnabled() ).thenReturn( Boolean.TRUE );
+
+        final ScheduleAuditLogSupportImpl auditLogSupport =
+            new ScheduleAuditLogSupportImpl( schedulerConfig, new ScheduleAuditLogExecutorImpl(), auditLogService );
+
+        schedulerService =
+            new SchedulerServiceImpl( indexService, repositoryService, nodeService, schedulerExecutorService, auditLogSupport );
 
         adminContext().runWith( () -> schedulerService.initialize() );
 

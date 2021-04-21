@@ -66,6 +66,9 @@ class SchedulerServiceActivatorTest
     @Mock(stubOnly = true)
     private SchedulerConfig schedulerConfig;
 
+    @Mock(stubOnly = true)
+    private ScheduleAuditLogSupport auditLogSupport;
+
     private SchedulerServiceActivator activator;
 
     private CalendarService calendarService;
@@ -78,8 +81,8 @@ class SchedulerServiceActivatorTest
         when( indexService.isMaster() ).thenReturn( true );
         when( indexService.waitForYellowStatus() ).thenReturn( true );
 
-        activator =
-            new SchedulerServiceActivator( repositoryService, indexService, nodeService, schedulerExecutorService, schedulerConfig );
+        activator = new SchedulerServiceActivator( repositoryService, indexService, nodeService, schedulerExecutorService, schedulerConfig,
+                                                   auditLogSupport );
 
         when( bundleContext.registerService( same( SchedulerService.class ), any( SchedulerService.class ), isNull() ) ).
             thenReturn( service );

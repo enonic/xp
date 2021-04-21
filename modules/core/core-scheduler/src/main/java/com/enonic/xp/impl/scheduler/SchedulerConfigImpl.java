@@ -71,6 +71,13 @@ public class SchedulerConfigImpl
 
     }
 
+    @Override
+    public boolean auditlogEnabled()
+    {
+        final Boolean enabled = this.config.get( "auditlog.enabled", Boolean.class );
+        return enabled == null || enabled;
+    }
+
     private Set<ScheduledJobName> parseNames( final Configuration jobConfig )
     {
         return jobConfig.asMap().keySet().

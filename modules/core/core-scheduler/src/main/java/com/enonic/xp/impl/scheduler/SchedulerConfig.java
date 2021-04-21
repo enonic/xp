@@ -7,4 +7,6 @@ import com.enonic.xp.scheduler.CreateScheduledJobParams;
 public interface SchedulerConfig
 {
     Set<CreateScheduledJobParams> jobs();
+
+    boolean auditlogEnabled();
 }
