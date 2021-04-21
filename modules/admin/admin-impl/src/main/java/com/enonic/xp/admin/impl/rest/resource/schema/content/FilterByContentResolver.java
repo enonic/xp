@@ -88,8 +88,7 @@ public class FilterByContentResolver
                 .filter( Predicate.not( ContentType::isAbstract ) )
                 .filter( type -> type.getSchemaConfig().getValue( "allowNewContent", Boolean.class, Boolean.TRUE ) );
 
-            final List<String> allowChildContentType =
-                readConfigValues( contentType.getSchemaConfig().getProperties( "allowChildContentType" ) );
+            final List<String> allowChildContentType = contentType.getAllowChildContentType();
 
             final Predicate<ContentTypeName> allowChildContentTypePredicate =
                 allowContentTypeFilter( contentType.getName().getApplicationKey(), allowChildContentType );

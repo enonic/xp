@@ -6,8 +6,8 @@ import org.mockito.Mockito;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
@@ -32,8 +32,6 @@ public class MoveContentCommandTest
 
     private final NodeService nodeService = Mockito.mock( NodeService.class );
 
-    private final ContentService contentService = Mockito.mock( ContentService.class );
-
     private final ContentNodeTranslator translator = Mockito.mock( ContentNodeTranslator.class );
 
     private final EventPublisher eventPublisher = Mockito.mock( EventPublisher.class );
@@ -55,7 +53,6 @@ public class MoveContentCommandTest
         MoveContentCommand command = MoveContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
             nodeService( this.nodeService ).
-            contentService( this.contentService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build();
@@ -63,7 +60,7 @@ public class MoveContentCommandTest
         Mockito.when( nodeService.getById( Mockito.isA( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
 
         // exercise
-        assertThrows(NodeNotFoundException.class, () -> command.execute());
+        assertThrows( ContentNotFoundException.class, () -> command.execute() );
     }
 
     @Test
@@ -85,7 +82,6 @@ public class MoveContentCommandTest
         final MoveContentCommand command = MoveContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
             nodeService( this.nodeService ).
-            contentService( this.contentService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build();
@@ -99,16 +95,18 @@ public class MoveContentCommandTest
         Mockito.when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
         Mockito.when( translator.fromNode( mockNode, false ) ).thenReturn( existingContent );
 
-        Mockito.when( contentService.getByPath( existingFolder.getPath() ) ).thenReturn( existingFolder );
-        Mockito.when( contentService.getNearestSite( existingContent.getId() ) ).thenReturn( parentSite );
+        final Node mockFolderNode = Node.create().parentPath( NodePath.ROOT ).build();
 
-        final ContentType contentType = ContentType.create().
-            name( "folder" ).
-            displayName( "folder" ).
-            setBuiltIn().setFinal( false ).setAbstract( false ).build();
+        Mockito.when( nodeService.getByPath( ContentNodeHelper.translateContentPathToNodePath( existingFolder.getPath() ) ) )
+            .thenReturn( mockFolderNode );
+        Mockito.when( translator.fromNode( mockFolderNode, true ) ).thenReturn( existingFolder );
+        Mockito.when( translator.fromNode( mockFolderNode, false ) ).thenReturn( existingFolder );
 
-        Mockito.when( contentTypeService.getByName( new GetContentTypeParams().contentTypeName( existingFolder.getType() ) ) ).thenReturn(
-            contentType );
+        final ContentType contentType =
+            ContentType.create().name( "folder" ).displayName( "folder" ).setBuiltIn().setFinal( false ).setAbstract( false ).build();
+
+        Mockito.when( contentTypeService.getByName( new GetContentTypeParams().contentTypeName( existingFolder.getType() ) ) )
+            .thenReturn( contentType );
 
         // exercise
         command.execute();
@@ -133,7 +131,6 @@ public class MoveContentCommandTest
         final MoveContentCommand command = MoveContentCommand.create( params ).
             contentTypeService( this.contentTypeService ).
             nodeService( this.nodeService ).
-            contentService( this.contentService ).
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build();
@@ -146,7 +143,7 @@ public class MoveContentCommandTest
         Mockito.when( translator.fromNode( mockNode, false ) ).thenReturn( existingContent );
 
         // exercise
-        assertThrows(ContentAlreadyMovedException.class, () -> command.execute());
+        assertThrows( ContentAlreadyMovedException.class, command::execute );
     }
 
     private Site createSite( final PropertyTree contentData, final ContentPath parentPath )

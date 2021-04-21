@@ -14,10 +14,8 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDataValidationException;
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
@@ -50,7 +48,6 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.site.Site;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -112,15 +109,16 @@ final class CreateContentCommand
 
         final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedParams );
 
-        final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams ).
-            contentTypeService( this.contentTypeService ).
-            pageDescriptorService( this.pageDescriptorService ).
-            xDataService( this.xDataService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            contentDataSerializer( this.contentDataSerializer ).
-            siteService( this.siteService ).
-            build().produce();
+        final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams )
+            .contentTypeService( this.contentTypeService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .xDataService( this.xDataService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .contentDataSerializer( this.contentDataSerializer )
+            .siteService( this.siteService )
+            .build()
+            .produce();
 
         try
         {
@@ -152,72 +150,12 @@ final class CreateContentCommand
 
     private void validateBlockingChecks()
     {
-        validateSpecificChecks( params );
         validateContentType( params );
+        validateParentChildRelations( params.getParent(), params.getType() );
         validatePropertyTree( params );
         validateCreateAttachments( params.getCreateAttachments() );
     }
 
-    private void validateSpecificChecks( final CreateContentParams params )
-    {
-        if ( params.getType().isTemplateFolder() )
-        {
-            validateCreateTemplateFolder( params );
-        }
-        else if ( params.getType().isPageTemplate() )
-        {
-            validateCreatePageTemplate( params );
-        }
-    }
-
-    private void validateCreateTemplateFolder( final CreateContentParams params )
-    {
-        try
-        {
-            final Content parent = GetContentByPathCommand.create( params.getParent(), this ).
-                build().
-                execute();
-
-            if ( !parent.getType().isSite() )
-            {
-                final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
-                throw new IllegalArgumentException( "A template folder can only be created below a content of type 'site'. Path: " + path );
-            }
-        }
-        catch ( ContentNotFoundException e )
-        {
-            final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
-            throw new IllegalArgumentException(
-                "Parent folder not found; A template folder can only be created below a content of type 'site'. Path: " + path, e );
-        }
-    }
-
-    private void validateCreatePageTemplate( final CreateContentParams params )
-    {
-        try
-        {
-            final Content parent = GetContentByPathCommand.create( params.getParent() ).
-                nodeService( this.nodeService ).
-                contentTypeService( this.contentTypeService ).
-                eventPublisher( this.eventPublisher ).
-                translator( this.translator ).
-                build().
-                execute();
-
-            if ( !parent.getType().isTemplateFolder() )
-            {
-                final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
-                throw new RuntimeException(
-                    "A page template can only be created below a content of type 'template-folder'. Path: " + path );
-            }
-        }
-        catch ( ContentNotFoundException e )
-        {
-            final ContentPath path = ContentPath.from( params.getParent(), params.getName().toString() );
-            throw new RuntimeException(
-                "Parent not found; A page template can only be created below a content of type 'template-folder'. Path: " + path, e );
-        }
-    }
 
     private void validateContentType( final CreateContentParams params )
     {
@@ -241,12 +179,11 @@ final class CreateContentCommand
 
             try
             {
-                InputValidator.
-                    create().
-                    form( contentType.getForm() ).
-                    inputTypeResolver( InputTypes.BUILTIN ).
-                    build().
-                    validate( params.getData() );
+                InputValidator.create()
+                    .form( contentType.getForm() )
+                    .inputTypeResolver( InputTypes.BUILTIN )
+                    .build()
+                    .validate( params.getData() );
             }
             catch ( final Exception e )
             {
@@ -266,7 +203,6 @@ final class CreateContentCommand
     private CreateContentTranslatorParams createContentTranslatorParams( final CreateContentParams processedContent )
     {
         final CreateContentTranslatorParams.Builder builder = CreateContentTranslatorParams.create( processedContent );
-        populateParentPath( builder );
         populateName( builder );
         populateCreator( builder );
         setChildOrder( builder );
@@ -278,26 +214,9 @@ final class CreateContentCommand
         return builder.build();
     }
 
-    private Site getNearestSite( final ContentId id )
-    {
-        return GetNearestSiteCommand.create().
-            nodeService( nodeService ).
-            contentTypeService( contentTypeService ).
-            translator( translator ).
-            eventPublisher( eventPublisher ).
-            contentId( id ).
-            build().
-            execute();
-    }
-
     private void setChildOrder( final CreateContentTranslatorParams.Builder builder )
     {
         builder.childOrder( this.params.getChildOrder() != null ? this.params.getChildOrder() : ContentConstants.DEFAULT_CHILD_ORDER );
-    }
-
-    private void setContentPublishInfo( final CreateContentTranslatorParams.Builder builder )
-    {
-        builder.contentPublishInfo( this.params.getContentPublishInfo() );
     }
 
     private CreateContentParams runContentProcessors( final CreateContentParams createContentParams, final ContentType contentType )
@@ -311,8 +230,7 @@ final class CreateContentCommand
                 final ProcessCreateResult processCreateResult =
                     contentProcessor.processCreate( new ProcessCreateParams( processedParams, mediaInfo ) );
 
-                processedParams = CreateContentParams.create( processCreateResult.getCreateContentParams() ).
-                    build();
+                processedParams = CreateContentParams.create( processCreateResult.getCreateContentParams() ).build();
             }
         }
 
@@ -336,8 +254,8 @@ final class CreateContentCommand
             final Node parent = nodeService.getByPath( ContentNodeHelper.translateContentParentToNodeParentPath( parentPath ) );
 
             final List<Property> inheritProperties = parent.data().getProperties( ContentPropertyNames.INHERIT );
-            final boolean inherited = inheritProperties.stream().
-                anyMatch( property -> ContentInheritType.CONTENT.name().equals( property.getString() ) );
+            final boolean inherited =
+                inheritProperties.stream().anyMatch( property -> ContentInheritType.CONTENT.name().equals( property.getString() ) );
 
             final String language;
 
@@ -382,34 +300,6 @@ final class CreateContentCommand
         return authInfo != null && authInfo.isAuthenticated() ? authInfo.getUser().getKey() : PrincipalKey.ofAnonymous();
     }
 
-    private void populateParentPath( final CreateContentTranslatorParams.Builder builder )
-    {
-        final ContentPath parentPath = params.getParent();
-        if ( !parentPath.isRoot() )
-        {
-            final Content parent = getContent( parentPath );
-
-            final ContentType parentContentType =
-                contentTypeService.getByName( new GetContentTypeParams().contentTypeName( parent.getType() ) );
-            if ( !parentContentType.allowChildContent() )
-            {
-                if ( parentContentType.getName().isPageTemplate() )
-                {
-                    final Site nearestSite = getNearestSite( parent.getId() );
-                    if ( nearestSite == null )
-                    {
-                        throw new IllegalArgumentException(
-                            "Content could not be created. No valid site for page template [" + parentPath.toString() + "]" );
-                    }
-                    builder.parent( nearestSite.getPath() );
-                    return;
-                }
-                throw new IllegalArgumentException(
-                    "Content could not be created. Children not allowed in parent [" + parentPath.toString() + "]" );
-            }
-        }
-    }
-
     private void populateName( final CreateContentTranslatorParams.Builder builder )
     {
         if ( params.getName() == null || isNullOrEmpty( params.getName().toString() ) )
@@ -434,17 +324,17 @@ final class CreateContentCommand
 
     private void populateValid( final CreateContentTranslatorParams.Builder builder )
     {
-        final ValidationErrors validationErrors = ValidateContentDataCommand.create().
-            contentData( builder.getData() ).
-            contentType( builder.getType() ).
-            name( builder.getName() ).
-            displayName( builder.getDisplayName() ).
-            extradatas( builder.getExtraDatas() != null ? ExtraDatas.from( builder.getExtraDatas() ) : ExtraDatas.empty() ).
-            xDataService( this.xDataService ).
-            siteService( this.siteService ).
-            contentTypeService( this.contentTypeService ).
-            build().
-            execute();
+        final ValidationErrors validationErrors = ValidateContentDataCommand.create()
+            .contentData( builder.getData() )
+            .contentType( builder.getType() )
+            .name( builder.getName() )
+            .displayName( builder.getDisplayName() )
+            .extradatas( builder.getExtraDatas() != null ? ExtraDatas.from( builder.getExtraDatas() ) : ExtraDatas.empty() )
+            .xDataService( this.xDataService )
+            .siteService( this.siteService )
+            .contentTypeService( this.contentTypeService )
+            .build()
+            .execute();
 
         for ( ValidationError error : validationErrors )
         {
