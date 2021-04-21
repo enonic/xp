@@ -42,24 +42,28 @@ public final class SchedulerServiceActivator
 
     private final SchedulerConfig schedulerConfig;
 
+    private final ScheduleAuditLogSupport auditLogSupport;
+
     @Activate
     public SchedulerServiceActivator( @Reference final RepositoryService repositoryService, @Reference final IndexService indexService,
                                       @Reference final NodeService nodeService,
                                       @Reference final SchedulerExecutorService schedulerExecutorService,
-                                      @Reference final SchedulerConfig schedulerConfig )
+                                      @Reference final SchedulerConfig schedulerConfig,
+                                      @Reference final ScheduleAuditLogSupport auditLogSupport )
     {
         this.repositoryService = repositoryService;
         this.indexService = indexService;
         this.nodeService = nodeService;
         this.schedulerExecutorService = schedulerExecutorService;
         this.schedulerConfig = schedulerConfig;
+        this.auditLogSupport = auditLogSupport;
     }
 
     @Activate
     public void activate( final BundleContext context )
     {
         final SchedulerServiceImpl schedulerService =
-            new SchedulerServiceImpl( indexService, repositoryService, nodeService, schedulerExecutorService );
+            new SchedulerServiceImpl( indexService, repositoryService, nodeService, schedulerExecutorService, auditLogSupport );
 
         schedulerService.initialize();
         this.schedulerServiceReg = context.registerService( SchedulerService.class, schedulerService, null );
