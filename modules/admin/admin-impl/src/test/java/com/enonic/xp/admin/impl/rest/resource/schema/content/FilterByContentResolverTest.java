@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.rest.resource.schema.content;
 
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -18,6 +19,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.core.impl.schema.content.BuiltinContentTypesAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.icon.Icon;
@@ -83,7 +85,7 @@ class FilterByContentResolverTest
         filterByContentResolver.setPageDescriptorService( pageDescriptorService );
         filterByContentResolver.setPartDescriptorService( partDescriptorService );
 
-        addSystemContentTypes();
+        knownContentTypes.addAll( BuiltinContentTypesAccessor.getAll() );
 
         lenient().when( contentTypeService.getByName(
             argThat( argument -> knownContentTypes.stream().anyMatch( ct -> ct.getName().equals( argument.getContentTypeName() ) ) ) ) )
@@ -126,10 +128,7 @@ class FilterByContentResolverTest
             .allowChildContent( true )
             .displayName( "My type" )
             .name( "application:test-type" )
-            .schemaConfig( InputTypeConfig.create()
-                               .property( InputTypeProperty.create( "allowChildContentType", "${app}:*" ).build() )
-                               .property( InputTypeProperty.create( "allowChildContentType", "base:folder" ).build() )
-                               .build() )
+            .allowChildContentType( List.of( "${app}:*", "base:folder" ) )
             .icon( Icon.from( new byte[]{123}, "image/gif", Instant.now() ) )
             .build();
 
@@ -425,58 +424,4 @@ class FilterByContentResolverTest
 
         return builder.build();
     }
-
-    private void addSystemContentTypes()
-    {
-        knownContentTypes.add( createSystemType( ContentTypeName.folder() ).description( "Container of items" )
-                                   .descriptionI18nKey( "base.folder.description" )
-                                   .setFinal( false )
-                                   .setAbstract( false )
-                                   .build() );
-
-        knownContentTypes.add( createSystemType( ContentTypeName.site() ).description( "Root content for sites" )
-                                   .descriptionI18nKey( "portal.site.description" )
-                                   .setFinal( true )
-                                   .setAbstract( false )
-                                   .form( Form.create().build() )
-                                   .superType( ContentTypeName.structured() )
-                                   .build() );
-
-        knownContentTypes.add( createSystemType( ContentTypeName.shortcut() ).description( "Redirect to other item" )
-                                   .descriptionI18nKey( "base.shortcut.description" )
-                                   .setFinal( true )
-                                   .setAbstract( false )
-                                   .form( Form.create().build() )
-                                   .superType( ContentTypeName.shortcut() )
-                                   .build() );
-
-        knownContentTypes.add( createSystemType( ContentTypeName.pageTemplate() ).description( "Predesigned customizable page" )
-                                   .descriptionI18nKey( "portal.page-template.description" )
-                                   .allowChildContent( false )
-                                   .setFinal( false )
-                                   .setAbstract( false )
-                                   .form( Form.create().build() )
-                                   .superType( ContentTypeName.structured() )
-                                   .build() );
-
-        knownContentTypes.add( createSystemType( ContentTypeName.templateFolder() ).description( "Root content for sites" )
-                                   .descriptionI18nKey( "portal.template-folder.description" )
-                                   .setFinal( true )
-                                   .setAbstract( false )
-                                   .superType( ContentTypeName.folder() )
-                                   .build() );
-    }
-
-    private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
-    {
-        final String localName = contentTypeName.getLocalName();
-        final String displayName = localName.substring( 0, 1 ).toUpperCase() + localName.substring( 1 );
-        final String app = contentTypeName.getApplicationKey().getName();
-        return ContentType.create()
-            .name( contentTypeName )
-            .displayName( displayName )
-            .displayNameI18nKey( app + "." + localName + ".displayName" )
-            .setBuiltIn();
-    }
-
 }
