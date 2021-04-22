@@ -10,6 +10,18 @@
       </allow>
       <deny type="array"/>
     </principal>
+    <principal key="user:system:test-user">
+      <allow type="array">
+        <value>READ</value>
+        <value>CREATE</value>
+        <value>MODIFY</value>
+        <value>DELETE</value>
+        <value>PUBLISH</value>
+        <value>READ_PERMISSIONS</value>
+        <value>WRITE_PERMISSIONS</value>
+      </allow>
+      <deny type="array"/>
+    </principal>
     <principal key="role:system.admin">
       <allow type="array">
         <value>READ</value>
