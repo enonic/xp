@@ -270,6 +270,7 @@ public final class NodeImporter
             insertManualStrategy( settings.getInsertManualStrategy() ).
             dryRun( this.dryRun ).
             importPermissions( this.importPermissions ).
+            importPermissionsOnCreate( this.importPermissions ).
             build();
 
         return this.nodeService.importNode( importNodeParams );

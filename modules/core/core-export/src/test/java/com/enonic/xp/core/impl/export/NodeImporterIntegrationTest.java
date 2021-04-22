@@ -7,7 +7,6 @@ import java.util.Objects;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import com.enonic.xp.core.impl.export.writer.NodeExportPathResolver;
@@ -19,7 +18,9 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeService;
+import com.enonic.xp.repo.impl.node.AbstractNodeTest;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.vfs.VirtualFiles;
 
@@ -27,20 +28,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class NodeImporterTest
+public class NodeImporterIntegrationTest
+    extends AbstractNodeTest
 {
-    @TempDir
-    public Path temporaryFolder;
-
-    private NodeService importNodeService;
 
     @BeforeEach
     public void setUp()
         throws Exception
     {
-        this.importNodeService = new NodeServiceMock();
-
         Path nodeFileDir = Files.createDirectories( resolveInTemporaryFolder( "myExport", NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
 
         copyFormResource( "root-node.xml", nodeFileDir.resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME ) );
@@ -55,14 +52,15 @@ public class NodeImporterTest
         copyFormResource( "node_unordered.xml", nodeFileDir.resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME ) );
 
         final NodeImportResult result = NodeImporter.create().
-            nodeService( importNodeService ).
+            nodeService( nodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport" ) ) ).
             build().
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 2, result.addedNodes.getSize() );
+        assertEquals( 1, result.getUpdateNodes().getSize() );
+        assertEquals( 1, result.getAddedNodes().getSize() );
     }
 
     @Test
@@ -74,14 +72,15 @@ public class NodeImporterTest
         copyFormResource( "node_timestamp.xml", nodeFileDir.resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME ) );
 
         final NodeImportResult result = NodeImporter.create().
-            nodeService( importNodeService ).
+            nodeService( nodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport" ) ) ).
             build().
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 2, result.addedNodes.getSize() );
+        assertEquals( 1, result.getAddedNodes().getSize() );
+        assertEquals( 1, result.getUpdateNodes().getSize() );
     }
 
     @Test
@@ -93,16 +92,17 @@ public class NodeImporterTest
         copyFormResource( "node_with_id_1234.xml", nodeFileDir.resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME ) );
 
         final NodeImportResult result = NodeImporter.create().
-            nodeService( importNodeService ).
+            nodeService( nodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport" ) ) ).
             build().
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 2, result.addedNodes.getSize() );
+        assertEquals( 1, result.getUpdateNodes().getSize() );
+        assertEquals( 1, result.getAddedNodes().getSize() );
 
-        final Node node1234 = importNodeService.getById( NodeId.from( "1234" ) );
+        final Node node1234 = nodeService.getById( NodeId.from( "1234" ) );
         assertNotNull( node1234 );
     }
 
@@ -114,27 +114,27 @@ public class NodeImporterTest
 
         copyFormResource( "node_unordered.xml", nodeFileDir.resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME ) );
 
-        final NodeServiceMock importNodeService = new NodeServiceMock();
         final NodeImportResult result = NodeImporter.create().
-            nodeService( importNodeService ).
+            nodeService( nodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport" ) ) ).
             build().
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 2, result.addedNodes.getSize() );
+        assertEquals( 1, result.getAddedNodes().getSize() );
+        assertEquals( 1, result.getUpdateNodes().getSize() );
 
         final NodeImportResult updateResult = NodeImporter.create().
-            nodeService( importNodeService ).
+            nodeService( nodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport" ) ) ).
             build().
             execute();
 
         assertEquals( 0, updateResult.getImportErrors().size() );
-        assertEquals( 0, updateResult.addedNodes.getSize() );
-        assertEquals( 2, updateResult.updateNodes.getSize() );
+        assertEquals( 0, updateResult.getAddedNodes().getSize() );
+        assertEquals( 2, updateResult.getUpdateNodes().getSize() );
     }
 
 
@@ -150,7 +150,7 @@ public class NodeImporterTest
         NodeImportListener nodeImportListener = Mockito.mock( NodeImportListener.class );
 
         final NodeImportResult result = NodeImporter.create().
-            nodeService( this.importNodeService ).
+            nodeService( this.nodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport" ) ) ).
             nodeImportListener( nodeImportListener ).
@@ -158,7 +158,8 @@ public class NodeImporterTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 5, result.addedNodes.getSize() );
+        assertEquals( 4, result.getAddedNodes().getSize() );
+        assertEquals( 1, result.getUpdateNodes().getSize() );
 
         final Node mynode = assertNodeExists( NodePath.ROOT, "mynode" );
         final Node mychild = assertNodeExists( mynode.path(), "mychild" );
@@ -180,20 +181,21 @@ public class NodeImporterTest
 
         final NodePath importRoot = NodePath.create( NodePath.ROOT, "my-import-here" ).build();
 
-        this.importNodeService.create( CreateNodeParams.create().
+        this.nodeService.create( CreateNodeParams.create().
             parent( importRoot.getParentPath() ).
             name( importRoot.getLastElement().toString() ).
             build() );
 
         final NodeImportResult result = NodeImporter.create().
-            nodeService( this.importNodeService ).
+            nodeService( this.nodeService ).
             targetNodePath( importRoot ).
             sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport" ) ) ).
             build().
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 5, result.addedNodes.getSize() );
+        assertEquals( 4, result.getAddedNodes().getSize() );
+        assertEquals( 1, result.getUpdateNodes().getSize() );
 
         final Node mynode = assertNodeExists( importRoot, "mynode" );
         final Node mychild = assertNodeExists( mynode.path(), "mychild" );
@@ -208,7 +210,7 @@ public class NodeImporterTest
         final NodePath importRoot = NodePath.create( NodePath.ROOT, "non-existing-node" ).build();
 
         assertThrows( ImportNodeException.class, () -> NodeImporter.create().
-            nodeService( this.importNodeService ).
+            nodeService( this.nodeService ).
             targetNodePath( importRoot ).
             sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport" ) ) ).
             build().
@@ -222,14 +224,15 @@ public class NodeImporterTest
         createNodeXmlFile( resolveInTemporaryFolder( "myExport", "mynode", "_" ), false );
 
         final NodeImportResult result = NodeImporter.create().
-            nodeService( this.importNodeService ).
+            nodeService( this.nodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport" ) ) ).
             build().
             execute();
 
         assertEquals( 1, result.getImportErrors().size() );
-        assertEquals( 1, result.getAddedNodes().getSize() );
+        assertEquals( 1, result.getUpdateNodes().getSize() );
+        assertEquals( 0, result.getAddedNodes().getSize() );
     }
 
     @Test
@@ -243,13 +246,14 @@ public class NodeImporterTest
         createNodeXmlFile( resolveInTemporaryFolder( "myExport", "mynode3" ), false );
 
         final NodeImportResult result = NodeImporter.create().
-            nodeService( this.importNodeService ).
+            nodeService( this.nodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport" ) ) ).
             build().
             execute();
 
-        assertEquals( 6, result.getAddedNodes().getSize() );
+        assertEquals( 5, result.getAddedNodes().getSize() );
+        assertEquals( 1, result.getUpdateNodes().getSize() );
         assertEquals( 1, result.getImportErrors().size() );
     }
 
@@ -270,14 +274,15 @@ public class NodeImporterTest
                          "mychildchildchild2", "mychildchildchild3" );
 
         final NodeImportResult result = NodeImporter.create().
-            nodeService( this.importNodeService ).
+            nodeService( this.nodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport" ) ) ).
             build().
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 8, result.addedNodes.getSize() );
+        assertEquals( 7, result.getAddedNodes().getSize() );
+        assertEquals( 1, result.getUpdateNodes().getSize() );
 
         final Node mynode = assertNodeExists( NodePath.ROOT, "mynode" );
         assertNull( mynode.getManualOrderValue() );
@@ -305,20 +310,21 @@ public class NodeImporterTest
         createOrderFile( resolveInTemporaryFolder( "myExport", "mynode" ), "mychild2", "mychild1" );
 
         final NodeImportResult result = NodeImporter.create().
-            nodeService( this.importNodeService ).
+            nodeService( this.nodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport" ) ) ).
             build().
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 4, result.addedNodes.getSize() );
+        assertEquals( 3, result.getAddedNodes().getSize() );
+        assertEquals( 1, result.getUpdateNodes().getSize() );
 
         final Node mynode = assertNodeExists( NodePath.ROOT, "mynode" );
         assertNodeExists( mynode.path(), "mychild1" );
         assertNodeExists( mynode.path(), "mychild2" );
 
-        final Node mychild3 = this.importNodeService.getByPath( NodePath.create( mynode.path(), "mychild3" ).build() );
+        final Node mychild3 = this.nodeService.getByPath( NodePath.create( mynode.path(), "mychild3" ).build() );
         assertNull( mychild3 );
     }
 
@@ -329,14 +335,15 @@ public class NodeImporterTest
         createNodeXmlFileWithBinaries( resolveInTemporaryFolder( "myExport", "mynode" ) );
 
         final NodeImportResult result = NodeImporter.create().
-            nodeService( this.importNodeService ).
+            nodeService( this.nodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport" ) ) ).
             build().
             execute();
 
-        assertEquals( 1, result.getImportErrors().size() );
-        assertEquals( 2, result.getAddedNodes().getSize() );
+        assertEquals( 2, result.getImportErrors().size() );
+        assertEquals( 0, result.getAddedNodes().getSize() );
+        assertEquals( 1, result.getUpdateNodes().getSize() );
     }
 
     @Test
@@ -347,7 +354,7 @@ public class NodeImporterTest
         createBinaryFile( resolveInTemporaryFolder( "myExport", "mynode" ), "image.jpg", "this-is-the-source".getBytes() );
 
         final NodeImportResult result = NodeImporter.create().
-            nodeService( this.importNodeService ).
+            nodeService( this.nodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport" ) ) ).
             build().
@@ -376,14 +383,15 @@ public class NodeImporterTest
         createNodeXmlFile( resolveInTemporaryFolder( "myExport", "mynode", myChildName, myChildChildName, myChildChildChildName ), false );
 
         final NodeImportResult result = NodeImporter.create().
-            nodeService( this.importNodeService ).
+            nodeService( this.nodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( this.temporaryFolder.resolve( "myExport" ) ) ).
             build().
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 5, result.addedNodes.getSize() );
+        assertEquals( 4, result.getAddedNodes().getSize() );
+        assertEquals( 1, result.getUpdateNodes().getSize() );
 
         final Node myNode = assertNodeExists( NodePath.ROOT, "mynode" );
         final Node myChild = assertNodeExists( myNode.path(), myChildName );
@@ -405,7 +413,7 @@ public class NodeImporterTest
         copyFormResource( "transform.xsl", xsltFilePath );
 
         final NodeImportResult result = NodeImporter.create().
-            nodeService( importNodeService ).
+            nodeService( nodeService ).
             targetNodePath( NodePath.ROOT ).
             sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport" ) ) ).
             xslt( VirtualFiles.from( xsltFilePath ) ).
@@ -414,9 +422,35 @@ public class NodeImporterTest
             execute();
 
         assertEquals( 0, result.getImportErrors().size() );
-        assertEquals( 2, result.addedNodes.getSize() );
-        final Node importedNode = this.importNodeService.getByPath( result.getAddedNodes().first() );
+        assertEquals( 1, result.getUpdateNodes().getSize() );
+        assertEquals( 1, result.getAddedNodes().getSize() );
+        final Node importedNode = this.nodeService.getByPath( result.getAddedNodes().first() );
         assertNotNull( importedNode );
+    }
+
+    @Test
+    public void import_node_without_permission_import()
+        throws Exception
+    {
+        final Path nodeFileDir = Files.createDirectories( resolveInTemporaryFolder( "myExport", "mynode", "_" ) );
+
+        copyFormResource( "node_unordered.xml", nodeFileDir.resolve( NodeExportPathResolver.NODE_XML_EXPORT_NAME ) );
+
+        NodeImporter.create().
+            nodeService( nodeService ).
+            targetNodePath( NodePath.ROOT ).
+            sourceDirectory( VirtualFiles.from( temporaryFolder.resolve( "myExport" ) ) ).
+            importPermissions( false ).
+            build().
+            execute();
+
+        final Node addedNode = nodeService.getByPath( NodePath.create( "/mynode" ).build() );
+
+        assertTrue( addedNode.inheritsPermissions() );
+        assertTrue(
+            addedNode.getPermissions().isAllowedFor( PrincipalKey.from( "user:system:test-user" ), Permission.READ, Permission.CREATE,
+                                                     Permission.MODIFY, Permission.DELETE, Permission.PUBLISH, Permission.READ_PERMISSIONS,
+                                                     Permission.WRITE_PERMISSIONS ) );
     }
 
     private void createOrderFile( final Path exportPath, final String... childNodeNames )
@@ -475,7 +509,7 @@ public class NodeImporterTest
 
     private Node assertNodeExists( final NodePath parentPath, final String name )
     {
-        final Node node = importNodeService.getByPath( NodePath.create( parentPath, name ).build() );
+        final Node node = nodeService.getByPath( NodePath.create( parentPath, name ).build() );
         assertNotNull( node );
         return node;
     }
