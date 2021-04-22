@@ -7,9 +7,11 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
+import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
@@ -191,4 +193,61 @@ public class FormDefaultValuesProcessorImplTest
         assertEquals( "default", data.getString( "myOptionSet.option1.myInput" ) );
         assertNull( data.getDouble( "myOptionSet.option1.myDouble" ) );
     }
+
+    @Test
+    public void testDefaultValueForInputAndItemSetWithOccurrences()
+    {
+        Input input = Input.create().
+            name( "testInput" ).
+            label( "testInput" ).
+            inputType( InputTypeName.TEXT_LINE ).
+            defaultValue( InputTypeDefault.create().property( InputTypeProperty.create( "default", "Default Value" ).build() ).build() ).
+            build();
+
+        FormItemSet formItemSet = FormItemSet.create().
+            name( "field" ).
+            label( "field" ).
+            addFormItem( input ).
+            occurrences( Occurrences.create( 3, 3 ) ).
+            build();
+
+        final Form form = Form.create().
+            addFormItem( formItemSet ).
+            build();
+
+        final FormDefaultValuesProcessor defaultValuesProcessor = new FormDefaultValuesProcessorImpl();
+        final PropertyTree data = new PropertyTree();
+        defaultValuesProcessor.setDefaultValues( form, data );
+
+        for ( int i = 0; i < 3; i++ )
+        {
+            assertEquals( "Default Value", data.getProperty( "field", i ).getSet().getString( "testInput" ) );
+        }
+    }
+
+    @Test
+    public void testDefaultValueForInputWithOccurrences()
+    {
+        Input input = Input.create().
+            name( "testInput" ).
+            label( "testInput" ).
+            inputType( InputTypeName.TEXT_LINE ).
+            defaultValue( InputTypeDefault.create().property( InputTypeProperty.create( "default", "Default Value" ).build() ).build() ).
+            occurrences( Occurrences.create( 3, 3 ) ).
+            build();
+
+        final Form form = Form.create().
+            addFormItem( input ).
+            build();
+
+        final FormDefaultValuesProcessor defaultValuesProcessor = new FormDefaultValuesProcessorImpl();
+        final PropertyTree data = new PropertyTree();
+        defaultValuesProcessor.setDefaultValues( form, data );
+
+        for ( int i = 0; i < 3; i++ )
+        {
+            assertEquals( "Default Value", data.getString( "testInput", i ) );
+        }
+    }
+
 }
