@@ -25,11 +25,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew ci --scan
       - uses: codecov/codecov-action@v1.3.2
-      - uses: codacy/codacy-coverage-reporter-action@master
-        if: github.ref == 'refs/heads/master'
-        continue-on-error: true
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
 
       ### PUBLISHING STEPS ###
 
