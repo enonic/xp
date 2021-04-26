@@ -16,10 +16,12 @@ jobs:
         with:
           java-version: 11
           distribution: 'adopt'
-      - uses: actions/cache@v2.1.4
+      - uses: actions/cache@v2.1.5
         with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
@@ -35,15 +37,15 @@ jobs:
           PROPERTIES_PATH: './gradle.properties'
           JAVA_HOME: ''
 
+      - name: Publish
+        if: ${{ github.ref == 'refs/heads/master' || contains(github.ref, 'refs/heads/7.') }}
+        run: ./gradlew publish -PrepoKey=${{ steps.publish_vars.outputs.repo }} -PrepoUser=${{ secrets.ARTIFACTORY_USERNAME }} -PrepoPassword=${{ secrets.ARTIFACTORY_PASSWORD }}
+
       - name: Download changelog
         if: steps.publish_vars.outputs.release == 'true'
         uses: actions/download-artifact@v2
         with:
           name: changelog
-
-      - name: Publish
-        if: ${{ github.ref == 'refs/heads/master' || contains(github.ref, 'refs/heads/7.') }}
-        run: ./gradlew publish -PrepoKey=${{ steps.publish_vars.outputs.repo }} -PrepoUser=${{ secrets.ARTIFACTORY_USERNAME }} -PrepoPassword=${{ secrets.ARTIFACTORY_PASSWORD }}
 
       - name: Create Release
         if: steps.publish_vars.outputs.release == 'true'
