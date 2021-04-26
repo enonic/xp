@@ -71,7 +71,7 @@ public class ImportNodeParams
 
         private boolean importPermissions;
 
-        private boolean importPermissionsOnCreate;
+        private boolean importPermissionsOnCreate = true;
 
         private Builder()
         {
