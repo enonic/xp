@@ -3,7 +3,7 @@ ext {
     osgiVersion = '7.0.0'
     felixVersion = '6.0.4'
     jettyVersion = '9.4.40.v20210413'
-    jacksonVersion = '2.12.1'
+    jacksonVersion = '2.12.3'
     junitJupiterVersion = '5.7.1'
     dropwizardMetricsVersion = '4.1.20'
     commonsLangVersion = '2.6'
