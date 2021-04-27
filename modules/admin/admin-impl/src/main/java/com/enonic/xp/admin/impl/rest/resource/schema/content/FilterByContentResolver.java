@@ -34,7 +34,7 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
 
-@Component
+@Component(service = FilterByContentResolver.class)
 public class FilterByContentResolver
 {
     private static final List<ContentTypeName> DEFAULT_CONTENT_TYPE_NAMES =
