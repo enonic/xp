@@ -15,6 +15,6 @@ ext {
     tikaVersion = '1.25'
     resteasyVersion = '3.14.0.Final'
     hazelcastVersion = '3.12.7'
-    mockitoVersion = '3.7.7'
+    mockitoVersion = '3.9.0'
     cronUtilsVersion = '9.1.5'
 }
