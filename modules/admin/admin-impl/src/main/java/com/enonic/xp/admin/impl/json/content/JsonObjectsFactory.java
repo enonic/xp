@@ -19,7 +19,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.MixinService;
 
-@Component
+@Component(service = JsonObjectsFactory.class)
 public class JsonObjectsFactory
 {
     private ContentTypeIconUrlResolver contentTypeIconUrlResolver;
