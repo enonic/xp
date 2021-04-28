@@ -14,7 +14,8 @@ ext {
     jaxrsApiVersion = '2.1.6'
     tikaVersion = '1.26'
     resteasyVersion = '3.15.1.Final'
-    hazelcastVersion = '3.12.7'
+    hazelcastVersion = '3.12.12'
+    hazelcastK8sVersion = '1.5.5'
     mockitoVersion = '3.9.0'
     cronUtilsVersion = '9.1.5'
 }

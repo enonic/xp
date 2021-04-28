@@ -4,7 +4,7 @@ dependencies {
     implementation "com.hazelcast:hazelcast:${hazelcastVersion}"
     implementation "org.eclipse.jetty:jetty-hazelcast:${jettyVersion}"
     implementation "com.hazelcast:hazelcast-client:${hazelcastVersion}"
-    implementation "com.hazelcast:hazelcast-kubernetes:1.5.3"
+    implementation "com.hazelcast:hazelcast-kubernetes:${hazelcastK8sVersion}"
 
     testImplementation( testFixtures( project(":core:core-api") ) )
 }

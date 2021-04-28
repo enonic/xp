@@ -141,7 +141,7 @@ public class HazelcastConfigServiceImpl
             final DiscoveryStrategyConfig discoveryStrategyConfig =
                 new DiscoveryStrategyConfig( new HazelcastKubernetesDiscoveryStrategyFactory() );
             discoveryStrategyConfig.addProperty( KubernetesProperties.SERVICE_DNS.key(),
-                                                 hazelcastConfig.network_join_kubernetes_serviceDns() );
+                                                 requireNonNullElse( hazelcastConfig.network_join_kubernetes_serviceDns(), "" ) );
             config.getNetworkConfig().getJoin().getDiscoveryConfig().addDiscoveryStrategyConfig( discoveryStrategyConfig );
         }
     }
@@ -161,10 +161,10 @@ public class HazelcastConfigServiceImpl
                 InterfacesConfig interfacesConfig = config.getNetworkConfig().getInterfaces();
                 interfacesConfig.setEnabled( true );
                 final String interfacesStr = requireNonNullElse( hazelcastConfig.network_interfaces(), "" ).trim();
-                List<String> interfaces = Arrays.stream( interfacesStr.split( "," ) ).
-                    filter( Predicate.not( String::isBlank ) ).
-                    map( String::trim ).
-                    collect( Collectors.toUnmodifiableList() );
+                List<String> interfaces = Arrays.stream( interfacesStr.split( "," ) )
+                    .filter( Predicate.not( String::isBlank ) )
+                    .map( String::trim )
+                    .collect( Collectors.toUnmodifiableList() );
                 interfacesConfig.setInterfaces( interfaces );
             }
         }
@@ -178,10 +178,11 @@ public class HazelcastConfigServiceImpl
             restApiConfig.setEnabled( true );
             final String endpointGroupsConfig = requireNonNullElse( hazelcastConfig.network_restApi_restEndpointGroups(), "" );
 
-            final List<RestEndpointGroup> restEndpointGroups = Arrays.stream( endpointGroupsConfig.split( "," ) ).
-                filter( Predicate.not( String::isBlank ) ).
-                map( String::trim ).
-                map( RestEndpointGroup::valueOf ).collect( Collectors.toList() );
+            final List<RestEndpointGroup> restEndpointGroups = Arrays.stream( endpointGroupsConfig.split( "," ) )
+                .filter( Predicate.not( String::isBlank ) )
+                .map( String::trim )
+                .map( RestEndpointGroup::valueOf )
+                .collect( Collectors.toList() );
 
             restApiConfig.setEnabledGroups( restEndpointGroups );
             config.getNetworkConfig().setRestApiConfig( restApiConfig );
@@ -205,16 +206,15 @@ public class HazelcastConfigServiceImpl
             final List<String> members;
             if ( !membersConfig.isEmpty() )
             {
-                members = Arrays.stream( membersConfig.split( "," ) ).
-                    filter( Predicate.not( String::isBlank ) ).
-                    map( String::trim ).
-                    collect( Collectors.toUnmodifiableList() );
+                members = Arrays.stream( membersConfig.split( "," ) )
+                    .filter( Predicate.not( String::isBlank ) )
+                    .map( String::trim )
+                    .collect( Collectors.toUnmodifiableList() );
             }
             else if ( hazelcastConfig.clusterConfigDefaults() )
             {
-                members = clusterConfig.discovery().get().stream().
-                    map( InetAddress::getHostAddress ).
-                    collect( Collectors.toUnmodifiableList() );
+                members =
+                    clusterConfig.discovery().get().stream().map( InetAddress::getHostAddress ).collect( Collectors.toUnmodifiableList() );
             }
             else
             {
