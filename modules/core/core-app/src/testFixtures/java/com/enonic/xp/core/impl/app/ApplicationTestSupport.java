@@ -1,8 +1,5 @@
 package com.enonic.xp.core.impl.app;
 
-import java.io.UncheckedIOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,25 +20,13 @@ import static org.mockito.Mockito.when;
 
 public abstract class ApplicationTestSupport
 {
+    private static final String ROOT_TEST_PATH = "src/test/resources";
+
     protected ResourceService resourceService;
 
     protected ApplicationService applicationService;
 
     private Map<ApplicationKey, MockApplication> apps;
-
-    private final URL rootTestUrl;
-
-    public ApplicationTestSupport()
-    {
-        try
-        {
-            this.rootTestUrl = Path.of( "src/test/resources" ).toUri().toURL();
-        }
-        catch ( MalformedURLException e )
-        {
-            throw new UncheckedIOException( e );
-        }
-    }
 
     @BeforeEach
     public final void setup()
@@ -50,16 +35,14 @@ public abstract class ApplicationTestSupport
         this.apps = new HashMap<>();
 
         this.applicationService = mock( ApplicationService.class );
-        when( this.applicationService.getInstalledApplication( any() ) ).
-            then( invocationOnMock -> apps.get( invocationOnMock.getArgument( 0 ) ) );
-        when( this.applicationService.getInstalledApplications() ).
-            then( invocationOnMock -> Applications.from( apps.values() ) );
-        when( this.applicationService.getInstalledApplicationKeys() ).
-            then( invocationOnMock -> ApplicationKeys.from( apps.keySet() ) );
+        when( this.applicationService.getInstalledApplication( any() ) ).then(
+            invocationOnMock -> apps.get( invocationOnMock.getArgument( 0 ) ) );
+        when( this.applicationService.getInstalledApplications() ).then( invocationOnMock -> Applications.from( apps.values() ) );
+        when( this.applicationService.getInstalledApplicationKeys() ).then( invocationOnMock -> ApplicationKeys.from( apps.keySet() ) );
 
         ApplicationFactoryService applicationFactoryService = mock( ApplicationFactoryService.class );
-        when( applicationFactoryService.findActiveApplication( any() ) ).
-            then( invocationOnMock -> Optional.ofNullable( apps.get( invocationOnMock.getArgument( 0 ) ) ) );
+        when( applicationFactoryService.findActiveApplication( any() ) ).then(
+            invocationOnMock -> Optional.ofNullable( apps.get( invocationOnMock.getArgument( 0 ) ) ) );
 
         this.resourceService = new ResourceServiceImpl( applicationFactoryService );
 
@@ -75,7 +58,7 @@ public abstract class ApplicationTestSupport
         app.setKey( ApplicationKey.from( key ) );
         app.setStarted( true );
 
-        app.setUrlResolver( this.rootTestUrl, prefix );
+        app.setResourcePath( Path.of( ROOT_TEST_PATH + prefix ) );
 
         this.apps.put( app.getKey(), app );
         return app;

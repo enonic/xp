@@ -47,37 +47,22 @@ public final class ResourceServiceImpl
     @Override
     public Resource getResource( final ResourceKey key )
     {
-        return findApplicationUrlResolver( key.getApplicationKey() ).
-            map( urlResolver -> urlResolver.findUrl( key.getPath() ) ).
-            map( url -> new UrlResource( key, url ) ).
-            orElse( new UrlResource( key, null ) );
-    }
-
-    private String normalize( final String str )
-    {
-        if ( str.startsWith( "/" ) )
-        {
-            return normalize( str.substring( 1 ) );
-        }
-
-        if ( str.endsWith( "/" ) )
-        {
-            return str.substring( 0, str.length() - 1 );
-        }
-
-        return str;
+        return findApplicationUrlResolver( key.getApplicationKey() ).map( urlResolver -> urlResolver.findUrl( key.getPath() ) )
+            .map( url -> new UrlResource( key, url ) )
+            .orElse( new UrlResource( key, null ) );
     }
 
     @Override
     public ResourceKeys findFiles( final ApplicationKey key, final String pattern )
     {
-        final Pattern compiled = Pattern.compile( normalize( pattern ) );
+        final Pattern compiled = Pattern.compile( pattern );
 
-        return ResourceKeys.from( findApplicationUrlResolver( key ).
-            map( ApplicationUrlResolver::findFiles ).orElse( Set.of() ).
-            stream().
-            filter( compiled.asPredicate() ).
-            map( name -> ResourceKey.from( key, name ) ).iterator() );
+        return ResourceKeys.from( findApplicationUrlResolver( key ).map( ApplicationUrlResolver::findFiles )
+                                      .orElse( Set.of() )
+                                      .stream()
+                                      .map( name -> ResourceKey.from( key, name ) )
+                                      .filter( rk -> compiled.matcher( rk.getPath() ).find() )
+                                      .iterator() );
     }
 
     private Optional<ApplicationUrlResolver> findApplicationUrlResolver( final ApplicationKey key )
@@ -104,9 +89,8 @@ public final class ResourceServiceImpl
         {
             throw new IllegalArgumentException( "Unsupported resource key " + key );
         }
-        return findApplicationUrlResolver( key.getApplicationKey() ).
-            map( urlResolver -> urlResolver.filesHash( key.getPath() ) ).
-            map( HashCode::fromLong );
+        return findApplicationUrlResolver( key.getApplicationKey() ).map( urlResolver -> urlResolver.filesHash( key.getPath() ) )
+            .map( HashCode::fromLong );
     }
 
     @Override

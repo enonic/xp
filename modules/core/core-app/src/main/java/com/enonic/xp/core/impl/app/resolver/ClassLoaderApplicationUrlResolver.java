@@ -1,19 +1,27 @@
 package com.enonic.xp.core.impl.app.resolver;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import com.google.common.reflect.ClassPath;
 
-import com.enonic.xp.util.Exceptions;
-
 public final class ClassLoaderApplicationUrlResolver
-    extends ApplicationUrlResolverBase
+    implements ApplicationUrlResolver
 {
     private final ClassLoader loader;
+
+    @Override
+    public long filesHash( final String path )
+    {
+        return System.currentTimeMillis();
+    }
 
     public ClassLoaderApplicationUrlResolver( final URLClassLoader loader )
     {
@@ -23,38 +31,54 @@ public final class ClassLoaderApplicationUrlResolver
     @Override
     public Set<String> findFiles()
     {
+        final ClassPath cp;
         try
         {
-            return doFindFiles();
+            cp = ClassPath.from( this.loader );
         }
-        catch ( final Exception e )
+        catch ( IOException e )
         {
-            throw Exceptions.unchecked( e );
+            throw new UncheckedIOException( e );
         }
-    }
-
-    private Set<String> doFindFiles()
-        throws Exception
-    {
-        final ClassPath cp = ClassPath.from( this.loader );
         return cp.getResources().stream().map( ClassPath.ResourceInfo::getResourceName ).collect( Collectors.toSet() );
     }
 
     @Override
     public URL findUrl( final String path )
     {
-        final String normalized = normalizePath( path );
-        return this.loader.getResource( normalized );
+        final URL url = this.loader.getResource( normalizePath( path ) );
+
+        if ( url == null )
+        {
+            return null;
+        }
+        else if ( "file".equalsIgnoreCase( url.getProtocol() ) )
+        {
+            try
+            {
+                if ( Files.isDirectory( Path.of( url.toURI() ) ) )
+                {
+                    return null;
+                }
+            }
+            catch ( URISyntaxException e )
+            {
+                return null;
+            }
+            return url;
+        }
+        else if ( url.getPath().endsWith( "/" ) )
+        {
+            return null;
+        }
+        else
+        {
+            return url;
+        }
     }
 
-    public static ClassLoaderApplicationUrlResolver create( final URL... urls )
+    private static String normalizePath( final String path )
     {
-        final URLClassLoader loader = new URLClassLoader( urls, null );
-        return new ClassLoaderApplicationUrlResolver( loader );
-    }
-
-    public static ClassLoaderApplicationUrlResolver create( final Iterable<URL> urls )
-    {
-        return create( StreamSupport.stream( urls.spliterator(), false ).toArray( URL[]::new ) );
+        return path.startsWith( "/" ) ? path.substring( 1 ) : path;
     }
 }
