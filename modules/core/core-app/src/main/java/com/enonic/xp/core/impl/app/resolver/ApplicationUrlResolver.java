@@ -7,7 +7,5 @@ public interface ApplicationUrlResolver
 {
     Set<String> findFiles();
 
-    long filesHash( String path );
-
     URL findUrl( String path );
 }

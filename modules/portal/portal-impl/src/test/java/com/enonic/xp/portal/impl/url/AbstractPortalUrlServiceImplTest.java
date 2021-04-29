@@ -1,7 +1,5 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
@@ -13,11 +11,9 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
-import com.enonic.xp.util.HashCode;
 
 import static org.mockito.Mockito.when;
 
@@ -62,8 +58,6 @@ public abstract class AbstractPortalUrlServiceImplTest
         when( this.applicationService.getInstalledApplication( applicationKey ) ).thenReturn( application );
 
         this.resourceService = Mockito.mock( ResourceService.class );
-        when( this.resourceService.resourceHash( ResourceKey.assets( applicationKey ) ) ).
-            thenReturn( Optional.of( HashCode.fromLong( 1 ) ) );
         this.service.setResourceService( this.resourceService );
     }
 }

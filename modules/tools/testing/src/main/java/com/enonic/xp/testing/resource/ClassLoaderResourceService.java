@@ -1,7 +1,6 @@
 package com.enonic.xp.testing.resource;
 
 import java.net.URL;
-import java.util.Optional;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.Resource;
@@ -10,7 +9,6 @@ import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
-import com.enonic.xp.util.HashCode;
 
 public final class ClassLoaderResourceService
     implements ResourceService
@@ -31,12 +29,6 @@ public final class ClassLoaderResourceService
 
     @Override
     public ResourceKeys findFiles( final ApplicationKey key, final String pattern )
-    {
-        throw new IllegalStateException( "Not implemented" );
-    }
-
-    @Override
-    public Optional<HashCode> resourceHash( final ResourceKey key )
     {
         throw new IllegalStateException( "Not implemented" );
     }

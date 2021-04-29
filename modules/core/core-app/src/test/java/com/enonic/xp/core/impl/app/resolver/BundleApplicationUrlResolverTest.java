@@ -53,17 +53,4 @@ public class BundleApplicationUrlResolverTest
         final URL url3 = this.resolver.findUrl( "site/not-found.txt" );
         assertNull( url3 );
     }
-
-    @Test
-    void recursiveFileHash()
-    {
-        final TinyBundle builder = newBundle( "foo.bar.bundle", true );
-        builder.add( "assets/1x1.png", getClass().getResource( "/myapp/assets/1x1.png" ) );
-
-        final Bundle bundle = deploy( "bundle", builder );
-        this.resolver = new BundleApplicationUrlResolver( bundle );
-
-        final long hashCode = resolver.filesHash( "/assets/" );
-        assertEquals( 3634921943798240323L, hashCode );
-    }
 }

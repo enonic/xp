@@ -4,6 +4,7 @@ import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.internal.HexCoder;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.Resource;
@@ -54,12 +55,10 @@ final class AssetHandlerWorker
         final Resource resource = resolveResource( resourceKey );
 
         final String type = MediaTypes.instance().fromFile( resource.getKey().getName() ).toString();
-        final PortalResponse.Builder portalResponse = PortalResponse.create().
-            body( resource ).
-            contentType( MediaType.parse( type ) );
+        final PortalResponse.Builder portalResponse = PortalResponse.create().body( resource ).contentType( MediaType.parse( type ) );
 
         if ( !nullToEmpty( this.fingerprint ).isBlank() && !nullToEmpty( cacheControlHeaderConfig ).isBlank() &&
-            RunMode.get() != RunMode.DEV && resourceKey.getPath().equals( assetPath ) && fingerpintMatches( fingerprint, assetsKey ) )
+            RunMode.get() != RunMode.DEV && resourceKey.getPath().equals( assetPath ) && fingerprintMatches( fingerprint ) )
         {
             portalResponse.header( HttpHeaders.CACHE_CONTROL, cacheControlHeaderConfig );
         }
@@ -76,10 +75,9 @@ final class AssetHandlerWorker
         return resource;
     }
 
-    private boolean fingerpintMatches( String providedFingerprint, final ResourceKey assetsKey )
+    private boolean fingerprintMatches( String providedFingerprint )
     {
-        return resourceService.resourceHash( assetsKey ).
-            map( hashCode -> hashCode.toString().equals( providedFingerprint ) ).
-            orElse( false );
+        final Resource resource = resourceService.getResource( ResourceKey.from( applicationKey, "META-INF/MANIFEST.MF" ) );
+        return resource.exists() && HexCoder.toHex( resource.getTimestamp() ).equals( providedFingerprint );
     }
 }
