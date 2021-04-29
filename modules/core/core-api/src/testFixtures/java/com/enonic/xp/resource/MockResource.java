@@ -4,19 +4,28 @@ import java.net.URL;
 
 import com.google.common.io.ByteSource;
 
-@Deprecated
-public final class BytesResource
+public class MockResource
     extends ResourceBase
 {
     private final byte[] bytes;
 
     private final long timestamp;
 
-    public BytesResource( final ResourceKey key, final byte[] bytes )
+    public MockResource( final ResourceKey key, final byte[] bytes, final long timestamp )
     {
         super( key );
         this.bytes = bytes;
-        this.timestamp = System.currentTimeMillis();
+        this.timestamp = timestamp;
+    }
+
+    public static MockResource missing( final ResourceKey key )
+    {
+        return new MockResource( key, null, 0 );
+    }
+
+    public static MockResource empty( final ResourceKey key, long timestamp )
+    {
+        return new MockResource( key, new byte[]{}, timestamp );
     }
 
     @Override
@@ -49,4 +58,5 @@ public final class BytesResource
         requireExists();
         return ByteSource.wrap( this.bytes );
     }
+
 }

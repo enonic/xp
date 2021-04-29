@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -66,16 +65,5 @@ class MultiApplicationUrlResolverTest
 
         final URL url3 = this.resolver.findUrl( "other.txt" );
         assertNull( url3 );
-    }
-
-    @Test
-    void filesHash()
-    {
-        when( this.delegate1.filesHash( "/a" ) ).thenReturn( Long.MIN_VALUE );
-
-        when( this.delegate2.filesHash( "/a" ) ).thenReturn( Long.MAX_VALUE );
-
-        long result = this.resolver.filesHash( "/a" );
-        assertNotEquals( 0, result );
     }
 }
