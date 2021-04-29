@@ -11,7 +11,6 @@ import org.mockito.Mockito;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
 import com.enonic.xp.core.impl.app.MockApplication;
-import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceProcessor;
@@ -46,7 +45,7 @@ class ResourceServiceImplTest
 
         final MockApplication app = new MockApplication();
         app.setStarted( true );
-        app.setUrlResolver( ClassLoaderApplicationUrlResolver.create( this.appDir.toUri().toURL() ) );
+        app.setResourcePath( this.appDir );
 
         when( applicationFactoryService.findActiveApplication( this.appKey ) ).thenReturn( Optional.of( app ) );
 

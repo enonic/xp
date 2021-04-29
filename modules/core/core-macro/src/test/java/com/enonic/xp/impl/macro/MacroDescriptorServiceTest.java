@@ -26,9 +26,7 @@ public class MacroDescriptorServiceTest
         addApplication( "myapp1", "/apps/myapp1" );
         addApplication( "myapp2", "/apps/myapp2" );
 
-        this.service = new MacroDescriptorServiceImpl();
-        this.service.setResourceService( this.resourceService );
-        this.service.setApplicationService( this.applicationService );
+        this.service = new MacroDescriptorServiceImpl( this.resourceService, this.applicationService );
     }
 
     @Test

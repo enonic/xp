@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.app;
 
-import java.net.URL;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -20,20 +19,18 @@ import com.enonic.xp.node.UpdateNodeParams;
 
 public class ApplicationRepoServiceImplTest
 {
+    private static final String ROOT_TEST_PATH = "src/test/resources";
+
     private NodeService nodeService = Mockito.mock( NodeService.class );
 
     private IndexService indexService = Mockito.mock( IndexService.class );
 
     private ApplicationRepoServiceImpl service;
 
-    private URL rootTestUrl;
-
     @BeforeEach
     public void setUp()
         throws Exception
     {
-        this.rootTestUrl = Path.of( "src/test/resources" ).toUri().toURL();
-
         this.service = new ApplicationRepoServiceImpl( this.nodeService, this.indexService );
     }
 
@@ -54,12 +51,9 @@ public class ApplicationRepoServiceImplTest
     {
         final MockApplication app = createApp();
 
-        Mockito.when( this.nodeService.getByPath( NodePath.create( ApplicationRepoServiceImpl.APPLICATION_PATH, "myBundle" ).build() ) ).
-            thenReturn( Node.create().
-                id( new NodeId() ).
-                name( "myBundle" ).
-                parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH ).
-                build() );
+        Mockito.when( this.nodeService.getByPath( NodePath.create( ApplicationRepoServiceImpl.APPLICATION_PATH, "myBundle" ).build() ) )
+            .thenReturn(
+                Node.create().id( new NodeId() ).name( "myBundle" ).parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH ).build() );
 
         this.service.updateApplicationNode( app, ByteSource.wrap( "myBinary".getBytes() ) );
 
@@ -71,7 +65,7 @@ public class ApplicationRepoServiceImplTest
         final MockApplication app = new MockApplication();
         app.setKey( ApplicationKey.from( "myBundle" ) );
         app.setStarted( true );
-        app.setUrlResolver( rootTestUrl, "/myApp" );
+        app.setResourcePath( Path.of( ROOT_TEST_PATH + "/myApp" ) );
         return app;
     }
 }

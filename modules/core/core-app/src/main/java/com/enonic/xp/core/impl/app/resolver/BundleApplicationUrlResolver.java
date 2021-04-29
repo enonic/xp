@@ -24,7 +24,7 @@ import com.google.common.hash.Hashing;
 import com.google.common.hash.HashingOutputStream;
 
 public final class BundleApplicationUrlResolver
-    extends ApplicationUrlResolverBase
+    implements ApplicationUrlResolver
 {
     private final Bundle bundle;
 
@@ -51,9 +51,7 @@ public final class BundleApplicationUrlResolver
 
     private ImmutableSet<String> doFindFiles()
     {
-        return entriesStream( "/" ).
-            map( url -> url.getFile().substring( 1 ) ).
-            collect( ImmutableSet.toImmutableSet() );
+        return entriesStream( "/" ).map( url -> url.getFile().substring( 1 ) ).collect( ImmutableSet.toImmutableSet() );
     }
 
     private long doHash( final String path )
@@ -62,19 +60,18 @@ public final class BundleApplicationUrlResolver
             new HashingOutputStream( Hashing.farmHashFingerprint64(), OutputStream.nullOutputStream() );
         try (hashingOutputStream)
         {
-            entriesStream( path ).
-                forEach( url -> {
-                    try (InputStream stream = url.openStream())
-                    {
-                        hashingOutputStream.write( url.getFile().getBytes( StandardCharsets.UTF_8 ) );
-                        hashingOutputStream.write( 0 );
-                        stream.transferTo( hashingOutputStream );
-                    }
-                    catch ( IOException e )
-                    {
-                        throw new UncheckedIOException( e );
-                    }
-                } );
+            entriesStream( path ).forEach( url -> {
+                try (InputStream stream = url.openStream())
+                {
+                    hashingOutputStream.write( url.getFile().getBytes( StandardCharsets.UTF_8 ) );
+                    hashingOutputStream.write( 0 );
+                    stream.transferTo( hashingOutputStream );
+                }
+                catch ( IOException e )
+                {
+                    throw new UncheckedIOException( e );
+                }
+            } );
         }
         catch ( IOException e )
         {
@@ -86,14 +83,14 @@ public final class BundleApplicationUrlResolver
     private Stream<URL> entriesStream( final String path )
     {
         final Iterator<URL> urls = this.bundle.findEntries( path, "*", true ).asIterator();
-        return StreamSupport.stream( Spliterators.spliteratorUnknownSize( urls, Spliterator.ORDERED ), false ).
-            filter( url -> !url.getFile().endsWith( "/" ) );
+        return StreamSupport.stream( Spliterators.spliteratorUnknownSize( urls, Spliterator.ORDERED ), false )
+            .filter( url -> !url.getPath().endsWith( "/" ) );
     }
 
     @Override
     public URL findUrl( final String path )
     {
-        final String normalized = normalizePath( path );
-        return this.bundle.getResource( normalized );
+        final URL url = this.bundle.getResource( path );
+        return ( url == null || url.getPath().endsWith( "/" ) ) ? null : url;
     }
 }
