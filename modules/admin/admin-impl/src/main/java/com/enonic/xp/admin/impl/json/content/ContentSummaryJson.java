@@ -100,7 +100,7 @@ public class ContentSummaryJson
 
     public boolean getIsRoot()
     {
-        return content.isRoot();
+        return content.getPath().elementCount() == 1;
     }
 
     public ContentPublishInfoJson getPublish()
