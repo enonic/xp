@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,7 @@ final class ApplicationFactory
     private ApplicationUrlResolver createClassLoaderUrlResolver( final List<String> paths )
     {
         final List<URL> urls = getSearchPathUrls( paths );
-        return ClassLoaderApplicationUrlResolver.create( urls );
+        return new ClassLoaderApplicationUrlResolver( new URLClassLoader( urls.toArray( URL[]::new ), null ) );
     }
 
     private List<URL> getSearchPathUrls( final List<String> paths )

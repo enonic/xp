@@ -22,8 +22,7 @@ public class ServiceDescriptorServiceImplTest
     {
         super.initialize();
 
-        this.service = new ServiceDescriptorServiceImpl();
-        this.service.setResourceService( this.resourceService );
+        this.service = new ServiceDescriptorServiceImpl( this.resourceService );
     }
 
     @Test

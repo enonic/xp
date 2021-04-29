@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -28,7 +29,16 @@ public final class ServiceDescriptorServiceImpl
 
     private static final String ROOT_PATH = "/services";
 
-    private ResourceService resourceService;
+    private final ResourceService resourceService;
+
+    private final DescriptorKeyLocator descriptorKeyLocator;
+
+    @Activate
+    public ServiceDescriptorServiceImpl( @Reference final ResourceService resourceService )
+    {
+        this.resourceService = resourceService;
+        this.descriptorKeyLocator = new DescriptorKeyLocator( this.resourceService, ROOT_PATH, true );
+    }
 
     @Override
     public ServiceDescriptor getByKey( final DescriptorKey descriptorKey )
@@ -111,17 +121,6 @@ public final class ServiceDescriptorServiceImpl
 
     private Iterable<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
     {
-        return findDescriptorKeys( ROOT_PATH, key );
-    }
-
-    private Iterable<DescriptorKey> findDescriptorKeys( final String path, final ApplicationKey key )
-    {
-        return new DescriptorKeyLocator( this.resourceService, path, true ).findKeys( key );
-    }
-
-    @Reference
-    public void setResourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
+        return descriptorKeyLocator.findKeys( key );
     }
 }

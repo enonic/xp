@@ -1,7 +1,10 @@
 package com.enonic.xp.core.impl.app;
 
+import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Set;
 
@@ -133,21 +136,19 @@ public class MockApplication
         this.key = key;
     }
 
-    public void setUrlResolver( final ApplicationUrlResolver urlResolver )
+    public void setResourcePath( final Path resourcePath )
     {
-        this.urlResolver = urlResolver;
-    }
-
-    private void setClassLoaderUrlResolver( final ClassLoader loader, final String prefix )
-    {
-        final ApplicationUrlResolver resolver = new ClassLoaderApplicationUrlResolver( (URLClassLoader) loader );
-        final ApplicationUrlResolver prefixedReslver = new PrefixApplicationUrlResolver( resolver, prefix );
-        setUrlResolver( prefixedReslver );
-    }
-
-    public void setUrlResolver( final URL root, final String prefix )
-    {
-        setClassLoaderUrlResolver( new URLClassLoader( new URL[]{root}, null ), prefix );
+        final URL url;
+        try
+        {
+            url = resourcePath.toUri().toURL();
+        }
+        catch ( MalformedURLException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+        final URLClassLoader loader = new URLClassLoader( new URL[]{url}, null );
+        this.urlResolver = new ClassLoaderApplicationUrlResolver( loader );
     }
 
     public ApplicationUrlResolver getUrlResolver()
