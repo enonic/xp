@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.handler.asset;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,10 +15,10 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.PortalConfig;
+import com.enonic.xp.resource.MockResource;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.util.HashCode;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -199,8 +198,9 @@ public class AssetHandlerTest
         addResource( "demo:/assets/css/main.css" );
         this.request.setEndpointPath( "/_/asset/demo:123/css/main.css" );
 
-        when( this.resourceService.resourceHash( ResourceKey.assets( ApplicationKey.from( "demo" ) ) ) ).
-            thenReturn( Optional.of( HashCode.fromLong( 1 ) ) );
+        final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "demo" ), "META-INF/MANIFEST.MF" );
+        when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );
+
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
         assertEquals( HttpStatus.OK, res.getStatus() );
@@ -214,8 +214,8 @@ public class AssetHandlerTest
         addResource( "demo:/assets/css/main.css" );
         this.request.setEndpointPath( "/_/asset/demo:0000000000000001/css/main.css" );
 
-        when( this.resourceService.resourceHash( ResourceKey.assets( ApplicationKey.from( "demo" ) ) ) ).
-            thenReturn( Optional.of( HashCode.fromLong( 1 ) ) );
+        final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "demo" ), "META-INF/MANIFEST.MF" );
+        when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );

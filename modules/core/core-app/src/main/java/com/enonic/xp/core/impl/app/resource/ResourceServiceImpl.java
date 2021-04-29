@@ -23,7 +23,6 @@ import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.server.RunMode;
-import com.enonic.xp.util.HashCode;
 
 @Component(immediate = true)
 public final class ResourceServiceImpl
@@ -80,17 +79,6 @@ public final class ResourceServiceImpl
     public <K, V> V processResource( final ResourceProcessor<K, V> processor )
     {
         return this.cache.process( processor );
-    }
-
-    @Override
-    public Optional<HashCode> resourceHash( final ResourceKey key )
-    {
-        if ( !key.equals( ResourceKey.assets( key.getApplicationKey() ) ) )
-        {
-            throw new IllegalArgumentException( "Unsupported resource key " + key );
-        }
-        return findApplicationUrlResolver( key.getApplicationKey() ).map( urlResolver -> urlResolver.filesHash( key.getPath() ) )
-            .map( HashCode::fromLong );
     }
 
     @Override

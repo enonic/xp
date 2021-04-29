@@ -17,12 +17,6 @@ public final class ClassLoaderApplicationUrlResolver
 {
     private final ClassLoader loader;
 
-    @Override
-    public long filesHash( final String path )
-    {
-        return System.currentTimeMillis();
-    }
-
     public ClassLoaderApplicationUrlResolver( final URLClassLoader loader )
     {
         this.loader = loader;

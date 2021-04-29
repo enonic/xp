@@ -15,10 +15,8 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceProcessor;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 class ResourceServiceImplTest
@@ -121,18 +119,5 @@ class ResourceServiceImplTest
     {
         final String value = processResource( "segment1", "a.txt", "1" );
         assertNull( value );
-    }
-
-    @Test
-    void resourceHash()
-    {
-        assertThat( this.resourceService.resourceHash( ResourceKey.assets( appKey ) ) ).isNotEmpty();
-    }
-
-    @Test
-    void resourceHash_unsupported()
-    {
-        // API is only open to acept limited set of resources that we know we need hash for.
-        assertThrows( IllegalArgumentException.class, () -> this.resourceService.resourceHash( ResourceKey.from( appKey, "/" ) ) );
     }
 }

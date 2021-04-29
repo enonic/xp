@@ -12,7 +12,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.resource.BytesResource;
+import com.enonic.xp.resource.MockResource;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -60,8 +60,8 @@ public class WebAppHandlerTest
         this.request.setRawRequest( Mockito.mock( HttpServletRequest.class ) );
         this.chain = Mockito.mock( WebHandlerChain.class );
 
-        Mockito.when( this.resourceService.getResource( Mockito.any() ) ).thenReturn(
-            new BytesResource( ResourceKey.from( "myapp:/unknown.txt" ), null ) );
+        Mockito.when( this.resourceService.getResource( Mockito.any() ) )
+            .thenReturn( MockResource.missing( ResourceKey.from( "myapp:/unknown.txt" ) ) );
 
         Mockito.when( this.exceptionRenderer.render( Mockito.any(), Mockito.any() ) ).thenReturn(
             WebResponse.create().status( HttpStatus.INTERNAL_SERVER_ERROR ).build() );
@@ -94,7 +94,7 @@ public class WebAppHandlerTest
     private Resource mockResource( final String uri, final byte[] data )
     {
         final ResourceKey key = ResourceKey.from( uri );
-        final Resource resource = new BytesResource( key, data );
+        final Resource resource = new MockResource( key, data, System.currentTimeMillis() );
         Mockito.when( this.resourceService.getResource( key ) ).thenReturn( resource );
         return resource;
     }
