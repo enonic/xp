@@ -7,7 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 
 @PublicApi
-public class ContentVersion
+public final class ContentVersion
     implements Comparable<ContentVersion>
 {
     private final ContentVersionId id;
@@ -17,6 +17,8 @@ public class ContentVersion
     private final String displayName;
 
     private final Instant modified;
+
+    private final Instant timestamp;
 
     private final String comment;
 
@@ -30,6 +32,7 @@ public class ContentVersion
         this.displayName = builder.displayName;
         this.modified = builder.modified;
         this.comment = builder.comment;
+        this.timestamp = builder.timestamp;
         this.id = builder.id;
         this.publishInfo = builder.publishInfo;
         this.workflowInfo = builder.workflowInfo;
@@ -53,6 +56,11 @@ public class ContentVersion
     public String getComment()
     {
         return comment;
+    }
+
+    public Instant getTimestamp()
+    {
+        return timestamp;
     }
 
     public ContentVersionId getId()
@@ -103,37 +111,17 @@ public class ContentVersion
         {
             return false;
         }
-
         final ContentVersion that = (ContentVersion) o;
-
-        if ( !Objects.equals( comment, that.comment ) )
-        {
-            return false;
-        }
-        if ( !Objects.equals( displayName, that.displayName ) )
-        {
-            return false;
-        }
-        if ( !Objects.equals( modified, that.modified ) )
-        {
-            return false;
-        }
-        if ( !Objects.equals( modifier, that.modifier ) )
-        {
-            return false;
-        }
-        if ( !Objects.equals( publishInfo, that.publishInfo ) )
-        {
-            return false;
-        }
-
-        return Objects.equals( workflowInfo, that.workflowInfo );
+        return Objects.equals( id, that.id ) && Objects.equals( modifier, that.modifier ) &&
+            Objects.equals( displayName, that.displayName ) && Objects.equals( modified, that.modified ) &&
+            Objects.equals( timestamp, that.timestamp ) && Objects.equals( comment, that.comment ) &&
+            Objects.equals( publishInfo, that.publishInfo ) && Objects.equals( workflowInfo, that.workflowInfo );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( modifier, displayName, modified, comment, publishInfo, workflowInfo );
+        return Objects.hash( id, modifier, displayName, modified, timestamp, comment, publishInfo, workflowInfo );
     }
 
     public static final class Builder
@@ -143,6 +131,8 @@ public class ContentVersion
         private String displayName;
 
         private Instant modified;
+
+        private Instant timestamp;
 
         private String comment;
 
@@ -177,6 +167,12 @@ public class ContentVersion
         public Builder modified( Instant modified )
         {
             this.modified = modified;
+            return this;
+        }
+
+        public Builder timestamp( Instant timestamp )
+        {
+            this.timestamp = timestamp;
             return this;
         }
 

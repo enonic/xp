@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.data.Property;
 
-public class WorkflowInfo
+public final class WorkflowInfo
 {
     private static final WorkflowInfo IN_PROGRESS = WorkflowInfo.create().
         state( WorkflowState.IN_PROGRESS ).
@@ -18,9 +18,9 @@ public class WorkflowInfo
         state( WorkflowState.READY ).
         build();
 
-    private WorkflowState state;
+    private final WorkflowState state;
 
-    private ImmutableMap<String, WorkflowCheckState> checks;
+    private final ImmutableMap<String, WorkflowCheckState> checks;
 
     private WorkflowInfo( Builder builder )
     {
@@ -115,7 +115,7 @@ public class WorkflowInfo
         {
             return true;
         }
-        if ( o == null || getClass() != o.getClass() )
+        if ( !( o instanceof WorkflowInfo ) )
         {
             return false;
         }

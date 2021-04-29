@@ -21,6 +21,7 @@ public class GetActiveContentVersionsResultTest
         final ContentVersion version = ContentVersion.create().
             id( ContentVersionId.from( "a" ) ).
             modified( now ).
+            timestamp( now ).
             build();
 
         final Branch draft = Branch.from( "draft" );
@@ -71,16 +72,19 @@ public class GetActiveContentVersionsResultTest
         final ContentVersion oldVersion = ContentVersion.create().
             id( ContentVersionId.from( "b" ) ).
             modified( middle ).
+            timestamp( middle ).
             build();
 
         final ContentVersion oldestVersion = ContentVersion.create().
             id( ContentVersionId.from( "a" ) ).
             modified( oldest ).
+            timestamp( oldest ).
             build();
 
         final ContentVersion newVersion = ContentVersion.create().
             id( ContentVersionId.from( "c" ) ).
             modified( newest ).
+            timestamp( newest ).
             build();
 
         final GetActiveContentVersionsResult result = GetActiveContentVersionsResult.create().
