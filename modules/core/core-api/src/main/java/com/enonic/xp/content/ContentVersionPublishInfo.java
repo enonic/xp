@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import com.enonic.xp.security.PrincipalKey;
 
-public class ContentVersionPublishInfo
+public final class ContentVersionPublishInfo
 {
     private final PrincipalKey publisher;
 
@@ -55,7 +55,7 @@ public class ContentVersionPublishInfo
         {
             return true;
         }
-        if ( o == null || getClass() != o.getClass() )
+        if ( !( o instanceof ContentVersionPublishInfo ) )
         {
             return false;
         }

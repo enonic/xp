@@ -24,7 +24,7 @@ final class ContentVersionDateComparator
         }
         else
         {
-            thisTime = thisVersion.getModified();
+            thisTime = thisVersion.getTimestamp();
 
         }
         if ( thatVersion.getPublishInfo() != null && thatVersion.getPublishInfo().getTimestamp() != null )
@@ -33,7 +33,7 @@ final class ContentVersionDateComparator
         }
         else
         {
-            thatTime = thatVersion.getModified();
+            thatTime = thatVersion.getTimestamp();
         }
 
         return thatTime.compareTo( thisTime );

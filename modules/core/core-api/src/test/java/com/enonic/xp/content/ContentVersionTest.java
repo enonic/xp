@@ -1,53 +1,63 @@
 package com.enonic.xp.content;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import org.junit.jupiter.api.Test;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class ContentVersionTest
 {
     @Test
-    public void testEquals()
+    public void testBuilder()
     {
         final Instant now1 = Instant.now();
+        final Instant now2 = Instant.now();
 
-        final ContentVersion version1 = ContentVersion.create().
+        final ContentVersionPublishInfo publishInfo = ContentVersionPublishInfo.create().
+            message( "My version 1" ).
+            publisher( PrincipalKey.ofAnonymous() ).
+            timestamp( Instant.ofEpochSecond( 1562056003L ) ).
+            contentPublishInfo( ContentPublishInfo.create().
+                first( Instant.now() ).
+                from( Instant.now() ).
+                to( Instant.now().plus( 3, ChronoUnit.DAYS ) ).
+                build() ).
+            build();
+
+        final WorkflowInfo workflowInfo = WorkflowInfo.create().
+            state( WorkflowState.READY ).
+            build();
+
+        final ContentVersion version = ContentVersion.create().
             id( ContentVersionId.from( "a" ) ).
             modified( now1 ).
+            timestamp( now2 ).
             modifier( PrincipalKey.ofAnonymous() ).
             displayName( "contentVersion" ).
             comment( "comment" ).
+            publishInfo( publishInfo ).
+            workflowInfo( workflowInfo ).
             build();
 
-        assertEquals( version1, version1 );
-        assertEquals( version1.hashCode(), version1.hashCode() );
+        assertEquals( ContentVersionId.from( "a" ), version.getId() );
+        assertEquals( now1, version.getModified() );
+        assertEquals( now2, version.getTimestamp() );
+        assertEquals( "comment", version.getComment() );
+        assertEquals( PrincipalKey.ofAnonymous(), version.getModifier() );
+        assertEquals( "contentVersion", version.getDisplayName() );
+        assertEquals( publishInfo, version.getPublishInfo() );
+        assertEquals( workflowInfo, version.getWorkflowInfo() );
+    }
 
-        assertNotEquals( version1, null );
-
-        final Instant now2 = now1.plusMillis( 1000 );
-
-        final ContentVersion version2 = ContentVersion.create().
-            id( ContentVersionId.from( "b" ) ).
-            modified( now2 ).
-            modifier( PrincipalKey.ofAnonymous() ).
-            displayName( "contentVersion" ).
-            comment( "comment" ).
-            build();
-
-        assertNotEquals( version1, version2 );
-        assertNotEquals( version1.hashCode(), version2.hashCode() );
-
-        assertEquals( version1.getModifier(), version2.getModifier() );
-        assertEquals( version1.getComment(), version2.getComment() );
-        assertEquals( version1.getDisplayName(), version2.getDisplayName() );
-
-        assertNotEquals( version1.getId(), version2.getId() );
-        assertNotEquals( version1.getModified(), version2.getModified() );
-
+    @Test
+    void equalsContract()
+    {
+        EqualsVerifier.forClass( ContentVersion.class ).verify();
     }
 }

@@ -18,7 +18,7 @@ public class GetContentVersionsForViewResultJson
 {
     private ActiveContentVersionEntryJson activeVersion;
 
-    private Set<ContentVersionViewJson> contentVersions = new LinkedHashSet<>();
+    private final Set<ContentVersionViewJson> contentVersions = new LinkedHashSet<>();
 
     private final long totalHits;
 
@@ -90,7 +90,7 @@ public class GetContentVersionsForViewResultJson
         while ( iterator.hasNext() )
         {
             final ContentVersion contentVersion = iterator.next();
-            if ( Math.abs( previouslyAdded.getModified().toEpochMilli() - contentVersion.getModified().toEpochMilli() ) > msRangeFilter ||
+            if ( Math.abs( previouslyAdded.getTimestamp().toEpochMilli() - contentVersion.getTimestamp().toEpochMilli() ) > msRangeFilter ||
                 contentVersion.getPublishInfo() != null )
             {
                 filteredContentVersions.add( contentVersion );

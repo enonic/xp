@@ -41,7 +41,7 @@ public class ContentVersions
 
     public static final class Builder
     {
-        private List<ContentVersion> contentVersions = new ArrayList<>();
+        private final List<ContentVersion> contentVersions = new ArrayList<>();
 
         private ContentId contentId;
 

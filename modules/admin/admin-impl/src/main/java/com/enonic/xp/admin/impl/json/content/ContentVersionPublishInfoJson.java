@@ -1,7 +1,6 @@
 package com.enonic.xp.admin.impl.json.content;
 
 import java.time.Instant;
-import java.util.Objects;
 
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.content.ContentVersionPublishInfo;
@@ -58,28 +57,5 @@ public class ContentVersionPublishInfoJson
     public ContentPublishInfoJson getContentPublishInfo()
     {
         return contentPublishInfo;
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final ContentVersionPublishInfoJson that = (ContentVersionPublishInfoJson) o;
-        return Objects.equals( publisher, that.publisher ) && Objects.equals( timestamp, that.timestamp ) &&
-            Objects.equals( message, that.message ) && Objects.equals( publisherDisplayName, that.publisherDisplayName ) &&
-            Objects.equals( contentPublishInfo, that.contentPublishInfo );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( publisher, timestamp, message, publisherDisplayName, contentPublishInfo );
     }
 }
