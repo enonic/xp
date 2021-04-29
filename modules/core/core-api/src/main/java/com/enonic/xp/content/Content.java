@@ -195,6 +195,7 @@ public class Content
         return path;
     }
 
+    @Deprecated
     public boolean isRoot()
     {
         return this.path.elementCount() == 1;
