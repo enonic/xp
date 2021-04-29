@@ -63,6 +63,7 @@ class ContentVersionFactory
             displayName( data.getProperty( ContentPropertyNames.DISPLAY_NAME ).getString() ).
             comment( "No comments" ).
             modified( data.getProperty( ContentPropertyNames.MODIFIED_TIME ).getInstant() ).
+            timestamp( nodeVersionMetadata.getTimestamp() ).
             modifier( PrincipalKey.from( data.getProperty( ContentPropertyNames.MODIFIER ).getString() ) ).
             id( ContentVersionId.from( nodeVersionMetadata.getNodeVersionId().toString() ) ).
             publishInfo( doCreateContentVersionPublishInfo( nodeVersionMetadata.getNodeCommitId(), data.getRoot() ) ).

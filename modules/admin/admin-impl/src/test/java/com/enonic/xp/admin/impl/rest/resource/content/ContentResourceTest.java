@@ -2167,8 +2167,10 @@ public class ContentResourceTest
         GetContentVersionsResultJson result =
             contentResource.getContentVersions( new GetContentVersionsJson( 0, 10, content.getId().toString() ) );
 
-        assertEquals( new ContentVersionJson( contentVersion2, contentPrincipalsResolver ), result.getContentVersions().toArray()[0] );
-        assertEquals( new ContentVersionJson( contentVersion1, contentPrincipalsResolver ), result.getContentVersions().toArray()[1] );
+        assertContentVersionJsonsEquality( new ContentVersionJson( contentVersion2, contentPrincipalsResolver ),
+                                           (ContentVersionJson) result.getContentVersions().toArray()[0] );
+        assertContentVersionJsonsEquality( new ContentVersionJson( contentVersion1, contentPrincipalsResolver ),
+                                           (ContentVersionJson) result.getContentVersions().toArray()[1] );
 
     }
 
@@ -2203,8 +2205,8 @@ public class ContentResourceTest
 
         GetActiveContentVersionsResultJson result = contentResource.getActiveVersions( content.getId().toString() );
 
-        assertEquals( new ContentVersionJson( contentVersion, contentPrincipalsResolver ),
-                      ( (ActiveContentVersionEntryJson) result.getActiveContentVersions().toArray()[0] ).getContentVersion() );
+        assertContentVersionJsonsEquality( new ContentVersionJson( contentVersion, contentPrincipalsResolver ),
+                                           ( (ActiveContentVersionEntryJson) result.getActiveContentVersions().toArray()[0] ).getContentVersion() );
     }
 
     @Test
@@ -2244,10 +2246,12 @@ public class ContentResourceTest
         GetContentVersionsForViewResultJson result =
             contentResource.getContentVersionsForView( new GetContentVersionsJson( 0, 10, content.getId().toString() ) );
 
-        assertEquals( new ContentVersionJson( contentVersion, contentPrincipalsResolver ), result.getActiveVersion().getContentVersion() );
-        assertEquals( new ContentVersionViewJson( contentVersion, contentPrincipalsResolver,
-                                                  Collections.singletonList( ContentConstants.BRANCH_DRAFT.toString() ) ),
-                      result.getContentVersions().toArray()[0] );
+        assertContentVersionJsonsEquality( new ContentVersionJson( contentVersion, contentPrincipalsResolver ),
+                                           result.getActiveVersion().getContentVersion() );
+        assertContentVersionViewJsonsEquality( new ContentVersionViewJson( contentVersion, contentPrincipalsResolver,
+                                                                           Collections.singletonList(
+                                                                               ContentConstants.BRANCH_DRAFT.toString() ) ),
+                                               (ContentVersionViewJson) result.getContentVersions().toArray()[0] );
     }
 
     @Test
@@ -2463,15 +2467,16 @@ public class ContentResourceTest
         final Content content = Mockito.mock( Content.class );
         final Content versionedContent = Mockito.mock( Content.class );
         final ByteSource byteSource = Mockito.mock( ByteSource.class );
-        final ContentVersion contentVersion = Mockito.mock( ContentVersion.class );
+        final ContentVersion contentVersion = ContentVersion.create().
+            id( ContentVersionId.from( "contentVersionId" ) ).
+            modifier( principalKey ).
+            build();
 
         final Attachments attachments = Attachments.create().add( Attachment.create().
             name( "attachment" ).mimeType( "mimeType" ).size( 1000L ).build() ).build();
 
         Mockito.when( versionedContent.getId() ).thenReturn( ContentId.from( "nodeId" ) );
         Mockito.when( versionedContent.getAttachments() ).thenReturn( attachments );
-        Mockito.when( contentVersion.getModifier() ).thenReturn( principalKey );
-        Mockito.when( contentVersion.getId() ).thenReturn( ContentVersionId.from( "contentVersionId" ) );
         Mockito.when( contentService.getByIdAndVersionId( any( ContentId.class ), any( ContentVersionId.class ) ) ).thenReturn(
             versionedContent );
         Mockito.when( contentService.getById( any( ContentId.class ) ) ).thenReturn( content );
@@ -2514,11 +2519,12 @@ public class ContentResourceTest
         // mock
         final Content content = Mockito.mock( Content.class );
         final Content versionedContent = Mockito.mock( Content.class );
-        final ContentVersion contentVersion = Mockito.mock( ContentVersion.class );
+        final ContentVersion contentVersion = ContentVersion.create().
+            id( ContentVersionId.from( "contentVersionId" ) ).
+            modifier( principalKey ).
+            build();
 
         Mockito.when( versionedContent.getId() ).thenReturn( ContentId.from( "nodeId" ) );
-        Mockito.when( contentVersion.getModifier() ).thenReturn( principalKey );
-        Mockito.when( contentVersion.getId() ).thenReturn( ContentVersionId.from( "contentVersionId" ) );
         Mockito.when( contentService.getByPathAndVersionId( any( ContentPath.class ), any( ContentVersionId.class ) ) ).thenReturn(
             versionedContent );
         Mockito.when( contentService.update( any( UpdateContentParams.class ) ) ).thenReturn( updatedContent );
@@ -2674,5 +2680,27 @@ public class ContentResourceTest
     {
         return AccessControlList.of( AccessControlEntry.create().principal( PrincipalKey.from( "user:system:admin" ) ).allowAll().build(),
                                      AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build() );
+    }
+
+    private void assertContentVersionJsonsEquality( final ContentVersionJson first, final ContentVersionJson second )
+    {
+        assertEquals( first.getModifier(), second.getModifier() );
+        assertEquals( first.getTimestamp(), second.getTimestamp() );
+        assertEquals( first.getDisplayName(), second.getDisplayName() );
+        assertEquals( first.getModified(), second.getModified() );
+        assertEquals( first.getComment(), second.getComment() );
+        assertEquals( first.getId(), second.getId() );
+        assertEquals( first.getModifierDisplayName(), second.getModifierDisplayName() );
+
+        assertEquals( first.getPublishInfo().getTimestamp(), second.getPublishInfo().getTimestamp() );
+        assertEquals( first.getPublishInfo().getPublisher(), second.getPublishInfo().getPublisher() );
+        assertEquals( first.getPublishInfo().getMessage(), second.getPublishInfo().getMessage() );
+        assertEquals( first.getPublishInfo().getPublisherDisplayName(), second.getPublishInfo().getPublisherDisplayName() );
+    }
+
+    private void assertContentVersionViewJsonsEquality( final ContentVersionViewJson first, final ContentVersionViewJson second )
+    {
+        assertContentVersionJsonsEquality( first, second );
+        assertEquals( first.getWorkspaces(), second.getWorkspaces() );
     }
 }

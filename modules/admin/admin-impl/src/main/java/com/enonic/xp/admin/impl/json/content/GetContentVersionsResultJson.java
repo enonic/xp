@@ -9,7 +9,7 @@ import com.enonic.xp.content.FindContentVersionsResult;
 
 public class GetContentVersionsResultJson
 {
-    private Set<ContentVersionJson> contentVersions = new LinkedHashSet<>();
+    private final Set<ContentVersionJson> contentVersions = new LinkedHashSet<>();
 
     private final long totalHits;
 

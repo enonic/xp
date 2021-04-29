@@ -1,7 +1,6 @@
 package com.enonic.xp.admin.impl.json.content;
 
 import java.time.Instant;
-import java.util.Objects;
 
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.content.ContentVersion;
@@ -17,6 +16,8 @@ public class ContentVersionJson
 
     private final Instant modified;
 
+    private final Instant timestamp;
+
     private final String comment;
 
     private final String id;
@@ -28,6 +29,7 @@ public class ContentVersionJson
     public ContentVersionJson( final ContentVersion contentVersion, final ContentPrincipalsResolver principalsResolver )
     {
         this.modified = contentVersion.getModified();
+        this.timestamp = contentVersion.getTimestamp();
         this.displayName = contentVersion.getDisplayName();
         this.comment = contentVersion.getComment();
 
@@ -39,8 +41,7 @@ public class ContentVersionJson
         this.publishInfo = contentVersion.getPublishInfo() != null ? new ContentVersionPublishInfoJson( contentVersion.getPublishInfo(),
                                                                                                         principalsResolver ) : null;
 
-        this.workflow =
-            contentVersion.getWorkflowInfo() != null ? new ContentWorkflowInfoJson( contentVersion.getWorkflowInfo() ) : null;
+        this.workflow = contentVersion.getWorkflowInfo() != null ? new ContentWorkflowInfoJson( contentVersion.getWorkflowInfo() ) : null;
 
     }
 
@@ -48,6 +49,12 @@ public class ContentVersionJson
     public String getModifier()
     {
         return modifier;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public Instant getTimestamp()
+    {
+        return timestamp;
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -90,29 +97,5 @@ public class ContentVersionJson
     public ContentWorkflowInfoJson getWorkflow()
     {
         return workflow;
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final ContentVersionJson that = (ContentVersionJson) o;
-        return Objects.equals( modifier, that.modifier ) && Objects.equals( modifierDisplayName, that.modifierDisplayName ) &&
-            Objects.equals( displayName, that.displayName ) && Objects.equals( modified, that.modified ) &&
-            Objects.equals( comment, that.comment ) && Objects.equals( id, that.id ) && Objects.equals( publishInfo, that.publishInfo ) &&
-            Objects.equals( workflow, that.workflow );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( modifier, modifierDisplayName, displayName, modified, comment, id, publishInfo, workflow );
     }
 }

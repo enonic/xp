@@ -3,13 +3,13 @@ package com.enonic.xp.content;
 import java.time.Instant;
 import java.util.Objects;
 
-public class ContentPublishInfo
+public final class ContentPublishInfo
 {
-    private Instant from;
+    private final Instant from;
 
-    private Instant to;
+    private final Instant to;
 
-    private Instant first;
+    private final Instant first;
 
     private ContentPublishInfo( final Builder builder )
     {
@@ -81,14 +81,12 @@ public class ContentPublishInfo
         {
             return true;
         }
-        if ( o == null || getClass() != o.getClass() )
+        if ( !( o instanceof ContentPublishInfo ) )
         {
             return false;
         }
-
         final ContentPublishInfo that = (ContentPublishInfo) o;
         return Objects.equals( from, that.from ) && Objects.equals( to, that.to ) && Objects.equals( first, that.first );
-
     }
 
     @Override

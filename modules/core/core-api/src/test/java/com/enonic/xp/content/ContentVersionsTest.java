@@ -7,11 +7,12 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentVersionsTest
 {
     @Test
-    public void testEquals()
+    public void testBuilder()
     {
 
         final Instant now1 = Instant.now();
@@ -19,6 +20,7 @@ public class ContentVersionsTest
         final ContentVersion version1 = ContentVersion.create().
             id( ContentVersionId.from( "a" ) ).
             modified( now1 ).
+            timestamp( now1 ).
             modifier( PrincipalKey.ofAnonymous() ).
             displayName( "contentVersion" ).
             comment( "comment" ).
@@ -29,6 +31,7 @@ public class ContentVersionsTest
         final ContentVersion version2 = ContentVersion.create().
             id( ContentVersionId.from( "b" ) ).
             modified( now2 ).
+            timestamp( now2 ).
             modifier( PrincipalKey.ofAnonymous() ).
             displayName( "contentVersion" ).
             comment( "comment" ).
@@ -41,7 +44,6 @@ public class ContentVersionsTest
             build();
 
         assertEquals( versions.getContentId(), ContentId.from( "ab" ) );
-        assertEquals( versions.iterator().hasNext(), true );
-
+        assertTrue( versions.iterator().hasNext() );
     }
 }

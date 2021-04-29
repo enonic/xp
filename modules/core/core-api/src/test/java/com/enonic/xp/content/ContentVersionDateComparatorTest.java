@@ -18,6 +18,7 @@ public class ContentVersionDateComparatorTest
         final ContentVersion version1 = ContentVersion.create().
             id( ContentVersionId.from( "a" ) ).
             modified( now1 ).
+            timestamp( now1 ).
             modifier( PrincipalKey.ofAnonymous() ).
             displayName( "contentVersion" ).
             comment( "comment" ).
@@ -26,6 +27,7 @@ public class ContentVersionDateComparatorTest
         final ContentVersion version1Same = ContentVersion.create().
             id( ContentVersionId.from( "a" ) ).
             modified( now1 ).
+            timestamp( now1 ).
             modifier( PrincipalKey.ofAnonymous() ).
             displayName( "contentVersion" ).
             comment( "comment" ).
@@ -38,6 +40,7 @@ public class ContentVersionDateComparatorTest
         final ContentVersion version2 = ContentVersion.create().
             id( ContentVersionId.from( "b" ) ).
             modified( now2 ).
+            timestamp( now2 ).
             modifier( PrincipalKey.ofAnonymous() ).
             displayName( "contentVersion" ).
             comment( "comment" ).
