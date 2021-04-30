@@ -468,6 +468,20 @@ RepoConnection.prototype.commit = function (params) {
     return __.toNativeObject(this.repoConnection.commit(keys, message));
 };
 
+/**
+ * This function fetches commit by id.
+ *
+ * @example-ref examples/node/commit.js
+ *
+ * @param {string} params.id existing commit id.
+ *
+ * @returns {object} Commit object.
+ */
+RepoConnection.prototype.getCommit = function (params) {
+    var id = required(params, 'id');
+    return __.toNativeObject(this.repoConnection.getCommit(id));
+};
+
 
 /**
  * Creates a connection to a repository with a given branch and authentication info.
