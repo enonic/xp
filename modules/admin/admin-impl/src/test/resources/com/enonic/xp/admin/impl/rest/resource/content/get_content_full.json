@@ -1,50 +1,50 @@
 {
-    "attachments": [],
-    "childOrder": null,
-    "contentState": "DEFAULT",
-    "createdTime": "2013-08-23T12:55:09.162Z",
-    "creator": "user:system:admin",
-    "data": [
+  "attachments": [],
+  "childOrder": null,
+  "contentState": "DEFAULT",
+  "createdTime": "2013-08-23T12:55:09.162Z",
+  "creator": "user:system:admin",
+  "data": [
+    {
+      "name": "myArray",
+      "type": "Long",
+      "values": [
         {
-            "name": "myArray",
-            "type": "Long",
-            "values": [
-                {
-                    "v": 1
-                },
-                {
-                    "v": 2
-                }
-            ]
+          "v": 1
         },
         {
-            "name": "mySetWithArray",
-            "type": "PropertySet",
-            "values": [
-                {
-                    "set": [
-                        {
-                            "name": "myArray",
-                            "type": "Double",
-                            "values": [
-                              {
-                                "v": 3.14159
-                              },
-                              {
-                                "v": 1.333
-                              }
-                            ]
-                        }
-                    ]
-                }
-            ]
+          "v": 2
         }
-    ],
+      ]
+    },
+    {
+      "name": "mySetWithArray",
+      "type": "PropertySet",
+      "values": [
+        {
+          "set": [
+            {
+              "name": "myArray",
+              "type": "Double",
+              "values": [
+                {
+                  "v": 3.14159
+                },
+                {
+                  "v": 1.333
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
   "deletable": true,
   "displayName": "My Content",
   "editable": true,
   "hasChildren": false,
-  "iconUrl": "/admin/rest/schema/content/icon/myapplication:my_type?hash=f95b70fdc3088560732a5ac135644506",
+  "iconUrl": "/admin/rest/schema/content/icon/myapplication:my_type?hash=e7e183114827ad2c4bbd8100f9398b07",
   "id": "aaa",
   "inherit": [],
   "inheritPermissions": true,
@@ -52,6 +52,7 @@
   "isRoot": true,
   "isValid": true,
   "language": "en",
+  "listTitle": "My Content",
   "meta": [
     {
       "data": [
@@ -71,7 +72,7 @@
   "modifiedTime": "2013-08-23T12:55:09.162Z",
   "modifier": "user:system:admin",
   "name": "my_a_content",
-  "originProject" : null,
+  "originProject": null,
   "owner": "user:myStore:me",
   "page": null,
   "path": "/my_a_content",
@@ -79,12 +80,12 @@
   "publish": {
     "first": "2016-11-02T10:36:00Z",
     "from": "2016-11-02T10:36:00Z",
-        "to": "2016-11-22T10:36:00Z"
-    },
-    "thumbnail": null,
-    "type": "myapplication:my_type",
-    "workflow" : {
-        "checks" : { },
-        "state" : "READY"
-    }
+    "to": "2016-11-22T10:36:00Z"
+  },
+  "thumbnail": null,
+  "type": "myapplication:my_type",
+  "workflow": {
+    "checks": {},
+    "state": "READY"
+  }
 }

@@ -4,6 +4,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.schema.content.ContentTypeName;
 
 @PublicApi
 public final class Site
@@ -72,6 +73,7 @@ public final class Site
         public Builder()
         {
             super();
+            type = ContentTypeName.site();
         }
 
         public Builder description( final String description )

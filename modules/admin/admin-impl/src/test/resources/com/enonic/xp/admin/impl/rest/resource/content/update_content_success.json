@@ -9,7 +9,7 @@
   "displayName": "My Content",
   "editable": true,
   "hasChildren": false,
-  "iconUrl": "/admin/rest/schema/content/icon/myapplication:content-type?hash=f95b70fdc3088560732a5ac135644506",
+  "iconUrl": "/admin/rest/schema/content/icon/myapplication:content-type?hash=e7e183114827ad2c4bbd8100f9398b07",
   "id": "content-id",
   "inherit": [],
   "inheritPermissions": true,
@@ -17,6 +17,7 @@
   "isRoot": true,
   "isValid": true,
   "language": "en",
+  "listTitle": "My Content",
   "meta": [
     {
       "data": [
@@ -36,13 +37,13 @@
   "modifiedTime": "2013-08-23T12:55:09.162Z",
   "modifier": "user:system:admin",
   "name": "content-name",
-  "originProject" : null,
+  "originProject": null,
   "owner": "user:myStore:me",
   "page": null,
   "path": "/content-name",
   "permissions": [],
   "publish": {
-    "first" : "2016-11-02T10:36:00Z",
+    "first": "2016-11-02T10:36:00Z",
     "from": "2016-11-02T10:36:00Z",
     "to": "2016-11-22T10:36:00Z"
   },

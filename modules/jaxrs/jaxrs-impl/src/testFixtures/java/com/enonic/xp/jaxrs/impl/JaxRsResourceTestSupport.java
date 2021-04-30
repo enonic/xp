@@ -36,11 +36,21 @@ public abstract class JaxRsResourceTestSupport
 
     private static final ObjectWriter OBJECT_WRITER = MAPPER.writerWithDefaultPrettyPrinter();
 
-    private String basePath = "/";
+    private final String basePath;
 
     private Dispatcher dispatcher;
 
     protected MultipartService multipartService;
+
+    public JaxRsResourceTestSupport()
+    {
+        this( "/" );
+    }
+
+    public JaxRsResourceTestSupport( final String basePath )
+    {
+        this.basePath = basePath;
+    }
 
     @BeforeEach
     public final void setUp()
@@ -140,11 +150,6 @@ public abstract class JaxRsResourceTestSupport
         result.append( "]" );
 
         return result.toString();
-    }
-
-    protected final void setBasePath( final String basePath )
-    {
-        this.basePath = basePath;
     }
 
     protected final RestRequestBuilder request()

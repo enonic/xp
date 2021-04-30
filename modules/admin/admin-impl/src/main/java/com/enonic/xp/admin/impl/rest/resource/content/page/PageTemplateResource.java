@@ -7,6 +7,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -16,9 +17,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.json.content.ContentJson;
 import com.enonic.xp.admin.impl.json.content.ContentListJson;
-import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
-import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
-import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
+import com.enonic.xp.admin.impl.json.content.JsonObjectsFactory;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentListMetaData;
@@ -37,16 +36,14 @@ import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.page.PageTemplates;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteService;
 
 import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.CMS_PATH;
 import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.REST_ROOT;
 
-@javax.ws.rs.Path(REST_ROOT + "{content:(content|" + CMS_PATH + "/content)}/page/template")
+@Path(REST_ROOT + "{content:(content|" + CMS_PATH + "/content)}/page/template")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
 @Component(immediate = true, property = "group=admin")
@@ -59,13 +56,7 @@ public final class PageTemplateResource
 
     private SiteService siteService;
 
-    private ContentTypeService contentTypeService;
-
-    private ContentPrincipalsResolver principalsResolver;
-
-    private ContentIconUrlResolver contentIconUrlResolver;
-
-    private ComponentNameResolver componentNameResolver;
+    private JsonObjectsFactory jsonObjectsFactory;
 
     @GET
     public ContentJson getByKey( @QueryParam("key") final String pageTemplateKeyAsString )
@@ -73,44 +64,38 @@ public final class PageTemplateResource
     {
         final PageTemplateKey pageTemplateKey = PageTemplateKey.from( pageTemplateKeyAsString );
         final PageTemplate pageTemplate = pageTemplateService.getByKey( pageTemplateKey );
-        return new ContentJson( pageTemplate, contentIconUrlResolver, principalsResolver, componentNameResolver );
+        return jsonObjectsFactory.createContentJson( pageTemplate );
     }
 
     @GET
-    @javax.ws.rs.Path("list")
-    public ContentListJson list( @QueryParam("siteId") String siteIdAsString )
+    @Path("list")
+    public ContentListJson<ContentJson> list( @QueryParam("siteId") String siteIdAsString )
     {
 
         final ContentId siteId = ContentId.from( siteIdAsString );
         final PageTemplates pageTemplates = pageTemplateService.getBySite( siteId );
 
-        final ContentListMetaData metaData = ContentListMetaData.create().
-            totalHits( pageTemplates.getSize() ).
-            hits( pageTemplates.getSize() ).
-            build();
-        return new ContentListJson( pageTemplates.toContents(), metaData, contentIconUrlResolver, principalsResolver,
-                                    componentNameResolver );
+        final ContentListMetaData metaData =
+            ContentListMetaData.create().totalHits( pageTemplates.getSize() ).hits( pageTemplates.getSize() ).build();
+        return new ContentListJson<>( pageTemplates.toContents(), metaData, jsonObjectsFactory::createContentJson );
     }
 
     @GET
-    @javax.ws.rs.Path("listByCanRender")
-    public ContentListJson listByCanRender( @QueryParam("siteId") String siteIdAsString,
-                                            @QueryParam("contentTypeName") String contentTypeName )
+    @Path("listByCanRender")
+    public ContentListJson<ContentJson> listByCanRender( @QueryParam("siteId") String siteIdAsString,
+                                                         @QueryParam("contentTypeName") String contentTypeName )
     {
         final ContentId siteId = ContentId.from( siteIdAsString );
         final PageTemplates pageTemplates = pageTemplateService.getBySite( siteId );
         final Predicate<PageTemplate> spec = PageTemplateFilter.canRender( ContentTypeName.from( contentTypeName ) );
         final PageTemplates filteredPageTemplates = pageTemplates.filter( spec );
-        final ContentListMetaData metaData = ContentListMetaData.create().
-            totalHits( filteredPageTemplates.getSize() ).
-            hits( filteredPageTemplates.getSize() ).
-            build();
-        return new ContentListJson( filteredPageTemplates.toContents(), metaData, contentIconUrlResolver, principalsResolver,
-                                    componentNameResolver );
+        final ContentListMetaData metaData =
+            ContentListMetaData.create().totalHits( filteredPageTemplates.getSize() ).hits( filteredPageTemplates.getSize() ).build();
+        return new ContentListJson<>( filteredPageTemplates.toContents(), metaData, jsonObjectsFactory::createContentJson );
     }
 
     @GET
-    @javax.ws.rs.Path("default")
+    @Path("default")
     public ContentJson getDefault( @QueryParam("siteId") String siteIdAsString,
                                    @QueryParam("contentTypeName") String contentTypeNameAsString )
     {
@@ -124,11 +109,11 @@ public final class PageTemplateResource
         {
             return null;
         }
-        return new ContentJson( pageTemplate, contentIconUrlResolver, principalsResolver, componentNameResolver );
+        return jsonObjectsFactory.createContentJson( pageTemplate );
     }
 
     @GET
-    @javax.ws.rs.Path("isRenderable")
+    @Path("isRenderable")
     public boolean isRenderable( @QueryParam("contentId") String contentIdAsString )
     {
         final ContentId contentId = ContentId.from( contentIdAsString );
@@ -177,7 +162,7 @@ public final class PageTemplateResource
     }
 
     @POST
-    @javax.ws.rs.Path("create")
+    @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
     public ContentJson create( final CreatePageTemplateJson params )
     {
@@ -186,7 +171,7 @@ public final class PageTemplateResource
         templateParams.name( ensureUniqueName( templateParams.getSite(), templateParams.getName() ) );
 
         PageTemplate template = this.pageTemplateService.create( templateParams );
-        return new ContentJson( template, contentIconUrlResolver, principalsResolver, componentNameResolver );
+        return jsonObjectsFactory.createContentJson( template );
     }
 
     private ContentName ensureUniqueName( ContentPath parent, ContentName name )
@@ -214,27 +199,14 @@ public final class PageTemplateResource
     }
 
     @Reference
-    public void setContentTypeService( final ContentTypeService contentTypeService )
-    {
-        this.contentIconUrlResolver = new ContentIconUrlResolver( contentTypeService );
-    }
-
-    @Reference
-    public void setSecurityService( final SecurityService securityService )
-    {
-        this.principalsResolver = new ContentPrincipalsResolver( securityService );
-    }
-
-    @Reference
     public void setSiteService( final SiteService siteService )
     {
         this.siteService = siteService;
     }
 
-
     @Reference
-    public void setComponentNameResolver( final ComponentNameResolver componentNameResolver )
+    public void setJsonObjectsFactory( final JsonObjectsFactory jsonObjectsFactory )
     {
-        this.componentNameResolver = componentNameResolver;
+        this.jsonObjectsFactory = jsonObjectsFactory;
     }
 }

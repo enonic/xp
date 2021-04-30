@@ -13,6 +13,7 @@ import com.enonic.xp.impl.server.rest.model.ImportNodesRequestJson;
 import com.enonic.xp.impl.server.rest.model.RepositoriesJson;
 import com.enonic.xp.impl.server.rest.task.ExportRunnableTask;
 import com.enonic.xp.impl.server.rest.task.ImportRunnableTask;
+import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 
 public class RepositoryResourceTest
-    extends ServerRestTestSupport
+    extends JaxRsResourceTestSupport
 {
     private TaskService taskService;
 
