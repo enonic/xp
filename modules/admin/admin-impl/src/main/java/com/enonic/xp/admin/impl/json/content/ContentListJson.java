@@ -1,33 +1,33 @@
 package com.enonic.xp.admin.impl.json.content;
 
-import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
-import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
-import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentListMetaData;
 import com.enonic.xp.content.Contents;
 
-@SuppressWarnings("UnusedDeclaration")
-public class ContentListJson
-    extends AbstractContentListJson<ContentJson>
+public class ContentListJson<T extends ContentIdJson>
 {
-    public ContentListJson( final Content content, final ContentListMetaData contentListMetaData,
-                            final ContentIconUrlResolver iconUrlResolver, final ContentPrincipalsResolver contentPrincipalsResolver,
-                            final ComponentNameResolver componentNameResolver )
+    private final ContentListMetaDataJson metadata;
+
+    private final List<T> contents;
+
+    public ContentListJson( final Contents contents, ContentListMetaData contentListMetaData,
+                            final Function<Content, T> createItemFunction )
     {
-        super( content, contentListMetaData, iconUrlResolver, contentPrincipalsResolver, componentNameResolver );
+        this.metadata = new ContentListMetaDataJson( contentListMetaData );
+        this.contents = contents.stream().map( createItemFunction ).collect( Collectors.toUnmodifiableList() );
     }
 
-    public ContentListJson( final Contents contents, final ContentListMetaData contentListMetaData,
-                            final ContentIconUrlResolver iconUrlResolver, final ContentPrincipalsResolver contentPrincipalsResolver,
-                            final ComponentNameResolver componentNameResolver )
+    public List<T> getContents()
     {
-        super( contents, contentListMetaData, iconUrlResolver, contentPrincipalsResolver, componentNameResolver );
+        return contents;
     }
 
-    @Override
-    protected ContentJson createItem( final Content content )
+    public ContentListMetaDataJson getMetadata()
     {
-        return new ContentJson( content, iconUrlResolver, contentPrincipalsResolver, componentNameResolver );
+        return metadata;
     }
 }

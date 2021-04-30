@@ -13,18 +13,14 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.json.content.ContentJson;
-import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
-import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
-import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
+import com.enonic.xp.admin.impl.json.content.JsonObjectsFactory;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.page.CreatePageParams;
 import com.enonic.xp.page.PageService;
 import com.enonic.xp.page.UpdatePageParams;
-import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SecurityService;
 
 import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.CMS_PATH;
 import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.REST_ROOT;
@@ -38,11 +34,7 @@ public final class PageResource
 {
     private PageService pageService;
 
-    private ContentPrincipalsResolver principalsResolver;
-
-    private ContentIconUrlResolver contentIconUrlResolver;
-
-    private ComponentNameResolver componentNameResolver;
+    private JsonObjectsFactory jsonObjectsFactory;
 
     @POST
     @Path("create")
@@ -52,7 +44,7 @@ public final class PageResource
         final CreatePageParams command = params.getCreatePage();
         final Content updatedContent = this.pageService.create( command );
 
-        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
+        return jsonObjectsFactory.createContentJson( updatedContent );
     }
 
     @POST
@@ -63,7 +55,7 @@ public final class PageResource
         final UpdatePageParams command = params.getUpdatePage();
         final Content updatedContent = this.pageService.update( command );
 
-        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
+        return jsonObjectsFactory.createContentJson( updatedContent );
     }
 
     @GET
@@ -74,7 +66,7 @@ public final class PageResource
         final ContentId contentId = ContentId.from( contentIdAsString );
         final Content updatedContent = this.pageService.delete( contentId );
 
-        return new ContentJson( updatedContent, contentIconUrlResolver, principalsResolver, componentNameResolver );
+        return jsonObjectsFactory.createContentJson( updatedContent );
     }
 
     @Reference
@@ -84,20 +76,8 @@ public final class PageResource
     }
 
     @Reference
-    public void setContentTypeService( final ContentTypeService contentTypeService )
+    public void setJsonObjectsFactory( final JsonObjectsFactory jsonObjectsFactory )
     {
-        this.contentIconUrlResolver = new ContentIconUrlResolver( contentTypeService );
-    }
-
-    @Reference
-    public void setSecurityService( final SecurityService securityService )
-    {
-        this.principalsResolver = new ContentPrincipalsResolver( securityService );
-    }
-
-    @Reference
-    public void setComponentNameResolver( final ComponentNameResolver componentNameResolver )
-    {
-        this.componentNameResolver = componentNameResolver;
+        this.jsonObjectsFactory = jsonObjectsFactory;
     }
 }

@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.OneTimeCalendar;
@@ -21,7 +22,7 @@ import com.enonic.xp.scheduler.SchedulerService;
 import com.enonic.xp.security.PrincipalKey;
 
 public class SchedulerResourceTest
-    extends ServerRestTestSupport
+    extends JaxRsResourceTestSupport
 {
     private SchedulerService schedulerService;
 

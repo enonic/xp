@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
 import com.enonic.xp.node.RestoreParams;
@@ -21,7 +22,7 @@ import com.enonic.xp.snapshot.SnapshotService;
 import static org.mockito.ArgumentMatchers.isA;
 
 public class SnapshotResourceTest
-    extends ServerRestTestSupport
+    extends JaxRsResourceTestSupport
 {
     private SnapshotService snapshotService;
 

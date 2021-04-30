@@ -14,6 +14,7 @@ import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.SyncContentService;
 import com.enonic.xp.impl.server.rest.task.ProjectsSyncTask;
+import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 
 public class ContentResourceTest
-    extends ServerRestTestSupport
+    extends JaxRsResourceTestSupport
 {
     private ContentService contentService;
 

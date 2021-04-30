@@ -5,7 +5,7 @@ var expectedJson = {
     '_id': '100123',
     '_name': 'my-content',
     '_path': '/my-content',
-    'type': 'base:unstructured',
+    'type': 'portal:site',
     'hasChildren': false,
     'valid': false,
     'data': {

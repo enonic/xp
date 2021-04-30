@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.admin.impl.json.content.JsonObjectsFactory;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
@@ -44,13 +45,16 @@ public class PageResourceTest
 
         final PageResource resource = new PageResource();
         resource.setPageService( pageService );
-        resource.setContentTypeService( contentTypeService );
 
-        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).
-            thenReturn( createContentType( "myapplication:my_type" ) );
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) )
+            .thenReturn( createContentType( "myapplication:my_type" ) );
 
         final SecurityService securityService = Mockito.mock( SecurityService.class );
-        resource.setSecurityService( securityService );
+
+        final JsonObjectsFactory jsonObjectsFactory = new JsonObjectsFactory();
+        jsonObjectsFactory.setContentTypeService( contentTypeService );
+        jsonObjectsFactory.setSecurityService( securityService );
+        resource.setJsonObjectsFactory( jsonObjectsFactory );
 
         return resource;
     }
