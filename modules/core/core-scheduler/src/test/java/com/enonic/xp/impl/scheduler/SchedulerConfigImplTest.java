@@ -23,7 +23,6 @@ import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -48,13 +47,13 @@ class SchedulerConfigImplTest
     {
         Map<String, String> properties = new HashMap<>();
 
-        properties.put( "init_job.landing1.enabled", "true" );
-        properties.put( "init_job.landing1.description", "landing1 description" );
-        properties.put( "init_job.landing1.descriptor", "com.enonic.app.features:landing" );
-        properties.put( "init_job.landing1.user", "user:system:user" );
-        properties.put( "init_job.landing1.config", "{\"a\":\"valueA\"}" );
-        properties.put( "init_job.landing1.cron", "* * * * *" );
-        properties.put( "init_job.landing1.timezone", "GMT+5:30" );
+        properties.put( "init-job.landing1.enabled", "true" );
+        properties.put( "init-job.landing1.description", "landing1 description" );
+        properties.put( "init-job.landing1.descriptor", "com.enonic.app.features:landing" );
+        properties.put( "init-job.landing1.user", "user:system:user" );
+        properties.put( "init-job.landing1.config", "{\"a\":\"valueA\"}" );
+        properties.put( "init-job.landing1.cron", "* * * * *" );
+        properties.put( "init-job.landing1.timezone", "GMT+5:30" );
 
         schedulerConfig = new SchedulerConfigImpl( properties, propertyTreeMarshallerService, calendarService );
         final Set<CreateScheduledJobParams> jobs = schedulerConfig.jobs();
@@ -89,12 +88,12 @@ class SchedulerConfigImplTest
             findAny().orElseThrow( RuntimeException::new );
 
         assertFalse( job.isEnabled() );
-        assertNull( job.getUser() );
         assertEquals( DescriptorKey.from( "com.enonic.xp.app.system:audit-log-cleanup" ), job.getDescriptor() );
         assertEquals( ScheduleCalendarType.CRON, job.getCalendar().getType() );
         assertEquals( "0 5 * * *", ( (CronCalendar) job.getCalendar() ).getCronValue() );
         assertEquals( 1, job.getConfig().getTotalSize() );
         assertEquals( "PT2s", job.getConfig().getProperty( "ageThreshold" ).getString() );
+        assertEquals( "user:system:custom", job.getUser().toString() );
     }
 
 
@@ -103,11 +102,11 @@ class SchedulerConfigImplTest
     {
         Map<String, String> properties = new HashMap<>();
 
-        properties.put( "init_job.landing1.enabled", "true" );
-        properties.put( "init_job.landing1.descriptor", "com.enonic.app.features:landing" );
-        properties.put( "init_job.landing1.calendar.type", "one_time" );
-        properties.put( "init_job.landing1.calendar.value", "2012-01-01T00:00:00.00Z" );
-        properties.put( "init_job.landing1.invalid", "some value" );
+        properties.put( "init-job.landing1.enabled", "true" );
+        properties.put( "init-job.landing1.descriptor", "com.enonic.app.features:landing" );
+        properties.put( "init-job.landing1.calendar.type", "one_time" );
+        properties.put( "init-job.landing1.calendar.value", "2012-01-01T00:00:00.00Z" );
+        properties.put( "init-job.landing1.invalid", "some value" );
 
         schedulerConfig = new SchedulerConfigImpl( properties, propertyTreeMarshallerService, calendarService );
 
@@ -121,10 +120,10 @@ class SchedulerConfigImplTest
     {
         Map<String, String> properties = new HashMap<>();
 
-        properties.put( "init_job.landing1.enabled", "true" );
-        properties.put( "init_job.landing1.descriptor", "com.enonic.app.features:landing" );
-        properties.put( "init_job.landing1.cron", "* * * * *" );
-        properties.put( "init_job.landing1.config", "{'a':'b'}" );
+        properties.put( "init-job.landing1.enabled", "true" );
+        properties.put( "init-job.landing1.descriptor", "com.enonic.app.features:landing" );
+        properties.put( "init-job.landing1.cron", "* * * * *" );
+        properties.put( "init-job.landing1.config", "{'a':'b'}" );
 
         schedulerConfig = new SchedulerConfigImpl( properties, propertyTreeMarshallerService, calendarService );
         final RuntimeException ex = assertThrows( RuntimeException.class, () -> schedulerConfig.jobs() );

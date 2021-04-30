@@ -24,6 +24,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskService;
 
@@ -62,22 +63,18 @@ public final class SchedulableTaskImpl
     {
         try
         {
-            adminContext().runWith( () -> {
-                taskContext().runWith(
-                    () -> OsgiSupport.withService( TaskService.class, taskService -> taskService.submitTask( SubmitTaskParams.create().
-                        descriptorKey( job.getDescriptor() ).
-                        data( job.getConfig() ).
-                        build() ) ) );
+            taskContext().runWith(
+                () -> OsgiSupport.withService( TaskService.class, taskService -> taskService.submitTask( SubmitTaskParams.create().
+                    descriptorKey( job.getDescriptor() ).
+                    data( job.getConfig() ).
+                    build() ) ) );
 
-                OsgiSupport.withService( NodeService.class, nodeService -> UpdateLastRunCommand.create().
-                    nodeService( nodeService ).
-                    name( job.getName() ).
-                    lastRun( Instant.now() ).
-                    build().
-                    execute() );
-            } );
-
-
+            adminContext().runWith( () -> OsgiSupport.withService( NodeService.class, nodeService -> UpdateLastRunCommand.create().
+                nodeService( nodeService ).
+                name( job.getName() ).
+                lastRun( Instant.now() ).
+                build().
+                execute() ) );
         }
         catch ( Exception e )
         {
@@ -93,26 +90,24 @@ public final class SchedulableTaskImpl
 
     private Context taskContext()
     {
-        Context taskContext = ContextAccessor.current();
-
         if ( job.getUser() == null )
         {
-            return taskContext;
+            return ContextBuilder.from( ContextAccessor.current() ).
+                authInfo( AuthenticationInfo.unAuthenticated() ).
+                build();
         }
 
-        return OsgiSupport.withService( SecurityService.class, securityService -> securityService.getUser( job.getUser() ) ).
-            map( ( user ) -> {
-                final AuthenticationInfo authInfo = AuthenticationInfo.
-                    copyOf( taskContext.getAuthInfo() ).
-                    user( user ).
-                    build();
+        final AuthenticationInfo authInfo = OsgiSupport.withService( SecurityService.class, securityService -> {
+            final VerifiedUsernameAuthToken token = new VerifiedUsernameAuthToken();
+            token.setIdProvider( job.getUser().getIdProviderKey() );
+            token.setUsername( job.getUser().getId() );
 
-                return ContextBuilder.
-                    from( taskContext ).
-                    authInfo( authInfo ).
-                    build();
-            } ).
-            orElse( taskContext );
+            return securityService.authenticate( token );
+        } );
+
+        return ContextBuilder.from( ContextAccessor.current() ).
+            authInfo( authInfo ).
+            build();
     }
 
 

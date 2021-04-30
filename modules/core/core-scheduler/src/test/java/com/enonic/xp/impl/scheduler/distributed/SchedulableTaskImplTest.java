@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.Optional;
 import java.util.TimeZone;
 
 import org.junit.jupiter.api.AfterEach;
@@ -39,8 +38,11 @@ import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskService;
 
@@ -126,14 +128,13 @@ public class SchedulableTaskImplTest
         final PropertyTree taskData = new PropertyTree();
         taskData.addString( "string", "value" );
 
+        when( securityService.authenticate( isA( VerifiedUsernameAuthToken.class ) ) ).thenReturn( AuthenticationInfo.unAuthenticated() );
+
         final SchedulableTaskImpl task = createAndRunTask( ScheduledJobName.from( "task" ), DescriptorKey.from( "app:key" ), taskData,
                                                            PrincipalKey.from( "user:system:user" ) );
         assertEquals( "task", task.getName() );
 
-        verify( taskService, times( 1 ) ).submitTask( taskCaptor.capture() );
-
-        assertEquals( DescriptorKey.from( "app:key" ), taskCaptor.getValue().getDescriptorKey() );
-        assertEquals( taskData, taskCaptor.getValue().getData() );
+        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
     }
 
     @Test
@@ -144,9 +145,18 @@ public class SchedulableTaskImplTest
         final PropertyTree taskData = new PropertyTree();
         taskData.addString( "string", "value" );
 
-        final User customUser =
-            User.create().displayName( "Custom" ).key( PrincipalKey.from( "user:system:user" ) ).login( "custom" ).build();
-        when( securityService.getUser( PrincipalKey.from( "user:system:user" ) ) ).thenReturn( Optional.of( customUser ) );
+        final User customUser = User.create().
+            displayName( "Custom" ).
+            key( PrincipalKey.from( "user:system:user" ) ).
+            login( "custom" ).
+            build();
+
+        final AuthenticationInfo authenticationInfo = AuthenticationInfo.create().
+            user( customUser ).
+            principals( RoleKeys.AUTHENTICATED, RoleKeys.ADMIN ).
+            build();
+
+        when( securityService.authenticate( isA( VerifiedUsernameAuthToken.class ) ) ).thenReturn( authenticationInfo );
 
         final SchedulableTaskImpl task =
             createAndRunTask( ScheduledJobName.from( "task" ), DescriptorKey.from( "app:key" ), taskData, customUser.getKey() );

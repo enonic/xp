@@ -30,7 +30,7 @@ import com.enonic.xp.security.PrincipalKey;
 public class SchedulerConfigImpl
     implements SchedulerConfig
 {
-    private static final String JOB_PROPERTY_PREFIX = "init_job.";
+    private static final String JOB_PROPERTY_PREFIX = "init-job.";
 
     private static final Pattern JOB_NAME_PATTERN = Pattern.compile( "^(?<name>[\\w\\-]+)\\.[\\w]+$" );
 
@@ -116,7 +116,7 @@ public class SchedulerConfigImpl
                         job.enabled( Boolean.parseBoolean( value ) );
                         break;
                     case ScheduledJobPropertyNames.USER:
-                        job.user( PrincipalKey.from( value ) );
+                        job.user( PrincipalKey.from( "user:" + value ) );
                         break;
                     case ScheduledJobPropertyNames.CONFIG:
                         try
