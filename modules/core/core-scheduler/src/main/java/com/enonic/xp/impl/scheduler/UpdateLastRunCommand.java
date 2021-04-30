@@ -40,7 +40,7 @@ public class UpdateLastRunCommand
     {
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             path( NodePath.create( NodePath.ROOT, name.getValue() ).build() ).
-            editor( ( toBeEdited -> toBeEdited.data.setString( ScheduledJobPropertyNames.LAST_RUN, lastRun.toString() ) ) ).
+            editor( ( toBeEdited -> toBeEdited.data.setInstant( ScheduledJobPropertyNames.LAST_RUN, lastRun ) ) ).
             build();
 
         final Node updatedNode = nodeService.update( updateNodeParams );
