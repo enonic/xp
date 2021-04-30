@@ -1,13 +1,17 @@
 package com.enonic.xp.admin.impl.rest.resource.content.page;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.ws.rs.core.MediaType;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 
+import com.enonic.xp.admin.impl.json.content.JsonObjectsFactory;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
@@ -19,6 +23,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.core.impl.schema.content.BuiltinContentTypesAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.CreatePageTemplateParams;
 import com.enonic.xp.page.DescriptorKey;
@@ -28,9 +33,11 @@ import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.page.PageTemplates;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
@@ -43,6 +50,8 @@ import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.lenient;
 
 public class PageTemplateResourceTest
     extends AdminResourceTestSupport
@@ -55,6 +64,8 @@ public class PageTemplateResourceTest
 
     private ContentTypeService contentTypeService;
 
+    Set<ContentType> knownContentTypes = new HashSet<>();
+
     private SecurityService securityService;
 
     private final String currentTime = "2013-08-23T12:55:09.162Z";
@@ -63,16 +74,29 @@ public class PageTemplateResourceTest
     protected Object getResourceInstance()
     {
         contentTypeService = Mockito.mock( ContentTypeService.class );
+
+        knownContentTypes.addAll( BuiltinContentTypesAccessor.getAll() );
+
+        lenient().when( contentTypeService.getByName(
+            argThat( argument -> knownContentTypes.stream().anyMatch( ct -> ct.getName().equals( argument.getContentTypeName() ) ) ) ) )
+            .thenAnswer( (Answer<ContentType>) invocation -> knownContentTypes.stream()
+                .filter( ct -> ct.getName().equals( invocation.<GetContentTypeParams>getArgument( 0 ).getContentTypeName() ) )
+                .findAny()
+                .orElseThrow() );
+
         pageTemplateService = Mockito.mock( PageTemplateService.class );
         securityService = Mockito.mock( SecurityService.class );
         siteService = Mockito.mock( SiteService.class );
         contentService = Mockito.mock( ContentService.class );
 
+        final JsonObjectsFactory jsonObjectsFactory = new JsonObjectsFactory();
+        jsonObjectsFactory.setContentTypeService( contentTypeService );
+        jsonObjectsFactory.setSecurityService( securityService );
+
         final PageTemplateResource resource = new PageTemplateResource();
         resource.setPageTemplateService( pageTemplateService );
         resource.setContentService( contentService );
-        resource.setContentTypeService( contentTypeService );
-        resource.setSecurityService( securityService );
+        resource.setJsonObjectsFactory( jsonObjectsFactory );
         resource.setSiteService( siteService );
         return resource;
     }

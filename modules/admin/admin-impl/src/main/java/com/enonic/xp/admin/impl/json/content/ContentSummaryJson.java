@@ -8,6 +8,7 @@ import com.enonic.xp.admin.impl.json.ChangeTraceableJson;
 import com.enonic.xp.admin.impl.json.ItemJson;
 import com.enonic.xp.admin.impl.json.thumb.ThumbnailJson;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
+import com.enonic.xp.admin.impl.rest.resource.content.ContentListTitleResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ChildOrderJson;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
@@ -20,6 +21,8 @@ public class ContentSummaryJson
     private final Content content;
 
     private final String iconUrl;
+
+    private final String listTitle;
 
     private final ThumbnailJson thumbnailJson;
 
@@ -39,18 +42,17 @@ public class ContentSummaryJson
 
     private final String originProject;
 
-    public ContentSummaryJson( final Content content, final ContentIconUrlResolver iconUrlResolver )
+    public ContentSummaryJson( final Content content, final ContentIconUrlResolver iconUrlResolver,
+                               ContentListTitleResolver contentListTitleResolver )
     {
         super( content.getId() );
         this.content = content;
         this.iconUrl = iconUrlResolver.resolve( content );
+        this.listTitle = contentListTitleResolver.resolve( content );
         this.thumbnailJson = content.hasThumbnail() ? new ThumbnailJson( content.getThumbnail() ) : null;
         this.isSite = content.isSite();
         this.isPage = content.hasPage();
-        this.inherit = content.getInherit().
-            stream().
-            sorted().
-            collect( Collectors.toList() );
+        this.inherit = content.getInherit().stream().sorted().collect( Collectors.toList() );
         this.childOrderJson = content.getChildOrder() != null ? new ChildOrderJson( content.getChildOrder() ) : null;
         this.contentState = content.getContentState().toString();
         this.publish = content.getPublishInfo() != null ? new ContentPublishInfoJson( content.getPublishInfo() ) : null;
@@ -86,6 +88,11 @@ public class ContentSummaryJson
     public String getDisplayName()
     {
         return content.getDisplayName();
+    }
+
+    public String getListTitle()
+    {
+        return listTitle;
     }
 
     public String getOwner()

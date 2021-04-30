@@ -8,6 +8,7 @@ import com.enonic.xp.admin.impl.json.content.attachment.AttachmentListJson;
 import com.enonic.xp.admin.impl.json.content.page.PageJson;
 import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
+import com.enonic.xp.admin.impl.rest.resource.content.ContentListTitleResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AccessControlEntriesJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AccessControlEntryJson;
@@ -34,9 +35,10 @@ public final class ContentJson
     private final boolean inheritPermissions;
 
     public ContentJson( final Content content, final ContentIconUrlResolver iconUrlResolver,
-                        final ContentPrincipalsResolver contentPrincipalsResolver, final ComponentNameResolver componentNameResolver )
+                        final ContentPrincipalsResolver contentPrincipalsResolver, final ComponentNameResolver componentNameResolver,
+                        final ContentListTitleResolver contentListTitleResolver )
     {
-        super( content, iconUrlResolver );
+        super( content, iconUrlResolver, contentListTitleResolver );
         this.data = PropertyTreeJson.toJson( content.getData() );
         this.attachments = AttachmentListJson.toJson( content.getAttachments() );
 

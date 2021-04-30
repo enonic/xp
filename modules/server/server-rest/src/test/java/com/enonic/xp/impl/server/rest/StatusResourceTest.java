@@ -10,13 +10,14 @@ import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.status.StatusReporter;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 public class StatusResourceTest
-    extends ServerRestTestSupport
+    extends JaxRsResourceTestSupport
 {
     private StatusReporter serverReporter;
 

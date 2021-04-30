@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
 import com.enonic.xp.admin.impl.json.aggregation.BucketAggregationJson;
+import com.enonic.xp.admin.impl.json.content.JsonObjectsFactory;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdQueryResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryResultJson;
@@ -22,11 +23,7 @@ public class FindContentByQuertResultJsonFactory
 
     private final Aggregations aggregations;
 
-    private final ContentIconUrlResolver iconUrlResolver;
-
-    private final ContentPrincipalsResolver contentPrincipalsResolver;
-
-    private final ComponentNameResolver componentNameResolver;
+    private final JsonObjectsFactory jsonObjectsFactory;
 
     private final String expand;
 
@@ -36,9 +33,7 @@ public class FindContentByQuertResultJsonFactory
         hits = builder.hits;
         contents = builder.contents;
         aggregations = builder.aggregations;
-        iconUrlResolver = builder.iconUrlResolver;
-        contentPrincipalsResolver = builder.contentPrincipalsResolver;
-        componentNameResolver = builder.componentNameResolver;
+        jsonObjectsFactory = builder.jsonObjectsFactory;
         expand = builder.expand;
     }
 
@@ -87,11 +82,11 @@ public class FindContentByQuertResultJsonFactory
 
         if ( Expand.FULL.matches( expand ) )
         {
-            builder = ContentQueryResultJson.newBuilder( iconUrlResolver, contentPrincipalsResolver, componentNameResolver );
+            builder = ContentQueryResultJson.newBuilder( jsonObjectsFactory );
         }
         else if ( Expand.SUMMARY.matches( expand ) )
         {
-            builder = ContentSummaryQueryResultJson.newBuilder( iconUrlResolver );
+            builder = ContentSummaryQueryResultJson.newBuilder( jsonObjectsFactory );
         }
         else
         {
@@ -115,11 +110,7 @@ public class FindContentByQuertResultJsonFactory
 
         private Aggregations aggregations = Aggregations.empty();
 
-        private ContentIconUrlResolver iconUrlResolver;
-
-        private ContentPrincipalsResolver contentPrincipalsResolver;
-
-        private ComponentNameResolver componentNameResolver;
+        private JsonObjectsFactory jsonObjectsFactory;
 
         private String expand;
 
@@ -151,24 +142,11 @@ public class FindContentByQuertResultJsonFactory
             return this;
         }
 
-        public Builder iconUrlResolver( final ContentIconUrlResolver val )
+        public Builder jsonObjectsFactory( final JsonObjectsFactory val )
         {
-            iconUrlResolver = val;
+            jsonObjectsFactory = val;
             return this;
         }
-
-        public Builder contentPrincipalsResolver( final ContentPrincipalsResolver val )
-        {
-            contentPrincipalsResolver = val;
-            return this;
-        }
-
-        public Builder componentNameResolver( final ComponentNameResolver val )
-        {
-            componentNameResolver = val;
-            return this;
-        }
-
 
         public Builder expand( final String val )
         {

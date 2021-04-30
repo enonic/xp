@@ -15,6 +15,7 @@ import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.index.UpdateIndexSettingsParams;
 import com.enonic.xp.index.UpdateIndexSettingsResult;
+import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
@@ -23,7 +24,7 @@ import com.enonic.xp.repository.RepositoryService;
 import static org.mockito.ArgumentMatchers.isA;
 
 public class JsonIndexResourceTest
-    extends ServerRestTestSupport
+    extends JaxRsResourceTestSupport
 {
     private IndexService indexService;
 

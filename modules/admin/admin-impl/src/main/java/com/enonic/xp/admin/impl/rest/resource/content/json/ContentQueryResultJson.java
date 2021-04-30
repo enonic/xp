@@ -1,14 +1,12 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.admin.impl.json.content.ContentJson;
-import com.enonic.xp.admin.impl.rest.resource.content.ComponentNameResolver;
-import com.enonic.xp.admin.impl.rest.resource.content.ContentIconUrlResolver;
-import com.enonic.xp.admin.impl.rest.resource.content.ContentPrincipalsResolver;
+import com.enonic.xp.admin.impl.json.content.JsonObjectsFactory;
 import com.enonic.xp.content.Content;
 
 public class ContentQueryResultJson
@@ -20,36 +18,27 @@ public class ContentQueryResultJson
         this.contents = ImmutableSet.copyOf( builder.contents );
     }
 
-    public static ContentQueryResultJson.Builder newBuilder( final ContentIconUrlResolver iconUrlResolver,
-                                                             final ContentPrincipalsResolver contentPrincipalsResolver,
-                                                             final ComponentNameResolver componentNameResolver )
+    public static ContentQueryResultJson.Builder newBuilder( final JsonObjectsFactory jsonObjectsFactory )
     {
-        return new Builder( iconUrlResolver, contentPrincipalsResolver, componentNameResolver );
+        return new Builder( jsonObjectsFactory );
     }
 
     public static class Builder
         extends AbstractContentQueryResultJson.Builder<Builder>
     {
-        private final ContentIconUrlResolver iconUrlResolver;
+        private final JsonObjectsFactory jsonObjectsFactory;
 
-        private final ContentPrincipalsResolver contentPrincipalsResolver;
+        private final List<ContentJson> contents = new ArrayList<>();
 
-        private final ComponentNameResolver componentNameResolver;
-
-        private Set<ContentJson> contents = new LinkedHashSet<>();
-
-        public Builder( final ContentIconUrlResolver iconUrlResolver, final ContentPrincipalsResolver contentPrincipalsResolver,
-                        final ComponentNameResolver componentNameResolver )
+        public Builder( final JsonObjectsFactory jsonObjectsFactory )
         {
-            this.iconUrlResolver = iconUrlResolver;
-            this.contentPrincipalsResolver = contentPrincipalsResolver;
-            this.componentNameResolver = componentNameResolver;
+            this.jsonObjectsFactory = jsonObjectsFactory;
         }
 
         @Override
         public Builder addContent( final Content content )
         {
-            this.contents.add( new ContentJson( content, iconUrlResolver, contentPrincipalsResolver, componentNameResolver ) );
+            this.contents.add( jsonObjectsFactory.createContentJson( content ) );
             return this;
         }
 
@@ -58,8 +47,5 @@ public class ContentQueryResultJson
         {
             return new ContentQueryResultJson( this );
         }
-
     }
-
-
 }

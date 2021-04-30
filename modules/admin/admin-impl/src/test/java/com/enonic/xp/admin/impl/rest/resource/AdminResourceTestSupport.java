@@ -7,6 +7,6 @@ public abstract class AdminResourceTestSupport
 {
     public AdminResourceTestSupport()
     {
-        setBasePath( ResourceConstants.REST_ROOT );
+        super( ResourceConstants.REST_ROOT );
     }
 }
