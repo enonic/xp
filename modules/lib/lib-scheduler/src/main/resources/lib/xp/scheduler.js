@@ -40,7 +40,7 @@ function nullOrValue(value) {
  * @param {string} params.schedule.value schedule value according to it's type.
  * @param {string} params.schedule.type schedule type (CRON | ONE_TIME).
  * @param {string} params.schedule.timezone time zone of cron scheduling.
- * @param {object} params.user Key of the user that submitted the task.
+ * @param {string} params.user key of the user that submitted the task.
  * @param {boolean} params.enabled job is active or not.
  */
 exports.create = function (params) {
@@ -71,7 +71,7 @@ exports.create = function (params) {
  * @param {string} params.schedule.value schedule value according to it's type.
  * @param {string} params.schedule.type schedule type (CRON | ONE_TIME).
  * @param {string} params.schedule.timezone time zone of cron scheduling.
- * @param {object} params.user Key of the user that submitted the task.
+ * @param {string} params.user key of the user that submitted the task.
  * @param {boolean} params.enabled job is active or not.
  */
 exports.modify = function (params) {
