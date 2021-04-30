@@ -8,6 +8,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.lib.value.ScriptValueTranslator;
 import com.enonic.xp.lib.value.ScriptValueTranslatorResult;
+import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.RefreshMode;
@@ -187,6 +188,15 @@ public class NodeHandler
             nodeService( this.nodeService ).
             keys( NodeKeys.from( keys ) ).
             message( message ).
+            build() );
+    }
+
+    @SuppressWarnings("unused")
+    public Object getCommit( final String id )
+    {
+        return execute( GetCommitHandler.create().
+            nodeService( this.nodeService ).
+            id( NodeCommitId.from( id ) ).
             build() );
     }
 
