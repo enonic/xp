@@ -2,8 +2,10 @@ package com.enonic.xp.impl.server.rest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.enonic.xp.impl.server.rest.model.CleanUpAuditLogRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
@@ -36,8 +38,8 @@ public class SystemResourceTest
     public void dumpTask()
         throws Exception
     {
-        Mockito.when( taskService.submitTask( Mockito.isA( DumpRunnableTask.class ), eq( "dump" ) ) ).thenReturn(
-            TaskId.from( "task-id" ) );
+        Mockito.when( taskService.submitTask( Mockito.isA( DumpRunnableTask.class ), eq( "dump" ) ) )
+            .thenReturn( TaskId.from( "task-id" ) );
 
         final SystemDumpRequestJson json = Mockito.mock( SystemDumpRequestJson.class );
 
@@ -49,8 +51,8 @@ public class SystemResourceTest
     public void load()
         throws Exception
     {
-        Mockito.when( taskService.submitTask( Mockito.isA( LoadRunnableTask.class ), eq( "load" ) ) ).thenReturn(
-            TaskId.from( "task-id" ) );
+        Mockito.when( taskService.submitTask( Mockito.isA( LoadRunnableTask.class ), eq( "load" ) ) )
+            .thenReturn( TaskId.from( "task-id" ) );
 
         final SystemLoadRequestJson json = Mockito.mock( SystemLoadRequestJson.class );
 
@@ -72,13 +74,33 @@ public class SystemResourceTest
     public void upgrade()
         throws Exception
     {
-        Mockito.when( taskService.submitTask( Mockito.isA( UpgradeRunnableTask.class ), eq( "upgrade" ) ) ).thenReturn(
-            TaskId.from( "task-id" ) );
+        Mockito.when( taskService.submitTask( Mockito.isA( UpgradeRunnableTask.class ), eq( "upgrade" ) ) )
+            .thenReturn( TaskId.from( "task-id" ) );
 
         final SystemDumpUpgradeRequestJson json = Mockito.mock( SystemDumpUpgradeRequestJson.class );
 
         final TaskResultJson result = resource.upgrade( json );
         assertEquals( "task-id", result.getTaskId() );
+    }
+
+    @Test
+    public void cleanUpAuditLog()
+        throws Exception
+    {
+        Mockito.when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "task-id" ) );
+
+        final CleanUpAuditLogRequestJson requestJson = new CleanUpAuditLogRequestJson( "PT1s" );
+
+        final TaskResultJson result = resource.cleanUpAuditLog( requestJson );
+
+        final ArgumentCaptor<SubmitTaskParams> captor = ArgumentCaptor.forClass( SubmitTaskParams.class );
+
+        Mockito.verify( taskService, Mockito.times( 1 ) ).submitTask( captor.capture() );
+
+        assertEquals( "task-id", result.getTaskId() );
+
+        assertEquals( 1, captor.getValue().getData().getTotalSize() );
+        assertEquals( "PT1s", captor.getValue().getData().getString( "ageThreshold" ) );
     }
 
     @Override
