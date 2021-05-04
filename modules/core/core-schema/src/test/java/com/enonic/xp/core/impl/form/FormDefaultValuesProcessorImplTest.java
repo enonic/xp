@@ -2,7 +2,9 @@ package com.enonic.xp.core.impl.form;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.form.Form;
@@ -247,6 +249,51 @@ public class FormDefaultValuesProcessorImplTest
         for ( int i = 0; i < 3; i++ )
         {
             assertEquals( "Default Value", data.getString( "testInput", i ) );
+        }
+    }
+
+    @Test
+    public void testOptionSetWithDefaultValueAndMinOccurrencesMoreThanZero()
+    {
+        FormOptionSet.Builder checkOptionSet = FormOptionSet.create().
+            required( false ).
+            name( "checkOptionSet" ).
+            occurrences( Occurrences.create( 2, 3 ) );
+
+        FormOptionSetOption.Builder option1 = FormOptionSetOption.create().name( "option_1" );
+        FormOptionSetOption.Builder option2 = FormOptionSetOption.create().name( "option_2" ).
+            defaultOption( true ).
+            addFormItem( Input.create()
+                             .name( "testInput" )
+                             .label( "testInput" )
+                             .inputType( InputTypeName.TEXT_LINE )
+                             .defaultValue( InputTypeDefault.create()
+                                                .property( InputTypeProperty.create( "default", "Default Value" ).build() )
+                                                .build() )
+                             .occurrences( Occurrences.create( 3, 3 ) )
+                             .build() );
+
+        checkOptionSet.addOptionSetOption( option1.build() );
+        checkOptionSet.addOptionSetOption( option2.build() );
+
+        final Form form = Form.create().
+            addFormItem( checkOptionSet.build() ).
+            build();
+
+        final FormDefaultValuesProcessor defaultValuesProcessor = new FormDefaultValuesProcessorImpl();
+        final PropertyTree data = new PropertyTree();
+        defaultValuesProcessor.setDefaultValues( form, data );
+
+        for ( int i = 0; i < 2; i++ )
+        {
+            Property checkOptionSet_1 = data.getProperty( "checkOptionSet", i );
+            assertEquals( "option_2", checkOptionSet_1.getSet().getString( "_selected" ) );
+
+            PropertySet propertySet = checkOptionSet_1.getSet().getPropertySet( "option_2" );
+            for ( int j = 0; j < 3; j++ )
+            {
+                assertEquals( "Default Value", propertySet.getString( "testInput", j ) );
+            }
         }
     }
 
