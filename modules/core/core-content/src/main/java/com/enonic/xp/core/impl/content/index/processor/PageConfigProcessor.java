@@ -13,8 +13,6 @@ import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 public class PageConfigProcessor
     implements ContentIndexConfigProcessor
 {
-    static final String ALL_PATTERN = "*";
-
     static final String COMPONENTS = "components";
 
     static final String CONFIG = "config";
@@ -82,7 +80,6 @@ public class PageConfigProcessor
                                     builder );
         indexConfigVisitor.traverse( pageConfigForm );
 
-        builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, PAGE, CONFIG, appNameAsString, componentNameAsString, ALL_PATTERN ),
-                     IndexConfig.BY_TYPE );
+        builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, PAGE, CONFIG, appNameAsString, componentNameAsString ), IndexConfig.BY_TYPE );
     }
 }
