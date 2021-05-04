@@ -9,7 +9,10 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PathIndexConfig;
@@ -86,8 +89,11 @@ public class PageRegionsConfigProcessorTest
         assertEquals( TEXT_COMPONENT_INDEX_CONFIG,
                       result.getConfigForPath( PropertyPath.from( COMPONENTS, TextComponentType.INSTANCE.toString(), VALUE ) ) );
 
-        assertEquals( "htmlStripper", result.getConfigForPath(
-            PropertyPath.from( COMPONENTS, TextComponentType.INSTANCE.toString(), VALUE ) ).getIndexValueProcessors().get( 0 ).getName() );
+        assertEquals( "htmlStripper",
+                      result.getConfigForPath( PropertyPath.from( COMPONENTS, TextComponentType.INSTANCE.toString(), VALUE ) )
+                          .getIndexValueProcessors()
+                          .get( 0 )
+                          .getName() );
     }
 
     @Test
@@ -112,7 +118,10 @@ public class PageRegionsConfigProcessorTest
         final PatternIndexConfigDocument result = processPage( page, Arrays.asList( configFormWithHtmlArea ).listIterator(), null );
         assertEquals( "htmlStripper", result.getConfigForPath(
             PropertyPath.from( COMPONENTS, PartComponentType.INSTANCE.toString(), CONFIG, partDescriptorKey.getApplicationKey().toString(),
-                               partDescriptorKey.getName(), htmlarea ) ).getIndexValueProcessors().get( 0 ).getName() );
+                               partDescriptorKey.getName(), htmlarea ) ).
+            getIndexValueProcessors().
+            get( 0 ).
+            getName() );
     }
 
     @Test
@@ -138,8 +147,10 @@ public class PageRegionsConfigProcessorTest
         final PatternIndexConfigDocument result = processPage( page, null, Arrays.asList( configFormWithHtmlArea ).listIterator() );
         assertEquals( "htmlStripper", result.getConfigForPath(
             PropertyPath.from( COMPONENTS, LayoutComponentType.INSTANCE.toString(), CONFIG,
-                               layoutDescriptorKey.getApplicationKey().toString(), layoutDescriptorKey.getName(),
-                               htmlarea ) ).getIndexValueProcessors().get( 0 ).getName() );
+                               layoutDescriptorKey.getApplicationKey().toString(), layoutDescriptorKey.getName(), htmlarea ) )
+            .getIndexValueProcessors()
+            .get( 0 )
+            .getName() );
     }
 
     @Test
@@ -173,11 +184,15 @@ public class PageRegionsConfigProcessorTest
         final PatternIndexConfigDocument result = processPage( page, Arrays.asList( configFormWithHtmlArea ).listIterator(),
                                                                Arrays.asList( configFormWithHtmlArea ).listIterator() );
         assertEquals( "htmlStripper", result.getConfigForPath(
-            PropertyPath.from( COMPONENTS, LayoutComponentType.INSTANCE.toString(), CONFIG, appKeyLayout,
-                               htmlarea ) ).getIndexValueProcessors().get( 0 ).getName() );
+            PropertyPath.from( COMPONENTS, LayoutComponentType.INSTANCE.toString(), CONFIG, appKeyLayout, htmlarea ) )
+            .getIndexValueProcessors()
+            .get( 0 )
+            .getName() );
         assertEquals( "htmlStripper", result.getConfigForPath(
-            PropertyPath.from( COMPONENTS, PartComponentType.INSTANCE.toString(), CONFIG, appKeyPart,
-                               htmlarea ) ).getIndexValueProcessors().get( 0 ).getName() );
+            PropertyPath.from( COMPONENTS, PartComponentType.INSTANCE.toString(), CONFIG, appKeyPart, htmlarea ) )
+            .getIndexValueProcessors()
+            .get( 0 )
+            .getName() );
     }
 
     @Test
@@ -198,10 +213,67 @@ public class PageRegionsConfigProcessorTest
 
         final PatternIndexConfigDocument result = processPage( page, singletonList( configFormWithHtmlArea ).listIterator(), null );
 
-        assertTrue( result.getPathIndexConfigs().contains(
-            PathIndexConfig.create().path( PropertyPath.from( COMPONENTS, FragmentComponentType.INSTANCE.toString(), ID ) ).indexConfig(
-                IndexConfig.MINIMAL ).build() ) );
+        assertTrue( result.getPathIndexConfigs()
+                        .contains( PathIndexConfig.create()
+                                       .path( PropertyPath.from( COMPONENTS, FragmentComponentType.INSTANCE.toString(), ID ) )
+                                       .indexConfig( IndexConfig.MINIMAL )
+                                       .build() ) );
 
+    }
+
+    @Test
+    public void test_complex_component_config()
+        throws Exception
+    {
+        final PropertyTree config = new PropertyTree();
+        final PropertySet items = config.addSet( "items" );
+        items.addStrings( "input", "a", "b", "c" );
+
+        final Page page = Page.
+            create().
+            regions( PageRegions.create().
+                add( Region.create().
+                    name( "region1" ).
+                    add( PartComponent.create().
+                        descriptor( DescriptorKey.from( "appKey1:partName1" ) ).
+                        config( new PropertyTree() ).
+                        build() ).
+                    add( LayoutComponent.create().
+                        descriptor( DescriptorKey.from( "appKey2:layoutName" ) ).
+                        config( new PropertyTree() ).
+                        regions( LayoutRegions.create().
+                            add( Region.create().
+                                name( "region" ).
+                                add( PartComponent.create().
+                                    descriptor( DescriptorKey.from( "appKey3:partName2" ) ).
+                                    config( new PropertyTree() ).
+                                    build() ).
+                                build() ).
+                            build() ).
+                        build() ).
+                    build() ).
+                build() ).
+            build();
+
+        final Form form = Form.create().
+            addFormItem( FormItemSet.create().
+                name( "items" ).
+                addFormItem( Input.create().
+                    name( "input" ).
+                    label( "input" ).
+                    inputType( InputTypeName.TEXT_LINE ).
+                    occurrences( 0, 5 ).
+                    build() ).
+                build() ).
+            build();
+
+        final PatternIndexConfigDocument result =
+            processPage( page, Arrays.asList( form, form ).listIterator(), singletonList( form ).listIterator() );
+        assertEquals( 8, result.getPathIndexConfigs().size() );
+
+        assertEquals( IndexConfig.BY_TYPE, result.getConfigForPath( PropertyPath.from( "components.part.config.appKey1.partName1" ) ) );
+        assertEquals( IndexConfig.BY_TYPE, result.getConfigForPath( PropertyPath.from( "components.part.config.appKey2.layoutName" ) ) );
+        assertEquals( IndexConfig.BY_TYPE, result.getConfigForPath( PropertyPath.from( "components.part.config.appkey3.partname2" ) ) );
     }
 
     private PatternIndexConfigDocument processPage( final Page page, final ListIterator<Form> partForms,
@@ -217,8 +289,8 @@ public class PageRegionsConfigProcessorTest
                     {
                         final PartComponent partComponent = (PartComponent) component;
 
-                        Mockito.when( partDescriptorService.getByKey( partComponent.getDescriptor() ) ).thenReturn(
-                            PartDescriptor.create().key( partComponent.getDescriptor() ).config( partForms.next() ).build() );
+                        Mockito.when( partDescriptorService.getByKey( partComponent.getDescriptor() ) )
+                            .thenReturn( PartDescriptor.create().key( partComponent.getDescriptor() ).config( partForms.next() ).build() );
                     }
                 }
                 else if ( LayoutComponentType.INSTANCE == component.getType() )
@@ -227,9 +299,12 @@ public class PageRegionsConfigProcessorTest
                     {
                         final LayoutComponent layoutComponent = (LayoutComponent) component;
 
-                        Mockito.when( layoutDescriptorService.getByKey( layoutComponent.getDescriptor() ) ).thenReturn(
-                            LayoutDescriptor.create().key( layoutComponent.getDescriptor() ).config( layoutForms.next() ).regions(
-                                RegionDescriptors.create().build() ).build() );
+                        Mockito.when( layoutDescriptorService.getByKey( layoutComponent.getDescriptor() ) )
+                            .thenReturn( LayoutDescriptor.create()
+                                             .key( layoutComponent.getDescriptor() )
+                                             .config( layoutForms.next() )
+                                             .regions( RegionDescriptors.create().build() )
+                                             .build() );
 
                         if ( layoutComponent.hasRegions() )
                         {
@@ -251,20 +326,20 @@ public class PageRegionsConfigProcessorTest
 
     private void processLayoutRegions( final LayoutRegions layoutRegions, ListIterator<Form> partForms )
     {
-        layoutRegions.forEach( layoutRegion -> {
-            layoutRegion.getComponents().forEach( component -> {
-                if ( PartComponentType.INSTANCE == component.getType() )
+        layoutRegions.forEach( layoutRegion -> layoutRegion.getComponents().forEach( component -> {
+            if ( PartComponentType.INSTANCE == component.getType() )
+            {
+                if ( partForms != null && partForms.hasNext() )
                 {
-                    if ( partForms != null && partForms.hasNext() )
-                    {
-                        final PartComponent partComponent = (PartComponent) component;
+                    final PartComponent partComponent = (PartComponent) component;
 
-                        Mockito.when( partDescriptorService.getByKey( partComponent.getDescriptor() ) ).thenReturn(
-                            PartDescriptor.create().key( partComponent.getDescriptor() ).config( partForms.next() ).build() );
-                    }
+                    Mockito.when( partDescriptorService.getByKey( partComponent.getDescriptor() ) )
+                        .thenReturn( PartDescriptor.create().key( partComponent.getDescriptor() ).
+                            config( partForms.next() ).
+                            build() );
                 }
-            } );
-        } );
+            }
+        } ) );
     }
 }
 
