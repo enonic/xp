@@ -16,9 +16,9 @@ import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.form.FormItem;
+import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputTypes;
 
 import static com.enonic.xp.form.FormItemType.FORM_ITEM_SET;
@@ -33,16 +33,13 @@ public final class FormDefaultValuesProcessorImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( FormDefaultValuesProcessorImpl.class );
 
-    private static final Occurrences DEFAULT_OCCURRENCES = Occurrences.create( 1, 1 );
-
     @Override
     public void setDefaultValues( final Form form, final PropertyTree data )
     {
-        processFormItems( form.getFormItems(), data, PropertyPath.from( "" ), DEFAULT_OCCURRENCES );
+        processFormItems( form.getFormItems(), data.getRoot() );
     }
 
-    private void processFormItems( final Iterable<FormItem> formItems, final PropertyTree data, final PropertyPath parentPath,
-                                   final Occurrences parentOccurrences )
+    private void processFormItems( final Iterable<FormItem> formItems, final PropertySet dataSet )
     {
         StreamSupport.stream( formItems.spliterator(), false ).forEach( formItem -> {
             if ( formItem.getType() == INPUT )
@@ -55,39 +52,20 @@ public final class FormDefaultValuesProcessorImpl
                         final Value defaultValue = InputTypes.BUILTIN.resolve( input.getInputType() ).
                             createDefaultValue( input );
 
-                        final PropertyPath propertyPath = PropertyPath.from( parentPath, input.getName() );
+                        final PropertyPath propertyPath = PropertyPath.from( input.getName() );
 
-                        if ( defaultValue != null && data.getProperty( propertyPath ) == null )
+                        if ( defaultValue != null && dataSet.getProperty( propertyPath ) == null )
                         {
-                            int minOccurs = input.getOccurrences().getMinimum();
-                            if ( parentOccurrences.getMinimum() > minOccurs )
+                            if ( input.getOccurrences().getMinimum() > 0 )
                             {
-                                minOccurs = parentOccurrences.getMinimum();
-                            }
-
-                            if ( minOccurs > 1 )
-                            {
-                                for ( int i = 0; i < minOccurs; i++ )
+                                for ( int i = 0; i < input.getOccurrences().getMinimum(); i++ )
                                 {
-                                    if ( parentOccurrences.getMinimum() > 1 )
-                                    {
-                                        final Property property = data.
-                                            getRoot().addProperty( parentPath.toString(),
-                                                                   ValueFactory.newPropertySet( new PropertySet() ) );
-                                        if ( property != null )
-                                        {
-                                            property.getSet().setProperty( input.getName(), defaultValue );
-                                        }
-                                    }
-                                    else
-                                    {
-                                        data.setProperty( PropertyPath.from( parentPath, input.getName() ).toString(), i, defaultValue );
-                                    }
+                                    dataSet.setProperty( input.getName(), i, defaultValue );
                                 }
                             }
                             else
                             {
-                                data.setProperty( PropertyPath.from( parentPath, input.getName() ), defaultValue );
+                                dataSet.setProperty( input.getName(), defaultValue );
                             }
                         }
                     }
@@ -101,26 +79,52 @@ public final class FormDefaultValuesProcessorImpl
             }
             else if ( formItem.getType() == FORM_ITEM_SET )
             {
-                processFormItems( formItem.toFormItemSet().getFormItems(), data, PropertyPath.from( parentPath, formItem.getName() ),
-                                  formItem.toFormItemSet().getOccurrences() );
+                processFormItems( formItem.getName(), formItem.toFormItemSet().getFormItems(), dataSet,
+                                  formItem.toFormItemSet().getOccurrences().getMinimum() );
             }
             else if ( formItem.getType() == LAYOUT && formItem.toLayout() instanceof FieldSet )
             {
-                processFormItems( (FieldSet) formItem.toLayout(), data, parentPath, DEFAULT_OCCURRENCES );
+                processFormItems( (FieldSet) formItem.toLayout(), dataSet );
             }
             else if ( formItem.getType() == FORM_OPTION_SET_OPTION )
             {
                 FormOptionSetOption option = formItem.toFormOptionSetOption();
                 if ( option.isDefaultOption() )
                 {
-                    processFormItems( option.getFormItems(), data, PropertyPath.from( parentPath, formItem.getName() ), DEFAULT_OCCURRENCES );
+                    dataSet.setProperty( "_selected", ValueFactory.newString( formItem.getName() ) );
+                    Property property = dataSet.setProperty( formItem.getName(), ValueFactory.newPropertySet( new PropertySet() ) );
+                    processFormItems( option.getFormItems(), property.getSet() );
                 }
             }
             else if ( formItem.getType() == FORM_OPTION_SET )
             {
-                processFormItems( formItem.toFormOptionSet().getFormItems(), data, PropertyPath.from( parentPath, formItem.getName() ),
-                                  formItem.toFormOptionSet().getOccurrences() );
+                processFormItems( formItem.getName(), formItem.toFormOptionSet().getFormItems(), dataSet,
+                                  formItem.toFormOptionSet().getOccurrences().getMinimum() );
             }
         } );
+    }
+
+    private void processFormItems( String formItemName, FormItems formItems, PropertySet dataSet, int minOccurrences )
+    {
+        if ( minOccurrences > 0 )
+        {
+            for ( int i = 0; i < minOccurrences; i++ )
+            {
+                setProperty( formItemName, formItems, i, dataSet );
+            }
+        }
+        else
+        {
+            setProperty( formItemName, formItems, 0, dataSet );
+        }
+    }
+
+    private void setProperty( String formItemName, FormItems formItems, int index, PropertySet dataSet )
+    {
+        Property property = dataSet.setProperty( formItemName, index, ValueFactory.newPropertySet( new PropertySet() ) );
+        if ( property != null )
+        {
+            processFormItems( formItems, property.getSet() );
+        }
     }
 }
