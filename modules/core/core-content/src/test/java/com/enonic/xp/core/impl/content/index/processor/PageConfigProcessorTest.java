@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PathIndexConfig;
@@ -18,10 +19,11 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.RegionDescriptors;
 
 import static com.enonic.xp.content.ContentPropertyNames.PAGE;
-import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.ALL_PATTERN;
 import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.COMPONENTS;
 import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.CONFIG;
+import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.CUSTOMIZED;
 import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.DESCRIPTOR;
+import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.TEMPLATE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -48,22 +50,83 @@ public class PageConfigProcessorTest
     }
 
     @Test
-    public void test_page()
+    public void test_empty_config()
         throws Exception
     {
         final PatternIndexConfigDocument result = processForm( Form.create().build() );
-        assertTrue( result.getPathIndexConfigs().contains(
-            PathIndexConfig.create().path( PropertyPath.from( COMPONENTS ) ).indexConfig( IndexConfig.NONE ).build() ) );
+
+        assertEquals( 4, result.getPathIndexConfigs().size() );
+
+        assertTrue( result.getPathIndexConfigs().
+            contains( PathIndexConfig.create().
+                path( PropertyPath.from( COMPONENTS ) ).
+                indexConfig( IndexConfig.NONE ).
+                build() ) );
+
+        assertTrue( result.getPathIndexConfigs().
+            contains( PathIndexConfig.create().
+                path( PropertyPath.from( COMPONENTS, PAGE, DESCRIPTOR ) ).
+                indexConfig( IndexConfig.MINIMAL ).
+                build() ) );
+
+        assertTrue( result.getPathIndexConfigs().
+            contains( PathIndexConfig.create().
+                path( PropertyPath.from( COMPONENTS, PAGE, CUSTOMIZED ) ).
+                indexConfig( IndexConfig.MINIMAL ).
+                build() ) );
+
+        assertTrue( result.getPathIndexConfigs().
+            contains( PathIndexConfig.create().
+                path( PropertyPath.from( COMPONENTS, PAGE, TEMPLATE ) ).
+                indexConfig( IndexConfig.MINIMAL ).
+                build() ) );
+
     }
 
     @Test
-    public void test_page_descriptor()
+    public void test_config_with_data()
         throws Exception
     {
-        final PatternIndexConfigDocument result = processForm( Form.create().build() );
-        assertTrue( result.getPathIndexConfigs().contains(
-            PathIndexConfig.create().path( PropertyPath.from( COMPONENTS, PAGE, DESCRIPTOR ) ).indexConfig(
-                IndexConfig.MINIMAL ).build() ) );
+        final PatternIndexConfigDocument result = processForm( Form.create().
+            addFormItem( FormItemSet.create().
+                name( "items" ).
+                addFormItem( Input.create().
+                    name( "input" ).
+                    label( "input" ).
+                    inputType( InputTypeName.TEXT_LINE ).
+                    occurrences( 0, 5 ).
+                    build() ).
+                build() ).
+            build() );
+
+        assertEquals( 5, result.getPathIndexConfigs().size() );
+
+        assertTrue( result.getPathIndexConfigs().
+            contains( PathIndexConfig.create().
+                path( PropertyPath.from( COMPONENTS ) ).
+                indexConfig( IndexConfig.NONE ).
+                build() ) );
+
+        assertTrue( result.getPathIndexConfigs().
+            contains( PathIndexConfig.create().
+                path( PropertyPath.from( COMPONENTS, PAGE, DESCRIPTOR ) ).
+                indexConfig( IndexConfig.MINIMAL ).
+                build() ) );
+
+        assertTrue( result.getPathIndexConfigs().
+            contains( PathIndexConfig.create().
+                path( PropertyPath.from( COMPONENTS, PAGE, CUSTOMIZED ) ).
+                indexConfig( IndexConfig.MINIMAL ).
+                build() ) );
+
+        assertTrue( result.getPathIndexConfigs().
+            contains( PathIndexConfig.create().
+                path( PropertyPath.from( COMPONENTS, PAGE, TEMPLATE ) ).
+                indexConfig( IndexConfig.MINIMAL ).
+                build() ) );
+
+        assertEquals( IndexConfig.BY_TYPE,
+                      result.getConfigForPath( PropertyPath.from( COMPONENTS, PAGE, CONFIG, "appKey", "descriptorName" ) ) );
     }
 
     @Test
@@ -83,9 +146,12 @@ public class PageConfigProcessorTest
         final PatternIndexConfigDocument result = processForm( form );
 
         assertEquals( 6, result.getPathIndexConfigs().size() );
-        assertTrue( result.getPathIndexConfigs().contains( PathIndexConfig.create().path(
-            PropertyPath.from( COMPONENTS, PAGE, CONFIG, descriptorKey.getApplicationKey().toString(), descriptorKey.getName(),
-                               ALL_PATTERN ) ).indexConfig( IndexConfig.BY_TYPE ).build() ) );
+        assertTrue( result.getPathIndexConfigs()
+                        .contains( PathIndexConfig.create()
+                                       .path( PropertyPath.from( COMPONENTS, PAGE, CONFIG, descriptorKey.getApplicationKey().toString(),
+                                                                 descriptorKey.getName() ) )
+                                       .indexConfig( IndexConfig.BY_TYPE )
+                                       .build() ) );
         assertEquals( "htmlStripper", result.getConfigForPath(
             PropertyPath.from( COMPONENTS, PAGE, CONFIG, descriptorKey.getApplicationKey().toString(), descriptorKey.getName(),
                                "htmlarea" ) ).getIndexValueProcessors().get( 0 ).getName() );
@@ -98,10 +164,14 @@ public class PageConfigProcessorTest
 
     private PatternIndexConfigDocument processForm( final Form form )
     {
-        final PageDescriptor descriptor =
-            PageDescriptor.create().key( descriptorKey ).config( form ).regions( RegionDescriptors.create().build() ).build();
+        final PageDescriptor descriptor = PageDescriptor.create().key( descriptorKey ).
+            config( form ).
+            regions( RegionDescriptors.create().build() ).
+            build();
 
-        final Page page = Page.create().descriptor( descriptorKey ).build();
+        final Page page = Page.create().
+            descriptor( descriptorKey ).
+            build();
 
         Mockito.when( pageDescriptorService.getByKey( descriptorKey ) ).thenReturn( descriptor );
 
