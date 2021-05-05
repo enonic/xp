@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 DIRNAME=`dirname "$0"`
 PROGNAME=`basename "$0"`
