@@ -73,7 +73,7 @@ class FilterByContentResolverTest
 
     FilterByContentResolver filterByContentResolver;
 
-    Set<ContentType> knownContentTypes = new HashSet<>();
+    Set<ContentType> knownContentTypes;
 
     @BeforeEach
     void setUp()
@@ -85,7 +85,7 @@ class FilterByContentResolverTest
         filterByContentResolver.setPageDescriptorService( pageDescriptorService );
         filterByContentResolver.setPartDescriptorService( partDescriptorService );
 
-        knownContentTypes.addAll( BuiltinContentTypesAccessor.getAll() );
+        knownContentTypes = new HashSet<>( BuiltinContentTypesAccessor.getAll() );
 
         lenient().when( contentTypeService.getByName(
             argThat( argument -> knownContentTypes.stream().anyMatch( ct -> ct.getName().equals( argument.getContentTypeName() ) ) ) ) )
