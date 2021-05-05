@@ -234,8 +234,6 @@ public class ContentResourceTest
 
     private ContentTypeService contentTypeService;
 
-    Set<ContentType> knownContentTypes = new HashSet<>();
-
     private ContentService contentService;
 
     private SecurityService securityService;
@@ -252,6 +250,8 @@ public class ContentResourceTest
 
     private SyncContentService syncContentService;
 
+    Set<ContentType> knownContentTypes;
+
     @Override
     protected ContentResource getResourceInstance()
     {
@@ -263,7 +263,7 @@ public class ContentResourceTest
         resource.setContentService( contentService );
         resource.setContentTypeService( contentTypeService );
 
-        knownContentTypes.addAll( BuiltinContentTypesAccessor.getAll() );
+        knownContentTypes = new HashSet<>( BuiltinContentTypesAccessor.getAll() );
 
         lenient().when( contentTypeService.getByName(
             argThat( argument -> knownContentTypes.stream().anyMatch( ct -> ct.getName().equals( argument.getContentTypeName() ) ) ) ) )
@@ -2606,7 +2606,7 @@ public class ContentResourceTest
 
     private Content createContent( final String id, final ContentPath parentPath, final String name, final String contentTypeName )
     {
-        knownContentTypes.add( ContentType.create().name( contentTypeName ).superType( ContentTypeName.unstructured() ).build() );
+        knownContentTypes.add( createContentType( contentTypeName ) );
 
         final PropertyTree metadata = new PropertyTree();
         metadata.setLong( "myProperty", 1L );

@@ -44,7 +44,7 @@
   "displayName": "My Content",
   "editable": true,
   "hasChildren": false,
-  "iconUrl": "/admin/rest/schema/content/icon/myapplication:my_type?hash=e7e183114827ad2c4bbd8100f9398b07",
+  "iconUrl": "/admin/rest/schema/content/icon/myapplication:my_type?hash=f95b70fdc3088560732a5ac135644506",
   "id": "aaa",
   "inherit": [],
   "inheritPermissions": true,

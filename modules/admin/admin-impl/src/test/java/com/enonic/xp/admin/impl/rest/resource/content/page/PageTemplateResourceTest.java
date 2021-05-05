@@ -64,18 +64,18 @@ public class PageTemplateResourceTest
 
     private ContentTypeService contentTypeService;
 
-    Set<ContentType> knownContentTypes = new HashSet<>();
-
     private SecurityService securityService;
 
     private final String currentTime = "2013-08-23T12:55:09.162Z";
+
+    Set<ContentType> knownContentTypes;
 
     @Override
     protected Object getResourceInstance()
     {
         contentTypeService = Mockito.mock( ContentTypeService.class );
 
-        knownContentTypes.addAll( BuiltinContentTypesAccessor.getAll() );
+        knownContentTypes = new HashSet<>( BuiltinContentTypesAccessor.getAll() );
 
         lenient().when( contentTypeService.getByName(
             argThat( argument -> knownContentTypes.stream().anyMatch( ct -> ct.getName().equals( argument.getContentTypeName() ) ) ) ) )
