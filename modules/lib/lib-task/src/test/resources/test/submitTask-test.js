@@ -3,8 +3,8 @@ var taskLib = require('/lib/xp/task.js');
 
 exports.submitTask = function () {
 
-    var taskId = taskLib.submitNamed({
-        name: 'my-task',
+    var taskId = taskLib.submitTask({
+        descriptor: 'my-task',
         config: {
             values: ['one', 'two', 'three']
         }
@@ -15,8 +15,8 @@ exports.submitTask = function () {
 
 exports.submitTaskFromApp = function () {
 
-    var taskId = taskLib.submitNamed({
-        name: 'other-app:some-task'
+    var taskId = taskLib.submitTask({
+        descriptor: 'other-app:some-task'
     });
 
     t.assertEquals('123', taskId);

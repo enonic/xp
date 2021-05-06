@@ -3,9 +3,9 @@ var taskLib = require('/lib/xp/task.js');
 
 exports.reportProgress = function () {
 
-    var taskId = taskLib.submit({
+    var taskId = taskLib.executeFunction({
         description: 'Background task',
-        task() {
+        func() {
 
             taskLib.progress({info: 'Starting task'});
 
