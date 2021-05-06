@@ -8,10 +8,10 @@ function processItem() {
 }
 
 // BEGIN
-// Execute task and keep taskId for polling status
-var taskId = taskLib.submit({
+// Execute function and keep taskId for polling status
+var taskId = taskLib.executeFunction({
     description: 'Background task',
-    task() {
+    func() {
 
         taskLib.progress({info: 'Initializing task'});
 

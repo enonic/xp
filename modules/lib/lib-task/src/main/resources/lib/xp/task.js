@@ -31,6 +31,8 @@ function checkRequired(params, name) {
  */
 
 /**
+ * @deprecated Please use {@link executeFunction}.
+
  * Submits a task to be executed in the background and returns an id representing the task.
  *
  * This function returns immediately. The callback function will be executed asynchronously.
@@ -45,18 +47,46 @@ function checkRequired(params, name) {
  */
 exports.submit = function (params) {
 
-    var bean = __.newBean('com.enonic.xp.lib.task.SubmitTaskHandler');
+    var bean = __.newBean('com.enonic.xp.lib.task.ExecuteFunctionHandler');
 
     checkRequired(params, 'description');
     checkRequired(params, 'task');
 
     bean.description = __.nullOrValue(params.description);
-    bean.task = __.nullOrValue(params.task);
+    bean.func = __.nullOrValue(params.task);
 
     return bean.submit();
 };
 
 /**
+ * Runs a task function in the background and returns an id representing the task.
+ *
+ * This function returns immediately. The callback function will be executed asynchronously.
+ *
+ * @example-ref examples/task/executeFunction.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.description Text describing the task to be executed.
+ * @param {function} params.func Callback function to be executed asynchronously.
+ *
+ * @returns {string} Id of the task that will be executed.
+ */
+exports.executeFunction = function (params) {
+
+    var bean = __.newBean('com.enonic.xp.lib.task.ExecuteFunctionHandler');
+
+    checkRequired(params, 'description');
+    checkRequired(params, 'func');
+
+    bean.description = __.nullOrValue(params.description);
+    bean.func = __.nullOrValue(params.func);
+
+    return bean.executeFunction();
+};
+
+/**
+ * @deprecated Please use {@link submitTask}.
+ *
  * Submits a named task to be executed in the background and returns an id representing the task.
  *
  * This function returns immediately. The callback function will be executed asynchronously.
@@ -72,12 +102,36 @@ exports.submit = function (params) {
 exports.submitNamed = function (params) {
     checkRequired(params, 'name');
 
-    var bean = __.newBean('com.enonic.xp.lib.task.SubmitNamedTaskHandler');
+    var bean = __.newBean('com.enonic.xp.lib.task.SubmitTaskHandler');
 
-    bean.name = __.nullOrValue(params.name);
+    bean.descriptor = __.nullOrValue(params.name);
     bean.config = __.toScriptValue(params.config);
 
     return bean.submit();
+};
+
+/**
+ * Submits a task to be executed in the background and returns an id representing the task.
+ *
+ * This function returns immediately. The callback function will be executed asynchronously.
+ *
+ * @example-ref examples/task/submitTask.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.descriptor Descriptor of the task to execute.
+ * @param {object} [params.config] Configuration parameters to pass to the task to be executed.
+ * The object must be valid according to the schema defined in the form of the task descriptor XML.
+ * @returns {string} Id of the task that will be executed.
+ */
+exports.submitTask = function (params) {
+    checkRequired(params, 'descriptor');
+
+    var bean = __.newBean('com.enonic.xp.lib.task.SubmitTaskHandler');
+
+    bean.descriptor = __.nullOrValue(params.descriptor);
+    bean.config = __.toScriptValue(params.config);
+
+    return bean.submitTask();
 };
 
 /**

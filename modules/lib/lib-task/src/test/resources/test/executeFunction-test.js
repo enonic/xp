@@ -1,11 +1,11 @@
 var t = require('/lib/xp/testing.js');
 var taskLib = require('/lib/xp/task.js');
 
-exports.submitTask = function () {
+exports.executeFunction = function () {
 
-    var taskId = taskLib.submit({
+    var taskId = taskLib.executeFunction({
         description: 'Background task',
-        task() {
+        func() {
             // do something
         }
     });
@@ -13,11 +13,11 @@ exports.submitTask = function () {
     t.assertEquals('123', taskId);
 };
 
-exports.submitTaskThrowingError = function () {
+exports.executeFunctionThrowingError = function () {
 
-    var taskId = taskLib.submit({
+    var taskId = taskLib.executeFunction({
         description: 'Background task',
-        task() {
+        func() {
             throw new Error('Something went wrong');
         }
     });
