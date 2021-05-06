@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 #
 # Handle specific scripts; the SCRIPT_NAME is exactly the name of the XP
