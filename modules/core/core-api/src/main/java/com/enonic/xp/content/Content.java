@@ -136,15 +136,11 @@ public class Content
     {
         if ( type.isPageTemplate() )
         {
-            final PageTemplate.Builder builder = PageTemplate.newPageTemplate();
-            builder.type( type );
-            return builder;
+            return PageTemplate.newPageTemplate();
         }
         else if ( type.isSite() )
         {
-            Site.Builder builder = Site.create();
-            builder.type( type );
-            return builder;
+            return Site.create();
         }
         else if ( type.isDescendantOfMedia() )
         {

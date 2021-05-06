@@ -14,7 +14,7 @@ public abstract class IconUrlResolver
         if ( icon != null )
         {
             final byte[] iconData = icon.toByteArray();
-            if ( iconData != null && iconData.length > 0 )
+            if ( iconData.length > 0 )
             {
                 str.append( "?hash=" ).append( Hashing.md5().hashBytes( iconData ).toString() );
             }

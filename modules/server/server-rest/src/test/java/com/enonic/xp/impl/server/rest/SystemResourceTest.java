@@ -1,7 +1,11 @@
 package com.enonic.xp.impl.server.rest;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
@@ -12,6 +16,7 @@ import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
 import com.enonic.xp.impl.server.rest.task.DumpRunnableTask;
 import com.enonic.xp.impl.server.rest.task.LoadRunnableTask;
 import com.enonic.xp.impl.server.rest.task.UpgradeRunnableTask;
+import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskResultJson;
@@ -22,8 +27,11 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 
 public class SystemResourceTest
-    extends ServerRestTestSupport
+    extends JaxRsResourceTestSupport
 {
+    @TempDir
+    public Path temporaryFolder;
+
     private TaskService taskService;
 
     private SystemResource resource;
@@ -32,6 +40,8 @@ public class SystemResourceTest
     public void setup()
         throws Exception
     {
+        final Path homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) ).toAbsolutePath();
+        System.setProperty( "xp.home", homeDir.toString() );
     }
 
     @Test

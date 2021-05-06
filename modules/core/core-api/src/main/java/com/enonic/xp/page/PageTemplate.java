@@ -84,6 +84,7 @@ public final class PageTemplate
         private Builder()
         {
             super();
+            type = ContentTypeName.pageTemplate();
         }
 
         public Builder( final PageTemplate source )
