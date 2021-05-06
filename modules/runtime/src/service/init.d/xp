@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # /etc/init.d/enonicxp
 # Subsystem file for "Enonic XP" server
