@@ -10,7 +10,7 @@ updates:
   reviewers:
     - "rymsha"
 - package-ecosystem: "npm"
-  directory: "/"
+  directory: "/modules/docs"
   schedule:
     interval: "monthly"
   open-pull-requests-limit: 10
