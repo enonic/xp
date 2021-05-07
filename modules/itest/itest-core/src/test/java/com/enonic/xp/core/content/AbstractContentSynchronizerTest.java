@@ -238,6 +238,11 @@ public abstract class AbstractContentSynchronizerTest
 
     protected Content createContent( final ContentPath parent, final String name )
     {
+        return createContent( parent, name, ContentTypeName.folder() );
+    }
+
+    protected Content createContent( final ContentPath parent, final String name, final ContentTypeName type )
+    {
         final PropertyTree data = new PropertyTree();
         data.addStrings( "stringField", "stringValue" );
 
@@ -246,7 +251,7 @@ public abstract class AbstractContentSynchronizerTest
             name( name ).
             displayName( name ).
             parent( parent ).
-            type( ContentTypeName.folder() ).
+            type( type ).
             build();
 
         return this.contentService.create( createParent );

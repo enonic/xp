@@ -43,6 +43,7 @@ import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -593,6 +594,27 @@ public class ProjectContentEventListenerTest
             assertFalse( contentService.contentExists( sourceContent.getId() ) );
             assertFalse( contentService.contentExists( sourceChild1.getId() ) );
             assertFalse( contentService.contentExists( sourceChild2.getId() ) );
+        } );
+    }
+
+    @Test
+    public void testDeletedTemplateFolder()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content", ContentTypeName.site() ) );
+        final Content sourceTemplateFolder =
+            sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1", ContentTypeName.templateFolder() ) );
+        handleEvents();
+
+        sourceContext.runWith( () -> contentService.deleteWithoutFetch( DeleteContentParams.create().
+            contentPath( sourceTemplateFolder.getPath() ).
+            build() ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> {
+            assertTrue( contentService.contentExists( sourceContent.getId() ) );
+            assertTrue( contentService.contentExists( sourceTemplateFolder.getId() ) );
         } );
     }
 

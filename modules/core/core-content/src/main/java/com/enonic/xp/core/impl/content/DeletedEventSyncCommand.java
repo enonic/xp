@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.schema.content.ContentTypeName;
 
 final class DeletedEventSyncCommand
     extends AbstractContentEventSyncCommand
@@ -37,7 +38,8 @@ final class DeletedEventSyncCommand
 
     private boolean isToSyncDelete( final Content targetContent )
     {
-        return targetContent.getInherit().contains( ContentInheritType.CONTENT );
+        return targetContent.getInherit().contains( ContentInheritType.CONTENT ) &&
+            !ContentTypeName.templateFolder().equals( targetContent.getType() );
     }
 
     private boolean needToDelete( final ContentEventSyncCommandParams params )
