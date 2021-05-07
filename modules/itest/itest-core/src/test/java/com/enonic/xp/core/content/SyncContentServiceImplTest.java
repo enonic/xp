@@ -9,6 +9,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
@@ -24,6 +25,7 @@ import com.enonic.xp.project.ProjectName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SyncContentServiceImplTest
@@ -108,6 +110,34 @@ public class SyncContentServiceImplTest
             assertTrue( changed.getData().hasProperty( "stringField" ) );
         } );
 
+    }
+
+    @Test
+    public void resetWithRemovedSource()
+        throws Exception
+    {
+        final Content source = sourceContext.callWith( () -> createContent( ContentPath.ROOT ) );
+
+        syncCreated( source.getId() );
+
+        targetContext.runWith( () -> {
+            contentService.update( new UpdateContentParams().
+                contentId( source.getId() ).
+                editor( edit -> {
+                    edit.workflowInfo = WorkflowInfo.ready();
+                    edit.data = new PropertyTree();
+                } ) );
+        } );
+
+        sourceContext.runWith( () -> contentService.deleteWithoutFetch( DeleteContentParams.create().
+            contentPath( source.getPath() ).
+            build() ) );
+
+        assertThrows( IllegalArgumentException.class, () -> syncContentService.resetInheritance( ResetContentInheritParams.create().
+            contentId( source.getId() ).
+            inherit( EnumSet.of( ContentInheritType.CONTENT ) ).
+            projectName( targetProject.getName() ).
+            build() ) );
     }
 
     @Test

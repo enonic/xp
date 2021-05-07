@@ -36,7 +36,7 @@ final class ResetContentInheritanceCommand
 
     private final ProjectService projectService;
 
-    private ContentSynchronizer contentSynchronizer;
+    private final ContentSynchronizer contentSynchronizer;
 
 
     private ResetContentInheritanceCommand( final Builder builder )
@@ -55,26 +55,30 @@ final class ResetContentInheritanceCommand
 
     void execute()
     {
-        final Context context = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( params.getProjectName().getRepoId() ).branch( ContentConstants.BRANCH_DRAFT ).
+        final ProjectName sourceProjectName = fetchSourceProjectName( params.getProjectName() );
+
+        validateSourceContentExist( sourceProjectName );
+
+        final Context targetContext = ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( params.getProjectName().getRepoId() ).
+            branch( ContentConstants.BRANCH_DRAFT ).
             authInfo( createAdminAuthInfo() ).
             build();
 
-        context.runWith( () -> {
+        targetContext.runWith( () -> {
             if ( contentService.contentExists( params.getContentId() ) )
             {
-
-                final Content content = contentService.getById( params.getContentId() );
+                final Content targetContent = contentService.getById( params.getContentId() );
                 final Set<ContentInheritType> typesToReset = params.getInherit().
                     stream().
-                    filter( contentInheritType -> !content.getInherit().contains( contentInheritType ) ).
+                    filter( contentInheritType -> !targetContent.getInherit().contains( contentInheritType ) ).
                     collect( Collectors.toSet() );
 
                 if ( !typesToReset.isEmpty() )
                 {
                     final UpdateContentParams updateParams = new UpdateContentParams().
-                        contentId( content.getId() ).
-                        modifier( content.getModifier() ).
+                        contentId( targetContent.getId() ).
+                        modifier( targetContent.getModifier() ).
                         stopInherit( false ).
                         editor( edit -> {
                             edit.inherit = processInherit( edit.inherit, typesToReset );
@@ -83,7 +87,7 @@ final class ResetContentInheritanceCommand
 
                     contentService.update( updateParams );
 
-                    syncContent( content.getId(), params.getProjectName() );
+                    syncContent( targetContent.getId(), sourceProjectName, params.getProjectName() );
                 }
             }
         } );
@@ -94,7 +98,17 @@ final class ResetContentInheritanceCommand
         return EnumSet.copyOf( Stream.concat( oldTypes.stream(), newTypes.stream() ).collect( Collectors.toSet() ) );
     }
 
-    private void syncContent( final ContentId contentId, final ProjectName targetProjectName )
+    private void syncContent( final ContentId contentId, final ProjectName sourceProjectName, final ProjectName targetProjectName )
+    {
+        contentSynchronizer.sync( ContentSyncParams.create().
+            contentId( contentId ).
+            sourceProject( sourceProjectName ).
+            targetProject( targetProjectName ).
+            includeChildren( false ).
+            build() );
+    }
+
+    private ProjectName fetchSourceProjectName( final ProjectName targetProjectName )
     {
         final Project targetProject = createAdminContext().callWith( () -> projectService.get( targetProjectName ) );
 
@@ -107,6 +121,7 @@ final class ResetContentInheritanceCommand
         {
             throw new IllegalArgumentException( String.format( "Project with name [%s] has no parent", targetProject.getName() ) );
         }
+
         final Project sourceProject = createAdminContext().callWith( () -> projectService.get( targetProject.getParent() ) );
 
         if ( sourceProject == null )
@@ -114,12 +129,22 @@ final class ResetContentInheritanceCommand
             throw new IllegalArgumentException( String.format( "Project with name [%s] doesn't exist", targetProject.getParent() ) );
         }
 
-        contentSynchronizer.sync( ContentSyncParams.create().
-            contentId( contentId ).
-            sourceProject( sourceProject.getName() ).
-            targetProject( targetProject.getName() ).
-            includeChildren( false ).
-            build() );
+        return sourceProject.getName();
+    }
+
+    private void validateSourceContentExist( final ProjectName sourceProjectName )
+    {
+        final Context sourceContext = ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( sourceProjectName.getRepoId() ).
+            branch( ContentConstants.BRANCH_DRAFT ).
+            authInfo( createAdminAuthInfo() ).
+            build();
+
+        if ( !sourceContext.callWith( () -> contentService.contentExists( params.getContentId() ) ) )
+        {
+            throw new IllegalArgumentException(
+                String.format( "[%s] content is missed in [%s] project", params.getContentId(), sourceProjectName ) );
+        }
     }
 
     private Context createAdminContext()
