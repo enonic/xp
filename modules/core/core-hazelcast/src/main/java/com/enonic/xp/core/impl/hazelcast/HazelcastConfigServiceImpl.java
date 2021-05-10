@@ -17,6 +17,7 @@ import com.hazelcast.config.DiscoveryStrategyConfig;
 import com.hazelcast.config.InterfacesConfig;
 import com.hazelcast.config.MulticastConfig;
 import com.hazelcast.config.NetworkConfig;
+import com.hazelcast.config.PartitionGroupConfig;
 import com.hazelcast.config.RestApiConfig;
 import com.hazelcast.config.RestEndpointGroup;
 import com.hazelcast.config.SerializationConfig;
@@ -120,6 +121,8 @@ public class HazelcastConfigServiceImpl
 
         configureJoin( config );
 
+        configurePartitionGroup( config );
+
         configureRestApi( config );
     }
 
@@ -140,6 +143,24 @@ public class HazelcastConfigServiceImpl
 
             final DiscoveryStrategyConfig discoveryStrategyConfig =
                 new DiscoveryStrategyConfig( new HazelcastKubernetesDiscoveryStrategyFactory() );
+            discoveryStrategyConfig.addProperty( KubernetesProperties.NAMESPACE.key(),
+                                                 requireNonNullElse( hazelcastConfig.network_join_kubernetes_namespace(), "" ) );
+            discoveryStrategyConfig.addProperty( KubernetesProperties.SERVICE_NAME.key(),
+                                                 requireNonNullElse( hazelcastConfig.network_join_kubernetes_serviceName(), "" ) );
+            discoveryStrategyConfig.addProperty( KubernetesProperties.SERVICE_LABEL_NAME.key(),
+                                                 requireNonNullElse( hazelcastConfig.network_join_kubernetes_serviceLabelName(), "" ) );
+            discoveryStrategyConfig.addProperty( KubernetesProperties.SERVICE_LABEL_VALUE.key(),
+                                                 requireNonNullElse( hazelcastConfig.network_join_kubernetes_serviceLabelValue(), "" ) );
+            discoveryStrategyConfig.addProperty( KubernetesProperties.POD_LABEL_NAME.key(),
+                                                 requireNonNullElse( hazelcastConfig.network_join_kubernetes_podLabelName(), "" ) );
+            discoveryStrategyConfig.addProperty( KubernetesProperties.POD_LABEL_VALUE.key(),
+                                                 requireNonNullElse( hazelcastConfig.network_join_kubernetes_podLabelValue(), "" ) );
+            discoveryStrategyConfig.addProperty( KubernetesProperties.RESOLVE_NOT_READY_ADDRESSES.key(),
+                                                 hazelcastConfig.network_join_kubernetes_resolveNotReadyAddresses() );
+            discoveryStrategyConfig.addProperty( KubernetesProperties.USE_NODE_NAME_AS_EXTERNAL_ADDRESS.key(),
+                                                 hazelcastConfig.network_join_kubernetes_useNodeNameAsExternalAddress() );
+            discoveryStrategyConfig.addProperty( KubernetesProperties.KUBERNETES_API_RETIRES.key(),
+                                                 hazelcastConfig.network_join_kubernetes_kubernetesApiRetries() );
             discoveryStrategyConfig.addProperty( KubernetesProperties.SERVICE_DNS.key(),
                                                  requireNonNullElse( hazelcastConfig.network_join_kubernetes_serviceDns(), "" ) );
             config.getNetworkConfig().getJoin().getDiscoveryConfig().addDiscoveryStrategyConfig( discoveryStrategyConfig );
@@ -167,6 +188,17 @@ public class HazelcastConfigServiceImpl
                     .collect( Collectors.toUnmodifiableList() );
                 interfacesConfig.setInterfaces( interfaces );
             }
+        }
+    }
+
+    private void configurePartitionGroup( final Config config )
+    {
+        if ( hazelcastConfig.partition_group_enabled() )
+        {
+            final PartitionGroupConfig partitionGroupConfig = config.getPartitionGroupConfig();
+            partitionGroupConfig.setEnabled( true );
+            partitionGroupConfig.setGroupType(
+                PartitionGroupConfig.MemberGroupType.valueOf( hazelcastConfig.partition_group_groupType() ) );
         }
     }
 

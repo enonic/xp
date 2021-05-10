@@ -40,6 +40,24 @@ public @interface HazelcastConfig
 
     boolean network_join_kubernetes_enabled() default false;
 
+    String network_join_kubernetes_namespace();
+
+    String network_join_kubernetes_serviceName();
+
+    String network_join_kubernetes_serviceLabelName();
+
+    String network_join_kubernetes_serviceLabelValue();
+
+    String network_join_kubernetes_podLabelName();
+
+    String network_join_kubernetes_podLabelValue();
+
+    boolean network_join_kubernetes_resolveNotReadyAddresses() default false;
+
+    boolean network_join_kubernetes_useNodeNameAsExternalAddress() default false;
+
+    int network_join_kubernetes_kubernetesApiRetries() default 3;
+
     String network_join_kubernetes_serviceDns();
 
     String network_join_tcpIp_members();
@@ -51,4 +69,8 @@ public @interface HazelcastConfig
     boolean network_restApi_enabled() default false;
 
     String network_restApi_restEndpointGroups() default "HEALTH_CHECK, CLUSTER_READ";
+
+    boolean partition_group_enabled() default false;
+
+    String partition_group_groupType() default "PER_MEMBER";
 }
