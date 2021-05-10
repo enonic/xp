@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.hazelcast.config.Config;
+import com.hazelcast.config.PartitionGroupConfig;
 import com.hazelcast.config.RestEndpointGroup;
 import com.hazelcast.kubernetes.HazelcastKubernetesDiscoveryStrategyFactory;
 import com.hazelcast.spi.properties.GroupProperty;
@@ -65,8 +66,8 @@ class HazelcastConfigServiceImplTest
     {
         when( clusterConfig.networkHost() ).thenReturn( "127.0.1.1" );
         when( clusterConfig.networkPublishHost() ).thenReturn( "127.0.2.1" );
-        when( clusterConfig.discovery().get() ).
-            thenReturn( List.of( InetAddress.getByName( "127.0.0.1" ), InetAddress.getByName( "127.0.1.1" ) ) );
+        when( clusterConfig.discovery().get() ).thenReturn(
+            List.of( InetAddress.getByName( "127.0.0.1" ), InetAddress.getByName( "127.0.1.1" ) ) );
 
         final Config config = hazelcastConfigService.configure();
 
@@ -111,6 +112,20 @@ class HazelcastConfigServiceImplTest
     }
 
     @Test
+    void configure_partition_group_enabled()
+        throws Exception
+    {
+        when( clusterConfig.networkHost() ).thenReturn( "127.0.0.1" );
+        when( clusterConfig.discovery().get() ).thenReturn( List.of( InetAddress.getByName( "127.0.0.1" ) ) );
+
+        when( hazelcastConfig.partition_group_enabled() ).thenReturn( true );
+        when( hazelcastConfig.partition_group_groupType() ).thenReturn( "ZONE_AWARE" );
+        final Config config = hazelcastConfigService.configure();
+        assertAll( () -> assertTrue( config.getPartitionGroupConfig().isEnabled() ),
+                   () -> assertEquals( PartitionGroupConfig.MemberGroupType.ZONE_AWARE, config.getPartitionGroupConfig().getGroupType() ) );
+    }
+
+    @Test
     void configure_kubernetes_enabled()
     {
         when( hazelcastConfig.clusterConfigDefaults() ).thenReturn( false );
@@ -118,11 +133,13 @@ class HazelcastConfigServiceImplTest
         when( hazelcastConfig.network_join_kubernetes_enabled() ).thenReturn( true );
         when( hazelcastConfig.network_join_kubernetes_serviceDns() ).thenReturn( "some.service.local" );
         final Config config = hazelcastConfigService.configure();
-        assertAll( () -> assertEquals( "true", config.getProperty( GroupProperty.DISCOVERY_SPI_ENABLED.getName() ) ),
-                   () -> assertTrue( config.getNetworkConfig().getJoin().getDiscoveryConfig().getDiscoveryStrategyConfigs().
-                       stream().
-                       anyMatch(
-                           dsc -> dsc.getDiscoveryStrategyFactory().getClass() == HazelcastKubernetesDiscoveryStrategyFactory.class ) ) );
+        assertAll( () -> assertEquals( "true", config.getProperty( GroupProperty.DISCOVERY_SPI_ENABLED.getName() ) ), () -> assertTrue(
+            config.getNetworkConfig()
+                .getJoin()
+                .getDiscoveryConfig()
+                .getDiscoveryStrategyConfigs()
+                .stream()
+                .anyMatch( dsc -> dsc.getDiscoveryStrategyFactory().getClass() == HazelcastKubernetesDiscoveryStrategyFactory.class ) ) );
     }
 
     @Test
