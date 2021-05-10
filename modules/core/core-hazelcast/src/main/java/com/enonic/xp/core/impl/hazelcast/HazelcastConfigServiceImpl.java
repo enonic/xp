@@ -156,11 +156,11 @@ public class HazelcastConfigServiceImpl
             discoveryStrategyConfig.addProperty( KubernetesProperties.POD_LABEL_VALUE.key(),
                                                  requireNonNullElse( hazelcastConfig.network_join_kubernetes_podLabelValue(), "" ) );
             discoveryStrategyConfig.addProperty( KubernetesProperties.RESOLVE_NOT_READY_ADDRESSES.key(),
-                                                 hazelcastConfig.network_join_kubernetes_resolveNotReadyAddresses() );
+                                                 String.valueOf( hazelcastConfig.network_join_kubernetes_resolveNotReadyAddresses() ) );
             discoveryStrategyConfig.addProperty( KubernetesProperties.USE_NODE_NAME_AS_EXTERNAL_ADDRESS.key(),
-                                                 hazelcastConfig.network_join_kubernetes_useNodeNameAsExternalAddress() );
+                                                 String.valueOf( hazelcastConfig.network_join_kubernetes_useNodeNameAsExternalAddress() ) );
             discoveryStrategyConfig.addProperty( KubernetesProperties.KUBERNETES_API_RETIRES.key(),
-                                                 hazelcastConfig.network_join_kubernetes_kubernetesApiRetries() );
+                                                 String.valueOf( hazelcastConfig.network_join_kubernetes_kubernetesApiRetries() ) );
             discoveryStrategyConfig.addProperty( KubernetesProperties.SERVICE_DNS.key(),
                                                  requireNonNullElse( hazelcastConfig.network_join_kubernetes_serviceDns(), "" ) );
             config.getNetworkConfig().getJoin().getDiscoveryConfig().addDiscoveryStrategyConfig( discoveryStrategyConfig );
