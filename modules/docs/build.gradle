@@ -6,7 +6,7 @@ plugins {
 
 node {
     download = true
-    version = '10.19.0'
+    version = '14.16.1'
 }
 
 task javadocAll( type: Javadoc, group: 'documentation' ) {
