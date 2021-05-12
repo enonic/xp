@@ -19,6 +19,7 @@ import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputTypes;
 
 import static com.enonic.xp.form.FormItemType.FORM_ITEM_SET;
@@ -92,8 +93,11 @@ public final class FormDefaultValuesProcessorImpl
                 if ( option.isDefaultOption() )
                 {
                     dataSet.setProperty( "_selected", ValueFactory.newString( formItem.getName() ) );
-                    Property property = dataSet.setProperty( formItem.getName(), ValueFactory.newPropertySet( new PropertySet() ) );
-                    processFormItems( option.getFormItems(), property.getSet() );
+                    if ( dataSet.getProperty( formItem.getName() ) == null )
+                    {
+                        Property property = dataSet.setProperty( formItem.getName(), ValueFactory.newPropertySet( new PropertySet() ) );
+                        processFormItems( option.getFormItems(), property.getSet() );
+                    }
                 }
             }
             else if ( formItem.getType() == FORM_OPTION_SET )
@@ -113,18 +117,59 @@ public final class FormDefaultValuesProcessorImpl
                 setProperty( formItemName, formItems, i, dataSet );
             }
         }
-        else
-        {
-            setProperty( formItemName, formItems, 0, dataSet );
-        }
     }
 
     private void setProperty( String formItemName, FormItems formItems, int index, PropertySet dataSet )
     {
-        Property property = dataSet.setProperty( formItemName, index, ValueFactory.newPropertySet( new PropertySet() ) );
-        if ( property != null )
+        if ( dataSet.getProperty( formItemName, index ) == null )
         {
-            processFormItems( formItems, property.getSet() );
+            Property property = dataSet.setProperty( formItemName, index, ValueFactory.newPropertySet( new PropertySet() ) );
+            if ( property != null )
+            {
+                if ( existsDefaultValuesOrMinOccurrencesGreaterThanZero( formItems ) )
+                {
+                    processFormItems( formItems, property.getSet() );
+                }
+            }
         }
+    }
+
+    private boolean existsDefaultValuesOrMinOccurrencesGreaterThanZero( FormItems formItems )
+    {
+        return StreamSupport.stream( formItems.spliterator(), false ).anyMatch( formItem -> {
+            if ( formItem.getType() == INPUT )
+            {
+                Input input = formItem.toInput();
+                return input.getOccurrences().getMinimum() > 0 || input.getDefaultValue() != null;
+            }
+            else if ( formItem.getType() == FORM_ITEM_SET )
+            {
+                final Occurrences occurrences = formItem.toFormItemSet().getOccurrences();
+                if ( occurrences.getMinimum() == 0 )
+                {
+                    return false;
+                }
+                return occurrences.getMinimum() > 0 || existsDefaultValuesOrMinOccurrencesGreaterThanZero( formItem.toFormItemSet().getFormItems() );
+            }
+            else if ( formItem.getType() == LAYOUT && formItem.toLayout() instanceof FieldSet )
+            {
+                return existsDefaultValuesOrMinOccurrencesGreaterThanZero( ( (FieldSet) formItem.toLayout() ).getFormItems() );
+            }
+            else if ( formItem.getType() == FORM_OPTION_SET_OPTION )
+            {
+                FormOptionSetOption option = formItem.toFormOptionSetOption();
+                return option.isDefaultOption();
+            }
+            else if ( formItem.getType() == FORM_OPTION_SET )
+            {
+                final Occurrences occurrences = formItem.toFormOptionSet().getOccurrences();
+                if ( occurrences.getMinimum() == 0 )
+                {
+                    return false;
+                }
+                return occurrences.getMinimum() > 0 || existsDefaultValuesOrMinOccurrencesGreaterThanZero( formItem.toFormOptionSet().getFormItems() );
+            }
+            return false;
+        } );
     }
 }
