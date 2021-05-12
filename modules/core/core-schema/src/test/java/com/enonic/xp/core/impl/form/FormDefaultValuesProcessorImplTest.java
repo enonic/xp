@@ -7,11 +7,13 @@ import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
+import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputTypeDefault;
@@ -19,6 +21,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -127,7 +130,8 @@ public class FormDefaultValuesProcessorImplTest
     @Test
     public void testOptionSetItemsAreDefaulted()
     {
-        FormOptionSet.Builder myOptionSet = FormOptionSet.create().required( false ).name( "myOptionSet" );
+        FormOptionSet.Builder myOptionSet =
+            FormOptionSet.create().required( false ).name( "myOptionSet" ).occurrences( Occurrences.create( 1, 1 ) );
         FormOptionSetOption.Builder option1 = FormOptionSetOption.create().name( "option1" ).defaultOption( true );
 
         option1.
@@ -161,7 +165,8 @@ public class FormDefaultValuesProcessorImplTest
     @Test
     public void testOptionSetIsNotDefaultedForUnselected()
     {
-        FormOptionSet.Builder myOptionSet = FormOptionSet.create().required( false ).name( "myOptionSet" );
+        FormOptionSet.Builder myOptionSet =
+            FormOptionSet.create().required( false ).name( "myOptionSet" ).occurrences( Occurrences.create( 1, 1 ) );
 
         FormOptionSetOption.Builder option1 = FormOptionSetOption.create().name( "option1" ).defaultOption( true );
         FormOptionSetOption.Builder option2 = FormOptionSetOption.create().name( "option2" );
@@ -297,4 +302,240 @@ public class FormDefaultValuesProcessorImplTest
         }
     }
 
+    @Test
+    public void testOptionSetWithMinOccurrencesEqualZero()
+    {
+        FormOptionSet.Builder checkOptionSet = FormOptionSet.create().
+            required( false ).
+            name( "checkOptionSet" ).
+            occurrences( Occurrences.create( 0, 3 ) );
+
+        FormOptionSetOption.Builder option = FormOptionSetOption.create().name( "option_1" );
+        checkOptionSet.addOptionSetOption( option.build() );
+
+        final Form form = Form.create().
+            addFormItem( checkOptionSet.build() ).
+            build();
+
+        final FormDefaultValuesProcessor defaultValuesProcessor = new FormDefaultValuesProcessorImpl();
+        final PropertyTree data = new PropertyTree();
+        defaultValuesProcessor.setDefaultValues( form, data );
+
+        assertEquals( 0, data.getTotalSize() );
+    }
+
+    @Test
+    public void testOptionSetWithMinOccurrencesMoreZero()
+    {
+        FormOptionSet.Builder checkOptionSet = FormOptionSet.create().
+            required( false ).
+            name( "checkOptionSet" ).
+            occurrences( Occurrences.create( 1, 3 ) );
+
+        FormOptionSetOption.Builder option = FormOptionSetOption.create().name( "option_1" );
+        checkOptionSet.addOptionSetOption( option.build() );
+
+        FormItemSet.Builder formItemSet = FormItemSet.create().name( "item-set" ).
+            occurrences( Occurrences.create( 1, 2 ) ).
+            addFormItem( checkOptionSet.build() );
+
+        final Form form = Form.create().
+            addFormItem( formItemSet.build() ).
+            build();
+
+        final FormDefaultValuesProcessor defaultValuesProcessor = new FormDefaultValuesProcessorImpl();
+        final PropertyTree data = new PropertyTree();
+        defaultValuesProcessor.setDefaultValues( form, data );
+
+        assertEquals( 2, data.getTotalSize() );
+        assertNotNull( data.getProperty( "item-set" ) );
+        assertNotNull( data.getProperty( "item-set.checkOptionSet" ) );
+    }
+
+    @Test
+    public void testItemSetWithMinOccurrencesMoreZero()
+    {
+        FormOptionSet.Builder checkOptionSet = FormOptionSet.create().
+            required( false ).
+            name( "checkOptionSet" ).
+            occurrences( Occurrences.create( 1, 1 ) );
+
+        FormItemSet.Builder formItemSet = FormItemSet.create().name( "item-set" ).
+            occurrences( Occurrences.create( 1, 1 ) ).
+            addFormItem( Input.create().name( "testInput" ).label( "testInput" ).inputType( InputTypeName.TEXT_LINE ).build() );
+
+        FormOptionSetOption.Builder option = FormOptionSetOption.create().name( "option_1" ).
+            defaultOption( true ).
+            addFormItem( formItemSet.build() );
+
+        checkOptionSet.addOptionSetOption( option.build() );
+
+        final Form form = Form.create().
+            addFormItem( checkOptionSet.build() ).
+            build();
+
+        final FormDefaultValuesProcessor defaultValuesProcessor = new FormDefaultValuesProcessorImpl();
+        final PropertyTree data = new PropertyTree();
+        defaultValuesProcessor.setDefaultValues( form, data );
+
+        assertEquals( 4, data.getTotalSize() );
+        assertNotNull( data.getProperty( "checkOptionSet" ) );
+        assertEquals("option_1",  data.getString( "checkOptionSet._selected" ) );
+        assertNotNull( data.getProperty( "checkOptionSet.option_1.item-set" ) );
+    }
+
+    @Test
+    public void testItemSetWithMinOccurrencesMoreEqualZero()
+    {
+        FormItemSet.Builder checkItemSet = FormItemSet.create().
+            name( "checkItemSet" ).
+            occurrences( Occurrences.create( 0, 3 ) );
+
+        Input input = Input.create().
+            name( "testInput" ).
+            label( "testInput" ).
+            inputType( InputTypeName.TEXT_LINE ).
+            defaultValue( InputTypeDefault.create().property( InputTypeProperty.create( "default", "Default Value" ).build() ).build() ).
+            occurrences( Occurrences.create( 3, 3 ) ).
+            build();
+
+        checkItemSet.addFormItem( input );
+
+        final Form form = Form.create().
+            addFormItem( checkItemSet.build() ).
+            build();
+
+        final FormDefaultValuesProcessor defaultValuesProcessor = new FormDefaultValuesProcessorImpl();
+        final PropertyTree data = new PropertyTree();
+        defaultValuesProcessor.setDefaultValues( form, data );
+
+        assertEquals( 0, data.getTotalSize() );
+    }
+
+    @Test
+    public void testItemSetWithMinOccurrencesGreaterMoreZero()
+    {
+        FormItemSet.Builder itemSet = FormItemSet.create().
+            name( "rootItemSet" ).
+            occurrences( Occurrences.create( 1, 3 ) );
+
+        itemSet.addFormItem( FormItemSet.create().
+            name( "childItemSet-1" ).
+            occurrences( Occurrences.create( 1, 3 ) ).
+            addFormItem( FormItemSet.create()
+                             .name( "childItemSet-2" )
+                             .occurrences( Occurrences.create( 0, 1 ) )
+                             .addFormItem(
+                                 Input.create().name( "testInput" ).label( "testInput" ).inputType( InputTypeName.TEXT_LINE ).build() )
+                             .build() ).
+            addFormItem( Input.create()
+                             .name( "testInput" )
+                             .label( "testInput" )
+                             .inputType( InputTypeName.TEXT_LINE )
+                             .defaultValue( InputTypeDefault.create()
+                                                .property( InputTypeProperty.create( "default", "Default Value" ).build() )
+                                                .build() )
+                             .build() ).build() );
+
+        final Form form = Form.create().
+            addFormItem( itemSet.build() ).
+            build();
+
+        final FormDefaultValuesProcessor defaultValuesProcessor = new FormDefaultValuesProcessorImpl();
+        final PropertyTree data = new PropertyTree();
+        defaultValuesProcessor.setDefaultValues( form, data );
+
+        assertEquals( 3, data.getTotalSize() );
+        assertNotNull( data.getProperty( "rootItemSet" ) );
+        assertNotNull( data.getProperty( "rootItemSet.childItemSet-1" ) );
+        assertNotNull( data.getProperty( "rootItemSet.childItemSet-1.testInput" ) );
+    }
+
+    @Test
+    public void testFieldSet()
+    {
+        FieldSet.Builder fieldSet = FieldSet.create()
+            .name( "fieldSet" )
+            .label( "FieldSet" )
+            .addFormItem( InlineMixin.create().mixin( "testApp:testMixin" ).build() )
+            .addFormItem( Input.create()
+                              .name( "testInput" )
+                              .label( "testInput" )
+                              .inputType( InputTypeName.TEXT_LINE )
+                              .defaultValue( InputTypeDefault.create()
+                                                 .property( InputTypeProperty.create( "default", "Default Value" ).build() )
+                                                 .build() )
+                              .build() )
+            .addFormItem( Input.create()
+                              .name( "testInput2" )
+                              .label( "testInput2" )
+                              .inputType( InputTypeName.TEXT_LINE )
+                              .defaultValue( InputTypeDefault.create()
+                                                 .property( InputTypeProperty.create( "default", "Default Value 2" ).build() )
+                                                 .build() )
+                              .build() );
+
+        FormItemSet.Builder itemSet = FormItemSet.create()
+            .name( "item-set" )
+            .label( "Item Set" )
+            .occurrences( Occurrences.create( 1, 1 ) )
+            .addFormItem( fieldSet.build() );
+
+        final Form form = Form.create().
+            addFormItem( itemSet.build() ).
+            build();
+
+        final FormDefaultValuesProcessor defaultValuesProcessor = new FormDefaultValuesProcessorImpl();
+        final PropertyTree data = new PropertyTree();
+        defaultValuesProcessor.setDefaultValues( form, data );
+
+        assertEquals( "Default Value", data.getString( "item-set.testInput" ) );
+        assertEquals( "Default Value 2", data.getString( "item-set.testInput2" ) );
+    }
+
+    @Test
+    public void testItemSetWithOptionSetWithMinOccurrencesMoreEqualZero()
+    {
+        FormItemSet.Builder checkItemSet = FormItemSet.create().
+            name( "checkItemSet" ).
+            occurrences( Occurrences.create( 1, 3 ) );
+
+        checkItemSet.addFormItem( FormOptionSet.create().
+            name( "checkOptionSet" ).
+            occurrences( Occurrences.create( 0, 1 ) ).
+            addOptionSetOption( FormOptionSetOption.create().name( "option" ).build() ).
+            build() );
+
+        final Form form = Form.create().
+            addFormItem( checkItemSet.build() ).
+            build();
+
+        final FormDefaultValuesProcessor defaultValuesProcessor = new FormDefaultValuesProcessorImpl();
+        final PropertyTree data = new PropertyTree();
+        defaultValuesProcessor.setDefaultValues( form, data );
+
+        assertEquals( 1, data.getTotalSize() );
+        assertNotNull( data.getString( "checkItemSet" ) );
+    }
+
+    @Test
+    public void testOptionSetWithItemSetWithMinOccurrencesMoreEqualZero()
+    {
+        final Form form = Form.create().
+            addFormItem( FormOptionSet.create().
+                name( "checkOptionSet" ).
+                occurrences( Occurrences.create( 1, 1 ) ).
+                addOptionSetOption( FormOptionSetOption.create().name( "option" ).addFormItem( FormItemSet.create().
+                    name( "checkItemSet" ).
+                    occurrences( Occurrences.create( 0, 1 ) ).build() ).build() ).
+                build() ).
+            build();
+
+        final FormDefaultValuesProcessor defaultValuesProcessor = new FormDefaultValuesProcessorImpl();
+        final PropertyTree data = new PropertyTree();
+        defaultValuesProcessor.setDefaultValues( form, data );
+
+        assertEquals( 1, data.getTotalSize() );
+        assertNotNull( data.getString( "checkOptionSet" ) );
+    }
 }
