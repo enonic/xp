@@ -165,8 +165,8 @@
     <xs:sequence>
       <xs:element minOccurs="1" maxOccurs="unbounded" name="option" type="optionSetOption"/>
     </xs:sequence>
-    <xs:attribute name="minimum" type="xs:int"/>
-    <xs:attribute name="maximum" type="xs:int"/>
+    <xs:attribute name="minimum" type="xs:int" use="required"/>
+    <xs:attribute name="maximum" type="xs:int" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="optionSetOption">
