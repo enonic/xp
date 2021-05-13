@@ -135,8 +135,9 @@ public final class OccurrenceValidator
 
     private void validateOptionSetSelection( final FormOptionSet formOptionSet, int numberOfSelectedOptions )
     {
-        if ( numberOfSelectedOptions > formOptionSet.getMultiselection().getMaximum() ||
-            numberOfSelectedOptions < formOptionSet.getMultiselection().getMinimum() )
+        if ( numberOfSelectedOptions < formOptionSet.getMultiselection().getMinimum() ||
+            ( formOptionSet.getMultiselection().getMaximum() != 0 &&
+                numberOfSelectedOptions > formOptionSet.getMultiselection().getMaximum() ) )
         {
             validationErrors.add( new OptionSetSelectionValidationError( formOptionSet, numberOfSelectedOptions ) );
         }
