@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
@@ -824,4 +825,42 @@ public class OccurrenceValidatorTest
         ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertFalse( validationResults.hasErrors() );
     }
+
+    @Test
+    public void testOptionSetWithDefaultValue1()
+    {
+        Form form = Form.create().
+            addFormItem( FormOptionSet.create().
+                name( "options" ).
+                label( "Option tests" ).
+                multiselection( Occurrences.create( 0, 0 ) ).
+                occurrences( Occurrences.create( 1, 1 ) ).
+                addOptionSetOption( FormOptionSetOption.create().
+                    name( "a" ).
+                    label( "A" ).
+                    build() ).
+                addOptionSetOption( FormOptionSetOption.create().
+                    name( "b" ).
+                    label( "B" ).
+                    build() ).
+                build() ).
+            build();
+
+        ContentType contentType = ContentType.create().
+            name( "myapplication:my_type" ).
+            superType( ContentTypeName.structured() ).
+            form( form ).
+            build();
+
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+
+        PropertySet propertySet = new PropertySet();
+        propertySet.setProperty( "a", ValueFactory.newString( "Value A" ) );
+        propertySet.setProperty( "b", ValueFactory.newString( "Value B" ) );
+        content.getData().setSet( "options", propertySet );
+
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        assertFalse( validationResults.hasErrors() );
+    }
+
 }
