@@ -149,11 +149,6 @@ public class ScheduleAuditLogSupportImpl
             targetSet.setString( ScheduledJobPropertyNames.USER, job.getUser().toString() );
         }
 
-        if ( job.getLastRun() != null )
-        {
-            targetSet.setInstant( ScheduledJobPropertyNames.LAST_RUN, job.getLastRun() );
-        }
-
         targetSet.setString( ScheduledJobPropertyNames.CREATOR, job.getCreator().toString() );
         targetSet.setString( ScheduledJobPropertyNames.MODIFIER, job.getModifier().toString() );
         targetSet.setInstant( ScheduledJobPropertyNames.CREATED_TIME, job.getCreatedTime() );

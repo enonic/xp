@@ -20,6 +20,7 @@ import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.scheduler.SchedulerService;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.task.TaskId;
 
 public class SchedulerResourceTest
     extends JaxRsResourceTestSupport
@@ -100,6 +101,7 @@ public class SchedulerResourceTest
             modifier( PrincipalKey.from( "user:system:modifier" ) ).
             user( PrincipalKey.from( "user:system:user" ) ).
             lastRun( Instant.parse( "2012-01-01T00:00:00.00Z" ) ).
+            lastTaskId( TaskId.from( "task-id" ) ).
             createdTime( Instant.parse( "2010-01-01T00:00:00.00Z" ) ).
             modifiedTime( Instant.parse( "2011-02-01T00:00:00.00Z" ) ).
             lastRun( Instant.parse( "2012-01-01T00:00:00.00Z" ) ).

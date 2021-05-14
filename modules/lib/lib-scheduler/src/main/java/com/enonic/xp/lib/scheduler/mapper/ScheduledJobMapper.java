@@ -49,6 +49,8 @@ public final class ScheduledJobMapper
         gen.value( "modifier", job.getModifier() != null ? job.getModifier().toString() : null );
         gen.value( "createdTime", job.getCreatedTime() != null ? job.getCreatedTime().toString() : null );
         gen.value( "modifiedTime", job.getModifiedTime() != null ? job.getModifiedTime().toString() : null );
+        gen.value( "lastRun", job.getLastRun() != null ? job.getLastRun().toString() : null );
+        gen.value( "lastTaskId", job.getLastTaskId() != null ? job.getLastTaskId().toString() : null );
 
         serializeCalendar( gen, job.getCalendar() );
         serializeConfig( gen, job.getConfig() );

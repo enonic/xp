@@ -23,6 +23,7 @@ import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobEditor;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.task.TaskId;
 
 public class SchedulerSerializer
 {
@@ -96,6 +97,9 @@ public class SchedulerSerializer
         data.setString( ScheduledJobPropertyNames.MODIFIER, contextUser.toString() );
         data.setInstant( ScheduledJobPropertyNames.MODIFIED_TIME, now );
 
+        data.removeProperty( ScheduledJobPropertyNames.LAST_RUN );
+        data.removeProperty( ScheduledJobPropertyNames.LAST_TASK_ID );
+
         return tree;
     }
 
@@ -119,8 +123,10 @@ public class SchedulerSerializer
             user( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.USER ) ).
                 map( PrincipalKey::from ).
                 orElse( null ) ).
-            lastRun( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.LAST_RUN ) ).
-                map( Instant::parse ).
+            lastRun( Optional.ofNullable( data.getInstant( ScheduledJobPropertyNames.LAST_RUN ) ).
+                orElse( null ) ).
+            lastTaskId( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.LAST_TASK_ID ) ).
+                map( TaskId::from ).
                 orElse( null ) ).
             creator( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.CREATOR ) ).
                 map( PrincipalKey::from ).

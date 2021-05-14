@@ -9,6 +9,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.task.TaskId;
 
 @PublicApi
 public final class ScheduledJob
@@ -36,6 +37,8 @@ public final class ScheduledJob
 
     private final Instant lastRun;
 
+    private final TaskId lastTaskId;
+
     private final Instant createdTime;
 
     private final Instant modifiedTime;
@@ -52,6 +55,7 @@ public final class ScheduledJob
         this.creator = builder.creator;
         this.modifier = builder.modifier;
         this.lastRun = builder.lastRun;
+        this.lastTaskId = builder.lastTaskId;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
     }
@@ -121,6 +125,11 @@ public final class ScheduledJob
         return lastRun;
     }
 
+    public TaskId getLastTaskId()
+    {
+        return lastTaskId;
+    }
+
     public static class Builder
     {
         private ScheduledJobName name;
@@ -146,6 +155,8 @@ public final class ScheduledJob
         private Instant modifiedTime;
 
         private Instant lastRun;
+
+        private TaskId lastTaskId;
 
         public Builder name( final ScheduledJobName name )
         {
@@ -216,6 +227,12 @@ public final class ScheduledJob
         public Builder lastRun( final Instant lastRun )
         {
             this.lastRun = lastRun;
+            return this;
+        }
+
+        public Builder lastTaskId( final TaskId lastTaskId )
+        {
+            this.lastTaskId = lastTaskId;
             return this;
         }
 

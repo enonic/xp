@@ -30,8 +30,10 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.task.TaskId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -126,6 +128,7 @@ public class ScheduleAuditLogSupportImplTest
             createdTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) ).
             modifiedTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) ).
             lastRun( Instant.parse( "2021-03-25T10:44:33.170079900Z" ) ).
+            lastTaskId( TaskId.from( "task-id" ) ).
             build();
 
         context.runWith( () -> support.create( params, job ) );
@@ -145,7 +148,6 @@ public class ScheduleAuditLogSupportImplTest
         assertEquals( job.getModifier().toString(), argumentCaptor.getValue().getData().getSet( "result" ).getString( "modifier" ) );
         assertEquals( job.getCreatedTime(), argumentCaptor.getValue().getData().getSet( "result" ).getInstant( "createdTime" ) );
         assertEquals( job.getModifiedTime(), argumentCaptor.getValue().getData().getSet( "result" ).getInstant( "modifiedTime" ) );
-        assertEquals( job.getLastRun(), argumentCaptor.getValue().getData().getSet( "result" ).getInstant( "lastRun" ) );
         assertEquals( name.getValue(), argumentCaptor.getValue().getData().getSet( "result" ).getString( "name" ) );
         assertEquals( jobDescription, argumentCaptor.getValue().getData().getSet( "result" ).getString( "description" ) );
         assertEquals( descriptor.toString(), argumentCaptor.getValue().getData().getSet( "result" ).getString( "descriptor" ) );
@@ -157,6 +159,8 @@ public class ScheduleAuditLogSupportImplTest
                       argumentCaptor.getValue().getData().getSet( "result" ).getSet( "calendar" ).getString( "timezone" ) );
         assertEquals( true, argumentCaptor.getValue().getData().getSet( "result" ).getBoolean( "enabled" ) );
         assertEquals( config.getRoot(), argumentCaptor.getValue().getData().getSet( "result" ).getSet( "config" ) );
+        assertNull( argumentCaptor.getValue().getData().getSet( "result" ).getInstant( "lastRun" ) );
+        assertNull( argumentCaptor.getValue().getData().getSet( "result" ).getString( "lastTaskId" ) );
     }
 
     @Test
