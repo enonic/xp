@@ -5,11 +5,19 @@ plugins {
     id "com.github.ben-manes.versions"
     id "com.enonic.defaults"
     id 'biz.aQute.bnd.builder' apply false
+    id 'maven-publish'
+    id 'com.github.node-gradle.node'
 }
 
 ext {
     leafProjects = subprojects.findAll { p -> p.subprojects.empty }
-    javaProjects = leafProjects - project( ':runtime' ) - project( ':docs' )
+    javaProjects = leafProjects - project( ':runtime' )
+    apiProjects = rootProject.subprojects.findAll { project -> project.name.endsWith( '-api' ) }
+}
+
+node {
+    download = true
+    version = '14.16.1'
 }
 
 allprojects {
@@ -26,4 +34,54 @@ configure( javaProjects ) {
 configure( rootProject ) {
     apply from: "$rootDir/gradle/ci.gradle"
     apply from: "$rootDir/gradle/tools.gradle"
+}
+
+task javadoc( type: Javadoc, group: 'documentation' ) {
+    title = "Enonic XP API ${version}"
+
+    options {
+        links 'https://docs.oracle.com/en/java/javase/11/docs/api/'
+        links 'https://www.javadoc.io/doc/com.google.guava/guava/26.0-jre'
+        quiet()
+        encoding( 'UTF-8' )
+    }
+
+    apiProjects.each { project ->
+        project.tasks.withType( Javadoc ).each { javadocTask ->
+            source += javadocTask.source
+            classpath += javadocTask.classpath
+            excludes += javadocTask.excludes
+            includes += javadocTask.includes
+        }
+    }
+}
+
+task javadocZip( type: Zip ) {
+    from javadoc
+    archiveFileName = "${project.name}-${project.version}-javadoc.zip"
+    destinationDirectory = project.distsDirectory
+    archiveClassifier.set( 'javadoc' )
+}
+
+task libdoc(type: NpmTask, dependsOn: 'npmInstall') {
+    description = 'Build JSDoc for libraries.'
+    args = ['run', 'jsdoc']
+}
+
+task libdocZip( type: Zip, dependsOn: 'libdoc' ) {
+    from "${docsDir}/jsdoc"
+    archiveFileName = "${project.name}-${project.version}-libdoc.zip"
+    destinationDirectory = project.distsDirectory
+    archiveClassifier.set( 'libdoc' )
+}
+
+publishing.publications {
+    mavenJava( MavenPublication ) {
+        artifact( javadocZip )  {
+            artifactId = 'docs'
+        }
+        artifact( libdocZip ) {
+            artifactId = 'docs'
+        }
+    }
 }

@@ -6,6 +6,12 @@
       "closure"
     ]
   },
+  "source": {
+    "include": [
+      "jsdoc/global.js",
+      "modules/lib"
+    ]
+  },
   "plugins": [
     "plugins/example",
     "plugins/markdown"
@@ -17,5 +23,10 @@
       "outputSourceFiles": false,
       "outputSourcePath": false
     }
+  },
+  "opts": {
+    "recurse": true,
+    "destination": "build/docs/jsdoc",
+    "readme": "jsdoc/index.md"
   }
 }
