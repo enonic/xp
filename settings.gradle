@@ -121,7 +121,6 @@ include 'app:app-system'
 include 'repack:repack-elasticsearch'
 
 include 'runtime'
-include 'docs'
 
 rootProject.name = 'xp'
 
