@@ -9,6 +9,7 @@ import com.enonic.xp.data.PropertyTreeJson;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.task.TaskId;
 
 public class ScheduledJobJson
 {
@@ -36,6 +37,8 @@ public class ScheduledJobJson
 
     private final Instant lastRun;
 
+    private final String lastTaskId;
+
     public ScheduledJobJson( final ScheduledJob job )
     {
         this.name = job.getName().getValue();
@@ -48,6 +51,7 @@ public class ScheduledJobJson
         this.creator = Optional.ofNullable( job.getCreator() ).map( PrincipalKey::toString ).orElse( null );
         this.modifier = Optional.ofNullable( job.getCreator() ).map( PrincipalKey::toString ).orElse( null );
         this.lastRun = job.getLastRun();
+        this.lastTaskId = Optional.ofNullable( job.getLastTaskId() ).map( TaskId::toString ).orElse( null );
         this.createdTime = job.getCreatedTime();
         this.modifiedTime = job.getModifiedTime();
     }
@@ -110,5 +114,10 @@ public class ScheduledJobJson
     public Instant getLastRun()
     {
         return lastRun;
+    }
+
+    public String getLastTaskId()
+    {
+        return lastTaskId;
     }
 }

@@ -89,7 +89,7 @@ exports.modify = function (params) {
  * @example-ref examples/scheduler/delete.js
  *
  * @param {object} params JSON with the parameters.
- * @param {boolean} params.name job to be deleted name.
+ * @param {string} params.name job to be deleted name.
  */
 exports.delete = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.scheduler.DeleteScheduledJobHandler');
@@ -105,7 +105,7 @@ exports.delete = function (params) {
  * @example-ref examples/scheduler/get.js
  *
  * @param {object} params JSON with the parameters.
- * @param {boolean} params.name job to be deleted name.
+ * @param {string} params.name job to be deleted name.
  */
 exports.get = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.scheduler.GetScheduledJobHandler');
@@ -123,6 +123,22 @@ exports.get = function (params) {
  */
 exports.list = function () {
     var bean = __.newBean('com.enonic.xp.lib.scheduler.ListScheduledJobsHandler');
+
+    return __.toNativeObject(bean.execute());
+};
+
+/**
+ * Fetches scheduled job last run state.
+ *
+ * @example-ref examples/scheduler/getLastRunState.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.name job to be deleted name.
+ */
+exports.getLastRunState = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.scheduler.GetScheduledJobLastRunStateHandler');
+
+    bean.name = required(params, 'name');
 
     return __.toNativeObject(bean.execute());
 };

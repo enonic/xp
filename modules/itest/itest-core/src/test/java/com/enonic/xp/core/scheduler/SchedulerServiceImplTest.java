@@ -27,6 +27,7 @@ import com.enonic.xp.impl.scheduler.ScheduleAuditLogSupportImpl;
 import com.enonic.xp.impl.scheduler.SchedulerConfig;
 import com.enonic.xp.impl.scheduler.SchedulerExecutorService;
 import com.enonic.xp.impl.scheduler.SchedulerServiceImpl;
+import com.enonic.xp.impl.scheduler.UpdateLastRunCommand;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -46,6 +47,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.task.TaskId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -259,7 +261,7 @@ class SchedulerServiceImplTest
         adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
             name( name ).
             descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
-            calendar( calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) ) ).
+            calendar( calendarService.oneTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) ) ).
             config( new PropertyTree() ).
             enabled( true ).
             build() ) );
@@ -321,6 +323,46 @@ class SchedulerServiceImplTest
         assertEquals( PrincipalKey.from( "user:provider:user" ), modifiedJob.getUser() );
         assertEquals( user.getKey(), modifiedJob.getModifier() );
         assertTrue( now.isBefore( modifiedJob.getModifiedTime() ) );
+    }
+
+    @Test
+    void modifyClearLastRun()
+        throws Exception
+    {
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
+
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create().
+            name( name ).
+            descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), "task1" ) ).
+            calendar( calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) ) ).
+            config( new PropertyTree() ).
+            build() ) );
+
+        final TaskId lastTaskId = TaskId.from( "task-id" );
+        final Instant lastRun = Instant.parse( "2021-02-25T10:44:33.170079900Z" );
+
+        adminContext().runWith( () -> UpdateLastRunCommand.create().
+            name( name ).
+            lastTaskId( lastTaskId ).
+            lastRun( lastRun ).
+            nodeService( nodeService ).
+            build().
+            execute() );
+
+        final ScheduledJob runJob = adminContext().callWith( () -> schedulerService.get( name ) );
+
+        assertEquals( lastRun, runJob.getLastRun() );
+        assertEquals( lastTaskId, runJob.getLastTaskId() );
+
+        final ScheduledJob modifiedJob = adminContext().callWith( () -> schedulerService.modify( ModifyScheduledJobParams.create().
+            name( name ).
+            editor( edit -> {
+                edit.enabled = true;
+            } ).
+            build() ) );
+
+        assertNull( modifiedJob.getLastRun() );
+        assertNull( modifiedJob.getLastTaskId() );
     }
 
     @Test

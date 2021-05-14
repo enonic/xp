@@ -11,6 +11,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
+import com.enonic.xp.task.TaskId;
 
 public class UpdateLastRunCommand
     extends AbstractSchedulerCommand
@@ -19,11 +20,14 @@ public class UpdateLastRunCommand
 
     private final Instant lastRun;
 
+    private final TaskId lastTaskId;
+
     private UpdateLastRunCommand( final Builder builder )
     {
         super( builder );
         name = builder.name;
         lastRun = builder.lastRun;
+        lastTaskId = builder.lastTaskId;
     }
 
     public static Builder create()
@@ -40,7 +44,10 @@ public class UpdateLastRunCommand
     {
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             path( NodePath.create( NodePath.ROOT, name.getValue() ).build() ).
-            editor( ( toBeEdited -> toBeEdited.data.setInstant( ScheduledJobPropertyNames.LAST_RUN, lastRun ) ) ).
+            editor( ( toBeEdited -> {
+                toBeEdited.data.setInstant( ScheduledJobPropertyNames.LAST_RUN, lastRun );
+                toBeEdited.data.setString( ScheduledJobPropertyNames.LAST_TASK_ID, lastTaskId.toString() );
+            } ) ).
             build();
 
         final Node updatedNode = nodeService.update( updateNodeParams );
@@ -54,6 +61,8 @@ public class UpdateLastRunCommand
     {
         private Instant lastRun;
 
+        private TaskId lastTaskId;
+
         private ScheduledJobName name;
 
         private Builder()
@@ -63,6 +72,12 @@ public class UpdateLastRunCommand
         public Builder lastRun( final Instant lastRun )
         {
             this.lastRun = lastRun;
+            return this;
+        }
+
+        public Builder lastTaskId( final TaskId lastTaskId )
+        {
+            this.lastTaskId = lastTaskId;
             return this;
         }
 
@@ -76,6 +91,7 @@ public class UpdateLastRunCommand
         {
             Preconditions.checkNotNull( name, "name cannot be null." );
             Preconditions.checkNotNull( lastRun, "lastRun cannot be null." );
+            Preconditions.checkNotNull( lastTaskId, "lastTaskId cannot be null." );
         }
 
         public UpdateLastRunCommand build()
