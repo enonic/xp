@@ -44,6 +44,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 import com.enonic.xp.task.SubmitTaskParams;
+import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -112,6 +113,7 @@ public class SchedulableTaskImplTest
         when( bundleContext.getService( taskServiceReference ) ).thenReturn( taskService );
         when( bundleContext.getService( nodeServiceReference ) ).thenReturn( nodeService );
         when( bundleContext.getService( securityServiceReference ) ).thenReturn( securityService );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "task-id" ) );
     }
 
     @AfterEach
