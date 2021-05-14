@@ -41,6 +41,5 @@ public final class SchedulerResource
             stream().
             map( ScheduledJobJson::new ).
             collect( Collectors.toList() );
-
     }
 }

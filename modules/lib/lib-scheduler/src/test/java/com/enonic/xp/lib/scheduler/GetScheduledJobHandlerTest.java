@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.enonic.xp.scheduler.ScheduledJobName;
+
 @ExtendWith(MockitoExtension.class)
 public class GetScheduledJobHandlerTest
     extends BaseScheduledJobHandlerTest
@@ -22,6 +24,10 @@ public class GetScheduledJobHandlerTest
         mockOneTimeCalendar();
         mockCronCalendar();
 
+        runFunction( "/test/GetScheduledJobHandlerTest.js", "createJob" );
+
+        updateLastRun( ScheduledJobName.from( "myjob" ) );
+
         runFunction( "/test/GetScheduledJobHandlerTest.js", "getJob" );
     }
 
@@ -29,7 +35,6 @@ public class GetScheduledJobHandlerTest
     public void getNotExist()
         throws Exception
     {
-
         runFunction( "/test/GetScheduledJobHandlerTest.js", "getNotExist" );
     }
 
@@ -37,8 +42,6 @@ public class GetScheduledJobHandlerTest
     public void getNull()
         throws Exception
     {
-
         runFunction( "/test/GetScheduledJobHandlerTest.js", "getNull" );
     }
-
 }

@@ -26,6 +26,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 import com.enonic.xp.task.SubmitTaskParams;
+import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
 public final class SchedulableTaskImpl
@@ -63,7 +64,7 @@ public final class SchedulableTaskImpl
     {
         try
         {
-            taskContext().runWith(
+            final TaskId taskId = taskContext().callWith(
                 () -> OsgiSupport.withService( TaskService.class, taskService -> taskService.submitTask( SubmitTaskParams.create().
                     descriptorKey( job.getDescriptor() ).
                     data( job.getConfig() ).
@@ -73,6 +74,7 @@ public final class SchedulableTaskImpl
                 nodeService( nodeService ).
                 name( job.getName() ).
                 lastRun( Instant.now() ).
+                lastTaskId( taskId ).
                 build().
                 execute() ) );
         }
@@ -153,6 +155,8 @@ public final class SchedulableTaskImpl
 
         private final Instant lastRun;
 
+        private final TaskId lastTaskId;
+
         private final Instant createdTime;
 
         private final Instant modifiedTime;
@@ -171,6 +175,7 @@ public final class SchedulableTaskImpl
             this.createdTime = job.getCreatedTime();
             this.modifiedTime = job.getModifiedTime();
             this.lastRun = job.getLastRun();
+            this.lastTaskId = job.getLastTaskId();
         }
 
         private Object readResolve()
@@ -189,6 +194,7 @@ public final class SchedulableTaskImpl
                     createdTime( createdTime ).
                     modifiedTime( modifiedTime ).
                     lastRun( lastRun ).
+                    lastTaskId( lastTaskId ).
                     build() ).
                 build();
         }

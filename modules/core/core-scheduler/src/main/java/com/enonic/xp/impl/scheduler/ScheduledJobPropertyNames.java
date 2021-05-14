@@ -22,6 +22,8 @@ public class ScheduledJobPropertyNames
 
     public static final String LAST_RUN = "lastRun";
 
+    public static final String LAST_TASK_ID = "lastTaskId";
+
     public static final String CALENDAR = "calendar";
 
     public static final String CALENDAR_VALUE = "value";

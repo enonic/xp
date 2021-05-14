@@ -2,6 +2,7 @@ package com.enonic.xp.lib.scheduler;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -10,8 +11,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.core.impl.PropertyTreeMarshallerServiceFactory;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
@@ -27,6 +26,7 @@ import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.scheduler.SchedulerService;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.task.TaskId;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,9 +40,11 @@ public abstract class BaseScheduledJobHandlerTest
 
     protected PropertyTreeMarshallerService propertyTreeMarshallerService;
 
+    private Map<ScheduledJobName, ScheduledJob> jobs;
+
     private void mockJob()
     {
-        final Map<ScheduledJobName, ScheduledJob> jobs = Maps.newHashMap();
+        jobs = new HashMap<>();
 
         Mockito.when( schedulerService.create( Mockito.isA( CreateScheduledJobParams.class ) ) ).thenAnswer( invocation -> {
             final CreateScheduledJobParams params = invocation.getArgument( 0 );
@@ -102,8 +104,8 @@ public abstract class BaseScheduledJobHandlerTest
             return job != null;
         } );
 
-        Mockito.when( schedulerService.get( Mockito.isA( ScheduledJobName.class ) ) ).thenAnswer(
-            invocation -> jobs.get( invocation.getArgument( 0 ) ) );
+        Mockito.when( schedulerService.get( Mockito.isA( ScheduledJobName.class ) ) )
+            .thenAnswer( invocation -> jobs.get( invocation.getArgument( 0 ) ) );
 
         Mockito.when( schedulerService.list() ).thenAnswer( invocation -> new ArrayList<>( jobs.values() ) );
     }
@@ -131,6 +133,29 @@ public abstract class BaseScheduledJobHandlerTest
 
             return cron;
         } );
+    }
+
+    protected void updateLastRun( final ScheduledJobName name )
+    {
+        final ScheduledJob existJob = jobs.get( name );
+
+        final ScheduledJob modifiedJob = ScheduledJob.create().
+            name( existJob.getName() ).
+            description( existJob.getDescription() ).
+            calendar( existJob.getCalendar() ).
+            enabled( existJob.isEnabled() ).
+            descriptor( existJob.getDescriptor() ).
+            config( existJob.getConfig() ).
+            user( existJob.getUser() ).
+            creator( existJob.getCreator() ).
+            createdTime( existJob.getCreatedTime() ).
+            modifier( existJob.getModifier() ).
+            modifiedTime( existJob.getModifiedTime() ).
+            lastTaskId( TaskId.from( "task-id" ) ).
+            lastRun( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) ).
+            build();
+
+        jobs.put( name, modifiedJob );
     }
 
     @Override
