@@ -119,20 +119,4 @@ exports.list = function () {
     return __.toNativeObject(bean.execute());
 };
 
-/**
- * Fetches scheduled job last run state.
- *
- * @example-ref examples/scheduler/getLastRunState.js
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.name job to be deleted name.
- */
-exports.getLastRunState = function (params) {
-    var bean = __.newBean('com.enonic.xp.lib.scheduler.GetScheduledJobLastRunStateHandler');
-
-    bean.name = required(params, 'name');
-
-    return __.toNativeObject(bean.execute());
-};
-
 
