@@ -126,8 +126,9 @@ public final class OccurrenceValidator
         final long numberOfDefaultOptions = StreamSupport.stream( formOptionSet.spliterator(), false ).
             filter( FormOptionSetOption::isDefaultOption ).
             count();
-        if ( numberOfDefaultOptions > formOptionSet.getMultiselection().getMaximum() ||
-            numberOfDefaultOptions < formOptionSet.getMultiselection().getMinimum() )
+        if ( numberOfDefaultOptions < formOptionSet.getMultiselection().getMinimum() ||
+            ( formOptionSet.getMultiselection().getMaximum() != 0 &&
+                numberOfDefaultOptions > formOptionSet.getMultiselection().getMaximum() ) )
         {
             validationErrors.add( new OptionSetSelectionValidationError( formOptionSet, toIntExact( numberOfDefaultOptions ) ) );
         }
