@@ -827,7 +827,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void testOptionSetWithDefaultValue1()
+    public void testOptionSetWithUnlimitedNumberAllowedSelections()
     {
         Form form = Form.create().
             addFormItem( FormOptionSet.create().
@@ -858,6 +858,38 @@ public class OccurrenceValidatorTest
         propertySet.setProperty( "a", ValueFactory.newString( "Value A" ) );
         propertySet.setProperty( "b", ValueFactory.newString( "Value B" ) );
         content.getData().setSet( "options", propertySet );
+
+        ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
+        assertFalse( validationResults.hasErrors() );
+    }
+
+    @Test
+    public void testOptionSetWithUnlimitedNumberAllowedSelectionsAndDefaultValues()
+    {
+        ContentType contentType = ContentType.create().
+            name( "myapplication:my_type" ).
+            superType( ContentTypeName.structured() ).
+            form( Form.create().
+                addFormItem( FormOptionSet.create().
+                    name( "options" ).
+                    label( "Option tests" ).
+                    multiselection( Occurrences.create( 0, 0 ) ).
+                    occurrences( Occurrences.create( 1, 1 ) ).
+                    addOptionSetOption( FormOptionSetOption.create().
+                        name( "a" ).
+                        label( "A" ).
+                        build() ).
+                    addOptionSetOption( FormOptionSetOption.create().
+                        name( "b" ).
+                        label( "B" ).
+                        defaultOption( true ).
+                        build() ).
+                    build() ).
+                build() ).
+            build();
+
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+        content.getData().setSet( "options", new PropertySet() );
 
         ValidationErrors validationResults = newValidator( contentType ).validate( content.getData().getRoot() );
         assertFalse( validationResults.hasErrors() );
