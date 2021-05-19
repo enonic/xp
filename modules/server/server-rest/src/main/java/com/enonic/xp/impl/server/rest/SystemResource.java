@@ -12,12 +12,10 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.export.ExportService;
-import com.enonic.xp.impl.server.rest.model.CleanUpAuditLogRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
 import com.enonic.xp.impl.server.rest.model.VacuumRequestJson;
-import com.enonic.xp.impl.server.rest.task.CleanUpAuditLogCommand;
 import com.enonic.xp.impl.server.rest.task.DumpRunnableTask;
 import com.enonic.xp.impl.server.rest.task.LoadRunnableTask;
 import com.enonic.xp.impl.server.rest.task.UpgradeRunnableTask;
@@ -98,17 +96,6 @@ public final class SystemResource
             params( params ).
             build().
             createTaskResult();
-    }
-
-    @POST
-    @Path("cleanUpAuditLog")
-    public TaskResultJson cleanUpAuditLog( final CleanUpAuditLogRequestJson params )
-    {
-        return CleanUpAuditLogCommand.create().
-            taskService( taskService ).
-            params( params ).
-            build().
-            execute();
     }
 
     @SuppressWarnings("WeakerAccess")

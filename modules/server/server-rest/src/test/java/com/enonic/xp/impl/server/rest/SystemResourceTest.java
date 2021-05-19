@@ -6,10 +6,8 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import com.enonic.xp.impl.server.rest.model.CleanUpAuditLogRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemDumpUpgradeRequestJson;
 import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
@@ -91,26 +89,6 @@ public class SystemResourceTest
 
         final TaskResultJson result = resource.upgrade( json );
         assertEquals( "task-id", result.getTaskId() );
-    }
-
-    @Test
-    public void cleanUpAuditLog()
-        throws Exception
-    {
-        Mockito.when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "task-id" ) );
-
-        final CleanUpAuditLogRequestJson requestJson = new CleanUpAuditLogRequestJson( "PT1s" );
-
-        final TaskResultJson result = resource.cleanUpAuditLog( requestJson );
-
-        final ArgumentCaptor<SubmitTaskParams> captor = ArgumentCaptor.forClass( SubmitTaskParams.class );
-
-        Mockito.verify( taskService, Mockito.times( 1 ) ).submitTask( captor.capture() );
-
-        assertEquals( "task-id", result.getTaskId() );
-
-        assertEquals( 1, captor.getValue().getData().getTotalSize() );
-        assertEquals( "PT1s", captor.getValue().getData().getString( "ageThreshold" ) );
     }
 
     @Override
