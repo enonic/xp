@@ -4,7 +4,7 @@
  * @example
  * var schedulerLib = require('/lib/xp/scheduler');
  *
- * @module event
+ * @module scheduler
  */
 
 /* global __*/
