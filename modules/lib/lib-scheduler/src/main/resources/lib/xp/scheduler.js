@@ -64,15 +64,7 @@ exports.create = function (params) {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.name unique job name.
- * @param {string} params.description job description.
- * @param {string} params.descriptor descriptor of the task to be scheduled.
- * @param {object} params.config config of the task to be scheduled.
- * @param {object} params.schedule task time run config.
- * @param {string} params.schedule.value schedule value according to it's type.
- * @param {string} params.schedule.type schedule type (CRON | ONE_TIME).
- * @param {string} params.schedule.timezone time zone of cron scheduling.
- * @param {string} params.user key of the user that submitted the task.
- * @param {boolean} params.enabled job is active or not.
+ * @param {function} params.editor editor callback function, has editable existing job as a param.
  */
 exports.modify = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.scheduler.ModifyScheduledJobHandler');
