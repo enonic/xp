@@ -6,18 +6,12 @@ plugins {
     id "com.enonic.defaults"
     id 'biz.aQute.bnd.builder' apply false
     id 'maven-publish'
-    id 'com.github.node-gradle.node'
 }
 
 ext {
     leafProjects = subprojects.findAll { p -> p.subprojects.empty }
     javaProjects = leafProjects - project( ':runtime' )
     apiProjects = rootProject.subprojects.findAll { project -> project.name.endsWith( '-api' ) }
-}
-
-node {
-    download = true
-    version = '14.16.1'
 }
 
 allprojects {
@@ -63,24 +57,10 @@ task javadocZip( type: Zip ) {
     archiveClassifier.set( 'javadoc' )
 }
 
-task libdoc(type: NpmTask, dependsOn: 'npmInstall') {
-    description = 'Build JSDoc for libraries.'
-    args = ['run', 'jsdoc']
-}
-
-task libdocZip( type: Zip, dependsOn: 'libdoc' ) {
-    from "${docsDir}/jsdoc"
-    archiveFileName = "${project.name}-${project.version}-libdoc.zip"
-    destinationDirectory = project.distsDirectory
-    archiveClassifier.set( 'libdoc' )
-}
 
 publishing.publications {
     mavenJava( MavenPublication ) {
         artifact( javadocZip )  {
-            artifactId = 'docs'
-        }
-        artifact( libdocZip ) {
             artifactId = 'docs'
         }
     }
