@@ -89,7 +89,7 @@ public class ImportNodesParams
 
         private VirtualFile source;
 
-        private boolean dryRun = false;
+        private boolean dryRun;
 
         private boolean importNodeIds;
 

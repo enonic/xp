@@ -18,9 +18,9 @@ public class NodeImportResult
 
     private final boolean dryRun;
 
-    private List<ImportError> importErrors = new ArrayList<>();
+    private List<ImportError> importErrors;
 
-    private List<String> exportedBinaries = new ArrayList<>();
+    private List<String> exportedBinaries;
 
     private NodeImportResult( final Builder builder )
     {
