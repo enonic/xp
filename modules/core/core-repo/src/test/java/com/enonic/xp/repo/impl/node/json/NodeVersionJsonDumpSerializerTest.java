@@ -85,6 +85,7 @@ public class NodeVersionJsonDumpSerializerTest
             nGram( true ).
             decideByType( false ).
             includeInAllText( true ).
+            path( true ).
             addIndexValueProcessor( indexValueProcessor ).
             addIndexValueProcessor( indexValueProcessor ).
             build();
