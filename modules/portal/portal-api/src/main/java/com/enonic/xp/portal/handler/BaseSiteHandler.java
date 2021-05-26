@@ -54,7 +54,7 @@ public abstract class BaseSiteHandler
     {
         final String repoSubPath = findPathAfterRepository( baseSubPath );
         final int index = repoSubPath.indexOf( '/' );
-        return repoSubPath.substring( index > 0 ? index : baseSubPath.length() );
+        return repoSubPath.substring( index > 0 ? index : repoSubPath.length() );
     }
 
     protected PortalRequest doCreatePortalRequest( final WebRequest webRequest, final String baseUri, final String baseSubPath )
@@ -62,6 +62,11 @@ public abstract class BaseSiteHandler
         final RepositoryId repositoryId = findRepository( baseSubPath );
         final Branch branch = findBranch( baseSubPath );
         final ContentPath contentPath = findContentPath( baseSubPath );
+
+        if ( contentPath.isRoot() )
+        {
+            throw WebException.badRequest( "Site path must be set." );
+        }
 
         final PortalRequest portalRequest = new PortalRequest( webRequest );
         portalRequest.setBaseUri( baseUri );

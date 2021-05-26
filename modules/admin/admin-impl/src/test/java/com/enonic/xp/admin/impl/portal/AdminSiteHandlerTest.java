@@ -81,4 +81,14 @@ public class AdminSiteHandlerTest
         assertEquals( "/content/1", portalRequest.getContentPath().toString() );
         assertEquals( "edit", portalRequest.getMode().toString() );
     }
+
+    @Test
+    public void testCreatePortalRequestEmptyContentPath()
+    {
+        this.request.setRawPath( "/admin/site/edit/repo/master/" );
+        assertThrows( WebException.class, () -> this.handler.createPortalRequest( this.request, this.response ) );
+
+        this.request.setRawPath( "/admin/site/edit/repo/master" );
+        assertThrows( WebException.class, () -> this.handler.createPortalRequest( this.request, this.response ) );
+    }
 }
