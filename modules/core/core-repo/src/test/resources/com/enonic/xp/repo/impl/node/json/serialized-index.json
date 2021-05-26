@@ -8,7 +8,8 @@
     "enabled": true,
     "fulltext": false,
     "includeInAllText": false,
-    "nGram": false
+    "nGram": false,
+    "path": false
   },
   "patternConfigs": [
     {
@@ -21,7 +22,8 @@
           "indexValueProcessor",
           "indexValueProcessor"
         ],
-        "nGram": true
+        "nGram": true,
+        "path": true
       },
       "path": "myPath"
     }
