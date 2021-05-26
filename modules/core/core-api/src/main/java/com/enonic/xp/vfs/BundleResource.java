@@ -2,15 +2,21 @@ package com.enonic.xp.vfs;
 
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.osgi.framework.Bundle;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
+
+import static java.util.Objects.requireNonNullElse;
 
 class BundleResource
     implements VirtualFile
@@ -75,13 +81,11 @@ class BundleResource
     @Override
     public List<VirtualFile> getChildren()
     {
-        final List<VirtualFile> files = new ArrayList<>();
-        final Iterator<URL> entries = bundle.findEntries( path, PATTERN, false ).asIterator();
-        while ( entries.hasNext() )
-        {
-            files.add( new BundleResource( this.bundle, entries.next().getPath() ) );
-        }
-        return files;
+        final Iterator<URL> iterator =
+            requireNonNullElse( bundle.findEntries( path, PATTERN, false ), Collections.<URL>emptyEnumeration() ).asIterator();
+        return StreamSupport.stream( Spliterators.spliteratorUnknownSize( iterator, Spliterator.ORDERED ), false )
+            .map( entry -> new BundleResource( this.bundle, entry.getPath() ) )
+            .collect( Collectors.toList() );
     }
 
     @Override
