@@ -31,6 +31,9 @@ public final class IndexConfigJson
     @JsonProperty("includeInAllText")
     private boolean includeInAllText;
 
+    @JsonProperty("path")
+    private boolean path;
+
     @JsonProperty("indexValueProcessors")
     private List<String> indexValueProcessors;
 
@@ -45,6 +48,7 @@ public final class IndexConfigJson
         json.nGram = config.isnGram();
         json.fulltext = config.isFulltext();
         json.includeInAllText = config.isIncludeInAllText();
+        json.path = config.isPath();
         if ( !config.getIndexValueProcessors().isEmpty() )
         {
             json.indexValueProcessors = toStringList( config.getIndexValueProcessors() );
@@ -63,7 +67,8 @@ public final class IndexConfigJson
             enabled( this.enabled ).
             nGram( this.nGram ).
             fulltext( this.fulltext ).
-            includeInAllText( this.includeInAllText );
+            includeInAllText( this.includeInAllText ).
+            path( this.path );
 
         if ( this.indexValueProcessors != null )
         {
