@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -22,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AdminSiteHandlerTest
     extends BaseHandlerTest
 {
-
     private AdminSiteHandler handler;
 
     private WebRequest request;
@@ -83,12 +83,27 @@ public class AdminSiteHandlerTest
     }
 
     @Test
+    public void testInlineAssetRequest()
+    {
+        this.request.setRawPath( "/admin/site/inline/repo/draft/_/asset/com.enonic.app.superhero:1622131535374/css/style.css" );
+        PortalRequest portalRequest = this.handler.createPortalRequest( this.request, this.response );
+
+        assertEquals( "/admin/site/inline", portalRequest.getBaseUri() );
+        assertEquals( "com.enonic.cms.repo", portalRequest.getRepositoryId().toString() );
+        assertEquals( "draft", portalRequest.getBranch().toString() );
+        assertEquals( "/", portalRequest.getContentPath().toString() );
+        assertEquals( "inline", portalRequest.getMode().toString() );
+    }
+
+    @Test
     public void testCreatePortalRequestEmptyContentPath()
     {
         this.request.setRawPath( "/admin/site/edit/repo/master/" );
-        assertThrows( WebException.class, () -> this.handler.createPortalRequest( this.request, this.response ) );
+        WebException exception = assertThrows( WebException.class, () -> this.handler.createPortalRequest( this.request, this.response ) );
+        assertEquals( HttpStatus.NOT_FOUND, exception.getStatus() );
 
         this.request.setRawPath( "/admin/site/edit/repo/master" );
-        assertThrows( WebException.class, () -> this.handler.createPortalRequest( this.request, this.response ) );
+        exception = assertThrows( WebException.class, () -> this.handler.createPortalRequest( this.request, this.response ) );
+        assertEquals( HttpStatus.NOT_FOUND, exception.getStatus() );
     }
 }
