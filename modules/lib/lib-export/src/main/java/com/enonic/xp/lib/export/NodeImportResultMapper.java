@@ -20,8 +20,6 @@ public class NodeImportResultMapper
     @Override
     public void serialize( final MapGenerator gen )
     {
-        gen.value( "dryRun", nodeImportResult.isDryRun() );
-
         gen.array( "addedNodes" );
         nodeImportResult.getAddedNodes().stream().map( NodePath::toString ).forEach( gen::value );
         gen.end();
