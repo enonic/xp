@@ -29,11 +29,11 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final ImageUrlParams params = new ImageUrlParams().
             portalRequest( this.portalRequest ).
-            scale( "max(300)" );
+            scale( "max(300)" ).
+            validate();
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/site/default/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent",
-                      url );
+        assertEquals( "/site/default/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
     }
 
     @Test
@@ -44,7 +44,8 @@ public class PortalUrlServiceImpl_imageUrlTest
         final ImageUrlParams params = new ImageUrlParams().
             portalRequest( this.portalRequest ).
             contextPathType( ContextPathType.VHOST.getValue() ).
-            scale( "max(300)" );
+            scale( "max(300)" ).
+            validate();
 
         final String url = this.service.imageUrl( params );
         assertEquals( "/site/default/draft/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
@@ -58,7 +59,8 @@ public class PortalUrlServiceImpl_imageUrlTest
         final ImageUrlParams params = new ImageUrlParams().
             format( "png" ).
             portalRequest( this.portalRequest ).
-            scale( "max(300)" );
+            scale( "max(300)" ).
+            validate();
 
         final String url = this.service.imageUrl( params );
         assertEquals( "/site/default/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.png",
@@ -76,7 +78,8 @@ public class PortalUrlServiceImpl_imageUrlTest
             filter( "scale(10,10)" ).
             format( "jpg" ).
             portalRequest( this.portalRequest ).
-            scale( "max(300)" );
+            scale( "max(300)" ).
+            validate();
 
         final String url = this.service.imageUrl( params );
         assertEquals( "/site/default/draft/a/b/mycontent/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent.jpg?" +
@@ -91,11 +94,11 @@ public class PortalUrlServiceImpl_imageUrlTest
         final ImageUrlParams params = new ImageUrlParams().
             id( "123456" ).
             portalRequest( this.portalRequest ).
-            scale( "max(300)" );
+            scale( "max(300)" ).
+            validate();
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/site/default/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent",
-                      url );
+        assertEquals( "/site/default/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
     }
 
     @Test
@@ -106,11 +109,11 @@ public class PortalUrlServiceImpl_imageUrlTest
         final ImageUrlParams params = new ImageUrlParams().
             path( "/a/b/mycontent" ).
             portalRequest( this.portalRequest ).
-            scale( "max(300)" );
+            scale( "max(300)" ).
+            validate();
 
         final String url = this.service.imageUrl( params );
-        assertEquals( "/site/default/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent",
-                      url );
+        assertEquals( "/site/default/draft/context/path/_/image/123456:8cf45815bba82c9711c673c9bb7304039a790026/max-300/mycontent", url );
     }
 
     @Test
@@ -121,12 +124,26 @@ public class PortalUrlServiceImpl_imageUrlTest
         final ImageUrlParams params = new ImageUrlParams().
             id( "123456" ).
             portalRequest( this.portalRequest ).
-            scale( "max(300)" );
+            scale( "max(300)" ).
+            validate();
 
         final String url = this.service.imageUrl( params );
-        assertEquals(
-            "/site/default/draft/context/path/_/error/404?message=Content+with+id+%5B123456%5D+was+not+found+in+branch+%5Bdraft%5D",
-            url );
+        assertEquals( "/site/default/draft/context/path/_/error/500?message=Image+with+%5B123456%5D+id+not+found", url );
+    }
+
+    @Test
+    public void createUrl_withNonMediaContent()
+    {
+        this.portalRequest.setContent( createContent( "non-media", false ) );
+
+        final ImageUrlParams params = new ImageUrlParams().
+            format( "png" ).
+            portalRequest( this.portalRequest ).
+            scale( "max(300)" ).
+            validate();
+
+        assertEquals( "/site/default/draft/a/b/mycontent/_/error/500?message=Image+with+%5B123456%5D+id+not+found",
+                      this.service.imageUrl( params ) );
     }
 
     @Test
@@ -137,7 +154,8 @@ public class PortalUrlServiceImpl_imageUrlTest
         final ImageUrlParams params = new ImageUrlParams().
             type( UrlTypeConstants.ABSOLUTE ).
             portalRequest( this.portalRequest ).
-            scale( "max(300)" );
+            scale( "max(300)" ).
+            validate();
 
         HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "localhost" );
@@ -154,12 +172,13 @@ public class PortalUrlServiceImpl_imageUrlTest
     @Test
     public void createUrl_withSpacesInName()
     {
-        this.portalRequest.setContent( createContent( "name with spaces(and-others).png" ) );
+        this.portalRequest.setContent( createContent( "name with spaces(and-others).png", true ) );
 
         final ImageUrlParams params = new ImageUrlParams().
             format( "png" ).
             portalRequest( this.portalRequest ).
-            scale( "max(300)" );
+            scale( "max(300)" ).
+            validate();
 
         final String url = this.service.imageUrl( params );
         assertEquals(
@@ -169,30 +188,40 @@ public class PortalUrlServiceImpl_imageUrlTest
 
     private Content createContent()
     {
-        return createContent( null );
+        return createContent( null, true );
     }
 
-    private Content createContent( final String name )
+    private Content createContent( final String name, final boolean isMedia )
     {
-        Media media = ContentFixtures.newMedia();
-        if ( name != null )
+        Content content;
+        if ( isMedia )
         {
-            media = Media.create( media ).name( name ).build();
+            Media media = ContentFixtures.newMedia();
+            if ( name != null )
+            {
+                media = Media.create( media ).name( name ).build();
+            }
+            content = media;
+            Mockito.when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) )
+                .thenReturn( "binaryHash" );
         }
-        Mockito.when( this.contentService.getByPath( media.getPath() ) ).thenReturn( media );
-        Mockito.when( this.contentService.getById( media.getId() ) ).thenReturn( media );
-        Mockito.when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) ).thenReturn(
-            "binaryHash" );
-        return media;
+        else
+        {
+            content = ContentFixtures.newContent();
+        }
+        Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+
+        return content;
     }
 
     private Content createContentNotFound()
     {
         final Content content = ContentFixtures.newContent();
-        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenThrow(
-            new ContentNotFoundException( content.getPath(), Branch.from( "draft" ) ) );
-        Mockito.when( this.contentService.getById( content.getId() ) ).thenThrow(
-            new ContentNotFoundException( content.getId(), Branch.from( "draft" ) ) );
+        Mockito.when( this.contentService.getByPath( content.getPath() ) )
+            .thenThrow( new ContentNotFoundException( content.getPath(), Branch.from( "draft" ) ) );
+        Mockito.when( this.contentService.getById( content.getId() ) )
+            .thenThrow( new ContentNotFoundException( content.getId(), Branch.from( "draft" ) ) );
         return content;
     }
 }

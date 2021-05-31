@@ -16,6 +16,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.url.ImageUrlParams;
+import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -52,6 +53,7 @@ public class ImageUrlBuilderTest
         final ContentId contentId = ContentId.from( "testID" );
         Mockito.when( media.getId() ).thenReturn( contentId );
         Mockito.when( media.getName() ).thenReturn( ContentName.from( "testName" ) );
+        Mockito.when( media.getType() ).thenReturn( ContentTypeName.imageMedia() );
         Mockito.when( media.getMediaAttachment() ).thenReturn( attachment );
 
         final ContentService contentService = Mockito.mock( ContentService.class );
