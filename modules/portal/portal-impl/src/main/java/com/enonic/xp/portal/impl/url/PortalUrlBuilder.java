@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Splitter;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
@@ -29,6 +32,8 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 {
+    private static final Logger LOG = LoggerFactory.getLogger( PortalUrlBuilder.class );
+
     protected PortalRequest portalRequest;
 
     protected T params;
@@ -199,6 +204,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         }
         else
         {
+            LOG.warn( "Portal url build failed", e );
             return buildErrorUrl( 500, e.getMessage() );
         }
     }

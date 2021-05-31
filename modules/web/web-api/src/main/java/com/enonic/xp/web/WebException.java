@@ -8,27 +8,44 @@ public final class WebException
 {
     private final HttpStatus status;
 
+    private final boolean loggable;
+
     public WebException( final HttpStatus status, final String message )
     {
         super( message );
         this.status = status;
+        this.loggable = this.status.is5xxServerError();
+    }
+
+    public WebException( final HttpStatus status, final String message, final boolean loggable )
+    {
+        super( message );
+        this.status = status;
+        this.loggable = loggable;
     }
 
     public WebException( final HttpStatus status, final Throwable cause )
     {
         super( cause.getMessage(), cause );
         this.status = status;
+        this.loggable = this.status.is5xxServerError();
     }
 
     public WebException( final HttpStatus status, final String message, final Throwable cause )
     {
         super( message, cause );
         this.status = status;
+        this.loggable = this.status.is5xxServerError();
     }
 
     public HttpStatus getStatus()
     {
         return this.status;
+    }
+
+    public boolean isLoggable()
+    {
+        return loggable;
     }
 
     public static WebException badRequest( final String message )

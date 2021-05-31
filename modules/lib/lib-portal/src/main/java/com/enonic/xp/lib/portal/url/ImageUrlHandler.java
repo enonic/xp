@@ -17,7 +17,11 @@ public final class ImageUrlHandler
     @Override
     protected String buildUrl( final Multimap<String, String> map )
     {
-        final ImageUrlParams params = new ImageUrlParams().portalRequest( this.request ).setAsMap( map );
+        final ImageUrlParams params = new ImageUrlParams().
+            setAsMap( map ).
+            portalRequest( request ).
+            validate();
+
         return this.urlService.imageUrl( params );
     }
 

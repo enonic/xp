@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.url;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
@@ -134,5 +135,13 @@ public final class ImageUrlParams
         helper.add( "filter", this.filter );
         helper.add( "background", this.background );
         helper.add( "scale", this.scale );
+    }
+
+    public ImageUrlParams validate()
+    {
+        Preconditions.checkState(
+            getPortalRequest().getContent() != null || getPortalRequest().getContentPath() != null || id != null || path != null,
+            "id, path or content must be set" );
+        return this;
     }
 }
