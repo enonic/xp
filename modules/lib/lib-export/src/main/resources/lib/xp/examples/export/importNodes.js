@@ -1,22 +1,41 @@
+/* global resolve*/
 var exportLib = require('/lib/xp/export');
 var t = require('/lib/xp/testing');
 
 // BEGIN
-// END
+// Import from application resource files
 let importNodes = exportLib.importNodes({
-    source: '/import',
+    source: resolve('/import'),
     targetNodePath: '/content',
+    xslt: 'transform.xslt',
+    xsltParams: {'k': 'v'},
     includeNodeIds: true,
-    includePermissions: true
+    includePermissions: true,
+    nodeImported: (i) => {
+    },
+    nodeResolved: (i) => {
+    }
 });
-
+// END
 // BEGIN
 // Information about imported nodes.
 var expected = {
-    'addedNodes': [],
-    'updatedNodes': [],
-    'exportedBinaries': [],
-    'importErrors': []
+    'addedNodes': [
+        '/added'
+    ],
+    'updatedNodes': [
+        '/updated'
+    ],
+    'exportedBinaries': [
+        'binaryPath [ref]'
+    ],
+    'importErrors': [
+        {
+            'exception': 'com.enonic.xp.lib.export.ImportHandlerTest$NoStacktraceException',
+            'message': 'error',
+            'stacktrace': []
+        }
+    ]
 };
 // END
 
