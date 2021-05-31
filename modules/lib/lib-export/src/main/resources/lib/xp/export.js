@@ -19,14 +19,14 @@ function required(params, name) {
 }
 
 /**
- * Import nodes from a nodes-export created by exportNodes method.
+ * Import nodes from a nodes-export.
  *
  * @example-ref examples/export/importNodes.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string|object} params.source Location of nodes-export directory. Can be either resource key or path relative to exports directory.
  * @param {string} params.targetNodePath Target path for imported nodes.
- * @param {string|object} [params.xslt] Location of XSLT stylesheet file used as pre-transformation of . Can be either resource key or path relative to exports directory. If specified, used as XSLT transformation for the import.
+ * @param {string|object} [params.xslt] Location of XSLT stylesheet file used as pre-transformation of node XML files. Can be either resource key or path relative to exports directory. If specified, used as XSLT transformation for the import.
  * @param {object} [params.xsltParams] Parameters used in XSLT transformation.
  * @param {boolean} [params.includeNodeIds=false] Set to true to use node IDs from the import, false to generate new node IDs.
  * @param {boolean} [params.includePermissions=false] Set to true to use Node permissions from the import, false to use target node permissions.
@@ -48,4 +48,4 @@ exports.importNodes = function (params) {
     bean.nodeResolved = __.nullOrValue(params.nodeResolved);
 
     return __.toNativeObject(bean.execute());
-}
+};

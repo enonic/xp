@@ -1,7 +1,6 @@
 package com.enonic.xp.lib.export;
 
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.function.Function;
 
 import org.osgi.framework.Bundle;
@@ -9,7 +8,6 @@ import org.osgi.framework.Bundle;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
-import com.enonic.xp.export.NodeImportListener;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.NodePath;
@@ -49,28 +47,12 @@ public class ImportHandler
             .source( toVirtualFile( source ) )
             .targetNodePath( NodePath.create( targetNodePath ).build() )
             .xslt( toVirtualFile( xslt ) )
-            .xsltParams( xsltParams != null ? xsltParams.getMap() : Map.of() )
-            .nodeImportListener( new NodeImportListener()
-            {
-                @Override
-                public void nodeImported( final long count )
-                {
-                    if ( nodeImported != null )
-                    {
-                        nodeImported.apply( count );
-                    }
-                }
+            .nodeImportListener( new FunctionBasedNodeImportListener( nodeImported, nodeResolved ) );
 
-                @Override
-                public void nodeResolved( final long count )
-                {
-                    if ( nodeResolved != null )
-                    {
-                        nodeResolved.apply( count );
-                    }
-                }
-            } );
-
+        if ( xsltParams != null )
+        {
+            paramsBuilder.xsltParams( xsltParams.getMap() );
+        }
         if ( includeNodeIds != null )
         {
             paramsBuilder.includeNodeIds( includeNodeIds );

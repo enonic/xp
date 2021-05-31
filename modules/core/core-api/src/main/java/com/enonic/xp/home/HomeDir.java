@@ -11,6 +11,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @PublicApi
 public final class HomeDir
 {
+    private static HomeDir homeDir;
+
     private final Path dir;
 
     private HomeDir( final Path dir )
@@ -36,7 +38,11 @@ public final class HomeDir
 
     public static HomeDir get()
     {
-        final String str = getHomeProperty();
+        if ( homeDir != null )
+        {
+            return homeDir;
+        }
+        final String str = System.getProperty( "xp.home" );
         if ( isNullOrEmpty( str ) )
         {
             throw new IllegalArgumentException( "Home dir [xp.home] is not set." );
@@ -45,8 +51,8 @@ public final class HomeDir
         return new HomeDir( Path.of( str ).toAbsolutePath().normalize() );
     }
 
-    private static String getHomeProperty()
+    static void set( final Path dir )
     {
-        return System.getProperty( "xp.home" );
+        homeDir = dir == null ? null : new HomeDir( dir );
     }
 }
