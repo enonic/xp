@@ -9,6 +9,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.server.RunMode;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 
 import static com.google.common.base.Strings.nullToEmpty;
@@ -17,11 +18,9 @@ final class ExceptionInfo
 {
     private final HttpStatus status;
 
-    private String message;
-
     private String tip;
 
-    private Throwable cause;
+    private WebException cause;
 
     private ResourceService resourceService;
 
@@ -39,7 +38,7 @@ final class ExceptionInfo
 
     public boolean shouldLogAsError()
     {
-        return this.status.is5xxServerError() || this.status == HttpStatus.BAD_REQUEST;
+        return cause.isLoggable();
     }
 
     public String getReasonPhrase()
@@ -49,19 +48,8 @@ final class ExceptionInfo
 
     public String getMessage()
     {
-        if ( this.message != null )
-        {
-            return this.message;
-        }
-
         final String str = this.cause != null ? this.cause.getMessage() : null;
         return str != null ? str : getReasonPhrase();
-    }
-
-    public ExceptionInfo message( final String message )
-    {
-        this.message = message;
-        return this;
     }
 
     public ExceptionInfo tip( final String tip )
@@ -76,12 +64,12 @@ final class ExceptionInfo
         return this;
     }
 
-    public Throwable getCause()
+    public WebException getCause()
     {
         return this.cause;
     }
 
-    public ExceptionInfo cause( final Throwable cause )
+    public ExceptionInfo cause( final WebException cause )
     {
         this.cause = cause;
         return this;

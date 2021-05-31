@@ -32,6 +32,6 @@ final class ErrorHandlerWorker
             this.message = this.code.getReasonPhrase();
         }
 
-        throw new WebException( this.code, this.message );
+        throw new WebException( this.code, this.message, false );
     }
 }

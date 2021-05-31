@@ -260,6 +260,24 @@ class ExceptionRendererImplTest
         assertEquals( "{\"status\":404,\"message\":\"Resource not found\"}", result.getBody().toString() );
     }
 
+    @Test
+    void render_internal_server_error()
+    {
+        this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
+
+        final PortalResponse res =
+            this.renderer.render( this.request, new WebException( HttpStatus.INTERNAL_SERVER_ERROR, "Custom message" ) );
+        assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, res.getStatus() );
+        assertEquals( MediaType.HTML_UTF_8.withoutParameters(), res.getContentType() );
+
+        final String body = res.getBody().toString();
+        assertTrue( body.contains( "500 Internal Server Error" ) );
+        assertTrue( body.contains( "Custom message" ) );
+
+        // Should not show exception
+        assertTrue( body.contains( ExceptionRendererImplTest.class.getName() ) );
+    }
+
     private Site newSite()
     {
         final PropertyTree siteConfigConfig = new PropertyTree();

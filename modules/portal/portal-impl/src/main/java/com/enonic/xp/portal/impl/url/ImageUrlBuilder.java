@@ -6,9 +6,13 @@ import com.google.common.collect.Multimap;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.url.ImageUrlParams;
+import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -50,7 +54,22 @@ final class ImageUrlBuilder
 
     private Media resolveMedia( final ContentId id )
     {
-        return (Media) this.contentService.getById( id );
+        final Content content;
+
+        try
+        {
+            content = this.contentService.getById( id );
+        }
+        catch ( ContentNotFoundException e )
+        {
+            throw new WebException( HttpStatus.NOT_FOUND, String.format( "Image with [%s] id not found", id ), e );
+        }
+
+        if ( !content.getType().isDescendantOfMedia() && !content.getType().isMedia() )
+        {
+            throw WebException.notFound( String.format( "Image with [%s] id not found", id ) );
+        }
+        return (Media) content;
     }
 
     private String resolveHash( final Media media )
