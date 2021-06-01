@@ -42,7 +42,7 @@ public class NodeExportResultTest
         expected += "dryRun=true, ";
         expected += "exportedNodes=[/], ";
         expected += "exportErrors=[export error occured], ";
-        expected += "exportedBinaries=[/[test binary ref]]";
+        expected += "exportedBinaries=[/ [test binary ref]]";
         expected += "}";
 
         assertEquals( expected, result.toString() );
