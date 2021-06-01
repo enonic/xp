@@ -94,7 +94,7 @@ public class NodeExportResult
 
         public Builder addBinary( final NodePath nodePath, final BinaryReference binaryReference )
         {
-            this.exportedBinaries.add( nodePath.toString() + "[" + binaryReference.toString() + "]" );
+            this.exportedBinaries.add( nodePath + " [" + binaryReference + "]" );
             return this;
         }
 
