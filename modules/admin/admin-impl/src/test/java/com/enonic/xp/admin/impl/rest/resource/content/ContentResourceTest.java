@@ -51,6 +51,7 @@ import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.JsonObjectsFactory;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
+import com.enonic.xp.admin.impl.rest.AdminRestConfig;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
@@ -252,12 +253,14 @@ public class ContentResourceTest
 
     Set<ContentType> knownContentTypes;
 
+    ContentResource resource;
+
     @Override
     protected ContentResource getResourceInstance()
     {
         contentTypeService = Mockito.mock( ContentTypeService.class );
 
-        final ContentResource resource = new ContentResource();
+        resource = new ContentResource();
 
         contentService = Mockito.mock( ContentService.class );
         resource.setContentService( contentService );
@@ -300,7 +303,7 @@ public class ContentResourceTest
         jsonObjectsFactory.setSecurityService( securityService );
         jsonObjectsFactory.setContentTypeService( contentTypeService );
         resource.setJsonObjectsFactory( jsonObjectsFactory );
-
+        resource.activate( Mockito.mock( AdminRestConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
         return resource;
     }
 
@@ -1534,8 +1537,7 @@ public class ContentResourceTest
             .name( "name" )
             .mimeType( "image/jpeg" )
             .byteSource( byteSource )
-            .focalX( 2.0 )
-            .focalY( 1.0 );
+            .focalX( 2.0 ).focalY( 1.0 );
 
         Mockito.when( this.contentService.update( params ) ).thenReturn( content );
 
@@ -1543,6 +1545,32 @@ public class ContentResourceTest
 
         Mockito.verify( this.contentService, Mockito.times( 1 ) ).update( params );
 
+    }
+
+    @Test
+    public void updateMedia_exceed_max_upload_size()
+        throws Exception
+    {
+        ContentResource contentResource = getResourceInstance();
+        final AdminRestConfig config = Mockito.mock( AdminRestConfig.class );
+        Mockito.when( config.uploadMaxFileSize() ).thenReturn( "1b" );
+        contentResource.activate( config );
+
+        ByteSource byteSource = ByteSource.wrap( "bytes".getBytes() );
+
+        MultipartItem multipartItem = Mockito.mock( MultipartItem.class );
+        Mockito.when( multipartItem.getContentType() ).thenReturn( com.google.common.net.MediaType.JPEG );
+        Mockito.when( multipartItem.getBytes() ).thenReturn( byteSource );
+        Mockito.when( multipartItem.getSize() ).thenReturn( byteSource.size() );
+
+        MultipartForm multipartForm = Mockito.mock( MultipartForm.class );
+        Mockito.when( multipartForm.getAsString( "content" ) ).thenReturn( "content-id" );
+        Mockito.when( multipartForm.getAsString( "name" ) ).thenReturn( "name" );
+        Mockito.when( multipartForm.getAsString( "focalX" ) ).thenReturn( "2" );
+        Mockito.when( multipartForm.getAsString( "focalY" ) ).thenReturn( "1" );
+        Mockito.when( multipartForm.get( "file" ) ).thenReturn( multipartItem );
+
+        assertThrows( IllegalStateException.class, () -> contentResource.updateMedia( multipartForm ) );
     }
 
     @Test
@@ -2427,6 +2455,41 @@ public class ContentResourceTest
             request().path( "content/createMediaFromUrl" ).entity( json, MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
 
             Mockito.verify( contentService ).create( Mockito.isA( CreateMediaParams.class ) );
+        }
+        finally
+        {
+            server.stop( 0 );
+        }
+    }
+
+    @Test
+    public void testLoadImage_exceeds_max_upload_size()
+        throws Exception
+    {
+        HttpServer server = HttpServer.create( new InetSocketAddress( 0 ), 0 );
+        server.start();
+        try
+        {
+            URL imageUrl = new URL( "http://localhost:" + server.getAddress().getPort() );
+
+            server.createContext( "/", exchange -> {
+
+                exchange.sendResponseHeaders( 200, 0 );
+                getClass().getResourceAsStream( "coliseum.jpg" ).transferTo( exchange.getResponseBody() );
+                exchange.close();
+            } );
+
+            final Content content = createContent( "aaa", "my_a_content", "myapplication:my_type" );
+            final String json = "{\"url\": \"" + imageUrl.toString() + "\",\"parent\": \"/content\", \"name\": \"imageToUpload.jpg\"}";
+
+            Mockito.when( contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenReturn( content );
+
+            final AdminRestConfig config = Mockito.mock( AdminRestConfig.class );
+            Mockito.when( config.uploadMaxFileSize() ).thenReturn( "1b" );
+            resource.activate( config );
+
+            assertThrows( IllegalStateException.class,
+                          () -> request().path( "content/createMediaFromUrl" ).entity( json, MediaType.APPLICATION_JSON_TYPE ).post() );
         }
         finally
         {

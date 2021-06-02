@@ -30,7 +30,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +61,8 @@ import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentListJson;
+import com.enonic.xp.admin.impl.rest.AdminRestConfig;
+import com.enonic.xp.admin.impl.rest.LimitingInputStream;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.BatchContentJson;
@@ -186,6 +190,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.util.BinaryReference;
+import com.enonic.xp.util.ByteSizeParser;
 import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
@@ -202,7 +207,7 @@ import static java.util.Optional.ofNullable;
 @Path(REST_ROOT + "{content:(content|" + CMS_PATH + "/content)}")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
-@Component(immediate = true, property = "group=admin")
+@Component(immediate = true, property = "group=admin", configurationPid = "com.enonic.xp.admin.rest")
 public final class ContentResource
     implements JaxRsComponent
 {
@@ -246,6 +251,15 @@ public final class ContentResource
 
     private JsonObjectsFactory jsonObjectsFactory;
 
+    private volatile long uploadMaxFileSize;
+
+    @Activate
+    @Modified
+    public void activate( final AdminRestConfig config )
+    {
+        uploadMaxFileSize = ByteSizeParser.parse( config.uploadMaxFileSize() );
+    }
+
     @POST
     @Path("create")
     public ContentJson create( final CreateContentJson params )
@@ -260,8 +274,14 @@ public final class ContentResource
     public ContentJson createMedia( final MultipartForm form )
         throws Exception
     {
-        final Content persistedContent;
         final CreateMediaParams createMediaParams = new CreateMediaParams();
+
+        final MultipartItem mediaFile = form.get( "file" );
+        checkSize( mediaFile );
+        createMediaParams.name( form.getAsString( "name" ) )
+            .mimeType( mediaFile.getContentType().toString() )
+            .byteSource( mediaFile.getBytes() );
+
         final String parentParam = form.getAsString( "parent" );
         if ( parentParam.startsWith( "/" ) )
         {
@@ -272,11 +292,6 @@ public final class ContentResource
             final Content parentContent = contentService.getById( ContentId.from( parentParam ) );
             createMediaParams.parent( parentContent.getPath() );
         }
-
-        final MultipartItem mediaFile = form.get( "file" );
-        createMediaParams.name( form.getAsString( "name" ) )
-            .mimeType( mediaFile.getContentType().toString() )
-            .byteSource( getFileItemByteSource( mediaFile ) );
 
         final String focalX = form.getAsString( "focalX" );
         final String focalY = form.getAsString( "focalY" );
@@ -290,7 +305,7 @@ public final class ContentResource
             createMediaParams.focalY( Double.parseDouble( focalY ) );
         }
 
-        persistedContent = contentService.create( createMediaParams );
+        final Content persistedContent = contentService.create( createMediaParams );
 
         return jsonObjectsFactory.createContentJson( persistedContent );
     }
@@ -312,7 +327,10 @@ public final class ContentResource
 
         try (InputStream inputStream = url.openStream())
         {
-            createMediaParams.byteSource( ByteSource.wrap( inputStream.readAllBytes() ) );
+            createMediaParams.byteSource( ByteSource.wrap( new LimitingInputStream<>( inputStream, uploadMaxFileSize,
+                                                                                      () -> new IllegalStateException(
+                                                                                          "File size exceeds maximum allowed upload size" ) )
+                                                               .readAllBytes() ) );
         }
 
         final String parent = params.getParent();
@@ -336,9 +354,13 @@ public final class ContentResource
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public ContentJson updateMedia( final MultipartForm form )
     {
-        final Content persistedContent;
         final UpdateMediaParams params =
             new UpdateMediaParams().content( ContentId.from( form.getAsString( "content" ) ) ).name( form.getAsString( "name" ) );
+
+        final MultipartItem mediaFile = form.get( "file" );
+        checkSize( mediaFile );
+        params.mimeType( mediaFile.getContentType().toString() );
+        params.byteSource( mediaFile.getBytes() );
 
         final String focalX = form.getAsString( "focalX" );
         final String focalY = form.getAsString( "focalY" );
@@ -352,10 +374,7 @@ public final class ContentResource
             params.focalY( Double.parseDouble( focalY ) );
         }
 
-        final MultipartItem mediaFile = form.get( "file" );
-        params.mimeType( mediaFile.getContentType().toString() );
-        params.byteSource( getFileItemByteSource( mediaFile ) );
-        persistedContent = contentService.update( params );
+        final Content persistedContent = contentService.update( params );
 
         return jsonObjectsFactory.createContentJson( persistedContent );
     }
@@ -1605,13 +1624,13 @@ public final class ContentResource
     private Content doCreateAttachment( final String attachmentName, final MultipartForm form )
     {
         final MultipartItem mediaFile = form.get( "file" );
-
+        checkSize( mediaFile );
         final ExtractedData extractedData = this.extractor.extract( mediaFile.getBytes() );
 
         final CreateAttachment attachment = CreateAttachment.create()
             .name( attachmentName )
             .mimeType( mediaFile.getContentType().toString() )
-            .byteSource( getFileItemByteSource( mediaFile ) )
+            .byteSource( mediaFile.getBytes() )
             .text( extractedData.getText() )
             .build();
 
@@ -1619,6 +1638,14 @@ public final class ContentResource
             .createAttachments( CreateAttachments.from( attachment ) );
 
         return contentService.update( params );
+    }
+
+    private void checkSize( final MultipartItem mediaFile )
+    {
+        if ( mediaFile.getSize() > uploadMaxFileSize )
+        {
+            throw new IllegalStateException( "File size exceeds maximum allowed upload size" );
+        }
     }
 
     private PrincipalQueryResult getTotalUsers()
@@ -1630,11 +1657,6 @@ public final class ContentResource
     private String getFormattedDisplayName( Locale locale )
     {
         return locale.getDisplayName( locale ) + " (" + locale.toLanguageTag() + ")";
-    }
-
-    private ByteSource getFileItemByteSource( final MultipartItem item )
-    {
-        return item.getBytes();
     }
 
     private long countContentsAndTheirChildren( final ContentPaths contentsPaths )

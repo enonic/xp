@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.admin.impl.rest.AdminRestConfig;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.task.ApplyPermissionsRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.ProjectsSyncTask;
@@ -63,6 +64,8 @@ public class ProjectResourceTest
 
     private TaskService taskService;
 
+    private ProjectResource resource;
+
     @Override
     protected ProjectResource getResourceInstance()
     {
@@ -71,12 +74,12 @@ public class ProjectResourceTest
         taskService = Mockito.mock( TaskService.class );
         final SyncContentService syncContentService = Mockito.mock( SyncContentService.class );
 
-        final ProjectResource resource = new ProjectResource();
+        resource = new ProjectResource();
         resource.setProjectService( projectService );
         resource.setContentService( contentService );
         resource.setTaskService( taskService );
         resource.setSyncContentService( syncContentService );
-
+        resource.activate( Mockito.mock( AdminRestConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
         return resource;
     }
 
@@ -371,15 +374,33 @@ public class ProjectResourceTest
 
             ModifyProjectIconParams params = (ModifyProjectIconParams) args[0];
             assertEquals( project.getName(), params.getName() );
-            assertEquals( 726l, params.getIcon().getByteSource().size() );
+            assertEquals( 726L, params.getIcon().getByteSource().size() );
             assertEquals( 150, params.getScaleWidth() );
 
             return null;
         } ).when( projectService ).modifyIcon( Mockito.any() );
 
-        request().path( "project/modifyIcon" ).
-            multipart( "icon", "icon.png", new byte[]{}, MediaType.MULTIPART_FORM_DATA_TYPE ).
-            post().getAsString();
+        request().path( "project/modifyIcon" )
+            .multipart( "icon", "icon.png", new byte[]{}, MediaType.MULTIPART_FORM_DATA_TYPE )
+            .post()
+            .getAsString();
+    }
+
+    @Test
+    public void testModifyIcon_exceed_max_upload_size()
+        throws Exception
+    {
+        final AdminRestConfig config = Mockito.mock( AdminRestConfig.class );
+        Mockito.when( config.uploadMaxFileSize() ).thenReturn( "1b" );
+        resource.activate( config );
+        final Project project = createProject( "project1", "project name 1", "project description 1",
+                                               Attachment.create().name( "logo.png" ).mimeType( "image/png" ).label( "small" ).build() );
+
+        createIconForm( project.getName(), 150 );
+
+        assertThrows( IllegalStateException.class, () -> request().path( "project/modifyIcon" )
+            .multipart( "icon", "icon.png", new byte[]{}, MediaType.MULTIPART_FORM_DATA_TYPE )
+            .post() );
     }
 
     @Test
@@ -389,8 +410,8 @@ public class ProjectResourceTest
         mockRootContent();
 
         final ProjectName projectName = ProjectName.from( "project1" );
-        Mockito.when( projectService.modifyPermissions( Mockito.eq( projectName ), Mockito.isA( ProjectPermissions.class ) ) ).
-            then( args -> {
+        Mockito.when( projectService.modifyPermissions( Mockito.eq( projectName ), Mockito.isA( ProjectPermissions.class ) ) )
+            .then( args -> {
                 final ProjectPermissions projectPermissions = args.getArgument( 1 );
                 assertAll( () -> assertTrue( projectPermissions.getOwner().contains( PrincipalKey.from( "user:system:user1" ) ) ),
                            () -> assertTrue( projectPermissions.getEditor().contains( PrincipalKey.from( "user:system:user2" ) ) ),
