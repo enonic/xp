@@ -15,13 +15,16 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.enonic.xp.admin.impl.rest.AdminRestConfig;
 import com.enonic.xp.admin.impl.rest.resource.ResourceConstants;
 import com.enonic.xp.admin.impl.rest.resource.content.task.ProjectsSyncTask;
 import com.enonic.xp.admin.impl.rest.resource.project.json.CreateProjectParamsJson;
@@ -56,6 +59,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskResultJson;
 import com.enonic.xp.task.TaskService;
+import com.enonic.xp.util.ByteSizeParser;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
@@ -64,7 +68,7 @@ import com.enonic.xp.web.multipart.MultipartItem;
 @Path(ResourceConstants.REST_ROOT + "project")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed({RoleKeys.ADMIN_ID, RoleKeys.ADMIN_LOGIN_ID})
-@Component(immediate = true, property = "group=admin")
+@Component(immediate = true, property = "group=admin", configurationPid = "com.enonic.xp.admin.rest")
 public final class ProjectResource
     implements JaxRsComponent
 {
@@ -79,6 +83,15 @@ public final class ProjectResource
     private ContentService contentService;
 
     private SyncContentService syncContentService;
+
+    private volatile long uploadMaxFileSize;
+
+    @Activate
+    @Modified
+    public void activate( final AdminRestConfig config )
+    {
+        uploadMaxFileSize = ByteSizeParser.parse( config.uploadMaxFileSize() );
+    }
 
     @POST
     @Path("create")
@@ -239,12 +252,21 @@ public final class ProjectResource
         {
             return null;
         }
-        return CreateAttachment.create().
-            name( ProjectConstants.PROJECT_ICON_PROPERTY ).
-            label( icon.getFileName() ).
-            mimeType( icon.getContentType().toString() ).
-            byteSource( icon.getBytes() ).
-            build();
+        checkSize( icon );
+        return CreateAttachment.create()
+            .name( ProjectConstants.PROJECT_ICON_PROPERTY )
+            .label( icon.getFileName() )
+            .mimeType( icon.getContentType().toString() )
+            .byteSource( icon.getBytes() )
+            .build();
+    }
+
+    private void checkSize( final MultipartItem mediaFile )
+    {
+        if ( mediaFile.getSize() > uploadMaxFileSize )
+        {
+            throw new IllegalStateException( "File size exceeds maximum allowed upload size" );
+        }
     }
 
     private ProjectJson doCreateJson( final Project project, final ProjectPermissions projectPermissions,
