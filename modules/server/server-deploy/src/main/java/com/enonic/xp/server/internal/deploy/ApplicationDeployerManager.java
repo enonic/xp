@@ -5,6 +5,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
+import com.enonic.xp.export.ExportService;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.mail.MailService;
 import com.enonic.xp.portal.owasp.HtmlSanitizer;
@@ -136,6 +137,12 @@ public class ApplicationDeployerManager
 
     @Reference
     public void setSchedulerService( final SchedulerService schedulerService )
+    {
+        //Needed to ensure startup-order
+    }
+
+    @Reference
+    public void setExportService( final ExportService exportService )
     {
         //Needed to ensure startup-order
     }
