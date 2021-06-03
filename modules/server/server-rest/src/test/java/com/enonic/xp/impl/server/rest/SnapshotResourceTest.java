@@ -62,9 +62,10 @@ public class SnapshotResourceTest
 
         Mockito.when( this.snapshotService.restore( isA( RestoreParams.class ) ) ).thenReturn( restoreResult );
 
-        final String result = request().path( "/repo/snapshot/restore" ).
-            entity( readFromFile( "restore_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
+        final String result = request().path( "repo/snapshot/restore" )
+            .entity( readFromFile( "restore_params.json" ), MediaType.APPLICATION_JSON_TYPE )
+            .post()
+            .getAsString();
 
         assertJson( "restore.json", result );
     }
@@ -83,9 +84,10 @@ public class SnapshotResourceTest
 
         Mockito.when( this.snapshotService.restore( isA( RestoreParams.class ) ) ).thenReturn( restoreResult );
 
-        final String result = request().path( "/repo/snapshot/restore" ).
-            entity( readFromFile( "restore_latest_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
+        final String result = request().path( "repo/snapshot/restore" )
+            .entity( readFromFile( "restore_latest_params.json" ), MediaType.APPLICATION_JSON_TYPE )
+            .post()
+            .getAsString();
 
         assertJson( "restore.json", result );
     }
@@ -100,9 +102,10 @@ public class SnapshotResourceTest
 
         Mockito.when( this.snapshotService.delete( isA( DeleteSnapshotParams.class ) ) ).thenReturn( deleteResult );
 
-        final String result = request().path( "/repo/snapshot/delete" ).
-            entity( readFromFile( "delete_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
+        final String result = request().path( "repo/snapshot/delete" )
+            .entity( readFromFile( "delete_params.json" ), MediaType.APPLICATION_JSON_TYPE )
+            .post()
+            .getAsString();
 
         assertJson( "delete.json", result );
     }
@@ -125,7 +128,7 @@ public class SnapshotResourceTest
 
         Mockito.when( this.snapshotService.list() ).thenReturn( snapshotResults );
 
-        String result = request().path( "/repo/snapshot/list" ).get().getAsString();
+        String result = request().path( "repo/snapshot/list" ).get().getAsString();
 
         assertJson( "list.json", result );
     }

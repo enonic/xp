@@ -44,9 +44,10 @@ public class JsonIndexResourceTest
 
         Mockito.when( this.indexService.reindex( isA( ReindexParams.class ) ) ).thenReturn( reindexResult );
 
-        final String result = request().path( "/repo/index/reindex" ).
-            entity( readFromFile( "reindex_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
+        final String result = request().path( "repo/index/reindex" )
+            .entity( readFromFile( "reindex_params.json" ), MediaType.APPLICATION_JSON_TYPE )
+            .post()
+            .getAsString();
 
         assertJson( "reindex.json", result );
     }
@@ -66,9 +67,8 @@ public class JsonIndexResourceTest
         Mockito.when( this.repositoryService.list() ).thenReturn(
             Repositories.from( Repository.create().id( RepositoryId.from( "my-repo" ) ).branches( Branch.from( "master" ) ).build() ) );
 
-        final String result = request().
-            path( "/repo/index/updateSettings" ).
-            entity( readFromFile( "update_index_settings_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
+        final String result = request().path( "repo/index/updateSettings" )
+            .entity( readFromFile( "update_index_settings_params.json" ), MediaType.APPLICATION_JSON_TYPE ).
             post().getAsString();
 
         assertJson( "update_index_settings.json", result );
