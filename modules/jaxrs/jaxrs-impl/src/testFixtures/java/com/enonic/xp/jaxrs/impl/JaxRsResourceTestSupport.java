@@ -8,9 +8,9 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jboss.resteasy.core.Dispatcher;
+import org.jboss.resteasy.core.ResteasyContext;
 import org.jboss.resteasy.mock.MockDispatcherFactory;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.jboss.resteasy.spi.Dispatcher;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,12 +44,12 @@ public abstract class JaxRsResourceTestSupport
 
     public JaxRsResourceTestSupport()
     {
-        this( "/" );
+        this( "" );
     }
 
     public JaxRsResourceTestSupport( final String basePath )
     {
-        this.basePath = basePath;
+        this.basePath = "/" + basePath;
     }
 
     @BeforeEach
@@ -159,6 +159,6 @@ public abstract class JaxRsResourceTestSupport
 
     protected void setHttpRequest( final HttpServletRequest request )
     {
-        ResteasyProviderFactory.getContextDataMap().put( HttpServletRequest.class, request );
+        ResteasyContext.getContextDataMap().put( HttpServletRequest.class, request );
     }
 }

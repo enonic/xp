@@ -40,7 +40,7 @@ public class StatusResourceTest
     {
         initServerInfo();
 
-        final String json = request().path( "/status" ).get().getAsString();
+        final String json = request().path( "status" ).get().getAsString();
         assertJson( "status_ok.json", json );
     }
 
@@ -56,7 +56,7 @@ public class StatusResourceTest
         Mockito.when( this.indexService.getIndexSettings( ContentConstants.CONTENT_REPO_ID, IndexType.SEARCH ) ).thenReturn(
             IndexSettings.from( indexes ) );
 
-        final String json = request().path( "/status" ).get().getAsString();
+        final String json = request().path( "status" ).get().getAsString();
         assertJson( "status_readonly.json", json );
     }
 
