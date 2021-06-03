@@ -192,7 +192,7 @@ public class ServletRequestUrlHelperTest
     {
         final String fileName = "Prisliste for pakker, stykk- og partigods nasjonalt 01.12.2015.pdf";
         assertEquals( "attachment; filename=\"Prisliste for pakker, stykk- og partigods nasjonalt 01.12.2015.pdf\"; " +
-                          "filename*=UTF-8''Prisliste%20for%20pakker%2c%20stykk-%20og%20partigods%20nasjonalt%2001.12.2015.pdf",
+                          "filename*=UTF-8''Prisliste%20for%20pakker%2C%20stykk-%20og%20partigods%20nasjonalt%2001.12.2015.pdf",
                       ServletRequestUrlHelper.contentDispositionAttachment( fileName ) );
     }
 

@@ -6,7 +6,6 @@ import javax.servlet.ServletException;
 import javax.ws.rs.core.Application;
 
 import org.jboss.resteasy.core.SynchronousDispatcher;
-import org.jboss.resteasy.logging.Logger;
 import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters;
 import org.jboss.resteasy.plugins.server.servlet.ServletBootstrap;
 import org.jboss.resteasy.plugins.server.servlet.ServletContainerDispatcher;
@@ -14,11 +13,6 @@ import org.jboss.resteasy.plugins.server.servlet.ServletContainerDispatcher;
 final class JaxRsDispatcher
     extends ServletContainerDispatcher
 {
-    static
-    {
-        Logger.setLoggerType( Logger.LoggerType.SLF4J );
-    }
-
     private final Application app;
 
     JaxRsDispatcher( final Application app )
