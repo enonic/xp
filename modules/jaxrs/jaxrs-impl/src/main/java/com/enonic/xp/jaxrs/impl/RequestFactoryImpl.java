@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.resteasy.core.SynchronousDispatcher;
 import org.jboss.resteasy.plugins.server.servlet.HttpRequestFactory;
-import org.jboss.resteasy.plugins.server.servlet.HttpServletInputMessage;
+import org.jboss.resteasy.plugins.server.servlet.Servlet3AsyncHttpRequest;
 import org.jboss.resteasy.specimpl.ResteasyHttpHeaders;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpResponse;
@@ -39,8 +39,8 @@ final class RequestFactoryImpl
                                                   final HttpResponse theResponse, final HttpServletResponse response )
     {
         final ResteasyUriInfo resteasyUriInfo = extractUriInfo( request );
-        return new HttpServletInputMessage( request, response, this.context, theResponse, headers, resteasyUriInfo,
-                                            httpMethod.toUpperCase(), this.dispatcher );
+        return new Servlet3AsyncHttpRequest( request, response, this.context, theResponse, headers, resteasyUriInfo,
+                                             httpMethod.toUpperCase(), this.dispatcher );
     }
 
     private static ResteasyUriInfo extractUriInfo( HttpServletRequest request )
