@@ -11,6 +11,7 @@ import com.enonic.xp.portal.owasp.HtmlSanitizer;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.view.ViewFunctionService;
 import com.enonic.xp.portal.websocket.WebSocketManager;
+import com.enonic.xp.scheduler.SchedulerService;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.script.event.ScriptEventManager;
 import com.enonic.xp.security.SecurityService;
@@ -129,6 +130,12 @@ public class ApplicationDeployerManager
 
     @Reference
     public void setWebSocketManager( final WebSocketManager webSocketManager )
+    {
+        //Needed to ensure startup-order
+    }
+
+    @Reference
+    public void setSchedulerService( final SchedulerService schedulerService )
     {
         //Needed to ensure startup-order
     }
