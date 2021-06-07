@@ -22,10 +22,10 @@ public final class CreateProjectIssuesAccessListCommand
 
     public AccessControlList execute()
     {
-        return createContentRootPermissions();
+        return createIssuesRootPermissions();
     }
 
-    private AccessControlList createContentRootPermissions()
+    private AccessControlList createIssuesRootPermissions()
     {
         if ( projectName == null || ProjectConstants.DEFAULT_PROJECT_NAME.equals( projectName ) )
         {
