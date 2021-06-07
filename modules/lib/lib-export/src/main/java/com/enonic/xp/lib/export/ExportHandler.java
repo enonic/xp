@@ -1,12 +1,10 @@
 package com.enonic.xp.lib.export;
 
-import java.nio.file.Path;
 import java.util.function.Function;
 
 import com.enonic.xp.export.ExportNodesParams;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.NodeExportResult;
-import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -14,13 +12,11 @@ import com.enonic.xp.script.bean.ScriptBean;
 public class ExportHandler
     implements ScriptBean
 {
-    private final Path exportsFolder = HomeDir.get().toPath().resolve( "data" ).resolve( "export" );
-
     private BeanContext context;
 
     private String sourceNodePath;
 
-    private String targetDirectory;
+    private String exportName;
 
     private Boolean includeNodeIds;
 
@@ -34,7 +30,7 @@ public class ExportHandler
     {
         final ExportNodesParams.Builder paramsBuilder = ExportNodesParams.create()
             .sourceNodePath( NodePath.create( sourceNodePath ).build() )
-            .targetDirectory( exportsFolder.resolve( targetDirectory ).toString() )
+            .exportName( exportName )
             .nodeExportListener( new FunctionBasedNodeExportListener( nodeExported, nodeResolved ) );
 
         if ( includeNodeIds != null )
@@ -55,9 +51,9 @@ public class ExportHandler
         this.sourceNodePath = sourceNodePath;
     }
 
-    public void setTargetDirectory( final String targetDirectory )
+    public void setExportName( final String exportName )
     {
-        this.targetDirectory = targetDirectory;
+        this.exportName = exportName;
     }
 
     public void setIncludeNodeIds( final Boolean includeNodeIds )

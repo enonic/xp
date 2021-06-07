@@ -75,9 +75,11 @@ public class LoadRunnableTask
         SystemLoadResultJson result;
         loadDumpListener = new SystemLoadListenerImpl( progressReporter );
 
-        if ( isExport( params ) )
+        final Path dumpRoot = getDumpRoot( params.getName() );
+
+        if ( isExport( dumpRoot ) )
         {
-            result = doLoadFromExport( params );
+            result = doLoadFromExport( dumpRoot );
         }
         else
         {
@@ -87,36 +89,29 @@ public class LoadRunnableTask
         progressReporter.info( result.toString() );
     }
 
-    private boolean isExport( final SystemLoadRequestJson request )
+    private boolean isExport( final Path dumpRoot )
     {
-        final Path dumpRoot = getDumpRoot( request.getName() );
-
-        final Path exportProperties = dumpRoot.resolve( "export.properties" );
-
-        return Files.exists( exportProperties );
+        return Files.exists( dumpRoot.resolve( "export.properties" ) );
     }
 
-    private SystemLoadResultJson doLoadFromExport( final SystemLoadRequestJson request )
+    private SystemLoadResultJson doLoadFromExport( final Path rootDir )
     {
         final SystemLoadResult.Builder builder = SystemLoadResult.create();
 
         final Repositories repositories = repositoryService.list();
 
-        final long branchesCount = repositories.
-            stream().
-            flatMap( repository -> repository.getBranches().stream() ).
-            count();
+        final long branchesCount = repositories.stream().flatMap( repository -> repository.getBranches().stream() ).count();
 
         loadDumpListener.totalBranches( branchesCount );
 
-        builder.add( importSystemRepo( request ) );
+        builder.add( importSystemRepo( rootDir ) );
 
         this.repositoryService.invalidateAll();
 
         for ( Repository repository : repositories )
         {
             initializeRepo( repository );
-            builder.add( importRepoBranches( request.getName(), repository ) );
+            builder.add( importRepoBranches( rootDir, repository ) );
         }
 
         return SystemLoadResultJson.from( builder.build() );
@@ -129,12 +124,12 @@ public class LoadRunnableTask
         return dumpsFolder.resolve( dumpName );
     }
 
-    private RepoLoadResult importSystemRepo( final SystemLoadRequestJson request )
+    private RepoLoadResult importSystemRepo( final Path rootDir )
     {
         final RepoLoadResult.Builder builder = RepoLoadResult.create( SystemConstants.SYSTEM_REPO_ID );
 
         final NodeImportResult systemRepoImport =
-            importRepoBranch( SystemConstants.SYSTEM_REPO_ID.toString(), SystemConstants.BRANCH_SYSTEM.toString(), request.getName() );
+            importRepoBranch( SystemConstants.SYSTEM_REPO_ID.toString(), SystemConstants.BRANCH_SYSTEM.toString(), rootDir );
 
         final BranchLoadResult branchLoadResult = NodeImportResultTranslator.translate( systemRepoImport, SystemConstants.BRANCH_SYSTEM );
         builder.add( branchLoadResult );
@@ -167,18 +162,16 @@ public class LoadRunnableTask
         return SystemLoadResultJson.from( systemLoadResult );
     }
 
-    private NodeImportResult importRepoBranch( final String repoName, final String branch, final String dumpName )
+    private NodeImportResult importRepoBranch( final String repoName, final String branch, final Path rootDir )
     {
-        final Path rootDir = getDumpRoot( dumpName );
-
         final Path importPath = rootDir.resolve( repoName ).resolve( branch );
 
-        return getContext( branch, repoName ).callWith( () -> this.exportService.importNodes( ImportNodesParams.create().
-            source( VirtualFiles.from( importPath ) ).
-            targetNodePath( NodePath.ROOT ).
-            includeNodeIds( true ).
-            includePermissions( true ).
-            build() ) );
+        return getContext( branch, repoName ).callWith( () -> this.exportService.importNodes( ImportNodesParams.create()
+                                                                                                  .source( VirtualFiles.from( importPath ) )
+                                                                                                  .targetNodePath( NodePath.ROOT )
+                                                                                                  .includeNodeIds( true )
+                                                                                                  .includePermissions( true )
+                                                                                                  .build() ) );
     }
 
 
@@ -196,7 +189,7 @@ public class LoadRunnableTask
             build();
     }
 
-    private RepoLoadResult importRepoBranches( final String dumpName, final Repository repository )
+    private RepoLoadResult importRepoBranches( final Path rootDir, final Repository repository )
     {
         final RepoLoadResult.Builder builder = RepoLoadResult.create( repository.getId() );
 
@@ -207,7 +200,7 @@ public class LoadRunnableTask
                 continue;
             }
 
-            final NodeImportResult nodeImportResult = importRepoBranch( repository.getId().toString(), branch.getValue(), dumpName );
+            final NodeImportResult nodeImportResult = importRepoBranch( repository.getId().toString(), branch.getValue(), rootDir );
             builder.add( NodeImportResultTranslator.translate( nodeImportResult, branch ) );
         }
 

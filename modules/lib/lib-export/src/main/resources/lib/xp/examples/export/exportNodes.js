@@ -6,7 +6,7 @@ var t = require('/lib/xp/testing');
 // Export content nodes.
 let exportNodes = exportLib.exportNodes({
     sourceNodePath: '/content',
-    targetDirectory: 'export-1',
+    exportName: 'export-1',
     includeNodeIds: true,
     includeVersions: true,
     nodeImported: (i) => {
