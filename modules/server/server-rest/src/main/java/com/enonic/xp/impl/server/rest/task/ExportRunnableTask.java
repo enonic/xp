@@ -1,17 +1,11 @@
 package com.enonic.xp.impl.server.rest.task;
 
-import java.nio.file.Path;
-
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.export.ExportNodesParams;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.NodeExportResult;
-import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.impl.server.rest.model.ExportNodesRequestJson;
 import com.enonic.xp.impl.server.rest.model.NodeExportResultJson;
 import com.enonic.xp.impl.server.rest.model.RepoPath;
@@ -23,7 +17,6 @@ import com.enonic.xp.task.TaskId;
 public class ExportRunnableTask
     extends AbstractRunnableTask
 {
-    private final Path exportsFolder = HomeDir.get().toPath().resolve( "data" ).resolve( "export" );
 
     private final ExportNodesRequestJson params;
 
@@ -44,32 +37,25 @@ public class ExportRunnableTask
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
-        final NodeExportResult result =
-            getContext( params.getSourceRepoPath() ).callWith( () -> this.exportService.exportNodes( ExportNodesParams.create().
-                sourceNodePath( params.getSourceRepoPath().getNodePath() ).
-                targetDirectory( getExportDirectory( params.getExportName() ).toString() ).
-                dryRun( params.isDryRun() ).
-                includeNodeIds( params.isExportWithIds() ).
-                includeVersions( params.isIncludeVersions() ).
-                nodeExportListener( new ExportListenerImpl( progressReporter ) ).
-                build() ) );
+        final NodeExportResult result = getContext( params.getSourceRepoPath() ).callWith( () -> this.exportService.exportNodes(
+            ExportNodesParams.create()
+                .sourceNodePath( params.getSourceRepoPath().getNodePath() )
+                .exportName( params.getExportName() )
+                .dryRun( params.isDryRun() )
+                .includeNodeIds( params.isExportWithIds() )
+                .includeVersions( params.isIncludeVersions() )
+                .nodeExportListener( new ExportListenerImpl( progressReporter ) )
+                .build() ) );
 
         progressReporter.info( NodeExportResultJson.from( result ).toString() );
     }
 
     private Context getContext( final RepoPath repoPath )
     {
-        return ContextBuilder.from( ContextAccessor.current() ).
-            branch( repoPath.getBranch() ).
-            repositoryId( repoPath.getRepositoryId() ).
-            build();
-    }
-
-    private Path getExportDirectory( final String exportName )
-    {
-        Preconditions.checkArgument( FileNames.isSafeFileName( exportName ) );
-
-        return exportsFolder.resolve( exportName );
+        return ContextBuilder.from( ContextAccessor.current() )
+            .branch( repoPath.getBranch() )
+            .repositoryId( repoPath.getRepositoryId() )
+            .build();
     }
 
     public static class Builder

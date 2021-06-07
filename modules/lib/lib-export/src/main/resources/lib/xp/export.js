@@ -20,13 +20,15 @@ function required(params, name) {
 
 /**
  * Import nodes from a nodes-export.
+ * Could be used to import node+export from exports directory or from application resource files.
+ * Optionally pre-transforms node XML node files with XSLT before import.
  *
  * @example-ref examples/export/importNodes.js
  *
  * @param {object} params JSON with the parameters.
- * @param {string|object} params.source Location of nodes-export directory. Can be either resource key or path relative to exports directory.
+ * @param {string|object} params.source Either name of nodes-export located in exports directory or application resource key.
  * @param {string} params.targetNodePath Target path for imported nodes.
- * @param {string|object} [params.xslt] Location of XSLT stylesheet file used as pre-transformation of node XML files. Can be either resource key or path relative to exports directory. If specified, used as XSLT transformation for the import.
+ * @param {string|object} [params.xslt] XSLT file name in exports directory or application resource key. Used for XSLT transformation.
  * @param {object} [params.xsltParams] Parameters used in XSLT transformation.
  * @param {boolean} [params.includeNodeIds=false] Set to true to use node IDs from the import, false to generate new node IDs.
  * @param {boolean} [params.includePermissions=false] Set to true to use Node permissions from the import, false to use target node permissions.
@@ -52,12 +54,13 @@ exports.importNodes = function (params) {
 
 /**
  * Export nodes to a nodes-export.
+ * Export is created in exports directory.
  *
  * @example-ref examples/export/exportNodes.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.sourceNodePath Source nodes path.
- * @param {string} params.targetDirectory Target path relative to exports directory.
+ * @param {string} params.exportName Export name.
  * @param {boolean} [params.includeNodeIds=true] Set to true to export node IDs.
  * @param {boolean} [params.includeVersions=false] Set to true to export all node versions.
  * @param {function} [params.nodeResolved] A function to be called before export starts with number of nodes to export.
@@ -68,7 +71,7 @@ exports.importNodes = function (params) {
 exports.exportNodes = function (params) {
     const bean = __.newBean('com.enonic.xp.lib.export.ExportHandler');
     bean.sourceNodePath = required(params, 'sourceNodePath');
-    bean.targetDirectory = required(params, 'targetDirectory');
+    bean.exportName = required(params, 'exportName');
     bean.includeNodeIds = __.nullOrValue(params.includeNodeIds);
     bean.includeVersions = __.nullOrValue(params.includeVersions);
     bean.nodeExported = __.nullOrValue(params.nodeExported);
