@@ -6,6 +6,10 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.archive.ArchiveContentParams;
+import com.enonic.xp.archive.ArchiveContentsResult;
+import com.enonic.xp.archive.RestoreContentParams;
+import com.enonic.xp.archive.RestoreContentsResult;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
@@ -49,6 +53,10 @@ public interface ContentService
     DuplicateContentsResult duplicate( DuplicateContentParams params );
 
     MoveContentsResult move( MoveContentParams params );
+
+    ArchiveContentsResult archive( ArchiveContentParams params );
+
+    RestoreContentsResult restore( RestoreContentParams params );
 
     Content setChildOrder( SetContentChildOrderParams params );
 
