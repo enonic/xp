@@ -20,6 +20,14 @@ import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.archive.ArchiveContentParams;
+import com.enonic.xp.archive.ArchiveContentsResult;
+import com.enonic.xp.archive.ArchivedContainer;
+import com.enonic.xp.archive.ArchivedContainerLayer;
+import com.enonic.xp.archive.ListContentsParams;
+import com.enonic.xp.archive.ResolveArchivedParams;
+import com.enonic.xp.archive.RestoreContentParams;
+import com.enonic.xp.archive.RestoreContentsResult;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
@@ -813,6 +821,60 @@ public class ContentServiceImpl
         contentAuditLogSupport.move( params, result );
 
         return result;
+    }
+
+    @Override
+    public ArchiveContentsResult archive( final ArchiveContentParams params )
+    {
+        final ArchiveContentsResult result = ArchiveContentCommand.create( params ).
+            nodeService( this.nodeService ).
+            translator( this.translator ).
+            archiveListener( params.getArchiveContentListener() ).
+            build().
+            execute();
+
+//        contentAuditLogSupport.archived( params, result );
+
+        return result;
+    }
+
+    @Override
+    public RestoreContentsResult restore( final RestoreContentParams params )
+    {
+        final RestoreContentsResult result = RestoreContentCommand.create( params ).
+            nodeService( this.nodeService ).
+            translator( this.translator ).
+            restoreListener( params.getRestoreContentListener() ).
+            build().
+            execute();
+
+//        contentAuditLogSupport.restored( params, result );
+
+        return result;
+    }
+
+    private static final Pattern ARCHIVED_PATTERN = Pattern.compile( "^(?:/archive/)([a-zA-Z0-9_\\-.:]+)/([^/]+)$" );
+
+    @Override
+    public List<ArchivedContainerLayer> listArchived( final ListContentsParams params)
+    {
+        return ListArchivedContentCommand.create().
+            nodeService( nodeService ).
+            translator( translator ).
+            params( params ).
+            build().
+            execute();
+    }
+
+    @Override
+    public List<ArchivedContainer> resolveArchivedByContents( final ResolveArchivedParams params)
+    {
+        return ResolveArchivedByContentsCommand.create().
+            nodeService( nodeService ).
+            translator( translator ).
+            params( params ).
+            build().
+            execute();
     }
 
     @Override

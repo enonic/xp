@@ -422,6 +422,18 @@ exports.move = function (params) {
     return __.toNativeObject(bean.execute());
 };
 
+exports.archive = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.ArchiveContentHandler');
+    bean.content = required(params, 'content');
+    return __.toNativeObject(bean.execute());
+};
+
+exports.restore = function (params) {
+    var bean = __.newBean('com.enonic.xp.lib.content.RestoreContentHandler');
+    bean.content = required(params, 'content');
+    return __.toNativeObject(bean.execute());
+};
+
 /**
  * Sets permissions on a content.
  *
