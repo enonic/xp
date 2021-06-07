@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.export;
 
 import java.nio.file.Path;
+import java.util.Optional;
 
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
@@ -14,63 +15,69 @@ import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.vfs.VirtualFile;
+import com.enonic.xp.vfs.VirtualFiles;
 
 @Component(immediate = true)
 @SuppressWarnings("UnusedDeclaration")
 public class ExportServiceImpl
     implements ExportService
 {
-    private String xpVersion;
+    private final String xpVersion;
 
-    private NodeService nodeService;
+    private final NodeService nodeService;
+
+    private final Path exportsDir;
 
     @Activate
-    public void activate( final ComponentContext context )
+    public ExportServiceImpl( final ComponentContext context, @Reference final ExportConfiguration exportConfiguration,
+                              @Reference final NodeService nodeService )
     {
-        xpVersion = context.getBundleContext().
-            getBundle().
-            getVersion().
-            toString();
+        this.xpVersion = context.getBundleContext().getBundle().getVersion().toString();
+        this.exportsDir = exportConfiguration.getExportsDir();
+        this.nodeService = nodeService;
     }
 
     @Override
     public NodeExportResult exportNodes( final ExportNodesParams params )
     {
-        return NodeExporter.create().
-            sourceNodePath( params.getSourceNodePath() ).
-            nodeService( this.nodeService ).
-            nodeExportWriter( new FileExportWriter() ).
-            rootDirectory( Path.of( params.getRootDirectory() ) ).
-            targetDirectory( Path.of( params.getTargetDirectory() ) ).
-            xpVersion( xpVersion ).
-            dryRun( params.isDryRun() ).
-            exportNodeIds( params.isIncludeNodeIds() ).
-            exportVersions( params.isIncludeVersions() ).
-            nodeExportListener( params.getNodeExportListener() ).
-            build().
-            execute();
+        final Path targetDirectory =
+            Optional.ofNullable( params.getTargetDirectory() ).map( Path::of ).orElse( exportsDir.resolve( params.getExportName() ) );
+
+        final Path rootDirectory = Optional.ofNullable( params.getRootDirectory() ).map( Path::of ).orElse( targetDirectory );
+
+        return NodeExporter.create()
+            .sourceNodePath( params.getSourceNodePath() )
+            .nodeService( this.nodeService )
+            .nodeExportWriter( new FileExportWriter() )
+            .rootDirectory( rootDirectory )
+            .targetDirectory( targetDirectory )
+            .xpVersion( xpVersion )
+            .dryRun( params.isDryRun() )
+            .exportNodeIds( params.isIncludeNodeIds() )
+            .exportVersions( params.isIncludeVersions() )
+            .nodeExportListener( params.getNodeExportListener() )
+            .build()
+            .execute();
     }
 
     @Override
     public NodeImportResult importNodes( final ImportNodesParams params )
     {
-        return NodeImporter.create().
-            nodeService( this.nodeService ).
-            sourceDirectory( params.getSource() ).
-            targetNodePath( params.getTargetNodePath() ).
-            dryRun( params.isDryRun() ).
-            importNodeIds( params.isImportNodeids() ).
-            importPermissions( params.isImportPermissions() ).
-            xslt( params.getXslt() ).
-            xsltParams( params.getXsltParams() ).
-            nodeImportListener( params.getNodeImportListener() ).
-            build().
-            execute();
-    }
+        VirtualFile source =
+            Optional.ofNullable( params.getSource() ).orElse( VirtualFiles.from( exportsDir.resolve( params.getExportName() ) ) );
 
-    @Reference
-    public void setNodeService( final NodeService nodeService )
-    {
-        this.nodeService = nodeService;
+        return NodeImporter.create()
+            .nodeService( this.nodeService )
+            .sourceDirectory( source )
+            .targetNodePath( params.getTargetNodePath() )
+            .dryRun( params.isDryRun() )
+            .importNodeIds( params.isImportNodeids() )
+            .importPermissions( params.isImportPermissions() )
+            .xslt( params.getXslt() )
+            .xsltParams( params.getXsltParams() )
+            .nodeImportListener( params.getNodeImportListener() )
+            .build()
+            .execute();
     }
 }

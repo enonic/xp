@@ -3,6 +3,7 @@ package com.enonic.xp.export;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.node.NodePath;
 
 @PublicApi
@@ -11,6 +12,8 @@ public class ExportNodesParams
     private final String rootDirectory;
 
     private final String targetDirectory;
+
+    private final String exportName;
 
     private final NodePath sourceNodePath;
 
@@ -33,6 +36,7 @@ public class ExportNodesParams
             this.rootDirectory = builder.rootDirectory;
         }
         this.targetDirectory = builder.targetDirectory;
+        this.exportName = builder.exportName;
         this.sourceNodePath = builder.sourceNodePath;
         this.dryRun = builder.dryRun;
         this.includeNodeIds = builder.includeNodeIds;
@@ -53,6 +57,11 @@ public class ExportNodesParams
     public String getTargetDirectory()
     {
         return targetDirectory;
+    }
+
+    public String getExportName()
+    {
+        return exportName;
     }
 
     public NodePath getSourceNodePath()
@@ -84,6 +93,8 @@ public class ExportNodesParams
     {
         private String rootDirectory;
 
+        private String exportName;
+
         private String targetDirectory;
 
         private NodePath sourceNodePath;
@@ -110,6 +121,12 @@ public class ExportNodesParams
         public Builder targetDirectory( final String targetDirectory )
         {
             this.targetDirectory = targetDirectory;
+            return this;
+        }
+
+        public Builder exportName( final String exportName )
+        {
+            this.exportName = exportName;
             return this;
         }
 
@@ -145,7 +162,14 @@ public class ExportNodesParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( targetDirectory );
+            Preconditions.checkArgument( exportName != null || targetDirectory != null,
+                                         "Either exportName or targetDirectory must be set" );
+            Preconditions.checkArgument( !( exportName != null && targetDirectory != null ),
+                                         "exportName and targetDirectory are mutually exclusive" );
+            if ( exportName != null )
+            {
+                Preconditions.checkArgument( FileNames.isSafeFileName( exportName ), "Invalid export name" );
+            }
             Preconditions.checkNotNull( sourceNodePath );
         }
 

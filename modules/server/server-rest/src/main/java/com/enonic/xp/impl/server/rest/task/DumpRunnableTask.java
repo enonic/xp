@@ -1,8 +1,5 @@
 package com.enonic.xp.impl.server.rest.task;
 
-import com.google.common.base.Preconditions;
-
-import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.SystemDumpParams;
 import com.enonic.xp.dump.SystemDumpResult;
@@ -35,8 +32,6 @@ public class DumpRunnableTask
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
-        Preconditions.checkArgument( FileNames.isSafeFileName( params.getName() ) );
-
         final SystemDumpParams systemDumpParams = SystemDumpParams.create().
             dumpName( params.getName() ).
             includeBinaries( true ).

@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.export;
 
-import java.nio.file.Path;
 import java.util.function.Function;
 
 import org.osgi.framework.Bundle;
@@ -9,7 +8,6 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeImportResult;
-import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptValue;
@@ -21,8 +19,6 @@ import com.enonic.xp.vfs.VirtualFiles;
 public class ImportHandler
     implements ScriptBean
 {
-    private final Path exportsFolder = HomeDir.get().toPath().resolve( "data" ).resolve( "export" );
-
     private BeanContext context;
 
     private Object source;
@@ -44,10 +40,26 @@ public class ImportHandler
     public NodeImportResultMapper execute()
     {
         final ImportNodesParams.Builder paramsBuilder = ImportNodesParams.create()
-            .source( toVirtualFile( source ) )
             .targetNodePath( NodePath.create( targetNodePath ).build() )
-            .xslt( toVirtualFile( xslt ) )
             .nodeImportListener( new FunctionBasedNodeImportListener( nodeImported, nodeResolved ) );
+
+        if ( source instanceof ResourceKey )
+        {
+            paramsBuilder.source( toVirtualFile( (ResourceKey) source ) );
+        }
+        else
+        {
+            paramsBuilder.exportName( source.toString() );
+        }
+
+        if ( xslt instanceof ResourceKey )
+        {
+            paramsBuilder.xslt( toVirtualFile( (ResourceKey) xslt ) );
+        }
+        else
+        {
+            paramsBuilder.xsltFileName( xslt.toString() );
+        }
 
         if ( xsltParams != null )
         {
@@ -105,24 +117,11 @@ public class ImportHandler
         this.nodeResolved = nodeResolved;
     }
 
-    private VirtualFile toVirtualFile( final Object value )
+    private VirtualFile toVirtualFile( final ResourceKey resourceKey )
     {
-        if ( value == null )
-        {
-            return null;
-        }
-
-        if ( value instanceof ResourceKey )
-        {
-            final ResourceKey resourceKey = (ResourceKey) value;
-            final Bundle bundle =
-                context.getService( ApplicationService.class ).get().getInstalledApplication( resourceKey.getApplicationKey() ).getBundle();
-            return VirtualFiles.from( bundle, resourceKey.getPath() );
-        }
-        else
-        {
-            return VirtualFiles.from( exportsFolder.resolve( value.toString() ) );
-        }
+        final Bundle bundle =
+            context.getService( ApplicationService.class ).get().getInstalledApplication( resourceKey.getApplicationKey() ).getBundle();
+        return VirtualFiles.from( bundle, resourceKey.getPath() );
     }
 
     @Override

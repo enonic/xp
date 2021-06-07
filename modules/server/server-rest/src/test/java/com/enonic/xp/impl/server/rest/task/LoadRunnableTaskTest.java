@@ -20,6 +20,7 @@ import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeImportResult;
+import com.enonic.xp.home.HomeDirSupport;
 import com.enonic.xp.impl.server.rest.model.SystemLoadRequestJson;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.CreateRepositoryParams;
@@ -58,10 +59,9 @@ public class LoadRunnableTaskTest
         this.repositoryService = Mockito.mock( RepositoryService.class );
         this.nodeRepositoryService = Mockito.mock( NodeRepositoryService.class );
 
-        final Path homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) ).toAbsolutePath();
-        System.setProperty( "xp.home", homeDir.toString() );
+        HomeDirSupport.set( temporaryFolder );
 
-        this.dumpDir = Files.createDirectories( homeDir.resolve( "data" ).resolve( "dump" ) );
+        this.dumpDir = Files.createDirectories( temporaryFolder.resolve( "data" ).resolve( "dump" ) );
     }
 
     @Override
