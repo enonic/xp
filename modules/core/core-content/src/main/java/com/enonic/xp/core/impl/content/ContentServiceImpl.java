@@ -21,6 +21,10 @@ import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.archive.ArchiveContentParams;
+import com.enonic.xp.archive.ArchiveContentsResult;
+import com.enonic.xp.archive.RestoreContentParams;
+import com.enonic.xp.archive.RestoreContentsResult;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
@@ -818,6 +822,37 @@ public class ContentServiceImpl
 
         return result;
     }
+
+    @Override
+    public ArchiveContentsResult archive( final ArchiveContentParams params )
+    {
+        final ArchiveContentsResult result = ArchiveContentCommand.create( params ).
+            nodeService( this.nodeService ).
+            translator( this.translator ).
+            archiveListener( params.getArchiveContentListener() ).
+            build().
+            execute();
+
+//        contentAuditLogSupport.archived( params, result );
+
+        return result;
+    }
+
+    @Override
+    public RestoreContentsResult restore( final RestoreContentParams params )
+    {
+        final RestoreContentsResult result = RestoreContentCommand.create( params ).
+            nodeService( this.nodeService ).
+            translator( this.translator ).
+            restoreListener( params.getRestoreContentListener() ).
+            build().
+            execute();
+
+//        contentAuditLogSupport.restored( params, result );
+
+        return result;
+    }
+
 
     @Override
     public Content rename( final RenameContentParams params )
