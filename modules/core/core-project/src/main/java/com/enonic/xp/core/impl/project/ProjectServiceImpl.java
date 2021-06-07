@@ -31,6 +31,7 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.project.init.ArchiveInitializer;
 import com.enonic.xp.core.impl.project.init.ContentInitializer;
 import com.enonic.xp.core.impl.project.init.IssueInitializer;
 import com.enonic.xp.data.PropertySet;
@@ -149,6 +150,18 @@ public class ProjectServiceImpl
             setNodeService( nodeService ).
             repositoryId( params.getName().getRepoId() ).
             accessControlList( CreateProjectIssuesAccessListCommand.create().
+                projectName( params.getName() ).
+                build().
+                execute() ).
+            forceInitialization( params.isForceInitialization() ).
+            build().
+            initialize();
+
+        ArchiveInitializer.create().
+            setIndexService( indexService ).
+            setNodeService( nodeService ).
+            repositoryId( params.getName().getRepoId() ).
+            accessControlList( CreateProjectRootAccessListCommand.create().
                 projectName( params.getName() ).
                 build().
                 execute() ).
