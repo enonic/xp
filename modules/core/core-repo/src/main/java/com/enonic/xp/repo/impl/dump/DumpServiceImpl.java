@@ -6,7 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -78,7 +80,8 @@ public class DumpServiceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( DumpServiceImpl.class );
 
-    private static final RepositoryId AUDIT_LOG_REPO_ID = RepositoryId.from( "system.auditlog" );
+    private static final List<RepositoryId> SYSTEM_REPO_IDS =
+        List.of( RepositoryId.from( "system.auditlog" ), RepositoryId.from( "system.scheduler" ) );
 
     private BlobStore blobStore;
 
@@ -314,16 +317,18 @@ public class DumpServiceImpl
             final RepositorySettings currentSystemSettings =
                 repositoryEntryService.getRepositoryEntry( SystemConstants.SYSTEM_REPO_ID ).getSettings();
 
-            final RepositorySettings currentAuditLogSettings = repositoryEntryService.getRepositoryEntry( AUDIT_LOG_REPO_ID ).getSettings();
+            final Map<RepositoryId, RepositorySettings> repoSettings = SYSTEM_REPO_IDS.stream()
+                .collect(
+                    Collectors.toMap( Function.identity(), repo -> repositoryEntryService.getRepositoryEntry( repo ).getSettings() ) );
 
-            // First delete all non-system repositories
             repositoryEntryService.findRepositoryEntryIds().
                 stream().
-                filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).or( Predicate.isEqual( AUDIT_LOG_REPO_ID ) ).negate() ).
+                filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).
+                    or( SYSTEM_REPO_IDS::contains ).
+                    negate() ).
                 forEach( this::doDeleteRepository );
 
-            // Then delete all system repositories
-            doDeleteRepository( AUDIT_LOG_REPO_ID );
+            SYSTEM_REPO_IDS.forEach( this::doDeleteRepository );
 
             // system-repo must be deleted last
             doDeleteRepository( SystemConstants.SYSTEM_REPO_ID );
@@ -332,24 +337,28 @@ public class DumpServiceImpl
             initAndLoad( includeVersions, results, dumpReader, SystemConstants.SYSTEM_REPO_ID, currentSystemSettings, null,
                          AttachedBinaries.empty() );
 
-            if ( dumpRepositories.contains( AUDIT_LOG_REPO_ID ) )
-            {
-                // Dump contains audit-log repository. Do a normal load.
-                initAndLoad( includeVersions, results, dumpReader, AUDIT_LOG_REPO_ID,
-                             repositoryEntryService.getRepositoryEntry( AUDIT_LOG_REPO_ID ).getSettings(), new PropertyTree(),
-                             AttachedBinaries.empty() );
-            }
-            else
-            {
-                // If it is a pre 7.2 dump it does not contain audit-log repo. It should be recreated with current settings
-                initializeRepo( AUDIT_LOG_REPO_ID, currentAuditLogSettings, null, AttachedBinaries.empty() );
-                createRootNode( AUDIT_LOG_REPO_ID );
-            }
+            SYSTEM_REPO_IDS.forEach( repositoryId -> {
+                if ( dumpRepositories.contains( repositoryId ) )
+                {
+                    // Dump contains repository. Do a normal load.
+                    initAndLoad( includeVersions, results, dumpReader, repositoryId, repoSettings.get( repositoryId ), new PropertyTree(),
+                                 AttachedBinaries.empty() );
+                }
+                else
+                {
+                    // If it is an old dump it does not contain repo. It should be recreated with current settings
+                    initializeRepo( repositoryId, repoSettings.get( repositoryId ), null, AttachedBinaries.empty() );
+                    createRootNode( repositoryId );
+                }
+
+            } );
 
             // Load non-system repositories
             dumpRepositories.
                 stream().
-                filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).or( Predicate.isEqual( AUDIT_LOG_REPO_ID ) ).negate() ).
+                filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).
+                    or( SYSTEM_REPO_IDS::contains ).
+                    negate() ).
                 forEach( repositoryId -> {
                     final Repository repository = repositoryEntryService.getRepositoryEntry( repositoryId );
                     final RepositorySettings settings = repository.getSettings();
