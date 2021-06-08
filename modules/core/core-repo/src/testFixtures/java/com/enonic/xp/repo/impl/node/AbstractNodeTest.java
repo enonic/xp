@@ -20,6 +20,7 @@ import com.enonic.xp.core.impl.audit.AuditLogConstants;
 import com.enonic.xp.core.impl.audit.AuditLogRepoInitializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.impl.scheduler.SchedulerRepoInitializer;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
@@ -65,6 +66,7 @@ import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
+import com.enonic.xp.scheduler.SchedulerConstants;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -101,7 +103,11 @@ public abstract class AbstractNodeTest
 
     protected static final RepositoryId AUDIT_LOG_REPO_ID = AuditLogConstants.AUDIT_LOG_REPO_ID;
 
+    protected static final RepositoryId SCHEDULER_REPO_ID = SchedulerConstants.SCHEDULER_REPO_ID;
+
     protected static final Branch AUDIT_LOG_BRANCH = AuditLogConstants.AUDIT_LOG_BRANCH;
+
+    protected static final Branch SCHEDULER_BRANCH = SchedulerConstants.SCHEDULER_BRANCH;
 
     @TempDir
     public Path temporaryFolder;
@@ -252,6 +258,12 @@ public abstract class AbstractNodeTest
             initialize();
 
         AuditLogRepoInitializer.create().
+            setIndexService( indexService ).
+            setRepositoryService( repositoryService ).
+            build().
+            initialize();
+
+        SchedulerRepoInitializer.create().
             setIndexService( indexService ).
             setRepositoryService( repositoryService ).
             build().

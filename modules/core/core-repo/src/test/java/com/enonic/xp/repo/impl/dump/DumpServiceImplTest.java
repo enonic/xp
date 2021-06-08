@@ -157,7 +157,8 @@ public class DumpServiceImplTest
         final Repositories newRepos = NodeHelper.runAsAdmin( this::doListRepositories );
 
         assertEquals( RepositoryIds.from( RepositoryId.from( "com.enonic.cms.default" ), RepositoryId.from( "system-repo" ),
-                                          RepositoryId.from( "system.auditlog" ) ), newRepos.getIds() );
+                                          RepositoryId.from( "system.auditlog" ), RepositoryId.from( "system.scheduler" ) ),
+                      newRepos.getIds() );
     }
 
     @Test
@@ -222,8 +223,8 @@ public class DumpServiceImplTest
 
         final Repositories newRepos = NodeHelper.runAsAdmin( this::doListRepositories );
 
-        assertEquals( 5, oldRepos.getIds().getSize() );
-        assertEquals( 4, newRepos.getIds().getSize() );
+        assertEquals( 6, oldRepos.getIds().getSize() );
+        assertEquals( 5, newRepos.getIds().getSize() );
 
         assertNotNull( newRepos.getRepositoryById( newRepoInsideDump.getId() ) );
         assertNull( newRepos.getRepositoryById( newRepoOutsideDump.getId() ) );
@@ -730,8 +731,9 @@ public class DumpServiceImplTest
         Mockito.verify( systemDumpListener ).dumpingBranch( TEST_REPO_ID, WS_DEFAULT, 2 );
         Mockito.verify( systemDumpListener ).dumpingBranch( TEST_REPO_ID, WS_OTHER, 1 );
         Mockito.verify( systemDumpListener ).dumpingBranch( AUDIT_LOG_REPO_ID, AUDIT_LOG_BRANCH, 1 );
-        Mockito.verify( systemDumpListener ).dumpingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 5 );
-        Mockito.verify( systemDumpListener, Mockito.times( 9 ) ).nodeDumped();
+        Mockito.verify( systemDumpListener ).dumpingBranch( SCHEDULER_REPO_ID, SCHEDULER_BRANCH, 1 );
+        Mockito.verify( systemDumpListener ).dumpingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 6 );
+        Mockito.verify( systemDumpListener, Mockito.times( 11 ) ).nodeDumped();
 
         final SystemLoadListener systemLoadListener = mock( SystemLoadListener.class );
         NodeHelper.runAsAdmin( () -> this.dumpService.load( SystemLoadParams.create().
@@ -745,10 +747,12 @@ public class DumpServiceImplTest
         Mockito.verify( systemLoadListener ).loadingBranch( TEST_REPO_ID, WS_OTHER, 1L );
         Mockito.verify( systemLoadListener ).loadingVersions( TEST_REPO_ID );
         Mockito.verify( systemLoadListener ).loadingBranch( AUDIT_LOG_REPO_ID, AUDIT_LOG_BRANCH, 1L );
+        Mockito.verify( systemLoadListener ).loadingBranch( SCHEDULER_REPO_ID, SCHEDULER_BRANCH, 1L );
         Mockito.verify( systemLoadListener ).loadingVersions( AUDIT_LOG_REPO_ID );
-        Mockito.verify( systemLoadListener ).loadingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 5L );
+        Mockito.verify( systemLoadListener ).loadingVersions( SCHEDULER_REPO_ID );
+        Mockito.verify( systemLoadListener ).loadingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 6L );
         Mockito.verify( systemLoadListener ).loadingVersions( SystemConstants.SYSTEM_REPO_ID );
-        Mockito.verify( systemLoadListener, Mockito.times( 17 ) ).entryLoaded();
+        Mockito.verify( systemLoadListener, Mockito.times( 21 ) ).entryLoaded();
     }
 
     @Test
@@ -1084,11 +1088,14 @@ public class DumpServiceImplTest
             stream().
             map( Repository::getId ).
             filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).
-                or( Predicate.isEqual( AUDIT_LOG_REPO_ID ) ).negate() ).
+                or( Predicate.isEqual( AUDIT_LOG_REPO_ID ) ).
+                or( Predicate.isEqual( SCHEDULER_REPO_ID ) ).
+                negate() ).
             forEach( this::doDeleteRepository );
 
         // Then delete all system repositories
-        doDeleteRepository( RepositoryId.from( "system.auditlog" ) );
+        doDeleteRepository( AUDIT_LOG_REPO_ID );
+        doDeleteRepository( SCHEDULER_REPO_ID );
 
         // system-repo must be deleted last
         doDeleteRepository( SystemConstants.SYSTEM_REPO_ID );
