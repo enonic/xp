@@ -61,7 +61,7 @@ class VersionTableVacuumTaskTest
             build() ) );
         refresh();
 
-        assertEquals( updates + 10, result.getProcessed() );
+        assertEquals( updates + 12, result.getProcessed() );
         //Old version of CMS repository entry is also delete. Remove +1 when config to specify repository is implemented
         assertEquals( expectedVersionCount + 1, result.getDeleted() );
 
@@ -86,7 +86,7 @@ class VersionTableVacuumTaskTest
             build() ) );
         refresh();
 
-        assertEquals( 10, result.getProcessed() );
+        assertEquals( 12, result.getProcessed() );
         //Old version of CMS repository entry is also delete. Set to 1 when config to specify repository is implemented
         assertEquals( 2, result.getDeleted() );
         assertVersions( node1.id(), 0 );
@@ -109,7 +109,7 @@ class VersionTableVacuumTaskTest
             build() ) );
         refresh();
 
-        assertEquals( 10, result.getProcessed() );
+        assertEquals( 12, result.getProcessed() );
         //Old version of CMS repository entry is also delete. Set to 0 when config to specify repository is implemented
         assertEquals( 1, result.getDeleted() );
 
