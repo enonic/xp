@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.image.FocalPoint;
+import com.enonic.xp.image.ImageHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -12,14 +13,72 @@ public class BlockScaleTest
     extends BaseImageFilterTest
 {
     @Test
-    public void testSize()
+    public void w_upscale_h_downscale()
     {
-        BufferedImage scaled = newScaleFunctions().block( FocalPoint.DEFAULT, 550, 320 ).apply( getOpaque() );
+        final BufferedImage original = ImageHelper.createImage( 300, 500, false );
+
+        BufferedImage scaled = newScaleFunctions().block( FocalPoint.DEFAULT, 550, 150 ).apply( original );
+        assertEquals( 550, scaled.getWidth() );
+        assertEquals( 150, scaled.getHeight() );
+    }
+
+    @Test
+    public void w_downscale_h_upscale()
+    {
+        final BufferedImage original = ImageHelper.createImage( 300, 500, false );
+
+        BufferedImage scaled = newScaleFunctions().block( FocalPoint.DEFAULT, 150, 550 ).apply( original );
+        assertEquals( 150, scaled.getWidth() );
+        assertEquals( 550, scaled.getHeight() );
+    }
+
+    @Test
+    public void wide_rectangle_upscale()
+    {
+        final BufferedImage original = ImageHelper.createImage( 400, 300, false );
+
+        BufferedImage scaled = newScaleFunctions().block( FocalPoint.DEFAULT, 550, 320 ).apply( original );
         assertEquals( 550, scaled.getWidth() );
         assertEquals( 320, scaled.getHeight() );
-
-        BufferedImage scaled2 = newScaleFunctions().block( FocalPoint.DEFAULT, 550, 320 ).apply( getOpaque() );
-        assertEquals( 550, scaled2.getWidth() );
-        assertEquals( 320, scaled2.getHeight() );
     }
+
+    @Test
+    public void wide_rectangle_downscale()
+    {
+        final BufferedImage original = ImageHelper.createImage( 400, 300, false );
+
+        BufferedImage scaled = newScaleFunctions().block( FocalPoint.DEFAULT, 250, 150 ).apply( original );
+        assertEquals( 250, scaled.getWidth() );
+        assertEquals( 150, scaled.getHeight() );
+    }
+
+    @Test
+    public void tall_rectangle_upscale()
+    {
+        final BufferedImage original = ImageHelper.createImage( 300, 400, false );
+
+        BufferedImage scaled = newScaleFunctions().block( FocalPoint.DEFAULT, 550, 320 ).apply( original );
+        assertEquals( 550, scaled.getWidth() );
+        assertEquals( 320, scaled.getHeight() );
+    }
+
+    @Test
+    public void tall_rectangle_downscale()
+    {
+        final BufferedImage original = ImageHelper.createImage( 300, 400, false );
+
+        BufferedImage scaled = newScaleFunctions().block( FocalPoint.DEFAULT, 250, 150 ).apply( original );
+        assertEquals( 250, scaled.getWidth() );
+        assertEquals( 150, scaled.getHeight() );
+    }
+
+    @Test
+    public void upscale_square()
+    {
+        final BufferedImage original = ImageHelper.createImage( 400, 300, false );
+        BufferedImage scaled = newScaleFunctions().block( FocalPoint.DEFAULT, 550, 550 ).apply( original );
+        assertEquals( 550, scaled.getWidth() );
+        assertEquals( 550, scaled.getHeight() );
+    }
+
 }

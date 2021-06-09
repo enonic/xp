@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.content;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -471,18 +473,17 @@ public class ContentTypeResourceTest
 
         final ContentType contentType = ContentType.create().
             name( "myapplication:my_content_type" ).
-            displayName( "My content type" ).
-            superType( ContentTypeName.from( "myapplication:unstructured" ) ).
-            icon( schemaIcon ).
-            build();
+            displayName( "My content type" ).superType( ContentTypeName.from( "myapplication:unstructured" ) ).icon( schemaIcon ).build();
         setupContentType( contentType );
 
         // exercise
         final Response response = this.resource.getIcon( "myapplication:my_content_type", 20, null );
-        final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
+        final byte[] iconData = (byte[]) response.getEntity();
 
         // verify
-        assertImage( contentTypeIcon, 20 );
+        assertNotNull( iconData );
+        final BufferedImage image = ImageIO.read( new ByteArrayInputStream( iconData ) );
+        assertEquals( 20, image.getWidth() );
     }
 
     @Test
@@ -532,18 +533,17 @@ public class ContentTypeResourceTest
         setupContentType( systemContentType );
 
         final ContentType contentType = ContentType.create().
-            name( "myapplication:my_content_type" ).
-            displayName( "My content type" ).
-            superType( systemContentType.getName() ).
-            build();
+            name( "myapplication:my_content_type" ).displayName( "My content type" ).superType( systemContentType.getName() ).build();
         setupContentType( contentType );
 
         // exercise
         final Response response = this.resource.getIcon( "myapplication:my_content_type", 20, null );
-        final BufferedImage contentTypeIcon = (BufferedImage) response.getEntity();
+        final byte[] iconData = (byte[]) response.getEntity();
 
         // verify
-        assertImage( contentTypeIcon, 20 );
+        assertNotNull( iconData );
+        final BufferedImage image = ImageIO.read( new ByteArrayInputStream( iconData ) );
+        assertEquals( 20, image.getWidth() );
     }
 
     @Test

@@ -1,11 +1,13 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.mixin;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+import javax.imageio.ImageIO;
 import javax.ws.rs.core.Response;
 
 import org.junit.jupiter.api.Assertions;
@@ -155,18 +157,19 @@ public class MixinResourceTest
 
         Mixin mixin = Mixin.create().
             name( "myapplication:postal_code" ).
-            displayName( "My content type" ).
-            icon( icon ).
-            addFormItem( Input.create().name( "postal_code" ).label( "Postal code" ).inputType( InputTypeName.TEXT_LINE ).build() ).
-            build();
+            displayName( "My content type" ).icon( icon )
+            .addFormItem( Input.create().name( "postal_code" ).label( "Postal code" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .build();
         setupMixin( mixin );
 
         // exercise
         final Response response = this.resource.getIcon( "myapplication:postal_code", 20, null );
-        final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
+        final byte[] iconData = (byte[]) response.getEntity();
 
         // verify
-        assertImage( mixinIcon, 20 );
+        assertNotNull( iconData );
+        final BufferedImage image = ImageIO.read( new ByteArrayInputStream( iconData ) );
+        assertEquals( 20, image.getWidth() );
     }
 
     @Test
@@ -209,12 +212,6 @@ public class MixinResourceTest
     private void setupMixin( final Mixin mixin )
     {
         Mockito.when( mixinService.getByName( mixin.getName() ) ).thenReturn( mixin );
-    }
-
-    private void assertImage( final BufferedImage image, final int size )
-    {
-        assertNotNull( image );
-        assertEquals( size, image.getWidth() );
     }
 
 }

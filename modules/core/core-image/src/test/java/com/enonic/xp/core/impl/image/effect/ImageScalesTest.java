@@ -10,13 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ImageScalesTest
 {
     @Test
-    void full()
-    {
-        assertNotNull( new ImageScales( 10 ).full( FocalPoint.DEFAULT ) );
-        assertThrows( IllegalArgumentException.class, () -> new ImageScales( 10 ).full( FocalPoint.DEFAULT, 1 ) );
-    }
-
-    @Test
     void block()
     {
         assertNotNull( new ImageScales( 10 ).block( FocalPoint.DEFAULT, 10, 5 ) );

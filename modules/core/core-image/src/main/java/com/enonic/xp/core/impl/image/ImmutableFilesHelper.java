@@ -1,125 +1,55 @@
 package com.enonic.xp.core.impl.image;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Function;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
-
-import com.enonic.xp.util.Exceptions;
+import com.google.common.io.MoreFiles;
+import com.google.common.util.concurrent.Striped;
 
 public class ImmutableFilesHelper
 {
-    private static final Lock LOCK = new ReentrantLock();
+    private static final Striped<Lock> FILE_LOCKS = Striped.lazyWeakLock( 100 );
 
-    private static final Map<Path, Condition> CONDITION_MAP = new HashMap<>();
-
-
-    public static <E extends Exception> ByteSource computeIfAbsent( Path path, SupplierWithException<? extends ByteSource, E> supplier )
-        throws E, IOException
+    public static ByteSource computeIfAbsent( Path path, Function<ByteSink, Boolean> consumer )
+        throws IOException
     {
         Preconditions.checkNotNull( path, "path is required" );
-        Preconditions.checkNotNull( supplier, "supplier is required" );
+        Preconditions.checkNotNull( consumer, "consumer is required" );
 
-        ByteSource byteSource;
-
-        lock( path );
-
+        final Lock lock = FILE_LOCKS.get( path );
+        lock.lock();
         try
         {
-            final File file = path.toFile();
-            if ( file.exists() )
+            if ( !Files.exists( path ) )
             {
-                byteSource = Files.asByteSource( file );
-            }
-            else
-            {
-                byteSource = supplier.get();
+                Files.createDirectories( path.getParent() );
 
-                if ( byteSource != null )
+                try
                 {
-                    File parentFile = file.getParentFile();
-                    if ( !parentFile.exists() )
+                    final Boolean written = consumer.apply( MoreFiles.asByteSink( path ) );
+                    if ( !Boolean.TRUE.equals( written ) )
                     {
-                        parentFile.mkdirs();
+                        return null;
                     }
-
-                    final ByteSink byteSink = Files.asByteSink( file );
-                    byteSource.copyTo( byteSink );
+                }
+                catch ( UncheckedIOException e )
+                {
+                    throw e.getCause();
                 }
             }
         }
         finally
         {
-            unlock( path );
+            lock.unlock();
         }
 
-        return byteSource;
-    }
-
-
-    private static void lock( Path path )
-    {
-        boolean pathLocked = false;
-
-        LOCK.lock();
-        try
-        {
-            while ( !pathLocked )
-            {
-                final Condition condition = CONDITION_MAP.get( path );
-
-                //If this path is not used
-                if ( condition == null )
-                {
-                    //Marks this path as used
-                    pathLocked = true;
-                    CONDITION_MAP.put( path, LOCK.newCondition() );
-                }
-
-                //Else this path is already used
-                else
-                {
-                    //Waits
-                    try
-                    {
-                        condition.await();
-                    }
-                    catch ( InterruptedException e )
-                    {
-                        throw Exceptions.unchecked( e );
-                    }
-                }
-            }
-        }
-        finally
-        {
-            LOCK.unlock();
-        }
-    }
-
-    private static void unlock( Path path )
-    {
-        LOCK.lock();
-        try
-        {
-            //Marks the path as free
-            final Condition condition = CONDITION_MAP.remove( path );
-
-            //Wakes up the waiters
-            condition.signalAll();
-        }
-        finally
-        {
-            LOCK.unlock();
-        }
+        return MoreFiles.asByteSource( path );
     }
 }

@@ -5,7 +5,6 @@ import javax.ws.rs.core.FeatureContext;
 
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.jaxrs.impl.exception.JsonExceptionMapper;
-import com.enonic.xp.jaxrs.impl.image.RenderedImageProvider;
 import com.enonic.xp.jaxrs.impl.json.JsonObjectProvider;
 import com.enonic.xp.jaxrs.impl.multipart.MultipartFormReader;
 import com.enonic.xp.web.multipart.MultipartService;
@@ -26,7 +25,6 @@ final class CommonFeature
         context.register( new MultipartFormReader( this.multipartService ) );
         context.register( new JsonObjectProvider() );
         context.register( new JsonExceptionMapper() );
-        context.register( new RenderedImageProvider() );
         return true;
     }
 }
