@@ -1,9 +1,11 @@
 package com.enonic.xp.admin.impl.rest.resource.schema.relationship;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.Instant;
 
+import javax.imageio.ImageIO;
 import javax.ws.rs.core.Response;
 
 import org.junit.jupiter.api.Assertions;
@@ -46,10 +48,8 @@ public class RelationshipTypeResourceTest
     public void testRequestGetRelationshipTypeJson_existing()
         throws Exception
     {
-        final RelationshipType relationshipType = RelationshipType.create().
-            name( "myapplication:the_relationship_type" ).
-            description( "RT description" ).
-            build();
+        final RelationshipType relationshipType =
+            RelationshipType.create().name( "myapplication:the_relationship_type" ).description( "RT description" ).build();
 
         final RelationshipTypeName name = RelationshipTypeName.from( "myapplication:the_relationship_type" );
         Mockito.when( relationshipTypeService.getByName( name ) ).thenReturn( relationshipType );
@@ -76,13 +76,9 @@ public class RelationshipTypeResourceTest
     public void testList()
         throws Exception
     {
-        final RelationshipType relationshipType1 = RelationshipType.create().
-            name( "myapplication:the_relationship_type_1" ).
-            build();
+        final RelationshipType relationshipType1 = RelationshipType.create().name( "myapplication:the_relationship_type_1" ).build();
 
-        final RelationshipType relationshipType2 = RelationshipType.create().
-            name( "myapplication:the_relationship_type_2" ).
-            build();
+        final RelationshipType relationshipType2 = RelationshipType.create().name( "myapplication:the_relationship_type_2" ).build();
 
         final RelationshipTypes relationshipTypes = RelationshipTypes.from( relationshipType1, relationshipType2 );
         Mockito.when( relationshipTypeService.getAll() ).thenReturn( relationshipTypes );
@@ -104,27 +100,29 @@ public class RelationshipTypeResourceTest
         }
         final Icon icon = Icon.from( data, "image/png", Instant.now() );
 
-        RelationshipType relationshipType = RelationshipType.create().
-            name( "myapplication:like" ).
-            fromSemantic( "likes" ).
-            toSemantic( "liked by" ).
-            addAllowedFromType( ContentTypeName.from( "myapplication:person" ) ).
-            addAllowedToType( ContentTypeName.from( "myapplication:person" ) ).
-            icon( icon ).
-            build();
+        RelationshipType relationshipType = RelationshipType.create()
+            .name( "myapplication:like" )
+            .fromSemantic( "likes" )
+            .toSemantic( "liked by" )
+            .addAllowedFromType( ContentTypeName.from( "myapplication:person" ) )
+            .addAllowedToType( ContentTypeName.from( "myapplication:person" ) )
+            .icon( icon )
+            .build();
         setupRelationshipType( relationshipType );
 
         // exercise
         final Response response = this.resource.getIcon( "myapplication:like", 20, null );
-        final BufferedImage mixinIcon = (BufferedImage) response.getEntity();
+        final byte[] iconData = (byte[]) response.getEntity();
 
         // verify
-        assertImage( mixinIcon, 20 );
+        assertNotNull( iconData );
+        final BufferedImage image = ImageIO.read( new ByteArrayInputStream( iconData ) );
+        assertEquals( 20, image.getWidth() );
     }
 
     @Test
     public void testRelationshipTypeIconSvg()
-            throws Exception
+        throws Exception
     {
         final byte[] data;
         try (InputStream stream = getClass().getResourceAsStream( "relationshiptype.svg" ))
@@ -133,21 +131,21 @@ public class RelationshipTypeResourceTest
         }
         final Icon icon = Icon.from( data, "image/svg+xml", Instant.now() );
 
-        RelationshipType relationshipType = RelationshipType.create().
-            name( "myapplication:like" ).
-            fromSemantic( "likes" ).
-            toSemantic( "liked by" ).
-            addAllowedFromType( ContentTypeName.from( "myapplication:person" ) ).
-            addAllowedToType( ContentTypeName.from( "myapplication:person" ) ).
-            icon( icon ).
-            build();
+        RelationshipType relationshipType = RelationshipType.create()
+            .name( "myapplication:like" )
+            .fromSemantic( "likes" )
+            .toSemantic( "liked by" )
+            .addAllowedFromType( ContentTypeName.from( "myapplication:person" ) )
+            .addAllowedToType( ContentTypeName.from( "myapplication:person" ) )
+            .icon( icon )
+            .build();
         setupRelationshipType( relationshipType );
 
         final Response response = this.resource.getIcon( "myapplication:like", 20, null );
 
         assertNotNull( response.getEntity() );
         assertEquals( icon.getMimeType(), response.getMediaType().toString() );
-        Assertions.assertArrayEquals( data, ( byte[] )response.getEntity() );
+        Assertions.assertArrayEquals( data, (byte[]) response.getEntity() );
     }
 
     @Test
@@ -158,19 +156,13 @@ public class RelationshipTypeResourceTest
         final Response response = this.resource.getIcon( "myapplication:icon_svg_test", 20, null );
 
         assertNotNull( response.getEntity() );
-        Assertions.assertArrayEquals( ByteStreams.toByteArray( in ), ( byte[] )response.getEntity() );
+        Assertions.assertArrayEquals( ByteStreams.toByteArray( in ), (byte[]) response.getEntity() );
     }
 
 
     private void setupRelationshipType( final RelationshipType relationshipType )
     {
         Mockito.when( relationshipTypeService.getByName( relationshipType.getName() ) ).thenReturn( relationshipType );
-    }
-
-    private void assertImage( final BufferedImage image, final int size )
-    {
-        assertNotNull( image );
-        assertEquals( size, image.getWidth() );
     }
 
 }

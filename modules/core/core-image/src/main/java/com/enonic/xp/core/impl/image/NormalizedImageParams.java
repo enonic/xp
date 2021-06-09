@@ -126,10 +126,23 @@ class NormalizedImageParams
 
     private static ScaleParams normalizeScaleParams( final ReadImageParams readImageParams )
     {
-        if ( readImageParams.getScaleParams() != null )
+        final ScaleParams scaleParams = readImageParams.getScaleParams();
+        if ( scaleParams != null )
         {
-            // Newer scaleParams could be managed without normalization.
-            return readImageParams.getScaleParams();
+            if ( "full".equals( scaleParams.getName() ) )
+            {
+                // full scale with arguments is not supported
+                if ( scaleParams.getArguments().length > 0 )
+                {
+                    throw new IllegalArgumentException( "Full scale cant have arguments" );
+                }
+                // Full same as no scale at all, in order to save cache space normalize to null
+                return null;
+            }
+            else
+            {
+                return scaleParams;
+            }
         }
         else
         {

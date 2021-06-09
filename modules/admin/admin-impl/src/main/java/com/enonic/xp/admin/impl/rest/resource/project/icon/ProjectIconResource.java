@@ -60,7 +60,7 @@ public final class ProjectIconResource
                                                Response.Status.INTERNAL_SERVER_ERROR );
         }
 
-        final ResolvedImage resolvedImage = new ResolvedImage( iconSource.read(), iconAttachment.getMimeType() );
+        final ResolvedImage resolvedImage = new ResolvedImage( iconSource, iconAttachment.getMimeType() );
 
         if ( resolvedImage.isOK() )
         {

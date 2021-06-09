@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 
+import com.enonic.xp.core.impl.image.effect.ImageScaleFunction;
 import com.enonic.xp.core.impl.image.effect.ImageScales;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ScaleParams;
@@ -30,12 +31,11 @@ public class ImageScaleFunctionBuilderImpl
         map.put( "wide", scaleFunctions::wide );
         map.put( "width", scaleFunctions::width );
         map.put( "block", scaleFunctions::block );
-        map.put( "full", scaleFunctions::full );
         scaleCommandRegistry = map;
     }
 
     @Override
-    public ImageFunction build( final ScaleParams scaleParams, final FocalPoint focalPoint )
+    public ImageScaleFunction build( final ScaleParams scaleParams, final FocalPoint focalPoint )
     {
         final ScaleCommand scaleCommand = scaleCommandRegistry.get( scaleParams.getName() );
 

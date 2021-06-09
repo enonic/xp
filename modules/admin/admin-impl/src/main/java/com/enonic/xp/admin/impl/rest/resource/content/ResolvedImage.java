@@ -1,24 +1,29 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Response;
 
+import com.google.common.io.ByteSource;
+
 public final class ResolvedImage
 {
-    final Object image;
+    final ByteSource image;
 
     final String mimeType;
 
     final boolean gzip;
 
-    public ResolvedImage( final Object image, final String mimeType )
+    public ResolvedImage( final ByteSource image, final String mimeType )
     {
         this.image = image;
         this.mimeType = mimeType;
         this.gzip = false;
     }
 
-    public ResolvedImage( final Object image, final String mimeType, final boolean gzip )
+    public ResolvedImage( final ByteSource image, final String mimeType, final boolean gzip )
     {
         this.image = image;
         this.mimeType = mimeType;
@@ -37,7 +42,15 @@ public final class ResolvedImage
 
     private Response.ResponseBuilder newResponse()
     {
-        final Response.ResponseBuilder r = Response.ok( image, mimeType );
+        final Response.ResponseBuilder r;
+        try
+        {
+            r = Response.ok( image.openBufferedStream(), mimeType );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
         if ( gzip )
         {
             r.encoding( "gzip" );

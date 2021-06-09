@@ -1,14 +1,18 @@
 package com.enonic.xp.core.impl.image.effect;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.TexturePaint;
 import java.awt.Toolkit;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
+import java.util.function.Consumer;
 
 import com.jhlabs.image.BlockFilter;
 import com.jhlabs.image.BumpFilter;
@@ -45,7 +49,7 @@ public class ImageFilters
     {
         final int size = CommandArgumentParser.getIntArg( args, 0, 2 );
         final int color = CommandArgumentParser.getIntArg( args, 1, 0x000000 );
-        return new RectBorderFilter( size, color );
+        return borderFunction( size, color );
     }
 
     public ImageFunction bump( Object... args )
@@ -144,7 +148,7 @@ public class ImageFilters
         final int radius = CommandArgumentParser.getIntArg( args, 0, 10 );
         final int borderSize = CommandArgumentParser.getIntArg( args, 1, 0 );
         final int borderColor = CommandArgumentParser.getIntArg( args, 2, 0x000000 );
-        return new RoundedFilter( radius, borderSize, borderColor );
+        return roundedFunction( radius, borderSize, borderColor );
     }
 
     public ImageFunction sepia( Object... args )
@@ -158,22 +162,85 @@ public class ImageFilters
         return adaptOperation( new SharpenFilter() );
     }
 
-    static ImageFunction adaptOperation( final BufferedImageOp operation )
+    private static ImageFunction adaptOperation( final BufferedImageOp operation )
     {
         return source -> operation.filter( source, null );
     }
 
-    static ImageFunction adaptFilter( final ImageFilter filter )
+    private static ImageFunction adaptFilter( final ImageFilter filter )
     {
         return source -> {
             ImageProducer producer = new FilteredImageSource( source.getSource(), filter );
             Image image = Toolkit.getDefaultToolkit().createImage( producer );
             BufferedImage bufferedImage = ImageHelper.createImage( image.getWidth( null ), image.getHeight( null ), true );
-            Graphics2D g = bufferedImage.createGraphics();
-            g.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-            g.drawImage( image, 0, 0, null );
-            g.dispose();
+            withGraphics( bufferedImage, g -> g.drawImage( image, 0, 0, null ) );
             return bufferedImage;
         };
+    }
+
+    private static ImageFunction roundedFunction( final int radius, final int borderSize, final int borderColor )
+    {
+        return source -> {
+            final int width = source.getWidth();
+            final int height = source.getHeight();
+            BufferedImage dest = ImageHelper.createImage( width, height, true );
+            withGraphics( dest, g -> {
+                int arc = radius * 2;
+
+                if ( borderSize > 0 )
+                {
+                    g.setPaint( new Color( borderColor, false ) );
+                    g.fillRoundRect( 0, 0, width, height, arc, arc );
+                }
+
+                arc = arc - ( borderSize * 2 );
+
+                g.setPaint( new TexturePaint( source, new Rectangle2D.Float( 0, 0, width, height ) ) );
+                g.fillRoundRect( borderSize, borderSize, width - ( borderSize * 2 ), height - ( borderSize * 2 ), arc, arc );
+            } );
+
+            return dest;
+        };
+    }
+
+    private static ImageFunction borderFunction( final int size, final int color )
+    {
+        return source -> {
+            final int width = source.getWidth();
+            final int height = source.getHeight();
+            BufferedImage dest = ImageHelper.createImage( width, height, true );
+            withGraphics( dest, g -> {
+
+                g.setPaint( new Color( color, false ) );
+
+                // drawing the border around image consists of of 4 rectangles with thickness = this.size
+                if ( size > 0 )
+                {
+                    g.fillRect( 0, 0, width, size );
+                    g.fillRect( 0, 0, size, height );
+                    g.fillRect( width - size, 0, size, height );
+                    g.fillRect( 0, height - size, width, size );
+                }
+
+                g.setPaint( new TexturePaint( source, new Rectangle2D.Float( 0, 0, width, height ) ) );
+                g.fillRect( size, size, width - ( size * 2 ), height - ( size * 2 ) );
+            } );
+
+            return dest;
+        };
+    }
+
+    private static void withGraphics( final BufferedImage img, Consumer<Graphics2D> consumer )
+    {
+        Graphics2D g = img.createGraphics();
+        try
+        {
+            g.setRenderingHint( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+            consumer.accept( g );
+        }
+        finally
+        {
+            g.dispose();
+        }
     }
 }
