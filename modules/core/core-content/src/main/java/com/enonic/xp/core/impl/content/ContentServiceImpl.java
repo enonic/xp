@@ -853,7 +853,6 @@ public class ContentServiceImpl
         return result;
     }
 
-
     @Override
     public Content rename( final RenameContentParams params )
     {

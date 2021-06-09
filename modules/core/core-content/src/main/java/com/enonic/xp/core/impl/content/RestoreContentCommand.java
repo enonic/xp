@@ -84,9 +84,6 @@ final class RestoreContentCommand
 
         final Node movedNode = nodeService.move( builder.build() );
 
-        // TODO: discuss
-        nodeService.deleteById( container.id() );
-
         final Content movedContent = translator.fromNode( movedNode, true );
 
         return RestoreContentsResult.create().
