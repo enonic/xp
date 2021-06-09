@@ -95,7 +95,6 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResetContentInheritJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishContentResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.RestoreContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.RevertContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
@@ -105,12 +104,10 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.UnpublishContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.query.ContentQueryWithChildren;
 import com.enonic.xp.admin.impl.rest.resource.content.task.ApplyPermissionsRunnableTask;
-import com.enonic.xp.admin.impl.rest.resource.content.task.ArchiveRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.DeleteRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.DuplicateRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.MoveRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.PublishRunnableTask;
-import com.enonic.xp.admin.impl.rest.resource.content.task.RestoreRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.UnpublishRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
@@ -437,32 +434,6 @@ public final class ContentResource
         return MoveRunnableTask.create()
             .params( params )
             .description( "Move content" )
-            .taskService( taskService )
-            .contentService( contentService )
-            .build()
-            .createTaskResult();
-    }
-
-    @POST
-    @Path("archive")
-    public TaskResultJson archive( final ArchiveContentJson params )
-    {
-        return ArchiveRunnableTask.create()
-            .params( params )
-            .description( "Archive content" )
-            .taskService( taskService )
-            .contentService( contentService )
-            .build()
-            .createTaskResult();
-    }
-
-    @POST
-    @Path("restore")
-    public TaskResultJson restore( final RestoreContentJson params )
-    {
-        return RestoreRunnableTask.create()
-            .params( params )
-            .description( "Restore content" )
             .taskService( taskService )
             .contentService( contentService )
             .build()
