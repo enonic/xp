@@ -1,6 +1,5 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.annotation.security.RolesAllowed;
@@ -25,6 +24,8 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.exception.ThrottlingException;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ImageService;
@@ -40,6 +41,8 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.util.Exceptions;
+import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 
 import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.CMS_PATH;
 import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.REST_ROOT;
@@ -125,15 +128,8 @@ public final class ContentImageResource
             final ByteSource binary = contentService.getBinary( media.getId(), attachment.getBinaryReference() );
             if ( binary != null )
             {
-                try
-                {
                     final boolean gzip = attachment.getName() != null && attachment.getName().toLowerCase().endsWith( ".svgz" );
-                    return new ResolvedImage( binary.read(), attachment.getMimeType(), gzip );
-                }
-                catch ( final IOException e )
-                {
-                    throw Exceptions.unchecked( e );
-                }
+                return new ResolvedImage( binary, attachment.getMimeType(), gzip );
             }
         }
         return ResolvedImage.unresolved();
@@ -155,7 +151,7 @@ public final class ContentImageResource
 
                     if ( mimeType.equals( "image/gif" ) )
                     {
-                        return new ResolvedImage( binary.read(), mimeType );
+                        return new ResolvedImage( binary, mimeType );
                     }
 
                     final Cropping cropping = ( !source && crop ) ? media.getCropping() : null;
@@ -174,16 +170,18 @@ public final class ContentImageResource
                         scaleWidth( scaleWidth ).
                         mimeType( mimeType ).
                         quality( DEFAULT_QUALITY ).
-                        orientation( imageOrientation ).
-                        filterParam( filter ).
-                        build();
+                        orientation( imageOrientation ).filterParam( filter ).build();
 
                     final ByteSource contentImage = imageService.readImage( readImageParams );
-                    return new ResolvedImage( contentImage.read(), mimeType );
+                    return new ResolvedImage( contentImage, mimeType );
                 }
                 catch ( IOException e )
                 {
                     throw Exceptions.unchecked( e );
+                }
+                catch ( ThrottlingException e )
+                {
+                    throw new WebException( HttpStatus.TOO_MANY_REQUESTS, "Try again later", e );
                 }
             }
         }
@@ -191,17 +189,19 @@ public final class ContentImageResource
     }
 
     private ResolvedImage resolveResponseFromContentType( final Content content, final int size )
+        throws IOException
     {
         final ContentType superContentTypeWithIcon = resolveSuperContentTypeWithIcon( content.getType() );
         if ( superContentTypeWithIcon == null || superContentTypeWithIcon.getIcon() == null )
         {
             return ResolvedImage.unresolved();
         }
+        final Icon icon = superContentTypeWithIcon.getIcon();
 
-        final BufferedImage contentImage = HELPER.resizeImage( superContentTypeWithIcon.getIcon().asInputStream(), size );
-        final String mimeType = superContentTypeWithIcon.getIcon().getMimeType();
+        final String mimeType = icon.getMimeType();
+        final byte[] contentImage = HELPER.readIconImage( icon, size );
 
-        return new ResolvedImage( contentImage, mimeType );
+        return new ResolvedImage( ByteSource.wrap( contentImage ), mimeType );
     }
 
     private ContentType resolveSuperContentTypeWithIcon( final ContentTypeName contentTypeName )

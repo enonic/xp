@@ -3,28 +3,37 @@ package com.enonic.xp.core.impl.image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Iterator;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
+import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.core.impl.image.parser.FilterSetExpr;
+import com.enonic.xp.core.impl.image.effect.ImageScaleFunction;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.image.Cropping;
-import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ImageHelper;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
-import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.util.HexEncoder;
 
@@ -32,6 +41,8 @@ import com.enonic.xp.util.HexEncoder;
 public class ImageServiceImpl
     implements ImageService
 {
+    private static final Logger LOG = LoggerFactory.getLogger( ImageServiceImpl.class );
+
     private final Path cacheFolder = HomeDir.get().toPath().resolve( "work" ).resolve( "cache" ).resolve( "img" );
 
     private final ContentService contentService;
@@ -40,14 +51,19 @@ public class ImageServiceImpl
 
     private final ImageFilterBuilder imageFilterBuilder;
 
+    private final MemoryCircuitBreaker circuitBreaker;
+
     @Activate
     public ImageServiceImpl( @Reference final ContentService contentService,
                              @Reference final ImageScaleFunctionBuilder imageScaleFunctionBuilder,
-                             @Reference final ImageFilterBuilder imageFilterBuilder )
+                             @Reference final ImageFilterBuilder imageFilterBuilder, final ImageConfig config )
     {
         this.contentService = contentService;
         this.imageScaleFunctionBuilder = imageScaleFunctionBuilder;
         this.imageFilterBuilder = imageFilterBuilder;
+
+        this.circuitBreaker = new MemoryCircuitBreaker(
+            toMegaBytes( new MemoryLimitParser( Runtime.getRuntime()::maxMemory ).parse( config.memoryLimit() ) ) );
     }
 
     @Override
@@ -56,29 +72,25 @@ public class ImageServiceImpl
     {
         NormalizedImageParams normalizedImageParams = new NormalizedImageParams( readImageParams );
         final Path cachedImagePath = getCachedImagePath( normalizedImageParams );
-        return ImmutableFilesHelper.computeIfAbsent( cachedImagePath, () -> createImage( normalizedImageParams ) );
+        return ImmutableFilesHelper.computeIfAbsent( cachedImagePath, sink -> writeImage( normalizedImageParams, sink ) );
     }
 
-    private ByteSource createImage( final NormalizedImageParams readImageParams )
-        throws IOException
+    private boolean writeImage( final NormalizedImageParams readImageParams, final ByteSink sink )
     {
-        final ByteSource blob = contentService.getBinary( readImageParams.getContentId(), readImageParams.getBinaryReference() );
-
-        if ( blob != null )
+        try
         {
-            final BufferedImage bufferedImage = readBufferedImage( blob, readImageParams );
-            if ( bufferedImage != null )
+            final ByteSource blob = contentService.getBinary( readImageParams.getContentId(), readImageParams.getBinaryReference() );
+
+            if ( blob != null )
             {
-                // Previous ImageHelper implementation interpreted 0 as system default quality explicitly,
-                // and anything below 0 as system default due to Exception swallow
-                // New implementation supports 0 value (it means "best compression" for PNG),
-                // but 0 quality in image service need to be retrofitted to "system default", otherwise JPEG with 0 quality
-                // is over-compressed and looks way different from system default compressed image.
-                final int writeImageQuality = readImageParams.getQuality() == 0 ? -1 : readImageParams.getQuality();
-                return ByteSource.wrap( ImageHelper.writeImage( bufferedImage, readImageParams.getFormat(), writeImageQuality ) );
+                return createImage( blob, readImageParams, sink );
             }
+            return false;
         }
-        return null;
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     @Deprecated
@@ -118,66 +130,130 @@ public class ImageServiceImpl
                                         readImageParams.getBinaryReference().toString() );
         final HashCode hashCode = Hashing.sha1().hashString( key, StandardCharsets.UTF_8 );
         final String hash = HexEncoder.toHex( hashCode.asBytes() );
-        return cacheFolder.
-            resolve( hash.substring( 0, 2 ) ).
-            resolve( hash.substring( 2, 4 ) ).
-            resolve( hash.substring( 4, 6 ) ).
-            resolve( hash );
+        return cacheFolder.resolve( hash.substring( 0, 2 ) )
+            .resolve( hash.substring( 2, 4 ) )
+            .resolve( hash.substring( 4, 6 ) )
+            .resolve( hash );
     }
 
-    private BufferedImage readBufferedImage( final ByteSource blob, final NormalizedImageParams readImageParams )
+    private boolean createImage( final ByteSource blob, final NormalizedImageParams readImageParams, ByteSink sink )
         throws IOException
     {
-        //Retrieves the buffered image
-        BufferedImage bufferedImage = retrieveBufferedImage( blob );
-
-        if ( bufferedImage != null )
+        try (InputStream inputStream = blob.openStream(); ImageInputStream stream = ImageIO.createImageInputStream( inputStream ))
         {
-            //Applies the rotation
-            if ( readImageParams.getOrientation() != ImageOrientation.TopLeft )
-            {
-                bufferedImage = applyRotation( bufferedImage, readImageParams.getOrientation() );
-            }
+            final ImageReader imageReader = getImageReader( stream );
 
-            //Apply the cropping
-            if ( readImageParams.getCropping() != null )
+            if ( imageReader != null )
             {
-                bufferedImage = applyCropping( bufferedImage, readImageParams.getCropping() );
-            }
+                try
+                {
+                    final int width = imageReader.getWidth( 0 );
+                    final int height = imageReader.getHeight( 0 );
 
-            //Applies the scaling
-            if ( readImageParams.getScaleParams() != null )
-            {
-                bufferedImage = applyScalingParams( bufferedImage, readImageParams.getScaleParams(), readImageParams.getFocalPoint() );
-            }
+                    final ColorModel originalColorModel = imageReader.getRawImageType( 0 ).getColorModel();
 
-            //Applies the filters
-            if ( !readImageParams.getFilterParam().isEmpty() )
-            {
-                bufferedImage = applyFilters( bufferedImage, readImageParams.getFilterParam() );
-            }
+                    final int pixelSize = originalColorModel.getPixelSize() / Byte.SIZE;
 
-            //Applies alpha channel removal
-            if ( !"png".equals( readImageParams.getFormat() ) )
-            {
-                bufferedImage = ImageHelper.removeAlphaChannel( bufferedImage, readImageParams.getBackgroundColor() );
+                    final boolean toRotate = readImageParams.getOrientation() != ImageOrientation.TopLeft;
+                    final boolean toApplyFilters = !readImageParams.getFilterParam().isEmpty();
+                    final boolean toAddBackground = !"png".equals( readImageParams.getFormat() ) && originalColorModel.hasAlpha();
+                    final boolean toScale = readImageParams.getScaleParams() != null;
+                    final boolean toCrop = readImageParams.getCropping() != null;
+
+                    final int originalMultiplier = 1 + ( toRotate || ( !toScale && ( toApplyFilters || toAddBackground ) ) ? 1 : 0 );
+
+                    final int originalMemoryRequirements =
+                        Math.max( toMegaBytes( (long) width * height * pixelSize * originalMultiplier ), 1 );
+
+                    final ImageScaleFunction imageScaleFunction;
+                    final int scaledMemoryRequirements;
+                    if ( toScale )
+                    {
+                        imageScaleFunction =
+                            imageScaleFunctionBuilder.build( readImageParams.getScaleParams(), readImageParams.getFocalPoint() );
+                        final int scaledMultiplier = 1 + ( ( toApplyFilters || toAddBackground ) ? 1 : 0 );
+                        scaledMemoryRequirements = Math.max(
+                            toMegaBytes( (long) imageScaleFunction.estimateResolution( width, height ) * pixelSize * scaledMultiplier ),
+                            1 );
+                    }
+                    else
+                    {
+                        imageScaleFunction = null;
+                        scaledMemoryRequirements = 0;
+                    }
+
+                    final int totalMemoryRequirementsEstimate = originalMemoryRequirements + scaledMemoryRequirements;
+
+                    LOG.debug( "Estimated original {} scaled {} total {} requirements. With pixelSize {}", originalMemoryRequirements,
+                               scaledMemoryRequirements, totalMemoryRequirementsEstimate, pixelSize );
+
+                    final int permitted = circuitBreaker.softTryAcquire( totalMemoryRequirementsEstimate );
+                    try
+                    {
+                        BufferedImage bufferedImage = imageReader.read( 0, imageReader.getDefaultReadParam() );
+                        imageReader.dispose();
+                        if ( bufferedImage != null )
+                        {
+                            if ( toRotate )
+                            {
+                                bufferedImage = applyRotation( bufferedImage, readImageParams.getOrientation() );
+                            }
+
+                            if ( toCrop )
+                            {
+                                bufferedImage = applyCropping( bufferedImage, readImageParams.getCropping() );
+                            }
+
+                            if ( toScale )
+                            {
+                                bufferedImage = imageScaleFunction.apply( bufferedImage );
+                            }
+
+                            if ( toApplyFilters )
+                            {
+                                bufferedImage = imageFilterBuilder.build( readImageParams.getFilterParam() ).apply( bufferedImage );
+                            }
+
+                            if ( toAddBackground )
+                            {
+                                bufferedImage = ImageHelper.removeAlphaChannel( bufferedImage, readImageParams.getBackgroundColor() );
+                            }
+
+                            // Previous ImageHelper implementation interpreted 0 as system default quality explicitly,
+                            // and anything below 0 as system default due to Exception swallow
+                            // New implementation supports 0 value (it means "best compression" for PNG),
+                            // but 0 quality in image service need to be retrofitted to "system default", otherwise JPEG with 0 quality
+                            // is over-compressed and looks way different from system default compressed image.
+                            final int writeImageQuality = readImageParams.getQuality() == 0 ? -1 : readImageParams.getQuality();
+                            try (OutputStream outputStream = sink.openBufferedStream())
+                            {
+                                ImageHelper.writeImage( outputStream, bufferedImage, readImageParams.getFormat(), writeImageQuality );
+                            }
+                            LOG.info( "Finish writing" );
+                            return true;
+                        }
+                    }
+                    finally
+                    {
+                        circuitBreaker.release( permitted );
+                    }
+                }
+                finally
+                {
+                    imageReader.dispose();
+                }
+
             }
         }
-
-        return bufferedImage;
+        return false;
     }
 
-    private BufferedImage retrieveBufferedImage( final ByteSource blob )
-        throws IOException
+    private static int toMegaBytes( long bytesValue )
     {
-        try (InputStream inputStream = blob.openStream())
-        {
-            return ImageHelper.toBufferedImage( inputStream );
-        }
+        return Math.toIntExact( bytesValue / 1024 / 1024 );
     }
 
-
-    private BufferedImage applyCropping( final BufferedImage bufferedImage, final Cropping cropping )
+    private static BufferedImage applyCropping( final BufferedImage bufferedImage, final Cropping cropping )
     {
         final double width = bufferedImage.getWidth();
         final double height = bufferedImage.getHeight();
@@ -186,17 +262,7 @@ public class ImageServiceImpl
 
     }
 
-    private BufferedImage applyScalingParams( final BufferedImage sourceImage, final ScaleParams scaleParams, final FocalPoint focalPoint )
-    {
-        return imageScaleFunctionBuilder.build( scaleParams, focalPoint ).apply( sourceImage );
-    }
-
-    private BufferedImage applyFilters( final BufferedImage sourceImage, final FilterSetExpr filterParam )
-    {
-        return imageFilterBuilder.build( filterParam ).apply( sourceImage );
-    }
-
-    private BufferedImage applyRotation( final BufferedImage bufferedImage, final ImageOrientation orientation )
+    private static BufferedImage applyRotation( final BufferedImage bufferedImage, final ImageOrientation orientation )
     {
         final AffineTransform transform = new AffineTransform();
         int resultWidth = bufferedImage.getWidth();
@@ -249,5 +315,25 @@ public class ImageServiceImpl
         final BufferedImage destinationImage = new BufferedImage( resultWidth, resultHeight, bufferedImage.getType() );
         final AffineTransformOp op = new AffineTransformOp( transform, AffineTransformOp.TYPE_BICUBIC );
         return op.filter( bufferedImage, destinationImage );
+    }
+
+    private static ImageReader getImageReader( final ImageInputStream stream )
+    {
+        if ( stream == null )
+        {
+            return null;
+        }
+        final Iterator<ImageReader> imageReaders = ImageIO.getImageReaders( stream );
+        if ( imageReaders.hasNext() )
+        {
+            final ImageReader imageReader = imageReaders.next();
+            imageReader.setInput( stream );
+
+            return imageReader;
+        }
+        else
+        {
+            return null;
+        }
     }
 }

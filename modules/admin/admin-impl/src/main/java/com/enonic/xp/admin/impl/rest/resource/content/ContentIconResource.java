@@ -147,7 +147,7 @@ public final class ContentIconResource
             {
                 final ByteSource binary = contentService.getBinary( params.id, params.binaryReference );
                 final boolean gzip = params.fileName != null && params.fileName.toLowerCase().endsWith( ".svgz" );
-                return new ResolvedImage( binary.read(), params.mimeType, gzip );
+                return new ResolvedImage( binary, params.mimeType, gzip );
             }
             else
             {
@@ -163,7 +163,7 @@ public final class ContentIconResource
                     build();
 
                 final ByteSource contentImage = imageService.readImage( readImageParams );
-                return new ResolvedImage( contentImage.read(), params.mimeType );
+                return new ResolvedImage( contentImage, params.mimeType );
             }
 
         }

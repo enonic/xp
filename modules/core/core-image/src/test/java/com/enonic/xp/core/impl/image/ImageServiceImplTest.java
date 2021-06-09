@@ -59,9 +59,10 @@ public class ImageServiceImplTest
         when( imageFilterBuilder.build( any() ) ).thenReturn( imageFilter );
 
         final ImageScaleFunctionBuilderImpl imageScaleFunctionBuilder = new ImageScaleFunctionBuilderImpl();
-        imageScaleFunctionBuilder.activate( mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
+        final ImageConfig imageConfig = mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        imageScaleFunctionBuilder.activate( imageConfig );
 
-        imageService = new ImageServiceImpl( contentService, imageScaleFunctionBuilder, imageFilterBuilder );
+        imageService = new ImageServiceImpl( contentService, imageScaleFunctionBuilder, imageFilterBuilder, imageConfig );
     }
 
     @Test

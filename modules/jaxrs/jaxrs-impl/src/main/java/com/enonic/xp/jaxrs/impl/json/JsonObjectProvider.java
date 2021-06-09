@@ -12,6 +12,6 @@ public final class JsonObjectProvider
 {
     public JsonObjectProvider()
     {
-        setMapper( ObjectMapperHelper.create() );
+        super( ObjectMapperHelper.create() );
     }
 }

@@ -2,7 +2,6 @@ package com.enonic.xp.image;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
@@ -17,14 +16,13 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.Exceptions;
 
-@PublicApi
 public final class ImageHelper
 {
     private ImageHelper()
@@ -36,7 +34,9 @@ public final class ImageHelper
         try
         {
             final BufferedImage image = createImage( width, height, true );
-            final byte[] bytes = writeImage( image, "png", 0 );
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            writeImage( out, image, "png", 0 );
+            final byte[] bytes = out.toByteArray();
 
             return "data:image/png;base64," + Base64.getEncoder().encodeToString( bytes );
         }
@@ -46,6 +46,7 @@ public final class ImageHelper
         }
     }
 
+    @Deprecated
     public static BufferedImage toBufferedImage( final InputStream inputStream )
     {
         try
@@ -101,9 +102,12 @@ public final class ImageHelper
     public static byte[] serializeImage( final BufferedImage bufferedImage, final String mimeType, final int quality )
         throws IOException
     {
-        return writeImage( bufferedImage, getFormatByMimeType( mimeType ), quality == 0 ? -1 : quality );
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        writeImage( out, bufferedImage, getFormatByMimeType( mimeType ), quality == 0 ? -1 : quality );
+        return out.toByteArray();
     }
 
+    @Deprecated
     public static byte[] writeImage( final BufferedImage image, final String format, final int quality )
         throws IOException
     {
@@ -116,14 +120,17 @@ public final class ImageHelper
         throws IOException
     {
         final ImageWriter writer = getWriterByFormat( format );
-        try (MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream( out ))
+        try (ImageOutputStream output = new MemoryCacheImageOutputStream( out ))
         {
             writer.setOutput( output );
             final ImageWriteParam params = writer.getDefaultWriteParam();
             setCompressionQuality( params, quality );
             writer.write( null, new IIOImage( image, null, null ), params );
         }
-        writer.dispose();
+        finally
+        {
+            writer.dispose();
+        }
     }
 
     private static void setCompressionQuality( ImageWriteParam params, int quality )
@@ -143,6 +150,7 @@ public final class ImageHelper
         }
     }
 
+    @Deprecated
     public static BufferedImage createImage( BufferedImage src, boolean hasAlpha )
     {
         return createImage( src.getWidth(), src.getHeight(), hasAlpha );
@@ -153,17 +161,20 @@ public final class ImageHelper
         return new BufferedImage( width, height, hasAlpha ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB );
     }
 
-    public static BufferedImage getScaledInstance( BufferedImage img, int targetWidth, int targetHeight )
+    public static BufferedImage getScaledInstance( BufferedImage img, int width, int height )
     {
-        int width = Math.max( 1, targetWidth );
-        int height = Math.max( 1, targetHeight );
-
         Image scaledImage = img.getScaledInstance( width, height, Image.SCALE_SMOOTH );
         final boolean hasAlpha = img.getTransparency() != Transparency.OPAQUE;
         BufferedImage targetImage = createImage( width, height, hasAlpha );
         Graphics g = targetImage.createGraphics();
-        g.drawImage( scaledImage, 0, 0, null );
-        g.dispose();
+        try
+        {
+            g.drawImage( scaledImage, 0, 0, null );
+        }
+        finally
+        {
+            g.dispose();
+        }
         return targetImage;
     }
 
@@ -174,14 +185,20 @@ public final class ImageHelper
             return img;
         }
 
-        final BufferedImage target = createImage( img, false );
-        final Graphics2D g = target.createGraphics();
-        g.setColor( new Color( color, false ) );
-        g.fillRect( 0, 0, img.getWidth(), img.getHeight() );
-        g.drawImage( img, 0, 0, null );
-        g.dispose();
+        final BufferedImage targetImage = createImage( img.getWidth(), img.getHeight(), false );
+        final Graphics g = targetImage.createGraphics();
+        try
+        {
+            g.setColor( new Color( color, false ) );
+            g.fillRect( 0, 0, img.getWidth(), img.getHeight() );
+            g.drawImage( img, 0, 0, null );
+        }
+        finally
+        {
+            g.dispose();
+        }
 
-        return target;
+        return targetImage;
     }
 
     @Deprecated

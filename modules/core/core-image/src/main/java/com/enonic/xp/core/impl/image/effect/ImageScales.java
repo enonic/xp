@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.image.effect;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.core.impl.image.ImageFunction;
 import com.enonic.xp.core.impl.image.parser.CommandArgumentParser;
 import com.enonic.xp.image.FocalPoint;
 
@@ -15,14 +14,7 @@ public class ImageScales
         this.maxSideLength = maxSideLength;
     }
 
-    public ImageFunction full( FocalPoint focalPoint, Object... args )
-    {
-        Preconditions.checkArgument( args.length == 0, "Too many arguments %s", args.length );
-
-        return new FullScale();
-    }
-
-    public ImageFunction block( FocalPoint focalPoint, Object... args )
+    public ImageScaleFunction block( FocalPoint focalPoint, Object... args )
     {
         Preconditions.checkArgument( args.length <= 2, "Too many arguments %s", args.length );
 
@@ -36,10 +28,10 @@ public class ImageScales
         Preconditions.checkArgument( height > 0 && height <= maxSideLength, "height value must be between 0 and %s : %s", maxSideLength,
                                      height );
 
-        return new BlockScale( width, height, xOffset, yOffset );
+        return adaptScaleCalculator( ScaleCalculator.block( width, height, xOffset, yOffset ) );
     }
 
-    public ImageFunction square( FocalPoint focalPoint, Object... args )
+    public ImageScaleFunction square( FocalPoint focalPoint, Object... args )
     {
         Preconditions.checkArgument( args.length <= 1, "Too many arguments %s", args.length );
 
@@ -49,10 +41,10 @@ public class ImageScales
 
         Preconditions.checkArgument( size > 0 && size <= maxSideLength, "size value must be between 0 and %s : %s", maxSideLength, size );
 
-        return new SquareScale( size, xOffset, yOffset );
+        return adaptScaleCalculator( ScaleCalculator.block( size, size, xOffset, yOffset ) );
     }
 
-    public ImageFunction max( FocalPoint focalPoint, Object... args )
+    public ImageScaleFunction max( FocalPoint focalPoint, Object... args )
     {
         Preconditions.checkArgument( args.length <= 1, "Too many arguments %s", args.length );
 
@@ -60,10 +52,10 @@ public class ImageScales
 
         Preconditions.checkArgument( size > 0 && size <= maxSideLength, "size value must be between 0 and %s : %s", maxSideLength, size );
 
-        return new MaxScale( size );
+        return adaptScaleCalculator( ScaleCalculator.max( size ) );
     }
 
-    public ImageFunction wide( FocalPoint focalPoint, Object... args )
+    public ImageScaleFunction wide( FocalPoint focalPoint, Object... args )
     {
         Preconditions.checkArgument( args.length <= 2, "Too many arguments %s", args.length );
 
@@ -76,10 +68,10 @@ public class ImageScales
         Preconditions.checkArgument( height > 0 && height <= maxSideLength, "height value must be between 0 and %s : %s", maxSideLength,
                                      height );
 
-        return new WideScale( width, height, offset );
+        return adaptScaleCalculator( ScaleCalculator.wide( width, height, offset ) );
     }
 
-    public ImageFunction height( FocalPoint focalPoint, Object... args )
+    public ImageScaleFunction height( FocalPoint focalPoint, Object... args )
     {
         Preconditions.checkArgument( args.length <= 1, "Too many arguments %s", args.length );
 
@@ -87,10 +79,10 @@ public class ImageScales
 
         Preconditions.checkArgument( size > 0 && size <= maxSideLength, "size value must be between 0 and %s : %s", maxSideLength, size );
 
-        return new HeightScale( size );
+        return adaptScaleCalculator( ScaleCalculator.height( size ) );
     }
 
-    public ImageFunction width( FocalPoint focalPoint, Object... args )
+    public ImageScaleFunction width( FocalPoint focalPoint, Object... args )
     {
         Preconditions.checkArgument( args.length <= 1, "Too many arguments %s", args.length );
 
@@ -98,6 +90,11 @@ public class ImageScales
 
         Preconditions.checkArgument( size > 0 && size <= maxSideLength, "size value must be between 0 and %s : %s", maxSideLength, size );
 
-        return new WidthScale( size );
+        return adaptScaleCalculator( ScaleCalculator.width( size ) );
+    }
+
+    private static ImageScaleFunction adaptScaleCalculator( final ScaleCalculator scaleCalculator )
+    {
+        return new ScaledFunction( scaleCalculator );
     }
 }
