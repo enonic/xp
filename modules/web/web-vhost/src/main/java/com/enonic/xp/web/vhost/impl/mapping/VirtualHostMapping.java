@@ -3,7 +3,6 @@ package com.enonic.xp.web.vhost.impl.mapping;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.web.vhost.VirtualHost;
-import com.enonic.xp.web.vhost.impl.VirtualHostInternalHelper;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -75,12 +74,41 @@ public final class VirtualHostMapping
 
     public void setSource( final String value )
     {
-        this.source = VirtualHostInternalHelper.normalizePath( value );
+        this.source = normalizePath( value );
     }
 
     public void setTarget( final String value )
     {
-        this.target = VirtualHostInternalHelper.normalizePath( value );
+        this.target = normalizePath( value );
+    }
+
+    private String normalizePath( final String value )
+    {
+        if ( value == null )
+        {
+            return "/";
+        }
+
+        final StringBuilder result = new StringBuilder();
+
+        if ( !value.startsWith( "/" ) )
+        {
+            result.append( "/" );
+        }
+
+        if ( value.length() > 1 )
+        {
+            if ( value.endsWith( "/" ) )
+            {
+                result.append( value, 0, value.length() - 1 );
+            }
+            else
+            {
+                result.append( value );
+            }
+        }
+
+        return result.toString();
     }
 
     public void setVirtualHostIdProvidersMapping( final VirtualHostIdProvidersMapping virtualHostIdProvidersMapping )

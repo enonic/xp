@@ -30,4 +30,20 @@ public class VirtualHostInternalHelperTest
         assertEquals( fullTarget, "/b/c/other/service" );
     }
 
+    @Test
+    public void testGetFullTargetPathWithTrailingSlash()
+    {
+        final VirtualHostMapping virtualHostMapping = new VirtualHostMapping( "host" );
+
+        virtualHostMapping.setHost( "foo.no" );
+        virtualHostMapping.setSource( "/a" );
+        virtualHostMapping.setTarget( "/b/c" );
+
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getRequestURI() ).thenReturn( "/a/other/service/" );
+
+        final String fullTarget = VirtualHostInternalHelper.getFullTargetPath( virtualHostMapping, req );
+
+        assertEquals( fullTarget, "/b/c/other/service/" );
+    }
 }

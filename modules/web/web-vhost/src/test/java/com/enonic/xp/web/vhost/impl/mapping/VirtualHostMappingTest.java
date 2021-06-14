@@ -41,14 +41,26 @@ public class VirtualHostMappingTest
     {
         assertEquals( "/", this.virtualHostMapping.getSource() );
 
+        this.virtualHostMapping.setSource( null );
+        assertEquals( "/", this.virtualHostMapping.getSource() );
+
         this.virtualHostMapping.setSource( "a/b" );
         assertEquals( "/a/b", this.virtualHostMapping.getSource() );
 
-        this.virtualHostMapping.setSource( "//a/b/" );
+        this.virtualHostMapping.setSource( "/a/b" );
         assertEquals( "/a/b", this.virtualHostMapping.getSource() );
 
-        this.virtualHostMapping.setSource( null );
-        assertEquals( "/", this.virtualHostMapping.getSource() );
+        this.virtualHostMapping.setSource( "a/b/" );
+        assertEquals( "/a/b", this.virtualHostMapping.getSource() );
+
+        this.virtualHostMapping.setSource( "/a/b/" );
+        assertEquals( "/a/b", this.virtualHostMapping.getSource() );
+
+        this.virtualHostMapping.setSource( "/a/b//" );
+        assertEquals( "/a/b/", this.virtualHostMapping.getSource() );
+
+        this.virtualHostMapping.setSource( "//a/b/" );
+        assertEquals( "//a/b", this.virtualHostMapping.getSource() );
     }
 
     @Test
@@ -56,14 +68,26 @@ public class VirtualHostMappingTest
     {
         assertEquals( "/", this.virtualHostMapping.getTarget() );
 
+        this.virtualHostMapping.setTarget( null );
+        assertEquals( "/", this.virtualHostMapping.getTarget() );
+
         this.virtualHostMapping.setTarget( "a/b" );
         assertEquals( "/a/b", this.virtualHostMapping.getTarget() );
 
-        this.virtualHostMapping.setTarget( "//a/b/" );
+        this.virtualHostMapping.setTarget( "/a/b" );
         assertEquals( "/a/b", this.virtualHostMapping.getTarget() );
 
-        this.virtualHostMapping.setTarget( null );
-        assertEquals( "/", this.virtualHostMapping.getTarget() );
+        this.virtualHostMapping.setTarget( "a/b/" );
+        assertEquals( "/a/b", this.virtualHostMapping.getTarget() );
+
+        this.virtualHostMapping.setTarget( "/a/b/" );
+        assertEquals( "/a/b", this.virtualHostMapping.getTarget() );
+
+        this.virtualHostMapping.setTarget( "/a/b//" );
+        assertEquals( "/a/b/", this.virtualHostMapping.getTarget() );
+
+        this.virtualHostMapping.setTarget( "//a/b/" );
+        assertEquals( "//a/b", this.virtualHostMapping.getTarget() );
     }
 
     @Test
