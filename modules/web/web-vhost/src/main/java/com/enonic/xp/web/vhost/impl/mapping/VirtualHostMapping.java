@@ -1,35 +1,38 @@
 package com.enonic.xp.web.vhost.impl.mapping;
 
+import java.util.Objects;
+
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.web.vhost.VirtualHost;
-import com.enonic.xp.web.vhost.impl.VirtualHostInternalHelper;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class VirtualHostMapping
     implements VirtualHost
 {
-    private static final String DEFAULT_HOST = "localhost";
-
-    private static final String DEFAULT_PATH = "/";
-
     private final String name;
 
-    private String host;
+    private final String host;
 
-    private String source;
+    private final String source;
 
-    private String target;
+    private final String target;
 
-    private VirtualHostIdProvidersMapping virtualHostIdProvidersMapping;
+    private final VirtualHostIdProvidersMapping idProvidersMapping;
 
-    public VirtualHostMapping( final String name )
+    public VirtualHostMapping( final String name, final String host, final String source, final String target,
+                               final VirtualHostIdProvidersMapping idProvidersMapping )
     {
+        Objects.requireNonNull( name, "name must be set" );
+        Objects.requireNonNull( host, "host must be set" );
+        Objects.requireNonNull( source, "source must be set" );
+        Objects.requireNonNull( target, "target must be set" );
+        Objects.requireNonNull( idProvidersMapping, "idProvidersMapping must be set" );
+
         this.name = name;
-        this.host = DEFAULT_HOST;
-        this.source = DEFAULT_PATH;
-        this.target = DEFAULT_PATH;
+        this.host = host;
+        this.source = source;
+        this.target = target;
+        this.idProvidersMapping = idProvidersMapping;
     }
 
     @Override
@@ -59,32 +62,13 @@ public final class VirtualHostMapping
     @Override
     public IdProviderKey getDefaultIdProviderKey()
     {
-        return virtualHostIdProvidersMapping == null ? null : virtualHostIdProvidersMapping.getDefaultIdProvider();
+        return idProvidersMapping.getDefaultIdProvider();
     }
 
     @Override
     public IdProviderKeys getIdProviderKeys()
     {
-        return virtualHostIdProvidersMapping == null ? IdProviderKeys.empty() : virtualHostIdProvidersMapping.getIdProviderKeys();
+        return idProvidersMapping.getIdProviderKeys();
     }
 
-    public void setHost( final String value )
-    {
-        this.host = isNullOrEmpty( value ) ? DEFAULT_HOST : value;
-    }
-
-    public void setSource( final String value )
-    {
-        this.source = VirtualHostInternalHelper.normalizePath( value );
-    }
-
-    public void setTarget( final String value )
-    {
-        this.target = VirtualHostInternalHelper.normalizePath( value );
-    }
-
-    public void setVirtualHostIdProvidersMapping( final VirtualHostIdProvidersMapping virtualHostIdProvidersMapping )
-    {
-        this.virtualHostIdProvidersMapping = virtualHostIdProvidersMapping;
-    }
 }

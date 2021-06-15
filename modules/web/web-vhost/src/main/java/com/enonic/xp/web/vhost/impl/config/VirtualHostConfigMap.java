@@ -49,16 +49,16 @@ final class VirtualHostConfigMap
 
     private VirtualHostMapping buildMapping( final String name )
     {
-        final VirtualHostMapping mapping = new VirtualHostMapping( name );
 
         final String prefix = "mapping." + name + ".";
-        mapping.setHost( getString( prefix + "host" ) );
-        mapping.setSource( getString( prefix + "source" ) );
-        mapping.setTarget( getString( prefix + "target" ) );
+        final String hostString = getString( prefix + "host" );
+        final String host = hostString != null ? hostString : "localhost";
 
-        mapping.setVirtualHostIdProvidersMapping( getHostIdProvidersMapping( prefix ) );
+        final String source = normalizePath( getString( prefix + "source" ) );
+        final String target = normalizePath( getString( prefix + "target" ) );
+        final VirtualHostIdProvidersMapping idProvidersMapping = getHostIdProvidersMapping( prefix );
 
-        return mapping;
+        return new VirtualHostMapping( name, host, source, target, idProvidersMapping );
     }
 
     private VirtualHostIdProvidersMapping getHostIdProvidersMapping( final String mappingPrefix )
@@ -135,5 +135,31 @@ final class VirtualHostConfigMap
         }
 
         return matcher.group( 1 );
+    }
+
+    private String normalizePath( final String value )
+    {
+        if ( value == null || "/".equals( value ) )
+        {
+            return "/";
+        }
+
+        final StringBuilder result = new StringBuilder();
+
+        if ( !value.startsWith( "/" ) )
+        {
+            result.append( "/" );
+        }
+
+        if ( value.endsWith( "/" ) )
+        {
+            result.append( value, 0, value.length() - 1 );
+        }
+        else
+        {
+            result.append( value );
+        }
+
+        return result.toString();
     }
 }
