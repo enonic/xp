@@ -167,7 +167,7 @@ public final class NodePath
         return elements.get( elements.size() - 1 );
     }
 
-    public final String getName()
+    public String getName()
     {
         return isEmpty() ? null : getLastElement().toString();
     }

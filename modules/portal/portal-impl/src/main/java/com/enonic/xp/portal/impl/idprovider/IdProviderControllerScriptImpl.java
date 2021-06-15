@@ -14,7 +14,7 @@ final class IdProviderControllerScriptImpl
 {
     private final ScriptExports scriptExports;
 
-    public IdProviderControllerScriptImpl( final ScriptExports scriptExports )
+    IdProviderControllerScriptImpl( final ScriptExports scriptExports )
     {
         this.scriptExports = scriptExports;
     }

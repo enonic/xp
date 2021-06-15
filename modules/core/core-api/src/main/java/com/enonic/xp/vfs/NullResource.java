@@ -20,7 +20,7 @@ class NullResource
         this.path = path;
     }
 
-    public NullResource( final VirtualFilePath virtualFilePath )
+    NullResource( final VirtualFilePath virtualFilePath )
     {
         this.virtualFilePath = virtualFilePath;
         this.path = virtualFilePath.getPath();

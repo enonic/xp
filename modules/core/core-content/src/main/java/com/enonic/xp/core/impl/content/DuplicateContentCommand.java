@@ -116,7 +116,7 @@ final class DuplicateContentCommand
 
         private DuplicateContentListener duplicateContentListener;
 
-        public Builder( final DuplicateContentParams params )
+        Builder( final DuplicateContentParams params )
         {
             this.params = params;
         }

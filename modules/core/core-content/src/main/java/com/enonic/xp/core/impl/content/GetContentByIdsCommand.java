@@ -59,7 +59,7 @@ final class GetContentByIdsCommand
     {
         private final GetContentByIdsParams params;
 
-        public Builder( final GetContentByIdsParams params )
+        Builder( final GetContentByIdsParams params )
         {
             this.params = params;
         }

@@ -20,8 +20,7 @@ final class LayoutComponentDataSerializer
 
     private final RegionDataSerializer regionDataSerializer;
 
-    public LayoutComponentDataSerializer( final LayoutDescriptorService layoutDescriptorService,
-                                          final RegionDataSerializer regionDataSerializer )
+    LayoutComponentDataSerializer( final LayoutDescriptorService layoutDescriptorService, final RegionDataSerializer regionDataSerializer )
     {
         this.layoutDescriptorService = layoutDescriptorService;
         this.regionDataSerializer = regionDataSerializer;

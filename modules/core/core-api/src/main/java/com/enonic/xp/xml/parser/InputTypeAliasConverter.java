@@ -5,5 +5,5 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 interface InputTypeAliasConverter
 {
-    String convert( final String alias );
+    String convert( String alias );
 }

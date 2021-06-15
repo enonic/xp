@@ -29,7 +29,7 @@ final class FilterScriptImpl
 
     private final ResourceKey script;
 
-    public FilterScriptImpl( final PortalScriptService scriptService, final ResourceKey script )
+    FilterScriptImpl( final PortalScriptService scriptService, final ResourceKey script )
     {
         this.scriptExports = scriptService.execute( script );
         this.scriptService = scriptService;

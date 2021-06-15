@@ -50,7 +50,7 @@ final class BuiltinXDataTypes
 
     private final XDatas mixins;
 
-    public BuiltinXDataTypes()
+    BuiltinXDataTypes()
     {
         final List<XData> generatedSystemXDatas = generateSystemXDatas( MIXINS );
         this.mixins = XDatas.from( generatedSystemXDatas );

@@ -56,7 +56,7 @@ final class GetContentByPathCommand
     {
         private final ContentPath contentPath;
 
-        public Builder( final ContentPath contentPath )
+        Builder( final ContentPath contentPath )
         {
             this.contentPath = contentPath;
         }

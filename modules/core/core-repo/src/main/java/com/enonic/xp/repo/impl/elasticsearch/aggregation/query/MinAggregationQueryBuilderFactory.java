@@ -11,7 +11,7 @@ import com.enonic.xp.repo.impl.index.IndexValueType;
 class MinAggregationQueryBuilderFactory
     extends AbstractBuilderFactory
 {
-    public MinAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    MinAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
     {
         super( fieldNameResolver );
     }

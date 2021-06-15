@@ -14,13 +14,13 @@ final class LoginResultMapper
 
     private final String message;
 
-    public LoginResultMapper( final AuthenticationInfo value )
+    LoginResultMapper( final AuthenticationInfo value )
     {
         this.value = value;
         this.message = null;
     }
 
-    public LoginResultMapper( final AuthenticationInfo value, final String message )
+    LoginResultMapper( final AuthenticationInfo value, final String message )
     {
         this.value = value;
         this.message = message;

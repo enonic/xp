@@ -13,7 +13,7 @@ import com.enonic.xp.xml.parser.XmlMixinParser;
 final class MixinLoader
     extends SchemaLoader<MixinName, Mixin>
 {
-    public MixinLoader( final ResourceService resourceService )
+    MixinLoader( final ResourceService resourceService )
     {
         super( resourceService, "/site/mixins" );
     }

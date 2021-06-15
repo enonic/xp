@@ -21,7 +21,7 @@ final class RequestFactoryImpl
 
     private SynchronousDispatcher dispatcher;
 
-    public RequestFactoryImpl( final ServletContext context )
+    RequestFactoryImpl( final ServletContext context )
     {
         this.context = context;
     }

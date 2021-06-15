@@ -14,7 +14,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 class DateRangeAggregationQueryBuilderFactory
     extends AbstractBuilderFactory
 {
-    public DateRangeAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    DateRangeAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
     {
         super( fieldNameResolver );
     }

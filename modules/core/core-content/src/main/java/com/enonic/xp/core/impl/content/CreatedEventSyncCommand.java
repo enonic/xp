@@ -24,7 +24,7 @@ final class CreatedEventSyncCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger( CreatedEventSyncCommand.class );
 
-    public CreatedEventSyncCommand( final Builder builder )
+    CreatedEventSyncCommand( final Builder builder )
     {
         super( builder );
     }

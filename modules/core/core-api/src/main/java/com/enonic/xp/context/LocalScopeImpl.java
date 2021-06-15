@@ -38,7 +38,7 @@ final class LocalScopeImpl
 
     @Override
     @SuppressWarnings("unchecked")
-    public final <T> T getAttribute( final Class<T> type )
+    public <T> T getAttribute( final Class<T> type )
     {
         return (T) getAttribute( type.getName() );
     }

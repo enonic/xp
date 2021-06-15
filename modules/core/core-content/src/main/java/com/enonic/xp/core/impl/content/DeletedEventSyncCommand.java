@@ -9,7 +9,7 @@ import com.enonic.xp.content.DeleteContentParams;
 final class DeletedEventSyncCommand
     extends AbstractContentEventSyncCommand
 {
-    public DeletedEventSyncCommand( final Builder builder )
+    DeletedEventSyncCommand( final Builder builder )
     {
         super( builder );
     }

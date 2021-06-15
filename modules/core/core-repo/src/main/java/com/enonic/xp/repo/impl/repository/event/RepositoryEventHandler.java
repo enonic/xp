@@ -5,5 +5,5 @@ import com.enonic.xp.repo.impl.InternalContext;
 
 interface RepositoryEventHandler
 {
-    void handleEvent( final Event event, final InternalContext context );
+    void handleEvent( Event event, InternalContext context );
 }

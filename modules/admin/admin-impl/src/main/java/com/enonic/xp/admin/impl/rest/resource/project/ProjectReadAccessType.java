@@ -6,7 +6,7 @@ public enum ProjectReadAccessType
 
     private final String value;
 
-    private ProjectReadAccessType( final String value )
+    ProjectReadAccessType( final String value )
     {
         this.value = value;
     }

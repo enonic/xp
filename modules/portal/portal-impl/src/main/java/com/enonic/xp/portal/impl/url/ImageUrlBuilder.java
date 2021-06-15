@@ -19,7 +19,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 final class ImageUrlBuilder
     extends GenericEndpointUrlBuilder<ImageUrlParams>
 {
-    public ImageUrlBuilder()
+    ImageUrlBuilder()
     {
         super( "image" );
     }

@@ -69,7 +69,7 @@ final class SecurityInitializer
     }
 
     @Override
-    public final void doInitialize()
+    public void doInitialize()
     {
         createAdminContext().runWith( () -> {
 

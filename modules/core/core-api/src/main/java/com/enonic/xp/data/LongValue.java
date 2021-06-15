@@ -3,12 +3,12 @@ package com.enonic.xp.data;
 final class LongValue
     extends Value
 {
-    public LongValue( final Long value )
+    LongValue( final Long value )
     {
         super( ValueTypes.LONG, value );
     }
 
-    public LongValue( final LongValue source )
+    LongValue( final LongValue source )
     {
         super( ValueTypes.LONG, source.getObject() );
     }

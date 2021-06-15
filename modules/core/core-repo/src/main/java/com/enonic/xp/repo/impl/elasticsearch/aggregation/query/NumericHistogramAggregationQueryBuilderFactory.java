@@ -12,8 +12,7 @@ import com.enonic.xp.repo.impl.index.IndexValueType;
 class NumericHistogramAggregationQueryBuilderFactory
     extends AbstractBuilderFactory
 {
-
-    public NumericHistogramAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    NumericHistogramAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
     {
         super( fieldNameResolver );
     }

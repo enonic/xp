@@ -5,7 +5,7 @@ abstract class NumberConverter<T extends Number>
 {
     private final Class<T> type;
 
-    public NumberConverter( final Class<T> type )
+    NumberConverter( final Class<T> type )
     {
         this.type = type;
     }
@@ -27,7 +27,7 @@ abstract class NumberConverter<T extends Number>
         return parse( value.toString() );
     }
 
-    protected abstract T fromNumber( final Number value );
+    protected abstract T fromNumber( Number value );
 
-    protected abstract T parse( final String value );
+    protected abstract T parse( String value );
 }

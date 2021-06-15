@@ -11,7 +11,7 @@ final class ProductInfoBuilder
 {
     private final ServerInfo serverInfo;
 
-    public ProductInfoBuilder( final ServerInfo serverInfo )
+    ProductInfoBuilder( final ServerInfo serverInfo )
     {
         this.serverInfo = serverInfo;
     }

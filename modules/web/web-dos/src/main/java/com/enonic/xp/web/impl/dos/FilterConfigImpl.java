@@ -15,7 +15,7 @@ final class FilterConfigImpl
 
     private final Map<String, String> config;
 
-    public FilterConfigImpl( final FilterConfig delegate )
+    FilterConfigImpl( final FilterConfig delegate )
     {
         this.delegate = delegate;
         this.config = new HashMap<>();

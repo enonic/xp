@@ -51,7 +51,7 @@ final class GetBinaryKeyCommand
 
         private BinaryReference binaryReference;
 
-        public Builder( final ContentId contentId, final BinaryReference binaryReference )
+        Builder( final ContentId contentId, final BinaryReference binaryReference )
         {
             this.contentId = contentId;
             this.binaryReference = binaryReference;

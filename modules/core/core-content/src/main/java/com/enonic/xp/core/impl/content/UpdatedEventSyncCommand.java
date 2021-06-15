@@ -28,7 +28,7 @@ final class UpdatedEventSyncCommand
 {
     private final MediaInfoService mediaInfoService;
 
-    public UpdatedEventSyncCommand( final Builder builder )
+    UpdatedEventSyncCommand( final Builder builder )
     {
         super( builder );
         this.mediaInfoService = builder.mediaInfoService;

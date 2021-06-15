@@ -25,7 +25,7 @@ final class WidgetHandlerWorker
 
     protected DescriptorKey descriptorKey;
 
-    public WidgetHandlerWorker( final PortalRequest request )
+    WidgetHandlerWorker( final PortalRequest request )
     {
         super( request );
     }

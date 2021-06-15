@@ -24,29 +24,27 @@ final class ContextImpl
     }
 
     @Override
-    public final RepositoryId getRepositoryId()
+    public RepositoryId getRepositoryId()
     {
         return getAttribute( RepositoryId.class );
     }
 
     @Override
-    public final Branch getBranch()
+    public Branch getBranch()
     {
         return getAttribute( Branch.class );
     }
 
     @Override
-    public final AuthenticationInfo getAuthInfo()
+    public AuthenticationInfo getAuthInfo()
     {
         final AuthenticationInfo attribute = getAttribute( AuthenticationInfo.class );
-        return attribute == null
-            ? AuthenticationInfo.unAuthenticated()
-            : attribute;
+        return attribute == null ? AuthenticationInfo.unAuthenticated() : attribute;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public final <T> T getAttribute( final Class<T> type )
+    public <T> T getAttribute( final Class<T> type )
     {
         return (T) getAttribute( type.getName() );
     }
@@ -76,7 +74,7 @@ final class ContextImpl
     }
 
     @Override
-    public final void runWith( final Runnable runnable )
+    public void runWith( final Runnable runnable )
     {
         final Context old = ContextAccessor.INSTANCE.get();
         ContextAccessor.INSTANCE.set( this );
@@ -92,7 +90,7 @@ final class ContextImpl
     }
 
     @Override
-    public final <T> T callWith( final Callable<T> runnable )
+    public <T> T callWith( final Callable<T> runnable )
     {
         final Context old = ContextAccessor.INSTANCE.get();
         ContextAccessor.INSTANCE.set( this );

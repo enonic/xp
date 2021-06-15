@@ -3,7 +3,7 @@ package com.enonic.xp.convert;
 final class ShortConverter
     extends NumberConverter<Short>
 {
-    public ShortConverter()
+    ShortConverter()
     {
         super( Short.class );
     }

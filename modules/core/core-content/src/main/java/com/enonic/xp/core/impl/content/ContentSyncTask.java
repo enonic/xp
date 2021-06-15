@@ -16,7 +16,7 @@ final class ContentSyncTask
 
     private final ContentSynchronizer contentSynchronizer;
 
-    public ContentSyncTask( final Builder builder )
+    ContentSyncTask( final Builder builder )
     {
         this.contentSynchronizer = builder.contentSynchronizer;
         this.sourceProject = builder.sourceProject;

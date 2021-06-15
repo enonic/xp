@@ -20,7 +20,7 @@ final class RegionDataSerializer
 {
     private final ComponentDataSerializerProvider componentDataSerializerProvider;
 
-    public RegionDataSerializer( final ComponentDataSerializerProvider componentDataSerializerProvider )
+    RegionDataSerializer( final ComponentDataSerializerProvider componentDataSerializerProvider )
     {
         this.componentDataSerializerProvider = componentDataSerializerProvider;
     }

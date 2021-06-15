@@ -11,8 +11,7 @@ import com.enonic.xp.repo.impl.index.IndexValueType;
 class MaxAggregationQueryBuilderFactory
     extends AbstractBuilderFactory
 {
-
-    public MaxAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    MaxAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
     {
         super( fieldNameResolver );
     }

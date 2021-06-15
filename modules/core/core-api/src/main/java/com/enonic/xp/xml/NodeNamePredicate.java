@@ -12,7 +12,7 @@ final class NodeNamePredicate
 {
     private final Set<String> set;
 
-    public NodeNamePredicate( final String... names )
+    NodeNamePredicate( final String... names )
     {
         this.set = new HashSet<>( Arrays.asList( names ) );
     }

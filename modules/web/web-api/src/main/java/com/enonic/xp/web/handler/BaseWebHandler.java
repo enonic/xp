@@ -77,7 +77,7 @@ public abstract class BaseWebHandler
 
     }
 
-    protected abstract boolean canHandle( final WebRequest webRequest );
+    protected abstract boolean canHandle( WebRequest webRequest );
 
     protected abstract WebResponse doHandle( WebRequest webRequest, WebResponse webResponse, WebHandlerChain webHandlerChain )
         throws Exception;

@@ -31,7 +31,7 @@ final class MappingHandlerWorker
 
     protected RendererDelegate rendererDelegate;
 
-    public MappingHandlerWorker( final PortalRequest request )
+    MappingHandlerWorker( final PortalRequest request )
     {
         super( request );
     }

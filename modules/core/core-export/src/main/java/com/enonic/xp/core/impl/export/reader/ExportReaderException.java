@@ -4,7 +4,7 @@ class ExportReaderException
     extends RuntimeException
 {
 
-    public ExportReaderException( final String message, final Throwable cause )
+    ExportReaderException( final String message, final Throwable cause )
     {
         super( message, cause );
     }

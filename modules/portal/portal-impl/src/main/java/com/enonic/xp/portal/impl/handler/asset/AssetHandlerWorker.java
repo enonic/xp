@@ -32,7 +32,7 @@ final class AssetHandlerWorker
 
     String cacheControlHeaderConfig;
 
-    public AssetHandlerWorker( final WebRequest request )
+    AssetHandlerWorker( final WebRequest request )
     {
         super( request );
     }

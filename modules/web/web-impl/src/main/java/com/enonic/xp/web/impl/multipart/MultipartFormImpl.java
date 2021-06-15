@@ -15,7 +15,7 @@ final class MultipartFormImpl
 {
     private final ImmutableListMultimap<String, MultipartItem> map;
 
-    public MultipartFormImpl( final Iterable<Part> parts )
+    MultipartFormImpl( final Iterable<Part> parts )
     {
         final ImmutableListMultimap.Builder<String, MultipartItem> builder = ImmutableListMultimap.builder();
         for ( final Part part : parts )

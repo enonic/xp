@@ -13,7 +13,7 @@ import com.enonic.xp.xml.parser.XmlRelationshipTypeParser;
 final class RelationshipTypeLoader
     extends SchemaLoader<RelationshipTypeName, RelationshipType>
 {
-    public RelationshipTypeLoader( final ResourceService resourceService )
+    RelationshipTypeLoader( final ResourceService resourceService )
     {
         super( resourceService, "/site/relationship-types" );
     }

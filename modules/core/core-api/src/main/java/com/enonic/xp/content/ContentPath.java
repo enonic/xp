@@ -99,7 +99,7 @@ public final class ContentPath
         return !elements.isEmpty();
     }
 
-    public final String getName()
+    public String getName()
     {
         return elements.size() == 0 ? null : elements.get( elements.size() - 1 );
     }

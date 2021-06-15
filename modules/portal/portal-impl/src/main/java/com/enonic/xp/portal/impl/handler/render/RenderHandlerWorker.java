@@ -21,7 +21,7 @@ abstract class RenderHandlerWorker
 
     protected PageDescriptorService pageDescriptorService;
 
-    public RenderHandlerWorker( final PortalRequest request )
+    RenderHandlerWorker( final PortalRequest request )
     {
         super( request );
     }

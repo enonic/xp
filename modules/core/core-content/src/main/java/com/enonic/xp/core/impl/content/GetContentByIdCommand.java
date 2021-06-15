@@ -61,12 +61,12 @@ final class GetContentByIdCommand
     {
         private final ContentId contentId;
 
-        public Builder( final ContentId contentId )
+        Builder( final ContentId contentId )
         {
             this.contentId = contentId;
         }
 
-        public Builder( final ContentId contentId, AbstractContentCommand source )
+        Builder( final ContentId contentId, AbstractContentCommand source )
         {
             super( source );
             this.contentId = contentId;

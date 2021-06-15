@@ -50,7 +50,7 @@ public class ApplicationConfigInvalidator
     {
         private final ApplicationRegistry applicationRegistry;
 
-        public Customizer( final ApplicationRegistry applicationRegistry )
+        Customizer( final ApplicationRegistry applicationRegistry )
         {
             this.applicationRegistry = applicationRegistry;
         }
