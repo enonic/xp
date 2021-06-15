@@ -6,5 +6,5 @@ import com.enonic.xp.repo.impl.storage.NodeStorageService;
 
 interface NodeEventHandler
 {
-    void handleEvent( NodeStorageService nodeStorageService, final Event event, final InternalContext context );
+    void handleEvent( NodeStorageService nodeStorageService, Event event, InternalContext context );
 }

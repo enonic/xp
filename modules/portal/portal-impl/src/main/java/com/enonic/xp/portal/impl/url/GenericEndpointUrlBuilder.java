@@ -16,7 +16,7 @@ abstract class GenericEndpointUrlBuilder<T extends AbstractUrlParams>
 
     protected final String endpointType;
 
-    public GenericEndpointUrlBuilder( final String endpointType )
+    GenericEndpointUrlBuilder( final String endpointType )
     {
         this.endpointType = endpointType;
     }

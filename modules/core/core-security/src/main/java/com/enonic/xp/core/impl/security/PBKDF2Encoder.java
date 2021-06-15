@@ -20,7 +20,7 @@ final class PBKDF2Encoder
 
     private static final int ITERATIONS = 1000;
 
-    public PBKDF2Encoder()
+    PBKDF2Encoder()
     {
     }
 

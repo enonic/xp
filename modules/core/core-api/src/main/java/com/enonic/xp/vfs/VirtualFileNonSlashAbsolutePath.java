@@ -6,7 +6,7 @@ import java.util.LinkedList;
 final class VirtualFileNonSlashAbsolutePath
     extends VirtualFilePathImpl
 {
-    public VirtualFileNonSlashAbsolutePath( final Path path )
+    VirtualFileNonSlashAbsolutePath( final Path path )
     {
         super( path );
     }

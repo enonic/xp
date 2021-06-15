@@ -16,7 +16,7 @@ final class WebHandlerChainImpl
 {
     private final UnmodifiableIterator<WebHandler> webHandlerIterator;
 
-    public WebHandlerChainImpl( final Collection<WebHandler> handlers )
+    WebHandlerChainImpl( final Collection<WebHandler> handlers )
     {
         this.webHandlerIterator = ImmutableList.copyOf( handlers ).iterator();
     }

@@ -3,7 +3,7 @@ package com.enonic.xp.convert;
 final class LongConverter
     extends NumberConverter<Long>
 {
-    public LongConverter()
+    LongConverter()
     {
         super( Long.class );
     }

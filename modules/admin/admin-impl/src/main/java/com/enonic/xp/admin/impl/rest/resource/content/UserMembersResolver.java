@@ -19,7 +19,7 @@ final class UserMembersResolver
 
     private Map<PrincipalKey, PrincipalKeys> membersCache;
 
-    public UserMembersResolver( final SecurityService securityService )
+    UserMembersResolver( final SecurityService securityService )
     {
         this.securityService = requireNonNull( securityService );
         this.membersCache = new HashMap<>();

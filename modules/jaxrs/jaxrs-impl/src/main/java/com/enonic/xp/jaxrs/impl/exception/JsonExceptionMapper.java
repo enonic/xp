@@ -27,7 +27,7 @@ public final class JsonExceptionMapper
     private static final Logger LOG = LoggerFactory.getLogger( JsonExceptionMapper.class );
 
     @Override
-    public final Response toResponse( final Throwable cause )
+    public Response toResponse( final Throwable cause )
     {
         if ( cause instanceof WebApplicationException )
         {

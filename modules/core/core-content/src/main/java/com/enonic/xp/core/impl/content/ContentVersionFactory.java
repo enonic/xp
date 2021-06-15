@@ -30,7 +30,7 @@ class ContentVersionFactory
 
     private final PublishInfoSerializer publishInfoSerializer = new PublishInfoSerializer();
 
-    public ContentVersionFactory( final NodeService nodeService )
+    ContentVersionFactory( final NodeService nodeService )
     {
         this.nodeService = nodeService;
     }

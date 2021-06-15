@@ -33,7 +33,7 @@ final class QueryGrammar
 
     private final Parser<Tokens.Fragment> identifierToken;
 
-    public QueryGrammar()
+    QueryGrammar()
     {
         this.identifierToken = identifierToken();
         this.terminals =

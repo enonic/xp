@@ -8,7 +8,7 @@ final class JavaTypeConverter<T>
 
     private final Function<Object, T> function;
 
-    public JavaTypeConverter( final Class<T> type, final Function<Object, T> function )
+    JavaTypeConverter( final Class<T> type, final Function<Object, T> function )
     {
         this.type = type;
         this.function = function;

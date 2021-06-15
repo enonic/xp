@@ -20,7 +20,7 @@ abstract class AbstractIssueCommand
 
         }
 
-        public Builder( final AbstractIssueCommand source )
+        Builder( final AbstractIssueCommand source )
         {
             this.nodeService = source.nodeService;
         }

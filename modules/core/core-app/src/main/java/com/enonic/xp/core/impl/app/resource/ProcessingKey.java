@@ -8,7 +8,7 @@ final class ProcessingKey
 
     private final Object key;
 
-    public ProcessingKey( final String segment, final Object key )
+    ProcessingKey( final String segment, final Object key )
     {
         this.segment = segment;
         this.key = key;

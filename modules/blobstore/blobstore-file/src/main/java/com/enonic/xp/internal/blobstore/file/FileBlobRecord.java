@@ -24,7 +24,7 @@ final class FileBlobRecord
     }
 
     @Override
-    public final BlobKey getKey()
+    public BlobKey getKey()
     {
         return this.key;
     }

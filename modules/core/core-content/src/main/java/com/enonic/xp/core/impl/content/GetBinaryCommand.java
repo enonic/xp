@@ -57,13 +57,13 @@ final class GetBinaryCommand
 
         private BinaryReference binaryReference;
 
-        public Builder( final ContentId contentId, final BinaryReference binaryReference )
+        Builder( final ContentId contentId, final BinaryReference binaryReference )
         {
             this.contentId = contentId;
             this.binaryReference = binaryReference;
         }
 
-        public Builder( final ContentId contentId, final BinaryReference binaryReference, AbstractContentCommand source )
+        Builder( final ContentId contentId, final BinaryReference binaryReference, AbstractContentCommand source )
         {
             super( source );
             this.contentId = contentId;

@@ -28,7 +28,7 @@ final class ContentTypeRegistry
 
     private final ApplicationService applicationService;
 
-    public ContentTypeRegistry( final ResourceService resourceService, final ApplicationService applicationService )
+    ContentTypeRegistry( final ResourceService resourceService, final ApplicationService applicationService )
     {
         this.applicationService = applicationService;
         this.builtInTypes = new BuiltinContentTypes();

@@ -30,37 +30,37 @@ import com.enonic.xp.site.Site;
 
 interface ContentAuditLogSupport
 {
-    void createSite( final CreateSiteParams params, final Site site );
+    void createSite( CreateSiteParams params, Site site );
 
-    void createContent( final CreateContentParams params, final Content content );
+    void createContent( CreateContentParams params, Content content );
 
-    void createMedia( final CreateMediaParams params, final Content content );
+    void createMedia( CreateMediaParams params, Content content );
 
-    void update( final UpdateContentParams params, final Content content );
+    void update( UpdateContentParams params, Content content );
 
-    void update( final UpdateMediaParams params, final Content content );
+    void update( UpdateMediaParams params, Content content );
 
-    void delete( final DeleteContentParams params, final DeleteContentsResult contents );
+    void delete( DeleteContentParams params, DeleteContentsResult contents );
 
-    void undoPendingDelete( final UndoPendingDeleteContentParams params, final Contents contents );
+    void undoPendingDelete( UndoPendingDeleteContentParams params, Contents contents );
 
-    void publish( final PushContentParams params, final PublishContentResult result );
+    void publish( PushContentParams params, PublishContentResult result );
 
-    void unpublishContent( final UnpublishContentParams params, final UnpublishContentsResult result );
+    void unpublishContent( UnpublishContentParams params, UnpublishContentsResult result );
 
-    void duplicate( final DuplicateContentParams params, final DuplicateContentsResult result );
+    void duplicate( DuplicateContentParams params, DuplicateContentsResult result );
 
-    void move( final MoveContentParams params, MoveContentsResult result );
+    void move( MoveContentParams params, MoveContentsResult result );
 
-    void rename( final RenameContentParams params, final Content content );
+    void rename( RenameContentParams params, Content content );
 
-    void setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId );
+    void setActiveContentVersion( ContentId contentId, ContentVersionId versionId );
 
-    void setChildOrder( final SetContentChildOrderParams params, final Content content );
+    void setChildOrder( SetContentChildOrderParams params, Content content );
 
-    void reorderChildren( final ReorderChildContentsParams params, final ReorderChildContentsResult result );
+    void reorderChildren( ReorderChildContentsParams params, ReorderChildContentsResult result );
 
-    void applyPermissions( final ApplyContentPermissionsParams params, final ApplyContentPermissionsResult result );
+    void applyPermissions( ApplyContentPermissionsParams params, ApplyContentPermissionsResult result );
 
-    void reprocess( final Content content );
+    void reprocess( Content content );
 }

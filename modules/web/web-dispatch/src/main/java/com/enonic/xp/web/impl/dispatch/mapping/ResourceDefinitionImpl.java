@@ -75,7 +75,7 @@ abstract class ResourceDefinitionImpl<T>
         }
     }
 
-    abstract void doInit( final ResourceConfig config )
+    abstract void doInit( ResourceConfig config )
         throws ServletException;
 
     abstract void doDestroy();

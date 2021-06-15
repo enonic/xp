@@ -11,7 +11,7 @@ import com.enonic.xp.repo.impl.index.IndexValueType;
 class ValueCountAggregationQueryBuilderFactory
     extends AbstractBuilderFactory
 {
-    public ValueCountAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    ValueCountAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
     {
         super( fieldNameResolver );
     }

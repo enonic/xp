@@ -23,7 +23,7 @@ final class TaskRunnable
 
     private final TaskId id;
 
-    public TaskRunnable( final DescribedTask runnableTask, final InternalProgressReporter progressReporter )
+    TaskRunnable( final DescribedTask runnableTask, final InternalProgressReporter progressReporter )
     {
         this.runnableTask = runnableTask;
         this.progressReporter = progressReporter;

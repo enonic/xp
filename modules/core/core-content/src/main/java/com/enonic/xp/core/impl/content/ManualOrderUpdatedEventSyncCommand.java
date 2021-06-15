@@ -12,7 +12,7 @@ import com.enonic.xp.security.PrincipalKey;
 final class ManualOrderUpdatedEventSyncCommand
     extends AbstractContentEventSyncCommand
 {
-    public ManualOrderUpdatedEventSyncCommand( final Builder builder )
+    ManualOrderUpdatedEventSyncCommand( final Builder builder )
     {
         super( builder );
     }

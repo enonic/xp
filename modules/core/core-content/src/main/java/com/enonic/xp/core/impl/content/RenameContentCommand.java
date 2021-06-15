@@ -143,7 +143,7 @@ final class RenameContentCommand
 
         private ContentDataSerializer contentDataSerializer;
 
-        public Builder( final RenameContentParams params )
+        Builder( final RenameContentParams params )
         {
             this.params = params;
         }

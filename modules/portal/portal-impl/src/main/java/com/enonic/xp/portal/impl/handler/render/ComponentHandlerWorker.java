@@ -34,7 +34,7 @@ final class ComponentHandlerWorker
 
     protected PostProcessor postProcessor;
 
-    public ComponentHandlerWorker( final PortalRequest request )
+    ComponentHandlerWorker( final PortalRequest request )
     {
         super( request );
     }

@@ -15,7 +15,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 class GeoDistanceAggregationQueryBuilderFactory
     extends AbstractBuilderFactory
 {
-    public GeoDistanceAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    GeoDistanceAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
     {
         super( fieldNameResolver );
     }

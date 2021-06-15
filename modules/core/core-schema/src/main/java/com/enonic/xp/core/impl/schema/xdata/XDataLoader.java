@@ -13,7 +13,7 @@ import com.enonic.xp.xml.parser.XmlXDataParser;
 final class XDataLoader
     extends SchemaLoader<XDataName, XData>
 {
-    public XDataLoader( final ResourceService resourceService )
+    XDataLoader( final ResourceService resourceService )
     {
         super( resourceService, "/site/x-data" );
     }

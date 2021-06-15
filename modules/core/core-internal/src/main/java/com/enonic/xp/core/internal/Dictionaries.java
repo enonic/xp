@@ -45,7 +45,7 @@ public final class Dictionaries
     {
         private final Map<K, V> map;
 
-        public MapAsDictionary( final Map<K, V> map )
+        MapAsDictionary( final Map<K, V> map )
         {
             this.map = map;
         }

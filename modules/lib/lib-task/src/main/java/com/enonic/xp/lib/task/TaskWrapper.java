@@ -19,7 +19,7 @@ final class TaskWrapper
 
     private final String description;
 
-    public TaskWrapper( final Function<Void, Void> taskFunction, final String description )
+    TaskWrapper( final Function<Void, Void> taskFunction, final String description )
     {
         this.taskFunction = taskFunction;
         this.description = description;

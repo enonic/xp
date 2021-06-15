@@ -29,7 +29,7 @@ class BundleResource
 
     private final VirtualFilePath virtualFilePath;
 
-    public BundleResource( final Bundle bundle, final String path )
+    BundleResource( final Bundle bundle, final String path )
     {
         this.virtualFilePath = VirtualFilePaths.from( path, "/" );
         this.bundle = bundle;

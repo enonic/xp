@@ -10,7 +10,7 @@ final class ProcessingEntry
 
     protected final long timestamp;
 
-    public ProcessingEntry( final ResourceKey key, final Object value, final long timestamp )
+    ProcessingEntry( final ResourceKey key, final Object value, final long timestamp )
     {
         this.key = key;
         this.value = value;

@@ -12,7 +12,7 @@ import com.enonic.xp.content.RenameContentParams;
 final class MovedEventSyncCommand
     extends AbstractContentEventSyncCommand
 {
-    public MovedEventSyncCommand( final Builder builder )
+    MovedEventSyncCommand( final Builder builder )
     {
         super( builder );
     }

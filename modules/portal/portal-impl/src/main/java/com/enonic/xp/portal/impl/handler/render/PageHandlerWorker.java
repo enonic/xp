@@ -36,7 +36,7 @@ final class PageHandlerWorker
 
     protected PortalUrlService portalUrlService;
 
-    public PageHandlerWorker( final PortalRequest request )
+    PageHandlerWorker( final PortalRequest request )
     {
         super( request );
     }

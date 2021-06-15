@@ -102,7 +102,7 @@ public final class MoveNodeHandler
     {
         private final String value;
 
-        public Target( final String value )
+        Target( final String value )
         {
             this.value = value;
         }

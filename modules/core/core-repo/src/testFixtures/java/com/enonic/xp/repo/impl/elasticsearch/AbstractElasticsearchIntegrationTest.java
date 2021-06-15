@@ -94,7 +94,7 @@ public abstract class AbstractElasticsearchIntegrationTest
 
         static Path elasticsearchTemporaryFolder;
 
-        public ElasticsearchFixture()
+        ElasticsearchFixture()
             throws IOException
         {
             LOG.info( "Starting up Elasticsearch" );

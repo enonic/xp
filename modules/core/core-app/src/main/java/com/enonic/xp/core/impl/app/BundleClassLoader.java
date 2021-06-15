@@ -13,7 +13,7 @@ final class BundleClassLoader
 {
     private final Bundle bundle;
 
-    public BundleClassLoader( final Bundle bundle )
+    BundleClassLoader( final Bundle bundle )
     {
         this.bundle = bundle;
     }

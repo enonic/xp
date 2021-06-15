@@ -10,7 +10,7 @@ final class ServiceRefImpl<T>
 
     private final BundleContext bundleContext;
 
-    public ServiceRefImpl( final Class<T> type, final BundleContext bundleContext )
+    ServiceRefImpl( final Class<T> type, final BundleContext bundleContext )
     {
         this.type = type;
         this.bundleContext = bundleContext;
