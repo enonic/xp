@@ -15,6 +15,7 @@ import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 import com.enonic.xp.web.vhost.VirtualHostResolver;
 import com.enonic.xp.web.vhost.VirtualHostService;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,6 +63,8 @@ public class VirtualHostFilterTest
         throws Exception
     {
         when( this.virtualHostService.isEnabled() ).thenReturn( false );
+        when( req.getServerName() ).thenReturn( "enonic.com" );
+
         this.filter.doFilter( this.req, this.res, this.chain );
 
         verify( this.chain, times( 1 ) ).doFilter( this.req, this.res );
@@ -121,10 +124,8 @@ public class VirtualHostFilterTest
 
     private void addMapping()
     {
-        final VirtualHostMapping mapping = new VirtualHostMapping( "test" );
-        mapping.setHost( "enonic.com" );
-        mapping.setSource( "/rest" );
-        mapping.setTarget( "/admin/rest" );
+        final VirtualHostMapping mapping =
+            new VirtualHostMapping( "test", "enonic.com", "/rest", "/admin/rest", VirtualHostIdProvidersMapping.create().build() );
         this.virtualHosts.add( mapping );
     }
 }

@@ -31,9 +31,9 @@ public final class VirtualHostFilter
 {
     private static final Logger LOG = LoggerFactory.getLogger( VirtualHostFilter.class );
 
-    private VirtualHostService virtualHostConfigService;
+    private final VirtualHostService virtualHostConfigService;
 
-    private VirtualHostResolver virtualHostResolver;
+    private final VirtualHostResolver virtualHostResolver;
 
     @Activate
     public VirtualHostFilter( @Reference final VirtualHostService virtualHostService,
@@ -78,15 +78,9 @@ public final class VirtualHostFilter
     {
         final String serverName = req.getServerName();
 
-        final VirtualHostMapping virtualHostMapping = new VirtualHostMapping( serverName );
-        virtualHostMapping.setHost( serverName );
-        virtualHostMapping.setSource( "/" );
-        virtualHostMapping.setTarget( "/" );
-        virtualHostMapping.setVirtualHostIdProvidersMapping( VirtualHostIdProvidersMapping.create().
+        return new VirtualHostMapping( serverName, serverName, "/", "/", VirtualHostIdProvidersMapping.create().
             setDefaultIdProvider( IdProviderKey.system() ).
             build() );
-
-        return virtualHostMapping;
     }
 
 }
