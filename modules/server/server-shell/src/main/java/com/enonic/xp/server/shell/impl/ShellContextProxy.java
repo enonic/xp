@@ -17,7 +17,7 @@ final class ShellContextProxy
 
     private final Map<String, String> properties;
 
-    public ShellContextProxy( final BundleContext delegate )
+    ShellContextProxy( final BundleContext delegate )
     {
         this.delegate = delegate;
         this.properties = new HashMap<>();

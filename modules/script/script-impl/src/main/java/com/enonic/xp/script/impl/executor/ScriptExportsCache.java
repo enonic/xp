@@ -24,7 +24,7 @@ final class ScriptExportsCache
 
     private final Lock lock = new ReentrantLock();
 
-    public ScriptExportsCache( final RunMode runMode, final Function<ResourceKey, Resource> resourceLookup, Runnable expiredCallback )
+    ScriptExportsCache( final RunMode runMode, final Function<ResourceKey, Resource> resourceLookup, Runnable expiredCallback )
     {
         this.runMode = runMode;
         this.resourceLookup = resourceLookup;

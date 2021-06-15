@@ -12,10 +12,9 @@ import static com.enonic.xp.lib.node.NodePropertyConstants.INHERITS_PERMISSIONS;
 final class PermissionsMapper
     implements MapSerializable
 {
-
     private final Node node;
 
-    public PermissionsMapper( final Node node )
+    PermissionsMapper( final Node node )
     {
         this.node = node;
     }

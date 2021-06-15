@@ -25,7 +25,7 @@ final class BuiltinRelationshipTypes
 
     private final RelationshipTypes types;
 
-    public BuiltinRelationshipTypes()
+    BuiltinRelationshipTypes()
     {
         final List<RelationshipType> relationshipTypeList = generateSystemRelationshipTypes();
         this.types = RelationshipTypes.from( relationshipTypeList );

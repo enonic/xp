@@ -43,7 +43,7 @@ public final class ConfigLoader
         final InputStream stream = getClass().getResourceAsStream( DEFAULT_CONFIG );
         Objects.requireNonNull( stream, "Could not find " + DEFAULT_CONFIG );
 
-        try (stream; final Reader reader = new BufferedReader( new InputStreamReader( stream, StandardCharsets.UTF_8 ) ))
+        try (stream; Reader reader = new BufferedReader( new InputStreamReader( stream, StandardCharsets.UTF_8 ) ))
         {
             return loadProperties( reader );
         }

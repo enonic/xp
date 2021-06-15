@@ -3,7 +3,7 @@ package com.enonic.xp.convert;
 final class FloatConverter
     extends NumberConverter<Float>
 {
-    public FloatConverter()
+    FloatConverter()
     {
         super( Float.class );
     }

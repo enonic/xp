@@ -13,7 +13,7 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFiel
 class MetricAggregationQueryBuilderFactory
     extends AbstractBuilderFactory
 {
-    public MetricAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    MetricAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
     {
         super( fieldNameResolver );
     }

@@ -19,7 +19,7 @@ final class IdentityHandlerWorker
 
     protected String idProviderFunction;
 
-    public IdentityHandlerWorker( final PortalRequest request )
+    IdentityHandlerWorker( final PortalRequest request )
     {
         super( request );
     }

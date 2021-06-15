@@ -11,7 +11,7 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFiel
 class HistogramAggregationQueryBuilderFactory
     extends AbstractBuilderFactory
 {
-    public HistogramAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    HistogramAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
     {
         super( fieldNameResolver );
     }

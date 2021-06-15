@@ -14,7 +14,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 class NumericRangeAggregationQueryFactory
     extends AbstractBuilderFactory
 {
-    public NumericRangeAggregationQueryFactory( final QueryFieldNameResolver fieldNameResolver )
+    NumericRangeAggregationQueryFactory( final QueryFieldNameResolver fieldNameResolver )
     {
         super( fieldNameResolver );
     }

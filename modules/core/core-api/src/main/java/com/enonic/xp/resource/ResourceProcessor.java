@@ -38,7 +38,7 @@ public final class ResourceProcessor<K, V>
         return this.keyTranslator.apply( this.key );
     }
 
-    public final V process( final Resource resource )
+    public V process( final Resource resource )
     {
         if ( !resource.exists() )
         {

@@ -24,8 +24,8 @@ final class ScriptEventListenerImpl
 
     private final boolean localOnly;
 
-    public ScriptEventListenerImpl( final ApplicationKey application, final Pattern typePattern, final Consumer<Object> listener,
-                                    final boolean localOnly )
+    ScriptEventListenerImpl( final ApplicationKey application, final Pattern typePattern, final Consumer<Object> listener,
+                             final boolean localOnly )
     {
         this.application = application;
         this.typePattern = typePattern;

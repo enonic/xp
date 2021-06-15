@@ -3,12 +3,12 @@ package com.enonic.xp.data;
 final class StringValue
     extends Value
 {
-    public StringValue( final String value )
+    StringValue( final String value )
     {
         super( ValueTypes.STRING, value );
     }
 
-    public StringValue( final StringValue source )
+    StringValue( final StringValue source )
     {
         super( ValueTypes.STRING, source.getObject() );
     }

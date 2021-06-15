@@ -27,7 +27,7 @@ public final class SchemaHelper
 
     private static Icon doLoadIcon( final Class clz, final String mimeType, final String filePath )
     {
-        try ( final InputStream stream = clz.getResourceAsStream( filePath ) )
+        try (InputStream stream = clz.getResourceAsStream( filePath ))
         {
             if ( stream == null )
             {

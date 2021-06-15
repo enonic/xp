@@ -255,7 +255,7 @@ public final class TaskInfo
 
         private final Instant startTime;
 
-        public SerializedForm( TaskInfo taskInfo )
+        SerializedForm( TaskInfo taskInfo )
         {
             this.id = taskInfo.id;
             this.name = taskInfo.name;

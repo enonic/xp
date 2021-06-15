@@ -8,7 +8,7 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFiel
 
 interface QueryTypeTranslator
 {
-    QueryBuilder createQueryBuilder( final Filters additionalFilters );
+    QueryBuilder createQueryBuilder( Filters additionalFilters );
 
     QueryFieldNameResolver getFieldNameResolver();
 

@@ -12,7 +12,7 @@ final class IdentityUrlBuilder
     extends GenericEndpointUrlBuilder<IdentityUrlParams>
 {
 
-    public IdentityUrlBuilder()
+    IdentityUrlBuilder()
     {
         super( "idprovider" );
     }

@@ -13,7 +13,7 @@ abstract class BaseSuggestionMapper<OPTION extends SuggestionOption, ENTRY exten
 {
     private final SUGGESTION value;
 
-    public BaseSuggestionMapper( final SUGGESTION value )
+    BaseSuggestionMapper( final SUGGESTION value )
     {
         this.value = value;
     }

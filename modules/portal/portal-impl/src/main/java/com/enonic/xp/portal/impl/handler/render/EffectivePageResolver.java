@@ -10,7 +10,7 @@ final class EffectivePageResolver
 
     private final PageTemplate template;
 
-    public EffectivePageResolver( final Content content, final PageTemplate template )
+    EffectivePageResolver( final Content content, final PageTemplate template )
     {
         this.content = content;
         this.template = template;

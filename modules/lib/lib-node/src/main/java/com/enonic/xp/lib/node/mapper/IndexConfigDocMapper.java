@@ -25,7 +25,7 @@ class IndexConfigDocMapper
 {
     private final IndexConfigDocument value;
 
-    public IndexConfigDocMapper( final IndexConfigDocument value )
+    IndexConfigDocMapper( final IndexConfigDocument value )
     {
         this.value = value;
     }

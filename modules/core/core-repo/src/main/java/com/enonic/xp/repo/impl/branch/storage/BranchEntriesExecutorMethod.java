@@ -7,5 +7,5 @@ import com.enonic.xp.node.NodeId;
 
 interface BranchEntriesExecutorMethod
 {
-    void execute( final Collection<NodeId> nodeIds, final NodeBranchEntries.Builder builder );
+    void execute( Collection<NodeId> nodeIds, NodeBranchEntries.Builder builder );
 }

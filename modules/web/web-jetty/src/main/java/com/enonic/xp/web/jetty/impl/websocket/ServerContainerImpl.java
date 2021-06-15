@@ -20,7 +20,7 @@ import org.eclipse.jetty.websocket.server.WebSocketServerFactory;
 final class ServerContainerImpl
     extends ServerContainer
 {
-    public ServerContainerImpl( final WebSocketServerFactory serverFactory )
+    ServerContainerImpl( final WebSocketServerFactory serverFactory )
     {
         super( new NativeWebSocketConfiguration( serverFactory ), (HttpClient) null );
     }

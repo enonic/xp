@@ -22,7 +22,7 @@ final class NetworkInterfaceResolver
 
     private final Map<String, NetworkInterface> interfaces;
 
-    public NetworkInterfaceResolver()
+    NetworkInterfaceResolver()
     {
         interfaces = load();
     }

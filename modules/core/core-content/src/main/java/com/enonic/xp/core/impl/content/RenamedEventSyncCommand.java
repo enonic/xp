@@ -11,7 +11,7 @@ final class RenamedEventSyncCommand
     extends AbstractContentEventSyncCommand
 {
 
-    public RenamedEventSyncCommand( final Builder builder )
+    RenamedEventSyncCommand( final Builder builder )
     {
         super( builder );
     }

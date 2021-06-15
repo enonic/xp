@@ -13,7 +13,7 @@ abstract class AbstractSessionStoreFactoryActivator
 
     private ServiceRegistration<SessionCacheFactory> sessionCacheReg;
 
-    public AbstractSessionStoreFactoryActivator( final BundleContext bundleContext )
+    AbstractSessionStoreFactoryActivator( final BundleContext bundleContext )
     {
         this.bundleContext = bundleContext;
     }

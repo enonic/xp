@@ -17,7 +17,7 @@ class HazelcastClusterReport
 
     private final List<HazelcastMemberState> memberStates;
 
-    public HazelcastClusterReport( final Builder builder )
+    HazelcastClusterReport( final Builder builder )
     {
         this.clusterState = builder.clusterState;
         this.clusterTime = builder.clusterTime;

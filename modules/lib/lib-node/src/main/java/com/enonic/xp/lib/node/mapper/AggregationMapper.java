@@ -16,7 +16,7 @@ final class AggregationMapper
 {
     private final Aggregations value;
 
-    public AggregationMapper( final Aggregations value )
+    AggregationMapper( final Aggregations value )
     {
         this.value = value;
     }

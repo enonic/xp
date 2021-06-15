@@ -14,7 +14,7 @@ final class InputValidationVisitor
 
     private final InputTypeResolver inputTypeResolver;
 
-    public InputValidationVisitor( final PropertyTree propertyTree, final InputTypeResolver inputTypeResolver )
+    InputValidationVisitor( final PropertyTree propertyTree, final InputTypeResolver inputTypeResolver )
     {
         this.propertyTree = propertyTree;
         this.inputTypeResolver = inputTypeResolver;

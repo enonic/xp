@@ -233,7 +233,7 @@ public final class PropertySet
         array.addProperty( property );
     }
 
-    public final Property addProperty( final String name, final Value value )
+    public Property addProperty( final String name, final Value value )
     {
         if ( ifNotNull && value.isNull() )
         {
@@ -245,12 +245,12 @@ public final class PropertySet
         return array.addValue( value );
     }
 
-    public final Property setProperty( final String path, final Value value )
+    public Property setProperty( final String path, final Value value )
     {
         return setProperty( PropertyPath.from( path ), value );
     }
 
-    public final Property setProperty( final PropertyPath path, final Value value )
+    public Property setProperty( final PropertyPath path, final Value value )
     {
         final PropertyPath.Element firstElement = path.getFirstElement();
         if ( path.elementCount() > 1 )
@@ -264,7 +264,7 @@ public final class PropertySet
         }
     }
 
-    public final Property setProperty( final String name, final int index, final Value value )
+    public Property setProperty( final String name, final int index, final Value value )
     {
         if ( ifNotNull && value.isNull() )
         {

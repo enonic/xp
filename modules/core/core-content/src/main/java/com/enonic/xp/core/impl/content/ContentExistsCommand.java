@@ -93,12 +93,12 @@ final class ContentExistsCommand
 
         private ContentPath contentPath;
 
-        public Builder( final ContentId contentId )
+        Builder( final ContentId contentId )
         {
             this.contentId = contentId;
         }
 
-        public Builder( final ContentPath contentPath )
+        Builder( final ContentPath contentPath )
         {
             this.contentPath = contentPath;
         }

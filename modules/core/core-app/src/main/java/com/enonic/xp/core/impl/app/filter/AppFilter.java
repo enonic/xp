@@ -34,7 +34,7 @@ public class AppFilter
 
         final Pattern pattern;
 
-        public Rule( String ruleString )
+        Rule( String ruleString )
         {
             if ( ruleString.startsWith( "!" ) )
             {

@@ -8,7 +8,7 @@ import com.enonic.xp.portal.url.ServiceUrlParams;
 final class ServiceUrlBuilder
     extends GenericEndpointUrlBuilder<ServiceUrlParams>
 {
-    public ServiceUrlBuilder()
+    ServiceUrlBuilder()
     {
         super( "service" );
     }

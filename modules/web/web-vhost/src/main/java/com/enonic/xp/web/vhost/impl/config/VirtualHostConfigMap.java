@@ -26,7 +26,7 @@ final class VirtualHostConfigMap
 
     private final Map<String, String> map;
 
-    public VirtualHostConfigMap( final Map<String, String> map )
+    VirtualHostConfigMap( final Map<String, String> map )
     {
         this.map = map;
     }

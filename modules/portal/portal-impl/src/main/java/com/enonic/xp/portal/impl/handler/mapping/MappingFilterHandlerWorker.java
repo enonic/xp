@@ -27,7 +27,7 @@ final class MappingFilterHandlerWorker
 
     protected ControllerMappingDescriptor mappingDescriptor;
 
-    public MappingFilterHandlerWorker( final PortalRequest request, final WebResponse response, final WebHandlerChain webHandlerChain )
+    MappingFilterHandlerWorker( final PortalRequest request, final WebResponse response, final WebHandlerChain webHandlerChain )
     {
         super( request );
         this.response = response;

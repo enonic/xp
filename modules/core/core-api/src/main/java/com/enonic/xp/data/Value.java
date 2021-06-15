@@ -217,7 +217,7 @@ public abstract class Value
         return ValueTypes.LINK.convert( object );
     }
 
-    abstract Value copy( final PropertyTree tree );
+    abstract Value copy( PropertyTree tree );
 
     @Override
     public boolean equals( final Object o )

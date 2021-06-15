@@ -115,12 +115,12 @@ abstract class AbstractDeleteNodeCommand
     {
         boolean allowDeleteRoot = false;
 
-        public Builder()
+        Builder()
         {
             super();
         }
 
-        public Builder( final AbstractNodeCommand source )
+        Builder( final AbstractNodeCommand source )
         {
             super( source );
         }

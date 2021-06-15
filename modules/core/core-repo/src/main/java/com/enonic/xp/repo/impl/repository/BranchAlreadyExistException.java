@@ -9,7 +9,7 @@ class BranchAlreadyExistException
 {
     private final Branch branch;
 
-    public BranchAlreadyExistException( final Branch branch )
+    BranchAlreadyExistException( final Branch branch )
     {
         super( "Branch [{" + branch.getValue() + "}] already exists" );
         this.branch = branch;

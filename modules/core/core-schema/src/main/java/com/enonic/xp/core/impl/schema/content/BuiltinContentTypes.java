@@ -401,7 +401,7 @@ final class BuiltinContentTypes
 
     private final Map<ContentTypeName, ContentType> map;
 
-    public BuiltinContentTypes()
+    BuiltinContentTypes()
     {
         this.map = CONTENT_TYPES.stream()
             .map( this::processType )

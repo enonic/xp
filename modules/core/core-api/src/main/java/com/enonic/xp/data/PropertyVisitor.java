@@ -47,5 +47,5 @@ public abstract class PropertyVisitor
         }
     }
 
-    public abstract void visit( final Property property );
+    public abstract void visit( Property property );
 }

@@ -12,7 +12,7 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFiel
 class RangeAggregationQueryBuilderFactory
     extends AbstractBuilderFactory
 {
-    public RangeAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    RangeAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
     {
         super( fieldNameResolver );
     }

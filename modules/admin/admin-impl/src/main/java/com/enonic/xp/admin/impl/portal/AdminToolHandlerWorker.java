@@ -23,7 +23,7 @@ final class AdminToolHandlerWorker
 
     protected DescriptorKey descriptorKey;
 
-    public AdminToolHandlerWorker( final PortalRequest request )
+    AdminToolHandlerWorker( final PortalRequest request )
     {
         super( request );
     }
