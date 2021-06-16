@@ -26,12 +26,14 @@ public class RescheduleTask
 {
     private static final long serialVersionUID = 0;
 
+    public static final String NAME = "rescheduleTask";
+
     private static final Logger LOG = LoggerFactory.getLogger( RescheduleTask.class );
 
     @Override
     public String getName()
     {
-        return "rescheduleTask";
+        return NAME;
     }
 
     @Override
