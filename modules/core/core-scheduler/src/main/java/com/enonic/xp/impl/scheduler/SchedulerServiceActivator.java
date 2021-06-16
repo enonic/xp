@@ -70,7 +70,10 @@ public final class SchedulerServiceActivator
 
         try
         {
-            schedulerExecutorService.scheduleAtFixedRate( new RescheduleTask(), 0, 1, TimeUnit.SECONDS );
+            if ( !schedulerExecutorService.getAllFutures().contains( RescheduleTask.NAME ) )
+            {
+                schedulerExecutorService.scheduleAtFixedRate( new RescheduleTask(), 0, 1, TimeUnit.SECONDS );
+            }
         }
         catch ( Exception e )
         {
