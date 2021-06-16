@@ -11,9 +11,9 @@ import com.enonic.xp.security.acl.Permission;
 
 public class ContentIdsPermissionsJson
 {
-    private ContentIds contentIds;
+    private final ContentIds contentIds;
 
-    private List<Permission> permissions;
+    private final List<Permission> permissions;
 
     @JsonCreator
     public ContentIdsPermissionsJson( @JsonProperty("contentIds") final List<String> contentIds,

@@ -7,13 +7,13 @@ import com.google.common.collect.ImmutableList;
 
 public abstract class SuggestionEntry<OPTION extends SuggestionOption>
 {
-    private String text;
+    private final String text;
 
-    private Integer offset;
+    private final Integer offset;
 
-    private Integer length;
+    private final Integer length;
 
-    private List<OPTION> options;
+    private final List<OPTION> options;
 
     protected SuggestionEntry( final Builder builder )
     {
@@ -56,7 +56,7 @@ public abstract class SuggestionEntry<OPTION extends SuggestionOption>
 
         private Integer length;
 
-        private List<OPTION> suggestionOptions = new ArrayList<>();
+        private final List<OPTION> suggestionOptions = new ArrayList<>();
 
         @SuppressWarnings("unchecked")
         public T text( final String text )

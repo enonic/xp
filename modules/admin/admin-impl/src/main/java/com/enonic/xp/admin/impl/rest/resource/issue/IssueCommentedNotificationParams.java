@@ -5,7 +5,7 @@ import com.enonic.xp.security.User;
 public class IssueCommentedNotificationParams
     extends IssueNotificationParams
 {
-    private User modifier;
+    private final User modifier;
 
     public IssueCommentedNotificationParams( final Builder builder )
     {
@@ -26,7 +26,7 @@ public class IssueCommentedNotificationParams
     public static class Builder
         extends IssueNotificationParams.Builder<Builder>
     {
-        private User modifier;
+        private final User modifier;
 
         private Builder( final User modifier, final IssueNotificationParams source )
         {

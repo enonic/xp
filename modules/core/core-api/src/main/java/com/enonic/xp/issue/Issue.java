@@ -150,7 +150,7 @@ public class Issue
 
         private PrincipalKey modifier;
 
-        private Set<PrincipalKey> approverIds;
+        private final Set<PrincipalKey> approverIds;
 
         private PublishRequest publishRequest;
 

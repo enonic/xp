@@ -80,13 +80,13 @@ public class MoveRunnableTaskResult
     public static class Builder
         extends RunnableTaskResult.Builder<Builder>
     {
-        private List<ContentPath> alreadyMoved = new ArrayList<>();
+        private final List<ContentPath> alreadyMoved = new ArrayList<>();
 
-        private List<ContentPath> existsFailed = new ArrayList<>();
+        private final List<ContentPath> existsFailed = new ArrayList<>();
 
-        private List<ContentPath> notExistsFailed = new ArrayList<>();
+        private final List<ContentPath> notExistsFailed = new ArrayList<>();
 
-        private List<ContentPath> accessFailed = new ArrayList<>();
+        private final List<ContentPath> accessFailed = new ArrayList<>();
 
         private ContentPath destination;
 

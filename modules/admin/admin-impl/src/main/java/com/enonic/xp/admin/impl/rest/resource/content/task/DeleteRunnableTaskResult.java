@@ -46,7 +46,7 @@ public class DeleteRunnableTaskResult
     public static class Builder
         extends RunnableTaskResult.Builder<Builder>
     {
-        private List<ContentPath> pending = new ArrayList<>();
+        private final List<ContentPath> pending = new ArrayList<>();
 
         private Builder()
         {

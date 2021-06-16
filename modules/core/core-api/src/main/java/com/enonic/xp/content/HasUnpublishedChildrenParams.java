@@ -10,7 +10,7 @@ import com.enonic.xp.branch.Branch;
 @PublicApi
 public final class HasUnpublishedChildrenParams
 {
-    private ContentId contentId;
+    private final ContentId contentId;
 
     private final Branch target;
 

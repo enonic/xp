@@ -10,7 +10,7 @@ import com.enonic.xp.region.TextComponent;
 
 public final class ComponentJsonSerializer
 {
-    private ComponentNameResolver componentNameResolver;
+    private final ComponentNameResolver componentNameResolver;
 
     public ComponentJsonSerializer( final ComponentNameResolver componentNameResolver )
     {

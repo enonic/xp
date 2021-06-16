@@ -20,7 +20,7 @@ public final class CachedBlobStore
 
     private final Cache<BlobKey, BlobRecord> cache;
 
-    private long sizeTreshold;
+    private final long sizeTreshold;
 
     private CachedBlobStore( final Builder builder )
     {

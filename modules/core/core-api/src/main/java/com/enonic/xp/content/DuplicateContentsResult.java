@@ -43,7 +43,7 @@ public class DuplicateContentsResult
 
     public static final class Builder
     {
-        private List<ContentId> duplicatedContents = new ArrayList<>();
+        private final List<ContentId> duplicatedContents = new ArrayList<>();
 
         private String contentName;
 

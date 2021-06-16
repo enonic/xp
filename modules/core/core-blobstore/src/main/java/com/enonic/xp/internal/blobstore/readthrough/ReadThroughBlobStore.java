@@ -14,11 +14,11 @@ import com.enonic.xp.blob.Segment;
 public class ReadThroughBlobStore
     implements BlobStore, CachingBlobStore
 {
-    private BlobStore store;
+    private final BlobStore store;
 
-    private BlobStore readThroughStore;
+    private final BlobStore readThroughStore;
 
-    private long sizeThreshold;
+    private final long sizeThreshold;
 
     private ReadThroughBlobStore( final Builder builder )
     {

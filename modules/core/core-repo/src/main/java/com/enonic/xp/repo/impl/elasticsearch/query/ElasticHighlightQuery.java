@@ -128,7 +128,7 @@ public class ElasticHighlightQuery
 
     public static class Builder
     {
-        private Set<HighlightBuilder.Field> fields = new HashSet<>();
+        private final Set<HighlightBuilder.Field> fields = new HashSet<>();
 
         private HighlightQuerySettings settings = HighlightQuerySettings.empty();
 

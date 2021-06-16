@@ -37,7 +37,7 @@ public class HighlightQuery
 
     public static class Builder
     {
-        private ImmutableSet.Builder<HighlightQueryProperty> properties = ImmutableSet.builder();
+        private final ImmutableSet.Builder<HighlightQueryProperty> properties = ImmutableSet.builder();
 
         private HighlightQuerySettings settings = HighlightQuerySettings.empty();
 

@@ -10,7 +10,7 @@ public class TextComponent
 {
     private static final ComponentName NAME = ComponentName.from( "Text" );
 
-    private String text;
+    private final String text;
 
     protected TextComponent( final Builder builder )
     {

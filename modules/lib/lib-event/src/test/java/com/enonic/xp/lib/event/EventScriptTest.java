@@ -15,7 +15,7 @@ public class EventScriptTest
 
     private Event published;
 
-    private ScriptEventManager manager = new ScriptEventManager()
+    private final ScriptEventManager manager = new ScriptEventManager()
     {
         @Override
         public void add( final ScriptEventListener l )
@@ -30,7 +30,7 @@ public class EventScriptTest
         }
     };
 
-    private EventPublisher publisher = new EventPublisher()
+    private final EventPublisher publisher = new EventPublisher()
     {
         @Override
         public void publish( final Event event )

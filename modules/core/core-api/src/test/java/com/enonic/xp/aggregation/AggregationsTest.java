@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class AggregationsTest
 {
 
-    private static ArrayList<Aggregation> list = new ArrayList();
+    private static final ArrayList<Aggregation> list = new ArrayList();
 
     @BeforeAll
     public static void initApplicationKeys()

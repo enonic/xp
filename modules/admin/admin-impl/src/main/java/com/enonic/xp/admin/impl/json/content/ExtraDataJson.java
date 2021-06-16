@@ -13,9 +13,9 @@ import com.enonic.xp.schema.xdata.XDataName;
 
 public class ExtraDataJson
 {
-    private String name;
+    private final String name;
 
-    private List<PropertyArrayJson> data;
+    private final List<PropertyArrayJson> data;
 
     public ExtraDataJson( final ExtraData extraData )
     {

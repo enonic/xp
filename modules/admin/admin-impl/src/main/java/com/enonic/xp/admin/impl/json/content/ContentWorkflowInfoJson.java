@@ -12,9 +12,9 @@ import com.enonic.xp.content.WorkflowState;
 
 public class ContentWorkflowInfoJson
 {
-    private WorkflowState state;
+    private final WorkflowState state;
 
-    private Map<String, WorkflowCheckState> checks;
+    private final Map<String, WorkflowCheckState> checks;
 
     @JsonCreator
     public ContentWorkflowInfoJson( @JsonProperty("state") WorkflowState state,

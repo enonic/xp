@@ -17,7 +17,7 @@ final class UserMembersResolver
 {
     private final SecurityService securityService;
 
-    private Map<PrincipalKey, PrincipalKeys> membersCache;
+    private final Map<PrincipalKey, PrincipalKeys> membersCache;
 
     UserMembersResolver( final SecurityService securityService )
     {

@@ -9,7 +9,7 @@ import com.enonic.xp.region.PartDescriptor;
 public class PartDescriptorJson
     extends DescriptorJson
 {
-    private String icon;
+    private final String icon;
 
     public PartDescriptorJson( final PartDescriptor descriptor, final LocaleMessageResolver localeMessageResolver,
                                final InlineMixinResolver inlineMixinResolver )

@@ -11,7 +11,7 @@ import com.enonic.xp.repository.RepositoryIds;
 public class MultiRepoSearchSource
     implements SearchSource, Iterable<SingleRepoSearchSource>
 {
-    private Set<SingleRepoSearchSource> sources;
+    private final Set<SingleRepoSearchSource> sources;
 
     private MultiRepoSearchSource( final Builder builder )
     {
@@ -47,7 +47,7 @@ public class MultiRepoSearchSource
 
     public static final class Builder
     {
-        private Set<SingleRepoSearchSource> sources = new HashSet<>();
+        private final Set<SingleRepoSearchSource> sources = new HashSet<>();
 
         private Builder()
         {

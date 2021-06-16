@@ -137,7 +137,7 @@ public class CreateNodeParamsFactory
 
     public static class Builder
     {
-        private CreateContentTranslatorParams params;
+        private final CreateContentTranslatorParams params;
 
         private ContentTypeService contentTypeService;
 

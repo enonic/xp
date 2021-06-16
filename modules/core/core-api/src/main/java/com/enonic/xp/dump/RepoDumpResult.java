@@ -75,7 +75,7 @@ public class RepoDumpResult
     {
         private List<BranchDumpResult> branchResults = new ArrayList<>();
 
-        private List<DumpError> versionsErrors = new ArrayList<>();
+        private final List<DumpError> versionsErrors = new ArrayList<>();
 
         private RepositoryId repositoryId;
 

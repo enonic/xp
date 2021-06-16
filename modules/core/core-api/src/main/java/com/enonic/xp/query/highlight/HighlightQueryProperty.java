@@ -74,7 +74,7 @@ public class HighlightQueryProperty
 
     public static class Builder
     {
-        private String name;
+        private final String name;
 
         private HighlightPropertySettings settings = HighlightPropertySettings.empty();
 

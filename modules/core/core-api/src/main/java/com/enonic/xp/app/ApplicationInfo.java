@@ -15,25 +15,25 @@ import com.enonic.xp.task.TaskDescriptor;
 
 public final class ApplicationInfo
 {
-    private ContentTypes contentTypes;
+    private final ContentTypes contentTypes;
 
-    private PageDescriptors pages;
+    private final PageDescriptors pages;
 
-    private PartDescriptors parts;
+    private final PartDescriptors parts;
 
-    private LayoutDescriptors layouts;
+    private final LayoutDescriptors layouts;
 
-    private RelationshipTypes relations;
+    private final RelationshipTypes relations;
 
-    private MacroDescriptors macros;
+    private final MacroDescriptors macros;
 
-    private Descriptors<TaskDescriptor> tasks;
+    private final Descriptors<TaskDescriptor> tasks;
 
-    private Contents contentReferences;
+    private final Contents contentReferences;
 
-    private IdProviders idProviderReferences;
+    private final IdProviders idProviderReferences;
 
-    private IdProviderDescriptor idProviderDescriptor;
+    private final IdProviderDescriptor idProviderDescriptor;
 
     private ApplicationInfo( final Builder builder )
     {

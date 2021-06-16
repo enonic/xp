@@ -24,29 +24,29 @@ import com.enonic.xp.region.PartDescriptors;
 
 public class ApplicationInfoJson
 {
-    private ContentTypeSummaryListJson contentTypes;
+    private final ContentTypeSummaryListJson contentTypes;
 
-    private PageDescriptorListJson pages;
+    private final PageDescriptorListJson pages;
 
-    private PartDescriptorsJson parts;
+    private final PartDescriptorsJson parts;
 
-    private LayoutDescriptorsJson layouts;
+    private final LayoutDescriptorsJson layouts;
 
-    private RelationshipTypeListJson relations;
+    private final RelationshipTypeListJson relations;
 
-    private ContentReferencesJson references;
+    private final ContentReferencesJson references;
 
-    private MacrosJson macros;
+    private final MacrosJson macros;
 
-    private ApplicationTaskDescriptorsJson tasks;
+    private final ApplicationTaskDescriptorsJson tasks;
 
-    private WidgetDescriptorsJson widgets;
+    private final WidgetDescriptorsJson widgets;
 
-    private AdminToolDescriptorsJson tools;
+    private final AdminToolDescriptorsJson tools;
 
-    private IdProviderApplicationJson idProviderApplication;
+    private final IdProviderApplicationJson idProviderApplication;
 
-    private ApplicationDeploymentJson deployment;
+    private final ApplicationDeploymentJson deployment;
 
     private ApplicationInfoJson( final Builder builder )
     {

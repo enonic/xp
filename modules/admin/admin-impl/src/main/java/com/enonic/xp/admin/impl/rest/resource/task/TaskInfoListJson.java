@@ -8,7 +8,7 @@ import com.enonic.xp.task.TaskInfoJson;
 
 public class TaskInfoListJson
 {
-    private List<TaskInfoJson> tasks;
+    private final List<TaskInfoJson> tasks;
 
     public TaskInfoListJson( final List<TaskInfo> taskInfoList )
     {

@@ -45,9 +45,9 @@ public class IdProviderApplicationJson
 
     public static class IdProviderJson
     {
-        private String displayName;
+        private final String displayName;
 
-        private String path;
+        private final String path;
 
         public IdProviderJson( final IdProvider idProvider )
         {

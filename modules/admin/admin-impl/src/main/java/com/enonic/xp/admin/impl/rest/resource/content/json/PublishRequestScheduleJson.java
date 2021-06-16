@@ -10,9 +10,9 @@ import com.enonic.xp.issue.PublishRequestIssueSchedule;
 public class PublishRequestScheduleJson
 {
 
-    private Instant from;
+    private final Instant from;
 
-    private Instant to;
+    private final Instant to;
 
     @JsonCreator
     public PublishRequestScheduleJson( @JsonProperty("from") final String from, @JsonProperty("to") final String to )

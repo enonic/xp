@@ -126,7 +126,7 @@ public final class ApplicationResource
 
     private MixinService mixinService;
 
-    private ApplicationIconUrlResolver iconUrlResolver;
+    private final ApplicationIconUrlResolver iconUrlResolver;
 
     private RelationshipTypeIconUrlResolver relationshipTypeIconUrlResolver;
 
@@ -216,11 +216,11 @@ public final class ApplicationResource
                 {
                     builder.setDeploymentUrl(
                         request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/webapp/" +
-                            applicationKey.toString() );
+                            applicationKey );
                 }
                 else
                 {
-                    builder.setDeploymentUrl( "webapp/" + applicationKey.toString() );
+                    builder.setDeploymentUrl( "webapp/" + applicationKey );
                 }
             }
         }

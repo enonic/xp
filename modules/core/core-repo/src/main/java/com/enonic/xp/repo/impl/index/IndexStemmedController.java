@@ -6,17 +6,18 @@ import com.google.common.collect.ImmutableMap;
 
 public class IndexStemmedController
 {
-    private static ImmutableMap<String, String> SUPPORTED_ANALYZERS = ImmutableMap.<String, String>builder().
-        put( "ar", "arabic" ).
-        put( "hy", "armenian" ).
-        put( "eu", "basque" ).
-        put( "bn", "bengali" ).
-        put( "pt-BR", "brazilian" ).
-        put( "bg", "bulgarian" ).
-        put( "ca", "catalan" ).
-        put( "zh", "cjk" ).
-        put( "ja", "cjk" ).
-        put( "ko", "cjk" ).
+    private static final ImmutableMap<String, String> SUPPORTED_ANALYZERS = ImmutableMap.<String, String>builder()
+        .put( "ar", "arabic" )
+        .put( "hy", "armenian" )
+        .put( "eu", "basque" )
+        .put( "bn", "bengali" )
+        .put( "pt-BR", "brazilian" )
+        .put( "bg", "bulgarian" )
+        .put( "ca", "catalan" )
+        .put( "zh", "cjk" )
+        .put( "ja", "cjk" )
+        .put( "ko", "cjk" )
+        .
         put( "cs", "czech" ).
         put( "da", "danish" ).
         put( "nl", "dutch" ).
@@ -47,7 +48,7 @@ public class IndexStemmedController
         put( "th", "thai" ).
         build();
 
-    private static Map<String, StemmedIndexValueType> SUPPORTED_INDEX_VALUE_TYPES;
+    private static final Map<String, StemmedIndexValueType> SUPPORTED_INDEX_VALUE_TYPES;
 
     static
     {

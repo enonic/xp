@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 public class LocaleListJson
 {
-    private ImmutableList<LocaleJson> locales;
+    private final ImmutableList<LocaleJson> locales;
 
     public LocaleListJson( final Locale[] locales )
     {

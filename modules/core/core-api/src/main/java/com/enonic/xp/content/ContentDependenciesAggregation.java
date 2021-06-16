@@ -7,9 +7,9 @@ import com.enonic.xp.schema.content.ContentTypeName;
 @PublicApi
 public class ContentDependenciesAggregation
 {
-    private ContentTypeName type;
+    private final ContentTypeName type;
 
-    private Long count;
+    private final Long count;
 
     public ContentDependenciesAggregation( final Bucket bucket )
     {

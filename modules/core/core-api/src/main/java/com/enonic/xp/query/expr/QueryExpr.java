@@ -72,7 +72,7 @@ public final class QueryExpr
 
         if ( this.constraint != null )
         {
-            str.append( this.constraint.toString() );
+            str.append( this.constraint );
         }
 
         if ( !this.orderList.isEmpty() )

@@ -7,20 +7,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PublishScheduleJson
 {
+    private final Instant publishFrom;
 
-    private Instant publishFrom;
-
-    private Instant publishTo;
+    private final Instant publishTo;
 
     @JsonCreator
     public PublishScheduleJson( @JsonProperty(value = "from", required = true) final String publishFrom,
                                 @JsonProperty("to") final String publishTo )
     {
         this.publishFrom = Instant.parse( publishFrom );
-        if ( publishTo != null )
-        {
-            this.publishTo = Instant.parse( publishTo );
-        }
+        this.publishTo = publishTo == null ? null : Instant.parse( publishTo );
     }
 
     public Instant getPublishFrom()

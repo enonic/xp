@@ -10,7 +10,7 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public class ReorderChildNodesParams
     extends AbstractImmutableEntityList<ReorderChildNodeParams>
 {
-    private NodeDataProcessor processor;
+    private final NodeDataProcessor processor;
 
     private ReorderChildNodesParams( final Builder builder )
     {

@@ -5,7 +5,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public abstract class AggregationQuery
 {
-    private String name;
+    private final String name;
 
     AggregationQuery( final Builder builder )
     {

@@ -11,11 +11,11 @@ import com.enonic.xp.node.SyncWorkResolverParams;
 public final class DiffBranchesHandler
     extends AbstractNodeHandler
 {
-    private NodeKey nodeKey;
+    private final NodeKey nodeKey;
 
-    private Branch targetBranch;
+    private final Branch targetBranch;
 
-    private boolean includeChildren;
+    private final boolean includeChildren;
 
     private DiffBranchesHandler( final Builder builder )
     {

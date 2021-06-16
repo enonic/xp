@@ -43,13 +43,13 @@ public class SnapshotRestoreExecutor
         }
         catch ( ElasticsearchException e )
         {
-            return RestoreResult.create().
-                repositoryId( null ).
-                indices( List.of( indicesToRestore ) ).
-                failed( true ).
-                name( snapshotName ).
-                message( "Could not restore snapshot: " + e.toString() + " for indices: " + Arrays.asList( indicesToClose ) ).
-                build();
+            return RestoreResult.create()
+                .repositoryId( null )
+                .indices( List.of( indicesToRestore ) )
+                .failed( true )
+                .name( snapshotName )
+                .message( "Could not restore snapshot: " + e + " for indices: " + Arrays.asList( indicesToClose ) )
+                .build();
         }
         finally
         {

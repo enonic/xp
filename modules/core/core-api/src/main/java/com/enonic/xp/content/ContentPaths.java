@@ -141,7 +141,7 @@ public final class ContentPaths
 
     public static class Builder
     {
-        private ImmutableSet.Builder<ContentPath> paths = ImmutableSet.builder();
+        private final ImmutableSet.Builder<ContentPath> paths = ImmutableSet.builder();
 
         public Builder add( final ContentPath contentPath )
         {

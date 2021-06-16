@@ -10,11 +10,11 @@ import com.enonic.xp.content.CompareStatus;
 @PublicApi
 public class SyncWorkResolverParams
 {
-    private Branch branch;
+    private final Branch branch;
 
-    private NodeId nodeId;
+    private final NodeId nodeId;
 
-    private NodeIds excludedNodeIds;
+    private final NodeIds excludedNodeIds;
 
     private final boolean includeChildren;
 

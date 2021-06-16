@@ -59,9 +59,9 @@ public class CompareContentResults
 
     public static final class Builder
     {
-        private Set<CompareContentResult> compareResults = new HashSet<>();
+        private final Set<CompareContentResult> compareResults = new HashSet<>();
 
-        private Map<ContentId, CompareContentResult> compareResultsMap = new HashMap<>();
+        private final Map<ContentId, CompareContentResult> compareResultsMap = new HashMap<>();
 
         private Builder()
         {

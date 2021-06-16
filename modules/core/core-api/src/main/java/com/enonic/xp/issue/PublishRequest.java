@@ -36,9 +36,9 @@ public final class PublishRequest
 
     public static class Builder
     {
-        private Set<PublishRequestItem> items = new LinkedHashSet<>();
+        private final Set<PublishRequestItem> items = new LinkedHashSet<>();
 
-        private Set<ContentId> exclude = new LinkedHashSet<>();
+        private final Set<ContentId> exclude = new LinkedHashSet<>();
 
         public Builder addItems( final Collection<PublishRequestItem> items )
         {

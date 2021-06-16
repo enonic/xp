@@ -7,7 +7,7 @@ import com.enonic.xp.script.serializer.MapSerializable;
 public class BranchMapper
     implements MapSerializable
 {
-    private Branch branch;
+    private final Branch branch;
 
     public BranchMapper( final Branch branch )
     {

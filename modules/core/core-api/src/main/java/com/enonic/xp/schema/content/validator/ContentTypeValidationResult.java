@@ -11,7 +11,7 @@ import com.enonic.xp.annotation.PublicApi;
 public class ContentTypeValidationResult
     implements Iterable<ContentTypeValidationError>
 {
-    private ImmutableList<ContentTypeValidationError> errors;
+    private final ImmutableList<ContentTypeValidationError> errors;
 
     private ContentTypeValidationResult( final ImmutableList<ContentTypeValidationError> errors )
     {
@@ -80,7 +80,7 @@ public class ContentTypeValidationResult
 
     public static class Builder
     {
-        private ImmutableList.Builder<ContentTypeValidationError> errors = new ImmutableList.Builder<>();
+        private final ImmutableList.Builder<ContentTypeValidationError> errors = new ImmutableList.Builder<>();
 
         public Builder addError( ContentTypeValidationError error )
         {

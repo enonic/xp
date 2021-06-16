@@ -11,9 +11,9 @@ class BranchAclEntry
         this.acl = acl;
     }
 
-    private Branch branch;
+    private final Branch branch;
 
-    private PrincipalKeys acl;
+    private final PrincipalKeys acl;
 
     public Branch getBranch()
     {

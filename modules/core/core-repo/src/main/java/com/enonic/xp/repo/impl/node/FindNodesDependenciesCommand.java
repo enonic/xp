@@ -130,9 +130,9 @@ public class FindNodesDependenciesCommand
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
-        private NodeIds.Builder nodeIds = NodeIds.create();
+        private final NodeIds.Builder nodeIds = NodeIds.create();
 
-        private NodeIds.Builder excludedIds = NodeIds.create();
+        private final NodeIds.Builder excludedIds = NodeIds.create();
 
         private boolean recursive;
 

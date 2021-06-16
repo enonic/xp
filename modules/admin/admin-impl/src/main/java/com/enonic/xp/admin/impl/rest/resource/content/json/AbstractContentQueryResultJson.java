@@ -12,9 +12,9 @@ import com.enonic.xp.content.ContentListMetaData;
 
 public abstract class AbstractContentQueryResultJson<T extends ContentIdJson>
 {
-    private ImmutableSet<AggregationJson> aggregations;
+    private final ImmutableSet<AggregationJson> aggregations;
 
-    private ContentListMetaData metadata;
+    private final ContentListMetaData metadata;
 
     protected ImmutableSet<T> contents;
 
@@ -26,7 +26,7 @@ public abstract class AbstractContentQueryResultJson<T extends ContentIdJson>
 
     public abstract static class Builder<T extends Builder>
     {
-        private Set<AggregationJson> aggregations = new HashSet<>();
+        private final Set<AggregationJson> aggregations = new HashSet<>();
 
         private ContentListMetaData metadata;
 

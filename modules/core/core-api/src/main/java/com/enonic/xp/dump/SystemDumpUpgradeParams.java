@@ -4,9 +4,9 @@ import com.enonic.xp.upgrade.UpgradeListener;
 
 public class SystemDumpUpgradeParams
 {
-    private String dumpName;
+    private final String dumpName;
 
-    private UpgradeListener upgradeListener;
+    private final UpgradeListener upgradeListener;
 
     public SystemDumpUpgradeParams( final Builder builder )
     {

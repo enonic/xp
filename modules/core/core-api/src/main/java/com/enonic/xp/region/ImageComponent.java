@@ -16,9 +16,9 @@ public class ImageComponent
 
     private static final ComponentName NAME = ComponentName.from( "Image" );
 
-    private ContentId image;
+    private final ContentId image;
 
-    private PropertyTree config;
+    private final PropertyTree config;
 
     public ImageComponent( final Builder builder )
     {

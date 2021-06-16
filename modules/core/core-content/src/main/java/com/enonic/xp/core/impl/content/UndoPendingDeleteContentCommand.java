@@ -25,7 +25,7 @@ final class UndoPendingDeleteContentCommand
 {
     private final UndoPendingDeleteContentParams params;
 
-    private Contents.Builder pendingDeleteUndoneContents = Contents.create();
+    private final Contents.Builder pendingDeleteUndoneContents = Contents.create();
 
     private UndoPendingDeleteContentCommand( final Builder builder )
     {

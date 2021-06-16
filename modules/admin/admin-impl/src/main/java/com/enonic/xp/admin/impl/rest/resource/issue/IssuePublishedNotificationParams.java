@@ -5,7 +5,7 @@ import com.enonic.xp.security.User;
 public class IssuePublishedNotificationParams
     extends IssueNotificationParams
 {
-    private User publisher;
+    private final User publisher;
 
     public IssuePublishedNotificationParams( final Builder builder )
     {
@@ -26,7 +26,7 @@ public class IssuePublishedNotificationParams
     public static class Builder
         extends IssueNotificationParams.Builder<Builder>
     {
-        private User publisher;
+        private final User publisher;
 
         private Builder( final User publisher, final IssueNotificationParams source )
         {

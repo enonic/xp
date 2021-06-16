@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ApplicationsTest
 {
-    private static ArrayList<Application> list = new ArrayList();
+    private static final ArrayList<Application> list = new ArrayList();
 
     @BeforeAll
     public static void initList()

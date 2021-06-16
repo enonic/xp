@@ -15,7 +15,7 @@ public final class LayoutComponent
 {
     private static final ComponentName NAME = ComponentName.from( "Layout" );
 
-    private LayoutRegions regions;
+    private final LayoutRegions regions;
 
     public LayoutComponent( final Builder builder )
     {

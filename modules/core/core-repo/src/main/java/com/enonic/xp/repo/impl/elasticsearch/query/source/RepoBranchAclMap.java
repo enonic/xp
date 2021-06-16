@@ -14,7 +14,7 @@ import com.enonic.xp.security.PrincipalKeys;
 class RepoBranchAclMap
     implements Iterable<RepositoryId>
 {
-    private Multimap<RepositoryId, BranchAclEntry> repoAclMap;
+    private final Multimap<RepositoryId, BranchAclEntry> repoAclMap;
 
     private RepoBranchAclMap( final Builder builder )
     {
@@ -46,7 +46,7 @@ class RepoBranchAclMap
 
     public static final class Builder
     {
-        private Multimap<RepositoryId, BranchAclEntry> repoAclMap = ArrayListMultimap.create();
+        private final Multimap<RepositoryId, BranchAclEntry> repoAclMap = ArrayListMultimap.create();
 
         private Builder()
         {

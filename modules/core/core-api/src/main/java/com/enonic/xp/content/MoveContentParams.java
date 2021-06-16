@@ -8,15 +8,15 @@ import com.enonic.xp.security.PrincipalKey;
 @PublicApi
 public final class MoveContentParams
 {
-    private ContentId contentId;
+    private final ContentId contentId;
 
-    private ContentPath parentContentPath;
+    private final ContentPath parentContentPath;
 
-    private PrincipalKey creator;
+    private final PrincipalKey creator;
 
     private final MoveContentListener moveContentListener;
 
-    private boolean stopInherit;
+    private final boolean stopInherit;
 
     public MoveContentParams( Builder builder )
     {

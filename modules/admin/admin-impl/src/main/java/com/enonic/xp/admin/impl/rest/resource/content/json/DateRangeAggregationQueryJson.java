@@ -11,7 +11,7 @@ import com.enonic.xp.query.aggregation.DateRangeAggregationQuery;
 public class DateRangeAggregationQueryJson
     extends AggregationQueryJson
 {
-    private DateRangeAggregationQuery dateRangeAggregationQuery;
+    private final DateRangeAggregationQuery dateRangeAggregationQuery;
 
 
     @JsonCreator

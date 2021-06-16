@@ -17,7 +17,7 @@ public class ResourceKeysTest
     private static final String RESOURCE_URI_3 = "myapplication-1.0.0:/a/c.txt";
 
 
-    private static ArrayList<ResourceKey> list = new ArrayList();
+    private static final ArrayList<ResourceKey> list = new ArrayList();
 
     @BeforeAll
     public static void initResourceKeys()

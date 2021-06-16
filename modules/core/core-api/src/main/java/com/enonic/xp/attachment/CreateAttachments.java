@@ -89,7 +89,7 @@ public final class CreateAttachments
 
     public static class Builder
     {
-        private Set<CreateAttachment> contents = new LinkedHashSet<>();
+        private final Set<CreateAttachment> contents = new LinkedHashSet<>();
 
         public Builder add( CreateAttachment value )
         {

@@ -73,7 +73,7 @@ public final class ExtraDatas
 
     public static class Builder
     {
-        private Set<ExtraData> set = new LinkedHashSet<>();
+        private final Set<ExtraData> set = new LinkedHashSet<>();
 
         public Builder add( final ExtraData value )
         {

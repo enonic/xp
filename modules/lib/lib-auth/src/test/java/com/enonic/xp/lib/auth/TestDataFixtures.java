@@ -26,7 +26,7 @@ public class TestDataFixtures
 {
     private static final Instant NOW = Instant.ofEpochSecond( 0 );
 
-    private static Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
+    private static final Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
 
     public static User getTestUser()
     {

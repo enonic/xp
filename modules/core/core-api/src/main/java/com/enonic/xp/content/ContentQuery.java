@@ -94,7 +94,7 @@ public class ContentQuery
     {
         private QueryExpr queryExpr;
 
-        private ContentTypeNames.Builder contentTypeNamesBuilder = ContentTypeNames.create();
+        private final ContentTypeNames.Builder contentTypeNamesBuilder = ContentTypeNames.create();
 
         private ContentIds filterContentIds;
 
@@ -102,9 +102,9 @@ public class ContentQuery
 
         private int size = DEFAULT_FETCH_SIZE;
 
-        private ImmutableSet.Builder<AggregationQuery> aggregationQueries = ImmutableSet.builder();
+        private final ImmutableSet.Builder<AggregationQuery> aggregationQueries = ImmutableSet.builder();
 
-        private Filters.Builder queryFilters = Filters.create();
+        private final Filters.Builder queryFilters = Filters.create();
 
         private HighlightQuery highlight;
 
