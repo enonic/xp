@@ -112,7 +112,7 @@ public class ZipDumpReaderTest
                         ZipEntry zipEntry;
                         if ( Files.isDirectory( path ) )
                         {
-                            zipEntry = new ZipEntry( sourceDirPath.relativize( path ).toString() + "/" );
+                            zipEntry = new ZipEntry( sourceDirPath.relativize( path ) + "/" );
                             outputStream.putNextEntry( zipEntry );
                         }
                         else

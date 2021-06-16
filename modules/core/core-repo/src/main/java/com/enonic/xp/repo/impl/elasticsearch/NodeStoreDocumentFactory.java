@@ -228,7 +228,7 @@ public class NodeStoreDocumentFactory
 
         private RepositoryId repositoryId;
 
-        private boolean refresh = false;
+        private final boolean refresh = false;
 
         private Builder()
         {

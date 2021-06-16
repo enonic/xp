@@ -62,7 +62,7 @@ public final class Repositories
 
     public static class Builder
     {
-        private Set<Repository> repositorys = new LinkedHashSet<>();
+        private final Set<Repository> repositorys = new LinkedHashSet<>();
 
         public Builder add( Repository repository )
         {

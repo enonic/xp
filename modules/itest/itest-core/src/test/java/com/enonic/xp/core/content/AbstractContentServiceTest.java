@@ -360,8 +360,8 @@ public class AbstractContentServiceTest
     protected Content createContent( ContentPath parentPath )
         throws Exception
     {
-        return doCreateContent( parentPath, "This is my test content #" + UUID.randomUUID().toString(), new PropertyTree(),
-                                ExtraDatas.empty(), ContentTypeName.folder() );
+        return doCreateContent( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), ExtraDatas.empty(),
+                                ContentTypeName.folder() );
     }
 
     protected Content createContent( final ContentPath parentPath, final String displayName )
@@ -373,8 +373,8 @@ public class AbstractContentServiceTest
         throws Exception
     {
         final CreateContentParams.Builder builder =
-            createContentBuilder( parentPath, "This is my test content #" + UUID.randomUUID().toString(), new PropertyTree(),
-                                  ExtraDatas.empty(), ContentTypeName.folder() ).
+            createContentBuilder( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), ExtraDatas.empty(),
+                                  ContentTypeName.folder() ).
                 contentPublishInfo( publishInfo );
 
         return doCreateContent( builder );

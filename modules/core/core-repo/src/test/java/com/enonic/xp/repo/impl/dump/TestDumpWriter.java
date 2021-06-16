@@ -30,9 +30,9 @@ class TestDumpWriter
 
     private final Set<NodeVersionKey> nodeVersionKeys = new HashSet<>();
 
-    private AtomicLong commitCount = new AtomicLong();
+    private final AtomicLong commitCount = new AtomicLong();
 
-    private AtomicLong versionCount = new AtomicLong();
+    private final AtomicLong versionCount = new AtomicLong();
 
     private DumpMeta dumpMeta;
 

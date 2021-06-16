@@ -38,7 +38,7 @@ public class SearchTargets
 
     public static final class Builder
     {
-        private Set<SearchTarget> targets = new HashSet<>();
+        private final Set<SearchTarget> targets = new HashSet<>();
 
         private Builder()
         {

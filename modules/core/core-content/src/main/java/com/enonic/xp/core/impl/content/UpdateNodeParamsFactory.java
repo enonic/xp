@@ -107,7 +107,7 @@ public class UpdateNodeParamsFactory
 
     public static class Builder
     {
-        private UpdateContentTranslatorParams params;
+        private final UpdateContentTranslatorParams params;
 
         private ContentTypeService contentTypeService;
 

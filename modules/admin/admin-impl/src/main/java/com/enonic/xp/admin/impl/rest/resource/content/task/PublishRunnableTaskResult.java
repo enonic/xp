@@ -46,7 +46,7 @@ public class PublishRunnableTaskResult
     public static class Builder
         extends RunnableTaskResult.Builder<Builder>
     {
-        private List<ContentPath> deleted = new ArrayList<>();
+        private final List<ContentPath> deleted = new ArrayList<>();
 
         private Builder()
         {

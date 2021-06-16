@@ -7,9 +7,9 @@ import com.enonic.xp.security.acl.AccessControlList;
 public class SetRootPermissionsHandler
     extends AbstractNodeHandler
 {
-    private AccessControlList permissions;
+    private final AccessControlList permissions;
 
-    private boolean inheritPermissions;
+    private final boolean inheritPermissions;
 
     private SetRootPermissionsHandler( final Builder builder )
     {

@@ -38,6 +38,6 @@ public final class ContentName
 
     public static ContentName uniqueUnnamed()
     {
-        return from( UNNAMED_PREFIX + UUID.randomUUID().toString() );
+        return from( UNNAMED_PREFIX + UUID.randomUUID() );
     }
 }

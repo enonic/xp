@@ -37,7 +37,7 @@ public class VirtualHostIdProvidersMapping
     {
         private IdProviderKey defaultIdProvider;
 
-        private List<IdProviderKey> idProviderKeys;
+        private final List<IdProviderKey> idProviderKeys;
 
         private Builder()
         {

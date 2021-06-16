@@ -90,9 +90,9 @@ public final class StyleDescriptor
 
         private String cssPath;
 
-        private ImmutableList.Builder<ElementStyle> elements;
+        private final ImmutableList.Builder<ElementStyle> elements;
 
-        private Set<String> elementNames;
+        private final Set<String> elementNames;
 
         private Builder()
         {

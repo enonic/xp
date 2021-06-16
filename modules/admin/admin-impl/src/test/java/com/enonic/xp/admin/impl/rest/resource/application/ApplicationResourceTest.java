@@ -484,10 +484,9 @@ public class ApplicationResourceTest
         Mockito.doThrow( new ApplicationInstallException( "" ) ).when( this.applicationService ).uninstallApplication( applicationKey,
                                                                                                                        true );
         assertThrows( ApplicationInstallException.class, () -> {
-            request().
-                path( "application/uninstall" ).
-                entity( "{\"key\":[\"" + applicationKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
-                post().getAsString();
+            request().path( "application/uninstall" )
+                .entity( "{\"key\":[\"" + applicationKey + "\"]}", MediaType.APPLICATION_JSON_TYPE )
+                .post().getAsString();
         } );
     }
 
@@ -497,10 +496,9 @@ public class ApplicationResourceTest
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "testapplication" );
 
-        final String response = request().
-            path( "application/uninstall" ).
-            entity( "{\"key\":[\"" + applicationKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
-            post().getAsString();
+        final String response = request().path( "application/uninstall" )
+            .entity( "{\"key\":[\"" + applicationKey + "\"]}", MediaType.APPLICATION_JSON_TYPE )
+            .post().getAsString();
 
         assertEquals( "{}", response );
     }

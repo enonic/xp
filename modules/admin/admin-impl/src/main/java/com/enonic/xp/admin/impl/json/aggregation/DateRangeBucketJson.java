@@ -7,9 +7,9 @@ import com.enonic.xp.aggregation.DateRangeBucket;
 public class DateRangeBucketJson
     extends BucketJson
 {
-    private Instant from;
+    private final Instant from;
 
-    private Instant to;
+    private final Instant to;
 
     public DateRangeBucketJson( final DateRangeBucket dateRangeBucket )
     {

@@ -70,7 +70,7 @@ public final class RepositoryIds
 
     public static class Builder
     {
-        private List<RepositoryId> repositories = new ArrayList<>();
+        private final List<RepositoryId> repositories = new ArrayList<>();
 
         public Builder add( final RepositoryId repositoryId )
         {

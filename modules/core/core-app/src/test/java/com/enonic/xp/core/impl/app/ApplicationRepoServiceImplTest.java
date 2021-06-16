@@ -21,9 +21,9 @@ public class ApplicationRepoServiceImplTest
 {
     private static final String ROOT_TEST_PATH = "src/test/resources";
 
-    private NodeService nodeService = Mockito.mock( NodeService.class );
+    private final NodeService nodeService = Mockito.mock( NodeService.class );
 
-    private IndexService indexService = Mockito.mock( IndexService.class );
+    private final IndexService indexService = Mockito.mock( IndexService.class );
 
     private ApplicationRepoServiceImpl service;
 

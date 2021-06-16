@@ -12,7 +12,7 @@ public class TermsAggregationQueryJson
     extends AggregationQueryJson
 {
 
-    private TermsAggregationQuery termsAggregationQuery;
+    private final TermsAggregationQuery termsAggregationQuery;
 
     @JsonCreator
     public TermsAggregationQueryJson( @JsonProperty("name") final String name, //

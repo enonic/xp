@@ -35,11 +35,11 @@ public final class ProjectContentEventListener
 {
     private static final Logger LOG = LoggerFactory.getLogger( ProjectContentEventListener.class );
 
-    private ProjectService projectService;
+    private final ProjectService projectService;
 
-    private ContentEventsSynchronizer contentSynchronizer;
+    private final ContentEventsSynchronizer contentSynchronizer;
 
-    private SimpleExecutor simpleExecutor;
+    private final SimpleExecutor simpleExecutor;
 
     @Activate
     public ProjectContentEventListener( @Reference final ProjectService projectService,

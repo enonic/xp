@@ -41,15 +41,15 @@ public class IssueNotificationParamsFactory
 
     private ContentTypeIconResolver contentTypeIconResolver;
 
-    private LocaleMessageResolver localeMessageResolver;
+    private final LocaleMessageResolver localeMessageResolver;
 
-    private Issue issue;
+    private final Issue issue;
 
-    private List<IssueComment> comments;
+    private final List<IssueComment> comments;
 
-    private PrincipalKeys recipients;
+    private final PrincipalKeys recipients;
 
-    private String url;
+    private final String url;
 
     private IssueNotificationParamsFactory( Builder builder )
     {

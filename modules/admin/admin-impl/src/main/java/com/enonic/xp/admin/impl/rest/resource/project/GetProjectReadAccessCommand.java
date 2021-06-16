@@ -11,7 +11,7 @@ import com.enonic.xp.security.acl.Permission;
 public final class GetProjectReadAccessCommand
     extends AbstractProjectRootCommand
 {
-    private PrincipalKeys viewerRoleMembers;
+    private final PrincipalKeys viewerRoleMembers;
 
     private GetProjectReadAccessCommand( final Builder builder )
     {

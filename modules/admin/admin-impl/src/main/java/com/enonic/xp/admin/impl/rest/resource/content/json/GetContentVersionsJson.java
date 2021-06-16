@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class GetContentVersionsJson
 {
-    private Integer from;
+    private final Integer from;
 
-    private Integer size;
+    private final Integer size;
 
     private final String contentId;
 

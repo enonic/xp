@@ -125,9 +125,9 @@ public class HighlightPropertySettings
 
         private Order order;
 
-        private ImmutableList.Builder<Object> preTags = ImmutableList.builder();
+        private final ImmutableList.Builder<Object> preTags = ImmutableList.builder();
 
-        private ImmutableList.Builder<Object> postTags = ImmutableList.builder();
+        private final ImmutableList.Builder<Object> postTags = ImmutableList.builder();
 
         private Boolean requireFieldMatch = false;
 

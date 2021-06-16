@@ -171,7 +171,7 @@ public class FormItemSet
         FormItemPath formItemPath = getPath();
         if ( formItemPath != null )
         {
-            s.append( formItemPath.toString() );
+            s.append( formItemPath );
         }
         else
         {
@@ -264,7 +264,7 @@ public class FormItemSet
 
         private String helpTextI18nKey;
 
-        private List<FormItem> formItems = new ArrayList<>();
+        private final List<FormItem> formItems = new ArrayList<>();
 
         public Builder()
         {

@@ -15,7 +15,7 @@ import com.enonic.xp.security.PrincipalRelationships;
 public final class UpdateProjectRolesCommand
     extends AbstractProjectRolesCommand
 {
-    private ProjectPermissions permissions;
+    private final ProjectPermissions permissions;
 
     private UpdateProjectRolesCommand( final Builder builder )
     {

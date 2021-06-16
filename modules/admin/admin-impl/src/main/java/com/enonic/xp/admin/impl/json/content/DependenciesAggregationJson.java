@@ -6,11 +6,11 @@ import com.enonic.xp.schema.content.ContentTypeName;
 
 public class DependenciesAggregationJson
 {
-    private String type;
+    private final String type;
 
-    private Long count;
+    private final Long count;
 
-    private String iconUrl;
+    private final String iconUrl;
 
     public DependenciesAggregationJson( final ContentDependenciesAggregation aggregation,
                                         final ContentTypeIconUrlResolver contentTypeIconUrlResolver )

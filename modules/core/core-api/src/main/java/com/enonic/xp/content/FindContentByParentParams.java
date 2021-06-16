@@ -115,7 +115,7 @@ public final class FindContentByParentParams
 
         private ContentId parentId;
 
-        private Filters.Builder queryFilters = Filters.create();
+        private final Filters.Builder queryFilters = Filters.create();
 
         private Integer size = DEFAULT_SIZE;
 

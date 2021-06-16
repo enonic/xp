@@ -79,7 +79,7 @@ public class PropertyTest
         PropertySet destiSet = destinationTree.addSet( "destiSet" );
         sourceTree.getProperty( "outerSet.innerSet" ).copyTo( destiSet );
 
-        System.out.println( destinationTree.toString() );
+        System.out.println( destinationTree );
 
         // Verify the property from the source and destination tree are equals
         assertEquals( sourceTree.getProperty( "outerSet.innerSet" ), destinationTree.getProperty( "destiSet.innerSet" ) );

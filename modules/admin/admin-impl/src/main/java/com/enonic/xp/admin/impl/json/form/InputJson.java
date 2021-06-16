@@ -27,7 +27,7 @@ public class InputJson
 
     private final String inputType;
 
-    private LocaleMessageResolver localeMessageResolver;
+    private final LocaleMessageResolver localeMessageResolver;
 
     private Value defaultValue;
 

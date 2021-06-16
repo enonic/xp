@@ -70,7 +70,7 @@ public final class PrincipalKeys
 
     public static class Builder
     {
-        private ImmutableList.Builder<PrincipalKey> principalKeys = new ImmutableList.Builder<>();
+        private final ImmutableList.Builder<PrincipalKey> principalKeys = new ImmutableList.Builder<>();
 
         public Builder add( final PrincipalKey principalKey )
         {

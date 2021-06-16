@@ -89,7 +89,7 @@ public final class XDatas
 
     public static class Builder
     {
-        private ImmutableList.Builder<XData> builder = ImmutableList.builder();
+        private final ImmutableList.Builder<XData> builder = ImmutableList.builder();
 
         public Builder add( XData node )
         {

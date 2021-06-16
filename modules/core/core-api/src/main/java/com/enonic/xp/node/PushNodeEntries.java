@@ -50,7 +50,7 @@ public class PushNodeEntries
 
     public static final class Builder
     {
-        private Set<PushNodeEntry> entries = new LinkedHashSet<>();
+        private final Set<PushNodeEntry> entries = new LinkedHashSet<>();
 
         private Branch targetBranch;
 

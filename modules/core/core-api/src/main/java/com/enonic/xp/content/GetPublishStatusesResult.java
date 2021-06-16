@@ -53,9 +53,9 @@ public class GetPublishStatusesResult
 
     public static final class Builder
     {
-        private Set<GetPublishStatusResult> compareResults = new HashSet<>();
+        private final Set<GetPublishStatusResult> compareResults = new HashSet<>();
 
-        private Map<ContentId, GetPublishStatusResult> compareResultsMap = new HashMap<>();
+        private final Map<ContentId, GetPublishStatusResult> compareResultsMap = new HashMap<>();
 
         private Builder()
         {

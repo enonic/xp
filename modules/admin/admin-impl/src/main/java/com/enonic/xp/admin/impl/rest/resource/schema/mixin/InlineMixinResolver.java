@@ -5,7 +5,7 @@ import com.enonic.xp.schema.mixin.MixinService;
 
 public final class InlineMixinResolver
 {
-    private MixinService mixinService;
+    private final MixinService mixinService;
 
     public InlineMixinResolver( final MixinService mixinService )
     {

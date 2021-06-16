@@ -2448,7 +2448,7 @@ public class ContentResourceTest
             } );
 
             final Content content = createContent( "aaa", "my_a_content", "myapplication:my_type" );
-            final String json = "{\"url\": \"" + imageUrl.toString() + "\",\"parent\": \"/content\", \"name\": \"imageToUpload.jpg\"}";
+            final String json = "{\"url\": \"" + imageUrl + "\",\"parent\": \"/content\", \"name\": \"imageToUpload.jpg\"}";
 
             Mockito.when( contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenReturn( content );
 
@@ -2480,7 +2480,7 @@ public class ContentResourceTest
             } );
 
             final Content content = createContent( "aaa", "my_a_content", "myapplication:my_type" );
-            final String json = "{\"url\": \"" + imageUrl.toString() + "\",\"parent\": \"/content\", \"name\": \"imageToUpload.jpg\"}";
+            final String json = "{\"url\": \"" + imageUrl + "\",\"parent\": \"/content\", \"name\": \"imageToUpload.jpg\"}";
 
             Mockito.when( contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenReturn( content );
 

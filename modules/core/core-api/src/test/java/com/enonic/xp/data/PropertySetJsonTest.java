@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PropertySetJsonTest
 {
-    private JsonTestHelper jsonTestHelper;
+    private final JsonTestHelper jsonTestHelper;
 
     public PropertySetJsonTest()
     {

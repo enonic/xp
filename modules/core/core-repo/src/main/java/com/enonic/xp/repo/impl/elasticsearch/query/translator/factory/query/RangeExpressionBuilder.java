@@ -36,7 +36,7 @@ class RangeExpressionBuilder
 
         if ( compareExpr.getFirstValue() == null )
         {
-            throw new IllegalArgumentException( "Invalid compare expression [" + compareExpr.toString() + "]" );
+            throw new IllegalArgumentException( "Invalid compare expression [" + compareExpr + "]" );
         }
 
         final Object value = ValueHelper.getValueAsType( compareExpr.getFirstValue().getValue() );
@@ -54,7 +54,7 @@ class RangeExpressionBuilder
 
         if ( compareExpr.getFirstValue() == null )
         {
-            throw new IllegalArgumentException( "Invalid compare expression [" + compareExpr.toString() + "]" );
+            throw new IllegalArgumentException( "Invalid compare expression [" + compareExpr + "]" );
         }
 
         final Object value = ValueHelper.getValueAsType( compareExpr.getFirstValue().getValue() );

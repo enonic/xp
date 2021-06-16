@@ -7,15 +7,15 @@ import com.enonic.xp.security.PrincipalKey;
 
 public class IssueComment
 {
-    private NodeId id;
+    private final NodeId id;
 
-    private PrincipalKey creator;
+    private final PrincipalKey creator;
 
-    private String creatorDisplayName;
+    private final String creatorDisplayName;
 
-    private Instant created;
+    private final Instant created;
 
-    private String text;
+    private final String text;
 
     private IssueComment( Builder builder )
     {

@@ -66,7 +66,7 @@ public class SiteConfigs
 
     public static class Builder
     {
-        private ImmutableList.Builder<SiteConfig> builder = ImmutableList.builder();
+        private final ImmutableList.Builder<SiteConfig> builder = ImmutableList.builder();
 
         public Builder add( SiteConfig siteConfig )
         {

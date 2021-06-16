@@ -226,9 +226,9 @@ public final class IndexConfig
 
         private boolean path = false;
 
-        private List<String> languages = new ArrayList<>();
+        private final List<String> languages = new ArrayList<>();
 
-        private List<IndexValueProcessor> indexValueProcessors = new ArrayList<>();
+        private final List<IndexValueProcessor> indexValueProcessors = new ArrayList<>();
 
         private Builder()
         {

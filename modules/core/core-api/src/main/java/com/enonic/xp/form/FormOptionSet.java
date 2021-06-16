@@ -173,7 +173,7 @@ public class FormOptionSet
 
         private boolean expanded = false;
 
-        private List<FormOptionSetOption> setOptionsList = new ArrayList<>();
+        private final List<FormOptionSetOption> setOptionsList = new ArrayList<>();
 
         private Occurrences occurrences = Occurrences.create( 0, 1 );
 

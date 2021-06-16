@@ -20,7 +20,7 @@ public final class LocaleMessageResolver
 {
     private static final Logger LOG = LoggerFactory.getLogger( LocaleMessageResolver.class );
 
-    private LocaleService localeService;
+    private final LocaleService localeService;
 
     private ApplicationKey applicationKey;
 

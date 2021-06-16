@@ -48,7 +48,7 @@ public final class UpdateRepositoryEntryParams
 
         private PropertyTree repositoryData;
 
-        private BinaryAttachments.Builder attachments = BinaryAttachments.create();
+        private final BinaryAttachments.Builder attachments = BinaryAttachments.create();
 
         public Builder repositoryId( RepositoryId repositoryId )
         {

@@ -25,7 +25,7 @@ import com.enonic.xp.support.JsonTestHelper;
 public class FormItemJsonTest
 {
 
-    private JsonTestHelper jsonTestHelper;
+    private final JsonTestHelper jsonTestHelper;
 
     public FormItemJsonTest()
     {

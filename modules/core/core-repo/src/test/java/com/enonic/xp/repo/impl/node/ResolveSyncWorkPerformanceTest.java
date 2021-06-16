@@ -48,7 +48,7 @@ public class ResolveSyncWorkPerformanceTest
 
         started.stop();
 
-        System.out.println( resolvedNodes.getSize() + " in " + started.toString() );
+        System.out.println( resolvedNodes.getSize() + " in " + started );
     }
 
 }

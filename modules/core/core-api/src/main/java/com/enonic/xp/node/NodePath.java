@@ -180,7 +180,7 @@ public final class NodePath
     public NodePath removeFromBeginning( final NodePath path )
     {
         Preconditions.checkState( this.elementCount() >= path.elementCount(),
-                                  "No point in trying to remove [" + path.toString() + "] from [" + this.toString() + "]" );
+                                  "No point in trying to remove [" + path + "] from [" + this.toString() + "]" );
 
         if ( path.elementCount() == 0 )
         {

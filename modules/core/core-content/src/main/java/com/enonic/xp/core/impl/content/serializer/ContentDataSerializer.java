@@ -70,13 +70,13 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 public class ContentDataSerializer
 {
-    private PageDataSerializer pageDataSerializer;
+    private final PageDataSerializer pageDataSerializer;
 
-    private ExtraDataSerializer extraDataSerializer;
+    private final ExtraDataSerializer extraDataSerializer;
 
-    private WorkflowInfoSerializer workflowInfoSerializer;
+    private final WorkflowInfoSerializer workflowInfoSerializer;
 
-    private PublishInfoSerializer publishInfoSerializer;
+    private final PublishInfoSerializer publishInfoSerializer;
 
     private ContentDataSerializer( final Builder builder )
     {

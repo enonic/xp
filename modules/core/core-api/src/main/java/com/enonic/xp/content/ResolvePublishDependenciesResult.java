@@ -5,7 +5,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public class ResolvePublishDependenciesResult
 {
-    private CompareContentResults compareContents;
+    private final CompareContentResults compareContents;
 
     private ResolvePublishDependenciesResult( final Builder builder )
     {
@@ -29,7 +29,7 @@ public class ResolvePublishDependenciesResult
 
     public static final class Builder
     {
-        private CompareContentResults.Builder results = CompareContentResults.create();
+        private final CompareContentResults.Builder results = CompareContentResults.create();
 
         private Builder()
         {

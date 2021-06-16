@@ -2,9 +2,9 @@ package com.enonic.xp.node;
 
 public class PushNodeEntry
 {
-    private NodeBranchEntry nodeBranchEntry;
+    private final NodeBranchEntry nodeBranchEntry;
 
-    private NodePath currentTargetPath;
+    private final NodePath currentTargetPath;
 
     private PushNodeEntry( final Builder builder )
     {

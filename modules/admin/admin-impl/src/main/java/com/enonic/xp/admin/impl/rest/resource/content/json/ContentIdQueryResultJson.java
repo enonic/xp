@@ -25,7 +25,7 @@ public class ContentIdQueryResultJson
     public static class Builder
         extends AbstractContentQueryResultJson.Builder<Builder>
     {
-        private Set<ContentIdJson> contents = new LinkedHashSet<>();
+        private final Set<ContentIdJson> contents = new LinkedHashSet<>();
 
         @Override
         public Builder addContent( final Content content )

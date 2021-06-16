@@ -18,9 +18,9 @@ public final class FormItems
 {
     private final FormItem containerFormItem;
 
-    private LinkedHashMap<String, FormItem> formItemByName = new LinkedHashMap<>();
+    private final LinkedHashMap<String, FormItem> formItemByName = new LinkedHashMap<>();
 
-    private LinkedHashMap<String, Layout> layoutByName = new LinkedHashMap<>();
+    private final LinkedHashMap<String, Layout> layoutByName = new LinkedHashMap<>();
 
     public FormItems()
     {

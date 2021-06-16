@@ -3,7 +3,7 @@ package com.enonic.xp.suggester;
 public final class TermSuggestionOption
     extends SuggestionOption
 {
-    private Integer freq;
+    private final Integer freq;
 
     private TermSuggestionOption( final Builder builder )
     {

@@ -75,7 +75,7 @@ public class ProjectServiceImpl
 
     private final ProjectPermissionsContextManager projectPermissionsContextManager;
 
-    private EventPublisher eventPublisher;
+    private final EventPublisher eventPublisher;
 
     public ProjectServiceImpl( final RepositoryService repositoryService, final IndexService indexService, final NodeService nodeService,
                                final SecurityService securityService,

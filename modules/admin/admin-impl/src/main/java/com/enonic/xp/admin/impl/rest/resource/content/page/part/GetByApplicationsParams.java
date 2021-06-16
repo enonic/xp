@@ -12,7 +12,7 @@ import com.enonic.xp.app.ApplicationKeys;
 public class GetByApplicationsParams
 {
 
-    private ApplicationKeys applicationKeys;
+    private final ApplicationKeys applicationKeys;
 
     @JsonCreator
     public GetByApplicationsParams( @JsonProperty("applicationKeys") List<String> applicationKeysAsStringList )

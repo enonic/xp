@@ -5,9 +5,9 @@ import java.util.List;
 
 public class MoveContentResultJson
 {
-    private List<Success> successes = new ArrayList<>();
+    private final List<Success> successes = new ArrayList<>();
 
-    private List<Failure> failures = new ArrayList<>();
+    private final List<Failure> failures = new ArrayList<>();
 
     public List<Success> getSuccesses()
     {
@@ -32,7 +32,7 @@ public class MoveContentResultJson
     public static class Success
     {
 
-        private String name;
+        private final String name;
 
         public Success( final String name )
         {
@@ -49,7 +49,7 @@ public class MoveContentResultJson
         extends Success
     {
 
-        private String reason;
+        private final String reason;
 
         public Failure( final String name, final String reason )
         {

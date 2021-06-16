@@ -49,7 +49,7 @@ public class BinaryAttachments
 
     public static final class Builder
     {
-        private Set<BinaryAttachment> binaryAttachments = new HashSet<>();
+        private final Set<BinaryAttachment> binaryAttachments = new HashSet<>();
 
         public Builder add( final BinaryAttachment binaryAttachment )
         {

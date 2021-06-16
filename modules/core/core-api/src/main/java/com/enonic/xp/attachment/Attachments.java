@@ -92,7 +92,7 @@ public final class Attachments
 
     public static class Builder
     {
-        private ImmutableList.Builder<Attachment> builder = ImmutableList.builder();
+        private final ImmutableList.Builder<Attachment> builder = ImmutableList.builder();
 
         public Builder add( Attachment attachment )
         {

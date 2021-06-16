@@ -23,7 +23,7 @@ public class PropertyTreeSpeedTest
         }
         stopwatch.stop();
 
-        System.out.println( "adding_one_million_properties_with_same_name_and_value_to_root: " + stopwatch.toString() );
+        System.out.println( "adding_one_million_properties_with_same_name_and_value_to_root: " + stopwatch );
     }
 
     @Test
@@ -40,7 +40,7 @@ public class PropertyTreeSpeedTest
         }
         stopwatch.stop();
 
-        System.out.println( "adding_one_million_properties_with_same_name_and_different_value_to_root: " + stopwatch.toString() );
+        System.out.println( "adding_one_million_properties_with_same_name_and_different_value_to_root: " + stopwatch );
     }
 
     @Test
@@ -59,7 +59,7 @@ public class PropertyTreeSpeedTest
         }
         stopwatch.stop();
 
-        System.out.println( "creating_tree_with_10_branches_with_width_of_10_and_depth_of_4_and_10_leaf_nodes: " + stopwatch.toString() );
+        System.out.println( "creating_tree_with_10_branches_with_width_of_10_and_depth_of_4_and_10_leaf_nodes: " + stopwatch );
         System.out.println( "number of properties: " + tree.getTotalSize() );
     }
 

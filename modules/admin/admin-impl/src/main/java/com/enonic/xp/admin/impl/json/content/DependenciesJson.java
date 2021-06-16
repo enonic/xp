@@ -4,9 +4,9 @@ import java.util.List;
 
 public class DependenciesJson
 {
-    private List<DependenciesAggregationJson> inbound;
+    private final List<DependenciesAggregationJson> inbound;
 
-    private List<DependenciesAggregationJson> outbound;
+    private final List<DependenciesAggregationJson> outbound;
 
 
     public DependenciesJson( final List<DependenciesAggregationJson> inbound, List<DependenciesAggregationJson> outbound )

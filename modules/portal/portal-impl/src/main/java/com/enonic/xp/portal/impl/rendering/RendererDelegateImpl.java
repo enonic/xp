@@ -19,7 +19,7 @@ public final class RendererDelegateImpl
 {
     private final CopyOnWriteArrayList<Renderer<? super Object>> renderers = new CopyOnWriteArrayList<>();
 
-    private ContentService contentService;
+    private final ContentService contentService;
 
     @Activate
     public RendererDelegateImpl( @Reference final ContentService contentService )

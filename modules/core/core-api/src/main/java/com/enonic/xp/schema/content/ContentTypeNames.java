@@ -57,7 +57,7 @@ public final class ContentTypeNames
 
     public static class Builder
     {
-        private ImmutableSortedSet.Builder<ContentTypeName> set = ImmutableSortedSet.naturalOrder();
+        private final ImmutableSortedSet.Builder<ContentTypeName> set = ImmutableSortedSet.naturalOrder();
 
         private Builder()
         {

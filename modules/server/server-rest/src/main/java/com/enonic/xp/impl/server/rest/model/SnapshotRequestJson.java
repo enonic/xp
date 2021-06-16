@@ -7,9 +7,9 @@ import com.enonic.xp.repository.RepositoryId;
 
 public class SnapshotRequestJson
 {
-    private RepositoryId repositoryId;
+    private final RepositoryId repositoryId;
 
-    private boolean skipIndexedData;
+    private final boolean skipIndexedData;
 
     @JsonCreator
     public SnapshotRequestJson( @JsonProperty("repositoryId") final String repository,

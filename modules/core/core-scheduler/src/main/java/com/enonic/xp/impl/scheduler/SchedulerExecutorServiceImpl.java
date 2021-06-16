@@ -24,7 +24,7 @@ public final class SchedulerExecutorServiceImpl
 
     private final DynamicReference<SystemScheduler> clusteredSchedulerRef = new DynamicReference<>();
 
-    private volatile boolean clusterEnabled;
+    private final boolean clusterEnabled;
 
     @Activate
     public SchedulerExecutorServiceImpl( @Reference(target = "(local=true)") final SystemScheduler localScheduler,

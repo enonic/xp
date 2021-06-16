@@ -13,7 +13,7 @@ import static com.enonic.xp.content.ContentPropertyNames.SITECONFIG;
 public class SiteConfigProcessor
     implements ContentIndexConfigProcessor
 {
-    private Collection<Form> sizeConfigForms;
+    private final Collection<Form> sizeConfigForms;
 
     public SiteConfigProcessor( final Collection<Form> sizeConfigForm )
     {

@@ -5,7 +5,7 @@ import com.enonic.xp.region.RegionDescriptor;
 
 public class RegionDescriptorJson
 {
-    private RegionDescriptor regionDescriptor;
+    private final RegionDescriptor regionDescriptor;
 
     public RegionDescriptorJson( final RegionDescriptor regionDescriptor )
     {

@@ -41,7 +41,7 @@ public final class PublishRequestItems
 
     public static class Builder
     {
-        private List<PublishRequestItem> items = new ArrayList<>();
+        private final List<PublishRequestItem> items = new ArrayList<>();
 
         public Builder add( final PublishRequestItem item )
         {
