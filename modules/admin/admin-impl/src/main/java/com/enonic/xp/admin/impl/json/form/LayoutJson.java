@@ -8,7 +8,7 @@ import com.enonic.xp.form.Layout;
 public abstract class LayoutJson<T extends Layout>
     extends FormItemJson<T>
 {
-    private T layout;
+    private final T layout;
 
     public LayoutJson( final T layout )
     {

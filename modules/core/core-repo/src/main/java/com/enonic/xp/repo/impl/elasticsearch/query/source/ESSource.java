@@ -49,7 +49,7 @@ public class ESSource
 
         private Set<String> indexTypes = new HashSet<>();
 
-        private Set<Filter> filters = new HashSet<>();
+        private final Set<Filter> filters = new HashSet<>();
 
         private Builder()
         {

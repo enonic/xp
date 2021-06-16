@@ -35,7 +35,7 @@ public class MoveContentsResult
 
     public static final class Builder
     {
-        private List<ContentId> movedContents = new ArrayList<>();
+        private final List<ContentId> movedContents = new ArrayList<>();
 
         private String contentName;
 

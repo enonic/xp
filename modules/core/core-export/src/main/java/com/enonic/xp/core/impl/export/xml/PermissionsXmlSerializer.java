@@ -7,9 +7,9 @@ import com.enonic.xp.xml.DomBuilder;
 
 public class PermissionsXmlSerializer
 {
-    private DomBuilder domBuilder;
+    private final DomBuilder domBuilder;
 
-    private AccessControlList accessControlList;
+    private final AccessControlList accessControlList;
 
     private PermissionsXmlSerializer( Builder builder )
     {

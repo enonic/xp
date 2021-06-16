@@ -45,7 +45,7 @@ public class Filters
 
     public static class Builder
     {
-        private ImmutableList.Builder<Filter> filters = ImmutableList.builder();
+        private final ImmutableList.Builder<Filter> filters = ImmutableList.builder();
 
         private Builder()
         {

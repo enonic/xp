@@ -32,10 +32,9 @@ public class ErrorPageRichBuilderTest
         final Exception cause = new Exception();
         cause.setStackTrace( traceElements );
 
-        final ErrorPageRichBuilder builder = new ErrorPageRichBuilder().
-            cause( cause ).
-            description( "<\"description\" \'with\' " + " escapable  text/> && </>" ).
-            resourceService( resourceService ).
+        final ErrorPageRichBuilder builder = new ErrorPageRichBuilder().cause( cause )
+            .description( "<\"description\" 'with' " + " escapable  text/> && </>" )
+            .resourceService( resourceService ).
             status( 404 ).
             title( "title" );
 
@@ -53,12 +52,11 @@ public class ErrorPageRichBuilderTest
         final Exception cause = new Exception();
         cause.setStackTrace( traceElements );
 
-        final ErrorPageRichBuilder builder = new ErrorPageRichBuilder().
-            cause( cause ).
-            description( "desc" ).
-            resourceService( resourceService ).
-            status( 404 ).
-            title( "<\"title\" \'with\' " + " escapable  text/> && </>" );
+        final ErrorPageRichBuilder builder = new ErrorPageRichBuilder().cause( cause )
+            .description( "desc" )
+            .resourceService( resourceService )
+            .status( 404 )
+            .title( "<\"title\" 'with' " + " escapable  text/> && </>" );
 
         final String result = readResource( "title_error_page_builder_test.html" );
         assertEquals( result, builder.build() );
@@ -79,12 +77,11 @@ public class ErrorPageRichBuilderTest
         final Exception cause = new Exception();
         cause.setStackTrace( traceElements );
 
-        final ErrorPageRichBuilder builder = new ErrorPageRichBuilder().
-            cause( cause ).
-            description( "desc" ).
-            resourceService( resourceService ).
-            status( 404 ).
-            title( "<\"title\" \'with\' " + " escapable  text/> && </>" );
+        final ErrorPageRichBuilder builder = new ErrorPageRichBuilder().cause( cause )
+            .description( "desc" )
+            .resourceService( resourceService )
+            .status( 404 )
+            .title( "<\"title\" 'with' " + " escapable  text/> && </>" );
 
         final String result = readResource( "cause_error_page_builder_test.html" );
         assertEquals( result, builder.build() );

@@ -6,21 +6,21 @@ import java.util.Objects;
 
 public class LocaleJson
 {
-    private String tag;
+    private final String tag;
 
-    private String displayName;
+    private final String displayName;
 
-    private String language;
+    private final String language;
 
-    private String displayLanguage;
+    private final String displayLanguage;
 
-    private String variant;
+    private final String variant;
 
-    private String displayVariant;
+    private final String displayVariant;
 
-    private String country;
+    private final String country;
 
-    private String displayCountry;
+    private final String displayCountry;
 
     public LocaleJson( final Locale locale )
     {

@@ -4,11 +4,11 @@ import com.enonic.xp.admin.impl.json.content.ContentJson;
 
 public class ContentTreeSelectorJson
 {
-    private ContentJson content;
+    private final ContentJson content;
 
-    private Boolean selectable;
+    private final Boolean selectable;
 
-    private Boolean expandable;
+    private final Boolean expandable;
 
     public ContentTreeSelectorJson( final ContentJson content, final Boolean selectable, final Boolean expandable )
     {

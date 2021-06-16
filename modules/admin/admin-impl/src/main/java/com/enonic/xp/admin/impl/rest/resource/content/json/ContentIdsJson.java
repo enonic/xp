@@ -8,7 +8,7 @@ import com.enonic.xp.content.ContentIds;
 
 public class ContentIdsJson
 {
-    private ContentIds contentIds;
+    private final ContentIds contentIds;
 
     public ContentIdsJson( @JsonProperty("contentIds") final List<String> contentIds )
     {

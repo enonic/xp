@@ -11,7 +11,7 @@ public final class ScriptSettings
 
     private final ImmutableMap<String, Object> globalMap;
 
-    private DebugSettings debug;
+    private final DebugSettings debug;
 
     private ScriptSettings( final Builder builder )
     {

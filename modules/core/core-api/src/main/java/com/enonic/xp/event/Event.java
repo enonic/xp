@@ -149,7 +149,7 @@ public final class Event
 
     public static final class Builder
     {
-        private String type;
+        private final String type;
 
         private boolean distributed;
 
@@ -157,7 +157,7 @@ public final class Event
 
         private boolean localOrigin = true;
 
-        private ImmutableMap.Builder<String, Object> dataBuilder = ImmutableMap.builder();
+        private final ImmutableMap.Builder<String, Object> dataBuilder = ImmutableMap.builder();
 
         private Builder( final String type )
         {

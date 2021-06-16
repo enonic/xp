@@ -642,11 +642,11 @@ public final class SecurityResource
 
     private static class FetchPrincipalsWithRolesResult
     {
-        private List<Principal> principals;
+        private final List<Principal> principals;
 
-        private int unfilteredSize;
+        private final int unfilteredSize;
 
-        private boolean hasMore;
+        private final boolean hasMore;
 
         FetchPrincipalsWithRolesResult( final List<Principal> principals, final int unfilteredSize, final boolean hasMore )
         {

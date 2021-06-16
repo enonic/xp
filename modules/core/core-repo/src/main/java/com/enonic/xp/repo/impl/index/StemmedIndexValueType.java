@@ -8,7 +8,7 @@ public class StemmedIndexValueType
 
     public static final String STEMMED_INDEX_PREFIX = "_stemmed_";
 
-    private String value;
+    private final String value;
 
     public StemmedIndexValueType( final String value )
     {

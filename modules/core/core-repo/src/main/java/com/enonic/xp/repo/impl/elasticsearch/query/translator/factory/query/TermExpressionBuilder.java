@@ -16,7 +16,7 @@ class TermExpressionBuilder
 
         if ( compareExpr.getFirstValue() == null )
         {
-            throw new IllegalArgumentException( "Invalid compare expression [" + compareExpr.toString() + "]" );
+            throw new IllegalArgumentException( "Invalid compare expression [" + compareExpr + "]" );
         }
 
         final Value value = compareExpr.getFirstValue().getValue();

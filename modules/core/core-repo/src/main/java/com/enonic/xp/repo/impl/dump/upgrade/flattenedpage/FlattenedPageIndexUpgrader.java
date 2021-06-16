@@ -35,7 +35,7 @@ public class FlattenedPageIndexUpgrader
 
     private final List<PropertySet> components;
 
-    private FlattenedPageRegionsIndexUpgrader flattenedPageRegionsIndexUpgrader;
+    private final FlattenedPageRegionsIndexUpgrader flattenedPageRegionsIndexUpgrader;
 
     private PatternIndexConfigDocument.Builder result;
 

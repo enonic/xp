@@ -50,7 +50,7 @@ public class XDataMappings
 
     public static class Builder
     {
-        private ImmutableList.Builder<XDataMapping> builder = ImmutableList.builder();
+        private final ImmutableList.Builder<XDataMapping> builder = ImmutableList.builder();
 
         public XDataMappings.Builder add( XDataMapping xDataMapping )
         {

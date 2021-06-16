@@ -32,9 +32,9 @@ public class ApplyNodePermissionsResult
 
     public static final class Builder
     {
-        private Nodes.Builder succeedNodes = Nodes.create();
+        private final Nodes.Builder succeedNodes = Nodes.create();
 
-        private Nodes.Builder skippedNodes = Nodes.create();
+        private final Nodes.Builder skippedNodes = Nodes.create();
 
         private Builder()
         {

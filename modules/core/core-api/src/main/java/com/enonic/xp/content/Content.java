@@ -519,7 +519,7 @@ public class Content
         public BUILDER path( final ContentPath path )
         {
             this.parentPath = path.getParentPath() != null ? path.getParentPath().asAbsolute() : null;
-            Preconditions.checkArgument( path.elementCount() > 0, "No content can be \"root content\": " + path.toString() );
+            Preconditions.checkArgument( path.elementCount() > 0, "No content can be \"root content\": " + path );
             this.name = ContentName.from( path.getElement( path.elementCount() - 1 ) );
             return (BUILDER) this;
         }

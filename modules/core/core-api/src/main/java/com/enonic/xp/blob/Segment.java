@@ -89,7 +89,7 @@ public final class Segment
 
     public static class Builder
     {
-        private ImmutableList.Builder<SegmentLevel> levels = ImmutableList.builder();
+        private final ImmutableList.Builder<SegmentLevel> levels = ImmutableList.builder();
 
         public Builder level( SegmentLevel level )
         {

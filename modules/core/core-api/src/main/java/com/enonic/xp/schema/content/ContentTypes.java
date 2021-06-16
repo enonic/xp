@@ -92,7 +92,7 @@ public final class ContentTypes
 
     public static class Builder
     {
-        private ImmutableList.Builder<ContentType> contentTypes = ImmutableList.builder();
+        private final ImmutableList.Builder<ContentType> contentTypes = ImmutableList.builder();
 
         public Builder add( final ContentType value )
         {

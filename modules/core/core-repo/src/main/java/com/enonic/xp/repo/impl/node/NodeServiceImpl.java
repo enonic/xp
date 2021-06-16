@@ -974,7 +974,7 @@ public class NodeServiceImpl
             return node;
         }
 
-        throw new RuntimeException( "Expected node with path " + NodePath.ROOT.toString() + " to be of type RootNode, found " + node.id() );
+        throw new RuntimeException( "Expected node with path " + NodePath.ROOT + " to be of type RootNode, found " + node.id() );
     }
 
     @Override

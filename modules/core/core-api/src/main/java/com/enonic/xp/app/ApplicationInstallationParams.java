@@ -4,9 +4,9 @@ import java.util.Objects;
 
 public class ApplicationInstallationParams
 {
-    private boolean start;
+    private final boolean start;
 
-    private boolean triggerEvent;
+    private final boolean triggerEvent;
 
     private ApplicationInstallationParams( final Builder builder )
     {

@@ -11,7 +11,7 @@ public class FragmentComponent
 {
     private static final ComponentName NAME = ComponentName.from( "Fragment" );
 
-    private ContentId fragment;
+    private final ContentId fragment;
 
     public FragmentComponent( final Builder builder )
     {

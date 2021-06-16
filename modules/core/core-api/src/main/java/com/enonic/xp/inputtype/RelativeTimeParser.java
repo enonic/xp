@@ -50,11 +50,11 @@ final class RelativeTimeParser
 
             if ( DateTimeUnits.PERIOD_UNITS.contains( unitTypeString ) )
             {
-                period = period.plus( Period.parse( "P" + operatorString + valueString + unitTypeString.substring( 0, 1 ) ) );
+                period = period.plus( Period.parse( "P" + operatorString + valueString + unitTypeString.charAt( 0 ) ) );
             }
             else if ( DateTimeUnits.DURATION_UNITS.contains( unitTypeString ) )
             {
-                duration = duration.plus( Duration.parse( "PT" + operatorString + valueString + unitTypeString.substring( 0, 1 ) ) );
+                duration = duration.plus( Duration.parse( "PT" + operatorString + valueString + unitTypeString.charAt( 0 ) ) );
             }
         }
         return trimedExpression.equals( actualExpression.toString() ) // check for whole expression is valid

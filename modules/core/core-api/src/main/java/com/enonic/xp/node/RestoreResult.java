@@ -56,7 +56,7 @@ public class RestoreResult
 
     public static final class Builder
     {
-        private Set<String> indices = new HashSet<>();
+        private final Set<String> indices = new HashSet<>();
 
         private String name;
 

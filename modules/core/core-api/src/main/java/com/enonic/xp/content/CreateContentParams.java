@@ -197,7 +197,7 @@ public final class CreateContentParams
 
         private boolean refresh = true;
 
-        private ContentIds.Builder processedIds = ContentIds.create();
+        private final ContentIds.Builder processedIds = ContentIds.create();
 
         private WorkflowInfo workflowInfo;
 

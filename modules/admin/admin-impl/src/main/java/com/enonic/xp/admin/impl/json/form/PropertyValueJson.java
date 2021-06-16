@@ -7,10 +7,10 @@ import com.enonic.xp.data.Value;
 public class PropertyValueJson
 {
     @JsonProperty("value")
-    private Object value;
+    private final Object value;
 
     @JsonProperty("type")
-    private String type;
+    private final String type;
 
     PropertyValueJson( final Value value )
     {

@@ -20,9 +20,9 @@ public class ContentNodeTranslator
 {
     private static final Logger LOG = LoggerFactory.getLogger( ContentNodeTranslator.class );
 
-    private NodeService nodeService;
+    private final NodeService nodeService;
 
-    private ContentDataSerializer contentDataSerializer;
+    private final ContentDataSerializer contentDataSerializer;
 
     public ContentNodeTranslator( final NodeService nodeService, final ContentDataSerializer contentDataSerializer )
     {

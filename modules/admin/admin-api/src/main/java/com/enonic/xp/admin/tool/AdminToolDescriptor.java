@@ -114,7 +114,7 @@ public class AdminToolDescriptor
 
         private String descriptionI18nKey;
 
-        private ImmutableSet.Builder<PrincipalKey> allowedPrincipals = ImmutableSet.builder();
+        private final ImmutableSet.Builder<PrincipalKey> allowedPrincipals = ImmutableSet.builder();
 
         private Builder()
         {

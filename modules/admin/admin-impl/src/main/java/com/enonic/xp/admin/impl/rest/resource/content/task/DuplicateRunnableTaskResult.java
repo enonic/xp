@@ -41,7 +41,7 @@ public class DuplicateRunnableTaskResult
     public static class Builder
         extends RunnableTaskResult.Builder<Builder>
     {
-        private List<ContentPath> alreadyDuplicated = new ArrayList<>();
+        private final List<ContentPath> alreadyDuplicated = new ArrayList<>();
 
         private Builder()
         {

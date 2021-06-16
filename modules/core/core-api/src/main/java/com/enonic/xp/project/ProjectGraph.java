@@ -21,7 +21,7 @@ public final class ProjectGraph
 
     public static class Builder
     {
-        private ImmutableList.Builder<ProjectGraphEntry> projects = ImmutableList.builder();
+        private final ImmutableList.Builder<ProjectGraphEntry> projects = ImmutableList.builder();
 
         public Builder add( ProjectGraphEntry project )
         {

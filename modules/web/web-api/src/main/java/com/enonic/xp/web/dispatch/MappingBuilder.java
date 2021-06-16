@@ -18,7 +18,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class MappingBuilder
 {
-    private List<String> connectors;
+    private final List<String> connectors;
 
     private static final class FilterMappingImpl
         extends AbstractMapping<Filter>
@@ -83,9 +83,9 @@ public final class MappingBuilder
     private abstract static class AbstractMapping<T>
         implements ResourceMapping<T>
     {
-        private int order;
+        private final int order;
 
-        private String name;
+        private final String name;
 
         private final ImmutableMap<String, String> initParams;
 

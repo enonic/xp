@@ -18,9 +18,9 @@ public class FormJson
 
     private final List<FormItemJson> items;
 
-    private LocaleMessageResolver localeMessageResolver;
+    private final LocaleMessageResolver localeMessageResolver;
 
-    private InlineMixinResolver inlineMixinResolver;
+    private final InlineMixinResolver inlineMixinResolver;
 
     public FormJson( final Form form, final LocaleMessageResolver localeMessageResolver, final InlineMixinResolver inlineMixinResolver )
     {

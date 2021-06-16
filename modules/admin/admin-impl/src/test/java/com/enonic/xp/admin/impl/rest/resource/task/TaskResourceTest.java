@@ -88,7 +88,7 @@ public class TaskResourceTest
 
         Mockito.when( this.taskService.getTaskInfo( taskId ) ).thenReturn( taskInfo );
 
-        String response = request().path( "tasks/" + taskId.toString() ).get().getAsString();
+        String response = request().path( "tasks/" + taskId ).get().getAsString();
 
         assertJson( "get_task_result.json", response );
     }

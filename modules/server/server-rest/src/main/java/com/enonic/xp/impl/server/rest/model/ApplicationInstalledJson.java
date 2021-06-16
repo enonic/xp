@@ -6,7 +6,7 @@ import com.enonic.xp.app.Application;
 
 public class ApplicationInstalledJson
 {
-    private ApplicationJson application;
+    private final ApplicationJson application;
 
     public ApplicationInstalledJson( final Application application, final boolean local )
     {

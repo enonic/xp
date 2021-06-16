@@ -12,7 +12,7 @@ public final class HtmlMacroProcessor
 
     private static final String MACRO_DOCUMENT_REF_PREFIX = "__macroDocument";
 
-    private MacroService macroService;
+    private final MacroService macroService;
 
     public HtmlMacroProcessor( final MacroService macroService )
     {

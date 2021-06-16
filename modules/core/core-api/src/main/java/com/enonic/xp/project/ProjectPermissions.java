@@ -10,7 +10,7 @@ import com.enonic.xp.security.PrincipalKeys;
 @PublicApi
 public final class ProjectPermissions
 {
-    private Map<ProjectRole, PrincipalKeys> permissions;
+    private final Map<ProjectRole, PrincipalKeys> permissions;
 
     private ProjectPermissions( Builder builder )
     {
@@ -77,15 +77,15 @@ public final class ProjectPermissions
 
     public static final class Builder
     {
-        private PrincipalKeys.Builder owner = PrincipalKeys.create();
+        private final PrincipalKeys.Builder owner = PrincipalKeys.create();
 
-        private PrincipalKeys.Builder editor = PrincipalKeys.create();
+        private final PrincipalKeys.Builder editor = PrincipalKeys.create();
 
-        private PrincipalKeys.Builder author = PrincipalKeys.create();
+        private final PrincipalKeys.Builder author = PrincipalKeys.create();
 
-        private PrincipalKeys.Builder contributor = PrincipalKeys.create();
+        private final PrincipalKeys.Builder contributor = PrincipalKeys.create();
 
-        private PrincipalKeys.Builder viewer = PrincipalKeys.create();
+        private final PrincipalKeys.Builder viewer = PrincipalKeys.create();
 
         private Builder()
         {

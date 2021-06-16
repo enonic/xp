@@ -12,7 +12,7 @@ public class HtmlAreaVisitor
     extends InputVisitor
 {
 
-    private Set<FormItemPath> paths = new HashSet<>();
+    private final Set<FormItemPath> paths = new HashSet<>();
 
     @Override
     public void visit( final Input input )

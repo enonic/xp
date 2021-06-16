@@ -11,13 +11,13 @@ public class NodeImportResultJson
 {
     private boolean dryRun;
 
-    private List<String> addedNodes = new ArrayList<>();
+    private final List<String> addedNodes = new ArrayList<>();
 
-    private List<String> updateNodes = new ArrayList<>();
+    private final List<String> updateNodes = new ArrayList<>();
 
-    private List<String> importErrors = new ArrayList<>();
+    private final List<String> importErrors = new ArrayList<>();
 
-    private List<String> importedBinaries = new ArrayList<>();
+    private final List<String> importedBinaries = new ArrayList<>();
 
     public static NodeImportResultJson from( final NodeImportResult result )
     {

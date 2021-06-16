@@ -14,17 +14,17 @@ import com.enonic.xp.node.SyncWorkResolverParams;
 public final class PushNodeHandler
     extends AbstractNodeHandler
 {
-    private NodeKey nodeKey;
+    private final NodeKey nodeKey;
 
-    private NodeKeys nodeKeys;
+    private final NodeKeys nodeKeys;
 
-    private Branch targetBranch;
+    private final Branch targetBranch;
 
-    private boolean resolve;
+    private final boolean resolve;
 
-    private boolean includeChildren;
+    private final boolean includeChildren;
 
-    private NodeKeys exclude;
+    private final NodeKeys exclude;
 
     private PushNodeHandler( final Builder builder )
     {

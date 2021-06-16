@@ -6,7 +6,7 @@ import static java.util.Objects.requireNonNull;
 
 public class AuditLogUri
 {
-    private String value;
+    private final String value;
 
     private AuditLogUri( final Builder builder )
     {

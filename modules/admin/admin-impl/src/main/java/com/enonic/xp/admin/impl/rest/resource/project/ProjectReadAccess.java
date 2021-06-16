@@ -10,9 +10,9 @@ import com.enonic.xp.security.PrincipalKey;
 
 public final class ProjectReadAccess
 {
-    private ProjectReadAccessType type;
+    private final ProjectReadAccessType type;
 
-    private List<PrincipalKey> principals;
+    private final List<PrincipalKey> principals;
 
     private ProjectReadAccess( final Builder builder )
     {
@@ -37,7 +37,7 @@ public final class ProjectReadAccess
 
     public static final class Builder
     {
-        private ImmutableList.Builder<PrincipalKey> principals = ImmutableList.builder();
+        private final ImmutableList.Builder<PrincipalKey> principals = ImmutableList.builder();
 
         private ProjectReadAccessType type;
 

@@ -156,7 +156,7 @@ public class FormOptionSetOption
 
         private String helpTextI18nKey;
 
-        private List<FormItem> formItemsList = new ArrayList<>();
+        private final List<FormItem> formItemsList = new ArrayList<>();
 
         private Builder()
         {

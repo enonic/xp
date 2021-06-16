@@ -15,7 +15,7 @@ public final class GeneratePasswordHandler
         LOWERCASE
     }
 
-    private static final String SPECIAL_CHARS = "!@#$%^&*()_+{}:\"<>?|[];\',./`~";
+    private static final String SPECIAL_CHARS = "!@#$%^&*()_+{}:\"<>?|[];',./`~";
 
     private static final String LOWERCASE_CHARS = "abcdefghijklmnopqrstuvwxyz";
 
@@ -23,7 +23,7 @@ public final class GeneratePasswordHandler
 
     private static final String DIGIT_CHARS = "0123456789";
 
-    private SecureRandom random = new SecureRandom();
+    private final SecureRandom random = new SecureRandom();
 
     public String generatePassword()
     {

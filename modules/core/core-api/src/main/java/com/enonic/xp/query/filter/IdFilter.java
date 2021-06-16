@@ -58,7 +58,7 @@ public class IdFilter
     public static final class Builder
         extends FieldFilter.Builder<Builder>
     {
-        private List<String> values = new ArrayList<>();
+        private final List<String> values = new ArrayList<>();
 
         private Builder()
         {

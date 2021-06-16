@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ApplicationKeysTest
 {
-    private static ArrayList<ApplicationKey> list = new ArrayList();
+    private static final ArrayList<ApplicationKey> list = new ArrayList();
 
     @BeforeAll
     public static void initApplicationKeys()

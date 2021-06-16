@@ -8,11 +8,11 @@ import com.enonic.xp.util.Version;
 
 public class DumpUpgradeResult
 {
-    private Version initialVersion;
+    private final Version initialVersion;
 
-    private Version upgradedVersion;
+    private final Version upgradedVersion;
 
-    private List<DumpUpgradeStepResult> stepResults;
+    private final List<DumpUpgradeStepResult> stepResults;
 
     public DumpUpgradeResult( final Builder builder )
     {
@@ -47,7 +47,7 @@ public class DumpUpgradeResult
 
         private Version upgradedVersion;
 
-        private ImmutableList.Builder<DumpUpgradeStepResult> stepResults = ImmutableList.builder();
+        private final ImmutableList.Builder<DumpUpgradeStepResult> stepResults = ImmutableList.builder();
 
         private Builder()
         {

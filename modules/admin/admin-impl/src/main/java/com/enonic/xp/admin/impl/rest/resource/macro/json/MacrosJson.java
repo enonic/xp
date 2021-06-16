@@ -14,7 +14,7 @@ import com.enonic.xp.macro.MacroDescriptors;
 public class MacrosJson
 {
 
-    private List<MacroDescriptorJson> macros;
+    private final List<MacroDescriptorJson> macros;
 
     public MacrosJson( final Builder builder )
     {

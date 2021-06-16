@@ -3,9 +3,9 @@ package com.enonic.xp.admin.impl.rest.resource.content.json;
 
 public class EffectivePermissionJson
 {
-    private String access;
+    private final String access;
 
-    private EffectivePermissionAccessJson permissionAccessJson;
+    private final EffectivePermissionAccessJson permissionAccessJson;
 
     public EffectivePermissionJson( final String access, final EffectivePermissionAccessJson permissionAccessJson )
     {

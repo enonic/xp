@@ -41,7 +41,7 @@ public final class RegionDescriptors
 
     public static class Builder
     {
-        private ImmutableMap.Builder<String, RegionDescriptor> regionsByName = new ImmutableMap.Builder<>();
+        private final ImmutableMap.Builder<String, RegionDescriptor> regionsByName = new ImmutableMap.Builder<>();
 
         public Builder add( final RegionDescriptor value )
         {

@@ -18,7 +18,7 @@ public class TemplateControllerMappings
 
     private static final String TEMPLATE_CONTENT_TYPE_VALUE = "portal:page-template";
 
-    private Map<String, String> templateControllerMap = new HashMap<>();
+    private final Map<String, String> templateControllerMap = new HashMap<>();
 
 
     public void handle( final NodeId nodeId, final PropertyTree nodeData )

@@ -223,7 +223,7 @@ final class ErrorPageRichBuilder
         if ( problem.getResource() != null )
         {
             html.open( "h2" );
-            html.escapedText( "In " + problem.getResource().toString() + " at line " + problem.getLineNumber() );
+            html.escapedText( "In " + problem.getResource() + " at line " + problem.getLineNumber() );
             html.close();
         }
 

@@ -36,9 +36,9 @@ public class UpdateAttachmentsParams
 
     public static class Builder
     {
-        private ContentId contentId;
+        private final ContentId contentId;
 
-        private Set<Attachment> attachments = new HashSet<>();
+        private final Set<Attachment> attachments = new HashSet<>();
 
         public Builder( final ContentId contentId )
         {

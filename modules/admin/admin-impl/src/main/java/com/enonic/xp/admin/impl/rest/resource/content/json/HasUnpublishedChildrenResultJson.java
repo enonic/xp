@@ -9,7 +9,7 @@ import com.enonic.xp.content.ContentId;
 
 public class HasUnpublishedChildrenResultJson
 {
-    private List<HasUnpublishedChildrenJson> contents;
+    private final List<HasUnpublishedChildrenJson> contents;
 
     public HasUnpublishedChildrenResultJson( final Builder builder) {
         this.contents = builder.contents;
@@ -27,7 +27,7 @@ public class HasUnpublishedChildrenResultJson
     public static final class Builder
     {
 
-        private List<HasUnpublishedChildrenJson> contents = new ArrayList<>();
+        private final List<HasUnpublishedChildrenJson> contents = new ArrayList<>();
 
 
         private Builder()

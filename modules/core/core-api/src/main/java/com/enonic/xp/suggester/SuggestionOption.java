@@ -2,9 +2,9 @@ package com.enonic.xp.suggester;
 
 public abstract class SuggestionOption
 {
-    private String text;
+    private final String text;
 
-    private Float score;
+    private final Float score;
 
     protected SuggestionOption( final Builder builder )
     {

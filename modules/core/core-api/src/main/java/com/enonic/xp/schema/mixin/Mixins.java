@@ -94,7 +94,7 @@ public final class Mixins
 
     public static class Builder
     {
-        private ImmutableList.Builder<Mixin> builder = ImmutableList.builder();
+        private final ImmutableList.Builder<Mixin> builder = ImmutableList.builder();
 
         public Builder add( Mixin node )
         {
