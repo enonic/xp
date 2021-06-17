@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventListener;
 import com.enonic.xp.impl.scheduler.distributed.RescheduleTask;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -27,6 +29,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component(immediate = true)
 public final class SchedulerServiceActivator
+    implements EventListener
 {
     private static final Logger LOG = LoggerFactory.getLogger( SchedulerServiceActivator.class );
 
@@ -82,6 +85,15 @@ public final class SchedulerServiceActivator
 
         createConfigJobs( schedulerService );
 
+    }
+
+    @Override
+    public void onEvent( final Event event )
+    {
+        if ( event.isType( "repository.restoreInitialized" ) )
+        {
+            schedulerExecutorService.dispose( RescheduleTask.NAME );
+        }
     }
 
     private void createConfigJobs( final SchedulerService schedulerService )
