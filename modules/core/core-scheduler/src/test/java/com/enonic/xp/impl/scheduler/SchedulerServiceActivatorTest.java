@@ -8,13 +8,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.event.Event;
 import com.enonic.xp.impl.scheduler.distributed.RescheduleTask;
 import com.enonic.xp.impl.scheduler.distributed.SchedulableTask;
 import com.enonic.xp.index.IndexService;
@@ -45,6 +49,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class SchedulerServiceActivatorTest
 {
     @Mock(stubOnly = true)
@@ -186,6 +191,16 @@ class SchedulerServiceActivatorTest
 
         verify( schedulerExecutorService, never() ).scheduleAtFixedRate( isA( SchedulableTask.class ), anyLong(), anyLong(),
                                                                          isA( TimeUnit.class ) );
+    }
+
+    @Test
+    public void restoreInitialized()
+        throws Exception
+    {
+        activator.onEvent( Event.create( "repository.restoreInitialized" ).
+            build() );
+
+        Mockito.verify( schedulerExecutorService, Mockito.times( 1 ) ).dispose( RescheduleTask.NAME );
     }
 
 
