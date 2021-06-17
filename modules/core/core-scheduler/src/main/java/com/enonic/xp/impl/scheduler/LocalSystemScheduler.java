@@ -54,7 +54,7 @@ public final class LocalSystemScheduler
                     }
                     catch ( CancellationException ce )
                     {
-                        error = ce;
+                        LOG.debug( "Job was cancelled.", ce );
                     }
                     catch ( ExecutionException ee )
                     {

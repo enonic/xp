@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -143,6 +144,20 @@ class SchedulerExecutorServiceImplTest
         service.disposeAllDone();
 
         assertEquals( 1, service.getAllFutures().size() );
+    }
+
+    @Test
+    void localCancelled()
+        throws Exception
+    {
+        setLocal();
+
+        final SchedulableTask task = mockTask( "task1" );
+        final ScheduledFuture<?> future = service.scheduleAtFixedRate( task, 100, 10000, TimeUnit.MILLISECONDS );
+        future.cancel( true );
+
+        Thread.sleep( 200 );
+        verify( task, never() ).run();
     }
 
     @Test
@@ -324,8 +339,8 @@ class SchedulerExecutorServiceImplTest
 
         if ( timeout > 0 )
         {
-            Executors.newSingleThreadScheduledExecutor().schedule( () -> service.setClusteredScheduler( clusteredScheduler ), timeout,
-                                                                   TimeUnit.MILLISECONDS );
+            Executors.newSingleThreadScheduledExecutor()
+                .schedule( () -> service.setClusteredScheduler( clusteredScheduler ), timeout, TimeUnit.MILLISECONDS );
         }
         else
         {
