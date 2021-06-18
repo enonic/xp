@@ -245,7 +245,6 @@ public abstract class AbstractNodeTest
         bootstrap();
 
         createTestRepository();
-        waitForClusterHealth();
     }
 
     protected void bootstrap()

@@ -193,6 +193,5 @@ public class AbstractIssueServiceTest
             setNodeService( nodeService ).
             build().
             initialize();
-        waitForClusterHealth();
     }
 }
