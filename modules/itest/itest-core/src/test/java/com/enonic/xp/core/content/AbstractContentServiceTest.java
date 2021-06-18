@@ -329,7 +329,6 @@ public class AbstractContentServiceTest
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
         contentService.initialize( mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
-        waitForClusterHealth();
     }
 
     @AfterEach
