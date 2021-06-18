@@ -159,7 +159,5 @@ public class AbstractAuditLogServiceTest
             setRepositoryService( repositoryService ).
             build().
             initialize();
-
-        waitForClusterHealth();
     }
 }

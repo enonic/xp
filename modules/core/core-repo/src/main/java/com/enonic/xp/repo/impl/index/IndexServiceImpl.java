@@ -54,18 +54,18 @@ public class IndexServiceImpl
     {
         if ( params.isInitialize() )
         {
-            doInitializeSearchIndex( params.getRepositoryId() );
+            doPurgeSearchIndex( params.getRepositoryId() );
         }
 
-        return ReindexExecutor.create().
-            branches( params.getBranches() ).
-            repositoryId( params.getRepositoryId() ).
-            indexDataService( this.indexDataService ).
-            nodeSearchService( this.nodeSearchService ).
-            nodeVersionService( this.nodeVersionService ).
-            listener( params.getListener() ).
-            build().
-            execute();
+        return ReindexExecutor.create()
+            .branches( params.getBranches() )
+            .repositoryId( params.getRepositoryId() )
+            .indexDataService( this.indexDataService )
+            .nodeSearchService( this.nodeSearchService )
+            .nodeVersionService( this.nodeVersionService )
+            .listener( params.getListener() )
+            .build()
+            .execute();
     }
 
 
@@ -144,27 +144,25 @@ public class IndexServiceImpl
     @Override
     public void purgeSearchIndex( final PurgeIndexParams params )
     {
-        doInitializeSearchIndex( params.getRepositoryId() );
+        doPurgeSearchIndex( params.getRepositoryId() );
     }
 
-    private void doInitializeSearchIndex( final RepositoryId repositoryId )
+    private void doPurgeSearchIndex( final RepositoryId repositoryId )
     {
         final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
 
         indexServiceInternal.deleteIndices( searchIndexName );
 
         final IndexSettings indexSettings = getSearchIndexSettings( repositoryId );
-        indexServiceInternal.createIndex( CreateIndexRequest.create().
-            indexName( searchIndexName ).
-            indexSettings( indexSettings ).
-            build() );
-
         final IndexMapping indexMapping = getSearchIndexMapping( repositoryId );
-        indexServiceInternal.applyMapping( ApplyMappingRequest.create().
-            indexName( searchIndexName ).
-            indexType( IndexType.SEARCH ).
-            mapping( indexMapping ).
-            build() );
+
+        indexServiceInternal.createIndex( CreateIndexRequest.create()
+                                              .indexName( searchIndexName )
+                                              .indexSettings( indexSettings )
+                                              .mappings( Map.of( IndexType.SEARCH, indexMapping ) )
+                                              .build() );
+
+        indexServiceInternal.waitForYellowStatus( searchIndexName );
     }
 
     private IndexSettings getSearchIndexSettings( final RepositoryId repositoryId )
@@ -174,8 +172,7 @@ public class IndexServiceImpl
         final Repository repositoryEntry = repositoryEntryService.getRepositoryEntry( repositoryId );
         if ( repositoryEntry != null )
         {
-            final IndexSettings indexSettings = repositoryEntry.getSettings().
-                getIndexSettings( IndexType.SEARCH );
+            final IndexSettings indexSettings = repositoryEntry.getSettings().getIndexSettings( IndexType.SEARCH );
 
             if ( indexSettings != null )
             {
@@ -193,8 +190,7 @@ public class IndexServiceImpl
         final Repository repositoryEntry = repositoryEntryService.getRepositoryEntry( repositoryId );
         if ( repositoryEntry != null )
         {
-            final IndexMapping indexMapping = repositoryEntry.getSettings().
-                getIndexMappings( IndexType.SEARCH );
+            final IndexMapping indexMapping = repositoryEntry.getSettings().getIndexMappings( IndexType.SEARCH );
 
             if ( indexMapping != null )
             {
