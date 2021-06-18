@@ -19,19 +19,12 @@ import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsReques
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequestBuilder;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequest;
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.open.OpenIndexAction;
 import org.elasticsearch.action.admin.indices.open.OpenIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsResponse;
-import org.elasticsearch.action.get.GetAction;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetRequestBuilder;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.client.Requests;
 import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
@@ -46,12 +39,11 @@ import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.repo.impl.index.ApplyMappingRequest;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.index.UpdateIndexSettings;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repository.IndexException;
+import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -69,8 +61,6 @@ public class IndexServiceInternalImpl
     private static final String CREATE_INDEX_TIMEOUT = "5s";
 
     private static final String UPDATE_INDEX_TIMEOUT = "5s";
-
-    private static final String APPLY_MAPPING_TIMEOUT = "5s";
 
     private static final String INDEX_EXISTS_TIMEOUT = "5s";
 
@@ -92,46 +82,17 @@ public class IndexServiceInternalImpl
     public boolean isMaster()
     {
         final ClusterStateRequestBuilder requestBuilder =
-            new ClusterStateRequestBuilder( this.client.admin().cluster(), ClusterStateAction.INSTANCE ).
-                setBlocks( false ).
-                setIndices().
-                setBlocks( false ).
-                setMetaData( false ).
-                setNodes( true ).
-                setRoutingTable( false );
+            new ClusterStateRequestBuilder( this.client.admin().cluster(), ClusterStateAction.INSTANCE ).setBlocks( false )
+                .setIndices()
+                .setBlocks( false )
+                .setMetaData( false )
+                .setNodes( true )
+                .setRoutingTable( false );
 
         final ClusterStateResponse clusterStateResponse =
             client.admin().cluster().state( requestBuilder.request() ).actionGet( CLUSTER_STATE_TIMEOUT );
 
         return clusterStateResponse.getState().nodes().localNodeMaster();
-    }
-
-    @Override
-    public void copy( final NodeId nodeId, final RepositoryId repositoryId, final Branch source, final Branch target )
-    {
-        final GetRequest request = new GetRequestBuilder( this.client, GetAction.INSTANCE ).setId( nodeId.toString() ).
-            setIndex( IndexNameResolver.resolveSearchIndexName( repositoryId ) ).
-            setType( source.getValue() ).
-            request();
-
-        final GetResponse response = this.client.get( request ).actionGet();
-
-        if ( !response.isExists() )
-        {
-            throw new IndexException( "Could not copy entry with id [" + nodeId + "], does not exist" );
-        }
-
-        final Map<String, Object> sourceValues = response.getSource();
-
-        final IndexRequest req = Requests.indexRequest().
-            id( nodeId.toString() ).
-            index( IndexNameResolver.resolveSearchIndexName( repositoryId ) ).
-            type( target.getValue() ).
-            source( sourceValues ).
-            refresh( false );
-
-        this.client.index( req ).actionGet();
-
     }
 
     @Override
@@ -143,13 +104,20 @@ public class IndexServiceInternalImpl
 
         CreateIndexRequest createIndexRequest = new CreateIndexRequest( indexName );
         createIndexRequest.settings( indexSettings.getAsString() );
+        if ( request.getMappings() != null )
+        {
+            for ( Map.Entry<IndexType, IndexMapping> mappingEntry : request.getMappings().entrySet() )
+            {
+                createIndexRequest.mapping(
+                    mappingEntry.getKey().isDynamicTypes() ? ES_DEFAULT_INDEX_TYPE_NAME : mappingEntry.getKey().getName(),
+                    mappingEntry.getValue().getAsString() );
+            }
+        }
 
         try
         {
-            final CreateIndexResponse createIndexResponse = client.admin().
-                indices().
-                create( createIndexRequest ).
-                actionGet( CREATE_INDEX_TIMEOUT );
+            final CreateIndexResponse createIndexResponse =
+                client.admin().indices().create( createIndexRequest ).actionGet( CREATE_INDEX_TIMEOUT );
 
             LOG.info( "Index {} created with status {}", indexName, createIndexResponse.isAcknowledged() );
         }
@@ -165,15 +133,12 @@ public class IndexServiceInternalImpl
     {
         LOG.info( "updating index {}", indexName );
 
-        final UpdateSettingsRequest updateSettingsRequest = new UpdateSettingsRequest().
-            indices( indexName ).
-            settings( settings.getSettingsAsString() );
+        final UpdateSettingsRequest updateSettingsRequest =
+            new UpdateSettingsRequest().indices( indexName ).settings( settings.getSettingsAsString() );
         try
         {
-            final UpdateSettingsResponse updateSettingsResponse = client.admin().
-                indices().
-                updateSettings( updateSettingsRequest ).
-                actionGet( UPDATE_INDEX_TIMEOUT );
+            final UpdateSettingsResponse updateSettingsResponse =
+                client.admin().indices().updateSettings( updateSettingsRequest ).actionGet( UPDATE_INDEX_TIMEOUT );
 
             LOG.info( "Index {} updated with status {}", indexName, updateSettingsResponse.isAcknowledged() );
         }
@@ -195,9 +160,11 @@ public class IndexServiceInternalImpl
             ? IndexNameResolver.resolveSearchIndexName( repositoryId )
             : IndexNameResolver.resolveStorageIndexName( repositoryId );
 
-        final ImmutableOpenMap<String, Settings> settingsMap =
-            this.client.admin().indices().getSettings( new GetSettingsRequest().indices( indexName ) ).actionGet(
-                GET_SETTINGS_TIMEOUT ).getIndexToSettings();
+        final ImmutableOpenMap<String, Settings> settingsMap = this.client.admin()
+            .indices()
+            .getSettings( new GetSettingsRequest().indices( indexName ) )
+            .actionGet( GET_SETTINGS_TIMEOUT )
+            .getIndexToSettings();
 
         return IndexSettings.from( (Map) settingsMap.get( indexName ).getAsMap() );
     }
@@ -214,9 +181,11 @@ public class IndexServiceInternalImpl
             ? IndexNameResolver.resolveSearchIndexName( repositoryId )
             : IndexNameResolver.resolveStorageIndexName( repositoryId );
 
-        final ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>> repoMappings =
-            this.client.admin().indices().getMappings( new GetMappingsRequest().indices( indexName ) ).actionGet(
-                GET_SETTINGS_TIMEOUT ).getMappings();
+        final ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>> repoMappings = this.client.admin()
+            .indices()
+            .getMappings( new GetMappingsRequest().indices( indexName ) )
+            .actionGet( GET_SETTINGS_TIMEOUT )
+            .getMappings();
 
         final ImmutableOpenMap<String, MappingMetaData> indexTypeMappings = repoMappings.get( indexName );
 
@@ -229,31 +198,6 @@ public class IndexServiceInternalImpl
         catch ( IOException e )
         {
             throw new IndexException( "Failed to get index mapping of index: " + indexName, e );
-        }
-    }
-
-    @Override
-    public void applyMapping( final ApplyMappingRequest request )
-    {
-        final String indexName = request.getIndexName();
-        LOG.info( "Apply mapping for index {}", indexName );
-
-        PutMappingRequest mappingRequest = new PutMappingRequest( indexName ).
-            type( request.getIndexType().isDynamicTypes() ? ES_DEFAULT_INDEX_TYPE_NAME : request.getIndexType().getName() ).
-            source( request.getMapping().getAsString() );
-
-        try
-        {
-            this.client.admin().
-                indices().
-                putMapping( mappingRequest ).
-                actionGet( APPLY_MAPPING_TIMEOUT );
-
-            LOG.info( "Mapping for index {} applied", indexName );
-        }
-        catch ( ElasticsearchException e )
-        {
-            throw new IndexException( "Failed to apply mapping to index: " + indexName, e );
         }
     }
 
@@ -316,8 +260,7 @@ public class IndexServiceInternalImpl
         for ( final String indexName : indices )
         {
             CloseIndexRequestBuilder closeIndexRequestBuilder =
-                new CloseIndexRequestBuilder( this.client.admin().indices(), CloseIndexAction.INSTANCE ).
-                    setIndices( indexName );
+                new CloseIndexRequestBuilder( this.client.admin().indices(), CloseIndexAction.INSTANCE ).setIndices( indexName );
 
             try
             {
@@ -337,8 +280,7 @@ public class IndexServiceInternalImpl
         for ( final String indexName : indices )
         {
             OpenIndexRequestBuilder openIndexRequestBuilder =
-                new OpenIndexRequestBuilder( this.client.admin().indices(), OpenIndexAction.INSTANCE ).
-                    setIndices( indexName );
+                new OpenIndexRequestBuilder( this.client.admin().indices(), OpenIndexAction.INSTANCE ).setIndices( indexName );
 
             try
             {
