@@ -1,5 +1,6 @@
 package com.enonic.xp.server.internal.deploy;
 
+import java.net.URL;
 import java.util.HashMap;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -41,5 +42,23 @@ public class AutoDeployerTest
 
         this.deployer.deploy();
         Mockito.verify( this.service, Mockito.times( 2 ) ).installGlobalApplication( Mockito.any() );
+    }
+
+    @Test
+    public void test_fails_doesnt_prevent_deploy()
+        throws Exception
+    {
+        final HashMap<String, String> config = new HashMap<>();
+
+        config.put( "deploy.1", "http://some.server.com/a" );
+        config.put( "deploy.2", "http://some.server.com/b" );
+        config.put( "deploy.3", "http://some.server.com/c" );
+
+        Mockito.when( this.service.installGlobalApplication( new URL( "http://some.server.com/b" ) ) ).thenThrow( new RuntimeException() );
+
+        this.deployer.activate( config );
+        this.deployer.deploy();
+
+        Mockito.verify( this.service, Mockito.times( 3 ) ).installGlobalApplication( Mockito.any() );
     }
 }
