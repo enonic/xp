@@ -41,8 +41,9 @@ public class ExportServiceImpl
     @Override
     public NodeExportResult exportNodes( final ExportNodesParams params )
     {
-        final Path targetDirectory =
-            Optional.ofNullable( params.getTargetDirectory() ).map( Path::of ).orElse( exportsDir.resolve( params.getExportName() ) );
+        final Path targetDirectory = Optional.ofNullable( params.getTargetDirectory() )
+            .map( Path::of )
+            .orElseGet( () -> exportsDir.resolve( params.getExportName() ) );
 
         final Path rootDirectory = Optional.ofNullable( params.getRootDirectory() ).map( Path::of ).orElse( targetDirectory );
 
@@ -65,7 +66,7 @@ public class ExportServiceImpl
     public NodeImportResult importNodes( final ImportNodesParams params )
     {
         VirtualFile source =
-            Optional.ofNullable( params.getSource() ).orElse( VirtualFiles.from( exportsDir.resolve( params.getExportName() ) ) );
+            Optional.ofNullable( params.getSource() ).orElseGet( () -> VirtualFiles.from( exportsDir.resolve( params.getExportName() ) ) );
 
         return NodeImporter.create()
             .nodeService( this.nodeService )
