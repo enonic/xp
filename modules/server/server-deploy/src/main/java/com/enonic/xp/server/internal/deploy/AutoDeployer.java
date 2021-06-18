@@ -9,12 +9,16 @@ import java.util.stream.Collectors;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationService;
 
 @Component(configurationPid = "com.enonic.xp.server.deploy", service = AutoDeployer.class)
 public final class AutoDeployer
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger( AutoDeployer.class );
+
     private ApplicationService applicationService;
 
     private Set<URL> urlSet;
@@ -27,7 +31,17 @@ public final class AutoDeployer
 
     public void deploy()
     {
-        urlSet.forEach( this::deploy );
+        for ( final URL url : urlSet )
+        {
+            try
+            {
+                deploy( url );
+            }
+            catch ( Exception e )
+            {
+                LOGGER.error( "Failed to install global application [" + url + "]", e );
+            }
+        }
     }
 
     private Set<URL> findDeployList( final Map<String, String> config )
