@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
+import java.util.Optional;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.core.internal.Interpolator;
 import com.enonic.xp.data.PropertyTree;
@@ -22,7 +24,12 @@ public class ContentListTitleResolver
     public String resolve( final Content content )
     {
         final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( content.getType() ) );
-        final String listTitleExpression = contentType.getSchemaConfig().getValue( "listTitleExpression" );
+
+        final String listTitleExpression = Optional.ofNullable( contentType )
+            .map( ContentType::getSchemaConfig )
+            .map( sc -> sc.getValue( "listTitleExpression" ) )
+            .orElse( "" );
+
         if ( nullToEmpty( listTitleExpression ).isBlank() )
         {
             return content.getDisplayName();
