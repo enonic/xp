@@ -1,29 +1,35 @@
 package com.enonic.xp.portal.impl.main;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 public class MainExecutorTest
 {
     private MainExecutor executor;
 
+    @Mock
     private PortalScriptService scriptService;
 
     @BeforeEach
     public void setup()
     {
-        this.scriptService = mock( PortalScriptService.class );
         this.executor = new MainExecutor( this.scriptService );
     }
 
@@ -35,16 +41,16 @@ public class MainExecutorTest
 
         this.executor.activated( app );
 
-        verify( this.scriptService, times( 1 ) ).hasScript( Mockito.any() );
-        verify( this.scriptService, times( 0 ) ).execute( Mockito.any() );
+        verify( this.scriptService, times( 1 ) ).hasScript( any() );
+        verify( this.scriptService, times( 0 ) ).execute( any() );
     }
 
     @Test
     public void mainJsError()
     {
         final ResourceKey key = ResourceKey.from( "foo.bar:/main.js" );
-        Mockito.when( this.scriptService.hasScript( key ) ).thenReturn( true );
-        Mockito.when( this.scriptService.execute( key ) ).thenThrow( new RuntimeException() );
+        when( this.scriptService.hasScript( key ) ).thenReturn( true );
+        when( this.scriptService.executeAsync( key ) ).thenReturn( CompletableFuture.failedFuture( new RuntimeException() ) );
 
         final Application app = mock( Application.class );
         when( app.getKey() ).thenReturn( ApplicationKey.from( "foo.bar" ) );
@@ -56,8 +62,8 @@ public class MainExecutorTest
     public void mainJsExecute()
     {
         final ResourceKey key = ResourceKey.from( "foo.bar:/main.js" );
-        Mockito.when( this.scriptService.hasScript( key ) ).thenReturn( true );
-        Mockito.when( this.scriptService.execute( key ) ).thenReturn( null );
+        when( this.scriptService.hasScript( key ) ).thenReturn( true );
+        when( this.scriptService.executeAsync( key ) ).thenReturn( CompletableFuture.completedFuture( null ) );
 
         final Application app = mock( Application.class );
         when( app.getKey() ).thenReturn( ApplicationKey.from( "foo.bar" ) );
