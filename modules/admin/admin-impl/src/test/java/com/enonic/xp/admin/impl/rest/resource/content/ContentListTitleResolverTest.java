@@ -59,4 +59,15 @@ class ContentListTitleResolverTest
         final String result = new ContentListTitleResolver( contentTypeService ).resolve( content );
         assertEquals( "my content", result );
     }
+
+    @Test
+    void no_content_type_found_falls_back_to_displayName()
+    {
+        final Content content = Content.create().parentPath( ContentPath.ROOT ).name( "mycontent" ).displayName( "my content" ).build();
+
+        when( contentTypeService.getByName( any() ) ).thenReturn( null );
+        final String result = new ContentListTitleResolver( contentTypeService ).resolve( content );
+        assertEquals( "my content", result );
+    }
+
 }
