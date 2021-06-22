@@ -2,7 +2,7 @@ const innerLib = require('inner-script');
 
 console.log('I am a require function');
 
-log.info("Print logs with two arguments: %s and %s ", "123", "456");;
+log.info("Print logs with two arguments: %s and %s ", 123.09, "456");
 log.info('info message', new Error('cause'));
 
 exports.get = function(req) {
