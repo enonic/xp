@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.graaljs.impl.util.JavascriptHelperFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,7 +32,7 @@ public class ScriptValueFactoryImplTest
     @Test
     public void test()
     {
-        ScriptValueFactory factory = new ScriptValueFactoryImpl();
+        ScriptValueFactory factory = new ScriptValueFactoryImpl( new JavascriptHelperFactory( context ).create() );
 
         ScriptValue value = factory.newValue( "2" );
         assertNotNull( value );

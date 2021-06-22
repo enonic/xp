@@ -81,8 +81,8 @@ public class ScriptEngineExecutorImpl
     public ScriptExports executeMain( final ResourceKey key )
     {
         exportsCache.expireCacheIfNeeded();
-        final ProxyObject exports = executeRequire( key );
-        ScriptValue scriptValue = new ObjectScriptValue( exports );
+        final Value exports = executeRequire( key );
+        ScriptValue scriptValue = new ObjectScriptValue( null, exports );
         return new ScriptExportsImpl( key, scriptValue, exports );
     }
 
@@ -93,7 +93,7 @@ public class ScriptEngineExecutorImpl
     }
 
     @Override
-    public ProxyObject executeRequire( final ResourceKey key )
+    public Value executeRequire( final ResourceKey key )
     {
         try
         {
@@ -153,9 +153,9 @@ public class ScriptEngineExecutorImpl
 
     }
 
-    private ProxyObject requireJsOrJson( final Resource resource )
+    private Value requireJsOrJson( final Resource resource )
     {
-        return "json".equals( resource.getKey().getExtension() ) ? requireJson( resource ) : requireJs( resource );
+        return null; //"json".equals( resource.getKey().getExtension() ) ? requireJson( resource ) : requireJs( resource );
     }
 
     private ProxyObject requireJs( final Resource resource )

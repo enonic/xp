@@ -9,14 +9,18 @@ import org.graalvm.polyglot.proxy.ProxyArray;
 import org.graalvm.polyglot.proxy.ProxyObject;
 
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.graaljs.impl.util.JsObjectConverter;
 
 public final class ObjectScriptValue
     extends AbstractScriptValue
 {
+    private final ScriptValueFactory factory;
+
     private final Object value;
 
-    public ObjectScriptValue( final Object value )
+    public ObjectScriptValue( final ScriptValueFactory factory, final Object value )
     {
+        this.factory = factory;
         this.value = value;
     }
 
@@ -29,7 +33,11 @@ public final class ObjectScriptValue
     @Override
     public Set<String> getKeys()
     {
-        if ( value instanceof ProxyObject )
+        if ( value instanceof Value )
+        {
+            return ( (Value) value ).getMemberKeys();
+        }
+        else if ( value instanceof ProxyObject )
         {
             final ProxyArray proxyArray = (ProxyArray) ( (ProxyObject) value ).getMemberKeys();
             final Set<String> result = new LinkedHashSet<>();
@@ -39,32 +47,49 @@ public final class ObjectScriptValue
             }
             return result;
         }
-        return null;
+        else
+        {
+            return null;
+        }
     }
 
     @Override
     public boolean hasMember( final String key )
     {
-        if ( value instanceof ProxyObject )
+        if ( value instanceof Value )
+        {
+            return ( (Value) value ).hasMember( key );
+        }
+        else if ( value instanceof ProxyObject )
         {
             return ( (ProxyObject) value ).hasMember( key );
         }
-        return false;
+        else
+        {
+            return false;
+        }
     }
 
     @Override
     public ScriptValue getMember( final String key )
     {
-        if ( value instanceof ProxyObject )
+        if ( value instanceof Value )
         {
-            return new FunctionScriptValue( Value.asValue( ( (ProxyObject) value ).getMember( key ) ) );
+            return new FunctionScriptValue( factory, ( (Value) value ).getMember( key ) );
         }
-        return null;
+        else if ( value instanceof ProxyObject )
+        {
+            return new FunctionScriptValue( factory, Value.asValue( ( (ProxyObject) value ).getMember( key ) ) );
+        }
+        else
+        {
+            return null;
+        }
     }
 
     @Override
     public Map<String, Object> getMap()
     {
-        return null;
+        return new JsObjectConverter( this.factory.getJavascriptHelper() ).toMap( this.value );
     }
 }

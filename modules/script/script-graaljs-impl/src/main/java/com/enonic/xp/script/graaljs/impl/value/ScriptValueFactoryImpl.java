@@ -3,10 +3,24 @@ package com.enonic.xp.script.graaljs.impl.value;
 import org.graalvm.polyglot.Value;
 
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.graaljs.impl.util.JavascriptHelper;
 
 public final class ScriptValueFactoryImpl
     implements ScriptValueFactory
 {
+    private final JavascriptHelper helper;
+
+    public ScriptValueFactoryImpl( final JavascriptHelper helper )
+    {
+        this.helper = helper;
+    }
+
+    @Override
+    public JavascriptHelper getJavascriptHelper()
+    {
+        return helper;
+    }
+
     @Override
     public ScriptValue newValue( final Object value )
     {
@@ -30,20 +44,21 @@ public final class ScriptValueFactoryImpl
 
     private ScriptValue newValue( final Value value )
     {
-        if (value.isDate()) {
+        if ( value.isDate() )
+        {
             return new ScalarScriptValue( value.asDate() );
         }
 
         if ( value.canExecute() )
         {
-            return new FunctionScriptValue( value );
+            return new FunctionScriptValue( this, value );
         }
 
         if ( value.hasArrayElements() )
         {
-            return new ArrayScriptValue(value);
+            return new ArrayScriptValue( this, value );
         }
 
-        return new ObjectScriptValue( value );
+        return new ObjectScriptValue( this, value );
     }
 }

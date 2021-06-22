@@ -8,7 +8,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
-import org.graalvm.polyglot.proxy.ProxyObject;
+import org.graalvm.polyglot.Value;
 
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -33,7 +33,7 @@ final class ScriptExportsCache
         this.expiredCallback = expiredCallback;
     }
 
-    public ProxyObject getOrCompute( final ResourceKey key, final Function<Resource, ProxyObject> requireFunction )
+    public Value getOrCompute( final ResourceKey key, final Function<Resource, Value> requireFunction )
         throws InterruptedException, TimeoutException
     {
         ScriptExportEntry cached = cache.get( key );
@@ -52,7 +52,7 @@ final class ScriptExportsCache
                     return cached.value;
                 }
                 final Resource resource = resourceLookup.apply( key );
-                final ProxyObject value = requireFunction.apply( resource );
+                final Value value = requireFunction.apply( resource );
                 cache.put( key, new ScriptExportEntry( resource, value ) );
                 return value;
             }
@@ -98,11 +98,11 @@ final class ScriptExportsCache
     {
         final Resource resource;
 
-        final ProxyObject value;
+        final Value value;
 
         final long timestamp;
 
-        ScriptExportEntry( final Resource resource, final ProxyObject value )
+        ScriptExportEntry( final Resource resource, final Value value )
         {
             this.resource = resource;
             this.value = value;
