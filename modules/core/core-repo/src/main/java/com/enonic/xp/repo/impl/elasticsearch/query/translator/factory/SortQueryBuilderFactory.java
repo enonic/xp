@@ -17,7 +17,7 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFiel
 public class SortQueryBuilderFactory
     extends AbstractBuilderFactory
 {
-    private static final boolean IGNORE_UNMAPPED = true;
+    private static final String UNMAPPED_TYPE = "long";
 
     public SortQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
     {
@@ -58,7 +58,7 @@ public class SortQueryBuilderFactory
         final FieldSortBuilder fieldSortBuilder =
             new FieldSortBuilder( fieldNameResolver.resolveOrderByFieldName( fieldOrderExpr.getField().getFieldPath() ) );
         fieldSortBuilder.order( SortOrder.valueOf( fieldOrderExpr.getDirection().name() ) );
-        fieldSortBuilder.ignoreUnmapped( IGNORE_UNMAPPED );
+        fieldSortBuilder.unmappedType( UNMAPPED_TYPE );
 
         return fieldSortBuilder;
     }
