@@ -29,52 +29,51 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptExports;
-import com.enonic.xp.script.graaljs.impl.executor.ScriptEngineExecutorImpl;
 import com.enonic.xp.script.graaljs.impl.executor.ScriptExecutor;
 import com.enonic.xp.script.runtime.ScriptSettings;
 import com.enonic.xp.server.RunMode;
 
 public class ComparingApproaches
 {
-    @Test
-    public void testScriptEngine()
-    {
-        ApplicationKey APPLICATION_KEY = ApplicationKey.from( "myapp" );
-
-        BundleContext bundleContext = Mockito.mock( BundleContext.class );
-
-        Bundle bundle = Mockito.mock( Bundle.class );
-        Mockito.when( bundle.getBundleContext() ).thenReturn( bundleContext );
-
-        Application application = Mockito.mock( Application.class );
-        Mockito.when( application.getBundle() ).thenReturn( bundle );
-        Mockito.when( application.getKey() ).thenReturn( APPLICATION_KEY );
-        Mockito.when( application.getVersion() ).thenReturn( Version.parseVersion( "1.0.0" ) );
-        Mockito.when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
-        Mockito.when( application.isStarted() ).thenReturn( true );
-        Mockito.when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
-
-        ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getInstalledApplication( APPLICATION_KEY ) ).thenReturn( application );
-
-        ResourceService resourceService = Mockito.mock( ResourceService.class );
-        Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
-            ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
-            URL resourceUrl = ComparingApproaches.class.getResource( "/" + resourceKey.getApplicationKey() + resourceKey.getPath() );
-            return new UrlResource( resourceKey, resourceUrl );
-        } );
-
-        ScriptSettings scriptSettings = ScriptSettings.create().build();
-
-        GraalJSContextProviderImpl contextProvider = new GraalJSContextProviderImpl();
-
-        ScriptExecutor scriptExecutor = new ScriptEngineExecutorImpl( scriptSettings, resourceService, application, RunMode.DEV );
-        ScriptExports scriptExports = scriptExecutor.executeMain( ResourceKey.from( "myapp:script.js" ) );
-
-        scriptExports.executeMethod( "execute" );
-
-        contextProvider.deactivate();
-    }
+//    @Test
+//    public void testScriptEngine()
+//    {
+//        ApplicationKey APPLICATION_KEY = ApplicationKey.from( "myapp" );
+//
+//        BundleContext bundleContext = Mockito.mock( BundleContext.class );
+//
+//        Bundle bundle = Mockito.mock( Bundle.class );
+//        Mockito.when( bundle.getBundleContext() ).thenReturn( bundleContext );
+//
+//        Application application = Mockito.mock( Application.class );
+//        Mockito.when( application.getBundle() ).thenReturn( bundle );
+//        Mockito.when( application.getKey() ).thenReturn( APPLICATION_KEY );
+//        Mockito.when( application.getVersion() ).thenReturn( Version.parseVersion( "1.0.0" ) );
+//        Mockito.when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
+//        Mockito.when( application.isStarted() ).thenReturn( true );
+//        Mockito.when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
+//
+//        ApplicationService applicationService = Mockito.mock( ApplicationService.class );
+//        Mockito.when( applicationService.getInstalledApplication( APPLICATION_KEY ) ).thenReturn( application );
+//
+//        ResourceService resourceService = Mockito.mock( ResourceService.class );
+//        Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
+//            ResourceKey resourceKey = (ResourceKey) invocation.getArguments()[0];
+//            URL resourceUrl = ComparingApproaches.class.getResource( "/" + resourceKey.getApplicationKey() + resourceKey.getPath() );
+//            return new UrlResource( resourceKey, resourceUrl );
+//        } );
+//
+//        ScriptSettings scriptSettings = ScriptSettings.create().build();
+//
+//        GraalJSContextProviderImpl contextProvider = new GraalJSContextProviderImpl();
+//
+//        ScriptExecutor scriptExecutor = new ScriptEngineExecutorImpl( scriptSettings, resourceService, application, RunMode.DEV );
+//        ScriptExports scriptExports = scriptExecutor.executeMain( ResourceKey.from( "myapp:script.js" ) );
+//
+//        scriptExports.executeMethod( "execute" );
+//
+//        contextProvider.deactivate();
+//    }
 
     @Test
     public void testProxy()
@@ -171,7 +170,7 @@ public class ComparingApproaches
 
             System.out.println( valueInnerBean.getMember( "toString()" ).execute(  ) );
             System.out.println( valueInnerBean.getMember( "getValue()" ).execute(  ) );
-            System.out.println( Value.asValue( BeanProxy.proxy( valueInnerBean ) ).getMember( "value" ) );
+//            System.out.println( Value.asValue( BeanProxy.proxy( valueInnerBean ) ).getMember( "value" ) );
 
             System.out.println( context.eval( "js", "bean.innerBean.getValue()" ).asString() );
             System.out.println( context.eval( "js", "bean.innerBean.value" ).asString() );
