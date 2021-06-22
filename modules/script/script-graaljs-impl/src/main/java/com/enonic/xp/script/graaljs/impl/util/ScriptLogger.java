@@ -1,5 +1,6 @@
 package com.enonic.xp.script.graaljs.impl.util;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,24 +15,27 @@ import com.enonic.xp.resource.ResourceKey;
 
 public final class ScriptLogger
 {
+    private final LogArgConverter converter;
+
     private final ResourceKey source;
 
     private final Logger log;
 
-    public ScriptLogger( final ResourceKey source )
+    public ScriptLogger( final ResourceKey source, final JavascriptHelper helper )
     {
         this.source = source;
         this.log = LoggerFactory.getLogger( this.source.getApplicationKey().toString() );
+        this.converter = new LogArgConverter( helper );
     }
 
     public ProxyObject asProxyObject()
     {
         final Map<String, Object> proxyAsMap = new HashMap<>();
 
-        proxyAsMap.put( "info", new LogProxyExecutable( source, log, LogLevelType.INFO ) );
-        proxyAsMap.put( "warning", new LogProxyExecutable( source, log, LogLevelType.WARN ) );
-        proxyAsMap.put( "debug", new LogProxyExecutable( source, log, LogLevelType.DEBUG ) );
-        proxyAsMap.put( "error", new LogProxyExecutable( source, log, LogLevelType.ERROR ) );
+        proxyAsMap.put( "info", new LogProxyExecutable( source, log, converter, LogLevelType.INFO ) );
+        proxyAsMap.put( "warning", new LogProxyExecutable( source, log, converter, LogLevelType.WARN ) );
+        proxyAsMap.put( "debug", new LogProxyExecutable( source, log, converter, LogLevelType.DEBUG ) );
+        proxyAsMap.put( "error", new LogProxyExecutable( source, log, converter, LogLevelType.ERROR ) );
 
         return ProxyObject.fromMap( proxyAsMap );
     }
@@ -55,12 +59,16 @@ public final class ScriptLogger
 
         private final Logger log;
 
+        private final LogArgConverter converter;
+
         private final LogLevelType logLevel;
 
-        private LogProxyExecutable( final ResourceKey source, final Logger log, final LogLevelType logLevel )
+        private LogProxyExecutable( final ResourceKey source, final Logger log, final LogArgConverter converter,
+                                    final LogLevelType logLevel )
         {
             this.source = source;
             this.log = log;
+            this.converter = converter;
             this.logLevel = logLevel;
         }
 
@@ -84,7 +92,7 @@ public final class ScriptLogger
             }
             else
             {
-                doLog( arguments );
+                doLog( arguments[0].asString(), Arrays.stream( arguments ).skip( 1 ).toArray() );
             }
         }
 
@@ -106,28 +114,27 @@ public final class ScriptLogger
             }
         }
 
-        void doLog( final Value... arguments )
+        void doLog( final String message, final Object... arguments )
         {
             switch ( logLevel )
             {
                 case INFO:
-                    log.info( format( arguments ) );
+                    log.info( format( message, arguments ) );
                     break;
                 case WARN:
-                    log.warn( format( arguments ) );
+                    log.warn( format( message, arguments ) );
                     break;
                 case DEBUG:
-                    log.debug( format( arguments ) );
+                    log.debug( format( message, arguments ) );
                     break;
                 default:
-                    log.error( format( arguments ) );
+                    log.error( format( message, arguments ) );
             }
         }
 
-        String format( final Value... arguments )
+        String format( final String message, final Object... arguments )
         {
-            final String prefix = "(" + source.getPath() + ") ";
-            final String message = arguments[0].asString();
+            String prefix = "(" + source.getPath() + ") ";
 
             if ( arguments.length == 1 )
             {
@@ -135,11 +142,7 @@ public final class ScriptLogger
             }
             else
             {
-                final Object[] convertedArgs = new Object[arguments.length - 1];
-                for ( int i = 0; i < arguments.length - 1; i++ )
-                {
-                    convertedArgs[i] = arguments[i + 1].asString();
-                }
+                Object[] convertedArgs = this.converter.convertArgs( arguments );
                 return prefix + String.format( message, convertedArgs );
             }
         }

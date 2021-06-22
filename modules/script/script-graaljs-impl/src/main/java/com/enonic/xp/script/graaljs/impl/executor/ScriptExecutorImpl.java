@@ -25,7 +25,10 @@ import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.graaljs.impl.function.ScriptFunctions;
 import com.enonic.xp.script.graaljs.impl.service.ServiceRegistry;
-import com.enonic.xp.script.graaljs.impl.value.ObjectScriptValue;
+import com.enonic.xp.script.graaljs.impl.util.JavascriptHelper;
+import com.enonic.xp.script.graaljs.impl.util.JavascriptHelperFactory;
+import com.enonic.xp.script.graaljs.impl.value.ScriptValueFactory;
+import com.enonic.xp.script.graaljs.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
 import com.enonic.xp.server.RunMode;
 
@@ -52,6 +55,10 @@ public class ScriptExecutorImpl
 
     private final ClassLoader classLoader;
 
+    private final JavascriptHelper javascriptHelper;
+
+    private final ScriptValueFactory scriptValueFactory;
+
     private final Map<String, Object> mocks = new ConcurrentHashMap<>();
 
     private final Map<ResourceKey, Runnable> disposers = new ConcurrentHashMap<>();
@@ -66,6 +73,8 @@ public class ScriptExecutorImpl
         this.resourceService = resourceService;
         this.serviceRegistry = serviceRegistry;
         this.application = application;
+        this.javascriptHelper = new JavascriptHelperFactory( context ).create();
+        this.scriptValueFactory = new ScriptValueFactoryImpl( this.javascriptHelper );
         this.classLoader = application.getClassLoader();
         this.exportsCache = new ScriptExportsCache( runMode, resourceService::getResource, this::runDisposers );
 
@@ -116,7 +125,7 @@ public class ScriptExecutorImpl
     @Override
     public ScriptValue newScriptValue( final Object value )
     {
-        return null;
+        return scriptValueFactory.newValue( value );
     }
 
     @Override
@@ -141,6 +150,12 @@ public class ScriptExecutorImpl
     public ScriptSettings getScriptSettings()
     {
         return scriptSettings;
+    }
+
+    @Override
+    public JavascriptHelper getJavascriptHelper()
+    {
+        return javascriptHelper;
     }
 
     @Override
@@ -169,16 +184,16 @@ public class ScriptExecutorImpl
     private ScriptExports doExecuteMain( final ResourceKey key )
     {
         final Object exports = executeRequire( key );
-        ScriptValue scriptValue = new ObjectScriptValue( exports );
+        ScriptValue scriptValue = scriptValueFactory.newValue( exports );
         return new ScriptExportsImpl( key, scriptValue, exports );
     }
 
-    private ProxyObject requireJsOrJson( final Resource resource )
+    private Value requireJsOrJson( final Resource resource )
     {
         return "json".equals( resource.getKey().getExtension() ) ? requireJson( resource ) : requireJs( resource );
     }
 
-    private ProxyObject requireJs( final Resource resource )
+    private Value requireJs( final Resource resource )
     {
         final SimpleBindings bindings = new SimpleBindings();
         bindings.put( ScriptEngine.FILENAME, getFileName( resource ) );
@@ -187,26 +202,32 @@ public class ScriptExecutorImpl
         return executeRequire( resource.getKey(), func );
     }
 
-    private ProxyObject requireJson( final Resource resource )
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    private ProxyObject executeRequire( final ResourceKey script, final Value func )
+    private Value requireJson( final Resource resource )
     {
         try
         {
-            final ProxyObject exports = ProxyObject.fromMap( new HashMap<>() );
+            final String text = resource.readString();
+            return this.javascriptHelper.parseJson( text );
+        }
+        catch ( final Exception e )
+        {
+            throw new RuntimeException( e ); // TODO GraalJS
+        }
+    }
 
-            final Map<String, Object> moduleAsMap = new HashMap<>();
-            moduleAsMap.put( "id", script.toString() );
-            moduleAsMap.put( "exports", exports );
+    private Value executeRequire( final ResourceKey script, final Value func )
+    {
+        try
+        {
+            Value exports = javascriptHelper.newJsObject();
 
-            final ProxyObject module = ProxyObject.fromMap( moduleAsMap );
+            Value module = javascriptHelper.newJsObject();
+            module.putMember( "id", script.toString() );
+            module.putMember( "exports", exports );
 
             final ScriptFunctions functions = new ScriptFunctions( script, this );
             func.execute( functions.getLog(), functions.getRequire(), functions.getResolve(), functions, exports, module );
-            return exports;
+            return module.getMember( "exports" );
         }
         catch ( final Exception e )
         {

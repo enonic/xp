@@ -39,7 +39,7 @@ public final class ScriptFunctions
 
     public ProxyObject getLog()
     {
-        return new ScriptLogger( this.script ).asProxyObject();
+        return new ScriptLogger( this.script, this.executor.getJavascriptHelper() ).asProxyObject();
     }
 
     public RequireFunction getRequire()

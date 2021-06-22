@@ -1,22 +1,23 @@
 package com.enonic.xp.script.graaljs.impl.value;
 
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.graalvm.polyglot.Value;
-import org.graalvm.polyglot.proxy.ProxyArray;
-import org.graalvm.polyglot.proxy.ProxyObject;
 
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.graaljs.impl.util.JsObjectConverter;
 
 public final class ObjectScriptValue
     extends AbstractScriptValue
 {
-    private final Object value;
+    private final ScriptValueFactory factory;
 
-    public ObjectScriptValue( final Object value )
+    private final Value value;
+
+    public ObjectScriptValue( final ScriptValueFactory factory, final Value value )
     {
+        this.factory = factory;
         this.value = value;
     }
 
@@ -29,42 +30,25 @@ public final class ObjectScriptValue
     @Override
     public Set<String> getKeys()
     {
-        if ( value instanceof ProxyObject )
-        {
-            final ProxyArray proxyArray = (ProxyArray) ( (ProxyObject) value ).getMemberKeys();
-            final Set<String> result = new LinkedHashSet<>();
-            for ( int i = 0; i < proxyArray.getSize(); i++ )
-            {
-                result.add( proxyArray.get( i ).toString() );
-            }
-            return result;
-        }
-        return null;
+        return value.getMemberKeys();
     }
 
     @Override
     public boolean hasMember( final String key )
     {
-        if ( value instanceof ProxyObject )
-        {
-            return ( (ProxyObject) value ).hasMember( key );
-        }
-        return false;
+        return value.hasMember( key );
     }
 
     @Override
     public ScriptValue getMember( final String key )
     {
-        if ( value instanceof ProxyObject )
-        {
-            return new FunctionScriptValue( Value.asValue( ( (ProxyObject) value ).getMember( key ) ) );
-        }
-        return null;
+        return factory.newValue( value.getMember( key ) );
     }
 
     @Override
     public Map<String, Object> getMap()
     {
-        return null;
+        final JsObjectConverter converter = new JsObjectConverter( this.factory.getJavascriptHelper() );
+        return converter.toMap( this.value );
     }
 }
