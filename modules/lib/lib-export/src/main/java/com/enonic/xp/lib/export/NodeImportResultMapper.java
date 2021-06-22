@@ -28,8 +28,8 @@ public class NodeImportResultMapper
         nodeImportResult.getUpdateNodes().stream().map( NodePath::toString ).forEach( gen::value );
         gen.end();
 
-        gen.array( "exportedBinaries" );
-        nodeImportResult.getExportedBinaries().forEach( gen::value );
+        gen.array( "importedBinaries" );
+        nodeImportResult.getImportedBinaries().forEach( gen::value );
         gen.end();
 
         gen.array( "importErrors" );

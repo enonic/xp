@@ -20,14 +20,14 @@ public class NodeImportResult
 
     private List<ImportError> importErrors;
 
-    private List<String> exportedBinaries;
+    private List<String> importedBinaries;
 
     private NodeImportResult( final Builder builder )
     {
         this.addedNodes = builder.addedNodes.build();
         this.updateNodes = builder.updatedNodes.build();
         this.importErrors = builder.importErrors;
-        this.exportedBinaries = builder.exportedBinaries;
+        this.importedBinaries = builder.importedBinaries;
         this.dryRun = builder.dryRun;
     }
 
@@ -41,19 +41,27 @@ public class NodeImportResult
         return importErrors;
     }
 
+    @Deprecated
     public void setImportErrors( final List<ImportError> importErrors )
     {
         this.importErrors = importErrors;
     }
 
+    @Deprecated
     public List<String> getExportedBinaries()
     {
-        return exportedBinaries;
+        return importedBinaries;
     }
 
+    @Deprecated
     public void setExportedBinaries( final List<String> exportedBinaries )
     {
-        this.exportedBinaries = exportedBinaries;
+        this.importedBinaries = exportedBinaries;
+    }
+
+    public List<String> getImportedBinaries()
+    {
+        return importedBinaries;
     }
 
     public NodePaths getAddedNodes()
@@ -74,13 +82,9 @@ public class NodeImportResult
     @Override
     public String toString()
     {
-        return "NodeImportResult{" +
-            "dryRun=" + dryRun +
-            ", addedNodes=" + addedNodes +
-            ", updateNodes=" + updateNodes +
-            ", importErrors=" + Arrays.toString( importErrors.toArray() ) +
-            ", exportedBinaries=" + Arrays.toString( exportedBinaries.toArray() ) +
-            '}';
+        return "NodeImportResult{" + "dryRun=" + dryRun + ", addedNodes=" + addedNodes + ", updateNodes=" + updateNodes +
+            ", importErrors=" + Arrays.toString( importErrors.toArray() ) + ", importedBinaries=" +
+            Arrays.toString( importedBinaries.toArray() ) + '}';
     }
 
     public static final class Builder
@@ -89,7 +93,7 @@ public class NodeImportResult
 
         private final NodePaths.Builder updatedNodes = NodePaths.create();
 
-        private final List<String> exportedBinaries = new ArrayList<>();
+        private final List<String> importedBinaries = new ArrayList<>();
 
         private final List<ImportError> importErrors = new ArrayList<>();
 
@@ -113,7 +117,7 @@ public class NodeImportResult
 
         public Builder addBinary( final String path, final BinaryReference binaryReference )
         {
-            this.exportedBinaries.add( path + " [" + binaryReference + "]" );
+            this.importedBinaries.add( path + " [" + binaryReference + "]" );
             return this;
         }
 
