@@ -55,7 +55,7 @@
     {
       "myfield._orderby": {
         "order": "desc",
-        "ignore_unmapped": true
+        "unmapped_type": "long"
       }
     }
   ],
