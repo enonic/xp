@@ -8,6 +8,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.graaljs.impl.service.ServiceRegistry;
+import com.enonic.xp.script.graaljs.impl.util.JavascriptHelper;
 import com.enonic.xp.script.runtime.ScriptSettings;
 
 public interface ScriptExecutor
@@ -29,6 +30,8 @@ public interface ScriptExecutor
     ResourceService getResourceService();
 
     ScriptSettings getScriptSettings();
+
+    JavascriptHelper getJavascriptHelper();
 
     void registerMock( String name, Object value );
 
