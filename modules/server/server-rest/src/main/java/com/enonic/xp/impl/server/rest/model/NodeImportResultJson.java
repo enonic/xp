@@ -40,7 +40,7 @@ public class NodeImportResultJson
             json.importErrors.add( importError.getMessage() + " - " + importError.getException() );
         }
 
-        json.importedBinaries.addAll( result.getExportedBinaries() );
+        json.importedBinaries.addAll( result.getImportedBinaries() );
 
         return json;
     }

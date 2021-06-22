@@ -26,7 +26,7 @@ var expected = {
     'updatedNodes': [
         '/updated'
     ],
-    'exportedBinaries': [
+    'importedBinaries': [
         'binaryPath [ref]'
     ],
     'importErrors': [
