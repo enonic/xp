@@ -24,7 +24,7 @@ public class NodeImportResultTest
         NodeImportResult result = builder.build();
 
         assertTrue( result.isDryRun() );
-        assertEquals( 1, result.getExportedBinaries().size() );
+        assertEquals( 1, result.getImportedBinaries().size() );
         assertEquals( 1, result.getAddedNodes().getSize() );
         assertEquals( 1, result.getUpdateNodes().getSize() );
         assertEquals( 3, result.getImportErrors().size() );
@@ -46,7 +46,7 @@ public class NodeImportResultTest
         expected += "addedNodes=[/], ";
         expected += "updateNodes=[/], ";
         expected += "importErrors=[ImportError{exception=java.lang.Exception, message='null'}], ";
-        expected += "exportedBinaries=[path [binary ref]]";
+        expected += "importedBinaries=[path [binary ref]]";
         expected += "}";
 
         assertEquals( expected, result.toString() );
