@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.TimeZone;
 
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -23,6 +24,7 @@ import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobEditor;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.User;
 import com.enonic.xp.task.TaskId;
 
 public class SchedulerSerializer
@@ -56,7 +58,7 @@ public class SchedulerSerializer
         }
 
         final Instant now = Instant.now();
-        final PrincipalKey contextUser = ContextAccessor.current().getAuthInfo().getUser().getKey();
+        final PrincipalKey contextUser = getCurrentUser().getKey();
 
         data.setString( ScheduledJobPropertyNames.CREATOR, contextUser.toString() );
         data.setString( ScheduledJobPropertyNames.MODIFIER, contextUser.toString() );
@@ -92,7 +94,7 @@ public class SchedulerSerializer
         }
 
         final Instant now = Instant.now();
-        final PrincipalKey contextUser = ContextAccessor.current().getAuthInfo().getUser().getKey();
+        final PrincipalKey contextUser = getCurrentUser().getKey();
 
         data.setString( ScheduledJobPropertyNames.MODIFIER, contextUser.toString() );
         data.setInstant( ScheduledJobPropertyNames.MODIFIED_TIME, now );
@@ -224,5 +226,11 @@ public class SchedulerSerializer
             default:
                 throw new IllegalArgumentException( String.format( "can't parse [%s] calendar type.", type ) );
         }
+    }
+
+    private static User getCurrentUser()
+    {
+        final Context context = ContextAccessor.current();
+        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser() : User.ANONYMOUS;
     }
 }
