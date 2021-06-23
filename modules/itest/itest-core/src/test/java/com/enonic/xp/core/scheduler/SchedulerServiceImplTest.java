@@ -19,6 +19,7 @@ import com.hazelcast.scheduledexecutor.ScheduledTaskHandler;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.scheduler.CalendarServiceImpl;
@@ -224,6 +225,34 @@ class SchedulerServiceImplTest
     }
 
     @Test
+    void createWithoutUser()
+    {
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
+        final CronCalendar calendar = calendarService.cron( "* * * * *", TimeZone.getDefault() );
+
+        final CreateScheduledJobParams params = CreateScheduledJobParams.create().
+            name( name ).
+            calendar( calendar ).
+            descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.features" ), "landing" ) ).
+            config( new PropertyTree() ).
+            build();
+
+        Context context = ContextAccessor.current();
+        final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( AuthenticationInfo.unAuthenticated() ).
+            user( null ).
+            principals( context.getAuthInfo().getPrincipals() ).
+            principals( RoleKeys.ADMIN ).
+            build();
+
+        context = ContextBuilder.from( context ).authInfo( authenticationInfo ).build();
+
+        final ScheduledJob scheduledJob = context.callWith( () -> schedulerService.create( params ) );
+
+        assertEquals( User.ANONYMOUS.getKey(), scheduledJob.getCreator() );
+        assertEquals( User.ANONYMOUS.getKey(), scheduledJob.getModifier() );
+    }
+
+    @Test
     void modifyNotCreated()
     {
         assertThrows( NodeNotFoundException.class,
@@ -299,8 +328,9 @@ class SchedulerServiceImplTest
             build();
 
         final Context adminContext = adminContext();
-        final Context userAdminContext = ContextBuilder.from( adminContext ).authInfo(
-            AuthenticationInfo.copyOf( adminContext.getAuthInfo() ).user( user ).build() ).build();
+        final Context userAdminContext = ContextBuilder.from( adminContext )
+            .authInfo( AuthenticationInfo.copyOf( adminContext.getAuthInfo() ).user( user ).build() )
+            .build();
 
         final ScheduledJob modifiedJob = userAdminContext.callWith( () -> schedulerService.modify( ModifyScheduledJobParams.create().
             name( name ).
