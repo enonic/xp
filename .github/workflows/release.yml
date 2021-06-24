@@ -1,4 +1,4 @@
-name: Java CI
+name: Release
 
 on:
   push:
@@ -58,8 +58,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-
-      ### PUBLISHING STEPS ###
 
       - name: Get publishing variables
         id: publish_vars
