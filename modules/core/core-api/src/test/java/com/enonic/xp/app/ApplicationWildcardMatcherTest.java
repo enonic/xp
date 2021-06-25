@@ -20,7 +20,40 @@ class ApplicationWildcardMatcherTest
 
         final ApplicationWildcardMatcher<Object> wildcardMatcher = new ApplicationWildcardMatcher<>( applicationKey, Object::toString );
         assertTrue( wildcardMatcher.matches( "${app}:*", "my.app:folder" ) );
+        assertFalse( wildcardMatcher.matches( "${app}:*", "mytapp:folder" ) );
         assertFalse( wildcardMatcher.matches( "${app}:*", "base:folder" ) );
+    }
+
+    @Test
+    void matches_multiple()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "my.app" );
+
+        final ApplicationWildcardMatcher<Object> wildcardMatcher = new ApplicationWildcardMatcher<>( applicationKey, Object::toString );
+
+        final Set<String> result =
+            List.of( "my.app:typeA", "my.app:typeB", "my.app:typeC", "my.app:typeD", "my.app:typeE", "my.apptypeA", "not.my.app:typeA",
+                     "${app}:typeA", "{app}:typeA" )
+                .stream()
+                .filter( wildcardMatcher.createPredicate( "${app}:typeA|my.app:typeB|${app}:type(C|D)" ) )
+                .collect( Collectors.toCollection( LinkedHashSet::new ) );
+        assertThat( result ).containsExactly( "my.app:typeA", "my.app:typeB", "my.app:typeC", "my.app:typeD" );
+    }
+
+    @Test
+    void matches_multiple_wildcards()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "my.app" );
+
+        final ApplicationWildcardMatcher<Object> wildcardMatcher = new ApplicationWildcardMatcher<>( applicationKey, Object::toString );
+
+        final Set<String> result =
+            List.of( "a.b:type", "a.b:sypertype", "my.app:types", "any.app:class", "any.app:class1", "my.app:method", "my.app:method1",
+                     "not.my.app:method" )
+                .stream()
+                .filter( wildcardMatcher.createPredicate( "*type*|*:class|my.app:method*" ) )
+                .collect( Collectors.toCollection( LinkedHashSet::new ) );
+        assertThat( result ).containsExactly( "a.b:type","a.b:sypertype", "my.app:types", "any.app:class", "my.app:method", "my.app:method1" );
     }
 
     @Test
