@@ -64,7 +64,6 @@ jobs:
         uses: enonic/release-tools/publish-vars@master
         env:
           PROPERTIES_PATH: './gradle.properties'
-          JAVA_HOME: ''
 
       - name: Verify release version
         if: steps.publish_vars.outputs.release != 'true'
