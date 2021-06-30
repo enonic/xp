@@ -30,7 +30,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +61,7 @@ import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
 import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentListJson;
+import com.enonic.xp.admin.impl.rest.AdminRestConfig;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.BatchContentJson;
@@ -107,6 +110,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.task.PublishRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.UnpublishRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
+import com.enonic.xp.app.ApplicationWildcardMatcher;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.Attachments;
@@ -202,7 +206,7 @@ import static java.util.Optional.ofNullable;
 @Path(REST_ROOT + "{content:(content|" + CMS_PATH + "/content)}")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
-@Component(immediate = true, property = "group=admin")
+@Component(immediate = true, property = "group=admin", configurationPid = "com.enonic.xp.admin.rest")
 public final class ContentResource
     implements JaxRsComponent
 {
@@ -245,6 +249,15 @@ public final class ContentResource
     private SyncContentService syncContentService;
 
     private JsonObjectsFactory jsonObjectsFactory;
+
+    private ApplicationWildcardMatcher.Mode contentTypeParseMode;
+
+    @Activate
+    @Modified
+    public void activate( final AdminRestConfig config )
+    {
+        contentTypeParseMode = ApplicationWildcardMatcher.Mode.valueOf( config.contentTypePatternMode() );
+    }
 
     @POST
     @Path("create")
@@ -1275,6 +1288,7 @@ public final class ContentResource
             .contentService( this.contentService )
             .contentTypeService( this.contentTypeService )
             .relationshipTypeService( this.relationshipTypeService )
+            .contentTypeParseMode( this.contentTypeParseMode )
             .build();
     }
 

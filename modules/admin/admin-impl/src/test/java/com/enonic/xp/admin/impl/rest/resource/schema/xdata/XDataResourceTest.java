@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 
+import com.enonic.xp.admin.impl.rest.AdminRestConfig;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -35,6 +36,8 @@ import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.XDataMapping;
 import com.enonic.xp.site.XDataMappings;
+
+import static org.mockito.Mockito.when;
 
 public class XDataResourceTest
     extends AdminResourceTestSupport
@@ -77,6 +80,11 @@ public class XDataResourceTest
         resource.setContentService( contentService );
         resource.setSiteService( siteService );
         resource.setContentTypeService( contentTypeService );
+
+        final AdminRestConfig config = Mockito.mock( AdminRestConfig.class );
+        when( config.contentTypePatternMode() ).thenReturn( "MATCH" );
+
+        resource.activate( config );
 
         Mockito.when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 

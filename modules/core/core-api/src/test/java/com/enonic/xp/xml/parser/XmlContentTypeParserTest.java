@@ -87,7 +87,7 @@ public class XmlContentTypeParserTest
         final Input contentSelectorInput = (Input) contentSelectorItem;
         assertEquals( InputTypeName.CONTENT_SELECTOR.toString(), contentSelectorInput.getInputType().toString() );
 
-        assertEquals( "myapplication:mytype", contentSelectorInput.getInputTypeConfig().getProperty( "allowContentType" ).getValue() );
+        assertEquals( "mytype", contentSelectorInput.getInputTypeConfig().getProperty( "allowContentType" ).getValue() );
         assertEquals( 2, contentSelectorInput.getInputTypeConfig().getProperties( "allowContentType" ).size() );
         assertEquals( "path1", contentSelectorInput.getInputTypeConfig().getProperty( "allowPath" ).getValue() );
         assertEquals( 2, contentSelectorInput.getInputTypeConfig().getProperties( "allowPath" ).size() );
@@ -330,8 +330,8 @@ public class XmlContentTypeParserTest
         assertEquals( "OptionSet", result.getDisplayName() );
         assertEquals( "OptionSet for testing", result.getDescription() );
         assertEquals( "base:structured", result.getSuperType().toString() );
-        assertEquals( false, result.isAbstract() );
-        assertEquals( false, result.isFinal() );
+        assertFalse( result.isAbstract() );
+        assertFalse( result.isFinal() );
 
         assertEquals( 2, result.getForm().size() );
 
@@ -408,7 +408,7 @@ public class XmlContentTypeParserTest
 
         final Input imageSelectorInput = checkOption3.getFormItems().getItemByName( "imageselector" ).toInput();
 
-        assertEquals( "myapplication:mytype", imageSelectorInput.getInputTypeConfig().getProperty( "allowContentType" ).getValue() );
+        assertEquals( "mytype", imageSelectorInput.getInputTypeConfig().getProperty( "allowContentType" ).getValue() );
         assertEquals( 2, imageSelectorInput.getInputTypeConfig().getProperties( "allowContentType" ).size() );
         assertEquals( "path1", imageSelectorInput.getInputTypeConfig().getProperty( "allowPath" ).getValue() );
         assertEquals( 2, imageSelectorInput.getInputTypeConfig().getProperties( "allowPath" ).size() );

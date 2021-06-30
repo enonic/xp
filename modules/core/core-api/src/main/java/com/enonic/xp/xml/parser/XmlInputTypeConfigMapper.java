@@ -99,10 +99,6 @@ final class XmlInputTypeConfigMapper
             {
                 return relativeResolver.toServiceUrl( value );
             }
-            else if ( lowerCasedName.endsWith( "contenttype" ) )
-            {
-                return relativeResolver.toContentTypeNameRegexp( value );
-            }
             else if ( lowerCasedName.endsWith( "mixintype" ) )
             {
                 return relativeResolver.toMixinName( value ).toString();

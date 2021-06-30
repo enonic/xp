@@ -51,6 +51,7 @@ import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson
 import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
 import com.enonic.xp.admin.impl.json.content.JsonObjectsFactory;
 import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
+import com.enonic.xp.admin.impl.rest.AdminRestConfig;
 import com.enonic.xp.admin.impl.rest.resource.AdminResourceTestSupport;
 import com.enonic.xp.admin.impl.rest.resource.content.json.AbstractContentQueryResultJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
@@ -221,6 +222,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
 public class ContentResourceTest
     extends AdminResourceTestSupport
@@ -300,6 +302,11 @@ public class ContentResourceTest
         jsonObjectsFactory.setSecurityService( securityService );
         jsonObjectsFactory.setContentTypeService( contentTypeService );
         resource.setJsonObjectsFactory( jsonObjectsFactory );
+
+        final AdminRestConfig config = Mockito.mock( AdminRestConfig.class );
+        when( config.contentTypePatternMode() ).thenReturn( "MATCH" );
+
+        resource.activate( config );
 
         return resource;
     }
