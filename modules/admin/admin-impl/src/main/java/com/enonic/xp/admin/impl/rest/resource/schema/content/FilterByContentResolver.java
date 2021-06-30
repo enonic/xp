@@ -140,14 +140,14 @@ public class FilterByContentResolver
         return contentTypeNames.stream().map( GetContentTypeParams::from ).map( contentTypeService::getByName );
     }
 
-    private static boolean isAllowedOnContentType( final ComponentDescriptor descriptor, ContentTypeName contentTypeName )
+    private boolean isAllowedOnContentType( final ComponentDescriptor descriptor, ContentTypeName contentTypeName )
     {
         final List<String> allowOnContentType = readConfigValues( descriptor.getSchemaConfig().getProperties( "allowOnContentType" ) );
 
         return allowContentTypeFilter( descriptor.getKey().getApplicationKey(), allowOnContentType ).test( contentTypeName );
     }
 
-    private static Predicate<ContentTypeName> allowContentTypeFilter( final ApplicationKey applicationKey, final List<String> wildcards )
+    private Predicate<ContentTypeName> allowContentTypeFilter( final ApplicationKey applicationKey, final List<String> wildcards )
     {
         final ApplicationWildcardMatcher<ContentTypeName> wildcardMatcher =
             new ApplicationWildcardMatcher<>( applicationKey, ContentTypeName::toString );
