@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
+import com.enonic.xp.app.ApplicationWildcardMatcher;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
@@ -78,8 +79,9 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             .contentQueryJson( contentQueryJson )
             .contentService( contentService )
             .contentTypeService( contentTypeService )
-            .relationshipTypeService( relationshipTypeService ).
-            build();
+            .relationshipTypeService( relationshipTypeService )
+            .contentTypeParseMode( ApplicationWildcardMatcher.Mode.MATCH )
+            .build();
 
         final ContentQuery contentQuery = processor.createQuery();
 
@@ -113,8 +115,9 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             .contentQueryJson( contentQueryJson )
             .contentService( contentService )
             .contentTypeService( contentTypeService )
-            .relationshipTypeService( relationshipTypeService ).
-            build();
+            .relationshipTypeService( relationshipTypeService )
+            .contentTypeParseMode( ApplicationWildcardMatcher.Mode.MATCH )
+            .build();
 
         final ContentQuery contentQuery = processor.createQuery();
 
@@ -146,8 +149,9 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             .contentQueryJson( contentQueryJson )
             .contentService( contentService )
             .contentTypeService( contentTypeService )
-            .relationshipTypeService( relationshipTypeService ).
-            build();
+            .relationshipTypeService( relationshipTypeService )
+            .contentTypeParseMode( ApplicationWildcardMatcher.Mode.MATCH )
+            .build();
 
         final ContentQuery contentQuery = processor.createQuery();
 
@@ -174,11 +178,12 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
 
         ContentSelectorQueryJson contentQueryJson =
             new ContentSelectorQueryJson( "", 0, 100, "summary", "contentId", "inputName", Collections.emptyList(), allowPaths, null );
-        ContentSelectorQueryJsonToContentQueryConverter processor = ContentSelectorQueryJsonToContentQueryConverter.create().
-            contentQueryJson( contentQueryJson ).
-            contentService( contentService ).
-            relationshipTypeService( relationshipTypeService ).
-            build();
+        ContentSelectorQueryJsonToContentQueryConverter processor = ContentSelectorQueryJsonToContentQueryConverter.create()
+            .contentQueryJson( contentQueryJson )
+            .contentService( contentService )
+            .relationshipTypeService( relationshipTypeService )
+            .contentTypeParseMode( ApplicationWildcardMatcher.Mode.MATCH )
+            .build();
 
         assertThrows(RuntimeException.class, () -> processor.createQuery() );
     }
@@ -212,8 +217,9 @@ public class ContentSelectorQueryJsonToContentQueryConverterTest
             .contentQueryJson( json )
             .contentService( contentService )
             .contentTypeService( contentTypeService )
-            .relationshipTypeService( relationshipTypeService ).
-            build();
+            .relationshipTypeService( relationshipTypeService )
+            .contentTypeParseMode( ApplicationWildcardMatcher.Mode.MATCH )
+            .build();
     }
 
     @Test

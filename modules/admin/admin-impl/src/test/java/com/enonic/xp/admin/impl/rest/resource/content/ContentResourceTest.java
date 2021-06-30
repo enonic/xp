@@ -255,6 +255,9 @@ public class ContentResourceTest
 
     ContentResource resource;
 
+    AdminRestConfig config;
+
+
     @Override
     protected ContentResource getResourceInstance()
     {
@@ -303,7 +306,10 @@ public class ContentResourceTest
         jsonObjectsFactory.setSecurityService( securityService );
         jsonObjectsFactory.setContentTypeService( contentTypeService );
         resource.setJsonObjectsFactory( jsonObjectsFactory );
-        resource.activate( Mockito.mock( AdminRestConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
+
+        config = Mockito.mock( AdminRestConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        resource.activate( config );
+
         return resource;
     }
 
@@ -1537,7 +1543,8 @@ public class ContentResourceTest
             .name( "name" )
             .mimeType( "image/jpeg" )
             .byteSource( byteSource )
-            .focalX( 2.0 ).focalY( 1.0 );
+            .focalX( 2.0 )
+            .focalY( 1.0 );
 
         Mockito.when( this.contentService.update( params ) ).thenReturn( content );
 
@@ -1552,7 +1559,6 @@ public class ContentResourceTest
         throws Exception
     {
         ContentResource contentResource = getResourceInstance();
-        final AdminRestConfig config = Mockito.mock( AdminRestConfig.class );
         Mockito.when( config.uploadMaxFileSize() ).thenReturn( "1b" );
         contentResource.activate( config );
 
@@ -2484,7 +2490,6 @@ public class ContentResourceTest
 
             Mockito.when( contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenReturn( content );
 
-            final AdminRestConfig config = Mockito.mock( AdminRestConfig.class );
             Mockito.when( config.uploadMaxFileSize() ).thenReturn( "1b" );
             resource.activate( config );
 

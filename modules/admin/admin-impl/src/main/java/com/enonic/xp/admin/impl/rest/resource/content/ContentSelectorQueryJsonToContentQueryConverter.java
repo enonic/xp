@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
 import com.enonic.xp.app.ApplicationWildcardMatcher;
 import com.enonic.xp.content.Content;
@@ -42,6 +44,8 @@ public class ContentSelectorQueryJsonToContentQueryConverter
 
     private final Content content;
 
+    private final ApplicationWildcardMatcher.Mode contentTypeParseMode;
+
     private Site parentSite;
 
     private static final FieldExpr PATH_FIELD_EXPR = FieldExpr.from( NodeIndexPath.PATH );
@@ -53,6 +57,7 @@ public class ContentSelectorQueryJsonToContentQueryConverter
         this.relationshipTypeService = builder.relationshipTypeService;
         this.content = contentQueryJson.getContentId() != null ? contentService.getById( contentQueryJson.getContentId() ) : null;
         this.contentTypeService = builder.contentTypeService;
+        this.contentTypeParseMode = builder.contentTypeParseMode;
     }
 
     public ContentQuery createQuery()
@@ -77,7 +82,7 @@ public class ContentSelectorQueryJsonToContentQueryConverter
         if ( this.content != null )
         {
             final ApplicationWildcardMatcher<ContentTypeName> wildcardMatcher =
-                new ApplicationWildcardMatcher<>( this.content.getType().getApplicationKey(), ContentTypeName::toString );
+                new ApplicationWildcardMatcher<>( this.content.getType().getApplicationKey(), ContentTypeName::toString, this.contentTypeParseMode );
 
             final Predicate<ContentTypeName> filter =
                 contentTypeNames.stream().map( wildcardMatcher::createPredicate ).reduce( Predicate::or ).orElse( s -> false );
@@ -227,6 +232,8 @@ public class ContentSelectorQueryJsonToContentQueryConverter
 
         private ContentTypeService contentTypeService;
 
+        private ApplicationWildcardMatcher.Mode contentTypeParseMode;
+
         public Builder contentQueryJson( final ContentSelectorQueryJson contentQueryJson )
         {
             this.contentQueryJson = contentQueryJson;
@@ -251,8 +258,22 @@ public class ContentSelectorQueryJsonToContentQueryConverter
             return this;
         }
 
+        public Builder contentTypeParseMode( final ApplicationWildcardMatcher.Mode contentTypeParseMode )
+        {
+            this.contentTypeParseMode = contentTypeParseMode;
+            return this;
+        }
+
+        private void validate() {
+            Preconditions.checkNotNull( contentQueryJson, "contentQueryJson must be set" );
+            Preconditions.checkNotNull( contentTypeParseMode, "contentTypeParseMode must be set" );
+            Preconditions.checkNotNull( relationshipTypeService, "relationshipTypeService must be set" );
+            Preconditions.checkNotNull( contentService, "contentService must be set" );
+        }
+
         public ContentSelectorQueryJsonToContentQueryConverter build()
         {
+            validate();
             return new ContentSelectorQueryJsonToContentQueryConverter( this );
         }
     }
