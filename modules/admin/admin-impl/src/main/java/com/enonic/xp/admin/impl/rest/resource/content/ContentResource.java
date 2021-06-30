@@ -111,6 +111,7 @@ import com.enonic.xp.admin.impl.rest.resource.content.task.PublishRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.UnpublishRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
+import com.enonic.xp.app.ApplicationWildcardMatcher;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.Attachments;
@@ -253,11 +254,14 @@ public final class ContentResource
 
     private volatile long uploadMaxFileSize;
 
+    private ApplicationWildcardMatcher.Mode contentTypeParseMode;
+
     @Activate
     @Modified
     public void activate( final AdminRestConfig config )
     {
         uploadMaxFileSize = ByteSizeParser.parse( config.uploadMaxFileSize() );
+        contentTypeParseMode = ApplicationWildcardMatcher.Mode.valueOf( config.contentTypePatternMode() );
     }
 
     @POST
@@ -1294,6 +1298,7 @@ public final class ContentResource
             .contentService( this.contentService )
             .contentTypeService( this.contentTypeService )
             .relationshipTypeService( this.relationshipTypeService )
+            .contentTypeParseMode( this.contentTypeParseMode )
             .build();
     }
 

@@ -88,8 +88,8 @@ public class XmlInputTypeConfigMapperTest
         assertNotNull( config );
         assertEquals( 12, config.getSize() );
 
-        assertEquals( "contentType=myapp:test[]", toString( config.getProperties( "contentType" ) ) );
-        assertEquals( "myContentType=myapp:test[]", toString( config.getProperties( "myContentType" ) ) );
+        assertEquals( "contentType=test[]", toString( config.getProperties( "contentType" ) ) );
+        assertEquals( "myContentType=test[]", toString( config.getProperties( "myContentType" ) ) );
 
         assertEquals( "mixinType=myapp:test[]", toString( config.getProperties( "mixinType" ) ) );
         assertEquals( "myMixinType=myapp:test[]", toString( config.getProperties( "myMixinType" ) ) );
@@ -98,10 +98,10 @@ public class XmlInputTypeConfigMapperTest
         assertEquals( "myRelationshipType=myapp:test[]", toString( config.getProperties( "myRelationshipType" ) ) );
 
         assertEquals( "other1=[mixinType=myapp:test]", toString( config.getProperties( "other1" ) ) );
-        assertEquals( "other2=[contentType=myapp:test]", toString( config.getProperties( "other2" ) ) );
+        assertEquals( "other2=[contentType=test]", toString( config.getProperties( "other2" ) ) );
         assertEquals( "other3=[relationshipType=myapp:test]", toString( config.getProperties( "other3" ) ) );
         assertEquals( "other4=[myMixinType=myapp:test]", toString( config.getProperties( "other4" ) ) );
-        assertEquals( "other5=[myContentType=myapp:test]", toString( config.getProperties( "other5" ) ) );
+        assertEquals( "other5=[myContentType=test]", toString( config.getProperties( "other5" ) ) );
         assertEquals( "other6=[myRelationshipType=myapp:test]", toString( config.getProperties( "other6" ) ) );
     }
 
@@ -112,7 +112,7 @@ public class XmlInputTypeConfigMapperTest
         assertNotNull( config );
         assertEquals( 2, config.getSize() );
 
-        assertEquals( "allowContentType=myapp:contentTypeTest[]", toString( config.getProperties( "allowContentType" ) ) );
+        assertEquals( "allowContentType=contentTypeTest[]", toString( config.getProperties( "allowContentType" ) ) );
         assertEquals( "relationshipType=myapp:relationshipTypeTest[]", toString( config.getProperties( "relationshipType" ) ) );
     }
 
@@ -123,8 +123,8 @@ public class XmlInputTypeConfigMapperTest
         assertNotNull( config );
         assertEquals( 12, config.getSize() );
 
-        assertEquals( "contentType=myapp:test[]", toString( config.getProperties( "contentType" ) ) );
-        assertEquals( "myContentType=myapp:test[]", toString( config.getProperties( "myContentType" ) ) );
+        assertEquals( "contentType=test[]", toString( config.getProperties( "contentType" ) ) );
+        assertEquals( "myContentType=test[]", toString( config.getProperties( "myContentType" ) ) );
 
         assertEquals( "mixinType=myapp:test[]", toString( config.getProperties( "mixinType" ) ) );
         assertEquals( "myMixinType=myapp:test[]", toString( config.getProperties( "myMixinType" ) ) );
@@ -133,10 +133,10 @@ public class XmlInputTypeConfigMapperTest
         assertEquals( "myRelationshipType=myapp:test[]", toString( config.getProperties( "myRelationshipType" ) ) );
 
         assertEquals( "other1=[mixinType=myapp:test]", toString( config.getProperties( "other1" ) ) );
-        assertEquals( "other2=[contentType=myapp:test]", toString( config.getProperties( "other2" ) ) );
+        assertEquals( "other2=[contentType=test]", toString( config.getProperties( "other2" ) ) );
         assertEquals( "other3=[relationshipType=myapp:test]", toString( config.getProperties( "other3" ) ) );
         assertEquals( "other4=[myMixinType=myapp:test]", toString( config.getProperties( "other4" ) ) );
-        assertEquals( "other5=[myContentType=myapp:test]", toString( config.getProperties( "other5" ) ) );
+        assertEquals( "other5=[myContentType=test]", toString( config.getProperties( "other5" ) ) );
         assertEquals( "other6=[myRelationshipType=myapp:test]", toString( config.getProperties( "other6" ) ) );
     }
 
