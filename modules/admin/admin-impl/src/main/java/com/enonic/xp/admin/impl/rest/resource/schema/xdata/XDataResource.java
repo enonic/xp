@@ -12,11 +12,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.impl.json.schema.xdata.XDataJson;
 import com.enonic.xp.admin.impl.json.schema.xdata.XDataListJson;
+import com.enonic.xp.admin.impl.rest.AdminRestConfig;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.LocaleMessageResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.InlineMixinResolver;
 import com.enonic.xp.admin.impl.rest.resource.schema.mixin.MixinIconResolver;
@@ -51,7 +54,7 @@ import static java.util.stream.Collectors.toList;
 @Path(REST_ROOT + "{content:(schema|" + CMS_PATH + "/schema)}/xdata")
 @Produces(MediaType.APPLICATION_JSON)
 @RolesAllowed({RoleKeys.ADMIN_LOGIN_ID, RoleKeys.ADMIN_ID})
-@Component(immediate = true, property = "group=admin")
+@Component(immediate = true, property = "group=admin", configurationPid = "com.enonic.xp.admin.rest")
 public final class XDataResource
     implements JaxRsComponent
 {
@@ -68,6 +71,15 @@ public final class XDataResource
     private MixinService mixinService;
 
     private MixinIconUrlResolver mixinIconUrlResolver;
+
+    private ApplicationWildcardMatcher.Mode contentTypeParseMode;
+
+    @Activate
+    @Modified
+    public void activate( final AdminRestConfig config )
+    {
+        contentTypeParseMode = ApplicationWildcardMatcher.Mode.valueOf( config.contentTypePatternMode() );
+    }
 
     @GET
     @Path("getContentXData")
@@ -153,7 +165,7 @@ public final class XDataResource
             final ApplicationKey applicationKey = xDataMapping.getXDataName().getApplicationKey();
 
             return nullToEmpty( wildcard ).isBlank() ||
-                new ApplicationWildcardMatcher<>( applicationKey, ContentTypeName::toString ).matches( wildcard, contentTypeName );
+                new ApplicationWildcardMatcher<>( applicationKey, ContentTypeName::toString, contentTypeParseMode ).matches( wildcard, contentTypeName );
         } ).forEach( xDataMapping -> {
             final XData xData = this.xDataService.getByName( xDataMapping.getXDataName() );
             if ( xData != null )
