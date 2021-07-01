@@ -20,7 +20,7 @@ function required(params, name) {
 
 /**
  * Import nodes from a nodes-export.
- * Could be used to import node+export from exports directory or from application resource files.
+ * Could be used to import node-export from exports directory or from application resource files.
  * Optionally pre-transforms node XML node files with XSLT before import.
  *
  * @example-ref examples/export/importNodes.js
