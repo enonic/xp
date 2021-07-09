@@ -4,10 +4,12 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
 import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.DslExpr;
 import com.enonic.xp.query.expr.DynamicConstraintExpr;
 import com.enonic.xp.query.expr.Expression;
 import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.NotExpr;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.query.dsl.DslExpressionBuilder;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 
 public class ConstraintExpressionBuilder
@@ -35,6 +37,10 @@ public class ConstraintExpressionBuilder
         else if ( constraint instanceof NotExpr )
         {
             return NotExpressionBuilder.build( (NotExpr) constraint, resolver );
+        }
+        else if ( constraint instanceof DslExpr )
+        {
+            return DslExpressionBuilder.build( (DslExpr) constraint, resolver );
         }
         else
         {

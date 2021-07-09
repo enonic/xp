@@ -14,7 +14,7 @@ public class QueryNodeHandlerParams
 
     private Integer count;
 
-    private String query;
+    private Object query;
 
     private String sort;
 
@@ -94,13 +94,13 @@ public class QueryNodeHandlerParams
         this.count = count;
     }
 
-    String getQuery()
+    Object getQuery()
     {
         return query;
     }
 
     @SuppressWarnings("unused")
-    public void setQuery( final String query )
+    public void setQuery( final Object query )
     {
         this.query = query;
     }

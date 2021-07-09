@@ -1,0 +1,13 @@
+
+  bool: {
+    must:[{
+      fulltext: {
+        field: "someField",
+        query: "my query string"}
+    }],
+    should: [{
+      like: "*microsoft*"
+    },{
+      in: ["fisk", "ost"]
+    }]
+  }

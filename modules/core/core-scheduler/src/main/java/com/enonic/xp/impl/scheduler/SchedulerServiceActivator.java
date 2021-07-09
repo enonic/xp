@@ -1,7 +1,5 @@
 package com.enonic.xp.impl.scheduler;
 
-import java.util.concurrent.TimeUnit;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
@@ -75,7 +73,7 @@ public final class SchedulerServiceActivator
         {
             if ( !schedulerExecutorService.getAllFutures().contains( RescheduleTask.NAME ) )
             {
-                schedulerExecutorService.scheduleAtFixedRate( new RescheduleTask(), 0, 1, TimeUnit.SECONDS );
+//                schedulerExecutorService.scheduleAtFixedRate( new RescheduleTask(), 0, 1, TimeUnit.SECONDS );
             }
         }
         catch ( Exception e )

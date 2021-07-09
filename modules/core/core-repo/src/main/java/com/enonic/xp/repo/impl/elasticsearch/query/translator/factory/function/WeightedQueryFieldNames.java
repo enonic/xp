@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -50,5 +51,11 @@ public class WeightedQueryFieldNames
         return new WeightedQueryFieldNames( list );
     }
 
+    public static WeightedQueryFieldNames from( final Collection<String> weightedQueryFieldNames )
+    {
+        return new WeightedQueryFieldNames(weightedQueryFieldNames.stream()
+                               .map( WeightedQueryFieldName::from )
+                               .collect( Collectors.toList() ));
+    }
 
 }
