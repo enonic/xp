@@ -21,9 +21,8 @@ public final class CmsResourceDynamicFeature
     implements DynamicFeature, JaxRsComponent
 {
     private final Set<Class<? extends JaxRsComponent>> supportedResources =
-        Set.of( ContentResource.class, XDataResource.class, PageTemplateResource.class, ContentImageResource.class,
-                ContentIconResource.class, PageResource.class, FragmentResource.class, ContentTypeResource.class,
-                FilterByContentResource.class );
+        Set.of( ContentResource.class, XDataResource.class, PageTemplateResource.class, ContentImageResource.class, PageResource.class,
+                FragmentResource.class, ContentTypeResource.class, FilterByContentResource.class );
 
     @Override
     public void configure( final ResourceInfo resourceInfo, final FeatureContext context )

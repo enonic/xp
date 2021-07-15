@@ -39,7 +39,7 @@ public class CmsResourceFilterTest
         checkResource( XDataResource.class );
         checkResource( PageTemplateResource.class );
         checkResource( ContentImageResource.class );
-        checkResource( ContentIconResource.class );
+//        checkResource( ContentIconResource.class );
 //        checkResource( ContentMediaResource.class );
         checkResource( PageResource.class );
         checkResource( FragmentResource.class );
