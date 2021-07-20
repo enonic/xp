@@ -20,9 +20,11 @@ import com.enonic.xp.jaxrs.JaxRsComponent;
 public final class CmsResourceDynamicFeature
     implements DynamicFeature, JaxRsComponent
 {
-    private final Set<Class<? extends JaxRsComponent>> supportedResources =
-        Set.of( ContentResource.class, XDataResource.class, PageTemplateResource.class, PageResource.class, FragmentResource.class,
-                ContentTypeResource.class, FilterByContentResource.class );
+    private final Set<Class<? extends JaxRsComponent>> supportedResources = Set.of( /*ContentResource.class, ContentImageResource.class, ContentIconResource.class, ContentMediaResource.class,
+                IssueResource.class*/
+        PageResource.class, FragmentResource.class, XDataResource.class, PageTemplateResource.class, ContentTypeResource.class,
+        FilterByContentResource.class );
+
 
     @Override
     public void configure( final ResourceInfo resourceInfo, final FeatureContext context )

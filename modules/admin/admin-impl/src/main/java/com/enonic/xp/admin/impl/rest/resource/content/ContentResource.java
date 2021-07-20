@@ -1,208 +1,19 @@
 package com.enonic.xp.admin.impl.rest.resource.content;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Modified;
-import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.io.ByteSource;
-
-import com.enonic.xp.admin.impl.json.content.CompareContentResultsJson;
-import com.enonic.xp.admin.impl.json.content.ContentIdJson;
-import com.enonic.xp.admin.impl.json.content.ContentJson;
-import com.enonic.xp.admin.impl.json.content.ContentListJson;
-import com.enonic.xp.admin.impl.json.content.ContentPermissionsJson;
-import com.enonic.xp.admin.impl.json.content.ContentSummaryJson;
-import com.enonic.xp.admin.impl.json.content.ContentTreeSelectorListJson;
-import com.enonic.xp.admin.impl.json.content.ContentVersionJson;
-import com.enonic.xp.admin.impl.json.content.ContentsExistByPathJson;
-import com.enonic.xp.admin.impl.json.content.ContentsExistJson;
-import com.enonic.xp.admin.impl.json.content.DependenciesAggregationJson;
-import com.enonic.xp.admin.impl.json.content.DependenciesJson;
-import com.enonic.xp.admin.impl.json.content.GetActiveContentVersionsResultJson;
-import com.enonic.xp.admin.impl.json.content.GetContentVersionsForViewResultJson;
-import com.enonic.xp.admin.impl.json.content.GetContentVersionsResultJson;
-import com.enonic.xp.admin.impl.json.content.JsonObjectsFactory;
-import com.enonic.xp.admin.impl.json.content.ReorderChildrenResultJson;
-import com.enonic.xp.admin.impl.json.content.RootPermissionsJson;
-import com.enonic.xp.admin.impl.json.content.attachment.AttachmentJson;
-import com.enonic.xp.admin.impl.json.content.attachment.AttachmentListJson;
-import com.enonic.xp.admin.impl.rest.AdminRestConfig;
-import com.enonic.xp.admin.impl.rest.LimitingInputStream;
-import com.enonic.xp.admin.impl.rest.resource.content.json.AbstractContentQueryResultJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ApplyContentPermissionsJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.BatchContentJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.CompareContentsJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ContentIdsPermissionsJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ContentPathsJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ContentQueryJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ContentSelectorQueryJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ContentTreeSelectorJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ContentTreeSelectorQueryJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.CreateContentJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.CreateMediaFromUrlJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteAttachmentJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.DeleteContentJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.DuplicateContentsJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionAccessJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.EffectivePermissionMemberJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.GetContentVersionsJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.GetDependenciesResultJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.GetDescendantsOfContents;
-import com.enonic.xp.admin.impl.rest.resource.content.json.HasUnpublishedChildrenResultJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.LocaleListJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.MarkAsReadyJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.MoveContentJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.PublishContentJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ReorderChildrenJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ResetContentInheritJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishContentResultJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.ResolvePublishDependenciesJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.RevertContentJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.SetActiveVersionJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.SetChildOrderJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteContentJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.UndoPendingDeleteContentResultJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.UnpublishContentJson;
-import com.enonic.xp.admin.impl.rest.resource.content.json.UpdateContentJson;
-import com.enonic.xp.admin.impl.rest.resource.content.query.ContentQueryWithChildren;
-import com.enonic.xp.admin.impl.rest.resource.content.task.ApplyPermissionsRunnableTask;
-import com.enonic.xp.admin.impl.rest.resource.content.task.DeleteRunnableTask;
-import com.enonic.xp.admin.impl.rest.resource.content.task.DuplicateRunnableTask;
-import com.enonic.xp.admin.impl.rest.resource.content.task.MoveRunnableTask;
-import com.enonic.xp.admin.impl.rest.resource.content.task.PublishRunnableTask;
-import com.enonic.xp.admin.impl.rest.resource.content.task.UnpublishRunnableTask;
-import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconResolver;
-import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeIconUrlResolver;
-import com.enonic.xp.app.ApplicationWildcardMatcher;
-import com.enonic.xp.attachment.Attachment;
-import com.enonic.xp.attachment.AttachmentNames;
-import com.enonic.xp.attachment.Attachments;
-import com.enonic.xp.attachment.CreateAttachment;
-import com.enonic.xp.attachment.CreateAttachments;
-import com.enonic.xp.branch.Branches;
-import com.enonic.xp.content.CompareContentResult;
-import com.enonic.xp.content.CompareContentResults;
-import com.enonic.xp.content.CompareContentsParams;
-import com.enonic.xp.content.CompareStatus;
-import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentAlreadyExistsException;
-import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentDependencies;
-import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ContentListMetaData;
-import com.enonic.xp.content.ContentName;
-import com.enonic.xp.content.ContentNotFoundException;
-import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentPaths;
-import com.enonic.xp.content.ContentQuery;
-import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.ContentValidityParams;
-import com.enonic.xp.content.ContentValidityResult;
-import com.enonic.xp.content.ContentVersion;
-import com.enonic.xp.content.ContentVersionId;
-import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.CreateMediaParams;
-import com.enonic.xp.content.FindContentByParentParams;
-import com.enonic.xp.content.FindContentByParentResult;
-import com.enonic.xp.content.FindContentIdsByParentResult;
-import com.enonic.xp.content.FindContentIdsByQueryResult;
-import com.enonic.xp.content.FindContentVersionsParams;
-import com.enonic.xp.content.FindContentVersionsResult;
-import com.enonic.xp.content.GetActiveContentVersionParams;
-import com.enonic.xp.content.GetActiveContentVersionsParams;
-import com.enonic.xp.content.GetActiveContentVersionsResult;
-import com.enonic.xp.content.GetContentByIdsParams;
-import com.enonic.xp.content.GetPublishStatusesParams;
-import com.enonic.xp.content.GetPublishStatusesResult;
-import com.enonic.xp.content.HasUnpublishedChildrenParams;
-import com.enonic.xp.content.RenameContentParams;
-import com.enonic.xp.content.ReorderChildContentsParams;
-import com.enonic.xp.content.ReorderChildContentsResult;
-import com.enonic.xp.content.ReorderChildParams;
-import com.enonic.xp.content.ResolvePublishDependenciesParams;
-import com.enonic.xp.content.ResolveRequiredDependenciesParams;
-import com.enonic.xp.content.SetActiveContentVersionResult;
-import com.enonic.xp.content.SetContentChildOrderParams;
-import com.enonic.xp.content.SyncContentService;
-import com.enonic.xp.content.UndoPendingDeleteContentParams;
-import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.content.UpdateMediaParams;
-import com.enonic.xp.content.WorkflowInfo;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.extractor.BinaryExtractor;
-import com.enonic.xp.extractor.ExtractedData;
-import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.query.parser.QueryParser;
-import com.enonic.xp.repository.IndexException;
-import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.relationship.RelationshipTypeService;
-import com.enonic.xp.security.Principal;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.PrincipalKeys;
-import com.enonic.xp.security.PrincipalQuery;
-import com.enonic.xp.security.PrincipalQueryResult;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.acl.AccessControlEntry;
-import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.security.acl.Permission;
-import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.task.TaskResultJson;
-import com.enonic.xp.task.TaskService;
-import com.enonic.xp.util.BinaryReference;
-import com.enonic.xp.util.ByteSizeParser;
-import com.enonic.xp.util.Exceptions;
-import com.enonic.xp.web.HttpStatus;
-import com.enonic.xp.web.multipart.MultipartForm;
-import com.enonic.xp.web.multipart.MultipartItem;
 
 import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.CMS_PATH;
 import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.REST_ROOT;
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.google.common.base.Strings.nullToEmpty;
-import static java.lang.Math.toIntExact;
-import static java.util.Optional.ofNullable;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(REST_ROOT + "{content:(content|" + CMS_PATH + "/content)}")
@@ -230,6 +41,7 @@ public final class ContentResource
 
     private static final int MAX_EFFECTIVE_PERMISSIONS_PRINCIPALS = 10;
 
+/*
     private static final Logger LOG = LoggerFactory.getLogger( ContentResource.class );
 
     private ContentService contentService;
@@ -461,10 +273,10 @@ public final class ContentResource
 
         final Content updatedContent = contentService.update( updateParams );
 
-       /* if ( !permissionsBeforeSave.equals( updatedContent.getPermissions() ) )
+       *//* if ( !permissionsBeforeSave.equals( updatedContent.getPermissions() ) )
         {
             this.contentService.applyPermissions( json.getApplyContentPermissionsParams() );
-        }*/
+        }*//*
 
         if ( json.getContentName().equals( updatedContent.getName() ) )
         {
@@ -1770,4 +1582,5 @@ public final class ContentResource
     {
         this.jsonObjectsFactory = jsonObjectsFactory;
     }
+*/
 }
