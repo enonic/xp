@@ -35,12 +35,12 @@ public class CmsResourceFilterTest
     @Test
     public void supported()
     {
-        checkResource( ContentResource.class );
-        checkResource( XDataResource.class );
-        checkResource( PageTemplateResource.class );
+//        checkResource( ContentResource.class );
 //        checkResource( ContentImageResource.class );
 //        checkResource( ContentIconResource.class );
 //        checkResource( ContentMediaResource.class );
+        checkResource( XDataResource.class );
+        checkResource( PageTemplateResource.class );
         checkResource( PageResource.class );
         checkResource( FragmentResource.class );
         checkResource( ContentTypeResource.class );
