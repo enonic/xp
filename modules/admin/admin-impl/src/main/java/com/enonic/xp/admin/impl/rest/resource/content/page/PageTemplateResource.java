@@ -1,44 +1,14 @@
 package com.enonic.xp.admin.impl.rest.resource.content.page;
 
-import java.io.IOException;
-import java.util.function.Predicate;
-
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.admin.impl.json.content.ContentJson;
-import com.enonic.xp.admin.impl.json.content.ContentListJson;
-import com.enonic.xp.admin.impl.json.content.JsonObjectsFactory;
-import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentListMetaData;
-import com.enonic.xp.content.ContentName;
-import com.enonic.xp.content.ContentNotFoundException;
-import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
-import com.enonic.xp.name.NamePrettyfier;
-import com.enonic.xp.page.CreatePageTemplateParams;
-import com.enonic.xp.page.GetDefaultPageTemplateParams;
-import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageTemplate;
-import com.enonic.xp.page.PageTemplateFilter;
-import com.enonic.xp.page.PageTemplateKey;
-import com.enonic.xp.page.PageTemplateService;
-import com.enonic.xp.page.PageTemplates;
-import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.site.Site;
-import com.enonic.xp.site.SiteService;
 
 import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.CMS_PATH;
 import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.REST_ROOT;
@@ -50,6 +20,7 @@ import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.REST_ROOT
 public final class PageTemplateResource
     implements JaxRsComponent
 {
+/*
     private PageTemplateService pageTemplateService;
 
     private ContentService contentService;
@@ -209,4 +180,5 @@ public final class PageTemplateResource
     {
         this.jsonObjectsFactory = jsonObjectsFactory;
     }
+*/
 }
