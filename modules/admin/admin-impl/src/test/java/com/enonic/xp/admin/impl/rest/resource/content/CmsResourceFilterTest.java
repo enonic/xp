@@ -39,6 +39,7 @@ public class CmsResourceFilterTest
 //        checkResource( PageResource.class );
 //        checkResource( PageTemplateResource.class );
 //        checkResource( FragmentResource.class );
+//        checkResource( FilterByContentResource.class );
         checkResource( XDataResource.class );
         checkResource( ContentTypeResource.class );
     }
