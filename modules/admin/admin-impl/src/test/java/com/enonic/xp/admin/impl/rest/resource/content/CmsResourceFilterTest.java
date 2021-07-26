@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.admin.impl.rest.resource.content.page.fragment.FragmentResource;
 import com.enonic.xp.admin.impl.rest.resource.schema.content.ContentTypeResource;
 import com.enonic.xp.admin.impl.rest.resource.schema.xdata.XDataResource;
 import com.enonic.xp.admin.impl.rest.resource.security.SecurityResource;
@@ -39,8 +38,9 @@ public class CmsResourceFilterTest
 //        checkResource( ContentMediaResource.class );
 //        checkResource( PageResource.class );
 //        checkResource( PageTemplateResource.class );
+//        checkResource( FragmentResource.class );
+//        checkResource( FilterByContentResource.class );
         checkResource( XDataResource.class );
-        checkResource( FragmentResource.class );
         checkResource( ContentTypeResource.class );
     }
 
