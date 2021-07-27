@@ -5,11 +5,15 @@ import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
+/**
+ * @deprecated This URL is not supported by XP any more.
+ * Use Content Studio's ContentTypeIconUrlResolver instead.
+ */
+@Deprecated
 public final class ContentTypeIconUrlResolver
     extends IconUrlResolver
 {
-
-    public static final String REST_SCHEMA_ICON_URL = "/admin/v2/rest/schema/content/icon/";
+    public static final String REST_SCHEMA_ICON_URL = "/admin/rest/schema/content/icon/";
 
     private final ContentTypeIconResolver contentTypeIconResolver;
 
