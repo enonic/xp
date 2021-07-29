@@ -93,7 +93,13 @@ public final class ParentContentSynchronizer
         final Context targetContext = initContext( params.getTargetProject() );
 
         sourceContext.runWith( () -> {
-            if ( params.getContentId() != null && contentService.contentExists( params.getContentId() ) )
+            if ( params.getContentId() == null )
+            {
+                this.doSyncWithChildren( contentService.getByPath( ContentPath.ROOT ), sourceContext, targetContext );
+                return;
+            }
+
+            if ( contentService.contentExists( params.getContentId() ) )
             {
                 if ( params.isIncludeChildren() )
                 {
@@ -104,9 +110,17 @@ public final class ParentContentSynchronizer
                     this.doSync( contentService.getById( params.getContentId() ), sourceContext, targetContext );
                 }
             }
-            else
+            else if ( targetContext.callWith( () -> contentService.contentExists( params.getContentId() ) ) )
             {
-                this.doSyncWithChildren( contentService.getByPath( ContentPath.ROOT ), sourceContext, targetContext );
+                targetContext.runWith( () -> {
+
+                    this.sync( ContentEventsSyncParams.create()
+                                   .contentId( params.getContentId() )
+                                   .sourceProject( params.getSourceProject() )
+                                   .targetProject( params.getTargetProject() )
+                                   .addSyncEventType( ContentSyncEventType.DELETED )
+                                   .build() );
+                } );
             }
         } );
     }
