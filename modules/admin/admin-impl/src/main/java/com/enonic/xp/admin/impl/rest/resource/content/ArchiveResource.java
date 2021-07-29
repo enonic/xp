@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.osgi.service.component.annotations.Component;
@@ -19,6 +21,8 @@ import com.enonic.xp.admin.impl.rest.resource.content.json.ArchivedContainerJson
 import com.enonic.xp.admin.impl.rest.resource.content.json.RestoreContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.task.ArchiveRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.RestoreRunnableTask;
+import com.enonic.xp.archive.ListContentsParams;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.security.RoleKeys;
@@ -27,6 +31,7 @@ import com.enonic.xp.task.TaskService;
 
 import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.CMS_PATH;
 import static com.enonic.xp.admin.impl.rest.resource.ResourceConstants.REST_ROOT;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @SuppressWarnings("UnusedDeclaration")
 @Path(REST_ROOT + "{content:(content|" + CMS_PATH + "/content)}/archive")
@@ -70,12 +75,14 @@ public final class ArchiveResource
 
     @GET
     @Path("list")
-    public List<ArchivedContainerJson> list()
+    public List<ArchivedContainerJson> list( @QueryParam("parentId") @DefaultValue("") final String parentId )
     {
-        return contentService.listArchived().
-            stream().
-            map( ArchivedContainerJson::new ).
-            collect( Collectors.toList() );
+        final ContentId parentContentId = isNullOrEmpty( parentId ) ? null : ContentId.from( parentId );
+
+        return contentService.listArchived( ListContentsParams.create().parent( parentContentId ).build() )
+            .stream()
+            .map( ArchivedContainerJson::new )
+            .collect( Collectors.toList() );
     }
 
 
