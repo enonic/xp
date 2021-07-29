@@ -24,6 +24,7 @@ import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.core.impl.content.ContentEventsSyncParams;
 import com.enonic.xp.core.impl.content.ContentSyncEventType;
+import com.enonic.xp.core.impl.content.ContentSyncParams;
 import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -136,6 +137,15 @@ public class ParentContentSynchronizerTest
             build() );
 
         return targetContext.callWith( () -> contentService.getById( contentId ) );
+    }
+
+    private void sync( final ContentId contentId )
+    {
+        synchronizer.sync( ContentSyncParams.create()
+                               .contentId( contentId )
+                               .sourceProject( sourceProject.getName() )
+                               .targetProject( targetProject.getName() )
+                               .build() );
     }
 
     @Test
@@ -507,6 +517,24 @@ public class ParentContentSynchronizerTest
             build() ) );
 
         assertTrue( syncDeleted( targetContent.getId() ) );
+    }
+
+    @Test
+    public void syncDeletedInParent()
+        throws Exception
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        syncCreated( sourceContent.getId() );
+
+        sourceContext.runWith( () -> contentService.deleteWithoutFetch( DeleteContentParams.create().
+            contentPath( sourceContent.getPath() ).
+            build() ) );
+
+        refresh();
+
+        sync( sourceContent.getId() );
+
+        assertFalse( targetContext.callWith( () -> contentService.contentExists( sourceContent.getId() ) ) );
     }
 
     @Test
