@@ -80,7 +80,7 @@ public class ImageUrlBuilderTest
         Mockito.when( media.getName() ).thenReturn( ContentName.from( "test+Name.png" ) );
 
         urlBuilder.buildUrl( stringBuilder, HashMultimap.create() );
-        assertEquals( "test/default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/test%2BName.png",
+        assertEquals( "test/default/draft/context/path/_/image/testID:2f6070713fd0e2823530379eb08b73c660e9a288/testScale/test+Name.png",
                       stringBuilder.toString() );
     }
 

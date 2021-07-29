@@ -38,7 +38,7 @@ public class PortalRequestAdapter
         result.setRemoteAddress( ServletRequestUrlHelper.getRemoteAddress( req ) );
         result.setPort( ServletRequestUrlHelper.getPort( req ) );
         result.setPath( ServletRequestUrlHelper.getPath( req ) );
-        result.setRawPath( req.getRequestURI() );
+        result.setRawPath( req.getPathInfo() );
         result.setUrl( ServletRequestUrlHelper.getFullUrl( req ) );
 
         setParameters( req, result );
