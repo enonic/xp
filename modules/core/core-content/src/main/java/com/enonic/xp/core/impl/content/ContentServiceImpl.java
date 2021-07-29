@@ -23,6 +23,8 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
+import com.enonic.xp.archive.ArchivedContainer;
+import com.enonic.xp.archive.ListContentsParams;
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.archive.RestoreContentsResult;
 import com.enonic.xp.branch.Branches;
@@ -851,6 +853,19 @@ public class ContentServiceImpl
 //        contentAuditLogSupport.restored( params, result );
 
         return result;
+    }
+
+    private static final Pattern ARCHIVED_PATTERN = Pattern.compile( "^(?:/archive/)([a-zA-Z0-9_\\-.:]+)/([^/]+)$" );
+
+    @Override
+    public List<ArchivedContainer> listArchived( final ListContentsParams params)
+    {
+        return ListArchivedContentCommand.create().
+            nodeService( nodeService ).
+            translator( translator ).
+            params( params ).
+            build().
+            execute();
     }
 
     @Override
