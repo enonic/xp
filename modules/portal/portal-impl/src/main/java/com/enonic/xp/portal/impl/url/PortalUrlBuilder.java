@@ -115,8 +115,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
     private String urlEncodePathSegment( final String value )
     {
-        // plus sign remains the same after UrlEscapers
-        return UrlEscapers.urlPathSegmentEscaper().escape( value ).replaceAll( "\\+", "%2B" );
+        return UrlEscapers.urlPathSegmentEscaper().escape( value );
     }
 
     String normalizePath( final String value )
