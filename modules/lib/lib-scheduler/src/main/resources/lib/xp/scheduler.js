@@ -45,7 +45,6 @@ function nullOrValue(value) {
  */
 exports.create = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.scheduler.CreateScheduledJobHandler');
-
     bean.name = required(params, 'name');
     bean.schedule = required(params, 'schedule');
     bean.descriptor = required(params, 'descriptor');

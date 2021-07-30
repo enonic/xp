@@ -2,12 +2,17 @@ dependencies {
     compile project( ':portal:portal-api' )
     compile project( ':core:core-app' )
     implementation project( ':core:core-internal' )
-    compile project( ':script:script-impl' )
+//    compile project( ':script:script-impl' )
+    compile project( ':script:script-graaljs-impl' )
     compile 'junit:junit:4.13.2'
     implementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     compile "org.mockito:mockito-core:${mockitoVersion}"
     compile 'org.hamcrest:hamcrest-library:1.3'
     compile "org.slf4j:slf4j-simple:${slf4jVersion}"
+
+    implementation "org.graalvm.js:js:${graalvmVersion}"
+    implementation "org.graalvm.js:js-scriptengine:${graalvmVersion}"
+    implementation "org.graalvm.truffle:truffle-api:${graalvmVersion}"
 
     testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${junitJupiterVersion}"
 }

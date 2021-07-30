@@ -109,14 +109,14 @@ exports.long = function () {
 exports.double = function () {
     var Double = Java.type('java.lang.Double');
     return {
-        myDouble: new Double(42)
+        myDouble: new Double(42.5)
     };
 };
 
 exports.float = function () {
     var Float = Java.type('java.lang.Float');
     return {
-        myFloat: new Float(42)
+        myFloat: new Float(42.5)
     };
 };
 

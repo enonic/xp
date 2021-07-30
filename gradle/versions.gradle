@@ -19,4 +19,5 @@ ext {
     hazelcastK8sVersion = '1.5.5'
     mockitoVersion = '3.9.0'
     cronUtilsVersion = '9.1.5'
+    graalvmVersion = '21.2.0'
 }

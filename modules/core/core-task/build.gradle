@@ -3,7 +3,8 @@ dependencies {
     implementation project( ':core:core-internal' )
     implementation "com.hazelcast:hazelcast:${hazelcastVersion}"
 
-    testImplementation( project(":script:script-impl")  )
+//    testImplementation( project(":script:script-impl")  )
+    testImplementation( project(":script:script-graaljs-impl")  )
     testImplementation( project(":portal:portal-impl")  )
     testImplementation( testFixtures( project(":core:core-api") ) )
     testImplementation( testFixtures( project(":core:core-app") ) )

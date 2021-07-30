@@ -24,7 +24,7 @@ var profile = authLib.modifyProfile({
 var expected = {
     'untouchedString': 'originalValue',
     'untouchedBoolean': true,
-    'untouchedDouble': 2,
+    'untouchedDouble': 2.1,
     'untouchedLong': 2,
     'untouchedLink': 'myLink',
     'untouchedInstant': '2017-01-02T10:00:00Z',

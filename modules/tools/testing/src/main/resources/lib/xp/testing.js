@@ -107,5 +107,5 @@ exports.assertNull = function (value, message) {
  * Assert not null.
  */
 exports.assertNotNull = function (value, message) {
-    helper.assertTrue(value || (value !== null), message || '');
+    helper.assertTrue(!!value || (value !== null), message || '');
 };
