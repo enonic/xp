@@ -2,11 +2,12 @@ dependencies {
     implementation project( ':script:script-api' )
     implementation project( ':core:core-internal' )
 
-    compile("org.graalvm.js:js:21.1.0")
-    compile("org.graalvm.js:js-scriptengine:21.1.0")
-//    compile("org.graalvm.truffle:truffle-api:21.0.0")
+    implementation "org.graalvm.js:js:${graalvmVersion}"
+    implementation "org.graalvm.js:js-scriptengine:${graalvmVersion}"
+    implementation "org.graalvm.truffle:truffle-api:${graalvmVersion}"
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Script - GraalVM JS Impl' )
+    bnd( 'Bundle-Name': 'Enonic XP Script - GraalVM JS Impl',
+         'Import-Package': 'com.oracle.graal.*;resolution:=optional,jdk.internal.reflect;resolution:=optional,jdk.vm.ci.services;resolution:=optional,*' )
 }

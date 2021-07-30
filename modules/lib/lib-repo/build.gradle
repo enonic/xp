@@ -5,4 +5,6 @@ dependencies {
     compileOnly project( ':script:script-api' )
 
     testImplementation project( ':tools:testing' )
+
+    testImplementation "org.graalvm.truffle:truffle-api:${graalvmVersion}"
 }

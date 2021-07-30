@@ -70,7 +70,7 @@ public class TestDataFixtures
         final PropertySet data = new PropertySet();
         data.setString( "untouchedString", "originalValue" );
         data.setBoolean( "untouchedBoolean", true );
-        data.setDouble( "untouchedDouble", 2.0 );
+        data.setDouble( "untouchedDouble", 2.1 );
         data.setLong( "untouchedLong", 2L );
         data.setLink( "untouchedLink", Link.from( "myLink" ) );
         data.setInstant( "untouchedInstant", Instant.parse( "2017-01-02T10:00:00Z" ) );

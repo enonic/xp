@@ -61,7 +61,7 @@ include 'server:server-rest'
 include 'server:server-trace'
 
 include 'script:script-api'
-include 'script:script-impl'
+//include 'script:script-impl'
 include 'script:script-graaljs-impl'
 
 include 'web:web-api'
