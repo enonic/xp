@@ -2,8 +2,8 @@ package com.enonic.xp.portal.impl.filter;
 
 import java.util.function.Function;
 
-import jdk.nashorn.api.scripting.JSObject;
-import jdk.nashorn.api.scripting.NashornException;
+import org.graalvm.polyglot.PolyglotException;
+import org.graalvm.polyglot.Value;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -16,7 +16,7 @@ import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
 public final class FilterNextFunctionWrapper
-    implements Function<JSObject, Object>
+    implements Function<Value, Object>
 {
     private final WebHandlerChain webHandlerChain;
 
@@ -44,7 +44,7 @@ public final class FilterNextFunctionWrapper
     }
 
     @Override
-    public Object apply( final JSObject scriptRequestObject )
+    public Object apply( final Value scriptRequestObject )
     {
         if ( functionWasCalled )
         {
@@ -89,8 +89,13 @@ public final class FilterNextFunctionWrapper
         }
         catch ( Exception e )
         {
-            final StackTraceElement[] elements = NashornException.getScriptFrames( e );
-            return elements.length > 0 ? elements[0].getLineNumber() : 0;
+            StackTraceElement[] elements = null;
+            if ( e instanceof PolyglotException )
+            {
+                PolyglotException ex = (PolyglotException) e;
+                elements = ex.getStackTrace();
+            }
+            return elements != null && elements.length > 0 ? elements[0].getLineNumber() : 0;
         }
     }
 }

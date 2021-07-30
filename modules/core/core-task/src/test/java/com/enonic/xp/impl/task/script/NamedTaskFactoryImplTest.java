@@ -24,6 +24,7 @@ import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
+import com.enonic.xp.script.impl.GraalJsEngineProviderImpl;
 import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.impl.standard.ScriptRuntimeFactoryImpl;
 import com.enonic.xp.task.RunnableTask;
@@ -88,7 +89,7 @@ class NamedTaskFactoryImplTest
         final ScriptAsyncService scriptAsyncService = mock( ScriptAsyncService.class );
 
         final ScriptRuntimeFactoryImpl runtimeFactory =
-            new ScriptRuntimeFactoryImpl( applicationService, resourceService, scriptAsyncService );
+            new ScriptRuntimeFactoryImpl( new GraalJsEngineProviderImpl(), applicationService, resourceService, scriptAsyncService );
 
         final PortalScriptServiceImpl scriptService = new PortalScriptServiceImpl( runtimeFactory );
         scriptService.initialize();

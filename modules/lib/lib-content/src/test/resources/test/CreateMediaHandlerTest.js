@@ -39,8 +39,8 @@ exports.createMediaWithFocalPoints = function () {
         name: 'mycontent',
         parentPath: '/a/b',
         mimeType: 'text/plain',
-        focalY: '0.1',
-        focalX: '0.3',
+        focalY: 0.1,
+        focalX: 0.3,
         data: TestClass.createByteSource('Hello World')
     });
 

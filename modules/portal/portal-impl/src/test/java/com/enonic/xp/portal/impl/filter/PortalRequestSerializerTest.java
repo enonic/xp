@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.script.ScriptEngine;
-
+import org.graalvm.polyglot.Context;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,8 +15,8 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.impl.JSContextFactory;
 import com.enonic.xp.script.impl.util.JavascriptHelperFactory;
-import com.enonic.xp.script.impl.util.NashornHelper;
 import com.enonic.xp.script.impl.value.ScriptValueFactory;
 import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.web.HttpMethod;
@@ -28,16 +28,21 @@ public class PortalRequestSerializerTest
 {
     private ScriptValueFactory factory;
 
-    private ScriptEngine engine;
-
+    private Context context;
 
     @BeforeEach
     public void setup()
     {
-        this.engine = NashornHelper.getScriptEngine( getClass().getClassLoader() );
+        this.context = JSContextFactory.create( PortalRequestSerializerTest.class.getClassLoader() );
 
-        final JavascriptHelperFactory factory = new JavascriptHelperFactory( this.engine );
+        final JavascriptHelperFactory factory = new JavascriptHelperFactory( context );
         this.factory = new ScriptValueFactoryImpl( factory.create() );
+    }
+
+    @AfterEach
+    public void destroy()
+    {
+        context.close();
     }
 
     @Test
@@ -127,6 +132,7 @@ public class PortalRequestSerializerTest
     }
 
     @Test
+    @SuppressWarnings( "unchecked" )
     public void serializeMultiParams()
         throws Exception
     {
@@ -140,7 +146,9 @@ public class PortalRequestSerializerTest
         final PortalRequest portalRequest = reqSerializer.serialize();
 
         assertNotNull( portalRequest );
-        assertEquals( Map.of( "key1", "value1", "key2", 42 ), portalRequest.getBody() );
+        final Map<String, Object> bodyAsMap = (Map<String, Object>) portalRequest.getBody();
+        assertEquals( "value1", bodyAsMap.get( "key1" ) );
+        assertEquals( 42L, bodyAsMap.get( "key2" ) );
 
         assertEquals( 0, portalRequest.getHeaders().size() );
         assertEquals( 0, portalRequest.getCookies().size() );
@@ -155,7 +163,7 @@ public class PortalRequestSerializerTest
     private Object execute( final String script )
         throws Exception
     {
-        return this.engine.eval( script );
+        return this.context.eval( "js", script );
     }
 
     private String readResource( final String resourceName )

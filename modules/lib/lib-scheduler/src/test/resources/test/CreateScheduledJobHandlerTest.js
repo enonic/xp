@@ -9,10 +9,7 @@ var createOneTimeJobExpected = {
     'config': {
         'a': 1,
         'b': 2,
-        'c': {
-            '0': '1',
-            '1': '2'
-        },
+        'c': ['1', '2'],
         'd': {
             'e': {
                 'f': 3.6,
@@ -63,10 +60,7 @@ var createCronJobExpected = {
     'config': {
         'a': 1,
         'b': 2,
-        'c': {
-            '0': '1',
-            '1': '2'
-        },
+        'c': ['1', '2'],
         'd': {
             'e': {
                 'f': 3.6,

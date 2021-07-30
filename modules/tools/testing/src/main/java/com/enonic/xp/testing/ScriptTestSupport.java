@@ -5,7 +5,9 @@ import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.concurrent.Executors;
 
+import org.junit.After;
 import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
@@ -34,6 +36,8 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.impl.GraalJsEngineProvider;
+import com.enonic.xp.script.impl.GraalJsEngineProviderImpl;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
 import com.enonic.xp.script.impl.executor.ScriptExecutorImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
@@ -57,6 +61,8 @@ public abstract class ScriptTestSupport
     protected ContentService contentService;
 
     private ResourceService resourceService;
+
+    private GraalJsEngineProvider engineProvider;
 
     private ScriptSettings.Builder scriptSettings;
 
@@ -90,6 +96,12 @@ public abstract class ScriptTestSupport
         initialize();
     }
 
+    @After
+    @AfterEach
+    public final void destroy() {
+        this.executor.close();
+    }
+
     protected void initialize()
         throws Exception
     {
@@ -100,10 +112,12 @@ public abstract class ScriptTestSupport
 
         this.bundleContext = createBundleContext();
         this.contentService = Mockito.mock( ContentService.class );
+        this.engineProvider = new GraalJsEngineProviderImpl();
         this.resourceService = createResourceService();
 
         addService( ContentService.class, this.contentService );
         addService( ResourceService.class, this.resourceService );
+        addService( GraalJsEngineProvider.class, this.engineProvider );
         addService( ViewFunctionService.class, new MockViewFunctionService() );
 
         this.scriptSettings = ScriptSettings.create();
@@ -193,7 +207,7 @@ public abstract class ScriptTestSupport
     private ScriptExecutor createExecutor()
         throws Exception
     {
-        return new ScriptExecutorImpl( Executors.newSingleThreadExecutor(), this.scriptSettings.build(), getClass().getClassLoader(),
+        return new ScriptExecutorImpl( engineProvider.getEngine(), Executors.newSingleThreadExecutor(), this.scriptSettings.build(),
                                        this.serviceRegistry, this.resourceService, createApplication(), RunMode.DEV );
     }
 

@@ -13,7 +13,7 @@ exports.get = function(req) {
     console.log(JSON.stringify(app, null, 2));
     console.log(JSON.stringify(xxx, null, 2));
 
-    var bean = __.newBean('com.enonic.xp.script.graaljs.impl.GraalScripBean');
+    var bean = __.newBean('com.enonic.xp.script.impl.GraalScripBean');
     bean.source = "Source Name 1";
     bean.execute();
     bean.execute(1);
