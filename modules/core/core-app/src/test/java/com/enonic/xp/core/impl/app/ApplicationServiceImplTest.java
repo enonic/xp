@@ -339,7 +339,7 @@ public class ApplicationServiceImplTest
 
         final ByteSource byteSource = createBundleSource( bundleName, false );
 
-        assertThrows( GlobalApplicationInstallException.class, () -> this.service.installGlobalApplication( byteSource, bundleName ) );
+        assertThrows( ApplicationInstallException.class, () -> this.service.installGlobalApplication( byteSource, bundleName ) );
     }
 
     @Test
@@ -361,7 +361,7 @@ public class ApplicationServiceImplTest
 
         final ByteSource byteSource = createBundleSource( bundleName );
 
-        assertThrows( GlobalApplicationInstallException.class, () -> this.service.installGlobalApplication( byteSource, bundleName ) );
+        assertThrows( ApplicationInstallException.class, () -> this.service.installGlobalApplication( byteSource, bundleName ) );
     }
 
     @Test
@@ -408,7 +408,7 @@ public class ApplicationServiceImplTest
 
         final ByteSource source = createBundleSource( bundleName, false );
 
-        assertThrows( LocalApplicationInstallException.class, () -> this.service.installLocalApplication( source, bundleName ) );
+        assertThrows( ApplicationInstallException.class, () -> this.service.installLocalApplication( source, bundleName ) );
     }
 
     @Test
