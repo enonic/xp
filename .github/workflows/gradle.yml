@@ -49,7 +49,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew ci --scan
         
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@v2.0.2
 
       - name: Publish
         if: needs.publish_vars.outputs.publish == 'true'
