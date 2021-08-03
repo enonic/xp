@@ -1,45 +1,30 @@
 package com.enonic.xp.admin.impl.rest.resource.content.json;
 
-import java.time.Instant;
-import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.archive.ArchivedContainer;
+import com.enonic.xp.content.ContentId;
 
 public class ArchivedContainerJson
 {
-    private final Set<String> contentIds;
+    private final List<String> contentIds;
 
-    private final String id;
+    private final String containerId;
 
-    private final String parent;
-
-    private final Instant archiveTime;
-
-    public ArchivedContainerJson( final ArchivedContainer archivedContainer )
+    public ArchivedContainerJson( final ArchivedContainer archived )
     {
-        this.contentIds = archivedContainer.getContentIds().asStrings();
-        this.id = archivedContainer.getId().toString();
-        this.parent = archivedContainer.getParent() != null ? archivedContainer.getParent().toString() : null;
-        this.archiveTime = archivedContainer.getArchiveTime();
+        this.contentIds = archived.getContentIds().stream().map( ContentId::toString ).collect( Collectors.toList());
+        this.containerId = archived.getId().toString();
     }
 
-    public Set<String> getContentIds()
+    public List<String> getContentIds()
     {
         return contentIds;
     }
 
-    public String getId()
+    public String getContainerId()
     {
-        return id;
-    }
-
-    public String getParent()
-    {
-        return parent;
-    }
-
-    public Instant getArchiveTime()
-    {
-        return archiveTime;
+        return containerId;
     }
 }
