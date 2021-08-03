@@ -127,31 +127,13 @@ public final class ApplicationServiceImpl
     @Override
     public Application installGlobalApplication( final ByteSource byteSource, final String applicationName )
     {
-        return ApplicationHelper.callWithContext( () -> {
-            try
-            {
-                return doInstallGlobalApplication( byteSource );
-            }
-            catch ( ApplicationInstallException e )
-            {
-                throw new GlobalApplicationInstallException( "'" + applicationName + "': " + e.getMessage() );
-            }
-        } );
+        return ApplicationHelper.callWithContext( () -> doInstallGlobalApplication( byteSource ) );
     }
 
     @Override
     public Application installLocalApplication( final ByteSource byteSource, final String applicationName )
     {
-        return ApplicationHelper.callWithContext( () -> {
-            try
-            {
-                return doInstallLocalApplication( byteSource );
-            }
-            catch ( ApplicationInstallException e )
-            {
-                throw new LocalApplicationInstallException( "'" + applicationName + "': " + e.getMessage() );
-            }
-        } );
+        return ApplicationHelper.callWithContext( () -> doInstallLocalApplication( byteSource ) );
     }
 
     @Override

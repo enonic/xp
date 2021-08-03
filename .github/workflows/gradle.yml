@@ -3,7 +3,7 @@ name: Gradle Build
 on:
   push:
 
-concurrency: ${{ github.ref }}
+concurrency: build-${{ github.ref }}
 
 jobs:
   publish_vars:
@@ -69,4 +69,5 @@ jobs:
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
           repository: ${{ matrix.repo }}
           event-type: xp
-          client-payload: '{"ref": "${{ github.ref }}"}'
+          client-payload: >
+            ${{ format('{{"ref" : "{0}" }}', github.ref) }}
