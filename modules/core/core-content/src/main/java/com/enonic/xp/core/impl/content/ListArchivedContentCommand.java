@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.archive.ArchiveConstants;
-import com.enonic.xp.archive.ArchivedContainer;
 import com.enonic.xp.archive.ArchivedContainerId;
+import com.enonic.xp.archive.ArchivedContainerLayer;
 import com.enonic.xp.archive.ListContentsParams;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.node.FindNodesByQueryResult;
@@ -45,15 +45,15 @@ final class ListArchivedContentCommand
         return new Builder();
     }
 
-    List<ArchivedContainer> execute()
+    List<ArchivedContainerLayer> execute()
     {
         final Map<String, Set<ContentId>> archived =
-            params.getParent() != null ? fetchContainer( params.getParent() ) : fetchAllContainers();
+            params.getParent() != null ? fetchContainerLayer( params.getParent() ) : fetchAllContainersRootLayers();
 
         return archived.entrySet().stream().map( entry -> {
             final Node container = nodeService.getById( NodeId.from( entry.getKey() ) );
 
-            return ArchivedContainer.create()
+            return ArchivedContainerLayer.create()
                 .id( ArchivedContainerId.from( entry.getKey() ) )
                 .addContentIds( entry.getValue() )
                 .archiveTime( container.getTimestamp() )
@@ -62,7 +62,7 @@ final class ListArchivedContentCommand
         } ).collect( Collectors.toList() );
     }
 
-    private Map<String, Set<ContentId>> fetchAllContainers()
+    private Map<String, Set<ContentId>> fetchAllContainersRootLayers()
     {
         final Map<String, Set<ContentId>> archived = new HashMap<>();
 
@@ -91,7 +91,7 @@ final class ListArchivedContentCommand
         return archived;
     }
 
-    private Map<String, Set<ContentId>> fetchContainer( final ContentId parent )
+    private Map<String, Set<ContentId>> fetchContainerLayer( final ContentId parent )
     {
         final Map<String, Set<ContentId>> archived = new HashMap<>();
 

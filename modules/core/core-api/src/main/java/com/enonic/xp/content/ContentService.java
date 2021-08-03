@@ -10,7 +10,9 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.archive.ArchivedContainer;
+import com.enonic.xp.archive.ArchivedContainerLayer;
 import com.enonic.xp.archive.ListContentsParams;
+import com.enonic.xp.archive.ResolveArchivedParams;
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.archive.RestoreContentsResult;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -61,7 +63,9 @@ public interface ContentService
 
     RestoreContentsResult restore( RestoreContentParams params );
 
-    List<ArchivedContainer> listArchived( ListContentsParams params );
+    List<ArchivedContainerLayer> listArchived( ListContentsParams params );
+
+    List<ArchivedContainer> resolveArchivedByContents( ResolveArchivedParams params);
 
     Content setChildOrder( SetContentChildOrderParams params );
 

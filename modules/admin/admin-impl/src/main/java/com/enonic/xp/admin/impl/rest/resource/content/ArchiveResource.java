@@ -18,10 +18,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.admin.impl.rest.resource.content.json.ArchivedContainerJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ArchivedContainerLayerJson;
+import com.enonic.xp.admin.impl.rest.resource.content.json.ResolveArchivedJson;
 import com.enonic.xp.admin.impl.rest.resource.content.json.RestoreContentJson;
 import com.enonic.xp.admin.impl.rest.resource.content.task.ArchiveRunnableTask;
 import com.enonic.xp.admin.impl.rest.resource.content.task.RestoreRunnableTask;
 import com.enonic.xp.archive.ListContentsParams;
+import com.enonic.xp.archive.ResolveArchivedParams;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.jaxrs.JaxRsComponent;
@@ -73,15 +76,29 @@ public final class ArchiveResource
             .createTaskResult();
     }
 
+    @POST
+    @Path("resolve")
+    public List<ArchivedContainerJson> resolve( final ResolveArchivedJson params )
+    {
+        final List<ContentId> contentIds = params.getContentIds() != null
+            ? params.getContentIds().stream().map( ContentId::from ).collect( Collectors.toList() )
+            : List.of();
+
+        return contentService.resolveArchivedByContents( ResolveArchivedParams.create().contents( contentIds ).build() )
+            .stream()
+            .map( ArchivedContainerJson::new )
+            .collect( Collectors.toList() );
+    }
+
     @GET
     @Path("list")
-    public List<ArchivedContainerJson> list( @QueryParam("parentId") @DefaultValue("") final String parentId )
+    public List<ArchivedContainerLayerJson> list( @QueryParam("parentId") @DefaultValue("") final String parentId )
     {
         final ContentId parentContentId = isNullOrEmpty( parentId ) ? null : ContentId.from( parentId );
 
         return contentService.listArchived( ListContentsParams.create().parent( parentContentId ).build() )
             .stream()
-            .map( ArchivedContainerJson::new )
+            .map( ArchivedContainerLayerJson::new )
             .collect( Collectors.toList() );
     }
 
