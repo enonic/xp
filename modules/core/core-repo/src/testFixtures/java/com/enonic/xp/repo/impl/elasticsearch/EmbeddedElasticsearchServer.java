@@ -41,18 +41,18 @@ public class EmbeddedElasticsearchServer
         snaphotsDir = new File( this.dataDirectory, "repo" );
         snaphotsDir.mkdir();
 
-        Settings.Builder testServerSetup = Settings.settingsBuilder().
-            put( "name", "repo-node-" + this.now ).
-            put( "data", "true" ).
-            put( "local", "true" ).
-            put( "path.data", pathData.getPath() ).
-            put( "path.home", pathHome.getPath() ).
-            put( "path.repo", this.snaphotsDir.getPath() ).
-            put( "cluster.name", "repo-test-cluster-" + this.now ).
-            put( "http.enabled", "false" ).
-            put( "index.translog.durability", "async" ).
-            put( "index.translog.sync_interval", "15m" ).
-            put( "discovery.zen.ping.multicast.enabled", "false" );
+        Settings.Builder testServerSetup = Settings.settingsBuilder()
+            .put( "name", "repo-node-" + this.now )
+            .put( "node.local", true )
+            .put( "action.auto_create_index", false )
+            .put( "path.data", pathData.getPath() )
+            .put( "path.home", pathHome.getPath() )
+            .put( "path.repo", this.snaphotsDir.getPath() )
+            .put( "cluster.name", "repo-test-cluster-" + this.now )
+            .put( "http.enabled", false )
+            .put( "index.translog.durability", "async" )
+            .put( "index.translog.sync_interval", "15m" )
+            .put( "discovery.zen.ping.multicast.enabled", false );
 
         node = nodeBuilder().
             local( true ).

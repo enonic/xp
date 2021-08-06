@@ -102,10 +102,7 @@ public class RepositoryServiceImpl
 
         this.nodeRepositoryService.create( params );
 
-        if ( getRootNode( repositoryId, RepositoryConstants.MASTER_BRANCH ) == null )
-        {
-            createRootNode( params );
-        }
+        createRootNode( params );
 
         final Repository repository = createRepositoryObject( params );
         repositoryEntryService.createRepositoryEntry( repository );
@@ -345,25 +342,21 @@ public class RepositoryServiceImpl
     {
         final Context rootNodeContext = ContextBuilder.from( ContextAccessor.current() ).
             repositoryId( params.getRepositoryId() ).
-            branch( RepositoryConstants.MASTER_BRANCH ).
-            build();
+            branch( RepositoryConstants.MASTER_BRANCH ).build();
 
         final InternalContext rootNodeInternalContext = InternalContext.create( rootNodeContext ).build();
 
-        final Node rootNode = this.nodeStorageService.store( Node.createRoot().
-            permissions( params.getRootPermissions() ).
-            inheritPermissions( false ).
-            childOrder( params.getRootChildOrder() ).
-            build(), rootNodeInternalContext );
+        final Node rootNode = this.nodeStorageService.store( Node.createRoot()
+                                                                 .permissions( params.getRootPermissions() )
+                                                                 .inheritPermissions( false )
+                                                                 .childOrder( params.getRootChildOrder() )
+                                                                 .build(), rootNodeInternalContext );
 
-        rootNodeContext.callWith( () -> {
-            RefreshCommand.create().
-                indexServiceInternal( this.indexServiceInternal ).
-                refreshMode( RefreshMode.SEARCH ).
-                build().
-                execute();
-            return null;
-        } );
+        rootNodeContext.runWith( () -> RefreshCommand.create()
+            .indexServiceInternal( this.indexServiceInternal )
+            .refreshMode( RefreshMode.ALL )
+            .build()
+            .execute() );
 
         LOG.info( "Created root node with id [{}] in repository [{}]", rootNode.id(), params.getRepositoryId() );
     }

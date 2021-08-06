@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesRequest;
 import org.elasticsearch.action.admin.cluster.repositories.get.GetRepositoriesResponse;
@@ -24,6 +24,7 @@ import org.elasticsearch.repositories.RepositoryException;
 import org.elasticsearch.repositories.RepositoryMissingException;
 import org.elasticsearch.snapshots.SnapshotInfo;
 import org.elasticsearch.snapshots.SnapshotState;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -41,10 +42,10 @@ import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.NodeHelper;
-import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repo.impl.repository.IndexNameResolver;
+import com.enonic.xp.repo.impl.repository.RepositoryEntryService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.snapshot.SnapshotService;
 
 @Component
@@ -55,15 +56,26 @@ public class SnapshotServiceImpl
 
     private static final String SNAPSHOT_REPOSITORY_NAME = "enonic-xp-snapshot-repo";
 
-    private Client client;
+    private final Client client;
 
-    private RepoConfiguration configuration;
+    private final RepoConfiguration configuration;
 
-    private RepositoryService repositoryService;
+    private final RepositoryEntryService repositoryEntryService;
 
-    private EventPublisher eventPublisher;
+    private final EventPublisher eventPublisher;
 
-    private IndexServiceInternal indexServiceInternal;
+    private final IndexServiceInternal indexServiceInternal;
+
+    @Activate
+    public SnapshotServiceImpl( @Reference final Client client, @Reference final RepoConfiguration configuration, @Reference final RepositoryEntryService repositoryEntryService,
+                                @Reference final EventPublisher eventPublisher, @Reference final IndexServiceInternal indexServiceInternal )
+    {
+        this.client = client;
+        this.configuration = configuration;
+        this.repositoryEntryService = repositoryEntryService;
+        this.eventPublisher = eventPublisher;
+        this.indexServiceInternal = indexServiceInternal;
+    }
 
     @Override
     public SnapshotResult snapshot( final SnapshotParams snapshotParams )
@@ -75,16 +87,17 @@ public class SnapshotServiceImpl
     {
         checkSnapshotRepository();
 
-        final RepositoryIds repositoriesToSnapshot =
-            RepositoryIds.from( Optional.ofNullable( snapshotParams.getRepositoryId() ).map( Set::of ).orElseGet( this::getRepositories ) );
+        final RepositoryIds repositoriesToSnapshot = Optional.ofNullable( snapshotParams.getRepositoryId() )
+            .map( RepositoryIds::from )
+            .orElseGet( repositoryEntryService::findRepositoryEntryIds );
 
-        return SnapshotExecutor.create().
-            snapshotName( snapshotParams.getSnapshotName() ).
-            repositories( repositoriesToSnapshot ).
-            client( this.client ).
-            snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME ).
-            build().
-            execute();
+        return SnapshotExecutor.create()
+            .snapshotName( snapshotParams.getSnapshotName() )
+            .repositories( repositoriesToSnapshot )
+            .client( this.client )
+            .snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME )
+            .build()
+            .execute();
     }
 
     @Override
@@ -101,35 +114,46 @@ public class SnapshotServiceImpl
 
         validateSnapshot( snapshotName );
 
-        final RepositoryIds repositoriesToClose = RepositoryIds.from( Optional.ofNullable( restoreParams.getRepositoryId() ).
-            map( Set::of ).
-            orElseGet( this::getRepositories ) );
+        final RepositoryId repositoryToRestore = restoreParams.getRepositoryId();
+        boolean restoreAll = repositoryToRestore == null;
 
-        final RepositoryIds repositoriesToRestore = RepositoryIds.from( Optional.ofNullable( restoreParams.getRepositoryId() ).
-            map( Set::of ).
-            orElse( Set.of() ) );
+        final RepositoryIds repositoriesBeforeRestore = restoreAll ? repositoryEntryService.findRepositoryEntryIds() : null;
 
         this.eventPublisher.publish( RepositoryEvents.restoreInitialized() );
 
-        final RestoreResult result = SnapshotRestoreExecutor.create().
-            snapshotName( snapshotName ).
-            repositoriesToClose( repositoriesToClose ).
-            repositoriesToRestore( repositoriesToRestore ).
-            client( this.client ).
-            snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME ).
-            indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
+        if ( restoreAll )
+        {
+            LOG.info( "Restoring all repositories from snapshot" );
+        }
+        else
+        {
+            LOG.info( "Restoring repository {} from snapshot", repositoryToRestore );
+        }
+
+        final RestoreResult result = SnapshotRestoreExecutor.create()
+            .snapshotName( snapshotName )
+            .repositoriesToClose( restoreAll ? repositoriesBeforeRestore : RepositoryIds.from( repositoryToRestore ) )
+            .repositoriesToRestore( restoreAll ? RepositoryIds.empty() : RepositoryIds.from( repositoryToRestore ) )
+            .client( this.client )
+            .snapshotRepositoryName( SNAPSHOT_REPOSITORY_NAME )
+            .indexServiceInternal( this.indexServiceInternal )
+            .build()
+            .execute();
+
+        if ( restoreAll )
+        {
+            final RepositoryIds repositoriesAfterRestore = repositoryEntryService.findRepositoryEntryIds();
+
+            repositoriesBeforeRestore.stream().filter( Predicate.not( repositoriesAfterRestore::contains ) ).forEach( repositoryId -> {
+                LOG.info( "Deleting repository {} indices missing in snapshot", repositoryId );
+                indexServiceInternal.deleteIndices( IndexNameResolver.resolveIndexNames( repositoryId ).toArray( String[]::new ) );
+            } );
+        }
 
         LOG.info( "Snapshot Restore completed" );
         this.eventPublisher.publish( RepositoryEvents.restored() );
 
         return result;
-    }
-
-    private Set<RepositoryId> getRepositories()
-    {
-        return this.repositoryService.list().stream().map( Repository::getId ).collect( Collectors.toSet() );
     }
 
     @Override
@@ -198,9 +222,7 @@ public class SnapshotServiceImpl
             return false;
         }
 
-        final boolean sameAsConfiguredLocation = snapshotRepo.settings().get( "location" ).equals( getSnapshotsDir().toString() );
-
-        return sameAsConfiguredLocation;
+        return snapshotRepo.settings().get( "location" ).equals( getSnapshotsDir().toString() );
     }
 
     private RepositoryMetaData getSnapshotRepo()
@@ -230,13 +252,10 @@ public class SnapshotServiceImpl
     private void registerRepository()
     {
         final PutRepositoryRequestBuilder requestBuilder =
-            new PutRepositoryRequestBuilder( this.client.admin().cluster(), PutRepositoryAction.INSTANCE ).
-                setName( SNAPSHOT_REPOSITORY_NAME ).
-                setType( "fs" ).
-                setSettings( Settings.settingsBuilder().
-                    put( "compress", true ).
-                    put( "location", getSnapshotsDir() ).
-                    build() );
+            new PutRepositoryRequestBuilder( this.client.admin().cluster(), PutRepositoryAction.INSTANCE ).setName(
+                    SNAPSHOT_REPOSITORY_NAME )
+                .setType( "fs" )
+                .setSettings( Settings.settingsBuilder().put( "compress", true ).put( "location", getSnapshotsDir() ).build() );
 
         this.client.admin().cluster().putRepository( requestBuilder.request() ).actionGet();
     }
@@ -249,9 +268,8 @@ public class SnapshotServiceImpl
     private SnapshotInfo getSnapshot( final String snapshotName )
     {
         final GetSnapshotsRequestBuilder getSnapshotsRequestBuilder =
-            new GetSnapshotsRequestBuilder( this.client.admin().cluster(), GetSnapshotsAction.INSTANCE ).
-                setRepository( SNAPSHOT_REPOSITORY_NAME ).
-                setSnapshots( snapshotName );
+            new GetSnapshotsRequestBuilder( this.client.admin().cluster(), GetSnapshotsAction.INSTANCE ).setRepository(
+                SNAPSHOT_REPOSITORY_NAME ).setSnapshots( snapshotName );
 
         final GetSnapshotsResponse getSnapshotsResponse =
             this.client.admin().cluster().getSnapshots( getSnapshotsRequestBuilder.request() ).actionGet();
@@ -334,40 +352,12 @@ public class SnapshotServiceImpl
             throw new SnapshotException( "No snapshots found" );
         }
 
-        final SnapshotResult snapshotResult = snapshotResults.getSet().stream().skip( snapshotResults.getSize() - 1 ).
-            findFirst().
-            orElseThrow( () -> new SnapshotException( "No snapshots found" ) );
+        final SnapshotResult snapshotResult = snapshotResults.getSet()
+            .stream()
+            .skip( snapshotResults.getSize() - 1 )
+            .findFirst()
+            .orElseThrow( () -> new SnapshotException( "No snapshots found" ) );
 
         return snapshotResult.getName();
-    }
-
-    @Reference
-    public void setConfiguration( final RepoConfiguration configuration )
-    {
-        this.configuration = configuration;
-    }
-
-    @Reference
-    public void setClient( final Client client )
-    {
-        this.client = client;
-    }
-
-    @Reference
-    public void setRepositoryService( final RepositoryService repositoryService )
-    {
-        this.repositoryService = repositoryService;
-    }
-
-    @Reference
-    public void setEventPublisher( final EventPublisher eventPublisher )
-    {
-        this.eventPublisher = eventPublisher;
-    }
-
-    @Reference
-    public void setIndexServiceInternal( final IndexServiceInternal indexServiceInternal )
-    {
-        this.indexServiceInternal = indexServiceInternal;
     }
 }

@@ -48,7 +48,6 @@ import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
-import com.enonic.xp.repo.impl.elasticsearch.snapshot.SnapshotServiceImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
@@ -123,8 +122,6 @@ public abstract class AbstractNodeTest
     protected CommitServiceImpl commitService;
 
     protected IndexServiceInternalImpl indexServiceInternal;
-
-    private SnapshotServiceImpl snapshotService;
 
     protected NodeStorageServiceImpl storageService;
 
@@ -228,10 +225,6 @@ public abstract class AbstractNodeTest
 
         this.searchService = new NodeSearchServiceImpl();
         this.searchService.setSearchDao( this.searchDao );
-
-        this.snapshotService = new SnapshotServiceImpl();
-        this.snapshotService.setClient( client );
-        this.snapshotService.setConfiguration( repoConfig );
 
         setUpRepositoryServices();
 
