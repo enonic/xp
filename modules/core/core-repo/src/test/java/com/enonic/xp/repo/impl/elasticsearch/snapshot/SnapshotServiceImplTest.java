@@ -18,6 +18,7 @@ import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
 import com.enonic.xp.repo.impl.node.NodeHelper;
+import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
 import com.enonic.xp.repository.CreateRepositoryParams;
@@ -25,7 +26,9 @@ import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -52,8 +55,6 @@ public class SnapshotServiceImplTest
             client.admin().cluster().prepareDeleteRepository( repository ).execute().actionGet();
         }
 
-        this.snapshotService = new SnapshotServiceImpl();
-
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl();
         nodeRepositoryService.setIndexServiceInternal( this.indexServiceInternal );
 
@@ -63,14 +64,11 @@ public class SnapshotServiceImplTest
 
         eventPublisher = Mockito.mock( EventPublisher.class );
 
-        this.snapshotService.setRepositoryService( repositoryService );
         final RepoConfiguration configuration = Mockito.mock( RepoConfiguration.class );
         Mockito.when( configuration.getSnapshotsDir() ).thenReturn( getSnapshotsDir() );
 
-        this.snapshotService.setConfiguration( configuration );
-        this.snapshotService.setClient( client );
-        this.snapshotService.setEventPublisher( eventPublisher );
-        this.snapshotService.setIndexServiceInternal( indexServiceInternal );
+        this.snapshotService =
+            new SnapshotServiceImpl( client, configuration, repositoryEntryService, eventPublisher, indexServiceInternal );
     }
 
     @Test
@@ -162,9 +160,7 @@ public class SnapshotServiceImplTest
             this.repositoryService.deleteRepository( DeleteRepositoryParams.from( newRepoId ) );
             assertNull( this.repositoryService.get( newRepoId ) );
 
-            this.snapshotService.restore( RestoreParams.create().
-                snapshotName( "my-snapshot" ).
-                build() );
+            this.snapshotService.restore( RestoreParams.create().snapshotName( "my-snapshot" ).build() );
 
             assertTrue( this.repositoryService.isInitialized( newRepoId ) );
             assertTrue( this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO_ID ) );
@@ -173,10 +169,29 @@ public class SnapshotServiceImplTest
     }
 
     @Test
+    public void restore_all_no_orphan_indices_left()
+    {
+        NodeHelper.runAsAdmin( () -> {
+            this.snapshotService.snapshot( SnapshotParams.create().snapshotName( "my-snapshot" ).build() );
+
+            final RepositoryId newRepoId = RepositoryId.from( "new-repo" );
+            this.repositoryService.createRepository( CreateRepositoryParams.create().repositoryId( newRepoId ).build() );
+
+            assertNotNull( this.repositoryService.get( newRepoId ) );
+
+            this.snapshotService.restore( RestoreParams.create().snapshotName( "my-snapshot" ).build() );
+
+            assertAll( () -> assertFalse( this.repositoryService.isInitialized( newRepoId ) ),
+                       () -> assertFalse( indexServiceInternal.indicesExists( IndexNameResolver.resolveStorageIndexName( newRepoId ) ) ),
+                       () -> assertFalse( indexServiceInternal.indicesExists( IndexNameResolver.resolveSearchIndexName( newRepoId ) ) ) );
+        } );
+    }
+
+    @Test
     public void restore_invalid_snapshot()
         throws Exception
     {
-        assertThrows(SnapshotException.class, () -> NodeHelper.runAsAdmin( this::doRestoreInvalidSnapshot ) );
+        assertThrows( SnapshotException.class, () -> NodeHelper.runAsAdmin( this::doRestoreInvalidSnapshot ) );
     }
 
     private void doRestoreInvalidSnapshot()

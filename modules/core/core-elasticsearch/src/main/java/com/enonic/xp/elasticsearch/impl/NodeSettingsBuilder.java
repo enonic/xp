@@ -17,6 +17,8 @@ final class NodeSettingsBuilder
 {
     private static final String COMMON_NODE_NAME_OPTION = "node.name";
 
+    private static final String AUTO_CREATE_INDEX_OPTION = "action.auto_create_index";
+
     private static final String COMMON_NETWORK_HOST_OPTION = "network.host";
 
     private static final String ES_NODE_LOCAL = "node.local";
@@ -64,11 +66,12 @@ final class NodeSettingsBuilder
 
     private Settings buildSettings( final Configuration config )
     {
-        final Settings.Builder builder = Settings.settingsBuilder().
-            put( config.asMap() ).
-            put( COMMON_NODE_NAME_OPTION, this.clusterConfig.name().toString() ).
-            put( ES_ZEN_UNICAST_HOST_OPTION, createZenUnicastHostString( config ) ).
-            put( ES_NODE_LOCAL, !this.clusterConfig.isEnabled() );
+        final Settings.Builder builder = Settings.settingsBuilder()
+            .put( config.asMap() )
+            .put( AUTO_CREATE_INDEX_OPTION, false )
+            .put( COMMON_NODE_NAME_OPTION, this.clusterConfig.name().toString() )
+            .put( ES_ZEN_UNICAST_HOST_OPTION, createZenUnicastHostString( config ) )
+            .put( ES_NODE_LOCAL, !this.clusterConfig.isEnabled() );
 
         final String networkHost = this.clusterConfig.networkHost();
         if ( !isNullOrEmpty( networkHost ) )
