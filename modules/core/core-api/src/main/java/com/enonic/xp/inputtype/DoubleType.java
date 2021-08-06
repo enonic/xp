@@ -58,7 +58,7 @@ final class DoubleType
 
             if ( min != null && value != null )
             {
-                validateValue( property, value >= min, "The value cannot be less than " + min.toString() );
+                validateValue( property, value >= min, "The value cannot be less than " + min );
             }
 
         }
@@ -77,7 +77,7 @@ final class DoubleType
 
             if ( max != null && value != null )
             {
-                validateValue( property, value <= max, "The value cannot be greater than " + max.toString() );
+                validateValue( property, value <= max, "The value cannot be greater than " + max );
             }
         }
         catch ( ConvertException e )

@@ -7,9 +7,9 @@ import com.google.common.collect.ImmutableList;
 
 public abstract class Suggestion<ENTRY extends SuggestionEntry>
 {
-    private String name;
+    private final String name;
 
-    private List<ENTRY> entries;
+    private final List<ENTRY> entries;
 
     protected Suggestion( final Builder builder )
     {

@@ -13,7 +13,7 @@ final class ErrorHandlerWorker
 
     protected String message;
 
-    public ErrorHandlerWorker( final WebRequest request )
+    ErrorHandlerWorker( final WebRequest request )
     {
         super( request );
     }

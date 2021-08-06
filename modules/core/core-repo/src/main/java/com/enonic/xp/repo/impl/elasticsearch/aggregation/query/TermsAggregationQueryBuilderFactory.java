@@ -12,7 +12,7 @@ import com.enonic.xp.repo.impl.index.IndexValueType;
 class TermsAggregationQueryBuilderFactory
     extends AbstractBuilderFactory
 {
-    public TermsAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    TermsAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
     {
         super( fieldNameResolver );
     }

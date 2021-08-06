@@ -261,7 +261,7 @@ public final class SendMailHandler
 
         public final Map<String, String> headers;
 
-        public Attachment( final String name, final ByteSource data, final String mimeType, final Map<String, String> headers )
+        Attachment( final String name, final ByteSource data, final String mimeType, final Map<String, String> headers )
         {
             this.name = name;
             this.data = data;

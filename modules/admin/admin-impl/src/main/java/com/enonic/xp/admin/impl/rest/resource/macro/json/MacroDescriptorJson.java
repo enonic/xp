@@ -12,23 +12,23 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 public class MacroDescriptorJson
 {
-    private String key;
+    private final String key;
 
-    private String name;
+    private final String name;
 
-    private String displayName;
+    private final String displayName;
 
-    private String description;
+    private final String description;
 
-    private FormJson form;
+    private final FormJson form;
 
-    private String iconUrl;
+    private final String iconUrl;
 
-    private String displayNameI18nKey;
+    private final String displayNameI18nKey;
 
     private final LocaleMessageResolver localeMessageResolver;
 
-    private String descriptionI18nKey;
+    private final String descriptionI18nKey;
 
     public MacroDescriptorJson( final Builder builder )
     {

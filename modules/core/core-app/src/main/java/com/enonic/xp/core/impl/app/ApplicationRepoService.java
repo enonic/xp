@@ -10,18 +10,18 @@ import com.enonic.xp.node.Nodes;
 
 interface ApplicationRepoService
 {
-    Node createApplicationNode( final Application application, final ByteSource source );
+    Node createApplicationNode( Application application, ByteSource source );
 
-    Node updateApplicationNode( final Application application, final ByteSource source );
+    Node updateApplicationNode( Application application, ByteSource source );
 
-    void deleteApplicationNode( final ApplicationKey application );
+    void deleteApplicationNode( ApplicationKey application );
 
-    Node getApplicationNode( final ApplicationKey applicationKey );
+    Node getApplicationNode( ApplicationKey applicationKey );
 
-    ByteSource getApplicationSource( final NodeId nodeId );
+    ByteSource getApplicationSource( NodeId nodeId );
 
     Nodes getApplications();
 
-    Node updateStartedState( final ApplicationKey applicationKey, final boolean started );
+    Node updateStartedState( ApplicationKey applicationKey, boolean started );
 
 }

@@ -8,7 +8,7 @@ import com.enonic.xp.suggester.TermSuggestionOption;
 final class TermSuggestionMapper
     extends BaseSuggestionMapper<TermSuggestionOption, TermSuggestionEntry, TermSuggestion>
 {
-    public TermSuggestionMapper( final TermSuggestion value )
+    TermSuggestionMapper( final TermSuggestion value )
     {
         super( value );
     }

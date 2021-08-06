@@ -116,7 +116,7 @@ final class MoveContentCommand
 
         private MoveContentListener moveContentListener;
 
-        public Builder( final MoveContentParams params )
+        Builder( final MoveContentParams params )
         {
             this.params = params;
         }

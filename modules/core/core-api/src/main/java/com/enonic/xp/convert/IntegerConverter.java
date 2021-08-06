@@ -3,7 +3,7 @@ package com.enonic.xp.convert;
 final class IntegerConverter
     extends NumberConverter<Integer>
 {
-    public IntegerConverter()
+    IntegerConverter()
     {
         super( Integer.class );
     }

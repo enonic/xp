@@ -1,17 +1,11 @@
 package com.enonic.xp.impl.server.rest.task;
 
-import java.nio.file.Path;
-
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeImportResult;
-import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.impl.server.rest.model.ImportNodesRequestJson;
 import com.enonic.xp.impl.server.rest.model.NodeImportResultJson;
 import com.enonic.xp.impl.server.rest.model.RepoPath;
@@ -24,16 +18,12 @@ import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.task.AbstractRunnableTask;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
-import com.enonic.xp.vfs.VirtualFile;
-import com.enonic.xp.vfs.VirtualFiles;
 
-import static com.google.common.base.Strings.nullToEmpty;
+import static com.google.common.base.Strings.emptyToNull;
 
 public class ImportRunnableTask
     extends AbstractRunnableTask
 {
-    private final Path exportsFolder = HomeDir.get().toPath().resolve( "data" ).resolve( "export" );
-
     private final ImportNodesRequestJson params;
 
     private final ExportService exportService;
@@ -59,21 +49,21 @@ public class ImportRunnableTask
     @Override
     public void run( final TaskId id, final ProgressReporter progressReporter )
     {
-        final String xsl = params.getXslSource();
-        final VirtualFile xsltFile = nullToEmpty( xsl ).isEmpty() ? null : VirtualFiles.from( resolveFileInExportsFolder( xsl ) );
         final RepoPath targetRepoPath = params.getTargetRepoPath();
 
-        final NodeImportResult result =
-            getContext( params.getTargetRepoPath() ).callWith( () -> this.exportService.importNodes( ImportNodesParams.create().
-                source( VirtualFiles.from( resolveFileInExportsFolder( params.getExportName() ) ) ).
-                targetNodePath( targetRepoPath.getNodePath() ).
-                dryRun( params.isDryRun() ).
-                includeNodeIds( params.isImportWithIds() ).
-                includePermissions( params.isImportWithPermissions() ).
-                xslt( xsltFile ).
-                xsltParams( params.getXslParams() ).
-                nodeImportListener( new ImportListenerImpl( progressReporter ) ).
-                build() ) );
+        final NodeImportResult result = getContext( params.getTargetRepoPath() ).callWith( () -> {
+            final ImportNodesParams.Builder builder = ImportNodesParams.create()
+                .exportName( params.getExportName() )
+                .targetNodePath( targetRepoPath.getNodePath() )
+                .dryRun( params.isDryRun() )
+                .includeNodeIds( params.isImportWithIds() )
+                .includePermissions( params.isImportWithPermissions() )
+                .xsltFileName( emptyToNull( params.getXslSource() ) )
+                .xsltParams( params.getXslParams() )
+                .nodeImportListener( new ImportListenerImpl( progressReporter ) );
+
+            return this.exportService.importNodes( builder.build() );
+        } );
 
         if ( targetIsSystemRepo( targetRepoPath ) )
         {
@@ -85,10 +75,10 @@ public class ImportRunnableTask
 
     private Context getContext( final RepoPath repoPath )
     {
-        return ContextBuilder.from( ContextAccessor.current() ).
-            branch( repoPath.getBranch() ).
-            repositoryId( repoPath.getRepositoryId() ).
-            build();
+        return ContextBuilder.from( ContextAccessor.current() )
+            .branch( repoPath.getBranch() )
+            .repositoryId( repoPath.getRepositoryId() )
+            .build();
     }
 
     private boolean targetIsSystemRepo( final RepoPath targetRepoPath )
@@ -104,20 +94,14 @@ public class ImportRunnableTask
         {
             if ( !this.nodeRepositoryService.isInitialized( repository.getId() ) )
             {
-                final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
-                    repositoryId( repository.getId() ).
-                    repositorySettings( repository.getSettings() ).
-                    data( repository.getData() ).
-                    build();
+                final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create()
+                    .repositoryId( repository.getId() )
+                    .repositorySettings( repository.getSettings() )
+                    .data( repository.getData() )
+                    .build();
                 this.nodeRepositoryService.create( createRepositoryParams );
             }
         }
-    }
-
-    private Path resolveFileInExportsFolder( final String fileName )
-    {
-        Preconditions.checkArgument( FileNames.isSafeFileName( fileName ) );
-        return exportsFolder.resolve( fileName );
     }
 
     public static class Builder

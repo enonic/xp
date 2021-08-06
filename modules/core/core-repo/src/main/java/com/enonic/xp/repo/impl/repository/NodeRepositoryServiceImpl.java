@@ -1,14 +1,18 @@
 package com.enonic.xp.repo.impl.repository;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.repo.impl.index.ApplyMappingRequest;
 import com.enonic.xp.repo.impl.index.CreateIndexRequest;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repository.CreateRepositoryParams;
@@ -16,6 +20,7 @@ import com.enonic.xp.repository.IndexMapping;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.NodeRepositoryService;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositorySettings;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.util.JsonHelper;
 
@@ -35,44 +40,48 @@ public class NodeRepositoryServiceImpl
     @Override
     public void create( final CreateRepositoryParams params )
     {
-        createIndexes( params );
-        applyMappings( params );
+        final RepositoryId repositoryId = params.getRepositoryId();
+
+        final RepositorySettings repositorySettings = params.getRepositorySettings();
+        createIndex( params, IndexType.VERSION,
+                     Map.ofEntries( mergeWithDefaultMapping( repositorySettings, repositoryId, IndexType.VERSION ),
+                                    mergeWithDefaultMapping( repositorySettings, repositoryId, IndexType.BRANCH ),
+                                    mergeWithDefaultMapping( repositorySettings, repositoryId, IndexType.COMMIT ) ) );
+
+        createIndex( params, IndexType.SEARCH,
+                     Map.ofEntries( mergeWithDefaultMapping( repositorySettings, repositoryId, IndexType.SEARCH ) ) );
+
+        indexServiceInternal.waitForYellowStatus( resolveIndexNames( repositoryId ) );
     }
 
     @Override
     public void delete( final RepositoryId repositoryId )
     {
-        indexServiceInternal.deleteIndices( IndexNameResolver.resolveIndexNames( repositoryId ).toArray( String[]::new ) );
+        indexServiceInternal.deleteIndices( resolveIndexNames( repositoryId ) );
     }
 
     @Override
     public boolean isInitialized( final RepositoryId repositoryId )
     {
-        return indexServiceInternal.indicesExists( IndexNameResolver.resolveIndexNames( repositoryId ).toArray( String[]::new ) );
+        return indexServiceInternal.indicesExists( resolveIndexNames( repositoryId ) );
     }
 
-    private void createIndexes( final CreateRepositoryParams params )
-    {
-        doCreateIndex( params, IndexType.SEARCH );
-        doCreateIndex( params, IndexType.VERSION );
-    }
-
-
-    private void doCreateIndex( final CreateRepositoryParams params, final IndexType indexType )
+    private void createIndex( final CreateRepositoryParams params, final IndexType indexType, final Map<IndexType, IndexMapping> mappings )
     {
         final RepositoryId repositoryId = params.getRepositoryId();
         final IndexSettings mergedSettings = mergeWithDefaultSettings( params, indexType );
 
-        indexServiceInternal.createIndex( CreateIndexRequest.create().
-            indexName( resolveIndexName( repositoryId, indexType ) ).
-            indexSettings( mergedSettings ).
-            build() );
+        indexServiceInternal.createIndex( CreateIndexRequest.create()
+                                              .indexName( resolveIndexName( repositoryId, indexType ) )
+                                              .mappings( mappings )
+                                              .indexSettings( mergedSettings )
+                                              .build() );
     }
 
 
     private IndexSettings mergeWithDefaultSettings( final CreateRepositoryParams params, final IndexType indexType )
     {
-        final IndexSettings defaultSettings = getDefaultSettings( params, indexType );
+        final IndexSettings defaultSettings = getDefaultSettings( params.getRepositoryId(), indexType );
 
         final IndexSettings indexSettings = params.getRepositorySettings().getIndexSettings( indexType );
         if ( indexSettings != null )
@@ -83,90 +92,68 @@ public class NodeRepositoryServiceImpl
         return defaultSettings;
     }
 
-    private IndexSettings getDefaultSettings( final CreateRepositoryParams params, final IndexType indexType )
+    private IndexSettings getDefaultSettings( final RepositoryId repositoryId, final IndexType indexType )
     {
-        final IndexSettings defaultSettings = DEFAULT_INDEX_RESOURCE_PROVIDER.getSettings( params.getRepositoryId(), indexType );
-        if ( SystemConstants.SYSTEM_REPO_ID.equals( params.getRepositoryId() ) )
+        final IndexSettings defaultSettings = DEFAULT_INDEX_RESOURCE_PROVIDER.getSettings( repositoryId, indexType );
+        if ( SystemConstants.SYSTEM_REPO_ID.equals( repositoryId ) )
         {
             return defaultSettings;
         }
 
         try
         {
-            final String numberOfReplicasString =
-                indexServiceInternal.getIndexSettings( SystemConstants.SYSTEM_REPO_ID, IndexType.VERSION ).getNode().
-                    get( "index.number_of_replicas" ).
-                    textValue();
+            final String numberOfReplicasString = indexServiceInternal.getIndexSettings( SystemConstants.SYSTEM_REPO_ID, IndexType.VERSION )
+                .getNode()
+                .get( "index.number_of_replicas" )
+                .textValue();
             final int numberOfReplicas = Integer.parseInt( numberOfReplicasString );
             final ObjectNode indexNodeObject = (ObjectNode) defaultSettings.getNode().get( "index" );
             indexNodeObject.put( "number_of_replicas", numberOfReplicas );
         }
         catch ( Exception e )
         {
-            LOG.warn(
-                "Failed to retrieve number of replicas from [" + resolveIndexName( SystemConstants.SYSTEM_REPO_ID, IndexType.VERSION ) +
-                    "]" );
+            LOG.warn( "Failed to retrieve number of replicas from [" +
+                          IndexNameResolver.resolveStorageIndexName( SystemConstants.SYSTEM_REPO_ID ) + "]" );
         }
 
         return defaultSettings;
     }
 
-    private void applyMappings( final CreateRepositoryParams params )
+    private static Map.Entry<IndexType, IndexMapping> mergeWithDefaultMapping( final RepositorySettings repositorySettings,
+                                                                               final RepositoryId repositoryId, final IndexType indexType )
     {
-        applyMapping( params, IndexType.SEARCH );
-        applyMapping( params, IndexType.BRANCH );
-        applyMapping( params, IndexType.VERSION );
-        applyMapping( params, IndexType.COMMIT );
+        return Map.entry( indexType, mergeMappings( DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( repositoryId, indexType ),
+                                                    repositorySettings.getIndexMappings( indexType ) ) );
     }
 
-    private void applyMapping( final CreateRepositoryParams params, final IndexType indexType )
+    private static IndexMapping mergeMappings( IndexMapping... indexMappings )
     {
-        final RepositoryId repositoryId = params.getRepositoryId();
-        final IndexMapping mergedMapping = mergeWithDefaultMapping( params, indexType );
+        JsonNode intermediate = JsonHelper.from( Map.of() );
 
-        this.indexServiceInternal.applyMapping( ApplyMappingRequest.create().
-            indexName( resolveIndexName( repositoryId, indexType ) ).
-            indexType( indexType ).
-            mapping( mergedMapping ).
-            build() );
+        Arrays.stream( indexMappings )
+            .filter( Objects::nonNull )
+            .forEach( indexMapping -> JsonHelper.merge( intermediate, indexMapping.getNode() ) );
+        return new IndexMapping( intermediate );
     }
 
-    private IndexMapping mergeWithDefaultMapping( final CreateRepositoryParams params, final IndexType indexType )
+    private static String[] resolveIndexNames( final RepositoryId repositoryId )
     {
-        final IndexMapping defaultMapping = DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( params.getRepositoryId(), indexType );
-
-        final IndexMapping indexMappings = params.getRepositorySettings().getIndexMappings( indexType );
-        if ( indexMappings != null )
-        {
-            return new IndexMapping( JsonHelper.merge( defaultMapping.getNode(), indexMappings.getNode() ) );
-        }
-
-        return defaultMapping;
+        return IndexNameResolver.resolveIndexNames( repositoryId ).toArray( String[]::new );
     }
 
-    private String resolveIndexName( final RepositoryId repositoryId, final IndexType indexType )
+    private static String resolveIndexName( final RepositoryId repositoryId, final IndexType indexType )
     {
         switch ( indexType )
         {
             case SEARCH:
-            {
                 return IndexNameResolver.resolveSearchIndexName( repositoryId );
-            }
             case VERSION:
-            {
-                return IndexNameResolver.resolveStorageIndexName( repositoryId );
-            }
             case BRANCH:
-            {
-                return IndexNameResolver.resolveStorageIndexName( repositoryId );
-            }
             case COMMIT:
-            {
                 return IndexNameResolver.resolveStorageIndexName( repositoryId );
-            }
+            default:
+                throw new IllegalArgumentException( "Cannot resolve index name for indexType [" + indexType.getName() + "]" );
         }
-
-        throw new IllegalArgumentException( "Cannot resolve index name for indexType [" + indexType.getName() + "]" );
     }
 
     @Reference

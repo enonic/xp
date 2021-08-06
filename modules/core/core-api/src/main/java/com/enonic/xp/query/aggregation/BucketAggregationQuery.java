@@ -29,7 +29,7 @@ public abstract class BucketAggregationQuery
             super( name );
         }
 
-        private ImmutableSet.Builder<AggregationQuery> aggregationQueries = ImmutableSet.builder();
+        private final ImmutableSet.Builder<AggregationQuery> aggregationQueries = ImmutableSet.builder();
 
         @SuppressWarnings("unchecked")
         public T addSubQuery( final AggregationQuery aggregationQuery )

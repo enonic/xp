@@ -49,7 +49,7 @@ public final class HtmlBlocks
 
     public static class Builder
     {
-        private ImmutableList.Builder<HtmlBlock> htmlBlocks = ImmutableList.builder();
+        private final ImmutableList.Builder<HtmlBlock> htmlBlocks = ImmutableList.builder();
 
         private boolean hasInstruction = false;
 

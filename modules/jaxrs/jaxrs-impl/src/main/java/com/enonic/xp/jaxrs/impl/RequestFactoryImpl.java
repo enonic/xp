@@ -1,7 +1,5 @@
 package com.enonic.xp.jaxrs.impl;
 
-import java.util.Arrays;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,16 +8,11 @@ import org.jboss.resteasy.core.SynchronousDispatcher;
 import org.jboss.resteasy.plugins.server.servlet.HttpRequestFactory;
 import org.jboss.resteasy.plugins.server.servlet.Servlet3AsyncHttpRequest;
 import org.jboss.resteasy.specimpl.ResteasyHttpHeaders;
+import org.jboss.resteasy.specimpl.ResteasyUriInfo;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpResponse;
-import org.jboss.resteasy.spi.ResteasyUriInfo;
-
-import com.google.common.net.UrlEscapers;
 
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.util.stream.Collectors.joining;
 
 final class RequestFactoryImpl
     implements HttpRequestFactory
@@ -28,7 +21,7 @@ final class RequestFactoryImpl
 
     private SynchronousDispatcher dispatcher;
 
-    public RequestFactoryImpl( final ServletContext context )
+    RequestFactoryImpl( final ServletContext context )
     {
         this.context = context;
     }
@@ -45,12 +38,7 @@ final class RequestFactoryImpl
 
     private static ResteasyUriInfo extractUriInfo( HttpServletRequest request )
     {
-        final String rawRequestURI = request.getRequestURI();
-        final String requestURI = Arrays.stream( rawRequestURI.split( "/" ) ).
-            map( UrlEscapers.urlFragmentEscaper()::escape ).
-            collect( joining( "/" ) );
-        final String absoluteUri = ServletRequestUrlHelper.getServerUrl() + ( isNullOrEmpty( requestURI ) ? "/" : requestURI );
-        return new ResteasyUriInfo( absoluteUri, request.getQueryString(), request.getContextPath() );
+        return new ResteasyUriInfo( ServletRequestUrlHelper.getFullUrl( request ), request.getContextPath() );
     }
 
     public void setDispatcher( final SynchronousDispatcher dispatcher )

@@ -39,7 +39,7 @@ public class FindNodesByQueryCommandTest_geoPoint
     {
         createGeoLocationNodes();
 
-        queryAndAssert( "myLocation = '" + FREDRIKSTAD.toString() + "'", 1 );
+        queryAndAssert( "myLocation = '" + FREDRIKSTAD + "'", 1 );
     }
 
     private void createGeoLocationNodes()
@@ -58,7 +58,7 @@ public class FindNodesByQueryCommandTest_geoPoint
         throws Exception
     {
         createGeoLocationNodes();
-        queryAndAssert( "myLocation IN ('" + FREDRIKSTAD.toString() + "','" + OSLO.toString() + "')", 2 );
+        queryAndAssert( "myLocation IN ('" + FREDRIKSTAD + "','" + OSLO + "')", 2 );
     }
 
     private Node createNodeWithLocation( final GeoPoint geoPoint, final String name, final NodePath parent )

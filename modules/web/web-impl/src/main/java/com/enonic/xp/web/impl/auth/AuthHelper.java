@@ -11,7 +11,7 @@ final class AuthHelper
 {
     private final SecurityService securityService;
 
-    public AuthHelper( final SecurityService securityService )
+    AuthHelper( final SecurityService securityService )
     {
         this.securityService = securityService;
     }

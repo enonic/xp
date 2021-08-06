@@ -18,7 +18,7 @@ public final class InputValidator
         this.inputTypeResolver = builder.inputTypeResolver;
     }
 
-    public final void validate( final PropertyTree propertyTree )
+    public void validate( final PropertyTree propertyTree )
     {
         if ( this.form != null )
         {

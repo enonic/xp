@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repository.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -22,8 +21,6 @@ public interface IndexServiceInternal
 
     void openIndices( String... indices );
 
-    void applyMapping( ApplyMappingRequest request );
-
     boolean waitForYellowStatus( String... indexNames );
 
     IndexSettings getIndexSettings( RepositoryId repositoryId, IndexType indexType );
@@ -33,7 +30,5 @@ public interface IndexServiceInternal
     void refresh( String... indexNames );
 
     boolean isMaster();
-
-    void copy( NodeId nodeId, RepositoryId repositoryId, Branch source, Branch target );
 }
 

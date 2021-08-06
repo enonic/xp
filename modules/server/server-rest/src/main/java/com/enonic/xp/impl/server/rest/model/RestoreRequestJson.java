@@ -7,13 +7,13 @@ import com.enonic.xp.repository.RepositoryId;
 
 public class RestoreRequestJson
 {
-    private RepositoryId repositoryId;
+    private final RepositoryId repositoryId;
 
-    private boolean skipIndexedData;
+    private final boolean skipIndexedData;
 
-    private String snapshotName;
+    private final String snapshotName;
 
-    private boolean latest;
+    private final boolean latest;
 
     @JsonCreator
     public RestoreRequestJson( @JsonProperty("repository") final String repository,

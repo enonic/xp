@@ -35,7 +35,7 @@ public class UnpublishContentsResult
 
     public static final class Builder
     {
-        private List<ContentId> unpublishedContents = new ArrayList<>();
+        private final List<ContentId> unpublishedContents = new ArrayList<>();
 
         private ContentPath contentPath;
 

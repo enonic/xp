@@ -1,11 +1,14 @@
 package com.enonic.xp.web.servlet;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.base.Splitter;
 import com.google.common.net.HostAndPort;
 import com.google.common.net.HttpHeaders;
-import com.google.common.net.UrlEscapers;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.web.vhost.VirtualHost;
@@ -17,6 +20,9 @@ import static com.google.common.base.Strings.nullToEmpty;
 @PublicApi
 public final class ServletRequestUrlHelper
 {
+    private static final int[] RFC_8187_ATTR_CHAR =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$&+-.^_`|~".chars().sorted().toArray();
+
     static final String X_FORWARDED_PROTO = HttpHeaders.X_FORWARDED_PROTO;
 
     static final String X_FORWARDED_HOST = HttpHeaders.X_FORWARDED_HOST;
@@ -208,8 +214,7 @@ public final class ServletRequestUrlHelper
 
     public static UriRewritingResult rewriteUri( final HttpServletRequest req, final String uri )
     {
-        UriRewritingResult.Builder resultBuilder = UriRewritingResult.create().
-            rewrittenUri( uri );
+        UriRewritingResult.Builder resultBuilder = UriRewritingResult.create().rewrittenUri( uri );
         if ( req == null )
         {
             return resultBuilder.build();
@@ -226,16 +231,13 @@ public final class ServletRequestUrlHelper
         {
             final String result = uri.substring( targetPath.length() );
             final String newUri = normalizePath( vhost.getSource() + ( "/".equals( targetPath ) ? "/" : "" ) + result );
-            return resultBuilder.rewrittenUri( newUri ).
-                deletedUriPrefix( targetPath ).
-                newUriPrefix( normalizePath( vhost.getSource() ) ).
-                build();
+            return resultBuilder.rewrittenUri( newUri )
+                .deletedUriPrefix( targetPath )
+                .newUriPrefix( normalizePath( vhost.getSource() ) )
+                .build();
         }
 
-        return resultBuilder.
-            rewrittenUri( normalizePath( uri ) ).
-            outOfScope( true ).
-            build();
+        return resultBuilder.rewrittenUri( normalizePath( uri ) ).outOfScope( true ).build();
     }
 
     private static String normalizePath( final String value )
@@ -251,7 +253,46 @@ public final class ServletRequestUrlHelper
 
     public static String contentDispositionAttachment( final String fileName )
     {
-        final String escapedFileName = UrlEscapers.urlPathSegmentEscaper().escape( fileName ).replace( ",", "%2c" );
-        return "attachment; filename=\"" + fileName + "\"; filename*=UTF-8''" + escapedFileName + "";
+        final StringBuilder builder = new StringBuilder();
+        builder.append( "attachment; filename=" );
+        appendQuoted( builder, fileName );
+        builder.append( "; filename*=" );
+        appendRfc8187Encoded( builder, fileName, StandardCharsets.UTF_8 );
+        return builder.toString();
+    }
+
+    private static void appendQuoted( final StringBuilder builder, final String input )
+    {
+        builder.append( "\"" );
+        input.codePoints().forEachOrdered( value -> {
+            if ( value == '"' )
+            {
+                builder.append( "\\\"" );
+            }
+            else
+            {
+                builder.appendCodePoint( value );
+            }
+        } );
+        builder.append( "\"" );
+    }
+
+    private static void appendRfc8187Encoded( final StringBuilder builder, final String input, final Charset charset )
+    {
+        builder.append( charset.name() );
+        builder.append( "''" );
+        for ( byte b : input.getBytes( charset ) )
+        {
+            if ( Arrays.binarySearch( RFC_8187_ATTR_CHAR, b ) >= 0 )
+            {
+                builder.append( (char) b );
+            }
+            else
+            {
+                builder.append( '%' );
+                builder.append( Character.toUpperCase( Character.forDigit( ( b >>> 4 ) & 0x0f, 16 ) ) );
+                builder.append( Character.toUpperCase( Character.forDigit( b & 0x0f, 16 ) ) );
+            }
+        }
     }
 }

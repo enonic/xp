@@ -14,7 +14,7 @@ import com.enonic.xp.config.Configuration;
 
 final class ConfigLoader
 {
-    private ConfigInterpolator interpolator;
+    private final ConfigInterpolator interpolator;
 
     ConfigLoader( final BundleContext context )
     {

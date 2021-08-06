@@ -3,7 +3,7 @@ package com.enonic.xp.convert;
 final class ByteConverter
     extends NumberConverter<Byte>
 {
-    public ByteConverter()
+    ByteConverter()
     {
         super( Byte.class );
     }

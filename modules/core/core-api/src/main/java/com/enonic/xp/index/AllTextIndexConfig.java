@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableList;
 
 public final class AllTextIndexConfig
 {
-    private List<String> languages;
+    private final List<String> languages;
 
     private AllTextIndexConfig( final Builder builder )
     {

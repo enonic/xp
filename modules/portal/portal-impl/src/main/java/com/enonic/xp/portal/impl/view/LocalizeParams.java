@@ -29,7 +29,7 @@ class LocalizeParams
 
     private final PortalRequest request;
 
-    public LocalizeParams( final PortalRequest request )
+    LocalizeParams( final PortalRequest request )
     {
         this.request = request;
     }

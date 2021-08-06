@@ -15,7 +15,7 @@ import com.enonic.xp.server.RunMode;
 final class AssetUrlBuilder
     extends GenericEndpointUrlBuilder<AssetUrlParams>
 {
-    public AssetUrlBuilder()
+    AssetUrlBuilder()
     {
         super( "asset" );
     }

@@ -11,7 +11,7 @@ import com.enonic.xp.content.SetContentChildOrderParams;
 final class SortedEventSyncCommand
     extends AbstractContentEventSyncCommand
 {
-    public SortedEventSyncCommand( final Builder builder )
+    SortedEventSyncCommand( final Builder builder )
     {
         super( builder );
     }

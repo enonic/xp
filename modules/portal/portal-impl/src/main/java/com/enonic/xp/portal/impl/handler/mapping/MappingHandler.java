@@ -43,7 +43,7 @@ public final class MappingHandler
     }
 
     @Override
-    public final boolean canHandle( final WebRequest req )
+    public boolean canHandle( final WebRequest req )
     {
         if ( !( req instanceof PortalRequest ) )
         {

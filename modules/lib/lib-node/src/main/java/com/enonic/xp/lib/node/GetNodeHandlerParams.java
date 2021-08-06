@@ -6,7 +6,7 @@ import java.util.List;
 public class GetNodeHandlerParams
 {
 
-    private List<NodeKey> keys = new ArrayList<>();
+    private final List<NodeKey> keys = new ArrayList<>();
 
     public void add( final String key )
     {

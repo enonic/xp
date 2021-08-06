@@ -13,7 +13,7 @@ import com.enonic.xp.xml.parser.XmlContentTypeParser;
 final class ContentTypeLoader
     extends SchemaLoader<ContentTypeName, ContentType>
 {
-    public ContentTypeLoader( final ResourceService resourceService )
+    ContentTypeLoader( final ResourceService resourceService )
     {
         super( resourceService, "/site/content-types" );
     }

@@ -38,17 +38,17 @@ public class SegmentVacuumCommand
     private static final RepositoryIds BUILTIN_REPOSITORIES =
         RepositoryIds.from( SystemConstants.SYSTEM_REPO_ID, ContentConstants.CONTENT_REPO_ID );
 
-    private RepositoryService repositoryService;
+    private final RepositoryService repositoryService;
 
-    private NodeService nodeService;
+    private final NodeService nodeService;
 
-    private BlobStore blobStore;
+    private final BlobStore blobStore;
 
     private final VacuumTaskParams params;
 
-    private VacuumTaskResult.Builder result;
+    private final VacuumTaskResult.Builder result;
 
-    private HashMap<RepositoryId, Boolean> repositoryPresenceMap;
+    private final HashMap<RepositoryId, Boolean> repositoryPresenceMap;
 
     private SegmentVacuumCommand( final Builder builder )
     {

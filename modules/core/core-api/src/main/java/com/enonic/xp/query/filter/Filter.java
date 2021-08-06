@@ -5,7 +5,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public abstract class Filter
 {
-    private Boolean cache;
+    private final Boolean cache;
 
     Filter( final Builder builder )
     {

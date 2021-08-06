@@ -13,7 +13,7 @@ public class SystemDumpUpgradeResultJson
 
     private final String upgradedVersion;
 
-    private List<SystemDumpUpgradeStepResultJson> stepResults;
+    private final List<SystemDumpUpgradeStepResultJson> stepResults;
 
     private SystemDumpUpgradeResultJson( final Builder builder )
     {
@@ -61,7 +61,7 @@ public class SystemDumpUpgradeResultJson
 
         private String upgradedVersion;
 
-        private ImmutableList.Builder<SystemDumpUpgradeStepResultJson> stepResults = ImmutableList.builder();
+        private final ImmutableList.Builder<SystemDumpUpgradeStepResultJson> stepResults = ImmutableList.builder();
 
         private Builder()
         {

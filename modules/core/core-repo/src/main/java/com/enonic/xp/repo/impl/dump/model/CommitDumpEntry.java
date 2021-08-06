@@ -7,7 +7,7 @@ import com.enonic.xp.security.PrincipalKey;
 
 public class CommitDumpEntry
 {
-    private NodeCommitId nodeCommitId;
+    private final NodeCommitId nodeCommitId;
 
     private final String message;
 

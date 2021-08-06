@@ -68,7 +68,7 @@ public final class ContentInitializer
     }
 
     @Override
-    public final void doInitialize()
+    public void doInitialize()
     {
         createAdminContext( ContentConstants.BRANCH_MASTER ).runWith( () -> {
             initializeRepository();

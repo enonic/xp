@@ -16,7 +16,7 @@ final class HtmlBuilder
 
     private boolean addedInner;
 
-    public HtmlBuilder()
+    HtmlBuilder()
     {
         this.escaper = HtmlEscapers.htmlEscaper();
         this.str = new StringBuilder();

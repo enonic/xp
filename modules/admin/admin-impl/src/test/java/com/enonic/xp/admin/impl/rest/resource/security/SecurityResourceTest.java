@@ -65,7 +65,7 @@ public class SecurityResourceTest
 {
     private static final Instant NOW = Instant.ofEpochSecond( 0 );
 
-    private static Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
+    private static final Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
 
     private static final IdProviderKey ID_PROVIDER_1 = IdProviderKey.from( "local" );
 
@@ -254,9 +254,8 @@ public class SecurityResourceTest
     {
         final IdProviderKey idProviderKey = IdProviderKey.from( "enonic" );
 
-        String result = request().
-            entity( "{\"keys\":[\"" + idProviderKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
-            path( "security/idprovider/delete" ).post().getAsString();
+        String result = request().entity( "{\"keys\":[\"" + idProviderKey + "\"]}", MediaType.APPLICATION_JSON_TYPE )
+            .path( "security/idprovider/delete" ).post().getAsString();
 
         assertJson( "deleteIdProviderResult.json", result );
     }
@@ -269,9 +268,8 @@ public class SecurityResourceTest
 
         Mockito.doThrow( new RuntimeException( "errorMessage" ) ).when( this.securityService ).deleteIdProvider( idProviderKey );
 
-        String result = request().
-            entity( "{\"keys\":[\"" + idProviderKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
-            path( "security/idprovider/delete" ).post().getAsString();
+        String result = request().entity( "{\"keys\":[\"" + idProviderKey + "\"]}", MediaType.APPLICATION_JSON_TYPE )
+            .path( "security/idprovider/delete" ).post().getAsString();
 
         assertJson( "deleteIdProviderResult_error.json", result );
     }
@@ -287,9 +285,8 @@ public class SecurityResourceTest
         Mockito.doThrow( new RuntimeException( "errorMessage" ) ).when( this.idProviderControllerService ).execute(
             Mockito.isA( IdProviderControllerExecutionParams.class ) );
 
-        String result = request().
-            entity( "{\"keys\":[\"" + idProviderKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
-            path( "security/idprovider/sync" ).post().getAsString();
+        String result = request().entity( "{\"keys\":[\"" + idProviderKey + "\"]}", MediaType.APPLICATION_JSON_TYPE )
+            .path( "security/idprovider/sync" ).post().getAsString();
 
         Mockito.verify( idProviderControllerService, Mockito.times( 1 ) ).execute( paramsCaptor.capture() );
 
@@ -306,9 +303,8 @@ public class SecurityResourceTest
     {
         final IdProviderKey idProviderKey = IdProviderKey.from( "enonic" );
 
-        String result = request().
-            entity( "{\"keys\":[\"" + idProviderKey.toString() + "\"]}", MediaType.APPLICATION_JSON_TYPE ).
-            path( "security/idprovider/sync" ).post().getAsString();
+        String result = request().entity( "{\"keys\":[\"" + idProviderKey + "\"]}", MediaType.APPLICATION_JSON_TYPE )
+            .path( "security/idprovider/sync" ).post().getAsString();
 
         assertJson( "syncIdProviderResult.json", result );
     }

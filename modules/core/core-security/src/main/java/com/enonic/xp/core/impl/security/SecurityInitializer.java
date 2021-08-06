@@ -69,7 +69,7 @@ final class SecurityInitializer
     }
 
     @Override
-    public final void doInitialize()
+    public void doInitialize()
     {
         createAdminContext().runWith( () -> {
 
@@ -141,7 +141,7 @@ final class SecurityInitializer
     private void initializeRoleFolder()
     {
         final NodePath rolesNodePath = IdProviderNodeTranslator.getRolesNodePath();
-        LOG.info( "Initializing [" + rolesNodePath.toString() + "] folder" );
+        LOG.info( "Initializing [" + rolesNodePath + "] folder" );
 
         nodeService.create( CreateNodeParams.create().
             parent( rolesNodePath.getParentPath() ).

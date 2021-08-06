@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostResolver;
 import com.enonic.xp.web.vhost.VirtualHostService;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,23 +26,21 @@ public class VirtualHostResolverImplTest
 
     private VirtualHostResolver virtualHostResolver;
 
+    private VirtualHostService virtualHostService;
+
     @BeforeEach
     public void setUp()
     {
-        this.virtualHostMapping = new VirtualHostMapping( "mymapping" );
-
-        final VirtualHostService virtualHostService = mock( VirtualHostService.class );
-        when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( this.virtualHostMapping ) );
-
+        this.virtualHostService = mock( VirtualHostService.class );
         this.virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
     }
 
     @Test
     public void testMatches_wrongHost()
     {
-        this.virtualHostMapping.setHost( "foo.no" );
-        this.virtualHostMapping.setSource( "/" );
-        this.virtualHostMapping.setTarget( "/a" );
+        this.virtualHostMapping =
+            new VirtualHostMapping( "mymapping", "foo.no", "/", "/a", VirtualHostIdProvidersMapping.create().build() );
+        when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( this.virtualHostMapping ) );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "localhost" );
@@ -53,9 +52,9 @@ public class VirtualHostResolverImplTest
     @Test
     public void testMatches_wrongSource()
     {
-        this.virtualHostMapping.setHost( "foo.no" );
-        this.virtualHostMapping.setSource( "/b" );
-        this.virtualHostMapping.setTarget( "/a" );
+        this.virtualHostMapping =
+            new VirtualHostMapping( "mymapping", "foo.no", "/b", "/a", VirtualHostIdProvidersMapping.create().build() );
+        when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( this.virtualHostMapping ) );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "foo.no" );
@@ -67,9 +66,9 @@ public class VirtualHostResolverImplTest
     @Test
     public void testMatches_host()
     {
-        this.virtualHostMapping.setHost( "foo.no" );
-        this.virtualHostMapping.setSource( "/" );
-        this.virtualHostMapping.setTarget( "/a" );
+        this.virtualHostMapping =
+            new VirtualHostMapping( "mymapping", "foo.no", "/", "/a", VirtualHostIdProvidersMapping.create().build() );
+        when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( this.virtualHostMapping ) );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "foo.no" );
@@ -125,13 +124,7 @@ public class VirtualHostResolverImplTest
 
     private VirtualHostMapping createVirtualHostMapping( String name, String host, String source, String target )
     {
-        final VirtualHostMapping virtualHostMapping = new VirtualHostMapping( name );
-
-        virtualHostMapping.setHost( host );
-        virtualHostMapping.setSource( source );
-        virtualHostMapping.setTarget( target );
-
-        return virtualHostMapping;
+        return new VirtualHostMapping( name, host, source, target, VirtualHostIdProvidersMapping.create().build() );
     }
 
 }

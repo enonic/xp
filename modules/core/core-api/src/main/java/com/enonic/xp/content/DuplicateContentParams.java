@@ -8,13 +8,13 @@ import com.enonic.xp.security.PrincipalKey;
 @PublicApi
 public final class DuplicateContentParams
 {
-    private ContentId contentId;
+    private final ContentId contentId;
 
     private PrincipalKey creator;
 
-    private DuplicateContentListener duplicateContentListener;
+    private final DuplicateContentListener duplicateContentListener;
 
-    private Boolean includeChildren;
+    private final Boolean includeChildren;
 
     public DuplicateContentParams( Builder builder )
     {
@@ -34,6 +34,7 @@ public final class DuplicateContentParams
         return contentId;
     }
 
+    @Deprecated
     public DuplicateContentParams creator( final PrincipalKey creator )
     {
         this.creator = creator;

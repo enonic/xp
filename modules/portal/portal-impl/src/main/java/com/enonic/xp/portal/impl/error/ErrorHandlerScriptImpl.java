@@ -14,7 +14,7 @@ final class ErrorHandlerScriptImpl
 {
     private final ScriptExports scriptExports;
 
-    public ErrorHandlerScriptImpl( final ScriptExports scriptExports )
+    ErrorHandlerScriptImpl( final ScriptExports scriptExports )
     {
         this.scriptExports = scriptExports;
     }

@@ -47,11 +47,11 @@ final class GetBinaryKeyCommand
     public static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
-        private ContentId contentId;
+        private final ContentId contentId;
 
-        private BinaryReference binaryReference;
+        private final BinaryReference binaryReference;
 
-        public Builder( final ContentId contentId, final BinaryReference binaryReference )
+        Builder( final ContentId contentId, final BinaryReference binaryReference )
         {
             this.contentId = contentId;
             this.binaryReference = binaryReference;

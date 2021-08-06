@@ -8,13 +8,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.event.Event;
+import com.enonic.xp.impl.scheduler.distributed.RescheduleTask;
 import com.enonic.xp.impl.scheduler.distributed.SchedulableTask;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.CreateNodeParams;
@@ -38,11 +43,13 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class SchedulerServiceActivatorTest
 {
     @Mock(stubOnly = true)
@@ -60,7 +67,7 @@ class SchedulerServiceActivatorTest
     @Mock(stubOnly = true)
     private RepositoryService repositoryService;
 
-    @Mock(stubOnly = true)
+    @Mock
     private SchedulerExecutorService schedulerExecutorService;
 
     @Mock(stubOnly = true)
@@ -163,6 +170,37 @@ class SchedulerServiceActivatorTest
         when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenThrow( new RuntimeException() );
 
         assertThrows( RuntimeException.class, () -> activator.activate( bundleContext ) );
+    }
+
+    @Test
+    void initWithAlreadyScheduledRescheduleTask()
+    {
+        final CreateScheduledJobParams jobParams = CreateScheduledJobParams.create().
+            name( ScheduledJobName.from( "name" ) ).
+            descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
+            calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) ).
+            config( new PropertyTree() ).
+            build();
+
+        mockNode( jobParams );
+
+        when( schedulerConfig.jobs() ).thenReturn( Set.of( jobParams ) );
+        when( schedulerExecutorService.getAllFutures() ).thenReturn( Set.of( RescheduleTask.NAME ) );
+
+        activator.activate( bundleContext );
+
+        verify( schedulerExecutorService, never() ).scheduleAtFixedRate( isA( SchedulableTask.class ), anyLong(), anyLong(),
+                                                                         isA( TimeUnit.class ) );
+    }
+
+    @Test
+    public void restoreInitialized()
+        throws Exception
+    {
+        activator.onEvent( Event.create( "repository.restoreInitialized" ).
+            build() );
+
+        Mockito.verify( schedulerExecutorService, Mockito.times( 1 ) ).dispose( RescheduleTask.NAME );
     }
 
 

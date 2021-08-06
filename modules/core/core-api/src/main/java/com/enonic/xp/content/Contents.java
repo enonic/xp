@@ -67,7 +67,7 @@ public final class Contents
 
     public static class Builder
     {
-        private Set<Content> contents = new LinkedHashSet<>();
+        private final Set<Content> contents = new LinkedHashSet<>();
 
         public Builder add( Content content )
         {

@@ -1,21 +1,19 @@
 dependencies {
     implementation project( ':jaxrs:jaxrs-api' )
     implementation "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:${jacksonVersion}"
-    implementation ( "org.jboss.resteasy:resteasy-jaxrs:${resteasyVersion}" ) {
+    implementation ( "org.jboss.resteasy:resteasy-core:${resteasyVersion}" ) {
         exclude group: 'org.jboss.spec.javax.annotation'
         exclude group: 'org.jboss.spec.javax.xml.bind'
         exclude group: 'org.jboss.spec.javax.ws.rs'
-        exclude group: 'org.apache.httpcomponents'
-        exclude group: 'com.github.stephenc.jcip'
+        exclude group: 'io.smallrye.config'
     }
 
     testFixturesApi project( ':jaxrs:jaxrs-api' )
-    testFixturesImplementation ( "org.jboss.resteasy:resteasy-jaxrs:${resteasyVersion}" ) {
+    testFixturesImplementation ( "org.jboss.resteasy:resteasy-core:${resteasyVersion}" ) {
         exclude group: 'org.jboss.spec.javax.annotation'
         exclude group: 'org.jboss.spec.javax.xml.bind'
         exclude group: 'org.jboss.spec.javax.ws.rs'
-        exclude group: 'org.apache.httpcomponents'
-        exclude group: 'com.github.stephenc.jcip'
+        exclude group: 'io.smallrye.config'
     }
     testFixturesImplementation "org.eclipse.jetty:jetty-client:${jettyVersion}"
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
@@ -31,5 +29,6 @@ jar {
          'Import-Package': '*;resolution:=optional',
          'Private-Package': 'org.jboss.resteasy.*' + ',' +
              'org.reactivestreams.*' + ',' +
+             'com.ibm.asyncutil.*' + ',' +
              'META-INF.services.*;-split-package:=merge-first' )
 }

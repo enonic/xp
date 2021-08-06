@@ -161,7 +161,7 @@ public final class Form
     {
         private FormItems formItems;
 
-        private List<FormItem> formItemsList;
+        private final List<FormItem> formItemsList;
 
         private Builder()
         {

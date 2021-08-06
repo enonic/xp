@@ -47,7 +47,7 @@ class ApplicationRepoInitializer
     private void initApplicationFolder()
     {
         final NodePath applicationsRootPath = ApplicationRepoServiceImpl.APPLICATION_PATH;
-        LOG.info( "Initializing [" + applicationsRootPath.toString() + "] folder" );
+        LOG.info( "Initializing [" + applicationsRootPath + "] folder" );
 
         nodeService.create( CreateNodeParams.create().
             parent( applicationsRootPath.getParentPath() ).

@@ -1,7 +1,0 @@
-{
-  "error" : {
-    "message" : "Failed to create content [Content One] at path [/parent-path]: Exception occured."
-  },
-  "result" : null
-}
-

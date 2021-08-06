@@ -83,7 +83,7 @@ public final class PageTemplates
 
     public static class Builder
     {
-        private ImmutableList.Builder<PageTemplate> list = new ImmutableList.Builder<>();
+        private final ImmutableList.Builder<PageTemplate> list = new ImmutableList.Builder<>();
 
         public Builder add( PageTemplate template )
         {

@@ -12,11 +12,11 @@ import com.enonic.xp.query.filter.ValueFilter;
 
 public class IsBlobUsedByVersionCommand
 {
-    private NodeService nodeService;
+    private final NodeService nodeService;
 
-    private IndexPath fieldPath;
+    private final IndexPath fieldPath;
 
-    private BlobKey blobKey;
+    private final BlobKey blobKey;
 
     private IsBlobUsedByVersionCommand( final Builder builder )
     {

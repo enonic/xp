@@ -43,11 +43,11 @@ public class DeleteContentsResult
 
     public static final class Builder
     {
-        private List<ContentId> pendingContents = new ArrayList<>();
+        private final List<ContentId> pendingContents = new ArrayList<>();
 
-        private List<ContentId> deletedContents = new ArrayList<>();
+        private final List<ContentId> deletedContents = new ArrayList<>();
 
-        private List<ContentId> unpublishedContents = new ArrayList<>();
+        private final List<ContentId> unpublishedContents = new ArrayList<>();
 
         private Builder()
         {

@@ -58,7 +58,7 @@ public final class Projects
 
     public static class Builder
     {
-        private ImmutableList.Builder<Project> projects = ImmutableList.builder();
+        private final ImmutableList.Builder<Project> projects = ImmutableList.builder();
 
         public Builder addAll( Collection<Project> projects )
         {

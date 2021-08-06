@@ -24,7 +24,7 @@ public class NodeExportResultTest
         assertEquals( 1, result.getExportedBinaries().size() );
         assertEquals( 1, result.getExportErrors().size() );
         assertEquals( 1, result.getExportedNodes().getSize() );
-        System.out.println( result.toString() );
+        System.out.println( result );
     }
 
     @Test

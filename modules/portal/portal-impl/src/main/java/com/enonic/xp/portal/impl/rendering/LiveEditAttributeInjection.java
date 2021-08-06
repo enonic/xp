@@ -7,7 +7,7 @@ final class LiveEditAttributeInjection
 {
     private static final char BYTE_ORDER_MARK = '\uFEFF';
 
-    public LiveEditAttributeInjection()
+    LiveEditAttributeInjection()
     {
     }
 

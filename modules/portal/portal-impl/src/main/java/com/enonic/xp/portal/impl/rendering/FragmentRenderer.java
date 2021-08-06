@@ -31,11 +31,11 @@ public final class FragmentRenderer
 
     private static final Logger LOG = LoggerFactory.getLogger( FragmentRenderer.class );
 
-    private ContentService contentService;
+    private final ContentService contentService;
 
-    private RendererDelegate rendererDelegate;
+    private final RendererDelegate rendererDelegate;
 
-    private FragmentPageResolver fragmentPageResolver = new FragmentPageResolver();
+    private final FragmentPageResolver fragmentPageResolver = new FragmentPageResolver();
 
     public FragmentRenderer( final ContentService contentService, final RendererDelegate rendererDelegate )
     {

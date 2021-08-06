@@ -18,7 +18,7 @@ final class MultipartItemImpl
 {
     private final Part item;
 
-    public MultipartItemImpl( final Part item )
+    MultipartItemImpl( final Part item )
     {
         this.item = item;
     }

@@ -11,7 +11,7 @@ import com.enonic.xp.repo.impl.index.IndexValueType;
 class StatsAggregationQueryBuilderFactory
     extends AbstractBuilderFactory
 {
-    public StatsAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
+    StatsAggregationQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
     {
         super( fieldNameResolver );
     }

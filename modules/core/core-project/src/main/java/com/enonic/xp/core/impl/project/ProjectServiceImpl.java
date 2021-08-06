@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.project;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -15,6 +16,8 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+
+import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +79,7 @@ public class ProjectServiceImpl
 
     private final ProjectPermissionsContextManager projectPermissionsContextManager;
 
-    private EventPublisher eventPublisher;
+    private final EventPublisher eventPublisher;
 
     public ProjectServiceImpl( final RepositoryService repositoryService, final IndexService indexService, final NodeService nodeService,
                                final SecurityService securityService,
@@ -486,15 +489,15 @@ public class ProjectServiceImpl
 
             try (InputStream inputStream = source.openStream())
             {
-                final BufferedImage bufferedImage = ImageHelper.toBufferedImage( inputStream );
+                final BufferedImage bufferedImage = ImageIO.read( inputStream );
 
                 if ( size > 0 && ( bufferedImage.getWidth() >= size ) )
                 {
                     final BufferedImage scaledImage = scaleWidth( bufferedImage, size );
-                    final ByteSource scaledSource =
-                        ByteSource.wrap( ImageHelper.writeImage( scaledImage, ImageHelper.getFormatByMimeType( icon.getMimeType() ), -1 ) );
+                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    ImageHelper.writeImage( out, scaledImage, ImageHelper.getFormatByMimeType( icon.getMimeType() ), -1 );
 
-                    return new BinaryAttachment( BinaryReference.from( icon.getName() ), scaledSource );
+                    return new BinaryAttachment( BinaryReference.from( icon.getName() ), ByteSource.wrap( out.toByteArray() ) );
                 }
 
                 return new BinaryAttachment( BinaryReference.from( icon.getName() ), icon.getByteSource() );

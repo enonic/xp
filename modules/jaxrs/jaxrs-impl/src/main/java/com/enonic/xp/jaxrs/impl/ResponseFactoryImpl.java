@@ -1,5 +1,6 @@
 package com.enonic.xp.jaxrs.impl;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.resteasy.core.SynchronousDispatcher;
@@ -13,9 +14,9 @@ final class ResponseFactoryImpl
     private SynchronousDispatcher dispatcher;
 
     @Override
-    public HttpResponse createResteasyHttpResponse( final HttpServletResponse response )
+    public HttpResponse createResteasyHttpResponse( final HttpServletResponse response, final HttpServletRequest request )
     {
-        return new HttpServletResponseWrapper( response, this.dispatcher.getProviderFactory() );
+        return new HttpServletResponseWrapper( response, request, this.dispatcher.getProviderFactory() );
     }
 
     public void setDispatcher( final SynchronousDispatcher dispatcher )

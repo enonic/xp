@@ -48,7 +48,7 @@ final class GetContentByPathsCommand
     {
         private final ContentPaths contentPaths;
 
-        public Builder( final ContentPaths contentPaths )
+        Builder( final ContentPaths contentPaths )
         {
             this.contentPaths = contentPaths;
         }

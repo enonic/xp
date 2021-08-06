@@ -11,7 +11,7 @@ final class SuggestionsMapper
 {
     private final Suggestions value;
 
-    public SuggestionsMapper( final Suggestions value )
+    SuggestionsMapper( final Suggestions value )
     {
         this.value = value;
     }

@@ -58,11 +58,6 @@ public abstract class AbstractElasticsearchIntegrationTest
         System.out.println( "\n\n" );
     }
 
-    public static void waitForClusterHealth()
-    {
-        ElasticsearchFixture.elasticsearchIndexService.waitForYellowStatus();
-    }
-
     protected static final RefreshResponse refresh()
     {
         RefreshResponse actionGet = client.admin().indices().prepareRefresh().execute().actionGet();
@@ -87,14 +82,11 @@ public abstract class AbstractElasticsearchIntegrationTest
     static class ElasticsearchFixture
         implements ExtensionContext.Store.CloseableResource
     {
-
-        static IndexServiceInternalImpl elasticsearchIndexService;
-
         static EmbeddedElasticsearchServer server;
 
         static Path elasticsearchTemporaryFolder;
 
-        public ElasticsearchFixture()
+        ElasticsearchFixture()
             throws IOException
         {
             LOG.info( "Starting up Elasticsearch" );
@@ -104,9 +96,6 @@ public abstract class AbstractElasticsearchIntegrationTest
             server = new EmbeddedElasticsearchServer( elasticsearchTemporaryFolder.toFile() );
 
             client = server.getClient();
-
-            elasticsearchIndexService = new IndexServiceInternalImpl();
-            elasticsearchIndexService.setClient( client );
         }
 
         @Override

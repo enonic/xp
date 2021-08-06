@@ -92,7 +92,7 @@ final class FindContentByParentCommand
     {
         private final FindContentByParentParams params;
 
-        public Builder( final FindContentByParentParams params )
+        Builder( final FindContentByParentParams params )
         {
             this.params = params;
         }

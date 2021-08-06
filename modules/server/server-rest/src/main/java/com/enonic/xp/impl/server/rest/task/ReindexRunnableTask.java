@@ -24,7 +24,7 @@ public class ReindexRunnableTask
 {
     private final ReindexRequestJson params;
 
-    private IndexService indexService;
+    private final IndexService indexService;
 
     private ReindexRunnableTask( Builder builder )
     {

@@ -48,7 +48,7 @@ final class ServiceHandlerWorker
 
     protected ControllerScriptFactory controllerScriptFactory;
 
-    public ServiceHandlerWorker( final PortalRequest request )
+    ServiceHandlerWorker( final PortalRequest request )
     {
         super( request );
     }

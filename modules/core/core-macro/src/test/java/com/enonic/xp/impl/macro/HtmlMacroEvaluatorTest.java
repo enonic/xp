@@ -83,7 +83,7 @@ public class HtmlMacroEvaluatorTest
     public void macroInAttribute()
         throws Exception
     {
-        String result = testMacro( "<p test=\'[macro test=\"123\"/]\'></p>", 0 );
+        String result = testMacro( "<p test='[macro test=\"123\"/]'></p>", 0 );
         assertEquals( "<p test='[macro test=\"123\"/]'></p>", result );
     }
 
@@ -99,7 +99,7 @@ public class HtmlMacroEvaluatorTest
     public void ignoreEscapedMacro()
         throws Exception
     {
-        String result = testMacro( "<p>\\[macro test=\"123\"/]\'></p>", 0 );
+        String result = testMacro( "<p>\\[macro test=\"123\"/]'></p>", 0 );
         assertEquals( "<p>\\[macro test=\"123\"/]'></p>", result );
     }
 

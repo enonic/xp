@@ -18,7 +18,7 @@ public final class ApplyContentPermissionsParams
 
     private final boolean overwriteChildPermissions;
 
-    private ApplyPermissionsListener listener;
+    private final ApplyPermissionsListener listener;
 
     private ApplyContentPermissionsParams( Builder builder )
     {

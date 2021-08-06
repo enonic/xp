@@ -48,13 +48,13 @@ public class VersionTableVacuumCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger( VersionTableVacuumCommand.class );
 
-    private NodeService nodeService;
+    private final NodeService nodeService;
 
-    private RepositoryService repositoryService;
+    private final RepositoryService repositoryService;
 
-    private VersionService versionService;
+    private final VersionService versionService;
 
-    private BlobStore blobStore;
+    private final BlobStore blobStore;
 
     private final Instant until;
 

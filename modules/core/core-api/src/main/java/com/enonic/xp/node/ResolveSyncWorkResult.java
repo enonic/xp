@@ -8,7 +8,7 @@ import java.util.Set;
 public class ResolveSyncWorkResult
     implements Iterable<NodeComparison>
 {
-    private NodeComparisons nodeComparisons;
+    private final NodeComparisons nodeComparisons;
 
     private ResolveSyncWorkResult( final Builder builder )
     {
@@ -50,7 +50,7 @@ public class ResolveSyncWorkResult
 
     public static final class Builder
     {
-        private NodeComparisons.Builder comparisonsBuilder = NodeComparisons.create();
+        private final NodeComparisons.Builder comparisonsBuilder = NodeComparisons.create();
 
         private Builder()
         {

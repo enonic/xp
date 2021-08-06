@@ -58,7 +58,7 @@ public final class ContentEventsSyncParams
 
         private ProjectName targetProject;
 
-        private ImmutableSet.Builder<ContentSyncEventType> syncTypes = ImmutableSet.builder();
+        private final ImmutableSet.Builder<ContentSyncEventType> syncTypes = ImmutableSet.builder();
 
         public Builder contentId( ContentId contentId )
         {

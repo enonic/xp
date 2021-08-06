@@ -35,11 +35,11 @@ public final class ProjectContentEventListener
 {
     private static final Logger LOG = LoggerFactory.getLogger( ProjectContentEventListener.class );
 
-    private ProjectService projectService;
+    private final ProjectService projectService;
 
-    private ContentEventsSynchronizer contentSynchronizer;
+    private final ContentEventsSynchronizer contentSynchronizer;
 
-    private SimpleExecutor simpleExecutor;
+    private final SimpleExecutor simpleExecutor;
 
     @Activate
     public ProjectContentEventListener( @Reference final ProjectService projectService,
@@ -96,6 +96,8 @@ public final class ProjectContentEventListener
     {
         createAdminContext().runWith( () -> {
 
+            final ContentId contentId = ContentId.from( nodeMap.get( "id" ) );
+
             final ProjectName currentProjectName = ProjectName.from( RepositoryId.from( nodeMap.get( "repo" ) ) );
 
             final Project sourceProject = this.projectService.list().
@@ -108,7 +110,6 @@ public final class ProjectContentEventListener
                 stream().
                 filter( project -> currentProjectName.equals( project.getParent() ) ).
                 forEach( targetProject -> {
-                    final ContentId contentId = ContentId.from( nodeMap.get( "id" ) );
 
                     final ContentEventsSyncParams.Builder paramsBuilder =
                         ContentEventsSyncParams.create().contentId( contentId ).sourceProject( sourceProject.getName() ).targetProject(
@@ -150,23 +151,19 @@ public final class ProjectContentEventListener
                     }
                 } );
 
-            this.projectService.list().
-                stream().
-                filter( project -> project.getName().equals( sourceProject.getParent() ) ).
-                forEach( parentProject -> {
+            if ( sourceProject.getParent() != null && "node.deleted".equals( type ) )
+            {
+                this.projectService.list()
+                    .stream()
+                    .filter( project -> project.getName().equals( sourceProject.getParent() ) )
+                    .forEach( parentProject -> contentSynchronizer.sync( ContentSyncParams.create()
+                                                                             .contentId( contentId )
+                                                                             .sourceProject( parentProject.getName() )
+                                                                             .targetProject( sourceProject.getName() )
+                                                                             .build() )
 
-                    final ContentId contentId = ContentId.from( nodeMap.get( "id" ) );
-
-                    if ( "node.deleted".equals( type ) )
-                    {
-                        contentSynchronizer.sync( ContentSyncParams.create().
-                            contentId( contentId ).
-                            sourceProject( parentProject.getName() ).
-                            targetProject( sourceProject.getName() ).
-                            build() );
-                    }
-
-                } );
+                    );
+            }
         } );
     }
 

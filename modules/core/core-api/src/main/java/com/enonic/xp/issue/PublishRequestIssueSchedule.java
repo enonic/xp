@@ -4,9 +4,9 @@ import java.time.Instant;
 
 public class PublishRequestIssueSchedule
 {
-    private Instant from;
+    private final Instant from;
 
-    private Instant to;
+    private final Instant to;
 
     private PublishRequestIssueSchedule( Builder builder )
     {

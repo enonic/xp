@@ -15,6 +15,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.exception.ThrottlingException;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
@@ -134,24 +135,28 @@ final class ImageHandlerWorker
 
             try
             {
-                final ReadImageParams readImageParams = ReadImageParams.newImageParams().
-                    contentId( this.contentId ).
-                    binaryReference( binaryReference ).
-                    cropping( content.getCropping() ).
-                    scaleParams( this.scaleParams ).
-                    focalPoint( content.getFocalPoint() ).
-                    filterParam( this.filterParam ).
-                    backgroundColor( getBackgroundColor() ).
-                    mimeType( mimeType.toString() ).
-                    quality( getImageQuality() ).
-                    orientation( imageOrientation ).
-                    build();
+                final ReadImageParams readImageParams = ReadImageParams.newImageParams()
+                    .contentId( this.contentId )
+                    .binaryReference( binaryReference )
+                    .cropping( content.getCropping() )
+                    .scaleParams( this.scaleParams )
+                    .focalPoint( content.getFocalPoint() )
+                    .filterParam( this.filterParam )
+                    .backgroundColor( getBackgroundColor() )
+                    .mimeType( mimeType.toString() )
+                    .quality( getImageQuality() )
+                    .orientation( imageOrientation )
+                    .build();
 
                 portalResponse.body( this.imageService.readImage( readImageParams ) );
             }
             catch ( IllegalArgumentException e )
             {
                 throw new WebException( HttpStatus.BAD_REQUEST, "Invalid parameters", e );
+            }
+            catch ( ThrottlingException e )
+            {
+                throw new WebException( HttpStatus.TOO_MANY_REQUESTS, "Try again later", e );
             }
         }
 
@@ -202,14 +207,14 @@ final class ImageHandlerWorker
     private String resolveHash( final Media media )
     {
         final String binaryKey = this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() );
-        return Hashing.sha1().
-            newHasher().
-            putString( String.valueOf( binaryKey ), StandardCharsets.UTF_8 ).
-            putString( String.valueOf( media.getFocalPoint() ), StandardCharsets.UTF_8 ).
-            putString( String.valueOf( media.getCropping() ), StandardCharsets.UTF_8 ).
-            putString( String.valueOf( media.getOrientation() ), StandardCharsets.UTF_8 ).
-            hash().
-            toString();
+        return Hashing.sha1()
+            .newHasher()
+            .putString( String.valueOf( binaryKey ), StandardCharsets.UTF_8 )
+            .putString( String.valueOf( media.getFocalPoint() ), StandardCharsets.UTF_8 )
+            .putString( String.valueOf( media.getCropping() ), StandardCharsets.UTF_8 )
+            .putString( String.valueOf( media.getOrientation() ), StandardCharsets.UTF_8 )
+            .hash()
+            .toString();
     }
 
     private Media getImage( final ContentId contentId )

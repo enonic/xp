@@ -43,7 +43,7 @@ public class Pre4VersionsDumpEntryJson
     {
         private String nodeId;
 
-        private Collection<Pre4VersionDumpEntryJson> versions = new ArrayList<>();
+        private final Collection<Pre4VersionDumpEntryJson> versions = new ArrayList<>();
 
         private Builder()
         {

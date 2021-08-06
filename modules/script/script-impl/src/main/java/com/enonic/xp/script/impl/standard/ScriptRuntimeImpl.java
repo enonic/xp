@@ -26,7 +26,7 @@ class ScriptRuntimeImpl
 
     private final Function<ApplicationKey, ScriptExecutor> scriptExecutorFactory;
 
-    public ScriptRuntimeImpl( final Function<ApplicationKey, ScriptExecutor> scriptExecutorFactory )
+    ScriptRuntimeImpl( final Function<ApplicationKey, ScriptExecutor> scriptExecutorFactory )
     {
         this.scriptExecutorFactory = scriptExecutorFactory;
     }

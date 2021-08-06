@@ -9,7 +9,7 @@ import com.enonic.xp.script.serializer.MapSerializable;
 public class FindNodesByParentResultMapper
     implements MapSerializable
 {
-    private FindNodesByParentResult result;
+    private final FindNodesByParentResult result;
 
     private final int count;
 

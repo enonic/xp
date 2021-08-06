@@ -29,7 +29,7 @@ public final class AttachmentHandler
 {
     private static final Pattern PATTERN = Pattern.compile( "([^/]+)/([^/^:]+)(?::([^/]+))?/([^/]+)" );
 
-    private ContentService contentService;
+    private final ContentService contentService;
 
     private volatile String privateCacheControlHeaderConfig;
 

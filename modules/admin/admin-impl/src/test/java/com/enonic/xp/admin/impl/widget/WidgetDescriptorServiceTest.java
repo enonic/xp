@@ -81,7 +81,6 @@ public class WidgetDescriptorServiceTest
             setAllowedPrincipals( Collections.emptyList() ).
             build();
 
-
         final Descriptors<WidgetDescriptor> widgetDescriptors =
             Descriptors.from( widgetDescriptor1, widgetDescriptor2, widgetDescriptor3, widgetDescriptor4, widgetDescriptor5 );
         Mockito.when( this.descriptorService.getAll( WidgetDescriptor.class ) ).thenReturn( widgetDescriptors );

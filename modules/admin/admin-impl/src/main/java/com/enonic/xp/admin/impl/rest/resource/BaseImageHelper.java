@@ -1,6 +1,6 @@
 package com.enonic.xp.admin.impl.rest.resource;
 
-import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
@@ -17,23 +17,6 @@ public abstract class BaseImageHelper
 {
 
     private static final MediaType IMAGE_SVG = MediaType.SVG_UTF_8.withoutParameters();
-
-    public final BufferedImage toBufferedImage( final InputStream dataStream )
-    {
-        try
-        {
-            return ImageIO.read( dataStream );
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( "Failed to read BufferedImage from InputStream", e );
-        }
-    }
-
-    protected final BufferedImage resizeImage( final BufferedImage image, final int size )
-    {
-        return ImageHelper.scaleSquare( image, size );
-    }
 
     protected final byte[] loadDefaultImage( final String imageName )
     {
@@ -58,9 +41,20 @@ public abstract class BaseImageHelper
         return Icon.from( image, "image/svg+xml", Instant.ofEpochMilli( 0L ) );
     }
 
-    public final BufferedImage resizeImage( final InputStream is, final int size )
+    public final byte[] readIconImage( final Icon icon, final int size )
+        throws IOException
     {
-        return resizeImage( toBufferedImage( is ), size );
+        if ( isSvg( icon ) )
+        {
+            return icon.toByteArray();
+        }
+        else
+        {
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ImageHelper.writeImage( out, ImageHelper.scaleSquare( ImageIO.read( icon.asInputStream() ), size ),
+                                    ImageHelper.getFormatByMimeType( icon.getMimeType() ), -1 );
+            return out.toByteArray();
+        }
     }
 
     public final boolean isSvg( final Icon icon )

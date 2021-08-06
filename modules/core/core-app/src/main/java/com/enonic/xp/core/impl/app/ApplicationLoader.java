@@ -63,7 +63,7 @@ public class ApplicationLoader
 
         private int lastPct = -1;
 
-        public ProgressInputStream( final InputStream in, final long totalLength, final String message )
+        ProgressInputStream( final InputStream in, final long totalLength, final String message )
         {
             super( in );
             this.totalLength = totalLength;

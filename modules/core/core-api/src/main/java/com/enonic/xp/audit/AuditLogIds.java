@@ -70,7 +70,7 @@ public final class AuditLogIds
 
     public static class Builder
     {
-        private List<AuditLogId> contents = new ArrayList<>();
+        private final List<AuditLogId> contents = new ArrayList<>();
 
         public Builder add( final AuditLogId auditLogId )
         {

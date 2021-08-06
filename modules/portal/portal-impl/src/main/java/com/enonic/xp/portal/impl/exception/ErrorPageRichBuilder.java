@@ -23,12 +23,12 @@ final class ErrorPageRichBuilder
 
         private final String text;
 
-        public LineInfo( final int line, final String text )
+        LineInfo( final int line, final String text )
         {
             this( line, text, false );
         }
 
-        public LineInfo( final int line, final String text, final boolean mark )
+        LineInfo( final int line, final String text, final boolean mark )
         {
             this.line = line;
             this.mark = mark;
@@ -223,7 +223,7 @@ final class ErrorPageRichBuilder
         if ( problem.getResource() != null )
         {
             html.open( "h2" );
-            html.escapedText( "In " + problem.getResource().toString() + " at line " + problem.getLineNumber() );
+            html.escapedText( "In " + problem.getResource() + " at line " + problem.getLineNumber() );
             html.close();
         }
 

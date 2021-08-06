@@ -12,7 +12,7 @@ import com.enonic.xp.repo.impl.index.IndexValueType;
 class DateHistogramAggregationQueryFactory
     extends AbstractBuilderFactory
 {
-    public DateHistogramAggregationQueryFactory( final QueryFieldNameResolver fieldNameResolver )
+    DateHistogramAggregationQueryFactory( final QueryFieldNameResolver fieldNameResolver )
     {
         super( fieldNameResolver );
     }

@@ -14,13 +14,13 @@ public final class FindContentByQueryResult
 {
     private final Aggregations aggregations;
 
-    private Contents contents;
+    private final Contents contents;
 
     private final ImmutableMap<ContentId, HighlightedProperties> highlight;
 
-    private long totalHits;
+    private final long totalHits;
 
-    private long hits;
+    private final long hits;
 
     private FindContentByQueryResult( final Builder builder )
     {

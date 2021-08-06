@@ -11,9 +11,9 @@ import javax.ws.rs.core.MediaType;
 
 import org.eclipse.jetty.client.util.BytesContentProvider;
 import org.eclipse.jetty.client.util.MultiPartContentProvider;
-import org.jboss.resteasy.core.Dispatcher;
 import org.jboss.resteasy.mock.MockHttpRequest;
 import org.jboss.resteasy.mock.MockHttpResponse;
+import org.jboss.resteasy.spi.Dispatcher;
 import org.jboss.resteasy.spi.UnhandledException;
 
 public final class RestRequestBuilder
@@ -38,11 +38,6 @@ public final class RestRequestBuilder
 
     public RestRequestBuilder path( final String path )
     {
-        if ( path.startsWith( "/" ) )
-        {
-            return path( path.substring( 1 ) );
-        }
-
         this.uri.append( path );
         return this;
     }

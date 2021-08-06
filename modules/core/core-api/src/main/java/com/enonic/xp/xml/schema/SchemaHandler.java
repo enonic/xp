@@ -20,20 +20,20 @@ final class SchemaHandler
 
     private Schema schema;
 
-    public SchemaHandler( final String ns, final String location )
+    SchemaHandler( final String ns, final String location )
     {
         this.ns = ns;
         this.location = location;
     }
 
-    public final boolean canValidate( final DOMSource source )
+    public boolean canValidate( final DOMSource source )
     {
         final Document doc = (Document) source.getNode();
         final String ns = doc.getDocumentElement().getNamespaceURI();
         return this.ns.equals( ns );
     }
 
-    public final DOMResult validate( final DOMSource source )
+    public DOMResult validate( final DOMSource source )
         throws IOException, SAXException
     {
         if ( !canValidate( source ) )

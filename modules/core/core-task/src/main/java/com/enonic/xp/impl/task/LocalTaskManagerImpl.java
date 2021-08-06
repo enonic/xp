@@ -221,7 +221,7 @@ public final class LocalTaskManagerImpl
     {
         private final TaskId taskId;
 
-        public ProgressReporterAdapter( final TaskId taskId )
+        ProgressReporterAdapter( final TaskId taskId )
         {
             this.taskId = taskId;
         }

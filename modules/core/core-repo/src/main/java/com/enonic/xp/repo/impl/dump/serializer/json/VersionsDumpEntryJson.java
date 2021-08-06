@@ -90,7 +90,7 @@ public class VersionsDumpEntryJson
     {
         private String nodeId;
 
-        private Collection<VersionDumpEntryJson> versions = new ArrayList<>();
+        private final Collection<VersionDumpEntryJson> versions = new ArrayList<>();
 
         private Builder()
         {

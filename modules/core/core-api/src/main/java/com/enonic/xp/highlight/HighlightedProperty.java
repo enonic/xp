@@ -60,7 +60,7 @@ public class HighlightedProperty
     {
         private String name;
 
-        private Set<String> fragments = new HashSet<>();
+        private final Set<String> fragments = new HashSet<>();
 
         private Builder()
         {

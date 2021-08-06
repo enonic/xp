@@ -28,7 +28,7 @@ public class AuthenticationInfoTest
 
     private static final Instant NOW = Instant.ofEpochSecond( 0 );
 
-    private static Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
+    private static final Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
 
     @Test
     public void testWithoutPrincipals()

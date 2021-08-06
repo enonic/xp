@@ -1,8 +1,6 @@
 package com.enonic.xp.web.impl.handler;
 
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -84,7 +82,8 @@ public final class WebDispatcherServlet
         final WebRequest result = new WebRequest();
         result.setMethod( HttpMethod.valueOf( req.getMethod().toUpperCase() ) );
 
-        final String rawPath = decodeUrl( req.getRequestURI() );
+        final String rawPath = req.getPathInfo();
+        result.setRawPath( rawPath );
         result.setEndpointPath( findEndpointPath( rawPath ) );
         result.setRawRequest( req );
         result.setContentType( req.getContentType() );
@@ -95,7 +94,6 @@ public final class WebDispatcherServlet
         result.setPort( ServletRequestUrlHelper.getPort( req ) );
         result.setRemoteAddress( ServletRequestUrlHelper.getRemoteAddress( req ) );
         result.setPath( ServletRequestUrlHelper.getPath( req ) );
-        result.setRawPath( rawPath );
         result.setUrl( ServletRequestUrlHelper.getFullUrl( req ) );
 
         setParameters( req, result );
@@ -170,12 +168,6 @@ public final class WebDispatcherServlet
         final int endpointPathIndex = path.indexOf( "/_/" );
         return endpointPathIndex > -1 ? path.substring( endpointPathIndex ) : "";
     }
-
-    private static String decodeUrl( final String url )
-    {
-        return URLDecoder.decode( url, StandardCharsets.UTF_8 );
-    }
-
 
     @Reference
     public void setExceptionMapper( final ExceptionMapper exceptionMapper )

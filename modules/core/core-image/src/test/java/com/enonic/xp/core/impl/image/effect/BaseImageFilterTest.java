@@ -5,33 +5,35 @@
 package com.enonic.xp.core.impl.image.effect;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
-import org.junit.jupiter.api.BeforeEach;
-
 public abstract class BaseImageFilterTest
 {
-    private BufferedImage opaque;
-
-    private BufferedImage transparent;
-
-    @BeforeEach
-    public final void setUp()
-        throws Exception
-    {
-        this.opaque = ImageIO.read( getClass().getResourceAsStream( "source.jpg" ) );
-        this.transparent = ImageIO.read( getClass().getResourceAsStream( "transparent.png" ) );
-    }
-
     protected final BufferedImage getOpaque()
     {
-        return this.opaque;
+        return readImageFromResource( "source.jpg" ); // 400x300
     }
 
     protected final BufferedImage getTransparent()
     {
-        return this.transparent;
+        return readImageFromResource( "transparent.png" ); // 500x154
+    }
+
+    private BufferedImage readImageFromResource( final String name )
+    {
+        try (InputStream resourceAsStream = BaseImageFilterTest.class.getResourceAsStream( name ))
+        {
+            return ImageIO.read( Objects.requireNonNull( resourceAsStream ) );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     ImageScales newScaleFunctions()

@@ -6,7 +6,7 @@ class ReturnField
 {
     private final IndexPath indexPath;
 
-    public ReturnField( final IndexPath indexPath )
+    ReturnField( final IndexPath indexPath )
     {
         this.indexPath = indexPath;
     }

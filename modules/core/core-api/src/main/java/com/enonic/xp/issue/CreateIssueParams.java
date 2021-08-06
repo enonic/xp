@@ -82,7 +82,7 @@ public class CreateIssueParams
 
         private String description;
 
-        private IssueStatus issueStatus;
+        private final IssueStatus issueStatus;
 
         private PrincipalKeys approverIds;
 

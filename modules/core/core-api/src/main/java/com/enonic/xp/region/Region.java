@@ -141,7 +141,7 @@ public final class Region
 
         private LayoutComponent parent;
 
-        private List<Component> components = new ArrayList<>();
+        private final List<Component> components = new ArrayList<>();
 
         public Builder()
         {

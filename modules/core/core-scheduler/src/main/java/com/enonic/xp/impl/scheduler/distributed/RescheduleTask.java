@@ -26,12 +26,16 @@ public class RescheduleTask
 {
     private static final long serialVersionUID = 0;
 
+    public static final String NAME = "rescheduleTask";
+
     private static final Logger LOG = LoggerFactory.getLogger( RescheduleTask.class );
+
+    private static int failedCount = 0;
 
     @Override
     public String getName()
     {
-        return "rescheduleTask";
+        return NAME;
     }
 
     @Override
@@ -40,6 +44,15 @@ public class RescheduleTask
         try
         {
             this.doRun();
+            failedCount = 0;
+        }
+        catch ( IllegalStateException e )
+        {
+            if ( ++failedCount >= 10 )
+            {
+                failedCount = 0;
+                throw e;
+            }
         }
         catch ( Exception e )
         {

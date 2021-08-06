@@ -70,7 +70,7 @@ public final class ContentIds
 
     public static class Builder
     {
-        private List<ContentId> contents = new ArrayList<>();
+        private final List<ContentId> contents = new ArrayList<>();
 
         public Builder add( final ContentId contentId )
         {

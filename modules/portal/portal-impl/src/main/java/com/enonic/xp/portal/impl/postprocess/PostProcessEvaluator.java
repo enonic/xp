@@ -29,10 +29,6 @@ final class PostProcessEvaluator
 
     protected List<PostProcessInjection> injections;
 
-    public PostProcessEvaluator()
-    {
-    }
-
     public PortalResponse evaluate()
     {
         HtmlBlocks htmlBlocks = new HtmlBlockParser().parse( this.input );
