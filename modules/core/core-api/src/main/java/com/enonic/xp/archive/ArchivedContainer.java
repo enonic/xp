@@ -18,7 +18,7 @@ public class ArchivedContainer
     private ArchivedContainer( Builder builder )
     {
         this.id = builder.id;
-        this.contentIds =  builder.contentIds.build();
+        this.contentIds = builder.contentIds.build();
     }
 
     public static Builder create()
