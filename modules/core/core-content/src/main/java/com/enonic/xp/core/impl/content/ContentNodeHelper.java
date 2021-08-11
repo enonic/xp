@@ -41,8 +41,14 @@ class ContentNodeHelper
 
     public static ContentPath translateNodePathToContentPath( final NodePath nodePath )
     {
-        final String contentPath = nodePath.asAbsolute().toString().substring( ( CONTENT_ROOT_NODE_NAME + "/" ).length() );
-        return ContentPath.from( contentPath ).asAbsolute();
+        final String path = nodePath.asRelative().toString();
+
+        if ( !path.startsWith( CONTENT_ROOT_NODE_NAME + "/" ) && !CONTENT_ROOT_NODE_NAME.equals( path ) )
+        {
+            throw new IllegalStateException( "Invalid content node path: " + nodePath.asAbsolute().toString() );
+        }
+
+        return ContentPath.from( path.substring( CONTENT_ROOT_NODE_NAME.length() ) ).asAbsolute();
     }
 
     public static NodePath translateContentParentToNodeParentPath( final ContentPath parentContentPath )
@@ -52,16 +58,12 @@ class ContentNodeHelper
 
     public static NodeIds toNodeIds( final ContentIds contentIds )
     {
-        return NodeIds.from( contentIds.stream().
-            map( contentId -> NodeId.from( contentId.toString() ) ).
-            collect( Collectors.toList() ) );
+        return NodeIds.from( contentIds.stream().map( contentId -> NodeId.from( contentId.toString() ) ).collect( Collectors.toList() ) );
     }
 
     public static ContentIds toContentIds( final NodeIds nodeIds )
     {
-        return ContentIds.from( nodeIds.stream().
-            map( nodeId -> ContentId.from( nodeId.toString() ) ).
-            collect( Collectors.toList() ) );
+        return ContentIds.from( nodeIds.stream().map( nodeId -> ContentId.from( nodeId.toString() ) ).collect( Collectors.toList() ) );
     }
 
 }
