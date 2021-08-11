@@ -11,7 +11,6 @@ import com.enonic.xp.content.ContentState;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
@@ -70,29 +69,21 @@ public class ContentNodeTranslator
 
     private Content doTranslate( final Node node, final boolean hasChildren )
     {
-        final NodePath parentNodePath = node.path().getParentPath();
-        final NodePath parentContentPathAsNodePath = translateToContentPath( node, parentNodePath );
-        final ContentPath parentContentPath = ContentPath.from( parentContentPathAsNodePath.toString() );
+        final ContentPath parentContentPath = ContentConstants.CONTENT_ROOT_PATH.equals( node.path() )
+            ? ContentPath.ROOT
+            : ContentNodeHelper.translateNodePathToContentPath( node.path().getParentPath() );
 
         final Content.Builder builder = contentDataSerializer.fromData( node.data().getRoot() );
-        builder.
-            id( ContentId.from( node.id().toString() ) ).
-            parentPath( parentContentPath ).
-            name( node.name().toString() ).
-            childOrder( node.getChildOrder() ).
-            permissions( node.getPermissions() ).
-            inheritPermissions( node.inheritsPermissions() ).
-            hasChildren( hasChildren ).
-            contentState( ContentState.from( node.getNodeState().value() ) ).
-            manualOrderValue( node.getManualOrderValue() );
+        builder.id( ContentId.from( node.id().toString() ) )
+            .parentPath( parentContentPath )
+            .name( node.name().toString() )
+            .childOrder( node.getChildOrder() )
+            .permissions( node.getPermissions() )
+            .inheritPermissions( node.inheritsPermissions() )
+            .hasChildren( hasChildren )
+            .contentState( ContentState.from( node.getNodeState().value() ) )
+            .manualOrderValue( node.getManualOrderValue() );
 
         return builder.build();
-    }
-
-
-    private NodePath translateToContentPath( final Node node, final NodePath parentNodePath )
-    {
-        return !ContentConstants.CONTENT_ROOT_PATH.equals( node.path() ) ? parentNodePath.removeFromBeginning(
-            ContentConstants.CONTENT_ROOT_PATH ) : NodePath.ROOT;
     }
 }
