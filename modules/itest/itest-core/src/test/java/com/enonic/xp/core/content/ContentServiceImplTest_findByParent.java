@@ -36,7 +36,7 @@ public class ContentServiceImplTest_findByParent
             build() );
 
         assertNotNull( result );
-        assertEquals( 2, result.getTotalHits() );
+        assertEquals( 3, result.getTotalHits() );
 
     }
 
@@ -53,7 +53,7 @@ public class ContentServiceImplTest_findByParent
         final FindContentByParentResult result = contentService.findByParent( params );
 
         assertNotNull( result );
-        assertEquals( 0, result.getTotalHits() );
+        assertEquals( 1, result.getTotalHits() );
 
     }
 
@@ -275,7 +275,7 @@ public class ContentServiceImplTest_findByParent
         final FindContentByParentResult result = createAndFindContent( ContentPublishInfo.create().
             from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
             build() );
-        assertEquals( 1, result.getTotalHits() );
+        assertEquals( 2, result.getTotalHits() );
     }
 
     @Test
@@ -299,7 +299,7 @@ public class ContentServiceImplTest_findByParent
             from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
             to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
             build() );
-        assertEquals( 1, result.getTotalHits() );
+        assertEquals( 2, result.getTotalHits() );
     }
 
     @Test
@@ -324,7 +324,7 @@ public class ContentServiceImplTest_findByParent
             from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
             to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
             build() );
-        assertEquals( 1, result.getTotalHits() );
+        assertEquals( 2, result.getTotalHits() );
     }
 
     @Test
