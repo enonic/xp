@@ -67,8 +67,10 @@ final class RestoreContentCommand
 
     private RestoreContentsResult doExecute()
     {
-        final Node contentToRestore = nodeService.getById( NodeId.from( params.getContentId() ) );
-        final Node container = nodeService.getByPath( contentToRestore.parentPath() );
+        final Node nodeToRestore =
+            nodeService.getById( NodeId.from( params.getContentId() ) );
+
+        final Node container = nodeService.getById( NodeId.from(  nodeToRestore.path().asAbsolute().getElementAsString( 2 ) ));
 
         final String oldSourceParentPath = container.data().getString( "oldParentPath" );
 

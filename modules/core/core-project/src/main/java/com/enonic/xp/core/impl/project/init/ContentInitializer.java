@@ -6,8 +6,10 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -21,6 +23,7 @@ import com.enonic.xp.query.Direction;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -32,20 +35,11 @@ public final class ContentInitializer
 {
     private static final Logger LOG = LoggerFactory.getLogger( ContentInitializer.class );
 
-    private static final AccessControlList CONTENT_ROOT_DEFAULT_ACL = AccessControlList.create().
-        add( AccessControlEntry.create().
-            principal( RoleKeys.ADMIN ).
-            allowAll().
-            build() ).
-        add( AccessControlEntry.create().
-            principal( RoleKeys.CONTENT_MANAGER_ADMIN ).
-            allowAll().
-            build() ).
-        add( AccessControlEntry.create().
-            principal( RoleKeys.CONTENT_MANAGER_APP ).
-            allow( Permission.READ ).
-            build() ).
-        build();
+    private static final AccessControlList CONTENT_ROOT_DEFAULT_ACL = AccessControlList.create()
+        .add( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() )
+        .add( AccessControlEntry.create().principal( RoleKeys.CONTENT_MANAGER_ADMIN ).allowAll().build() )
+        .add( AccessControlEntry.create().principal( RoleKeys.CONTENT_MANAGER_APP ).allow( Permission.READ ).build() )
+        .build();
 
     private static final IndexPath CONTENT_INDEX_PATH_DISPLAY_NAME = IndexPath.from( "displayName" );
 
@@ -74,15 +68,16 @@ public final class ContentInitializer
             initializeRepository();
             createDraftBranch();
         } );
-        createAdminContext( ContentConstants.BRANCH_DRAFT ).runWith( this::initContentNode );
+        final Context adminDraft = createAdminContext( ContentConstants.BRANCH_DRAFT );
+        adminDraft.runWith( this::initContentNode );
+        adminDraft.runWith( this::initArchiveNode );
     }
 
     @Override
     protected boolean isInitialized()
     {
-        return createAdminContext( ContentConstants.BRANCH_MASTER ).
-            callWith( () -> repositoryService.isInitialized( repositoryId ) &&
-                nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) != null );
+        return createAdminContext( ContentConstants.BRANCH_MASTER ).callWith(
+            () -> repositoryService.isInitialized( repositoryId ) && nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) != null );
     }
 
     @Override
@@ -98,12 +93,12 @@ public final class ContentInitializer
 
     private void initializeRepository()
     {
-        final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
-            repositoryId( repositoryId ).
-            data( data ).
-            rootPermissions( ContentConstants.CONTENT_REPO_DEFAULT_ACL ).
-            rootChildOrder( ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER ).
-            build();
+        final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create()
+            .repositoryId( repositoryId )
+            .data( data )
+            .rootPermissions( ContentConstants.CONTENT_REPO_DEFAULT_ACL )
+            .rootChildOrder( ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER )
+            .build();
 
         this.repositoryService.createRepository( createRepositoryParams );
     }
@@ -126,19 +121,55 @@ public final class ContentInitializer
             data.setString( ContentPropertyNames.CREATOR, user.getKey().toString() );
             data.setInstant( ContentPropertyNames.CREATED_TIME, Instant.now() );
 
-            final Node contentRoot = nodeService.create( CreateNodeParams.create().
-                data( data ).
-                name( ContentConstants.CONTENT_ROOT_NAME ).
-                parent( NodePath.ROOT ).
-                permissions( Objects.requireNonNullElse( this.accessControlList, CONTENT_ROOT_DEFAULT_ACL ) ).
-                childOrder( CONTENT_DEFAULT_CHILD_ORDER ).
-                build() );
+            final Node contentRoot = nodeService.create( CreateNodeParams.create()
+                                                             .data( data )
+                                                             .name( ContentConstants.CONTENT_ROOT_NAME )
+                                                             .parent( NodePath.ROOT )
+                                                             .permissions( Objects.requireNonNullElse( this.accessControlList,
+                                                                                                       CONTENT_ROOT_DEFAULT_ACL ) )
+                                                             .childOrder( CONTENT_DEFAULT_CHILD_ORDER )
+                                                             .build() );
 
             LOG.info( "Created content root-node: {}", contentRoot );
 
             nodeService.refresh( RefreshMode.ALL );
 
             nodeService.push( NodeIds.from( contentRoot.id() ), ContentConstants.BRANCH_MASTER );
+        }
+    }
+
+    private void initArchiveNode()
+    {
+        Node archiveNode = nodeService.getByPath( ContentConstants.CONTENT_ARCHIVE_PATH );
+
+        if ( archiveNode == null )
+        {
+            LOG.info( "Archive node not found, creating" );
+
+            final User user = ContextAccessor.current().getAuthInfo().getUser();
+
+            final PropertyTree data = new PropertyTree();
+            data.setString( ContentPropertyNames.TYPE, ContentTypeName.folder().toString() );
+            data.setString( ContentPropertyNames.DISPLAY_NAME, "Archive" );
+            data.addSet( ContentPropertyNames.DATA );
+            data.addSet( ContentPropertyNames.FORM );
+            data.setString( ContentPropertyNames.CREATOR, user.getKey().toString() );
+            data.setString( ContentPropertyNames.MODIFIER, user.getKey().toString() );
+            data.setInstant( ContentPropertyNames.CREATED_TIME, Instant.now() );
+
+            final CreateNodeParams createNodeParams = CreateNodeParams.create()
+                                 .permissions( Objects.requireNonNullElse( accessControlList, ArchiveConstants.ARCHIVE_ROOT_DEFAULT_ACL ) )
+                                 .parent( ContentConstants.CONTENT_ROOT_PATH )
+                                 .name( ArchiveConstants.ARCHIVE_ROOT_NAME )
+                                 .data( data )
+                                 .childOrder( ArchiveConstants.DEFAULT_ARCHIVE_REPO_ROOT_ORDER )
+                                 .build();
+
+            archiveNode = nodeService.create( createNodeParams );
+
+            LOG.info( "Created archive root-node: " + archiveNode.path() );
+
+            nodeService.refresh( RefreshMode.ALL );
         }
     }
 

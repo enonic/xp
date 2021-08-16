@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.UUID;
+import java.time.Instant;
 
 import com.google.common.base.Preconditions;
 
@@ -12,7 +12,10 @@ import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.MoveNodeException;
@@ -22,7 +25,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.security.User;
 
 final class ArchiveContentCommand
     extends AbstractArchiveCommand
@@ -50,9 +53,7 @@ final class ArchiveContentCommand
 
         try
         {
-            final ArchiveContentsResult archivedContents = doExecute();
-            this.nodeService.refresh( RefreshMode.ALL );
-            return archivedContents;
+            return doExecute();
         }
         catch ( MoveNodeException e )
         {
@@ -90,15 +91,27 @@ final class ArchiveContentCommand
 
     private CreateNodeParams containerParams( final Node contentToArchive )
     {
-        final String uniqueName = UUID.randomUUID().toString();
+        final NodeId nodeId = new NodeId();
+        final String displayName = Instant.now().toString();
+
+        final User user = ContextAccessor.current().getAuthInfo().getUser();
 
         final PropertyTree data = new PropertyTree();
+        data.setString( ContentPropertyNames.TYPE, "base:folder" );
+        data.setString( ContentPropertyNames.DISPLAY_NAME, displayName );
+        data.addSet( ContentPropertyNames.DATA );
+        data.addSet( ContentPropertyNames.FORM );
+        data.setString( ContentPropertyNames.CREATOR, user.getKey().toString() );
+        data.setString( ContentPropertyNames.MODIFIER, user.getKey().toString() );
+        data.setInstant( ContentPropertyNames.CREATED_TIME, Instant.now() );
+
         data.setString( "oldParentPath", contentToArchive.parentPath().toString() );
 
-        return CreateNodeParams.create().parent( ArchiveConstants.ARCHIVE_ROOT_PATH ).
-            name( uniqueName ).
-            setNodeId( NodeId.from( uniqueName ) ).
-            nodeType( ArchiveConstants.ARCHIVE_NODE_TYPE ).
+        return CreateNodeParams.create().
+            setNodeId( nodeId ).
+            name( nodeId.toString() ).
+            parent( ArchiveConstants.ARCHIVE_ROOT_PATH ).
+            nodeType( ContentConstants.CONTENT_NODE_COLLECTION ).
             data( data ).
             build();
     }
