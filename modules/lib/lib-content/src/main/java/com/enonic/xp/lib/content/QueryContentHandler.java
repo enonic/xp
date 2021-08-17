@@ -35,6 +35,8 @@ public final class QueryContentHandler
 
     private String sort;
 
+    private Boolean includeArchive;
+
     private Map<String, Object> aggregations;
 
     private Map<String, Object> highlight;
@@ -50,6 +52,7 @@ public final class QueryContentHandler
         final int count = valueOrDefault( this.count, GetChildContentHandler.DEFAULT_COUNT );
         final String query = valueOrDefault( this.query, "" ).trim();
         final String sort = valueOrDefault( this.sort, "" ).trim();
+        final Boolean includeArchive = valueOrDefault( this.includeArchive, false );
         final ContentTypeNames contentTypeNames = getContentTypeNames();
 
         final List<OrderExpr> orderExpressions = QueryParser.parseOrderExpressions( sort );
@@ -67,6 +70,7 @@ public final class QueryContentHandler
             aggregationQueries( aggregations ).
             highlight( highlight ).
             addContentTypeNames( contentTypeNames ).
+            includeArchive( includeArchive ).
             queryExpr( queryExpr );
 
         for ( final Filter filter : filters )
@@ -123,6 +127,11 @@ public final class QueryContentHandler
     public void setSort( final String sort )
     {
         this.sort = sort;
+    }
+
+    public void setIncludeArchive( final Boolean includeArchive )
+    {
+        this.includeArchive = includeArchive;
     }
 
     public void setAggregations( final ScriptValue value )

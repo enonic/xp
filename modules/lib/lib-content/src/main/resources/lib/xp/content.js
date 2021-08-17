@@ -259,6 +259,7 @@ exports.create = function (params) {
  * @param {object} params JSON with the parameters.
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
+ * @param {boolean} [params.includeArchive=false] Include search in content archive.
  * @param {string} params.query Query expression.
  * @param {object} [params.filters] Filters to apply to query result
  * @param {string} [params.sort] Sorting expression.
@@ -273,6 +274,7 @@ exports.query = function (params) {
     bean.count = params.count;
     bean.query = nullOrValue(params.query);
     bean.sort = nullOrValue(params.sort);
+    bean.includeArchive = nullOrValue(params.includeArchive);
     bean.aggregations = __.toScriptValue(params.aggregations);
     bean.contentTypes = __.toScriptValue(params.contentTypes);
     bean.filters = __.toScriptValue(params.filters);

@@ -61,6 +61,7 @@ public class CheckContentValidityCommand
                 values( contentIds.asStrings() ).
                 build() ).
             size( -1 ).
+            includeArchive( true ).
             build();
 
         final FindContentByQueryResult result = FindContentByQueryCommand.create().
