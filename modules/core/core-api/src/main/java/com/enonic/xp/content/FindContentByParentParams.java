@@ -28,6 +28,8 @@ public final class FindContentByParentParams
 
     private static final Integer DEFAULT_SIZE = 500;
 
+    private final boolean includeArchive;
+
     private FindContentByParentParams( Builder builder )
     {
         Preconditions.checkArgument( builder.parentPath == null || builder.parentId == null,
@@ -43,6 +45,7 @@ public final class FindContentByParentParams
         this.from = builder.from;
         this.childOrder = builder.childOrder;
         this.recursive = builder.recursive;
+        this.includeArchive = builder.includeArchive;
     }
 
     public ContentPath getParentPath()
@@ -80,6 +83,11 @@ public final class FindContentByParentParams
         return recursive;
     }
 
+    public boolean isIncludeArchive()
+    {
+        return includeArchive;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -95,13 +103,13 @@ public final class FindContentByParentParams
         return Objects.equals( this.parentPath, that.parentPath ) && Objects.equals( this.parentId, that.parentId ) &&
             Objects.equals( this.queryFilters, that.queryFilters ) && Objects.equals( this.size, that.size ) &&
             Objects.equals( this.from, that.from ) && Objects.equals( this.childOrder, that.childOrder ) &&
-            Objects.equals( this.recursive, that.recursive );
+            Objects.equals( this.recursive, that.recursive ) && Objects.equals( this.includeArchive, that.includeArchive );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( parentPath, parentId, size, from, childOrder, recursive );
+        return Objects.hash( parentPath, parentId, size, from, childOrder, recursive, includeArchive );
     }
 
     public static Builder create()
@@ -124,6 +132,8 @@ public final class FindContentByParentParams
         private ChildOrder childOrder;
 
         private Boolean recursive = false;
+
+        private boolean includeArchive = false;
 
         private Builder()
         {
@@ -168,6 +178,12 @@ public final class FindContentByParentParams
         public Builder recursive( final Boolean recursive )
         {
             this.recursive = recursive;
+            return this;
+        }
+
+        public Builder includeArchive( final boolean includeArchive )
+        {
+            this.includeArchive = includeArchive;
             return this;
         }
 

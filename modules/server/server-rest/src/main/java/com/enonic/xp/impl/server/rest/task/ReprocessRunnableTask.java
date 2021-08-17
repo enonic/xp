@@ -65,8 +65,9 @@ public class ReprocessRunnableTask
                         asAbsolute().
                         toString();
                 }
-                ConstraintExpr pathExpr = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( nodePath + "/*" ) );
-                ContentQuery countChildren = ContentQuery.create().queryExpr( QueryExpr.from( pathExpr ) ).size( 0 ).build();
+                final ConstraintExpr pathExpr = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( nodePath + "/*" ) );
+                final ContentQuery countChildren =
+                    ContentQuery.create().queryExpr( QueryExpr.from( pathExpr ) ).size( 0 ).includeArchive( true ).build();
 
                 total = (int) contentService.find( countChildren ).getTotalHits() + 1;
             }

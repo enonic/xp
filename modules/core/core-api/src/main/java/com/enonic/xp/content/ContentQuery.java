@@ -33,6 +33,8 @@ public class ContentQuery
 
     private final int size;
 
+    private final boolean includeArchive;
+
     public ContentQuery( final Builder builder )
     {
         this.queryExpr = builder.queryExpr;
@@ -43,6 +45,7 @@ public class ContentQuery
         this.aggregationQueries = AggregationQueries.fromCollection( builder.aggregationQueries.build() );
         this.queryFilters = builder.queryFilters.build();
         this.highlight = builder.highlight;
+        this.includeArchive = builder.includeArchive;
     }
 
     public static Builder create()
@@ -90,6 +93,11 @@ public class ContentQuery
         return highlight;
     }
 
+    public boolean isIncludeArchive()
+    {
+        return includeArchive;
+    }
+
     public static class Builder
     {
         private QueryExpr queryExpr;
@@ -107,6 +115,8 @@ public class ContentQuery
         private final Filters.Builder queryFilters = Filters.create();
 
         private HighlightQuery highlight;
+
+        private boolean includeArchive = false;
 
         public Builder queryExpr( final QueryExpr queryExpr )
         {
@@ -165,6 +175,12 @@ public class ContentQuery
         public Builder highlight( final HighlightQuery highlight )
         {
             this.highlight = highlight;
+            return this;
+        }
+
+        public Builder includeArchive( final boolean includeArchive )
+        {
+            this.includeArchive = includeArchive;
             return this;
         }
 

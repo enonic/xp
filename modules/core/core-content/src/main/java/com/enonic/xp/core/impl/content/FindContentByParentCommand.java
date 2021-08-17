@@ -5,12 +5,16 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.Filters;
+import com.enonic.xp.query.filter.ValueFilter;
 
 final class FindContentByParentCommand
     extends AbstractContentCommand
@@ -36,11 +40,7 @@ final class FindContentByParentCommand
 
         final Contents contents = this.translator.fromNodes( nodes, true );
 
-        return FindContentByParentResult.create().
-            contents( contents ).
-            totalHits( result.getTotalHits() ).
-            hits( result.getHits() ).
-            build();
+        return FindContentByParentResult.create().contents( contents ).totalHits( result.getTotalHits() ).hits( result.getHits() ).build();
     }
 
     private FindNodesByParentParams createFindNodesByParentParams()
@@ -49,12 +49,11 @@ final class FindContentByParentCommand
 
         setNodePathOrIdAsIdentifier( findNodesParam );
 
-        return findNodesParam.
-            queryFilters( createFilters() ).
-            from( params.getFrom() ).
-            size( params.getSize() ).
-            childOrder( params.getChildOrder() ).
-            build();
+        return findNodesParam.queryFilters( createFilters() )
+            .from( params.getFrom() )
+            .size( params.getSize() )
+            .childOrder( params.getChildOrder() )
+            .build();
     }
 
     private void setNodePathOrIdAsIdentifier( final FindNodesByParentParams.Builder findNodesParam )
@@ -80,10 +79,23 @@ final class FindContentByParentCommand
     protected Filters createFilters()
     {
         final Filters.Builder filters = Filters.create();
-        super.createFilters().
-            forEach( filters::add );
-        params.getQueryFilters().
-            forEach( filters::add );
+        super.createFilters().forEach( filters::add );
+        params.getQueryFilters().forEach( filters::add );
+
+        if ( !params.isIncludeArchive() )
+        {
+            filters.add( BooleanFilter.create()
+                             .mustNot( ValueFilter.create()
+                                           .fieldName( NodeIndexPath.PATH.getPath() )
+                                           .addValue( ValueFactory.newString( "/content/__archive__/*" ) )
+                                           .build() )
+                             .mustNot( ValueFilter.create()
+                                           .fieldName( NodeIndexPath.PATH.getPath() )
+                                           .addValue( ValueFactory.newString( "/content/__archive__" ) )
+                                           .build() )
+                             .build() );
+        }
+
         return filters.build();
     }
 

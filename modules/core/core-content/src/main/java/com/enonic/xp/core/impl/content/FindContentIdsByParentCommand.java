@@ -5,11 +5,15 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentIdsByParentResult;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.Filters;
+import com.enonic.xp.query.filter.ValueFilter;
 
 final class FindContentIdsByParentCommand
     extends AbstractContentCommand
@@ -84,6 +88,21 @@ final class FindContentIdsByParentCommand
             forEach( filters::add );
         params.getQueryFilters().
             forEach( filters::add );
+
+        if ( !params.isIncludeArchive() )
+        {
+            filters.add( BooleanFilter.create()
+                             .mustNot( ValueFilter.create()
+                                           .fieldName( NodeIndexPath.PATH.getPath() )
+                                           .addValue( ValueFactory.newString( "/content/__archive__/*" ) )
+                                           .build() )
+                             .mustNot( ValueFilter.create()
+                                           .fieldName( NodeIndexPath.PATH.getPath() )
+                                           .addValue( ValueFactory.newString( "/content/__archive__" ) )
+                                           .build() )
+                             .build() );
+        }
+
         return filters.build();
     }
 

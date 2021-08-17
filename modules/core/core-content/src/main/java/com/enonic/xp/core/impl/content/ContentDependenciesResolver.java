@@ -62,6 +62,7 @@ public class ContentDependenciesResolver
                 fieldName( "type" ).
                 orderDirection( TermsAggregationQuery.Direction.DESC ).
                 build() ).
+            includeArchive( true ).
             build() );
 
         final BucketAggregation bucketAggregation = (BucketAggregation) result.getAggregations().get( "type" );
