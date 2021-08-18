@@ -7,10 +7,11 @@ import com.enonic.xp.archive.RestoreContentException;
 import com.enonic.xp.archive.RestoreContentListener;
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.archive.RestoreContentsResult;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
@@ -18,6 +19,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 
@@ -67,30 +69,37 @@ final class RestoreContentCommand
 
     private RestoreContentsResult doExecute()
     {
-        final Node nodeToRestore =
-            nodeService.getById( NodeId.from( params.getContentId() ) );
+        final Node nodeToRestore = nodeService.getById( NodeId.from( params.getContentId() ) );
 
-        final Node container = nodeService.getById( NodeId.from(  nodeToRestore.path().asAbsolute().getElementAsString( 2 ) ));
+        final Node container = nodeService.getById( NodeId.from( nodeToRestore.path().asAbsolute().getElementAsString( 2 ) ) );
 
         final String oldSourceParentPath = container.data().getString( "oldParentPath" );
 
         final NodePath oldParentPath = params.getPath() != null
             ? ContentNodeHelper.translateContentPathToNodePath( params.getPath() )
-            : !Strings.nullToEmpty( oldSourceParentPath ).isBlank() ? NodePath.create( oldSourceParentPath ).
-                build() : ContentNodeHelper.translateContentPathToNodePath( ContentPath.ROOT );
+            : !Strings.nullToEmpty( oldSourceParentPath ).isBlank()
+                ? NodePath.create( oldSourceParentPath ).build()
+                : ContentNodeHelper.translateContentPathToNodePath( ContentPath.ROOT );
 
-        final MoveNodeParams.Builder builder = MoveNodeParams.create().
-            nodeId( NodeId.from( params.getContentId() ) ).
-            parentNodePath( oldParentPath ).
-            moveListener( this );
+        final NodeIds contentsToRestore =
+            nodeService.findByParent( FindNodesByParentParams.create().parentPath( container.path() ).size( -1 ).build() ).getNodeIds();
 
-        final Node movedNode = nodeService.move( builder.build() );
+        final RestoreContentsResult.Builder result = RestoreContentsResult.create();
 
-        final Content movedContent = translator.fromNode( movedNode, true );
+        for ( final NodeId contentToRestore : contentsToRestore )
+        {
 
-        return RestoreContentsResult.create().
-            addRestored( movedContent.getId() ).
-            build();
+            final MoveNodeParams.Builder builder =
+                MoveNodeParams.create().nodeId( contentToRestore ).parentNodePath( oldParentPath ).moveListener( this );
+
+            final Node movedNode = nodeService.move( builder.build() );
+
+            result.addRestored( ContentId.from( movedNode.id().toString() ) );
+        }
+
+        nodeService.deleteById( container.id() );
+
+        return result.build();
     }
 
     @Override
