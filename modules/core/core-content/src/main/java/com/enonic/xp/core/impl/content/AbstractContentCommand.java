@@ -13,6 +13,8 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationWildcardMatcher;
+import com.enonic.xp.archive.ArchiveConstants;
+import com.enonic.xp.archive.ArchiveContentException;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -58,6 +60,13 @@ abstract class AbstractContentCommand
         this.translator = builder.translator;
     }
 
+    private static Predicate<ContentTypeName> allowContentTypeFilter( final ApplicationKey applicationKey, final List<String> wildcards )
+    {
+        final ApplicationWildcardMatcher<ContentTypeName> wildcardMatcher =
+            new ApplicationWildcardMatcher<>( applicationKey, ContentTypeName::toString );
+        return wildcards.stream().map( wildcardMatcher::createPredicate ).reduce( Predicate::or ).orElse( s -> true );
+    }
+
     Content getContent( final ContentId contentId )
     {
         return GetContentByIdCommand.create( contentId, this ).build().execute();
@@ -93,7 +102,6 @@ abstract class AbstractContentCommand
             contents.stream().filter( content -> !this.contentPendingOrExpired( content, now ) ).collect( Collectors.toList() );
         return Contents.from( filteredContentList );
     }
-
 
     protected Content filterScheduledPublished( Content content )
     {
@@ -214,11 +222,13 @@ abstract class AbstractContentCommand
         }
     }
 
-    private static Predicate<ContentTypeName> allowContentTypeFilter( final ApplicationKey applicationKey, final List<String> wildcards )
+    protected void validateContentLocation( final ContentPath parentPath, final String message )
     {
-        final ApplicationWildcardMatcher<ContentTypeName> wildcardMatcher =
-            new ApplicationWildcardMatcher<>( applicationKey, ContentTypeName::toString );
-        return wildcards.stream().map( wildcardMatcher::createPredicate ).reduce( Predicate::or ).orElse( s -> true );
+        if ( ArchiveConstants.ARCHIVE_ROOT_CONTENT_PATH.equals( parentPath ) ||
+            parentPath.isChildOf( ArchiveConstants.ARCHIVE_ROOT_CONTENT_PATH ) )
+        {
+            throw new ArchiveContentException( message, parentPath );
+        }
     }
 
     public static class Builder<B extends Builder>
