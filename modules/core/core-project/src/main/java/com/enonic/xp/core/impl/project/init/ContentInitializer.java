@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -65,19 +64,24 @@ public final class ContentInitializer
     public void doInitialize()
     {
         createAdminContext( ContentConstants.BRANCH_MASTER ).runWith( () -> {
-            initializeRepository();
-            createDraftBranch();
+            if ( !repositoryService.isInitialized( repositoryId ) )
+            {
+                initializeRepository();
+                createDraftBranch();
+            }
         } );
-        final Context adminDraft = createAdminContext( ContentConstants.BRANCH_DRAFT );
-        adminDraft.runWith( this::initContentNode );
-        adminDraft.runWith( this::initArchiveNode );
+        createAdminContext( ContentConstants.BRANCH_DRAFT ).runWith( () -> {
+            this.initContentNode();
+            this.initArchiveNode();
+        } );
     }
 
     @Override
     protected boolean isInitialized()
     {
         return createAdminContext( ContentConstants.BRANCH_MASTER ).callWith(
-            () -> repositoryService.isInitialized( repositoryId ) && nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) != null );
+            () -> repositoryService.isInitialized( repositoryId ) && nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) != null &&
+                nodeService.getByPath( ArchiveConstants.ARCHIVE_ROOT_PATH ) != null );
     }
 
     @Override
@@ -140,7 +144,7 @@ public final class ContentInitializer
 
     private void initArchiveNode()
     {
-        Node archiveNode = nodeService.getByPath( ContentConstants.CONTENT_ARCHIVE_PATH );
+        Node archiveNode = nodeService.getByPath( ArchiveConstants.ARCHIVE_ROOT_PATH );
 
         if ( archiveNode == null )
         {
@@ -158,12 +162,12 @@ public final class ContentInitializer
             data.setInstant( ContentPropertyNames.CREATED_TIME, Instant.now() );
 
             final CreateNodeParams createNodeParams = CreateNodeParams.create()
-                                 .permissions( Objects.requireNonNullElse( accessControlList, ArchiveConstants.ARCHIVE_ROOT_DEFAULT_ACL ) )
-                                 .parent( ContentConstants.CONTENT_ROOT_PATH )
-                                 .name( ArchiveConstants.ARCHIVE_ROOT_NAME )
-                                 .data( data )
-                                 .childOrder( ArchiveConstants.DEFAULT_ARCHIVE_REPO_ROOT_ORDER )
-                                 .build();
+                .permissions( Objects.requireNonNullElse( accessControlList, ArchiveConstants.ARCHIVE_ROOT_DEFAULT_ACL ) )
+                .parent( ContentConstants.CONTENT_ROOT_PATH )
+                .name( ArchiveConstants.ARCHIVE_ROOT_NAME )
+                .data( data )
+                .childOrder( ArchiveConstants.DEFAULT_ARCHIVE_REPO_ROOT_ORDER )
+                .build();
 
             archiveNode = nodeService.create( createNodeParams );
 
