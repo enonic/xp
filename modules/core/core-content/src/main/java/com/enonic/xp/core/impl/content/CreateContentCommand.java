@@ -151,6 +151,7 @@ final class CreateContentCommand
     private void validateBlockingChecks()
     {
         validateContentType( params );
+        validateContentLocation( params.getParent(), "Content cannot be created directly in the archive" );
         validateParentChildRelations( params.getParent(), params.getType() );
         validatePropertyTree( params );
         validateCreateAttachments( params.getCreateAttachments() );
