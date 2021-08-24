@@ -146,7 +146,7 @@ public class FilterScriptImplTest
         }
         catch ( ResourceProblemException e )
         {
-//            assertEquals( "myapplication:/filter/filtererror.js", e.getResource().toString() );
+            assertEquals( "myapplication:/filter/filtererror.js", e.getResource().toString() );
             assertEquals( 3, e.getLineNumber() );
             assertEquals( "ReferenceError: \"callback\" is not defined", e.getMessage() );
         }
@@ -167,8 +167,8 @@ public class FilterScriptImplTest
         }
         catch ( ResourceProblemException e )
         {
-//            assertEquals( "myapplication:/filter/duplicated_next_call.js", e.getResource().toString() );
-//            assertEquals( 3, e.getLineNumber() );
+            assertEquals( "myapplication:/filter/duplicated_next_call.js", e.getResource().toString() );
+            assertEquals( 3, e.getLineNumber() );
             assertEquals( "Filter 'next' function was called multiple times", e.getMessage() );
         }
     }
