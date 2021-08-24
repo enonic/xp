@@ -8,18 +8,19 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.aggregation.Aggregations;
-import com.enonic.xp.aggregation.Bucket;
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.aggregation.Buckets;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentDependenciesAggregation;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
+import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.core.impl.content.ContentDependenciesResolver;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Icon;
@@ -74,17 +75,21 @@ public class ContentDependenciesResolverTest
     public void resolve_inbound_dependencies()
         throws Exception
     {
-        final Content content = createContent( "folderRefContent1", new PropertyTree(), ContentTypeName.folder() );
+        final Content content = createContent( "content", new PropertyTree(), ContentTypeName.folder() );
+
+        final Content siteRefContent1 = createContent( "siteRefContent1", new PropertyTree(), ContentTypeName.site() );
+        final Content siteRefContent2 = createContent( "siteRefContent2", new PropertyTree(), ContentTypeName.site() );
+        final Content folderRefContent1 = createContent( "folderRefContent1", new PropertyTree(), ContentTypeName.folder() );
 
         final FindContentIdsByQueryResult findContentByQueryResult =
-            FindContentIdsByQueryResult.create().aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).
-                buckets( Buckets.create().
-                    add( Bucket.create().key( "portal:site" ).docCount( 2 ).build() ).
-                    add( Bucket.create().key( "base:folder" ).docCount( 1 ).build() ).
-                    build() ).build() ) ).build();
+            FindContentIdsByQueryResult.create().
+            contents( ContentIds.from( "siteRefContent1","siteRefContent2","folderRefContent1" ) ).
+                build();
 
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
-        Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn( Contents.empty() );
+        Mockito.when( contentService.getByIds( new GetContentByIdsParams(ContentIds.from( "siteRefContent1","siteRefContent2","folderRefContent1" )) ) ).thenReturn( Contents.from(siteRefContent1,siteRefContent2,folderRefContent1) );
+        Mockito.when( contentService.getByIds( new GetContentByIdsParams(ContentIds.empty()) ) ).thenReturn( Contents.empty() );
+        Mockito.when( contentService.getOutboundDependencies( content.getId() )).thenReturn( ContentIds.empty() );
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findContentByQueryResult );
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn(
@@ -97,11 +102,11 @@ public class ContentDependenciesResolverTest
 
         final ContentDependenciesAggregation siteAggregation = (ContentDependenciesAggregation) result.getInbound().toArray()[0];
         assertEquals( siteAggregation.getType(), ContentTypeName.site() );
-        assertEquals( siteAggregation.getCount(), 2 );
+        assertEquals( siteAggregation.getContentIds().size(), 2 );
 
         final ContentDependenciesAggregation folderAggregation = (ContentDependenciesAggregation) result.getInbound().toArray()[1];
         assertEquals( folderAggregation.getType(), ContentTypeName.folder() );
-        assertEquals( folderAggregation.getCount(), 1 );
+        assertEquals( folderAggregation.getContentIds().size(), 1 );
 
     }
 
@@ -145,11 +150,11 @@ public class ContentDependenciesResolverTest
 
         final ContentDependenciesAggregation siteAggregation = (ContentDependenciesAggregation) result.getOutbound().toArray()[0];
         assertEquals( siteAggregation.getType(), ContentTypeName.site() );
-        assertEquals( siteAggregation.getCount(), 1 );
+        assertEquals( siteAggregation.getContentIds().size(), 1 );
 
         final ContentDependenciesAggregation folderAggregation = (ContentDependenciesAggregation) result.getOutbound().toArray()[1];
         assertEquals( folderAggregation.getType(), ContentTypeName.folder() );
-        assertEquals( folderAggregation.getCount(), 2 );
+        assertEquals( folderAggregation.getContentIds().size(), 2 );
     }
 
     @Test
@@ -184,6 +189,6 @@ public class ContentDependenciesResolverTest
 
         final ContentDependenciesAggregation folderAggregation = (ContentDependenciesAggregation) result.getOutbound().toArray()[0];
         assertEquals( folderAggregation.getType(), ContentTypeName.folder() );
-        assertEquals( folderAggregation.getCount(), 2 );
+        assertEquals( folderAggregation.getContentIds().size(), 2 );
     }
 }
