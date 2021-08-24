@@ -6,7 +6,7 @@ import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.util.ErrorHelper;
 import com.enonic.xp.script.impl.util.JsObjectConverter;
 
-public final class FunctionScriptValue
+final class FunctionScriptValue
     extends AbstractScriptValue
 {
     private final ScriptValueFactory factory;
