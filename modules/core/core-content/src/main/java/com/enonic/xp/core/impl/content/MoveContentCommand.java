@@ -2,6 +2,8 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.archive.ArchiveConstants;
+import com.enonic.xp.archive.ArchiveContentException;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
@@ -80,6 +82,7 @@ final class MoveContentCommand
         }
 
         validateParentChildRelations( params.getParentContentPath(), sourceContent.getType() );
+        validateArchive( sourceContent );
 
         final NodePath nodePath =
             NodePath.create( ContentConstants.CONTENT_ROOT_PATH ).elements( params.getParentContentPath().toString() ).build();
@@ -98,6 +101,24 @@ final class MoveContentCommand
         final Content movedContent = translator.fromNode( movedNode, true );
 
         return MoveContentsResult.create().setContentName( movedContent.getDisplayName() ).addMoved( movedContent.getId() ).build();
+    }
+
+    private void validateArchive( final Content sourceContent )
+    {
+            if ( ArchiveConstants.ARCHIVE_ROOT_CONTENT_PATH.equals( sourceContent.getPath() ) )
+            {
+                throw new ArchiveContentException( "Archive node cannot be moved" );
+            }
+
+            if ( ArchiveConstants.ARCHIVE_ROOT_CONTENT_PATH.equals( sourceContent.getParentPath() ) )
+            {
+                throw new ArchiveContentException( "Archive container cannot be moved" );
+            }
+
+            if ( ArchiveConstants.ARCHIVE_ROOT_CONTENT_PATH.equals( params.getParentContentPath() ) )
+            {
+                throw new ArchiveContentException( "Content cannot be moved directly to the archive" );
+            }
     }
 
     @Override

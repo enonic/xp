@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
@@ -42,7 +44,7 @@ final class MovedEventSyncCommand
                     {
                         final ContentPath newPath = buildNewPath( targetParentPath, params.getTargetContent().getName() );
 
-                        if ( !params.getTargetContent().getPath().equals( newPath ) )
+                        if ( !Objects.equals( newPath.getName(), params.getTargetContent().getPath().getName() ) )
                         {
                             contentService.rename( RenameContentParams.create().
                                 contentId( params.getTargetContent().getId() ).
