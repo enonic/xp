@@ -13,6 +13,7 @@ import javax.script.SimpleBindings;
 
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
+import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
 
@@ -270,7 +271,7 @@ public class ScriptExecutorImpl
             final String text = script.readString();
             final String source = PRE_SCRIPT + text + POST_SCRIPT;
             bindings.forEach( ( key, value ) -> this.context.getBindings( "js" ).putMember( key, value ) );
-            return this.context.eval( "js", source );
+            return this.context.eval( Source.newBuilder( "js", source, script.getKey().toString() ).build() );
         }
         catch ( final Exception e )
         {

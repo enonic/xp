@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.auth;
 
-import org.graalvm.polyglot.PolyglotException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -54,8 +53,7 @@ public class RemoveMembersHandlerTest
         }
         catch ( Exception e )
         {
-            // TODO investigate issue with error handling
-            assertTrue( e.getCause() instanceof PolyglotException );
+            assertTrue( e.getCause() instanceof IllegalArgumentException );
             assertEquals( "Principal relationship from User to another Principal is not allowed", e.getMessage() );
         }
     }

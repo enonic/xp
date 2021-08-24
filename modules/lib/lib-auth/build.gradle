@@ -7,6 +7,4 @@ dependencies {
 
     testImplementation( testFixtures( project( ':core:core-api' ) ) )
     testImplementation project( ':tools:testing' )
-
-    testImplementation "org.graalvm.truffle:truffle-api:${graalvmVersion}"
 }

@@ -8,7 +8,7 @@ import org.graalvm.polyglot.Value;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.util.JsObjectConverter;
 
-public final class ObjectScriptValue
+final class ObjectScriptValue
     extends AbstractScriptValue
 {
     private final ScriptValueFactory factory;
