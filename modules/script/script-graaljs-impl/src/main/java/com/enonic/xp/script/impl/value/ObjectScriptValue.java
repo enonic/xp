@@ -51,4 +51,10 @@ final class ObjectScriptValue
         final JsObjectConverter converter = new JsObjectConverter( this.factory.getJavascriptHelper() );
         return converter.toMap( this.value );
     }
+
+    @Override
+    public Object getValue()
+    {
+        return value.isHostObject() ? value.asHostObject() : value;
+    }
 }
