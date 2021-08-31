@@ -1,8 +1,0 @@
-{
-  "key": "role:superuser",
-  "displayName": "Super user role",
-  "members": [
-    "user:system:user1",
-    "user:system:user2"
-  ]
-}
