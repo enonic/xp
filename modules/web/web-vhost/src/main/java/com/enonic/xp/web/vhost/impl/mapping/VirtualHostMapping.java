@@ -17,10 +17,12 @@ public final class VirtualHostMapping
 
     private final String target;
 
+    private final int order;
+
     private final VirtualHostIdProvidersMapping idProvidersMapping;
 
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
-                               final VirtualHostIdProvidersMapping idProvidersMapping )
+                               final VirtualHostIdProvidersMapping idProvidersMapping, final int order )
     {
         Objects.requireNonNull( name, "name must be set" );
         Objects.requireNonNull( host, "host must be set" );
@@ -33,6 +35,7 @@ public final class VirtualHostMapping
         this.source = source;
         this.target = target;
         this.idProvidersMapping = idProvidersMapping;
+        this.order = order;
     }
 
     @Override
@@ -71,4 +74,9 @@ public final class VirtualHostMapping
         return idProvidersMapping.getIdProviderKeys();
     }
 
+    @Override
+    public int getOrder()
+    {
+        return order;
+    }
 }

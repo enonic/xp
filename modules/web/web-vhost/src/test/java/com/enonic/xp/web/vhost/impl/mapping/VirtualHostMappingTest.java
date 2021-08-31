@@ -14,21 +14,21 @@ public class VirtualHostMappingTest
     @Test
     public void testName()
     {
-        this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build() );
+        this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0 );
         assertEquals( "mymapping", this.virtualHostMapping.getName() );
     }
 
     @Test
     public void testHost()
     {
-        this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build() );
+        this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0 );
         assertEquals( "foo.no", this.virtualHostMapping.getHost() );
     }
 
     @Test
     public void testSource()
     {
-        this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build() );
+        this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0 );
         assertEquals( "/", this.virtualHostMapping.getSource() );
 
         this.virtualHostMapping =
