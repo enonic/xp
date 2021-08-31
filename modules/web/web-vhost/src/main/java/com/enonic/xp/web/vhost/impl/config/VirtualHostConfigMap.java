@@ -1,7 +1,6 @@
 package com.enonic.xp.web.vhost.impl.config;
 
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -42,9 +41,9 @@ final class VirtualHostConfigMap
         return findMappingNames().stream()
             .map( this::buildMapping )
             .sorted( Comparator.comparing( VirtualHost::getOrder )
-                         .thenComparing( VirtualHost::getSource, Comparator.comparing( String::length ) )
+                         .thenComparing( VirtualHost::getSource, Comparator.comparing( String::length ).reversed() )
                          .thenComparing( VirtualHost::getSource ) )
-            .collect( Collectors.toList() );
+            .collect( Collectors.toUnmodifiableList() );
     }
 
     private VirtualHostMapping buildMapping( final String name )
@@ -57,7 +56,7 @@ final class VirtualHostConfigMap
         final String source = normalizePath( getString( prefix + "source" ) );
         final String target = normalizePath( getString( prefix + "target" ) );
         final VirtualHostIdProvidersMapping idProvidersMapping = getHostIdProvidersMapping( prefix );
-        final int order = getInt( prefix + "order", 0 );
+        final int order = getInt( prefix + "order", Integer.MAX_VALUE );
 
         return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order );
     }
@@ -114,7 +113,7 @@ final class VirtualHostConfigMap
     private int getInt( final String name, final int defValue )
     {
         final String value = getString( name );
-        return value != null ? Integer.parseInt( name ) : defValue;
+        return value != null ? Integer.parseInt( value ) : defValue;
     }
 
     private Set<String> findMappingNames()

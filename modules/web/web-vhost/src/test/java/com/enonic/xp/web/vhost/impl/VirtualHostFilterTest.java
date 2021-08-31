@@ -125,7 +125,7 @@ public class VirtualHostFilterTest
     private void addMapping()
     {
         final VirtualHostMapping mapping =
-            new VirtualHostMapping( "test", "enonic.com", "/rest", "/admin/rest", VirtualHostIdProvidersMapping.create().build() );
+            new VirtualHostMapping( "test", "enonic.com", "/rest", "/admin/rest", VirtualHostIdProvidersMapping.create().build(), 0 );
         this.virtualHosts.add( mapping );
     }
 }
