@@ -85,14 +85,18 @@ public final class ScriptLogger
             {
                 throw new IllegalArgumentException( "log." + logLevel.level + "(...) must have at least one parameter" );
             }
-            else if ( arguments.length == 2 && arguments[1].isException() )
-            {
-                PolyglotException ex = arguments[1].as( PolyglotException.class );
-                doLog( arguments[0].asString(), ex );
-            }
             else
             {
-                doLog( arguments[0].asString(), Arrays.stream( arguments ).skip( 1 ).toArray() );
+                final Value argument = arguments[0];
+                if ( arguments.length == 2 && arguments[1].isException() )
+                {
+                    PolyglotException ex = arguments[1].as( PolyglotException.class );
+                    doLog( argument.isString() ? argument.asString() : argument.toString(), ex );
+                }
+                else
+                {
+                    doLog( argument.isString() ? argument.asString() : argument.toString(), Arrays.stream( arguments ).skip( 1 ).toArray() );
+                }
             }
         }
 

@@ -50,7 +50,11 @@ public final class ScriptValueFactoryImpl
         if ( value instanceof Value )
         {
             Value castedValue = (Value) value;
-            if ( castedValue.isNumber() )
+            if ( castedValue.isHostObject() )
+            {
+                return new ObjectScriptValue( this, castedValue );
+            }
+            else if ( castedValue.isNumber() )
             {
                 if ( castedValue.fitsInLong() )
                 {

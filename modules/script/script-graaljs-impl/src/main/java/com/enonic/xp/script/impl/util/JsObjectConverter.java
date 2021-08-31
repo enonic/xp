@@ -90,7 +90,8 @@ public final class JsObjectConverter
         {
             return null;
         }
-        else if (source.isHostObject()) {
+        else if ( source.isHostObject() )
+        {
             return source.asHostObject();
         }
         else if ( source.hasArrayElements() )

@@ -10,8 +10,6 @@ import org.graalvm.polyglot.Value;
 public final class JSContextFactory
 {
     private static final HostAccess HOST_ACCESS = HostAccess.newBuilder( HostAccess.ALL ).
-        allowListAccess( true ).
-        allowMapAccess( true ).
         targetTypeMapping( Value.class, Object.class, Value::hasArrayElements, value -> value.as( List.class ) ).
         build();
 
@@ -20,6 +18,7 @@ public final class JSContextFactory
         final Context.Builder contextBuilder = Context.newBuilder( "js" ).
             allowHostAccess( HOST_ACCESS ).
             allowHostClassLookup( className -> true ).
+            allowHostClassLoading( true ).
             allowExperimentalOptions( true ).
             option( "js.nashorn-compat", "true" ).
             option( "js.ecmascript-version", "6" );
