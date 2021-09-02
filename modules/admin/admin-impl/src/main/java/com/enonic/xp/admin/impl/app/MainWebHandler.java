@@ -30,12 +30,7 @@ public final class MainWebHandler
     protected WebResponse doHandle( final WebRequest req, final WebResponse res, final WebHandlerChain chain )
         throws Exception
     {
-        return redirectToLoginPage();
-    }
-
-    private WebResponse redirectToLoginPage()
-    {
-        final String uri = ServletRequestUrlHelper.createUri( "/admin/tool" );
+        final String uri = ServletRequestUrlHelper.createUri( req.getRawRequest(), "/admin/tool" );
         return WebResponse.create().
             status( HttpStatus.TEMPORARY_REDIRECT ).
             header( "Location", uri ).

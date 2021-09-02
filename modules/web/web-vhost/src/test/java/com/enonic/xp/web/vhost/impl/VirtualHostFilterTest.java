@@ -21,6 +21,7 @@ import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -29,8 +30,6 @@ import static org.mockito.Mockito.when;
 
 public class VirtualHostFilterTest
 {
-    private VirtualHostFilter filter;
-
     private VirtualHostService virtualHostService;
 
     private HttpServletRequest req;
@@ -51,11 +50,9 @@ public class VirtualHostFilterTest
         this.virtualHosts = new ArrayList<>();
         this.virtualHostService = mock( VirtualHostService.class );
 
-        final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
-
         when( virtualHostService.getVirtualHosts() ).thenReturn( this.virtualHosts );
 
-        this.filter = new VirtualHostFilter( virtualHostService, virtualHostResolver );
+
     }
 
     @Test
@@ -65,7 +62,9 @@ public class VirtualHostFilterTest
         when( this.virtualHostService.isEnabled() ).thenReturn( false );
         when( req.getServerName() ).thenReturn( "enonic.com" );
 
-        this.filter.doFilter( this.req, this.res, this.chain );
+        VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
+
+        filter.doFilter( this.req, this.res, this.chain );
 
         verify( this.chain, times( 1 ) ).doFilter( this.req, this.res );
     }
@@ -75,10 +74,12 @@ public class VirtualHostFilterTest
         throws Exception
     {
         when( this.virtualHostService.isEnabled() ).thenReturn( true );
-        this.filter.doFilter( this.req, this.res, this.chain );
+
+        VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
+        filter.doFilter( this.req, this.res, this.chain );
 
         verify( this.chain, times( 0 ) ).doFilter( this.req, this.res );
-        assertFalse( VirtualHostHelper.hasVirtualHost( this.req ) );
+        assertNull( VirtualHostHelper.getVirtualHost( this.req ) );
         verify( res ).setStatus( 404 );
     }
 
@@ -89,11 +90,14 @@ public class VirtualHostFilterTest
         addMapping();
 
         when( this.virtualHostService.isEnabled() ).thenReturn( true );
+        when( req.getServerName() ).thenReturn( "not-exists.com" );
+        when( req.getRequestURI() ).thenReturn( "/rest/status" );
 
-        this.filter.doFilter( this.req, this.res, this.chain );
+        VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
+        filter.doFilter( this.req, this.res, this.chain );
 
         verify( this.chain, times( 0 ) ).doFilter( this.req, this.res );
-        assertFalse( VirtualHostHelper.hasVirtualHost( this.req ) );
+        assertNull( VirtualHostHelper.getVirtualHost( this.req ) );
         verify( res ).setStatus( 404 );
     }
 
@@ -111,7 +115,8 @@ public class VirtualHostFilterTest
         when( req.getRequestDispatcher( "/admin/rest/status" ) ).thenReturn( requestDispatcher );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHosts.get( 0 ) );
 
-        this.filter.doFilter( this.req, this.res, this.chain );
+        VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
+        filter.doFilter( this.req, this.res, this.chain );
 
         verify( this.chain, times( 0 ) ).doFilter( this.req, this.res );
         verify( requestDispatcher ).forward( this.req, this.res );

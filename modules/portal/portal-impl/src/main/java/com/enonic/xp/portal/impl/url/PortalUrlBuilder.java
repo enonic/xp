@@ -155,7 +155,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         buildUrl( str, params );
         appendParams( str, params.entries() );
 
-        final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( str.toString() );
+        final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( portalRequest.getRawRequest(), str.toString() );
 
         if ( rewritingResult.isOutOfScope() )
         {
@@ -166,7 +166,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
         if ( UrlTypeConstants.ABSOLUTE.equals( this.params.getType() ) )
         {
-            return ServletRequestUrlHelper.getServerUrl() + uri;
+            return ServletRequestUrlHelper.getServerUrl( portalRequest.getRawRequest() ) + uri;
         }
         else
         {
@@ -238,7 +238,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
         appendParams( str, params.entries() );
         final String uri = str.toString();
-        return ServletRequestUrlHelper.rewriteUri( uri ).getRewrittenUri();
+        return ServletRequestUrlHelper.rewriteUri( portalRequest.getRawRequest(), uri ).getRewrittenUri();
     }
 
     @Override

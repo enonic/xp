@@ -24,15 +24,12 @@ public class VirtualHostResolverImplTest
 {
     private VirtualHostMapping virtualHostMapping;
 
-    private VirtualHostResolver virtualHostResolver;
-
     private VirtualHostService virtualHostService;
 
     @BeforeEach
     public void setUp()
     {
         this.virtualHostService = mock( VirtualHostService.class );
-        this.virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
     }
 
     @Test
@@ -41,6 +38,8 @@ public class VirtualHostResolverImplTest
         this.virtualHostMapping =
             new VirtualHostMapping( "mymapping", "foo.no", "/", "/a", VirtualHostIdProvidersMapping.create().build(), 0 );
         when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( this.virtualHostMapping ) );
+
+        VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "localhost" );
@@ -56,6 +55,8 @@ public class VirtualHostResolverImplTest
             new VirtualHostMapping( "mymapping", "foo.no", "/b", "/a", VirtualHostIdProvidersMapping.create().build(), 0 );
         when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( this.virtualHostMapping ) );
 
+        VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
+
         HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "foo.no" );
         when( req.getRequestURI() ).thenReturn( "/a" );
@@ -69,6 +70,8 @@ public class VirtualHostResolverImplTest
         this.virtualHostMapping =
             new VirtualHostMapping( "mymapping", "foo.no", "/", "/a", VirtualHostIdProvidersMapping.create().build(), 0 );
         when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( this.virtualHostMapping ) );
+
+        VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "foo.no" );

@@ -110,11 +110,9 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             portalRequest( this.portalRequest ).
             param( "a", 3 );
 
-        HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
         when( req.getServerPort() ).thenReturn( 80 );
-        ServletRequestHolder.setRequest( req );
 
         final String url = this.service.attachmentUrl( params );
         assertEquals( "http://localhost/site/default/draft/a/b/mycontent/_/attachment/inline/123456:binaryHash2/a2.jpg?a=3", url );

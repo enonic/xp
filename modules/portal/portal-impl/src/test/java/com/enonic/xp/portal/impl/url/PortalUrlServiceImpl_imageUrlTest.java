@@ -157,11 +157,9 @@ public class PortalUrlServiceImpl_imageUrlTest
             scale( "max(300)" ).
             validate();
 
-        HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
         when( req.getServerPort() ).thenReturn( 80 );
-        ServletRequestHolder.setRequest( req );
 
         final String url = this.service.imageUrl( params );
         assertEquals(
