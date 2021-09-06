@@ -218,6 +218,57 @@ public class ScheduleAuditLogSupportImplTest
     }
 
     @Test
+    public void testUpdateWithoutCreator() // jobs were produced with an empty `creator` and `createdTime` fields from 7.7.0 to 7.7.2
+    throws Exception
+    {
+        final PropertyTree config = new PropertyTree();
+        config.addString( "property", "value" );
+
+        final CronCalendarImpl calendar = CronCalendarImpl.create().
+            value( "* * * * *" ).
+            timeZone( TimeZone.getTimeZone( "GMT+5:30" ) ).
+            build();
+
+        final DescriptorKey descriptor = DescriptorKey.from( "appKey:descriptorName" );
+
+        final String jobDescription = "Job description";
+
+        final PrincipalKey userKey = PrincipalKey.from( "user:system:user" );
+
+        final OneTimeCalendarImpl oneTimeCalendar =
+            OneTimeCalendarImpl.create().value( Instant.parse( "2021-04-25T10:44:33.170079900Z" ) ).build();
+
+        final ModifyScheduledJobParams params = ModifyScheduledJobParams.create().
+            name( name ).
+            editor( edit -> edit.calendar = oneTimeCalendar ).
+            build();
+
+        final ScheduledJob job = ScheduledJob.create()
+            .name( name )
+            .calendar( oneTimeCalendar )
+            .descriptor( descriptor )
+            .description( jobDescription )
+            .config( config )
+            .enabled( true )
+            .user( userKey )
+            .modifier( PrincipalKey.from( "user:system:creator" ) )
+            .createdTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) )
+            .modifiedTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) )
+            .build();
+
+        context.runWith( () -> support.modify( params, job ) );
+
+        executor.shutdown();
+        executor.awaitTermination( 1, TimeUnit.MINUTES );
+
+        final ArgumentCaptor<LogAuditLogParams> argumentCaptor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+
+        verify( auditLogService, times( 1 ) ).log( argumentCaptor.capture() );
+
+        assertNull( argumentCaptor.getValue().getData().getSet( "params" ).getString( "creator" ) );
+    }
+
+    @Test
     public void delete()
         throws Exception
     {
