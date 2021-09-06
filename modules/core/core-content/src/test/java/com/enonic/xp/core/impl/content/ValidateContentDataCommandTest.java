@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentName;
-import com.enonic.xp.core.impl.content.validate.ValidationErrors;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;

@@ -2,9 +2,12 @@ package com.enonic.xp.core.impl.content.validate;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.content.DataValidationError;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.form.FormItemPath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -12,12 +15,12 @@ public class ValidationErrorsTest
 {
 
     @Test
-    public void validattionResult()
+    public void validationResult()
     {
         ValidationErrors errors1 =
             ValidationErrors.create().add( new DataValidationError( FormItemPath.from( "root" ), "errorMessage" ) ).build();
         ValidationErrors errors2 = ValidationErrors.empty();
-        assertTrue( errors2.getValidationErrors().size() == 0 );
+        assertFalse( errors2.hasErrors() );
         assertNotEquals( errors1, errors2 );
         assertNotEquals( errors1.hashCode(), errors2.hashCode() );
         errors2 = ValidationErrors.create().addAll( errors1 ).build();

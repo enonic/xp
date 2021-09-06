@@ -18,13 +18,12 @@ import com.enonic.xp.content.EditableSite;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.processor.ProcessUpdateParams;
 import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
-import com.enonic.xp.core.impl.content.validate.ValidationError;
-import com.enonic.xp.core.impl.content.validate.ValidationErrors;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
@@ -117,13 +116,20 @@ final class UpdateContentCommand
             return contentBeforeChange;
         }
 
+        editedContent = processContent( contentBeforeChange, editedContent );
+
         validateBlockingChecks( editedContent );
-        final boolean validated = validateNonBlockingChecks( editedContent );
+        final ValidationErrors validated = validateNonBlockingChecks( editedContent );
+
+        if ( params.isRequireValid() )
+        {
+            throw new ContentDataValidationException( validated.iterator().next().getErrorMessage() );
+        }
 
         editedContent = Content.create( editedContent ).
-            valid( validated ).
+            valid( validated.isEmpty() ).
+            validationErrors( validated ).
             build();
-        editedContent = processContent( contentBeforeChange, editedContent );
         editedContent = attachThumbnail( editedContent );
         editedContent = setModifiedTime( editedContent );
 
@@ -284,38 +290,20 @@ final class UpdateContentCommand
         }
     }
 
-    private boolean validateNonBlockingChecks( final Content edited )
+    private ValidationErrors validateNonBlockingChecks( final Content edited )
     {
-        final ValidationErrors validationErrors = ValidateContentDataCommand.create().
-            contentData( edited.getData() ).
-            contentType( edited.getType() ).
-            name( edited.getName() ).
-            displayName( edited.getDisplayName() ).
-            extradatas( edited.getAllExtraData() ).
-            xDataService( this.xDataService ).
-            siteService( this.siteService ).
-            contentTypeService( this.contentTypeService ).
-            build().
-            execute();
-
-        for ( ValidationError error : validationErrors )
-        {
-            LOG.info( "*** DataValidationError: " + error.getErrorMessage() );
-        }
-
-        if ( validationErrors.hasErrors() )
-        {
-            if ( this.params.isRequireValid() )
-            {
-                throw new ContentDataValidationException( validationErrors.getFirst().getErrorMessage() );
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        return true;
+        return ValidateContentDataCommand.create()
+            .contentData( edited.getData() )
+            .contentType( edited.getType() )
+            .name( edited.getName() )
+            .displayName( edited.getDisplayName() )
+            .extraDatas( edited.getAllExtraData() )
+            .xDataService( this.xDataService )
+            .siteService( this.siteService )
+            .contentValidators( this.contentValidators )
+            .contentTypeService( this.contentTypeService )
+            .build()
+            .execute();
     }
 
     private Thumbnail resolveMediaThumbnail( final Content content )

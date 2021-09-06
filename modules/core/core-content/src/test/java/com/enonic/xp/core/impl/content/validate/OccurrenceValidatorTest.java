@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.DataValidationError;
+import com.enonic.xp.content.ValidationError;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.form.FieldSet;

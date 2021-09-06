@@ -28,8 +28,7 @@ import com.enonic.xp.content.processor.ProcessCreateResult;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
-import com.enonic.xp.core.impl.content.validate.ValidationError;
-import com.enonic.xp.core.impl.content.validate.ValidationErrors;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.inputtype.InputTypes;
@@ -99,13 +98,13 @@ final class CreateContentCommand
 
     private Content doExecute()
     {
-        validateBlockingChecks();
-
         final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
         formDefaultValuesProcessor.setDefaultValues( contentType.getForm(), params.getData() );
         // TODO apply default values to xData
 
-        CreateContentParams processedParams = processCreateContentParams();
+        CreateContentParams processedParams = runContentProcessors( this.params, contentType );
+
+        validateBlockingChecks( processedParams );
 
         final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedParams );
 
@@ -122,7 +121,7 @@ final class CreateContentCommand
 
         try
         {
-            final Node createdNode = doCreateContent( createNodeParams );
+            final Node createdNode = nodeService.create( createNodeParams );
 
             if ( params.isRefresh() )
             {
@@ -143,19 +142,13 @@ final class CreateContentCommand
         }
     }
 
-    private Node doCreateContent( final CreateNodeParams createNodeParams )
-    {
-        return nodeService.create( createNodeParams );
-    }
-
-    private void validateBlockingChecks()
+    private void validateBlockingChecks(final CreateContentParams params)
     {
         validateContentType( params );
         validateParentChildRelations( params.getParent(), params.getType() );
         validatePropertyTree( params );
         validateCreateAttachments( params.getCreateAttachments() );
     }
-
 
     private void validateContentType( final CreateContentParams params )
     {
@@ -194,12 +187,6 @@ final class CreateContentCommand
         }
     }
 
-    private CreateContentParams processCreateContentParams()
-    {
-        final ContentType type = this.contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
-        return runContentProcessors( this.params, type );
-    }
-
     private CreateContentTranslatorParams createContentTranslatorParams( final CreateContentParams processedContent )
     {
         final CreateContentTranslatorParams.Builder builder = CreateContentTranslatorParams.create( processedContent );
@@ -227,10 +214,10 @@ final class CreateContentCommand
         {
             if ( contentProcessor.supports( contentType ) )
             {
-                final ProcessCreateResult processCreateResult =
+                final ProcessCreateResult result =
                     contentProcessor.processCreate( new ProcessCreateParams( processedParams, mediaInfo ) );
 
-                processedParams = CreateContentParams.create( processCreateResult.getCreateContentParams() ).build();
+                processedParams = CreateContentParams.create( result.getCreateContentParams() ).build();
             }
         }
 
@@ -329,26 +316,24 @@ final class CreateContentCommand
             .contentType( builder.getType() )
             .name( builder.getName() )
             .displayName( builder.getDisplayName() )
-            .extradatas( builder.getExtraDatas() != null ? ExtraDatas.from( builder.getExtraDatas() ) : ExtraDatas.empty() )
+            .extraDatas( builder.getExtraDatas() != null ? ExtraDatas.from( builder.getExtraDatas() ) : ExtraDatas.empty() )
             .xDataService( this.xDataService )
             .siteService( this.siteService )
+            .contentValidators( this.contentValidators )
             .contentTypeService( this.contentTypeService )
             .build()
             .execute();
 
-        for ( ValidationError error : validationErrors )
-        {
-            LOG.info( "*** DataValidationError: " + error.getErrorMessage() );
-        }
-        if ( validationErrors.hasErrors() )
+        if ( validationErrors.isNotEmpty() )
         {
             if ( params.isRequireValid() )
             {
-                throw new ContentDataValidationException( validationErrors.getFirst().getErrorMessage() );
+                throw new ContentDataValidationException( validationErrors.iterator().next().getErrorMessage() );
             }
             else
             {
                 builder.valid( false );
+                builder.validationErrors( validationErrors );
                 return;
             }
         }

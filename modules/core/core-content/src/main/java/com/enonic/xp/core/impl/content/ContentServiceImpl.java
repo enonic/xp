@@ -3,7 +3,9 @@ package com.enonic.xp.core.impl.content;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
+import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -88,10 +90,10 @@ import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.processor.ContentProcessor;
+import com.enonic.xp.content.validate.ContentValidator;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.content.processor.ContentProcessors;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
@@ -153,7 +155,9 @@ public class ContentServiceImpl
 
     private final ContentNodeTranslator translator;
 
-    private final ContentProcessors contentProcessors = new ContentProcessors();
+    private final List<ContentProcessor> contentProcessors = new CopyOnWriteArrayList<>();
+
+    private final List<ContentValidator> contentValidators = new CopyOnWriteArrayList<>();
 
     private FormDefaultValuesProcessor formDefaultValuesProcessor;
 
@@ -221,6 +225,7 @@ public class ContentServiceImpl
             siteService( this.siteService ).
             xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
+            contentValidators( this.contentValidators ).
             formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
@@ -259,6 +264,7 @@ public class ContentServiceImpl
             siteService( this.siteService ).
             xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
+            contentValidators( this.contentValidators ).
             formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
@@ -303,6 +309,7 @@ public class ContentServiceImpl
             siteService( this.siteService ).
             xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
+            contentValidators( this.contentValidators ).
             formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
@@ -328,6 +335,7 @@ public class ContentServiceImpl
             siteService( this.siteService ).
             xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
+            contentValidators( this.contentValidators ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
@@ -356,6 +364,7 @@ public class ContentServiceImpl
             siteService( this.siteService ).
             xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
+            contentValidators( this.contentValidators ).
             contentDataSerializer( this.contentDataSerializer ).
             allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).
             build().
@@ -755,6 +764,7 @@ public class ContentServiceImpl
             translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             contentProcessors( this.contentProcessors ).
+            contentValidators( this.contentValidators ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
@@ -1171,6 +1181,7 @@ public class ContentServiceImpl
             siteService( this.siteService ).
             xDataService( this.xDataService ).
             contentProcessors( this.contentProcessors ).
+            contentValidators( this.contentValidators ).
             build().
             execute();
 
@@ -1316,6 +1327,17 @@ public class ContentServiceImpl
     public void removeContentProcessor( final ContentProcessor contentProcessor )
     {
         this.contentProcessors.remove( contentProcessor );
+    }
+
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void addContentValidator( final ContentValidator contentValidator )
+    {
+        this.contentValidators.add( contentValidator );
+    }
+
+    public void removeContentValidator( final ContentValidator contentValidator )
+    {
+        this.contentValidators.remove( contentValidator );
     }
 
     @Reference

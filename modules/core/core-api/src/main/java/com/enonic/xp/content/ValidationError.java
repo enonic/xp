@@ -1,10 +1,9 @@
-package com.enonic.xp.core.impl.content.validate;
+package com.enonic.xp.content;
 
 import java.text.MessageFormat;
 
 public class ValidationError
 {
-
     private final String errorMessage;
 
     public ValidationError( final String errorMessage, final Object... args )

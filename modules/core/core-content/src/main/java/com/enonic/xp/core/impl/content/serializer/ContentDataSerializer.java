@@ -23,8 +23,10 @@ import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentTranslatorParams;
+import com.enonic.xp.content.DataValidationError;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -80,11 +82,11 @@ public class ContentDataSerializer
 
     private ContentDataSerializer( final Builder builder )
     {
-        this.pageDataSerializer = PageDataSerializer.create().
-            pageDescriptorService( builder.pageDescriptorService ).
-            partDescriptorService( builder.partDescriptorService ).
-            layoutDescriptorService( builder.layoutDescriptorService ).
-            build();
+        this.pageDataSerializer = PageDataSerializer.create()
+            .pageDescriptorService( builder.pageDescriptorService )
+            .partDescriptorService( builder.partDescriptorService )
+            .layoutDescriptorService( builder.layoutDescriptorService )
+            .build();
 
         this.extraDataSerializer = new ExtraDataSerializer();
         this.workflowInfoSerializer = new WorkflowInfoSerializer();
@@ -98,15 +100,19 @@ public class ContentDataSerializer
         final PropertySet contentAsData = propertyTree.getRoot();
 
         contentAsData.addBoolean( VALID, params.isValid() );
+
+        addValidationErrors( params.getValidationErrors(), contentAsData );
+
         contentAsData.ifNotNull().addString( DISPLAY_NAME, params.getDisplayName() );
         contentAsData.ifNotNull().addString( TYPE, params.getType() != null ? params.getType().toString() : null );
         contentAsData.ifNotNull().addInstant( CREATED_TIME, params.getCreatedTime() );
         contentAsData.ifNotNull().addString( CREATOR, params.getCreator().toString() );
         contentAsData.ifNotNull().addString( MODIFIER, params.getModifier().toString() );
         contentAsData.ifNotNull().addInstant( MODIFIED_TIME, params.getModifiedTime() );
-        contentAsData.ifNotNull().addString( OWNER, PrincipalKey.ofAnonymous().equals( params.getOwner() ) || params.getOwner() == null
-            ? null
-            : params.getOwner().toString() );
+        contentAsData.ifNotNull()
+            .addString( OWNER, PrincipalKey.ofAnonymous().equals( params.getOwner() ) || params.getOwner() == null
+                ? null
+                : params.getOwner().toString() );
         contentAsData.ifNotNull().addString( LANGUAGE, params.getLanguage() != null ? params.getLanguage().toLanguageTag() : null );
 
         contentAsData.addSet( DATA, params.getData().getRoot().copy( contentAsData.getTree() ) );
@@ -233,6 +239,8 @@ public class ContentDataSerializer
     private void addMetadata( final PropertySet contentAsData, final Content content, final PrincipalKey modifier )
     {
         contentAsData.setBoolean( ContentPropertyNames.VALID, content.isValid() );
+        addValidationErrors( content.getValidationErrors(), contentAsData );
+
         contentAsData.ifNotNull().addString( DISPLAY_NAME, content.getDisplayName() );
         contentAsData.ifNotNull().addString( TYPE, content.getType().toString() );
         contentAsData.ifNotNull().addString( OWNER, content.getOwner() != null ? content.getOwner().toString() : null );
@@ -241,8 +249,8 @@ public class ContentDataSerializer
         contentAsData.ifNotNull().addString( MODIFIER, modifier.toString() );
         contentAsData.ifNotNull().addString( CREATOR, content.getCreator().toString() );
         contentAsData.ifNotNull().addInstant( CREATED_TIME, content.getCreatedTime() );
-        contentAsData.ifNotNull().addString( ORIGIN_PROJECT,
-                                             content.getOriginProject() != null ? content.getOriginProject().toString() : null );
+        contentAsData.ifNotNull()
+            .addString( ORIGIN_PROJECT, content.getOriginProject() != null ? content.getOriginProject().toString() : null );
         addPublishInfo( contentAsData, content.getPublishInfo() );
         addWorkflowInfo( contentAsData, content.getWorkflowInfo() );
         addInherit( contentAsData, content.getInherit() );
@@ -254,10 +262,10 @@ public class ContentDataSerializer
         {
             return;
         }
-        contentAsData.ifNotNull().addReferences( PROCESSED_REFERENCES, processedIds.
-            stream().
-            map( contentId -> new Reference( NodeId.from( contentId ) ) ).
-            toArray( Reference[]::new ) );
+        contentAsData.ifNotNull()
+            .addReferences( PROCESSED_REFERENCES, processedIds.stream()
+                .map( contentId -> new Reference( NodeId.from( contentId ) ) )
+                .toArray( Reference[]::new ) );
     }
 
     private void addPublishInfo( final PropertySet contentAsData, final ContentPublishInfo data )
@@ -287,10 +295,7 @@ public class ContentDataSerializer
     {
         if ( inherit != null )
         {
-            contentAsData.ifNotNull().addStrings( INHERIT, inherit.
-                stream().
-                map( Enum::name ).
-                collect( Collectors.toSet() ) );
+            contentAsData.ifNotNull().addStrings( INHERIT, inherit.stream().map( Enum::name ).collect( Collectors.toSet() ) );
         }
     }
 
@@ -380,10 +385,9 @@ public class ContentDataSerializer
 
     private void extractInherit( final PropertySet contentAsSet, final Content.Builder builder )
     {
-        builder.setInherit( StreamSupport.
-            stream( contentAsSet.getStrings( INHERIT ).spliterator(), false ).
-            map( ContentInheritType::valueOf ).
-            collect( Collectors.toSet() ) );
+        builder.setInherit( StreamSupport.stream( contentAsSet.getStrings( INHERIT ).spliterator(), false )
+                                .map( ContentInheritType::valueOf )
+                                .collect( Collectors.toSet() ) );
     }
 
     private void extractOriginProject( final PropertySet contentAsSet, final Content.Builder builder )
@@ -400,13 +404,13 @@ public class ContentDataSerializer
         final Attachments.Builder attachments = Attachments.create();
         for ( final PropertySet attachmentAsSet : attachmentSets )
         {
-            attachments.add( Attachment.create().
-                name( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_NAME ) ).
-                label( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_LABEL ) ).
-                mimeType( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_MIMETYPE ) ).
-                size( attachmentAsSet.getLong( ContentPropertyNames.ATTACHMENT_SIZE ) ).
-                textContent( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_TEXT ) ).
-                build() );
+            attachments.add( Attachment.create()
+                                 .name( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_NAME ) )
+                                 .label( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_LABEL ) )
+                                 .mimeType( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_MIMETYPE ) )
+                                 .size( attachmentAsSet.getLong( ContentPropertyNames.ATTACHMENT_SIZE ) )
+                                 .textContent( attachmentAsSet.getString( ContentPropertyNames.ATTACHMENT_TEXT ) )
+                                 .build() );
         }
         return attachments.build();
     }
@@ -453,16 +457,32 @@ public class ContentDataSerializer
         // added attachments with same BinaryReference will replace existing ones
         for ( final CreateAttachment createAttachment : createAttachments )
         {
-            final Attachment attachment = Attachment.create().
-                name( createAttachment.getName() ).
-                label( createAttachment.getLabel() ).
-                mimeType( createAttachment.getMimeType() ).
-                size( attachmentSize( createAttachment ) ).
-                textContent( createAttachment.getTextContent() ).
-                build();
+            final Attachment attachment = Attachment.create()
+                .name( createAttachment.getName() )
+                .label( createAttachment.getLabel() )
+                .mimeType( createAttachment.getMimeType() )
+                .size( attachmentSize( createAttachment ) )
+                .textContent( createAttachment.getTextContent() )
+                .build();
             attachments.put( attachment.getBinaryReference(), attachment );
         }
         return Attachments.from( attachments.values() );
+    }
+
+    private void addValidationErrors( final ValidationErrors validationErrors, final PropertySet contentAsData )
+    {
+        if ( validationErrors != null && validationErrors.iterator().hasNext() )
+        {
+            contentAsData.addSets( "validationErrors", validationErrors.stream().map( validationError -> {
+                final PropertySet propertySet = new PropertySet();
+                propertySet.addString( "message", validationError.getErrorMessage() );
+                if ( validationError instanceof DataValidationError )
+                {
+                    propertySet.addString( "path", ( (DataValidationError) validationError ).getPath().toString() );
+                }
+                return propertySet;
+            } ).toArray( PropertySet[]::new ) );
+        }
     }
 
     private long attachmentSize( final CreateAttachment createAttachment )

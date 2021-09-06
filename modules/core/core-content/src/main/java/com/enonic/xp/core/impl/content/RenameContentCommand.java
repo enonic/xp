@@ -7,7 +7,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
-import com.enonic.xp.core.impl.content.validate.ValidationErrors;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
@@ -82,34 +82,32 @@ final class RenameContentCommand
 
         final Content content = translator.fromNode( node, false );
 
-        final boolean isValid = validateContent( content );
+        final ValidationErrors validate = validateContent( content );
 
-        if ( content.isValid() != isValid )
+        if ( content.isValid() != validate.isEmpty() )
         {
-            return updateValidState( content, isValid );
+            return updateValidState( content, validate );
         }
 
         return getContent( params.getContentId() );
     }
 
-    private boolean validateContent( final Content content )
+    private ValidationErrors validateContent( final Content content )
     {
-        final ValidationErrors validationErrors = ValidateContentDataCommand.create().
+        return ValidateContentDataCommand.create().
             contentData( content.getData() ).
             contentType( content.getType() ).
             name( content.getName() ).
-            displayName( content.getDisplayName() ).
-            extradatas( content.getAllExtraData() ).
+            displayName( content.getDisplayName() ).extraDatas( content.getAllExtraData() ).
             contentTypeService( this.contentTypeService ).
             xDataService( this.xDataService ).
             siteService( this.siteService ).
+            contentValidators( this.contentValidators ).
             build().
             execute();
-
-        return !validationErrors.hasErrors();
     }
 
-    private Content updateValidState( final Content content, final boolean isValid )
+    private Content updateValidState( final Content content, final ValidationErrors validated )
     {
 
         final UpdateContentParams updateContentParams = new UpdateContentParams().
@@ -117,7 +115,7 @@ final class RenameContentCommand
             contentId( content.getId() ).
             modifier( content.getModifier() ).
             stopInherit( false ).
-            editor( edit -> edit.valid = isValid );
+            editor( edit -> edit.valid = validated.isEmpty() );
 
         return UpdateContentCommand.create( this ).params( updateContentParams ).
             siteService( siteService ).

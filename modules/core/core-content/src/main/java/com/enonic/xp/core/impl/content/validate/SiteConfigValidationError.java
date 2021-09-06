@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content.validate;
 
+import com.enonic.xp.content.DataValidationError;
+
 public final class SiteConfigValidationError
     extends DataValidationError
 {

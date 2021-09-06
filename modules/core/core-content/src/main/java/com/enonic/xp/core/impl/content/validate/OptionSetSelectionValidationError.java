@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content.validate;
 
+import com.enonic.xp.content.DataValidationError;
 import com.enonic.xp.form.FormOptionSet;
 
 public final class OptionSetSelectionValidationError

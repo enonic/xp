@@ -6,6 +6,8 @@ import java.util.stream.StreamSupport;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.content.ValidationError;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.ValueTypes;

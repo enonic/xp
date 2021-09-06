@@ -18,7 +18,6 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.core.impl.content.processor.ContentProcessors;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.schema.content.BuiltinContentTypesAccessor;
 import com.enonic.xp.data.PropertySet;
@@ -603,7 +602,6 @@ public class CreateContentCommandTest
             .siteService( this.siteService )
             .pageDescriptorService( this.pageDescriptorService )
             .contentDataSerializer( contentDataSerializer )
-            .contentProcessors( new ContentProcessors() )
             .formDefaultValuesProcessor( ( form, data ) -> {
             } )
             .build();

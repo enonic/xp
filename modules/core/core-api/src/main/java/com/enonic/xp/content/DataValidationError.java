@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.content.validate;
+package com.enonic.xp.content;
 
 import com.enonic.xp.form.FormItemPath;
 
@@ -7,8 +7,7 @@ public class DataValidationError
 {
     private final FormItemPath path;
 
-
-    DataValidationError( final FormItemPath path, final String errorMessage, final Object... args )
+    public DataValidationError( final FormItemPath path, final String errorMessage, final Object... args )
     {
         super( errorMessage, args );
         this.path = path;
@@ -18,5 +17,4 @@ public class DataValidationError
     {
         return path;
     }
-
 }
