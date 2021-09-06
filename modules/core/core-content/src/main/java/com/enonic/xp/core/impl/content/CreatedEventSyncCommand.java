@@ -19,6 +19,8 @@ import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.project.ProjectName;
 
+import static com.enonic.xp.archive.ArchiveConstants.ARCHIVE_ROOT_CONTENT_PATH;
+
 final class CreatedEventSyncCommand
     extends AbstractContentEventSyncCommand
 {
@@ -43,21 +45,17 @@ final class CreatedEventSyncCommand
                 {
                     final ContentId parentId = contentService.getByPath( params.getSourceContent().getParentPath() ).getId();
                     params.getTargetContext().runWith( () -> {
-
                         if ( params.getSourceContent().getParentPath().isRoot() )
                         {
-                            contentService.importContent( createImportParams( params, ContentPath.ROOT, null ) );
-                            return;
+                            syncRootContent();
                         }
-
-                        if ( contentService.contentExists( parentId ) )
+                        else if ( contentService.contentExists( parentId ) )
                         {
-                            final Content targetParent = contentService.getById( parentId );
-
-                            contentService.importContent( createImportParams( params, targetParent.getPath(),
-                                                                              targetParent.getChildOrder().isManualOrder()
-                                                                                  ? InsertManualStrategy.MANUAL
-                                                                                  : null ) );
+                            syncChildContent( parentId );
+                        }
+                        else if ( ARCHIVE_ROOT_CONTENT_PATH.equals( params.getSourceContent().getParentPath() ) )
+                        {
+                            syncArchiveContainer();
                         }
                     } );
                 }
@@ -70,35 +68,57 @@ final class CreatedEventSyncCommand
         }
     }
 
+    private void syncRootContent()
+    {
+        contentService.importContent( createImportParams( params, params.getSourceContent().getParentPath().getRoot(), null ) );
+    }
+
+    private void syncChildContent( final ContentId parentId )
+    {
+        final Content targetParent = contentService.getById( parentId );
+
+        contentService.importContent( createImportParams( params, targetParent.getPath(), targetParent.getChildOrder().isManualOrder()
+            ? InsertManualStrategy.MANUAL
+            : null ) );
+    }
+
+    private void syncArchiveContainer()
+    {
+        final Content targetParent = contentService.getByPath( ARCHIVE_ROOT_CONTENT_PATH );
+
+        contentService.importContent( createImportParams( params, targetParent.getPath(), targetParent.getChildOrder().isManualOrder()
+            ? InsertManualStrategy.MANUAL
+            : null ) );
+
+    }
+
     private ImportContentParams createImportParams( final ContentEventSyncCommandParams params, final ContentPath parentPath,
                                                     final InsertManualStrategy insertManualStrategy )
     {
         final BinaryAttachments.Builder builder = BinaryAttachments.create();
 
-        params.getSourceContent().getAttachments().
-            forEach( attachment -> {
-                final ByteSource binary = params.getSourceContext().callWith(
-                    () -> contentService.getBinary( params.getSourceContent().getId(), attachment.getBinaryReference() ) );
-                builder.add( new BinaryAttachment( attachment.getBinaryReference(), binary ) );
-            } );
+        params.getSourceContent().getAttachments().forEach( attachment -> {
+            final ByteSource binary = params.getSourceContext()
+                .callWith( () -> contentService.getBinary( params.getSourceContent().getId(), attachment.getBinaryReference() ) );
+            builder.add( new BinaryAttachment( attachment.getBinaryReference(), binary ) );
+        } );
 
         final ContentPath targetPath = buildNewPath( parentPath, params.getSourceContent().getName() );
 
-        final EnumSet<ContentInheritType> inheritTypes = params.getSourceContent().getName().toString().
-            equals( targetPath.getName() )
+        final EnumSet<ContentInheritType> inheritTypes = params.getSourceContent().getName().toString().equals( targetPath.getName() )
             ? EnumSet.allOf( ContentInheritType.class )
             : EnumSet.complementOf( EnumSet.of( ContentInheritType.NAME ) );
 
-        return ImportContentParams.create().
-            importContent( params.getSourceContent() ).
-            targetPath( targetPath ).
-            binaryAttachments( builder.build() ).
-            inherit( inheritTypes ).
-            originProject( ProjectName.from( params.getSourceContext().getRepositoryId() ) ).
-            importPermissionsOnCreate( false ).
-            dryRun( false ).
-            insertManualStrategy( insertManualStrategy ).
-            build();
+        return ImportContentParams.create()
+            .importContent( params.getSourceContent() )
+            .targetPath( targetPath )
+            .binaryAttachments( builder.build() )
+            .inherit( inheritTypes )
+            .originProject( ProjectName.from( params.getSourceContext().getRepositoryId() ) )
+            .importPermissionsOnCreate( false )
+            .dryRun( false )
+            .insertManualStrategy( insertManualStrategy )
+            .build();
     }
 
     public static class Builder

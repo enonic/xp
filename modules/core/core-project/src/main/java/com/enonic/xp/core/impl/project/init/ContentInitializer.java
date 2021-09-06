@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -32,20 +33,11 @@ public final class ContentInitializer
 {
     private static final Logger LOG = LoggerFactory.getLogger( ContentInitializer.class );
 
-    private static final AccessControlList CONTENT_ROOT_DEFAULT_ACL = AccessControlList.create().
-        add( AccessControlEntry.create().
-            principal( RoleKeys.ADMIN ).
-            allowAll().
-            build() ).
-        add( AccessControlEntry.create().
-            principal( RoleKeys.CONTENT_MANAGER_ADMIN ).
-            allowAll().
-            build() ).
-        add( AccessControlEntry.create().
-            principal( RoleKeys.CONTENT_MANAGER_APP ).
-            allow( Permission.READ ).
-            build() ).
-        build();
+    private static final AccessControlList CONTENT_ROOT_DEFAULT_ACL = AccessControlList.create()
+        .add( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() )
+        .add( AccessControlEntry.create().principal( RoleKeys.CONTENT_MANAGER_ADMIN ).allowAll().build() )
+        .add( AccessControlEntry.create().principal( RoleKeys.CONTENT_MANAGER_APP ).allow( Permission.READ ).build() )
+        .build();
 
     private static final IndexPath CONTENT_INDEX_PATH_DISPLAY_NAME = IndexPath.from( "displayName" );
 
@@ -74,15 +66,15 @@ public final class ContentInitializer
             initializeRepository();
             createDraftBranch();
         } );
-        createAdminContext( ContentConstants.BRANCH_DRAFT ).runWith( this::initContentNode );
+        final Context adminDraft = createAdminContext( ContentConstants.BRANCH_DRAFT );
+        adminDraft.runWith( this::initContentNode );
     }
 
     @Override
     protected boolean isInitialized()
     {
-        return createAdminContext( ContentConstants.BRANCH_MASTER ).
-            callWith( () -> repositoryService.isInitialized( repositoryId ) &&
-                nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) != null );
+        return createAdminContext( ContentConstants.BRANCH_MASTER ).callWith(
+            () -> repositoryService.isInitialized( repositoryId ) && nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) != null );
     }
 
     @Override
@@ -98,12 +90,12 @@ public final class ContentInitializer
 
     private void initializeRepository()
     {
-        final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
-            repositoryId( repositoryId ).
-            data( data ).
-            rootPermissions( ContentConstants.CONTENT_REPO_DEFAULT_ACL ).
-            rootChildOrder( ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER ).
-            build();
+        final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create()
+            .repositoryId( repositoryId )
+            .data( data )
+            .rootPermissions( ContentConstants.CONTENT_REPO_DEFAULT_ACL )
+            .rootChildOrder( ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER )
+            .build();
 
         this.repositoryService.createRepository( createRepositoryParams );
     }
@@ -126,13 +118,14 @@ public final class ContentInitializer
             data.setString( ContentPropertyNames.CREATOR, user.getKey().toString() );
             data.setInstant( ContentPropertyNames.CREATED_TIME, Instant.now() );
 
-            final Node contentRoot = nodeService.create( CreateNodeParams.create().
-                data( data ).
-                name( ContentConstants.CONTENT_ROOT_NAME ).
-                parent( NodePath.ROOT ).
-                permissions( Objects.requireNonNullElse( this.accessControlList, CONTENT_ROOT_DEFAULT_ACL ) ).
-                childOrder( CONTENT_DEFAULT_CHILD_ORDER ).
-                build() );
+            final Node contentRoot = nodeService.create( CreateNodeParams.create()
+                                                             .data( data )
+                                                             .name( ContentConstants.CONTENT_ROOT_NAME )
+                                                             .parent( NodePath.ROOT )
+                                                             .permissions( Objects.requireNonNullElse( this.accessControlList,
+                                                                                                       CONTENT_ROOT_DEFAULT_ACL ) )
+                                                             .childOrder( CONTENT_DEFAULT_CHILD_ORDER )
+                                                             .build() );
 
             LOG.info( "Created content root-node: {}", contentRoot );
 

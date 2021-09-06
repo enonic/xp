@@ -157,8 +157,7 @@ public class ProjectServiceImpl
             build().
             initialize();
 
-        ArchiveInitializer.create().
-            setIndexService( indexService ).
+        ArchiveInitializer.create().setIndexService( indexService ).
             setNodeService( nodeService ).
             repositoryId( params.getName().getRepoId() ).
             accessControlList( CreateProjectRootAccessListCommand.create().

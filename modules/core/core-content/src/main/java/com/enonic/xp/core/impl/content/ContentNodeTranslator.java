@@ -67,11 +67,25 @@ public class ContentNodeTranslator
         return contents.build();
     }
 
+    private ContentPath getParent( final NodePath nodePath )
+    {
+        if ( NodePath.ROOT.equals( nodePath.getParentPath() ) )
+        {
+            if ( ContentConstants.CONTENT_ROOT_NAME.equals(  nodePath.getName()) )
+            {
+                return ContentPath.ROOT;
+            }
+            else
+            {
+                return ContentPath.from( "/", nodePath.getName() );
+            }
+        }
+        return ContentNodeHelper.translateNodePathToContentPath( nodePath.getParentPath() );
+    }
+
     private Content doTranslate( final Node node, final boolean hasChildren )
     {
-        final ContentPath parentContentPath = ContentConstants.CONTENT_ROOT_PATH.equals( node.path() )
-            ? ContentPath.ROOT
-            : ContentNodeHelper.translateNodePathToContentPath( node.path().getParentPath() );
+        final ContentPath parentContentPath = getParent( node.path() );
 
         final Content.Builder builder = contentDataSerializer.fromData( node.data().getRoot() );
         builder.id( ContentId.from( node.id().toString() ) )
