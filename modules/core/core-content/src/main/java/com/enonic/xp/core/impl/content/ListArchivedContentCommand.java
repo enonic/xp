@@ -69,8 +69,7 @@ final class ListArchivedContentCommand
         final FindNodesByQueryResult result = nodeService.findByQuery( NodeQuery.create()
                                                                            .query( QueryExpr.from(
                                                                                CompareExpr.like( FieldExpr.from( "_parentPath" ),
-                                                                                                 ValueExpr.string( "/" +
-                                                                                                                       ArchiveConstants.ARCHIVE_ROOT_NAME +
+                                                                                                 ValueExpr.string( ArchiveConstants.ARCHIVE_ROOT_PATH +
                                                                                                                        "/*" ) ) ) )
                                                                            .withPath( true )
                                                                            .size( -1 )
@@ -95,12 +94,12 @@ final class ListArchivedContentCommand
     {
         final Map<String, Set<ContentId>> archived = new HashMap<>();
 
-        final String parentPath = nodeService.getById( NodeId.from( parent ) ).path().asRelative().toString();
+        final String parentPath = nodeService.getById( NodeId.from( parent ) ).path().asAbsolute().toString();
 
         final FindNodesByQueryResult result = nodeService.findByQuery( NodeQuery.create()
                                                                            .query( QueryExpr.from(
                                                                                CompareExpr.eq( FieldExpr.from( "_parentPath" ),
-                                                                                               ValueExpr.string( "/" + parentPath ) ) ) )
+                                                                                               ValueExpr.string( parentPath ) ) ) )
                                                                            .withPath( true )
                                                                            .size( -1 )
                                                                            .build() );

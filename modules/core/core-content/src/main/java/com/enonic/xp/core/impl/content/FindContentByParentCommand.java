@@ -36,11 +36,7 @@ final class FindContentByParentCommand
 
         final Contents contents = this.translator.fromNodes( nodes, true );
 
-        return FindContentByParentResult.create().
-            contents( contents ).
-            totalHits( result.getTotalHits() ).
-            hits( result.getHits() ).
-            build();
+        return FindContentByParentResult.create().contents( contents ).totalHits( result.getTotalHits() ).hits( result.getHits() ).build();
     }
 
     private FindNodesByParentParams createFindNodesByParentParams()
@@ -49,19 +45,18 @@ final class FindContentByParentCommand
 
         setNodePathOrIdAsIdentifier( findNodesParam );
 
-        return findNodesParam.
-            queryFilters( createFilters() ).
-            from( params.getFrom() ).
-            size( params.getSize() ).
-            childOrder( params.getChildOrder() ).
-            build();
+        return findNodesParam.queryFilters( createFilters() )
+            .from( params.getFrom() )
+            .size( params.getSize() )
+            .childOrder( params.getChildOrder() )
+            .build();
     }
 
     private void setNodePathOrIdAsIdentifier( final FindNodesByParentParams.Builder findNodesParam )
     {
         if ( params.getParentPath() == null && params.getParentId() == null )
         {
-            final NodePath parentPath = ContentNodeHelper.CONTENT_ROOT_NODE.asAbsolute();
+            final NodePath parentPath = ContentNodeHelper.getContentRoot();
             findNodesParam.parentPath( parentPath );
         }
         else if ( params.getParentPath() != null )
@@ -80,10 +75,9 @@ final class FindContentByParentCommand
     protected Filters createFilters()
     {
         final Filters.Builder filters = Filters.create();
-        super.createFilters().
-            forEach( filters::add );
-        params.getQueryFilters().
-            forEach( filters::add );
+        super.createFilters().forEach( filters::add );
+        params.getQueryFilters().forEach( filters::add );
+
         return filters.build();
     }
 

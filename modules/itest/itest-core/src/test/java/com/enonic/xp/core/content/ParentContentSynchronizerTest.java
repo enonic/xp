@@ -57,7 +57,7 @@ public class ParentContentSynchronizerTest
             contentId( contentId ).
             sourceProject( sourceProject.getName() ).
             targetProject( targetProject.getName() ).
-            addSyncEventType( ContentSyncEventType.CREATED ).
+            syncEventType( ContentSyncEventType.CREATED ).
             build() );
 
         return targetContext.callWith( () -> contentService.getById( contentId ) );
@@ -69,7 +69,7 @@ public class ParentContentSynchronizerTest
             contentId( contentId ).
             sourceProject( sourceProject.getName() ).
             targetProject( targetProject.getName() ).
-            addSyncEventType( ContentSyncEventType.UPDATED ).
+            syncEventType( ContentSyncEventType.UPDATED ).
             build() );
 
         return targetContext.callWith( () -> contentService.getById( contentId ) );
@@ -82,7 +82,7 @@ public class ParentContentSynchronizerTest
             contentId( contentId ).
             sourceProject( sourceProject.getName() ).
             targetProject( targetProject.getName() ).
-            addSyncEventType( ContentSyncEventType.RENAMED ).
+            syncEventType( ContentSyncEventType.RENAMED ).
             build() );
 
         return targetContext.callWith( () -> contentService.getById( contentId ) );
@@ -95,7 +95,7 @@ public class ParentContentSynchronizerTest
             contentId( contentId ).
             sourceProject( sourceProject.getName() ).
             targetProject( targetProject.getName() ).
-            addSyncEventType( ContentSyncEventType.MOVED ).
+            syncEventType( ContentSyncEventType.MOVED ).
             build() );
 
         return targetContext.callWith( () -> contentService.getById( contentId ) );
@@ -108,7 +108,7 @@ public class ParentContentSynchronizerTest
             contentId( contentId ).
             sourceProject( sourceProject.getName() ).
             targetProject( targetProject.getName() ).
-            addSyncEventType( ContentSyncEventType.SORTED ).
+            syncEventType( ContentSyncEventType.SORTED ).
             build() );
 
         return targetContext.callWith( () -> contentService.getById( contentId ) );
@@ -121,7 +121,7 @@ public class ParentContentSynchronizerTest
             contentId( contentId ).
             sourceProject( sourceProject.getName() ).
             targetProject( targetProject.getName() ).
-            addSyncEventType( ContentSyncEventType.DELETED ).
+            syncEventType( ContentSyncEventType.DELETED ).
             build() );
 
         return !targetContext.callWith( () -> contentService.contentExists( contentId ) );
@@ -133,7 +133,7 @@ public class ParentContentSynchronizerTest
             contentId( contentId ).
             sourceProject( sourceProject.getName() ).
             targetProject( targetProject.getName() ).
-            addSyncEventType( ContentSyncEventType.MANUAL_ORDER_UPDATED ).
+            syncEventType( ContentSyncEventType.MANUAL_ORDER_UPDATED ).
             build() );
 
         return targetContext.callWith( () -> contentService.getById( contentId ) );

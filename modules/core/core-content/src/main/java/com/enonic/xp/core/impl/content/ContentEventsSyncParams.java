@@ -1,9 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.EnumSet;
-
-import com.google.common.collect.ImmutableSet;
-
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.project.ProjectName;
 
@@ -15,14 +11,14 @@ public final class ContentEventsSyncParams
 
     private final ProjectName targetProject;
 
-    private final EnumSet<ContentSyncEventType> syncTypes;
+    private final ContentSyncEventType syncType;
 
     public ContentEventsSyncParams( Builder builder )
     {
         this.contentId = builder.contentId;
         this.sourceProject = builder.sourceProject;
         this.targetProject = builder.targetProject;
-        this.syncTypes = EnumSet.copyOf( builder.syncTypes.build() );
+        this.syncType = builder.syncType;
     }
 
     public static Builder create()
@@ -45,9 +41,9 @@ public final class ContentEventsSyncParams
         return targetProject;
     }
 
-    public EnumSet<ContentSyncEventType> getSyncTypes()
+    public ContentSyncEventType getSyncType()
     {
-        return syncTypes;
+        return syncType;
     }
 
     public static final class Builder
@@ -58,7 +54,7 @@ public final class ContentEventsSyncParams
 
         private ProjectName targetProject;
 
-        private final ImmutableSet.Builder<ContentSyncEventType> syncTypes = ImmutableSet.builder();
+        private ContentSyncEventType syncType;
 
         public Builder contentId( ContentId contentId )
         {
@@ -78,9 +74,9 @@ public final class ContentEventsSyncParams
             return this;
         }
 
-        public Builder addSyncEventType( ContentSyncEventType syncEventType )
+        public Builder syncEventType( ContentSyncEventType syncEventType )
         {
-            this.syncTypes.add( syncEventType );
+            this.syncType = syncEventType;
             return this;
         }
 

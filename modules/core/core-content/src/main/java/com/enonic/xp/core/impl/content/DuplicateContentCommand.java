@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.DuplicateContentException;
 import com.enonic.xp.content.DuplicateContentListener;
 import com.enonic.xp.content.DuplicateContentParams;
@@ -74,7 +73,7 @@ final class DuplicateContentCommand
         final ContentIds childrenIds = params.getIncludeChildren() ? getAllChildren( duplicatedContent ) : ContentIds.empty();
 
         return DuplicateContentsResult.create().
-            setSourceContentPath( ContentPath.from( sourceNode.path().toString() ) ).
+            setSourceContentPath( ContentNodeHelper.translateNodePathToContentPath( sourceNode.path() ) ).
             setContentName( duplicatedContent.getDisplayName() ).
             addDuplicated( duplicatedContent.getId() ).
             addDuplicated( childrenIds ).

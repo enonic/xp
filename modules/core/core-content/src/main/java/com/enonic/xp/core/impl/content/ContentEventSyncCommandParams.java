@@ -92,6 +92,7 @@ public final class ContentEventSyncCommandParams
 
         public ContentEventSyncCommandParams build()
         {
+            validate();
             return new ContentEventSyncCommandParams( this );
         }
 

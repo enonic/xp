@@ -6,9 +6,11 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentState;
 import com.enonic.xp.content.Contents;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeService;
@@ -44,6 +46,10 @@ public class ContentNodeTranslator
 
     public Content fromNode( final Node node, final boolean resolveHasChildren )
     {
+        return fromNode( node, resolveHasChildren, true );
+    }
+
+    public Content fromNode(final Node node, final boolean resolveHasChildren, final boolean checkContext) {
         final boolean hasChildren = resolveHasChildren && this.nodeService.hasChildren( node );
         return doTranslate( node, hasChildren );
     }
@@ -67,14 +73,35 @@ public class ContentNodeTranslator
         return contents.build();
     }
 
+    private ContentPath getParent( final NodePath nodePath )
+    {
+        if ( NodePath.ROOT.equals( nodePath.getParentPath() ) )
+        {
+            if ( ContentConstants.CONTENT_ROOT_NAME.equals( nodePath.getName() ) )
+            {
+                return ContentPath.ROOT;
+            }
+            else
+            {
+                return ContentPath.from( "/", nodePath.getName() );
+            }
+        }
+        return ContentNodeHelper.translateNodePathToContentPath( nodePath.getParentPath() );
+    }
+
     private Content doTranslate( final Node node, final boolean hasChildren )
     {
-        final ContentPath parentContentPath = ContentConstants.CONTENT_ROOT_PATH.equals( node.path() )
-            ? ContentPath.ROOT
-            : ContentNodeHelper.translateNodePathToContentPath( node.path().getParentPath() );
+        final ContentId contentId = ContentId.from( node.id().toString() );
+
+        if ( !node.path().toString().startsWith( ContentNodeHelper.getContentRoot().toString() ) )
+        {
+            throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch(), ContentNodeHelper.getContentRoot() );
+        }
+
+        final ContentPath parentContentPath = getParent( node.path() );
 
         final Content.Builder builder = contentDataSerializer.fromData( node.data().getRoot() );
-        builder.id( ContentId.from( node.id().toString() ) )
+        builder.id( contentId )
             .parentPath( parentContentPath )
             .name( node.name().toString() )
             .childOrder( node.getChildOrder() )

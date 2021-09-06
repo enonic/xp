@@ -40,22 +40,21 @@ final class ResolveArchivedByContentsCommand
 
     List<ArchivedContainer> execute()
     {
-        final Nodes nodesToRemove =
+        final Nodes sourceNodes =
             nodeService.getByIds( NodeIds.from( params.getContents().stream().map( ContentId::toString ).collect( Collectors.toList() ) ) );
 
-        final List<NodeId> containerIdsToRemove = nodesToRemove.getPaths()
+        final List<NodeId> containerIds = sourceNodes.getPaths()
             .stream()
             .map( path -> path.asAbsolute().getElementAsString( 1 ) )
             .distinct()
             .map( NodeId::from )
             .collect( Collectors.toList() );
 
-        return containerIdsToRemove.stream().map( containerId -> {
+        return containerIds.stream().map( containerId -> {
             final FindNodesByQueryResult result = nodeService.findByQuery( NodeQuery.create()
                                                                                .query( QueryExpr.from(
                                                                                    CompareExpr.like( FieldExpr.from( "_path" ),
-                                                                                                   ValueExpr.string( "/" +
-                                                                                                                         ArchiveConstants.ARCHIVE_ROOT_NAME +
+                                                                                                     ValueExpr.string( ArchiveConstants.ARCHIVE_ROOT_PATH +
                                                                                                                          "/" + containerId +
                                                                                                                          "/*" ) ) ) )
                                                                                .withPath( true )

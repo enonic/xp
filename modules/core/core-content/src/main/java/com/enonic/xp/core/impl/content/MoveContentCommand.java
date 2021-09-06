@@ -6,7 +6,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentAlreadyMovedException;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.MoveContentException;
@@ -72,21 +71,21 @@ final class MoveContentCommand
         final ContentId contentId = params.getContentId();
         final Content sourceContent = getContent( contentId );
 
-        if ( sourceContent.getParentPath().equals( params.getParentContentPath() ) )
+        final NodePath newParentPath = ContentNodeHelper.translateContentPathToNodePath( params.getParentContentPath() );
+
+        if ( nodeService.nodeExists( NodePath.create( newParentPath, sourceContent.getName().toString() ).build() ) )
         {
             throw new ContentAlreadyMovedException(
-                String.format( "Content with id [%s] is already a child of [%s]", params.getContentId(), params.getParentContentPath() ),
+                String.format( "Content with name [%s] is already a child of [%s]", sourceContent.getName(), params.getParentContentPath() ),
                 sourceContent.getPath() );
         }
 
         validateParentChildRelations( params.getParentContentPath(), sourceContent.getType() );
 
-        final NodePath nodePath =
-            NodePath.create( ContentConstants.CONTENT_ROOT_PATH ).elements( params.getParentContentPath().toString() ).build();
         final NodeId sourceNodeId = NodeId.from( contentId );
 
         final MoveNodeParams.Builder builder =
-            MoveNodeParams.create().nodeId( sourceNodeId ).parentNodePath( nodePath ).moveListener( this );
+            MoveNodeParams.create().nodeId( sourceNodeId ).parentNodePath( newParentPath ).moveListener( this );
 
         if ( params.stopInherit() )
         {
