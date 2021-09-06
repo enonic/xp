@@ -78,7 +78,7 @@ public final class ProjectContentEventListener
         final List<Map<String, String>> nodes = (List<Map<String, String>>) event.getData().get( "nodes" );
 
         nodes.forEach( nodeMap -> {
-            if ( nodeMap.get( "path" ).startsWith( "/content/" ) )
+            if ( nodeMap.get( "path" ).startsWith( "/content/" ) || nodeMap.get( "path" ).startsWith( "/archive/" ) )
             {
                 this.simpleExecutor.execute( () -> handleContentEvent( nodeMap, event.getType() ) );
             }

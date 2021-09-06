@@ -151,6 +151,7 @@ final class CreateContentCommand
     private void validateBlockingChecks()
     {
         validateContentType( params );
+//        validateContentLocation( params.getParent(), "Content cannot be created directly in the archive" );
         validateParentChildRelations( params.getParent(), params.getType() );
         validatePropertyTree( params );
         validateCreateAttachments( params.getCreateAttachments() );
@@ -262,7 +263,7 @@ final class CreateContentCommand
             if ( inherited )
             {
                 final Node contentRootNode =
-                    runAsAdmin( () -> this.nodeService.getByPath( ContentNodeHelper.translateContentPathToNodePath( ContentPath.ROOT ) ) );
+                    runAsAdmin( () -> this.nodeService.getByPath( ContentNodeHelper.translateContentPathToNodePath( parentPath.getRoot() ) ) );
 
                 language = contentRootNode.data().getString( ContentPropertyNames.LANGUAGE );
             }

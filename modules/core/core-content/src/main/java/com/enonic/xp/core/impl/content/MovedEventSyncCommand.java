@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
@@ -29,12 +31,13 @@ final class MovedEventSyncCommand
         {
             final Content sourceParent =
                 params.getSourceContext().callWith( () -> contentService.getByPath( params.getSourceContent().getParentPath() ) );
-            final Content sourceRoot = params.getSourceContext().callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
+            final Content sourceRoot =
+                params.getSourceContext().callWith( () -> contentService.getByPath( params.getSourceContent().getPath().getRoot()  ) );
 
             params.getTargetContext().runWith( () -> {
                 final ContentPath targetParentPath = contentService.contentExists( sourceParent.getId() )
                     ? contentService.getById( sourceParent.getId() ).getPath()
-                    : sourceRoot.getId().equals( sourceParent.getId() ) ? ContentPath.ROOT : null;
+                    : sourceRoot.getId().equals( sourceParent.getId() ) ? params.getSourceContent().getPath().getRoot() : null;
 
                 if ( targetParentPath != null )
                 {
@@ -42,19 +45,19 @@ final class MovedEventSyncCommand
                     {
                         final ContentPath newPath = buildNewPath( targetParentPath, params.getTargetContent().getName() );
 
-                        if ( !params.getTargetContent().getPath().equals( newPath ) )
+                        if ( !Objects.equals( newPath.getName(), params.getTargetContent().getPath().getName() ) )
                         {
-                            contentService.rename( RenameContentParams.create().
-                                contentId( params.getTargetContent().getId() ).
-                                newName( ContentName.from( newPath.getName() ) ).
-                                build() );
+                            contentService.rename( RenameContentParams.create()
+                                                       .contentId( params.getTargetContent().getId() )
+                                                       .newName( ContentName.from( newPath.getName() ) )
+                                                       .build() );
                         }
 
-                        contentService.move( MoveContentParams.create().
-                            contentId( params.getTargetContent().getId() ).
-                            parentContentPath( targetParentPath ).
-                            stopInherit( false ).
-                            build() );
+                        contentService.move( MoveContentParams.create()
+                                                 .contentId( params.getTargetContent().getId() )
+                                                 .parentContentPath( targetParentPath )
+                                                 .stopInherit( false )
+                                                 .build() );
 
                     }
                 }

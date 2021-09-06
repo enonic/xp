@@ -31,6 +31,8 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static com.enonic.xp.archive.ArchiveConstants.ARCHIVE_ROOT_CONTENT_PATH;
+
 @Component
 public final class ParentContentSynchronizer
     implements ContentSynchronizer, ContentEventsSynchronizer
@@ -96,6 +98,7 @@ public final class ParentContentSynchronizer
             if ( params.getContentId() == null )
             {
                 this.doSyncWithChildren( contentService.getByPath( ContentPath.ROOT ), sourceContext, targetContext );
+                this.doSyncWithChildren( contentService.getByPath( ARCHIVE_ROOT_CONTENT_PATH ), sourceContext, targetContext );
                 return;
             }
 
@@ -156,7 +159,7 @@ public final class ParentContentSynchronizer
 
             queue.add( sourceContent );
 
-            final Content root = contentService.getByPath( ContentPath.ROOT );
+            final Content root = contentService.getByPath( sourceContent.getPath().getRoot() );
 
             if ( !root.getId().equals( sourceContent.getId() ) )
             {
@@ -193,11 +196,11 @@ public final class ParentContentSynchronizer
                 return;
             }
 
-            final Content root = sourceContext.callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
+            final Content root = sourceContext.callWith( () -> contentService.getByPath( sourceContent.getPath().getRoot() ) );
 
             if ( root.getId().equals( sourceContent.getId() ) )
             {
-                cleanDeletedContents( contentService.getByPath( ContentPath.ROOT ), sourceContext, targetContext );
+                cleanDeletedContents( contentService.getByPath( sourceContent.getPath().getRoot() ), sourceContext, targetContext );
             }
         } );
     }

@@ -68,31 +68,37 @@ public class ContentNodeTranslator
         return contents.build();
     }
 
-    private Content doTranslate( final Node node, final boolean hasChildren )
+    private ContentPath getParent( final NodePath nodePath )
     {
-        final NodePath parentNodePath = node.path().getParentPath();
-        final NodePath parentContentPathAsNodePath = translateToContentPath( node, parentNodePath );
-        final ContentPath parentContentPath = ContentPath.from( parentContentPathAsNodePath.toString() );
-
-        final Content.Builder builder = contentDataSerializer.fromData( node.data().getRoot() );
-        builder.
-            id( ContentId.from( node.id().toString() ) ).
-            parentPath( parentContentPath ).
-            name( node.name().toString() ).
-            childOrder( node.getChildOrder() ).
-            permissions( node.getPermissions() ).
-            inheritPermissions( node.inheritsPermissions() ).
-            hasChildren( hasChildren ).
-            contentState( ContentState.from( node.getNodeState().value() ) ).
-            manualOrderValue( node.getManualOrderValue() );
-
-        return builder.build();
+        if ( NodePath.ROOT.equals( nodePath.getParentPath() ) )
+        {
+            if ( ContentConstants.CONTENT_ROOT_NAME.equals(  nodePath.getName()) )
+            {
+                return ContentPath.ROOT;
+            }
+            else
+            {
+                return ContentPath.from( "/", nodePath.getName() );
+            }
+        }
+        return ContentNodeHelper.translateNodePathToContentPath( nodePath.getParentPath() );
     }
 
-
-    private NodePath translateToContentPath( final Node node, final NodePath parentNodePath )
+    private Content doTranslate( final Node node, final boolean hasChildren )
     {
-        return !ContentConstants.CONTENT_ROOT_PATH.equals( node.path() ) ? parentNodePath.removeFromBeginning(
-            ContentConstants.CONTENT_ROOT_PATH ) : NodePath.ROOT;
+        final ContentPath parentContentPath = getParent( node.path() );
+
+        final Content.Builder builder = contentDataSerializer.fromData( node.data().getRoot() );
+        builder.id( ContentId.from( node.id().toString() ) )
+            .parentPath( parentContentPath )
+            .name( node.name().toString() )
+            .childOrder( node.getChildOrder() )
+            .permissions( node.getPermissions() )
+            .inheritPermissions( node.inheritsPermissions() )
+            .hasChildren( hasChildren )
+            .contentState( ContentState.from( node.getNodeState().value() ) )
+            .manualOrderValue( node.getManualOrderValue() );
+
+        return builder.build();
     }
 }

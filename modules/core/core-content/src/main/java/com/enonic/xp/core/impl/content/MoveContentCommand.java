@@ -6,7 +6,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentAlreadyMovedException;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.MoveContentException;
@@ -81,8 +80,8 @@ final class MoveContentCommand
 
         validateParentChildRelations( params.getParentContentPath(), sourceContent.getType() );
 
-        final NodePath nodePath =
-            NodePath.create( ContentConstants.CONTENT_ROOT_PATH ).elements( params.getParentContentPath().toString() ).build();
+        final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( params.getParentContentPath() );
+
         final NodeId sourceNodeId = NodeId.from( contentId );
 
         final MoveNodeParams.Builder builder =

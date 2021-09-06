@@ -84,6 +84,7 @@ final class FindContentIdsByParentCommand
             forEach( filters::add );
         params.getQueryFilters().
             forEach( filters::add );
+
         return filters.build();
     }
 
