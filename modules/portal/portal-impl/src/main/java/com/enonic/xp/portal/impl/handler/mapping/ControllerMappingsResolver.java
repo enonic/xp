@@ -181,7 +181,7 @@ final class ControllerMappingsResolver
         //Resolves closest retrievable content, starting from the top.
         if ( content == null )
         {
-            ContentPath currentContentPath = ContentPath.ROOT;
+            ContentPath currentContentPath = contentPath.getRoot();
             content = getContentByPath( currentContentPath );
 
             for ( int contentPathIndex = 0; contentPathIndex < contentPath.elementCount(); contentPathIndex++ )

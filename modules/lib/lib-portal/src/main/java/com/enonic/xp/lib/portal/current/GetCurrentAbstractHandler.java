@@ -22,7 +22,7 @@ public abstract class GetCurrentAbstractHandler
         if ( content == null )
         {
             final ContentPath contentPath = this.request.getContentPath();
-            if ( contentPath != null && !ContentPath.ROOT.equals( contentPath ) )
+            if ( contentPath != null && !contentPath.getRoot().equals( contentPath ) )
             {
                 try
                 {
