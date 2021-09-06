@@ -149,7 +149,10 @@ public class ScheduleAuditLogSupportImpl
             targetSet.setString( ScheduledJobPropertyNames.USER, job.getUser().toString() );
         }
 
-        targetSet.setString( ScheduledJobPropertyNames.CREATOR, job.getCreator().toString() );
+        if ( job.getCreator() != null )
+        {
+            targetSet.setString( ScheduledJobPropertyNames.CREATOR, job.getCreator().toString() );
+        }
         targetSet.setString( ScheduledJobPropertyNames.MODIFIER, job.getModifier().toString() );
         targetSet.setInstant( ScheduledJobPropertyNames.CREATED_TIME, job.getCreatedTime() );
         targetSet.setInstant( ScheduledJobPropertyNames.MODIFIED_TIME, job.getModifiedTime() );

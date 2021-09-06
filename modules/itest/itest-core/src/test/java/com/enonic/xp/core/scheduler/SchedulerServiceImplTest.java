@@ -351,8 +351,12 @@ class SchedulerServiceImplTest
         assertEquals( ScheduleCalendarType.ONE_TIME, modifiedJob.getCalendar().getType() );
         assertEquals( "value", modifiedJob.getConfig().getString( "string" ) );
         assertEquals( PrincipalKey.from( "user:provider:user" ), modifiedJob.getUser() );
+        assertEquals( PrincipalKey.from( "user:system:repo-test-user" ), modifiedJob.getCreator() );
+        assertEquals( PrincipalKey.from( "user:system:user1" ), modifiedJob.getModifier() );
         assertEquals( user.getKey(), modifiedJob.getModifier() );
         assertTrue( now.isBefore( modifiedJob.getModifiedTime() ) );
+        assertTrue( Instant.now().isAfter( modifiedJob.getModifiedTime() ) );
+        assertTrue( Instant.now().isAfter( modifiedJob.getCreatedTime() ) );
     }
 
     @Test

@@ -92,15 +92,17 @@ public class SchedulerSerializer
         {
             data.setString( ScheduledJobPropertyNames.USER, modifiedJob.getUser().toString() );
         }
+        if ( modifiedJob.getCreator() != null )
+        {
+            data.setString( ScheduledJobPropertyNames.CREATOR, modifiedJob.getCreator().toString() );
+        }
+        if ( modifiedJob.getCreatedTime() != null )
+        {
+            data.setInstant( ScheduledJobPropertyNames.CREATED_TIME, modifiedJob.getCreatedTime() );
+        }
 
-        final Instant now = Instant.now();
-        final PrincipalKey contextUser = getCurrentUser().getKey();
-
-        data.setString( ScheduledJobPropertyNames.MODIFIER, contextUser.toString() );
-        data.setInstant( ScheduledJobPropertyNames.MODIFIED_TIME, now );
-
-        data.removeProperty( ScheduledJobPropertyNames.LAST_RUN );
-        data.removeProperty( ScheduledJobPropertyNames.LAST_TASK_ID );
+        data.setString( ScheduledJobPropertyNames.MODIFIER, getCurrentUser().getKey().toString() );
+        data.setInstant( ScheduledJobPropertyNames.MODIFIED_TIME, Instant.now() );
 
         return tree;
     }
