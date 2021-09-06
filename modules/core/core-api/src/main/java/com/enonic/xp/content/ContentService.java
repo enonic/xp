@@ -63,7 +63,7 @@ public interface ContentService
 
     RestoreContentsResult restore( RestoreContentParams params );
 
-    List<ArchivedContainerLayer> listArchived( ListContentsParams params );
+    List<ArchivedContainerLayer> listArchived( final ListContentsParams params);
 
     List<ArchivedContainer> resolveArchivedByContents( ResolveArchivedParams params);
 

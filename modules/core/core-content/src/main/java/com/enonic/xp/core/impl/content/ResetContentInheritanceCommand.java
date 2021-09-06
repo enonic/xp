@@ -150,7 +150,7 @@ final class ResetContentInheritanceCommand
     private Context createAdminContext()
     {
         final AuthenticationInfo authInfo = createAdminAuthInfo();
-        return ContextBuilder.create().
+        return ContextBuilder.from( ContextAccessor.current() ).
             branch( ContentConstants.BRANCH_DRAFT ).
             repositoryId( ContentConstants.CONTENT_REPO_ID ).
             authInfo( authInfo ).

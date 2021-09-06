@@ -59,14 +59,16 @@ public class ReprocessRunnableTask
             if ( !params.isSkipChildren() )
             {
                 String nodePath = CONTENT_ROOT_PATH.asAbsolute().toString();
-                if ( !ContentPath.ROOT.equals( params.getSourceBranchPath().getContentPath() ) )
+                final ContentPath contentPath = params.getSourceBranchPath().getContentPath();
+                if ( !ContentPath.ROOT.equals( contentPath ) )
                 {
                     nodePath += content.getPath().
                         asAbsolute().
                         toString();
                 }
-                ConstraintExpr pathExpr = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( nodePath + "/*" ) );
-                ContentQuery countChildren = ContentQuery.create().queryExpr( QueryExpr.from( pathExpr ) ).size( 0 ).build();
+                final ConstraintExpr pathExpr = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( nodePath + "/*" ) );
+                final ContentQuery countChildren =
+                    ContentQuery.create().queryExpr( QueryExpr.from( pathExpr ) ).size( 0 ).build();
 
                 total = (int) contentService.find( countChildren ).getTotalHits() + 1;
             }

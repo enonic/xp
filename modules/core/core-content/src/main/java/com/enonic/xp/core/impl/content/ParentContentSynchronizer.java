@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.ArrayDeque;
-import java.util.EnumSet;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,10 +13,10 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.ImmutableList;
-
+import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.FindContentByParentParams;
@@ -25,6 +25,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.media.MediaInfoService;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -46,106 +47,114 @@ public final class ParentContentSynchronizer
 
         syncCommandCreators = new LinkedHashMap<>();
 
-        syncCommandCreators.put( ContentSyncEventType.CREATED, params -> CreatedEventSyncCommand.create().
-            contentService( contentService ).
-            params( params ).
-            build() );
-        syncCommandCreators.put( ContentSyncEventType.MOVED, params -> MovedEventSyncCommand.create().
-            contentService( contentService ).
-            params( params ).
-            build() );
-        syncCommandCreators.put( ContentSyncEventType.RENAMED, params -> RenamedEventSyncCommand.create().
-            contentService( contentService ).
-            params( params ).
-            build() );
-        syncCommandCreators.put( ContentSyncEventType.SORTED, params -> SortedEventSyncCommand.create().
-            contentService( contentService ).
-            params( params ).
-            build() );
-        syncCommandCreators.put( ContentSyncEventType.MANUAL_ORDER_UPDATED, params -> ManualOrderUpdatedEventSyncCommand.create().
-            contentService( contentService ).
-            params( params ).
-            build() );
-        syncCommandCreators.put( ContentSyncEventType.UPDATED, params -> UpdatedEventSyncCommand.create().
-            contentService( contentService ).
-            mediaInfoService( mediaInfoService ).
-            params( params ).
-            build() );
-        syncCommandCreators.put( ContentSyncEventType.DELETED, params -> DeletedEventSyncCommand.create().
-            contentService( contentService ).
-            params( params ).
-            build() );
+        syncCommandCreators.put( ContentSyncEventType.CREATED,
+                                 params -> CreatedEventSyncCommand.create().contentService( contentService ).params( params ).build() );
+        syncCommandCreators.put( ContentSyncEventType.MOVED,
+                                 params -> MovedEventSyncCommand.create().contentService( contentService ).params( params ).build() );
+        syncCommandCreators.put( ContentSyncEventType.RENAMED,
+                                 params -> RenamedEventSyncCommand.create().contentService( contentService ).params( params ).build() );
+        syncCommandCreators.put( ContentSyncEventType.SORTED,
+                                 params -> SortedEventSyncCommand.create().contentService( contentService ).params( params ).build() );
+        syncCommandCreators.put( ContentSyncEventType.MANUAL_ORDER_UPDATED, params -> ManualOrderUpdatedEventSyncCommand.create()
+            .contentService( contentService )
+            .params( params )
+            .build() );
+        syncCommandCreators.put( ContentSyncEventType.UPDATED, params -> UpdatedEventSyncCommand.create()
+            .contentService( contentService )
+            .mediaInfoService( mediaInfoService )
+            .params( params )
+            .build() );
+        syncCommandCreators.put( ContentSyncEventType.DELETED,
+                                 params -> DeletedEventSyncCommand.create().contentService( contentService ).params( params ).build() );
     }
 
-    private Context initContext( final ProjectName projectName )
+    private Context initContext( final ProjectName projectName, final NodePath root )
     {
-        return ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( projectName.getRepoId() ).
-            branch( ContentConstants.BRANCH_DRAFT ).
-            authInfo( adminAuthInfo() ).
-            build();
+        return ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( projectName.getRepoId() )
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .authInfo( adminAuthInfo() )
+            .attribute( "contentRootPath", root )
+            .build();
     }
 
     @Override
     public void sync( final ContentSyncParams params )
     {
-        final Context sourceContext = initContext( params.getSourceProject() );
-        final Context targetContext = initContext( params.getTargetProject() );
+        final Map<NodePath, Context> sourceContexts = initContexts( params.getSourceProject() );
+        final Map<NodePath, Context> targetContexts = initContexts( params.getTargetProject() );
 
-        sourceContext.runWith( () -> {
-            if ( params.getContentId() == null )
+        if ( params.getContentId() == null )
+        {
+            sourceContexts.forEach(
+                ( root, context ) -> this.doSyncWithChildren( context.callWith( () -> contentService.getByPath( ContentPath.ROOT ) ),
+                                                              context, targetContexts.get( root ) ) );
+            return;
+        }
+
+        final Context actualSourceContext = getActualContext( params.getContentId(), sourceContexts.values() );
+        Context actualTargetContext = getActualContext( params.getContentId(), targetContexts.values() );
+
+        if ( actualSourceContext != null )
+        {
+            if ( actualTargetContext == null )
             {
-                this.doSyncWithChildren( contentService.getByPath( ContentPath.ROOT ), sourceContext, targetContext );
-                return;
+                actualTargetContext = targetContexts.get( (NodePath) actualSourceContext.getAttribute( "contentRootPath" ) );
             }
 
-            if ( contentService.contentExists( params.getContentId() ) )
+            if ( params.isIncludeChildren() )
             {
-                if ( params.isIncludeChildren() )
-                {
-                    this.doSyncWithChildren( contentService.getById( params.getContentId() ), sourceContext, targetContext );
-                }
-                else
-                {
-                    this.doSync( contentService.getById( params.getContentId() ), sourceContext, targetContext );
-                }
+                this.doSyncWithChildren( actualSourceContext.callWith( () -> contentService.getById( params.getContentId() ) ),
+                                         actualSourceContext, actualTargetContext );
             }
-            else if ( targetContext.callWith( () -> contentService.contentExists( params.getContentId() ) ) )
+            else
             {
-                targetContext.runWith( () -> {
-
-                    this.sync( ContentEventsSyncParams.create()
-                                   .contentId( params.getContentId() )
-                                   .sourceProject( params.getSourceProject() )
-                                   .targetProject( params.getTargetProject() )
-                                   .addSyncEventType( ContentSyncEventType.DELETED )
-                                   .build() );
-                } );
+                this.doSync( actualSourceContext.callWith( () -> contentService.getById( params.getContentId() ) ), actualSourceContext,
+                             actualTargetContext );
             }
-        } );
+        }
+        else if ( actualTargetContext != null )
+        {
+            actualTargetContext.runWith( () -> this.sync( ContentEventsSyncParams.create()
+                                                              .contentId( params.getContentId() )
+                                                              .sourceProject( params.getSourceProject() )
+                                                              .targetProject( params.getTargetProject() )
+                                                              .syncEventType( ContentSyncEventType.DELETED )
+                                                              .build() ) );
+        }
     }
 
     @Override
     public void sync( final ContentEventsSyncParams params )
     {
-        final Context sourceContext = initContext( params.getSourceProject() );
-        final Context targetContext = initContext( params.getTargetProject() );
+        final Map<NodePath, Context> sourceContexts = initContexts( params.getSourceProject() );
+        final Map<NodePath, Context> targetContexts = initContexts( params.getTargetProject() );
 
-        sourceContext.runWith( () -> {
-            final Content sourceContent =
-                contentService.contentExists( params.getContentId() ) ? contentService.getById( params.getContentId() ) : null;
+        Context actualSourceContext = getActualContext( params.getContentId(), sourceContexts.values() );
+        Context actualTargetContext = getActualContext( params.getContentId(), targetContexts.values() );
 
-            targetContext.runWith( () -> {
-                final Content targetContent =
-                    contentService.contentExists( params.getContentId() ) ? contentService.getById( params.getContentId() ) : null;
+        final Content sourceContent =
+            actualSourceContext != null ? actualSourceContext.callWith( () -> this.contentService.getById( params.getContentId() ) ) : null;
+        final Content targetContent =
+            actualTargetContext != null ? actualTargetContext.callWith( () -> this.contentService.getById( params.getContentId() ) ) : null;
 
-                final ContentEventSyncCommandParams commandParams =
-                    createEventCommandParams( sourceContent, targetContent, sourceContext, targetContext );
-                final List<AbstractContentEventSyncCommand> commands = createEventCommands( commandParams, params.getSyncTypes() );
+        if ( actualSourceContext != null )
+        {
+            if ( actualTargetContext == null )
+            {
+                actualTargetContext = targetContexts.get( (NodePath) actualSourceContext.getAttribute( "contentRootPath" ) );
+            }
+        }
+        else if ( actualTargetContext != null )
+        {
+            actualSourceContext = sourceContexts.get( (NodePath) actualTargetContext.getAttribute( "contentRootPath" ) );
+        }
 
-                commands.forEach( AbstractContentEventSyncCommand::sync );
-            } );
-        } );
+        final ContentEventSyncCommandParams commandParams =
+            createEventCommandParams( sourceContent, targetContent, actualSourceContext, actualTargetContext );
+        final AbstractContentEventSyncCommand command = createEventCommand( commandParams, params.getSyncType() );
+
+        command.sync();
     }
 
     private void doSyncWithChildren( final Content sourceContent, final Context sourceContext, final Context targetContext )
@@ -167,12 +176,12 @@ public final class ParentContentSynchronizer
             {
                 final Content currentContent = queue.poll();
 
-                final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create().
-                    parentId( currentContent.getId() ).
-                    recursive( false ).
-                    childOrder( currentContent.getChildOrder() ).
-                    size( -1 ).
-                    build() );
+                final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create()
+                                                                                          .parentId( currentContent.getId() )
+                                                                                          .recursive( false )
+                                                                                          .childOrder( currentContent.getChildOrder() )
+                                                                                          .size( -1 )
+                                                                                          .build() );
 
                 for ( final Content content : result.getContents() )
                 {
@@ -211,9 +220,14 @@ public final class ParentContentSynchronizer
             final ContentEventSyncCommandParams commandParams =
                 createEventCommandParams( sourceContent, targetContent, sourceContext, targetContext );
 
-            final List<AbstractContentEventSyncCommand> commands = createEventCommands( commandParams, targetContent != null ? EnumSet.of(
-                ContentSyncEventType.MOVED, ContentSyncEventType.RENAMED, ContentSyncEventType.SORTED,
-                ContentSyncEventType.MANUAL_ORDER_UPDATED, ContentSyncEventType.UPDATED ) : EnumSet.of( ContentSyncEventType.CREATED ) );
+            final List<AbstractContentEventSyncCommand> commands =
+                targetContent != null
+                    ? List.of( createEventCommand( commandParams, ContentSyncEventType.MOVED ),
+                               createEventCommand( commandParams, ContentSyncEventType.RENAMED ),
+                               createEventCommand( commandParams, ContentSyncEventType.SORTED ),
+                               createEventCommand( commandParams, ContentSyncEventType.MANUAL_ORDER_UPDATED ),
+                               createEventCommand( commandParams, ContentSyncEventType.UPDATED ) )
+                    : List.of( createEventCommand( commandParams, ContentSyncEventType.CREATED ) );
 
             commands.forEach( AbstractContentEventSyncCommand::sync );
         } );
@@ -222,22 +236,18 @@ public final class ParentContentSynchronizer
     private ContentEventSyncCommandParams createEventCommandParams( final Content sourceContent, final Content targetContent,
                                                                     final Context sourceContext, final Context targetContext )
     {
-        return ContentEventSyncCommandParams.create().
-            sourceContext( sourceContext ).
-            targetContext( targetContext ).
-            sourceContent( sourceContent ).
-            targetContent( targetContent ).
-            build();
+        return ContentEventSyncCommandParams.create()
+            .sourceContext( sourceContext )
+            .targetContext( targetContext )
+            .sourceContent( sourceContent )
+            .targetContent( targetContent )
+            .build();
     }
 
-    private List<AbstractContentEventSyncCommand> createEventCommands( final ContentEventSyncCommandParams params,
-                                                                       final EnumSet<ContentSyncEventType> syncTypes )
+    private AbstractContentEventSyncCommand createEventCommand( final ContentEventSyncCommandParams params,
+                                                                final ContentSyncEventType syncType )
     {
-        final ImmutableList.Builder<AbstractContentEventSyncCommand> commands = ImmutableList.builder();
-
-        syncTypes.forEach( type -> commands.add( syncCommandCreators.get( type ).apply( params ) ) );
-
-        return commands.build();
+        return syncCommandCreators.get( syncType ).apply( params );
     }
 
     private void cleanDeletedContents( final Content targetContent, final Context sourceContext, final Context targetContext )
@@ -248,18 +258,17 @@ public final class ParentContentSynchronizer
             while ( queue.size() > 0 )
             {
                 final Content currentContent = queue.poll();
-                createEventCommands( createEventCommandParams( null, currentContent, sourceContext, targetContext ),
-                                     EnumSet.of( ContentSyncEventType.DELETED ) ).
-                    forEach( AbstractContentEventSyncCommand::sync );
+                createEventCommand( createEventCommandParams( null, currentContent, sourceContext, targetContext ),
+                                    ContentSyncEventType.DELETED ).sync();
 
                 if ( currentContent.hasChildren() )
                 {
-                    final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create().
-                        parentId( currentContent.getId() ).
-                        recursive( false ).
-                        childOrder( currentContent.getChildOrder() ).
-                        size( -1 ).
-                        build() );
+                    final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create()
+                                                                                              .parentId( currentContent.getId() )
+                                                                                              .recursive( false )
+                                                                                              .childOrder( currentContent.getChildOrder() )
+                                                                                              .size( -1 )
+                                                                                              .build() );
 
                     for ( final Content content : result.getContents() )
                     {
@@ -270,14 +279,28 @@ public final class ParentContentSynchronizer
         } );
     }
 
+    private Map<NodePath, Context> initContexts( final ProjectName projectName )
+    {
+        final Context contentContext = initContext( projectName, ContentConstants.CONTENT_ROOT_PATH );
+        final Context archiveContext = initContext( projectName, ArchiveConstants.ARCHIVE_ROOT_PATH );
+
+        return Map.of( (NodePath) contentContext.getAttribute( "contentRootPath" ), contentContext,
+                       (NodePath) archiveContext.getAttribute( "contentRootPath" ), archiveContext );
+    }
+
+    private Context getActualContext( final ContentId contentId, final Collection<Context> contexts )
+    {
+        return contexts.stream()
+            .filter( context -> context.callWith( () -> contentService.contentExists( contentId ) ) )
+            .findAny()
+            .orElse( null );
+    }
+
     private AuthenticationInfo adminAuthInfo()
     {
-        return AuthenticationInfo.create().
-            principals( RoleKeys.ADMIN ).
-            user( User.create().
-                key( PrincipalKey.ofSuperUser() ).
-                login( PrincipalKey.ofSuperUser().getId() ).
-                build() ).
-            build();
+        return AuthenticationInfo.create()
+            .principals( RoleKeys.ADMIN )
+            .user( User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build() )
+            .build();
     }
 }

@@ -105,6 +105,11 @@ public class ContentDataSerializer
         this.publishInfoSerializer = new PublishInfoSerializer();
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     public PropertyTree toCreateNodeData( final CreateContentTranslatorParams params )
     {
         final PropertyTree propertyTree = new PropertyTree();
@@ -575,11 +580,6 @@ public class ContentDataSerializer
         {
             throw Exceptions.unchecked( e );
         }
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
     }
 
     public static class Builder
