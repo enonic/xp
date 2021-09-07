@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentDataValidationException;
@@ -119,7 +120,7 @@ final class UpdateContentCommand
         editedContent = processContent( contentBeforeChange, editedContent );
 
         validateBlockingChecks( editedContent );
-        final ValidationErrors validated = validateNonBlockingChecks( editedContent );
+        final ValidationErrors validated = validateNonBlockingChecks( editedContent, this.params.getCreateAttachments() );
 
         if ( params.isRequireValid() )
         {
@@ -290,7 +291,7 @@ final class UpdateContentCommand
         }
     }
 
-    private ValidationErrors validateNonBlockingChecks( final Content edited )
+    private ValidationErrors validateNonBlockingChecks( final Content edited, final CreateAttachments createAttachments )
     {
         return ValidateContentDataCommand.create()
             .contentData( edited.getData() )
@@ -298,6 +299,7 @@ final class UpdateContentCommand
             .name( edited.getName() )
             .displayName( edited.getDisplayName() )
             .extraDatas( edited.getAllExtraData() )
+            .createAttachments( createAttachments )
             .xDataService( this.xDataService )
             .siteService( this.siteService )
             .contentValidators( this.contentValidators )

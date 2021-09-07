@@ -321,7 +321,8 @@ public class CreateContentTranslatorParams
             return this;
         }
 
-        public Builder validationErrors( final ValidationErrors validationErrors) {
+        public Builder validationErrors( final ValidationErrors validationErrors )
+        {
             this.validationErrors = validationErrors;
             return this;
         }
@@ -397,6 +398,10 @@ public class CreateContentTranslatorParams
         public ExtraDatas getExtraDatas()
         {
             return extraDatas;
+        }
+
+        public CreateAttachments getCreateAttachments() {
+            return createAttachments;
         }
 
         private void validate()

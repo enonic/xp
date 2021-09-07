@@ -317,6 +317,7 @@ final class CreateContentCommand
             .name( builder.getName() )
             .displayName( builder.getDisplayName() )
             .extraDatas( builder.getExtraDatas() != null ? ExtraDatas.from( builder.getExtraDatas() ) : ExtraDatas.empty() )
+            .createAttachments( builder.getCreateAttachments() )
             .xDataService( this.xDataService )
             .siteService( this.siteService )
             .contentValidators( this.contentValidators )

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
@@ -64,6 +65,7 @@ final class ValidateContentDataCommand
             .contentType( builder.contentType )
             .name( builder.name )
             .displayName( builder.displayName )
+            .createAttachments( builder.createAttachments )
             .build();
         resultBuilder = ValidationErrors.create();
     }
@@ -211,6 +213,8 @@ final class ValidateContentDataCommand
 
         private String displayName;
 
+        private CreateAttachments createAttachments;
+
         private Builder()
         {
         }
@@ -266,6 +270,11 @@ final class ValidateContentDataCommand
         public Builder displayName( String displayName )
         {
             this.displayName = displayName;
+            return this;
+        }
+
+        public Builder createAttachments( CreateAttachments createAttachments) {
+            this.createAttachments = createAttachments;
             return this;
         }
 

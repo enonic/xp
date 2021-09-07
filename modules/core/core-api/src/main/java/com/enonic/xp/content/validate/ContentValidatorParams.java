@@ -1,5 +1,8 @@
 package com.enonic.xp.content.validate;
 
+import java.util.Objects;
+
+import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
@@ -17,13 +20,16 @@ public final class ContentValidatorParams
 
     private final String displayName;
 
+    private final CreateAttachments createAttachments;
+
     private ContentValidatorParams( Builder builder )
     {
         contentData = builder.contentData;
-        extraDatas = builder.extraDatas;
+        extraDatas = Objects.requireNonNullElse( builder.extraDatas, ExtraDatas.empty() );
         contentType = builder.contentType;
         name = builder.name;
         displayName = builder.displayName;
+        createAttachments = Objects.requireNonNullElse( builder.createAttachments, CreateAttachments.empty() );
     }
 
     public PropertyTree getContentData()
@@ -51,12 +57,18 @@ public final class ContentValidatorParams
         return displayName;
     }
 
+    public CreateAttachments getCreateAttachments()
+    {
+        return createAttachments;
+    }
+
     public static Builder create()
     {
         return new Builder();
     }
 
-    public static final class Builder {
+    public static final class Builder
+    {
         private PropertyTree contentData;
 
         private ExtraDatas extraDatas;
@@ -66,6 +78,8 @@ public final class ContentValidatorParams
         private ContentName name;
 
         private String displayName;
+
+        private CreateAttachments createAttachments;
 
         private Builder()
         {
@@ -98,6 +112,12 @@ public final class ContentValidatorParams
         public Builder displayName( String displayName )
         {
             this.displayName = displayName;
+            return this;
+        }
+
+        public Builder createAttachments( CreateAttachments createAttachments )
+        {
+            this.createAttachments = createAttachments;
             return this;
         }
 
