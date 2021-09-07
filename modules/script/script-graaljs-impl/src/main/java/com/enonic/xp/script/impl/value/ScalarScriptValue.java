@@ -1,14 +1,19 @@
 package com.enonic.xp.script.impl.value;
 
+import org.graalvm.polyglot.Context;
+
 import com.enonic.xp.convert.Converters;
 
 final class ScalarScriptValue
     extends AbstractScriptValue
 {
+    private final Context context;
+
     private final Object value;
 
-    ScalarScriptValue( final Object value )
+    ScalarScriptValue( final Context context, final Object value )
     {
+        this.context = context;
         this.value = value;
     }
 
@@ -27,6 +32,9 @@ final class ScalarScriptValue
     @Override
     public <T> T getValue( final Class<T> type )
     {
-        return Converters.convert( this.value, type );
+        synchronized ( context )
+        {
+            return Converters.convert( this.value, type );
+        }
     }
 }

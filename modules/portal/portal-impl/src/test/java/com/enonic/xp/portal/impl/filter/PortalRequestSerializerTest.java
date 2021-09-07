@@ -39,7 +39,7 @@ public class PortalRequestSerializerTest
         this.context = JSContextFactory.create( PortalRequestSerializerTest.class.getClassLoader() );
 
         final JavascriptHelperFactory factory = new JavascriptHelperFactory( context );
-        this.factory = new ScriptValueFactoryImpl( factory.create() );
+        this.factory = new ScriptValueFactoryImpl( context, factory.create() );
     }
 
     @AfterEach
