@@ -3,6 +3,7 @@ package com.enonic.xp.script.impl.value;
 import java.util.List;
 import java.util.Map;
 
+import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 
 import com.enonic.xp.script.ScriptValue;
@@ -13,9 +14,12 @@ public final class ScriptValueFactoryImpl
 {
     private final JavascriptHelper helper;
 
-    public ScriptValueFactoryImpl( final JavascriptHelper helper )
+    private final Context context;
+
+    public ScriptValueFactoryImpl( final Context context, final JavascriptHelper helper )
     {
         this.helper = helper;
+        this.context = context;
     }
 
     @Override
@@ -27,43 +31,45 @@ public final class ScriptValueFactoryImpl
     @Override
     public ScriptValue newValue( final Object value )
     {
-        if ( value == null )
+        synchronized ( context )
         {
-            return null;
-        }
-
-        if ( Value.asValue( value ).isNull() )
-        {
-            return null;
-        }
-
-        if ( value instanceof List )
-        {
-            return newValue( Value.asValue( value ) );
-        }
-
-        if ( value instanceof Map )
-        {
-            return newValue( Value.asValue( value ) );
-        }
-
-        if ( value instanceof Value )
-        {
-            Value castedValue = (Value) value;
-            if ( castedValue.isHostObject() )
+            if ( value == null )
             {
-                return new ObjectScriptValue( this, castedValue );
+                return null;
             }
-            else if ( castedValue.isNumber() )
+
+            if ( Value.asValue( value ).isNull() )
             {
-                if ( castedValue.fitsInLong() )
+                return null;
+            }
+
+            if ( value instanceof List )
+            {
+                return newValue( Value.asValue( value ) );
+            }
+
+            if ( value instanceof Map )
+            {
+                return newValue( Value.asValue( value ) );
+            }
+
+            if ( value instanceof Value )
+            {
+                Value castedValue = (Value) value;
+                if ( castedValue.isHostObject() )
                 {
-                    return new ScalarScriptValue( castedValue.asLong() );
+                    return new ObjectScriptValue( context, this, castedValue );
                 }
-                else
+                else if ( castedValue.isNumber() )
                 {
-                    return new ScalarScriptValue( castedValue.asDouble() );
-                }
+                    if ( castedValue.fitsInLong() )
+                    {
+                        return new ScalarScriptValue( context, castedValue.asLong() );
+                    }
+                    else
+                    {
+                        return new ScalarScriptValue( context, castedValue.asDouble() );
+                    }
 //                if ( castedValue.fitsInInt() )
 //                {
 //                    return new ScalarScriptValue( castedValue.asInt() );
@@ -88,41 +94,45 @@ public final class ScriptValueFactoryImpl
 //                {
 //                    return new ScalarScriptValue( castedValue.asShort() );
 //                }
+                }
+                else if ( castedValue.isString() )
+                {
+                    return new ScalarScriptValue( context, castedValue.asString() );
+                }
+                else if ( castedValue.isBoolean() )
+                {
+                    return new ScalarScriptValue( context, castedValue.asBoolean() );
+                }
+                else
+                {
+                    return newValue( castedValue );
+                }
             }
-            else if ( castedValue.isString() )
-            {
-                return new ScalarScriptValue( castedValue.asString() );
-            }
-            else if ( castedValue.isBoolean() )
-            {
-                return new ScalarScriptValue( castedValue.asBoolean() );
-            }
-            else
-            {
-                return newValue( castedValue );
-            }
-        }
 
-        return new ScalarScriptValue( value );
+            return new ScalarScriptValue( context, value );
+        }
     }
 
     private ScriptValue newValue( final Value value )
     {
-        if ( value.isDate() )
+        synchronized ( context )
         {
-            return new ScalarScriptValue( value.asDate() );
-        }
+            if ( value.isDate() )
+            {
+                return new ScalarScriptValue( context, value.asDate() );
+            }
 
-        if ( value.canExecute() )
-        {
-            return new FunctionScriptValue( this, value );
-        }
+            if ( value.canExecute() )
+            {
+                return new FunctionScriptValue( context, this, value );
+            }
 
-        if ( value.hasArrayElements() )
-        {
-            return new ArrayScriptValue( this, value );
-        }
+            if ( value.hasArrayElements() )
+            {
+                return new ArrayScriptValue( context, this, value );
+            }
 
-        return new ObjectScriptValue( this, value );
+            return new ObjectScriptValue( context, this, value );
+        }
     }
 }

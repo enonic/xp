@@ -28,7 +28,7 @@ public class ScriptValueFactoryImplTest
     public void setUp()
     {
         this.context = Context.newBuilder( "js" ).allowAllAccess( true ).build();
-        this.factory = new ScriptValueFactoryImpl( new JavascriptHelperFactory( context ).create() );
+        this.factory = new ScriptValueFactoryImpl( context, new JavascriptHelperFactory( context ).create() );
     }
 
     @AfterEach

@@ -80,7 +80,7 @@ public class ScriptExecutorImpl
 
         this.context = JSContextFactory.create( engine, application.getClassLoader() );
         this.javascriptHelper = new JavascriptHelperFactory( context ).create();
-        this.scriptValueFactory = new ScriptValueFactoryImpl( this.javascriptHelper );
+        this.scriptValueFactory = new ScriptValueFactoryImpl( context, this.javascriptHelper );
         this.classLoader = application.getClassLoader();
         this.exportsCache = new ScriptExportsCache( runMode, resourceService::getResource, this::runDisposers );
 
@@ -198,9 +198,12 @@ public class ScriptExecutorImpl
 
     private ScriptExports doExecuteMain( final ResourceKey key )
     {
-        final Object exports = executeRequire( key );
-        ScriptValue scriptValue = scriptValueFactory.newValue( exports );
-        return new ScriptExportsImpl( key, scriptValue, exports );
+        synchronized ( context )
+        {
+            final Object exports = executeRequire( key );
+            ScriptValue scriptValue = scriptValueFactory.newValue( exports );
+            return new ScriptExportsImpl( this.context, key, scriptValue, exports );
+        }
     }
 
     private Value requireJsOrJson( final Resource resource )
@@ -213,8 +216,11 @@ public class ScriptExecutorImpl
         final SimpleBindings bindings = new SimpleBindings();
         bindings.put( ScriptEngine.FILENAME, getFileName( resource ) );
 
-        final Value func = doExecute( bindings, resource );
-        return executeRequire( resource.getKey(), func );
+        synchronized ( context )
+        {
+            final Value func = doExecute( bindings, resource );
+            return executeRequire( resource.getKey(), func );
+        }
     }
 
     private Value requireJson( final Resource resource )

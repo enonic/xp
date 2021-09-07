@@ -3,6 +3,7 @@ package com.enonic.xp.script.impl.value;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 
 import com.enonic.xp.script.ScriptValue;
@@ -10,12 +11,15 @@ import com.enonic.xp.script.ScriptValue;
 final class ArrayScriptValue
     extends AbstractScriptValue
 {
+    private final Context context;
+
     private final ScriptValueFactory factory;
 
     private final Value value;
 
-    ArrayScriptValue( final ScriptValueFactory factory, final Value value )
+    ArrayScriptValue( final Context context, final ScriptValueFactory factory, final Value value )
     {
+        this.context = context;
         this.factory = factory;
         this.value = value;
     }
@@ -29,69 +33,80 @@ final class ArrayScriptValue
     @Override
     public List<ScriptValue> getArray()
     {
-        final List<ScriptValue> result = new ArrayList<>();
-        for (int i = 0; i < this.value.getArraySize(); i++) {
-            final Value arrayElement = this.value.getArrayElement( i );
-            final ScriptValue wrapped = this.factory.newValue( arrayElement );
-            if ( wrapped != null )
+        synchronized ( context )
+        {
+            final List<ScriptValue> result = new ArrayList<>();
+            for ( int i = 0; i < this.value.getArraySize(); i++ )
             {
-                result.add( wrapped );
+                final Value arrayElement = this.value.getArrayElement( i );
+                final ScriptValue wrapped = this.factory.newValue( arrayElement );
+                if ( wrapped != null )
+                {
+                    result.add( wrapped );
+                }
             }
+            return result;
         }
-        return result;
     }
 
     @Override
     public <T> List<T> getArray( final Class<T> type )
     {
-        final List<T> result = new ArrayList<>();
-        for ( final ScriptValue item : getArray() )
+        synchronized ( context )
         {
-            final T converted = item.getValue( type );
-            if ( converted != null )
+            final List<T> result = new ArrayList<>();
+            for ( final ScriptValue item : getArray() )
             {
-                result.add( converted );
+                final T converted = item.getValue( type );
+                if ( converted != null )
+                {
+                    result.add( converted );
+                }
             }
+            return result;
         }
-        return result;
     }
 
     @Override
     public List<Object> getList()
     {
-        final List<Object> result = new ArrayList<>();
+        synchronized ( context )
+        {
+            final List<Object> result = new ArrayList<>();
 
-        for (int i = 0; i < this.value.getArraySize(); i++) {
-            Value arrayElement = this.value.getArrayElement( i );
+            for ( int i = 0; i < this.value.getArraySize(); i++ )
+            {
+                Value arrayElement = this.value.getArrayElement( i );
 
-            final ScriptValue item = this.factory.newValue( arrayElement );
-            if ( item == null )
-            {
-                result.add( null );
-            }
-            else if ( item.isValue() )
-            {
-                final Object converted = item.getValue( Object.class );
-                result.add( converted );
-            }
-            else if ( item.isObject() )
-            {
-                final Object obj = item.getMap();
-                if ( obj != null )
+                final ScriptValue item = this.factory.newValue( arrayElement );
+                if ( item == null )
                 {
-                    result.add( obj );
+                    result.add( null );
+                }
+                else if ( item.isValue() )
+                {
+                    final Object converted = item.getValue( Object.class );
+                    result.add( converted );
+                }
+                else if ( item.isObject() )
+                {
+                    final Object obj = item.getMap();
+                    if ( obj != null )
+                    {
+                        result.add( obj );
+                    }
+                }
+                else if ( item.isArray() )
+                {
+                    final Object obj = item.getList();
+                    if ( obj != null )
+                    {
+                        result.add( obj );
+                    }
                 }
             }
-            else if ( item.isArray() )
-            {
-                final Object obj = item.getList();
-                if ( obj != null )
-                {
-                    result.add( obj );
-                }
-            }
+
+            return result;
         }
-
-        return result;
     }
 }

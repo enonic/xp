@@ -1,5 +1,7 @@
 package com.enonic.xp.script.impl.executor;
 
+import org.graalvm.polyglot.Context;
+
 import com.enonic.xp.resource.ResourceError;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
@@ -8,6 +10,7 @@ import com.enonic.xp.script.ScriptValue;
 final class ScriptExportsImpl
     implements ScriptExports
 {
+    private final Context context;
 
     private final ResourceKey script;
 
@@ -15,8 +18,9 @@ final class ScriptExportsImpl
 
     private final Object raw;
 
-    ScriptExportsImpl( final ResourceKey script, final ScriptValue value, final Object raw )
+    ScriptExportsImpl( final Context context, final ResourceKey script, final ScriptValue value, final Object raw )
     {
+        this.context = context;
         this.script = script;
         this.value = value;
         this.raw = raw;
@@ -49,13 +53,16 @@ final class ScriptExportsImpl
             return null;
         }
 
-        try
+        synchronized ( context )
         {
-            return method.call( args );
-        }
-        catch ( StackOverflowError e )
-        {
-            throw new ResourceError( script, "Method execute failed: [" + script + "][" + name + "]", e );
+            try
+            {
+                return method.call( args );
+            }
+            catch ( StackOverflowError e )
+            {
+                throw new ResourceError( script, "Method execute failed: [" + script + "][" + name + "]", e );
+            }
         }
     }
 
@@ -67,7 +74,10 @@ final class ScriptExportsImpl
 
     private ScriptValue getMethod( final String name )
     {
-        final ScriptValue func = this.value.getMember( name );
-        return ( ( func != null ) && func.isFunction() ) ? func : null;
+        synchronized ( context )
+        {
+            final ScriptValue func = this.value.getMember( name );
+            return ( ( func != null ) && func.isFunction() ) ? func : null;
+        }
     }
 }

@@ -24,19 +24,28 @@ public final class JavascriptHelperFactory
             @Override
             public Value newJsArray()
             {
-                return arrayProto.newInstance();
+                synchronized ( context )
+                {
+                    return arrayProto.newInstance();
+                }
             }
 
             @Override
             public Value newJsObject()
             {
-                return objectProto.newInstance();
+                synchronized ( context )
+                {
+                    return objectProto.newInstance();
+                }
             }
 
             @Override
             public Value parseJson( final String text )
             {
-                return jsonProto.getMember( "parse" ).execute( text );
+                synchronized ( context )
+                {
+                    return jsonProto.getMember( "parse" ).execute( text );
+                }
             }
         };
     }
