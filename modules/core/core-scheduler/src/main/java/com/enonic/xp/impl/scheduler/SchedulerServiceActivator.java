@@ -1,5 +1,6 @@
 package com.enonic.xp.impl.scheduler;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.osgi.framework.BundleContext;
@@ -73,9 +74,12 @@ public final class SchedulerServiceActivator
 
         try
         {
-            if ( !schedulerExecutorService.getAllFutures().contains( RescheduleTask.NAME ) )
+            final Set<String> allFutures = schedulerExecutorService.getAllFutures();
+            if ( !allFutures.contains( RescheduleTask.NAME ) )
             {
                 schedulerExecutorService.scheduleAtFixedRate( new RescheduleTask(), 0, 1, TimeUnit.SECONDS );
+            } else {
+                LOG.debug( "RescheduleTask already scheduled." );
             }
         }
         catch ( Exception e )

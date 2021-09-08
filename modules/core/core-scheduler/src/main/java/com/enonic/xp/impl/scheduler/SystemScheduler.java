@@ -17,6 +17,4 @@ interface SystemScheduler
     ScheduledFuture<?> schedule( SchedulableTask command, long delay, TimeUnit unit );
 
     ScheduledFuture<?> scheduleAtFixedRate( SchedulableTask command, long initialDelay, long period, TimeUnit unit );
-
-
 }
