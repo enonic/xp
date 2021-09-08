@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.hazelcast.status.objects;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,8 +15,12 @@ import com.hazelcast.core.IExecutorService;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.IQueue;
 import com.hazelcast.core.ITopic;
+import com.hazelcast.core.Member;
 import com.hazelcast.cp.CPSubsystem;
 import com.hazelcast.cp.lock.FencedLock;
+import com.hazelcast.scheduledexecutor.IScheduledExecutorService;
+import com.hazelcast.scheduledexecutor.IScheduledFuture;
+import com.hazelcast.scheduledexecutor.ScheduledTaskHandler;
 
 import com.enonic.xp.status.JsonStatusReporterTest;
 
@@ -60,6 +65,17 @@ class HazelcastObjectsReporterTest
         when( queue.size() ).thenReturn( 20 );
         final IExecutorService executorService = mock( IExecutorService.class );
         when( executorService.getName() ).thenReturn( "executorService" );
+        final IScheduledExecutorService scheduledExecutorService = mock( IScheduledExecutorService.class );
+        when( scheduledExecutorService.getName() ).thenReturn( "scheduledExecutorService" );
+
+        final Member member = mock( Member.class );
+        when( member.getUuid() ).thenReturn( "member-uuid" );
+        final IScheduledFuture<Object> scheduledFuture = mock( IScheduledFuture.class );
+        final ScheduledTaskHandler scheduledTaskHandler = mock( ScheduledTaskHandler.class );
+        when( scheduledFuture.getHandler() ).thenReturn( scheduledTaskHandler );
+        when( scheduledTaskHandler.getTaskName() ).thenReturn( "some-task" );
+        when( scheduledExecutorService.getAllScheduledFutures() ).thenReturn( Map.of( member, List.of( scheduledFuture ) ) );
+
         final ITopic<?> topic = mock( ITopic.class );
         when( topic.getName() ).thenReturn( "topic" );
         final FencedLock lock = mock( FencedLock.class );
@@ -71,7 +87,8 @@ class HazelcastObjectsReporterTest
         when( hazelcastInstance.getQueue( "queue" ) ).thenReturn( (IQueue<Object>) queue );
         when( cpSubsystem.getLock( "lock" ) ).thenReturn( lock );
 
-        when( hazelcastInstance.getDistributedObjects() ).thenReturn( List.of( map, queue, executorService, topic, lock ) );
+        when( hazelcastInstance.getDistributedObjects() ).thenReturn(
+            List.of( map, queue, scheduledExecutorService, executorService, topic, lock ) );
 
         assertJson( "hazelcast_objects.json", hazelcastClusterReporter.getReport() );
     }

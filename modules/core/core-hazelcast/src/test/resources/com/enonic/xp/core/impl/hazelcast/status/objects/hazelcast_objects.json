@@ -21,6 +21,18 @@
       "name": "executorService"
     }
   ],
+  "scheduledExecutorServices": [
+    {
+      "name": "scheduledExecutorService",
+      "tasks": [
+        {
+          "member": "member-uuid",
+          "taskName": "some-task",
+          "totalRuns": -1
+        }
+      ]
+    }
+  ],
   "fencedLocks": [
     {
       "name": "lock",

@@ -17,6 +17,8 @@ class HazelcastObjectsReport
 
     private final List<ExecutorServiceObjectReport> executorServiceObjectReports;
 
+    private final List<ScheduledExecutorServiceObjectReport> scheduledExecutorServiceObjectReports;
+
     private final List<FencedLockObjectReport> fencedLockObjectReports;
 
 
@@ -26,6 +28,7 @@ class HazelcastObjectsReport
         queueObjectReports = List.copyOf( builder.queueObjectReports );
         topicObjectReports = List.copyOf( builder.topicObjectReports );
         executorServiceObjectReports = List.copyOf( builder.executorServiceObjectReports );
+        scheduledExecutorServiceObjectReports = List.copyOf( builder.scheduledExecutorServiceObjectReports );
         fencedLockObjectReports = List.copyOf( builder.fencedLockObjectReports );
     }
 
@@ -40,6 +43,10 @@ class HazelcastObjectsReport
         topicObjectReports.stream().map( TopicObjectReport::toJson ).forEach( topicsJson::add );
         final ArrayNode executorServicesJson = json.putArray( "executorServices" );
         executorServiceObjectReports.stream().map( ExecutorServiceObjectReport::toJson ).forEach( executorServicesJson::add );
+        final ArrayNode scheduledExecutorServicesJson = json.putArray( "scheduledExecutorServices" );
+        scheduledExecutorServiceObjectReports.stream()
+            .map( ScheduledExecutorServiceObjectReport::toJson )
+            .forEach( scheduledExecutorServicesJson::add );
         final ArrayNode fencedLocks = json.putArray( "fencedLocks" );
         fencedLockObjectReports.stream().map( FencedLockObjectReport::toJson ).forEach( fencedLocks::add );
 
@@ -60,6 +67,8 @@ class HazelcastObjectsReport
         List<TopicObjectReport> topicObjectReports = new ArrayList<>();
 
         List<ExecutorServiceObjectReport> executorServiceObjectReports = new ArrayList<>();
+
+        List<ScheduledExecutorServiceObjectReport> scheduledExecutorServiceObjectReports = new ArrayList<>();
 
         List<FencedLockObjectReport> fencedLockObjectReports = new ArrayList<>();
 
@@ -90,6 +99,12 @@ class HazelcastObjectsReport
         Builder addFencedLockObject( FencedLockObjectReport fencedLockObjectReport )
         {
             fencedLockObjectReports.add( fencedLockObjectReport );
+            return this;
+        }
+
+        Builder addScheduledExecutorServiceObject( final ScheduledExecutorServiceObjectReport scheduledExecutorServiceObjectReport )
+        {
+            scheduledExecutorServiceObjectReports.add( scheduledExecutorServiceObjectReport );
             return this;
         }
 
