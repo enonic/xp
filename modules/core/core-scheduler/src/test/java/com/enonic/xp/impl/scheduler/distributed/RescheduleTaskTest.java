@@ -40,7 +40,6 @@ import com.enonic.xp.scheduler.SchedulerService;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doAnswer;
@@ -68,7 +67,7 @@ public class RescheduleTaskTest
     @Mock
     private SchedulerExecutorService schedulerExecutorService;
 
-    @Mock(stubOnly = true)
+    @Mock
     private BundleContext bundleContext;
 
     @BeforeEach
@@ -136,11 +135,11 @@ public class RescheduleTaskTest
         mockFutures();
         mockJobs();
 
-        for ( int i = 0; i < 9; i++ )
+        for ( int i = 0; i < 10; i++ )
         {
             createAndRunTask();
         }
-        assertThrows( IllegalStateException.class, this::createAndRunTask );
+        verify( bundleContext, times( 10 ) ).getServiceReferences( SchedulerService.class, null );
     }
 
     private RescheduleTask createAndRunTask()

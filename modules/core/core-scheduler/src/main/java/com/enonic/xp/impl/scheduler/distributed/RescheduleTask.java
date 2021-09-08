@@ -3,6 +3,7 @@ package com.enonic.xp.impl.scheduler.distributed;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ public class RescheduleTask
 
     private static final Logger LOG = LoggerFactory.getLogger( RescheduleTask.class );
 
-    private static int failedCount = 0;
+    private static final AtomicInteger FAILED_COUNT = new AtomicInteger( 0 );
 
     @Override
     public String getName()
@@ -44,68 +45,66 @@ public class RescheduleTask
         try
         {
             this.doRun();
-            failedCount = 0;
+            FAILED_COUNT.set( 0 );
         }
         catch ( IllegalStateException e )
         {
-            if ( ++failedCount >= 10 )
+            if ( FAILED_COUNT.addAndGet( 1 ) >= 10 )
             {
-                failedCount = 0;
-                throw e;
+                FAILED_COUNT.set( 0 );
+                LOG.warn( "Problem during tasks scheduling", e );
+            } else {
+                LOG.debug( "Problem during tasks scheduling", e );
             }
         }
-        catch ( Exception e )
+        catch ( Throwable e )
         {
-            LOG.warn( "Problem during task scheduling.", e );
+            LOG.error( "Problem during tasks scheduling", e );
         }
     }
 
     private void doRun()
     {
-        final List<ScheduledJob> jobs = OsgiSupport.withService( SchedulerService.class, schedulerService -> adminContext().
-            callWith( schedulerService::list ) );
+        final List<ScheduledJob> jobs =
+            OsgiSupport.withService( SchedulerService.class, schedulerService -> adminContext().callWith( schedulerService::list ) );
 
         OsgiSupport.withService( SchedulerExecutorService.class, schedulerExecutorService -> {
             schedulerExecutorService.disposeAllDone();
-            return true;
+            return null;
         } );
 
-        final Set<String> liveTasks =
+        final Set<String> scheduledJobs =
             OsgiSupport.withService( SchedulerExecutorService.class, ( SchedulerExecutorService::getAllFutures ) );
 
-        final List<ScheduledJob> jobsToSchedule = jobs.
-            stream().
-            filter( job -> !liveTasks.contains( job.getName().getValue() ) ).
-            filter( job -> !ScheduleCalendarType.ONE_TIME.equals( job.getCalendar().getType() ) || job.getLastRun() == null ).
-            filter( ScheduledJob::isEnabled ).
-            collect( Collectors.toList() );
+        LOG.debug( "Currently scheduled jobs {}", scheduledJobs );
 
-        jobsToSchedule.forEach( job -> job.getCalendar().
-            nextExecution().
-            ifPresent( duration -> {
-                try
-                {
-                    OsgiSupport.withService( SchedulerExecutorService.class, scheduler -> scheduler.schedule( SchedulableTaskImpl.create().
-                        job( job ).
-                        build(), duration.isNegative() ? 0 : duration.toMillis(), TimeUnit.MILLISECONDS ) );
-                }
-                catch ( Exception e )
-                {
-                    LOG.warn( "[{}] job rescheduling failed.", job.getName().getValue(), e );
-                }
-            } ) );
+        jobs.stream()
+            .filter( ScheduledJob::isEnabled )
+            .filter( job -> !scheduledJobs.contains( job.getName().getValue() ) )
+            .filter( job -> !ScheduleCalendarType.ONE_TIME.equals( job.getCalendar().getType() ) || job.getLastRun() == null )
+            .forEach( job -> job.getCalendar().nextExecution().ifPresent( duration -> {
+            try
+            {
+                LOG.debug( "Rescheduling a job {}", job.getName() );
+                OsgiSupport.withService( SchedulerExecutorService.class,
+                                         scheduler -> scheduler.schedule( SchedulableTaskImpl.create().job( job ).build(),
+                                                                          duration.isNegative() ? 0 : duration.toMillis(),
+                                                                          TimeUnit.MILLISECONDS ) );
+            }
+            catch ( Exception e )
+            {
+                LOG.warn( "{} job rescheduling failed", job.getName(), e );
+            }
+        } ) );
     }
 
     private static Context adminContext()
     {
-        return ContextBuilder.from( ContextAccessor.current() ).
-            authInfo( AuthenticationInfo.create().
-                principals( RoleKeys.ADMIN ).
-                user( User.create().
-                    key( PrincipalKey.ofSuperUser() ).
-                    login( PrincipalKey.ofSuperUser().getId() ).
-                    build() ).
-                build() ).
-            build();
+        return ContextBuilder.from( ContextAccessor.current() )
+            .authInfo( AuthenticationInfo.create()
+                           .principals( RoleKeys.ADMIN )
+                           .user( User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build() )
+                           .build() )
+            .build();
     }
 }
