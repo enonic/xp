@@ -6,6 +6,7 @@ import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.validate.ContentValidatorParams;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.node.Node;
@@ -69,9 +70,7 @@ final class RenameContentCommand
 
         final NodeName nodeName = NodeName.from( params.getNewName().toString() );
 
-        final RenameNodeParams.Builder builder = RenameNodeParams.create().
-            nodeId( nodeId ).
-            nodeName( nodeName );
+        final RenameNodeParams.Builder builder = RenameNodeParams.create().nodeId( nodeId ).nodeName( nodeName );
 
         if ( params.stopInherit() )
         {
@@ -94,38 +93,42 @@ final class RenameContentCommand
 
     private ValidationErrors validateContent( final Content content )
     {
-        return ValidateContentDataCommand.create().
-            contentData( content.getData() ).
-            contentType( content.getType() ).
-            name( content.getName() ).
-            displayName( content.getDisplayName() ).extraDatas( content.getAllExtraData() ).
-            contentTypeService( this.contentTypeService ).
-            xDataService( this.xDataService ).
-            siteService( this.siteService ).
-            contentValidators( this.contentValidators ).
-            build().
-            execute();
+        return ValidateContentDataCommand.create()
+            .contentValidatorParams( ContentValidatorParams.create()
+                                         .data( content.getData() )
+                                         .extraDatas( content.getAllExtraData() )
+                                         .contentType( content.getType() )
+                                         .name( content.getName() )
+                                         .displayName( content.getDisplayName() )
+                                         .build() )
+            .contentTypeService( this.contentTypeService )
+            .xDataService( this.xDataService )
+            .siteService( this.siteService )
+            .contentValidators( this.contentValidators )
+            .build()
+            .execute();
     }
 
     private Content updateValidState( final Content content, final ValidationErrors validated )
     {
 
-        final UpdateContentParams updateContentParams = new UpdateContentParams().
-            requireValid( false ).
-            contentId( content.getId() ).
-            modifier( content.getModifier() ).
-            stopInherit( false ).
-            editor( edit -> edit.valid = validated.isEmpty() );
+        final UpdateContentParams updateContentParams = new UpdateContentParams().requireValid( false )
+            .contentId( content.getId() )
+            .modifier( content.getModifier() )
+            .stopInherit( false )
+            .editor( edit -> edit.valid = validated.isEmpty() );
 
-        return UpdateContentCommand.create( this ).params( updateContentParams ).
-            siteService( siteService ).
-            contentTypeService( contentTypeService ).
-            xDataService( this.xDataService ).
-            pageDescriptorService( this.pageDescriptorService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            contentDataSerializer( this.contentDataSerializer ).
-            build().execute();
+        return UpdateContentCommand.create( this )
+            .params( updateContentParams )
+            .siteService( siteService )
+            .contentTypeService( contentTypeService )
+            .xDataService( this.xDataService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .contentDataSerializer( this.contentDataSerializer )
+            .build()
+            .execute();
     }
 
     public static class Builder

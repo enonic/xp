@@ -3,6 +3,7 @@ package com.enonic.xp.content.validate;
 import java.util.Objects;
 
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
@@ -10,11 +11,13 @@ import com.enonic.xp.schema.content.ContentTypeName;
 
 public final class ContentValidatorParams
 {
-    private final PropertyTree contentData;
-
-    private final ExtraDatas extraDatas;
+    private final ContentId contentId;
 
     private final ContentTypeName contentType;
+
+    private final PropertyTree data;
+
+    private final ExtraDatas extraDatas;
 
     private final ContentName name;
 
@@ -24,7 +27,8 @@ public final class ContentValidatorParams
 
     private ContentValidatorParams( Builder builder )
     {
-        contentData = builder.contentData;
+        contentId = builder.contentId;
+        data = builder.data;
         extraDatas = Objects.requireNonNullElse( builder.extraDatas, ExtraDatas.empty() );
         contentType = builder.contentType;
         name = builder.name;
@@ -32,14 +36,9 @@ public final class ContentValidatorParams
         createAttachments = Objects.requireNonNullElse( builder.createAttachments, CreateAttachments.empty() );
     }
 
-    public PropertyTree getContentData()
+    public ContentId getContentId()
     {
-        return contentData;
-    }
-
-    public ExtraDatas getExtraDatas()
-    {
-        return extraDatas;
+        return contentId;
     }
 
     public ContentTypeName getContentType()
@@ -57,6 +56,16 @@ public final class ContentValidatorParams
         return displayName;
     }
 
+    public PropertyTree getData()
+    {
+        return data;
+    }
+
+    public ExtraDatas getExtraDatas()
+    {
+        return extraDatas;
+    }
+
     public CreateAttachments getCreateAttachments()
     {
         return createAttachments;
@@ -69,9 +78,7 @@ public final class ContentValidatorParams
 
     public static final class Builder
     {
-        private PropertyTree contentData;
-
-        private ExtraDatas extraDatas;
+        private ContentId contentId;
 
         private ContentTypeName contentType;
 
@@ -79,21 +86,19 @@ public final class ContentValidatorParams
 
         private String displayName;
 
+        private PropertyTree data;
+
+        private ExtraDatas extraDatas;
+
         private CreateAttachments createAttachments;
 
         private Builder()
         {
         }
 
-        public Builder contentData( PropertyTree contentData )
+        public Builder contentId( ContentId contentId )
         {
-            this.contentData = contentData;
-            return this;
-        }
-
-        public Builder extraDatas( ExtraDatas extraDatas )
-        {
-            this.extraDatas = extraDatas;
+            this.contentId = contentId;
             return this;
         }
 
@@ -112,6 +117,18 @@ public final class ContentValidatorParams
         public Builder displayName( String displayName )
         {
             this.displayName = displayName;
+            return this;
+        }
+
+        public Builder data( PropertyTree contentData )
+        {
+            this.data = contentData;
+            return this;
+        }
+
+        public Builder extraDatas( ExtraDatas extraDatas )
+        {
+            this.extraDatas = extraDatas;
             return this;
         }
 

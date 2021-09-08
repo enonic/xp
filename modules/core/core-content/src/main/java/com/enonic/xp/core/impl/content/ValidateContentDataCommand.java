@@ -8,18 +8,14 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.attachment.CreateAttachments;
-import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.ValidationError;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.validate.ContentValidator;
 import com.enonic.xp.content.validate.ContentValidatorParams;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
 import com.enonic.xp.core.impl.content.validate.SiteConfigValidationError;
-import com.enonic.xp.content.ValidationError;
-import com.enonic.xp.content.ValidationErrors;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentType;
@@ -49,7 +45,7 @@ final class ValidateContentDataCommand
 
     private final List<ContentValidator> contentValidators;
 
-    private final ContentValidatorParams validatorParams;
+    private final ContentValidatorParams contentValidatorParams;
 
     private final ValidationErrors.Builder resultBuilder;
 
@@ -59,14 +55,7 @@ final class ValidateContentDataCommand
         xDataService = builder.xDataService;
         siteService = builder.siteService;
         contentValidators = builder.contentValidators;
-        validatorParams = ContentValidatorParams.create()
-            .contentData( builder.contentData )
-            .extraDatas( builder.extraDatas )
-            .contentType( builder.contentType )
-            .name( builder.name )
-            .displayName( builder.displayName )
-            .createAttachments( builder.createAttachments )
-            .build();
+        contentValidatorParams = builder.contentValidatorParams;
         resultBuilder = ValidationErrors.create();
     }
 
@@ -83,7 +72,7 @@ final class ValidateContentDataCommand
 
     ValidationErrors doExecute()
     {
-        final ContentTypeName contentTypeName = this.validatorParams.getContentType();
+        final ContentTypeName contentTypeName = this.contentValidatorParams.getContentType();
         final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
 
         Preconditions.checkArgument( contentType != null, "ContentType [%s] not found", contentTypeName );
@@ -96,7 +85,7 @@ final class ValidateContentDataCommand
         {
             if (contentValidator.supports( contentType ))
             {
-                final ValidationErrors validationErrors = contentValidator.validate( validatorParams );
+                final ValidationErrors validationErrors = contentValidator.validate( contentValidatorParams );
                 resultBuilder.addAll( validationErrors );
             }
         }
@@ -106,11 +95,11 @@ final class ValidateContentDataCommand
 
     private void validateName()
     {
-        if ( validatorParams.getName() == null || validatorParams.getName().isUnnamed() )
+        if ( contentValidatorParams.getName() == null || contentValidatorParams.getName().isUnnamed() )
         {
             this.resultBuilder.add( new ValidationError( "name is required" ) );
         }
-        if ( nullToEmpty( validatorParams.getDisplayName() ).isBlank() )
+        if ( nullToEmpty( contentValidatorParams.getDisplayName() ).isBlank() )
         {
             this.resultBuilder.add( new ValidationError( "displayName is required" ) );
         }
@@ -124,7 +113,7 @@ final class ValidateContentDataCommand
             if ( contentType.getName().isSite() )
             {
 
-                final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties( this.validatorParams.getContentData().getRoot() ).build();
+                final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties( this.contentValidatorParams.getData().getRoot() ).build();
 
                 for ( final SiteConfig siteConfig : siteConfigs )
                 {
@@ -164,15 +153,15 @@ final class ValidateContentDataCommand
     {
         if ( contentType != null )
         {
-            this.resultBuilder.addAll( new OccurrenceValidator( contentType.getForm() ).validate( this.validatorParams.getContentData().getRoot() ) );
+            this.resultBuilder.addAll( new OccurrenceValidator( contentType.getForm() ).validate( this.contentValidatorParams.getData().getRoot() ) );
         }
     }
 
     private void validateMetadata()
     {
-        if ( this.validatorParams.getExtraDatas() != null )
+        if ( this.contentValidatorParams.getExtraDatas() != null )
         {
-            for ( final ExtraData extraData : this.validatorParams.getExtraDatas() )
+            for ( final ExtraData extraData : this.contentValidatorParams.getExtraDatas() )
             {
                 final XDataName name = extraData.getName();
 
@@ -203,17 +192,7 @@ final class ValidateContentDataCommand
 
         private List<ContentValidator> contentValidators;
 
-        private PropertyTree contentData;
-
-        private ExtraDatas extraDatas;
-
-        private ContentTypeName contentType;
-
-        private ContentName name;
-
-        private String displayName;
-
-        private CreateAttachments createAttachments;
+        private ContentValidatorParams contentValidatorParams;
 
         private Builder()
         {
@@ -243,38 +222,8 @@ final class ValidateContentDataCommand
             return this;
         }
 
-        public Builder contentData( PropertyTree contentData )
-        {
-            this.contentData = contentData;
-            return this;
-        }
-
-        public Builder extraDatas( ExtraDatas extraDatas )
-        {
-            this.extraDatas = extraDatas;
-            return this;
-        }
-
-        public Builder contentType( ContentTypeName contentType )
-        {
-            this.contentType = contentType;
-            return this;
-        }
-
-        public Builder name( ContentName name )
-        {
-            this.name = name;
-            return this;
-        }
-
-        public Builder displayName( String displayName )
-        {
-            this.displayName = displayName;
-            return this;
-        }
-
-        public Builder createAttachments( CreateAttachments createAttachments) {
-            this.createAttachments = createAttachments;
+        public Builder contentValidatorParams( ContentValidatorParams contentValidatorParams) {
+            this.contentValidatorParams = contentValidatorParams;
             return this;
         }
 

@@ -23,6 +23,7 @@ import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.processor.ProcessUpdateParams;
 import com.enonic.xp.content.processor.ProcessUpdateResult;
+import com.enonic.xp.content.validate.ContentValidatorParams;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.icon.Thumbnail;
@@ -104,9 +105,8 @@ final class UpdateContentCommand
         {
             if ( editedContent.getInherit().contains( ContentInheritType.CONTENT ) )
             {
-                nodeService.commit( NodeCommitEntry.create().
-                    message( "Base inherited version" ).
-                    build(), NodeIds.from( params.getContentId().toString() ) );
+                nodeService.commit( NodeCommitEntry.create().message( "Base inherited version" ).build(),
+                                    NodeIds.from( params.getContentId().toString() ) );
                 editedContent.getInherit().remove( ContentInheritType.CONTENT );
             }
             editedContent.getInherit().remove( ContentInheritType.NAME );
@@ -127,30 +127,28 @@ final class UpdateContentCommand
             throw new ContentDataValidationException( validated.iterator().next().getErrorMessage() );
         }
 
-        editedContent = Content.create( editedContent ).
-            valid( validated.isEmpty() ).
-            validationErrors( validated ).
-            build();
+        editedContent = Content.create( editedContent ).valid( validated.isEmpty() ).validationErrors( validated ).build();
         editedContent = attachThumbnail( editedContent );
         editedContent = setModifiedTime( editedContent );
 
-        final UpdateContentTranslatorParams updateContentTranslatorParams = UpdateContentTranslatorParams.create().
-            editedContent( editedContent ).
-            createAttachments( this.params.getCreateAttachments() ).
-            removeAttachments( this.params.getRemoveAttachments() ).
-            clearAttachments( this.params.isClearAttachments() ).
-            modifier( getCurrentUser().getKey() ).
-            build();
+        final UpdateContentTranslatorParams updateContentTranslatorParams = UpdateContentTranslatorParams.create()
+            .editedContent( editedContent )
+            .createAttachments( this.params.getCreateAttachments() )
+            .removeAttachments( this.params.getRemoveAttachments() )
+            .clearAttachments( this.params.isClearAttachments() )
+            .modifier( getCurrentUser().getKey() )
+            .build();
 
-        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( updateContentTranslatorParams ).
-            contentTypeService( this.contentTypeService ).
-            xDataService( this.xDataService ).
-            pageDescriptorService( this.pageDescriptorService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            contentDataSerializer( this.contentDataSerializer ).
-            siteService( this.siteService ).
-            build().produce();
+        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( updateContentTranslatorParams )
+            .contentTypeService( this.contentTypeService )
+            .xDataService( this.xDataService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .contentDataSerializer( this.contentDataSerializer )
+            .siteService( this.siteService )
+            .build()
+            .produce();
 
         final Node editedNode = this.nodeService.update( updateNodeParams );
         return translator.fromNode( editedNode, true );
@@ -171,14 +169,14 @@ final class UpdateContentCommand
         {
             if ( contentProcessor.supports( contentType ) )
             {
-                final ProcessUpdateResult result = contentProcessor.processUpdate( ProcessUpdateParams.create().
-                    contentType( contentType ).
-                    mediaInfo( mediaInfo ).
-                    createAttachments( params.getCreateAttachments() ).
-                    originalContent( originalContent ).
-                    editedContent( editedContent ).
-                    modifier( getCurrentUser() ).
-                    build() );
+                final ProcessUpdateResult result = contentProcessor.processUpdate( ProcessUpdateParams.create()
+                                                                                       .contentType( contentType )
+                                                                                       .mediaInfo( mediaInfo )
+                                                                                       .createAttachments( params.getCreateAttachments() )
+                                                                                       .originalContent( originalContent )
+                                                                                       .editedContent( editedContent )
+                                                                                       .modifier( getCurrentUser() )
+                                                                                       .build() );
 
                 editedContent = updateContentWithProcessedData( editedContent, result );
             }
@@ -225,9 +223,7 @@ final class UpdateContentCommand
 
     private Content setModifiedTime( final Content content )
     {
-        return Content.create( content ).
-            modifiedTime( Instant.now() ).
-            build();
+        return Content.create( content ).modifiedTime( Instant.now() ).build();
     }
 
     private void validateBlockingChecks( final Content editedContent )
@@ -278,12 +274,11 @@ final class UpdateContentCommand
             contentTypeService.getByName( new GetContentTypeParams().contentTypeName( editedContent.getType() ) );
         try
         {
-            InputValidator.
-                create().
-                form( contentType.getForm() ).
-                inputTypeResolver( InputTypes.BUILTIN ).
-                build().
-                validate( editedContent.getData() );
+            InputValidator.create()
+                .form( contentType.getForm() )
+                .inputTypeResolver( InputTypes.BUILTIN )
+                .build()
+                .validate( editedContent.getData() );
         }
         catch ( final Exception e )
         {
@@ -294,12 +289,15 @@ final class UpdateContentCommand
     private ValidationErrors validateNonBlockingChecks( final Content edited, final CreateAttachments createAttachments )
     {
         return ValidateContentDataCommand.create()
-            .contentData( edited.getData() )
-            .contentType( edited.getType() )
-            .name( edited.getName() )
-            .displayName( edited.getDisplayName() )
-            .extraDatas( edited.getAllExtraData() )
-            .createAttachments( createAttachments )
+            .contentValidatorParams( ContentValidatorParams.create()
+                                         .contentId( edited.getId() )
+                                         .data( edited.getData() )
+                                         .extraDatas( edited.getAllExtraData() )
+                                         .contentType( edited.getType() )
+                                         .name( edited.getName() )
+                                         .displayName( edited.getDisplayName() )
+                                         .createAttachments( createAttachments )
+                                         .build() )
             .xDataService( this.xDataService )
             .siteService( this.siteService )
             .contentValidators( this.contentValidators )

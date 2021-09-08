@@ -21,10 +21,10 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
-import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.processor.ProcessCreateParams;
 import com.enonic.xp.content.processor.ProcessCreateResult;
+import com.enonic.xp.content.validate.ContentValidatorParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
@@ -142,7 +142,7 @@ final class CreateContentCommand
         }
     }
 
-    private void validateBlockingChecks(final CreateContentParams params)
+    private void validateBlockingChecks( final CreateContentParams params )
     {
         validateContentType( params );
         validateParentChildRelations( params.getParent(), params.getType() );
@@ -214,8 +214,7 @@ final class CreateContentCommand
         {
             if ( contentProcessor.supports( contentType ) )
             {
-                final ProcessCreateResult result =
-                    contentProcessor.processCreate( new ProcessCreateParams( processedParams, mediaInfo ) );
+                final ProcessCreateResult result = contentProcessor.processCreate( new ProcessCreateParams( processedParams, mediaInfo ) );
 
                 processedParams = CreateContentParams.create( result.getCreateContentParams() ).build();
             }
@@ -311,19 +310,22 @@ final class CreateContentCommand
 
     private void populateValid( final CreateContentTranslatorParams.Builder builder )
     {
-        final ValidationErrors validationErrors = ValidateContentDataCommand.create()
-            .contentData( builder.getData() )
-            .contentType( builder.getType() )
-            .name( builder.getName() )
-            .displayName( builder.getDisplayName() )
-            .extraDatas( builder.getExtraDatas() != null ? ExtraDatas.from( builder.getExtraDatas() ) : ExtraDatas.empty() )
-            .createAttachments( builder.getCreateAttachments() )
-            .xDataService( this.xDataService )
-            .siteService( this.siteService )
-            .contentValidators( this.contentValidators )
-            .contentTypeService( this.contentTypeService )
-            .build()
-            .execute();
+        final ValidationErrors validationErrors =
+            ValidateContentDataCommand.create()
+                .contentValidatorParams( ContentValidatorParams.create()
+                                             .data( builder.getData() )
+                                             .extraDatas( builder.getExtraDatas() )
+                                             .contentType( builder.getType() )
+                                             .name( builder.getName() )
+                                             .displayName( builder.getDisplayName() )
+                                             .createAttachments( builder.getCreateAttachments() )
+                                             .build() )
+                .xDataService( this.xDataService )
+                .siteService( this.siteService )
+                .contentValidators( this.contentValidators )
+                .contentTypeService( this.contentTypeService )
+                .build()
+                .execute();
 
         if ( validationErrors.isNotEmpty() )
         {
