@@ -63,7 +63,15 @@ public abstract class MapGeneratorBase
         return value;
     }
 
+    private void putRawValueInMap( final String key, final Object value )
+    {
+        checkIfMap();
+        putRawValueInMap( this.current, key, value );
+    }
+
     protected abstract void putInMap( Object map, String key, Object value );
+
+    protected abstract void putRawValueInMap( Object map, String key, Object value );
 
     private Object addToArray( final Object value )
     {
@@ -159,7 +167,8 @@ public abstract class MapGeneratorBase
             return this.end();
         }
 
-        return rawValue( key, convertValue( value ) );
+        putInMap( key, convertValue( value ) );
+        return this;
     }
 
     @Override
@@ -172,7 +181,7 @@ public abstract class MapGeneratorBase
     @Override
     public MapGenerator rawValue( final String key, final Object value )
     {
-        putInMap( key, convertRaw( value ) );
+        putRawValueInMap( key, convertRaw( value ) );
         return this;
     }
 
