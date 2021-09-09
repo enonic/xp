@@ -54,6 +54,12 @@ public final class JsonMapGenerator
     }
 
     @Override
+    protected void putRawValueInMap( final Object map, final String key, final Object value )
+    {
+        putInMap( map, key, value );
+    }
+
+    @Override
     protected void addToArray( final Object array, final Object value )
     {
         ( (ArrayNode) array ).add( toValue( value ) );
