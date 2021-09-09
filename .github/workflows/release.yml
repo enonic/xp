@@ -20,7 +20,7 @@ jobs:
       - name: Get previous release tag
         id: get_previous_release_tag
         run: |
-          PREVIOUS_RELEASE_TAG=$(git tag --sort=-version:refname --merged | grep -E '^v([[:digit:]]+\.){2}[[:digit:]]+$' | head -1)
+          PREVIOUS_RELEASE_TAG=$(git tag --sort=-version:refname --merged | grep -E '^v([[:digit:]]+\.){2}[[:digit:]]+$' | grep -v "$(git describe --tags)" | head -1)
           echo ::set-output name=previous_release_tag::$PREVIOUS_RELEASE_TAG
 
       - name: Generate Release Notes
