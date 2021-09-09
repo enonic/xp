@@ -47,6 +47,12 @@ final class ScriptMapGenerator
     }
 
     @Override
+    protected void putRawValueInMap( final Object map, final String key, final Object value )
+    {
+        GraalJSHelper.addToNativeObject( map, key, value );
+    }
+
+    @Override
     protected void addToArray( final Object array, final Object value )
     {
         GraalJSHelper.addToNativeArray( array, value );
