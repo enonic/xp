@@ -22,13 +22,10 @@ public final class ContentPath
 
     private final String refString;
 
-    private final String root;
-
     private ContentPath( final Builder builder )
     {
         Preconditions.checkNotNull( builder.elements );
         this.absolute = builder.absolute;
-        this.root = builder.root;
         this.elements = builder.elements.build();
         this.refString = ( this.absolute ? ELEMENT_DIVIDER : "" ) + String.join( ELEMENT_DIVIDER, elements );
     }
@@ -37,7 +34,7 @@ public final class ContentPath
     {
         final Iterable<String> pathElements = Splitter.on( ELEMENT_DIVIDER ).omitEmptyStrings().split( path );
         boolean absolute = path.startsWith( ELEMENT_DIVIDER );
-        return create().elements( pathElements ).absolute( absolute ).root( root ).build();
+        return create().elements( pathElements ).absolute( absolute ).build();
     }
 
     public static ContentPath from( final String path )
@@ -47,7 +44,7 @@ public final class ContentPath
 
     public static ContentPath from( final ContentPath parent, final String name )
     {
-        return create().elements( parent.elements ).absolute( parent.isAbsolute() ).addElement( name ).root( parent.root ).build();
+        return create().elements( parent.elements ).absolute( parent.isAbsolute() ).addElement( name ).build();
     }
 
     public static ContentPath from( final ContentPath parent, final ContentPath relative )
@@ -55,7 +52,6 @@ public final class ContentPath
         final Builder builder = create().elements( parent.elements );
         builder.addElements( relative.elements );
         builder.absolute( parent.isAbsolute() );
-        builder.root( parent.root );
         return builder.build();
     }
 
@@ -72,15 +68,6 @@ public final class ContentPath
     public boolean isRoot()
     {
         return this.elements.isEmpty();
-    }
-
-    public ContentPath getRoot()
-    {
-        return ContentPath.create().root( this.root ).absolute( true ).build();
-    }
-
-    public String getRootAsString() {
-        return this.root;
     }
 
     public int elementCount()
@@ -105,7 +92,7 @@ public final class ContentPath
         final int subIndex = size - deep;
         final List<String> parentElements = this.elements.subList( 0, subIndex );
 
-        return create().absolute( absolute ).elements( parentElements ).root( root ).build();
+        return create().absolute( absolute ).elements( parentElements ).build();
     }
 
     public boolean isAbsolute()
@@ -125,7 +112,7 @@ public final class ContentPath
             return this;
         }
 
-        return new ContentPath.Builder( this ).absolute( false ).root( root ).build();
+        return new ContentPath.Builder( this ).absolute( false ).build();
     }
 
     public ContentPath asAbsolute()
@@ -135,7 +122,7 @@ public final class ContentPath
             return this;
         }
 
-        return new ContentPath.Builder( this ).absolute( true ).root( root ).build();
+        return new ContentPath.Builder( this ).absolute( true ).build();
     }
 
     public boolean hasName()
@@ -180,13 +167,13 @@ public final class ContentPath
 
         final ContentPath that = (ContentPath) o;
 
-        return Objects.equals( refString, that.refString ) && Objects.equals( root, that.root );
+        return Objects.equals( refString, that.refString );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( refString, root );
+        return Objects.hash( refString );
     }
 
     public int compareTo( ContentPath contentPath )
@@ -206,8 +193,6 @@ public final class ContentPath
 
         private boolean absolute = true;
 
-        private String root = ContentConstants.CONTENT_ROOT_NAME;
-
         private Builder()
         {
             this.elements = ImmutableList.builder();
@@ -223,12 +208,6 @@ public final class ContentPath
         public Builder absolute( final boolean value )
         {
             this.absolute = value;
-            return this;
-        }
-
-        public Builder root( final String root )
-        {
-            this.root = root;
             return this;
         }
 
@@ -274,14 +253,8 @@ public final class ContentPath
                                          "A path element cannot contain an element divider '%s': [%s]", ELEMENT_DIVIDER, pathElement );
         }
 
-        private void validate()
-        {
-            Preconditions.checkNotNull( root, "root cannot be null" );
-        }
-
         public ContentPath build()
         {
-            validate();
             return new ContentPath( this );
         }
     }

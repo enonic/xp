@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
@@ -97,7 +98,7 @@ public final class ProjectEventListener
     private Context createAdminContext()
     {
         final AuthenticationInfo authInfo = createAdminAuthInfo();
-        return ContextBuilder.create().
+        return ContextBuilder.from( ContextAccessor.current() ).
             branch( ContentConstants.BRANCH_DRAFT ).
             repositoryId( ContentConstants.CONTENT_REPO_ID ).
             authInfo( authInfo ).

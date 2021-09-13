@@ -33,8 +33,7 @@ public final class ContextHandlerBean
         applyBranch( builder, params.branch );
         addAttributes( builder, params.attributes );
 
-        return builder.build().
-            callWith( params.callback );
+        return builder.build().callWith( params.callback );
     }
 
     public ContextMapper get()
@@ -49,11 +48,10 @@ public final class ContextHandlerBean
 
     private void applyRepository( final ContextBuilder builder, final String repository )
     {
-        if ( repository == null )
+        if ( repository != null )
         {
-            return;
+            builder.repositoryId( repository );
         }
-        builder.repositoryId( repository );
     }
 
     private void applyAuthInfo( final ContextBuilder builder, final String username, final String idProvider,
@@ -66,10 +64,7 @@ public final class ContextHandlerBean
         }
         if ( principals != null )
         {
-            authInfo = AuthenticationInfo.
-                copyOf( authInfo ).
-                principals( principals ).
-                build();
+            authInfo = AuthenticationInfo.copyOf( authInfo ).principals( principals ).build();
         }
 
         builder.authInfo( authInfo );
@@ -77,12 +72,10 @@ public final class ContextHandlerBean
 
     private void applyBranch( final ContextBuilder builder, final String branch )
     {
-        if ( branch == null )
+        if ( branch != null )
         {
-            return;
+            builder.branch( branch );
         }
-
-        builder.branch( branch );
     }
 
     private void addAttributes( final ContextBuilder builder, final Map<String, Object> attributes )
@@ -107,11 +100,12 @@ public final class ContextHandlerBean
     private <T> T runAsAuthenticated( final Callable<T> runnable )
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.ANONYMOUS ).build();
-        return ContextBuilder.from( this.context.get() ).
-            authInfo( authInfo ).
-            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-            branch( SecurityConstants.BRANCH_SECURITY ).build().
-            callWith( runnable );
+        return ContextBuilder.from( this.context.get() )
+            .authInfo( authInfo )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .branch( SecurityConstants.BRANCH_SECURITY )
+            .build()
+            .callWith( runnable );
     }
 
     @Override
