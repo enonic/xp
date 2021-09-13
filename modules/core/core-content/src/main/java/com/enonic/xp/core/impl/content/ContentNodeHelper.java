@@ -2,10 +2,12 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.stream.Collectors;
 
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
@@ -22,7 +24,7 @@ class ContentNodeHelper
 
     public static NodePath translateContentPathToNodePath( final ContentPath contentPath )
     {
-        return new NodePath( contentPath.getRootAsString() + contentPath.asAbsolute().toString() ).asAbsolute().trimTrailingDivider();
+        return new NodePath( getRoot() + contentPath.asAbsolute().toString() ).asAbsolute().trimTrailingDivider();
     }
 
     public static NodePaths translateContentPathsToNodePaths( final ContentPaths contentPaths )
@@ -78,6 +80,11 @@ class ContentNodeHelper
         return ContentIds.from( nodeIds.stream().map( nodeId -> ContentId.from( nodeId.toString() ) ).collect( Collectors.toList() ) );
     }
 
+    private static String getRoot()
+    {
+        final NodePath nodePath = (NodePath) ContextAccessor.current().getAttribute("contentRootPath");
+        return nodePath != null ? nodePath.asAbsolute().toString() : ContentConstants.CONTENT_ROOT_PATH.toString();
+    }
 }
 
 
