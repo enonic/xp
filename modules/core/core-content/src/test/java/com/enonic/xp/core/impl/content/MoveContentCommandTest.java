@@ -139,6 +139,7 @@ public class MoveContentCommandTest
             ContentNodeHelper.translateContentParentToNodeParentPath( existingContent.getParentPath() ) ).build();
 
         Mockito.when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
+        Mockito.when( nodeService.nodeExists( mockNode.path() )).thenReturn( true );
         Mockito.when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
         Mockito.when( translator.fromNode( mockNode, false ) ).thenReturn( existingContent );
 

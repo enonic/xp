@@ -17,7 +17,7 @@ public final class ArchiveConstants
 
     public static final NodePath ARCHIVE_ROOT_PATH = NodePath.create( NodePath.ROOT, ARCHIVE_ROOT_NAME ).build();
 
-    public static final ContentPath ARCHIVE_ROOT_CONTENT_PATH = ContentPath.create().absolute( true ).root( ARCHIVE_ROOT_NAME ).build();
+    public static final ContentPath ARCHIVE_ROOT_CONTENT_PATH = ContentPath.create().absolute( true ).build();
 
     public static final ChildOrder DEFAULT_ARCHIVE_REPO_ROOT_ORDER = ChildOrder.from( "_name ASC" );
 

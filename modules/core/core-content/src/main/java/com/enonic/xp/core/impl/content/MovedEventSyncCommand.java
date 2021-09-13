@@ -31,35 +31,43 @@ final class MovedEventSyncCommand
         {
             final Content sourceParent =
                 params.getSourceContext().callWith( () -> contentService.getByPath( params.getSourceContent().getParentPath() ) );
-            final Content sourceRoot =
-                params.getSourceContext().callWith( () -> contentService.getByPath( params.getSourceContent().getPath().getRoot()  ) );
+            final Content sourceRoot = params.getSourceContext().callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
 
             params.getTargetContext().runWith( () -> {
                 final ContentPath targetParentPath = contentService.contentExists( sourceParent.getId() )
                     ? contentService.getById( sourceParent.getId() ).getPath()
-                    : sourceRoot.getId().equals( sourceParent.getId() ) ? params.getSourceContent().getPath().getRoot() : null;
+                    : sourceRoot.getId().equals( sourceParent.getId() ) ? ContentPath.ROOT : null;
 
                 if ( targetParentPath != null )
                 {
-                    if ( !targetParentPath.equals( params.getTargetContent().getParentPath() ) )
+                    if ( targetParentPath.equals( params.getTargetContent().getParentPath() ) )
                     {
-                        final ContentPath newPath = buildNewPath( targetParentPath, params.getTargetContent().getName() );
-
-                        if ( !Objects.equals( newPath.getName(), params.getTargetContent().getPath().getName() ) )
+                        final ContentPath newContentPath =
+                            ContentPath.from( targetParentPath, params.getTargetContent().getName().toString() );
+                        final Content existedContent =
+                            contentService.contentExists( newContentPath ) ? contentService.getByPath( newContentPath ) : null;
+                        if ( existedContent != null && existedContent.getId().equals( params.getTargetContent().getId() ) )
                         {
-                            contentService.rename( RenameContentParams.create()
-                                                       .contentId( params.getTargetContent().getId() )
-                                                       .newName( ContentName.from( newPath.getName() ) )
-                                                       .build() );
+                            return; // content is already there.
                         }
-
-                        contentService.move( MoveContentParams.create()
-                                                 .contentId( params.getTargetContent().getId() )
-                                                 .parentContentPath( targetParentPath )
-                                                 .stopInherit( false )
-                                                 .build() );
-
                     }
+
+                    final ContentPath newPath = buildNewPath( targetParentPath, params.getTargetContent().getName() );
+
+                    if ( !Objects.equals( newPath.getName(), params.getTargetContent().getPath().getName() ) )
+                    {
+                        contentService.rename( RenameContentParams.create()
+                                                   .contentId( params.getTargetContent().getId() )
+                                                   .newName( ContentName.from( newPath.getName() ) )
+                                                   .build() );
+                    }
+
+                    contentService.move( MoveContentParams.create()
+                                             .contentId( params.getTargetContent().getId() )
+                                             .parentContentPath( targetParentPath )
+                                             .stopInherit( false )
+                                             .build() );
+
                 }
             } );
         }

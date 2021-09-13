@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.concurrent.SimpleExecutor;
 import com.enonic.xp.event.Event;
@@ -119,33 +120,33 @@ public final class ProjectContentEventListener
                     {
                         case "node.created":
                         case "node.duplicated":
-                            paramsBuilder.addSyncEventType( ContentSyncEventType.CREATED );
+                            paramsBuilder.syncEventType( ContentSyncEventType.CREATED );
                             break;
                         case "node.updated":
                         case "node.pushed":
-                            paramsBuilder.addSyncEventType( ContentSyncEventType.UPDATED );
+                            paramsBuilder.syncEventType( ContentSyncEventType.UPDATED );
                             break;
                         case "node.manualOrderUpdated":
-                            paramsBuilder.addSyncEventType( ContentSyncEventType.MANUAL_ORDER_UPDATED );
+                            paramsBuilder.syncEventType( ContentSyncEventType.MANUAL_ORDER_UPDATED );
                             break;
                         case "node.sorted":
-                            paramsBuilder.addSyncEventType( ContentSyncEventType.SORTED );
+                            paramsBuilder.syncEventType( ContentSyncEventType.SORTED );
                             break;
                         case "node.renamed":
-                            paramsBuilder.addSyncEventType( ContentSyncEventType.RENAMED );
+                            paramsBuilder.syncEventType( ContentSyncEventType.RENAMED );
                             break;
                         case "node.moved":
-                            paramsBuilder.addSyncEventType( ContentSyncEventType.MOVED );
+                            paramsBuilder.syncEventType( ContentSyncEventType.MOVED );
                             break;
                         case "node.deleted":
-                            paramsBuilder.addSyncEventType( ContentSyncEventType.DELETED );
+                            paramsBuilder.syncEventType( ContentSyncEventType.DELETED );
                             break;
                         default:
                             LOG.debug( "Ignoring node type: {}", type );
                             break;
                     }
                     final ContentEventsSyncParams params = paramsBuilder.build();
-                    if ( !params.getSyncTypes().isEmpty() )
+                    if ( params.getSyncType() != null )
                     {
                         contentSynchronizer.sync( params );
                     }
@@ -170,7 +171,7 @@ public final class ProjectContentEventListener
     private Context createAdminContext()
     {
         final AuthenticationInfo authInfo = createAdminAuthInfo();
-        return ContextBuilder.create().
+        return ContextBuilder.from( ContextAccessor.current() ).
             branch( ContentConstants.BRANCH_DRAFT ).
             repositoryId( ContentConstants.CONTENT_REPO_ID ).
             authInfo( authInfo ).

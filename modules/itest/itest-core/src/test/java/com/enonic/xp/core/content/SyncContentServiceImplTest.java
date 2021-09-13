@@ -169,7 +169,7 @@ public class SyncContentServiceImplTest
             contentId( contentId ).
             sourceProject( sourceProject.getName() ).
             targetProject( targetProject.getName() ).
-            addSyncEventType( ContentSyncEventType.CREATED ).
+            syncEventType( ContentSyncEventType.CREATED ).
             build() );
 
         return targetContext.callWith( () -> contentService.getById( contentId ) );

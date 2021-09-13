@@ -59,7 +59,8 @@ public class ReprocessRunnableTask
             if ( !params.isSkipChildren() )
             {
                 String nodePath = CONTENT_ROOT_PATH.asAbsolute().toString();
-                if ( !ContentPath.ROOT.equals( params.getSourceBranchPath().getContentPath() ) )
+                final ContentPath contentPath = params.getSourceBranchPath().getContentPath();
+                if ( !ContentPath.ROOT.equals( contentPath ) )
                 {
                     nodePath += content.getPath().
                         asAbsolute().

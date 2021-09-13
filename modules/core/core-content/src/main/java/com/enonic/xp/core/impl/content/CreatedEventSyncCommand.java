@@ -70,7 +70,7 @@ final class CreatedEventSyncCommand
 
     private void syncRootContent()
     {
-        contentService.importContent( createImportParams( params, params.getSourceContent().getParentPath().getRoot(), null ) );
+        contentService.importContent( createImportParams( params, ContentPath.ROOT, null ) );
     }
 
     private void syncChildContent( final ContentId parentId )
