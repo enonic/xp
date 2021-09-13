@@ -47,9 +47,9 @@ public final class ValidationErrors
             return this;
         }
 
-        public Builder addAll( final ValidationErrors validationErrors )
+        public Builder addAll( final Collection<ValidationError> validationErrors )
         {
-            this.dataValidationErrors.addAll( validationErrors.set );
+            this.dataValidationErrors.addAll( validationErrors );
             return this;
         }
 

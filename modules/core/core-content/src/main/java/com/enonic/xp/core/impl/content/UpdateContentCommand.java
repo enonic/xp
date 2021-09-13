@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentDataValidationException;
@@ -112,7 +111,8 @@ final class UpdateContentCommand
             editedContent.getInherit().remove( ContentInheritType.NAME );
         }
 
-        if ( contentBeforeChange.equals( editedContent ) && params.getCreateAttachments() == null && params.getRemoveAttachments() == null )
+        if ( contentBeforeChange.equals( editedContent ) && params.getCreateAttachments() == null &&
+            params.getRemoveAttachments() == null && !this.params.isClearAttachments() )
         {
             return contentBeforeChange;
         }
@@ -120,7 +120,19 @@ final class UpdateContentCommand
         editedContent = processContent( contentBeforeChange, editedContent );
 
         validateBlockingChecks( editedContent );
-        final ValidationErrors validated = validateNonBlockingChecks( editedContent, this.params.getCreateAttachments() );
+        final ContentValidatorParams validatorParams = ContentValidatorParams.create()
+            .contentId( editedContent.getId() )
+            .data( editedContent.getData() )
+            .extraDatas( editedContent.getAllExtraData() )
+            .contentType( editedContent.getType() )
+            .name( editedContent.getName() )
+            .displayName( editedContent.getDisplayName() )
+            .createAttachments( params.getCreateAttachments() )
+            .removeAttachments( params.getRemoveAttachments() )
+            .clearAttachments( params.isClearAttachments() )
+            .currentValidationErrors( contentBeforeChange.getValidationErrors() )
+            .build();
+        final ValidationErrors validated = validateNonBlockingChecks( validatorParams );
 
         if ( params.isRequireValid() )
         {
@@ -286,18 +298,10 @@ final class UpdateContentCommand
         }
     }
 
-    private ValidationErrors validateNonBlockingChecks( final Content edited, final CreateAttachments createAttachments )
+    private ValidationErrors validateNonBlockingChecks( ContentValidatorParams params )
     {
         return ValidateContentDataCommand.create()
-            .contentValidatorParams( ContentValidatorParams.create()
-                                         .contentId( edited.getId() )
-                                         .data( edited.getData() )
-                                         .extraDatas( edited.getAllExtraData() )
-                                         .contentType( edited.getType() )
-                                         .name( edited.getName() )
-                                         .displayName( edited.getDisplayName() )
-                                         .createAttachments( createAttachments )
-                                         .build() )
+            .contentValidatorParams( params )
             .xDataService( this.xDataService )
             .siteService( this.siteService )
             .contentValidators( this.contentValidators )

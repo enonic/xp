@@ -86,7 +86,7 @@ final class ValidateContentDataCommand
             if (contentValidator.supports( contentType ))
             {
                 final ValidationErrors validationErrors = contentValidator.validate( contentValidatorParams );
-                resultBuilder.addAll( validationErrors );
+                resultBuilder.addAll( validationErrors.getSet() );
             }
         }
 
@@ -126,7 +126,7 @@ final class ValidateContentDataCommand
                         if ( siteDescriptor != null )
                         {
                             this.resultBuilder.addAll(
-                                new OccurrenceValidator( siteDescriptor.getForm() ).validate( siteConfig.getConfig().getRoot() ) );
+                                new OccurrenceValidator( siteDescriptor.getForm() ).validate( siteConfig.getConfig().getRoot() ).getSet() );
 
                             validateSiteForm( siteDescriptor.getForm(), siteConfig );
                         }
@@ -153,7 +153,7 @@ final class ValidateContentDataCommand
     {
         if ( contentType != null )
         {
-            this.resultBuilder.addAll( new OccurrenceValidator( contentType.getForm() ).validate( this.contentValidatorParams.getData().getRoot() ) );
+            this.resultBuilder.addAll( new OccurrenceValidator( contentType.getForm() ).validate( this.contentValidatorParams.getData().getRoot() ).getSet() );
         }
     }
 
@@ -175,7 +175,7 @@ final class ValidateContentDataCommand
                 final Form mixinForm = xData.getForm();
                 if ( extraData.getData().getRoot().getPropertySize() > 0 )
                 {
-                    this.resultBuilder.addAll( new OccurrenceValidator( mixinForm ).validate( extraData.getData().getRoot() ) );
+                    this.resultBuilder.addAll( new OccurrenceValidator( mixinForm ).validate( extraData.getData().getRoot() ).getSet() );
                 }
             }
         }

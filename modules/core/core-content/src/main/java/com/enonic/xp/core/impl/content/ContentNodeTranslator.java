@@ -9,6 +9,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentState;
 import com.enonic.xp.content.Contents;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeService;
@@ -74,6 +75,7 @@ public class ContentNodeTranslator
             : ContentNodeHelper.translateNodePathToContentPath( node.path().getParentPath() );
 
         final Content.Builder builder = contentDataSerializer.fromData( node.data().getRoot() );
+
         builder.id( ContentId.from( node.id().toString() ) )
             .parentPath( parentContentPath )
             .name( node.name().toString() )

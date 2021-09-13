@@ -1,5 +1,7 @@
 package com.enonic.xp.content;
 
+import java.util.Objects;
+
 import com.enonic.xp.form.FormItemPath;
 
 public class DataValidationError
@@ -10,7 +12,7 @@ public class DataValidationError
     public DataValidationError( final FormItemPath path, final String errorMessage, final Object... args )
     {
         super( errorMessage, args );
-        this.path = path;
+        this.path = Objects.requireNonNull( path );
     }
 
     public FormItemPath getPath()

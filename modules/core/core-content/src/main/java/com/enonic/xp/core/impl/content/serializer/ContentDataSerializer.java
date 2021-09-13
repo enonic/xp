@@ -16,6 +16,7 @@ import com.enonic.xp.attachment.AttachmentSerializer;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.content.AttachmentValidationError;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -26,10 +27,12 @@ import com.enonic.xp.content.CreateContentTranslatorParams;
 import com.enonic.xp.content.DataValidationError;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
+import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.page.Page;
@@ -232,7 +235,7 @@ public class ContentDataSerializer
         extractWorkflowInfo( contentAsSet, builder );
         extractInherit( contentAsSet, builder );
         extractOriginProject( contentAsSet, builder );
-
+        extractValidationErrors( contentAsSet, builder );
         return builder;
     }
 
@@ -390,6 +393,32 @@ public class ContentDataSerializer
                                 .collect( Collectors.toSet() ) );
     }
 
+    private void extractValidationErrors( final PropertySet contentAsSet, final Content.Builder builder )
+    {
+        builder.validationErrors( ValidationErrors.create()
+                                      .addAll( StreamSupport.stream( contentAsSet.getSets( "validationErrors" ).spliterator(), false )
+                                                   .map( this::mapValidationError )
+                                                   .collect( Collectors.toList() ) )
+                                      .build() );
+    }
+
+    private ValidationError mapValidationError( final PropertySet ve )
+    {
+        if ( ve.hasProperty( "path" ) )
+        {
+            return new DataValidationError( FormItemPath.from( ve.getString( "path" ) ), ve.getString( "errorMessage" ) );
+        }
+        else if ( ve.hasProperty( "attachment" ) )
+        {
+            return new AttachmentValidationError( BinaryReference.from( ve.getString( "attachment" ) ), ve.getString( "errorCode" ),
+                                                  ve.getString( "errorMessage" ) );
+        }
+        else
+        {
+            return new ValidationError( ve.getString( "errorCode" ), ve.getString( "errorMessage" ) );
+        }
+    }
+
     private void extractOriginProject( final PropertySet contentAsSet, final Content.Builder builder )
     {
         final String originProject = contentAsSet.getString( ORIGIN_PROJECT );
@@ -475,10 +504,15 @@ public class ContentDataSerializer
         {
             contentAsData.addSets( "validationErrors", validationErrors.stream().map( validationError -> {
                 final PropertySet propertySet = new PropertySet();
-                propertySet.addString( "message", validationError.getErrorMessage() );
+                propertySet.addString( "errorCode", validationError.getErrorCode() );
+                propertySet.addString( "errorMessage", validationError.getErrorMessage() );
                 if ( validationError instanceof DataValidationError )
                 {
                     propertySet.addString( "path", ( (DataValidationError) validationError ).getPath().toString() );
+                }
+                else if ( validationError instanceof AttachmentValidationError )
+                {
+                    propertySet.addString( "attachment", ( (AttachmentValidationError) validationError ).getBinaryReference().toString() );
                 }
                 return propertySet;
             } ).toArray( PropertySet[]::new ) );
