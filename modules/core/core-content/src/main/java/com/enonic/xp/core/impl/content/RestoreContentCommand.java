@@ -15,7 +15,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
@@ -23,9 +22,11 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.node.RenameNodeParams;
+import com.enonic.xp.node.UpdateNodeParams;
 
 final class RestoreContentCommand
     extends AbstractArchiveCommand
@@ -79,8 +80,7 @@ final class RestoreContentCommand
         {
             if ( ContentConstants.CONTENT_NODE_COLLECTION.equals( nodeToRestore.getNodeType() ) )
             {
-                throw new RestoreContentException(
-                    String.format( "Content [%s] is not archived", nodeToRestore.id().toString() ) );
+                throw new RestoreContentException( String.format( "Content [%s] is not archived", nodeToRestore.id().toString() ) );
             }
             else
             {
@@ -88,33 +88,33 @@ final class RestoreContentCommand
             }
         }
 
-        final Node container = nodeService.getById( NodeId.from( nodeToRestore.path().asAbsolute().getElementAsString( 1 ) ) );
+        final Node rootOfArchive = nodeService.getById( NodeId.from( nodeToRestore.path().asAbsolute().getElementAsString( 1 ) ) );
 
-        final String oldSourceParentPath = container.data().getString( "oldParentPath" );
+        final String originalSourceName = rootOfArchive.data().getString( ArchiveConstants.ORIGINAL_NAME_PROPERTY_NAME );
+        final String originalSourceParentPath = rootOfArchive.data().getString( ArchiveConstants.ORIGINAL_PARENT_PATH_PROPERTY_NAME );
 
         final NodePath oldParentPath = params.getPath() != null
             ? ContentNodeHelper.translateContentPathToNodePath( params.getPath() )
-            : !Strings.nullToEmpty( oldSourceParentPath ).isBlank()
-                ? NodePath.create( oldSourceParentPath ).build()
+            : !Strings.nullToEmpty( originalSourceParentPath ).isBlank() ||
+                nodeService.nodeExists( NodePath.create( originalSourceParentPath ).build() )
+                ? NodePath.create( originalSourceParentPath ).build()
                 : ContentNodeHelper.translateContentPathToNodePath( ContentPath.ROOT );
-
-        final NodeIds contentsToRestore =
-            nodeService.findByParent( FindNodesByParentParams.create().parentPath( container.path() ).size( -1 ).build() ).getNodeIds();
 
         final RestoreContentsResult.Builder result = RestoreContentsResult.create();
 
-        for ( final NodeId contentToRestore : contentsToRestore )
-        {
+        final MoveNodeParams.Builder builder =
+            MoveNodeParams.create().nodeId( rootOfArchive.id() ).parentNodePath( oldParentPath ).moveListener( this );
 
-            final MoveNodeParams.Builder builder =
-                MoveNodeParams.create().nodeId( contentToRestore ).parentNodePath( oldParentPath ).moveListener( this );
+        final Node movedNode = nodeService.move( builder.build() );
 
-            final Node movedNode = nodeService.move( builder.build() );
+        nodeService.update( UpdateNodeParams.create().id( movedNode.id() ).editor( toBeEdited -> {
+            toBeEdited.data.removeProperties( ArchiveConstants.ORIGINAL_NAME_PROPERTY_NAME );
+            toBeEdited.data.removeProperties( ArchiveConstants.ORIGINAL_PARENT_PATH_PROPERTY_NAME );
+        } ).build() );
 
-            result.addRestored( ContentId.from( movedNode.id().toString() ) );
-        }
+        nodeService.rename( RenameNodeParams.create().nodeId( movedNode.id() ).nodeName( NodeName.from( originalSourceName ) ).build() );
 
-        nodeService.deleteById( container.id() );
+        result.addRestored( ContentId.from( movedNode.id().toString() ) );
 
         return result.build();
     }
