@@ -4,18 +4,19 @@ import java.util.Objects;
 
 import com.enonic.xp.util.BinaryReference;
 
-public class AttachmentValidationError extends ValidationError
+public final class AttachmentValidationError
+    extends ValidationError
 {
-    private final BinaryReference binaryReference;
+    private final BinaryReference attachment;
 
-    public AttachmentValidationError( final BinaryReference binaryReference, final String errorCode, final String errorMessage, final Object... args )
+    public AttachmentValidationError( final BinaryReference attachment, final String errorCode, final String errorMessage, final Object... args )
     {
-        super(errorCode, errorMessage, args);
-        this.binaryReference = Objects.requireNonNull( binaryReference );
+        super( errorCode, errorMessage, args );
+        this.attachment = Objects.requireNonNull( attachment );
     }
 
-    public BinaryReference getBinaryReference()
+    public BinaryReference getAttachment()
     {
-        return binaryReference;
+        return attachment;
     }
 }

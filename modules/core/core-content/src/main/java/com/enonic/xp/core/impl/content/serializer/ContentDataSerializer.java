@@ -512,7 +512,7 @@ public class ContentDataSerializer
                 }
                 else if ( validationError instanceof AttachmentValidationError )
                 {
-                    propertySet.addString( "attachment", ( (AttachmentValidationError) validationError ).getBinaryReference().toString() );
+                    propertySet.addString( "attachment", ( (AttachmentValidationError) validationError ).getAttachment().toString() );
                 }
                 return propertySet;
             } ).toArray( PropertySet[]::new ) );
