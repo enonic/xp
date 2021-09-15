@@ -8,6 +8,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.content.validate.ContentValidatorParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
@@ -52,18 +53,23 @@ public class ValidateContentDataCommandTest
         throws Exception
     {
         // setup
-        final ContentType contentType = ContentType.create().
-            superType( ContentTypeName.structured() ).
-            name( "myapplication:my_type" ).
-            addFormItem( FieldSet.create().
-                label( "My layout" ).
-                name( "myLayout" ).
-                addFormItem( FormItemSet.create().name( "mySet" ).required( true ).
-                    addFormItem( Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).
-                        build() ).
-                    build() ).
-                build() ).
-            build();
+        final ContentType contentType = ContentType.create()
+            .superType( ContentTypeName.structured() )
+            .name( "myapplication:my_type" )
+            .addFormItem( FieldSet.create()
+                              .label( "My layout" )
+                              .name( "myLayout" )
+                              .addFormItem( FormItemSet.create()
+                                                .name( "mySet" )
+                                                .required( true )
+                                                .addFormItem( Input.create()
+                                                                  .name( "myInput" )
+                                                                  .label( "Input" )
+                                                                  .inputType( InputTypeName.TEXT_LINE )
+                                                                  .build() )
+                                                .build() )
+                              .build() )
+            .build();
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
@@ -71,8 +77,8 @@ public class ValidateContentDataCommandTest
 
         final ValidationErrors result = executeValidation( content.getData(), contentType.getName() );
         // test
-        assertTrue( result.hasErrors() );
-        assertEquals( 1, result.size() );
+        assertTrue( result.isNotEmpty() );
+        assertEquals( 1, result.getSize() );
 
     }
 
@@ -81,14 +87,17 @@ public class ValidateContentDataCommandTest
         throws Exception
     {
         // setup
-        final FieldSet fieldSet = FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem(
-            FormItemSet.create().name( "mySet" ).required( true ).addFormItem(
-                Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).build();
-        final ContentType contentType = ContentType.create().
-            superType( ContentTypeName.structured() ).
-            name( "myapplication:my_type" ).
-            addFormItem( fieldSet ).
-            build();
+        final FieldSet fieldSet = FieldSet.create()
+            .label( "My layout" )
+            .name( "myLayout" )
+            .addFormItem( FormItemSet.create()
+                              .name( "mySet" )
+                              .required( true )
+                              .addFormItem( Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() )
+                              .build() )
+            .build();
+        final ContentType contentType =
+            ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:my_type" ).addFormItem( fieldSet ).build();
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
@@ -98,17 +107,15 @@ public class ValidateContentDataCommandTest
         // exercise
         final ValidationErrors result = executeValidation( content.getData(), contentType.getName() );
 
-        assertFalse( result.hasErrors() );
-        assertEquals( 0, result.size() );
+        assertFalse( result.isNotEmpty() );
+        assertEquals( 0, result.getSize() );
     }
 
     @Test
     public void testSiteConfigTextRegexpFailure()
     {
-        final ContentType contentType = ContentType.create().
-            superType( ContentTypeName.structured() ).
-            name( ContentTypeName.site() ).
-            build();
+        final ContentType contentType =
+            ContentType.create().superType( ContentTypeName.structured() ).name( ContentTypeName.site() ).build();
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
@@ -117,9 +124,7 @@ public class ValidateContentDataCommandTest
         PropertyTree siteConfigDataSet = new PropertyTree();
         siteConfigDataSet.setString( "textInput-1", "test" );
 
-        SiteConfig siteConfig = SiteConfig.create().
-            application( ApplicationKey.from( "myapp" ) ).
-            config( siteConfigDataSet ).build();
+        SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "myapp" ) ).config( siteConfigDataSet ).build();
         new SiteConfigsDataSerializer().toProperties( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
 
         Mockito.when( siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createSiteDescriptor() );
@@ -127,8 +132,8 @@ public class ValidateContentDataCommandTest
         // exercise
         final ValidationErrors result = executeValidation( rootDataSet, ContentTypeName.site() );
 
-        assertTrue( result.hasErrors() );
-        assertEquals( 1, result.size() );
+        assertTrue( result.isNotEmpty() );
+        assertEquals( 1, result.getSize() );
     }
 
     @Test
@@ -136,14 +141,17 @@ public class ValidateContentDataCommandTest
         throws Exception
     {
         // setup
-        final FieldSet fieldSet = FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem(
-            FormItemSet.create().name( "mySet" ).required( true ).addFormItem(
-                Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).build();
-        final ContentType contentType = ContentType.create().
-            superType( ContentTypeName.structured() ).
-            name( "myapplication:my_type" ).
-            addFormItem( fieldSet ).
-            build();
+        final FieldSet fieldSet = FieldSet.create()
+            .label( "My layout" )
+            .name( "myLayout" )
+            .addFormItem( FormItemSet.create()
+                              .name( "mySet" )
+                              .required( true )
+                              .addFormItem( Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() )
+                              .build() )
+            .build();
+        final ContentType contentType =
+            ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:my_type" ).addFormItem( fieldSet ).build();
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
@@ -154,8 +162,8 @@ public class ValidateContentDataCommandTest
         final ValidationErrors result =
             executeValidation( content.getData(), contentType.getName(), content.getName(), content.getDisplayName() );
 
-        assertTrue( result.hasErrors() );
-        assertEquals( 1, result.size() );
+        assertTrue( result.isNotEmpty() );
+        assertEquals( 1, result.getSize() );
     }
 
     @Test
@@ -163,54 +171,57 @@ public class ValidateContentDataCommandTest
         throws Exception
     {
         // setup
-        final FieldSet fieldSet = FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem(
-            FormItemSet.create().name( "mySet" ).required( true ).addFormItem(
-                Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).build();
-        final ContentType contentType = ContentType.create().
-            superType( ContentTypeName.structured() ).
-            name( "myapplication:my_type" ).
-            addFormItem( fieldSet ).
-            build();
+        final FieldSet fieldSet = FieldSet.create()
+            .label( "My layout" )
+            .name( "myLayout" )
+            .addFormItem( FormItemSet.create()
+                              .name( "mySet" )
+                              .required( true )
+                              .addFormItem( Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() )
+                              .build() )
+            .build();
+        final ContentType contentType =
+            ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:my_type" ).addFormItem( fieldSet ).build();
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
-        final Content content = Content.create().path( "/mycontent" ).type( contentType.getName() ).
-            name( ContentName.unnamed() ).displayName( "display-name" ).build();
+        final Content content = Content.create()
+            .path( "/mycontent" )
+            .type( contentType.getName() )
+            .name( ContentName.unnamed() )
+            .displayName( "display-name" )
+            .build();
         content.getData().setString( "mySet.myInput", "thing" );
 
         // exercise
         final ValidationErrors result =
             executeValidation( content.getData(), contentType.getName(), content.getName(), content.getDisplayName() );
 
-        assertTrue( result.hasErrors() );
-        assertEquals( 1, result.size() );
+        assertTrue( result.isNotEmpty() );
+        assertEquals( 1, result.getSize() );
     }
 
     private SiteDescriptor createSiteDescriptor()
     {
-        final Form config = Form.create().
-            addFormItem( createTextLineInput( "textInput-1", "some-label" ).build() ).
-            build();
+        final Form config = Form.create().addFormItem( createTextLineInput( "textInput-1", "some-label" ).build() ).build();
         return SiteDescriptor.create().form( config ).build();
     }
 
     private Input.Builder createTextLineInput( final String name, final String label )
     {
-        return Input.create().
-            inputType( InputTypeName.TEXT_LINE ).
-            label( label ).
-            name( name ).
-            inputTypeProperty( InputTypeProperty.create( "regexp", "\\d+" ).build() ).
-            immutable( true );
+        return Input.create()
+            .inputType( InputTypeName.TEXT_LINE )
+            .label( label )
+            .name( name )
+            .inputTypeProperty( InputTypeProperty.create( "regexp", "\\d+" ).build() )
+            .immutable( true );
     }
 
     @Test
     public void testSiteConfigTextRegexpPasses()
     {
-        final ContentType contentType = ContentType.create().
-            superType( ContentTypeName.structured() ).
-            name( ContentTypeName.site() ).
-            build();
+        final ContentType contentType =
+            ContentType.create().superType( ContentTypeName.structured() ).name( ContentTypeName.site() ).build();
 
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
@@ -219,9 +230,7 @@ public class ValidateContentDataCommandTest
         PropertyTree siteConfigDataSet = new PropertyTree();
         siteConfigDataSet.setString( "textInput-1", "1234" );
 
-        SiteConfig siteConfig = SiteConfig.create().
-            application( ApplicationKey.from( "myapp" ) ).
-            config( siteConfigDataSet ).build();
+        SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "myapp" ) ).config( siteConfigDataSet ).build();
         new SiteConfigsDataSerializer().toProperties( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
 
         Mockito.when( siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createSiteDescriptor() );
@@ -229,8 +238,8 @@ public class ValidateContentDataCommandTest
         // exercise
         final ValidationErrors result = executeValidation( rootDataSet, ContentTypeName.site() );
 
-        assertFalse( result.hasErrors() );
-        assertEquals( 0, result.size() );
+        assertFalse( result.isNotEmpty() );
+        assertEquals( 0, result.getSize() );
     }
 
     private ValidationErrors executeValidation( final PropertyTree propertyTree, final ContentTypeName contentTypeName )
@@ -241,15 +250,17 @@ public class ValidateContentDataCommandTest
     private ValidationErrors executeValidation( final PropertyTree propertyTree, final ContentTypeName contentTypeName,
                                                 final ContentName name, final String displayName )
     {
-        return ValidateContentDataCommand.create().
-            contentData( propertyTree ).
-            contentType( contentTypeName ).
-            name( name ).
-            displayName( displayName ).
-            contentTypeService( this.contentTypeService ).
-            xDataService( this.xDataService ).
-            siteService( this.siteService ).
-            build().
-            execute();
+        return ValidateContentDataCommand.create()
+            .contentValidatorParams( ContentValidatorParams.create()
+                                         .contentType( contentTypeName )
+                                         .contentType( contentTypeName )
+                                         .name( name )
+                                         .displayName( displayName )
+                                         .build() )
+            .contentTypeService( this.contentTypeService )
+            .xDataService( this.xDataService )
+            .siteService( this.siteService )
+            .build()
+            .execute();
     }
 }

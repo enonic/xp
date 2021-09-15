@@ -3,6 +3,8 @@ package com.enonic.xp.form;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.DataValidationError;
 import com.enonic.xp.content.ValidationErrors;
-import com.enonic.xp.form.FormItemPath;
+import com.enonic.xp.data.PropertyPath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -18,12 +18,12 @@ public class ValidationErrorsTest
     public void validationResult()
     {
         ValidationErrors errors1 =
-            ValidationErrors.create().add( new DataValidationError( FormItemPath.from( "root" ), "errorMessage" ) ).build();
+            ValidationErrors.create().add( new DataValidationError( PropertyPath.from( "root" ), "errorMessage" ) ).build();
         ValidationErrors errors2 = ValidationErrors.empty();
-        assertFalse( errors2.hasErrors() );
+        assertFalse( errors2.isNotEmpty() );
         assertNotEquals( errors1, errors2 );
         assertNotEquals( errors1.hashCode(), errors2.hashCode() );
-        errors2 = ValidationErrors.create().addAll( errors1 ).build();
+        errors2 = ValidationErrors.create().addAll( errors1.getSet() ).build();
         assertEquals( errors1, errors2 );
     }
 

@@ -30,6 +30,7 @@ import com.enonic.xp.content.UpdateContentTranslatorParams;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowInfo;
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormItemPath;
@@ -406,7 +407,7 @@ public class ContentDataSerializer
     {
         if ( ve.hasProperty( "path" ) )
         {
-            return new DataValidationError( FormItemPath.from( ve.getString( "path" ) ), ve.getString( "errorMessage" ) );
+            return new DataValidationError( PropertyPath.from( ve.getString( "path" ) ), ve.getString( "errorMessage" ) );
         }
         else if ( ve.hasProperty( "attachment" ) )
         {

@@ -145,7 +145,7 @@ final class ValidateContentDataCommand
         }
         catch ( final Exception e )
         {
-            this.resultBuilder.add( new SiteConfigValidationError( siteConfig.getApplicationKey().getName() ) );
+            this.resultBuilder.add( new ValidationError( "Data validation error in site config for {0}", siteConfig.getApplicationKey().getName() ) );
         }
     }
 
