@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -253,13 +255,14 @@ public class ValidateContentDataCommandTest
         return ValidateContentDataCommand.create()
             .contentValidatorParams( ContentValidatorParams.create()
                                          .contentType( contentTypeName )
-                                         .contentType( contentTypeName )
+                                         .data( propertyTree )
                                          .name( name )
                                          .displayName( displayName )
                                          .build() )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )
             .siteService( this.siteService )
+            .contentValidators( List.of() )
             .build()
             .execute();
     }

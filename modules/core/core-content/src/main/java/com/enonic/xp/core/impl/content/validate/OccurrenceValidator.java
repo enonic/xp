@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content.validate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -96,7 +97,9 @@ public final class OccurrenceValidator
             {
                 if ( hasSelectionArray && optionIsSelected( option, selectedItems ) )
                 {
-                    validate( option.getFormItems(), List.of( optionSetOccurrencePropertySet.getSet( option.getName() ) ) );
+                    validate( option.getFormItems(), Optional.ofNullable( optionSetOccurrencePropertySet.getSet( option.getName() ) )
+                        .map( List::of )
+                        .orElse( List.of() ) );
                 }
             }
         }
@@ -172,7 +175,7 @@ public final class OccurrenceValidator
             if ( maxOccurrences > 0 && entryCount > maxOccurrences )
             {
                 validationErrors.add( new DataValidationError( propertyPath, formItem.getClass().getSimpleName() +
-                    " [{0}] allows maximum {1,choice,1#1 occurrence|1<{1} occurrences}: {2}", formItem.getPath(), occurrences.getMinimum(),
+                    " [{0}] allows maximum {1,choice,1#1 occurrence|1<{1} occurrences}: {2}", formItem.getPath(), occurrences.getMaximum(),
                                                                entryCount ) );
             }
         }

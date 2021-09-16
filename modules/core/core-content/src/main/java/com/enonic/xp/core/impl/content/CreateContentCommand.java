@@ -99,6 +99,8 @@ final class CreateContentCommand
     private Content doExecute()
     {
         final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
+        validateContentType( contentType );
+
         formDefaultValuesProcessor.setDefaultValues( contentType.getForm(), params.getData() );
         // TODO apply default values to xData
 
@@ -144,16 +146,13 @@ final class CreateContentCommand
 
     private void validateBlockingChecks( final CreateContentParams params )
     {
-        validateContentType( params );
         validateParentChildRelations( params.getParent(), params.getType() );
         validatePropertyTree( params );
         validateCreateAttachments( params.getCreateAttachments() );
     }
 
-    private void validateContentType( final CreateContentParams params )
+    private void validateContentType( final ContentType contentType )
     {
-        final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
-
         if ( contentType == null )
         {
             throw new IllegalArgumentException( "Content type not found [" + params.getType().toString() + "]" );

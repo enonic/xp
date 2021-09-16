@@ -232,11 +232,9 @@ public class OccurrenceValidatorTest
         Iterator<ValidationError> dataValidationErrorIterator = validationResults.iterator();
 
         DataValidationError nextDataValidationError = (DataValidationError) dataValidationErrorIterator.next();
-        assertTrue( nextDataValidationError instanceof DataValidationError );
         assertEquals( "Input [mySet.myRequiredInput] requires minimum 1 occurrence: 0", nextDataValidationError.getErrorMessage() );
         assertNotNull( nextDataValidationError.getPath() );
         nextDataValidationError = (DataValidationError) dataValidationErrorIterator.next();
-        assertTrue( nextDataValidationError instanceof DataValidationError );
         assertEquals( "Input [myOtherRequiredInput] requires minimum 1 occurrence: 0", nextDataValidationError.getErrorMessage() );
     }
 
