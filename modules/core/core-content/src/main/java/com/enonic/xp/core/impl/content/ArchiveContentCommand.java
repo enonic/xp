@@ -1,6 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 import com.google.common.base.Preconditions;
 
@@ -12,12 +14,7 @@ import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
@@ -25,22 +22,31 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.security.User;
+import com.enonic.xp.node.RenameNodeParams;
+import com.enonic.xp.node.UpdateNodeParams;
 
 final class ArchiveContentCommand
     extends AbstractArchiveCommand
     implements MoveNodeListener
 {
+    private static final DateTimeFormatter DATE_TIME_FORMATTER =
+        DateTimeFormatter.ofPattern( "HH-mm-ss-SSS" ).withZone( ZoneId.systemDefault() );
+
     private final ArchiveContentParams params;
 
     private final ArchiveContentListener archiveContentListener;
+
+    private final PathResolver pathResolver;
 
     private ArchiveContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.archiveContentListener = builder.archiveContentListener;
+        this.pathResolver = new PathResolver();
     }
 
     public static Builder create( final ArchiveContentParams params )
@@ -74,49 +80,27 @@ final class ArchiveContentCommand
 
     private ArchiveContentsResult doExecute()
     {
-        final Node contentToArchive = nodeService.getById( NodeId.from( params.getContentId() ) );
+        final NodeId nodeId = NodeId.from( params.getContentId() );
 
-        final Node container = nodeService.create( containerParams( contentToArchive ) );
+        final Node nodeToArchive = nodeService.update( UpdateNodeParams.create().id( nodeId ).editor( toBeEdited -> {
+            toBeEdited.data.setString( ArchiveConstants.ORIGINAL_PARENT_PATH_PROPERTY_NAME, toBeEdited.source.parentPath().toString() );
+            toBeEdited.data.setString( ArchiveConstants.ORIGINAL_NAME_PROPERTY_NAME, toBeEdited.source.name().toString() );
+        } ).build() );
 
-        final MoveNodeParams.Builder builder = MoveNodeParams.create().
-            nodeId( NodeId.from( params.getContentId() ) ).
-            parentNodePath( container.path() ).
-            moveListener( this );
+        final NodePath newPath = pathResolver.buildArchivedPath( nodeToArchive.name() );
+        if ( !newPath.getName().equals( nodeToArchive.name().toString() ) )
+        {
+            nodeService.rename( RenameNodeParams.create().nodeId( nodeId ).nodeName( NodeName.from( newPath.getName() ) ).build() );
+        }
+
+        final MoveNodeParams.Builder builder =
+            MoveNodeParams.create().nodeId( nodeId ).parentNodePath( ArchiveConstants.ARCHIVE_ROOT_PATH ).moveListener( this );
 
         final Node movedNode = nodeService.move( builder.build() );
 
         final Content movedContent = translator.fromNode( movedNode, true );
 
-        return ArchiveContentsResult.create().
-            addArchived( movedContent.getId() ).
-            build();
-    }
-
-    private CreateNodeParams containerParams( final Node contentToArchive )
-    {
-        final NodeId nodeId = new NodeId();
-        final String displayName = Instant.now().toString();
-
-        final User user = ContextAccessor.current().getAuthInfo().getUser();
-
-        final PropertyTree data = new PropertyTree();
-        data.setString( "oldParentPath", contentToArchive.parentPath().toString() );
-
-        data.setString( ContentPropertyNames.TYPE, "base:folder" );
-        data.setString( ContentPropertyNames.DISPLAY_NAME, displayName );
-        data.addSet( ContentPropertyNames.DATA );
-        data.addSet( ContentPropertyNames.FORM );
-        data.setString( ContentPropertyNames.CREATOR, user.getKey().toString() );
-        data.setString( ContentPropertyNames.MODIFIER, user.getKey().toString() );
-        data.setInstant( ContentPropertyNames.CREATED_TIME, Instant.now() );
-
-        return CreateNodeParams.create().
-            setNodeId( nodeId ).
-            name( nodeId.toString() ).
-            parent( ArchiveConstants.ARCHIVE_ROOT_PATH ).
-            nodeType( ContentConstants.CONTENT_NODE_COLLECTION ).
-            data( data ).
-            build();
+        return ArchiveContentsResult.create().addArchived( movedContent.getId() ).build();
     }
 
     @Override
@@ -157,6 +141,37 @@ final class ArchiveContentCommand
         {
             validate();
             return new ArchiveContentCommand( this );
+        }
+    }
+
+    private final class PathResolver
+    {
+        private static final String DELIMITER = "...";
+
+        private static final int MAX_NAME_SIZE = 30;
+
+        private NodePath buildArchivedPath( final NodeName name )
+        {
+            NodePath newPath;
+            String newName = null;
+            do
+            {
+                newName = newName == null ? name.toString() : newName + " " + DATE_TIME_FORMATTER.format( Instant.now() );
+                newPath = NodePath.create( ArchiveConstants.ARCHIVE_ROOT_PATH, trim( newName ) ).build();
+
+            }
+            while ( nodeService.nodeExists( newPath ) );
+
+            return newPath;
+        }
+
+        private String trim( final String value )
+        {
+            if ( value.length() > MAX_NAME_SIZE )
+            {
+                return value.substring( 0, MAX_NAME_SIZE - 7 - DELIMITER.length() + 1 ) + DELIMITER + value.substring( value.length() - 7 );
+            }
+            return value;
         }
     }
 

@@ -61,7 +61,7 @@ final class FindContentIdsByParentCommand
     {
         if ( params.getParentPath() == null && params.getParentId() == null )
         {
-            final NodePath parentPath = ContentNodeHelper.CONTENT_ROOT_NODE.asAbsolute();
+            final NodePath parentPath = ContentNodeHelper.getContentRoot();
             findNodesParam.parentPath( parentPath );
         }
         else if ( params.getParentPath() != null )

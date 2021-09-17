@@ -20,11 +20,9 @@ class ContentNodeHelper
 {
     private static final String CONTENT_ROOT_NODE_NAME = "content";
 
-    static final NodePath CONTENT_ROOT_NODE = NodePath.create( NodePath.ROOT, CONTENT_ROOT_NODE_NAME ).build();
-
     public static NodePath translateContentPathToNodePath( final ContentPath contentPath )
     {
-        return new NodePath( getRoot() + contentPath.asAbsolute().toString() ).asAbsolute().trimTrailingDivider();
+        return new NodePath( getContentRoot() + contentPath.asAbsolute().toString() ).asAbsolute().trimTrailingDivider();
     }
 
     public static NodePaths translateContentPathsToNodePaths( final ContentPaths contentPaths )
@@ -80,10 +78,10 @@ class ContentNodeHelper
         return ContentIds.from( nodeIds.stream().map( nodeId -> ContentId.from( nodeId.toString() ) ).collect( Collectors.toList() ) );
     }
 
-    private static String getRoot()
+    public static NodePath getContentRoot()
     {
         final NodePath nodePath = (NodePath) ContextAccessor.current().getAttribute("contentRootPath");
-        return nodePath != null ? nodePath.asAbsolute().toString() : ContentConstants.CONTENT_ROOT_PATH.toString();
+        return nodePath != null ? nodePath.asAbsolute() : ContentConstants.CONTENT_ROOT_PATH;
     }
 }
 
