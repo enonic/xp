@@ -364,7 +364,7 @@ public class PortalUrlServiceImpl_processHtmlTest
             portalRequest( this.portalRequest ).
             value( "<p><figure class=\"editor-align-justify\"><img alt=\"Alt text\" src=\"image://" + media.getId() +
                        "\"/><figcaption>Caption text</figcaption></figure></p>" ).
-            imageWidths( List.of( 660, 1024 ) );
+            imageWidths( List.of( 660, 1024 ) ).imageSizes( " " );
 
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
@@ -375,6 +375,34 @@ public class PortalUrlServiceImpl_processHtmlTest
                 ":8cf45815bba82c9711c673c9bb7304039a790026/width-660/mycontent 660w," + "/site/default/draft/context/path/_/image/" +
                 media.getId() +
                 ":8cf45815bba82c9711c673c9bb7304039a790026/width-1024/mycontent 1024w\"/><figcaption>Caption text</figcaption></figure></p>",
+            processedHtml );
+    }
+
+    @Test
+    public void processHtml_image_imageWidths_with_imageSizes()
+    {
+        //Creates a content
+        final Media media = ContentFixtures.newMedia();
+        Mockito.when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+        Mockito.when( this.contentService.getBinaryKey( media.getId(), media.getMediaAttachment().getBinaryReference() ) ).thenReturn(
+            "binaryHash" );
+
+        //Process an html text containing a link to this content
+        final ProcessHtmlParams params = new ProcessHtmlParams().
+            portalRequest( this.portalRequest ).
+            value( "<p><figure class=\"editor-align-justify\"><img alt=\"Alt text\" src=\"image://" + media.getId() +
+                       "\"/><figcaption>Caption text</figcaption></figure></p>" ).
+            imageWidths( List.of( 660, 1024 ) ).imageSizes( "(max-width: 960px) 660px" );
+
+        //Checks that the page URL of the content is returned
+        final String processedHtml = this.service.processHtml( params );
+        assertEquals(
+            "<p><figure class=\"editor-align-justify\">" + "<img alt=\"Alt text\" src=\"/site/default/draft/context/path/_/image/" +
+                media.getId() + ":8cf45815bba82c9711c673c9bb7304039a790026/width-768/mycontent\" " +
+                "srcset=\"/site/default/draft/context/path/_/image/" + media.getId() +
+                ":8cf45815bba82c9711c673c9bb7304039a790026/width-660/mycontent 660w," + "/site/default/draft/context/path/_/image/" +
+                media.getId() +
+                ":8cf45815bba82c9711c673c9bb7304039a790026/width-1024/mycontent 1024w\" sizes=\"(max-width: 960px) 660px\"/><figcaption>Caption text</figcaption></figure></p>",
             processedHtml );
     }
 

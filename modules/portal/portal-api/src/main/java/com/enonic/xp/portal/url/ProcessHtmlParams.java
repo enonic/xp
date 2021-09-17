@@ -18,6 +18,8 @@ public final class ProcessHtmlParams
 
     private List<Integer> imageWidths;
 
+    private String imageSizes;
+
     public String getValue()
     {
         return this.value;
@@ -40,6 +42,17 @@ public final class ProcessHtmlParams
         return this;
     }
 
+    public String getImageSizes()
+    {
+        return imageSizes;
+    }
+
+    public ProcessHtmlParams imageSizes( final String imageSizes )
+    {
+        this.imageSizes = imageSizes;
+        return this;
+    }
+
     @Override
     public ProcessHtmlParams setAsMap( final Multimap<String, String> map )
     {
@@ -49,6 +62,7 @@ public final class ProcessHtmlParams
             stream().
             map( Integer::parseInt ).
             collect( Collectors.toUnmodifiableList() ) );
+        imageSizes( singleValue( map, "_imageSizes" ) );
         getParams().putAll( map );
         return this;
     }
@@ -59,5 +73,6 @@ public final class ProcessHtmlParams
         super.buildToString( helper );
         helper.add( "value", this.value );
         helper.add( "imageWidths", this.imageWidths );
+        helper.add( "imageSizes", this.imageSizes );
     }
 }

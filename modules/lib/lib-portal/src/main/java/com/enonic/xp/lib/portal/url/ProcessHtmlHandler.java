@@ -9,7 +9,7 @@ import com.enonic.xp.portal.url.ProcessHtmlParams;
 public final class ProcessHtmlHandler
     extends AbstractUrlHandler
 {
-    private static final Set<String> VALID_URL_PROPERTY_KEYS = Set.of( "value", "type", "imageWidths" );
+    private static final Set<String> VALID_URL_PROPERTY_KEYS = Set.of( "value", "type", "imageWidths", "imageSizes" );
 
     @Override
     protected String buildUrl( final Multimap<String, String> map )
