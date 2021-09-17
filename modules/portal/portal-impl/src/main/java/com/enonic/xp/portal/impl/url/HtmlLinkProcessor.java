@@ -95,7 +95,8 @@ public class HtmlLinkProcessor
         this.portalUrlService = portalUrlService;
     }
 
-    public String process( final String text, final String urlType, final PortalRequest portalRequest, final List<Integer> imageWidths)
+    public String process( final String text, final String urlType, final PortalRequest portalRequest, final List<Integer> imageWidths,
+                           final String imageSizes )
     {
         String processedHtml = text;
         final ImmutableMap<String, ImageStyle> imageStyleMap = getImageStyleMap( portalRequest );
@@ -157,6 +158,11 @@ public class HtmlLinkProcessor
                             if ( !srcsetValues.isEmpty() )
                             {
                                 replacement.append( " srcset=\"" ).append( srcsetValues ).append( "\"" );
+                            }
+
+                            if ( imageSizes != null && !imageSizes.isBlank() )
+                            {
+                                replacement.append( " sizes=\"" ).append( imageSizes ).append( "\"" );
                             }
                         }
 

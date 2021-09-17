@@ -19,7 +19,7 @@ public class ProcessHtmlFunctionTest
     @Test
     public void testExecute()
     {
-        final Object result = execute( "processHtml", "_value=<html/>", "a=1", "b=2", "_imageWidths=600", "_imageWidths=1024" );
-        assertEquals( "ProcessHtmlParams{type=server, params={a=[1], b=[2]}, value=<html/>, imageWidths=[600, 1024]}", result );
+        final Object result = execute( "processHtml", "_value=<html/>", "a=1", "b=2", "_imageWidths=600", "_imageWidths=1024", "_imageSizes=(max-width: 960px) 600px" );
+        assertEquals( "ProcessHtmlParams{type=server, params={a=[1], b=[2]}, value=<html/>, imageWidths=[600, 1024], imageSizes=(max-width: 960px) 600px}", result );
     }
 }
