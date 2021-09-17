@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyExecutable;
@@ -15,14 +16,17 @@ import com.enonic.xp.resource.ResourceKey;
 
 public final class ScriptLogger
 {
+    private final Context context;
+
     private final LogArgConverter converter;
 
     private final ResourceKey source;
 
     private final Logger log;
 
-    public ScriptLogger( final ResourceKey source, final JavascriptHelper helper )
+    public ScriptLogger( final Context context, final ResourceKey source, final JavascriptHelper helper )
     {
+        this.context = context;
         this.source = source;
         this.log = LoggerFactory.getLogger( this.source.getApplicationKey().toString() );
         this.converter = new LogArgConverter( helper );
@@ -32,10 +36,10 @@ public final class ScriptLogger
     {
         final Map<String, Object> proxyAsMap = new HashMap<>();
 
-        proxyAsMap.put( "info", new LogProxyExecutable( source, log, converter, LogLevelType.INFO ) );
-        proxyAsMap.put( "warning", new LogProxyExecutable( source, log, converter, LogLevelType.WARN ) );
-        proxyAsMap.put( "debug", new LogProxyExecutable( source, log, converter, LogLevelType.DEBUG ) );
-        proxyAsMap.put( "error", new LogProxyExecutable( source, log, converter, LogLevelType.ERROR ) );
+        proxyAsMap.put( "info", new LogProxyExecutable( context, source, log, converter, LogLevelType.INFO ) );
+        proxyAsMap.put( "warning", new LogProxyExecutable( context, source, log, converter, LogLevelType.WARN ) );
+        proxyAsMap.put( "debug", new LogProxyExecutable( context, source, log, converter, LogLevelType.DEBUG ) );
+        proxyAsMap.put( "error", new LogProxyExecutable( context, source, log, converter, LogLevelType.ERROR ) );
 
         return ProxyObject.fromMap( proxyAsMap );
     }
@@ -55,6 +59,8 @@ public final class ScriptLogger
     private static class LogProxyExecutable
         implements ProxyExecutable
     {
+        private final Context context;
+
         private final ResourceKey source;
 
         private final Logger log;
@@ -63,9 +69,10 @@ public final class ScriptLogger
 
         private final LogLevelType logLevel;
 
-        private LogProxyExecutable( final ResourceKey source, final Logger log, final LogArgConverter converter,
+        private LogProxyExecutable( final Context context, final ResourceKey source, final Logger log, final LogArgConverter converter,
                                     final LogLevelType logLevel )
         {
+            this.context = context;
             this.source = source;
             this.log = log;
             this.converter = converter;
@@ -75,7 +82,10 @@ public final class ScriptLogger
         @Override
         public Object execute( final Value... arguments )
         {
-            log( arguments );
+            synchronized ( context )
+            {
+                log( arguments );
+            }
             return null;
         }
 
@@ -95,7 +105,8 @@ public final class ScriptLogger
                 }
                 else
                 {
-                    doLog( argument.isString() ? argument.asString() : argument.toString(), Arrays.stream( arguments ).skip( 1 ).toArray() );
+                    doLog( argument.isString() ? argument.asString() : argument.toString(),
+                           Arrays.stream( arguments ).skip( 1 ).toArray() );
                 }
             }
         }

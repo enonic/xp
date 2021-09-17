@@ -246,7 +246,7 @@ public class ScriptExecutorImpl
             module.putMember( "id", script.toString() );
             module.putMember( "exports", exports );
 
-            final ScriptFunctions functions = new ScriptFunctions( script, this );
+            final ScriptFunctions functions = new ScriptFunctions( context, script, this );
             func.execute( functions.getLog(), functions.getRequire(), functions.getResolve(), functions, exports, module );
             return module.getMember( "exports" );
         }

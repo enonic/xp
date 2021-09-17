@@ -1,5 +1,6 @@
 package com.enonic.xp.script.impl.function;
 
+import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
 
@@ -15,6 +16,8 @@ import com.enonic.xp.script.impl.util.ScriptLogger;
 
 public final class ScriptFunctions
 {
+    private final Context context;
+
     private final ResourceKey script;
 
     private final ScriptExecutor executor;
@@ -25,8 +28,9 @@ public final class ScriptFunctions
 
     private final ScriptLogger logger;
 
-    public ScriptFunctions( final ResourceKey script, final ScriptExecutor executor )
+    public ScriptFunctions( final Context context, final ResourceKey script, final ScriptExecutor executor )
     {
+        this.context = context;
         this.script = script;
         this.executor = executor;
 
@@ -36,7 +40,7 @@ public final class ScriptFunctions
 
         this.scriptBeanFactory = new ScriptBeanFactoryImpl( executor.getClassLoader(), beanContext );
         this.converter = new JsObjectConverter( this.executor.getJavascriptHelper() );
-        this.logger = new ScriptLogger( this.script, this.executor.getJavascriptHelper() );
+        this.logger = new ScriptLogger( this.context, this.script, this.executor.getJavascriptHelper() );
     }
 
     public ResourceKey getScript()
@@ -46,17 +50,20 @@ public final class ScriptFunctions
 
     public ProxyObject getLog()
     {
-        return this.logger.asProxyObject();
+        synchronized ( context )
+        {
+            return this.logger.asProxyObject();
+        }
     }
 
     public RequireFunction getRequire()
     {
-        return new RequireFunction( this.script, this.executor );
+        return new RequireFunction( context, this.script, this.executor );
     }
 
     public ResolveFunction getResolve()
     {
-        return new ResolveFunction( this.script, this.executor );
+        return new ResolveFunction( context, this.script, this.executor );
     }
 
     public Application getApp()
@@ -77,12 +84,18 @@ public final class ScriptFunctions
 
     public Object toNativeObject( final Object value )
     {
-        return this.converter.toJs( value );
+        synchronized ( context )
+        {
+            return this.converter.toJs( value );
+        }
     }
 
     public Object nullOrValue( final Object value )
     {
-        return Value.asValue( value ).isNull() ? null : value;
+        synchronized ( context )
+        {
+            return Value.asValue( value ).isNull() ? null : value;
+        }
     }
 
     public void registerMock( final String name, final Object value )
