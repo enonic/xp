@@ -10,8 +10,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ValidationErrors;
-import com.enonic.xp.content.validate.ContentValidatorParams;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
+import com.enonic.xp.core.impl.content.validate.MetadataValidator;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
 import com.enonic.xp.core.impl.content.validate.SiteConfigsValidator;
 import com.enonic.xp.data.PropertyTree;
@@ -261,8 +261,8 @@ public class ValidateContentDataCommandTest
             .contentName( name )
             .displayName( displayName )
             .contentTypeService( this.contentTypeService )
-            .xDataService( this.xDataService )
-            .contentValidators( List.of( new ContentNameValidator(), new SiteConfigsValidator( siteService ), new OccurrenceValidator() ) )
+            .contentValidators( List.of( new ContentNameValidator(), new SiteConfigsValidator( siteService ), new OccurrenceValidator(),
+                                         new MetadataValidator( xDataService ) ) )
             .build()
             .execute();
     }

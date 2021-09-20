@@ -150,7 +150,6 @@ final class UpdateContentCommand
             .contentName( editedContent.getName() )
             .displayName( editedContent.getDisplayName() )
             .createAttachments( params.getCreateAttachments() )
-            .xDataService( this.xDataService )
             .contentValidators( this.contentValidators )
             .contentTypeService( this.contentTypeService )
             .validationErrorsBuilder( validationErrorsBuilder )

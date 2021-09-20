@@ -99,7 +99,6 @@ final class RenameContentCommand
             .contentName( content.getName() )
             .displayName( content.getDisplayName() )
             .contentTypeService( this.contentTypeService )
-            .xDataService( this.xDataService )
             .contentValidators( this.contentValidators )
             .build()
             .execute();

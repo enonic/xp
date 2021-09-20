@@ -10,16 +10,21 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.content.AttachmentValidationError;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentTranslatorParams;
+import com.enonic.xp.content.DataValidationError;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
+import com.enonic.xp.content.ValidationError;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -29,7 +34,9 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.util.BinaryReference;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -89,6 +96,7 @@ public class ContentDataSerializerTest
                 name( "myContent" ).
                 parentPath( ContentPath.ROOT ).
                 creator( PrincipalKey.ofAnonymous() ).
+                validationErrors( ValidationErrors.create().add( new AttachmentValidationError( BinaryReference.from( "prevFile" ), "SOME_CODE", "someError") ).build() ).
                 build() ).
             modifier( PrincipalKey.ofAnonymous() ).
             createAttachments( CreateAttachments.from( CreateAttachment.create().
@@ -110,6 +118,50 @@ public class ContentDataSerializerTest
         assertEquals( binaryName, attachmentData.getString( ContentPropertyNames.ATTACHMENT_BINARY_REF ) );
     }
 
+
+    @Test
+    public void update_validationErrors()
+        throws Exception
+    {
+        final ContentDataSerializer contentDataSerializer = createContentDataSerializer();
+
+        final String binaryName = "myName";
+        final String binaryLabel = "myLabel";
+        final String binaryMimeType = "myMimeType";
+        final byte[] binaryData = "my binary".getBytes();
+
+        final ValidationErrors validationErrors = ValidationErrors.create()
+            .add( new AttachmentValidationError( BinaryReference.from( "myName" ), "SOME_CODE", "someError" ) )
+            .add( new DataValidationError( PropertyPath.from( "" ), "SOME_OTHER_CODE", "someDataError" ) )
+            .add( new ValidationError( "SERIOUS_ERROR", "someError" ) )
+            .build();
+
+        final UpdateContentTranslatorParams params = UpdateContentTranslatorParams.create().
+            editedContent( Content.create().
+            name( "myContent" ).
+            parentPath( ContentPath.ROOT ).
+            creator( PrincipalKey.ofAnonymous() ).
+            validationErrors( validationErrors ).
+            build() ).
+            modifier( PrincipalKey.ofAnonymous() ).
+            createAttachments( CreateAttachments.from( CreateAttachment.create().
+            byteSource( ByteSource.wrap( binaryData ) ).
+            label( binaryLabel ).
+            mimeType( binaryMimeType ).
+            name( binaryName ).
+            build() ) ).
+            build();
+
+        final PropertyTree data = contentDataSerializer.toUpdateNodeData( params );
+        final Iterable<PropertySet> validationErrorsData = data.getSets( "validationErrors" );
+        assertThat( validationErrorsData ).hasSize( 3 )
+            .extracting( propertySet -> propertySet.getString( "errorCode" ) )
+            .containsExactly( "SOME_CODE", "SOME_OTHER_CODE", "SERIOUS_ERROR" );
+
+        assertThat( validationErrorsData )
+            .extracting( propertySet -> propertySet.getString( "attachment" ) )
+            .containsExactly( "myName", null, null );
+    }
 
     @Test
     public void create_propertyTree_populated_with_extraData()

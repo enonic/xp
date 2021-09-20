@@ -3,37 +3,24 @@ package com.enonic.xp.core.impl.content;
 import java.util.List;
 import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
-import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.validate.ContentValidator;
 import com.enonic.xp.content.validate.ContentValidatorParams;
-import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.schema.xdata.XDataService;
 
 final class ValidateContentDataCommand
 {
-    private static final Logger LOG = LoggerFactory.getLogger( ValidateContentDataCommand.class );
-
     private final ContentTypeService contentTypeService;
-
-    private final XDataService xDataService;
 
     private final List<ContentValidator> contentValidators;
 
@@ -46,7 +33,6 @@ final class ValidateContentDataCommand
     private ValidateContentDataCommand( Builder builder )
     {
         contentTypeService = builder.contentTypeService;
-        xDataService = builder.xDataService;
         contentValidators = builder.contentValidators;
         contentValidatorParamsBuilder = ContentValidatorParams.create()
             .contentId( builder.contentId )
@@ -71,7 +57,6 @@ final class ValidateContentDataCommand
         Preconditions.checkArgument( contentType != null, "ContentType [%s] not found", contentTypeName );
         final ContentValidatorParams validatorParams = contentValidatorParamsBuilder.contentType( contentType ).build();
 
-        validateMetadata( validatorParams );
         for ( ContentValidator contentValidator : contentValidators )
         {
             if ( contentValidator.supports( contentTypeName ) )
@@ -83,32 +68,9 @@ final class ValidateContentDataCommand
         return this.resultBuilder.build();
     }
 
-    private void validateMetadata( final ContentValidatorParams validatorParams )
-    {
-        for ( final ExtraData extraData : validatorParams.getExtraDatas() )
-        {
-            final XDataName name = extraData.getName();
-
-            final XData xData = this.xDataService.getByName( name );
-            if ( xData == null )
-            {
-                LOG.warn( "Mixin not found: '" + name );
-                continue;
-            }
-
-            final Form mixinForm = xData.getForm();
-            if ( extraData.getData().getRoot().getPropertySize() > 0 )
-            {
-                OccurrenceValidator.validate( mixinForm, extraData.getData().getRoot(), this.resultBuilder );
-            }
-        }
-    }
-
     public static final class Builder
     {
         private ContentTypeService contentTypeService;
-
-        private XDataService xDataService;
 
         private List<ContentValidator> contentValidators;
 
@@ -135,12 +97,6 @@ final class ValidateContentDataCommand
         public Builder contentTypeService( ContentTypeService contentTypeService )
         {
             this.contentTypeService = contentTypeService;
-            return this;
-        }
-
-        public Builder xDataService( XDataService xDataService )
-        {
-            this.xDataService = xDataService;
             return this;
         }
 
