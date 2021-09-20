@@ -88,7 +88,7 @@ public final class PortalRequest
 
     public String rewriteUri( final String uri )
     {
-        return ServletRequestUrlHelper.rewriteUri( uri ).getRewrittenUri();
+        return ServletRequestUrlHelper.rewriteUri( getRawRequest(), uri ).getRewrittenUri();
     }
 
     public Site getSite()

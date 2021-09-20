@@ -65,15 +65,10 @@ public final class AdminToolDescriptorServiceImpl
             execute();
     }
 
-    private static String rewriteUri( final String uri )
-    {
-        return ServletRequestUrlHelper.createUri( uri );
-    }
-
     @Override
     public String getHomeToolUri()
     {
-        return rewriteUri( ADMIN_TOOLS_URI_PREFIX );
+        return ServletRequestUrlHelper.createUri( ADMIN_TOOLS_URI_PREFIX );
     }
 
     @Override
@@ -84,7 +79,7 @@ public final class AdminToolDescriptorServiceImpl
         {
             uri += "/" + adminTool;
         }
-        return rewriteUri( uri );
+        return ServletRequestUrlHelper.createUri( uri );
     }
 
     private Set<DescriptorKey> findDescriptorKeys( final ApplicationKey key )

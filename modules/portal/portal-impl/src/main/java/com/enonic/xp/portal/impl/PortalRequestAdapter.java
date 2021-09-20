@@ -33,10 +33,10 @@ public class PortalRequestAdapter
         //The Servlet request should be translated to Portal request only once
 //        result.setBody( RequestBodyReader.readBody( req ) );
 
-        result.setScheme( ServletRequestUrlHelper.getScheme( req ) );
-        result.setHost( ServletRequestUrlHelper.getHost( req ) );
-        result.setRemoteAddress( ServletRequestUrlHelper.getRemoteAddress( req ) );
-        result.setPort( ServletRequestUrlHelper.getPort( req ) );
+        result.setScheme( req.getScheme() );
+        result.setHost( req.getServerName() );
+        result.setRemoteAddress( req.getRemoteAddr() );
+        result.setPort( req.getServerPort() );
         result.setPath( ServletRequestUrlHelper.getPath( req ) );
         result.setRawPath( req.getPathInfo() );
         result.setUrl( ServletRequestUrlHelper.getFullUrl( req ) );

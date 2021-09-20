@@ -18,7 +18,7 @@ public class VirtualHostInternalHelperTest
     public void testGetFullTargetPath()
     {
         final VirtualHostMapping virtualHostMapping =
-            new VirtualHostMapping( "host", "foo.no", "/a", "/b/c", VirtualHostIdProvidersMapping.create().build() );
+            new VirtualHostMapping( "host", "foo.no", "/a", "/b/c", VirtualHostIdProvidersMapping.create().build(), 0 );
 
         final HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getRequestURI() ).thenReturn( "/a/other/service" );
@@ -32,7 +32,7 @@ public class VirtualHostInternalHelperTest
     public void testGetFullTargetPathWithTrailingSlash()
     {
         final VirtualHostMapping virtualHostMapping =
-            new VirtualHostMapping( "host", "foo.no", "/a", "/b/c", VirtualHostIdProvidersMapping.create().build() );
+            new VirtualHostMapping( "host", "foo.no", "/a", "/b/c", VirtualHostIdProvidersMapping.create().build(), 0 );
 
         final HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getRequestURI() ).thenReturn( "/a/other/service/" );

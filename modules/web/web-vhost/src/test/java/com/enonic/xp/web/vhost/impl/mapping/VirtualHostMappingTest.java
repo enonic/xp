@@ -14,43 +14,43 @@ public class VirtualHostMappingTest
     @Test
     public void testName()
     {
-        this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build() );
+        this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0 );
         assertEquals( "mymapping", this.virtualHostMapping.getName() );
     }
 
     @Test
     public void testHost()
     {
-        this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build() );
+        this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0 );
         assertEquals( "foo.no", this.virtualHostMapping.getHost() );
     }
 
     @Test
     public void testSource()
     {
-        this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build() );
+        this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0 );
         assertEquals( "/", this.virtualHostMapping.getSource() );
 
         this.virtualHostMapping =
-            new VirtualHostMapping( "mymapping", "foo.no", "a/b", "/", VirtualHostIdProvidersMapping.create().build() );
+            new VirtualHostMapping( "mymapping", "foo.no", "a/b", "/", VirtualHostIdProvidersMapping.create().build(), 0 );
         assertEquals( "a/b", this.virtualHostMapping.getSource() );
 
         assertThrows( NullPointerException.class,
-                      () -> new VirtualHostMapping( "mymapping", "foo.no", null, "/", VirtualHostIdProvidersMapping.create().build() ) );
+                      () -> new VirtualHostMapping( "mymapping", "foo.no", null, "/", VirtualHostIdProvidersMapping.create().build(), 0 ) );
     }
 
     @Test
     public void testTarget()
     {
-        this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build() );
+        this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0 );
         assertEquals( "/", this.virtualHostMapping.getTarget() );
 
         this.virtualHostMapping =
-            new VirtualHostMapping( "mymapping", "foo.no", "/", "a/b", VirtualHostIdProvidersMapping.create().build() );
+            new VirtualHostMapping( "mymapping", "foo.no", "/", "a/b", VirtualHostIdProvidersMapping.create().build(), 0 );
         assertEquals( "a/b", this.virtualHostMapping.getTarget() );
 
         assertThrows( NullPointerException.class,
-                      () -> new VirtualHostMapping( "mymapping", "foo.no", "/", null, VirtualHostIdProvidersMapping.create().build() ) );
+                      () -> new VirtualHostMapping( "mymapping", "foo.no", "/", null, VirtualHostIdProvidersMapping.create().build(), 0 ) );
     }
 
     @Test
@@ -59,11 +59,11 @@ public class VirtualHostMappingTest
         assertThrows( NullPointerException.class,
                       () -> new VirtualHostMapping( "mymapping", "foo.no", "/", null, VirtualHostIdProvidersMapping.create().
                           setDefaultIdProvider( IdProviderKey.system() ).
-                          build() ) );
+                          build(), 0 ) );
 
         this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().
             setDefaultIdProvider( IdProviderKey.system() ).
-            build() );
+            build(), 0 );
         assertEquals( IdProviderKey.system(), this.virtualHostMapping.getDefaultIdProviderKey() );
     }
 

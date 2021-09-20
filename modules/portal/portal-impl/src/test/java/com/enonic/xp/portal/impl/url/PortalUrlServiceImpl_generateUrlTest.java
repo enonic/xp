@@ -38,11 +38,9 @@ public class PortalUrlServiceImpl_generateUrlTest
             url( "/admin" ).
             param( "a", 3 );
 
-        HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
         when( req.getServerPort() ).thenReturn( 80 );
-        ServletRequestHolder.setRequest( req );
 
         final String url = this.service.generateUrl( params );
         assertEquals( "http://localhost/admin?a=3", url );
@@ -59,12 +57,10 @@ public class PortalUrlServiceImpl_generateUrlTest
 
         //Mocks a virtual host and the HTTP request
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
-        HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
         when( req.getServerPort() ).thenReturn( 80 );
-        ServletRequestHolder.setRequest( req );
 
         //Calls the method with a virtual mapping /main -> /
         Mockito.when( virtualHost.getSource() ).thenReturn( "/main" );

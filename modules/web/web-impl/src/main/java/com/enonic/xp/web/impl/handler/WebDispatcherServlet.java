@@ -89,10 +89,10 @@ public final class WebDispatcherServlet
         result.setContentType( req.getContentType() );
         result.setBody( RequestBodyReader.readBody( req ) );
 
-        result.setScheme( ServletRequestUrlHelper.getScheme( req ) );
-        result.setHost( ServletRequestUrlHelper.getHost( req ) );
-        result.setPort( ServletRequestUrlHelper.getPort( req ) );
-        result.setRemoteAddress( ServletRequestUrlHelper.getRemoteAddress( req ) );
+        result.setScheme( req.getScheme() );
+        result.setHost( req.getServerName() );
+        result.setPort( req.getServerPort() );
+        result.setRemoteAddress( req.getRemoteAddr() );
         result.setPath( ServletRequestUrlHelper.getPath( req ) );
         result.setUrl( ServletRequestUrlHelper.getFullUrl( req ) );
 

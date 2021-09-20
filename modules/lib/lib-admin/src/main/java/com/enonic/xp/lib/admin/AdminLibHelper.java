@@ -35,19 +35,14 @@ public final class AdminLibHelper
         this.version = generateVersion();
     }
 
-    private static String rewriteUri( final String uri )
-    {
-        return ServletRequestUrlHelper.createUri( uri );
-    }
-
     public String getBaseUri()
     {
-        return rewriteUri( ADMIN_URI_PREFIX );
+        return ServletRequestUrlHelper.createUri( ADMIN_URI_PREFIX );
     }
 
     public String getAssetsUri()
     {
-        return rewriteUri( ADMIN_ASSETS_URI_PREFIX + this.version );
+        return ServletRequestUrlHelper.createUri( ADMIN_ASSETS_URI_PREFIX + this.version );
     }
 
     public String getHomeToolUri()

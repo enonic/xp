@@ -18,4 +18,6 @@ public interface VirtualHost
     IdProviderKey getDefaultIdProviderKey();
 
     IdProviderKeys getIdProviderKeys();
+
+    int getOrder();
 }

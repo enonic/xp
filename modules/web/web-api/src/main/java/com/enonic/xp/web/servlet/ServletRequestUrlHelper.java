@@ -8,28 +8,18 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.base.Splitter;
 import com.google.common.net.HostAndPort;
-import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.google.common.base.Strings.nullToEmpty;
 
 @PublicApi
 public final class ServletRequestUrlHelper
 {
     private static final int[] RFC_8187_ATTR_CHAR =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$&+-.^_`|~".chars().sorted().toArray();
-
-    static final String X_FORWARDED_PROTO = HttpHeaders.X_FORWARDED_PROTO;
-
-    static final String X_FORWARDED_HOST = HttpHeaders.X_FORWARDED_HOST;
-
-    static final String X_FORWARDED_PORT = HttpHeaders.X_FORWARDED_PORT;
-
-    static final String X_FORWARDED_FOR = HttpHeaders.X_FORWARDED_FOR;
 
     public static String createUri( final String path )
     {
@@ -64,8 +54,7 @@ public final class ServletRequestUrlHelper
 
     public static String getScheme( final HttpServletRequest req )
     {
-        String scheme = req.getHeader( X_FORWARDED_PROTO );
-        return nullToEmpty( scheme ).isBlank() ? req.getScheme() : getFirstForwarded( scheme );
+        return req.getScheme();
     }
 
     public static String getHost()
@@ -75,7 +64,7 @@ public final class ServletRequestUrlHelper
 
     public static String getHost( final HttpServletRequest req )
     {
-        return getHostAndPort( req ).getHost();
+        return req.getServerName();
     }
 
     public static int getPort()
@@ -85,7 +74,7 @@ public final class ServletRequestUrlHelper
 
     public static int getPort( final HttpServletRequest req )
     {
-        return getHostAndPort( req ).getPortOrDefault( -1 );
+        return req.getServerPort();
     }
 
     public static HostAndPort getHostAndPort()
@@ -95,44 +84,12 @@ public final class ServletRequestUrlHelper
 
     public static HostAndPort getHostAndPort( final HttpServletRequest req )
     {
-        final String xForwardedHost = req.getHeader( X_FORWARDED_HOST );
-        if ( nullToEmpty( xForwardedHost ).isBlank() )
-        {
-            return HostAndPort.fromParts( req.getServerName(), req.getServerPort() );
-        }
-        else
-        {
-            final HostAndPort hostAndPort = HostAndPort.fromString( getFirstForwarded( xForwardedHost ) );
-
-            final String xForwardedPort = req.getHeader( X_FORWARDED_PORT );
-            if ( nullToEmpty( xForwardedPort ).isBlank() )
-            {
-                return hostAndPort;
-            }
-            else
-            {
-                return hostAndPort.withDefaultPort( Integer.parseInt( getFirstForwarded( xForwardedPort ) ) );
-            }
-        }
+        return HostAndPort.fromParts( req.getServerName(), req.getServerPort() );
     }
 
     public static String getRemoteAddress( final HttpServletRequest req )
     {
-        final String xForwardedFor = req.getHeader( X_FORWARDED_FOR );
-        if ( nullToEmpty( xForwardedFor ).isBlank() )
-        {
-            return req.getRemoteAddr();
-        }
-        else
-        {
-            return getFirstForwarded( xForwardedFor );
-        }
-    }
-
-    private static String getFirstForwarded( final String xForwarded )
-    {
-        final int firstCommaIndex = xForwarded.indexOf( "," );
-        return firstCommaIndex == -1 ? xForwarded : xForwarded.substring( 0, firstCommaIndex );
+        return req.getRemoteAddr();
     }
 
     public static String getPath()
@@ -142,7 +99,7 @@ public final class ServletRequestUrlHelper
 
     public static String getPath( final HttpServletRequest req )
     {
-        return createUri( req.getRequestURI() );
+        return createUri( req, req.getRequestURI() );
     }
 
     private static String getQueryString( final HttpServletRequest req )
@@ -160,14 +117,14 @@ public final class ServletRequestUrlHelper
         final StringBuilder str = new StringBuilder();
 
         //Appends the scheme part
-        String scheme = getScheme( req );
+        String scheme = req.getScheme();
         str.append( scheme );
 
         //Appends the host
-        str.append( "://" ).append( getHost( req ) );
+        str.append( "://" ).append( req.getServerName() );
 
         //Appends the port if necessary
-        final int port = getPort( req );
+        final int port = req.getServerPort();
         if ( needPortNumber( scheme, port ) )
         {
             str.append( ":" ).append( port );
@@ -190,7 +147,7 @@ public final class ServletRequestUrlHelper
         fullUrl.append( getPath( req ) );
 
         //Appends the query string part
-        final String queryString = getQueryString( req );
+        final String queryString = req.getQueryString();
         if ( queryString != null )
         {
             fullUrl.append( "?" ).append( queryString );
