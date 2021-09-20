@@ -3,8 +3,6 @@ package com.enonic.xp.repo.impl.index;
 import java.time.Duration;
 import java.time.Instant;
 
-import com.google.common.base.Stopwatch;
-
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.ContextAccessor;
@@ -58,7 +56,6 @@ public class ReindexExecutor
             listener.totalBranches( this.branches.getSize() );
         }
 
-        final Stopwatch started = Stopwatch.createStarted();
         for ( final Branch branch : this.branches )
         {
             doReindexBranchNew( repositoryId, builder, branch );
@@ -66,7 +63,7 @@ public class ReindexExecutor
 
         final long stop = System.currentTimeMillis();
         builder.endTime( Instant.ofEpochMilli( stop ) );
-        builder.duration( Duration.ofMillis( start - stop ) );
+        builder.duration( Duration.ofMillis( stop - start  ) );
 
         return builder.build();
     }
