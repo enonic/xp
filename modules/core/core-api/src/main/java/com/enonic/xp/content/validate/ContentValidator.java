@@ -1,7 +1,6 @@
 package com.enonic.xp.content.validate;
 
 import com.enonic.xp.content.ValidationErrors;
-import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 public interface ContentValidator

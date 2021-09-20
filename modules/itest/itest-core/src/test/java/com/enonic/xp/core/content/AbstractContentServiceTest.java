@@ -48,6 +48,9 @@ import com.enonic.xp.core.impl.content.ContentAuditLogExecutorImpl;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
+import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
+import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
+import com.enonic.xp.core.impl.content.validate.SiteConfigsValidator;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
@@ -327,6 +330,11 @@ public class AbstractContentServiceTest
         contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
         } );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
+
+        contentService.addContentValidator( new ContentNameValidator() );
+        contentService.addContentValidator( new SiteConfigsValidator( siteService ) );
+        contentService.addContentValidator( new OccurrenceValidator() );
+
         contentService.initialize( mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
     }

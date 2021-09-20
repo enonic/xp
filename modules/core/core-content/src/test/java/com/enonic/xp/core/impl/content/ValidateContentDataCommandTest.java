@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.validate.ContentValidatorParams;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
+import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
 import com.enonic.xp.core.impl.content.validate.SiteConfigsValidator;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FieldSet;
@@ -255,15 +256,13 @@ public class ValidateContentDataCommandTest
                                                 final ContentName name, final String displayName )
     {
         return ValidateContentDataCommand.create()
-            .contentValidatorParams( ContentValidatorParams.create()
-                                         .contentType( contentTypeName )
-                                         .data( propertyTree )
-                                         .name( name )
-                                         .displayName( displayName )
-                                         .build() )
+            .contentTypeName( contentTypeName )
+            .data( propertyTree )
+            .contentName( name )
+            .displayName( displayName )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )
-            .contentValidators( List.of( new ContentNameValidator(), new SiteConfigsValidator( siteService ) ) )
+            .contentValidators( List.of( new ContentNameValidator(), new SiteConfigsValidator( siteService ), new OccurrenceValidator() ) )
             .build()
             .execute();
     }

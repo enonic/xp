@@ -21,14 +21,13 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.processor.ProcessCreateParams;
 import com.enonic.xp.content.processor.ProcessCreateResult;
-import com.enonic.xp.content.validate.ContentValidatorParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
-import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.inputtype.InputTypes;
@@ -309,23 +308,18 @@ final class CreateContentCommand
 
     private void populateValid( final CreateContentTranslatorParams.Builder builder )
     {
-        final ContentValidatorParams validatorParams = ContentValidatorParams.create()
+        final ValidationErrors validationErrors = ValidateContentDataCommand.create()
             .data( builder.getData() )
             .extraDatas( builder.getExtraDatas() )
-            .contentType( builder.getType() )
-            .name( builder.getName() )
+            .contentTypeName( builder.getType() )
+            .contentName( builder.getName() )
             .displayName( builder.getDisplayName() )
             .createAttachments( builder.getCreateAttachments() )
-            .build();
-
-        final ValidationErrors validationErrors =
-            ValidateContentDataCommand.create()
-                .contentValidatorParams( validatorParams )
-                .xDataService( this.xDataService )
-                .contentValidators( this.contentValidators )
-                .contentTypeService( this.contentTypeService )
-                .build()
-                .execute();
+            .xDataService( this.xDataService )
+            .contentValidators( this.contentValidators )
+            .contentTypeService( this.contentTypeService )
+            .build()
+            .execute();
 
         if ( validationErrors.isNotEmpty() )
         {

@@ -20,11 +20,11 @@ public class ValidationErrorsTest
         ValidationErrors errors1 = ValidationErrors.create()
             .add( new DataValidationError( PropertyPath.from( "root" ), "CUSTOM_ERROR_CODE", "errorMessage" ) )
             .build();
-        ValidationErrors errors2 = ValidationErrors.empty();
+        ValidationErrors errors2 = ValidationErrors.create().build();
         assertFalse( errors2.isNotEmpty() );
         assertNotEquals( errors1, errors2 );
         assertNotEquals( errors1.hashCode(), errors2.hashCode() );
-        errors2 = ValidationErrors.create().addAll( errors1.getSet() ).build();
+        errors2 = ValidationErrors.create().addAll( errors1.getList() ).build();
         assertEquals( errors1, errors2 );
     }
 

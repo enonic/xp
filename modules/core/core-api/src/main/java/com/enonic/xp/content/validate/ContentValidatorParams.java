@@ -7,13 +7,13 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentType;
 
 public final class ContentValidatorParams
 {
     private final ContentId contentId;
 
-    private final ContentTypeName contentType;
+    private final ContentType contentType;
 
     private final PropertyTree data;
 
@@ -41,7 +41,7 @@ public final class ContentValidatorParams
         return contentId;
     }
 
-    public ContentTypeName getContentType()
+    public ContentType getContentType()
     {
         return contentType;
     }
@@ -80,7 +80,7 @@ public final class ContentValidatorParams
     {
         private ContentId contentId;
 
-        private ContentTypeName contentType;
+        private ContentType contentType;
 
         private ContentName name;
 
@@ -102,7 +102,7 @@ public final class ContentValidatorParams
             return this;
         }
 
-        public Builder contentType( ContentTypeName contentType )
+        public Builder contentType( ContentType contentType )
         {
             this.contentType = contentType;
             return this;
@@ -143,5 +143,4 @@ public final class ContentValidatorParams
             return new ContentValidatorParams( this );
         }
     }
-
 }

@@ -6,9 +6,8 @@ import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.content.validate.ContentValidatorParams;
-import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
@@ -93,16 +92,12 @@ final class RenameContentCommand
 
     private ValidationErrors validateContent( final Content content )
     {
-        final ContentValidatorParams validatorParams = ContentValidatorParams.create()
+        return ValidateContentDataCommand.create()
             .data( content.getData() )
             .extraDatas( content.getAllExtraData() )
-            .contentType( content.getType() )
-            .name( content.getName() )
+            .contentTypeName( content.getType() )
+            .contentName( content.getName() )
             .displayName( content.getDisplayName() )
-            .build();
-
-        return ValidateContentDataCommand.create()
-            .contentValidatorParams( validatorParams )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )
             .contentValidators( this.contentValidators )

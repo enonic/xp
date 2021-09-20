@@ -25,7 +25,6 @@ import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.processor.ProcessUpdateParams;
 import com.enonic.xp.content.processor.ProcessUpdateResult;
-import com.enonic.xp.content.validate.ContentValidatorParams;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.icon.Thumbnail;
@@ -143,18 +142,14 @@ final class UpdateContentCommand
             }
         }
 
-        final ContentValidatorParams validatorParams = ContentValidatorParams.create()
+        final ValidationErrors validated = ValidateContentDataCommand.create()
             .contentId( editedContent.getId() )
             .data( editedContent.getData() )
             .extraDatas( editedContent.getAllExtraData() )
-            .contentType( editedContent.getType() )
-            .name( editedContent.getName() )
+            .contentTypeName( editedContent.getType() )
+            .contentName( editedContent.getName() )
             .displayName( editedContent.getDisplayName() )
             .createAttachments( params.getCreateAttachments() )
-            .build();
-
-        final ValidationErrors validated = ValidateContentDataCommand.create()
-            .contentValidatorParams( validatorParams )
             .xDataService( this.xDataService )
             .contentValidators( this.contentValidators )
             .contentTypeService( this.contentTypeService )

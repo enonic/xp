@@ -48,8 +48,7 @@ public class SiteConfigsValidator
 
             if ( siteDescriptor != null )
             {
-                validationErrorsBuilder.addAll(
-                    new OccurrenceValidator( siteDescriptor.getForm() ).validate( siteConfig.getConfig().getRoot() ).getSet() );
+                OccurrenceValidator.validate( siteDescriptor.getForm(), siteConfig.getConfig().getRoot(), validationErrorsBuilder );
 
                 try
                 {
