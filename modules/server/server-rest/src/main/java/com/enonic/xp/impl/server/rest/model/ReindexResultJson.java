@@ -4,19 +4,20 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.impl.server.rest.ModelToStringHelper;
 import com.enonic.xp.index.ReindexResult;
 
 public final class ReindexResultJson
 {
     public String duration;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     public Instant startTime;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     public Instant endTime;
 
     public int numberReindexed;
@@ -46,11 +47,6 @@ public final class ReindexResultJson
     @Override
     public String toString()
     {
-        ObjectNode node = new ObjectMapper().valueToTree( this );
-        // instants are not formatted nicely by default so doing it manually
-        JsonNodeFactory factory = JsonNodeFactory.instance;
-        node.set( "startTime", factory.textNode( startTime.toString() ) );
-        node.set( "endTime", factory.textNode( endTime.toString() ) );
-        return node.toString();
+        return ModelToStringHelper.convertToString( this );
     }
 }
