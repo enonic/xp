@@ -49,6 +49,7 @@ import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
+import com.enonic.xp.core.impl.content.validate.MetadataValidator;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
 import com.enonic.xp.core.impl.content.validate.SiteConfigsValidator;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
@@ -334,6 +335,7 @@ public class AbstractContentServiceTest
         contentService.addContentValidator( new ContentNameValidator() );
         contentService.addContentValidator( new SiteConfigsValidator( siteService ) );
         contentService.addContentValidator( new OccurrenceValidator() );
+        contentService.addContentValidator( new MetadataValidator( xDataService ) );
 
         contentService.initialize( mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
