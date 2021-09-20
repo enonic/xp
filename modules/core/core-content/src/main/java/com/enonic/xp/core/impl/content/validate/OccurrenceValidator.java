@@ -124,9 +124,9 @@ public final class OccurrenceValidator
             ( formOptionSet.getMultiselection().getMaximum() != 0 && numberOfOptions > formOptionSet.getMultiselection().getMaximum() ) )
         {
             validationErrors.add(
-                new DataValidationError( path, "OptionSet [{0}] requires min {1} max {2} items selected: {3}", formOptionSet.getPath(),
-                                         formOptionSet.getMultiselection().getMinimum(), formOptionSet.getMultiselection().getMaximum(),
-                                         numberOfOptions ) );
+                new DataValidationError( path, "OPTIONSET_MIN_MAX", "OptionSet [{0}] requires min {1} max {2} items selected: {3}",
+                                         formOptionSet.getPath(), formOptionSet.getMultiselection().getMinimum(),
+                                         formOptionSet.getMultiselection().getMaximum(), numberOfOptions ) );
         }
     }
 
@@ -166,7 +166,7 @@ public final class OccurrenceValidator
 
             if ( occurrences.impliesRequired() && entryCount < occurrences.getMinimum() )
             {
-                validationErrors.add( new DataValidationError( propertyPath, formItem.getClass().getSimpleName() +
+                validationErrors.add( new DataValidationError( propertyPath, "MIN_OCCURRENCES", formItem.getClass().getSimpleName() +
                     " [{0}] requires minimum {1,choice,1#1 occurrence|1<{1} occurrences}: {2}", formItem.getPath(),
                                                                occurrences.getMinimum(), entryCount ) );
             }
@@ -174,7 +174,7 @@ public final class OccurrenceValidator
             final int maxOccurrences = occurrences.getMaximum();
             if ( maxOccurrences > 0 && entryCount > maxOccurrences )
             {
-                validationErrors.add( new DataValidationError( propertyPath, formItem.getClass().getSimpleName() +
+                validationErrors.add( new DataValidationError( propertyPath, "MAX_OCCURRENCES", formItem.getClass().getSimpleName() +
                     " [{0}] allows maximum {1,choice,1#1 occurrence|1<{1} occurrences}: {2}", formItem.getPath(), occurrences.getMaximum(),
                                                                entryCount ) );
             }

@@ -2,15 +2,12 @@ package com.enonic.xp.content.validate;
 
 import java.util.Objects;
 
-import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ExtraDatas;
-import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.util.BinaryReferences;
 
 public final class ContentValidatorParams
 {
@@ -28,12 +25,6 @@ public final class ContentValidatorParams
 
     private final CreateAttachments createAttachments;
 
-    private final BinaryReferences removeAttachments;
-
-    private final boolean clearAttachments;
-
-    private final ValidationErrors currentValidationErrors;
-
     private ContentValidatorParams( Builder builder )
     {
         contentId = builder.contentId;
@@ -43,9 +34,6 @@ public final class ContentValidatorParams
         name = builder.name;
         displayName = builder.displayName;
         createAttachments = Objects.requireNonNullElse( builder.createAttachments, CreateAttachments.empty() );
-        removeAttachments = Objects.requireNonNullElse( builder.removeAttachments, BinaryReferences.empty() );
-        clearAttachments = builder.clearAttachments;
-        currentValidationErrors = Objects.requireNonNullElse( builder.currentValidationErrors, ValidationErrors.empty() );
     }
 
     public ContentId getContentId()
@@ -83,21 +71,6 @@ public final class ContentValidatorParams
         return createAttachments;
     }
 
-    public BinaryReferences getRemoveAttachments()
-    {
-        return removeAttachments;
-    }
-
-    public boolean isClearAttachments()
-    {
-        return clearAttachments;
-    }
-
-    public ValidationErrors getCurrentValidationErrors()
-    {
-        return currentValidationErrors;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -118,12 +91,6 @@ public final class ContentValidatorParams
         private ExtraDatas extraDatas;
 
         private CreateAttachments createAttachments;
-
-        private BinaryReferences removeAttachments;
-
-        private boolean clearAttachments;
-
-        private ValidationErrors currentValidationErrors;
 
         private Builder()
         {
@@ -168,24 +135,6 @@ public final class ContentValidatorParams
         public Builder createAttachments( CreateAttachments createAttachments )
         {
             this.createAttachments = createAttachments;
-            return this;
-        }
-
-        public Builder removeAttachments( final BinaryReferences removeAttachments )
-        {
-            this.removeAttachments = removeAttachments;
-            return this;
-        }
-
-        public Builder clearAttachments( final boolean clearAttachments )
-        {
-            this.clearAttachments = clearAttachments;
-            return this;
-        }
-
-        public Builder currentValidationErrors( final ValidationErrors currentValidationErrors )
-        {
-            this.currentValidationErrors = currentValidationErrors;
             return this;
         }
 

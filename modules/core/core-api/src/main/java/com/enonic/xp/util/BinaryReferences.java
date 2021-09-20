@@ -33,7 +33,6 @@ public class BinaryReferences
 
     public static BinaryReferences from( final Iterable<BinaryReference> binaryReferences )
     {
-        return new BinaryReferences( ImmutableSet.copyOf(binaryReferences) );
+        return new BinaryReferences( ImmutableSet.copyOf( binaryReferences ) );
     }
-
 }

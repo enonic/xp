@@ -93,17 +93,18 @@ final class RenameContentCommand
 
     private ValidationErrors validateContent( final Content content )
     {
+        final ContentValidatorParams validatorParams = ContentValidatorParams.create()
+            .data( content.getData() )
+            .extraDatas( content.getAllExtraData() )
+            .contentType( content.getType() )
+            .name( content.getName() )
+            .displayName( content.getDisplayName() )
+            .build();
+
         return ValidateContentDataCommand.create()
-            .contentValidatorParams( ContentValidatorParams.create()
-                                         .data( content.getData() )
-                                         .extraDatas( content.getAllExtraData() )
-                                         .contentType( content.getType() )
-                                         .name( content.getName() )
-                                         .displayName( content.getDisplayName() )
-                                         .build() )
+            .contentValidatorParams( validatorParams )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )
-            .siteService( this.siteService )
             .contentValidators( this.contentValidators )
             .build()
             .execute();

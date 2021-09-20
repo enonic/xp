@@ -33,7 +33,6 @@ import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.page.Page;
@@ -407,7 +406,8 @@ public class ContentDataSerializer
     {
         if ( ve.hasProperty( "path" ) )
         {
-            return new DataValidationError( PropertyPath.from( ve.getString( "path" ) ), ve.getString( "errorMessage" ) );
+            return new DataValidationError( PropertyPath.from( ve.getString( "path" ) ), ve.getString( "errorCode" ),
+                                            ve.getString( "errorMessage" ) );
         }
         else if ( ve.hasProperty( "attachment" ) )
         {

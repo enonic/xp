@@ -8,11 +8,6 @@ public class ValidationError
 
     private final String errorMessage;
 
-    public ValidationError( final String errorMessage, final Object... args )
-    {
-        this( null, errorMessage, args );
-    }
-
     public ValidationError( final String errorCode, final String errorMessage, final Object... args )
     {
         this.errorCode = errorCode;

@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +14,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
+import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
@@ -166,16 +169,17 @@ class RenameContentCommandTest
 
     private RenameContentCommand createCommand( final RenameContentParams params )
     {
-        return RenameContentCommand.create( params ).
-            contentTypeService( this.contentTypeService ).
-            nodeService( this.nodeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            xDataService( this.xDataService ).
-            pageDescriptorService( this.pageDescriptorService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            contentDataSerializer( this.contentDataSerializer ).
-            build();
+        return RenameContentCommand.create( params )
+            .contentTypeService( this.contentTypeService )
+            .nodeService( this.nodeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .xDataService( this.xDataService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .contentValidators( List.of( new ContentNameValidator() ) )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .contentDataSerializer( this.contentDataSerializer )
+            .build();
     }
 }

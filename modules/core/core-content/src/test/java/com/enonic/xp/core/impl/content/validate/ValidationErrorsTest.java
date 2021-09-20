@@ -17,8 +17,9 @@ public class ValidationErrorsTest
     @Test
     public void validationResult()
     {
-        ValidationErrors errors1 =
-            ValidationErrors.create().add( new DataValidationError( PropertyPath.from( "root" ), "errorMessage" ) ).build();
+        ValidationErrors errors1 = ValidationErrors.create()
+            .add( new DataValidationError( PropertyPath.from( "root" ), "CUSTOM_ERROR_CODE", "errorMessage" ) )
+            .build();
         ValidationErrors errors2 = ValidationErrors.empty();
         assertFalse( errors2.isNotEmpty() );
         assertNotEquals( errors1, errors2 );

@@ -11,6 +11,8 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.validate.ContentValidatorParams;
+import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
+import com.enonic.xp.core.impl.content.validate.SiteConfigsValidator;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
@@ -261,8 +263,7 @@ public class ValidateContentDataCommandTest
                                          .build() )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )
-            .siteService( this.siteService )
-            .contentValidators( List.of() )
+            .contentValidators( List.of( new ContentNameValidator(), new SiteConfigsValidator( siteService ) ) )
             .build()
             .execute();
     }

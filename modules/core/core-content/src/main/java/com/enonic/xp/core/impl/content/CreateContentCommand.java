@@ -309,18 +309,19 @@ final class CreateContentCommand
 
     private void populateValid( final CreateContentTranslatorParams.Builder builder )
     {
+        final ContentValidatorParams validatorParams = ContentValidatorParams.create()
+            .data( builder.getData() )
+            .extraDatas( builder.getExtraDatas() )
+            .contentType( builder.getType() )
+            .name( builder.getName() )
+            .displayName( builder.getDisplayName() )
+            .createAttachments( builder.getCreateAttachments() )
+            .build();
+
         final ValidationErrors validationErrors =
             ValidateContentDataCommand.create()
-                .contentValidatorParams( ContentValidatorParams.create()
-                                             .data( builder.getData() )
-                                             .extraDatas( builder.getExtraDatas() )
-                                             .contentType( builder.getType() )
-                                             .name( builder.getName() )
-                                             .displayName( builder.getDisplayName() )
-                                             .createAttachments( builder.getCreateAttachments() )
-                                             .build() )
+                .contentValidatorParams( validatorParams )
                 .xDataService( this.xDataService )
-                .siteService( this.siteService )
                 .contentValidators( this.contentValidators )
                 .contentTypeService( this.contentTypeService )
                 .build()

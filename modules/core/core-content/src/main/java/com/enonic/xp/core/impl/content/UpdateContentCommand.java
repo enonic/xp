@@ -1,12 +1,14 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.content.AttachmentValidationError;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentDataValidationException;
@@ -18,6 +20,7 @@ import com.enonic.xp.content.EditableSite;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
+import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.processor.ProcessUpdateParams;
@@ -40,6 +43,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.util.BinaryReferences;
 
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -111,8 +115,10 @@ final class UpdateContentCommand
             editedContent.getInherit().remove( ContentInheritType.NAME );
         }
 
-        if ( contentBeforeChange.equals( editedContent ) && params.getCreateAttachments() == null &&
-            params.getRemoveAttachments() == null && !this.params.isClearAttachments() )
+        final BinaryReferences removeAttachments = Objects.requireNonNullElseGet( params.getRemoveAttachments(), BinaryReferences::empty );
+
+        if ( contentBeforeChange.equals( editedContent ) && params.getCreateAttachments() == null && removeAttachments.isEmpty() &&
+            !this.params.isClearAttachments() )
         {
             return contentBeforeChange;
         }
@@ -120,6 +126,23 @@ final class UpdateContentCommand
         editedContent = processContent( contentBeforeChange, editedContent );
 
         validateBlockingChecks( editedContent );
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+
+        if ( !params.isClearAttachments() && contentBeforeChange.getValidationErrors() != null && !removeAttachments.isEmpty() )
+        {
+            for ( ValidationError validationError : contentBeforeChange.getValidationErrors() )
+            {
+                if ( validationError instanceof AttachmentValidationError )
+                {
+                    if ( !removeAttachments.contains( ( (AttachmentValidationError) validationError ).getAttachment() ) )
+                    {
+                        validationErrorsBuilder.add( validationError );
+                    }
+                }
+            }
+        }
+
         final ContentValidatorParams validatorParams = ContentValidatorParams.create()
             .contentId( editedContent.getId() )
             .data( editedContent.getData() )
@@ -128,11 +151,16 @@ final class UpdateContentCommand
             .name( editedContent.getName() )
             .displayName( editedContent.getDisplayName() )
             .createAttachments( params.getCreateAttachments() )
-            .removeAttachments( params.getRemoveAttachments() )
-            .clearAttachments( params.isClearAttachments() )
-            .currentValidationErrors( contentBeforeChange.getValidationErrors() )
             .build();
-        final ValidationErrors validated = validateNonBlockingChecks( validatorParams );
+
+        final ValidationErrors validated = ValidateContentDataCommand.create()
+            .contentValidatorParams( validatorParams )
+            .xDataService( this.xDataService )
+            .contentValidators( this.contentValidators )
+            .contentTypeService( this.contentTypeService )
+            .validationErrorsBuilder( validationErrorsBuilder )
+            .build()
+            .execute();
 
         if ( params.isRequireValid() )
         {
@@ -296,18 +324,6 @@ final class UpdateContentCommand
         {
             throw new IllegalArgumentException( "Invalid property for content: " + editedContent.getPath(), e );
         }
-    }
-
-    private ValidationErrors validateNonBlockingChecks( ContentValidatorParams params )
-    {
-        return ValidateContentDataCommand.create()
-            .contentValidatorParams( params )
-            .xDataService( this.xDataService )
-            .siteService( this.siteService )
-            .contentValidators( this.contentValidators )
-            .contentTypeService( this.contentTypeService )
-            .build()
-            .execute();
     }
 
     private Thumbnail resolveMediaThumbnail( final Content content )

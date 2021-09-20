@@ -1,0 +1,71 @@
+package com.enonic.xp.core.impl.content.validate;
+
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.ValidationError;
+import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.content.validate.ContentValidator;
+import com.enonic.xp.content.validate.ContentValidatorParams;
+import com.enonic.xp.inputtype.InputTypes;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
+import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.SiteService;
+
+@Component
+public class SiteConfigsValidator
+    implements ContentValidator
+{
+    private final SiteService siteService;
+
+    @Activate
+    public SiteConfigsValidator( @Reference final SiteService siteService )
+    {
+        this.siteService = siteService;
+    }
+
+    @Override
+    public boolean supports( final ContentTypeName contentType )
+    {
+        return contentType.isSite();
+    }
+
+    @Override
+    public void validate( final ContentValidatorParams params, final ValidationErrors.Builder validationErrorsBuilder )
+    {
+        final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties( params.getData().getRoot() ).build();
+
+        for ( final SiteConfig siteConfig : siteConfigs )
+        {
+            final ApplicationKey applicationKey = siteConfig.getApplicationKey();
+
+            final SiteDescriptor siteDescriptor = siteService.getDescriptor( applicationKey );
+
+            if ( siteDescriptor != null )
+            {
+                validationErrorsBuilder.addAll(
+                    new OccurrenceValidator( siteDescriptor.getForm() ).validate( siteConfig.getConfig().getRoot() ).getSet() );
+
+                try
+                {
+                    InputValidator.create()
+                        .form( siteDescriptor.getForm() )
+                        .inputTypeResolver( InputTypes.BUILTIN )
+                        .build()
+                        .validate( siteConfig.getConfig() );
+                }
+                catch ( final Exception e )
+                {
+                    validationErrorsBuilder.add( new ValidationError( "SITE_CONFIG_ERROR", "Data validation error in site config for {0}",
+                                                                      siteConfig.getApplicationKey().getName() ) );
+                }
+
+            }
+        }
+    }
+}
