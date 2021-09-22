@@ -11,7 +11,6 @@ import com.enonic.xp.archive.ArchiveContentException;
 import com.enonic.xp.archive.ArchiveContentListener;
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentPath;
@@ -96,11 +95,10 @@ final class ArchiveContentCommand
         final MoveNodeParams.Builder builder =
             MoveNodeParams.create().nodeId( nodeId ).parentNodePath( ArchiveConstants.ARCHIVE_ROOT_PATH ).moveListener( this );
 
-        final Node movedNode = nodeService.move( builder.build() );
+        nodeService.move( builder.build() );
+        nodeService.refresh( RefreshMode.ALL );
 
-        final Content movedContent = translator.fromNode( movedNode, true );
-
-        return ArchiveContentsResult.create().addArchived( movedContent.getId() ).build();
+        return ArchiveContentsResult.create().addArchived( params.getContentId() ).build();
     }
 
     @Override

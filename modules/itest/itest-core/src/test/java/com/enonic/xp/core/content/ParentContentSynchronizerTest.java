@@ -441,7 +441,7 @@ public class ParentContentSynchronizerTest
     {
         final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
-        assertThrows( ContentNotFoundException.class, () -> syncMoved( sourceContent.getId() ), "sourceContent must be set." );
+        assertThrows( NullPointerException.class, () -> syncMoved( sourceContent.getId() ), "sourceContent must be set." );
     }
 
     @Test
