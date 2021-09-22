@@ -2,7 +2,10 @@ package com.enonic.xp.impl.task.distributed;
 
 import java.io.Serializable;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -17,11 +20,19 @@ public final class TaskContext
 
     private final AuthenticationInfo authInfo;
 
-    public TaskContext( final Branch branch, final RepositoryId repo, final AuthenticationInfo authInfo )
+    private final NodePath contentRootPath;
+
+    private TaskContext( final Builder builder )
     {
-        this.branch = branch;
-        this.repo = repo;
-        this.authInfo = authInfo;
+        this.branch = builder.branch;
+        this.repo = builder.repo;
+        this.authInfo = builder.authInfo;
+        this.contentRootPath = builder.contentRootPath;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public Branch getBranch()
@@ -37,5 +48,58 @@ public final class TaskContext
     public AuthenticationInfo getAuthInfo()
     {
         return authInfo;
+    }
+
+    public NodePath getContentRootPath()
+    {
+        return contentRootPath;
+    }
+
+    public static final class Builder
+    {
+        private Branch branch;
+
+        private RepositoryId repo;
+
+        private AuthenticationInfo authInfo;
+
+        private NodePath contentRootPath;
+
+        public Builder setBranch( final Branch branch )
+        {
+            this.branch = branch;
+            return this;
+        }
+
+        public Builder setRepo( final RepositoryId repo )
+        {
+            this.repo = repo;
+            return this;
+        }
+
+        public Builder setAuthInfo( final AuthenticationInfo authInfo )
+        {
+            this.authInfo = authInfo;
+            return this;
+        }
+
+        public Builder setContentRootPath( final NodePath contentRootPath )
+        {
+            this.contentRootPath = contentRootPath;
+            return this;
+        }
+
+        private void validate()
+        {
+            Preconditions.checkNotNull( repo, "repositoryId must be set" );
+            Preconditions.checkNotNull( branch, "branch must be set" );
+            Preconditions.checkNotNull( authInfo, "authInfo must be set" );
+        }
+
+        public TaskContext build()
+        {
+            return new TaskContext( this );
+        }
+
     }
 }

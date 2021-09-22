@@ -72,6 +72,7 @@ final class TaskRunnable
             authInfo( taskContext.getAuthInfo() ).
             branch( taskContext.getBranch() ).
             repositoryId( taskContext.getRepo() ).
+            attribute("contentRootPath", taskContext.getContentRootPath() ).
             build();
     }
 
