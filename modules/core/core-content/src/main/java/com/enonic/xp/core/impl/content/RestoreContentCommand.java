@@ -98,15 +98,15 @@ final class RestoreContentCommand
             final String originalSourceParentPath = nodeToRestore.data().getString( ArchiveConstants.ORIGINAL_PARENT_PATH_PROPERTY_NAME );
 
             parentPathToRestore = params.getPath() != null
-                ? ContentNodeHelper.translateContentPathToNodePath( params.getPath() )
+                ? NodePath.create( ContentConstants.CONTENT_ROOT_PATH, params.getPath().toString() ).build()
                 : !Strings.nullToEmpty( originalSourceParentPath ).isBlank() &&
                     nodeService.nodeExists( NodePath.create( originalSourceParentPath ).build() ) ? NodePath.create(
-                    originalSourceParentPath ).build() : ContentNodeHelper.translateContentPathToNodePath( ContentPath.ROOT );
+                    originalSourceParentPath ).build() :  ContentConstants.CONTENT_ROOT_PATH;
 
         }
         else
         {
-            parentPathToRestore = ContentNodeHelper.translateContentPathToNodePath( ContentPath.ROOT );
+            parentPathToRestore = ContentConstants.CONTENT_ROOT_PATH;
         }
         final RestoreContentsResult.Builder result = RestoreContentsResult.create();
 
@@ -128,6 +128,7 @@ final class RestoreContentCommand
                     RenameNodeParams.create().nodeId( movedNode.id() ).nodeName( NodeName.from( originalSourceName ) ).build() );
             }
         }
+        nodeService.refresh( RefreshMode.ALL );
 
         result.addRestored( ContentId.from( movedNode.id().toString() ) );
 

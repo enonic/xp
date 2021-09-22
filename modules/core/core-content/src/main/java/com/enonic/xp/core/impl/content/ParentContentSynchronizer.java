@@ -115,14 +115,12 @@ public final class ParentContentSynchronizer
         }
         else if ( actualTargetContext != null )
         {
-            actualTargetContext.runWith( () ->
-
-                                             this.sync( ContentEventsSyncParams.create()
-                                                            .contentId( params.getContentId() )
-                                                            .sourceProject( params.getSourceProject() )
-                                                            .targetProject( params.getTargetProject() )
-                                                            .syncEventType( ContentSyncEventType.DELETED )
-                                                            .build() ) );
+            actualTargetContext.runWith( () -> this.sync( ContentEventsSyncParams.create()
+                                                              .contentId( params.getContentId() )
+                                                              .sourceProject( params.getSourceProject() )
+                                                              .targetProject( params.getTargetProject() )
+                                                              .syncEventType( ContentSyncEventType.DELETED )
+                                                              .build() ) );
         }
     }
 
@@ -133,9 +131,7 @@ public final class ParentContentSynchronizer
         final Map<NodePath, Context> targetContexts = initContexts( params.getTargetProject() );
 
         Context actualSourceContext = getActualContext( params.getContentId(), sourceContexts.values() );
-        Context actualTargetContext = !ContentSyncEventType.MOVED.equals( params.getSyncType() )
-            ? getActualContext( params.getContentId(), targetContexts.values() )
-            : targetContexts.get( (NodePath) actualSourceContext.getAttribute( "contentRootPath" ) );
+        Context actualTargetContext = getActualContext( params.getContentId(), targetContexts.values() );
 
         final Content sourceContent =
             actualSourceContext != null ? actualSourceContext.callWith( () -> this.contentService.getById( params.getContentId() ) ) : null;
@@ -294,14 +290,10 @@ public final class ParentContentSynchronizer
 
     private Context getActualContext( final ContentId contentId, final Collection<Context> contexts )
     {
-        return contexts.stream().filter( context -> context.callWith( () -> {
-            if ( contentService.contentExists( contentId ) )
-            {
-                final Content content = contentService.getById( contentId );
-                return contentService.contentExists( content.getPath() );
-            }
-            return false;
-        } ) ).findAny().orElse( null );
+        return contexts.stream()
+            .filter( context -> context.callWith( () -> contentService.contentExists( contentId ) ) )
+            .findAny()
+            .orElse( null );
     }
 
     private AuthenticationInfo adminAuthInfo()
