@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.exception.NotFoundException;
+import com.enonic.xp.node.NodePath;
 
 @PublicApi
 public final class ContentNotFoundException
@@ -29,6 +30,11 @@ public final class ContentNotFoundException
     public ContentNotFoundException( final ContentId contentId, final Branch branch )
     {
         super( MessageFormat.format( "Content with id [{0}] was not found in branch [{1}]", contentId.toString(), branch ) );
+    }
+
+    public ContentNotFoundException( final ContentId contentId, final Branch branch, final NodePath nodePath )
+    {
+        super( MessageFormat.format( "Content with id [{0}] was not found in branch [{1}] in content root [{2}]", contentId.toString(), branch, nodePath ) );
     }
 
     public ContentNotFoundException( final ContentIds contentIds, final Branch branch )

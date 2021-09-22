@@ -1,9 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
-import java.time.Instant;
-
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.node.Node;
@@ -25,6 +24,16 @@ final class ContentExistsCommand
         this.contentPath = builder.contentPath;
     }
 
+    public static Builder create( final ContentId contentId )
+    {
+        return new Builder( contentId );
+    }
+
+    public static Builder create( final ContentPath contentPath )
+    {
+        return new Builder( contentPath );
+    }
+
     boolean execute()
     {
         try
@@ -37,53 +46,38 @@ final class ContentExistsCommand
         }
     }
 
-    private boolean doExecute()
+    private Content fetchContent()
     {
-        if ( shouldFilterScheduledPublished() )
-        {
-            final Node node;
-            try
-            {
-                if ( contentId != null )
-                {
-                    node = runAsAdmin( () -> nodeService.getById( NodeId.from( contentId ) ) );
-                }
-                else
-                {
-                    node = runAsAdmin( () -> nodeService.getByPath( ContentNodeHelper.translateContentPathToNodePath( contentPath ) ) );
-                }
-            }
-            catch ( NodeNotFoundException e )
-            {
-                return false;
-            }
-            if ( node == null )
-            {
-                return false;
-            }
-            return !contentPendingOrExpired( node, Instant.now() );
-        }
-        else
+        Node node;
+        try
         {
             if ( contentId != null )
             {
-                return nodeService.nodeExists( NodeId.from( contentId ) );
+                node = runAsAdmin( () -> nodeService.getById( NodeId.from( contentId ) ) );
             }
             else
             {
-                return nodeService.nodeExists( ContentNodeHelper.translateContentPathToNodePath( contentPath ) );
+                node = runAsAdmin( () -> nodeService.getByPath( ContentNodeHelper.translateContentPathToNodePath( contentPath ) ) );
             }
+        }
+        catch ( NodeNotFoundException e )
+        {
+            return null;
+        }
+
+        try
+        {
+            return filter( translator.fromNode( node, false ) );
+        }
+        catch ( Exception e )
+        {
+            return null;
         }
     }
 
-    public static Builder create( final ContentId contentId )
+    private boolean doExecute()
     {
-        return new Builder( contentId );
-    }
-
-    public static Builder create( final ContentPath contentPath )
-    {
-        return new Builder( contentPath );
+        return fetchContent() != null;
     }
 
     public static class Builder
