@@ -1,26 +1,57 @@
 package com.enonic.xp.content;
 
-import java.text.MessageFormat;
-
 public class ValidationError
 {
     private final String errorCode;
 
-    private final String errorMessage;
+    private final String message;
 
-    public ValidationError( final String errorCode, final String errorMessage, final Object... args )
+    private final I18nKey i18n;
+
+    private final Object[] args;
+
+    public ValidationError( final String errorCode, final I18nKey i18n, final Object... args )
     {
         this.errorCode = errorCode;
-        this.errorMessage = args.length == 0 ? errorMessage : MessageFormat.format( errorMessage, args );
+        this.message = null;
+        this.i18n = i18n;
+        this.args = args;
     }
 
-    public String getErrorMessage()
+    public ValidationError( final String errorCode, final String message, final I18nKey i18n, final Object... args )
     {
-        return errorMessage;
+        this.errorCode = errorCode;
+        this.message = null;
+        this.i18n = i18n;
+        this.args = args;
+    }
+
+    public ValidationError( final String errorCode, final String message )
+    {
+        this.errorCode = errorCode;
+        this.message = message;
+        this.i18n = null;
+        this.args = null;
+    }
+
+
+    public String getMessage()
+    {
+        return message;
     }
 
     public String getErrorCode()
     {
         return errorCode;
+    }
+
+    public I18nKey getI18n()
+    {
+        return i18n;
+    }
+
+    public Object[] getArgs()
+    {
+        return args;
     }
 }

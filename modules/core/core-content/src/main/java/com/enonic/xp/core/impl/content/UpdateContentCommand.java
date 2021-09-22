@@ -20,7 +20,6 @@ import com.enonic.xp.content.EditableSite;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
-import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.processor.ProcessUpdateParams;
@@ -128,21 +127,17 @@ final class UpdateContentCommand
 
         final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
 
-        if ( !params.isClearAttachments() && contentBeforeChange.getValidationErrors() != null && !removeAttachments.isEmpty() )
+        if ( !params.isClearAttachments() && contentBeforeChange.getValidationErrors() != null )
         {
-            for ( ValidationError validationError : contentBeforeChange.getValidationErrors() )
-            {
-                if ( validationError instanceof AttachmentValidationError )
-                {
-                    if ( !removeAttachments.contains( ( (AttachmentValidationError) validationError ).getAttachment() ) )
-                    {
-                        validationErrorsBuilder.add( validationError );
-                    }
-                }
-            }
+            contentBeforeChange.getValidationErrors()
+                .stream()
+                .filter( validationError -> validationError instanceof AttachmentValidationError )
+                .map( validationError -> (AttachmentValidationError) validationError )
+                .filter( validationError -> !removeAttachments.contains( validationError.getAttachment() ) )
+                .forEach( validationErrorsBuilder::add );
         }
 
-        final ValidationErrors validated = ValidateContentDataCommand.create()
+        final ValidationErrors validationErrors = ValidateContentDataCommand.create()
             .contentId( editedContent.getId() )
             .data( editedContent.getData() )
             .extraDatas( editedContent.getAllExtraData() )
@@ -158,10 +153,12 @@ final class UpdateContentCommand
 
         if ( params.isRequireValid() )
         {
-            throw new ContentDataValidationException( validated.iterator().next().getErrorMessage() );
+            validationErrors.stream().findFirst().ifPresent( validationError -> {
+                throw new ContentDataValidationException( validationError.getMessage() );
+            } );
         }
 
-        editedContent = Content.create( editedContent ).valid( validated.isEmpty() ).validationErrors( validated ).build();
+        editedContent = Content.create( editedContent ).valid( validationErrors.hasNoErrors() ).validationErrors( validationErrors ).build();
         editedContent = attachThumbnail( editedContent );
         editedContent = setModifiedTime( editedContent );
 

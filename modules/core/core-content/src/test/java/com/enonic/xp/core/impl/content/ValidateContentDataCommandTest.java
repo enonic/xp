@@ -11,7 +11,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
-import com.enonic.xp.core.impl.content.validate.MetadataValidator;
+import com.enonic.xp.core.impl.content.validate.ExtraDataValidator;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
 import com.enonic.xp.core.impl.content.validate.SiteConfigsValidator;
 import com.enonic.xp.data.PropertyTree;
@@ -82,8 +82,8 @@ public class ValidateContentDataCommandTest
 
         final ValidationErrors result = executeValidation( content.getData(), contentType.getName() );
         // test
-        assertTrue( result.isNotEmpty() );
-        assertEquals( 1, result.getSize() );
+        assertTrue( result.hasErrors() );
+        assertEquals( 1, result.getAllErrors().size() );
 
     }
 
@@ -112,8 +112,7 @@ public class ValidateContentDataCommandTest
         // exercise
         final ValidationErrors result = executeValidation( content.getData(), contentType.getName() );
 
-        assertFalse( result.isNotEmpty() );
-        assertEquals( 0, result.getSize() );
+        assertFalse( result.hasErrors() );
     }
 
     @Test
@@ -137,8 +136,8 @@ public class ValidateContentDataCommandTest
         // exercise
         final ValidationErrors result = executeValidation( rootDataSet, ContentTypeName.site() );
 
-        assertTrue( result.isNotEmpty() );
-        assertEquals( 1, result.getSize() );
+        assertTrue( result.hasErrors() );
+        assertEquals( 1, result.getAllErrors().size() );
     }
 
     @Test
@@ -167,8 +166,8 @@ public class ValidateContentDataCommandTest
         final ValidationErrors result =
             executeValidation( content.getData(), contentType.getName(), content.getName(), content.getDisplayName() );
 
-        assertTrue( result.isNotEmpty() );
-        assertEquals( 1, result.getSize() );
+        assertTrue( result.hasErrors() );
+        assertEquals( 1, result.getAllErrors().size() );
     }
 
     @Test
@@ -202,8 +201,8 @@ public class ValidateContentDataCommandTest
         final ValidationErrors result =
             executeValidation( content.getData(), contentType.getName(), content.getName(), content.getDisplayName() );
 
-        assertTrue( result.isNotEmpty() );
-        assertEquals( 1, result.getSize() );
+        assertTrue( result.hasErrors() );
+        assertEquals( 1, result.getAllErrors().size() );
     }
 
     private SiteDescriptor createSiteDescriptor()
@@ -243,8 +242,7 @@ public class ValidateContentDataCommandTest
         // exercise
         final ValidationErrors result = executeValidation( rootDataSet, ContentTypeName.site() );
 
-        assertFalse( result.isNotEmpty() );
-        assertEquals( 0, result.getSize() );
+        assertFalse( result.hasErrors() );
     }
 
     private ValidationErrors executeValidation( final PropertyTree propertyTree, final ContentTypeName contentTypeName )
@@ -262,7 +260,7 @@ public class ValidateContentDataCommandTest
             .displayName( displayName )
             .contentTypeService( this.contentTypeService )
             .contentValidators( List.of( new ContentNameValidator(), new SiteConfigsValidator( siteService ), new OccurrenceValidator(),
-                                         new MetadataValidator( xDataService ) ) )
+                                         new ExtraDataValidator( xDataService ) ) )
             .build()
             .execute();
     }

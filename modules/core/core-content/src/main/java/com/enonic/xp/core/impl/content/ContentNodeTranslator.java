@@ -74,7 +74,6 @@ public class ContentNodeTranslator
             : ContentNodeHelper.translateNodePathToContentPath( node.path().getParentPath() );
 
         final Content.Builder builder = contentDataSerializer.fromData( node.data().getRoot() );
-
         builder.id( ContentId.from( node.id().toString() ) )
             .parentPath( parentContentPath )
             .name( node.name().toString() )

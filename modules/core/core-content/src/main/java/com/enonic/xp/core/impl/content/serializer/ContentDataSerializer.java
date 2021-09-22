@@ -1,13 +1,17 @@
 package com.enonic.xp.core.impl.content.serializer;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.attachment.Attachment;
@@ -34,6 +38,7 @@ import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.icon.Thumbnail;
+import com.enonic.xp.json.ObjectMapperHelper;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
@@ -75,6 +80,8 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 public class ContentDataSerializer
 {
+    private static final ObjectMapper OBJECT_MAPPER = ObjectMapperHelper.create();
+
     private final PageDataSerializer pageDataSerializer;
 
     private final ExtraDataSerializer extraDataSerializer;
@@ -404,19 +411,30 @@ public class ContentDataSerializer
 
     private ValidationError mapValidationError( final PropertySet ve )
     {
-        if ( ve.hasProperty( "path" ) )
+        final Object[] args = Optional.ofNullable( ve.getString( "args" ) ).map( argsJson -> {
+            try
+            {
+                return OBJECT_MAPPER.readValue( argsJson, Object[].class );
+            }
+            catch ( JsonProcessingException e )
+            {
+                throw new UncheckedIOException( e );
+            }
+        } ).orElse( null );
+
+        if ( ve.hasProperty( "propertyPath" ) )
         {
-            return new DataValidationError( PropertyPath.from( ve.getString( "path" ) ), ve.getString( "errorCode" ),
-                                            ve.getString( "errorMessage" ) );
+            return new DataValidationError( PropertyPath.from( ve.getString( "propertyPath" ) ), ve.getString( "errorCode" ),
+                                            ve.getString( "message" ), ve.getString( "i18n" ), args );
         }
         else if ( ve.hasProperty( "attachment" ) )
         {
             return new AttachmentValidationError( BinaryReference.from( ve.getString( "attachment" ) ), ve.getString( "errorCode" ),
-                                                  ve.getString( "errorMessage" ) );
+                                                  ve.getString( "message" ), ve.getString( "i18n" ), args );
         }
         else
         {
-            return new ValidationError( ve.getString( "errorCode" ), ve.getString( "errorMessage" ) );
+            return new ValidationError( ve.getString( "errorCode" ), ve.getString( "message" ), ve.getString( "i18n" ), args );
         }
     }
 
@@ -501,15 +519,27 @@ public class ContentDataSerializer
 
     private void addValidationErrors( final ValidationErrors validationErrors, final PropertySet contentAsData )
     {
-        if ( validationErrors != null && validationErrors.iterator().hasNext() )
+        if ( validationErrors != null && validationErrors.hasErrors() )
         {
             contentAsData.addSets( "validationErrors", validationErrors.stream().map( validationError -> {
                 final PropertySet propertySet = new PropertySet();
                 propertySet.addString( "errorCode", validationError.getErrorCode() );
-                propertySet.addString( "errorMessage", validationError.getErrorMessage() );
+                propertySet.addString( "message", validationError.getMessage() );
+                propertySet.addString( "i18n", validationError.getI18n() );
+                propertySet.addString( "args", Optional.ofNullable( validationError.getArgs() ).filter( a -> a.length != 0 ).map( a -> {
+                    try
+                    {
+                        return OBJECT_MAPPER.writeValueAsString( a );
+                    }
+                    catch ( JsonProcessingException e )
+                    {
+                        throw new UncheckedIOException( e );
+                    }
+                } ).orElse( null ) );
+
                 if ( validationError instanceof DataValidationError )
                 {
-                    propertySet.addString( "path", ( (DataValidationError) validationError ).getPath().toString() );
+                    propertySet.addString( "propertyPath", ( (DataValidationError) validationError ).getPropertyPath().toString() );
                 }
                 else if ( validationError instanceof AttachmentValidationError )
                 {

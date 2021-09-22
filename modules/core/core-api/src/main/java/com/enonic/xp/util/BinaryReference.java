@@ -7,7 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 @PublicApi
-public class BinaryReference
+public final class BinaryReference
 {
     private final String value;
 

@@ -77,5 +77,4 @@ public abstract class AbstractImmutableEntitySet<T>
     {
         return this.set.hashCode();
     }
-
 }

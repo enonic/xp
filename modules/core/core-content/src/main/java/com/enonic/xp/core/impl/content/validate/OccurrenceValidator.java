@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content.validate;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,19 +24,12 @@ import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
-import com.enonic.xp.schema.content.ContentTypeName;
 
 @Component
 public final class OccurrenceValidator
     implements ContentValidator
 {
     private static final String OPTION_SET_SELECTION_ARRAY_NAME = "_selected";
-
-    @Override
-    public boolean supports( final ContentTypeName contentType )
-    {
-        return true;
-    }
 
     @Override
     public void validate( final ContentValidatorParams params, final ValidationErrors.Builder validationErrorsBuilder )
@@ -48,7 +42,8 @@ public final class OccurrenceValidator
         validate( form, List.of( dataSet ), validationErrorsBuilder );
     }
 
-    private static void validate( final Iterable<FormItem> formItems, final List<PropertySet> parentDataSets, final ValidationErrors.Builder validationErrorsBuilder )
+    private static void validate( final Iterable<FormItem> formItems, final List<PropertySet> parentDataSets,
+                                  final ValidationErrors.Builder validationErrorsBuilder )
     {
         for ( FormItem formItem : formItems )
         {
@@ -70,7 +65,8 @@ public final class OccurrenceValidator
         }
     }
 
-    private static void validateFormOptionSetSelection( final FormOptionSet formOptionSet, final List<PropertySet> parentDataSets, final ValidationErrors.Builder validationErrorsBuilder )
+    private static void validateFormOptionSetSelection( final FormOptionSet formOptionSet, final List<PropertySet> parentDataSets,
+                                                        final ValidationErrors.Builder validationErrorsBuilder )
     {
         final List<PropertySet> optionSetOccurrencePropertySets = getDataSets( formOptionSet.getName(), parentDataSets );
 
@@ -84,11 +80,13 @@ public final class OccurrenceValidator
 
             if ( hasSelectionArray )
             {
-                validateOptionSetSelection( formOptionSet, selectedItems.size(), optionSetOccurrencePropertySet.getProperty().getPath(), validationErrorsBuilder );
+                validateOptionSetSelection( formOptionSet, selectedItems.size(), optionSetOccurrencePropertySet.getProperty().getPath(),
+                                            validationErrorsBuilder );
             }
             else
             {
-                validateDefaultOptionSetSelection( formOptionSet, optionSetOccurrencePropertySet.getProperty().getPath(), validationErrorsBuilder );
+                validateDefaultOptionSetSelection( formOptionSet, optionSetOccurrencePropertySet.getProperty().getPath(),
+                                                   validationErrorsBuilder );
             }
 
             for ( final FormOptionSetOption option : formOptionSet )
@@ -108,7 +106,8 @@ public final class OccurrenceValidator
         return selectedItems.stream().anyMatch( elem -> elem.getString().equals( option.getName() ) );
     }
 
-    private static void validateDefaultOptionSetSelection( final FormOptionSet formOptionSet, final PropertyPath path, final ValidationErrors.Builder validationErrorsBuilder )
+    private static void validateDefaultOptionSetSelection( final FormOptionSet formOptionSet, final PropertyPath path,
+                                                           final ValidationErrors.Builder validationErrorsBuilder )
     {
         final int numberOfOptions = Math.toIntExact(
             StreamSupport.stream( formOptionSet.spliterator(), false ).filter( FormOptionSetOption::isDefaultOption ).count() );
@@ -116,19 +115,21 @@ public final class OccurrenceValidator
         validateOptionSetSelection( formOptionSet, numberOfOptions, path, validationErrorsBuilder );
     }
 
-    private static void validateOptionSetSelection( final FormOptionSet formOptionSet, int numberOfOptions, final PropertyPath path, final ValidationErrors.Builder validationErrorsBuilder )
+    private static void validateOptionSetSelection( final FormOptionSet formOptionSet, int numberOfOptions, final PropertyPath path,
+                                                    final ValidationErrors.Builder validationErrorsBuilder )
     {
         if ( numberOfOptions < formOptionSet.getMultiselection().getMinimum() ||
             ( formOptionSet.getMultiselection().getMaximum() != 0 && numberOfOptions > formOptionSet.getMultiselection().getMaximum() ) )
         {
-            validationErrorsBuilder.add(
-                new DataValidationError( path, "OPTIONSET_MIN_MAX", "OptionSet [{0}] requires min {1} max {2} items selected: {3}",
-                                         formOptionSet.getPath(), formOptionSet.getMultiselection().getMinimum(),
-                                         formOptionSet.getMultiselection().getMaximum(), numberOfOptions ) );
+            validationErrorsBuilder.add( new DataValidationError( path, "com.enonic.cms.occurrences",
+                                                                  MessageFormat.format(
+                "OptionSet [{0}] requires min {1} max {2} items selected: {3}", formOptionSet.getPath(),
+                formOptionSet.getMultiselection().getMinimum(), formOptionSet.getMultiselection().getMaximum(), numberOfOptions ) ) );
         }
     }
 
-    private static void validateOccurrences( final FormItem formItem, final List<PropertySet> parentDataSets, final ValidationErrors.Builder validationErrorsBuilder )
+    private static void validateOccurrences( final FormItem formItem, final List<PropertySet> parentDataSets,
+                                             final ValidationErrors.Builder validationErrorsBuilder )
     {
         final Occurrences occurrences;
         if ( formItem instanceof Input )
@@ -164,17 +165,17 @@ public final class OccurrenceValidator
 
             if ( occurrences.impliesRequired() && entryCount < occurrences.getMinimum() )
             {
-                validationErrorsBuilder.add( new DataValidationError( propertyPath, "MIN_OCCURRENCES", formItem.getClass().getSimpleName() +
-                    " [{0}] requires minimum {1,choice,1#1 occurrence|1<{1} occurrences}: {2}", formItem.getPath(),
-                                                                      occurrences.getMinimum(), entryCount ) );
+                validationErrorsBuilder.add( new DataValidationError( propertyPath, "com.enonic.cms.occurrences", MessageFormat.format(
+                    formItem.getClass().getSimpleName() + " [{0}] requires minimum {1,choice,1#1 occurrence|1<{1} occurrences}: {2}",
+                    formItem.getPath(), occurrences.getMinimum(), entryCount ) ) );
             }
 
             final int maxOccurrences = occurrences.getMaximum();
             if ( maxOccurrences > 0 && entryCount > maxOccurrences )
             {
-                validationErrorsBuilder.add( new DataValidationError( propertyPath, "MAX_OCCURRENCES", formItem.getClass().getSimpleName() +
-                    " [{0}] allows maximum {1,choice,1#1 occurrence|1<{1} occurrences}: {2}", formItem.getPath(), occurrences.getMaximum(),
-                                                                      entryCount ) );
+                validationErrorsBuilder.add( new DataValidationError( propertyPath, "com.enonic.cms.occurrences", MessageFormat.format(
+                    formItem.getClass().getSimpleName() + " [{0}] allows maximum {1,choice,1#1 occurrence|1<{1} occurrences}: {2}",
+                    formItem.getPath(), occurrences.getMaximum(), entryCount ) ) );
             }
         }
     }

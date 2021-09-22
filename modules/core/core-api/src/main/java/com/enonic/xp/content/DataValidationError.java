@@ -7,16 +7,22 @@ import com.enonic.xp.data.PropertyPath;
 public final class DataValidationError
     extends ValidationError
 {
-    private final PropertyPath path;
+    private final PropertyPath propertyPath;
 
-    public DataValidationError( final PropertyPath path, final String errorCode, final String errorMessage, final Object... args )
+    public DataValidationError( final PropertyPath propertyPath, final String errorCode, final String message )
     {
-        super( errorCode, errorMessage, args );
-        this.path = Objects.requireNonNull( path );
+        this( propertyPath, errorCode, message, null );
     }
 
-    public PropertyPath getPath()
+    public DataValidationError( final PropertyPath propertyPath, final String errorCode, final String message, final String i18n,
+                                final Object... args )
     {
-        return path;
+        super( errorCode, message, i18n, args );
+        this.propertyPath = Objects.requireNonNull( propertyPath );
+    }
+
+    public PropertyPath getPropertyPath()
+    {
+        return propertyPath;
     }
 }

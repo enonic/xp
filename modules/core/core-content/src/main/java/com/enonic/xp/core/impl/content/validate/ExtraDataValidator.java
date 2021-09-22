@@ -11,29 +11,22 @@ import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.validate.ContentValidator;
 import com.enonic.xp.content.validate.ContentValidatorParams;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataService;
 
 @Component
-public class MetadataValidator
+public class ExtraDataValidator
     implements ContentValidator
 {
-    private static final Logger LOG = LoggerFactory.getLogger( MetadataValidator.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ExtraDataValidator.class );
 
     private final XDataService xDataService;
 
     @Activate
-    public MetadataValidator( @Reference final XDataService xDataService )
+    public ExtraDataValidator( @Reference final XDataService xDataService )
     {
         this.xDataService = xDataService;
-    }
-
-    @Override
-    public boolean supports( final ContentTypeName contentType )
-    {
-        return false;
     }
 
     @Override

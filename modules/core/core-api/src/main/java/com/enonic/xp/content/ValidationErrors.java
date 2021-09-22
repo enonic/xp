@@ -3,22 +3,75 @@ package com.enonic.xp.content;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.support.AbstractImmutableEntityList;
-
 public final class ValidationErrors
-    extends AbstractImmutableEntityList<ValidationError>
 {
+    private final ImmutableList<ValidationError> errors;
+
     private ValidationErrors( final Collection<ValidationError> validationErrors )
     {
-        super( ImmutableList.copyOf( validationErrors ) );
+        errors = ImmutableList.copyOf( validationErrors );
     }
 
     public static Builder create()
     {
         return new Builder();
+    }
+
+    /**
+     * @return true if there were any errors
+     */
+    public boolean hasErrors()
+    {
+        return !errors.isEmpty();
+    }
+
+    /**
+     * @return true if there were no errors
+     */
+    public boolean hasNoErrors()
+    {
+        return errors.isEmpty();
+    }
+
+    /**
+     * @return a stream of {@link ValidationError} instances
+     */
+    public Stream<ValidationError> stream()
+    {
+        return errors.stream();
+    }
+
+    /**
+     * @return a list of {@link ValidationError} instances
+     */
+    public List<ValidationError> getAllErrors()
+    {
+        return errors;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final ValidationErrors that = (ValidationErrors) o;
+        return errors.equals( that.errors );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return errors.hashCode();
     }
 
     public static class Builder

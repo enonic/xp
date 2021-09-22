@@ -320,21 +320,15 @@ final class CreateContentCommand
             .build()
             .execute();
 
-        if ( validationErrors.isNotEmpty() )
+        if ( params.isRequireValid() )
         {
-            if ( params.isRequireValid() )
-            {
-                throw new ContentDataValidationException( validationErrors.iterator().next().getErrorMessage() );
-            }
-            else
-            {
-                builder.valid( false );
-                builder.validationErrors( validationErrors );
-                return;
-            }
+            validationErrors.stream().findFirst().ifPresent( validationError -> {
+                throw new ContentDataValidationException( validationError.getMessage() );
+            } );
         }
 
-        builder.valid( true );
+        builder.valid( validationErrors.hasNoErrors() );
+        builder.validationErrors( validationErrors );
     }
 
     static class Builder
