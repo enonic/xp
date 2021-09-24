@@ -36,14 +36,17 @@ import static org.mockito.Mockito.when;
 
 public class LocalTaskManagerImplTest
 {
+    private static final TaskContext TEST_TASK_CONTEXT = TaskContext.create()
+        .setBranch( Branch.from( "master" ) )
+        .setRepo( RepositoryId.from( "test" ) )
+        .setAuthInfo( AuthenticationInfo.unAuthenticated() )
+        .build();
+
     private LocalTaskManagerImpl taskMan;
 
     private List<Event> eventsPublished;
 
     private TaskManagerCleanupSchedulerMock cleanupScheduler;
-
-    private static final TaskContext TEST_TASK_CONTEXT =
-        new TaskContext( Branch.from( "master" ), RepositoryId.from( "test" ), AuthenticationInfo.unAuthenticated() );
 
     @BeforeEach
     public void setup()
