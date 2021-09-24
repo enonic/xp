@@ -42,9 +42,10 @@ final class TaskRunnable
         else
         {
             trace.put( "taskId", id );
-            trace.put( "user", runnableTask.getTaskContext().getAuthInfo().getUser() != null
-                ? runnableTask.getTaskContext().getAuthInfo().getUser().getKey()
-                : PrincipalKey.ofAnonymous() );
+            trace.put( "user", runnableTask.getTaskContext().getAuthInfo().getUser() != null ? runnableTask.getTaskContext()
+                .getAuthInfo()
+                .getUser()
+                .getKey() : PrincipalKey.ofAnonymous() );
             trace.put( "app", runnableTask.getApplicationKey() );
             Tracer.trace( trace, this::doRun );
         }
@@ -68,11 +69,19 @@ final class TaskRunnable
     private Context newContext()
     {
         final TaskContext taskContext = runnableTask.getTaskContext();
-        return ContextBuilder.create().
-            authInfo( taskContext.getAuthInfo() ).
-            branch( taskContext.getBranch() ).
-            repositoryId( taskContext.getRepo() ).
-            build();
+
+        final ContextBuilder context = ContextBuilder.create()
+            .authInfo( taskContext.getAuthInfo() )
+            .branch( taskContext.getBranch() )
+            .repositoryId( taskContext.getRepo() );
+
+        if ( taskContext.getContentRootPath() != null )
+        {
+
+            context.attribute( "contentRootPath", taskContext.getContentRootPath() );
+        }
+
+        return context.build();
     }
 
     private void setThreadName()
