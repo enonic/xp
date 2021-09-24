@@ -24,6 +24,7 @@ import com.enonic.xp.impl.task.distributed.TaskContext;
 import com.enonic.xp.impl.task.distributed.TaskManager;
 import com.enonic.xp.impl.task.script.NamedTask;
 import com.enonic.xp.impl.task.script.NamedTaskFactory;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.SubmitTaskParams;
@@ -110,7 +111,12 @@ public final class TaskServiceImpl
     private TaskContext buildContext()
     {
         final Context userContext = ContextAccessor.current();
-        return new TaskContext( userContext.getBranch(), userContext.getRepositoryId(), userContext.getAuthInfo() );
+        return TaskContext.create()
+            .setBranch( userContext.getBranch() )
+            .setRepo( userContext.getRepositoryId() )
+            .setAuthInfo( userContext.getAuthInfo() )
+            .setContentRootPath( (NodePath) ContextAccessor.current().getAttribute( "contentRootPath" ) )
+            .build();
     }
 
     private TaskId submitLocal( final DescribedTask task )

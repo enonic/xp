@@ -35,8 +35,11 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class DistributableTaskTest
 {
-    private static final TaskContext TEST_TASK_CONTEXT =
-        new TaskContext( Branch.from( "master" ), RepositoryId.from( "test" ), AuthenticationInfo.unAuthenticated() );
+    private static final TaskContext TEST_TASK_CONTEXT = TaskContext.create()
+        .setBranch( Branch.from( "master" ) )
+        .setRepo( RepositoryId.from( "test" ) )
+        .setAuthInfo( AuthenticationInfo.unAuthenticated() )
+        .build();
 
     @Mock(stubOnly = true)
     BundleContext bundleContext;
