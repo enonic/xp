@@ -1,39 +1,28 @@
 package com.enonic.xp.content;
 
+import java.text.MessageFormat;
+import java.util.Objects;
+
+import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.util.BinaryReference;
+
 public class ValidationError
 {
     private final String errorCode;
 
     private final String message;
 
-    private final I18nKey i18n;
+    private final String i18n;
 
     private final Object[] args;
 
-    public ValidationError( final String errorCode, final I18nKey i18n, final Object... args )
-    {
-        this.errorCode = errorCode;
-        this.message = null;
-        this.i18n = i18n;
-        this.args = args;
-    }
-
-    public ValidationError( final String errorCode, final String message, final I18nKey i18n, final Object... args )
-    {
-        this.errorCode = errorCode;
-        this.message = null;
-        this.i18n = i18n;
-        this.args = args;
-    }
-
-    public ValidationError( final String errorCode, final String message )
+    ValidationError( final String errorCode, final String message, final String i18n, final Object[] args )
     {
         this.errorCode = errorCode;
         this.message = message;
-        this.i18n = null;
-        this.args = null;
+        this.i18n = i18n;
+        this.args = args;
     }
-
 
     public String getMessage()
     {
@@ -45,7 +34,7 @@ public class ValidationError
         return errorCode;
     }
 
-    public I18nKey getI18n()
+    public String getI18n()
     {
         return i18n;
     }
@@ -53,5 +42,95 @@ public class ValidationError
     public Object[] getArgs()
     {
         return args;
+    }
+
+    public static Builder generalError( final String errorCode )
+    {
+        final Builder builder = new Builder();
+        builder.errorCode = errorCode;
+        return builder;
+    }
+
+    public static Builder attachmentError( final String errorCode, final BinaryReference attachment )
+    {
+        final Builder builder = new Builder();
+        builder.errorCode = errorCode;
+        builder.attachment = attachment;
+        return builder;
+    }
+
+    public static Builder dataError( final String errorCode, final PropertyPath propertyPath )
+    {
+        final Builder builder = new Builder();
+        builder.errorCode = errorCode;
+        builder.propertyPath = propertyPath;
+        return builder;
+    }
+
+    public static class Builder
+    {
+        private String errorCode;
+
+        private BinaryReference attachment;
+
+        private PropertyPath propertyPath;
+
+        private String i18n;
+
+        private Object[] args;
+
+        private String message;
+
+        private boolean skipFormat;
+
+        private Builder()
+        {
+        }
+
+        public Builder i18n( final String i18n )
+        {
+            this.i18n = i18n;
+            return this;
+        }
+
+        public Builder args( final Object... args )
+        {
+            this.args = args;
+            return this;
+        }
+
+        public Builder message( final String message )
+        {
+            this.message = message;
+            return this;
+        }
+
+        public Builder message( final String message, boolean skipFormat )
+        {
+            this.message = message;
+            this.skipFormat = skipFormat;
+            return this;
+        }
+
+        public ValidationError build()
+        {
+            Objects.requireNonNull( errorCode );
+
+            final String formattedMessage =
+                args == null || message == null || skipFormat ? this.message : MessageFormat.format( message, args );
+
+            if ( attachment != null )
+            {
+                return new AttachmentValidationError( attachment, errorCode, formattedMessage, i18n, args );
+            }
+            else if ( propertyPath != null )
+            {
+                return new DataValidationError( propertyPath, errorCode, formattedMessage, i18n, args );
+            }
+            else
+            {
+                return new ValidationError( errorCode, formattedMessage, i18n, args );
+            }
+        }
     }
 }

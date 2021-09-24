@@ -327,7 +327,7 @@ final class CreateContentCommand
             } );
         }
 
-        builder.valid( validationErrors.hasNoErrors() );
+        builder.valid( !validationErrors.hasErrors() );
         builder.validationErrors( validationErrors );
     }
 

@@ -82,7 +82,7 @@ final class RenameContentCommand
 
         final ValidationErrors validate = validateContent( content );
 
-        if ( content.isValid() != validate.hasNoErrors() )
+        if ( content.isValid() == validate.hasErrors() )
         {
             return updateValidState( content, validate );
         }
@@ -111,7 +111,7 @@ final class RenameContentCommand
             .contentId( content.getId() )
             .modifier( content.getModifier() )
             .stopInherit( false )
-            .editor( edit -> edit.valid = validated.hasNoErrors() );
+            .editor( edit -> edit.valid = !validated.hasErrors() );
 
         return UpdateContentCommand.create( this )
             .params( updateContentParams )

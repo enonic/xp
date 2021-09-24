@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content.validate;
 
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -8,7 +7,7 @@ import java.util.stream.StreamSupport;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.xp.content.DataValidationError;
+import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.validate.ContentValidator;
 import com.enonic.xp.content.validate.ContentValidatorParams;
@@ -121,10 +120,11 @@ public final class OccurrenceValidator
         if ( numberOfOptions < formOptionSet.getMultiselection().getMinimum() ||
             ( formOptionSet.getMultiselection().getMaximum() != 0 && numberOfOptions > formOptionSet.getMultiselection().getMaximum() ) )
         {
-            validationErrorsBuilder.add( new DataValidationError( path, "com.enonic.cms.occurrences",
-                                                                  MessageFormat.format(
-                "OptionSet [{0}] requires min {1} max {2} items selected: {3}", formOptionSet.getPath(),
-                formOptionSet.getMultiselection().getMinimum(), formOptionSet.getMultiselection().getMaximum(), numberOfOptions ) ) );
+            validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrences", path )
+                                             .i18n( "system.cms.validation.optionsetOccurrences" )
+                                             .args( formOptionSet.getPath(), formOptionSet.getMultiselection().getMinimum(),
+                                                    formOptionSet.getMultiselection().getMaximum(), numberOfOptions )
+                                             .build() );
         }
     }
 
@@ -165,17 +165,19 @@ public final class OccurrenceValidator
 
             if ( occurrences.impliesRequired() && entryCount < occurrences.getMinimum() )
             {
-                validationErrorsBuilder.add( new DataValidationError( propertyPath, "com.enonic.cms.occurrences", MessageFormat.format(
-                    formItem.getClass().getSimpleName() + " [{0}] requires minimum {1,choice,1#1 occurrence|1<{1} occurrences}: {2}",
-                    formItem.getPath(), occurrences.getMinimum(), entryCount ) ) );
+                validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrences", propertyPath )
+                                                 .i18n( "system.cms.validation.minOccurrences" )
+                                                 .args( formItem.getPath(), occurrences.getMinimum(), entryCount )
+                                                 .build() );
             }
 
             final int maxOccurrences = occurrences.getMaximum();
             if ( maxOccurrences > 0 && entryCount > maxOccurrences )
             {
-                validationErrorsBuilder.add( new DataValidationError( propertyPath, "com.enonic.cms.occurrences", MessageFormat.format(
-                    formItem.getClass().getSimpleName() + " [{0}] allows maximum {1,choice,1#1 occurrence|1<{1} occurrences}: {2}",
-                    formItem.getPath(), occurrences.getMaximum(), entryCount ) ) );
+                validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrences", propertyPath )
+                                                 .i18n( "system.cms.validation.maxOccurrences" )
+                                                 .args( formItem.getPath(), occurrences.getMaximum(), entryCount )
+                                                 .build() );
             }
         }
     }

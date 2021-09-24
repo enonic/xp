@@ -158,7 +158,7 @@ final class UpdateContentCommand
             } );
         }
 
-        editedContent = Content.create( editedContent ).valid( validationErrors.hasNoErrors() ).validationErrors( validationErrors ).build();
+        editedContent = Content.create( editedContent ).valid( !validationErrors.hasErrors() ).validationErrors( validationErrors ).build();
         editedContent = attachThumbnail( editedContent );
         editedContent = setModifiedTime( editedContent );
 

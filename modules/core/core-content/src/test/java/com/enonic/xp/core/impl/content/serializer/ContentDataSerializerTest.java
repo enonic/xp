@@ -10,12 +10,10 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
-import com.enonic.xp.content.AttachmentValidationError;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentTranslatorParams;
-import com.enonic.xp.content.DataValidationError;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
@@ -44,7 +42,6 @@ public class ContentDataSerializerTest
 {
     @Test
     public void create_propertyTree_populated_with_attachment_properties()
-        throws Exception
     {
         final ContentDataSerializer contentDataSerializer = createContentDataSerializer();
 
@@ -82,7 +79,6 @@ public class ContentDataSerializerTest
 
     @Test
     public void update_propertyTree_populated_with_new_attachment_properties()
-        throws Exception
     {
         final ContentDataSerializer contentDataSerializer = createContentDataSerializer();
 
@@ -97,8 +93,9 @@ public class ContentDataSerializerTest
                                 .parentPath( ContentPath.ROOT )
                                 .creator( PrincipalKey.ofAnonymous() )
                                 .validationErrors( ValidationErrors.create()
-                                                       .add( new AttachmentValidationError( BinaryReference.from( "prevFile" ), "SOME_CODE",
-                                                                                            "someError" ) )
+                                                       .add( ValidationError.attachmentError( "SOME_CODE", BinaryReference.from( "prevFile" ) )
+                                                                 .message( "someError" )
+                                                                 .build() )
                                                        .build() )
                                 .build() )
             .modifier( PrincipalKey.ofAnonymous() )
@@ -124,7 +121,6 @@ public class ContentDataSerializerTest
 
     @Test
     public void update_validationErrors()
-        throws Exception
     {
         final ContentDataSerializer contentDataSerializer = createContentDataSerializer();
 
@@ -134,9 +130,13 @@ public class ContentDataSerializerTest
         final byte[] binaryData = "my binary".getBytes();
 
         final ValidationErrors validationErrors = ValidationErrors.create()
-            .add( new AttachmentValidationError( BinaryReference.from( "myName" ), "SOME_CODE", "someError" ) )
-            .add( new DataValidationError( PropertyPath.from( "" ), "SOME_OTHER_CODE", "someDataError" ) )
-            .add( new ValidationError( "SERIOUS_ERROR", "someError" ) )
+            .add( ValidationError.attachmentError( "SOME_CODE", BinaryReference.from( "myName" ) )
+                      .message( "someError" )
+                      .build() )
+            .add( ValidationError.dataError( "SOME_OTHER_CODE", PropertyPath.from( "" ) )
+                      .message( "someDataError" )
+                      .build() )
+            .add( ValidationError.generalError( "SERIOUS_ERROR").message( "someError" ).build() )
             .build();
 
         final UpdateContentTranslatorParams params = UpdateContentTranslatorParams.create()
@@ -167,7 +167,6 @@ public class ContentDataSerializerTest
 
     @Test
     public void create_propertyTree_populated_with_extraData()
-        throws Exception
     {
         final ContentDataSerializer contentDataSerializer = createContentDataSerializer();
 
@@ -204,7 +203,6 @@ public class ContentDataSerializerTest
 
     @Test
     public void update_propertyTree_populated_with_extraData()
-        throws Exception
     {
         final ContentDataSerializer contentDataSerializer = createContentDataSerializer();
 
@@ -244,7 +242,6 @@ public class ContentDataSerializerTest
 
     @Test
     public void create_add_content_data()
-        throws Exception
     {
         final ContentDataSerializer contentDataSerializer = createContentDataSerializer();
 
@@ -270,7 +267,6 @@ public class ContentDataSerializerTest
 
     @Test
     public void update_add_content_data()
-        throws Exception
     {
         final ContentDataSerializer contentDataSerializer = createContentDataSerializer();
 

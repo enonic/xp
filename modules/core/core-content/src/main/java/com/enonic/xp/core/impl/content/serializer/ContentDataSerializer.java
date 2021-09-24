@@ -222,10 +222,10 @@ public class ContentDataSerializer
         return extraDataSerializer.fromData( asSet );
     }
 
-    public Content.Builder fromData( final PropertySet contentAsSet )
+    public Content.Builder<?> fromData( final PropertySet contentAsSet )
     {
         final ContentTypeName contentTypeName = ContentTypeName.from( contentAsSet.getString( ContentPropertyNames.TYPE ) );
-        final Content.Builder builder = Content.create( contentTypeName );
+        final Content.Builder<?> builder = Content.create( contentTypeName );
 
         builder.displayName( contentAsSet.getString( DISPLAY_NAME ) );
         builder.valid( contentAsSet.getBoolean( VALID ) != null ? contentAsSet.getBoolean( ContentPropertyNames.VALID ) : false );
@@ -309,7 +309,7 @@ public class ContentDataSerializer
         }
     }
 
-    private void extractUserInfo( final PropertySet contentAsSet, final Content.Builder builder )
+    private void extractUserInfo( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
         builder.creator( PrincipalKey.from( contentAsSet.getString( CREATOR ) ) );
         builder.createdTime( contentAsSet.getInstant( CREATED_TIME ) );
@@ -317,7 +317,7 @@ public class ContentDataSerializer
         builder.modifiedTime( contentAsSet.getInstant( MODIFIED_TIME ) );
     }
 
-    private void extractPublishInfo( final PropertySet contentAsSet, final Content.Builder builder )
+    private void extractPublishInfo( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
         final ContentPublishInfo publishInfo = publishInfoSerializer.serialize( contentAsSet );
 
@@ -327,7 +327,7 @@ public class ContentDataSerializer
         }
     }
 
-    private void extractAttachments( final PropertySet contentAsSet, final Content.Builder builder )
+    private void extractAttachments( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
         final Attachments attachments = dataToAttachments( contentAsSet.getSets( ATTACHMENT ) );
         builder.attachments( attachments );
@@ -342,7 +342,7 @@ public class ContentDataSerializer
         }
     }
 
-    private void extractPage( final PropertySet contentAsSet, final Content.Builder builder )
+    private void extractPage( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
         if ( contentAsSet.hasProperty( COMPONENTS ) )
         {
@@ -350,7 +350,7 @@ public class ContentDataSerializer
         }
     }
 
-    private void extractExtradata( final PropertySet contentAsSet, final Content.Builder builder )
+    private void extractExtradata( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
         final ExtraDatas extraData = extraDataSerializer.fromData( contentAsSet.getSet( EXTRA_DATA ) );
 
@@ -360,7 +360,7 @@ public class ContentDataSerializer
         }
     }
 
-    private void extractLanguage( final PropertySet contentAsSet, final Content.Builder builder )
+    private void extractLanguage( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
         String language = contentAsSet.getString( LANGUAGE );
         if ( !isNullOrEmpty( language ) )
@@ -369,7 +369,7 @@ public class ContentDataSerializer
         }
     }
 
-    private void extractOwner( final PropertySet contentAsSet, final Content.Builder builder )
+    private void extractOwner( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
         String owner = contentAsSet.getString( OWNER );
 
@@ -379,28 +379,28 @@ public class ContentDataSerializer
         }
     }
 
-    private void extractProcessedReferences( final PropertySet contentAsSet, final Content.Builder builder )
+    private void extractProcessedReferences( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
         Iterable<Reference> references = contentAsSet.getReferences( PROCESSED_REFERENCES );
 
         references.forEach( reference -> builder.addProcessedReference( ContentId.from( reference ) ) );
     }
 
-    private void extractWorkflowInfo( final PropertySet contentAsSet, final Content.Builder builder )
+    private void extractWorkflowInfo( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
         final PropertySet workflowInfoSet = contentAsSet.getSet( WORKFLOW_INFO );
         final WorkflowInfo workflowInfo = workflowInfoSerializer.extract( workflowInfoSet );
         builder.workflowInfo( workflowInfo );
     }
 
-    private void extractInherit( final PropertySet contentAsSet, final Content.Builder builder )
+    private void extractInherit( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
         builder.setInherit( StreamSupport.stream( contentAsSet.getStrings( INHERIT ).spliterator(), false )
                                 .map( ContentInheritType::valueOf )
                                 .collect( Collectors.toSet() ) );
     }
 
-    private void extractValidationErrors( final PropertySet contentAsSet, final Content.Builder builder )
+    private void extractValidationErrors( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
         builder.validationErrors( ValidationErrors.create()
                                       .addAll( StreamSupport.stream( contentAsSet.getSets( "validationErrors" ).spliterator(), false )
@@ -424,21 +424,31 @@ public class ContentDataSerializer
 
         if ( ve.hasProperty( "propertyPath" ) )
         {
-            return new DataValidationError( PropertyPath.from( ve.getString( "propertyPath" ) ), ve.getString( "errorCode" ),
-                                            ve.getString( "message" ), ve.getString( "i18n" ), args );
+            return ValidationError.dataError( ve.getString( "errorCode" ), PropertyPath.from( ve.getString( "propertyPath" ) ) )
+                .message( ve.getString( "message" ), true )
+                .i18n( ve.getString( "i18n" ) )
+                .args( args )
+                .build();
         }
         else if ( ve.hasProperty( "attachment" ) )
         {
-            return new AttachmentValidationError( BinaryReference.from( ve.getString( "attachment" ) ), ve.getString( "errorCode" ),
-                                                  ve.getString( "message" ), ve.getString( "i18n" ), args );
+            return ValidationError.attachmentError( ve.getString( "errorCode" ), BinaryReference.from( ve.getString( "attachment" ) ) )
+                .message( ve.getString( "message" ), true )
+                .i18n( ve.getString( "i18n" ) )
+                .args( args )
+                .build();
         }
         else
         {
-            return new ValidationError( ve.getString( "errorCode" ), ve.getString( "message" ), ve.getString( "i18n" ), args );
+            return ValidationError.generalError( ve.getString( "errorCode" ) )
+                .message( ve.getString( "message" ), true )
+                .i18n( ve.getString( "i18n" ) )
+                .args( args )
+                .build();
         }
     }
 
-    private void extractOriginProject( final PropertySet contentAsSet, final Content.Builder builder )
+    private void extractOriginProject( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
         final String originProject = contentAsSet.getString( ORIGIN_PROJECT );
         if ( !isNullOrEmpty( originProject ) )

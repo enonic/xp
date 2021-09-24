@@ -38,7 +38,7 @@ public class ContentTypeTest
             addFormItem( Input.create().name( "eyeColour" ).label( "Eye color" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             build();
 
-        contentType.getForm().addFormItem( layout );
+        contentType.getForm().getFormItems().add( layout );
 
         assertEquals( "eyeColour", contentType.getForm().getInput( "eyeColour" ).getPath().toString() );
     }
@@ -55,7 +55,7 @@ public class ContentTypeTest
             build();
 
         FormItemSet myFormItemSet = FormItemSet.create().name( "mySet" ).addFormItem( layout ).build();
-        contentType.getForm().addFormItem( myFormItemSet );
+        contentType.getForm().getFormItems().add( myFormItemSet );
 
         assertEquals( "mySet.eyeColour", contentType.getForm().getInput( "mySet.eyeColour" ).getPath().toString() );
     }

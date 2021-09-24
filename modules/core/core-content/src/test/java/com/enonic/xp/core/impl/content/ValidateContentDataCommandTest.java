@@ -32,7 +32,7 @@ import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -55,7 +55,6 @@ public class ValidateContentDataCommandTest
 
     @Test
     public void validation_with_errors()
-        throws Exception
     {
         // setup
         final ContentType contentType = ContentType.create()
@@ -83,13 +82,11 @@ public class ValidateContentDataCommandTest
         final ValidationErrors result = executeValidation( content.getData(), contentType.getName() );
         // test
         assertTrue( result.hasErrors() );
-        assertEquals( 1, result.getAllErrors().size() );
-
+        assertThat(result.stream()).hasSize( 1 );
     }
 
     @Test
     public void validation_no_errors()
-        throws Exception
     {
         // setup
         final FieldSet fieldSet = FieldSet.create()
@@ -136,13 +133,11 @@ public class ValidateContentDataCommandTest
         // exercise
         final ValidationErrors result = executeValidation( rootDataSet, ContentTypeName.site() );
 
-        assertTrue( result.hasErrors() );
-        assertEquals( 1, result.getAllErrors().size() );
+        assertThat(result.stream()).hasSize( 1 );
     }
 
     @Test
     public void test_empty_displayName()
-        throws Exception
     {
         // setup
         final FieldSet fieldSet = FieldSet.create()
@@ -166,13 +161,11 @@ public class ValidateContentDataCommandTest
         final ValidationErrors result =
             executeValidation( content.getData(), contentType.getName(), content.getName(), content.getDisplayName() );
 
-        assertTrue( result.hasErrors() );
-        assertEquals( 1, result.getAllErrors().size() );
+        assertThat(result.stream()).hasSize( 1 );
     }
 
     @Test
     public void test_unnamed()
-        throws Exception
     {
         // setup
         final FieldSet fieldSet = FieldSet.create()
@@ -201,24 +194,19 @@ public class ValidateContentDataCommandTest
         final ValidationErrors result =
             executeValidation( content.getData(), contentType.getName(), content.getName(), content.getDisplayName() );
 
-        assertTrue( result.hasErrors() );
-        assertEquals( 1, result.getAllErrors().size() );
+        assertThat(result.stream()).hasSize( 1 );
     }
 
     private SiteDescriptor createSiteDescriptor()
     {
-        final Form config = Form.create().addFormItem( createTextLineInput( "textInput-1", "some-label" ).build() ).build();
+        final Form config = Form.create().addFormItem( Input.create()
+                                                           .inputType( InputTypeName.TEXT_LINE )
+                                                           .label( "some-label" )
+                                                           .name( "textInput-1" )
+                                                           .inputTypeProperty( InputTypeProperty.create( "regexp", "\\d+" ).build() )
+                                                           .immutable( true )
+                                                           .build() ).build();
         return SiteDescriptor.create().form( config ).build();
-    }
-
-    private Input.Builder createTextLineInput( final String name, final String label )
-    {
-        return Input.create()
-            .inputType( InputTypeName.TEXT_LINE )
-            .label( label )
-            .name( name )
-            .inputTypeProperty( InputTypeProperty.create( "regexp", "\\d+" ).build() )
-            .immutable( true );
     }
 
     @Test

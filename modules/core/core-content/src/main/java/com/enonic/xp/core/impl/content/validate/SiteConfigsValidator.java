@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content.validate;
 
-import java.text.MessageFormat;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -62,9 +60,10 @@ public class SiteConfigsValidator
                 }
                 catch ( final Exception e )
                 {
-                    validationErrorsBuilder.add( new ValidationError( "com.enonic.cms.site_config_invalid",
-                                                                      MessageFormat.format( "Data validation error in site config for {0}",
-                                                                                            siteConfig.getApplicationKey().getName() ) ) );
+                    validationErrorsBuilder.add( ValidationError.generalError( "com.enonic.cms.site_config_invalid" )
+                                                     .i18n( "system.cms.validation.site" )
+                                                     .args( siteConfig.getApplicationKey().getName() )
+                                                     .build() );
                 }
 
             }

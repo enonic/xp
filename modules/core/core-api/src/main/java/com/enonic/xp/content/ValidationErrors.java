@@ -30,48 +30,11 @@ public final class ValidationErrors
     }
 
     /**
-     * @return true if there were no errors
-     */
-    public boolean hasNoErrors()
-    {
-        return errors.isEmpty();
-    }
-
-    /**
      * @return a stream of {@link ValidationError} instances
      */
     public Stream<ValidationError> stream()
     {
         return errors.stream();
-    }
-
-    /**
-     * @return a list of {@link ValidationError} instances
-     */
-    public List<ValidationError> getAllErrors()
-    {
-        return errors;
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final ValidationErrors that = (ValidationErrors) o;
-        return errors.equals( that.errors );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return errors.hashCode();
     }
 
     public static class Builder

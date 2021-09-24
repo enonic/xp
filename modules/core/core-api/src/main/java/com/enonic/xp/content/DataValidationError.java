@@ -9,13 +9,8 @@ public final class DataValidationError
 {
     private final PropertyPath propertyPath;
 
-    public DataValidationError( final PropertyPath propertyPath, final String errorCode, final String message )
-    {
-        this( propertyPath, errorCode, message, null );
-    }
-
-    public DataValidationError( final PropertyPath propertyPath, final String errorCode, final String message, final String i18n,
-                                final Object... args )
+    DataValidationError( final PropertyPath propertyPath, final String errorCode, final String message, final String i18n,
+                         final Object[] args )
     {
         super( errorCode, message, i18n, args );
         this.propertyPath = Objects.requireNonNull( propertyPath );
