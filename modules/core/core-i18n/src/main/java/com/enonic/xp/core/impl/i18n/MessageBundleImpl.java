@@ -1,11 +1,12 @@
 package com.enonic.xp.core.impl.i18n;
 
 import java.text.MessageFormat;
-import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import com.google.common.collect.Maps;
 
 import com.enonic.xp.i18n.MessageBundle;
 
@@ -16,49 +17,41 @@ final class MessageBundleImpl
 {
     private final Properties properties;
 
-    MessageBundleImpl( final Properties properties )
+    private final Locale locale;
+
+    MessageBundleImpl( final Properties properties, final Locale locale )
     {
         this.properties = properties;
+        this.locale = locale;
     }
 
     @Override
     public Set<String> getKeys()
     {
-        return this.properties.keySet().stream().map( Object::toString ).collect( Collectors.toSet() );
+        return this.properties.stringPropertyNames();
     }
 
     @Override
     public String localize( final String key, final Object... args )
     {
-        final String message = doGetMessage( key );
-        return isNullOrEmpty( message ) ? null : format( message, args );
+        final String message = this.properties.getProperty( key, "" );
+        return message.isEmpty() ? null : format( message, args );
     }
 
     @Override
     public String getMessage( final String key )
     {
-        return doGetMessage( key );
+        return this.properties.getProperty( key );
     }
 
     private String format( final String message, final Object[] args )
     {
-        return MessageFormat.format( message, args );
-    }
-
-    private String doGetMessage( final String key )
-    {
-        return this.properties.getProperty( key, "" );
+        return locale != null ? new MessageFormat( message, locale ).format( args ) : MessageFormat.format( message, args );
     }
 
     @Override
     public Map<String, String> asMap()
     {
-        final Map<String, String> map = new HashMap<>();
-        for ( final Object key : this.properties.keySet() )
-        {
-            map.put( key.toString(), doGetMessage( key.toString() ) );
-        }
-
-        return map;
+        return Maps.fromProperties( this.properties );
     }
 }

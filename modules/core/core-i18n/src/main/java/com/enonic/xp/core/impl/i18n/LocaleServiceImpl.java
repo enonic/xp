@@ -211,7 +211,7 @@ public final class LocaleServiceImpl
             props.putAll( loadBundles( applicationKey, locale, bundleName ) );
         }
 
-        return new MessageBundleImpl( props );
+        return new MessageBundleImpl( props, locale );
     }
 
     private Properties loadBundles( final ApplicationKey applicationKey, final Locale locale, final String bundleName )

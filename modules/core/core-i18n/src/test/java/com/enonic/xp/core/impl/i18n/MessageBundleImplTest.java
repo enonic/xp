@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.i18n;
 
+import java.time.Instant;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -20,7 +22,7 @@ public class MessageBundleImplTest
         properties.put( "key4", "value is here {0}" );
         properties.put( "key5", "value is here {0} and there {1}" );
         properties.put( "key6", "" );
-        return new MessageBundleImpl( properties );
+        return new MessageBundleImpl( properties, Locale.ENGLISH );
     }
 
     @Test
@@ -42,8 +44,17 @@ public class MessageBundleImplTest
     @Test
     public void testEmptyResourceBundle()
     {
-        MessageBundle resourceBundle = new MessageBundleImpl( new Properties() );
+        MessageBundle resourceBundle = new MessageBundleImpl( new Properties(), Locale.ENGLISH );
         assertEquals( resourceBundle.localize( "dummyKey" ), null );
+    }
+
+    @Test
+    public void dateTime()
+    {
+        final Properties properties = new Properties();
+        properties.put( "key1", "At {0,time,short} on {0,date,short}" );
+        MessageBundle resourceBundle = new MessageBundleImpl( properties, Locale.TRADITIONAL_CHINESE );
+        assertEquals( "At 上午10:46 on 1973/3/3", resourceBundle.localize( "key1", Instant.ofEpochMilli( 100000000000L ).toEpochMilli() ) );
     }
 
     @Test
