@@ -32,8 +32,4 @@ public final class ArchiveConstants
                   .allow( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE )
                   .build() )
         .build();
-
-    public static final String ORIGINAL_NAME_PROPERTY_NAME = "originalName";
-
-    public static final String ORIGINAL_PARENT_PATH_PROPERTY_NAME = "originalParentPath";
 }
