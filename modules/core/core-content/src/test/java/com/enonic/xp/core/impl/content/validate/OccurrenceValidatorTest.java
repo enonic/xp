@@ -1,6 +1,9 @@
 package com.enonic.xp.core.impl.content.validate;
 
 
+import java.util.List;
+
+import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +26,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -60,8 +64,8 @@ public class OccurrenceValidatorTest
         final ValidationErrors validationResults = validate( content );
         assertThat( validationResults.stream().findFirst() ).containsInstanceOf( DataValidationError.class )
             .get()
-            .extracting( ValidationError::getMessage )
-            .isEqualTo( "Input [myInput] allows maximum 1 occurrence: 2" );
+            .extracting( ValidationError::getArgs, LIST )
+            .containsExactly( "myInput", 1, 2 );
     }
 
     @Test
@@ -79,8 +83,8 @@ public class OccurrenceValidatorTest
         final ValidationErrors validationResults = validate( content );
         assertThat( validationResults.stream().findFirst() ).containsInstanceOf( DataValidationError.class )
             .get()
-            .extracting( ValidationError::getMessage )
-            .isEqualTo( "Input [myInput] allows maximum 2 occurrences: 3" );
+            .extracting( ValidationError::getArgs, LIST )
+            .containsExactly( "myInput", 2, 3 );
     }
 
     @Test
@@ -123,8 +127,8 @@ public class OccurrenceValidatorTest
         final ValidationErrors validationResults = validate( content );
         assertThat( validationResults.stream().findFirst() ).containsInstanceOf( DataValidationError.class )
             .get()
-            .extracting( ValidationError::getMessage )
-            .isEqualTo( "Input [myInput] requires minimum 2 occurrences: 1" );
+            .extracting( ValidationError::getArgs, LIST )
+            .containsExactly( "myInput", 2, 1 );
     }
 
     @Test
@@ -141,8 +145,8 @@ public class OccurrenceValidatorTest
         final ValidationErrors validationResults = validate( content );
         assertThat( validationResults.stream().findFirst() ).containsInstanceOf( DataValidationError.class )
             .get()
-            .extracting( ValidationError::getMessage )
-            .isEqualTo( "Input [myInput] requires minimum 3 occurrences: 2" );
+            .extracting( ValidationError::getArgs, LIST )
+            .containsExactly( "myInput", 3, 2 );
     }
 
     @Test
@@ -224,8 +228,8 @@ public class OccurrenceValidatorTest
         final ValidationErrors validationResults = validate( content );
         assertThat( validationResults.stream().findFirst() ).containsInstanceOf( DataValidationError.class )
             .get()
-            .extracting( ValidationError::getMessage )
-            .isEqualTo( "FormItemSet [mySet] requires minimum 1 occurrence: 0" );
+            .extracting( ValidationError::getArgs, LIST )
+            .containsExactly( "mySet", 1, 0 );
     }
 
     @Test
@@ -274,9 +278,8 @@ public class OccurrenceValidatorTest
         final ValidationErrors validationResults = validate( content );
         assertThat( validationResults.stream() ).hasSize( 2 )
             .allMatch( ve -> ve instanceof DataValidationError )
-            .extracting( ValidationError::getMessage )
-            .containsExactly( "Input [mySet.myRequiredInput] requires minimum 1 occurrence: 0",
-                              "Input [myOtherRequiredInput] requires minimum 1 occurrence: 0" );
+            .extracting( ValidationError::getArgs )
+            .containsExactly( Arrays.array( List.of( "mySet.myRequiredInput", 1, 0 ), List.of( "myOtherRequiredInput", 1, 0 ) ) );
     }
 
     @Test
@@ -324,8 +327,8 @@ public class OccurrenceValidatorTest
         final ValidationErrors validationResults = validate( content );
         assertThat( validationResults.stream().findFirst() ).containsInstanceOf( DataValidationError.class )
             .get()
-            .extracting( ValidationError::getMessage )
-            .isEqualTo( "FormItemSet [personalia] requires minimum 1 occurrence: 0" );
+            .extracting( ValidationError::getArgs, LIST )
+            .containsExactly( "personalia", 1, 0 );
     }
 
     @Test
@@ -584,9 +587,10 @@ public class OccurrenceValidatorTest
 
         // exercise
         final ValidationErrors validationResults = validate( content );
-        assertThat( validationResults.stream() ).allMatch( ve -> ve instanceof DataValidationError )
-            .extracting( ValidationError::getMessage )
-            .containsExactly( "FormOptionSet [myOptionSet] requires minimum 1 occurrence: 0" );
+        assertThat( validationResults.stream().findFirst() ).containsInstanceOf( DataValidationError.class )
+            .get()
+            .extracting( ValidationError::getArgs, LIST )
+            .containsExactly( "myOptionSet", 1, 0 );
     }
 
     @Test
@@ -639,11 +643,12 @@ public class OccurrenceValidatorTest
 
         // exercise
         final ValidationErrors validationResults = validate( content );
-        assertTrue( validationResults.hasErrors() );
-        assertThat( validationResults.stream() ).hasSize( 1 )
-            .allMatch( ve -> ve instanceof DataValidationError )
-            .extracting( ValidationError::getMessage )
-            .containsExactly( "Input [myOtherRequiredInput] requires minimum 1 occurrence: 0" );
+
+        assertThat( validationResults.stream() ).hasSize( 1 );
+        assertThat( validationResults.stream().findFirst() ).containsInstanceOf( DataValidationError.class )
+            .get()
+            .extracting( ValidationError::getArgs, LIST )
+            .containsExactly( "myOtherRequiredInput", 1, 0 );
     }
 
 
@@ -701,9 +706,10 @@ public class OccurrenceValidatorTest
 
         // exercise
         final ValidationErrors validationResults = validate( content );
-        assertThat( validationResults.stream() ).allMatch( ve -> ve instanceof DataValidationError )
-            .extracting( ValidationError::getMessage )
-            .contains( "FormOptionSet [personalia] requires minimum 1 occurrence: 0" );
+        assertThat( validationResults.stream().findFirst() ).containsInstanceOf( DataValidationError.class )
+            .get()
+            .extracting( ValidationError::getArgs, LIST )
+            .containsExactly( "personalia", 1, 0 );
     }
 
     @Test
@@ -727,9 +733,10 @@ public class OccurrenceValidatorTest
         content.getData().setString( "myOptionSet._selected", "1" );
         content.getData().removeProperty( "myOptionSet._selected" );
         final ValidationErrors validationResults = validate( content );
-        assertThat( validationResults.stream() ).allMatch( ve -> ve instanceof DataValidationError )
-            .extracting( ValidationError::getMessage )
-            .containsExactly( "OptionSet [myOptionSet] requires min 1 max 1 items selected: 0" );
+        assertThat( validationResults.stream().findFirst() ).containsInstanceOf( DataValidationError.class )
+            .get()
+            .extracting( ValidationError::getArgs, LIST )
+            .containsExactly( "myOptionSet", 1, 1, 0 );
     }
 
     @Test
@@ -744,9 +751,10 @@ public class OccurrenceValidatorTest
         content.getData().getSet( "myOptionSet" ).addString( "_selected", "option3" );
 
         final ValidationErrors validationResults = validate( content );
-        assertThat( validationResults.stream() ).allMatch( ve -> ve instanceof DataValidationError )
-            .extracting( ValidationError::getMessage )
-            .containsExactly( "OptionSet [myOptionSet] requires min 1 max 2 items selected: 3" );
+        assertThat( validationResults.stream().findFirst() ).containsInstanceOf( DataValidationError.class )
+            .get()
+            .extracting( ValidationError::getArgs, LIST )
+            .containsExactly( "myOptionSet", 1, 2, 3 );
     }
 
     @Test
@@ -760,9 +768,9 @@ public class OccurrenceValidatorTest
         content.getData().getSet( "myOptionSet" ).addString( "_selected", "option2" );
 
         final ValidationErrors validationResults = validate( content );
-        assertThat( validationResults.stream() ).allMatch( ve -> ve instanceof DataValidationError )
-            .extracting( ValidationError::getMessage )
-            .containsExactly( "OptionSet [myOptionSet] requires min 3 max 3 items selected: 2" );
+        assertThat( validationResults.stream().findFirst() ).get()
+            .extracting( ValidationError::getArgs, LIST )
+            .containsExactly( "myOptionSet", 3, 3, 2 );
     }
 
     @Test
@@ -773,9 +781,10 @@ public class OccurrenceValidatorTest
         Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
         content.getData().setString( "myOptionSet.option1.myUnrequiredData", "1" );
         final ValidationErrors validationResults = validate( content );
-        assertThat( validationResults.stream() ).allMatch( ve -> ve instanceof DataValidationError )
-            .extracting( ValidationError::getMessage )
-            .containsExactly( "OptionSet [myOptionSet] requires min 1 max 1 items selected: 2" );
+        assertThat( validationResults.stream().findFirst() ).containsInstanceOf( DataValidationError.class )
+            .get()
+            .extracting( ValidationError::getArgs, LIST )
+            .containsExactly( "myOptionSet", 1, 1, 2 );
     }
 
     @Test
@@ -787,9 +796,10 @@ public class OccurrenceValidatorTest
         content.getData().setString( "myOptionSet.option1.myUnrequiredData", "1" );
 
         final ValidationErrors validationResults = validate( content );
-        assertThat( validationResults.stream() ).allMatch( ve -> ve instanceof DataValidationError )
-            .extracting( ValidationError::getMessage )
-            .containsExactly( "OptionSet [myOptionSet] requires min 1 max 1 items selected: 0" );
+        assertThat( validationResults.stream().findFirst() ).containsInstanceOf( DataValidationError.class )
+            .get()
+            .extracting( ValidationError::getArgs, LIST )
+            .containsExactly( "myOptionSet", 1, 1, 0 );
     }
 
     private FormOptionSet makeOptionSet( final String name, int numberOfOptions, int numberOfDefaultOptions, int minSelection,

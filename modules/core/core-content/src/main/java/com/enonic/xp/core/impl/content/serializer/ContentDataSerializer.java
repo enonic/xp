@@ -536,16 +536,17 @@ public class ContentDataSerializer
                 propertySet.addString( "errorCode", validationError.getErrorCode() );
                 propertySet.addString( "message", validationError.getMessage() );
                 propertySet.addString( "i18n", validationError.getI18n() );
-                propertySet.addString( "args", Optional.ofNullable( validationError.getArgs() ).filter( a -> a.length != 0 ).map( a -> {
+                if ( !validationError.getArgs().isEmpty() )
+                {
                     try
                     {
-                        return OBJECT_MAPPER.writeValueAsString( a );
+                        propertySet.addString( "args", OBJECT_MAPPER.writeValueAsString( validationError.getArgs() ) );
                     }
                     catch ( JsonProcessingException e )
                     {
                         throw new UncheckedIOException( e );
                     }
-                } ).orElse( null ) );
+                }
 
                 if ( validationError instanceof DataValidationError )
                 {

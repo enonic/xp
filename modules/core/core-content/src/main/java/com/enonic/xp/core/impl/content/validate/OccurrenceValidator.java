@@ -152,29 +152,27 @@ public final class OccurrenceValidator
         for ( final PropertySet parentDataSet : parentDataSets )
         {
             final int entryCount = parentDataSet.countProperties( formItem.getName() );
-            final Property property = parentDataSet.getProperty();
-            final PropertyPath propertyPath;
-            if ( property == null )
-            {
-                propertyPath = PropertyPath.from( formItem.getPath().toString() );
-            }
-            else
-            {
-                propertyPath = property.getPath();
-            }
 
-            if ( occurrences.impliesRequired() && entryCount < occurrences.getMinimum() )
+            PropertyPath path = PropertyPath.from( Optional.ofNullable( parentDataSet.getProperty() )
+                                                       .map( Property::getPath )
+                                                       .orElseGet( () -> PropertyPath.from( formItem.getPath().toString() ) ),
+                                                   formItem.getName() );
+
+            final int minOccurrences = occurrences.getMinimum();
+
+            if ( occurrences.impliesRequired() && entryCount < minOccurrences )
             {
-                validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrences", propertyPath )
+                validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrences", path )
                                                  .i18n( "system.cms.validation.minOccurrences" )
-                                                 .args( formItem.getPath(), occurrences.getMinimum(), entryCount )
+                                                 .args( formItem.getPath(), minOccurrences, entryCount )
                                                  .build() );
             }
 
             final int maxOccurrences = occurrences.getMaximum();
+
             if ( maxOccurrences > 0 && entryCount > maxOccurrences )
             {
-                validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrences", propertyPath )
+                validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrences", path )
                                                  .i18n( "system.cms.validation.maxOccurrences" )
                                                  .args( formItem.getPath(), occurrences.getMaximum(), entryCount )
                                                  .build() );

@@ -1,6 +1,9 @@
 package com.enonic.xp.core.impl.i18n;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -10,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.i18n.MessageBundle;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MessageBundleImplTest
 {
@@ -27,34 +31,74 @@ public class MessageBundleImplTest
 
     @Test
     public void testNonExistingKey()
-        throws Exception
     {
         MessageBundle resourceBundle = createDefault();
-        assertEquals( resourceBundle.localize( "dummyKey" ), null );
+        assertNull( resourceBundle.localize( "dummyKey" ) );
     }
 
     @Test
     public void testEmptyValue()
-        throws Exception
     {
         MessageBundle resourceBundle = createDefault();
-        assertEquals( resourceBundle.localize( "key6" ), null );
+        assertNull( resourceBundle.localize( "key6" ) );
     }
 
     @Test
     public void testEmptyResourceBundle()
     {
         MessageBundle resourceBundle = new MessageBundleImpl( new Properties(), Locale.ENGLISH );
-        assertEquals( resourceBundle.localize( "dummyKey" ), null );
+        assertNull( resourceBundle.localize( "dummyKey" ) );
     }
 
     @Test
     public void dateTime()
     {
         final Properties properties = new Properties();
-        properties.put( "key1", "At {0,time,short} on {0,date,short}" );
+        properties.put( "key1", "{0,time,short} {0,date,short}" );
         MessageBundle resourceBundle = new MessageBundleImpl( properties, Locale.TRADITIONAL_CHINESE );
-        assertEquals( "At 上午10:46 on 1973/3/3", resourceBundle.localize( "key1", Instant.ofEpochMilli( 100000000000L ).toEpochMilli() ) );
+        assertEquals( "上午9:46 1973/3/3", resourceBundle.localize( "key1", Instant.ofEpochMilli( 100000000000L ).toEpochMilli() ) );
+    }
+
+    @Test
+    public void nullArguments()
+    {
+        final Properties properties = new Properties();
+        properties.put( "key1", "{0}" );
+        MessageBundle resourceBundle = new MessageBundleImpl( properties, Locale.ROOT );
+        assertEquals( "{0}", resourceBundle.localize( "key1", (Object[]) null ) );
+    }
+
+    @Test
+    public void nullArgument()
+    {
+        final Properties properties = new Properties();
+        properties.put( "key1", "{0}" );
+        MessageBundle resourceBundle = new MessageBundleImpl( properties, Locale.ROOT );
+        assertEquals( "null", resourceBundle.localize( "key1", (Object) null ) );
+    }
+
+    @Test
+    public void localDateTime()
+    {
+        LocalTime lt = LocalTime.of( 13, 56, 4 );
+        LocalDate ld = LocalDate.of( 2021, 5, 3 );
+
+        long ltms = lt.atDate( LocalDate.EPOCH ).atZone( ZoneOffset.UTC ).toInstant().toEpochMilli();
+        long ldms = ld.atTime( LocalTime.MIN ).atZone( ZoneOffset.UTC ).toInstant().toEpochMilli();
+
+        final Properties properties = new Properties();
+        properties.put( "key1", "At {1,time,medium} on {0,date,short}" );
+        MessageBundle resourceBundle = new MessageBundleImpl( properties, Locale.US );
+        assertEquals( "At 1:56:04 PM on 5/3/21", resourceBundle.localize( "key1", ldms, ltms ) );
+    }
+
+    @Test
+    public void alwaysUTC()
+    {
+        final Properties properties = new Properties();
+        properties.put( "key1", "{0,date,z}" );
+        MessageBundle resourceBundle = new MessageBundleImpl( properties, Locale.ROOT );
+        assertEquals( "UTC", resourceBundle.localize( "key1", System.currentTimeMillis() ) );
     }
 
     @Test
@@ -68,7 +112,6 @@ public class MessageBundleImplTest
 
     @Test
     public void testParameterizedPhrase()
-        throws Exception
     {
         MessageBundle resourceBundle = createDefault();
 
@@ -81,7 +124,6 @@ public class MessageBundleImplTest
 
     @Test
     public void testParameterizedPhraseMissingParameter()
-        throws Exception
     {
         MessageBundle resourceBundle = createDefault();
 
@@ -94,7 +136,6 @@ public class MessageBundleImplTest
 
     @Test
     public void testParameterizedPhrase_two_values()
-        throws Exception
     {
         MessageBundle resourceBundle = createDefault();
 

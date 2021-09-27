@@ -1,16 +1,17 @@
 package com.enonic.xp.core.impl.i18n;
 
+import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.time.ZoneOffset;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TimeZone;
 
 import com.google.common.collect.Maps;
 
 import com.enonic.xp.i18n.MessageBundle;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class MessageBundleImpl
     implements MessageBundle
@@ -46,7 +47,20 @@ final class MessageBundleImpl
 
     private String format( final String message, final Object[] args )
     {
-        return locale != null ? new MessageFormat( message, locale ).format( args ) : MessageFormat.format( message, args );
+        if ( args == null || args.length == 0 )
+        {
+            return message;
+        }
+        final MessageFormat mf = locale == null ? new MessageFormat( message ) : new MessageFormat( message, locale );
+        final Object[] formats = mf.getFormats();
+        for ( final Object format : formats )
+        {
+            if ( format instanceof DateFormat )
+            {
+                ( (DateFormat) format ).setTimeZone( TimeZone.getTimeZone( ZoneOffset.UTC ) );
+            }
+        }
+        return mf.format( args );
     }
 
     @Override
