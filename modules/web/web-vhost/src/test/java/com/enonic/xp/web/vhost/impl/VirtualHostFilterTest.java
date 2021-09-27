@@ -74,6 +74,7 @@ public class VirtualHostFilterTest
         throws Exception
     {
         when( this.virtualHostService.isEnabled() ).thenReturn( true );
+        when( this.req.getServerName() ).thenReturn( "domain.com" );
 
         VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
         filter.doFilter( this.req, this.res, this.chain );

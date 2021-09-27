@@ -174,4 +174,30 @@ public class VirtualHostConfigMapTest
         assertEquals( 2, virtualHost.getIdProviderKeys().getSize() );
         assertTrue( virtualHost.getIdProviderKeys().contains( IdProviderKey.from( "myProvider" ) ) );
     }
+
+    @Test
+    public void test()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+        map.put( "mapping.myapp1.source", "/" );
+        map.put( "mapping.myapp1.target", "/" );
+        map.put( "mapping.myapp1.order", "1" );
+
+        map.put( "mapping.myapp2.host", "example.com" );
+        map.put( "mapping.myapp2.source", "/source" );
+        map.put( "mapping.myapp2.target", "/target" );
+        map.put( "mapping.myapp2.order", "1" );
+
+        map.put( "mapping.myapp3.host", "example.com" );
+        map.put( "mapping.myapp3.source", "/source" );
+        map.put( "mapping.myapp3.target", "/target/path" );
+        map.put( "mapping.myapp3.order", "5" );
+
+        VirtualHostConfigMap virtualHostConfig = new VirtualHostConfigMap( map );
+
+        final List<VirtualHost> virtualHosts = virtualHostConfig.buildMappings();
+
+        assertEquals( "/source", virtualHosts.get( 0 ).getSource() );
+        assertEquals( "/", virtualHosts.get( 1 ).getSource() );
+    }
 }
