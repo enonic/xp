@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 
 import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.archive.RestoreContentException;
@@ -15,6 +14,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.data.Property;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
@@ -27,6 +27,10 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
+
+import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_NAME;
+import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_PARENT_PATH;
+import static com.google.common.base.Strings.nullToEmpty;
 
 final class RestoreContentCommand
     extends AbstractArchiveCommand
@@ -91,26 +95,40 @@ final class RestoreContentCommand
             }
         }
 
-        NodePath parentPathToRestore;
-        String originalSourceName;
+        NodePath parentPathToRestore = ContentConstants.CONTENT_ROOT_PATH;
+        String originalSourceName = nodeToRestore.name().toString();
         final boolean isRootContent = nodeToRestore.path().asAbsolute().elementCount() == 2;
 
         if ( isRootContent )
         {
-            originalSourceName = nodeToRestore.data().getString( ArchiveConstants.ORIGINAL_NAME_PROPERTY_NAME );
-            final String originalSourceParentPath = nodeToRestore.data().getString( ArchiveConstants.ORIGINAL_PARENT_PATH_PROPERTY_NAME );
+            final Property originalNameProperty = nodeToRestore.data().getProperty( ORIGINAL_NAME );
+            if ( originalNameProperty != null )
+            {
+                originalSourceName = originalNameProperty.getString();
+            }
+            final Property originalParentPathProperty = nodeToRestore.data().getProperty( ORIGINAL_PARENT_PATH );
 
-            parentPathToRestore = params.getPath() != null
-                ? NodePath.create( ContentConstants.CONTENT_ROOT_PATH, params.getPath().toString() ).build()
-                : !Strings.nullToEmpty( originalSourceParentPath ).isBlank() &&
-                    nodeService.nodeExists( NodePath.create( originalSourceParentPath ).build() ) ? NodePath.create(
-                    originalSourceParentPath ).build() : ContentConstants.CONTENT_ROOT_PATH;
+            if ( originalParentPathProperty != null )
+            {
+                final String originalParentPath = originalParentPathProperty.getString();
 
-        }
-        else
-        {
-            originalSourceName = nodeToRestore.name().toString();
-            parentPathToRestore = ContentConstants.CONTENT_ROOT_PATH;
+                if ( params.getPath() != null )
+                {
+                    parentPathToRestore = NodePath.create( ContentConstants.CONTENT_ROOT_PATH, params.getPath().toString() ).build();
+                }
+                else if ( !nullToEmpty( originalParentPath ).isBlank() )
+                {
+                    final NodePath parentPath =
+                        NodePath.create( ContentConstants.CONTENT_ROOT_PATH, originalParentPathProperty.getValue().asString() ).build();
+
+                    if ( nodeService.nodeExists( parentPath ) )
+                    {
+                        parentPathToRestore = parentPath;
+                    }
+
+                }
+            }
+
         }
         final RestoreContentsResult.Builder result = RestoreContentsResult.create();
 
@@ -137,8 +155,8 @@ final class RestoreContentCommand
         if ( isRootContent )
         {
             nodeService.update( UpdateNodeParams.create().id( movedNode.id() ).editor( toBeEdited -> {
-                toBeEdited.data.removeProperties( ArchiveConstants.ORIGINAL_NAME_PROPERTY_NAME );
-                toBeEdited.data.removeProperties( ArchiveConstants.ORIGINAL_PARENT_PATH_PROPERTY_NAME );
+                toBeEdited.data.removeProperties( ORIGINAL_PARENT_PATH );
+                toBeEdited.data.removeProperties( ORIGINAL_NAME );
             } ).build() );
 
 
