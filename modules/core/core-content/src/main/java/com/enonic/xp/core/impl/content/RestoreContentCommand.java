@@ -36,11 +36,14 @@ final class RestoreContentCommand
 
     private final RestoreContentListener restoreContentListener;
 
+    private final NameResolver nameResolver;
+
     private RestoreContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.restoreContentListener = builder.restoreContentListener;
+        this.nameResolver = new NameResolver();
     }
 
     public static Builder create( final RestoreContentParams params )
@@ -89,7 +92,7 @@ final class RestoreContentCommand
         }
 
         NodePath parentPathToRestore;
-        String originalSourceName = null;
+        String originalSourceName;
         final boolean isRootContent = nodeToRestore.path().asAbsolute().elementCount() == 2;
 
         if ( isRootContent )
@@ -101,19 +104,35 @@ final class RestoreContentCommand
                 ? NodePath.create( ContentConstants.CONTENT_ROOT_PATH, params.getPath().toString() ).build()
                 : !Strings.nullToEmpty( originalSourceParentPath ).isBlank() &&
                     nodeService.nodeExists( NodePath.create( originalSourceParentPath ).build() ) ? NodePath.create(
-                    originalSourceParentPath ).build() :  ContentConstants.CONTENT_ROOT_PATH;
+                    originalSourceParentPath ).build() : ContentConstants.CONTENT_ROOT_PATH;
 
         }
         else
         {
+            originalSourceName = nodeToRestore.name().toString();
             parentPathToRestore = ContentConstants.CONTENT_ROOT_PATH;
         }
         final RestoreContentsResult.Builder result = RestoreContentsResult.create();
+
+        final NodeName newNodeName = nameResolver.buildName( parentPathToRestore, originalSourceName, nodeToRestore );
+
+        if ( !newNodeName.equals( nodeToRestore.name() ) )
+        {
+            nodeService.rename( RenameNodeParams.create().nodeId( nodeToRestore.id() ).nodeName( newNodeName ).build() );
+        }
 
         final MoveNodeParams.Builder builder =
             MoveNodeParams.create().nodeId( nodeToRestore.id() ).parentNodePath( parentPathToRestore ).moveListener( this );
 
         final Node movedNode = nodeService.move( builder.build() );
+
+        if ( originalSourceName != null && !originalSourceName.equals( movedNode.name().toString() ) )
+        {
+            nodeService.rename( RenameNodeParams.create()
+                                    .nodeId( movedNode.id() )
+                                    .nodeName( nameResolver.buildName( movedNode.parentPath(), originalSourceName, movedNode ) )
+                                    .build() );
+        }
 
         if ( isRootContent )
         {
@@ -122,11 +141,7 @@ final class RestoreContentCommand
                 toBeEdited.data.removeProperties( ArchiveConstants.ORIGINAL_PARENT_PATH_PROPERTY_NAME );
             } ).build() );
 
-            if ( originalSourceName != null && !originalSourceName.equals( movedNode.name().toString() ) )
-            {
-                nodeService.rename(
-                    RenameNodeParams.create().nodeId( movedNode.id() ).nodeName( NodeName.from( originalSourceName ) ).build() );
-            }
+
         }
         nodeService.refresh( RefreshMode.ALL );
 
@@ -176,4 +191,34 @@ final class RestoreContentCommand
         }
     }
 
+    private final class NameResolver
+    {
+        private NodeName buildName( final NodePath newParentPath, final String name, final Node node )
+        {
+            String newName = null;
+
+            boolean nameAlreadyExist;
+
+            do
+            {
+                newName = newName != null ? NameValueResolver.name( newName ) : name;
+
+                final NodePath targetPath = NodePath.create( newParentPath, newName ).build();
+
+                nameAlreadyExist = nodeService.nodeExists( targetPath ) && !nodeService.getByPath( targetPath ).id().equals( node.id() );
+                if ( !newParentPath.equals( node.parentPath() ) )
+                {
+                    nameAlreadyExist = nameAlreadyExist ||
+                        ( nodeService.nodeExists( NodePath.create( node.parentPath(), newName ).build() ) &&
+                            !node.name().toString().equals( newName ) );
+                }
+
+            }
+            while ( nameAlreadyExist );
+
+            return NodeName.from( newName );
+        }
+
+
+    }
 }
