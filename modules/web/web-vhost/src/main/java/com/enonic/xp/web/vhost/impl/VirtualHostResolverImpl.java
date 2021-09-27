@@ -1,7 +1,12 @@
 package com.enonic.xp.web.vhost.impl;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,55 +18,94 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostResolver;
 import com.enonic.xp.web.vhost.VirtualHostService;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
+import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 @Component(immediate = true)
 public class VirtualHostResolverImpl
     implements VirtualHostResolver
 {
-
-    private final List<VirtualHost> virtualHosts;
+    private final List<VirtualHostMatcher> virtualHostMappings;
 
     @Activate
     public VirtualHostResolverImpl( @Reference final VirtualHostService virtualHostService )
     {
-        this.virtualHosts = List.copyOf( virtualHostService.getVirtualHosts() );
+        this.virtualHostMappings = virtualHostService.getVirtualHosts()
+            .stream()
+            .sorted( Comparator.comparing( VirtualHost::getOrder )
+                         .thenComparing( VirtualHost::getSource, Comparator.comparing( String::length ) )
+                         .thenComparing( VirtualHost::getSource ) )
+            .flatMap( virtualHost -> Stream.of( virtualHost.getHost().split( " ", -1 ) )
+                .map( String::trim )
+                .map( host -> new VirtualHostMatcher( host, virtualHost ) ) )
+            .collect( Collectors.toList() );
     }
 
     @Override
     public VirtualHost resolveVirtualHost( final HttpServletRequest req )
     {
-        for ( final VirtualHost virtualHost : virtualHosts )
+        String serverName = req.getServerName().toLowerCase( Locale.ROOT );
+        return virtualHostMappings.stream()
+            .map( virtualHost -> virtualHost.matches( serverName, req.getRequestURI() ) )
+            .filter( Objects::nonNull )
+            .findFirst()
+            .orElse( null );
+    }
+
+    private static final class VirtualHostMatcher
+    {
+        private final VirtualHost virtualHost;
+
+        private final String originalHost;
+
+        private final Pattern pattern;
+
+        VirtualHostMatcher( String originalHost, VirtualHost virtualHost )
         {
-            if ( matchesHost( virtualHost, req ) && matchesSource( virtualHost, req ) )
-            {
-                return virtualHost;
-            }
+            this.originalHost = originalHost;
+            this.virtualHost = virtualHost;
+            this.pattern = originalHost.startsWith( "~" ) ? Pattern.compile( originalHost.substring( 1 ), Pattern.CASE_INSENSITIVE ) : null;
         }
 
-        return null;
-    }
-
-    private boolean matchesHost( final VirtualHost virtualHost, final HttpServletRequest req )
-    {
-        final String serverName = req.getServerName().toLowerCase( Locale.ROOT );
-        final String host = virtualHost.getHost();
-        return Stream.of( host.split( " " ) ).map( h -> h.toLowerCase( Locale.ROOT ) ).allMatch( h -> {
-            if ( h.startsWith( "~" ) )
+        VirtualHostMapping matches( String serverName, String requestURI )
+        {
+            if ( pattern != null )
             {
-                return serverName.matches( h.substring( 1 ) );
+                Matcher matcher = pattern.matcher( serverName );
+                if ( matcher.matches() && matchesSource( requestURI ) )
+                {
+                    return new VirtualHostMapping( virtualHost.getName(), originalHost, virtualHost.getSource(),
+                                                   matcher.replaceAll( virtualHost.getTarget() ), createIdProvidersMapping( virtualHost ),
+                                                   virtualHost.getOrder() );
+                }
             }
-            else
+            else if ( originalHost.toLowerCase( Locale.ROOT ).equals( serverName ) && matchesSource( requestURI ) )
             {
-                return h.equals( serverName );
+                return new VirtualHostMapping( virtualHost.getName(), originalHost, virtualHost.getSource(), virtualHost.getTarget(),
+                                               createIdProvidersMapping( virtualHost ), virtualHost.getOrder() );
             }
-        } );
-    }
+            return null;
+        }
 
-    private boolean matchesSource( final VirtualHost virtualHost, final HttpServletRequest req )
-    {
-        final String actualPath = req.getRequestURI();
-        return "/".equals( virtualHost.getSource() ) || actualPath.equals( virtualHost.getSource() ) ||
-            actualPath.startsWith( virtualHost.getSource() + "/" );
-    }
+        boolean matchesSource( String requestURI )
+        {
+            return "/".equals( virtualHost.getSource() ) || requestURI.equals( virtualHost.getSource() ) ||
+                requestURI.startsWith( virtualHost.getSource() + "/" );
+        }
 
+        VirtualHostIdProvidersMapping createIdProvidersMapping( VirtualHost virtualHost )
+        {
+            VirtualHostIdProvidersMapping.Builder idProvidersMapping = VirtualHostIdProvidersMapping.create();
+            if ( virtualHost.getDefaultIdProviderKey() != null )
+            {
+                idProvidersMapping.setDefaultIdProvider( virtualHost.getDefaultIdProviderKey() );
+            }
+            if ( virtualHost.getIdProviderKeys() != null )
+            {
+                virtualHost.getIdProviderKeys().forEach( idProvidersMapping::addIdProviderKey );
+            }
+            return idProvidersMapping.build();
+        }
+
+    }
 }

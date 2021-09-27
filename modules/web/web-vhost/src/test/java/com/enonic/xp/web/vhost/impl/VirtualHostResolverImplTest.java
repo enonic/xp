@@ -1,7 +1,9 @@
 package com.enonic.xp.web.vhost.impl;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -85,15 +87,13 @@ public class VirtualHostResolverImplTest
     {
         final List<VirtualHost> virtualHosts = new ArrayList<>();
 
-        virtualHosts.add( createVirtualHostMapping( "a", "localhost", "/", "/other/a" ) );
-        virtualHosts.add( createVirtualHostMapping( "b", "enonic.com", "/", "/other/d" ) );
-
-        final VirtualHostService virtualHostService = mock( VirtualHostService.class );
+        virtualHosts.add( createVirtualHostMapping( "a", "localhost", "/", "/other/a", 0 ) );
+        virtualHosts.add( createVirtualHostMapping( "b", "enonic.com ~example\\.(?<cc>.+)", "/", "/other/d", 0 ) );
 
         when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
-        when( req.getServerName() ).thenReturn( "enonic.com" );
+        when( req.getServerName() ).thenReturn( "eXampLe.com" );
 
         final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
 
@@ -108,10 +108,8 @@ public class VirtualHostResolverImplTest
     {
         final List<VirtualHost> virtualHosts = new ArrayList<>();
 
-        virtualHosts.add( createVirtualHostMapping( "a", "localhost", "/", "/other/a" ) );
-        virtualHosts.add( createVirtualHostMapping( "b", "enonic.com", "/", "/other/d" ) );
-
-        final VirtualHostService virtualHostService = mock( VirtualHostService.class );
+        virtualHosts.add( createVirtualHostMapping( "a", "localhost", "/", "/other/a", 0 ) );
+        virtualHosts.add( createVirtualHostMapping( "b", "domain.com", "/", "/other/b", 0 ) );
 
         when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
 
@@ -125,9 +123,125 @@ public class VirtualHostResolverImplTest
         assertNull( mapping );
     }
 
-    private VirtualHostMapping createVirtualHostMapping( String name, String host, String source, String target )
+    @Test
+    public void testResolve_multipleHosts()
     {
-        return new VirtualHostMapping( name, host, source, target, VirtualHostIdProvidersMapping.create().build(), 0 );
+        final List<VirtualHost> virtualHosts = new ArrayList<>();
+        virtualHosts.add( createVirtualHostMapping( "a", "subdomain.com", "/source", "/other/a", 1 ) );
+        virtualHosts.add( createVirtualHostMapping( "c", "domain.com ~(?<sub>.+)\\.domain\\.com", "/", "/other/c/${sub}", 1 ) );
+        virtualHosts.add( createVirtualHostMapping( "b", "domain.com", "/", "/other/b", 1 ) );
+        virtualHosts.add( createVirtualHostMapping( "d", "no.domain.com", "/", "/other/d", 1 ) );
+        virtualHosts.add( createVirtualHostMapping( "e", "~.+", "/", "/other/e", 2 ) );
+
+        when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
+
+        HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getServerName() ).thenReturn( "no.domain.com" );
+        when( req.getRequestURI() ).thenReturn( URI.create( "https://no.domain.com" ).getPath() );
+
+        final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
+        VirtualHost mapping = virtualHostResolver.resolveVirtualHost( req );
+
+        assertNotNull( mapping );
+        assertEquals( "c", mapping.getName() );
+        assertEquals( "/other/c/no", mapping.getTarget() );
+
+        when( req.getServerName() ).thenReturn( "foo.com" );
+        when( req.getRequestURI() ).thenReturn( URI.create( "https://foo.com" ).getPath() );
+
+        mapping = virtualHostResolver.resolveVirtualHost( req );
+
+        assertNotNull( mapping );
+        assertEquals( "e", mapping.getName() );
+    }
+
+    @Test
+    public void testResolve_multipleHosts_sortedBySource_reversed()
+    {
+        final List<VirtualHost> virtualHosts = new ArrayList<>();
+        virtualHosts.add( createVirtualHostMapping( "a", "no.domain.com", "/source", "/other/a", 1 ) );
+        virtualHosts.add( createVirtualHostMapping( "b", "domain.com ~(?<sub>.+)\\.domain\\.com", "/", "/other/b/${sub}", 1 ) );
+        virtualHosts.add( createVirtualHostMapping( "c", "domain.com", "/", "/other/c", 1 ) );
+
+        when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
+
+        HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getServerName() ).thenReturn( "no.domain.com" );
+        when( req.getRequestURI() ).thenReturn( URI.create( "https://no.domain.com" ).getPath() );
+
+        final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
+        VirtualHost mapping = virtualHostResolver.resolveVirtualHost( req );
+
+        assertNotNull( mapping );
+        assertEquals( "b", mapping.getName() );
+        assertEquals( "/other/b/no", mapping.getTarget() );
+        assertEquals( "/", mapping.getSource() );
+    }
+
+    @Test
+    public void testMatchesHostInLowerCase()
+    {
+        final List<VirtualHost> virtualHosts = new ArrayList<>();
+        virtualHosts.add( createVirtualHostMapping( "a", "doMain.com", "/source", "/other/a", 1 ) );
+        virtualHosts.add( createVirtualHostMapping( "b", "no.domain.com", "/", "/other/b", 1 ) );
+
+        when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
+
+        HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getRequestURI() ).thenReturn( URI.create( "https://domain.com/source" ).getPath() );
+        when( req.getServerName() ).thenReturn( "DoMaIn.com" );
+
+        final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
+        VirtualHost mapping = virtualHostResolver.resolveVirtualHost( req );
+
+        assertNotNull( mapping );
+        assertEquals( "a", mapping.getName() );
+        assertEquals( "/other/a", mapping.getTarget() );
+    }
+
+    @Test
+    public void testResolve_multipleHosts_sortedBySource_natural()
+    {
+        final List<VirtualHost> virtualHosts = new ArrayList<>();
+        virtualHosts.add( createVirtualHostMapping( "a", "no.domain.com", "/", "/other/a", 1 ) );
+        virtualHosts.add( createVirtualHostMapping( "b", "domain.com ~(?<sub>.+)\\.domain\\.com", "/source", "/other/b/${sub}", 1 ) );
+        virtualHosts.add( createVirtualHostMapping( "c", "domain.com", "/", "/other/c", 1 ) );
+
+        when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
+
+        HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getServerName() ).thenReturn( "no.domain.com" );
+        when( req.getRequestURI() ).thenReturn( URI.create( "https://no.domain.com" ).getPath() );
+
+        final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
+        VirtualHost mapping = virtualHostResolver.resolveVirtualHost( req );
+
+        assertNotNull( mapping );
+        assertEquals( "a", mapping.getName() );
+        assertEquals( "/other/a", mapping.getTarget() );
+        assertEquals( "/", mapping.getSource() );
+    }
+
+    @Test
+    public void testResolve_NotMatched()
+    {
+        final List<VirtualHost> virtualHosts = new ArrayList<>();
+        virtualHosts.add( createVirtualHostMapping( "a", "domain.com", "/source", "/other/a", 1 ) );
+        virtualHosts.add( createVirtualHostMapping( "b", "domain.com", "/", "/other/b", 1 ) );
+
+        when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
+
+        HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getServerName() ).thenReturn( "foo.com" );
+
+        final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
+        assertNull( virtualHostResolver.resolveVirtualHost( req ) );
+    }
+
+    private VirtualHostMapping createVirtualHostMapping( String name, String host, String source, String target, Integer order )
+    {
+        return new VirtualHostMapping( name, host, source, target, VirtualHostIdProvidersMapping.create().build(),
+                                       Objects.requireNonNullElse( order, Integer.MAX_VALUE ) );
     }
 
 }
