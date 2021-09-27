@@ -86,7 +86,7 @@ final class ArchiveContentCommand
             toBeEdited.data.setString( ArchiveConstants.ORIGINAL_NAME_PROPERTY_NAME, toBeEdited.source.name().toString() );
         } ).build() );
 
-        final NodePath newPath = pathResolver.buildArchivedPath( nodeToArchive.name() );
+        final NodePath newPath = pathResolver.buildArchivedPath( nodeToArchive );
         if ( !newPath.getName().equals( nodeToArchive.name().toString() ) )
         {
             nodeService.rename( RenameNodeParams.create().nodeId( nodeId ).nodeName( NodeName.from( newPath.getName() ) ).build() );
@@ -148,17 +148,19 @@ final class ArchiveContentCommand
 
         private static final int MAX_NAME_SIZE = 30;
 
-        private NodePath buildArchivedPath( final NodeName name )
+        private NodePath buildArchivedPath( final Node node )
         {
             NodePath newPath;
             String newName = null;
             do
             {
-                newName = newName == null ? name.toString() : newName + " " + DATE_TIME_FORMATTER.format( Instant.now() );
+                newName = newName == null ? node.name().toString() : node.name() + " " + DATE_TIME_FORMATTER.format( Instant.now() );
                 newPath = NodePath.create( ArchiveConstants.ARCHIVE_ROOT_PATH, trim( newName ) ).build();
 
             }
-            while ( nodeService.nodeExists( newPath ) );
+            while ( nodeService.nodeExists( newPath ) ||
+                ( nodeService.nodeExists( NodePath.create( node.parentPath(), newName ).build() ) &&
+                    !newName.equals( node.name().toString() ) ) );
 
             return newPath;
         }
