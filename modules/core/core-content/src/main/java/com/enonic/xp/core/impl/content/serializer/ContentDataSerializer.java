@@ -20,6 +20,8 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
+import com.enonic.xp.content.ContentName;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentTranslatorParams;
@@ -52,6 +54,8 @@ import static com.enonic.xp.content.ContentPropertyNames.INHERIT;
 import static com.enonic.xp.content.ContentPropertyNames.LANGUAGE;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIER;
+import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_NAME;
+import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_PARENT_PATH;
 import static com.enonic.xp.content.ContentPropertyNames.ORIGIN_PROJECT;
 import static com.enonic.xp.content.ContentPropertyNames.OWNER;
 import static com.enonic.xp.content.ContentPropertyNames.PROCESSED_REFERENCES;
@@ -232,6 +236,8 @@ public class ContentDataSerializer
         extractWorkflowInfo( contentAsSet, builder );
         extractInherit( contentAsSet, builder );
         extractOriginProject( contentAsSet, builder );
+        extractOriginalName( contentAsSet, builder );
+        extractOriginalParentPath( contentAsSet, builder );
 
         return builder;
     }
@@ -252,6 +258,10 @@ public class ContentDataSerializer
         addPublishInfo( contentAsData, content.getPublishInfo() );
         addWorkflowInfo( contentAsData, content.getWorkflowInfo() );
         addInherit( contentAsData, content.getInherit() );
+        contentAsData.ifNotNull()
+            .addString( ORIGINAL_NAME, content.getOriginalName() != null ? content.getOriginalName().toString() : null );
+        contentAsData.ifNotNull()
+            .addString( ORIGINAL_PARENT_PATH, content.getOriginalParentPath() != null ? content.getOriginalParentPath().toString() : null );
     }
 
     private void addProcessedReferences( final PropertySet contentAsData, final ContentIds processedIds )
@@ -394,6 +404,24 @@ public class ContentDataSerializer
         if ( !isNullOrEmpty( originProject ) )
         {
             builder.originProject( ProjectName.from( originProject ) );
+        }
+    }
+
+    private void extractOriginalName( final PropertySet contentAsSet, final Content.Builder builder )
+    {
+        final String originalName = contentAsSet.getString( ORIGINAL_NAME );
+        if ( !isNullOrEmpty( originalName ) )
+        {
+            builder.originalName( ContentName.from( originalName ) );
+        }
+    }
+
+    private void extractOriginalParentPath( final PropertySet contentAsSet, final Content.Builder builder )
+    {
+        final String originalParentPath = contentAsSet.getString( ORIGINAL_PARENT_PATH );
+        if ( !isNullOrEmpty( originalParentPath ) )
+        {
+            builder.originalParentPath( ContentPath.from( originalParentPath ) );
         }
     }
 

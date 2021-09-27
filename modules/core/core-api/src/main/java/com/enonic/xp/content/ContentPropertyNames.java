@@ -96,4 +96,8 @@ public class ContentPropertyNames
     public static final String INHERIT = "inherit";
 
     public static final String ORIGIN_PROJECT = "originProject";
+
+    public static final String ORIGINAL_NAME = "originalName";
+
+    public static final String ORIGINAL_PARENT_PATH = "originalParentPath";
 }

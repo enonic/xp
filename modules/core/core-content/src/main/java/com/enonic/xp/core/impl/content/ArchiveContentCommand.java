@@ -27,6 +27,9 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
 
+import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_NAME;
+import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_PARENT_PATH;
+
 final class ArchiveContentCommand
     extends AbstractArchiveCommand
     implements MoveNodeListener
@@ -82,8 +85,9 @@ final class ArchiveContentCommand
         final NodeId nodeId = NodeId.from( params.getContentId() );
 
         final Node nodeToArchive = nodeService.update( UpdateNodeParams.create().id( nodeId ).editor( toBeEdited -> {
-            toBeEdited.data.setString( ArchiveConstants.ORIGINAL_PARENT_PATH_PROPERTY_NAME, toBeEdited.source.parentPath().toString() );
-            toBeEdited.data.setString( ArchiveConstants.ORIGINAL_NAME_PROPERTY_NAME, toBeEdited.source.name().toString() );
+            toBeEdited.data.setString( ORIGINAL_PARENT_PATH,
+                                       ContentNodeHelper.translateNodePathToContentPath( toBeEdited.source.parentPath() ).toString() );
+            toBeEdited.data.setString( ORIGINAL_NAME, toBeEdited.source.name().toString() );
         } ).build() );
 
         final NodePath newPath = pathResolver.buildArchivedPath( nodeToArchive );
