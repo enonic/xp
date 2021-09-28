@@ -80,11 +80,11 @@ final class RenameContentCommand
 
         final Content content = translator.fromNode( node, false );
 
-        final ValidationErrors validate = validateContent( content );
+        final ValidationErrors validationErrors = validateContent( content );
 
-        if ( content.isValid() == validate.hasErrors() )
+        if ( content.isValid() == validationErrors.hasErrors() )
         {
-            return updateValidState( content, validate );
+            return updateValidState( content );
         }
 
         return getContent( params.getContentId() );
@@ -104,14 +104,13 @@ final class RenameContentCommand
             .execute();
     }
 
-    private Content updateValidState( final Content content, final ValidationErrors validated )
+    private Content updateValidState( final Content content )
     {
-
         final UpdateContentParams updateContentParams = new UpdateContentParams().requireValid( false )
             .contentId( content.getId() )
             .modifier( content.getModifier() )
             .stopInherit( false )
-            .editor( edit -> edit.valid = !validated.hasErrors() );
+            .editor( edit -> edit.valid = !content.isValid() );
 
         return UpdateContentCommand.create( this )
             .params( updateContentParams )

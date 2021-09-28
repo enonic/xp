@@ -361,4 +361,3 @@ public class ContentDataSerializerTest
         assertEquals( WorkflowState.READY.toString(), workflowData.getString( ContentPropertyNames.WORKFLOW_INFO_STATE ) );
     }
 }
-

@@ -63,7 +63,7 @@ public class ValidationErrorTest
     {
         final Date date = new Date();
         final ValidationError validationError =
-            ValidationError.generalError( "ERR_CODE" ).message( "{0, date}" ).args( date.getTime() ).build();
+            ValidationError.generalError( "ERR_CODE" ).message( "{0, date}" ).args( date ).build();
         assertEquals( DateFormat.getDateInstance( DateFormat.DEFAULT ).format( date ), validationError.getMessage() );
         assertEquals( date.getTime(), validationError.getArgs().get( 0 ) );
     }

@@ -71,6 +71,7 @@ import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_INFO;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_TO;
 import static com.enonic.xp.content.ContentPropertyNames.TYPE;
 import static com.enonic.xp.content.ContentPropertyNames.VALID;
+import static com.enonic.xp.content.ContentPropertyNames.VALIDATION_ERRORS;
 import static com.enonic.xp.content.ContentPropertyNames.WORKFLOW_INFO;
 import static com.enonic.xp.content.ContentPropertyNames.WORKFLOW_INFO_CHECKS;
 import static com.enonic.xp.content.ContentPropertyNames.WORKFLOW_INFO_STATE;
@@ -403,7 +404,7 @@ public class ContentDataSerializer
     private void extractValidationErrors( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
         builder.validationErrors( ValidationErrors.create()
-                                      .addAll( StreamSupport.stream( contentAsSet.getSets( "validationErrors" ).spliterator(), false )
+                                      .addAll( StreamSupport.stream( contentAsSet.getSets( VALIDATION_ERRORS ).spliterator(), false )
                                                    .map( this::mapValidationError )
                                                    .collect( Collectors.toList() ) )
                                       .build() );
@@ -531,7 +532,7 @@ public class ContentDataSerializer
     {
         if ( validationErrors != null && validationErrors.hasErrors() )
         {
-            contentAsData.addSets( "validationErrors", validationErrors.stream().map( validationError -> {
+            contentAsData.addSets( VALIDATION_ERRORS, validationErrors.stream().map( validationError -> {
                 final PropertySet propertySet = new PropertySet();
                 propertySet.addString( "errorCode", validationError.getErrorCode() );
                 propertySet.addString( "message", validationError.getMessage() );

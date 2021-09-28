@@ -25,6 +25,8 @@ public class ContentPropertyNames
 
     public static final String VALID = "valid";
 
+    public static final String VALIDATION_ERRORS = "validationErrors";
+
     public static final String EXTRA_DATA = "x";
 
     public static final String MEDIA = "media";
