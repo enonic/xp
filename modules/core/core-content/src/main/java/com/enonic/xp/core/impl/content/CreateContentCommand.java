@@ -21,15 +21,13 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateContentTranslatorParams;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.processor.ProcessCreateParams;
 import com.enonic.xp.content.processor.ProcessCreateResult;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
-import com.enonic.xp.core.impl.content.validate.ValidationError;
-import com.enonic.xp.core.impl.content.validate.ValidationErrors;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.inputtype.InputTypes;
@@ -99,13 +97,15 @@ final class CreateContentCommand
 
     private Content doExecute()
     {
-        validateBlockingChecks();
-
         final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
+        validateContentType( contentType );
+
         formDefaultValuesProcessor.setDefaultValues( contentType.getForm(), params.getData() );
         // TODO apply default values to xData
 
-        CreateContentParams processedParams = processCreateContentParams();
+        CreateContentParams processedParams = runContentProcessors( this.params, contentType );
+
+        validateBlockingChecks( processedParams );
 
         final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedParams );
 
@@ -122,7 +122,7 @@ final class CreateContentCommand
 
         try
         {
-            final Node createdNode = doCreateContent( createNodeParams );
+            final Node createdNode = nodeService.create( createNodeParams );
 
             if ( params.isRefresh() )
             {
@@ -143,24 +143,15 @@ final class CreateContentCommand
         }
     }
 
-    private Node doCreateContent( final CreateNodeParams createNodeParams )
+    private void validateBlockingChecks( final CreateContentParams params )
     {
-        return nodeService.create( createNodeParams );
-    }
-
-    private void validateBlockingChecks()
-    {
-        validateContentType( params );
         validateParentChildRelations( params.getParent(), params.getType() );
         validatePropertyTree( params );
         validateCreateAttachments( params.getCreateAttachments() );
     }
 
-
-    private void validateContentType( final CreateContentParams params )
+    private void validateContentType( final ContentType contentType )
     {
-        final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
-
         if ( contentType == null )
         {
             throw new IllegalArgumentException( "Content type not found [" + params.getType().toString() + "]" );
@@ -194,12 +185,6 @@ final class CreateContentCommand
         }
     }
 
-    private CreateContentParams processCreateContentParams()
-    {
-        final ContentType type = this.contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
-        return runContentProcessors( this.params, type );
-    }
-
     private CreateContentTranslatorParams createContentTranslatorParams( final CreateContentParams processedContent )
     {
         final CreateContentTranslatorParams.Builder builder = CreateContentTranslatorParams.create( processedContent );
@@ -227,10 +212,9 @@ final class CreateContentCommand
         {
             if ( contentProcessor.supports( contentType ) )
             {
-                final ProcessCreateResult processCreateResult =
-                    contentProcessor.processCreate( new ProcessCreateParams( processedParams, mediaInfo ) );
+                final ProcessCreateResult result = contentProcessor.processCreate( new ProcessCreateParams( processedParams, mediaInfo ) );
 
-                processedParams = CreateContentParams.create( processCreateResult.getCreateContentParams() ).build();
+                processedParams = CreateContentParams.create( result.getCreateContentParams() ).build();
             }
         }
 
@@ -325,35 +309,26 @@ final class CreateContentCommand
     private void populateValid( final CreateContentTranslatorParams.Builder builder )
     {
         final ValidationErrors validationErrors = ValidateContentDataCommand.create()
-            .contentData( builder.getData() )
-            .contentType( builder.getType() )
-            .name( builder.getName() )
+            .data( builder.getData() )
+            .extraDatas( builder.getExtraDatas() )
+            .contentTypeName( builder.getType() )
+            .contentName( builder.getName() )
             .displayName( builder.getDisplayName() )
-            .extradatas( builder.getExtraDatas() != null ? ExtraDatas.from( builder.getExtraDatas() ) : ExtraDatas.empty() )
-            .xDataService( this.xDataService )
-            .siteService( this.siteService )
+            .createAttachments( builder.getCreateAttachments() )
+            .contentValidators( this.contentValidators )
             .contentTypeService( this.contentTypeService )
             .build()
             .execute();
 
-        for ( ValidationError error : validationErrors )
+        if ( params.isRequireValid() )
         {
-            LOG.info( "*** DataValidationError: " + error.getErrorMessage() );
-        }
-        if ( validationErrors.hasErrors() )
-        {
-            if ( params.isRequireValid() )
-            {
-                throw new ContentDataValidationException( validationErrors.getFirst().getErrorMessage() );
-            }
-            else
-            {
-                builder.valid( false );
-                return;
-            }
+            validationErrors.stream().findFirst().ifPresent( validationError -> {
+                throw new ContentDataValidationException( validationError.getMessage() );
+            } );
         }
 
-        builder.valid( true );
+        builder.valid( !validationErrors.hasErrors() );
+        builder.validationErrors( validationErrors );
     }
 
     static class Builder

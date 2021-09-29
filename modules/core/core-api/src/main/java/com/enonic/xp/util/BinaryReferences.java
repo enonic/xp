@@ -1,15 +1,11 @@
 package com.enonic.xp.util;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
-
-import static java.util.stream.Collectors.toSet;
 
 @PublicApi
 public class BinaryReferences
@@ -20,21 +16,14 @@ public class BinaryReferences
         super( set );
     }
 
-    private BinaryReferences( final Set<BinaryReference> set )
-    {
-        super( ImmutableSet.copyOf( set ) );
-    }
-
     public static BinaryReferences empty()
     {
-        final Set<BinaryReference> returnFields = new HashSet<>();
-        return new BinaryReferences( returnFields );
+        return new BinaryReferences( ImmutableSet.of() );
     }
 
     public static BinaryReferences from( final String... binaryReferences )
     {
-        final Set<BinaryReference> binaryReferenceList = Stream.of( binaryReferences ).map( BinaryReference::from ).collect( toSet() );
-        return new BinaryReferences( ImmutableSet.copyOf( binaryReferenceList ) );
+        return new BinaryReferences( Stream.of( binaryReferences ).map( BinaryReference::from ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
     public static BinaryReferences from( final BinaryReference... binaryReferences )
@@ -44,12 +33,6 @@ public class BinaryReferences
 
     public static BinaryReferences from( final Iterable<BinaryReference> binaryReferences )
     {
-        final ImmutableSet.Builder<BinaryReference> keys = ImmutableSet.builder();
-        for ( BinaryReference binaryReference : binaryReferences )
-        {
-            keys.add( binaryReference );
-        }
-        return new BinaryReferences( keys.build() );
+        return new BinaryReferences( ImmutableSet.copyOf( binaryReferences ) );
     }
-
 }

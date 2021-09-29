@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Iterator;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,9 +13,8 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.content.processor.ContentProcessor;
-import com.enonic.xp.core.impl.content.processor.ContentProcessors;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
+import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
@@ -68,8 +67,6 @@ class RenameContentCommandTest
 
     XDataService xDataService;
 
-    ContentProcessors contentProcessors;
-
     ContentDataSerializer contentDataSerializer;
 
     @BeforeEach
@@ -84,7 +81,6 @@ class RenameContentCommandTest
         this.pageDescriptorService = mock( PageDescriptorService.class );
         this.partDescriptorService = mock( PartDescriptorService.class );
         this.layoutDescriptorService = mock( LayoutDescriptorService.class );
-        this.contentProcessors = mock( ContentProcessors.class );
 
         this.contentDataSerializer = ContentDataSerializer.create().
             layoutDescriptorService( layoutDescriptorService ).
@@ -113,8 +109,6 @@ class RenameContentCommandTest
         when( this.nodeService.getById( any( NodeId.class ) ) ).thenReturn( mockNode );
         when( translator.fromNode( mockNode, false ) ).thenReturn( content );
         when( translator.fromNode( mockNode, true ) ).thenReturn( content );
-        Iterator<ContentProcessor> contentProcessorIterator = mock( Iterator.class );
-        when( contentProcessors.iterator() ).thenReturn( contentProcessorIterator );
 
         final RenameContentParams params =
             RenameContentParams.create().contentId( content.getId() ).newName( ContentName.unnamed() ).build();
@@ -175,17 +169,17 @@ class RenameContentCommandTest
 
     private RenameContentCommand createCommand( final RenameContentParams params )
     {
-        return RenameContentCommand.create( params ).
-            contentTypeService( this.contentTypeService ).
-            nodeService( this.nodeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            xDataService( this.xDataService ).
-            contentProcessors( this.contentProcessors ).
-            pageDescriptorService( this.pageDescriptorService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            contentDataSerializer( this.contentDataSerializer ).
-            build();
+        return RenameContentCommand.create( params )
+            .contentTypeService( this.contentTypeService )
+            .nodeService( this.nodeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .xDataService( this.xDataService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .contentValidators( List.of( new ContentNameValidator() ) )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .contentDataSerializer( this.contentDataSerializer )
+            .build();
     }
 }

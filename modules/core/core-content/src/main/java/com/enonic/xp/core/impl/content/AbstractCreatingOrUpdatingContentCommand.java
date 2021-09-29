@@ -1,14 +1,17 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.List;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.content.processor.ContentProcessor;
+import com.enonic.xp.content.validate.ContentValidator;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.core.impl.content.processor.ContentProcessors;
 import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.User;
@@ -28,7 +31,9 @@ class AbstractCreatingOrUpdatingContentCommand
 
     final SiteService siteService;
 
-    final ContentProcessors contentProcessors;
+    final List<ContentProcessor> contentProcessors;
+
+    final List<ContentValidator> contentValidators;
 
     final boolean allowUnsafeAttachmentNames;
 
@@ -37,7 +42,8 @@ class AbstractCreatingOrUpdatingContentCommand
         super( builder );
         this.xDataService = builder.xDataService;
         this.siteService = builder.siteService;
-        this.contentProcessors = builder.contentProcessors;
+        this.contentProcessors = List.copyOf( builder.contentProcessors );
+        this.contentValidators = List.copyOf( builder.contentValidators );
         this.allowUnsafeAttachmentNames = builder.allowUnsafeAttachmentNames;
     }
 
@@ -48,7 +54,9 @@ class AbstractCreatingOrUpdatingContentCommand
 
         private SiteService siteService;
 
-        private ContentProcessors contentProcessors;
+        private List<ContentProcessor> contentProcessors = List.of();
+
+        private List<ContentValidator> contentValidators = List.of();
 
         private boolean allowUnsafeAttachmentNames;
 
@@ -62,6 +70,7 @@ class AbstractCreatingOrUpdatingContentCommand
             this.xDataService = source.xDataService;
             this.siteService = source.siteService;
             this.contentProcessors = source.contentProcessors;
+            this.contentValidators = source.contentValidators;
         }
 
         @SuppressWarnings("unchecked")
@@ -79,9 +88,16 @@ class AbstractCreatingOrUpdatingContentCommand
         }
 
         @SuppressWarnings("unchecked")
-        B contentProcessors( final ContentProcessors contentProcessors )
+        B contentProcessors( final List<ContentProcessor> contentProcessors )
         {
             this.contentProcessors = contentProcessors;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        B contentValidators( final List<ContentValidator> contentValidators )
+        {
+            this.contentValidators = contentValidators;
             return (B) this;
         }
 

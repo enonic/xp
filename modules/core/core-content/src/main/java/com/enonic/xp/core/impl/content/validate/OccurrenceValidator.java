@@ -1,12 +1,18 @@
 package com.enonic.xp.core.impl.content.validate;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import com.google.common.base.Preconditions;
+import org.osgi.service.component.annotations.Component;
 
+import com.enonic.xp.content.ValidationError;
+import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.content.validate.ContentValidator;
+import com.enonic.xp.content.validate.ContentValidatorParams;
 import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.FieldSet;
@@ -16,220 +22,151 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.form.Occurrences;
 
-import static java.lang.Math.toIntExact;
-
+@Component
 public final class OccurrenceValidator
+    implements ContentValidator
 {
     private static final String OPTION_SET_SELECTION_ARRAY_NAME = "_selected";
 
-    private final Form form;
-
-    private final List<ValidationError> validationErrors = new ArrayList<>();
-
-    public OccurrenceValidator( final Form form )
+    @Override
+    public void validate( final ContentValidatorParams params, final ValidationErrors.Builder validationErrorsBuilder )
     {
-        Preconditions.checkNotNull( form, "No form given" );
-        this.form = form;
+        validate( params.getContentType().getForm(), params.getData().getRoot(), validationErrorsBuilder );
     }
 
-    public ValidationErrors validate( final PropertySet propertySet )
+    public static void validate( final Form form, final PropertySet dataSet, final ValidationErrors.Builder validationErrorsBuilder )
     {
-
-        this.validate( this.form, propertySet );
-
-        return ValidationErrors.from( validationErrors );
+        validate( form, List.of( dataSet ), validationErrorsBuilder );
     }
 
-    private void validate( final Form form, final PropertySet dataSet )
-    {
-        final List<PropertySet> parentDataSets = new ArrayList<>();
-        parentDataSets.add( dataSet );
-        validate( form, parentDataSets );
-    }
-
-    private void validate( final Iterable<FormItem> formItems, final List<PropertySet> parentDataSets )
+    private static void validate( final Iterable<FormItem> formItems, final List<PropertySet> parentDataSets,
+                                  final ValidationErrors.Builder validationErrorsBuilder )
     {
         for ( FormItem formItem : formItems )
         {
-            if ( formItem instanceof Input )
+            validateOccurrences( formItem, parentDataSets, validationErrorsBuilder );
+
+            if ( formItem instanceof FormItemSet )
             {
-                validateInput( (Input) formItem, parentDataSets );
-            }
-            else if ( formItem instanceof FormItemSet )
-            {
-                validateFormItemSet( (FormItemSet) formItem, parentDataSets );
+                final List<PropertySet> dataSets = getDataSets( formItem.getName(), parentDataSets );
+                validate( ( (FormItemSet) formItem ).getFormItems(), dataSets, validationErrorsBuilder );
             }
             else if ( formItem instanceof FieldSet )
             {
-                validate( ( (FieldSet) formItem ).formItemIterable(), parentDataSets );
+                validate( ( (FieldSet) formItem ).formItemIterable(), parentDataSets, validationErrorsBuilder );
             }
             else if ( formItem instanceof FormOptionSet )
             {
-                validateFormOptionSet( (FormOptionSet) formItem, parentDataSets );
+                validateFormOptionSetSelection( (FormOptionSet) formItem, parentDataSets, validationErrorsBuilder );
             }
         }
     }
 
-    private void validateInput( final Input input, final List<PropertySet> parentDataSets )
+    private static void validateFormOptionSetSelection( final FormOptionSet formOptionSet, final List<PropertySet> parentDataSets,
+                                                        final ValidationErrors.Builder validationErrorsBuilder )
     {
-        this.validateInputOccurrences( input, parentDataSets );
-    }
+        final List<PropertySet> propertySets = getDataSets( formOptionSet.getName(), parentDataSets );
 
-    private void validateFormOptionSet( final FormOptionSet formOptionSet, final List<PropertySet> parentDataSets )
-    {
-        this.validateOptionSetOccurrences( formOptionSet, parentDataSets );
-
-        this.validateFormOptionSetSelection( formOptionSet, parentDataSets );
-    }
-
-    private void validateFormOptionSetSelection( final FormOptionSet formOptionSet, final List<PropertySet> parentDataSets )
-    {
-        final List<PropertySet> optionSetOccurrencePropertySets = getDataSets( formOptionSet.getName(), parentDataSets );
-
-        for ( PropertySet optionSetOccurrencePropertySet : optionSetOccurrencePropertySets )
+        for ( PropertySet propertySet : propertySets )
         {
+            boolean hasSelectionArray =
+                propertySet.getPropertyArrays().stream().anyMatch( array -> array.getValueType().equals( ValueTypes.STRING ) );
 
-            boolean hasSelectionArray = optionSetOccurrencePropertySet.getPropertyArrays().stream().anyMatch(
-                    array -> array.getValueType().equals( ValueTypes.STRING ) );
+            final List<Property> selectedItems = propertySet.getProperties( OPTION_SET_SELECTION_ARRAY_NAME );
 
-            final List<Property> selectedItems = optionSetOccurrencePropertySet.getProperties( OPTION_SET_SELECTION_ARRAY_NAME );
+            int numberOfOptions = hasSelectionArray
+                ? selectedItems.size()
+                : Math.toIntExact(
+                    StreamSupport.stream( formOptionSet.spliterator(), false ).filter( FormOptionSetOption::isDefaultOption ).count() );
 
-            if ( hasSelectionArray )
+            final Occurrences occurrences = formOptionSet.getMultiselection();
+
+            if ( numberOfOptions < occurrences.getMinimum() ||
+                ( occurrences.getMaximum() != 0 && numberOfOptions > occurrences.getMaximum() ) )
             {
-                validateOptionSetSelection( formOptionSet, selectedItems.size() );
-            }
-            else
-            {
-                validateDefaultOptionSetSelection( formOptionSet );
+                validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrences", propertySet.getProperty().getPath() )
+                                                 .i18n( "system.cms.validation.optionsetOccurrences" )
+                                                 .args( formOptionSet.getPath(), occurrences.getMinimum(), occurrences.getMaximum(),
+                                                        numberOfOptions )
+                                                 .build() );
             }
 
             for ( final FormOptionSetOption option : formOptionSet )
             {
                 if ( hasSelectionArray && optionIsSelected( option, selectedItems ) )
                 {
-                    final List<PropertySet> optionDataSets = new ArrayList<>();
-                    optionDataSets.add( optionSetOccurrencePropertySet.getSet( option.getName() ) );
-                    validate( option.getFormItems(), optionDataSets );
+                    validate( option.getFormItems(),
+                              Optional.ofNullable( propertySet.getSet( option.getName() ) ).map( List::of ).orElse( List.of() ),
+                              validationErrorsBuilder );
                 }
             }
         }
     }
 
-    private boolean optionIsSelected( final FormOptionSetOption option, final List<Property> selectedItems )
+    private static boolean optionIsSelected( final FormOptionSetOption option, final List<Property> selectedItems )
     {
         return selectedItems.stream().anyMatch( elem -> elem.getString().equals( option.getName() ) );
     }
 
-    private void validateDefaultOptionSetSelection( final FormOptionSet formOptionSet )
+    private static void validateOccurrences( final FormItem formItem, final List<PropertySet> parentDataSets,
+                                             final ValidationErrors.Builder validationErrorsBuilder )
     {
-        final long numberOfDefaultOptions = StreamSupport.stream( formOptionSet.spliterator(), false ).
-            filter( FormOptionSetOption::isDefaultOption ).
-            count();
-        if ( numberOfDefaultOptions < formOptionSet.getMultiselection().getMinimum() ||
-            ( formOptionSet.getMultiselection().getMaximum() != 0 &&
-                numberOfDefaultOptions > formOptionSet.getMultiselection().getMaximum() ) )
+        final Occurrences occurrences;
+        if ( formItem instanceof Input )
         {
-            validationErrors.add( new OptionSetSelectionValidationError( formOptionSet, toIntExact( numberOfDefaultOptions ) ) );
+            occurrences = ( (Input) formItem ).getOccurrences();
         }
-    }
-
-    private void validateOptionSetSelection( final FormOptionSet formOptionSet, int numberOfSelectedOptions )
-    {
-        if ( numberOfSelectedOptions < formOptionSet.getMultiselection().getMinimum() ||
-            ( formOptionSet.getMultiselection().getMaximum() != 0 &&
-                numberOfSelectedOptions > formOptionSet.getMultiselection().getMaximum() ) )
+        else if ( formItem instanceof FormItemSet )
         {
-            validationErrors.add( new OptionSetSelectionValidationError( formOptionSet, numberOfSelectedOptions ) );
+            occurrences = ( (FormItemSet) formItem ).getOccurrences();
         }
-    }
-
-    private void validateFormItemSet( final FormItemSet formItemSet, final List<PropertySet> parentDataSets )
-    {
-
-        this.validateItemSetOccurrences( formItemSet, parentDataSets );
-
-        final List<PropertySet> dataSets = getDataSets( formItemSet.getName(), parentDataSets );
-        validate( formItemSet.getFormItems(), dataSets );
-    }
-
-    private void validateInputOccurrences( final Input input, final List<PropertySet> parentDataSets )
-    {
+        else if ( formItem instanceof FormOptionSet )
+        {
+            occurrences = ( (FormOptionSet) formItem ).getOccurrences();
+        }
+        else
+        {
+            return;
+        }
 
         for ( final PropertySet parentDataSet : parentDataSets )
         {
-            final int entryCount = parentDataSet.countProperties( input.getName() );
-            if ( input.isRequired() && entryCount < input.getOccurrences().getMinimum() )
+            final int entryCount = parentDataSet.countProperties( formItem.getName() );
+
+            final PropertyPath parentPath = Optional.ofNullable( parentDataSet.getProperty() )
+                .map( Property::getPath )
+                .orElseGet( () -> PropertyPath.from( formItem.getPath().toString() ) );
+
+            final PropertyPath path = PropertyPath.from( parentPath, formItem.getName() );
+
+            final int minOccurrences = occurrences.getMinimum();
+
+            if ( occurrences.impliesRequired() && entryCount < minOccurrences )
             {
-                validationErrors.add(
-                    new MinimumOccurrencesValidationError( input.getPath(), "Input", input.getOccurrences(), entryCount ) );
+                validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrences", path )
+                                                 .i18n( "system.cms.validation.minOccurrences" )
+                                                 .args( formItem.getPath(), minOccurrences, entryCount )
+                                                 .build() );
             }
 
-            final int maxOccurrences = input.getOccurrences().getMaximum();
+            final int maxOccurrences = occurrences.getMaximum();
+
             if ( maxOccurrences > 0 && entryCount > maxOccurrences )
             {
-                validationErrors.add(
-                    new MaximumOccurrencesValidationError( input.getPath(), "Input", input.getOccurrences(), entryCount ) );
+                validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrences", path )
+                                                 .i18n( "system.cms.validation.maxOccurrences" )
+                                                 .args( formItem.getPath(), occurrences.getMaximum(), entryCount )
+                                                 .build() );
             }
         }
     }
 
-    private void validateItemSetOccurrences( final FormItemSet formItemSet, final List<PropertySet> parentDataSets )
+    private static List<PropertySet> getDataSets( final String name, final List<PropertySet> parentDataSets )
     {
-
-        for ( final PropertySet parentDataSet : parentDataSets )
-        {
-            final int entryCount = parentDataSet.countProperties( formItemSet.getName() );
-            if ( formItemSet.isRequired() && entryCount < formItemSet.getOccurrences().getMinimum() )
-            {
-                validationErrors.add(
-                    new MinimumOccurrencesValidationError( formItemSet.getPath(), "FormItemSet", formItemSet.getOccurrences(),
-                                                           entryCount ) );
-            }
-
-            final int maxOccurrences = formItemSet.getOccurrences().getMaximum();
-            if ( maxOccurrences > 0 && entryCount > maxOccurrences )
-            {
-                validationErrors.add(
-                    new MaximumOccurrencesValidationError( formItemSet.getPath(), "FormItemSet", formItemSet.getOccurrences(),
-                                                           entryCount ) );
-            }
-        }
-    }
-
-    private void validateOptionSetOccurrences( final FormOptionSet formOptionSet, final List<PropertySet> parentDataSets )
-    {
-
-        for ( final PropertySet parentDataSet : parentDataSets )
-        {
-            final int entryCount = parentDataSet.countProperties( formOptionSet.getName() );
-            if ( formOptionSet.isRequired() && entryCount < formOptionSet.getOccurrences().getMinimum() )
-            {
-                validationErrors.add(
-                    new MinimumOccurrencesValidationError( formOptionSet.getPath(), "FormOptionSet", formOptionSet.getOccurrences(),
-                                                           entryCount ) );
-            }
-
-            final int maxOccurrences = formOptionSet.getOccurrences().getMaximum();
-            if ( maxOccurrences > 0 && entryCount > maxOccurrences )
-            {
-                validationErrors.add(
-                    new MaximumOccurrencesValidationError( formOptionSet.getPath(), "FormOptionSet", formOptionSet.getOccurrences(),
-                                                           entryCount ) );
-            }
-        }
-    }
-
-    private List<PropertySet> getDataSets( final String name, final List<PropertySet> parentDataSets )
-    {
-        final List<PropertySet> dataSets = new ArrayList<>();
-        for ( final PropertySet parentDataSet : parentDataSets )
-        {
-            for ( final PropertySet set : parentDataSet.getSets( name ) )
-            {
-                dataSets.add( set );
-            }
-        }
-        return dataSets;
+        return parentDataSets.stream()
+            .flatMap( parentDataSet -> StreamSupport.stream( parentDataSet.getSets( name ).spliterator(), false ) )
+            .collect( Collectors.toList() );
     }
 }

@@ -7,7 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 @PublicApi
-public class BinaryReference
+public final class BinaryReference
 {
     private final String value;
 
@@ -35,21 +35,18 @@ public class BinaryReference
         {
             return true;
         }
-
         if ( o == null || getClass() != o.getClass() )
         {
             return false;
         }
-
         final BinaryReference that = (BinaryReference) o;
-
-        return value != null ? value.equals( that.value ) : that.value == null;
+        return value.equals( that.value );
     }
 
     @Override
     public int hashCode()
     {
-        return value != null ? value.hashCode() : 0;
+        return value.hashCode();
     }
 }
 

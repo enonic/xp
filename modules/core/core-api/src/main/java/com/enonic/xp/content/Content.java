@@ -28,6 +28,8 @@ public class Content
 {
     private final boolean valid;
 
+    private final ValidationErrors validationErrors;
+
     private final String displayName;
 
     private final ContentTypeName type;
@@ -102,6 +104,7 @@ public class Content
         }
 
         this.valid = builder.valid;
+        this.validationErrors = builder.validationErrors;
         this.displayName = builder.displayName;
         this.type = builder.type;
         this.name = builder.name;
@@ -210,6 +213,11 @@ public class Content
     public boolean isValid()
     {
         return valid;
+    }
+
+    public ValidationErrors getValidationErrors()
+    {
+        return validationErrors;
     }
 
     public String getDisplayName()
@@ -404,6 +412,8 @@ public class Content
 
         protected boolean valid;
 
+        protected ValidationErrors validationErrors;
+
         protected ContentPath parentPath;
 
         protected ContentName name;
@@ -465,6 +475,7 @@ public class Content
         {
             this.id = source.id;
             this.valid = source.valid;
+            this.validationErrors = source.validationErrors;
             this.parentPath = source.parentPath;
             this.name = source.name;
             this.type = source.type;
@@ -527,6 +538,12 @@ public class Content
         public BUILDER valid( final boolean valid )
         {
             this.valid = valid;
+            return (BUILDER) this;
+        }
+
+        public BUILDER validationErrors( final ValidationErrors validationErrors )
+        {
+            this.validationErrors = validationErrors;
             return (BUILDER) this;
         }
 

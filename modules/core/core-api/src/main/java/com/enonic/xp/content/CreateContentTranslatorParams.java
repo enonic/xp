@@ -40,6 +40,8 @@ public class CreateContentTranslatorParams
 
     private final boolean valid;
 
+    private final ValidationErrors validationErrors;
+
     private final CreateAttachments createAttachments;
 
     private final AccessControlList permissions;
@@ -72,6 +74,7 @@ public class CreateContentTranslatorParams
         this.name = builder.name;
         this.parentContentPath = builder.parent;
         this.valid = builder.valid;
+        this.validationErrors = builder.validationErrors;;
         this.permissions = builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
         this.createAttachments = builder.createAttachments;
@@ -152,6 +155,11 @@ public class CreateContentTranslatorParams
         return valid;
     }
 
+    public ValidationErrors getValidationErrors()
+    {
+        return validationErrors;
+    }
+
     public CreateAttachments getCreateAttachments()
     {
         return createAttachments;
@@ -211,6 +219,8 @@ public class CreateContentTranslatorParams
         private ContentPath parent;
 
         private boolean valid;
+
+        private ValidationErrors validationErrors;
 
         private AccessControlList permissions;
 
@@ -311,6 +321,12 @@ public class CreateContentTranslatorParams
             return this;
         }
 
+        public Builder validationErrors( final ValidationErrors validationErrors )
+        {
+            this.validationErrors = validationErrors;
+            return this;
+        }
+
         public Builder valid( final boolean valid )
         {
             this.valid = valid;
@@ -382,6 +398,10 @@ public class CreateContentTranslatorParams
         public ExtraDatas getExtraDatas()
         {
             return extraDatas;
+        }
+
+        public CreateAttachments getCreateAttachments() {
+            return createAttachments;
         }
 
         private void validate()
