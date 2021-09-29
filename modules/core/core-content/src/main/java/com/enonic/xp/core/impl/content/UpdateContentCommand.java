@@ -1,12 +1,14 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.content.AttachmentValidationError;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentDataValidationException;
@@ -18,13 +20,12 @@ import com.enonic.xp.content.EditableSite;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.processor.ProcessUpdateParams;
 import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
-import com.enonic.xp.core.impl.content.validate.ValidationError;
-import com.enonic.xp.core.impl.content.validate.ValidationErrors;
 import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
@@ -40,6 +41,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.util.BinaryReferences;
 
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -104,46 +106,80 @@ final class UpdateContentCommand
         {
             if ( editedContent.getInherit().contains( ContentInheritType.CONTENT ) )
             {
-                nodeService.commit( NodeCommitEntry.create().
-                    message( "Base inherited version" ).
-                    build(), NodeIds.from( params.getContentId().toString() ) );
+                nodeService.commit( NodeCommitEntry.create().message( "Base inherited version" ).build(),
+                                    NodeIds.from( params.getContentId().toString() ) );
                 editedContent.getInherit().remove( ContentInheritType.CONTENT );
             }
             editedContent.getInherit().remove( ContentInheritType.NAME );
         }
 
-        if ( contentBeforeChange.equals( editedContent ) && params.getCreateAttachments() == null && params.getRemoveAttachments() == null )
+        final BinaryReferences removeAttachments = Objects.requireNonNullElseGet( params.getRemoveAttachments(), BinaryReferences::empty );
+
+        if ( contentBeforeChange.equals( editedContent ) && params.getCreateAttachments() == null && removeAttachments.isEmpty() &&
+            !this.params.isClearAttachments() )
         {
             return contentBeforeChange;
         }
 
-        validateBlockingChecks( editedContent );
-        final boolean validated = validateNonBlockingChecks( editedContent );
-
-        editedContent = Content.create( editedContent ).
-            valid( validated ).
-            build();
         editedContent = processContent( contentBeforeChange, editedContent );
+
+        validateBlockingChecks( editedContent );
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+
+        if ( !params.isClearAttachments() && contentBeforeChange.getValidationErrors() != null )
+        {
+            contentBeforeChange.getValidationErrors()
+                .stream()
+                .filter( validationError -> validationError instanceof AttachmentValidationError )
+                .map( validationError -> (AttachmentValidationError) validationError )
+                .filter( validationError -> !removeAttachments.contains( validationError.getAttachment() ) )
+                .forEach( validationErrorsBuilder::add );
+        }
+
+        final ValidationErrors validationErrors = ValidateContentDataCommand.create()
+            .contentId( editedContent.getId() )
+            .data( editedContent.getData() )
+            .extraDatas( editedContent.getAllExtraData() )
+            .contentTypeName( editedContent.getType() )
+            .contentName( editedContent.getName() )
+            .displayName( editedContent.getDisplayName() )
+            .createAttachments( params.getCreateAttachments() )
+            .contentValidators( this.contentValidators )
+            .contentTypeService( this.contentTypeService )
+            .validationErrorsBuilder( validationErrorsBuilder )
+            .build()
+            .execute();
+
+        if ( params.isRequireValid() )
+        {
+            validationErrors.stream().findFirst().ifPresent( validationError -> {
+                throw new ContentDataValidationException( validationError.getMessage() );
+            } );
+        }
+
+        editedContent = Content.create( editedContent ).valid( !validationErrors.hasErrors() ).validationErrors( validationErrors ).build();
         editedContent = attachThumbnail( editedContent );
         editedContent = setModifiedTime( editedContent );
 
-        final UpdateContentTranslatorParams updateContentTranslatorParams = UpdateContentTranslatorParams.create().
-            editedContent( editedContent ).
-            createAttachments( this.params.getCreateAttachments() ).
-            removeAttachments( this.params.getRemoveAttachments() ).
-            clearAttachments( this.params.isClearAttachments() ).
-            modifier( getCurrentUser().getKey() ).
-            build();
+        final UpdateContentTranslatorParams updateContentTranslatorParams = UpdateContentTranslatorParams.create()
+            .editedContent( editedContent )
+            .createAttachments( this.params.getCreateAttachments() )
+            .removeAttachments( this.params.getRemoveAttachments() )
+            .clearAttachments( this.params.isClearAttachments() )
+            .modifier( getCurrentUser().getKey() )
+            .build();
 
-        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( updateContentTranslatorParams ).
-            contentTypeService( this.contentTypeService ).
-            xDataService( this.xDataService ).
-            pageDescriptorService( this.pageDescriptorService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            contentDataSerializer( this.contentDataSerializer ).
-            siteService( this.siteService ).
-            build().produce();
+        final UpdateNodeParams updateNodeParams = UpdateNodeParamsFactory.create( updateContentTranslatorParams )
+            .contentTypeService( this.contentTypeService )
+            .xDataService( this.xDataService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .contentDataSerializer( this.contentDataSerializer )
+            .siteService( this.siteService )
+            .build()
+            .produce();
 
         final Node editedNode = this.nodeService.update( updateNodeParams );
         return translator.fromNode( editedNode, true );
@@ -164,14 +200,14 @@ final class UpdateContentCommand
         {
             if ( contentProcessor.supports( contentType ) )
             {
-                final ProcessUpdateResult result = contentProcessor.processUpdate( ProcessUpdateParams.create().
-                    contentType( contentType ).
-                    mediaInfo( mediaInfo ).
-                    createAttachments( params.getCreateAttachments() ).
-                    originalContent( originalContent ).
-                    editedContent( editedContent ).
-                    modifier( getCurrentUser() ).
-                    build() );
+                final ProcessUpdateResult result = contentProcessor.processUpdate( ProcessUpdateParams.create()
+                                                                                       .contentType( contentType )
+                                                                                       .mediaInfo( mediaInfo )
+                                                                                       .createAttachments( params.getCreateAttachments() )
+                                                                                       .originalContent( originalContent )
+                                                                                       .editedContent( editedContent )
+                                                                                       .modifier( getCurrentUser() )
+                                                                                       .build() );
 
                 editedContent = updateContentWithProcessedData( editedContent, result );
             }
@@ -218,9 +254,7 @@ final class UpdateContentCommand
 
     private Content setModifiedTime( final Content content )
     {
-        return Content.create( content ).
-            modifiedTime( Instant.now() ).
-            build();
+        return Content.create( content ).modifiedTime( Instant.now() ).build();
     }
 
     private void validateBlockingChecks( final Content editedContent )
@@ -271,51 +305,16 @@ final class UpdateContentCommand
             contentTypeService.getByName( new GetContentTypeParams().contentTypeName( editedContent.getType() ) );
         try
         {
-            InputValidator.
-                create().
-                form( contentType.getForm() ).
-                inputTypeResolver( InputTypes.BUILTIN ).
-                build().
-                validate( editedContent.getData() );
+            InputValidator.create()
+                .form( contentType.getForm() )
+                .inputTypeResolver( InputTypes.BUILTIN )
+                .build()
+                .validate( editedContent.getData() );
         }
         catch ( final Exception e )
         {
             throw new IllegalArgumentException( "Invalid property for content: " + editedContent.getPath(), e );
         }
-    }
-
-    private boolean validateNonBlockingChecks( final Content edited )
-    {
-        final ValidationErrors validationErrors = ValidateContentDataCommand.create().
-            contentData( edited.getData() ).
-            contentType( edited.getType() ).
-            name( edited.getName() ).
-            displayName( edited.getDisplayName() ).
-            extradatas( edited.getAllExtraData() ).
-            xDataService( this.xDataService ).
-            siteService( this.siteService ).
-            contentTypeService( this.contentTypeService ).
-            build().
-            execute();
-
-        for ( ValidationError error : validationErrors )
-        {
-            LOG.info( "*** DataValidationError: " + error.getErrorMessage() );
-        }
-
-        if ( validationErrors.hasErrors() )
-        {
-            if ( this.params.isRequireValid() )
-            {
-                throw new ContentDataValidationException( validationErrors.getFirst().getErrorMessage() );
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private Thumbnail resolveMediaThumbnail( final Content content )
