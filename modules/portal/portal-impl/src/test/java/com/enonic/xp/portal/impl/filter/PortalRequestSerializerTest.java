@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.script.ScriptEngine;
 
@@ -21,7 +22,9 @@ import com.enonic.xp.script.impl.value.ScriptValueFactory;
 import com.enonic.xp.script.impl.value.ScriptValueFactoryImpl;
 import com.enonic.xp.web.HttpMethod;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PortalRequestSerializerTest
@@ -152,6 +155,36 @@ public class PortalRequestSerializerTest
         assertEquals( "param-value2-c", param2Values.get( 2 ) );
     }
 
+    @Test
+    public void serialize_no_params_duplication()
+        throws Exception
+    {
+        final PortalRequest sourceRequest = new PortalRequest();
+        sourceRequest.getParams().put( "a", "oldA" );
+
+        sourceRequest.getParams().put( "b", "oldB" );
+        sourceRequest.getParams().put( "b", "oldB" );
+
+        sourceRequest.getParams().put( "d", "oldD" );
+        sourceRequest.getParams().put( "e", "oldE" );
+        sourceRequest.getParams().put( "f", "oldF" );
+
+        final String jsonRequest = readResource( "PortalRequestSerializer_request4.json" );
+        final Object obj = execute( "var result = " + jsonRequest + "; result;" );
+        final ScriptValue value = this.factory.newValue( obj );
+
+        PortalRequestSerializer reqSerializer = new PortalRequestSerializer( sourceRequest, value );
+
+        final PortalRequest portalRequest = reqSerializer.serialize();
+
+        assertThat( portalRequest.getParams().get( "a" ) ).containsExactly( "newA" );
+        assertThat( portalRequest.getParams().get( "b" ) ).containsExactly( "newB", "1" );
+        assertThat( portalRequest.getParams().get( "c" ) ).containsExactly( "newC" );
+        assertThat( portalRequest.getParams().get( "d" ) ).containsExactly( "oldD" );
+        assertFalse( portalRequest.getParams().containsKey( "e" ) );
+        assertFalse( portalRequest.getParams().containsKey( "f" ) );
+    }
+
     private Object execute( final String script )
         throws Exception
     {
@@ -163,7 +196,7 @@ public class PortalRequestSerializerTest
     {
         try (InputStream stream = getClass().getResourceAsStream( resourceName ))
         {
-            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
+            return new String( Objects.requireNonNull( stream ).readAllBytes(), StandardCharsets.UTF_8 );
         }
     }
 }

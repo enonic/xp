@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.filter;
 
+import java.util.List;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
@@ -211,12 +213,7 @@ public final class PortalRequestSerializer
 
     private void populateParams( final PortalRequest req, final ScriptValue value )
     {
-        if ( value == null )
-        {
-            return;
-        }
-
-        if ( !value.isObject() )
+        if ( value == null || !value.isObject() )
         {
             return;
         }
@@ -226,21 +223,16 @@ public final class PortalRequestSerializer
             final ScriptValue paramValue = value.getMember( key );
             if ( paramValue == null )
             {
-                continue;
+                req.getParams().removeAll( key );
             }
-            if ( paramValue.isArray() )
+            else if ( paramValue.isArray() )
             {
-                for ( Object listValue : paramValue.getList() )
-                {
-                    req.getParams().put( key, listValue.toString() );
-                }
+                req.getParams().replaceValues( key, paramValue.getArray( String.class ) );
             }
             else if ( paramValue.isValue() )
             {
-                req.getParams().put( key, paramValue.getValue().toString() );
+                req.getParams().replaceValues( key, List.of( paramValue.getValue( String.class ) ) );
             }
         }
-
     }
-
 }
