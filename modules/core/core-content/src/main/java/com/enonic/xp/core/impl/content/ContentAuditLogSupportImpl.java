@@ -8,6 +8,10 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.archive.ArchiveContentParams;
+import com.enonic.xp.archive.ArchiveContentsResult;
+import com.enonic.xp.archive.RestoreContentParams;
+import com.enonic.xp.archive.RestoreContentsResult;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.audit.AuditLogUri;
 import com.enonic.xp.audit.AuditLogUris;
@@ -396,14 +400,14 @@ public class ContentAuditLogSupportImpl
     }
 
     @Override
-    public void move( final MoveContentParams params, MoveContentsResult result )
+    public void move( final MoveContentParams params, final MoveContentsResult result )
     {
         final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
         executor.execute( () -> doMove( params, result, context ) );
     }
 
-    private void doMove( final MoveContentParams params, MoveContentsResult result, final Context rootContext )
+    private void doMove( final MoveContentParams params, final MoveContentsResult result, final Context rootContext )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -419,6 +423,50 @@ public class ContentAuditLogSupportImpl
         addContents( resultSet, result.getMovedContents(), "movedContents" );
 
         log( "system.content.move", data, params.getContentId(), rootContext );
+    }
+
+    @Override
+    public void archive( final ArchiveContentParams params, final ArchiveContentsResult result )
+    {
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
+
+        executor.execute( () -> doArchive( params, result, context ) );
+    }
+
+    private void doArchive( final ArchiveContentParams params, final ArchiveContentsResult result, final Context rootContext )
+    {
+        final PropertyTree data = new PropertyTree();
+        final PropertySet paramsSet = data.addSet( "params" );
+        final PropertySet resultSet = data.addSet( "result" );
+
+        paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
+
+        addContents( resultSet, result.getArchivedContents(), "archivedContents" );
+
+        log( "system.content.archive", data, params.getContentId(), rootContext );
+    }
+
+    @Override
+    public void restore( final RestoreContentParams params, final RestoreContentsResult result )
+    {
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
+
+        executor.execute( () -> doRestore( params, result, context ) );
+    }
+
+    private void doRestore( final RestoreContentParams params, final RestoreContentsResult result, final Context rootContext )
+    {
+        final PropertyTree data = new PropertyTree();
+        final PropertySet paramsSet = data.addSet( "params" );
+        final PropertySet resultSet = data.addSet( "result" );
+
+        paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
+        paramsSet.addString( "parentContentPath", nullToNull( params.getPath() ) );
+
+        resultSet.addString( "parentContentPath", nullToNull( result.getParentPath() ) );
+        addContents( resultSet, result.getRestoredContents(), "restoredContents" );
+
+        log( "system.content.restore", data, params.getContentId(), rootContext );
     }
 
     @Override
