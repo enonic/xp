@@ -833,7 +833,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-//        contentAuditLogSupport.archived( params, result );
+        contentAuditLogSupport.archive( params, result );
 
         return result;
     }
@@ -848,7 +848,7 @@ public class ContentServiceImpl
             build().
             execute();
 
-//        contentAuditLogSupport.restored( params, result );
+        contentAuditLogSupport.restore( params, result );
 
         return result;
     }
