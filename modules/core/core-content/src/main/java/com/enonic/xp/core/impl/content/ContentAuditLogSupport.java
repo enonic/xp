@@ -1,5 +1,9 @@
 package com.enonic.xp.core.impl.content;
 
+import com.enonic.xp.archive.ArchiveContentParams;
+import com.enonic.xp.archive.ArchiveContentsResult;
+import com.enonic.xp.archive.RestoreContentParams;
+import com.enonic.xp.archive.RestoreContentsResult;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.Content;
@@ -51,6 +55,10 @@ interface ContentAuditLogSupport
     void duplicate( DuplicateContentParams params, DuplicateContentsResult result );
 
     void move( MoveContentParams params, MoveContentsResult result );
+
+    void archive( ArchiveContentParams params, ArchiveContentsResult result );
+
+    void restore( RestoreContentParams params, RestoreContentsResult result );
 
     void rename( RenameContentParams params, Content content );
 

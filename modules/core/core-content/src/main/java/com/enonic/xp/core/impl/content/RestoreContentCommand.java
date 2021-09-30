@@ -163,7 +163,8 @@ final class RestoreContentCommand
         }
         nodeService.refresh( RefreshMode.ALL );
 
-        result.addRestored( ContentId.from( movedNode.id().toString() ) );
+        result.addRestored( ContentId.from( movedNode.id().toString() ) )
+            .parentPath( ContentNodeHelper.translateNodePathToContentPath( parentPathToRestore ) );
 
         return result.build();
     }
