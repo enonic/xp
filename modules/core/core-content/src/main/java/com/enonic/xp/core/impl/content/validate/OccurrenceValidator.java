@@ -86,7 +86,7 @@ public final class OccurrenceValidator
             if ( numberOfOptions < occurrences.getMinimum() ||
                 ( occurrences.getMaximum() != 0 && numberOfOptions > occurrences.getMaximum() ) )
             {
-                validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrences", propertySet.getProperty().getPath() )
+                validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrencesInvalid", propertySet.getProperty().getPath() )
                                                  .i18n( "system.cms.validation.optionsetOccurrences" )
                                                  .args( formOptionSet.getPath(), occurrences.getMinimum(), occurrences.getMaximum(),
                                                         numberOfOptions )
@@ -145,7 +145,7 @@ public final class OccurrenceValidator
 
             if ( occurrences.impliesRequired() && entryCount < minOccurrences )
             {
-                validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrences", path )
+                validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrencesInvalid", path )
                                                  .i18n( "system.cms.validation.minOccurrences" )
                                                  .args( formItem.getPath(), minOccurrences, entryCount )
                                                  .build() );
@@ -155,7 +155,7 @@ public final class OccurrenceValidator
 
             if ( maxOccurrences > 0 && entryCount > maxOccurrences )
             {
-                validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrences", path )
+                validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrencesInvalid", path )
                                                  .i18n( "system.cms.validation.maxOccurrences" )
                                                  .args( formItem.getPath(), occurrences.getMaximum(), entryCount )
                                                  .build() );

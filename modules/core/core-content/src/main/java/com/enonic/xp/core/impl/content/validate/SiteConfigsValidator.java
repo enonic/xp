@@ -60,9 +60,9 @@ public class SiteConfigsValidator
                 }
                 catch ( final Exception e )
                 {
-                    validationErrorsBuilder.add( ValidationError.generalError( "com.enonic.cms.site_config_invalid" )
-                                                     .i18n( "system.cms.validation.site" )
-                                                     .args( siteConfig.getApplicationKey().getName() )
+                    validationErrorsBuilder.add( ValidationError.generalError( "com.enonic.cms.siteConfigInvalid" )
+                                                     .i18n( "system.cms.validation.siteConfigInvalid" )
+                                                     .args( siteConfig.getApplicationKey() )
                                                      .build() );
                 }
 
