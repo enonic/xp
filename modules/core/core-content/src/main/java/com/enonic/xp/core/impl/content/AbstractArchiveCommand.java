@@ -2,7 +2,11 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.node.NodeCommitEntry;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.RefreshMode;
 
 abstract class AbstractArchiveCommand
 {
@@ -14,6 +18,14 @@ abstract class AbstractArchiveCommand
     {
         this.nodeService = builder.nodeService;
         this.translator = builder.translator;
+    }
+
+    protected void commitNode( final NodeId nodeId, final String message )
+    {
+        final NodeCommitEntry commitEntry = NodeCommitEntry.create().message( message ).build();
+
+        nodeService.refresh( RefreshMode.ALL );
+        nodeService.commit( commitEntry, NodeIds.from( nodeId ) );
     }
 
     public static class Builder<B extends Builder<B>>

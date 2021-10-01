@@ -13,6 +13,8 @@ public final class ContentVersionPublishInfo
 
     private final String message;
 
+    private final CommitType type;
+
     private final ContentPublishInfo contentPublishInfo;
 
     private ContentVersionPublishInfo( Builder builder )
@@ -21,6 +23,12 @@ public final class ContentVersionPublishInfo
         timestamp = builder.timestamp;
         message = builder.message;
         contentPublishInfo = builder.contentPublishInfo;
+        type = builder.type;
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
     }
 
     public PrincipalKey getPublisher()
@@ -43,9 +51,9 @@ public final class ContentVersionPublishInfo
         return contentPublishInfo;
     }
 
-    public static Builder create()
+    public CommitType getType()
     {
-        return new Builder();
+        return type;
     }
 
     @Override
@@ -61,13 +69,19 @@ public final class ContentVersionPublishInfo
         }
         final ContentVersionPublishInfo that = (ContentVersionPublishInfo) o;
         return Objects.equals( publisher, that.publisher ) && Objects.equals( timestamp, that.timestamp ) &&
-            Objects.equals( message, that.message ) && Objects.equals( contentPublishInfo, that.contentPublishInfo );
+            Objects.equals( message, that.message ) && Objects.equals( contentPublishInfo, that.contentPublishInfo ) &&
+            Objects.equals( type, that.type );
     }
 
     @Override
     public int hashCode()
     {
         return Objects.hash( publisher, timestamp, message, contentPublishInfo );
+    }
+
+    public enum CommitType
+    {
+        PUBLISHED, UNPUBLISHED, ARCHIVED, RESTORED, CUSTOM
     }
 
     public static class Builder
@@ -79,6 +93,8 @@ public final class ContentVersionPublishInfo
         private String message;
 
         private ContentPublishInfo contentPublishInfo;
+
+        private CommitType type;
 
         public Builder publisher( final PrincipalKey publisher )
         {
@@ -101,6 +117,12 @@ public final class ContentVersionPublishInfo
         public Builder contentPublishInfo( final ContentPublishInfo contentPublishInfo )
         {
             this.contentPublishInfo = contentPublishInfo;
+            return this;
+        }
+
+        public Builder type( final CommitType type )
+        {
+            this.type = type;
             return this;
         }
 

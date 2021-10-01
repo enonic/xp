@@ -89,13 +89,16 @@ public class ContentConstants
 
     public static final ChildOrder DEFAULT_CONTENT_REPO_ROOT_ORDER = ChildOrder.from( "_name ASC" );
 
-    public static final ChildOrder DEFAULT_CHILD_ORDER = ChildOrder.create().
-        add( FieldOrderExpr.create( ContentIndexPath.MODIFIED_TIME, OrderExpr.Direction.DESC ) ).
-        build();
+    public static final ChildOrder DEFAULT_CHILD_ORDER =
+        ChildOrder.create().add( FieldOrderExpr.create( ContentIndexPath.MODIFIED_TIME, OrderExpr.Direction.DESC ) ).build();
 
     public static final String PUBLISH_COMMIT_PREFIX = "COM_ENONIC_XP_CONTENT_PUBLISH";
 
     public static final String UNPUBLISH_COMMIT_PREFIX = "COM_ENONIC_XP_CONTENT_UNPUBLISH";
+
+    public static final String RESTORE_COMMIT_PREFIX = "COM_ENONIC_XP_CONTENT_RESTORE";
+
+    public static final String ARCHIVE_COMMIT_PREFIX = "COM_ENONIC_XP_CONTENT_ARCHIVE";
 
     public static final String PUBLISH_COMMIT_PREFIX_DELIMITER = " ";
 
