@@ -161,13 +161,14 @@ final class RestoreContentCommand
 
 
         }
-        nodeService.refresh( RefreshMode.ALL );
+        commitNode( movedNode.id(), ContentConstants.RESTORE_COMMIT_PREFIX );
 
         result.addRestored( ContentId.from( movedNode.id().toString() ) )
             .parentPath( ContentNodeHelper.translateNodePathToContentPath( parentPathToRestore ) );
 
         return result.build();
     }
+
 
     @Override
     public void nodesMoved( final int count )

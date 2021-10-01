@@ -13,6 +13,7 @@ import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
@@ -100,7 +101,8 @@ final class ArchiveContentCommand
             MoveNodeParams.create().nodeId( nodeId ).parentNodePath( ArchiveConstants.ARCHIVE_ROOT_PATH ).moveListener( this );
 
         nodeService.move( builder.build() );
-        nodeService.refresh( RefreshMode.ALL );
+
+        commitNode( nodeId, ContentConstants.ARCHIVE_COMMIT_PREFIX );
 
         return ArchiveContentsResult.create().addArchived( params.getContentId() ).build();
     }
