@@ -18,13 +18,13 @@ public class ContentNameValidator
     {
         if ( params.getName() == null || params.getName().isUnnamed() )
         {
-            validationErrorsBuilder.add( ValidationError.generalError( "com.enonic.xp.cms.name_required" )
+            validationErrorsBuilder.add( ValidationError.generalError( "com.enonic.cms.nameRequired" )
                                              .i18n( "system.cms.validation.nameRequired" )
                                              .build() );
         }
         if ( nullToEmpty( params.getDisplayName() ).isBlank() )
         {
-            validationErrorsBuilder.add( ValidationError.generalError( "com.enonic.xp.cms.displayname_required" )
+            validationErrorsBuilder.add( ValidationError.generalError( "com.enonic.cms.displaynameRequired" )
                                              .i18n( "system.cms.validation.displayNameRequired" )
                                              .build() );
         }
