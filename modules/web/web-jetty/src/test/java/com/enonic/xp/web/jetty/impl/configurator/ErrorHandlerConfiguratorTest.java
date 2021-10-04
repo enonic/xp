@@ -5,10 +5,9 @@ import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.server.RunMode;
+import com.enonic.xp.web.jetty.impl.LastResortErrorHandler;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ErrorHandlerConfiguratorTest
 {
@@ -18,15 +17,7 @@ class ErrorHandlerConfiguratorTest
         final Server server = new Server();
         new ErrorHandlerConfigurator().configure( RunMode.PROD, server );
         final ErrorHandler errorHandler = server.getErrorHandler();
-        assertAll( () -> assertFalse( errorHandler.isShowStacks() ), () -> assertFalse( errorHandler.isShowServlet() ) );
-    }
+        assertThat( errorHandler ).isInstanceOf( LastResortErrorHandler.class );
 
-    @Test
-    void testConfigure_dev()
-    {
-        final Server server = new Server();
-        new ErrorHandlerConfigurator().configure( RunMode.DEV, server );
-        final ErrorHandler errorHandler = server.getErrorHandler();
-        assertAll( () -> assertTrue( errorHandler.isShowStacks() ), () -> assertTrue( errorHandler.isShowServlet() ) );
     }
 }
