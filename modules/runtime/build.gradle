@@ -41,7 +41,7 @@ addBundle( "org.slf4j:log4j-over-slf4j:${slf4jVersion}", 6 )
 addBundle( "org.jboss.logging:jboss-logging:3.4.1.Final", 6 )
 
 // Java Cryptography Extension
-addBundle( 'org.bouncycastle:bcprov-jdk15on:1.68', 6 )
+addBundle( 'org.bouncycastle:bcprov-jdk15on:1.69', 6 )
 
 // Library dependencies
 addBundle( 'com.google.guava:guava:26.0-jre', 8 )
