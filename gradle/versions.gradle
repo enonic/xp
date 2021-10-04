@@ -5,7 +5,7 @@ ext {
     felixVersion = '7.0.0'
     jettyVersion = '9.4.40.v20210413'
     jacksonVersion = '2.13.0'
-    junitJupiterVersion = '5.7.1'
+    junitJupiterVersion = '5.8.1'
     dropwizardMetricsVersion = '4.2.4'
     commonsLangVersion = '2.6'
     commonsIoVersion = '2.8.0'
