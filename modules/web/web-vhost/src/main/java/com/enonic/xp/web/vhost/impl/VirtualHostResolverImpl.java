@@ -2,7 +2,6 @@ package com.enonic.xp.web.vhost.impl;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,7 +43,7 @@ public class VirtualHostResolverImpl
     @Override
     public VirtualHost resolveVirtualHost( final HttpServletRequest req )
     {
-        String serverName = req.getServerName().toLowerCase( Locale.ROOT );
+        String serverName = req.getServerName();
         return virtualHostMappings.stream()
             .map( virtualHost -> virtualHost.matches( serverName, req.getRequestURI() ) )
             .filter( Objects::nonNull )
@@ -79,7 +78,7 @@ public class VirtualHostResolverImpl
                                                    virtualHost.getOrder() );
                 }
             }
-            else if ( originalHost.toLowerCase( Locale.ROOT ).equals( serverName ) && matchesSource( requestURI ) )
+            else if ( originalHost.equalsIgnoreCase( serverName ) && matchesSource( requestURI ) )
             {
                 return new VirtualHostMapping( virtualHost.getName(), originalHost, virtualHost.getSource(), virtualHost.getTarget(),
                                                createIdProvidersMapping( virtualHost ), virtualHost.getOrder() );
