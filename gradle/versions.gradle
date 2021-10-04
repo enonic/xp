@@ -4,7 +4,7 @@ ext {
     osgiCmpnVersion = '7.0.0'
     felixVersion = '7.0.0'
     jettyVersion = '9.4.40.v20210413'
-    jacksonVersion = '2.12.3'
+    jacksonVersion = '2.13.0'
     junitJupiterVersion = '5.7.1'
     dropwizardMetricsVersion = '4.1.21'
     commonsLangVersion = '2.6'
