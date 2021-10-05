@@ -18,6 +18,7 @@ import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
 import com.enonic.xp.content.ValidationError;
+import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
@@ -93,9 +94,9 @@ public class ContentDataSerializerTest
                                 .parentPath( ContentPath.ROOT )
                                 .creator( PrincipalKey.ofAnonymous() )
                                 .validationErrors( ValidationErrors.create()
-                                                       .add( ValidationError.attachmentError( "SOME_CODE", BinaryReference.from( "prevFile" ) )
-                                                                 .message( "someError" )
-                                                                 .build() )
+                                                       .add( ValidationError.attachmentError(
+                                                           ValidationErrorCode.from( ApplicationKey.SYSTEM, "SOME_CODE" ),
+                                                           BinaryReference.from( "prevFile" ) ).message( "someError" ).build() )
                                                        .build() )
                                 .build() )
             .modifier( PrincipalKey.ofAnonymous() )
@@ -130,13 +131,14 @@ public class ContentDataSerializerTest
         final byte[] binaryData = "my binary".getBytes();
 
         final ValidationErrors validationErrors = ValidationErrors.create()
-            .add( ValidationError.attachmentError( "SOME_CODE", BinaryReference.from( "myName" ) )
-                      .message( "someError" )
-                      .build() )
-            .add( ValidationError.dataError( "SOME_OTHER_CODE", PropertyPath.from( "" ) )
+            .add( ValidationError.attachmentError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "SOME_CODE" ),
+                                                   BinaryReference.from( "myName" ) ).message( "someError" ).build() )
+            .add( ValidationError.dataError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "SOME_OTHER_CODE" ), PropertyPath.from( "" ) )
                       .message( "someDataError" )
                       .build() )
-            .add( ValidationError.generalError( "SERIOUS_ERROR").message( "someError" ).build() )
+            .add( ValidationError.generalError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "SERIOUS_ERROR" ) )
+                      .message( "someError" )
+                      .build() )
             .build();
 
         final UpdateContentTranslatorParams params = UpdateContentTranslatorParams.create()
@@ -159,7 +161,7 @@ public class ContentDataSerializerTest
         final Iterable<PropertySet> validationErrorsData = data.getSets( "validationErrors" );
         assertThat( validationErrorsData ).hasSize( 3 )
             .extracting( propertySet -> propertySet.getString( "errorCode" ) )
-            .containsExactly( "SOME_CODE", "SOME_OTHER_CODE", "SERIOUS_ERROR" );
+            .containsExactly( "system:SOME_CODE", "system:SOME_OTHER_CODE", "system:SERIOUS_ERROR" );
 
         assertThat( validationErrorsData ).extracting( propertySet -> propertySet.getString( "attachment" ) )
             .containsExactly( "myName", null, null );

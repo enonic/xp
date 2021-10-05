@@ -10,7 +10,7 @@ public final class DataValidationError
 {
     private final PropertyPath propertyPath;
 
-    DataValidationError( final PropertyPath propertyPath, final String errorCode, final String message, final String i18n,
+    DataValidationError( final PropertyPath propertyPath, final ValidationErrorCode errorCode, final String message, final String i18n,
                          final List<Object> args )
     {
         super( errorCode, message, i18n, args );
