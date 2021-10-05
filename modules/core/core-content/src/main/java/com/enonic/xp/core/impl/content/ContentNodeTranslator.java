@@ -46,10 +46,6 @@ public class ContentNodeTranslator
 
     public Content fromNode( final Node node, final boolean resolveHasChildren )
     {
-        return fromNode( node, resolveHasChildren, true );
-    }
-
-    public Content fromNode(final Node node, final boolean resolveHasChildren, final boolean checkContext) {
         final boolean hasChildren = resolveHasChildren && this.nodeService.hasChildren( node );
         return doTranslate( node, hasChildren );
     }
