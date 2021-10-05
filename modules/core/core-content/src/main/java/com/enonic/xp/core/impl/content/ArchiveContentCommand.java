@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.EnumSet;
 
 import com.google.common.base.Preconditions;
 
@@ -13,7 +14,7 @@ import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
-import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
@@ -83,26 +84,10 @@ final class ArchiveContentCommand
 
     private ArchiveContentsResult doExecute()
     {
-        final NodeId nodeId = NodeId.from( params.getContentId() );
+        final Node nodeToArchive = updateProperties( NodeId.from( params.getContentId() ) );
 
-        final Node nodeToArchive = nodeService.update( UpdateNodeParams.create().id( nodeId ).editor( toBeEdited -> {
-            toBeEdited.data.setString( ORIGINAL_PARENT_PATH,
-                                       ContentNodeHelper.translateNodePathToContentPath( toBeEdited.source.parentPath() ).toString() );
-            toBeEdited.data.setString( ORIGINAL_NAME, toBeEdited.source.name().toString() );
-        } ).build() );
-
-        final NodePath newPath = pathResolver.buildArchivedPath( nodeToArchive );
-        if ( !newPath.getName().equals( nodeToArchive.name().toString() ) )
-        {
-            nodeService.rename( RenameNodeParams.create().nodeId( nodeId ).nodeName( NodeName.from( newPath.getName() ) ).build() );
-        }
-
-        final MoveNodeParams.Builder builder =
-            MoveNodeParams.create().nodeId( nodeId ).parentNodePath( ArchiveConstants.ARCHIVE_ROOT_PATH ).moveListener( this );
-
-        nodeService.move( builder.build() );
-
-        commitNode( nodeId, ContentConstants.ARCHIVE_COMMIT_PREFIX );
+        rename( nodeToArchive );
+        move( nodeToArchive.id() );
 
         return ArchiveContentsResult.create().addArchived( params.getContentId() ).build();
     }
@@ -114,6 +99,47 @@ final class ArchiveContentCommand
         {
             archiveContentListener.contentArchived( count );
         }
+    }
+
+    private Node updateProperties( final NodeId nodeId )
+    {
+        return nodeService.update( UpdateNodeParams.create().id( nodeId ).editor( toBeEdited -> {
+            toBeEdited.data.setString( ORIGINAL_PARENT_PATH,
+                                       ContentNodeHelper.translateNodePathToContentPath( toBeEdited.source.parentPath() ).toString() );
+            toBeEdited.data.setString( ORIGINAL_NAME, toBeEdited.source.name().toString() );
+        } ).build() );
+    }
+
+    private Node rename( final Node node )
+    {
+        final NodePath newPath = pathResolver.buildArchivedPath( node );
+        if ( !newPath.getName().equals( node.name().toString() ) )
+        {
+            return nodeService.rename(
+                RenameNodeParams.create().nodeId( node.id() ).nodeName( NodeName.from( newPath.getName() ) ).build() );
+        }
+
+        return node;
+    }
+
+    private Node move( final NodeId nodeId )
+    {
+        final MoveNodeParams.Builder builder =
+            MoveNodeParams.create().nodeId( nodeId ).parentNodePath( ArchiveConstants.ARCHIVE_ROOT_PATH ).moveListener( this );
+
+        if ( params.stopInherit() )
+        {
+            builder.processor( new ContentDataProcessor()
+            {
+                @Override
+                protected EnumSet<ContentInheritType> getTypesToProceed()
+                {
+                    return EnumSet.of( ContentInheritType.CONTENT, ContentInheritType.PARENT );
+                }
+            } );
+        }
+
+        return nodeService.move( builder.build() );
     }
 
     public static class Builder
