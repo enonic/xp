@@ -40,57 +40,62 @@ final class MovedEventSyncCommand
 
             params.getTargetContext().runWith( () -> {
 
-
-                    if ( !params.getSourceContext()
-                        .getAttribute( "contentRootPath" )
-                        .equals( params.getTargetContext().getAttribute( "contentRootPath" ) ) )
+                if ( !params.getSourceContext()
+                    .getAttribute( "contentRootPath" )
+                    .equals( params.getTargetContext().getAttribute( "contentRootPath" ) ) )
+                {
+                    if ( ArchiveConstants.ARCHIVE_ROOT_PATH.toString()
+                        .equals( params.getSourceContext().getAttribute( "contentRootPath" ).toString() ) )
                     {
-                        if ( ArchiveConstants.ARCHIVE_ROOT_PATH.toString().equals( params.getSourceContext().getAttribute( "contentRootPath" ).toString() ) )
-                        {
-                            contentService.archive( ArchiveContentParams.create().contentId( params.getTargetContent().getId() ).build() );
-                        }
-                        else if ( ArchiveConstants.ARCHIVE_ROOT_PATH.toString().equals( params.getTargetContext().getAttribute( "contentRootPath" ).toString() ) )
-                        {
-                            final Context
-                                targetContextToRestore = ContextBuilder.from( params.getTargetContext() ).attribute( "contentRootPath", params.getSourceContext().getAttribute( "contentRootPath" ) ).build();
-
-                            final ContentPath targetParentPath = targetContextToRestore.callWith( () -> contentService.contentExists( sourceParent.getId() )
-                                ? contentService.getById( sourceParent.getId() ).getPath()
-                                : ContentPath.ROOT);
-
-                            contentService.restore( RestoreContentParams.create()
-                                                        .contentId( params.getTargetContent().getId() )
-                                                        .path( targetParentPath )
-                                                        .build() );
-                        }
+                        contentService.archive(
+                            ArchiveContentParams.create().contentId( params.getTargetContent().getId() ).stopInherit( false ).build() );
                     }
-                    else
+                    else if ( ArchiveConstants.ARCHIVE_ROOT_PATH.toString()
+                        .equals( params.getTargetContext().getAttribute( "contentRootPath" ).toString() ) )
                     {
-                        final ContentPath targetParentPath = contentService.contentExists( sourceParent.getId() )
-                            ? contentService.getById( sourceParent.getId() ).getPath()
-                            : sourceRoot.getId().equals( sourceParent.getId() ) ? ContentPath.ROOT : null;
+                        final Context targetContextToRestore = ContextBuilder.from( params.getTargetContext() )
+                            .attribute( "contentRootPath", params.getSourceContext().getAttribute( "contentRootPath" ) )
+                            .build();
 
-                        if(targetParentPath == null) {
-                            return;
-                        }
+                        final ContentPath targetParentPath = targetContextToRestore.callWith(
+                            () -> contentService.contentExists( sourceParent.getId() ) ? contentService.getById( sourceParent.getId() )
+                                .getPath() : ContentPath.ROOT );
 
-                        if ( !targetParentPath.equals( params.getTargetContent().getParentPath() ) )
+                        contentService.restore( RestoreContentParams.create()
+                                                    .contentId( params.getTargetContent().getId() )
+                                                    .path( targetParentPath )
+                                                    .stopInherit( false )
+                                                    .build() );
+                    }
+                }
+                else
+                {
+                    final ContentPath targetParentPath = contentService.contentExists( sourceParent.getId() )
+                        ? contentService.getById( sourceParent.getId() ).getPath()
+                        : sourceRoot.getId().equals( sourceParent.getId() ) ? ContentPath.ROOT : null;
+
+                    if ( targetParentPath == null )
+                    {
+                        return;
+                    }
+
+                    if ( !targetParentPath.equals( params.getTargetContent().getParentPath() ) )
+                    {
+                        final ContentPath newPath = buildNewPath( targetParentPath, params.getTargetContent().getName() );
+
+                        if ( !Objects.equals( newPath.getName(), params.getTargetContent().getPath().getName() ) )
                         {
-                            final ContentPath newPath = buildNewPath( targetParentPath, params.getTargetContent().getName() );
-
-                            if ( !Objects.equals( newPath.getName(), params.getTargetContent().getPath().getName() ) )
-                            {
-                                contentService.rename( RenameContentParams.create()
-                                                           .contentId( params.getTargetContent().getId() )
-                                                           .newName( ContentName.from( newPath.getName() ) )
-                                                           .build() );
-                            }
-                            contentService.move( MoveContentParams.create()
-                                                     .contentId( params.getTargetContent().getId() )
-                                                     .parentContentPath( targetParentPath )
-                                                     .stopInherit( false )
-                                                     .build() );
+                            contentService.rename( RenameContentParams.create()
+                                                       .contentId( params.getTargetContent().getId() )
+                                                       .newName( ContentName.from( newPath.getName() ) )
+                                                       .build() );
                         }
+                        contentService.move( MoveContentParams.create()
+                                                 .contentId( params.getTargetContent().getId() )
+                                                 .parentContentPath( targetParentPath )
+                                                 .stopInherit( false )
+                                                 .build() );
+                    }
 
                 }
             } );

@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.EnumSet;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.archive.ArchiveConstants;
@@ -11,6 +13,7 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.context.ContextAccessor;
@@ -112,9 +115,9 @@ final class RestoreContentCommand
             {
                 final String originalParentPath = originalParentPathProperty.getString();
 
-                if ( params.getPath() != null )
+                if ( params.getParentPath() != null )
                 {
-                    parentPathToRestore = NodePath.create( ContentConstants.CONTENT_ROOT_PATH, params.getPath().toString() ).build();
+                    parentPathToRestore = NodePath.create( ContentConstants.CONTENT_ROOT_PATH, params.getParentPath().toString() ).build();
                 }
                 else if ( !nullToEmpty( originalParentPath ).isBlank() )
                 {
@@ -141,6 +144,18 @@ final class RestoreContentCommand
 
         final MoveNodeParams.Builder builder =
             MoveNodeParams.create().nodeId( nodeToRestore.id() ).parentNodePath( parentPathToRestore ).moveListener( this );
+
+        if ( params.stopInherit() )
+        {
+            builder.processor( new ContentDataProcessor()
+            {
+                @Override
+                protected EnumSet<ContentInheritType> getTypesToProceed()
+                {
+                    return EnumSet.of( ContentInheritType.CONTENT, ContentInheritType.PARENT );
+                }
+            } );
+        }
 
         final Node movedNode = nodeService.move( builder.build() );
 
