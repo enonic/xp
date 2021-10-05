@@ -161,6 +161,8 @@ public final class ParentContentSynchronizer
     {
         final Queue<Content> queue = new ArrayDeque<>();
 
+        final Map<NodePath, Context> targetContexts = initContexts( ProjectName.from( targetContext.getRepositoryId() ) );
+
         sourceContext.runWith( () -> {
 
             queue.add( sourceContent );
@@ -169,7 +171,8 @@ public final class ParentContentSynchronizer
 
             if ( !root.getId().equals( sourceContent.getId() ) )
             {
-                this.doSync( sourceContent, sourceContext, targetContext );
+                final Context actualTargetContext = getActualContext( sourceContent.getId(), targetContexts.values() );
+                this.doSync( sourceContent, sourceContext, actualTargetContext != null ? actualTargetContext : targetContext );
             }
 
             while ( queue.size() > 0 )
@@ -185,7 +188,8 @@ public final class ParentContentSynchronizer
 
                 for ( final Content content : result.getContents() )
                 {
-                    this.doSync( content, sourceContext, targetContext );
+                    final Context actualTargetContext = getActualContext( content.getId(), targetContexts.values() );
+                    this.doSync( content, sourceContext, actualTargetContext != null ? actualTargetContext : targetContext );
 
                     if ( content.hasChildren() )
                     {
