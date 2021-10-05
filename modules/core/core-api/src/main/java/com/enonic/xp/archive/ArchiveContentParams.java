@@ -12,10 +12,13 @@ public final class ArchiveContentParams
 
     private final ArchiveContentListener archiveContentListener;
 
+    private final boolean stopInherit;
+
     public ArchiveContentParams( Builder builder )
     {
         this.contentId = builder.contentId;
         this.archiveContentListener = builder.archiveContentListener;
+        this.stopInherit = builder.stopInherit;
     }
 
     public static ArchiveContentParams.Builder create()
@@ -33,6 +36,11 @@ public final class ArchiveContentParams
         return archiveContentListener;
     }
 
+    public boolean stopInherit()
+    {
+        return stopInherit;
+    }
+
     public void validate()
     {
         Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
@@ -43,6 +51,8 @@ public final class ArchiveContentParams
         private ContentId contentId;
 
         private ArchiveContentListener archiveContentListener;
+
+        private boolean stopInherit = true;
 
         private Builder()
         {
@@ -57,6 +67,12 @@ public final class ArchiveContentParams
         public Builder archiveContentListener( ArchiveContentListener archiveContentListener )
         {
             this.archiveContentListener = archiveContentListener;
+            return this;
+        }
+
+        public Builder stopInherit( boolean stopInherit )
+        {
+            this.stopInherit = stopInherit;
             return this;
         }
 

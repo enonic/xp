@@ -11,15 +11,19 @@ public final class RestoreContentParams
 {
     private final ContentId contentId;
 
-    private final ContentPath path;
+    private final ContentPath parentPath;
 
     private final RestoreContentListener restoreContentListener;
+
+    private final boolean stopInherit;
 
     public RestoreContentParams( Builder builder )
     {
         this.contentId = builder.contentId;
+        this.parentPath = builder.parentPath;
         this.restoreContentListener = builder.restoreContentListener;
-        this.path = builder.path;
+        this.stopInherit = builder.stopInherit;
+
     }
 
     public static RestoreContentParams.Builder create()
@@ -32,14 +36,19 @@ public final class RestoreContentParams
         return contentId;
     }
 
-    public ContentPath getPath()
+    public ContentPath getParentPath()
     {
-        return path;
+        return parentPath;
     }
 
     public RestoreContentListener getRestoreContentListener()
     {
         return restoreContentListener;
+    }
+
+    public boolean stopInherit()
+    {
+        return stopInherit;
     }
 
     public void validate()
@@ -51,9 +60,11 @@ public final class RestoreContentParams
     {
         private ContentId contentId;
 
-        private ContentPath path;
+        private ContentPath parentPath;
 
         private RestoreContentListener restoreContentListener;
+
+        private boolean stopInherit = true;
 
         private Builder()
         {
@@ -67,13 +78,19 @@ public final class RestoreContentParams
 
         public Builder path( final ContentPath path )
         {
-            this.path = path;
+            this.parentPath = path;
             return this;
         }
 
         public Builder restoreContentListener( RestoreContentListener restoreContentListener )
         {
             this.restoreContentListener = restoreContentListener;
+            return this;
+        }
+
+        public Builder stopInherit( boolean stopInherit )
+        {
+            this.stopInherit = stopInherit;
             return this;
         }
 
