@@ -461,7 +461,7 @@ public class ContentAuditLogSupportImpl
         final PropertySet resultSet = data.addSet( "result" );
 
         paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
-        paramsSet.addString( "parentContentPath", nullToNull( params.getPath() ) );
+        paramsSet.addString( "parentContentPath", nullToNull( params.getParentPath() ) );
 
         resultSet.addString( "parentContentPath", nullToNull( result.getParentPath() ) );
         addContents( resultSet, result.getRestoredContents(), "restoredContents" );
