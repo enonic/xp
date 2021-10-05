@@ -5,10 +5,11 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.ContentValidator;
+import com.enonic.xp.content.ContentValidatorParams;
 import com.enonic.xp.content.ValidationError;
+import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
-import com.enonic.xp.content.validate.ContentValidator;
-import com.enonic.xp.content.validate.ContentValidatorParams;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.SiteConfig;
@@ -60,8 +61,8 @@ public class SiteConfigsValidator
                 }
                 catch ( final Exception e )
                 {
-                    validationErrorsBuilder.add( ValidationError.generalError( "com.enonic.cms.siteConfigInvalid" )
-                                                     .i18n( "system.cms.validation.siteConfigInvalid" )
+                    validationErrorsBuilder.add( ValidationError.generalError(
+                            ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.siteConfigInvalid" ) )
                                                      .args( siteConfig.getApplicationKey() )
                                                      .build() );
                 }

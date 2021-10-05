@@ -32,6 +32,7 @@ import com.enonic.xp.content.DataValidationError;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.UpdateContentTranslatorParams;
 import com.enonic.xp.content.ValidationError;
+import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyPath;
@@ -423,9 +424,11 @@ public class ContentDataSerializer
             }
         } ).orElse( null );
 
+        final ValidationErrorCode errorCode = ValidationErrorCode.parse( ve.getString( "errorCode" ) );
+
         if ( ve.hasProperty( "propertyPath" ) )
         {
-            return ValidationError.dataError( ve.getString( "errorCode" ), PropertyPath.from( ve.getString( "propertyPath" ) ) )
+            return ValidationError.dataError( errorCode, PropertyPath.from( ve.getString( "propertyPath" ) ) )
                 .message( ve.getString( "message" ), true )
                 .i18n( ve.getString( "i18n" ) )
                 .args( args )
@@ -433,7 +436,7 @@ public class ContentDataSerializer
         }
         else if ( ve.hasProperty( "attachment" ) )
         {
-            return ValidationError.attachmentError( ve.getString( "errorCode" ), BinaryReference.from( ve.getString( "attachment" ) ) )
+            return ValidationError.attachmentError( errorCode, BinaryReference.from( ve.getString( "attachment" ) ) )
                 .message( ve.getString( "message" ), true )
                 .i18n( ve.getString( "i18n" ) )
                 .args( args )
@@ -441,7 +444,7 @@ public class ContentDataSerializer
         }
         else
         {
-            return ValidationError.generalError( ve.getString( "errorCode" ) )
+            return ValidationError.generalError( errorCode )
                 .message( ve.getString( "message" ), true )
                 .i18n( ve.getString( "i18n" ) )
                 .args( args )
@@ -534,7 +537,7 @@ public class ContentDataSerializer
         {
             contentAsData.addSets( VALIDATION_ERRORS, validationErrors.stream().map( validationError -> {
                 final PropertySet propertySet = new PropertySet();
-                propertySet.addString( "errorCode", validationError.getErrorCode() );
+                propertySet.addString( "errorCode", validationError.getErrorCode().toString() );
                 propertySet.addString( "message", validationError.getMessage() );
                 propertySet.addString( "i18n", validationError.getI18n() );
                 if ( !validationError.getArgs().isEmpty() )

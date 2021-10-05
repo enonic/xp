@@ -7,10 +7,12 @@ import java.util.stream.StreamSupport;
 
 import org.osgi.service.component.annotations.Component;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.ContentValidator;
+import com.enonic.xp.content.ContentValidatorParams;
 import com.enonic.xp.content.ValidationError;
+import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
-import com.enonic.xp.content.validate.ContentValidator;
-import com.enonic.xp.content.validate.ContentValidatorParams;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
@@ -86,11 +88,12 @@ public final class OccurrenceValidator
             if ( numberOfOptions < occurrences.getMinimum() ||
                 ( occurrences.getMaximum() != 0 && numberOfOptions > occurrences.getMaximum() ) )
             {
-                validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrencesInvalid", propertySet.getProperty().getPath() )
-                                                 .i18n( "system.cms.validation.optionsetOccurrences" )
-                                                 .args( formOptionSet.getPath(), occurrences.getMinimum(), occurrences.getMaximum(),
-                                                        numberOfOptions )
-                                                 .build() );
+                validationErrorsBuilder.add(
+                    ValidationError.dataError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.occurrencesInvalid" ),
+                                               propertySet.getProperty().getPath() )
+                        .i18n( "system.cms.validation.optionsetOccurrencesInvalid" )
+                        .args( formOptionSet.getPath(), occurrences.getMinimum(), occurrences.getMaximum(), numberOfOptions )
+                        .build() );
             }
 
             for ( final FormOptionSetOption option : formOptionSet )
@@ -145,20 +148,22 @@ public final class OccurrenceValidator
 
             if ( occurrences.impliesRequired() && entryCount < minOccurrences )
             {
-                validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrencesInvalid", path )
-                                                 .i18n( "system.cms.validation.minOccurrences" )
-                                                 .args( formItem.getPath(), minOccurrences, entryCount )
-                                                 .build() );
+                validationErrorsBuilder.add(
+                    ValidationError.dataError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.occurrencesInvalid" ), path )
+                        .i18n( "system.cms.validation.minOccurrencesInvalid" )
+                        .args( formItem.getPath(), minOccurrences, entryCount )
+                        .build() );
             }
 
             final int maxOccurrences = occurrences.getMaximum();
 
             if ( maxOccurrences > 0 && entryCount > maxOccurrences )
             {
-                validationErrorsBuilder.add( ValidationError.dataError( "com.enonic.cms.occurrencesInvalid", path )
-                                                 .i18n( "system.cms.validation.maxOccurrences" )
-                                                 .args( formItem.getPath(), occurrences.getMaximum(), entryCount )
-                                                 .build() );
+                validationErrorsBuilder.add(
+                    ValidationError.dataError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.occurrencesInvalid" ), path )
+                        .i18n( "system.cms.validation.maxOccurrencesInvalid" )
+                        .args( formItem.getPath(), occurrences.getMaximum(), entryCount )
+                        .build() );
             }
         }
     }

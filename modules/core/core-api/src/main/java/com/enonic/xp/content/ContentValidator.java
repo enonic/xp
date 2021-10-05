@@ -1,6 +1,5 @@
-package com.enonic.xp.content.validate;
+package com.enonic.xp.content;
 
-import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 /**

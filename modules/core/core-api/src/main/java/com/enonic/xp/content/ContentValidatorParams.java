@@ -1,11 +1,8 @@
-package com.enonic.xp.content.validate;
+package com.enonic.xp.content;
 
 import java.util.Objects;
 
 import com.enonic.xp.attachment.CreateAttachments;
-import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentName;
-import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentType;
 

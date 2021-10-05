@@ -13,7 +13,7 @@ import com.enonic.xp.util.BinaryReference;
 
 public class ValidationError
 {
-    private final String errorCode;
+    private final ValidationErrorCode errorCode;
 
     private final String message;
 
@@ -21,7 +21,7 @@ public class ValidationError
 
     private final List<Object> args;
 
-    ValidationError( final String errorCode, final String message, final String i18n, final List<Object> args )
+    ValidationError( final ValidationErrorCode errorCode, final String message, final String i18n, final List<Object> args )
     {
         this.errorCode = errorCode;
         this.message = message;
@@ -34,7 +34,7 @@ public class ValidationError
         return message;
     }
 
-    public String getErrorCode()
+    public ValidationErrorCode getErrorCode()
     {
         return errorCode;
     }
@@ -49,14 +49,14 @@ public class ValidationError
         return args;
     }
 
-    public static Builder generalError( final String errorCode )
+    public static Builder generalError( final ValidationErrorCode errorCode )
     {
         final Builder builder = new Builder();
         builder.errorCode = errorCode;
         return builder;
     }
 
-    public static Builder attachmentError( final String errorCode, final BinaryReference attachment )
+    public static Builder attachmentError( final ValidationErrorCode errorCode, final BinaryReference attachment )
     {
         final Builder builder = new Builder();
         builder.errorCode = errorCode;
@@ -64,7 +64,7 @@ public class ValidationError
         return builder;
     }
 
-    public static Builder dataError( final String errorCode, final PropertyPath propertyPath )
+    public static Builder dataError( final ValidationErrorCode errorCode, final PropertyPath propertyPath )
     {
         final Builder builder = new Builder();
         builder.errorCode = errorCode;
@@ -74,7 +74,7 @@ public class ValidationError
 
     public static class Builder
     {
-        private String errorCode;
+        private ValidationErrorCode errorCode;
 
         private BinaryReference attachment;
 

@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ValidationErrors;
-import com.enonic.xp.content.validate.ContentValidator;
-import com.enonic.xp.content.validate.ContentValidatorParams;
+import com.enonic.xp.content.ContentValidator;
+import com.enonic.xp.content.ContentValidatorParams;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;

@@ -90,7 +90,7 @@ import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.processor.ContentProcessor;
-import com.enonic.xp.content.validate.ContentValidator;
+import com.enonic.xp.content.ContentValidator;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;

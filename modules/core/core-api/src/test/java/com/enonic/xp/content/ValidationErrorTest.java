@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.util.BinaryReference;
 
@@ -18,43 +19,58 @@ public class ValidationErrorTest
     @Test
     void generalError()
     {
-        final ValidationError validationError = ValidationError.generalError( "ERR_CODE" ).build();
+        final ValidationError validationError =
+            ValidationError.generalError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "ERR_CODE" ) ).build();
         assertThat( validationError ).isInstanceOf( ValidationError.class )
             .extracting( ValidationError::getErrorCode )
-            .isEqualTo( "ERR_CODE" );
+            .asString()
+            .isEqualTo( "system:ERR_CODE" );
     }
 
     @Test
     void dataError()
     {
-        final ValidationError validationError = ValidationError.dataError( "ERR_CODE", PropertyPath.from( "a.b" ) ).build();
+        final ValidationError validationError =
+            ValidationError.dataError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "ERR_CODE" ), PropertyPath.from( "a.b" ) ).build();
         assertThat( validationError ).isInstanceOf( DataValidationError.class )
             .extracting( ValidationError::getErrorCode )
-            .isEqualTo( "ERR_CODE" );
+            .asString()
+            .isEqualTo( "system:ERR_CODE" );
         assertEquals( PropertyPath.from( "a.b" ), ( (DataValidationError) validationError ).getPropertyPath() );
     }
 
     @Test
     void attachmentError()
     {
-        final ValidationError validationError = ValidationError.attachmentError( "ERR_CODE", BinaryReference.from( "f" ) ).build();
+        final ValidationError validationError =
+            ValidationError.attachmentError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "ERR_CODE" ), BinaryReference.from( "f" ) )
+                .build();
         assertThat( validationError ).isInstanceOf( AttachmentValidationError.class )
             .extracting( ValidationError::getErrorCode )
-            .isEqualTo( "ERR_CODE" );
+            .asString()
+            .isEqualTo( "system:ERR_CODE" );
         assertEquals( BinaryReference.from( "f" ), ( (AttachmentValidationError) validationError ).getAttachment() );
     }
 
     @Test
     void messageFormat()
     {
-        final ValidationError validationError = ValidationError.generalError( "ERR_CODE" ).message( "{0}" ).args( "a" ).build();
+        final ValidationError validationError =
+            ValidationError.generalError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "ERR_CODE" ) )
+                .message( "{0}" )
+                .args( "a" )
+                .build();
         assertEquals( "a", validationError.getMessage() );
     }
 
     @Test
     void skipFormat()
     {
-        final ValidationError validationError = ValidationError.generalError( "ERR_CODE" ).message( "{0}", true ).args( "a" ).build();
+        final ValidationError validationError =
+            ValidationError.generalError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "ERR_CODE" ) )
+                .message( "{0}", true )
+                .args( "a" )
+                .build();
         assertEquals( "{0}", validationError.getMessage() );
     }
 
@@ -63,7 +79,10 @@ public class ValidationErrorTest
     {
         final Date date = new Date();
         final ValidationError validationError =
-            ValidationError.generalError( "ERR_CODE" ).message( "{0, date}" ).args( date ).build();
+            ValidationError.generalError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "ERR_CODE" ) )
+                .message( "{0, date}" )
+                .args( date )
+                .build();
         assertEquals( DateFormat.getDateInstance( DateFormat.DEFAULT ).format( date ), validationError.getMessage() );
         assertEquals( date.getTime(), validationError.getArgs().get( 0 ) );
     }
@@ -72,7 +91,10 @@ public class ValidationErrorTest
     void classArgConvertedToString()
     {
         final ValidationError validationError =
-            ValidationError.generalError( "ERR_CODE" ).message( "{0}" ).args( PropertyPath.from( "a.b" ) ).build();
+            ValidationError.generalError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "ERR_CODE" ) )
+                .message( "{0}" )
+                .args( PropertyPath.from( "a.b" ) )
+                .build();
         assertEquals( "a.b", validationError.getMessage() );
         assertEquals( "a.b", validationError.getArgs().get( 0 ) );
     }
@@ -82,7 +104,10 @@ public class ValidationErrorTest
     {
         final Date date = new Date();
         final ValidationError validationError =
-            ValidationError.generalError( "ERR_CODE" ).message( "{0, date}" ).args( date.getTime() ).build();
+            ValidationError.generalError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "ERR_CODE" ) )
+                .message( "{0, date}" )
+                .args( date.getTime() )
+                .build();
         assertEquals( DateFormat.getDateInstance( DateFormat.DEFAULT ).format( date ), validationError.getMessage() );
     }
 
@@ -90,7 +115,11 @@ public class ValidationErrorTest
     void fields()
     {
         final ValidationError validationError =
-            ValidationError.generalError( "ERR_CODE" ).i18n( "some.message" ).args( "a", 1 ).message( "{0}", true ).build();
+            ValidationError.generalError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "ERR_CODE" ) )
+                .i18n( "some.message" )
+                .args( "a", 1 )
+                .message( "{0}", true )
+                .build();
         assertAll( () -> assertEquals( "some.message", validationError.getI18n() ),
                    () -> assertEquals( Arrays.asList( "a", 1 ), validationError.getArgs() ),
                    () -> assertEquals( "{0}", validationError.getMessage() ) );
