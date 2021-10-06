@@ -145,6 +145,7 @@ public class VirtualHostResolverImplTest
         assertNotNull( mapping );
         assertEquals( "c", mapping.getName() );
         assertEquals( "/other/c/no", mapping.getTarget() );
+        assertEquals( "no.domain.com", mapping.getHost() );
 
         when( req.getServerName() ).thenReturn( "foo.com" );
         when( req.getRequestURI() ).thenReturn( URI.create( "https://foo.com" ).getPath() );
