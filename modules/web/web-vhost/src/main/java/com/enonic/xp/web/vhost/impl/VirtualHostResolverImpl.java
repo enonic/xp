@@ -73,14 +73,14 @@ public class VirtualHostResolverImpl
                 Matcher matcher = pattern.matcher( serverName );
                 if ( matcher.matches() && matchesSource( requestURI ) )
                 {
-                    return new VirtualHostMapping( virtualHost.getName(), originalHost, virtualHost.getSource(),
+                    return new VirtualHostMapping( virtualHost.getName(), serverName, virtualHost.getSource(),
                                                    matcher.replaceAll( virtualHost.getTarget() ), createIdProvidersMapping( virtualHost ),
                                                    virtualHost.getOrder() );
                 }
             }
             else if ( originalHost.equalsIgnoreCase( serverName ) && matchesSource( requestURI ) )
             {
-                return new VirtualHostMapping( virtualHost.getName(), originalHost, virtualHost.getSource(), virtualHost.getTarget(),
+                return new VirtualHostMapping( virtualHost.getName(), serverName, virtualHost.getSource(), virtualHost.getTarget(),
                                                createIdProvidersMapping( virtualHost ), virtualHost.getOrder() );
             }
             return null;
