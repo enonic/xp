@@ -30,6 +30,7 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -39,6 +40,7 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ContentValidator;
 import com.enonic.xp.content.ContentValidityParams;
 import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.ContentVersion;
@@ -90,7 +92,6 @@ import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.processor.ContentProcessor;
-import com.enonic.xp.content.ContentValidator;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -573,14 +574,17 @@ public class ContentServiceImpl
 
     private Site doGetNearestSite( final ContentId contentId )
     {
-        return GetNearestSiteCommand.create().
-            contentId( contentId ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
+        return ContextBuilder.from( ContextAccessor.current() ).
+            authInfo( ContentConstants.CONTENT_SU_AUTH_INFO ).
             build().
-            execute();
+            callWith( () -> GetNearestSiteCommand.create().
+                contentId( contentId ).
+                nodeService( this.nodeService ).
+                contentTypeService( this.contentTypeService ).
+                translator( this.translator ).
+                eventPublisher( this.eventPublisher ).
+                build().
+                execute() );
     }
 
     @Override

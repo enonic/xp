@@ -9,6 +9,15 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
@@ -128,6 +137,41 @@ public class ContentServiceImplTest_getNearestSite
 
             return null;
         } ));
+    }
+
+    @Test
+    public void test_getNearestSite_WhenSomeParentInPathDoestNotHaveReadPermission()
+        throws Exception
+    {
+        final Content site = createSite();
+
+        final Content childLevel1 = createContent( site.getPath(), "Child 1", AccessControlList.create().
+            add( AccessControlEntry.create().
+                principal( RoleKeys.AUTHENTICATED ).
+                allowAll().
+                build() ).
+            add( AccessControlEntry.create().
+                principal( RoleKeys.EVERYONE ).
+                allowAll().
+                deny( Permission.READ ).
+                build() ).
+            build() );
+        final Content childLevel2 = createContent( childLevel1.getPath(), "Child 2", AccessControlList.create().
+            add( AccessControlEntry.create().
+                principal( RoleKeys.EVERYONE ).
+                allow( Permission.READ ).
+                build() ).
+            build() );
+
+        final Site fetchedSite = ContextBuilder.from( ContextAccessor.current() ).
+            authInfo( AuthenticationInfo.create().
+                principals( RoleKeys.EVERYONE ).
+                user( User.create().key( PrincipalKey.ofAnonymous() ).login( "anonymous" ).build() ).
+                build() ).
+            build().callWith( () -> this.contentService.getNearestSite( childLevel2.getId() ) );
+
+        assertNotNull( fetchedSite );
+        assertEquals( site.getId(), fetchedSite.getId() );
     }
 
     private Content createSite()
