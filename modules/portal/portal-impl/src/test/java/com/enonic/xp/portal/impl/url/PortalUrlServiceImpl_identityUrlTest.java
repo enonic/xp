@@ -81,9 +81,7 @@ public class PortalUrlServiceImpl_identityUrlTest
 
         //Mocks a virtual host and the HTTP request
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
-        HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
-        ServletRequestHolder.setRequest( req );
 
         //Calls the method with a virtual mapping /main -> /
         Mockito.when( virtualHost.getSource() ).thenReturn( "/main" );
@@ -134,11 +132,9 @@ public class PortalUrlServiceImpl_identityUrlTest
             idProviderKey( IdProviderKey.system() ).
             idProviderFunction( "login" );
 
-        HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
         when( req.getServerPort() ).thenReturn( 80 );
-        ServletRequestHolder.setRequest( req );
 
         final String url = this.service.identityUrl( params );
         assertEquals( "http://localhost/site/default/draft/_/idprovider/system/login", url );

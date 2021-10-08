@@ -108,11 +108,9 @@ public class PortalUrlServiceImpl_pageUrlTest
             portalRequest( this.portalRequest ).
             param( "a", 3 );
 
-        HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
         when( req.getServerPort() ).thenReturn( 80 );
-        ServletRequestHolder.setRequest( req );
 
         final String url = this.service.pageUrl( params );
         assertEquals( "http://localhost/site/default/draft/context/path?a=3", url );

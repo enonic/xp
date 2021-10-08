@@ -268,11 +268,9 @@ public class PortalUrlServiceImpl_processHtmlTest
             portalRequest( this.portalRequest ).
             value( "<a href=\"content://" + content.getId() + "\">Content</a>" );
 
-        HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
         when( req.getServerPort() ).thenReturn( 80 );
-        ServletRequestHolder.setRequest( req );
 
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );

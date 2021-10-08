@@ -1,6 +1,7 @@
 package com.enonic.xp.web.vhost.impl.config;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.vhost.VirtualHost;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -134,18 +136,29 @@ public class VirtualHostConfigMapTest
     }
 
     @Test
-    public void testOrder()
+    public void testHostOrder()
     {
-        map.put( "mapping.myapp1.source", "/a" );
-        map.put( "mapping.myapp2.source", "/a/b" );
+        map.put( "mapping.myapp1.order", "3" );
+        map.put( "mapping.myapp2.order", "1" );
+        map.put( "mapping.myapp3.order", "2" );
 
         VirtualHostConfigMap virtualHostConfig = new VirtualHostConfigMap( map );
 
-        VirtualHost virtualHost1 = virtualHostConfig.buildMappings().get( 0 );
-        VirtualHost virtualHost2 = virtualHostConfig.buildMappings().get( 1 );
+        final List<VirtualHost> virtualHosts = virtualHostConfig.buildMappings();
+        assertThat( virtualHosts.stream().map( VirtualHost::getName ) ).containsExactly( "myapp2", "myapp3", "myapp1" );
+    }
 
-        assertEquals( "/a/b", virtualHost1.getSource() );
-        assertEquals( "/a", virtualHost2.getSource() );
+    @Test
+    public void testSourceOrder()
+    {
+        map.put( "mapping.myapp1.source", "/a" );
+        map.put( "mapping.myapp2.source", "/a/b/c" );
+        map.put( "mapping.myapp3.source", "/a/b" );
+
+        VirtualHostConfigMap virtualHostConfig = new VirtualHostConfigMap( map );
+
+        final List<VirtualHost> virtualHosts = virtualHostConfig.buildMappings();
+        assertThat( virtualHosts.stream().map( VirtualHost::getName ) ).containsExactly( "myapp2", "myapp3", "myapp1" );
     }
 
     @Test
@@ -160,5 +173,31 @@ public class VirtualHostConfigMapTest
         assertEquals( "system", virtualHost.getDefaultIdProviderKey().toString() );
         assertEquals( 2, virtualHost.getIdProviderKeys().getSize() );
         assertTrue( virtualHost.getIdProviderKeys().contains( IdProviderKey.from( "myProvider" ) ) );
+    }
+
+    @Test
+    public void test()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+        map.put( "mapping.myapp1.source", "/" );
+        map.put( "mapping.myapp1.target", "/" );
+        map.put( "mapping.myapp1.order", "1" );
+
+        map.put( "mapping.myapp2.host", "example.com" );
+        map.put( "mapping.myapp2.source", "/source" );
+        map.put( "mapping.myapp2.target", "/target" );
+        map.put( "mapping.myapp2.order", "1" );
+
+        map.put( "mapping.myapp3.host", "example.com" );
+        map.put( "mapping.myapp3.source", "/source" );
+        map.put( "mapping.myapp3.target", "/target/path" );
+        map.put( "mapping.myapp3.order", "5" );
+
+        VirtualHostConfigMap virtualHostConfig = new VirtualHostConfigMap( map );
+
+        final List<VirtualHost> virtualHosts = virtualHostConfig.buildMappings();
+
+        assertEquals( "/source", virtualHosts.get( 0 ).getSource() );
+        assertEquals( "/", virtualHosts.get( 1 ).getSource() );
     }
 }

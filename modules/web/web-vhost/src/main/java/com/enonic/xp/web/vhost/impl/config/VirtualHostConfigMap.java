@@ -1,9 +1,9 @@
 package com.enonic.xp.web.vhost.impl.config;
 
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,7 +22,7 @@ final class VirtualHostConfigMap
 
     private static final String ENABLED_ID_PROVIDER_VALUE = "enabled";
 
-    private static final Pattern MAPPING_NAME_PATTERN = Pattern.compile( "mapping\\.([^\\.]+)\\..+" );
+    private static final Pattern MAPPING_NAME_PATTERN = Pattern.compile( "mapping\\.(?<name>[^.]+)\\..+" );
 
     private final Map<String, String> map;
 
@@ -38,13 +38,12 @@ final class VirtualHostConfigMap
 
     public List<VirtualHost> buildMappings()
     {
-        return findMappingNames().stream().
-            map( this::buildMapping ).
-            sorted( Comparator.comparing( VirtualHost::getHost ).
-                thenComparing( VirtualHost::getSource,
-                               ( virtualHost, otherVirtualHost ) -> Integer.compare( otherVirtualHost.length(), virtualHost.length() ) ).
-                thenComparing( VirtualHost::getSource ) ).
-            collect( Collectors.toList() );
+        return findMappingNames().stream()
+            .map( this::buildMapping )
+            .sorted( Comparator.comparing( VirtualHost::getOrder )
+                         .thenComparing( VirtualHost::getSource, Comparator.comparing( String::length ).reversed() )
+                         .thenComparing( VirtualHost::getSource ) )
+            .collect( Collectors.toUnmodifiableList() );
     }
 
     private VirtualHostMapping buildMapping( final String name )
@@ -57,8 +56,9 @@ final class VirtualHostConfigMap
         final String source = normalizePath( getString( prefix + "source" ) );
         final String target = normalizePath( getString( prefix + "target" ) );
         final VirtualHostIdProvidersMapping idProvidersMapping = getHostIdProvidersMapping( prefix );
+        final int order = getInt( prefix + "order", Integer.MAX_VALUE );
 
-        return new VirtualHostMapping( name, host, source, target, idProvidersMapping );
+        return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order );
     }
 
     private VirtualHostIdProvidersMapping getHostIdProvidersMapping( final String mappingPrefix )
@@ -67,30 +67,30 @@ final class VirtualHostConfigMap
 
         final VirtualHostIdProvidersMapping.Builder hostIdProvidersMapping = VirtualHostIdProvidersMapping.create();
 
-        getIdProviders( idProviderPrefix ).
-            forEach( ( idProviderName, idProviderStatus ) -> {
+        getIdProviders( idProviderPrefix ).forEach( ( idProviderName, idProviderStatus ) -> {
 
-                final IdProviderKey idProviderKey = IdProviderKey.from( idProviderName );
+            final IdProviderKey idProviderKey = IdProviderKey.from( idProviderName );
 
-                if ( DEFAULT_ID_PROVIDER_VALUE.equals( idProviderStatus ) )
-                {
-                    hostIdProvidersMapping.setDefaultIdProvider( idProviderKey );
-                }
-                if ( ENABLED_ID_PROVIDER_VALUE.equals( idProviderStatus ) )
-                {
-                    hostIdProvidersMapping.addIdProviderKey( idProviderKey );
-                }
+            if ( DEFAULT_ID_PROVIDER_VALUE.equals( idProviderStatus ) )
+            {
+                hostIdProvidersMapping.setDefaultIdProvider( idProviderKey );
+            }
+            if ( ENABLED_ID_PROVIDER_VALUE.equals( idProviderStatus ) )
+            {
+                hostIdProvidersMapping.addIdProviderKey( idProviderKey );
+            }
 
-            } );
+        } );
 
         return hostIdProvidersMapping.build();
     }
 
     private Map<String, String> getIdProviders( final String idProviderPrefix )
     {
-        return this.map.entrySet().stream().
-            filter( entry -> entry.getKey().startsWith( idProviderPrefix ) ).
-            collect( Collectors.toMap( entry -> entry.getKey().replace( idProviderPrefix, "" ), Map.Entry::getValue ) );
+        return this.map.entrySet()
+            .stream()
+            .filter( entry -> entry.getKey().startsWith( idProviderPrefix ) )
+            .collect( Collectors.toMap( entry -> entry.getKey().replace( idProviderPrefix, "" ), Map.Entry::getValue ) );
     }
 
     private String getString( final String name )
@@ -110,20 +110,15 @@ final class VirtualHostConfigMap
         return value != null ? "true".equals( value ) : defValue;
     }
 
+    private int getInt( final String name, final int defValue )
+    {
+        final String value = getString( name );
+        return value != null ? Integer.parseInt( value ) : defValue;
+    }
+
     private Set<String> findMappingNames()
     {
-        final Set<String> result = new HashSet<>();
-
-        for ( final String key : this.map.keySet() )
-        {
-            final String name = findMappingName( key );
-            if ( name != null )
-            {
-                result.add( name );
-            }
-        }
-
-        return result;
+        return this.map.keySet().stream().map( this::findMappingName ).filter( Objects::nonNull ).collect( Collectors.toSet() );
     }
 
     private String findMappingName( final String key )
@@ -134,7 +129,7 @@ final class VirtualHostConfigMap
             return null;
         }
 
-        return matcher.group( 1 );
+        return matcher.group( "name" );
     }
 
     private String normalizePath( final String value )

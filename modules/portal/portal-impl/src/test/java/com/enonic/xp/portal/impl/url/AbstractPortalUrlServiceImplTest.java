@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.url;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
@@ -15,6 +17,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public abstract class AbstractPortalUrlServiceImplTest
@@ -31,6 +34,8 @@ public abstract class AbstractPortalUrlServiceImplTest
 
     protected StyleDescriptorService styleDescriptorService;
 
+    HttpServletRequest req;
+
     @BeforeEach
     public void setup()
     {
@@ -38,11 +43,14 @@ public abstract class AbstractPortalUrlServiceImplTest
         final Application application = Mockito.mock( Application.class );
         when( application.getKey() ).thenReturn( applicationKey );
 
+        req = mock( HttpServletRequest.class );
+
         this.portalRequest = new PortalRequest();
         this.portalRequest.setBranch( Branch.from( "draft" ) );
         this.portalRequest.setApplicationKey( applicationKey );
         this.portalRequest.setBaseUri( "/site" );
         this.portalRequest.setContentPath( ContentPath.from( "context/path" ) );
+        this.portalRequest.setRawRequest( req );
 
         this.service = new PortalUrlServiceImpl();
         this.service.setMacroService( new MacroServiceImpl() );

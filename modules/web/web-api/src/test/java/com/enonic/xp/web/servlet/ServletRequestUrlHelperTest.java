@@ -81,63 +81,6 @@ public class ServletRequestUrlHelperTest
     }
 
     @Test
-    public void createServerUrl_x_forwarded_headers()
-    {
-        when( req.getServerName() ).thenReturn( "localhost" );
-        when( req.getScheme() ).thenReturn( "http" );
-        when( req.getServerPort() ).thenReturn( 8080 );
-        when( req.getHeader( ServletRequestUrlHelper.X_FORWARDED_PROTO ) ).thenReturn( "https" );
-        when( req.getHeader( ServletRequestUrlHelper.X_FORWARDED_HOST ) ).thenReturn( "127.0.0.1:123" );
-
-        assertEquals( "https", ServletRequestUrlHelper.getScheme() );
-        assertEquals( "127.0.0.1", ServletRequestUrlHelper.getHost() );
-        assertEquals( 123, ServletRequestUrlHelper.getPort() );
-        assertEquals( "https://127.0.0.1:123", ServletRequestUrlHelper.getServerUrl() );
-    }
-
-    @Test
-    public void createServerUrl_x_forwarded_headers_no_port()
-    {
-        when( req.getServerName() ).thenReturn( "localhost" );
-        when( req.getScheme() ).thenReturn( "http" );
-        when( req.getServerPort() ).thenReturn( 8080 );
-        when( req.getHeader( ServletRequestUrlHelper.X_FORWARDED_PROTO ) ).thenReturn( "https" );
-        when( req.getHeader( ServletRequestUrlHelper.X_FORWARDED_HOST ) ).thenReturn( "127.0.0.1" );
-
-        assertEquals( "https", ServletRequestUrlHelper.getScheme() );
-        assertEquals( "127.0.0.1", ServletRequestUrlHelper.getHost() );
-        assertEquals( -1, ServletRequestUrlHelper.getPort() );
-        assertEquals( "https://127.0.0.1", ServletRequestUrlHelper.getServerUrl() );
-    }
-
-    @Test
-    public void createServerUrl_x_forwarded_host_header_multi()
-    {
-        when( req.getServerName() ).thenReturn( "localhost" );
-        when( req.getScheme() ).thenReturn( "http" );
-        when( req.getServerPort() ).thenReturn( 8080 );
-        when( req.getHeader( ServletRequestUrlHelper.X_FORWARDED_HOST ) ).thenReturn( "host1:4000, host2" );
-
-        assertEquals( "host1", ServletRequestUrlHelper.getHost( this.req ) );
-        assertEquals( 4000, ServletRequestUrlHelper.getPort( this.req ) );
-        assertEquals( "http://host1:4000", ServletRequestUrlHelper.getServerUrl() );
-    }
-
-    @Test
-    public void createServerUrl_various_x_forwarded_headers()
-    {
-        when( req.getServerName() ).thenReturn( "localhost" );
-        when( req.getServerPort() ).thenReturn( 8080 );
-        when( req.getHeader( ServletRequestUrlHelper.X_FORWARDED_PROTO ) ).thenReturn( "https" );
-        when( req.getHeader( ServletRequestUrlHelper.X_FORWARDED_HOST ) ).thenReturn( "host1, host2" );
-        when( req.getHeader( ServletRequestUrlHelper.X_FORWARDED_PORT ) ).thenReturn( "4200, 9090" );
-
-        assertEquals( "host1", ServletRequestUrlHelper.getHost( this.req ) );
-        assertEquals( 4200, ServletRequestUrlHelper.getPort( this.req ) );
-        assertEquals( "https://host1:4200", ServletRequestUrlHelper.getServerUrl() );
-    }
-
-    @Test
     public void rewriteUri_no_vhost()
     {
         VirtualHostHelper.setVirtualHost( this.req, null );
@@ -176,15 +119,6 @@ public class ServletRequestUrlHelperTest
         when( req.getRemoteAddr() ).thenReturn( "127.0.0.1" );
 
         assertEquals( "127.0.0.1", ServletRequestUrlHelper.getRemoteAddress( this.req ) );
-    }
-
-    @Test
-    public void getRemoteAddress_x_forwarded_for_header()
-    {
-        when( req.getRemoteAddr() ).thenReturn( "127.0.0.1" );
-        when( req.getHeader( ServletRequestUrlHelper.X_FORWARDED_FOR ) ).thenReturn( "10.0.0.1" );
-
-        assertEquals( "10.0.0.1", ServletRequestUrlHelper.getRemoteAddress( this.req ) );
     }
 
     @Test

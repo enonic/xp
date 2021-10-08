@@ -89,11 +89,9 @@ public class PortalUrlServiceImpl_componentUrlTest
             portalRequest( this.portalRequest ).
             param( "a", 3 );
 
-        HttpServletRequest req = mock( HttpServletRequest.class );
         when( req.getScheme() ).thenReturn( "http" );
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getServerPort() ).thenReturn( 80 );
-        ServletRequestHolder.setRequest( req );
 
         final String url = this.service.componentUrl( params );
         assertEquals( "http://localhost/site/default/draft/context/path?a=3", url );

@@ -80,7 +80,7 @@ public final class VirtualHostFilter
 
         return new VirtualHostMapping( serverName, serverName, "/", "/", VirtualHostIdProvidersMapping.create().
             setDefaultIdProvider( IdProviderKey.system() ).
-            build() );
+            build(), Integer.MAX_VALUE );
     }
 
 }

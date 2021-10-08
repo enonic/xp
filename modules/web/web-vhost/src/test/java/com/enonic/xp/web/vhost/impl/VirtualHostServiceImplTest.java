@@ -17,6 +17,7 @@ import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.impl.config.VirtualHostServiceImpl;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,7 +28,7 @@ public class VirtualHostServiceImplTest
     @Test
     public void testNoConfig()
     {
-        final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl();
+        final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl( Map.of() );
 
         assertFalse( virtualHostService.isEnabled() );
         assertNotNull( virtualHostService.getVirtualHosts() );
@@ -40,8 +41,7 @@ public class VirtualHostServiceImplTest
     public void testLoadedConfig_none()
         throws Exception
     {
-        final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl();
-        virtualHostService.configure( loadConfig( "none" ) );
+        final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl( loadConfig( "none" ) );
 
         assertFalse( virtualHostService.isEnabled() );
         assertNotNull( virtualHostService.getVirtualHosts() );
@@ -54,8 +54,7 @@ public class VirtualHostServiceImplTest
     public void testLoadedConfig_simple()
         throws Exception
     {
-        final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl();
-        virtualHostService.configure( loadConfig( "simple" ) );
+        final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl( loadConfig( "simple" ) );
 
         assertTrue( virtualHostService.isEnabled() );
 
@@ -71,8 +70,7 @@ public class VirtualHostServiceImplTest
     public void testLoadedConfig_disable()
         throws Exception
     {
-        final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl();
-        virtualHostService.configure( loadConfig( "disable" ) );
+        final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl( loadConfig( "disable" ) );
 
         assertFalse( virtualHostService.isEnabled() );
     }
@@ -81,8 +79,7 @@ public class VirtualHostServiceImplTest
     public void testLoadedConfig_complete()
         throws Exception
     {
-        final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl();
-        virtualHostService.configure( loadConfig( "complete" ) );
+        final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl( loadConfig( "complete" ) );
 
         assertTrue( virtualHostService.isEnabled() );
 
@@ -91,10 +88,10 @@ public class VirtualHostServiceImplTest
         assertNotNull( mappings );
         assertEquals( 4, mappings.size() );
 
+        assertMapping( mappings.get( 0 ), "b", "enonic.com", "/status/b", "/full/path/status/b", IdProviderKeys.from( "enonic" ), null );
+
         assertMapping( mappings.get( 1 ), "a", "localhost", "/status/a", "/full/path/status/a",
                        IdProviderKeys.from( IdProviderKey.system() ), null );
-
-        assertMapping( mappings.get( 0 ), "b", "enonic.com", "/status/b", "/full/path/status/b", IdProviderKeys.from( "enonic" ), null );
 
         assertMapping( mappings.get( 2 ), "c", "localhost", "/status/c", "/full/path/status/c", null, null );
 
@@ -105,8 +102,7 @@ public class VirtualHostServiceImplTest
     @Test
     public void testEnabled()
     {
-        final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl();
-        virtualHostService.configure( Collections.singletonMap( "enabled", "true" ) );
+        final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl( Collections.singletonMap( "enabled", "true" ) );
 
         assertTrue( virtualHostService.isEnabled() );
     }
@@ -122,8 +118,7 @@ public class VirtualHostServiceImplTest
         configurationMap.put( "mapping.a.source", "/a" );
         configurationMap.put( "mapping.a.target", "/other/a" );
 
-        final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl();
-        virtualHostService.configure( configurationMap );
+        final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl( configurationMap );
 
         final List<VirtualHost> virtualHosts = virtualHostService.getVirtualHosts();
 
@@ -147,22 +142,19 @@ public class VirtualHostServiceImplTest
         configurationMap.put( "mapping.b.source", "/b" );
         configurationMap.put( "mapping.b.target", "/other/b" );
 
-        configurationMap.put( "mapping.c.host", "localhost" );
+        configurationMap.put( "mapping.c.host", "~localhost" );
         configurationMap.put( "mapping.c.source", "/a/c" );
         configurationMap.put( "mapping.c.target", "/other/a/c" );
 
         configurationMap.put( "mapping.d.host", "enonic.com" );
         configurationMap.put( "mapping.d.source", "/d" );
         configurationMap.put( "mapping.d.target", "/other/d" );
+        configurationMap.put( "mapping.d.order", "1" );
 
-        final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl();
-        virtualHostService.configure( configurationMap );
+        final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl( configurationMap );
 
-        final Iterator<VirtualHost> it = virtualHostService.getVirtualHosts().iterator();
-        assertEquals( "d", it.next().getName() );
-        assertEquals( "c", it.next().getName() );
-        assertEquals( "a", it.next().getName() );
-        assertEquals( "b", it.next().getName() );
+        final List<VirtualHost> virtualHosts = virtualHostService.getVirtualHosts();
+        assertThat( virtualHosts.stream().map( VirtualHost::getName ) ).containsExactly( "d", "c", "a", "b" );
     }
 
     private Map<String, String> loadConfig( final String name )
