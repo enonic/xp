@@ -157,6 +157,28 @@ public class VirtualHostResolverImplTest
     }
 
     @Test
+    public void test_matchesVHostWithLongestSourceAndEqualHosts()
+    {
+        final List<VirtualHost> virtualHosts = new ArrayList<>();
+        virtualHosts.add( createVirtualHostMapping( "a", "no.domain.com", "/source", "/other/a", 0 ) );
+        virtualHosts.add( createVirtualHostMapping( "b", "~(?<sub>.+)\\.domain\\.com", "/source/path", "/other/b/${sub}", 0 ) );
+
+        when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
+
+        HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getServerName() ).thenReturn( "no.domain.com" );
+        when( req.getRequestURI() ).thenReturn( URI.create( "https://no.domain.com/source/path/123" ).getPath() );
+
+        final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
+        VirtualHost mapping = virtualHostResolver.resolveVirtualHost( req );
+
+        assertNotNull( mapping );
+        assertEquals( "b", mapping.getName() );
+        assertEquals( "/other/b/no", mapping.getTarget() );
+        assertEquals( "no.domain.com", mapping.getHost() );
+    }
+
+    @Test
     public void testResolve_multipleHosts_sortedBySource_reversed()
     {
         final List<VirtualHost> virtualHosts = new ArrayList<>();

@@ -32,7 +32,7 @@ public class VirtualHostResolverImpl
         this.virtualHostMappings = virtualHostService.getVirtualHosts()
             .stream()
             .sorted( Comparator.comparing( VirtualHost::getOrder )
-                         .thenComparing( VirtualHost::getSource, Comparator.comparing( String::length ) )
+                         .thenComparing( VirtualHost::getSource, Comparator.comparing( String::length ).reversed() )
                          .thenComparing( VirtualHost::getSource ) )
             .flatMap( virtualHost -> Stream.of( virtualHost.getHost().split( " ", -1 ) )
                 .map( String::trim )
