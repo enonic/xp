@@ -7,12 +7,15 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 
+import com.google.common.net.MediaType;
+
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.web.HttpMethod;
 
 import static java.util.stream.Collectors.joining;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class PostProcessorImplTest
 {
@@ -20,7 +23,7 @@ public class PostProcessorImplTest
     public void testPostProcessingInstructions_GET()
         throws Exception
     {
-        testPostProcessingInstructions( HttpMethod.GET);
+        testPostProcessingInstructions( HttpMethod.GET );
     }
 
     @Test
@@ -34,14 +37,29 @@ public class PostProcessorImplTest
     public void testPostProcessingInjections_GET()
         throws Exception
     {
-        testPostProcessingInjections(HttpMethod.GET);
+        testPostProcessingInjections( HttpMethod.GET );
     }
 
     @Test
     public void testPostProcessingInjections_POST()
         throws Exception
     {
-        testPostProcessingInjections(HttpMethod.POST);
+        testPostProcessingInjections( HttpMethod.POST );
+    }
+
+    @Test
+    public void processResponse_skip_non_html()
+        throws Exception
+    {
+        final PostProcessorImpl postProcessor = new PostProcessorImpl();
+
+        final PortalResponse portalResponse = PortalResponse.create().contentType( MediaType.JAVASCRIPT_UTF_8 ).body( "" ).build();
+
+        final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMethod( HttpMethod.GET );
+
+        final PortalResponse result = postProcessor.processResponse( portalRequest, portalResponse );
+        assertSame( portalResponse, result );
     }
 
     private void assertEqualsTrimmed( final String expected, final String actual )
@@ -51,9 +69,7 @@ public class PostProcessorImplTest
 
     private String trimLines( final String text )
     {
-        return text == null ? null : Stream.of( text.split( "\\r?\\n" ) ).
-            map( String::trim ).
-            collect( joining( "\r\n" ) );
+        return text == null ? null : Stream.of( text.split( "\\r?\\n" ) ).map( String::trim ).collect( joining( "\r\n" ) );
     }
 
     private String readResource( final String resourceName )
@@ -73,7 +89,7 @@ public class PostProcessorImplTest
         final PostProcessorImpl postProcessor = new PostProcessorImpl();
         postProcessor.addInstruction( new TestPostProcessInstruction() );
 
-        final PortalResponse.Builder portalResponseBuilder = PortalResponse.create().postProcess( true ).body( html );
+        final PortalResponse.Builder portalResponseBuilder = PortalResponse.create().contentType( MediaType.HTML_UTF_8 ).body( html );
 
         final PortalRequest portalRequest = new PortalRequest();
         portalRequest.setMethod( httpMethod );
@@ -86,7 +102,7 @@ public class PostProcessorImplTest
         assertEqualsTrimmed( expectedResult, outputHtml );
     }
 
-    private void testPostProcessingInjections(final HttpMethod httpMethod)
+    private void testPostProcessingInjections( final HttpMethod httpMethod )
         throws Exception
     {
         final String html = readResource( "postProcessSource2.html" );
@@ -94,7 +110,7 @@ public class PostProcessorImplTest
         final PostProcessorImpl postProcessor = new PostProcessorImpl();
         postProcessor.addInjection( new TestPostProcessInjection() );
 
-        final PortalResponse.Builder portalResponseBuilder = PortalResponse.create().postProcess( true ).body( html );
+        final PortalResponse.Builder portalResponseBuilder = PortalResponse.create().contentType( MediaType.HTML_UTF_8 ).body( html );
 
         final PortalRequest portalRequest = new PortalRequest();
         portalRequest.setMethod( httpMethod );

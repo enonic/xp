@@ -36,13 +36,7 @@ public final class PostProcessorImpl
     @Override
     public PortalResponse processResponse( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        if ( !portalResponse.isPostProcess() || !METHODS_ALLOWED_TO_PROCESS.contains( portalRequest.getMethod() ) )
-        {
-            return portalResponse;
-        }
-
-        final Object body = portalResponse.getBody();
-        if ( !( body instanceof String ) )
+        if ( skipPostprocess( portalRequest, portalResponse ) )
         {
             return portalResponse;
         }
@@ -53,13 +47,7 @@ public final class PostProcessorImpl
     @Override
     public PortalResponse processResponseInstructions( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        if ( !portalResponse.isPostProcess() || !METHODS_ALLOWED_TO_PROCESS.contains( portalRequest.getMethod() ) )
-        {
-            return portalResponse;
-        }
-
-        final Object body = portalResponse.getBody();
-        if ( !( body instanceof String ) )
+        if ( skipPostprocess( portalRequest, portalResponse ) )
         {
             return portalResponse;
         }
@@ -70,22 +58,18 @@ public final class PostProcessorImpl
     @Override
     public PortalResponse processResponseContributions( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        if ( !portalResponse.isPostProcess() || !METHODS_ALLOWED_TO_PROCESS.contains( portalRequest.getMethod() ) )
-        {
-            return portalResponse;
-        }
-        if ( !isHtmlResponse( portalResponse ) )
-        {
-            return portalResponse;
-        }
-
-        final Object body = portalResponse.getBody();
-        if ( !( body instanceof String ) )
+        if ( skipPostprocess( portalRequest, portalResponse ) )
         {
             return portalResponse;
         }
 
         return postProcessEvaluator( portalRequest, portalResponse ).evaluateContributions();
+    }
+
+    private boolean skipPostprocess( final PortalRequest portalRequest, final PortalResponse portalResponse )
+    {
+        return !portalResponse.isPostProcess() || !( portalResponse.getBody() instanceof String ) ||
+            !METHODS_ALLOWED_TO_PROCESS.contains( portalRequest.getMethod() ) || !isHtmlResponse( portalResponse );
     }
 
     private boolean isHtmlResponse( final PortalResponse portalResponse )
