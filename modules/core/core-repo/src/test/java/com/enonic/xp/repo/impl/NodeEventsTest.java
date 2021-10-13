@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
@@ -129,7 +130,13 @@ public class NodeEventsTest
         final Node sourceNode = createNode( "before", NodePath.create( "/mynode1/child1" ).build(), "myId" );
         final Node targetNode = createNode( "after", NodePath.create( "/mynode1" ).build(), "myId" );
 
-        Event event = NodeEvents.moved( sourceNode, targetNode );
+        Event event = NodeEvents.moved( MoveNodeResult.create()
+                                            .addMovedNode( MoveNodeResult.MovedNode.create()
+                                                               .node( targetNode )
+                                                               .previousPath( sourceNode.path() )
+                                                               .build() )
+                                            .sourceNode( sourceNode )
+                                            .build() );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
@@ -144,7 +151,7 @@ public class NodeEventsTest
         final Node sourceNode = createNode( "before", NodePath.create( "/mynode1/child1" ).build(), "myId" );
         final Node targetNode = createNode( "after", NodePath.create( "/mynode1/child1" ).build(), "myId" );
 
-        Event event = NodeEvents.renamed( sourceNode, targetNode );
+        Event event = NodeEvents.renamed( sourceNode.path(), targetNode );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );

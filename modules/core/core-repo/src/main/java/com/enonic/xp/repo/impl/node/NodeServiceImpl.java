@@ -500,14 +500,15 @@ public class NodeServiceImpl
             build().
             execute();
 
-        if ( moveNodeResult.getTargetNode() != null )
+        if ( !moveNodeResult.getMovedNodes().isEmpty() )
         {
-            this.eventPublisher.publish( NodeEvents.renamed( moveNodeResult.getSourceNode(), moveNodeResult.getTargetNode() ) );
-            return moveNodeResult.getTargetNode();
+            this.eventPublisher.publish( NodeEvents.renamed( moveNodeResult.getMovedNodes().get( 0 ).getPreviousPath(),
+                                                             moveNodeResult.getMovedNodes().get( 0 ).getNode() ) );
+            return moveNodeResult.getMovedNodes().get( 0 ).getNode();
         }
         else
         {
-            return moveNodeResult.getSourceNode();
+            return nodeStorageService.get( params.getNodeId(), InternalContext.from( ContextAccessor.current() ) );
         }
     }
 
@@ -632,14 +633,14 @@ public class NodeServiceImpl
             build().
             execute();
 
-        if ( moveNodeResult.getTargetNode() != null )
+        if ( !moveNodeResult.getMovedNodes().isEmpty() )
         {
-            this.eventPublisher.publish( NodeEvents.moved( moveNodeResult.getSourceNode(), moveNodeResult.getTargetNode() ) );
-            return moveNodeResult.getTargetNode();
+            this.eventPublisher.publish( NodeEvents.moved( moveNodeResult ) );
+            return moveNodeResult.getMovedNodes().get( 0 ).getNode();
         }
         else
         {
-            return moveNodeResult.getSourceNode();
+            return nodeStorageService.get( params.getNodeId(), InternalContext.from( ContextAccessor.current() ) );
         }
     }
 

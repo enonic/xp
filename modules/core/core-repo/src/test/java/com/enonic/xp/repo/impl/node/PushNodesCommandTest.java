@@ -256,47 +256,26 @@ public class PushNodesCommandTest
     public void moved_nodes_yields_reindex_of_children()
         throws Exception
     {
-        final Node node1 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "node1" ).
-            setNodeId( NodeId.from( "node1" ) ).
-            build() );
+        final Node node1 =
+            createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "node1" ).setNodeId( NodeId.from( "node1" ) ).build() );
 
-        final Node node2 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "node2" ).
-            setNodeId( NodeId.from( "node2" ) ).
-            build() );
+        final Node node2 =
+            createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "node2" ).setNodeId( NodeId.from( "node2" ) ).build() );
 
-        final Node child1 = createNode( CreateNodeParams.create().
-            parent( node1.path() ).
-            name( "child1" ).
-            setNodeId( NodeId.from( "child1" ) ).
-            build() );
+        final Node child1 =
+            createNode( CreateNodeParams.create().parent( node1.path() ).name( "child1" ).setNodeId( NodeId.from( "child1" ) ).build() );
 
-        final Node child2 = createNode( CreateNodeParams.create().
-            parent( node1.path() ).
-            name( "child2" ).
-            setNodeId( NodeId.from( "child2" ) ).
-            build() );
+        final Node child2 =
+            createNode( CreateNodeParams.create().parent( node1.path() ).name( "child2" ).setNodeId( NodeId.from( "child2" ) ).build() );
 
-        final Node child1_1 = createNode( CreateNodeParams.create().
-            parent( child1.path() ).
-            name( "child1_1" ).
-            setNodeId( NodeId.from( "child1_1" ) ).
-            build() );
+        final Node child1_1 = createNode(
+            CreateNodeParams.create().parent( child1.path() ).name( "child1_1" ).setNodeId( NodeId.from( "child1_1" ) ).build() );
 
-        final Node child1_1_1 = createNode( CreateNodeParams.create().
-            parent( child1_1.path() ).
-            name( "child1_1_1" ).
-            setNodeId( NodeId.from( "child1_1_1" ) ).
-            build() );
+        final Node child1_1_1 = createNode(
+            CreateNodeParams.create().parent( child1_1.path() ).name( "child1_1_1" ).setNodeId( NodeId.from( "child1_1_1" ) ).build() );
 
-        final Node child2_1 = createNode( CreateNodeParams.create().
-            parent( child2.path() ).
-            name( "child2_1" ).
-            setNodeId( NodeId.from( "child2_1" ) ).
-            build() );
+        final Node child2_1 = createNode(
+            CreateNodeParams.create().parent( child2.path() ).name( "child2_1" ).setNodeId( NodeId.from( "child2_1" ) ).build() );
 
         final PushNodesResult result =
             pushNodes( NodeIds.from( node1.id(), node2.id(), child1.id(), child1_1.id(), child1_1_1.id(), child2.id(), child2_1.id() ),
@@ -304,15 +283,17 @@ public class PushNodesCommandTest
 
         assertNotNull( getNodeByPathInOther( NodePath.create( node1.path(), child1.name().toString() ).build() ) );
 
-        final Node movedNode = MoveNodeCommand.create().
-            id( node1.id() ).
-            newParent( node2.path() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute().
-            getTargetNode();
+        final Node movedNode = MoveNodeCommand.create()
+            .id( node1.id() )
+            .newParent( node2.path() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute()
+            .getMovedNodes()
+            .get( 0 )
+            .getNode();
 
         pushNodes( NodeIds.from( node1.id() ), WS_OTHER );
 

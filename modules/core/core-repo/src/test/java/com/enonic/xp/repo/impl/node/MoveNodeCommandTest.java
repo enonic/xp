@@ -210,58 +210,49 @@ public class MoveNodeCommandTest
     public void move_with_children()
         throws Exception
     {
-        final Node parent = createNode( CreateNodeParams.create().
-            name( "parent" ).
-            setNodeId( NodeId.from( "parent" ) ).
-            parent( NodePath.ROOT ).
-            permissions( AccessControlList.of( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() ) ).
-            build() );
+        final Node parent = createNode( CreateNodeParams.create()
+                                            .name( "parent" )
+                                            .setNodeId( NodeId.from( "parent" ) )
+                                            .parent( NodePath.ROOT )
+                                            .permissions( AccessControlList.of(
+                                                AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() ) )
+                                            .build() );
 
-        final Node child1 = createNode( CreateNodeParams.create().
-            name( "child1" ).
-            parent( parent.path() ).
-            setNodeId( NodeId.from( "child1" ) ).
-            inheritPermissions( true ).
-            build() );
+        final Node child1 = createNode( CreateNodeParams.create()
+                                            .name( "child1" )
+                                            .parent( parent.path() )
+                                            .setNodeId( NodeId.from( "child1" ) )
+                                            .inheritPermissions( true )
+                                            .build() );
 
-        final Node child1_1 = createNode( CreateNodeParams.create().
-            name( "child1_1" ).
-            parent( child1.path() ).
-            setNodeId( NodeId.from( "child1_1" ) ).
-            build() );
+        final Node child1_1 = createNode(
+            CreateNodeParams.create().name( "child1_1" ).parent( child1.path() ).setNodeId( NodeId.from( "child1_1" ) ).build() );
 
-        final Node child1_2 = createNode( CreateNodeParams.create().
-            name( "child1_2" ).
-            parent( child1.path() ).
-            setNodeId( NodeId.from( "child1_2" ) ).
-            build() );
+        final Node child1_2 = createNode(
+            CreateNodeParams.create().name( "child1_2" ).parent( child1.path() ).setNodeId( NodeId.from( "child1_2" ) ).build() );
 
-        final Node child1_1_1 = createNode( CreateNodeParams.create().
-            name( "child1_1_1" ).
-            parent( child1_1.path() ).
-            setNodeId( NodeId.from( "child1_1_1" ) ).
-            build() );
+        final Node child1_1_1 = createNode(
+            CreateNodeParams.create().name( "child1_1_1" ).parent( child1_1.path() ).setNodeId( NodeId.from( "child1_1_1" ) ).build() );
 
-        final Node newParent = createNode( CreateNodeParams.create().
-            name( "newParent" ).
-            parent( NodePath.ROOT ).
-            setNodeId( NodeId.from( "newParent" ) ).
-            build() );
+        final Node newParent = createNode(
+            CreateNodeParams.create().name( "newParent" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "newParent" ) ).build() );
 
         assertEquals( 1, getVersions( child1 ).getHits() );
         assertEquals( 1, getVersions( child1_1 ).getHits() );
         assertEquals( 1, getVersions( child1_2 ).getHits() );
         assertNotNull( getNodeByPath( NodePath.create( child1.path(), child1_1.name().toString() ).build() ) );
 
-        final Node movedNode = MoveNodeCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            id( child1.id() ).
-            newParent( newParent.path() ).
-            build().
-            execute().
-            getTargetNode();
+        final Node movedNode = MoveNodeCommand.create()
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .id( child1.id() )
+            .newParent( newParent.path() )
+            .build()
+            .execute()
+            .getMovedNodes()
+            .get( 0 )
+            .getNode();
 
         refresh();
 
