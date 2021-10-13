@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
@@ -127,26 +128,25 @@ public class NodeEventListenerTest
         final NodeId nodeId = NodeId.from( "node1" );
         final NodePath nodePath = NodePath.create( NodePath.ROOT, "nodeName" ).build();
 
-        final Node sourceNode = Node.create().
-            id( nodeId ).
-            parentPath( nodePath.getParentPath() ).
-            name( nodePath.getLastElement().toString() ).
-            build();
+        final Node sourceNode =
+            Node.create().id( nodeId ).parentPath( nodePath.getParentPath() ).name( nodePath.getLastElement().toString() ).build();
 
-        final Node movedNode = Node.create( sourceNode ).
-            parentPath( NodePath.create( "newParent" ).build() ).
-            build();
+        final Node movedNode = Node.create( sourceNode ).parentPath( NodePath.create( "newParent" ).build() ).build();
 
-        final Event localEvent = NodeEvents.moved( sourceNode, movedNode );
+        final Event localEvent = NodeEvents.moved( MoveNodeResult.create()
+                                                       .addMovedNode( MoveNodeResult.MovedNode.create()
+                                                                          .node( movedNode )
+                                                                          .previousPath( sourceNode.path() )
+                                                                          .build() )
+                                                       .sourceNode( sourceNode )
+                                                       .build() );
 
-        nodeEventListener.onEvent( Event.create( localEvent ).
-            localOrigin( false ).
-            build() );
+        nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
 
         final NodeMovedParams nodeMovedParams = new NodeMovedParams( sourceNode.path(), movedNode.path(), sourceNode.id() );
 
-        Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodeMoved( Mockito.eq( nodeMovedParams ),
-                                                                                  Mockito.isA( InternalContext.class ) );
+        Mockito.verify( nodeStorageService, Mockito.times( 1 ) )
+            .handleNodeMoved( Mockito.eq( nodeMovedParams ), Mockito.isA( InternalContext.class ) );
     }
 
     @Test
@@ -166,7 +166,7 @@ public class NodeEventListenerTest
             parentPath( NodePath.create( "newParent" ).build() ).
             build();
 
-        final Event localEvent = NodeEvents.renamed( sourceNode, movedNode );
+        final Event localEvent = NodeEvents.renamed( sourceNode.path(), movedNode );
 
         nodeEventListener.onEvent( Event.create( localEvent ).
             localOrigin( false ).
