@@ -43,6 +43,8 @@ public class MoveNodeCommand
 
     private final MoveNodeListener moveListener;
 
+    private final MoveNodeResult.Builder result;
+
     private MoveNodeCommand( final Builder builder )
     {
         super( builder );
@@ -51,6 +53,7 @@ public class MoveNodeCommand
         this.newNodeName = builder.newNodeName;
         this.moveListener = builder.moveListener;
         this.processor = builder.processor;
+        this.result = MoveNodeResult.create();
     }
 
     public static Builder create()
@@ -66,6 +69,7 @@ public class MoveNodeCommand
     public MoveNodeResult execute()
     {
         final Node existingNode = doGetById( nodeId );
+        result.sourceNode( existingNode );
 
         if ( existingNode == null )
         {
@@ -83,27 +87,18 @@ public class MoveNodeCommand
 
         if ( noChanges( existingNode, newParentPath, newNodeName ) )
         {
-            return MoveNodeResult.create().
-                sourceNode( existingNode ).
-                build();
+            return result.build();
         }
 
         checkNotMovedToSelfOrChild( existingNode, newParentPath, newNodeName );
 
         checkContextUserPermissionOrAdmin( existingNode, newParentPath );
 
-        final Node movedNode = doMoveNode( newParentPath, newNodeName, nodeId );
+        doMoveNode( newParentPath, newNodeName, nodeId );
 
-        RefreshCommand.create().
-            refreshMode( RefreshMode.ALL ).
-            indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
+        RefreshCommand.create().refreshMode( RefreshMode.ALL ).indexServiceInternal( this.indexServiceInternal ).build().execute();
 
-        return MoveNodeResult.create().
-            sourceNode( existingNode ).
-            targetNode( movedNode ).
-            build();
+        return result.build();
     }
 
     private void checkContextUserPermissionOrAdmin( final Node existingSourceNode, final NodePath newParentPath )
@@ -169,11 +164,9 @@ public class MoveNodeCommand
     {
         final Node persistedNode = doGetById( id );
 
-        final SearchResult result = this.nodeSearchService.query( NodeQuery.create().
-            parent( persistedNode.path() ).
-            from( 0 ).
-            size( NodeSearchService.GET_ALL_SIZE_FLAG ).
-            build(), SingleRepoSearchSource.from( ContextAccessor.current() ) );
+        final SearchResult result = this.nodeSearchService.query(
+            NodeQuery.create().parent( persistedNode.path() ).from( 0 ).size( NodeSearchService.GET_ALL_SIZE_FLAG ).build(),
+            SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
         final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( NodeIds.from( result.getIds() ), false,
                                                                                                    InternalContext.from(
@@ -183,12 +176,12 @@ public class MoveNodeCommand
 
         verifyNoExistingAtNewPath( newParentPath, newNodeName );
 
-        final Node.Builder nodeToMoveBuilder = Node.create( persistedNode ).
-            name( nodeName ).
-            data( processor.process( persistedNode.data() ) ).
-            parentPath( newParentPath ).
-            indexConfigDocument( persistedNode.getIndexConfigDocument() ).
-            timestamp( Instant.now( CLOCK ) );
+        final Node.Builder nodeToMoveBuilder = Node.create( persistedNode )
+            .name( nodeName )
+            .data( processor.process( persistedNode.data() ) )
+            .parentPath( newParentPath )
+            .indexConfigDocument( persistedNode.getIndexConfigDocument() )
+            .timestamp( Instant.now( CLOCK ) );
 
         final Node movedNode;
 
@@ -208,6 +201,8 @@ public class MoveNodeCommand
         {
             movedNode = doStore( nodeToMoveBuilder.build(), true );
         }
+
+        this.result.addMovedNode( MoveNodeResult.MovedNode.create().previousPath( persistedNode.path() ).node( movedNode ).build() );
 
         nodeMoved( 1 );
 

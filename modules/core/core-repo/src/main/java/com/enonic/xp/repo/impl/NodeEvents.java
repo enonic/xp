@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -9,9 +10,11 @@ import com.google.common.collect.ImmutableMap;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodeEntries;
 import com.enonic.xp.node.PushNodeEntry;
@@ -51,8 +54,7 @@ public class NodeEvents
     {
         if ( pushNodeEntries != null )
         {
-            return event( NODE_PUSHED_EVENT, pushNodeEntries ).
-                build();
+            return event( NODE_PUSHED_EVENT, pushNodeEntries ).build();
         }
         return null;
     }
@@ -68,9 +70,7 @@ public class NodeEvents
                 return null;
             }
 
-            return event( NODE_STATE_UPDATED_EVENT, updatedNodes ).
-                value( "state", firstNode.getNodeState().toString() ).
-                build();
+            return event( NODE_STATE_UPDATED_EVENT, updatedNodes ).value( "state", firstNode.getNodeState().toString() ).build();
         }
         return null;
     }
@@ -95,36 +95,23 @@ public class NodeEvents
         return event( NODE_PERMISSIONS_UPDATED, updatedNode );
     }
 
-    public static Event moved( final Node sourceNode, final Node targetNode )
+    public static Event moved( final MoveNodeResult result )
     {
-        final ImmutableMap<Object, Object> node = ImmutableMap.builder().
-            put( "id", sourceNode.id().toString() ).
-            put( "path", sourceNode.path().toString() ).
-            put( "branch", ContextAccessor.current().getBranch().getValue() ).
-            put( "repo", ContextAccessor.current().getRepositoryId().toString() ).
-            put( "newPath", targetNode.path().toString() ).
-            build();
-
-        return Event.create( NODE_MOVED_EVENT ).
-            distributed( true ).
-            value( "nodes", ImmutableList.of( node ) ).
-            build();
+        return Event.create( NODE_MOVED_EVENT )
+            .distributed( true )
+            .value( "nodes", result.getMovedNodes()
+                .stream()
+                .map( movedNode -> createMoved( movedNode.getPreviousPath(), movedNode.getNode() ) )
+                .collect( Collectors.toList() ) )
+            .build();
     }
 
-    public static Event renamed( final Node sourceNode, final Node targetNode )
+    public static Event renamed( final NodePath previousPath, final Node targetNode )
     {
-        final ImmutableMap<Object, Object> node = ImmutableMap.builder().
-            put( "id", sourceNode.id().toString() ).
-            put( "path", sourceNode.path().toString() ).
-            put( "branch", ContextAccessor.current().getBranch().getValue() ).
-            put( "repo", ContextAccessor.current().getRepositoryId().toString() ).
-            put( "newPath", targetNode.path().toString() ).
-            build();
-
-        return Event.create( NODE_RENAMED_EVENT ).
-            distributed( true ).
-            value( "nodes", ImmutableList.of( node ) ).
-            build();
+        return Event.create( NODE_RENAMED_EVENT )
+            .distributed( true )
+            .value( "nodes", ImmutableList.of( createMoved( previousPath, targetNode ) ) )
+            .build();
     }
 
     public static Event sorted( final Node sortedNode )
@@ -148,31 +135,23 @@ public class NodeEvents
 
     private static Event.Builder event( String type, Nodes nodes )
     {
-        return Event.create( type ).
-            distributed( true ).
-            value( "nodes", nodesToList( nodes ) );
+        return Event.create( type ).distributed( true ).value( "nodes", nodesToList( nodes ) );
     }
 
     private static Event.Builder event( String type, NodeBranchEntries nodes )
     {
-        return Event.create( type ).
-            distributed( true ).
-            value( "nodes", nodesToList( nodes ) );
+        return Event.create( type ).distributed( true ).value( "nodes", nodesToList( nodes ) );
     }
 
     private static Event.Builder event( String type, PushNodeEntries nodes )
     {
-        return Event.create( type ).
-            distributed( true ).
-            value( "nodes", nodesToList( nodes ) );
+        return Event.create( type ).distributed( true ).value( "nodes", nodesToList( nodes ) );
     }
 
     private static ImmutableList nodesToList( final Nodes nodes )
     {
         List<ImmutableMap> list = new ArrayList<>();
-        nodes.stream().
-            map( NodeEvents::nodeToMap ).
-            forEach( list::add );
+        nodes.stream().map( NodeEvents::nodeToMap ).forEach( list::add );
 
         return ImmutableList.copyOf( list );
     }
@@ -180,9 +159,7 @@ public class NodeEvents
     private static ImmutableList nodesToList( final NodeBranchEntries nodes )
     {
         List<ImmutableMap> list = new ArrayList<>();
-        nodes.stream().
-            map( NodeEvents::nodeToMap ).
-            forEach( list::add );
+        nodes.stream().map( NodeEvents::nodeToMap ).forEach( list::add );
 
         return ImmutableList.copyOf( list );
     }
@@ -190,44 +167,55 @@ public class NodeEvents
     private static ImmutableList nodesToList( final PushNodeEntries pushNodeEntries )
     {
         List<ImmutableMap> list = new ArrayList<>();
-        pushNodeEntries.stream().
-            map( node -> NodeEvents.nodeToMap( node, pushNodeEntries.getTargetBranch(), pushNodeEntries.getTargetRepo() ) ).
-            forEach( list::add );
+        pushNodeEntries.stream()
+            .map( node -> NodeEvents.nodeToMap( node, pushNodeEntries.getTargetBranch(), pushNodeEntries.getTargetRepo() ) )
+            .forEach( list::add );
 
         return ImmutableList.copyOf( list );
     }
 
     private static ImmutableMap nodeToMap( final NodeBranchEntry node )
     {
-        return ImmutableMap.builder().
-            put( "id", node.getNodeId().toString() ).
-            put( "path", node.getNodePath().toString() ).
-            put( "branch", ContextAccessor.current().getBranch().getValue() ).
-            put( "repo", ContextAccessor.current().getRepositoryId().toString() ).
-            build();
+        return ImmutableMap.builder()
+            .put( "id", node.getNodeId().toString() )
+            .put( "path", node.getNodePath().toString() )
+            .put( "branch", ContextAccessor.current().getBranch().getValue() )
+            .put( "repo", ContextAccessor.current().getRepositoryId().toString() )
+            .build();
     }
 
     private static ImmutableMap nodeToMap( final Node node )
     {
-        return ImmutableMap.builder().
-            put( "id", node.id().toString() ).
-            put( "path", node.path().toString() ).
-            put( "branch", ContextAccessor.current().getBranch().getValue() ).
-            put( "repo", ContextAccessor.current().getRepositoryId().toString() ).
-            build();
+        return ImmutableMap.builder()
+            .put( "id", node.id().toString() )
+            .put( "path", node.path().toString() )
+            .put( "branch", ContextAccessor.current().getBranch().getValue() )
+            .put( "repo", ContextAccessor.current().getRepositoryId().toString() )
+            .build();
     }
 
     private static ImmutableMap nodeToMap( final PushNodeEntry node, final Branch targetBranch, final RepositoryId targetRepository )
     {
-        final ImmutableMap.Builder<Object, Object> nodeAsMap = ImmutableMap.builder().
-            put( "id", node.getNodeBranchEntry().getNodeId().toString() ).
-            put( "path", node.getNodeBranchEntry().getNodePath().toString() ).
-            put( "branch", targetBranch.getValue() ).
-            put( "repo", targetRepository.toString() );
+        final ImmutableMap.Builder<Object, Object> nodeAsMap = ImmutableMap.builder()
+            .put( "id", node.getNodeBranchEntry().getNodeId().toString() )
+            .put( "path", node.getNodeBranchEntry().getNodePath().toString() )
+            .put( "branch", targetBranch.getValue() )
+            .put( "repo", targetRepository.toString() );
         if ( node.getCurrentTargetPath() != null )
         {
             nodeAsMap.put( "currentTargetPath", node.getCurrentTargetPath().toString() );
         }
         return nodeAsMap.build();
+    }
+
+    private static ImmutableMap<String, String> createMoved( final NodePath previousPath, final Node targetNode )
+    {
+        return ImmutableMap.<String, String>builder()
+            .put( "id", targetNode.id().toString() )
+            .put( "path", previousPath.toString() )
+            .put( "branch", ContextAccessor.current().getBranch().getValue() )
+            .put( "repo", ContextAccessor.current().getRepositoryId().toString() )
+            .put( "newPath", targetNode.path().toString() )
+            .build();
     }
 }
