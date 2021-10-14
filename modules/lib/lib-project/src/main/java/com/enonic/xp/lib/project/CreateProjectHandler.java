@@ -5,13 +5,16 @@ import java.util.Locale;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.lib.project.command.ApplyProjectLanguageCommand;
-import com.enonic.xp.lib.project.command.ApplyProjectReadAccessCommand;
 import com.enonic.xp.lib.project.mapper.ProjectMapper;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -49,29 +52,32 @@ public final class CreateProjectHandler
             ? this.projectService.modifyPermissions( this.id, this.permissions )
             : ProjectPermissions.create().build();
 
-        final Boolean modifiedIsPublic = ApplyProjectReadAccessCommand.create().
-            setPublic( this.isPublic ).
-            contentService( this.contentService ).
-            projectName( this.id ).
-            build().
-            execute();
-
         return ProjectMapper.create().
             setProject( project ).
             setLanguage( modifiedLanguage ).
             setProjectPermissions( modifiedPermissions ).
-            setIsPublic( modifiedIsPublic ).
+            setIsPublic( isPublic ).
             build();
     }
 
     private CreateProjectParams createProjectParams()
     {
-        return CreateProjectParams.create().
+        final CreateProjectParams.Builder builder = CreateProjectParams.create().
             name( this.id ).
             displayName( this.displayName ).
             description( this.description ).
             parent( this.parent ).
-            forceInitialization( true ).
+            forceInitialization( true );
+
+        if (isPublic) {
+            builder.permissions( AccessControlList.create().
+                add( AccessControlEntry.create().
+                    principal( RoleKeys.EVERYONE ).
+                    allow( Permission.READ ).
+                    build() ).build() );
+        }
+
+        return builder.
             build();
     }
 

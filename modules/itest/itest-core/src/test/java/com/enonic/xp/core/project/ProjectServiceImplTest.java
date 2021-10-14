@@ -51,6 +51,7 @@ import com.enonic.xp.security.PrincipalRelationships;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -340,6 +341,7 @@ class ProjectServiceImplTest
                     isAllowed( Permission.READ ) );
                 assertTrue( rootContentPermissions.getEntry( PrincipalKey.ofRole( "cms.project.test-project.viewer" ) ).
                     isAllowed( Permission.READ ) );
+                assertNull( rootContentPermissions.getEntry( RoleKeys.EVERYONE ) );
             } ) );
     }
 
@@ -371,6 +373,28 @@ class ProjectServiceImplTest
                 forEach( principalKey -> assertTrue(
                     rootContentPermissions.isAllowedFor( principalKey, Permission.READ, Permission.CREATE, Permission.MODIFY,
                                                          Permission.DELETE ) ) );
+        } );
+    }
+
+    @Test
+    void create_project_with_public_readAccess()
+    {
+        final RepositoryId projectRepoId = RepositoryId.from( "com.enonic.cms.test-project" );
+        final ProjectName projectName = ProjectName.from( projectRepoId );
+
+        adminContext().callWith( () -> doCreateProject( projectName, null, false, null, AccessControlList.create()
+            .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
+            .build() ) );
+
+        ContextBuilder.from( adminContext() ).
+            branch( ContentConstants.BRANCH_DRAFT ).
+            repositoryId( projectRepoId ).
+            build().runWith( () -> {
+
+            final Node rootContentNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
+            final AccessControlList rootContentPermissions = rootContentNode.getPermissions();
+
+            assertTrue( rootContentPermissions.getEntry( RoleKeys.EVERYONE ).isAllowed( Permission.READ ) );
         } );
     }
 
@@ -890,11 +914,18 @@ class ProjectServiceImplTest
     private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions, final boolean forceInitialization,
                                      final ProjectName parent )
     {
+        return doCreateProject( name, projectPermissions, forceInitialization, parent, null );
+    }
+
+    private Project doCreateProject( final ProjectName name, final ProjectPermissions projectPermissions, final boolean forceInitialization,
+                                     final ProjectName parent, final AccessControlList permissions )
+    {
         final Project project = this.projectService.create( CreateProjectParams.create().
             name( name ).
             description( "description" ).
             displayName( "Project display name" ).
             parent( parent ).
+            permissions( permissions ).
             forceInitialization( forceInitialization ).
             build() );
 
