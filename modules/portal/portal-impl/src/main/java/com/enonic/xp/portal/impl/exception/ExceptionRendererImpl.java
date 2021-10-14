@@ -13,8 +13,6 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentNotFoundException;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -219,60 +217,9 @@ public final class ExceptionRendererImpl
         Site site = req.getSite();
         if ( site == null )
         {
-            site = resolveSiteFromPath( req );
+            site = this.contentService.findNearestSiteByPath( req.getContentPath() );
         }
         return site;
-    }
-
-    private Site resolveSiteFromPath( final PortalRequest req )
-    {
-        ContentPath contentPath = req.getContentPath();
-        final Content content = getByPathAsContentAdmin( contentPath );
-        if ( content != null && content.isSite() )
-        {
-            return (Site) content;
-        }
-
-        //Resolves closest site, starting from the top.
-        Site site = null;
-        ContentPath currentContentPath = ContentPath.ROOT;
-        for ( int contentPathIndex = 0; contentPathIndex < contentPath.elementCount(); contentPathIndex++ )
-        {
-            currentContentPath = ContentPath.from( currentContentPath, contentPath.getElement( contentPathIndex ) );
-            final Content childContent = getByPathAsContentAdmin( currentContentPath );
-            if ( childContent == null )
-            {
-                break;
-            }
-            else if ( childContent.isSite() )
-            {
-                site = (Site) childContent;
-            }
-        }
-
-        return site;
-    }
-
-    private Content getByPathAsContentAdmin( final ContentPath contentPath )
-    {
-        try
-        {
-            return runAsContentAdmin( () -> this.contentService.getByPath( contentPath ) );
-        }
-        catch ( ContentNotFoundException e )
-        {
-            return null;
-        }
-    }
-
-    private <T> T runAsContentAdmin( final Callable<T> callable )
-    {
-        final Context context = ContextAccessor.current();
-        return ContextBuilder.from( ContextAccessor.current() ).
-            authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).
-                principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ).build() ).
-            build().
-            callWith( callable );
     }
 
     private PortalResponse renderApplicationCustomError( final ApplicationKey appKey, final String errorScriptPath,

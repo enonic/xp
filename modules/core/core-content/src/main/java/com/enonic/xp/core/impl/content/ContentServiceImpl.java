@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -34,6 +35,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -588,6 +590,59 @@ public class ContentServiceImpl
     }
 
     @Override
+    public Site findNearestSiteByPath( final ContentPath contentPath )
+    {
+        final Trace trace = Tracer.newTrace( "content.findNearestSiteByPath" );
+        if ( trace == null )
+        {
+            return (Site) doFindNearestByPath( contentPath, Content::isSite );
+        }
+
+        return Tracer.trace( trace, () -> {
+            trace.put( "contentPath", contentPath );
+            final Site site = (Site) doFindNearestByPath( contentPath, Content::isSite );
+            if ( site != null )
+            {
+                trace.put( "path", site.getPath() );
+            }
+            return site;
+        } );
+    }
+
+    private Content doFindNearestByPath( final ContentPath contentPath, final Predicate<Content> predicate )
+    {
+        return callAsContentAdmin( () -> {
+
+            final Content content = executeGetByPath( contentPath );
+            if ( content != null && predicate.test( content ) )
+            {
+                return content;
+            }
+
+            //Resolves the closest content, starting from the root.
+            Content foundContent = null;
+            ContentPath nextContentPath = ContentPath.ROOT;
+            for ( int contentPathIndex = 0; contentPathIndex < contentPath.elementCount(); contentPathIndex++ )
+            {
+                final ContentPath currentContentPath = ContentPath.from( nextContentPath, contentPath.getElement( contentPathIndex ) );
+
+                final Content childContent = executeGetByPath( currentContentPath );
+                if ( childContent == null )
+                {
+                    break;
+                }
+                if ( predicate.test( childContent ) )
+                {
+                    foundContent = childContent;
+                }
+                nextContentPath = currentContentPath;
+            }
+
+            return foundContent;
+        } );
+    }
+
+    @Override
     public Contents getByIds( final GetContentByIdsParams params )
     {
         final Trace trace = Tracer.newTrace( "content.getByIds" );
@@ -619,29 +674,36 @@ public class ContentServiceImpl
         final Trace trace = Tracer.newTrace( "content.getByPath" );
         if ( trace == null )
         {
-            return executeGetByPath( path );
+            return doGetByPath( path );
         }
 
         return Tracer.trace( trace, () -> {
             trace.put( "path", path );
-            final Content content = executeGetByPath( path );
-            if ( content != null )
-            {
-                trace.put( "id", content.getId() );
-            }
+            final Content content = doGetByPath( path );
+            trace.put( "id", content.getId() );
             return content;
         } );
     }
 
+    private Content doGetByPath( final ContentPath path )
+    {
+        final Content content = executeGetByPath( path );
+        if ( content == null )
+        {
+            throw new ContentNotFoundException( path, ContextAccessor.current().getBranch() );
+        }
+        return content;
+    }
+
     private Content executeGetByPath( final ContentPath path )
     {
-        return GetContentByPathCommand.create( path ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
+        return GetContentByPathCommand.create( path )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build()
+            .execute();
     }
 
     @Override

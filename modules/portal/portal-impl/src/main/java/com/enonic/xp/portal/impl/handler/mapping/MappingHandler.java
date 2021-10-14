@@ -1,11 +1,14 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
+import java.util.Optional;
+
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
@@ -15,70 +18,107 @@ import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
 @Component(immediate = true, service = WebHandler.class)
 public final class MappingHandler
-    extends BaseWebHandler
+    implements WebHandler
 {
-    private SiteService siteService;
+    private final ResourceService resourceService;
 
-    private ContentService contentService;
+    private final ControllerScriptFactory controllerScriptFactory;
 
-    private ResourceService resourceService;
+    private final FilterScriptFactory filterScriptFactory;
 
-    private ControllerScriptFactory controllerScriptFactory;
+    private final RendererDelegate rendererDelegate;
 
-    private FilterScriptFactory filterScriptFactory;
+    private final ControllerMappingsResolver controllerMappingsResolver;
 
-    private RendererDelegate rendererDelegate;
+    private final ContentResolver contentResolver;
 
-    public MappingHandler()
+    @Activate
+    public MappingHandler( @Reference final SiteService siteService, @Reference final ContentResolver contentResolver,
+                           @Reference final ResourceService resourceService,
+                           @Reference final ControllerScriptFactory controllerScriptFactory,
+                           @Reference final FilterScriptFactory filterScriptFactory, @Reference final RendererDelegate rendererDelegate )
     {
-        super( -10 );
+        this.resourceService = resourceService;
+        this.controllerScriptFactory = controllerScriptFactory;
+        this.filterScriptFactory = filterScriptFactory;
+        this.rendererDelegate = rendererDelegate;
+        this.controllerMappingsResolver = new ControllerMappingsResolver( siteService );
+        this.contentResolver = contentResolver;
     }
 
     @Override
-    public boolean canHandle( final WebRequest req )
+    public int getOrder()
     {
-        if ( !( req instanceof PortalRequest ) )
-        {
-            return false;
-        }
-        PortalRequest portalRequest = (PortalRequest) req;
-        return portalRequest.isSiteBase() && new ControllerMappingsResolver( siteService, contentService ).canHandle( portalRequest );
+        return -10;
     }
 
     @Override
-    protected PortalResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
+    public WebResponse handle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        WebHandlerHelper.checkAdminAccess( webRequest );
-
-        PortalRequest portalRequest = (PortalRequest) webRequest;
-        final ControllerMappingDescriptor mapping = new ControllerMappingsResolver( siteService, contentService ).
-            resolve( portalRequest );
-        setContextPath( portalRequest );
-
-        if ( mapping.isController() )
+        if ( !( webRequest instanceof PortalRequest ) || webRequest.getEndpointPath() != null )
         {
-            return handleController( portalRequest, mapping );
+            return webHandlerChain.handle( webRequest, webResponse );
+        }
+
+        final PortalRequest request = (PortalRequest) webRequest;
+
+        if ( request.getContentPath() == null || request.getMode() == RenderMode.ADMIN || !request.isSiteBase() )
+        {
+            return webHandlerChain.handle( webRequest, webResponse );
+        }
+
+        WebHandlerHelper.checkAdminAccess( request );
+
+        final HttpMethod method = webRequest.getMethod();
+
+        if ( !HttpMethod.standard().contains( method ) )
+        {
+            throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", method ) );
+        }
+
+        final ContentResolverResult resolvedContent = contentResolver.resolve( request );
+
+        if ( resolvedContent == null )
+        {
+            return webHandlerChain.handle( request, webResponse );
+        }
+
+        final Optional<ControllerMappingDescriptor> resolve =
+            controllerMappingsResolver.resolve( resolvedContent.siteRelativePath, request.getParams(), resolvedContent.content,
+                                                resolvedContent.nearestSite.getSiteConfigs() );
+
+        if ( resolve.isPresent() )
+        {
+            final ControllerMappingDescriptor mapping = resolve.get();
+
+            request.setContent( resolvedContent.content );
+            request.setSite( resolvedContent.nearestSite );
+            request.setContextPath( request.getBaseUri() + "/" + request.getBranch() + resolvedContent.nearestSite.getPath() );
+
+            if ( mapping.isController() )
+            {
+                return handleController( request, mapping );
+            }
+            else
+            {
+                return handleFilter( request, webResponse, webHandlerChain, mapping );
+            }
         }
         else
         {
-            return handleFilter( portalRequest, webResponse, webHandlerChain, mapping );
+            return webHandlerChain.handle( request, webResponse );
         }
-    }
-
-    private void setContextPath( final PortalRequest portalRequest )
-    {
-        final String contextPath =
-            portalRequest.getBaseUri() + "/" + portalRequest.getBranch() + portalRequest.getSite().getPath().toString();
-        portalRequest.setContextPath( contextPath );
     }
 
     private PortalResponse handleController( final PortalRequest portalRequest, final ControllerMappingDescriptor mapping )
@@ -111,41 +151,5 @@ public final class MappingHandler
             return worker.execute();
         }
         return Tracer.traceEx( trace, worker::execute );
-    }
-
-    @Reference
-    public void setSiteService( final SiteService siteService )
-    {
-        this.siteService = siteService;
-    }
-
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
-    }
-
-    @Reference
-    public void setResourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
-    }
-
-    @Reference
-    public void setControllerScriptFactory( final ControllerScriptFactory controllerScriptFactory )
-    {
-        this.controllerScriptFactory = controllerScriptFactory;
-    }
-
-    @Reference
-    public void setFilterScriptFactory( final FilterScriptFactory filterScriptFactory )
-    {
-        this.filterScriptFactory = filterScriptFactory;
-    }
-
-    @Reference
-    public void setRendererDelegate( final RendererDelegate rendererDelegate )
-    {
-        this.rendererDelegate = rendererDelegate;
     }
 }

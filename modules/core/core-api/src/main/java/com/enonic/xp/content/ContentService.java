@@ -62,6 +62,8 @@ public interface ContentService
 
     Site getNearestSite( ContentId contentId );
 
+    Site findNearestSiteByPath( ContentPath contentPath );
+
     Contents getByIds( GetContentByIdsParams params );
 
     Content getByPath( ContentPath path );

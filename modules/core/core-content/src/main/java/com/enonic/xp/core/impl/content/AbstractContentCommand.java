@@ -17,6 +17,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIndexPath;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
@@ -65,7 +66,12 @@ abstract class AbstractContentCommand
 
     Content getContent( final ContentPath contentPath )
     {
-        return GetContentByPathCommand.create( contentPath, this ).build().execute();
+        final Content content = GetContentByPathCommand.create( contentPath, this ).build().execute();
+        if ( content == null )
+        {
+            throw new ContentNotFoundException( contentPath, ContextAccessor.current().getBranch() );
+        }
+        return content;
     }
 
     protected Contents filter( Contents contents )
