@@ -29,16 +29,11 @@ final class GetContentByPathCommand
 
         if ( node == null )
         {
-            throw new ContentNotFoundException( contentPath, ContextAccessor.current().getBranch() );
+            return null;
         }
 
         final Content content = translator.fromNode( node, true );
-        final Content filteredContent = filter( content );
-        if ( filteredContent == null )
-        {
-            throw new ContentNotFoundException( contentPath, ContextAccessor.current().getBranch() );
-        }
-        return filteredContent;
+        return filter( content );
     }
 
     static Builder create( final ContentPath contentPath, final AbstractContentCommand source )

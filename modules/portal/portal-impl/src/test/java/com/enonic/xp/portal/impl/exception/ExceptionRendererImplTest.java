@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
@@ -12,7 +11,6 @@ import com.google.common.net.MediaType;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
@@ -37,6 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.AdditionalMatchers.not;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -179,9 +179,7 @@ class ExceptionRendererImplTest
         this.request.setContentPath( ContentPath.from( "/mysite/some/long/path" ) );
 
         final Site site = newSite();
-        when( contentService.getByPath( ContentPath.from( "/mysite" ) ) ).thenReturn( site );
-        when( contentService.getByPath( not( ArgumentMatchers.eq( ContentPath.from( "/mysite" ) ) ) ) ).thenThrow(
-            new ContentNotFoundException( ContentPath.from( "/" ), Branch.from( "draft" ) ) );
+        when( contentService.findNearestSiteByPath( eq( ContentPath.from( "/mysite/some/long/path" )) )).thenReturn( site );
 
         final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
         final ErrorHandlerScript errorHandlerScript =

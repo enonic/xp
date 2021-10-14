@@ -390,14 +390,11 @@ public class AbstractContentServiceTest
     }
 
     protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data )
-        throws Exception
     {
-
         return doCreateContent( parentPath, displayName, data, ExtraDatas.empty(), ContentTypeName.folder() );
     }
 
     protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data, ContentTypeName type )
-        throws Exception
     {
         return doCreateContent( parentPath, displayName, data, ExtraDatas.empty(), type );
     }

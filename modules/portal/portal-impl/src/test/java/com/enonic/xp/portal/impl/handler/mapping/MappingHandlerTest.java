@@ -36,18 +36,23 @@ import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.handler.BaseHandlerTest;
+import com.enonic.xp.web.handler.WebHandlerChain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 public class MappingHandlerTest
-    extends BaseHandlerTest
 {
     private MappingHandler handler;
 
@@ -57,13 +62,7 @@ public class MappingHandlerTest
 
     protected ResourceService resourceService;
 
-    private ControllerScript controllerScript;
-
     private RendererDelegate rendererDelegate;
-
-    private FilterScriptFactory filterScriptFactory;
-
-    private FilterScript filterScript;
 
     private SiteService siteService;
 
@@ -72,36 +71,30 @@ public class MappingHandlerTest
         throws Exception
     {
         this.request = new PortalRequest();
-        final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
-        this.controllerScript = Mockito.mock( ControllerScript.class );
-        when( controllerScriptFactory.fromDir( Mockito.any() ) ).thenReturn( this.controllerScript );
+        final ControllerScriptFactory controllerScriptFactory = mock( ControllerScriptFactory.class );
+        ControllerScript controllerScript = mock( ControllerScript.class );
+        when( controllerScriptFactory.fromDir( Mockito.any() ) ).thenReturn( controllerScript );
         final PortalResponse portalResponse = PortalResponse.create().build();
-        when( this.controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
+        when( controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
 
-        this.filterScriptFactory = Mockito.mock( FilterScriptFactory.class );
-        this.filterScript = Mockito.mock( FilterScript.class );
-        when( filterScriptFactory.fromScript( Mockito.any() ) ).thenReturn( this.filterScript );
-        when( this.filterScript.execute( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
+        FilterScriptFactory filterScriptFactory = mock( FilterScriptFactory.class );
+        FilterScript filterScript = mock( FilterScript.class );
+        when( filterScriptFactory.fromScript( Mockito.any() ) ).thenReturn( filterScript );
+        when( filterScript.execute( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
-        this.resourceService = Mockito.mock( ResourceService.class );
-        final Resource resourceNotFound = Mockito.mock( Resource.class );
+        this.resourceService = mock( ResourceService.class );
+        final Resource resourceNotFound = mock( Resource.class );
         when( resourceNotFound.exists() ).thenReturn( false );
-        final Resource resource = Mockito.mock( Resource.class );
+        final Resource resource = mock( Resource.class );
         when( resource.exists() ).thenReturn( true );
         when( this.resourceService.getResource( ResourceKey.from( "demo:/services/test" ) ) ).thenReturn( resource );
 
-        this.contentService = Mockito.mock( ContentService.class );
-        this.rendererDelegate = Mockito.mock( RendererDelegate.class );
-        this.siteService = Mockito.mock( SiteService.class );
+        this.contentService = mock( ContentService.class );
+        this.rendererDelegate = mock( RendererDelegate.class );
+        this.siteService = mock( SiteService.class );
 
-        this.handler = new MappingHandler();
-        this.handler.setControllerScriptFactory( controllerScriptFactory );
-        this.handler.setContentService( this.contentService );
-        this.handler.setResourceService( this.resourceService );
-        this.handler.setRendererDelegate( this.rendererDelegate );
-        this.handler.setSiteService( this.siteService );
-        this.handler.setFilterScriptFactory( this.filterScriptFactory );
-
+        this.handler = new MappingHandler( siteService, new ContentResolver( contentService ), resourceService, controllerScriptFactory,
+                                           filterScriptFactory, rendererDelegate );
         this.request.setMethod( HttpMethod.GET );
     }
 
@@ -112,28 +105,76 @@ public class MappingHandlerTest
     }
 
     @Test
-    public void testNoMatch()
-        throws Exception
+    public void methodNotAllowed()
     {
-        this.request.setEndpointPath( null );
-        assertEquals( false, this.handler.canHandle( this.request ) );
+        final PortalResponse response = PortalResponse.create().build();
+        this.request.setBaseUri( "/admin/site" );
+        this.request.setContentPath( ContentPath.from( "/site/content" ) );
+        this.request.setMethod( HttpMethod.LOCK );
+        final WebException webException = assertThrows( WebException.class, () -> this.handler.handle( this.request, response, null ) );
+        assertEquals( HttpStatus.METHOD_NOT_ALLOWED, webException.getStatus() );
     }
 
     @Test
-    public void testMatch()
+    public void testNoMatch_no_site_based()
+        throws Exception
+    {
+        final WebHandlerChain chain = mock( WebHandlerChain.class );
+        final PortalResponse response = PortalResponse.create().build();
+        this.request.setContentPath( ContentPath.from( "/site/content" ) );
+        this.request.setBaseUri( "/something" );
+
+        this.handler.handle( this.request, response, chain );
+        verify( chain ).handle( this.request, response );
+        verifyNoInteractions( rendererDelegate );
+    }
+
+    @Test
+    public void testNoMatch_no_site()
+        throws Exception
+    {
+        final WebHandlerChain chain = mock( WebHandlerChain.class );
+        final PortalResponse response = PortalResponse.create().build();
+        this.request.setBaseUri( "/admin/site" );
+        this.request.setContentPath( ContentPath.from( "/site/content" ) );
+        this.handler.handle( this.request, response, chain );
+        verify( chain ).handle( this.request, response );
+        verifyNoInteractions( rendererDelegate );
+    }
+
+    @Test
+    public void testNoMatch_endpointPath()
+        throws Exception
+    {
+        this.request.setEndpointPath( "something" );
+        final WebHandlerChain chain = mock( WebHandlerChain.class );
+        final PortalResponse response = PortalResponse.create().build();
+
+        this.handler.handle( this.request, response, chain );
+        verify( chain ).handle( this.request, response );
+        verifyNoInteractions( rendererDelegate );
+    }
+
+    @Test
+    public void executeNothing()
         throws Exception
     {
         final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
-        final ControllerMappingDescriptor mapping = ControllerMappingDescriptor.create().
-            controller( controller ).
-            pattern( ".*/content" ).
-            build();
+        final ControllerMappingDescriptor mapping =
+            ControllerMappingDescriptor.create().controller( controller ).pattern( "/nomatch" ).build();
+
         setupContentAndSite( mapping );
+
+        final WebHandlerChain chain = mock( WebHandlerChain.class );
+        final PortalResponse response = PortalResponse.create().build();
+
         this.request.setBaseUri( "/site" );
-        this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
-        this.request.setSite( this.contentService.getNearestSite( ContentId.from( "id" ) ) );
-        this.request.setEndpointPath( "" );
-        assertEquals( true, this.handler.canHandle( this.request ) );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
+
+        this.handler.handle( this.request, response, chain );
+
+        verify( chain ).handle( this.request, response );
+        verifyNoInteractions( rendererDelegate );
     }
 
     @Test
@@ -141,20 +182,15 @@ public class MappingHandlerTest
         throws Exception
     {
         final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
-        final ControllerMappingDescriptor mapping = ControllerMappingDescriptor.create().
-            controller( controller ).
-            pattern( ".*/content" ).
-            build();
+        final ControllerMappingDescriptor mapping =
+            ControllerMappingDescriptor.create().controller( controller ).pattern( ".*/content" ).build();
 
         setupContentAndSite( mapping );
         this.request.setBaseUri( "/site" );
-        this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
-        this.request.setSite( this.contentService.getNearestSite( ContentId.from( "id" ) ) );
-        this.request.setEndpointPath( "" );
-        this.request.setContent( this.contentService.getById( ContentId.from( "id" ) ) );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
 
-        when( rendererDelegate.render( isA( ControllerMappingDescriptor.class ), same( request ) ) ).
-            thenReturn( PortalResponse.create().body( "Ok" ).build() );
+        when( rendererDelegate.render( isA( ControllerMappingDescriptor.class ), same( request ) ) ).thenReturn(
+            PortalResponse.create().body( "Ok" ).build() );
 
         final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertEquals( HttpStatus.OK, response.getStatus() );
@@ -169,18 +205,12 @@ public class MappingHandlerTest
         throws Exception
     {
         final ResourceKey filter = ResourceKey.from( "demo:/services/test" );
-        final ControllerMappingDescriptor mapping = ControllerMappingDescriptor.create().
-            filter( filter ).
-            pattern( ".*/content" ).
-            build();
+        final ControllerMappingDescriptor mapping = ControllerMappingDescriptor.create().filter( filter ).pattern( ".*/content" ).build();
 
         setupContentAndSite( mapping );
 
         this.request.setBaseUri( "/site" );
-        this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
-        this.request.setSite( this.contentService.getNearestSite( ContentId.from( "id" ) ) );
-        this.request.setEndpointPath( "" );
-        this.request.setContent( this.contentService.getById( ContentId.from( "id" ) ) );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
 
         final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertEquals( HttpStatus.OK, response.getStatus() );
@@ -192,14 +222,14 @@ public class MappingHandlerTest
     }
 
     private void setupContentAndSite( final ControllerMappingDescriptor mapping )
-        throws Exception
     {
-        final Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", true );
+        final Content content = createPage( "id", "site/somesite/content", "myapplication:ctype", true );
         final Site site = createSite( "id", "site", "myapplication:contenttypename" );
 
-        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).thenReturn( content );
+        final ContentPath path = ContentPath.from( "site/somesite/content" ).asAbsolute();
+        when( this.contentService.getByPath( path ) ).thenReturn( content );
 
-        when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).thenReturn( site );
+        when( this.contentService.findNearestSiteByPath( eq( path ) ) ).thenReturn( site );
 
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
@@ -213,28 +243,21 @@ public class MappingHandlerTest
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
 
-        final Content.Builder content = Content.create().
-            id( ContentId.from( id ) ).
-            path( ContentPath.from( path ) ).
-            owner( PrincipalKey.from( "user:myStore:me" ) ).
-            displayName( "My Content" ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( ContentTypeName.from( contentTypeName ) );
+        final Content.Builder content = Content.create()
+            .id( ContentId.from( id ) )
+            .path( ContentPath.from( path ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( ContentTypeName.from( contentTypeName ) );
 
         if ( withPage )
         {
-            PageRegions pageRegions = PageRegions.create().
-                add( Region.create().name( "main-region" ).
-                    add( PartComponent.create().descriptor( "myapp:mypart" ).
-                        build() ).
-                    build() ).
-                build();
+            PageRegions pageRegions = PageRegions.create()
+                .add( Region.create().name( "main-region" ).add( PartComponent.create().descriptor( "myapp:mypart" ).build() ).build() )
+                .build();
 
-            Page page = Page.create().
-                template( PageTemplateKey.from( "my-page" ) ).
-                regions( pageRegions ).
-                config( rootDataSet ).
-                build();
+            Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).regions( pageRegions ).config( rootDataSet ).build();
             content.page( page );
         }
         return content.build();
@@ -245,22 +268,19 @@ public class MappingHandlerTest
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
 
-        Page page = Page.create().
-            template( PageTemplateKey.from( "my-page" ) ).
-            config( rootDataSet ).
-            build();
+        Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).config( rootDataSet ).build();
 
         final SiteConfig siteConfig =
             SiteConfig.create().application( ApplicationKey.from( "myapplication" ) ).config( new PropertyTree() ).build();
-        return Site.create().
-            siteConfigs( SiteConfigs.from( siteConfig ) ).
-            id( ContentId.from( id ) ).
-            path( ContentPath.from( path ) ).
-            owner( PrincipalKey.from( "user:myStore:me" ) ).
-            displayName( "My Content" ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( ContentTypeName.from( contentTypeName ) ).
-            page( page ).
-            build();
+        return Site.create()
+            .siteConfigs( SiteConfigs.from( siteConfig ) )
+            .id( ContentId.from( id ) )
+            .path( ContentPath.from( path ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( ContentTypeName.from( contentTypeName ) )
+            .page( page )
+            .build();
     }
 }

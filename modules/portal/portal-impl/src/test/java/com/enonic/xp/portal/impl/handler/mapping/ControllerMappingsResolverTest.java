@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -8,11 +9,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
@@ -27,201 +30,89 @@ import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ControllerMappingsResolverTest
 {
-    private ContentService contentService;
-
     private SiteService siteService;
-
-    private PortalRequest request;
 
     @BeforeEach
     public final void setup()
         throws Exception
     {
-        final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
-        Mockito.when( rawRequest.getRequestURI() ).thenReturn( "/site/master/mysite/landing-page" );
-
-        this.request = new PortalRequest();
-        this.request.setMode( RenderMode.LIVE );
-        this.request.setRawRequest( rawRequest );
-
-        this.contentService = Mockito.mock( ContentService.class );
         this.siteService = Mockito.mock( SiteService.class );
     }
 
     @Test
     public void testNoDescriptors()
-        throws Exception
     {
         final Content content = newContent();
         final Site site = newSite();
-        this.request.setContentPath( content.getPath() );
 
-        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
-        Mockito.when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( site );
+        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
+        final Optional<ControllerMappingDescriptor> mapping = resolver.resolve( "/landing-page", ImmutableMultimap.of(), content, site.getSiteConfigs() );
 
-        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService, this.contentService );
-        final ControllerMappingDescriptor mapping = resolver.resolve( request );
-
-        assertNull( mapping );
+        assertTrue( mapping.isEmpty() );
     }
 
     @Test
     public void testResolve()
-        throws Exception
     {
         final Content content = newContent();
         final Site site = newSite();
 
-        this.request.setContentPath( content.getPath() );
-        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
-        Mockito.when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( site );
         final SiteDescriptor siteDescriptor = newSiteDescriptor();
         Mockito.when( this.siteService.getDescriptor( getAppKey() ) ).thenReturn( siteDescriptor );
         final SiteDescriptor siteDescriptor2 = newSiteDescriptor2();
         Mockito.when( this.siteService.getDescriptor( getAppKey2() ) ).thenReturn( siteDescriptor2 );
 
-        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService, this.contentService );
-        final ControllerMappingDescriptor mapping = resolver.resolve( request );
+        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
+        final Optional<ControllerMappingDescriptor> mapping =
+            resolver.resolve( "/landing-page", ImmutableMultimap.of(), content, site.getSiteConfigs() );
 
-        assertNotNull( mapping );
-        assertEquals( "/site/controllers/controller2.js", mapping.getController().getPath() );
+        assertThat( mapping ).map( ControllerMappingDescriptor::getController )
+            .map( ResourceKey::getPath )
+            .contains( "/site/controllers/controller2.js" );
     }
 
     @Test
     public void testResolveWithParameters()
-        throws Exception
     {
         final Content content = newContent();
         final Site site = newSite();
 
-        this.request.setContentPath( ContentPath.from( content.getPath(), "api" ) );
-        this.request.getParams().put( "key", "123" );
-        this.request.getParams().put( "category", "foo" );
-        Mockito.when( this.contentService.getByPath( content.getParentPath() ) ).thenReturn( site );
-        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
-        Mockito.when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( site );
         final SiteDescriptor siteDescriptor = newSiteDescriptor3();
         Mockito.when( this.siteService.getDescriptor( getAppKey2() ) ).thenReturn( siteDescriptor );
 
-        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService, this.contentService );
-        final boolean mappingCanHandleRequest = resolver.canHandle( request );
-        final boolean mappingCanHandleRequest2 = resolver.canHandle( request );
+        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
 
-        final ControllerMappingDescriptor mapping = resolver.resolve( request );
+        final Optional<ControllerMappingDescriptor> mapping = resolver.resolve( "/api", ImmutableMultimap.of("key", "123", "category", "foo"), content, site.getSiteConfigs() );
 
-        assertTrue( mappingCanHandleRequest );
-        assertTrue( mappingCanHandleRequest2 );
-        assertNotNull( mapping );
-        assertEquals( "/other/controller1.js", mapping.getController().getPath() );
+        assertThat( mapping ).map( ControllerMappingDescriptor::getController )
+            .map( ResourceKey::getPath )
+            .contains( "/other/controller1.js" );
     }
 
     @Test
     public void testResolvePatternWithParametersNoMatch()
-        throws Exception
     {
         final Content content = newContent();
         final Site site = newSite();
 
-        this.request.setContentPath( ContentPath.from( content.getPath(), "api" ) );
-        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
-        Mockito.when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( site );
         final SiteDescriptor siteDescriptor = newSiteDescriptor3();
         Mockito.when( this.siteService.getDescriptor( getAppKey2() ) ).thenReturn( siteDescriptor );
 
-        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService, this.contentService );
-        final boolean mappingCanHandleRequest = resolver.canHandle( request );
+        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
 
-        final ControllerMappingDescriptor mapping = resolver.resolve( request );
+        final Optional<ControllerMappingDescriptor> mapping = resolver.resolve( "/api", ImmutableMultimap.of(), content, site.getSiteConfigs() );
 
-        assertFalse( mappingCanHandleRequest );
-        assertNull( mapping );
+        assertTrue( mapping.isEmpty() );
     }
 
-
-    @Test
-    public void testResolveUrlEditModeWithContentId()
-        throws Exception
-    {
-        final Content content = newContent();
-        final Site site = newSite();
-
-        this.request.setContentPath( ContentPath.from( "/c8da0c10-0002-4b68-b407-87412f3e45c8" ) );
-        this.request.setMode( RenderMode.EDIT );
-        Mockito.when( this.contentService.getById( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenReturn( content );
-        Mockito.when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( site );
-        final SiteDescriptor siteDescriptor = newSiteDescriptor();
-        Mockito.when( this.siteService.getDescriptor( getAppKey() ) ).thenReturn( siteDescriptor );
-        final SiteDescriptor siteDescriptor2 = newSiteDescriptor2();
-        Mockito.when( this.siteService.getDescriptor( getAppKey2() ) ).thenReturn( siteDescriptor2 );
-
-        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService, this.contentService );
-        final ControllerMappingDescriptor mapping = resolver.resolve( request );
-
-        assertNotNull( mapping );
-        assertEquals( "/site/controllers/controller2.js", mapping.getController().getPath() );
-    }
-
-    @Test
-    public void testResolveUrlAdminMode()
-        throws Exception
-    {
-        final Content content = newContent();
-        this.request.setContentPath( content.getPath() );
-        this.request.setMode( RenderMode.ADMIN );
-
-        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService, this.contentService );
-        final ControllerMappingDescriptor mapping = resolver.resolve( request );
-
-        assertNull( mapping );
-    }
-
-    @Test
-    public void testResolveContentNotInSite()
-        throws Exception
-    {
-        final Content content = newContent();
-
-        this.request.setContentPath( content.getPath() );
-        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
-        Mockito.when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( null );
-        final SiteDescriptor siteDescriptor = newSiteDescriptor();
-        Mockito.when( this.siteService.getDescriptor( getAppKey() ) ).thenReturn( siteDescriptor );
-        final SiteDescriptor siteDescriptor2 = newSiteDescriptor2();
-        Mockito.when( this.siteService.getDescriptor( getAppKey2() ) ).thenReturn( siteDescriptor2 );
-
-        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService, this.contentService );
-        final ControllerMappingDescriptor mapping = resolver.resolve( request );
-
-        assertNull( mapping );
-    }
-
-    @Test
-    public void testResolveUrlWithEndPoint()
-        throws Exception
-    {
-        final Content content = newFragmentContent();
-        final Site site = newSite();
-
-        this.request.setContentPath( content.getPath() );
-        this.request.setEndpointPath( "/_/image/1234:5678/width-695/superhero_5.jpg" );
-        Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
-        Mockito.when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( site );
-        final SiteDescriptor siteDescriptor4 = newDescriptorForFragments();
-        Mockito.when( this.siteService.getDescriptor( getAppKey() ) ).thenReturn( siteDescriptor4 );
-
-        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService, this.contentService );
-        final ControllerMappingDescriptor mapping = resolver.resolve( request );
-
-        assertNull( mapping );
-    }
 
     private SiteDescriptor newSiteDescriptor()
     {
