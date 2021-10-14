@@ -137,6 +137,7 @@ public class ProjectServiceImpl
             setData( createProjectData( params ) ).
             accessControlList( CreateProjectRootAccessListCommand.create().
                 projectName( params.getName() ).
+                permissions( params.getPermissions() ).
                 build().
                 execute() ).
             forceInitialization( params.isForceInitialization() ).

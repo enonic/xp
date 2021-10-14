@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.project;
 
+import java.util.Objects;
+
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.security.RoleKeys;
@@ -10,9 +12,12 @@ import com.enonic.xp.security.acl.Permission;
 public final class CreateProjectRootAccessListCommand
     extends AbstractProjectCommand
 {
+    private final AccessControlList permissions;
+
     private CreateProjectRootAccessListCommand( final Builder builder )
     {
         super( builder );
+        this.permissions = Objects.requireNonNullElse( builder.permissions, AccessControlList.empty() );
     }
 
     public static Builder create()
@@ -32,7 +37,7 @@ public final class CreateProjectRootAccessListCommand
             return null;
         }
 
-        return AccessControlList.create().
+        return AccessControlList.create( permissions ).
             add( AccessControlEntry.create().
                 allowAll().
                 principal( RoleKeys.ADMIN ).
@@ -67,8 +72,16 @@ public final class CreateProjectRootAccessListCommand
     public static final class Builder
         extends AbstractProjectCommand.Builder<Builder>
     {
+        AccessControlList permissions;
+
         private Builder()
         {
+        }
+
+        public Builder permissions( final AccessControlList permissions )
+        {
+            this.permissions = permissions;
+            return this;
         }
 
         @Override

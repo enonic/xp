@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.mockito.Mockito;
 
-import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
@@ -22,7 +21,10 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -40,7 +42,9 @@ public abstract class BaseProjectHandlerTest
         final Content.Builder contentRoot = Content.create().id( ContentId.from( "123" ) ).
             name( ContentName.from( "root" ) ).
             parentPath( ContentPath.ROOT ).
-            permissions( AccessControlList.empty() ).
+            permissions( AccessControlList.create()
+                             .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
+                             .build() ).
             data( new PropertyTree() ).
             extraDatas( ExtraDatas.empty() );
 
@@ -54,14 +58,6 @@ public abstract class BaseProjectHandlerTest
             contentRoot.language( editableContent.language );
             Mockito.when( contentService.getByPath( ContentPath.ROOT ) ).thenReturn( contentRoot.build() );
             return contentRoot.build();
-        } );
-
-        when( this.contentService.applyPermissions( any( ApplyContentPermissionsParams.class ) ) ).thenAnswer( mock -> {
-            final ApplyContentPermissionsParams params = (ApplyContentPermissionsParams) mock.getArguments()[0];
-
-            contentRoot.permissions( params.getPermissions() );
-            Mockito.when( contentService.getByPath( ContentPath.ROOT ) ).thenReturn( contentRoot.build() );
-            return null;
         } );
     }
 

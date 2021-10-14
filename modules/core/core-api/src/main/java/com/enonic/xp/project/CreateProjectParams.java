@@ -3,6 +3,7 @@ package com.enonic.xp.project;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.security.acl.AccessControlList;
 
 @PublicApi
 public final class CreateProjectParams
@@ -15,6 +16,8 @@ public final class CreateProjectParams
 
     private final ProjectName parent;
 
+    private final AccessControlList permissions;
+
     private final boolean forceInitialization;
 
     private CreateProjectParams( final Builder builder )
@@ -24,6 +27,7 @@ public final class CreateProjectParams
         this.description = builder.description;
         this.parent = builder.parent;
         this.forceInitialization = builder.forceInitialization;
+        this.permissions = builder.permissions;
     }
 
     public static Builder create()
@@ -51,6 +55,11 @@ public final class CreateProjectParams
         return parent;
     }
 
+    public AccessControlList getPermissions()
+    {
+        return permissions;
+    }
+
     public boolean isForceInitialization()
     {
         return forceInitialization;
@@ -66,6 +75,8 @@ public final class CreateProjectParams
         private String description;
 
         private ProjectName parent;
+
+        private AccessControlList permissions;
 
         private boolean forceInitialization = false;
 
@@ -94,6 +105,12 @@ public final class CreateProjectParams
         public Builder parent( final ProjectName parent )
         {
             this.parent = parent;
+            return this;
+        }
+
+        public Builder permissions( final AccessControlList permissions )
+        {
+            this.permissions = permissions;
             return this;
         }
 
