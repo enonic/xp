@@ -20,7 +20,7 @@ public abstract class AbstractContentEventSyncCommand
 
     public void sync()
     {
-        this.params.getTargetContext().runWith( this::doSync );
+        this.doSync();
     }
 
     protected abstract void doSync();

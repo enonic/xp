@@ -1,13 +1,17 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.project.ProjectName;
 
 public final class ContentSyncParams
 {
-    private final ContentId contentId;
+    private final List<ContentId> contentIds;
 
     private final ProjectName sourceProject;
 
@@ -17,7 +21,7 @@ public final class ContentSyncParams
 
     public ContentSyncParams( Builder builder )
     {
-        this.contentId = builder.contentId;
+        this.contentIds = builder.contentIds.build();
         this.sourceProject = builder.sourceProject;
         this.targetProject = builder.targetProject;
         this.includeChildren = builder.includeChildren;
@@ -28,9 +32,9 @@ public final class ContentSyncParams
         return new Builder();
     }
 
-    public ContentId getContentId()
+    public List<ContentId> getContentIds()
     {
-        return contentId;
+        return contentIds;
     }
 
     public ProjectName getSourceProject()
@@ -50,7 +54,7 @@ public final class ContentSyncParams
 
     public static final class Builder
     {
-        private ContentId contentId;
+        private final ImmutableList.Builder<ContentId> contentIds = ImmutableList.builder();
 
         private ProjectName sourceProject;
 
@@ -58,9 +62,15 @@ public final class ContentSyncParams
 
         private boolean includeChildren = true;
 
-        public Builder contentId( final ContentId contentId )
+        public Builder addContentId( final ContentId contentId )
         {
-            this.contentId = contentId;
+            this.contentIds.add( contentId );
+            return this;
+        }
+
+        public Builder addContentIds( final Collection<ContentId> contentIds )
+        {
+            this.contentIds.addAll( contentIds );
             return this;
         }
 
