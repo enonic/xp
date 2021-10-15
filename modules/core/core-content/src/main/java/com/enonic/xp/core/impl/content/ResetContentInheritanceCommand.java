@@ -100,12 +100,12 @@ final class ResetContentInheritanceCommand
 
     private void syncContent( final ContentId contentId, final ProjectName sourceProjectName, final ProjectName targetProjectName )
     {
-        contentSynchronizer.sync( ContentSyncParams.create().
-            contentId( contentId ).
-            sourceProject( sourceProjectName ).
-            targetProject( targetProjectName ).
-            includeChildren( false ).
-            build() );
+        contentSynchronizer.sync( ContentSyncParams.create()
+                                      .addContentId( contentId )
+                                      .sourceProject( sourceProjectName )
+                                      .targetProject( targetProjectName )
+                                      .includeChildren( false )
+                                      .build() );
     }
 
     private ProjectName fetchSourceProjectName( final ProjectName targetProjectName )

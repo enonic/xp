@@ -19,8 +19,6 @@ import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.project.ProjectName;
 
-import static com.enonic.xp.archive.ArchiveConstants.ARCHIVE_ROOT_CONTENT_PATH;
-
 final class CreatedEventSyncCommand
     extends AbstractContentEventSyncCommand
 {
@@ -38,24 +36,25 @@ final class CreatedEventSyncCommand
 
     protected void doSync()
     {
+        params.getContents().forEach( this::doSync );
+    }
+
+    private void doSync( final ContentToSync content )
+    {
         try
         {
-            params.getSourceContext().runWith( () -> {
-                if ( contentService.contentExists( params.getSourceContent().getParentPath() ) )
+            content.getSourceContext().runWith( () -> {
+                if ( contentService.contentExists( content.getSourceContent().getParentPath() ) )
                 {
-                    final ContentId parentId = contentService.getByPath( params.getSourceContent().getParentPath() ).getId();
-                    params.getTargetContext().runWith( () -> {
-                        if ( params.getSourceContent().getParentPath().isRoot() )
+                    final ContentId parentId = contentService.getByPath( content.getSourceContent().getParentPath() ).getId();
+                    content.getTargetContext().runWith( () -> {
+                        if ( content.getSourceContent().getParentPath().isRoot() )
                         {
-                            syncRootContent();
+                            syncRootContent( content );
                         }
                         else if ( contentService.contentExists( parentId ) )
                         {
-                            syncChildContent( parentId );
-                        }
-                        else if ( ARCHIVE_ROOT_CONTENT_PATH.equals( params.getSourceContent().getParentPath() ) )
-                        {
-                            syncArchiveContainer();
+                            syncChildContent( parentId, content );
                         }
                     } );
                 }
@@ -64,57 +63,47 @@ final class CreatedEventSyncCommand
         }
         catch ( ContentAlreadyExistsException e )
         {
-            LOG.warn( "content [{}] already exists.", params.getSourceContent().getId() );
+            LOG.warn( "content [{}] already exists.", content.getId() );
         }
     }
 
-    private void syncRootContent()
+    private void syncRootContent( final ContentToSync content )
     {
-        contentService.importContent( createImportParams( params, ContentPath.ROOT, null ) );
+        contentService.importContent( createImportParams( content, ContentPath.ROOT, null ) );
     }
 
-    private void syncChildContent( final ContentId parentId )
+    private void syncChildContent( final ContentId parentId, final ContentToSync content )
     {
         final Content targetParent = contentService.getById( parentId );
 
-        contentService.importContent( createImportParams( params, targetParent.getPath(), targetParent.getChildOrder().isManualOrder()
+        contentService.importContent( createImportParams( content, targetParent.getPath(), targetParent.getChildOrder().isManualOrder()
             ? InsertManualStrategy.MANUAL
             : null ) );
     }
 
-    private void syncArchiveContainer()
-    {
-        final Content targetParent = contentService.getByPath( ARCHIVE_ROOT_CONTENT_PATH );
-
-        contentService.importContent( createImportParams( params, targetParent.getPath(), targetParent.getChildOrder().isManualOrder()
-            ? InsertManualStrategy.MANUAL
-            : null ) );
-
-    }
-
-    private ImportContentParams createImportParams( final ContentEventSyncCommandParams params, final ContentPath parentPath,
+    private ImportContentParams createImportParams( final ContentToSync content, final ContentPath parentPath,
                                                     final InsertManualStrategy insertManualStrategy )
     {
         final BinaryAttachments.Builder builder = BinaryAttachments.create();
 
-        params.getSourceContent().getAttachments().forEach( attachment -> {
-            final ByteSource binary = params.getSourceContext()
-                .callWith( () -> contentService.getBinary( params.getSourceContent().getId(), attachment.getBinaryReference() ) );
+        content.getSourceContent().getAttachments().forEach( attachment -> {
+            final ByteSource binary =
+                content.getSourceContext().callWith( () -> contentService.getBinary( content.getId(), attachment.getBinaryReference() ) );
             builder.add( new BinaryAttachment( attachment.getBinaryReference(), binary ) );
         } );
 
-        final ContentPath targetPath = buildNewPath( parentPath, params.getSourceContent().getName() );
+        final ContentPath targetPath = buildNewPath( parentPath, content.getSourceContent().getName() );
 
-        final EnumSet<ContentInheritType> inheritTypes = params.getSourceContent().getName().toString().equals( targetPath.getName() )
+        final EnumSet<ContentInheritType> inheritTypes = content.getSourceContent().getName().toString().equals( targetPath.getName() )
             ? EnumSet.allOf( ContentInheritType.class )
             : EnumSet.complementOf( EnumSet.of( ContentInheritType.NAME ) );
 
         return ImportContentParams.create()
-            .importContent( params.getSourceContent() )
+            .importContent( content.getSourceContent() )
             .targetPath( targetPath )
             .binaryAttachments( builder.build() )
             .inherit( inheritTypes )
-            .originProject( ProjectName.from( params.getSourceContext().getRepositoryId() ) )
+            .originProject( ProjectName.from( content.getSourceContext().getRepositoryId() ) )
             .importPermissionsOnCreate( false )
             .dryRun( false )
             .insertManualStrategy( insertManualStrategy )
@@ -127,8 +116,10 @@ final class CreatedEventSyncCommand
 
         void validate()
         {
-            Preconditions.checkNotNull( params.getSourceContent(), "sourceContent must be set." );
-            Preconditions.checkArgument( params.getTargetContent() == null, "targetContent must be null." );
+            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getSourceContent() != null ),
+                                         "sourceContent must be set." );
+            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getTargetContent() == null ),
+                                         "targetContent must be null." );
         }
 
         public CreatedEventSyncCommand build()
