@@ -42,66 +42,72 @@ final class UpdatedEventSyncCommand
     @Override
     protected void doSync()
     {
-        if ( isContentSyncable( params.getSourceContent(), params.getTargetContent() ) )
-        {
-            if ( isToSyncData( params.getTargetContent() ) )
-            {
-                if ( needToUpdate( params.getSourceContent(), params.getTargetContent() ) )
-                {
-                    final UpdateContentParams updateParams = updateParams( params.getSourceContent() );
-
-                    doSyncMedia( params, updateParams );
-                    doSyncThumbnail( params, updateParams );
-
-                    contentService.update( updateParams );
-                }
-            }
-        }
+        params.getContents().forEach( this::doSync );
     }
 
-    private void doSyncMedia( final ContentEventSyncCommandParams params, final UpdateContentParams updteParams )
+    private void doSync( final ContentToSync content )
     {
-        if ( params.getSourceContent() instanceof Media )
+        content.getTargetContext().runWith( () -> {
+            if ( isContentSyncable( content.getSourceContent(), content.getTargetContent() ) )
+            {
+                if ( isToSyncData( content.getTargetContent() ) )
+                {
+                    if ( needToUpdate( content.getSourceContent(), content.getTargetContent() ) )
+                    {
+                        final UpdateContentParams updateParams = updateParams( content.getSourceContent() );
+
+                        doSyncMedia( content, updateParams );
+                        doSyncThumbnail( content, updateParams );
+
+                        contentService.update( updateParams );
+                    }
+                }
+            }
+        } );
+    }
+
+    private void doSyncMedia( final ContentToSync content, final UpdateContentParams updateParams )
+    {
+        if ( content.getSourceContent() instanceof Media )
         {
-            final Media sourceMedia = (Media) params.getSourceContent();
+            final Media sourceMedia = (Media) content.getSourceContent();
 
             final Attachment mediaAttachment = sourceMedia.getMediaAttachment();
 
-            final ByteSource sourceBinary = params.getSourceContext().callWith(
-                () -> contentService.getBinary( sourceMedia.getId(), mediaAttachment.getBinaryReference() ) );
-            final MediaInfo mediaInfo = params.getSourceContext().callWith( () -> mediaInfoService.parseMediaInfo( sourceBinary ) );
+            final ByteSource sourceBinary = content.getSourceContext()
+                .callWith( () -> contentService.getBinary( sourceMedia.getId(), mediaAttachment.getBinaryReference() ) );
+            final MediaInfo mediaInfo = content.getSourceContext().callWith( () -> mediaInfoService.parseMediaInfo( sourceBinary ) );
 
             final ContentTypeName type = ContentTypeFromMimeTypeResolver.resolve( mediaAttachment.getMimeType() );
 
-            final CreateAttachment createAttachment = CreateAttachment.create().
-                name( mediaAttachment.getName() ).
-                mimeType( mediaAttachment.getMimeType() ).
-                label( "source" ).
-                byteSource( sourceBinary ).
-                text( type != null && type.isTextualMedia() ? mediaInfo.getTextContent() : null ).
-                build();
+            final CreateAttachment createAttachment = CreateAttachment.create()
+                .name( mediaAttachment.getName() )
+                .mimeType( mediaAttachment.getMimeType() )
+                .label( "source" )
+                .byteSource( sourceBinary )
+                .text( type != null && type.isTextualMedia() ? mediaInfo.getTextContent() : null )
+                .build();
 
-            updteParams.clearAttachments( true ).
-                createAttachments( CreateAttachments.from( createAttachment ) );
+            updateParams.clearAttachments( true ).createAttachments( CreateAttachments.from( createAttachment ) );
         }
     }
 
-    private void doSyncThumbnail( final ContentEventSyncCommandParams params, final UpdateContentParams updateParams )
+    private void doSyncThumbnail( final ContentToSync content, final UpdateContentParams updateParams )
     {
-        if ( !Objects.equals( params.getSourceContent().getThumbnail(), params.getTargetContent().getThumbnail() ) )
+        if ( !Objects.equals( content.getSourceContent().getThumbnail(), content.getTargetContent().getThumbnail() ) )
         {
-            final Thumbnail sourceThumbnail = params.getSourceContent().getThumbnail();
+            final Thumbnail sourceThumbnail = content.getSourceContent().getThumbnail();
 
             if ( sourceThumbnail != null )
             {
-                final ByteSource sourceBinary = params.getSourceContext().callWith(
-                    () -> contentService.getBinary( params.getSourceContent().getId(), sourceThumbnail.getBinaryReference() ) );
+                final ByteSource sourceBinary = content.getSourceContext()
+                    .callWith( () -> contentService.getBinary( content.getSourceContent().getId(), sourceThumbnail.getBinaryReference() ) );
 
-                final CreateAttachment createThumbnail = CreateAttachment.create().
-                    name( AttachmentNames.THUMBNAIL ).
-                    mimeType( sourceThumbnail.getMimeType() ).
-                    byteSource( sourceBinary ).
-                    build();
+                final CreateAttachment createThumbnail = CreateAttachment.create()
+                    .name( AttachmentNames.THUMBNAIL )
+                    .mimeType( sourceThumbnail.getMimeType() )
+                    .byteSource( sourceBinary )
+                    .build();
 
                 final CreateAttachments.Builder createAttachments = CreateAttachments.create().add( createThumbnail );
                 if ( updateParams.getCreateAttachments() != null )
@@ -113,7 +119,7 @@ final class UpdatedEventSyncCommand
             }
             else
             {
-                final Thumbnail targetThumbnail = params.getTargetContent().getThumbnail();
+                final Thumbnail targetThumbnail = content.getTargetContent().getThumbnail();
                 updateParams.removeAttachments( BinaryReferences.from( targetThumbnail.getBinaryReference() ) );
             }
         }
@@ -149,12 +155,11 @@ final class UpdatedEventSyncCommand
 
     private UpdateContentParams updateParams( final Content source )
     {
-        return new UpdateContentParams().
-            contentId( source.getId() ).
-            modifier( PrincipalKey.ofAnonymous() ).
-            requireValid( false ).
-            stopInherit( false ).
-            editor( edit -> {
+        return new UpdateContentParams().contentId( source.getId() )
+            .modifier( PrincipalKey.ofAnonymous() )
+            .requireValid( false )
+            .stopInherit( false )
+            .editor( edit -> {
                 edit.data = source.getData();
                 edit.extraDatas = source.getAllExtraData();
                 edit.displayName = source.getDisplayName();
@@ -183,8 +188,10 @@ final class UpdatedEventSyncCommand
         {
             super.validate();
             Preconditions.checkNotNull( mediaInfoService, "mediaInfoService must be set." );
-            Preconditions.checkNotNull( params.getSourceContent(), "sourceContent must be set." );
-            Preconditions.checkNotNull( params.getTargetContent(), "targetContent must be set." );
+            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getSourceContent() != null ),
+                                         "sourceContent must be set." );
+            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getTargetContent() != null ),
+                                         "targetContent must be set." );
         }
 
         public UpdatedEventSyncCommand build()

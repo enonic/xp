@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -78,12 +79,14 @@ public final class ProjectContentEventListener
     {
         final List<Map<String, String>> nodes = (List<Map<String, String>>) event.getData().get( "nodes" );
 
-        nodes.forEach( nodeMap -> {
-            if ( nodeMap.get( "path" ).startsWith( "/content/" ) || nodeMap.get( "path" ).startsWith( "/archive/" ) )
-            {
-                this.simpleExecutor.execute( () -> handleContentEvent( nodeMap, event.getType() ) );
-            }
-        } );
+        final boolean isContentEvent = nodes.stream()
+            .map( map -> map.get( "path" ) )
+            .allMatch( path -> path.startsWith( "/content/" ) || path.startsWith( "/archive/" ) );
+
+        if ( isContentEvent )
+        {
+            this.simpleExecutor.execute( () -> doHandleContentEvent( nodes, event.getType() ) );
+        }
     }
 
     private boolean isAllowedContentEvent( final String type )
@@ -93,28 +96,41 @@ public final class ProjectContentEventListener
             "node.deleted".equals( type ) || "node.sorted".equals( type ) || "node.manualOrderUpdated".equals( type );
     }
 
-    private void handleContentEvent( final Map<String, String> nodeMap, final String type )
+    private void doHandleContentEvent( final List<Map<String, String>> nodes, final String type )
     {
         createAdminContext().runWith( () -> {
 
-            final ContentId contentId = ContentId.from( nodeMap.get( "id" ) );
+            final List<ContentId> contentIds =
+                nodes.stream().map( map -> ContentId.from( map.get( "id" ) ) ).collect( Collectors.toList() );
 
-            final ProjectName currentProjectName = ProjectName.from( RepositoryId.from( nodeMap.get( "repo" ) ) );
+            final List<ProjectName> projectNames = nodes.stream()
+                .map( map -> map.get( "repo" ) )
+                .distinct()
+                .map( repo -> ProjectName.from( RepositoryId.from( repo ) ) )
+                .collect( Collectors.toList() );
 
-            final Project sourceProject = this.projectService.list().
-                stream().
-                filter( project -> currentProjectName.equals( project.getName() ) ).
-                findAny().
-                orElseThrow( () -> new ProjectNotFoundException( currentProjectName ) );
+            if ( projectNames.size() != 1 )
+            {
+                throw new IllegalArgumentException( "An event cannot contain nodes from different repositories" );
+            }
 
-            this.projectService.list().
-                stream().
-                filter( project -> currentProjectName.equals( project.getParent() ) ).
-                forEach( targetProject -> {
+            final ProjectName currentProjectName = projectNames.get( 0 );
 
-                    final ContentEventsSyncParams.Builder paramsBuilder =
-                        ContentEventsSyncParams.create().contentId( contentId ).sourceProject( sourceProject.getName() ).targetProject(
-                            targetProject.getName() );
+            final Project sourceProject = this.projectService.list()
+                .stream()
+                .filter( project -> currentProjectName.equals( project.getName() ) )
+                .findAny()
+                .orElseThrow( () -> new ProjectNotFoundException( currentProjectName ) );
+
+            this.projectService.list()
+                .stream()
+                .filter( project -> currentProjectName.equals( project.getParent() ) )
+                .forEach( targetProject -> {
+
+                    final ContentEventsSyncParams.Builder paramsBuilder = ContentEventsSyncParams.create()
+                        .addContentIds( contentIds )
+                        .sourceProject( sourceProject.getName() )
+                        .targetProject( targetProject.getName() );
 
                     switch ( type )
                     {
@@ -157,8 +173,7 @@ public final class ProjectContentEventListener
                 this.projectService.list()
                     .stream()
                     .filter( project -> project.getName().equals( sourceProject.getParent() ) )
-                    .forEach( parentProject -> contentSynchronizer.sync( ContentSyncParams.create()
-                                                                             .contentId( contentId )
+                    .forEach( parentProject -> contentSynchronizer.sync( ContentSyncParams.create().addContentIds( contentIds )
                                                                              .sourceProject( parentProject.getName() )
                                                                              .targetProject( sourceProject.getName() )
                                                                              .build() )

@@ -24,29 +24,37 @@ final class ManualOrderUpdatedEventSyncCommand
 
     protected void doSync()
     {
-        if ( needToUpdateManualOrderValue( params.getSourceContent(), params.getTargetContent() ) )
-        {
-            if ( isToSyncManualOrderUpdated( params ) )
+        params.getContents().forEach( this::doSync );
+    }
+
+    private void doSync( final ContentToSync content )
+    {
+        content.getTargetContext().runWith( () -> {
+
+            if ( needToUpdateManualOrderValue( content ) )
             {
-                contentService.update( updateManualOrderValueParams( params.getSourceContent() ) );
+                if ( isToSyncManualOrderUpdated( content ) )
+                {
+                    contentService.update( updateManualOrderValueParams( content.getSourceContent() ) );
+                }
             }
-        }
+        } );
     }
 
-    private boolean needToUpdateManualOrderValue( final Content sourceContent, final Content targetContent )
+    private boolean needToUpdateManualOrderValue( final ContentToSync content )
     {
-        return !Objects.equals( targetContent.getManualOrderValue(), sourceContent.getManualOrderValue() );
+        return !Objects.equals( content.getTargetContent().getManualOrderValue(), content.getSourceContent().getManualOrderValue() );
     }
 
-    private boolean isToSyncManualOrderUpdated( final ContentEventSyncCommandParams params )
+    private boolean isToSyncManualOrderUpdated( final ContentToSync content )
     {
-        if ( contentService.contentExists( params.getTargetContent().getParentPath() ) )
+        if ( contentService.contentExists( content.getTargetContent().getParentPath() ) )
         {
-            final Content targetParent = contentService.getByPath( params.getTargetContent().getParentPath() );
+            final Content targetParent = contentService.getByPath( content.getTargetContent().getParentPath() );
             if ( targetParent.getChildOrder().isManualOrder() )
             {
                 final Content sourceParent =
-                    params.getSourceContext().callWith( () -> contentService.getByPath( params.getSourceContent().getParentPath() ) );
+                    content.getSourceContext().callWith( () -> contentService.getByPath( content.getSourceContent().getParentPath() ) );
 
                 return targetParent.getId().equals( sourceParent.getId() ) && targetParent.getInherit().contains( ContentInheritType.SORT );
             }
@@ -56,12 +64,11 @@ final class ManualOrderUpdatedEventSyncCommand
 
     private UpdateContentParams updateManualOrderValueParams( final Content source )
     {
-        return new UpdateContentParams().
-            contentId( source.getId() ).
-            modifier( PrincipalKey.ofAnonymous() ).
-            requireValid( false ).
-            stopInherit( false ).
-            editor( edit -> edit.manualOrderValue = source.getManualOrderValue() );
+        return new UpdateContentParams().contentId( source.getId() )
+            .modifier( PrincipalKey.ofAnonymous() )
+            .requireValid( false )
+            .stopInherit( false )
+            .editor( edit -> edit.manualOrderValue = source.getManualOrderValue() );
     }
 
     public static class Builder
@@ -70,8 +77,10 @@ final class ManualOrderUpdatedEventSyncCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( params.getSourceContent(), "sourceContent must be set." );
-            Preconditions.checkNotNull( params.getTargetContent(), "targetContent must be set." );
+            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getSourceContent() != null ),
+                                         "sourceContent must be set." );
+            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getTargetContent() != null ),
+                                         "targetContent must be set." );
         }
 
         public ManualOrderUpdatedEventSyncCommand build()
