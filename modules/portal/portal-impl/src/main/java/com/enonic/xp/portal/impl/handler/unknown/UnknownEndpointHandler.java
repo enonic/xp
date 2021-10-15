@@ -18,19 +18,13 @@ public class UnknownEndpointHandler
 {
     public UnknownEndpointHandler()
     {
-        super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ) );
-    }
-
-    @Override
-    public int getOrder()
-    {
-        return 1;
+        super( 1, EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ) );
     }
 
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return webRequest.getEndpointPath() != null && webRequest.getEndpointPath().startsWith( "/_/" );
+        return webRequest.getEndpointPath() != null;
     }
 
     @Override

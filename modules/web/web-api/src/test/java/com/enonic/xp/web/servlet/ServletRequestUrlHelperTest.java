@@ -22,22 +22,21 @@ public class ServletRequestUrlHelperTest
     public void setup()
     {
         this.req = mock( HttpServletRequest.class );
-        ServletRequestHolder.setRequest( this.req );
     }
 
     @Test
     public void createUri()
     {
-        final String uri1 = ServletRequestUrlHelper.createUri( null );
+        final String uri1 = ServletRequestUrlHelper.createUri( req, null );
         assertEquals( "/", uri1 );
 
-        final String uri2 = ServletRequestUrlHelper.createUri( "" );
+        final String uri2 = ServletRequestUrlHelper.createUri( req, "" );
         assertEquals( "/", uri2 );
 
-        final String uri3 = ServletRequestUrlHelper.createUri( "a/b" );
+        final String uri3 = ServletRequestUrlHelper.createUri( req, "a/b" );
         assertEquals( "/a/b", uri3 );
 
-        final String uri4 = ServletRequestUrlHelper.createUri( "/a/b" );
+        final String uri4 = ServletRequestUrlHelper.createUri( req, "/a/b" );
         assertEquals( "/a/b", uri4 );
     }
 
@@ -48,10 +47,7 @@ public class ServletRequestUrlHelperTest
         when( req.getScheme() ).thenReturn( "http" );
         when( req.getServerPort() ).thenReturn( 80 );
 
-        assertEquals( "http", ServletRequestUrlHelper.getScheme() );
-        assertEquals( "localhost", ServletRequestUrlHelper.getHost() );
-        assertEquals( 80, ServletRequestUrlHelper.getPort() );
-        assertEquals( "http://localhost", ServletRequestUrlHelper.getServerUrl() );
+        assertEquals( "http://localhost", ServletRequestUrlHelper.getServerUrl( req ) );
     }
 
     @Test
@@ -61,10 +57,7 @@ public class ServletRequestUrlHelperTest
         when( req.getScheme() ).thenReturn( "https" );
         when( req.getServerPort() ).thenReturn( 443 );
 
-        assertEquals( "https", ServletRequestUrlHelper.getScheme() );
-        assertEquals( "localhost", ServletRequestUrlHelper.getHost() );
-        assertEquals( 443, ServletRequestUrlHelper.getPort() );
-        assertEquals( "https://localhost", ServletRequestUrlHelper.getServerUrl() );
+        assertEquals( "https://localhost", ServletRequestUrlHelper.getServerUrl( req ) );
     }
 
     @Test
@@ -74,10 +67,7 @@ public class ServletRequestUrlHelperTest
         when( req.getScheme() ).thenReturn( "http" );
         when( req.getServerPort() ).thenReturn( 8080 );
 
-        assertEquals( "http", ServletRequestUrlHelper.getScheme() );
-        assertEquals( "localhost", ServletRequestUrlHelper.getHost() );
-        assertEquals( 8080, ServletRequestUrlHelper.getPort() );
-        assertEquals( "http://localhost:8080", ServletRequestUrlHelper.getServerUrl() );
+        assertEquals( "http://localhost:8080", ServletRequestUrlHelper.getServerUrl( req ) );
     }
 
     @Test
@@ -85,7 +75,7 @@ public class ServletRequestUrlHelperTest
     {
         VirtualHostHelper.setVirtualHost( this.req, null );
 
-        final String uri = ServletRequestUrlHelper.rewriteUri( "/path/to/page" ).getRewrittenUri();
+        final String uri = ServletRequestUrlHelper.rewriteUri( req, "/path/to/page" ).getRewrittenUri();
         assertEquals( "/path/to/page", uri );
     }
 
@@ -98,27 +88,19 @@ public class ServletRequestUrlHelperTest
         when( vhost.getTarget() ).thenReturn( "/" );
         when( vhost.getSource() ).thenReturn( "/admin" );
 
-        final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( "/path/to/page" );
+        final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( req, "/path/to/page" );
         assertEquals( "/admin/path/to/page", rewritingResult.getRewrittenUri() );
         assertFalse( rewritingResult.isOutOfScope() );
 
         when( vhost.getTarget() ).thenReturn( "/root/to/site" );
-        final UriRewritingResult rewritingResult2 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" );
+        final UriRewritingResult rewritingResult2 = ServletRequestUrlHelper.rewriteUri( req, "/path/to/page" );
         assertEquals( "/path/to/page", rewritingResult2.getRewrittenUri() );
         assertTrue( rewritingResult2.isOutOfScope() );
 
         when( vhost.getTarget() ).thenReturn( "/path/to" );
-        final UriRewritingResult rewritingResult3 = ServletRequestUrlHelper.rewriteUri( "/path/to/page" );
+        final UriRewritingResult rewritingResult3 = ServletRequestUrlHelper.rewriteUri( req, "/path/to/page" );
         assertEquals( "/admin/page", rewritingResult3.getRewrittenUri() );
         assertFalse( rewritingResult3.isOutOfScope() );
-    }
-
-    @Test
-    public void getRemoteAddress()
-    {
-        when( req.getRemoteAddr() ).thenReturn( "127.0.0.1" );
-
-        assertEquals( "127.0.0.1", ServletRequestUrlHelper.getRemoteAddress( this.req ) );
     }
 
     @Test

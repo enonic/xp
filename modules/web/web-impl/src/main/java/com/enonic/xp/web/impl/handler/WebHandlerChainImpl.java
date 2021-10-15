@@ -1,9 +1,7 @@
 package com.enonic.xp.web.impl.handler;
 
-import java.util.Collection;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.UnmodifiableIterator;
+import java.util.Iterator;
+import java.util.List;
 
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
@@ -14,11 +12,11 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 final class WebHandlerChainImpl
     implements WebHandlerChain
 {
-    private final UnmodifiableIterator<WebHandler> webHandlerIterator;
+    private final Iterator<WebHandler> webHandlerIterator;
 
-    WebHandlerChainImpl( final Collection<WebHandler> handlers )
+    WebHandlerChainImpl( final List<WebHandler> handlers )
     {
-        this.webHandlerIterator = ImmutableList.copyOf( handlers ).iterator();
+        this.webHandlerIterator = List.copyOf( handlers ).iterator();
     }
 
     @Override

@@ -2,51 +2,42 @@ package com.enonic.xp.web.impl.handler;
 
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.google.common.collect.ImmutableList;
-
+import com.enonic.xp.core.internal.concurrent.AtomicSortedList;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandler;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 @Component
 public final class WebDispatcherImpl
     implements WebDispatcher
 {
-    private final AtomicReference<ImmutableList<WebHandler>> webHandlerListRef = new AtomicReference<>( ImmutableList.of() );
+    private final AtomicSortedList<WebHandler> webHandlerList = new AtomicSortedList<>( Comparator.comparingInt( WebHandler::getOrder ) );
 
     @Override
     public void add( final WebHandler webHandler )
     {
-        webHandlerListRef.updateAndGet( oldWebHandlers -> Stream.concat( oldWebHandlers.stream(), Stream.of( webHandler ) ).
-            sorted( Comparator.comparingInt( WebHandler::getOrder ) ).
-            collect( ImmutableList.toImmutableList() ) );
+        webHandlerList.add( webHandler );
     }
 
     @Override
     public void remove( final WebHandler webHandler )
     {
-        webHandlerListRef.updateAndGet( oldWebHandlers -> oldWebHandlers.stream().filter( w -> w != webHandler ).
-            sorted( Comparator.comparingInt( WebHandler::getOrder ) ).
-            collect( ImmutableList.toImmutableList() ) );
+        webHandlerList.remove( webHandler );
     }
 
     @Override
     public WebResponse dispatch( final WebRequest req, final WebResponse res )
         throws Exception
     {
-        ServletRequestHolder.setRequest( req.getRawRequest() );
-        return new WebHandlerChainImpl( this.webHandlerListRef.get() ).handle( req, res );
+        return new WebHandlerChainImpl( this.webHandlerList.snapshot() ).handle( req, res );
     }
 
     @Override
     public Iterator<WebHandler> iterator()
     {
-        return this.webHandlerListRef.get().iterator();
+        return this.webHandlerList.snapshot().iterator();
     }
 }

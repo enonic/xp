@@ -21,6 +21,7 @@ public final class ServletRequestUrlHelper
     private static final int[] RFC_8187_ATTR_CHAR =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$&+-.^_`|~".chars().sorted().toArray();
 
+    @Deprecated
     public static String createUri( final String path )
     {
         return createUri( ServletRequestHolder.getRequest(), path );
@@ -47,51 +48,61 @@ public final class ServletRequestUrlHelper
         return rewriteUri( req, str.toString() ).getRewrittenUri();
     }
 
+    @Deprecated
     public static String getScheme()
     {
         return getScheme( ServletRequestHolder.getRequest() );
     }
 
+    @Deprecated
     public static String getScheme( final HttpServletRequest req )
     {
         return req.getScheme();
     }
 
+    @Deprecated
     public static String getHost()
     {
         return getHost( ServletRequestHolder.getRequest() );
     }
 
+    @Deprecated
     public static String getHost( final HttpServletRequest req )
     {
         return req.getServerName();
     }
 
+    @Deprecated
     public static int getPort()
     {
         return getPort( ServletRequestHolder.getRequest() );
     }
 
+    @Deprecated
     public static int getPort( final HttpServletRequest req )
     {
         return req.getServerPort();
     }
 
+    @Deprecated
     public static HostAndPort getHostAndPort()
     {
         return getHostAndPort( ServletRequestHolder.getRequest() );
     }
 
+    @Deprecated
     public static HostAndPort getHostAndPort( final HttpServletRequest req )
     {
         return HostAndPort.fromParts( req.getServerName(), req.getServerPort() );
     }
 
+    @Deprecated
     public static String getRemoteAddress( final HttpServletRequest req )
     {
         return req.getRemoteAddr();
     }
 
+    @Deprecated
     public static String getPath()
     {
         return getPath( ServletRequestHolder.getRequest() );
@@ -102,11 +113,13 @@ public final class ServletRequestUrlHelper
         return createUri( req, req.getRequestURI() );
     }
 
+    @Deprecated
     private static String getQueryString( final HttpServletRequest req )
     {
         return req.getQueryString();
     }
 
+    @Deprecated
     public static String getServerUrl()
     {
         return getServerUrl( ServletRequestHolder.getRequest() );
@@ -133,6 +146,7 @@ public final class ServletRequestUrlHelper
         return str.toString();
     }
 
+    @Deprecated
     public static String getFullUrl()
     {
         return getFullUrl( ServletRequestHolder.getRequest() );
@@ -164,6 +178,7 @@ public final class ServletRequestUrlHelper
         return !( isUndefined || isHttp || isHttps );
     }
 
+    @Deprecated
     public static UriRewritingResult rewriteUri( final String uri )
     {
         return rewriteUri( ServletRequestHolder.getRequest(), uri );

@@ -57,4 +57,22 @@ public class EndpointHandlerTest
         webRequest.setEndpointPath( "/_/endpoint" );
         assertEquals( "", endpointHandler.findRestPath( webRequest ) );
     }
+
+    @Test
+    public void testPreRestPath()
+    {
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setEndpointPath( "/_/endpoint/a/b" );
+        webRequest.setRawPath( "/site/www/_/endpoint/a/b" );
+
+        assertEquals( "/site/www/_/endpoint", endpointHandler.findPreRestPath( webRequest ) );
+
+        webRequest.setEndpointPath( "/_/endpoint/" );
+        webRequest.setRawPath( "/site/www/_/endpoint/" );
+        assertEquals( "/site/www/_/endpoint", endpointHandler.findPreRestPath( webRequest ) );
+
+        webRequest.setEndpointPath( "/_/endpoint" );
+        webRequest.setRawPath( "/site/www/_/endpoint" );
+        assertEquals( "/site/www/_/endpoint", endpointHandler.findPreRestPath( webRequest ) );
+    }
 }

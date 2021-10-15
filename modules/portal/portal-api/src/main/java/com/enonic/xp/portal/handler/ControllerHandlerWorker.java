@@ -45,8 +45,7 @@ public abstract class ControllerHandlerWorker
 
     protected final Content getContentOrNull( final String contentSelector )
     {
-        final boolean inEditMode = ( this.request.getMode() == RenderMode.EDIT );
-        if ( inEditMode )
+        if ( request.getMode() == RenderMode.EDIT  )
         {
             final ContentId contentId = ContentId.from( contentSelector.substring( 1 ) );
             final Content contentById = getContentById( contentId );

@@ -15,6 +15,7 @@ import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @Component(immediate = true)
@@ -68,7 +69,7 @@ public final class AdminToolDescriptorServiceImpl
     @Override
     public String getHomeToolUri()
     {
-        return ServletRequestUrlHelper.createUri( ADMIN_TOOLS_URI_PREFIX );
+        return ServletRequestUrlHelper.createUri( ServletRequestHolder.getRequest(), ADMIN_TOOLS_URI_PREFIX );
     }
 
     @Override
@@ -79,7 +80,7 @@ public final class AdminToolDescriptorServiceImpl
         {
             uri += "/" + adminTool;
         }
-        return ServletRequestUrlHelper.createUri( uri );
+        return ServletRequestUrlHelper.createUri( ServletRequestHolder.getRequest(), uri );
     }
 
     private Set<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
