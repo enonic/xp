@@ -21,18 +21,24 @@ final class DeletedEventSyncCommand
 
     protected void doSync()
     {
-        if ( isToSyncDelete( params.getTargetContent() ) )
-        {
-            if ( needToDelete( params ) )
-            {
-                final DeleteContentParams deleteParams = DeleteContentParams.create().
-                    contentPath( params.getTargetContent().getPath() ).
-                    deleteOnline( true ).
-                    build();
+        params.getContents().forEach( this::doSync );
+    }
 
-                contentService.deleteWithoutFetch( deleteParams );
+    private void doSync( final ContentToSync content )
+    {
+        content.getTargetContext().runWith( () -> {
+
+            if ( isToSyncDelete( content.getTargetContent() ) )
+            {
+                if ( needToDelete( content ) )
+                {
+                    final DeleteContentParams deleteParams =
+                        DeleteContentParams.create().contentPath( content.getTargetContent().getPath() ).deleteOnline( true ).build();
+
+                    contentService.deleteWithoutFetch( deleteParams );
+                }
             }
-        }
+        } );
     }
 
     private boolean isToSyncDelete( final Content targetContent )
@@ -40,11 +46,11 @@ final class DeletedEventSyncCommand
         return targetContent.getInherit().contains( ContentInheritType.CONTENT );
     }
 
-    private boolean needToDelete( final ContentEventSyncCommandParams params )
+    private boolean needToDelete( final ContentToSync content )
     {
-        return params.getSourceContext().callWith( () -> !contentService.contentExists( params.getTargetContent().getId() ) ) &&
-            contentService.getDependencies( params.getTargetContent().getId() ).getInbound().isEmpty() &&
-            !params.getTargetContent().hasChildren();
+        return content.getSourceContext().callWith( () -> !contentService.contentExists( content.getTargetContent().getId() ) ) &&
+            contentService.getDependencies( content.getTargetContent().getId() ).getInbound().isEmpty() &&
+            !contentService.getById( content.getTargetContent().getId() ).hasChildren();
     }
 
     public static class Builder
@@ -53,8 +59,10 @@ final class DeletedEventSyncCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( params.getTargetContent(), "targetContent must be set." );
-            Preconditions.checkArgument( params.getSourceContent() == null, "sourceContent must be null." );
+            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getSourceContent() == null ),
+                                         "sourceContent must be null." );
+            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getTargetContent() != null ),
+                                         "targetContent must be set." );
         }
 
         public DeletedEventSyncCommand build()

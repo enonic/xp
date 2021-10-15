@@ -24,19 +24,26 @@ final class SortedEventSyncCommand
     @Override
     protected void doSync()
     {
-        if ( isToSyncSort( params.getTargetContent() ) )
-        {
-            if ( needToSort( params.getSourceContent(), params.getTargetContent() ) )
-            {
-                final SetContentChildOrderParams sortParams = SetContentChildOrderParams.create().
-                    childOrder( params.getSourceContent().getChildOrder() ).
-                    contentId( params.getSourceContent().getId() ).
-                    stopInherit( false ).
-                    build();
+        params.getContents().forEach( this::doSync );
+    }
 
-                contentService.setChildOrder( sortParams );
+    private void doSync( final ContentToSync content )
+    {
+        content.getTargetContext().runWith( () -> {
+            if ( isToSyncSort( content.getTargetContent() ) )
+            {
+                if ( needToSort( content.getSourceContent(), content.getTargetContent() ) )
+                {
+                    final SetContentChildOrderParams sortParams = SetContentChildOrderParams.create()
+                        .childOrder( content.getSourceContent().getChildOrder() )
+                        .contentId( content.getSourceContent().getId() )
+                        .stopInherit( false )
+                        .build();
+
+                    contentService.setChildOrder( sortParams );
+                }
             }
-        }
+        } );
     }
 
     private boolean isToSyncSort( final Content targetContent )
@@ -55,8 +62,10 @@ final class SortedEventSyncCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( params.getSourceContent(), "sourceContent must be set." );
-            Preconditions.checkNotNull( params.getTargetContent(), "targetContent must be set." );
+            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getSourceContent() != null ),
+                                         "sourceContent must be set." );
+            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getTargetContent() != null ),
+                                         "targetContent must be set." );
         }
 
         public SortedEventSyncCommand build()
