@@ -29,8 +29,11 @@ public class UnknownEndpointHandlerTest
     @Test
     public void testCanHandle()
     {
-        request.setEndpointPath( "/unknown" );
+        request.setEndpointPath( null );
         assertFalse( handler.canHandle( request ) );
+
+        request.setEndpointPath( "/unknown" );
+        assertTrue( handler.canHandle( request ) );
 
         request.setEndpointPath( "/_/unknown" );
         assertTrue( handler.canHandle( request ) );

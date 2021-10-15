@@ -99,13 +99,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
     private void appendParam( final StringBuilder str, final Map.Entry<String, String> param )
     {
-        appendParam( str, param.getKey(), param.getValue() );
-    }
-
-    private void appendParam( final StringBuilder str, final String key, final String value )
-    {
-        final String encoded = urlEncode( nullToEmpty( value ) );
-        str.append( key ).append( "=" ).append( encoded );
+        str.append( urlEncode( param.getKey() ) ).append( "=" ).append( urlEncode( nullToEmpty( param.getValue() ) ) );
     }
 
     private String urlEncode( final String value )
@@ -179,7 +173,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     {
         params.putAll( this.params.getParams() );
 
-        if ( isSiteBase() )
+        if ( this.portalRequest.isSiteBase() )
         {
             appendPart( url, RepositoryUtils.getContentRepoName( getRepositoryId() ) );
             appendPart( url, getBranch().toString() );
@@ -208,17 +202,12 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         }
     }
 
-    private boolean isSiteBase()
-    {
-        return this.portalRequest.isSiteBase();
-    }
-
     protected final String buildErrorUrl( final int code, final String message )
     {
         final StringBuilder str = new StringBuilder();
         appendPart( str, getBaseUri() );
 
-        if ( isSiteBase() )
+        if ( this.portalRequest.isSiteBase() )
         {
             appendPart( str, RepositoryUtils.getContentRepoName( getRepositoryId() ) );
             appendPart( str, getBranch().toString() );

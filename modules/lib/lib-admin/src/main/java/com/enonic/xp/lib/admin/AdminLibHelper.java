@@ -37,12 +37,12 @@ public final class AdminLibHelper
 
     public String getBaseUri()
     {
-        return ServletRequestUrlHelper.createUri( ADMIN_URI_PREFIX );
+        return ServletRequestUrlHelper.createUri( ServletRequestHolder.getRequest(), ADMIN_URI_PREFIX );
     }
 
     public String getAssetsUri()
     {
-        return ServletRequestUrlHelper.createUri( ADMIN_ASSETS_URI_PREFIX + this.version );
+        return ServletRequestUrlHelper.createUri( ServletRequestHolder.getRequest(), ADMIN_ASSETS_URI_PREFIX + this.version );
     }
 
     public String getHomeToolUri()

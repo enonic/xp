@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 
@@ -190,7 +189,7 @@ public class WebRequest
 
     public void setEndpointPath( final String endpointPath )
     {
-        this.endpointPath = Strings.emptyToNull( endpointPath );
+        this.endpointPath = endpointPath;
     }
 
     public String getContentType()

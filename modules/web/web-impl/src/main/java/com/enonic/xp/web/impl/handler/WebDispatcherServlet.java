@@ -149,12 +149,10 @@ public final class WebDispatcherServlet
     private WebResponse handleError( final WebRequest req, final Exception cause )
     {
         final WebException exception = this.exceptionMapper.map( cause );
-        final WebResponse webResponse = this.exceptionRenderer.render( req, exception );
-        return webResponse;
+        return this.exceptionRenderer.render( req, exception );
     }
 
     private WebResponse filterResponse( final WebRequest webRequest, final WebResponse webResponse )
-        throws Exception
     {
         if ( webRequest.getRawRequest().getAttribute( "error.handled" ) != Boolean.TRUE )
         {
@@ -166,7 +164,7 @@ public final class WebDispatcherServlet
     private static String findEndpointPath( final String path )
     {
         final int endpointPathIndex = path.indexOf( "/_/" );
-        return endpointPathIndex > -1 ? path.substring( endpointPathIndex ) : "";
+        return endpointPathIndex > -1 ? path.substring( endpointPathIndex ) : null;
     }
 
     @Reference
