@@ -24,20 +24,27 @@ final class RenamedEventSyncCommand
     @Override
     protected void doSync()
     {
-        if ( isToSyncName( params.getTargetContent() ) )
-        {
-            if ( needToRename( params.getSourceContent(), params.getTargetContent() ) )
-            {
-                final ContentName newName = ContentName.from(
-                    buildNewPath( params.getTargetContent().getParentPath(), params.getSourceContent().getName() ).getName() );
+        this.params.getContents().forEach( this::doSync );
+    }
 
-                contentService.rename( RenameContentParams.create().
-                    contentId( params.getTargetContent().getId() ).
-                    newName( newName ).
-                    stopInherit( !newName.equals( params.getSourceContent().getName() ) ).
-                    build() );
+    private void doSync( final ContentToSync content )
+    {
+        content.getTargetContext().runWith( () -> {
+            if ( isToSyncName( content.getTargetContent() ) )
+            {
+                if ( needToRename( content.getSourceContent(), content.getTargetContent() ) )
+                {
+                    final ContentName newName = ContentName.from(
+                        buildNewPath( content.getTargetContent().getParentPath(), content.getSourceContent().getName() ).getName() );
+
+                    contentService.rename( RenameContentParams.create()
+                                               .contentId( content.getTargetContent().getId() )
+                                               .newName( newName )
+                                               .stopInherit( !newName.equals( content.getSourceContent().getName() ) )
+                                               .build() );
+                }
             }
-        }
+        } );
     }
 
     private boolean needToRename( final Content sourceContent, final Content targetContent )
@@ -56,8 +63,10 @@ final class RenamedEventSyncCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( params.getSourceContent(), "sourceContent must be set." );
-            Preconditions.checkNotNull( params.getTargetContent(), "targetContent must be set." );
+            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getSourceContent() != null ),
+                                         "sourceContent must be set." );
+            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getTargetContent() != null ),
+                                         "targetContent must be set." );
         }
 
         public RenamedEventSyncCommand build()
