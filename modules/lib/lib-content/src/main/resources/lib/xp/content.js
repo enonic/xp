@@ -422,15 +422,37 @@ exports.move = function (params) {
     return __.toNativeObject(bean.execute());
 };
 
+/**
+ * Archive a content.
+ *
+ * @example-ref examples/content/archive.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.content Path or id of the content to be archived.
+ *
+ * @returns {string[]} List with ids of the content that were archived.
+ */
 exports.archive = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.ArchiveContentHandler');
     bean.content = required(params, 'content');
     return __.toNativeObject(bean.execute());
 };
 
+/**
+ * Restore a content from the archive.
+ *
+ * @example-ref examples/content/restore.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.content Path or id of the content to be restored.
+ * @param {string} params.path Path of parent for restored content.
+ *
+ * @returns {string[]} List with ids of the content that were archived.
+ */
 exports.restore = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.RestoreContentHandler');
     bean.content = required(params, 'content');
+    bean.path = nullOrValue(params.path);
     return __.toNativeObject(bean.execute());
 };
 
