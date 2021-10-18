@@ -1,6 +1,9 @@
 package com.enonic.xp.lib.content;
 
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.archive.RestoreContentsResult;
 import com.enonic.xp.content.Content;
@@ -17,12 +20,12 @@ public final class RestoreContentHandler
     private String path;
 
     @Override
-    protected Object doExecute()
+    protected List<String> doExecute()
     {
         return executeRestore();
     }
 
-    private boolean executeRestore()
+    private List<String> executeRestore()
 
     {
         final ContentId sourceId;
@@ -38,24 +41,20 @@ public final class RestoreContentHandler
         {
             // source is key
             sourceId = ContentId.from( this.content );
-            final Content sourceContent = contentService.getById( sourceId );
-            sourcePath = sourceContent.getPath();
         }
 
-        final ContentPath contentPath = nullToEmpty( path ).isBlank() ? null : ContentPath.from( path );
-        return restore( sourceId, contentPath );
+        final ContentPath pathToRestore = nullToEmpty( path ).isBlank() ? null : ContentPath.from( path );
+
+        return restore( sourceId, pathToRestore );
     }
 
-    private boolean restore( final ContentId sourceId, final ContentPath contentPath )
+    private List<String> restore( final ContentId sourceId, final ContentPath pathToRestore )
     {
-        final RestoreContentParams restoreParams = RestoreContentParams.create().
-            contentId( sourceId ).
-            path( contentPath ).
-            build();
+        final RestoreContentParams restoreParams = RestoreContentParams.create().contentId( sourceId ).path( pathToRestore ).build();
 
         final RestoreContentsResult result = contentService.restore( restoreParams );
 
-        return result.getRestoredContents().contains( sourceId );
+        return result.getRestoredContents().stream().map( ContentId::toString ).collect( Collectors.toList() );
     }
 
     public RestoreContentHandler setContent( final String content )
