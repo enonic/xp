@@ -2,6 +2,8 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -25,7 +27,10 @@ abstract class AbstractArchiveCommand
         final NodeCommitEntry commitEntry = NodeCommitEntry.create().message( message ).build();
 
         nodeService.refresh( RefreshMode.ALL );
-        nodeService.commit( commitEntry, NodeIds.from( nodeId ) );
+
+        final FindNodesByParentResult movedTree =
+            nodeService.findByParent( FindNodesByParentParams.create().size( -1 ).recursive( true ).parentId( nodeId ).build() );
+        nodeService.commit( commitEntry, NodeIds.create().addAll( movedTree.getNodeIds() ).add( nodeId ).build() );
     }
 
     public static class Builder<B extends Builder<B>>
