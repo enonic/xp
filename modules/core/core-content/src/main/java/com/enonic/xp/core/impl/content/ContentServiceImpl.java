@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.content;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
@@ -23,10 +22,6 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
-import com.enonic.xp.archive.ArchivedContainer;
-import com.enonic.xp.archive.ArchivedContainerLayer;
-import com.enonic.xp.archive.ListContentsParams;
-import com.enonic.xp.archive.ResolveArchivedParams;
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.archive.RestoreContentsResult;
 import com.enonic.xp.branch.Branches;
@@ -855,28 +850,6 @@ public class ContentServiceImpl
         contentAuditLogSupport.restore( params, result );
 
         return result;
-    }
-
-    @Override
-    public List<ArchivedContainerLayer> listArchived( final ListContentsParams params)
-    {
-        return ListArchivedContentCommand.create().
-            nodeService( nodeService ).
-            translator( translator ).
-            params( params ).
-            build().
-            execute();
-    }
-
-    @Override
-    public List<ArchivedContainer> resolveArchivedByContents( final ResolveArchivedParams params)
-    {
-        return ResolveArchivedByContentsCommand.create().
-            nodeService( nodeService ).
-            translator( translator ).
-            params( params ).
-            build().
-            execute();
     }
 
     @Override
