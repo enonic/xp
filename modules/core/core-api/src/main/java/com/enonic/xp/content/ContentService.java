@@ -1,7 +1,6 @@
 package com.enonic.xp.content;
 
 import java.io.InputStream;
-import java.util.List;
 
 import com.google.common.io.ByteSource;
 
@@ -9,10 +8,6 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
-import com.enonic.xp.archive.ArchivedContainer;
-import com.enonic.xp.archive.ArchivedContainerLayer;
-import com.enonic.xp.archive.ListContentsParams;
-import com.enonic.xp.archive.ResolveArchivedParams;
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.archive.RestoreContentsResult;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -62,10 +57,6 @@ public interface ContentService
     ArchiveContentsResult archive( ArchiveContentParams params );
 
     RestoreContentsResult restore( RestoreContentParams params );
-
-    List<ArchivedContainerLayer> listArchived( final ListContentsParams params);
-
-    List<ArchivedContainer> resolveArchivedByContents( ResolveArchivedParams params);
 
     Content setChildOrder( SetContentChildOrderParams params );
 
