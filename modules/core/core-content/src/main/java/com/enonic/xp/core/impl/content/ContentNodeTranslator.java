@@ -13,6 +13,7 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
@@ -89,7 +90,8 @@ public class ContentNodeTranslator
     {
         final ContentId contentId = ContentId.from( node.id().toString() );
 
-        if ( !node.path().toString().startsWith( ContentNodeHelper.getContentRoot().toString() ) )
+        if ( !node.path().toString().startsWith( ContentNodeHelper.getContentRoot().toString() + "/" ) &&
+            !node.path().equals( ContentNodeHelper.getContentRoot() ) )
         {
             throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch(), ContentNodeHelper.getContentRoot() );
         }
@@ -97,9 +99,7 @@ public class ContentNodeTranslator
         final ContentPath parentContentPath = getParent( node.path() );
 
         final Content.Builder builder = contentDataSerializer.fromData( node.data().getRoot() );
-        builder.id( contentId )
-            .parentPath( parentContentPath )
-            .name( node.name().toString() )
+        builder.id( contentId ).parentPath( parentContentPath ).name( node.name().toString() )
             .childOrder( node.getChildOrder() )
             .permissions( node.getPermissions() )
             .inheritPermissions( node.inheritsPermissions() )

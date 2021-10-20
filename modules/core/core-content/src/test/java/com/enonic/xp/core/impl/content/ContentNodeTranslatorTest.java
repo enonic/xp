@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
@@ -126,8 +127,9 @@ public class ContentNodeTranslatorTest
     public void testNodeOutsideOfContentRoot()
         throws Exception
     {
-        assertThrows( IllegalStateException.class, () -> this.contentNodeTranslator.fromNode( createNode( NodePath.ROOT ), false ) );
-        assertThrows( IllegalStateException.class, () -> this.contentNodeTranslator.fromNode( createNode( NodePath.create("/non-content").build() ), false ) );
+        assertThrows( ContentNotFoundException.class, () -> this.contentNodeTranslator.fromNode( createNode( NodePath.ROOT ), false ) );
+        assertThrows( ContentNotFoundException.class,
+                      () -> this.contentNodeTranslator.fromNode( createNode( NodePath.create( "/non-content" ).build() ), false ) );
     }
 
     private Node createNode()
