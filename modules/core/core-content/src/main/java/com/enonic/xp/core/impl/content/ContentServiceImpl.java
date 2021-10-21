@@ -825,12 +825,14 @@ public class ContentServiceImpl
     @Override
     public ArchiveContentsResult archive( final ArchiveContentParams params )
     {
-        final ArchiveContentsResult result = ArchiveContentCommand.create( params ).
-            nodeService( nodeService ).
-            translator( translator ).
-            archiveListener( params.getArchiveContentListener() ).
-            build().
-            execute();
+        final ArchiveContentsResult result = ArchiveContentCommand.create( params )
+            .nodeService( nodeService )
+            .translator( translator )
+            .eventPublisher( eventPublisher )
+            .contentTypeService( contentTypeService )
+            .archiveListener( params.getArchiveContentListener() )
+            .build()
+            .execute();
 
         contentAuditLogSupport.archive( params, result );
 
@@ -840,12 +842,14 @@ public class ContentServiceImpl
     @Override
     public RestoreContentsResult restore( final RestoreContentParams params )
     {
-        final RestoreContentsResult result = RestoreContentCommand.create( params ).
-            nodeService( nodeService ).
-            translator( translator ).
-            restoreListener( params.getRestoreContentListener() ).
-            build().
-            execute();
+        final RestoreContentsResult result = RestoreContentCommand.create( params )
+            .nodeService( nodeService )
+            .translator( translator )
+            .eventPublisher( eventPublisher )
+            .contentTypeService( contentTypeService )
+            .restoreListener( params.getRestoreContentListener() )
+            .build()
+            .execute();
 
         contentAuditLogSupport.restore( params, result );
 
