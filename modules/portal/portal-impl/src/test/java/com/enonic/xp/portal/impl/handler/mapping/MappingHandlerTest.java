@@ -19,6 +19,7 @@ import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
+import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
@@ -93,8 +94,8 @@ public class MappingHandlerTest
         this.rendererDelegate = mock( RendererDelegate.class );
         this.siteService = mock( SiteService.class );
 
-        this.handler = new MappingHandler( siteService, new ContentResolver( contentService ), resourceService, controllerScriptFactory,
-                                           filterScriptFactory, rendererDelegate );
+        this.handler = new MappingHandler( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
+                                           new ControllerMappingsResolver( siteService ), new ContentResolver( contentService ) );
         this.request.setMethod( HttpMethod.GET );
     }
 

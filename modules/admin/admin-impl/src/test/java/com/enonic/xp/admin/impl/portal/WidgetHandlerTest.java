@@ -58,7 +58,6 @@ public class WidgetHandlerTest
 
     @BeforeEach
     public final void setup()
-        throws Exception
     {
         this.request = new PortalRequest();
         final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
@@ -73,7 +72,6 @@ public class WidgetHandlerTest
 
         this.handler = new WidgetHandler();
         this.handler.setControllerScriptFactory( controllerScriptFactory );
-        this.handler.setContentService( this.contentService );
         this.handler.setWidgetDescriptorService( this.widgetDescriptorService );
 
         HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
@@ -201,43 +199,18 @@ public class WidgetHandlerTest
         Mockito.verify( this.controllerScript ).execute( this.request );
 
         assertNotNull( this.request.getApplicationKey() );
-        assertNotNull( this.request.getSite() );
-        assertNotNull( this.request.getContent() );
         assertEquals( "/admin/tool/_/widgets/demo/test", this.request.getContextPath() );
-    }
-
-    @Test
-    public void testContentDependentWidget()
-        throws Exception
-    {
-        final Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", false );
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
-            thenReturn( content );
-        Mockito.when( this.contentService.getById( content.getId() ) ).
-            thenReturn( content );
-        mockDescriptor( true );
-
-        this.request.setEndpointPath( "/_/widgets/demo/test" );
-        this.request.setMode( RenderMode.ADMIN );
-
-        final WebResponse response = this.handler.handle( this.request, WebResponse.create().build(), null );
-        assertEquals( HttpStatus.OK, response.getStatus() );
-
-        Mockito.verify( this.controllerScript ).execute( this.request );
-
-        assertNotNull( this.request.getApplicationKey() );
-        assertNotNull( this.request.getContent() );
-
     }
 
     private void setupContentAndSite()
     {
         final Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", true );
 
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
+        final ContentPath path = ContentPath.from( "site/somepath/content" ).asAbsolute();
+        Mockito.when( this.contentService.getByPath( path ) ).
             thenReturn( content );
 
-        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
+        Mockito.when( this.contentService.findNearestSiteByPath( path ) ).
             thenReturn( createSite( "id", "site", "myapplication:contenttypename" ) );
 
         Mockito.when( this.contentService.getById( content.getId() ) ).

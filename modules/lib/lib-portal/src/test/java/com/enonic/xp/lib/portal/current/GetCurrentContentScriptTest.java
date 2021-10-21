@@ -1,7 +1,6 @@
 package com.enonic.xp.lib.portal.current;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.lib.portal.TestDataFixtures;
@@ -32,8 +31,7 @@ public class GetCurrentContentScriptTest
         final Content content = TestDataFixtures.newContent();
         this.portalRequest.setContent( null );
         this.portalRequest.setContentPath( content.getPath() );
-        Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
-        runFunction( "/test/getCurrentContent-test.js", "currentContent" );
+        runFunction( "/test/getCurrentContent-test.js", "noCurrentContent" );
     }
 
     @Test

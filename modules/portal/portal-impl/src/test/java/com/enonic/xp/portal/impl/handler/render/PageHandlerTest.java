@@ -6,8 +6,10 @@ import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -24,7 +26,8 @@ import com.enonic.xp.web.WebResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PageHandlerTest
     extends RenderBaseHandlerTest
@@ -56,7 +59,7 @@ public class PageHandlerTest
     @Test
     public void testMatch()
     {
-        assertEquals( true, this.handler.canHandle( this.request ) );
+        assertTrue( this.handler.canHandle( this.request ) );
     }
 
     @Test
@@ -66,9 +69,7 @@ public class PageHandlerTest
         setupContentAndSite();
         setupTemplates();
 
-        final PortalResponse portalResponse = PortalResponse.create().
-            status( HttpStatus.METHOD_NOT_ALLOWED ).
-            build();
+        final PortalResponse portalResponse = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
 
         setRendererResult( portalResponse );
 
@@ -89,11 +90,8 @@ public class PageHandlerTest
         setupContentAndSite();
         setupTemplates();
 
-        final PortalResponse portalResponse = PortalResponse.create().
-            body( "component rendered" ).
-            header( "some-header", "some-value" ).
-            status( HttpStatus.OK ).
-            build();
+        final PortalResponse portalResponse =
+            PortalResponse.create().body( "component rendered" ).header( "some-header", "some-value" ).status( HttpStatus.OK ).build();
 
         setRendererResult( portalResponse );
 
@@ -107,43 +105,45 @@ public class PageHandlerTest
         assertEquals( "component rendered", res.getBody() );
     }
 
-
     @Test
     public void getContentNotFound()
-        throws Exception
     {
-        Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( null );
-        this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
+        final ContentPath path = ContentPath.from( "/site/somepath/content" );
+        Mockito.when( this.contentService.getByPath( path ) ).thenThrow( new ContentNotFoundException( path, Branch.from( "draft" ) ) );
+        this.request.setContentPath( path );
 
-        try
-        {
-            this.handler.handle( this.request, PortalResponse.create().build(), null );
-            fail( "Should throw exception" );
-        }
-        catch ( final WebException e )
-        {
-            assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
-            assertEquals( "Page [/site/somepath/content] not found", e.getMessage() );
-        }
+        final WebException e =
+            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
+        assertEquals( "Page [/site/somepath/content] not found", e.getMessage() );
+    }
+
+    @Test
+    public void getSiteNotFound()
+    {
+        setupContent();
+
+        final ContentPath path = ContentPath.from( "/site/somepath/content" );
+        Mockito.when( this.contentService.findNearestSiteByPath( path ) ).thenReturn( null );
+
+        this.request.setContentPath( path );
+
+        final WebException e =
+            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
+        assertEquals( "Site for [/site/somepath/content] not found", e.getMessage() );
     }
 
     @Test
     public void getContentWithTemplateNotFound()
-        throws Exception
     {
         setupContentAndSite();
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
 
-        try
-        {
-            this.handler.handle( this.request, PortalResponse.create().build(), null );
-            fail( "Should throw exception" );
-        }
-        catch ( final WebException e )
-        {
-            assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, e.getStatus() );
-            assertEquals( "Page template [my-page] not found", e.getMessage() );
-        }
+        final WebException e =
+            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, e.getStatus() );
+        assertEquals( "Page template [my-page] not found", e.getMessage() );
     }
 
     @Test
@@ -153,16 +153,12 @@ public class PageHandlerTest
         setupContentAndSite();
         setupTemplates();
 
-        final PortalResponse portalResponse = PortalResponse.create().
-            body( "content rendered" ).
-            header( "some-header", "some-value" ).
-            status( HttpStatus.OK ).
-            build();
+        final PortalResponse portalResponse =
+            PortalResponse.create().body( "content rendered" ).header( "some-header", "some-value" ).status( HttpStatus.OK ).build();
 
         setRendererResult( portalResponse );
 
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
-        this.request.setMode( RenderMode.EDIT );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
@@ -173,42 +169,21 @@ public class PageHandlerTest
     }
 
     @Test
-    public void getContentNotEnoughPermissions()
-        throws Exception
-    {
-        Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( null );
-        Mockito.when( this.contentService.contentExists( Mockito.any( ContentPath.class ) ) ).thenReturn( true );
-
-        this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
-
-        try
-        {
-            this.handler.handle( this.request, PortalResponse.create().build(), null );
-            fail( "Should throw exception" );
-        }
-        catch ( final WebException e )
-        {
-            assertEquals( HttpStatus.UNAUTHORIZED, e.getStatus() );
-            assertEquals( "You don't have permission to access [/site/somepath/content]", e.getMessage() );
-        }
-    }
-
-    @Test
     public void getContentShortcut()
         throws Exception
     {
         final PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addReference( "target", Reference.from( "ref" ) );
 
-        final Content content = Content.create().
-            id( ContentId.from( "id" ) ).
-            path( ContentPath.from( "site/somepath/shortcut" ) ).
-            owner( PrincipalKey.from( "user:myStore:me" ) ).
-            displayName( "My Content" ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( ContentTypeName.shortcut() ).
-            data( rootDataSet ).
-            build();
+        final Content content = Content.create()
+            .id( ContentId.from( "id" ) )
+            .path( ContentPath.from( "site/somepath/shortcut" ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( ContentTypeName.shortcut() )
+            .data( rootDataSet )
+            .build();
 
         Mockito.when( this.contentService.getByPath( content.getPath().asAbsolute() ) ).thenReturn( content );
         Mockito.when( this.portalUrlService.pageUrl( Mockito.any( PageUrlParams.class ) ) ).thenReturn( "/master/site/otherpath" );
@@ -237,19 +212,19 @@ public class PageHandlerTest
         rootDataSet.addSet( "parameters", shortcutParam1 );
         rootDataSet.addSet( "parameters", shortcutParam2 );
 
-        final Content content = Content.create().
-            id( ContentId.from( "id" ) ).
-            path( ContentPath.from( "site/somepath/shortcut" ) ).
-            owner( PrincipalKey.from( "user:myStore:me" ) ).
-            displayName( "My Content" ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( ContentTypeName.shortcut() ).
-            data( rootDataSet ).
-            build();
+        final Content content = Content.create()
+            .id( ContentId.from( "id" ) )
+            .path( ContentPath.from( "site/somepath/shortcut" ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( ContentTypeName.shortcut() )
+            .data( rootDataSet )
+            .build();
 
         Mockito.when( this.contentService.getByPath( content.getPath().asAbsolute() ) ).thenReturn( content );
-        Mockito.when( this.portalUrlService.pageUrl( Mockito.any( PageUrlParams.class ) ) ).thenReturn(
-            "/master/site/otherpath?product=123456&order=abcdef" );
+        Mockito.when( this.portalUrlService.pageUrl( Mockito.any( PageUrlParams.class ) ) )
+            .thenReturn( "/master/site/otherpath?product=123456&order=abcdef" );
 
         this.request.setContentPath( ContentPath.from( "/site/somepath/shortcut" ) );
 
@@ -266,11 +241,8 @@ public class PageHandlerTest
         setupCustomizedTemplateContentAndSite();
         setupController();
 
-        final PortalResponse portalResponse = PortalResponse.create().
-            body( "content rendered" ).
-            header( "some-header", "some-value" ).
-            status( HttpStatus.OK ).
-            build();
+        final PortalResponse portalResponse =
+            PortalResponse.create().body( "content rendered" ).header( "some-header", "some-value" ).status( HttpStatus.OK ).build();
 
         setRendererResult( portalResponse );
 

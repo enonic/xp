@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.handler.render;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -10,6 +11,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
+import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.region.ComponentPath;
@@ -24,19 +26,27 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 public final class ComponentHandler
     extends EndpointHandler
 {
-    private ContentService contentService;
+    private final RendererDelegate rendererDelegate;
 
-    private RendererDelegate rendererDelegate;
+    private final PageDescriptorService pageDescriptorService;
 
-    private PageDescriptorService pageDescriptorService;
+    private final PageTemplateService pageTemplateService;
 
-    private PageTemplateService pageTemplateService;
+    private final PostProcessor postProcessor;
 
-    protected PostProcessor postProcessor;
+    private final ContentService contentService;
 
-    public ComponentHandler()
+    @Activate
+    public ComponentHandler( @Reference final ContentService contentService, @Reference final RendererDelegate rendererDelegate,
+                             @Reference final PageDescriptorService pageDescriptorService,
+                             @Reference final PageTemplateService pageTemplateService, @Reference final PostProcessor postProcessor )
     {
         super( "component" );
+        this.contentService = contentService;
+        this.rendererDelegate = rendererDelegate;
+        this.pageDescriptorService = pageDescriptorService;
+        this.pageTemplateService = pageTemplateService;
+        this.postProcessor = postProcessor;
     }
 
     @Override
@@ -55,7 +65,8 @@ public final class ComponentHandler
 
         final ComponentHandlerWorker worker = new ComponentHandlerWorker( (PortalRequest) webRequest );
         worker.componentPath = ComponentPath.from( restPath );
-        worker.setContentService( this.contentService );
+        worker.contentService = contentService;
+        worker.contentResolver = new ContentResolver( contentService );
         worker.rendererDelegate = rendererDelegate;
         worker.pageDescriptorService = pageDescriptorService;
         worker.pageTemplateService = pageTemplateService;
@@ -66,35 +77,5 @@ public final class ComponentHandler
             return worker.execute();
         }
         return Tracer.traceEx( trace, worker::execute );
-    }
-
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
-    }
-
-    @Reference
-    public void setRendererDelegate( final RendererDelegate rendererDelegate )
-    {
-        this.rendererDelegate = rendererDelegate;
-    }
-
-    @Reference
-    public void setPageDescriptorService( final PageDescriptorService pageDescriptorService )
-    {
-        this.pageDescriptorService = pageDescriptorService;
-    }
-
-    @Reference
-    public void setPageTemplateService( final PageTemplateService pageTemplateService )
-    {
-        this.pageTemplateService = pageTemplateService;
-    }
-
-    @Reference
-    public void setPostProcessor( final PostProcessor postProcessor )
-    {
-        this.postProcessor = postProcessor;
     }
 }

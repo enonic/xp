@@ -8,11 +8,14 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.ContentResolver;
+import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.impl.rendering.FragmentPageResolver;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.postprocess.PostProcessor;
@@ -28,11 +31,15 @@ import com.enonic.xp.web.WebException;
 final class ComponentHandlerWorker
     extends RenderHandlerWorker
 {
-    protected ComponentPath componentPath;
+    ComponentPath componentPath;
 
-    protected RendererDelegate rendererDelegate;
+    RendererDelegate rendererDelegate;
 
-    protected PostProcessor postProcessor;
+    PostProcessor postProcessor;
+
+    ContentResolver contentResolver;
+
+    ContentService contentService;
 
     ComponentHandlerWorker( final PortalRequest request )
     {
@@ -43,8 +50,14 @@ final class ComponentHandlerWorker
     public PortalResponse execute()
         throws Exception
     {
-        final Content content = getContent( getContentSelector() );
-        final Site site = getSite( content );
+        final ContentResolverResult resolvedContent = contentResolver.resolve( this.request );
+
+        final Content content = resolvedContent.getContentOrElseThrow();
+
+        final Site site = resolvedContent.getNearestSiteOrElseThrow();
+
+        this.request.setContent( content );
+        this.request.setSite( site );
 
         final PageTemplate pageTemplate;
         final DescriptorKey pageController;
@@ -59,7 +72,7 @@ final class ComponentHandlerWorker
         else if ( !content.hasPage() )
         {
             // content without page -> use default page-template
-            pageTemplate = getDefaultPageTemplate( content.getType(), site );
+            pageTemplate = getDefaultPageTemplate( content.getType(), site.getPath() );
             pageController = pageTemplate.getController();
         }
         else if ( content.getPage().hasDescriptor() )
@@ -104,9 +117,7 @@ final class ComponentHandlerWorker
             throw WebException.notFound( String.format( "Page component for [%s] not found", this.componentPath ) );
         }
 
-        final Content effectiveContent = Content.create( content ).
-            page( effectivePage ).
-            build();
+        final Content effectiveContent = Content.create( content ).page( effectivePage ).build();
 
         this.request.setSite( site );
         this.request.setContent( effectiveContent );

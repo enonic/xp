@@ -140,7 +140,7 @@ public final class ImageUrlParams
     public ImageUrlParams validate()
     {
         Preconditions.checkState(
-            getPortalRequest().getContent() != null || getPortalRequest().getContentPath() != null || id != null || path != null,
+            getPortalRequest().getContent() != null || id != null || path != null,
             "id, path or content must be set" );
         return this;
     }

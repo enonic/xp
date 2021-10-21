@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
@@ -31,7 +30,6 @@ import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -94,7 +92,6 @@ import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.processor.ContentProcessor;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
@@ -121,9 +118,7 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
-import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
@@ -291,7 +286,7 @@ public class ContentServiceImpl
                 contentData( new PropertyTree() ).
                 build() );
 
-            return this.getById( content.getId() );
+            return this.doGetById( content.getId() );
         }
 
         contentAuditLogSupport.createContent( params, content );
@@ -535,23 +530,30 @@ public class ContentServiceImpl
         return Tracer.trace( trace, () -> {
             trace.put( "id", contentId );
             final Content content = doGetById( contentId );
-            if ( content != null )
-            {
-                trace.put( "path", content.getPath() );
-            }
+            trace.put( "path", content.getPath() );
             return content;
         } );
     }
 
     private Content doGetById( final ContentId contentId )
     {
-        return GetContentByIdCommand.create( contentId ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
+        final Content content = executeGetById( contentId );
+        if ( content == null )
+        {
+            throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch() );
+        }
+        return content;
+    }
+
+    private Content executeGetById( final ContentId contentId )
+    {
+        return GetContentByIdCommand.create( contentId )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build()
+            .execute();
     }
 
     @Override
@@ -576,17 +578,14 @@ public class ContentServiceImpl
 
     private Site doGetNearestSite( final ContentId contentId )
     {
-        return ContextBuilder.from( ContextAccessor.current() ).
-            authInfo( ContentConstants.CONTENT_SU_AUTH_INFO ).
-            build().
-            callWith( () -> GetNearestSiteCommand.create().
+        return GetNearestSiteCommand.create().
                 contentId( contentId ).
                 nodeService( this.nodeService ).
                 contentTypeService( this.contentTypeService ).
                 translator( this.translator ).
                 eventPublisher( this.eventPublisher ).
                 build().
-                execute() );
+                execute();
     }
 
     @Override
@@ -611,35 +610,32 @@ public class ContentServiceImpl
 
     private Content doFindNearestByPath( final ContentPath contentPath, final Predicate<Content> predicate )
     {
-        return callAsContentAdmin( () -> {
+        final Content content = executeGetByPath( contentPath );
+        if ( content != null && predicate.test( content ) )
+        {
+            return content;
+        }
 
-            final Content content = executeGetByPath( contentPath );
-            if ( content != null && predicate.test( content ) )
+        //Resolves the closest content, starting from the root.
+        Content foundContent = null;
+        ContentPath nextContentPath = ContentPath.ROOT;
+        for ( int contentPathIndex = 0; contentPathIndex < contentPath.elementCount(); contentPathIndex++ )
+        {
+            final ContentPath currentContentPath = ContentPath.from( nextContentPath, contentPath.getElement( contentPathIndex ) );
+
+            final Content childContent = executeGetByPath( currentContentPath );
+            if ( childContent == null )
             {
-                return content;
+                break;
             }
-
-            //Resolves the closest content, starting from the root.
-            Content foundContent = null;
-            ContentPath nextContentPath = ContentPath.ROOT;
-            for ( int contentPathIndex = 0; contentPathIndex < contentPath.elementCount(); contentPathIndex++ )
+            if ( predicate.test( childContent ) )
             {
-                final ContentPath currentContentPath = ContentPath.from( nextContentPath, contentPath.getElement( contentPathIndex ) );
-
-                final Content childContent = executeGetByPath( currentContentPath );
-                if ( childContent == null )
-                {
-                    break;
-                }
-                if ( predicate.test( childContent ) )
-                {
-                    foundContent = childContent;
-                }
-                nextContentPath = currentContentPath;
+                foundContent = childContent;
             }
+            nextContentPath = currentContentPath;
+        }
 
-            return foundContent;
-        } );
+        return foundContent;
     }
 
     @Override
@@ -709,8 +705,8 @@ public class ContentServiceImpl
     @Override
     public AccessControlList getPermissionsById( ContentId contentId )
     {
-        Content content = getById( contentId );
-        if ( content != null && content.getPermissions() != null )
+        Content content = doGetById( contentId );
+        if ( content.getPermissions() != null )
         {
             return content.getPermissions();
         }
@@ -1123,7 +1119,7 @@ public class ContentServiceImpl
     {
         final ContentPath rootContentPath = ContentPath.ROOT;
         final NodePath rootNodePath = ContentNodeHelper.translateContentPathToNodePath( rootContentPath );
-        final Node rootNode = callAuthenticatedAsContentAdmin( () -> nodeService.getByPath( rootNodePath ) );
+        final Node rootNode = nodeService.getByPath( rootNodePath );
         return rootNode != null ? rootNode.getPermissions() : AccessControlList.empty();
     }
 
@@ -1166,33 +1162,6 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             build().
             execute();
-    }
-
-    private <T> T callAsContentAdmin( final Callable<T> callable )
-    {
-        return adminContext().callWith( callable );
-    }
-
-    private <T> T callAuthenticatedAsContentAdmin( final Callable<T> callable )
-    {
-        final Context context = ContextAccessor.current();
-        final AuthenticationInfo authInfo = context.getAuthInfo();
-        if ( !authInfo.isAuthenticated() )
-        {
-            return context.callWith( callable );
-        }
-
-        return callAsContentAdmin( callable );
-    }
-
-    private Context adminContext()
-    {
-        return ContextBuilder.from( ContextAccessor.current() ).
-            authInfo( AuthenticationInfo.
-                copyOf( ContextAccessor.current().getAuthInfo() ).
-                principals( RoleKeys.ADMIN, RoleKeys.CONTENT_MANAGER_ADMIN ).
-                build() ).
-            build();
     }
 
     @Override

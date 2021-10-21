@@ -20,7 +20,6 @@ import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
-import com.google.common.io.ByteStreams;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.attachment.CreateAttachment;
@@ -195,7 +194,6 @@ public class AbstractContentServiceTest
 
     @BeforeEach
     public void setUpAbstractContentServiceTest()
-        throws Exception
     {
         executorService = Executors.newSingleThreadExecutor();
 
@@ -350,11 +348,11 @@ public class AbstractContentServiceTest
     protected ByteSource loadImage( final String name )
         throws IOException
     {
-        final InputStream imageStream = this.getClass().getResourceAsStream( name );
-
-        return ByteSource.wrap( ByteStreams.toByteArray( imageStream ) );
+        try (InputStream stream = this.getClass().getResourceAsStream( name ))
+        {
+            return ByteSource.wrap( stream.readAllBytes() );
+        }
     }
-
 
     protected CreateAttachments createAttachment( final String name, final String mimeType, final ByteSource byteSource )
     {
@@ -365,9 +363,7 @@ public class AbstractContentServiceTest
             build() );
     }
 
-
     protected Content createContent( ContentPath parentPath )
-        throws Exception
     {
         return doCreateContent( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), ExtraDatas.empty(),
                                 ContentTypeName.folder() );
@@ -379,7 +375,6 @@ public class AbstractContentServiceTest
     }
 
     protected Content createContent( ContentPath parentPath, final ContentPublishInfo publishInfo )
-        throws Exception
     {
         final CreateContentParams.Builder builder =
             createContentBuilder( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), ExtraDatas.empty(),
@@ -471,12 +466,12 @@ public class AbstractContentServiceTest
         data.addReference( "contentSelector", reference );
         data.addString( "contentTypeFilter", "stringValue" );
         data.addString( "siteConfigurator", "com.enonic.app.features" );
-        data.addLocalDate( "date", LocalDate.of( 2015, 03, 13 ) );
+        data.addLocalDate( "date", LocalDate.of( 2015, 3, 13 ) );
         data.addLocalTime( "time", LocalTime.NOON );
         data.addGeoPoint( "geoPoint", GeoPoint.from( "59.9127300 ,10.7460900" ) );
         data.addString( "htmlArea", "<p>paragraph</p>" );
         data.addString( "xml", "<elem>paragraph</elem>" );
-        data.addLocalDateTime( "localDateTime", LocalDateTime.of( 2015, 03, 13, 10, 00, 0 ) );
+        data.addLocalDateTime( "localDateTime", LocalDateTime.of( 2015, 3, 13, 10, 0, 0 ) );
         data.addInstant( "dateTime", Instant.now() );
         data.addSet( "set", propertySet );
 

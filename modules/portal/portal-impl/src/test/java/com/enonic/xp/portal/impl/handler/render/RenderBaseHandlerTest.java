@@ -61,7 +61,6 @@ public abstract class RenderBaseHandlerTest
 
     @BeforeEach
     void setupRenderBaseHandlerTest()
-        throws Exception
     {
         this.request = new PortalRequest();
         this.contentService = Mockito.mock( ContentService.class );
@@ -83,22 +82,30 @@ public abstract class RenderBaseHandlerTest
     }
 
     protected final void setupContentAndSite()
-        throws Exception
+    {
+        setupContent();
+
+        final Site site = createSite( "id", "site", "myapplication:contenttypename" );
+
+        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
+            thenReturn( site );
+
+        Mockito.when( this.contentService.findNearestSiteByPath( Mockito.isA( ContentPath.class ) ) ).
+            thenReturn( site );
+    }
+
+    protected void setupContent()
     {
         final Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", true );
 
         Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
             thenReturn( content );
 
-        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
-            thenReturn( createSite( "id", "site", "myapplication:contenttypename" ) );
-
         Mockito.when( this.contentService.getById( content.getId() ) ).
             thenReturn( content );
     }
 
     protected final void setupCustomizedTemplateContentAndSite()
-        throws Exception
     {
         Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", true );
         final PageDescriptor controllerDescriptor = createDescriptor();
@@ -116,17 +123,17 @@ public abstract class RenderBaseHandlerTest
     }
 
     protected final void setupNonPageContent()
-        throws Exception
     {
         Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
             thenReturn( createPage( "id", "site/somepath/content", "myapplication:ctype", false ) );
 
-        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
-            thenReturn( createSite( "id", "site", "myapplication:contenttypename" ) );
+        final Site site = createSite( "id", "site", "myapplication:contenttypename" );
+
+        Mockito.when( this.contentService.findNearestSiteByPath( Mockito.isA( ContentPath.class ) ) ).
+            thenReturn( site );
     }
 
     protected final void setupTemplates()
-        throws Exception
     {
         Mockito.when( this.pageTemplateService.getByKey( Mockito.eq( PageTemplateKey.from( "my-page" ) ) ) ).thenReturn(
             createPageTemplate() );
@@ -136,7 +143,6 @@ public abstract class RenderBaseHandlerTest
     }
 
     protected final void setupController()
-        throws Exception
     {
         Mockito.when( this.pageDescriptorService.getByKey( Mockito.isA( DescriptorKey.class ) ) ).thenReturn( createDescriptor() );
     }
@@ -223,7 +229,6 @@ public abstract class RenderBaseHandlerTest
     }
 
     private PageDescriptor createDescriptor()
-        throws Exception
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "mainapplication" );
         final String name = "mypage";

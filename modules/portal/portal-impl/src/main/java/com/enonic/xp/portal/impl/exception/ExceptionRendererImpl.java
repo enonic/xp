@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
@@ -164,10 +163,12 @@ public final class ExceptionRendererImpl
             exception( cause ).
             request( req ).build();
 
-        final Site site = resolveSite( req );
+        final Site siteInRequest = req.getSite();
+        final Site site = siteInRequest != null
+            ? siteInRequest
+            : callAsContentAdmin( () -> this.contentService.findNearestSiteByPath( req.getContentPath() ) );
         if ( site != null )
         {
-            final Site prevSite = req.getSite();
             req.setSite( site );
             try
             {
@@ -191,7 +192,7 @@ public final class ExceptionRendererImpl
             }
             finally
             {
-                req.setSite( prevSite );
+                req.setSite( siteInRequest );
             }
         }
         else if ( req.getApplicationKey() != null )
@@ -210,16 +211,6 @@ public final class ExceptionRendererImpl
         }
 
         return null;
-    }
-
-    private Site resolveSite( final PortalRequest req )
-    {
-        Site site = req.getSite();
-        if ( site == null )
-        {
-            site = this.contentService.findNearestSiteByPath( req.getContentPath() );
-        }
-        return site;
     }
 
     private PortalResponse renderApplicationCustomError( final ApplicationKey appKey, final String errorScriptPath,
@@ -313,5 +304,14 @@ public final class ExceptionRendererImpl
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         return authInfo.isAuthenticated();
+    }
+
+    private <T> T callAsContentAdmin( final Callable<T> callable )
+    {
+        final Context context = ContextAccessor.current();
+        return ContextBuilder.from( context )
+            .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.CONTENT_MANAGER_ADMIN ).build() )
+            .build()
+            .callWith( callable );
     }
 }

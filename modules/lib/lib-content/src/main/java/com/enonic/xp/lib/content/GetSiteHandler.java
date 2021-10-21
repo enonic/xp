@@ -1,8 +1,9 @@
 package com.enonic.xp.lib.content;
 
-import com.enonic.xp.content.Content;
+import java.util.Optional;
+import java.util.function.Supplier;
+
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.lib.content.mapper.SiteMapper;
 import com.enonic.xp.site.Site;
@@ -15,52 +16,25 @@ public final class GetSiteHandler
     @Override
     protected Object doExecute()
     {
-        if ( this.key == null || this.key.isEmpty() )
+        validate();
+        final Supplier<Site> siteSupplier;
+        if ( key.startsWith( "/" ) )
         {
-            throw new IllegalArgumentException( "Parameter 'key' is required" );
-        }
-        if ( this.key.startsWith( "/" ) )
-        {
-            return getByPath( ContentPath.from( this.key ) );
+            siteSupplier = () -> contentService.findNearestSiteByPath( ContentPath.from( key ) );
         }
         else
         {
-            return getById( ContentId.from( this.key ) );
+            siteSupplier = () -> this.contentService.getNearestSite( ContentId.from( key ) );
         }
+        return Optional.ofNullable( siteSupplier.get() ).map( SiteMapper::new ).orElse( null );
     }
 
-    private SiteMapper getByPath( final ContentPath contentPath )
+    private void validate()
     {
-        try
+        if ( key == null || key.isEmpty() )
         {
-            final Content content = this.contentService.getByPath( contentPath );
-            return getById( content.getId() );
+            throw new IllegalArgumentException( "Parameter 'key' is required" );
         }
-        catch ( final ContentNotFoundException e )
-        {
-        }
-        return null;
-    }
-
-    private SiteMapper getById( final ContentId contentId )
-    {
-        try
-        {
-            final Site site = this.contentService.getNearestSite( contentId );
-            if ( site != null )
-            {
-                return convert( site );
-            }
-        }
-        catch ( final ContentNotFoundException e )
-        {
-        }
-        return null;
-    }
-
-    private SiteMapper convert( final Site content )
-    {
-        return new SiteMapper( content );
     }
 
     public void setKey( final String key )

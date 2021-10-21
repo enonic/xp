@@ -264,8 +264,12 @@ public class ServiceHandlerTest
         Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
             thenReturn( content );
 
+        final Site site = createSite( "id", "site", "myapplication:contenttypename" );
         Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
-            thenReturn( createSite( "id", "site", "myapplication:contenttypename" ) );
+            thenReturn( site );
+
+        Mockito.when( this.contentService.findNearestSiteByPath( Mockito.isA( ContentPath.class ) ) ).
+            thenReturn( site );
 
         Mockito.when( this.contentService.getById( content.getId() ) ).
             thenReturn( content );

@@ -10,6 +10,7 @@ import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
@@ -59,7 +60,7 @@ public class SetPermissionsHandlerTest
     public void testContentNotFoundByPath()
         throws Exception
     {
-        Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( null );
+        Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenThrow( new ContentNotFoundException( ContentPath.ROOT, Branch.from( "draft" ) ) );
 
         SecurityService securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, securityService );

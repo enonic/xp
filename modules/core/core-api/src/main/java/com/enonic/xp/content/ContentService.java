@@ -68,6 +68,7 @@ public interface ContentService
 
     Content getByPath( ContentPath path );
 
+    @Deprecated
     AccessControlList getPermissionsById( ContentId contentId );
 
     Contents getByPaths( ContentPaths paths );
