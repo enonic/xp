@@ -15,8 +15,10 @@ import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
@@ -85,6 +87,8 @@ final class ArchiveContentCommand
 
     private ArchiveContentsResult doExecute()
     {
+        unpublish();
+
         final Node nodeToArchive = updateProperties( NodeId.from( params.getContentId() ) );
 
         rename( nodeToArchive );
@@ -102,6 +106,24 @@ final class ArchiveContentCommand
         {
             archiveContentListener.contentArchived( count );
         }
+    }
+
+    private void unpublish()
+    {
+        UnpublishContentCommand.create()
+            .nodeService( nodeService )
+            .contentTypeService( contentTypeService )
+            .translator( translator )
+            .eventPublisher( eventPublisher )
+            .params( UnpublishContentParams.create()
+                         .contentIds( ContentIds.from( params.getContentId() ) )
+                         .unpublishBranch( ContentConstants.BRANCH_MASTER )
+                         .includeChildren( true )
+                         .build() )
+            .build()
+            .execute();
+
+        nodeService.refresh( RefreshMode.ALL );
     }
 
     private Node updateProperties( final NodeId nodeId )

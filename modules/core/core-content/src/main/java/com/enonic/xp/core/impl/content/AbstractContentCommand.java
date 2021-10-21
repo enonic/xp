@@ -225,15 +225,7 @@ abstract class AbstractContentCommand
         }
     }
 
-//    protected void validateContentLocation( final ContentPath parentPath, final String message )
-//    {
-//        if ( parentPath )
-//        {
-//            throw new ArchiveContentException( message, parentPath );
-//        }
-//    }
-
-    public static class Builder<B extends Builder>
+    public static class Builder<B extends Builder<B>>
     {
         private NodeService nodeService;
 
