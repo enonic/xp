@@ -13,6 +13,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.context.Context;
@@ -99,6 +100,14 @@ public final class ProjectContentEventListener
     private void doHandleContentEvent( final List<Map<String, String>> nodes, final String type )
     {
         createAdminContext().runWith( () -> {
+
+            final Branch branch = Branch.from(
+                nodes.stream().findAny().orElseThrow( () -> new IllegalArgumentException( "nodes cannot be empty" ) ).get( "branch" ) );
+
+            if ( !ContentConstants.BRANCH_DRAFT.equals( branch ) )
+            {
+                return;
+            }
 
             final List<ContentId> contentIds =
                 nodes.stream().map( map -> ContentId.from( map.get( "id" ) ) ).collect( Collectors.toList() );
