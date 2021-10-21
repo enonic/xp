@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentNotFoundException;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -33,15 +31,11 @@ final class GetContentByIdCommand
         }
         catch ( NodeNotFoundException e )
         {
-            throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch() );
+            return null;
         }
         catch ( Exception e )
         {
             throw Exceptions.newRuntime( "Error getting node" ).withCause( e );
-        }
-        if ( content == null )
-        {
-            throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch() );
         }
         return content;
     }

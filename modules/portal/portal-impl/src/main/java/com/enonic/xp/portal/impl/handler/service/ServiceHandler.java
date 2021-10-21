@@ -12,6 +12,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.EndpointHandler;
+import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.web.WebException;
@@ -57,7 +58,7 @@ public final class ServiceHandler
         final ServiceHandlerWorker worker = new ServiceHandlerWorker( portalRequest );
         worker.applicationKey = ApplicationKey.from( matcher.group( 1 ) );
         worker.name = matcher.group( 2 );
-        worker.setContentService( this.contentService );
+        worker.contentResolver = new ContentResolver( this.contentService );
         worker.resourceService = this.resourceService;
         worker.serviceDescriptorService = this.serviceDescriptorService;
         worker.controllerScriptFactory = this.controllerScriptFactory;

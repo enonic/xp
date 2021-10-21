@@ -9,6 +9,7 @@ import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
+import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.trace.Trace;
@@ -51,7 +52,7 @@ public final class PageHandler
         WebHandlerHelper.checkAdminAccess( webRequest );
 
         final PageHandlerWorker worker = new PageHandlerWorker( (PortalRequest) webRequest );
-        worker.setContentService( this.contentService );
+        worker.contentResolver = new ContentResolver( contentService );
         worker.rendererDelegate = rendererDelegate;
         worker.pageDescriptorService = pageDescriptorService;
         worker.pageTemplateService = pageTemplateService;

@@ -10,6 +10,7 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.WebException;
 
+@Deprecated
 public abstract class ControllerHandlerWorker
     extends PortalHandlerWorker<PortalRequest>
 {

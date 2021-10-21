@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler.render;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.page.GetDefaultPageTemplateParams;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
@@ -9,13 +10,12 @@ import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.handler.ControllerHandlerWorker;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.site.Site;
 import com.enonic.xp.web.WebException;
 
 abstract class RenderHandlerWorker
-    extends ControllerHandlerWorker
+    extends PortalHandlerWorker<PortalRequest>
 {
     protected PageTemplateService pageTemplateService;
 
@@ -52,10 +52,10 @@ abstract class RenderHandlerWorker
         return pageTemplate;
     }
 
-    protected final PageTemplate getDefaultPageTemplate( final ContentTypeName contentType, final Site site )
+    protected final PageTemplate getDefaultPageTemplate( final ContentTypeName contentType, final ContentPath sitePath )
     {
         final GetDefaultPageTemplateParams getDefPageTemplate = GetDefaultPageTemplateParams.create().
-            sitePath( site.getPath() ).
+            sitePath( sitePath ).
             contentType( contentType ).
             build();
 

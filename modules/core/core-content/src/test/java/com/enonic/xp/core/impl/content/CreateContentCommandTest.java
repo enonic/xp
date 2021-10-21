@@ -14,7 +14,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
@@ -126,7 +125,7 @@ public class CreateContentCommandTest
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) )
             .thenReturn( ContentType.create().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build() );
 
-        assertThrows( ContentNotFoundException.class, command::execute );
+        assertThrows( IllegalStateException.class, command::execute );
     }
 
     @Test

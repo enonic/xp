@@ -24,6 +24,10 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
@@ -166,29 +170,26 @@ public final class TestDataFixtures
         return builder.build();
     }
 
-    public static Site newSite()
+    public static Site.Builder newSite()
     {
         final PropertyTree siteConfigConfig = new PropertyTree();
         siteConfigConfig.setLong( "Field", 42L );
 
-        final SiteConfig siteConfig = SiteConfig.create().
-            application( ApplicationKey.from( "myapplication" ) ).
-            config( siteConfigConfig ).
-            build();
+        final SiteConfig siteConfig =
+            SiteConfig.create().application( ApplicationKey.from( "myapplication" ) ).config( siteConfigConfig ).build();
 
         final Site.Builder site = Site.create();
         site.id( ContentId.from( "100123" ) );
         site.siteConfigs( SiteConfigs.from( siteConfig ) );
         site.name( "my-content" );
         site.parentPath( ContentPath.ROOT );
-        return site.build();
+        site.permissions(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() ) );
+        return site;
     }
 
     public static IdProvider newIdProvider()
     {
-        return IdProvider.create().
-            key( IdProviderKey.from( "myidprovider" ) ).
-            displayName( "My id provider" ).
-            build();
+        return IdProvider.create().key( IdProviderKey.from( "myidprovider" ) ).displayName( "My id provider" ).build();
     }
 }

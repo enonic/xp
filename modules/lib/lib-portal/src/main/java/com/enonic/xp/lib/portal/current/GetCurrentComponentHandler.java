@@ -14,12 +14,7 @@ public final class GetCurrentComponentHandler
     public ComponentMapper execute()
     {
         final Component component = this.request.getComponent();
-        return component != null ? convert( component ) : null;
-    }
-
-    private ComponentMapper convert( final Component component )
-    {
-        return component == null ? null : new ComponentMapper( component );
+        return component != null ? new ComponentMapper( component ) : null;
     }
 
     @Override

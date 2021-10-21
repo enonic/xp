@@ -16,6 +16,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
+import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
@@ -86,7 +87,7 @@ public class IdentityHandler
         final IdentityHandlerWorker worker = new IdentityHandlerWorker( portalRequest );
         worker.idProviderKey = idProviderKey;
         worker.idProviderFunction = idProviderFunction;
-        worker.setContentService( this.contentService );
+        worker.contentResolver =  new ContentResolver( contentService );
         worker.idProviderControllerService = this.idProviderControllerService;
         final Trace trace = Tracer.newTrace( "portalRequest" );
         if ( trace == null )

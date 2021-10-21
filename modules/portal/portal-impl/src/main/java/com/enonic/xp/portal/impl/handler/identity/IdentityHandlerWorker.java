@@ -1,23 +1,25 @@
 package com.enonic.xp.portal.impl.handler.identity;
 
-import com.enonic.xp.content.Content;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.handler.ControllerHandlerWorker;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
+import com.enonic.xp.portal.impl.ContentResolver;
+import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.security.IdProviderKey;
-import com.enonic.xp.site.Site;
 import com.enonic.xp.web.WebException;
 
 final class IdentityHandlerWorker
-    extends ControllerHandlerWorker
+    extends PortalHandlerWorker<PortalRequest>
 {
-    protected IdProviderKey idProviderKey;
+    IdProviderKey idProviderKey;
 
-    protected IdProviderControllerService idProviderControllerService;
+    IdProviderControllerService idProviderControllerService;
 
-    protected String idProviderFunction;
+    String idProviderFunction;
+
+    ContentResolver contentResolver;
 
     IdentityHandlerWorker( final PortalRequest request )
     {
@@ -28,11 +30,10 @@ final class IdentityHandlerWorker
     public PortalResponse execute()
         throws Exception
     {
-        //Prepares the request
-        Content content = getContentOrNull( getContentSelector() );
-        this.request.setContent( content );
-        final Site site = getSiteOrNull( content );
-        this.request.setSite( site );
+        final ContentResolverResult resolvedContent = contentResolver.resolve( this.request );
+
+        this.request.setContent( resolvedContent.getContent() );
+        this.request.setSite( resolvedContent.getNearestSite() );
 
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
             idProviderKey( idProviderKey ).

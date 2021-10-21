@@ -68,15 +68,16 @@ final class ControllerMappingsResolver
 
     private boolean matchesContent( final ControllerMappingDescriptor descriptor, final Content content )
     {
+        if ( descriptor.getContentConstraint() == null )
+        {
+            return true;
+        }
+
         if ( content == null )
         {
             return false;
         }
 
-        if ( descriptor.getContentConstraint() == null )
-        {
-            return true;
-        }
         return descriptor.getContentConstraint().matches( content );
     }
 }

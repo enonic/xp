@@ -6,9 +6,7 @@ import com.google.common.collect.Multimap;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentNotFoundException;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.page.DescriptorKey;
@@ -17,6 +15,8 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.ContentResolver;
+import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -32,9 +32,11 @@ final class PageHandlerWorker
 {
     private static final String SHORTCUT_TARGET_PROPERTY = "target";
 
-    protected RendererDelegate rendererDelegate;
+    RendererDelegate rendererDelegate;
 
-    protected PortalUrlService portalUrlService;
+    PortalUrlService portalUrlService;
+
+    ContentResolver contentResolver;
 
     PageHandlerWorker( final PortalRequest request )
     {
@@ -45,19 +47,16 @@ final class PageHandlerWorker
     public PortalResponse execute()
         throws Exception
     {
-        final ContentPath contentPath = this.request.getContentPath();
-        if ( ContentConstants.CONTENT_ROOT_PARENT.toString().equals( contentPath.toString() ) )
-        {
-            throw WebException.notFound( String.format( "Page [%s] not found", contentPath ) );
-        }
+        final ContentResolverResult resolvedContent = contentResolver.resolve( this.request );
 
-        final Content content = getContent( getContentSelector() );
+        final Content content = resolvedContent.getContentOrElseThrow();
+
         if ( content.getType().isShortcut() )
         {
             return renderShortcut( content );
         }
 
-        final Site site = getSite( content );
+        final Site site = resolvedContent.getNearestSiteOrElseThrow();
 
         PageTemplate pageTemplate = null;
         PageDescriptor pageDescriptor = null;
@@ -68,7 +67,7 @@ final class PageHandlerWorker
         }
         else if ( !content.hasPage() )
         {
-            pageTemplate = getDefaultPageTemplate( content.getType(), site );
+            pageTemplate = getDefaultPageTemplate( content.getType(), site.getPath() );
         }
         else
         {
@@ -86,7 +85,7 @@ final class PageHandlerWorker
                 }
                 catch ( ContentNotFoundException e )
                 {
-                    pageTemplate = getDefaultPageTemplate( content.getType(), site );
+                    pageTemplate = getDefaultPageTemplate( content.getType(), site.getPath() );
                 }
             }
             else if ( page.hasDescriptor() )
@@ -108,9 +107,7 @@ final class PageHandlerWorker
         }
 
         final Page effectivePage = new EffectivePageResolver( content, pageTemplate ).resolve();
-        final Content effectiveContent = Content.create( content ).
-            page( effectivePage ).
-            build();
+        final Content effectiveContent = Content.create( content ).page( effectivePage ).build();
 
         this.request.setSite( site );
         this.request.setContent( effectiveContent );
@@ -133,7 +130,7 @@ final class PageHandlerWorker
         final Reference target = shortcut == null ? null : shortcut.getReference();
         if ( target == null || target.getNodeId() == null )
         {
-            throw WebException.notFound( String.format( "Missing shortcut target" ) );
+            throw WebException.notFound( "Missing shortcut target" );
         }
 
         final PageUrlParams pageUrlParams = new PageUrlParams().id( target.toString() ).portalRequest( this.request );
@@ -143,10 +140,7 @@ final class PageHandlerWorker
 
         final String targetUrl = this.portalUrlService.pageUrl( pageUrlParams );
 
-        return PortalResponse.create().
-            status( HttpStatus.TEMPORARY_REDIRECT ).
-            header( "Location", targetUrl ).
-            build();
+        return PortalResponse.create().status( HttpStatus.TEMPORARY_REDIRECT ).header( "Location", targetUrl ).build();
     }
 
     private PageDescriptor getPageDescriptor( final DescriptorKey descriptorKey )

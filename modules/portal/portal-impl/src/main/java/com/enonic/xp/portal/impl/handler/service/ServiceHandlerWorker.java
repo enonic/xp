@@ -1,28 +1,24 @@
 package com.enonic.xp.portal.impl.handler.service;
 
-import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.content.Content;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.handler.ControllerHandlerWorker;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
+import com.enonic.xp.portal.impl.ContentResolver;
+import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.impl.app.WebAppHandler;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.PrincipalKeys;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.site.Site;
@@ -34,19 +30,21 @@ import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
 final class ServiceHandlerWorker
-    extends ControllerHandlerWorker
+    extends PortalHandlerWorker<PortalRequest>
 {
     private static final String ROOT_SERVICE_PREFIX = "services/";
 
-    protected ResourceService resourceService;
+    ResourceService resourceService;
 
-    protected ServiceDescriptorService serviceDescriptorService;
+    ServiceDescriptorService serviceDescriptorService;
 
-    protected String name;
+    String name;
 
-    protected ApplicationKey applicationKey;
+    ApplicationKey applicationKey;
 
-    protected ControllerScriptFactory controllerScriptFactory;
+    ControllerScriptFactory controllerScriptFactory;
+
+    ContentResolver contentResolver;
 
     ServiceHandlerWorker( final PortalRequest request )
     {
@@ -66,23 +64,20 @@ final class ServiceHandlerWorker
         }
 
         //Checks if the access to ServiceDescriptor is allowed
-        final PrincipalKeys principals = ContextAccessor.current().
-            getAuthInfo().
-            getPrincipals();
+        final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
         if ( !serviceDescriptor.isAccessAllowed( principals ) )
         {
             throw WebException.forbidden( String.format( "You don't have permission to access [%s]", descriptorKey ) );
         }
 
-        //Retrieves the current content and site
-        final Content content = getContentOrNull( getContentSelector() );
-        final Site site = getSiteOrNull( content );
+        final ContentResolverResult resolvedContent = contentResolver.resolve( request );
+
+        final Site site = resolvedContent.getNearestSite();
 
         //Checks if the application is set on the current site
-        final Site forcedSite = site == null ? forcedGetSiteOrNull(content) : site;
-        if ( forcedSite != null )
+        if ( site != null )
         {
-            final PropertyTree siteConfig = forcedSite.getSiteConfig( applicationKey );
+            final PropertyTree siteConfig = site.getSiteConfig( applicationKey );
             if ( siteConfig == null )
             {
                 throw WebException.forbidden( String.format( "Service [%s] forbidden for this site", descriptorKey ) );
@@ -98,7 +93,7 @@ final class ServiceHandlerWorker
 
         //Prepares the request
         this.request.setApplicationKey( applicationKey );
-        this.request.setContent( content );
+        this.request.setContent( resolvedContent.getContent() );
         this.request.setSite( site );
 
         //Executes the service
@@ -146,23 +141,5 @@ final class ServiceHandlerWorker
         }
         return new WebSocketEndpointImpl( config, this::getScript );
     }
-    
-    private Site forcedGetSiteOrNull( final Content content ) {
-        return runWithAdminRole(() -> {
-            final Content forcedContent = content == null ? getContentOrNull( getContentSelector() ) : content;
-            return getSiteOrNull( forcedContent );
-        });
-    }
 
-    private <T> T runWithAdminRole( final Callable<T> callable )
-    {
-        final Context context = ContextAccessor.current();
-        final AuthenticationInfo authenticationInfo = AuthenticationInfo.copyOf( context.getAuthInfo() ).
-            principals( RoleKeys.ADMIN ).
-            build();
-        return ContextBuilder.from( context ).
-            authInfo( authenticationInfo ).
-            build().
-            callWith( callable );
-    }
 }

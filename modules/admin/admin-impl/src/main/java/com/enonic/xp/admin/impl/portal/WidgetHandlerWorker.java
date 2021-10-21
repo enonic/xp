@@ -2,7 +2,6 @@ package com.enonic.xp.admin.impl.portal;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
@@ -10,20 +9,19 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.handler.ControllerHandlerWorker;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
-import com.enonic.xp.site.Site;
 import com.enonic.xp.web.WebException;
 
 final class WidgetHandlerWorker
-    extends ControllerHandlerWorker
+    extends PortalHandlerWorker<PortalRequest>
 {
-    protected ControllerScriptFactory controllerScriptFactory;
+    ControllerScriptFactory controllerScriptFactory;
 
-    protected WidgetDescriptorService widgetDescriptorService;
+    WidgetDescriptorService widgetDescriptorService;
 
-    protected DescriptorKey descriptorKey;
+    DescriptorKey descriptorKey;
 
     WidgetHandlerWorker( final PortalRequest request )
     {
@@ -47,9 +45,7 @@ final class WidgetHandlerWorker
         }
 
         //Checks if the access to WidgetDescriptor is allowed
-        final PrincipalKeys principals = ContextAccessor.current().
-            getAuthInfo().
-            getPrincipals();
+        final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
         if ( !widgetDescriptor.isAccessAllowed( principals ) )
         {
             throw WebException.forbidden( String.format( "You don't have permission to access [%s]", descriptorKey ) );
@@ -57,10 +53,7 @@ final class WidgetHandlerWorker
 
         //Renders the widget
         this.request.setApplicationKey( this.descriptorKey.getApplicationKey() );
-        final Content content = getContentOrNull( getContentSelector() );
-        this.request.setContent( content );
-        final Site site = getSiteOrNull( content );
-        this.request.setSite( site );
+
         final ResourceKey scriptDir = ResourceKey.from( descriptorKey.getApplicationKey(), "admin/widgets/" + descriptorKey.getName() );
         final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( scriptDir );
         return controllerScript.execute( this.request );

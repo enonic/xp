@@ -74,7 +74,7 @@ public final class MacroInstruction
             throw new RenderException( "Macro controller script could not be resolved, context site could not be found." );
         }
 
-        final MacroDescriptor macroDescriptor = resolveMacroDescriptor( site, macroName );
+        final MacroDescriptor macroDescriptor = resolveMacroDescriptor( site.getSiteConfigs(), macroName );
         if ( macroDescriptor == null )
         {
             final String editModeMacro = toMacroInstruction( macroInstruction );
@@ -101,10 +101,9 @@ public final class MacroInstruction
         }
     }
 
-    private MacroDescriptor resolveMacroDescriptor( final Site site, final String macroName )
+    private MacroDescriptor resolveMacroDescriptor( final SiteConfigs siteConfigs, final String macroName )
     {
         //Searches for the macro in the applications associated to the site
-        final SiteConfigs siteConfigs = site.getSiteConfigs();
         MacroDescriptor macroDescriptor = siteConfigs.
             stream().
             map( siteConfig -> MacroKey.from( siteConfig.getApplicationKey(), macroName ) ).

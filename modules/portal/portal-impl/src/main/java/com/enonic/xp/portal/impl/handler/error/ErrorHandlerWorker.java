@@ -7,11 +7,11 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 
 final class ErrorHandlerWorker
-    extends PortalHandlerWorker
+    extends PortalHandlerWorker<WebRequest>
 {
-    protected HttpStatus code;
+    HttpStatus code;
 
-    protected String message;
+    String message;
 
     ErrorHandlerWorker( final WebRequest request )
     {

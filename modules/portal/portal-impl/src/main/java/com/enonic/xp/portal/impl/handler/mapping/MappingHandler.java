@@ -6,14 +6,19 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
+import com.enonic.xp.portal.impl.ContentResolver;
+import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.trace.Trace;
@@ -43,16 +48,24 @@ public final class MappingHandler
     private final ContentResolver contentResolver;
 
     @Activate
-    public MappingHandler( @Reference final SiteService siteService, @Reference final ContentResolver contentResolver,
+    public MappingHandler( @Reference final SiteService siteService, @Reference final ContentService contentService,
                            @Reference final ResourceService resourceService,
                            @Reference final ControllerScriptFactory controllerScriptFactory,
                            @Reference final FilterScriptFactory filterScriptFactory, @Reference final RendererDelegate rendererDelegate )
+    {
+        this( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
+              new ControllerMappingsResolver( siteService ), new ContentResolver( contentService ) );
+    }
+
+    MappingHandler( final ResourceService resourceService, final ControllerScriptFactory controllerScriptFactory,
+                    final FilterScriptFactory filterScriptFactory, final RendererDelegate rendererDelegate,
+                    final ControllerMappingsResolver controllerMappingsResolver, final ContentResolver contentResolver )
     {
         this.resourceService = resourceService;
         this.controllerScriptFactory = controllerScriptFactory;
         this.filterScriptFactory = filterScriptFactory;
         this.rendererDelegate = rendererDelegate;
-        this.controllerMappingsResolver = new ControllerMappingsResolver( siteService );
+        this.controllerMappingsResolver = controllerMappingsResolver;
         this.contentResolver = contentResolver;
     }
 
@@ -73,7 +86,7 @@ public final class MappingHandler
 
         final PortalRequest request = (PortalRequest) webRequest;
 
-        if ( request.getContentPath() == null || request.getMode() == RenderMode.ADMIN || !request.isSiteBase() )
+        if ( request.getMode() == RenderMode.ADMIN || !request.isSiteBase() )
         {
             return webHandlerChain.handle( webRequest, webResponse );
         }
@@ -89,22 +102,26 @@ public final class MappingHandler
 
         final ContentResolverResult resolvedContent = contentResolver.resolve( request );
 
-        if ( resolvedContent == null )
+        final Site site = resolvedContent.getNearestSite();
+
+        if ( site == null )
         {
             return webHandlerChain.handle( request, webResponse );
         }
 
+        final Content content = resolvedContent.getContent();
+
         final Optional<ControllerMappingDescriptor> resolve =
-            controllerMappingsResolver.resolve( resolvedContent.siteRelativePath, request.getParams(), resolvedContent.content,
-                                                resolvedContent.nearestSite.getSiteConfigs() );
+            controllerMappingsResolver.resolve( resolvedContent.getSiteRelativePath(), request.getParams(), content,
+                                                site.getSiteConfigs() );
 
         if ( resolve.isPresent() )
         {
             final ControllerMappingDescriptor mapping = resolve.get();
 
-            request.setContent( resolvedContent.content );
-            request.setSite( resolvedContent.nearestSite );
-            request.setContextPath( request.getBaseUri() + "/" + request.getBranch() + resolvedContent.nearestSite.getPath() );
+            request.setContent( content );
+            request.setSite( site );
+            request.setContextPath( request.getBaseUri() + "/" + request.getBranch() + site.getPath() );
 
             if ( mapping.isController() )
             {

@@ -6,8 +6,10 @@ import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
@@ -25,9 +27,12 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ComponentHandlerTest
     extends RenderBaseHandlerTest
@@ -38,13 +43,9 @@ public class ComponentHandlerTest
     public final void setup()
         throws Exception
     {
-
-        this.handler = new ComponentHandler();
-        this.handler.setContentService( this.contentService );
-        this.handler.setPageDescriptorService( this.pageDescriptorService );
-        this.handler.setPageTemplateService( this.pageTemplateService );
-        this.handler.setRendererDelegate( this.rendererDelegate );
-        this.handler.setPostProcessor( this.postProcessor );
+        this.handler =
+            new ComponentHandler( this.contentService, this.rendererDelegate, this.pageDescriptorService, this.pageTemplateService,
+                                  this.postProcessor );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
@@ -61,16 +62,16 @@ public class ComponentHandlerTest
     public void testMatch()
     {
         this.request.setEndpointPath( null );
-        assertEquals( false, this.handler.canHandle( this.request ) );
+        assertFalse( this.handler.canHandle( this.request ) );
 
         this.request.setEndpointPath( "/_/other/main/1" );
-        assertEquals( false, this.handler.canHandle( this.request ) );
+        assertFalse( this.handler.canHandle( this.request ) );
 
         this.request.setEndpointPath( "/component/main/1" );
-        assertEquals( false, this.handler.canHandle( this.request ) );
+        assertFalse( this.handler.canHandle( this.request ) );
 
         this.request.setEndpointPath( "/_/component/main/1" );
-        assertEquals( true, this.handler.canHandle( this.request ) );
+        assertTrue( this.handler.canHandle( this.request ) );
     }
 
     @Test
@@ -80,9 +81,7 @@ public class ComponentHandlerTest
         setupContentAndSite();
         setupTemplates();
 
-        final PortalResponse portalResponse = PortalResponse.create().
-            status( HttpStatus.METHOD_NOT_ALLOWED ).
-            build();
+        final PortalResponse portalResponse = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
         setRendererResult( portalResponse );
 
         Mockito.when( this.postProcessor.processResponseInstructions( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
@@ -103,11 +102,8 @@ public class ComponentHandlerTest
         setupContentAndSite();
         setupTemplates();
 
-        final PortalResponse portalResponse = PortalResponse.create().
-            body( "component rendered" ).
-            header( "some-header", "some-value" ).
-            status( HttpStatus.OK ).
-            build();
+        final PortalResponse portalResponse =
+            PortalResponse.create().body( "component rendered" ).header( "some-header", "some-value" ).status( HttpStatus.OK ).build();
 
         Mockito.when( this.postProcessor.processResponseInstructions( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
@@ -131,16 +127,10 @@ public class ComponentHandlerTest
 
         this.request.setEndpointPath( "/_/component/main-region/0" );
 
-        try
-        {
-            this.handler.handle( this.request, PortalResponse.create().build(), null );
-            fail( "Should throw exception" );
-        }
-        catch ( final WebException e )
-        {
-            assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, e.getStatus() );
-            assertEquals( "No template found for content", e.getMessage() );
-        }
+        final WebException e =
+            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        assertAll( () -> assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, e.getStatus() ),
+                   () -> assertEquals( "No template found for content", e.getMessage() ));
     }
 
     @Test
@@ -152,17 +142,44 @@ public class ComponentHandlerTest
 
         this.request.setEndpointPath( "/_/component/main-region/666" );
 
-        try
-        {
-            this.handler.handle( this.request, PortalResponse.create().build(), null );
-            fail( "Should throw exception" );
-        }
-        catch ( final WebException e )
-        {
-            assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
-            assertEquals( "Page component for [/main-region/666] not found", e.getMessage() );
-        }
+        final WebException e =
+            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
+        assertEquals( "Page component for [/main-region/666] not found", e.getMessage() );
     }
+
+    @Test
+    public void getContentNotFound()
+    {
+        this.request.setEndpointPath( "/_/component/main-region/666" );
+
+        final ContentPath path = ContentPath.from( "/site/somepath/content" );
+        Mockito.when( this.contentService.getByPath( path ) ).thenThrow( new ContentNotFoundException( path, Branch.from( "draft" ) ) );
+        this.request.setContentPath( path );
+
+        final WebException e =
+            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
+        assertEquals( "Page [/site/somepath/content] not found", e.getMessage() );
+    }
+
+    @Test
+    public void getSiteNotFound()
+    {
+        setupContent();
+        this.request.setEndpointPath( "/_/component/main-region/666" );
+
+        final ContentPath path = ContentPath.from( "/site/somepath/content" );
+        Mockito.when( this.contentService.findNearestSiteByPath( path ) ).thenReturn( null );
+
+        this.request.setContentPath( path );
+
+        final WebException e =
+            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
+        assertEquals( "Site for [/site/somepath/content] not found", e.getMessage() );
+    }
+
 
     @Test
     public void testComponentFragment()
@@ -172,11 +189,8 @@ public class ComponentHandlerTest
         setupContentFragment();
         setupTemplates();
 
-        final PortalResponse portalResponse = PortalResponse.create().
-            body( "component rendered" ).
-            header( "some-header", "some-value" ).
-            status( HttpStatus.OK ).
-            build();
+        final PortalResponse portalResponse =
+            PortalResponse.create().body( "component rendered" ).header( "some-header", "some-value" ).status( HttpStatus.OK ).build();
 
         Mockito.when( this.postProcessor.processResponseInstructions( Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
@@ -194,8 +208,9 @@ public class ComponentHandlerTest
 
     private void setupSite()
     {
-        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
-            thenReturn( createSite( "id", "site", "myapplication:contenttypename" ) );
+        final Site site = createSite( "id", "site", "myapplication:contenttypename" );
+        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).thenReturn( site );
+        Mockito.when( this.contentService.findNearestSiteByPath( Mockito.isA( ContentPath.class ) ) ).thenReturn( site );
     }
 
     private void setupContentFragment()
@@ -203,8 +218,7 @@ public class ComponentHandlerTest
         final Content content = createPageWithFragment( "id", "site/somepath/content", "myapplication:ctype", true );
         final Content fragment = createFragmentContent();
 
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
-            thenReturn( content );
+        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).thenReturn( content );
 
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
@@ -219,28 +233,24 @@ public class ComponentHandlerTest
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
 
-        final Content.Builder content = Content.create().
-            id( ContentId.from( id ) ).
-            path( ContentPath.from( path ) ).
-            owner( PrincipalKey.from( "user:myStore:me" ) ).
-            displayName( "My Content" ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( ContentTypeName.from( contentTypeName ) );
+        final Content.Builder content = Content.create()
+            .id( ContentId.from( id ) )
+            .path( ContentPath.from( path ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( ContentTypeName.from( contentTypeName ) );
 
         if ( withPage )
         {
-            PageRegions pageRegions = PageRegions.create().
-                add( Region.create().name( "main-region" ).
-                    add( FragmentComponent.create().fragment( ContentId.from( "fragmentId" ) ).
-                        build() ).
-                    build() ).
-                build();
+            PageRegions pageRegions = PageRegions.create()
+                .add( Region.create()
+                          .name( "main-region" )
+                          .add( FragmentComponent.create().fragment( ContentId.from( "fragmentId" ) ).build() )
+                          .build() )
+                .build();
 
-            Page page = Page.create().
-                template( PageTemplateKey.from( "my-page" ) ).
-                regions( pageRegions ).
-                config( rootDataSet ).
-                build();
+            Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).regions( pageRegions ).config( rootDataSet ).build();
             content.page( page );
         }
         return content.build();
@@ -250,19 +260,19 @@ public class ComponentHandlerTest
     {
         PropertyTree rootDataSet = new PropertyTree();
 
-        final Content.Builder content = Content.create().
-            id( ContentId.from( "fragmentId" ) ).
-            path( ContentPath.from( "site/somepath/fragment" ) ).
-            owner( PrincipalKey.from( "user:myStore:me" ) ).
-            displayName( "My Content" ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( ContentTypeName.fragment() );
+        final Content.Builder content = Content.create()
+            .id( ContentId.from( "fragmentId" ) )
+            .path( ContentPath.from( "site/somepath/fragment" ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( ContentTypeName.fragment() );
 
-        Page page = Page.create().
-            template( PageTemplateKey.from( "my-page" ) ).
-            fragment( PartComponent.create().descriptor( "myapp:mypart" ).build() ).
-            config( rootDataSet ).
-            build();
+        Page page = Page.create()
+            .template( PageTemplateKey.from( "my-page" ) )
+            .fragment( PartComponent.create().descriptor( "myapp:mypart" ).build() )
+            .config( rootDataSet )
+            .build();
         content.page( page );
         return content.build();
     }
@@ -272,19 +282,16 @@ public class ComponentHandlerTest
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
 
-        Page page = Page.create().
-            template( PageTemplateKey.from( "my-page" ) ).
-            config( rootDataSet ).
-            build();
+        Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).config( rootDataSet ).build();
 
-        return Site.create().
-            id( ContentId.from( id ) ).
-            path( ContentPath.from( path ) ).
-            owner( PrincipalKey.from( "user:myStore:me" ) ).
-            displayName( "My Content" ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( ContentTypeName.from( contentTypeName ) ).
-            page( page ).
-            build();
+        return Site.create()
+            .id( ContentId.from( id ) )
+            .path( ContentPath.from( path ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( ContentTypeName.from( contentTypeName ) )
+            .page( page )
+            .build();
     }
 }

@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.handler.mapping;
+package com.enonic.xp.portal.impl;
 
 import java.time.Instant;
 
@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -25,12 +24,12 @@ import com.enonic.xp.site.SiteConfigs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ContentResolverTest
 {
-
     @Mock
     ContentService contentService;
 
@@ -49,9 +48,9 @@ class ContentResolverTest
 
         final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
 
-        assertSame( content, result.content );
-        assertSame( site, result.nearestSite );
-        assertEquals( "/landing-page", result.siteRelativePath );
+        assertSame( content, result.getContent() );
+        assertSame( site, result.getNearestSite() );
+        assertEquals( "/landing-page", result.getSiteRelativePath() );
     }
 
     @Test
@@ -68,9 +67,45 @@ class ContentResolverTest
 
         final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
 
-        assertSame( site, result.content );
-        assertSame( site, result.nearestSite );
-        assertEquals( "/", result.siteRelativePath );
+        assertSame( site, result.getContent() );
+        assertSame( site, result.getNearestSite() );
+        assertEquals( "/", result.getSiteRelativePath() );
+    }
+
+    @Test
+    void resolve_not_found_edit_mode()
+    {
+        final PortalRequest request = new PortalRequest();
+        request.setMode( RenderMode.EDIT );
+        request.setContentPath( ContentPath.from( "/c8da0c10-0002-4b68-b407-87412f3e45c8" ) );
+
+        when( this.contentService.getById( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenThrow(
+            new ContentNotFoundException( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ), null ) );
+
+        final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
+
+        assertNull( result.getContent() );
+        assertNull( result.getNearestSite() );
+        assertNull( result.getSiteRelativePath() );
+    }
+
+    @Test
+    void resolve_root_edit_mode()
+    {
+        final PortalRequest request = new PortalRequest();
+        request.setMode( RenderMode.EDIT );
+        request.setContentPath( ContentPath.from( "/c8da0c10-0002-4b68-b407-87412f3e45c8" ) );
+
+        final Content rootContent = mock( Content.class );
+        when( rootContent.getPath() ).thenReturn( ContentPath.ROOT );
+
+        when( this.contentService.getById( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenReturn( rootContent );
+
+        final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
+
+        assertNull( result.getContent() );
+        assertNull( result.getNearestSite() );
+        assertNull( result.getSiteRelativePath() );
     }
 
     @Test
@@ -86,7 +121,10 @@ class ContentResolverTest
         when( this.contentService.getNearestSite( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenReturn( null );
 
         final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
-        assertNull( result );
+
+        assertSame( content, result.getContent() );
+        assertNull( result.getNearestSite() );
+        assertNull( result.getSiteRelativePath() );
     }
 
     @Test
@@ -99,13 +137,13 @@ class ContentResolverTest
         request.setContentPath( ContentPath.from( "/mysite/landing-page" ) );
 
         when( this.contentService.getByPath( ContentPath.from( "/mysite/landing-page" ) ) ).thenReturn( content );
-        when( this.contentService.findNearestSiteByPath( ContentPath.from( "/mysite/landing-page" ) )).thenReturn( site );
+        when( this.contentService.findNearestSiteByPath( ContentPath.from( "/mysite/landing-page" ) ) ).thenReturn( site );
 
         final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
 
-        assertSame( content, result.content );
-        assertSame( site, result.nearestSite );
-        assertEquals( "/landing-page", result.siteRelativePath );
+        assertSame( content, result.getContent() );
+        assertSame( site, result.getNearestSite() );
+        assertEquals( "/landing-page", result.getSiteRelativePath() );
     }
 
     @Test
@@ -117,13 +155,13 @@ class ContentResolverTest
         request.setContentPath( ContentPath.from( "/mysite" ) );
 
         when( this.contentService.getByPath( ContentPath.from( "/mysite" ) ) ).thenReturn( site );
-        when( this.contentService.findNearestSiteByPath( ContentPath.from( "/mysite" ) )).thenReturn( site );
+        when( this.contentService.findNearestSiteByPath( ContentPath.from( "/mysite" ) ) ).thenReturn( site );
 
         final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
 
-        assertSame( site, result.content );
-        assertSame( site, result.nearestSite );
-        assertEquals( "/", result.siteRelativePath );
+        assertSame( site, result.getContent() );
+        assertSame( site, result.getNearestSite() );
+        assertEquals( "/", result.getSiteRelativePath() );
     }
 
     @Test
@@ -136,26 +174,31 @@ class ContentResolverTest
         request.setContentPath( contentPath );
 
         when( this.contentService.getByPath( contentPath ) ).thenThrow( new ContentNotFoundException( contentPath, null ) );
-        when( this.contentService.findNearestSiteByPath( contentPath )).thenReturn( site );
+        when( this.contentService.findNearestSiteByPath( contentPath ) ).thenReturn( site );
 
         final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
 
-        assertNull( result.content );
-        assertSame( site, result.nearestSite );
-        assertEquals( "/landing-page/non-existing", result.siteRelativePath );
+        assertNull( result.getContent() );
+        assertSame( site, result.getNearestSite() );
+        assertEquals( "/landing-page/non-existing", result.getSiteRelativePath() );
     }
 
     @Test
-    void resolve_no_site_no_result_in_live_mode()
+    void resolve_no_site_in_live_mode()
     {
+        final Content content = newContent();
+
         final PortalRequest request = new PortalRequest();
         request.setContentPath( ContentPath.from( "/mysite/landing-page" ) );
 
-        when( this.contentService.findNearestSiteByPath( ContentPath.from( "/mysite/landing-page" ) )).thenReturn( null );
+        when( this.contentService.getByPath( ContentPath.from( "/mysite/landing-page" ) ) ).thenReturn( content );
+        when( this.contentService.findNearestSiteByPath( ContentPath.from( "/mysite/landing-page" ) ) ).thenReturn( null );
 
         final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
 
-        assertNull( result );
+        assertSame( content, result.getContent() );
+        assertNull( result.getNearestSite() );
+        assertNull( result.getSiteRelativePath() );
     }
 
     private Content newContent()

@@ -1,12 +1,18 @@
 package com.enonic.xp.lib.content;
 
+import java.util.Optional;
+import java.util.concurrent.Callable;
+import java.util.function.Supplier;
+
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.lib.common.PropertyTreeMapper;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
 
 public final class GetSiteConfigHandler
@@ -19,51 +25,32 @@ public final class GetSiteConfigHandler
     @Override
     protected Object doExecute()
     {
-        if ( this.key == null || this.key.isEmpty() )
+        validate();
+        final Supplier<Site> siteSupplier;
+        if ( key.startsWith( "/" ) )
         {
-            throw new IllegalArgumentException( "Parameter 'key' is required" );
-        }
-        if ( this.key.startsWith( "/" ) )
-        {
-            return getByPath( ContentPath.from( this.key ) );
+            siteSupplier = () -> contentService.findNearestSiteByPath( ContentPath.from( key ) );
         }
         else
         {
-            return getById( ContentId.from( this.key ) );
+            siteSupplier = () -> contentService.getNearestSite( ContentId.from( key ) );
         }
+        return Optional.ofNullable( callAsContentAdmin( siteSupplier::get ) )
+            .map( site -> site.getSiteConfig( ApplicationKey.from( applicationKey ) ) )
+            .map( PropertyTreeMapper::new )
+            .orElse( null );
     }
 
-    private PropertyTreeMapper getByPath( final ContentPath contentPath )
+    private void validate()
     {
-        try
+        if ( key == null || key.isEmpty() )
         {
-            final Content content = this.contentService.getByPath( contentPath );
-            return getById( content.getId() );
+            throw new IllegalArgumentException( "Parameter 'key' is required" );
         }
-        catch ( final ContentNotFoundException e )
+        if ( applicationKey == null )
         {
-            return null;
+            throw new IllegalArgumentException( "Parameter 'applicationKey' is required" );
         }
-    }
-
-    private PropertyTreeMapper getById( final ContentId contentId )
-    {
-        try
-        {
-            final Site site = this.contentService.getNearestSite( contentId );
-            if ( site != null && applicationKey != null )
-            {
-                final PropertyTree siteConfigPropertyTree = site.getSiteConfig( ApplicationKey.from( applicationKey ) );
-                if ( siteConfigPropertyTree != null )
-                {
-                    return new PropertyTreeMapper( siteConfigPropertyTree );
-                }
-            }
-        }
-        catch ( final ContentNotFoundException e )
-        {
-        }
-        return null;
     }
 
     public void setKey( final String key )
@@ -74,5 +61,14 @@ public final class GetSiteConfigHandler
     public void setApplicationKey( final String applicationKey )
     {
         this.applicationKey = applicationKey;
+    }
+
+    private <T> T callAsContentAdmin( final Callable<T> callable )
+    {
+        final Context context = ContextAccessor.current();
+        return ContextBuilder.from( context )
+            .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.CONTENT_MANAGER_ADMIN ).build() )
+            .build()
+            .callWith( callable );
     }
 }

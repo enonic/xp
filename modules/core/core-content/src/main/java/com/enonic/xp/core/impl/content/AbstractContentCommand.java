@@ -61,15 +61,10 @@ abstract class AbstractContentCommand
 
     Content getContent( final ContentId contentId )
     {
-        return GetContentByIdCommand.create( contentId, this ).build().execute();
-    }
-
-    Content getContent( final ContentPath contentPath )
-    {
-        final Content content = GetContentByPathCommand.create( contentPath, this ).build().execute();
+        final Content content = GetContentByIdCommand.create( contentId, this ).build().execute();
         if ( content == null )
         {
-            throw new ContentNotFoundException( contentPath, ContextAccessor.current().getBranch() );
+            throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch() );
         }
         return content;
     }
@@ -186,7 +181,11 @@ abstract class AbstractContentCommand
             }
         }
 
-        final Content parent = getContent( parentPath );
+        final Content parent = GetContentByPathCommand.create( parentPath, this ).build().execute();
+        if (parent == null)
+        {
+            throw new IllegalStateException( String.format( "Cannot read parent type with path %s", parentPath ) );
+        }
 
         final ContentTypeName parentTypeName = parent.getType();
 

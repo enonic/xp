@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
@@ -34,6 +35,13 @@ import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
@@ -339,4 +347,23 @@ public final class TestDataFixtures
 
         return LayoutComponent.create().descriptor( "layoutDescriptor:name" ).regions( layoutRegions ).build();
     }
+
+    public static Site newSite()
+    {
+        final PropertyTree siteConfigConfig = new PropertyTree();
+        siteConfigConfig.setLong( "Field", 42L );
+
+        final SiteConfig siteConfig =
+            SiteConfig.create().application( ApplicationKey.from( "myapplication" ) ).config( siteConfigConfig ).build();
+
+        final Site.Builder site = Site.create();
+        site.id( ContentId.from( "100123" ) );
+        site.siteConfigs( SiteConfigs.from( siteConfig ) );
+        site.name( "my-content" );
+        site.parentPath( ContentPath.ROOT );
+        site.permissions(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() ) );
+        return site.build();
+    }
+
 }

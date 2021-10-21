@@ -3,13 +3,10 @@ package com.enonic.xp.portal.impl.handler.mapping;
 import java.time.Instant;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -17,8 +14,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -31,9 +26,6 @@ import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ControllerMappingsResolverTest
@@ -113,6 +105,71 @@ public class ControllerMappingsResolverTest
         assertTrue( mapping.isEmpty() );
     }
 
+    @Test
+    public void testPatternCatchAll_matches_anything()
+    {
+        final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create().
+            controller( ResourceKey.from( getAppKey2(), "/other/controller1.js" ) ).
+            pattern( "/.*" ).
+            order( 10 ).
+            build();
+        final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping1 );
+
+        final Content content = newContent();
+        final Site site = newSite();
+
+        final SiteDescriptor siteDescriptor = SiteDescriptor.create().
+            mappingDescriptors( mappings ).
+            build();
+
+        Mockito.when( this.siteService.getDescriptor( getAppKey2() ) ).thenReturn( siteDescriptor );
+
+        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
+
+        final Optional<ControllerMappingDescriptor> mapping = resolver.resolve( "/landing-page", ImmutableMultimap.of(), content, site.getSiteConfigs() );
+
+        assertThat( mapping ).map( ControllerMappingDescriptor::getController )
+            .map( ResourceKey::getPath )
+            .contains( "/other/controller1.js" );
+
+        final Optional<ControllerMappingDescriptor> mapping2 = resolver.resolve( "/does-not-exist", ImmutableMultimap.of(), null, site.getSiteConfigs() );
+
+        assertThat( mapping2 ).map( ControllerMappingDescriptor::getController )
+            .map( ResourceKey::getPath )
+            .contains( "/other/controller1.js" );
+
+        final Optional<ControllerMappingDescriptor> mapping3 = resolver.resolve( "/", ImmutableMultimap.of(), site, site.getSiteConfigs() );
+
+        assertThat( mapping3 ).map( ControllerMappingDescriptor::getController )
+            .map( ResourceKey::getPath )
+            .contains( "/other/controller1.js" );
+    }
+
+    @Test
+    public void testPatternCatchAllType_not_matches_missing()
+    {
+        final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create().
+            controller( ResourceKey.from( getAppKey2(), "/other/controller1.js" ) ).
+            contentConstraint( "type:'.+:.+'" ).
+            order( 10 ).
+            build();
+        final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping1 );
+
+        final Site site = newSite();
+
+        final SiteDescriptor siteDescriptor = SiteDescriptor.create().
+            mappingDescriptors( mappings ).
+            build();
+
+        Mockito.when( this.siteService.getDescriptor( getAppKey2() ) ).thenReturn( siteDescriptor );
+
+        final ControllerMappingsResolver resolver = new ControllerMappingsResolver( this.siteService );
+
+        final Optional<ControllerMappingDescriptor> mapping = resolver.resolve( "/does-not-exist", ImmutableMultimap.of(), null, site.getSiteConfigs() );
+
+        assertTrue( mapping.isEmpty() );
+
+    }
 
     private SiteDescriptor newSiteDescriptor()
     {
@@ -139,7 +196,6 @@ public class ControllerMappingsResolverTest
             mappingDescriptors( mappings ).
             build();
     }
-
 
     private SiteDescriptor newSiteDescriptor2()
     {

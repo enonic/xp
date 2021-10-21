@@ -8,7 +8,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
@@ -25,8 +24,6 @@ public final class WidgetHandler
     extends EndpointHandler
 {
     private static final Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)" );
-
-    private ContentService contentService;
 
     private ControllerScriptFactory controllerScriptFactory;
 
@@ -57,15 +54,8 @@ public final class WidgetHandler
         final WidgetHandlerWorker worker = new WidgetHandlerWorker( portalRequest );
         worker.controllerScriptFactory = this.controllerScriptFactory;
         worker.widgetDescriptorService = this.widgetDescriptorService;
-        worker.setContentService( this.contentService );
         worker.descriptorKey = DescriptorKey.from( ApplicationKey.from( matcher.group( 1 ) ), matcher.group( 2 ) );
         return worker.execute();
-    }
-
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
     }
 
     @Reference
