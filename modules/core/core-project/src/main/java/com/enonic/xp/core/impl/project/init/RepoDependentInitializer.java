@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.node.NodeService;
@@ -41,11 +42,7 @@ public abstract class RepoDependentInitializer
     protected Context createAdminContext( Branch branch )
     {
         final AuthenticationInfo authInfo = createAdminAuthInfo();
-        return ContextBuilder.create().
-            branch( branch ).
-            repositoryId( repositoryId ).
-            authInfo( authInfo ).
-            build();
+        return ContextBuilder.from( ContextAccessor.current() ).branch( branch ).repositoryId( repositoryId ).authInfo( authInfo ).build();
     }
 
     protected AuthenticationInfo createAdminAuthInfo()

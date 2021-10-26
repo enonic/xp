@@ -96,11 +96,25 @@ public class ProjectServiceImpl
 
     public void initialize()
     {
-        adminContext().runWith( () -> doCreate( CreateProjectParams.create().
-            name( ProjectConstants.DEFAULT_PROJECT.getName() ).
-            displayName( ProjectConstants.DEFAULT_PROJECT.getDisplayName() ).
-            description( ProjectConstants.DEFAULT_PROJECT.getDescription() ).
-            build() ) );
+        adminContext().runWith( () -> {
+
+            final Projects projects = this.doList();
+
+            projects.forEach( project -> doInitRootNodes( CreateProjectParams.create()
+                                                              .name( project.getName() )
+                                                              .displayName( project.getDisplayName() )
+                                                              .description( project.getDescription() )
+                                                              .build() ) );
+
+            if ( projects.stream().noneMatch( project -> project.getName().equals( ProjectConstants.DEFAULT_PROJECT.getName() ) ) )
+            {
+                doInitRootNodes( CreateProjectParams.create()
+                                     .name( ProjectConstants.DEFAULT_PROJECT.getName() )
+                                     .displayName( ProjectConstants.DEFAULT_PROJECT.getDisplayName() )
+                                     .description( ProjectConstants.DEFAULT_PROJECT.getDescription() )
+                                     .build() );
+            }
+        } );
     }
 
     @Override
@@ -111,7 +125,7 @@ public class ProjectServiceImpl
             {
                 throw new ProjectAlreadyExistsException( params.getName() );
             }
-            final Project result = doCreate( params );
+            final Project result = doInitRootNodes( params );
 
             CreateProjectRolesCommand.create().
                 securityService( securityService ).
@@ -128,45 +142,40 @@ public class ProjectServiceImpl
         } );
     }
 
-    private Project doCreate( final CreateProjectParams params )
+    private Project doInitRootNodes( final CreateProjectParams params )
     {
-        ContentInitializer.create().
-            setIndexService( indexService ).
-            setNodeService( nodeService ).
-            setRepositoryService( repositoryService ).
-            repositoryId( params.getName().getRepoId() ).
-            setData( createProjectData( params ) ).
-            accessControlList( CreateProjectRootAccessListCommand.create().
-                projectName( params.getName() ).
-                permissions( params.getPermissions() ).
-                build().
-                execute() ).
-            forceInitialization( params.isForceInitialization() ).
-            build().
-            initialize();
+        ContentInitializer.create()
+            .setIndexService( indexService )
+            .setNodeService( nodeService )
+            .setRepositoryService( repositoryService )
+            .repositoryId( params.getName().getRepoId() )
+            .setData( createProjectData( params ) )
+            .accessControlList( CreateProjectRootAccessListCommand.create()
+                                    .projectName( params.getName() )
+                                    .permissions( params.getPermissions() )
+                                    .build()
+                                    .execute() )
+            .forceInitialization( params.isForceInitialization() )
+            .build()
+            .initialize();
 
-        IssueInitializer.create().
-            setIndexService( indexService ).
-            setNodeService( nodeService ).
-            repositoryId( params.getName().getRepoId() ).
-            accessControlList( CreateProjectIssuesAccessListCommand.create().
-                projectName( params.getName() ).
-                build().
-                execute() ).
-            forceInitialization( params.isForceInitialization() ).
-            build().
-            initialize();
+        IssueInitializer.create()
+            .setIndexService( indexService )
+            .setNodeService( nodeService )
+            .repositoryId( params.getName().getRepoId() )
+            .accessControlList( CreateProjectIssuesAccessListCommand.create().projectName( params.getName() ).build().execute() )
+            .forceInitialization( params.isForceInitialization() )
+            .build()
+            .initialize();
 
-        ArchiveInitializer.create().setIndexService( indexService ).
-            setNodeService( nodeService ).
-            repositoryId( params.getName().getRepoId() ).
-            accessControlList( CreateProjectRootAccessListCommand.create().
-                projectName( params.getName() ).
-                build().
-                execute() ).
-            forceInitialization( params.isForceInitialization() ).
-            build().
-            initialize();
+        ArchiveInitializer.create()
+            .setIndexService( indexService )
+            .setNodeService( nodeService )
+            .repositoryId( params.getName().getRepoId() )
+            .accessControlList( CreateProjectRootAccessListCommand.create().projectName( params.getName() ).build().execute() )
+            .forceInitialization( params.isForceInitialization() )
+            .build()
+            .initialize();
 
         return Project.from( repositoryService.get( params.getName().getRepoId() ) );
     }
