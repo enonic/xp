@@ -55,7 +55,7 @@ addBundle( "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVers
 addBundle( "com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:${jacksonVersion}", 8 )
 addBundle( "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:${jacksonVersion}", 8 )
 addBundle( "org.apache.tika:tika-core:${tikaVersion}", 8 )
-addBundle( "org.apache.tika:tika-bundle:${tikaVersion}", 8 )
+addBundle( "org.apache.tika:tika-bundle-standard:${tikaVersion}", 8 )
 addBundle( "io.dropwizard.metrics:metrics-core:${dropwizardMetricsVersion}", 8 )
 addBundle( "io.dropwizard.metrics:metrics-json:${dropwizardMetricsVersion}", 8 )
 addBundle( "io.dropwizard.metrics:metrics-jvm:${dropwizardMetricsVersion}", 8 )

@@ -13,7 +13,7 @@ ext {
     jakartaMailVersion = '1.6.5'
     jakartaAnnotationApiVersion = '1.3.5'
     jaxrsApiVersion = '2.1.6'
-    tikaVersion = '1.26'
+    tikaVersion = '2.1.0'
     resteasyVersion = '4.7.2.Final'
     hazelcastVersion = '3.12.12'
     hazelcastK8sVersion = '1.5.5'
