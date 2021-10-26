@@ -1,6 +1,6 @@
 dependencies {
     api "org.osgi:osgi.core:${osgiVersion}"
-    implementation 'org.jsoup:jsoup:1.13.1'
+    implementation 'org.jsoup:jsoup:1.14.3'
 
     testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"
 }
@@ -8,5 +8,6 @@ dependencies {
 jar {
     bnd( 'Bundle-Name': 'Enonic XP Core - Internal',
          'Export-Package': 'com.enonic.xp.core.internal.*',
+         'Import-Package': 'javax.annotation.meta;resolution:=optional,*',
          'Private-Package': 'org.jsoup.*')
 }
