@@ -203,7 +203,7 @@ final class ArchiveContentCommand
     {
         private static final String DELIMITER = "...";
 
-        private static final int MAX_NAME_SIZE = 30;
+        private static final int MAX_NAME_SIZE = 50;
 
         private NodePath buildArchivedPath( final Node node )
         {
