@@ -157,7 +157,26 @@ class ProjectServiceImplTest
             projectService =
                 new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectAccessContextManager,
                                         eventPublisher );
+
+            projectService.initialize();
         } );
+    }
+
+    @Test
+    void initialize()
+    {
+        ContextBuilder.from( adminContext() )
+            .repositoryId( ContentConstants.CONTENT_REPO_ID )
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .build()
+            .runWith( () -> {
+                final Projects projects = projectService.list();
+
+                assertEquals( 1, projects.getSize() );
+                assertTrue( nodeService.nodeExists( NodePath.create().addElement( "content" ).build() ) );
+                assertTrue( nodeService.nodeExists( NodePath.create().addElement( "issues" ).build() ) );
+                assertTrue( nodeService.nodeExists( NodePath.create().addElement( "archive" ).build() ) );
+            } );
     }
 
     @Test
@@ -642,7 +661,10 @@ class ProjectServiceImplTest
         adminContext().runWith( () -> {
 
             final Project pro = projectService.get( ProjectName.from( ContentConstants.CONTENT_REPO_ID ) );
-            assertEquals( ProjectConstants.DEFAULT_PROJECT, pro );
+            assertEquals( ProjectConstants.DEFAULT_PROJECT.getDescription(), pro.getDescription() );
+            assertEquals( ProjectConstants.DEFAULT_PROJECT.getDisplayName(), pro.getDisplayName() );
+            assertEquals( ProjectConstants.DEFAULT_PROJECT.getIcon(), pro.getIcon() );
+            assertEquals( ProjectConstants.DEFAULT_PROJECT.getParent(), pro.getParent() );
         } );
 
     }

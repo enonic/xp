@@ -15,6 +15,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.SecurityService;
 
@@ -59,6 +60,7 @@ class ProjectServiceActivatorTest
 
         final Node mockNode = Node.create().id( NodeId.from( "1" ) ).parentPath( NodePath.ROOT ).build();
         when( nodeService.create( any() ) ).thenReturn( mockNode );
+        when( repositoryService.list() ).thenReturn( Repositories.empty() );
     }
 
     @Test
