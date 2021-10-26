@@ -6,7 +6,9 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,7 +33,6 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.toSet;
 
 @Component(immediate = true)
@@ -39,8 +40,6 @@ public final class LocaleServiceImpl
     implements LocaleService, ApplicationListener
 {
     private static final Logger LOG = LoggerFactory.getLogger( LocaleServiceImpl.class );
-
-    private static final String DELIMITER = "_";
 
     private static final String KEY_SEPARATOR = "|";
 
@@ -69,8 +68,7 @@ public final class LocaleServiceImpl
         {
             return null;
         }
-
-        return getMessageBundle( applicationKey, locale, bundleNames );
+        return getMessageBundle( applicationKey, Objects.requireNonNullElse( locale, Locale.ROOT ), bundleNames );
     }
 
     @Override
@@ -97,9 +95,8 @@ public final class LocaleServiceImpl
             bundleNames = new String[]{"site/i18n/phrases", "i18n/phrases"};
         }
 
-        final Set<String> supportedLocales = this.getLocales( applicationKey, bundleNames ).stream().
-            map( ( l ) -> l.toLanguageTag().toLowerCase() ).
-            collect( toSet() );
+        final Set<String> supportedLocales =
+            this.getLocales( applicationKey, bundleNames ).stream().map( ( l ) -> l.toLanguageTag().toLowerCase() ).collect( toSet() );
 
         for ( Locale locale : preferredLocales )
         {
@@ -127,17 +124,14 @@ public final class LocaleServiceImpl
         final Set<Locale> locales = new LinkedHashSet<>();
         for ( final String bundleName : bundleNames )
         {
-            final String bundlePattern = Pattern.quote( bundleName ) + ".*\\.properties";
+            final String bundlePattern = Pattern.quote( bundleName ) + ".+\\.properties$";
             final ResourceKeys resourceKeys = resourceService.findFiles( applicationKey, bundlePattern );
             for ( ResourceKey resourceKey : resourceKeys )
             {
-                if ( resourceService.getResource( resourceKey ).exists() )
-                {
-                    locales.add( localeFromResource( resourceKey.getName() ) );
-                }
+                locales.add( localeFromResource( resourceKey.getName() ) );
             }
         }
-        return new LinkedHashSet<>( locales );
+        return locales;
     }
 
     private Locale localeFromResource( final String resourceName )
@@ -164,14 +158,10 @@ public final class LocaleServiceImpl
 
     private String bundleCacheKey( final ApplicationKey applicationKey, final Locale locale, final String... bundleNames )
     {
-        String lang = locale != null ? locale.getLanguage() : "";
-        String country = locale != null ? locale.getCountry() : "";
-        String variant = locale != null ? locale.getVariant() : "";
-        StringJoiner key = new StringJoiner( KEY_SEPARATOR ).
-            add( applicationKey.toString() ).
-            add( lang ).
-            add( country ).
-            add( variant );
+        String lang = locale.getLanguage();
+        String country = locale.getCountry();
+        String variant = locale.getVariant();
+        StringJoiner key = new StringJoiner( KEY_SEPARATOR ).add( applicationKey.toString() ).add( lang ).add( country ).add( variant );
         if ( bundleNames != null )
         {
             for ( String bundleName : bundleNames )
@@ -184,8 +174,7 @@ public final class LocaleServiceImpl
 
     private String appBundlesCacheKey( final ApplicationKey applicationKey, final String... bundleNames )
     {
-        StringJoiner key = new StringJoiner( KEY_SEPARATOR ).
-            add( applicationKey.toString() );
+        StringJoiner key = new StringJoiner( KEY_SEPARATOR ).add( applicationKey.toString() );
         if ( bundleNames != null )
         {
             for ( String bundleName : bundleNames )
@@ -206,63 +195,36 @@ public final class LocaleServiceImpl
     {
         LOG.debug( "Create message bundle for {} {}", applicationKey, locale );
         final Properties props = new Properties();
-        for ( final String bundleName : bundleNames )
+        for ( final String baseName : bundleNames )
         {
-            props.putAll( loadBundles( applicationKey, locale, bundleName ) );
+            props.putAll( loadBundles( applicationKey, locale, baseName ) );
         }
 
         return new MessageBundleImpl( props, locale );
     }
 
-    private Properties loadBundles( final ApplicationKey applicationKey, final Locale locale, final String bundleName )
+    private Properties loadBundles( final ApplicationKey applicationKey, final Locale locale, final String baseName )
     {
         final Properties props = new Properties();
 
-        if ( locale == null )
+        final ResourceBundle.Control control = ResourceBundle.Control.getControl( ResourceBundle.Control.FORMAT_PROPERTIES );
+        final List<Locale> candidateLocales = control.getCandidateLocales( baseName, locale );
+        Collections.reverse( candidateLocales );
+
+        for ( Locale candidateLocale : candidateLocales )
         {
-            props.putAll( loadBundle( applicationKey, bundleName, "" ) );
-            return props;
-        }
-
-        String lang = locale.getLanguage();
-        String country = locale.getCountry();
-        String variant = locale.getVariant();
-
-        props.putAll( loadBundle( applicationKey, bundleName, "" ) );
-
-        if ( !isNullOrEmpty( lang ) )
-        {
-            lang = lang.toLowerCase();
-            props.putAll( loadBundle( applicationKey, bundleName, DELIMITER + lang ) );
-        }
-
-        if ( !isNullOrEmpty( country ) )
-        {
-            props.putAll( loadBundle( applicationKey, bundleName, DELIMITER + lang + DELIMITER + country ) );
-        }
-
-        if ( !isNullOrEmpty( variant ) )
-        {
-            variant = variant.toLowerCase();
-            props.putAll( loadBundle( applicationKey, bundleName, DELIMITER + lang + DELIMITER + country + DELIMITER + variant ) );
+            props.putAll( loadBundle( applicationKey, control.toBundleName( baseName, candidateLocale ) ) );
         }
 
         return props;
     }
 
-    private Properties loadBundle( final ApplicationKey applicationKey, final String bundleName, final String bundleExtension )
+    private Properties loadBundle( final ApplicationKey applicationKey, final String bundleName )
     {
-        final Properties properties = new Properties();
-        properties.putAll( loadSingleBundle( applicationKey, bundleName, bundleExtension ) );
-        return properties;
-    }
-
-    private Properties loadSingleBundle( final ApplicationKey applicationKey, final String bundleName, final String bundleExtension )
-    {
-        final Properties properties = new Properties();
-        final ResourceKey resourceKey = ResourceKey.from( applicationKey, bundleName + bundleExtension + ".properties" );
+        final ResourceKey resourceKey = ResourceKey.from( applicationKey, bundleName + ".properties" );
         final Resource resource = resourceService.getResource( resourceKey );
 
+        final Properties properties = new Properties();
         if ( resource.exists() )
         {
             try (Reader in = resource.openReader())

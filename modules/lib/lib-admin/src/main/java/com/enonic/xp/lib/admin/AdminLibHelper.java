@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,8 +15,6 @@ import com.enonic.xp.server.ServerInfo;
 import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
-
-import static java.util.stream.Collectors.toList;
 
 public final class AdminLibHelper
     implements ScriptBean
@@ -67,7 +66,7 @@ public final class AdminLibHelper
     {
         final HttpServletRequest req = ServletRequestHolder.getRequest();
         final Locale locale = req != null ? req.getLocale() : Locale.getDefault();
-        return resolveLanguage( locale.getLanguage().toLowerCase() );
+        return locale.getLanguage().toLowerCase();
     }
 
     public List<String> getLocales()
@@ -83,34 +82,15 @@ public final class AdminLibHelper
             locales = Collections.singletonList( Locale.getDefault() );
         }
 
-        final List<String> localeList =
-            locales.stream().map( ( l ) -> resolveLanguage( l.toLanguageTag().toLowerCase() ) ).collect( toList() );
+        final List<String> localeList = locales.stream().map( Locale::toLanguageTag ).collect( Collectors.toList() );
         if ( localeList.isEmpty() )
         {
-            return Collections.singletonList( resolveLanguage( Locale.getDefault().toLanguageTag().toLowerCase() ) );
+            return Collections.singletonList( Locale.getDefault().toLanguageTag() );
         }
         else
         {
             return localeList;
         }
-    }
-
-    /**
-     * This is a hack for now. We should resolve language in another way.
-     */
-    private String resolveLanguage( final String lang )
-    {
-        if ( lang.equals( "nn" ) )
-        {
-            return "no";
-        }
-
-        if ( lang.equals( "nb" ) )
-        {
-            return "no";
-        }
-
-        return lang;
     }
 
     private static String generateVersion()
@@ -142,5 +122,4 @@ public final class AdminLibHelper
     {
         this.adminToolDescriptorService = context.getService( AdminToolDescriptorService.class );
     }
-
 }

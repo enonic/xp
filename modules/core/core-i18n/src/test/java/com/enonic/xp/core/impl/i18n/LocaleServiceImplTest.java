@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,7 @@ import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
@@ -52,14 +54,31 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void get_bundle()
-        throws Exception
+    public void get_bundle_norwegian_no()
     {
-        final MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.ENGLISH );
+        final MessageBundle bundle =
+            localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.forLanguageTag( "no" ), "norwegian" );
 
-        assertNotNull( bundle );
-        assertEquals( 8, bundle.getKeys().size() );
-        assertEquals( "en", bundle.localize( "msg" ) );
+        assertThat( bundle.asMap() ).containsExactlyInAnyOrderEntriesOf( Map.of( "a", "default", "b", "nb", "d", "no" ) );
+    }
+
+    @Test
+    public void get_bundle_norwegian_nb()
+    {
+        final MessageBundle bundle =
+            localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.forLanguageTag( "nb" ), "norwegian" );
+
+        assertThat( bundle.asMap() ).containsExactlyInAnyOrderEntriesOf( Map.of( "a", "default", "b", "nb", "d", "no" ) );
+
+    }
+
+    @Test
+    public void get_bundle_norwegian_nn()
+    {
+        final MessageBundle bundle =
+            localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.forLanguageTag( "nn" ), "norwegian" );
+
+        assertThat( bundle.asMap() ).containsExactlyInAnyOrderEntriesOf( Map.of( "a", "default", "c", "nn", "d", "no" ) );
     }
 
     @Test
@@ -135,12 +154,11 @@ public class LocaleServiceImplTest
     {
         final ResourceKeys resourceKeys =
             ResourceKeys.from( "myapplication:/i18n/myphrases.properties", "myapplication:/i18n/myphrases_en.properties",
-                               "myapplication:/i18n/myphrases_en_US.properties",
-                               "myapplication:/i18n/myphrases_en_US_1.properties", "myapplication:/i18n/myphrases_fr.properties",
-                               "myapplication:/i18n/myphrases_ca.properties" );
+                               "myapplication:/i18n/myphrases_en_US.properties", "myapplication:/i18n/myphrases_en_US_1.properties",
+                               "myapplication:/i18n/myphrases_fr.properties", "myapplication:/i18n/myphrases_ca.properties" );
 
-        Mockito.when( resourceService.findFiles( Mockito.any(), Mockito.eq( "\\Q/phrases\\E.*\\.properties" ) ) ).thenReturn(
-            resourceKeys );
+        Mockito.when( resourceService.findFiles( Mockito.any(), Mockito.eq( "\\Q/phrases\\E.+\\.properties$" ) ) )
+            .thenReturn( resourceKeys );
 
         final Set<Locale> locales = localeService.getLocales( ApplicationKey.from( "myapplication" ), "/phrases" );
 
