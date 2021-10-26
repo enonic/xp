@@ -156,7 +156,7 @@ public class DumpServiceImplTest
 
         final Repositories newRepos = NodeHelper.runAsAdmin( this::doListRepositories );
 
-        assertEquals( RepositoryIds.from( RepositoryId.from( "com.enonic.cms.default" ), RepositoryId.from( "system-repo" ),
+        assertEquals( RepositoryIds.from( RepositoryId.from( "com.enonic.cms.test" ), RepositoryId.from( "system-repo" ),
                                           RepositoryId.from( "system.auditlog" ), RepositoryId.from( "system.scheduler" ) ),
                       newRepos.getIds() );
     }
@@ -830,11 +830,7 @@ public class DumpServiceImplTest
         createIncompatibleDump( dumpName );
 
         NodeHelper.runAsAdmin( () -> {
-            this.dumpService.load( SystemLoadParams.create().
-                dumpName( dumpName ).
-                upgrade( true ).
-                includeVersions( true ).
-                build() );
+            this.dumpService.load( SystemLoadParams.create().dumpName( dumpName ).upgrade( true ).includeVersions( true ).build() );
 
             FileDumpReader reader = FileDumpReader.create( null, temporaryFolder, dumpName );
             final DumpMeta updatedMeta = reader.getDumpMeta();
@@ -847,34 +843,36 @@ public class DumpServiceImplTest
             final NodeVersionId draftNodeVersionId = NodeVersionId.from( "f3765655d5f0c7c723887071b517808dae00556c" );
             final NodeVersionId masterNodeVersionId = NodeVersionId.from( "02e61f29a57309834d96bbf7838207ac456bbf5c" );
 
-            final Node draftNode = nodeService.getById( nodeId );
-            assertNotNull( draftNode );
-            assertEquals( draftNodeVersionId, draftNode.getNodeVersionId() );
-            assertEquals( nodePath, draftNode.path() );
-            assertEquals( "2019-02-20T14:44:06.883Z", draftNode.getTimestamp().toString() );
+            ContextBuilder.from( ContextAccessor.current() ).repositoryId( "com.enonic.cms.default" ).build().runWith( () -> {
+                final Node draftNode = nodeService.getById( nodeId );
+                assertNotNull( draftNode );
+                assertEquals( draftNodeVersionId, draftNode.getNodeVersionId() );
+                assertEquals( nodePath, draftNode.path() );
+                assertEquals( "2019-02-20T14:44:06.883Z", draftNode.getTimestamp().toString() );
 
-            final Node masterNode = ContextBuilder.
-                from( ContextAccessor.current() ).
-                branch( Branch.from( "master" ) ).
-                build().
-                callWith( () -> nodeService.getById( nodeId ) );
-            assertNotNull( masterNode );
-            assertEquals( masterNodeVersionId, masterNode.getNodeVersionId() );
-            assertEquals( nodePath, masterNode.path() );
-            assertEquals( "2018-11-23T11:14:21.662Z", masterNode.getTimestamp().toString() );
+                final Node masterNode = ContextBuilder.from( ContextAccessor.current() )
+                    .branch( Branch.from( "master" ) )
+                    .build()
+                    .callWith( () -> nodeService.getById( nodeId ) );
+                assertNotNull( masterNode );
+                assertEquals( masterNodeVersionId, masterNode.getNodeVersionId() );
+                assertEquals( nodePath, masterNode.path() );
+                assertEquals( "2018-11-23T11:14:21.662Z", masterNode.getTimestamp().toString() );
 
-            checkCommitUpgrade( nodeId );
-            checkPageFlatteningUpgradePage( draftNode );
+                checkCommitUpgrade( nodeId );
+                checkPageFlatteningUpgradePage( draftNode );
 
-            final Node fragmentNode = nodeService.getById( fragmentNodeId );
-            checkPageFlatteningUpgradeFragment( fragmentNode );
+                final Node fragmentNode = nodeService.getById( fragmentNodeId );
+                checkPageFlatteningUpgradeFragment( fragmentNode );
 
-            checkRepositoryUpgrade( updatedMeta );
+                checkRepositoryUpgrade( updatedMeta );
 
-            final Node postNode = nodeService.getById( postNodeId );
-            checkHtmlAreaUpgrade( draftNode, postNode );
+                final Node postNode = nodeService.getById( postNodeId );
+                checkHtmlAreaUpgrade( draftNode, postNode );
 
-            checkLanguageUpgrade( draftNode );
+                checkLanguageUpgrade( draftNode );
+            } );
+
         } );
     }
 

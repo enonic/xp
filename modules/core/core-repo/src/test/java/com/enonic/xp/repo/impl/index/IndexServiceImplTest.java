@@ -190,29 +190,21 @@ public class IndexServiceImplTest
         throws Exception
     {
 
-        final Context cmsRepoContext = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( ContentConstants.CONTENT_REPO_ID ).
-            branch( ContentConstants.BRANCH_DRAFT ).
-            build();
+        final Context cmsRepoContext =
+            ContextBuilder.from( ContextAccessor.current() ).repositoryId( TEST_REPO_ID ).branch( ContentConstants.BRANCH_DRAFT ).build();
 
         cmsRepoContext.callWith( this::createDefaultRootNode );
 
-        cmsRepoContext.
-            callWith( () -> createNode( CreateNodeParams.create().
-                setNodeId( NodeId.from( "su" ) ).
-                name( "su" ).
-                parent( NodePath.ROOT ).
-                build() ) );
+        cmsRepoContext.callWith(
+            () -> createNode( CreateNodeParams.create().setNodeId( NodeId.from( "su" ) ).name( "su" ).parent( NodePath.ROOT ).build() ) );
 
         refresh();
 
-        assertEquals( 2, cmsRepoContext.
-            callWith( this::findAllNodes ).getHits() );
+        assertEquals( 2, cmsRepoContext.callWith( this::findAllNodes ).getHits() );
 
         this.indexService.purgeSearchIndex( new PurgeIndexParams( cmsRepoContext.getRepositoryId() ) );
 
-        assertEquals( 0, cmsRepoContext.
-            callWith( this::findAllNodes ).getHits() );
+        assertEquals( 0, cmsRepoContext.callWith( this::findAllNodes ).getHits() );
 
         this.indexService.reindex( ReindexParams.create().
             addBranch( cmsRepoContext.getBranch() ).

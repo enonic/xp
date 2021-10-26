@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.RestoreParams;
@@ -98,7 +97,7 @@ public class SnapshotServiceImplTest
 
         assertNotNull( this.repositoryService.get( newRepoId ) );
         assertNotNull( this.repositoryService.get( SystemConstants.SYSTEM_REPO_ID ) );
-        assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO_ID ) );
+        assertNotNull( this.repositoryService.get( TEST_REPO_ID ) );
     }
 
     @Test
@@ -139,7 +138,7 @@ public class SnapshotServiceImplTest
 
         assertTrue( this.repositoryService.isInitialized( newRepoId ) );
         assertTrue( this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO_ID ) );
-        assertTrue( this.repositoryService.isInitialized( ContentConstants.CONTENT_REPO_ID ) );
+        assertTrue( this.repositoryService.isInitialized( TEST_REPO_ID ) );
     }
 
     @Test
@@ -164,7 +163,7 @@ public class SnapshotServiceImplTest
 
             assertTrue( this.repositoryService.isInitialized( newRepoId ) );
             assertTrue( this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO_ID ) );
-            assertTrue( this.repositoryService.isInitialized( ContentConstants.CONTENT_REPO_ID ) );
+            assertTrue( this.repositoryService.isInitialized( TEST_REPO_ID ) );
         } );
     }
 
@@ -219,8 +218,7 @@ public class SnapshotServiceImplTest
         }
         finally
         {
-            assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO_ID ) );
-            assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO_ID ) );
+            assertNotNull( this.repositoryService.get( TEST_REPO_ID ) );
         }
     }
 
@@ -271,7 +269,7 @@ public class SnapshotServiceImplTest
 
         assertNotNull( this.repositoryService.get( newRepoId ) );
         assertNotNull( this.repositoryService.get( SystemConstants.SYSTEM_REPO_ID ) );
-        assertNotNull( this.repositoryService.get( ContentConstants.CONTENT_REPO_ID ) );
+        assertNotNull( this.repositoryService.get( TEST_REPO_ID ) );
     }
 
     @Test
