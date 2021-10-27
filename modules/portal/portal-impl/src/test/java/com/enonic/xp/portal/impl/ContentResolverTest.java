@@ -60,10 +60,10 @@ class ContentResolverTest
 
         final PortalRequest request = new PortalRequest();
         request.setMode( RenderMode.EDIT );
-        request.setContentPath( ContentPath.from( "/c8da0c10-0002-4b68-b407-87412f3e45c8" ) );
+        request.setContentPath( ContentPath.from( "/c8da0c10-0002-4b68-b407-87412f3e45c9" ) );
 
-        when( this.contentService.getById( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenReturn( site );
-        when( this.contentService.getNearestSite( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenReturn( site );
+        when( this.contentService.getById( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c9" ) ) ).thenReturn( site );
+        when( this.contentService.getNearestSite( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c9" ) ) ).thenReturn( site );
 
         final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
 
@@ -77,9 +77,13 @@ class ContentResolverTest
     {
         final PortalRequest request = new PortalRequest();
         request.setMode( RenderMode.EDIT );
-        request.setContentPath( ContentPath.from( "/c8da0c10-0002-4b68-b407-87412f3e45c8" ) );
+        final ContentPath contentPath = ContentPath.from( "/c8da0c10-0002-4b68-b407-87412f3e45c8" );
+        request.setContentPath( contentPath );
 
         when( this.contentService.getById( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenThrow(
+            new ContentNotFoundException( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ), null ) );
+
+        when( this.contentService.getByPath( contentPath ) ).thenThrow(
             new ContentNotFoundException( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ), null ) );
 
         final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
@@ -87,6 +91,29 @@ class ContentResolverTest
         assertNull( result.getContent() );
         assertNull( result.getNearestSite() );
         assertNull( result.getSiteRelativePath() );
+    }
+
+    @Test
+    void resolve_found_by_path_edit_mode()
+    {
+        final Content content = newContent();
+        final Site site = newSite();
+
+        final PortalRequest request = new PortalRequest();
+        request.setMode( RenderMode.EDIT );
+        request.setContentPath( ContentPath.from( "/c8da0c10-0002-4b68-b407-87412f3e45c8" ) );
+
+        when( this.contentService.getById( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenThrow(
+            new ContentNotFoundException( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ), null ) );
+        when( this.contentService.getByPath( ContentPath.from( "/c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenReturn( content );
+
+        when( this.contentService.getNearestSite( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ) ) ).thenReturn( site );
+
+        final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
+
+        assertSame( content, result.getContent() );
+        assertSame( site, result.getNearestSite() );
+        assertEquals( "/landing-page", result.getSiteRelativePath() );
     }
 
     @Test
@@ -109,7 +136,7 @@ class ContentResolverTest
     }
 
     @Test
-    void resolve_no_site_no_result_in_edit_mode()
+    void resolve_no_site_edit_mode()
     {
         final Content content = newContent();
 
@@ -204,7 +231,7 @@ class ContentResolverTest
     private Content newContent()
     {
         final Content.Builder builder = Content.create();
-        builder.id( ContentId.from( "123456" ) );
+        builder.id( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c8" ) );
         builder.name( "landing-page" );
         builder.displayName( "My Landing Page" );
         builder.parentPath( ContentPath.from( "/mysite" ) );
@@ -221,7 +248,7 @@ class ContentResolverTest
     {
 
         final Site.Builder site = Site.create();
-        site.id( ContentId.from( "100123" ) );
+        site.id( ContentId.from( "c8da0c10-0002-4b68-b407-87412f3e45c9" ) );
         site.siteConfigs( SiteConfigs.empty() );
         site.name( "mysite" );
         site.parentPath( ContentPath.ROOT );
