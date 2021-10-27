@@ -29,40 +29,58 @@ public class ContentResolver
     {
         final ContentPath contentPath = request.getContentPath();
 
-        final Content content;
-        final Site site;
-        final String path;
         if ( request.getMode() == RenderMode.EDIT )
         {
-            final ContentId contentId = ContentId.from( contentPath.toString().substring( 1 ) );
-            content = getContentById( contentId );
-            if ( content == null )
-            {
-                return ContentResolverResult.nothingFound( contentId.toString() );
-            }
-            site = callAsContentAdmin( () -> this.contentService.getNearestSite( contentId ) );
-            if ( site == null )
-            {
-                return ContentResolverResult.noSiteFound( content, contentId.toString() );
-            }
-            else
-            {
-                return ContentResolverResult.build( content, site, content.getPath().toString(), contentId.toString() );
-            }
+            return resolveInEditMode( contentPath );
         }
         else
         {
+            return resolveInNonEditMode( contentPath );
+        }
+    }
+
+    private ContentResolverResult resolveInNonEditMode( final ContentPath contentPath )
+    {
+        Content content = getContentByPath( contentPath );
+        final Site site = callAsContentAdmin( () -> this.contentService.findNearestSiteByPath( contentPath ) );
+        if ( site == null )
+        {
+            return ContentResolverResult.noSiteFound( content, contentPath.toString() );
+        }
+        else
+        {
+            return ContentResolverResult.build( content, site, contentPath.toString(), contentPath.toString() );
+        }
+    }
+
+    private ContentResolverResult resolveInEditMode( final ContentPath contentPath )
+    {
+        final Site site;
+
+        Content content = getContentById( ContentId.from( contentPath.toString().substring( 1 ) ) );
+
+        if ( content == null )
+        {
             content = getContentByPath( contentPath );
-            site = callAsContentAdmin( () -> this.contentService.findNearestSiteByPath( contentPath ) );
-            if ( site == null )
-            {
-                return ContentResolverResult.build( content, null, null, contentPath.toString() );
-            }
-            else
-            {
-                return ContentResolverResult.build( content, site, contentPath.toString(),
-                                                    contentPath.toString() );
-            }
+        }
+
+        if ( content == null )
+        {
+            return ContentResolverResult.nothingFound( contentPath.toString() );
+        }
+        else
+        {
+            final ContentId contentId = content.getId();
+            site = callAsContentAdmin( () -> this.contentService.getNearestSite( contentId ) );
+        }
+
+        if ( site == null )
+        {
+            return ContentResolverResult.noSiteFound( content, contentPath.toString() );
+        }
+        else
+        {
+            return ContentResolverResult.build( content, site, content.getPath().toString(), contentPath.toString() );
         }
     }
 
@@ -80,7 +98,7 @@ public class ContentResolver
                 return content;
             }
         }
-        catch ( final ContentNotFoundException e )
+        catch ( final Exception e )
         {
             return null;
         }
