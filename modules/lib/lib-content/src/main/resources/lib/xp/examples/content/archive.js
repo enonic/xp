@@ -6,10 +6,10 @@ var assert = require('/lib/xp/testing');
 // BEGIN
 // Archive content by path.
 var result1 = contentLib.archive({
-    content: '/my-site/my-content-name',
+    content: '/path/to/mycontent',
 });
 
-log.info('Archived content ids: ' + result.join(','));
+log.info('Archived content ids: ' + result1.join(''));
 
 // END
 
@@ -24,3 +24,4 @@ log.info('Archived content ids: ' + result2.join(','));
 
 
 assert.assertEquals('my-content-id', result2[0]);
+

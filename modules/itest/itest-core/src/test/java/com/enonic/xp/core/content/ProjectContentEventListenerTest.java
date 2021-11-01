@@ -11,11 +11,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.enonic.xp.archive.ArchiveContentParams;
+import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
+import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.ExtraData;
@@ -23,6 +29,7 @@ import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildParams;
@@ -30,6 +37,7 @@ import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
 import com.enonic.xp.core.impl.content.ProjectContentEventListener;
 import com.enonic.xp.data.PropertyTree;
@@ -53,6 +61,8 @@ import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -94,6 +104,21 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
+    public void testCreatedInMaster()
+        throws InterruptedException
+    {
+        final Content sourceContent = ContextBuilder.from( sourceContext )
+            .branch( ContentConstants.BRANCH_MASTER )
+            .build()
+            .callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+
+        handleEvents();
+
+        assertThrows( ContentNotFoundException.class,
+                      () -> targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) ) );
+    }
+
+    @Test
     public void testSyncCreateWithExistedLocalName()
         throws InterruptedException
     {
@@ -120,8 +145,10 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        final ContentId duplicatedContentId = sourceContext.callWith( () -> contentService.duplicate(
-            DuplicateContentParams.create().contentId( sourceContent.getId() ).build() ).getDuplicatedContents().first() );
+        final ContentId duplicatedContentId = sourceContext.callWith(
+            () -> contentService.duplicate( DuplicateContentParams.create().contentId( sourceContent.getId() ).build() )
+                .getDuplicatedContents()
+                .first() );
 
         handleEvents();
 
@@ -141,11 +168,10 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        final ContentId duplicatedContentId = targetContext.callWith( () -> contentService.duplicate( DuplicateContentParams.create().
-            contentId( sourceContent.getId() ).
-            build() ).
-            getDuplicatedContents().
-            first() );
+        final ContentId duplicatedContentId = targetContext.callWith(
+            () -> contentService.duplicate( DuplicateContentParams.create().contentId( sourceContent.getId() ).build() )
+                .getDuplicatedContents()
+                .first() );
 
         targetContext.runWith( () -> {
             final Content duplicatedTargetContent = contentService.getById( duplicatedContentId );
@@ -162,19 +188,15 @@ public class ProjectContentEventListenerTest
 
         final Content updatedContent = sourceContext.callWith( () -> {
 
-            final Content updated = contentService.update( new UpdateContentParams().
-                contentId( sourceContent.getId() ).
-                editor( ( edit -> {
-                    edit.data = new PropertyTree();
-                    edit.displayName = "newDisplayName";
-                    edit.extraDatas = ExtraDatas.create().
-                        add( createExtraData() ).
-                        build();
-                    edit.owner = PrincipalKey.from( "user:system:newOwner" );
-                    edit.language = Locale.forLanguageTag( "no" );
-                    edit.page = createPage();
+            final Content updated = contentService.update( new UpdateContentParams().contentId( sourceContent.getId() ).editor( ( edit -> {
+                edit.data = new PropertyTree();
+                edit.displayName = "newDisplayName";
+                edit.extraDatas = ExtraDatas.create().add( createExtraData() ).build();
+                edit.owner = PrincipalKey.from( "user:system:newOwner" );
+                edit.language = Locale.forLanguageTag( "no" );
+                edit.page = createPage();
 
-                } ) ) );
+            } ) ) );
 
             return updated;
 
@@ -197,15 +219,16 @@ public class ProjectContentEventListenerTest
 
         sourceContext.callWith( () -> {
 
-            contentService.update( new UpdateContentParams().
-                contentId( sourceContent.getId() ).
-                editor( ( edit -> edit.workflowInfo = WorkflowInfo.create().state( WorkflowState.READY ).build() ) ) );
+            contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
+                                       .editor(
+                                           ( edit -> edit.workflowInfo = WorkflowInfo.create().state( WorkflowState.READY ).build() ) ) );
 
             handleEvents();
 
-            final Content sourceContentReady = contentService.update( new UpdateContentParams().
-                contentId( sourceContent.getId() ).
-                editor( ( edit -> edit.workflowInfo = WorkflowInfo.create().state( WorkflowState.IN_PROGRESS ).build() ) ) );
+            final Content sourceContentReady = contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
+                                                                          .editor( ( edit -> edit.workflowInfo = WorkflowInfo.create()
+                                                                              .state( WorkflowState.IN_PROGRESS )
+                                                                              .build() ) ) );
 
             handleEvents();
 
@@ -226,17 +249,16 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        final Content updatedInChild = targetContext.callWith( () -> contentService.update( new UpdateContentParams().
-            contentId( sourceContent.getId() ).
-            editor( ( edit -> edit.data = new PropertyTree() ) ) ) );
+        final Content updatedInChild = targetContext.callWith( () -> contentService.update(
+            new UpdateContentParams().contentId( sourceContent.getId() ).editor( ( edit -> edit.data = new PropertyTree() ) ) ) );
 
         assertEquals( 2, updatedInChild.getInherit().size() );
         assertFalse( updatedInChild.getInherit().contains( ContentInheritType.CONTENT ) );
         assertFalse( updatedInChild.getInherit().contains( ContentInheritType.NAME ) );
 
-        final Content updatedInParent = sourceContext.callWith( () -> contentService.update( new UpdateContentParams().
-            contentId( sourceContent.getId() ).
-            editor( ( edit -> edit.displayName = "new source display name" ) ) ) );
+        final Content updatedInParent = sourceContext.callWith( () -> contentService.update(
+            new UpdateContentParams().contentId( sourceContent.getId() )
+                .editor( ( edit -> edit.displayName = "new source display name" ) ) ) );
 
         handleEvents();
 
@@ -254,10 +276,8 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.move( MoveContentParams.create().
-            contentId( sourceContent.getId() ).
-            parentContentPath( sourceFolder.getPath() ).
-            build() ) );
+        sourceContext.runWith( () -> contentService.move(
+            MoveContentParams.create().contentId( sourceContent.getId() ).parentContentPath( sourceFolder.getPath() ).build() ) );
 
         handleEvents();
 
@@ -278,20 +298,16 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        targetContext.runWith( () -> contentService.move( MoveContentParams.create().
-            contentId( sourceContent1.getId() ).
-            parentContentPath( sourceContent2.getPath() ).
-            build() ) );
+        targetContext.runWith( () -> contentService.move(
+            MoveContentParams.create().contentId( sourceContent1.getId() ).parentContentPath( sourceContent2.getPath() ).build() ) );
 
         final Content targetMovedContent = targetContext.callWith( () -> contentService.getById( sourceContent1.getId() ) );
 
         assertEquals( 3, targetMovedContent.getInherit().size() );
         assertFalse( targetMovedContent.getInherit().contains( ContentInheritType.PARENT ) );
 
-        sourceContext.runWith( () -> contentService.move( MoveContentParams.create().
-            contentId( sourceContent1.getId() ).
-            parentContentPath( sourceContent3.getPath() ).
-            build() ) );
+        sourceContext.runWith( () -> contentService.move(
+            MoveContentParams.create().contentId( sourceContent1.getId() ).parentContentPath( sourceContent3.getPath() ).build() ) );
 
         assertEquals( "/content3/content1",
                       sourceContext.callWith( () -> contentService.getById( sourceContent1.getId() ) ).getPath().toString() );
@@ -310,16 +326,144 @@ public class ProjectContentEventListenerTest
 
         targetContext.callWith( () -> createContent( sourceContent2.getPath(), "content" ) );
 
-        sourceContext.runWith( () -> contentService.move( MoveContentParams.create().
-            contentId( sourceContent1.getId() ).
-            parentContentPath( sourceContent2.getPath() ).
-            build() ) );
+        sourceContext.runWith( () -> contentService.move(
+            MoveContentParams.create().contentId( sourceContent1.getId() ).parentContentPath( sourceContent2.getPath() ).build() ) );
 
         handleEvents();
 
         final Content targetMovedContent = targetContext.callWith( () -> contentService.getById( sourceContent1.getId() ) );
 
         assertEquals( "/content2/content-1", targetMovedContent.getPath().toString() );
+    }
+
+    @Test
+    public void testArchived()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child" ) );
+
+        handleEvents();
+
+        sourceContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
+
+        handleEvents();
+
+        final Content targetContent = targetArchiveContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+        final Content targetChild = targetArchiveContext.callWith( () -> contentService.getById( sourceChild.getId() ) );
+
+        assertEquals( "/content", targetContent.getPath().toString() );
+        assertEquals( "/content/child", targetChild.getPath().toString() );
+    }
+
+    @Test
+    public void testArchivedNotInherited()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> contentService.update(
+            new UpdateContentParams().contentId( sourceContent.getId() ).editor( edit -> edit.data = new PropertyTree() ) ) );
+
+        handleEvents();
+
+        sourceContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
+
+        handleEvents();
+
+        final Content targetContent = targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+
+        assertEquals( "/content", targetContent.getPath().toString() );
+    }
+
+    @Test
+    public void testArchivedAndRestoreAlreadyArchived()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
+
+        handleEvents();
+
+        sourceContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
+
+        handleEvents();
+
+        sourceContext.runWith( () -> contentService.restore( RestoreContentParams.create().contentId( sourceContent.getId() ).build() ) );
+
+        handleEvents();
+
+        final Content targetContent = targetArchiveContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+
+        assertEquals( "/content", targetContent.getPath().toString() );
+    }
+
+    @Test
+    public void testArchivePublishedInLayer()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+
+        handleEvents();
+
+        targetContext.runWith( () -> contentService.publish( PushContentParams.create()
+                                                                 .contentIds( ContentIds.from( sourceContent.getId() ) )
+                                                                 .target( ContentConstants.BRANCH_MASTER )
+                                                                 .build() ) );
+
+        handleEvents();
+
+        sourceContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
+
+        handleEvents();
+
+        sourceContext.runWith( () -> contentService.restore( RestoreContentParams.create().contentId( sourceContent.getId() ).build() ) );
+
+        handleEvents();
+
+        final Content targetContent = targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+        final ContentPublishInfo publishInfo = targetContent.getPublishInfo();
+
+        assertNotNull( publishInfo.getFirst() );
+        assertNull( publishInfo.getFrom() );
+        assertNull( publishInfo.getTo() );
+    }
+
+    @Test
+    public void testRestored()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
+        final Content sourceChild = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child" ) );
+
+        handleEvents();
+
+        sourceContext.runWith( () -> contentService.archive( ArchiveContentParams.create().contentId( sourceContent.getId() ).build() ) );
+
+        handleEvents();
+
+        final Content targetChild = targetArchiveContext.callWith( () -> contentService.getById( sourceChild.getId() ) );
+
+        sourceContext.runWith( () -> contentService.restore( RestoreContentParams.create().contentId( targetChild.getId() ).build() ) );
+
+        handleEvents();
+
+        final Content targetRestoredChild = targetContext.callWith( () -> contentService.getById( sourceChild.getId() ) );
+
+        sourceContext.runWith( () -> contentService.restore(
+            RestoreContentParams.create().contentId( sourceContent.getId() ).path( targetRestoredChild.getPath() ).build() ) );
+
+        handleEvents();
+
+        final Content targetRestoredContent = targetContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+
+        assertEquals( "/child", targetRestoredChild.getPath().toString() );
+        assertEquals( "/child/content", targetRestoredContent.getPath().toString() );
     }
 
     @Test
@@ -333,10 +477,10 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
-            contentId( sourceContent.getId() ).
-            childOrder( ChildOrder.from( "_name DESC" ) ).
-            build() ) );
+        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+                                                                       .contentId( sourceContent.getId() )
+                                                                       .childOrder( ChildOrder.from( "_name DESC" ) )
+                                                                       .build() ) );
 
         handleEvents();
 
@@ -361,18 +505,17 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        final Content sortedInChild = targetContext.callWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
-            contentId( sourceContent.getId() ).
-            childOrder( ChildOrder.from( "_name DESC" ) ).
-            build() ) );
+        final Content sortedInChild = targetContext.callWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+                                                                                                      .contentId( sourceContent.getId() )
+                                                                                                      .childOrder(
+                                                                                                          ChildOrder.from( "_name DESC" ) )
+                                                                                                      .build() ) );
 
         assertEquals( 3, sortedInChild.getInherit().size() );
         assertFalse( sortedInChild.getInherit().contains( ContentInheritType.SORT ) );
 
-        final Content sortedInParent = sourceContext.callWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
-            contentId( sourceContent.getId() ).
-            childOrder( ChildOrder.from( "_name ASC" ) ).
-            build() ) );
+        final Content sortedInParent = sourceContext.callWith( () -> contentService.setChildOrder(
+            SetContentChildOrderParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.from( "_name ASC" ) ).build() ) );
 
         handleEvents();
 
@@ -391,10 +534,10 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
-            contentId( sourceContent.getId() ).
-            childOrder( ChildOrder.from( "_name DESC" ) ).
-            build() ) );
+        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+                                                                       .contentId( sourceContent.getId() )
+                                                                       .childOrder( ChildOrder.from( "_name DESC" ) )
+                                                                       .build() ) );
 
         handleEvents();
 
@@ -409,24 +552,22 @@ public class ProjectContentEventListenerTest
             assertEquals( sourceChild1.getId(), iterator.next().getId() );
         } );
 
-        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
-            contentId( sourceContent.getId() ).
-            childOrder( ChildOrder.manualOrder() ).
-            build() ) );
+        sourceContext.runWith( () -> contentService.setChildOrder(
+            SetContentChildOrderParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.manualOrder() ).build() ) );
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.reorderChildren( ReorderChildContentsParams.create().
-            contentId( sourceContent.getId() ).
-            add( ReorderChildParams.create().
-                contentToMove( sourceChild2.getId() ).
-                contentToMoveBefore( sourceChild3.getId() ).
-                build() ).
-            add( ReorderChildParams.create().
-                contentToMove( sourceChild1.getId() ).
-                contentToMoveBefore( sourceChild3.getId() ).
-                build() ).
-            build() ) );
+        sourceContext.runWith( () -> contentService.reorderChildren( ReorderChildContentsParams.create()
+                                                                         .contentId( sourceContent.getId() )
+                                                                         .add( ReorderChildParams.create()
+                                                                                   .contentToMove( sourceChild2.getId() )
+                                                                                   .contentToMoveBefore( sourceChild3.getId() )
+                                                                                   .build() )
+                                                                         .add( ReorderChildParams.create()
+                                                                                   .contentToMove( sourceChild1.getId() )
+                                                                                   .contentToMoveBefore( sourceChild3.getId() )
+                                                                                   .build() )
+                                                                         .build() ) );
 
         handleEvents();
 
@@ -454,34 +595,32 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
-            contentId( sourceContent.getId() ).
-            childOrder( ChildOrder.from( "_name DESC" ) ).
-            build() ) );
+        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+                                                                       .contentId( sourceContent.getId() )
+                                                                       .childOrder( ChildOrder.from( "_name DESC" ) )
+                                                                       .build() ) );
 
         handleEvents();
 
-        targetContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
-            contentId( sourceContent.getId() ).
-            childOrder( ChildOrder.manualOrder() ).
-            build() ) );
+        targetContext.runWith( () -> contentService.setChildOrder(
+            SetContentChildOrderParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.manualOrder() ).build() ) );
 
-        targetContext.runWith( () -> contentService.reorderChildren( ReorderChildContentsParams.create().
-            contentId( sourceContent.getId() ).
-            add( ReorderChildParams.create().
-                contentToMove( sourceChild2.getId() ).
-                contentToMoveBefore( sourceChild3.getId() ).
-                build() ).
-            add( ReorderChildParams.create().
-                contentToMove( sourceChild1.getId() ).
-                contentToMoveBefore( sourceChild3.getId() ).
-                build() ).
-            build() ) );
+        targetContext.runWith( () -> contentService.reorderChildren( ReorderChildContentsParams.create()
+                                                                         .contentId( sourceContent.getId() )
+                                                                         .add( ReorderChildParams.create()
+                                                                                   .contentToMove( sourceChild2.getId() )
+                                                                                   .contentToMoveBefore( sourceChild3.getId() )
+                                                                                   .build() )
+                                                                         .add( ReorderChildParams.create()
+                                                                                   .contentToMove( sourceChild1.getId() )
+                                                                                   .contentToMoveBefore( sourceChild3.getId() )
+                                                                                   .build() )
+                                                                         .build() ) );
 
-        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create().
-            contentId( sourceContent.getId() ).
-            childOrder( ChildOrder.from( "_name DESC" ) ).
-            build() ) );
+        sourceContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+                                                                       .contentId( sourceContent.getId() )
+                                                                       .childOrder( ChildOrder.from( "_name DESC" ) )
+                                                                       .build() ) );
 
         handleEvents();
 
@@ -510,10 +649,8 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.rename( RenameContentParams.create().
-            contentId( sourceContent.getId() ).
-            newName( ContentName.from( "content-new" ) ).
-            build() ) );
+        sourceContext.runWith( () -> contentService.rename(
+            RenameContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "content-new" ) ).build() ) );
 
         handleEvents();
 
@@ -523,10 +660,8 @@ public class ProjectContentEventListenerTest
             assertEquals( "/content-new/child1/child2", contentService.getById( sourceChild2.getId() ).getPath().toString() );
         } );
 
-        sourceContext.runWith( () -> contentService.rename( RenameContentParams.create().
-            contentId( sourceChild1.getId() ).
-            newName( ContentName.from( "child1-new" ) ).
-            build() ) );
+        sourceContext.runWith( () -> contentService.rename(
+            RenameContentParams.create().contentId( sourceChild1.getId() ).newName( ContentName.from( "child1-new" ) ).build() ) );
 
         handleEvents();
 
@@ -536,10 +671,8 @@ public class ProjectContentEventListenerTest
             assertEquals( "/content-new/child1-new/child2", contentService.getById( sourceChild2.getId() ).getPath().toString() );
         } );
 
-        sourceContext.runWith( () -> contentService.rename( RenameContentParams.create().
-            contentId( sourceChild2.getId() ).
-            newName( ContentName.from( "child2-new" ) ).
-            build() ) );
+        sourceContext.runWith( () -> contentService.rename(
+            RenameContentParams.create().contentId( sourceChild2.getId() ).newName( ContentName.from( "child2-new" ) ).build() ) );
 
         handleEvents();
 
@@ -563,10 +696,8 @@ public class ProjectContentEventListenerTest
         } );
 
         sourceContext.runWith( () -> {
-            contentService.rename( RenameContentParams.create().
-                contentId( sourceContent.getId() ).
-                newName( ContentName.from( "newName" ) ).
-                build() );
+            contentService.rename(
+                RenameContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName" ) ).build() );
         } );
         handleEvents();
 
@@ -583,9 +714,8 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        sourceContext.runWith( () -> contentService.deleteWithoutFetch( DeleteContentParams.create().
-            contentPath( sourceContent.getPath() ).
-            build() ) );
+        sourceContext.runWith(
+            () -> contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
 
         handleEvents();
 
@@ -606,9 +736,8 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        targetContext.runWith( () -> contentService.deleteWithoutFetch( DeleteContentParams.create().
-            contentPath( sourceContent.getPath() ).
-            build() ) );
+        targetContext.runWith(
+            () -> contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
 
         handleEvents();
 
@@ -644,43 +773,31 @@ public class ProjectContentEventListenerTest
         PropertyTree componentConfig = new PropertyTree();
         componentConfig.setString( "my-prop", "value" );
 
-        PartComponent component = PartComponent.create().
-            descriptor( DescriptorKey.from( "mainapplication:partTemplateName" ) ).
-            config( componentConfig ).
-            build();
+        PartComponent component =
+            PartComponent.create().descriptor( DescriptorKey.from( "mainapplication:partTemplateName" ) ).config( componentConfig ).build();
 
-        Region region = Region.create().
-            name( "my-region" ).
-            add( component ).
-            build();
+        Region region = Region.create().name( "my-region" ).add( component ).build();
 
-        PageRegions regions = PageRegions.create().
-            add( region ).
-            build();
+        PageRegions regions = PageRegions.create().add( region ).build();
 
         PropertyTree pageConfig = new PropertyTree();
         pageConfig.setString( "background-color", "blue" );
 
-        Mockito.when( partDescriptorService.getByKey( DescriptorKey.from( "mainapplication:partTemplateName" ) ) ).thenReturn(
-            PartDescriptor.create().
-                key( DescriptorKey.from( "mainapplication:partTemplateName" ) ).
-                displayName( "my-component" ).
-                config( Form.create().build() ).
-                build() );
+        Mockito.when( partDescriptorService.getByKey( DescriptorKey.from( "mainapplication:partTemplateName" ) ) )
+            .thenReturn( PartDescriptor.create()
+                             .key( DescriptorKey.from( "mainapplication:partTemplateName" ) )
+                             .displayName( "my-component" )
+                             .config( Form.create().build() )
+                             .build() );
 
-        return Page.create().
-            template( PageTemplateKey.from( "mypagetemplate" ) ).
-            regions( regions ).
-            build();
+        return Page.create().template( PageTemplateKey.from( "mypagetemplate" ) ).regions( regions ).build();
     }
 
     private void handleEvents()
         throws InterruptedException
     {
         Mockito.verify( eventPublisher, Mockito.atLeastOnce() ).publish( eventCaptor.capture() );
-        eventCaptor.getAllValues().stream().
-            filter( event -> !handledEvents.contains( event ) ).
-            forEach( listener::onEvent );
+        eventCaptor.getAllValues().stream().filter( event -> !handledEvents.contains( event ) ).forEach( listener::onEvent );
         handledEvents.addAll( eventCaptor.getAllValues() );
         Thread.sleep( 1000 );
 

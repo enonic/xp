@@ -58,8 +58,14 @@ final class MovedEventSyncCommand
             }
         } );
 
-        MovedEventSyncArchiver.create().contentService( contentService ).addContents( toArchive ).build().execute();
-        MovedEventSyncRestorer.create().contentService( contentService ).addContents( toRestore ).build().execute();
+        if ( !toArchive.isEmpty() )
+        {
+            MovedEventSyncArchiver.create().contentService( contentService ).addContents( toArchive ).build().execute();
+        }
+        if ( !toRestore.isEmpty() )
+        {
+            MovedEventSyncRestorer.create().contentService( contentService ).addContents( toRestore ).build().execute();
+        }
 
         this.doMove( toMove );
     }

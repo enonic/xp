@@ -52,12 +52,6 @@ public class RestoreContentsResult
             return this;
         }
 
-        public Builder addRestored( final ContentIds contentIds )
-        {
-            this.restoredContents.addAll( contentIds.getSet() );
-            return this;
-        }
-
         public Builder parentPath( final ContentPath parentPath )
         {
             this.parentPath = parentPath;

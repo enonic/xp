@@ -9,14 +9,9 @@ public class RestoreContentException
 {
     ContentPath path;
 
-    public RestoreContentException( final String message )
-    {
-        super( message );
-    }
-
     public RestoreContentException( final String message, final ContentPath path )
     {
-        this( message );
+        super( message );
         this.path = path;
     }
 
