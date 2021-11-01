@@ -40,12 +40,6 @@ public class ArchiveContentsResult
             return this;
         }
 
-        public Builder addArchived( final ContentIds contentIds )
-        {
-            this.archivedContents.addAll( contentIds.getSet() );
-            return this;
-        }
-
         public ArchiveContentsResult build()
         {
             return new ArchiveContentsResult( this );

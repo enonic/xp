@@ -98,6 +98,7 @@ public final class TaskContext
 
         public TaskContext build()
         {
+            validate();
             return new TaskContext( this );
         }
 
