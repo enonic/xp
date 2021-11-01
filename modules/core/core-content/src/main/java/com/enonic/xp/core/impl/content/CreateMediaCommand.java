@@ -56,8 +56,6 @@ final class CreateMediaCommand
 
     private Content doExecute()
     {
-//        validateContentLocation( params.getParent(), "Content cannot be created directly in the archive" );
-
         final MediaInfo mediaInfo = mediaInfoService.parseMediaInfo( params.getByteSource() );
 
         if ( ( params.getMimeType() == null || isBinaryContentType( params.getMimeType() ) ) && mediaInfo.getMediaType() != null )

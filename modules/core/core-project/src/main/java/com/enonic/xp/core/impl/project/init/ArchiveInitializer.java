@@ -73,8 +73,6 @@ public class ArchiveInitializer
         LOG.info( "Created archive root-node: " + archiveRoot.path() );
 
         nodeService.refresh( RefreshMode.ALL );
-
-//        nodeService.push( NodeIds.from( archiveRoot.id() ), ContentConstants.BRANCH_MASTER );
     }
 
     public static class Builder

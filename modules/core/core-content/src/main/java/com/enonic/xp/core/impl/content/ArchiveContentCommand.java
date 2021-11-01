@@ -13,18 +13,15 @@ import com.enonic.xp.archive.ArchiveContentListener;
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.content.ContentAccessException;
-import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
-import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
@@ -73,11 +70,7 @@ final class ArchiveContentCommand
         }
         catch ( MoveNodeException e )
         {
-            throw new ArchiveContentException( e.getMessage(), ContentPath.from( e.getPath().toString() ) );
-        }
-        catch ( NodeAlreadyExistAtPathException e )
-        {
-            throw new ContentAlreadyExistsException( ContentPath.from( e.getNode().toString() ), e.getRepositoryId(), e.getBranch() );
+            throw new ArchiveContentException( e.getMessage(), ContentNodeHelper.translateNodePathToContentPath( e.getPath() ) );
         }
         catch ( NodeAccessException e )
         {
@@ -87,6 +80,7 @@ final class ArchiveContentCommand
 
     private ArchiveContentsResult doExecute()
     {
+        validateLocation();
         unpublish();
 
         final Node nodeToArchive = updateProperties( NodeId.from( params.getContentId() ) );
@@ -165,6 +159,16 @@ final class ArchiveContentCommand
         }
 
         return nodeService.move( builder.build() );
+    }
+
+    private void validateLocation()
+    {
+        final Node nodeToArchive = nodeService.getById( NodeId.from( params.getContentId() ) );
+        if ( nodeToArchive.path().getElementAsString( 0 ).startsWith( ArchiveConstants.ARCHIVE_ROOT_NAME ) )
+        {
+            throw new ArchiveContentException( String.format( "content [%s] is archived already", params.getContentId() ),
+                                               ContentNodeHelper.translateNodePathToContentPath( nodeToArchive.path() ) );
+        }
     }
 
     public static class Builder

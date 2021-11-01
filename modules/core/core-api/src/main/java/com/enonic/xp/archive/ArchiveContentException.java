@@ -9,14 +9,9 @@ public class ArchiveContentException
 {
     ContentPath path;
 
-    public ArchiveContentException( final String message )
-    {
-        super( message );
-    }
-
     public ArchiveContentException( final String message, final ContentPath path )
     {
-        this( message );
+        super( message );
         this.path = path;
     }
 

@@ -1,5 +1,7 @@
 package com.enonic.xp.core.content;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +11,7 @@ import org.mockito.AdditionalAnswers;
 import org.osgi.framework.Bundle;
 
 import com.google.common.io.ByteSource;
+import com.google.common.io.ByteStreams;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.audit.AuditLogService;
@@ -17,6 +20,8 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.CreateMediaParams;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -40,6 +45,7 @@ import com.enonic.xp.impl.task.LocalTaskManagerImpl;
 import com.enonic.xp.impl.task.TaskManagerCleanupScheduler;
 import com.enonic.xp.impl.task.TaskServiceImpl;
 import com.enonic.xp.impl.task.script.NamedTaskFactory;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.Project;
@@ -97,17 +103,21 @@ public abstract class AbstractContentSynchronizerTest
 
     protected Context targetContext;
 
+    protected Context sourceArchiveContext;
+
+    protected Context targetArchiveContext;
+
     protected Project sourceProject;
 
     protected Project targetProject;
 
     protected static Context adminContext()
     {
-        return ContextBuilder.create().
-            branch( "master" ).
-            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-            authInfo( REPO_TEST_ADMIN_USER_AUTHINFO ).
-            build();
+        return ContextBuilder.create()
+            .branch( "master" )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
+            .build();
     }
 
     protected void setUpNode()
@@ -130,28 +140,34 @@ public abstract class AbstractContentSynchronizerTest
             projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService,
                                                      new ProjectPermissionsContextManagerImpl(), eventPublisher );
 
-            sourceProject = projectService.create( CreateProjectParams.create().
-                name( ProjectName.from( "source_project" ) ).
-                displayName( "Source Project" ).
-                build() );
+            sourceProject = projectService.create(
+                CreateProjectParams.create().name( ProjectName.from( "source_project" ) ).displayName( "Source Project" ).build() );
 
-            targetProject = projectService.create( CreateProjectParams.create().
-                name( ProjectName.from( "target_project" ) ).
-                displayName( "Target Project" ).
-                parent( sourceProject.getName() ).
-                build() );
+            targetProject = projectService.create( CreateProjectParams.create()
+                                                       .name( ProjectName.from( "target_project" ) )
+                                                       .displayName( "Target Project" )
+                                                       .parent( sourceProject.getName() )
+                                                       .build() );
 
-            this.targetContext = ContextBuilder.from( ContextAccessor.current() ).
-                repositoryId( targetProject.getName().getRepoId() ).
-                branch( ContentConstants.BRANCH_DRAFT ).
-                authInfo( REPO_TEST_ADMIN_USER_AUTHINFO ).
-                build();
+            this.targetContext = ContextBuilder.from( ContextAccessor.current() )
+                .repositoryId( targetProject.getName().getRepoId() )
+                .branch( ContentConstants.BRANCH_DRAFT )
+                .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
+                .build();
 
-            this.sourceContext = ContextBuilder.from( ContextAccessor.current() ).
-                repositoryId( sourceProject.getName().getRepoId() ).
-                branch( ContentConstants.BRANCH_DRAFT ).
-                authInfo( REPO_TEST_ADMIN_USER_AUTHINFO ).
-                build();
+            this.sourceContext = ContextBuilder.from( ContextAccessor.current() )
+                .repositoryId( sourceProject.getName().getRepoId() )
+                .branch( ContentConstants.BRANCH_DRAFT )
+                .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
+                .build();
+
+            this.targetArchiveContext =
+                ContextBuilder.from( this.targetContext ).attribute( "contentRootPath", NodePath.create( "archive" ).build() ).build();
+
+            this.sourceArchiveContext =
+                ContextBuilder.from( this.sourceContext ).attribute( "contentRootPath", NodePath.create( "archive" ).build() ).build();
+
+            projectService.initialize();
         } );
     }
 
@@ -241,15 +257,36 @@ public abstract class AbstractContentSynchronizerTest
         final PropertyTree data = new PropertyTree();
         data.addStrings( "stringField", "stringValue" );
 
-        final CreateContentParams createParent = CreateContentParams.create().
-            contentData( data ).
-            name( name ).
-            displayName( name ).
-            parent( parent ).
-            type( ContentTypeName.folder() ).
-            build();
+        final CreateContentParams createParent = CreateContentParams.create()
+            .contentData( data )
+            .name( name )
+            .displayName( name )
+            .parent( parent )
+            .type( ContentTypeName.folder() )
+            .build();
 
         return this.contentService.create( createParent );
+    }
+
+    protected Media createMedia( final String name, final ContentPath parentPath )
+        throws IOException
+    {
+        final CreateMediaParams params = new CreateMediaParams().byteSource( loadImage( "cat-small.jpg" ) )
+            .name( "cat-small.jpg" )
+            .mimeType( "image/jpeg" )
+            .parent( ContentPath.ROOT );
+
+        params.name( name ).parent( parentPath );
+
+        return (Media) this.contentService.create( params );
+    }
+
+    protected ByteSource loadImage( final String name )
+        throws IOException
+    {
+        final InputStream imageStream = this.getClass().getResourceAsStream( name );
+
+        return ByteSource.wrap( ByteStreams.toByteArray( imageStream ) );
     }
 
     protected void compareSynched( final Content sourceContent, final Content targetContent )

@@ -8,12 +8,15 @@ import org.junit.jupiter.api.Test;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.UnmodifiableIterator;
 
+import com.enonic.xp.archive.ArchiveContentParams;
+import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentVersion;
+import com.enonic.xp.content.ContentVersionPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
@@ -177,6 +180,34 @@ public class ContentServiceImplTest_versions
         assertNotNull( versions.next().getPublishInfo() );
         assertNotNull( versions.next().getPublishInfo() );
         assertNull( versions.next().getPublishInfo() );
+    }
+
+    @Test
+    public void get_archived_versions()
+        throws Exception
+    {
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "content" )
+                                                                .parent( ContentPath.ROOT )
+                                                                .name( "myContent" )
+                                                                .type( ContentTypeName.folder() )
+                                                                .build() );
+
+        this.contentService.archive( ArchiveContentParams.create().contentId( content.getId() ).build() );
+
+        this.contentService.restore( RestoreContentParams.create().contentId( content.getId() ).build() );
+
+        final FindContentVersionsResult result =
+            this.contentService.getVersions( FindContentVersionsParams.create().contentId( content.getId() ).build() );
+
+        assertEquals( 5, result.getHits() );
+        assertEquals( 5, result.getTotalHits() );
+
+        final ImmutableList<ContentVersion> versions = ImmutableList.copyOf( result.getContentVersions().iterator() );
+
+        assertEquals( ContentVersionPublishInfo.CommitType.RESTORED, versions.get( 0 ).getPublishInfo().getType() );
+        assertEquals( ContentVersionPublishInfo.CommitType.ARCHIVED, versions.get( 2 ).getPublishInfo().getType() );
     }
 }
 
