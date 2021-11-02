@@ -102,4 +102,6 @@ public class ContentPropertyNames
     public static final String ORIGINAL_NAME = "originalName";
 
     public static final String ORIGINAL_PARENT_PATH = "originalParentPath";
+
+    public static final String ARCHIVED_TIME = "archivedTime";
 }

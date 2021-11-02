@@ -16,6 +16,8 @@ import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
+import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
@@ -28,6 +30,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
 
+import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_NAME;
 import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_PARENT_PATH;
 import static com.google.common.base.Strings.nullToEmpty;
@@ -164,11 +167,19 @@ final class RestoreContentCommand
 
     private void updateProperties( final Node node, final boolean isRootContent )
     {
+        final FindNodesByParentResult childrenToRestore =
+            nodeService.findByParent( FindNodesByParentParams.create().size( -1 ).recursive( true ).parentId( node.id() ).build() );
+
+        childrenToRestore.getNodeIds().forEach( id -> nodeService.update( UpdateNodeParams.create().id( id ).editor( toBeEdited -> {
+            toBeEdited.data.removeProperties( ARCHIVED_TIME );
+        } ).build() ) );
+
         if ( isRootContent )
         {
             nodeService.update( UpdateNodeParams.create().id( node.id() ).editor( toBeEdited -> {
                 toBeEdited.data.removeProperties( ORIGINAL_PARENT_PATH );
                 toBeEdited.data.removeProperties( ORIGINAL_NAME );
+                toBeEdited.data.removeProperties( ARCHIVED_TIME );
             } ).build() );
         }
     }
