@@ -30,6 +30,7 @@ import com.enonic.xp.node.NodePath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -246,8 +247,7 @@ public class ContentServiceImplTest_restore
 
         final ContentId importedId = archiveContext().callWith( () -> this.contentService.importContent( ImportContentParams.create()
                                                                                                              .importContent( content )
-                                                                                                             .targetPath(
-                                                                                                                 content.getPath() )
+                                                                                                             .targetPath( content.getPath() )
                                                                                                              .inherit( EnumSet.allOf(
                                                                                                                  ContentInheritType.class ) )
                                                                                                              .build() )
@@ -258,7 +258,28 @@ public class ContentServiceImplTest_restore
 
         final Set<ContentInheritType> inherit = this.contentService.getById( importedId ).getInherit();
         assertEquals( 4, inherit.size() );
+    }
 
+    @Test
+    public void restore_check_properties()
+        throws Exception
+    {
+        final Content parent = createContent( ContentPath.ROOT, "archive" );
+        final Content child = createContent( parent.getPath(), "content" );
+
+        this.contentService.archive( ArchiveContentParams.create().contentId( parent.getId() ).build() );
+        this.contentService.restore( RestoreContentParams.create().contentId( parent.getId() ).build() );
+
+        final Content restoredParent = contentService.getById( parent.getId() );
+        final Content restoredChild = contentService.getById( child.getId() );
+
+        assertNull( restoredParent.getOriginalParentPath() );
+        assertNull( restoredParent.getOriginalName() );
+        assertNull( restoredParent.getArchivedTime() );
+
+        assertNull( restoredChild.getOriginalParentPath() );
+        assertNull( restoredChild.getOriginalName() );
+        assertNull( restoredChild.getArchivedTime() );
     }
 
     private Context archiveContext()

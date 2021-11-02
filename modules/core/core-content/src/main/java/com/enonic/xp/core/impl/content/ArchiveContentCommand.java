@@ -17,6 +17,8 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.UnpublishContentParams;
+import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
@@ -29,6 +31,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
 
+import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_NAME;
 import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_PARENT_PATH;
 
@@ -122,10 +125,20 @@ final class ArchiveContentCommand
 
     private Node updateProperties( final NodeId nodeId )
     {
+        final FindNodesByParentResult childrenToArchive =
+            nodeService.findByParent( FindNodesByParentParams.create().size( -1 ).recursive( true ).parentId( nodeId ).build() );
+
+        final Instant now = Instant.now();
+
+        childrenToArchive.getNodeIds().forEach( id -> nodeService.update( UpdateNodeParams.create().id( id ).editor( toBeEdited -> {
+            toBeEdited.data.setInstant( ARCHIVED_TIME, now );
+        } ).build() ) );
+
         return nodeService.update( UpdateNodeParams.create().id( nodeId ).editor( toBeEdited -> {
             toBeEdited.data.setString( ORIGINAL_PARENT_PATH,
                                        ContentNodeHelper.translateNodePathToContentPath( toBeEdited.source.parentPath() ).toString() );
             toBeEdited.data.setString( ORIGINAL_NAME, toBeEdited.source.name().toString() );
+            toBeEdited.data.setInstant( ARCHIVED_TIME, now );
         } ).build() );
     }
 

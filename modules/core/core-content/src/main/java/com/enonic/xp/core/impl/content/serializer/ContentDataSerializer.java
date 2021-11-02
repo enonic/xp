@@ -55,6 +55,7 @@ import com.enonic.xp.util.BinaryReferences;
 import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.util.Reference;
 
+import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT;
 import static com.enonic.xp.content.ContentPropertyNames.CREATED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.CREATOR;
@@ -256,6 +257,7 @@ public class ContentDataSerializer
         extractValidationErrors( contentAsSet, builder );
         extractOriginalName( contentAsSet, builder );
         extractOriginalParentPath( contentAsSet, builder );
+        extractArchivedTime( contentAsSet, builder );
 
         return builder;
     }
@@ -282,6 +284,7 @@ public class ContentDataSerializer
             .addString( ORIGINAL_NAME, content.getOriginalName() != null ? content.getOriginalName().toString() : null );
         contentAsData.ifNotNull()
             .addString( ORIGINAL_PARENT_PATH, content.getOriginalParentPath() != null ? content.getOriginalParentPath().toString() : null );
+        contentAsData.ifNotNull().addInstant( ARCHIVED_TIME, content.getArchivedTime() );
     }
 
     private void addProcessedReferences( final PropertySet contentAsData, final ContentIds processedIds )
@@ -493,6 +496,11 @@ public class ContentDataSerializer
         {
             builder.originalParentPath( ContentPath.from( originalParentPath ) );
         }
+    }
+
+    private void extractArchivedTime( final PropertySet contentAsSet, final Content.Builder<?> builder )
+    {
+        builder.archivedTime( contentAsSet.getInstant( ARCHIVED_TIME ) );
     }
 
     private Attachments dataToAttachments( final Iterable<PropertySet> attachmentSets )
