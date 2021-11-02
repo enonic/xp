@@ -16,7 +16,7 @@ public final class ArchiveConstants
 
     public static final NodePath ARCHIVE_ROOT_PATH = NodePath.create( NodePath.ROOT, ARCHIVE_ROOT_NAME ).build();
 
-    public static final ChildOrder DEFAULT_ARCHIVE_REPO_ROOT_ORDER = ChildOrder.from( "_name ASC" );
+    public static final ChildOrder DEFAULT_ARCHIVE_REPO_ROOT_ORDER = ChildOrder.from( "archivedTime DESC, _name ASC" );
 
     public static final ChildOrder DEFAULT_CHILD_ORDER =
         ChildOrder.create().add( FieldOrderExpr.create( ContentIndexPath.MODIFIED_TIME, OrderExpr.Direction.DESC ) ).build();
