@@ -1,5 +1,6 @@
 package com.enonic.xp.core.content;
 
+import java.time.Instant;
 import java.util.EnumSet;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,7 @@ import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -233,19 +235,33 @@ public class ContentServiceImplTest_archive
             .build();
     }
 
-/*
-    private Context contextWithoutAdmin()
+    @Test
+    public void archive_check_properties()
+        throws Exception
     {
-        AuthenticationInfo authenticationInfo =
-            AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( TEST_DEFAULT_USER ).build();
+        final Content parent = createContent( ContentPath.ROOT, "archive" );
+        final Content child = createContent( parent.getPath(), "content" );
 
-        return ContextBuilder.create()
-            .branch( ContextAccessor.current().getBranch() )
-            .repositoryId( ContextAccessor.current().getRepositoryId() )
-            .authInfo( authenticationInfo )
-            .build();
+        final ArchiveContentParams params =
+            ArchiveContentParams.create().contentId( parent.getId() ).archiveContentListener( listener ).build();
+
+        this.contentService.archive( params );
+
+        archiveContext().runWith( () -> {
+            final Content archivedParent = contentService.getById( parent.getId() );
+
+            assertEquals( "/", archivedParent.getOriginalParentPath().toString() );
+            assertEquals( "archive", archivedParent.getOriginalName().toString() );
+            assertTrue( archivedParent.getArchivedTime().isBefore( Instant.now() ) );
+
+            final Content archivedChild = contentService.getById( child.getId() );
+
+            assertNull( archivedChild.getOriginalParentPath() );
+            assertNull( archivedChild.getOriginalName() );
+            assertTrue( archivedChild.getArchivedTime().isBefore( Instant.now() ) );
+
+        } );
     }
-*/
 
     private static final class TestListener
         implements ArchiveContentListener
