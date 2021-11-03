@@ -14,6 +14,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 
 import static com.enonic.xp.content.ContentPropertyNames.ORIGIN_PROJECT;
+import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_INFO;
 
 public class ImportContentFactory
 {
@@ -54,15 +55,18 @@ public class ImportContentFactory
             nodeData.removeProperty( ORIGIN_PROJECT );
         }
 
-        return Node.create().
-            id( NodeId.from( params.getContent().getId().toString() ) ).
-            parentPath( ContentNodeHelper.translateContentPathToNodePath( params.getTargetPath().getParentPath() ) ).
-            name( NodeName.from( params.getTargetPath().getName() ) ).
-            data( nodeData ).
-            childOrder( params.getContent().getChildOrder() ).
-            manualOrderValue( params.getContent().getManualOrderValue() ).
-            permissions( params.getContent().getPermissions() ).
-            inheritPermissions( params.getContent().inheritsPermissions() ).
+        nodeData.removeProperty( PUBLISH_INFO );
+
+        return Node.create()
+            .id( NodeId.from( params.getContent().getId().toString() ) )
+            .parentPath( ContentNodeHelper.translateContentPathToNodePath( params.getTargetPath().getParentPath() ) )
+            .name( NodeName.from( params.getTargetPath().getName() ) )
+            .data( nodeData )
+            .childOrder( params.getContent().getChildOrder() )
+            .manualOrderValue( params.getContent().getManualOrderValue() )
+            .permissions( params.getContent().getPermissions() )
+            .inheritPermissions( params.getContent().inheritsPermissions() )
+            .
             nodeType( ContentConstants.CONTENT_NODE_COLLECTION ).
             build();
     }
