@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
@@ -25,6 +27,8 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 
+import static com.enonic.xp.content.ContentPropertyNames.ORIGIN_PROJECT;
+import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_INFO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -46,6 +50,8 @@ public class ImportContentFactoryTest
         Mockito.when( content.getCreator() ).thenReturn( PrincipalKey.from( "user:system:user" ) );
         Mockito.when( content.getData() ).thenReturn( new PropertyTree() );
         Mockito.when( content.getPermissions() ).thenReturn( AccessControlList.empty() );
+        Mockito.when( content.getPublishInfo() )
+            .thenReturn( ContentPublishInfo.create().first( Instant.now() ).from( Instant.now() ).to( Instant.now() ).build() );
     }
 
     @Test
@@ -55,16 +61,16 @@ public class ImportContentFactoryTest
 
         Mockito.when( content.getOriginProject() ).thenReturn( ProjectName.from( "old-project" ) );
 
-        params = ImportContentParams.create().
-            importContent( content ).
-            targetPath( ContentPath.from( ContentPath.ROOT, "content" ) ).
-            originProject( ProjectName.from( "origin-project" ) ).
-            build();
+        params = ImportContentParams.create()
+            .importContent( content )
+            .targetPath( ContentPath.from( ContentPath.ROOT, "content" ) )
+            .originProject( ProjectName.from( "origin-project" ) )
+            .build();
 
         final Node result = createFactory().execute();
 
         List<String> origin = new ArrayList<>();
-        result.data().getStrings( "originProject" ).forEach( origin::add );
+        result.data().getStrings( ORIGIN_PROJECT ).forEach( origin::add );
 
         assertEquals( 1, origin.size() );
         assertEquals( "origin-project", origin.get( 0 ) );
@@ -77,14 +83,27 @@ public class ImportContentFactoryTest
     {
         Mockito.when( content.getOriginProject() ).thenReturn( ProjectName.from( "old-project" ) );
 
-        params = ImportContentParams.create().
-            importContent( content ).
-            targetPath( ContentPath.from( ContentPath.ROOT, "content" ) ).
-            build();
+        params =
+            ImportContentParams.create().importContent( content ).targetPath( ContentPath.from( ContentPath.ROOT, "content" ) ).build();
 
         final Node result = createFactory().execute();
 
-        assertFalse( result.data().hasProperty( "originProject" ) );
+        assertFalse( result.data().hasProperty( ORIGIN_PROJECT ) );
+
+    }
+
+    @Test
+    public void removePublishInfo()
+        throws Exception
+    {
+        Mockito.when( content.getOriginProject() ).thenReturn( ProjectName.from( "old-project" ) );
+
+        params =
+            ImportContentParams.create().importContent( content ).targetPath( ContentPath.from( ContentPath.ROOT, "content" ) ).build();
+
+        final Node result = createFactory().execute();
+
+        assertFalse( result.data().hasProperty( PUBLISH_INFO ) );
 
     }
 
@@ -94,18 +113,15 @@ public class ImportContentFactoryTest
         final PartDescriptorService partDescriptorService = Mockito.mock( PartDescriptorService.class );
         final LayoutDescriptorService layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
 
-        return ContentDataSerializer.create().
-            partDescriptorService( partDescriptorService ).
-            pageDescriptorService( pageDescriptorService ).
-            layoutDescriptorService( layoutDescriptorService ).
-            build();
+        return ContentDataSerializer.create()
+            .partDescriptorService( partDescriptorService )
+            .pageDescriptorService( pageDescriptorService )
+            .layoutDescriptorService( layoutDescriptorService )
+            .build();
     }
 
     private ImportContentFactory createFactory()
     {
-        return ImportContentFactory.create().
-            params( this.params ).
-            contentDataSerializer( createContentDataSerializer() ).
-            build();
+        return ImportContentFactory.create().params( this.params ).contentDataSerializer( createContentDataSerializer() ).build();
     }
 }
