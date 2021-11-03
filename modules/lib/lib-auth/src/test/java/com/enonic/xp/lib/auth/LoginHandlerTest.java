@@ -76,6 +76,27 @@ public class LoginHandlerTest
     }
 
     @Test
+    public void testLoginWithScopeNONE()
+    {
+        ContextAccessor.current().getLocalScope().setSession( null );
+
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
+
+        final IdProviders idProviders =
+            IdProviders.from( IdProvider.create().displayName( "system" ).key( IdProviderKey.from( "system" ) ).build() );
+
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+        Mockito.when( this.securityService.getIdProviders() ).thenReturn( idProviders );
+
+
+        runFunction( "/test/login-test.js", "loginWithScopeNONE" );
+
+        assertNull( ContextAccessor.current().getLocalScope().getSession() );
+        assertNull( ContextAccessor.current().getLocalScope().getAttribute( AuthenticationInfo.class ) );
+    }
+
+    @Test
     public void testLoginSuccessNoSession()
     {
         final AuthenticationInfo authInfo =
