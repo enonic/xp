@@ -32,7 +32,7 @@ public final class LoginHandler
 {
     private enum Scope
     {
-        SESSION, REQUEST
+        SESSION, REQUEST, NONE
     }
 
     private String user;
@@ -91,6 +91,9 @@ public final class LoginHandler
         {
             switch ( this.scope )
             {
+                case NONE:
+                    // do nothing
+                    break;
                 case REQUEST:
                     this.context.get().getLocalScope().setAttribute( authInfo );
                     break;
