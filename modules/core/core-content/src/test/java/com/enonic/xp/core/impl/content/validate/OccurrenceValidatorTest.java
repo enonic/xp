@@ -25,8 +25,10 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
+import static org.assertj.core.api.InstanceOfAssertFactories.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -112,6 +114,22 @@ public class OccurrenceValidatorTest
         // exercise
         final ValidationErrors validationResults = validate( content );
         assertTrue( validationResults.hasErrors() );
+    }
+
+    @Test
+    public void given_required_input_with_no_data_when_validate_then_validation_error_propertyPath_correct()
+    {
+        contentType.getForm()
+            .getFormItems()
+            .add( Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() );
+        Content content = Content.create().path( MY_CONTENT_PATH ).type( contentType.getName() ).build();
+
+        // exercise
+        final ValidationErrors validationResults = validate( content );
+        assertThat( validationResults.stream().findFirst() ).get( as( type( DataValidationError.class ) ) )
+            .extracting( DataValidationError::getPropertyPath )
+            .asString()
+            .isEqualTo( "myInput" );
     }
 
     @Test

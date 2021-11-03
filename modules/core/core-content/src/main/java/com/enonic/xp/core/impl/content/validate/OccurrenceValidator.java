@@ -140,7 +140,7 @@ public final class OccurrenceValidator
 
             final PropertyPath parentPath = Optional.ofNullable( parentDataSet.getProperty() )
                 .map( Property::getPath )
-                .orElseGet( () -> PropertyPath.from( formItem.getPath().toString() ) );
+                .orElseGet( () -> PropertyPath.from( formItem.getPath().getParent().toString() ) );
 
             final PropertyPath path = PropertyPath.from( parentPath, formItem.getName() );
 
