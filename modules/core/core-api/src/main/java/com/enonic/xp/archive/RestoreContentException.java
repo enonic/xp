@@ -4,10 +4,10 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentPath;
 
 @PublicApi
-public class RestoreContentException
+public final class RestoreContentException
     extends RuntimeException
 {
-    ContentPath path;
+    private final ContentPath path;
 
     public RestoreContentException( final String message, final ContentPath path )
     {

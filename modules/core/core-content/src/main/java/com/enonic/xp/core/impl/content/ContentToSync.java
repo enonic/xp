@@ -6,7 +6,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.context.Context;
 
-public class ContentToSync
+public final class ContentToSync
 {
     private final Content sourceContent;
 

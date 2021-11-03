@@ -19,7 +19,7 @@ import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
-class ContentQueryNodeQueryTranslator
+final class ContentQueryNodeQueryTranslator
 {
     public static NodeQuery.Builder translate( final ContentQuery contentQuery )
     {
