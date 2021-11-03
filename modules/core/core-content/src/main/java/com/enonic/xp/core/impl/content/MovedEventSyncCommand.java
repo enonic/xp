@@ -16,6 +16,8 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.RenameContentParams;
 
+import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
+
 final class MovedEventSyncCommand
     extends AbstractContentEventSyncCommand
 {
@@ -38,16 +40,16 @@ final class MovedEventSyncCommand
 
         params.getContents().forEach( contentToSync -> {
             if ( !contentToSync.getSourceContext()
-                .getAttribute( "contentRootPath" )
-                .equals( contentToSync.getTargetContext().getAttribute( "contentRootPath" ) ) )
+                .getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE )
+                .equals( contentToSync.getTargetContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) ) )
             {
                 if ( ArchiveConstants.ARCHIVE_ROOT_PATH.toString()
-                    .equals( contentToSync.getSourceContext().getAttribute( "contentRootPath" ).toString() ) )
+                    .equals( contentToSync.getSourceContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ).toString() ) )
                 {
                     toArchive.add( contentToSync );
                 }
                 else if ( ArchiveConstants.ARCHIVE_ROOT_PATH.toString()
-                    .equals( contentToSync.getTargetContext().getAttribute( "contentRootPath" ).toString() ) )
+                    .equals( contentToSync.getTargetContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ).toString() ) )
                 {
                     toRestore.add( contentToSync );
                 }
@@ -118,11 +120,6 @@ final class MovedEventSyncCommand
             }
         } );
     }
-
-//    private void move()
-//    {
-//        params.getContents().stream().filter( content -> isToSyncParent( content.getTargetContent() ) ).forEach( this::doMove );
-//    }
 
     private boolean isToSync( final Content targetContent )
     {

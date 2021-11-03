@@ -69,7 +69,6 @@ public class MoveNodeCommand
     public MoveNodeResult execute()
     {
         final Node existingNode = doGetById( nodeId );
-        result.sourceNode( existingNode );
 
         if ( existingNode == null )
         {

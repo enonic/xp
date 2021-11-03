@@ -120,7 +120,9 @@ public final class ProjectContentEventListener
 
             if ( projectNames.size() != 1 )
             {
-                throw new IllegalArgumentException( "An event cannot contain nodes from different repositories" );
+                throw new IllegalArgumentException( projectNames.size() > 1
+                                                        ? "An event cannot contain nodes from different repositories"
+                                                        : "An event must contain 'repo' property" );
             }
 
             final ProjectName currentProjectName = projectNames.get( 0 );

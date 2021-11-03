@@ -10,6 +10,8 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 
+import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
+
 final class MovedEventSyncRestorer
     extends MovedEventSyncSynchronizer
 {
@@ -34,7 +36,7 @@ final class MovedEventSyncRestorer
                 content.getSourceContext().callWith( () -> contentService.getByPath( content.getSourceContent().getParentPath() ) );
 
             final Context targetContextToRestore = ContextBuilder.from( content.getTargetContext() )
-                .attribute( "contentRootPath", content.getSourceContext().getAttribute( "contentRootPath" ) )
+                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, content.getSourceContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) )
                 .build();
 
             final ContentPath targetParentPath = targetContextToRestore.callWith( () -> contentService.contentExists( sourceParent.getId() )

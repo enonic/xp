@@ -28,6 +28,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 
+import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -177,8 +178,10 @@ public class ContentServiceImplTest_restore
     {
         final Content content = createContent( ContentPath.ROOT, "archive" );
 
-        assertThrows( RestoreContentException.class, () -> this.contentService.restore(
+        final RestoreContentException ex = assertThrows( RestoreContentException.class, () -> this.contentService.restore(
             RestoreContentParams.create().contentId( content.getId() ).restoreContentListener( listener ).build() ) );
+
+        assertEquals( "/archive", ex.getPath().toString() );
     }
 
     @Test
@@ -285,7 +288,7 @@ public class ContentServiceImplTest_restore
     private Context archiveContext()
     {
         return ContextBuilder.from( ContextAccessor.current() )
-            .attribute( "contentRootPath", NodePath.create( "archive" ).build() )
+            .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, NodePath.create( "archive" ).build() )
             .build();
     }
 

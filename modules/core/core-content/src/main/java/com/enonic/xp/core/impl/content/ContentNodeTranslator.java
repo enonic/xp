@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
@@ -74,15 +73,9 @@ public class ContentNodeTranslator
     {
         if ( NodePath.ROOT.equals( nodePath.getParentPath() ) )
         {
-            if ( ContentConstants.CONTENT_ROOT_NAME.equals( nodePath.getName() ) )
-            {
-                return ContentPath.ROOT;
-            }
-            else
-            {
-                return ContentPath.from( "/", nodePath.getName() );
-            }
+            return ContentPath.ROOT;
         }
+
         return ContentNodeHelper.translateNodePathToContentPath( nodePath.getParentPath() );
     }
 
@@ -98,7 +91,7 @@ public class ContentNodeTranslator
 
         final ContentPath parentContentPath = getParent( node.path() );
 
-        final Content.Builder builder = contentDataSerializer.fromData( node.data().getRoot() );
+        final Content.Builder<?> builder = contentDataSerializer.fromData( node.data().getRoot() );
         builder.id( contentId ).parentPath( parentContentPath ).name( node.name().toString() )
             .childOrder( node.getChildOrder() )
             .permissions( node.getPermissions() )

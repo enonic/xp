@@ -14,7 +14,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 
 import static com.enonic.xp.archive.ArchiveConstants.ARCHIVE_ROOT_NAME;
-import static com.enonic.xp.archive.ArchiveConstants.ARCHIVE_ROOT_PATH;
+import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
 
 class ContentNodeHelper
 {
@@ -51,14 +51,11 @@ class ContentNodeHelper
         final String rootNodeName = nodePath.asAbsolute().getElementAsString( 0 );
         final String contentPathString = nodePath.asAbsolute().toString().substring( ( rootNodeName + "/" ).length() );
 
-        if ( CONTENT_ROOT_NODE_NAME.equals( rootNodeName ) )
+        if ( CONTENT_ROOT_NODE_NAME.equals( rootNodeName ) || ARCHIVE_ROOT_NAME.equals( rootNodeName ) )
         {
             return ContentPath.from( contentPathString ).asAbsolute();
         }
-        else if ( ARCHIVE_ROOT_NAME.equals( rootNodeName ) )
-        {
-            return ContentPath.from( contentPathString, ARCHIVE_ROOT_PATH.toString() ).asAbsolute();
-        }
+
         throw new IllegalArgumentException( "Node path is not a content path: " + nodePath );
 
     }
@@ -80,7 +77,7 @@ class ContentNodeHelper
 
     public static NodePath getContentRoot()
     {
-        final NodePath nodePath = (NodePath) ContextAccessor.current().getAttribute("contentRootPath");
+        final NodePath nodePath = (NodePath) ContextAccessor.current().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE );
         return nodePath != null ? nodePath.asAbsolute() : ContentConstants.CONTENT_ROOT_PATH;
     }
 }

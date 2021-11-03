@@ -35,6 +35,9 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static com.enonic.xp.content.ContentConstants.BRANCH_DRAFT;
+import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
+
 @Component
 public final class ParentContentSynchronizer
     implements ContentSynchronizer, ContentEventsSynchronizer
@@ -75,9 +78,9 @@ public final class ParentContentSynchronizer
     {
         return ContextBuilder.from( ContextAccessor.current() )
             .repositoryId( projectName.getRepoId() )
-            .branch( ContentConstants.BRANCH_DRAFT )
+            .branch( BRANCH_DRAFT )
             .authInfo( adminAuthInfo() )
-            .attribute( "contentRootPath", root )
+            .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, root )
             .build();
     }
 
@@ -114,7 +117,7 @@ public final class ParentContentSynchronizer
                 Content targetContent = null;
                 if ( actualTargetContext == null )
                 {
-                    actualTargetContext = targetContexts.get( (NodePath) actualSourceContext.getAttribute( "contentRootPath" ) );
+                    actualTargetContext = targetContexts.get( (NodePath) actualSourceContext.getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) );
                 }
                 else
                 {
@@ -170,12 +173,12 @@ public final class ParentContentSynchronizer
             {
                 if ( targetContextToSync == null )
                 {
-                    targetContextToSync = targetContexts.get( (NodePath) sourceContextToSync.getAttribute( "contentRootPath" ) );
+                    targetContextToSync = targetContexts.get( (NodePath) sourceContextToSync.getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) );
                 }
             }
             else if ( targetContextToSync != null )
             {
-                sourceContextToSync = sourceContexts.get( (NodePath) targetContextToSync.getAttribute( "contentRootPath" ) );
+                sourceContextToSync = sourceContexts.get( (NodePath) targetContextToSync.getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) );
             }
 
             return contentToSync.sourceContext( sourceContextToSync ).targetContext( targetContextToSync ).build();
@@ -266,18 +269,29 @@ public final class ParentContentSynchronizer
 
     private void doSync( final Collection<ContentToSync> sourceContents )
     {
-        final ContentEventSyncCommandParams commandParams = createEventCommandParams( sourceContents );
+        final List<ContentToSync> existedContents =
+            sourceContents.stream().filter( contentToSync -> contentToSync.getTargetContent() != null ).collect( Collectors.toList() );
+        final List<ContentToSync> newContents =
+            sourceContents.stream().filter( contentToSync -> contentToSync.getTargetContent() == null ).collect( Collectors.toList() );
 
-        final List<AbstractContentEventSyncCommand> commands =
-            sourceContents.stream().allMatch( contentToSync -> contentToSync.getTargetContent() != null )
-                ? List.of( createEventCommand( commandParams, ContentSyncEventType.MOVED ),
-                           createEventCommand( commandParams, ContentSyncEventType.RENAMED ),
-                           createEventCommand( commandParams, ContentSyncEventType.SORTED ),
-                           createEventCommand( commandParams, ContentSyncEventType.MANUAL_ORDER_UPDATED ),
-                           createEventCommand( commandParams, ContentSyncEventType.UPDATED ) )
-                : List.of( createEventCommand( commandParams, ContentSyncEventType.CREATED ) );
+        final ContentEventSyncCommandParams existedCommandParams =
+            !existedContents.isEmpty() ? createEventCommandParams( existedContents ) : null;
+        final ContentEventSyncCommandParams newCommandParams = !newContents.isEmpty() ? createEventCommandParams( newContents ) : null;
 
-        commands.forEach( AbstractContentEventSyncCommand::sync );
+        if ( newCommandParams != null )
+        {
+            createEventCommand( newCommandParams, ContentSyncEventType.CREATED ).sync();
+        }
+
+        if ( existedCommandParams != null )
+        {
+            List.of( createEventCommand( existedCommandParams, ContentSyncEventType.MOVED ),
+                     createEventCommand( existedCommandParams, ContentSyncEventType.RENAMED ),
+                     createEventCommand( existedCommandParams, ContentSyncEventType.SORTED ),
+                     createEventCommand( existedCommandParams, ContentSyncEventType.MANUAL_ORDER_UPDATED ),
+                     createEventCommand( existedCommandParams, ContentSyncEventType.UPDATED ) )
+                .forEach( AbstractContentEventSyncCommand::sync );
+        }
     }
 
     private ContentEventSyncCommandParams createEventCommandParams( final Collection<ContentToSync> contents )
@@ -328,8 +342,8 @@ public final class ParentContentSynchronizer
         final Context contentContext = initContext( projectName, ContentConstants.CONTENT_ROOT_PATH );
         final Context archiveContext = initContext( projectName, ArchiveConstants.ARCHIVE_ROOT_PATH );
 
-        return Map.of( (NodePath) contentContext.getAttribute( "contentRootPath" ), contentContext,
-                       (NodePath) archiveContext.getAttribute( "contentRootPath" ), archiveContext );
+        return Map.of( (NodePath) contentContext.getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ), contentContext,
+                       (NodePath) archiveContext.getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ), archiveContext );
     }
 
     private Context getActualContext( final ContentId contentId, final Collection<Context> contexts )

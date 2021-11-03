@@ -12,6 +12,8 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 
+import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
+
 final class TaskRunnable
     implements Runnable
 {
@@ -78,7 +80,7 @@ final class TaskRunnable
         if ( taskContext.getContentRootPath() != null )
         {
 
-            context.attribute( "contentRootPath", taskContext.getContentRootPath() );
+            context.attribute( CONTENT_ROOT_PATH_ATTRIBUTE, taskContext.getContentRootPath() );
         }
 
         return context.build();

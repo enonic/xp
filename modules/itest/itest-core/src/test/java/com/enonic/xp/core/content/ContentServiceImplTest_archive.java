@@ -27,6 +27,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
+import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -170,10 +171,13 @@ public class ContentServiceImplTest_archive
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.archive( ArchiveContentParams.create().contentId( content.getId() ).build() );
 
-        archiveContext().runWith( () -> {
-            assertThrows( ArchiveContentException.class,
-                          () -> this.contentService.archive( ArchiveContentParams.create().contentId( content.getId() ).build() ) );
-        } );
+        final ArchiveContentException ex = archiveContext().callWith( () -> assertThrows( ArchiveContentException.class,
+                                                                                          () -> this.contentService.archive(
+                                                                                              ArchiveContentParams.create()
+                                                                                                  .contentId( content.getId() )
+                                                                                                  .build() ) ) );
+
+        assertEquals( "/content", ex.getPath().toString() );
     }
 
     @Test
@@ -231,7 +235,7 @@ public class ContentServiceImplTest_archive
     private Context archiveContext()
     {
         return ContextBuilder.from( ContextAccessor.current() )
-            .attribute( "contentRootPath", NodePath.create( "archive" ).build() )
+            .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, NodePath.create( "archive" ).build() )
             .build();
     }
 
