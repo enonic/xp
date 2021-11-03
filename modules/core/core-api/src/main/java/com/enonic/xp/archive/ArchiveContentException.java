@@ -4,10 +4,10 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentPath;
 
 @PublicApi
-public class ArchiveContentException
+public final class ArchiveContentException
     extends RuntimeException
 {
-    ContentPath path;
+    private final ContentPath path;
 
     public ArchiveContentException( final String message, final ContentPath path )
     {

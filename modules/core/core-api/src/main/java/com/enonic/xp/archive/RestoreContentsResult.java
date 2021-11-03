@@ -9,7 +9,7 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 
 @PublicApi
-public class RestoreContentsResult
+public final class RestoreContentsResult
 {
     private final ContentIds restoredContents;
 

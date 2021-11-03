@@ -1,7 +1,6 @@
 package com.enonic.xp.content;
 
 import java.util.List;
-import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -12,7 +11,7 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public final class ContentPath
 {
-    public static final ContentPath ROOT = create().build();
+    public static final ContentPath ROOT = create().absolute( true ).build();
 
     private static final String ELEMENT_DIVIDER = "/";
 
@@ -28,36 +27,6 @@ public final class ContentPath
         this.absolute = builder.absolute;
         this.elements = builder.elements.build();
         this.refString = ( this.absolute ? ELEMENT_DIVIDER : "" ) + String.join( ELEMENT_DIVIDER, elements );
-    }
-
-    public static ContentPath from( final String path, final String root )
-    {
-        final Iterable<String> pathElements = Splitter.on( ELEMENT_DIVIDER ).omitEmptyStrings().split( path );
-        boolean absolute = path.startsWith( ELEMENT_DIVIDER );
-        return create().elements( pathElements ).absolute( absolute ).build();
-    }
-
-    public static ContentPath from( final String path )
-    {
-        return from( path, ContentConstants.CONTENT_ROOT_NAME );
-    }
-
-    public static ContentPath from( final ContentPath parent, final String name )
-    {
-        return create().elements( parent.elements ).absolute( parent.isAbsolute() ).addElement( name ).build();
-    }
-
-    public static ContentPath from( final ContentPath parent, final ContentPath relative )
-    {
-        final Builder builder = create().elements( parent.elements );
-        builder.addElements( relative.elements );
-        builder.absolute( parent.isAbsolute() );
-        return builder.build();
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
     }
 
     public String getElement( final int index )
@@ -153,6 +122,42 @@ public final class ContentPath
         return true;
     }
 
+    public static ContentPath from( final String path )
+    {
+        final Iterable<String> pathElements = Splitter.on( ELEMENT_DIVIDER ).omitEmptyStrings().split( path );
+        boolean absolute = path.startsWith( ELEMENT_DIVIDER );
+        return create().elements( pathElements ).absolute( absolute ).build();
+    }
+
+    public static ContentPath from( final ContentPath parent, final String name )
+    {
+        return create().elements( parent.elements ).absolute( parent.isAbsolute() ).addElement( name ).build();
+    }
+
+    public static ContentPath from( final ContentPath parent, final ContentPath relative )
+    {
+        final Builder builder = create().elements( parent.elements );
+        builder.addElements( relative.elements );
+        builder.absolute( parent.isAbsolute() );
+        return builder.build();
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public int compareTo( ContentPath contentPath )
+    {
+        return refString.compareTo( contentPath.refString );
+    }
+
+    @Override
+    public String toString()
+    {
+        return refString;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -167,24 +172,13 @@ public final class ContentPath
 
         final ContentPath that = (ContentPath) o;
 
-        return Objects.equals( refString, that.refString );
+        return refString.equals( that.refString );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( refString );
-    }
-
-    public int compareTo( ContentPath contentPath )
-    {
-        return refString.compareTo( contentPath.refString );
-    }
-
-    @Override
-    public String toString()
-    {
-        return refString;
+        return refString.hashCode();
     }
 
     public static final class Builder

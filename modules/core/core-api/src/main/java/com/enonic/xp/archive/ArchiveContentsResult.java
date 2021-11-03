@@ -7,7 +7,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 
 @PublicApi
-public class ArchiveContentsResult
+public final class ArchiveContentsResult
 {
     private final ContentIds archivedContents;
 

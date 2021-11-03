@@ -170,10 +170,13 @@ public class ContentServiceImplTest_archive
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.archive( ArchiveContentParams.create().contentId( content.getId() ).build() );
 
-        archiveContext().runWith( () -> {
-            assertThrows( ArchiveContentException.class,
-                          () -> this.contentService.archive( ArchiveContentParams.create().contentId( content.getId() ).build() ) );
-        } );
+        final ArchiveContentException ex = archiveContext().callWith( () -> assertThrows( ArchiveContentException.class,
+                                                                                          () -> this.contentService.archive(
+                                                                                              ArchiveContentParams.create()
+                                                                                                  .contentId( content.getId() )
+                                                                                                  .build() ) ) );
+
+        assertEquals( "/content", ex.getPath().toString() );
     }
 
     @Test

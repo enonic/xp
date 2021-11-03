@@ -177,8 +177,10 @@ public class ContentServiceImplTest_restore
     {
         final Content content = createContent( ContentPath.ROOT, "archive" );
 
-        assertThrows( RestoreContentException.class, () -> this.contentService.restore(
+        final RestoreContentException ex = assertThrows( RestoreContentException.class, () -> this.contentService.restore(
             RestoreContentParams.create().contentId( content.getId() ).restoreContentListener( listener ).build() ) );
+
+        assertEquals( "/archive", ex.getPath().toString() );
     }
 
     @Test

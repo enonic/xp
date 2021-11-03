@@ -14,7 +14,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 
 import static com.enonic.xp.archive.ArchiveConstants.ARCHIVE_ROOT_NAME;
-import static com.enonic.xp.archive.ArchiveConstants.ARCHIVE_ROOT_PATH;
 
 class ContentNodeHelper
 {
@@ -51,14 +50,11 @@ class ContentNodeHelper
         final String rootNodeName = nodePath.asAbsolute().getElementAsString( 0 );
         final String contentPathString = nodePath.asAbsolute().toString().substring( ( rootNodeName + "/" ).length() );
 
-        if ( CONTENT_ROOT_NODE_NAME.equals( rootNodeName ) )
+        if ( CONTENT_ROOT_NODE_NAME.equals( rootNodeName ) || ARCHIVE_ROOT_NAME.equals( rootNodeName ) )
         {
             return ContentPath.from( contentPathString ).asAbsolute();
         }
-        else if ( ARCHIVE_ROOT_NAME.equals( rootNodeName ) )
-        {
-            return ContentPath.from( contentPathString, ARCHIVE_ROOT_PATH.toString() ).asAbsolute();
-        }
+
         throw new IllegalArgumentException( "Node path is not a content path: " + nodePath );
 
     }

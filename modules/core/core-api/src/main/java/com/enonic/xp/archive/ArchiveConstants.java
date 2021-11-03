@@ -29,4 +29,9 @@ public final class ArchiveConstants
                   .allow( Permission.READ, Permission.CREATE, Permission.MODIFY, Permission.DELETE )
                   .build() )
         .build();
+
+    private ArchiveConstants()
+    {
+
+    }
 }
