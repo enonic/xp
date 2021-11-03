@@ -143,13 +143,18 @@ public class ParentContentSynchronizerTest
         return targetContext.callWith( () -> contentService.getById( contentId ) );
     }
 
-    private void sync( final ContentId contentId )
+    private void sync( final ContentId contentId, final boolean includeChildren )
     {
-        synchronizer.sync( ContentSyncParams.create()
-                               .addContentId( contentId )
-                               .sourceProject( sourceProject.getName() )
-                               .targetProject( targetProject.getName() )
-                               .build() );
+        final ContentSyncParams.Builder builder = ContentSyncParams.create()
+            .sourceProject( sourceProject.getName() )
+            .targetProject( targetProject.getName() )
+            .includeChildren( includeChildren );
+
+        if ( contentId != null )
+        {
+            builder.addContentId( contentId );
+        }
+        synchronizer.sync( builder.build() );
     }
 
     @Test
@@ -172,7 +177,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void testCreated()
+    public void syncCreatedWithChildren()
         throws Exception
     {
         final CreateContentParams createContentParams = CreateContentParams.create()
@@ -655,10 +660,72 @@ public class ParentContentSynchronizerTest
 
         refresh();
 
-        sync( sourceContent.getId() );
+        sync( sourceContent.getId(), false );
 
         assertFalse( targetContext.callWith( () -> contentService.contentExists( sourceContent.getId() ) ) );
     }
+
+    @Test
+    public void syncWithChildren()
+        throws Exception
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
+
+        sync( sourceContent.getId(), true );
+
+        assertTrue( targetContext.callWith( () -> contentService.contentExists( sourceChild1.getId() ) ) );
+
+        final Content sourceChild1_1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1_1" ) );
+
+        sync( sourceContent.getId(), true );
+
+        assertTrue( targetContext.callWith( () -> contentService.contentExists( sourceChild1_1.getId() ) ) );
+
+        sourceContext.callWith( () -> contentService.move(
+            MoveContentParams.create().contentId( sourceChild1_1.getId() ).parentContentPath( ContentPath.ROOT ).build() ) );
+        sourceContext.callWith(
+            () -> contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( sourceChild1.getPath() ).build() ) );
+        sourceContext.callWith( () -> contentService.update(
+            new UpdateContentParams().contentId( sourceContent.getId() ).editor( edit -> edit.data = new PropertyTree() ) ) );
+
+        sync( null, true );
+
+        refresh();
+
+        assertEquals( "/child1_1", targetContext.callWith( () -> contentService.getById( sourceChild1_1.getId() ).getPath().toString() ) );
+        assertFalse( targetContext.callWith( () -> contentService.contentExists( sourceChild1.getId() ) ) );
+
+    }
+
+    @Test
+    public void syncWithoutChildren()
+        throws Exception
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
+
+        sync( sourceContent.getId(), false );
+
+        assertTrue( targetContext.callWith( () -> contentService.contentExists( sourceContent.getId() ) ) );
+        assertFalse( targetContext.callWith( () -> contentService.contentExists( sourceChild1.getId() ) ) );
+    }
+
+    @Test
+    public void syncByRoot()
+        throws Exception
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
+        final Content sourceChild1_1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "child1_1" ) );
+
+        sync( null, false );
+
+        assertTrue( targetContext.callWith( () -> contentService.contentExists( sourceContent.getId() ) ) );
+        assertTrue( targetContext.callWith( () -> contentService.contentExists( sourceChild1.getId() ) ) );
+        assertTrue( targetContext.callWith( () -> contentService.contentExists( sourceChild1_1.getId() ) ) );
+    }
+
 
     @Test
     public void updateManualOrderNotExisted()

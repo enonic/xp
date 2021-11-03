@@ -64,6 +64,7 @@ import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -161,11 +162,13 @@ public abstract class AbstractContentSynchronizerTest
                 .authInfo( REPO_TEST_ADMIN_USER_AUTHINFO )
                 .build();
 
-            this.targetArchiveContext =
-                ContextBuilder.from( this.targetContext ).attribute( "contentRootPath", NodePath.create( "archive" ).build() ).build();
+            this.targetArchiveContext = ContextBuilder.from( this.targetContext )
+                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, NodePath.create( "archive" ).build() )
+                .build();
 
-            this.sourceArchiveContext =
-                ContextBuilder.from( this.sourceContext ).attribute( "contentRootPath", NodePath.create( "archive" ).build() ).build();
+            this.sourceArchiveContext = ContextBuilder.from( this.sourceContext )
+                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, NodePath.create( "archive" ).build() )
+                .build();
 
             projectService.initialize();
         } );

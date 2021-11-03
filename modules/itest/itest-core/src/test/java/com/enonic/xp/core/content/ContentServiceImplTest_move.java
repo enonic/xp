@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
@@ -17,6 +18,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ContentServiceImplTest_move
     extends AbstractContentServiceTest
@@ -61,10 +63,8 @@ public class ContentServiceImplTest_move
 
         refresh();
 
-        final MoveContentParams params = MoveContentParams.create().
-            contentId( content.getId() ).
-            parentContentPath( ContentPath.ROOT ).
-            build();
+        final MoveContentParams params =
+            MoveContentParams.create().contentId( content.getId() ).parentContentPath( ContentPath.ROOT ).build();
 
         final MoveContentsResult result = this.contentService.move( params );
 
@@ -73,6 +73,27 @@ public class ContentServiceImplTest_move
         assertEquals( movedContent.getAllExtraData().getSize(), 1 );
 
     }
+
+    @Test
+    public void move_to_the_same_parent()
+        throws Exception
+    {
+
+        final PropertyTree siteData = new PropertyTree();
+        siteData.setSet( "siteConfig", this.createSiteConfig() );
+        final Content site = createContent( ContentPath.ROOT, "site", siteData, ContentTypeName.site() );
+
+        final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createExtraDatas() );
+
+        refresh();
+
+        final MoveContentParams params =
+            MoveContentParams.create().contentId( content.getId() ).parentContentPath( content.getParentPath() ).build();
+
+        assertThrows( ContentAlreadyMovedException.class, () -> this.contentService.move( params ) );
+
+    }
+
 
     @Test
     public void audit_data()

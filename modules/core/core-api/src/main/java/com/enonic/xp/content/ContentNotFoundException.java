@@ -32,9 +32,11 @@ public final class ContentNotFoundException
         super( MessageFormat.format( "Content with id [{0}] was not found in branch [{1}]", contentId.toString(), branch ) );
     }
 
-    public ContentNotFoundException( final ContentId contentId, final Branch branch, final NodePath nodePath )
+    public ContentNotFoundException( final ContentId contentId, final Branch branch, final NodePath contentRoot )
     {
-        super( MessageFormat.format( "Content with id [{0}] was not found in branch [{1}] in content root [{2}]", contentId.toString(), branch, nodePath ) );
+        super(
+            MessageFormat.format( "Content with id [{0}] was not found in branch [{1}] in content root [{2}]", contentId.toString(), branch,
+                                  contentRoot ) );
     }
 
     public ContentNotFoundException( final ContentIds contentIds, final Branch branch )

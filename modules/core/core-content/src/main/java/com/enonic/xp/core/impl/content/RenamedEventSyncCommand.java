@@ -10,7 +10,6 @@ import com.enonic.xp.content.RenameContentParams;
 final class RenamedEventSyncCommand
     extends AbstractContentEventSyncCommand
 {
-
     RenamedEventSyncCommand( final Builder builder )
     {
         super( builder );

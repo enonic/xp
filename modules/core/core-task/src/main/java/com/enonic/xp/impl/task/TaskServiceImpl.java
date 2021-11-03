@@ -32,6 +32,8 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskService;
 
+import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
+
 @Component(immediate = true, configurationPid = "com.enonic.xp.task")
 public final class TaskServiceImpl
     implements TaskService
@@ -115,7 +117,7 @@ public final class TaskServiceImpl
             .setBranch( userContext.getBranch() )
             .setRepo( userContext.getRepositoryId() )
             .setAuthInfo( userContext.getAuthInfo() )
-            .setContentRootPath( (NodePath) ContextAccessor.current().getAttribute( "contentRootPath" ) )
+            .setContentRootPath( (NodePath) ContextAccessor.current().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) )
             .build();
     }
 

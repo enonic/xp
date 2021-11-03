@@ -21,6 +21,7 @@ import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.DuplicateNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.GetNodeVersionsParams;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
@@ -161,10 +162,7 @@ public class NodeServiceImplTest
     public void rename()
         throws Exception
     {
-        final Node createdNode = createNode( CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            build() );
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
         doRename( createdNode.id(), "my-node-edited" );
 
@@ -174,21 +172,30 @@ public class NodeServiceImplTest
     }
 
     @Test
+    public void move_to_the_same_parent()
+        throws Exception
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+
+        final Node movedNode =
+            nodeService.move( MoveNodeParams.create().nodeId( createdNode.id() ).parentNodePath( createdNode.parentPath() ).build() );
+
+        assertEquals( createdNode, movedNode );
+    }
+
+    @Test
     public void create()
         throws Exception
     {
 
-        final ChildOrder childOrder = ChildOrder.create().
-            add( FieldOrderExpr.create( NodeIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) ).
-            add( FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC ) ).
-            build();
+        final ChildOrder childOrder = ChildOrder.create()
+            .add( FieldOrderExpr.create( NodeIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) )
+            .add( FieldOrderExpr.create( NodeIndexPath.NAME, OrderExpr.Direction.ASC ) )
+            .build();
 
-        final AccessControlList aclList = AccessControlList.create().
-            add( AccessControlEntry.create().
-                principal( PrincipalKey.from( "user:myidprovider:rmy" ) ).
-                allow( Permission.READ ).
-                build() ).
-            build();
+        final AccessControlList aclList = AccessControlList.create()
+            .add( AccessControlEntry.create().principal( PrincipalKey.from( "user:myidprovider:rmy" ) ).allow( Permission.READ ).build() )
+            .build();
 
         final CreateNodeParams params = CreateNodeParams.create().
             name( "my-node" ).

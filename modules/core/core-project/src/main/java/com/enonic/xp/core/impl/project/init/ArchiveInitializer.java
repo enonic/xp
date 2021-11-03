@@ -18,7 +18,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 
-public class ArchiveInitializer
+public final class ArchiveInitializer
     extends RepoDependentInitializer
 {
     private static final Logger LOG = LoggerFactory.getLogger( ArchiveInitializer.class );

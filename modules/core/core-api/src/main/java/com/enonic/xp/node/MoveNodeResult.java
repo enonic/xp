@@ -14,7 +14,16 @@ public class MoveNodeResult
     private MoveNodeResult( Builder builder )
     {
         this.sourceNode = builder.sourceNode;
-        this.movedNodes = builder.movedNodes.build();
+
+        final List<MovedNode> movedNodes = builder.movedNodes.build();
+        if ( builder.sourceNode != null && builder.targetNode != null && movedNodes.isEmpty() )
+        {
+            this.movedNodes = List.of( MovedNode.create().node( builder.targetNode ).previousPath( builder.sourceNode.path() ).build() );
+        }
+        else
+        {
+            this.movedNodes = builder.movedNodes.build();
+        }
     }
 
     public static Builder create()
@@ -104,6 +113,8 @@ public class MoveNodeResult
 
         private Node sourceNode;
 
+        private Node targetNode;
+
         private Builder()
         {
         }
@@ -124,12 +135,12 @@ public class MoveNodeResult
         @Deprecated
         public Builder targetNode( final Node targetNode )
         {
+            this.targetNode = targetNode;
             return this;
         }
 
         private void validate()
         {
-            Preconditions.checkNotNull( sourceNode, "sourceNode cannot be null" );
         }
 
         public MoveNodeResult build()

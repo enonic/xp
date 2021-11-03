@@ -3,7 +3,7 @@ package com.enonic.xp.content;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class ContentPropertyNames
+public final class ContentPropertyNames
 {
     public static final String PAGE = "page";
 
@@ -104,4 +104,9 @@ public class ContentPropertyNames
     public static final String ORIGINAL_PARENT_PATH = "originalParentPath";
 
     public static final String ARCHIVED_TIME = "archivedTime";
+
+    private ContentPropertyNames()
+    {
+
+    }
 }
