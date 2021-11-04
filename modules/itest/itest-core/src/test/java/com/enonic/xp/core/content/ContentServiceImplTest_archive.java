@@ -256,12 +256,14 @@ public class ContentServiceImplTest_archive
             assertEquals( "/", archivedParent.getOriginalParentPath().toString() );
             assertEquals( "archive", archivedParent.getOriginalName().toString() );
             assertTrue( archivedParent.getArchivedTime().isBefore( Instant.now() ) );
+            assertEquals( "user:system:test-user", archivedParent.getArchivedBy().toString() );
 
             final Content archivedChild = contentService.getById( child.getId() );
 
             assertNull( archivedChild.getOriginalParentPath() );
             assertNull( archivedChild.getOriginalName() );
             assertTrue( archivedChild.getArchivedTime().isBefore( Instant.now() ) );
+            assertEquals( "user:system:test-user", archivedParent.getArchivedBy().toString() );
 
         } );
     }
