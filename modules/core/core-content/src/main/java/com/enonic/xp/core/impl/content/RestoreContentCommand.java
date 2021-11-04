@@ -30,6 +30,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
 
+import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_BY;
 import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_NAME;
 import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_PARENT_PATH;
@@ -172,6 +173,7 @@ final class RestoreContentCommand
 
         childrenToRestore.getNodeIds().forEach( id -> nodeService.update( UpdateNodeParams.create().id( id ).editor( toBeEdited -> {
             toBeEdited.data.removeProperties( ARCHIVED_TIME );
+            toBeEdited.data.removeProperties( ARCHIVED_BY );
         } ).build() ) );
 
         if ( isRootContent )
@@ -180,6 +182,7 @@ final class RestoreContentCommand
                 toBeEdited.data.removeProperties( ORIGINAL_PARENT_PATH );
                 toBeEdited.data.removeProperties( ORIGINAL_NAME );
                 toBeEdited.data.removeProperties( ARCHIVED_TIME );
+                toBeEdited.data.removeProperties( ARCHIVED_BY );
             } ).build() );
         }
     }

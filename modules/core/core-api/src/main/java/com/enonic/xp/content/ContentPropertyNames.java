@@ -105,6 +105,8 @@ public final class ContentPropertyNames
 
     public static final String ARCHIVED_TIME = "archivedTime";
 
+    public static final String ARCHIVED_BY = "archivedBy";
+
     private ContentPropertyNames()
     {
 

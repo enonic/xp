@@ -279,10 +279,11 @@ public class ContentServiceImplTest_restore
         assertNull( restoredParent.getOriginalParentPath() );
         assertNull( restoredParent.getOriginalName() );
         assertNull( restoredParent.getArchivedTime() );
+        assertNull( restoredParent.getArchivedBy() );
 
         assertNull( restoredChild.getOriginalParentPath() );
         assertNull( restoredChild.getOriginalName() );
-        assertNull( restoredChild.getArchivedTime() );
+        assertNull( restoredChild.getArchivedBy() );
     }
 
     private Context archiveContext()
