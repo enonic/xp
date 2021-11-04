@@ -17,6 +17,8 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.UnpublishContentParams;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.MoveNodeException;
@@ -30,7 +32,9 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.security.User;
 
+import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_BY;
 import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_NAME;
 import static com.enonic.xp.content.ContentPropertyNames.ORIGINAL_PARENT_PATH;
@@ -129,9 +133,11 @@ final class ArchiveContentCommand
             nodeService.findByParent( FindNodesByParentParams.create().size( -1 ).recursive( true ).parentId( nodeId ).build() );
 
         final Instant now = Instant.now();
+        final String archivedBy = getCurrentUser().getKey().toString();
 
         childrenToArchive.getNodeIds().forEach( id -> nodeService.update( UpdateNodeParams.create().id( id ).editor( toBeEdited -> {
             toBeEdited.data.setInstant( ARCHIVED_TIME, now );
+            toBeEdited.data.setString( ARCHIVED_BY, archivedBy );
         } ).build() ) );
 
         return nodeService.update( UpdateNodeParams.create().id( nodeId ).editor( toBeEdited -> {
@@ -139,6 +145,7 @@ final class ArchiveContentCommand
                                        ContentNodeHelper.translateNodePathToContentPath( toBeEdited.source.parentPath() ).toString() );
             toBeEdited.data.setString( ORIGINAL_NAME, toBeEdited.source.name().toString() );
             toBeEdited.data.setInstant( ARCHIVED_TIME, now );
+            toBeEdited.data.setString( ARCHIVED_BY, archivedBy );
         } ).build() );
     }
 
@@ -182,6 +189,12 @@ final class ArchiveContentCommand
             throw new ArchiveContentException( String.format( "content [%s] is archived already", params.getContentId() ),
                                                ContentNodeHelper.translateNodePathToContentPath( nodeToArchive.path() ) );
         }
+    }
+
+    private User getCurrentUser()
+    {
+        final Context context = ContextAccessor.current();
+        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser() : User.ANONYMOUS;
     }
 
     public static class Builder

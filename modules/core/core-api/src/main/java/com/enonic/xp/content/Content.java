@@ -92,6 +92,8 @@ public class Content
 
     private final Instant archivedTime;
 
+    private final PrincipalKey archivedBy;
+
     protected Content( final Builder builder )
     {
         Preconditions.checkNotNull( builder.name, "name is required for a Content" );
@@ -142,6 +144,7 @@ public class Content
         this.originalName = builder.originalName;
         this.originalParentPath = builder.originalParentPath;
         this.archivedTime = builder.archivedTime;
+        this.archivedBy = builder.archivedBy;
     }
 
     public static Builder create( final ContentTypeName type )
@@ -389,6 +392,12 @@ public class Content
         return archivedTime;
     }
 
+    public PrincipalKey getArchivedBy()
+    {
+        return archivedBy;
+    }
+
+
     @Override
     public boolean equals( final Object o )
     {
@@ -417,7 +426,7 @@ public class Content
             Objects.equals( publishInfo, other.publishInfo ) && Objects.equals( processedReferences, other.processedReferences ) &&
             Objects.equals( workflowInfo, other.workflowInfo ) && Objects.equals( manualOrderValue, other.manualOrderValue ) &&
             Objects.equals( originalName, other.originalName ) && Objects.equals( originalParentPath, other.originalParentPath ) &&
-            Objects.equals( archivedTime, other.archivedTime );
+            Objects.equals( archivedTime, other.archivedTime ) && Objects.equals( archivedBy, other.archivedBy );
     }
 
     @Override
@@ -426,7 +435,7 @@ public class Content
         return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
                              hasChildren, inherit, originProject, inheritPermissions, childOrder, thumbnail, permissions, attachments, data,
                              extraDatas, page, language, contentState, publishInfo, processedReferences, workflowInfo, manualOrderValue,
-                             originalName, originalParentPath, archivedTime );
+                             originalName, originalParentPath, archivedTime, archivedBy );
     }
 
     public static class Builder<BUILDER extends Builder>
@@ -494,6 +503,8 @@ public class Content
         protected ContentName originalName;
 
         protected Instant archivedTime;
+
+        protected PrincipalKey archivedBy;
 
 
         protected Builder()
@@ -781,6 +792,12 @@ public class Content
         public BUILDER archivedTime( final Instant archivedTime )
         {
             this.archivedTime = archivedTime;
+            return (BUILDER) this;
+        }
+
+        public BUILDER archivedBy( final PrincipalKey archivedBy )
+        {
+            this.archivedBy = archivedBy;
             return (BUILDER) this;
         }
 
