@@ -23,7 +23,7 @@ public final class XmlIdProviderDescriptorParser
     {
         assertTagName( root, "id-provider" );
 
-        final IdProviderDescriptorMode mode = IdProviderDescriptorMode.valueOf( root.getChildValue( "mode" ) );
+        final IdProviderDescriptorMode mode = IdProviderDescriptorMode.valueOf( root.getChildValueTrimmed( "mode" ) );
         this.builder.mode( mode );
 
         final XmlFormMapper formMapper = new XmlFormMapper( this.currentApplication );

@@ -33,7 +33,7 @@ public final class XmlServiceDescriptorParser
             final List<DomElement> allowedPrincipalList = allowedPrincipals.getChildren( "principal" );
             for ( DomElement allowedPrincipal : allowedPrincipalList )
             {
-                allowedPrincipalKeys.add( PrincipalKey.from( allowedPrincipal.getValue() ) );
+                allowedPrincipalKeys.add( PrincipalKey.from( allowedPrincipal.getValue().trim() ) );
             }
             this.builder.setAllowedPrincipals( allowedPrincipalKeys );
         }

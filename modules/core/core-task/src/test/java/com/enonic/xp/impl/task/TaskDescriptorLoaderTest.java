@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
 import com.enonic.xp.descriptor.DescriptorKeys;
+import com.enonic.xp.form.FormItem;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -73,5 +74,8 @@ public class TaskDescriptorLoaderTest
         final TaskDescriptor descriptor = this.loader.load( descriptorKey, resource );
 
         assertEquals( "MyTask", descriptor.getDescription() );
+
+        FormItem formItem = descriptor.getConfig().getFormItem( "param1" );
+        assertEquals( " something ", formItem.toInput().getDefaultValue().getRootValue() );
     }
 }

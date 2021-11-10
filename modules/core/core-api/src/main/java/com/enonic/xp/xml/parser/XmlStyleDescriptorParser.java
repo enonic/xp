@@ -89,13 +89,13 @@ public final class XmlStyleDescriptorParser
         final DomElement aspectRatio = styleElement.getChild( ASPECT_RATIO_TAG_NAME );
         if ( aspectRatio != null )
         {
-            builder.aspectRatio( aspectRatio.getValue() );
+            builder.aspectRatio( aspectRatio.getValue().trim() );
         }
 
         final DomElement filter = styleElement.getChild( FILTER_TAG_NAME );
         if ( filter != null )
         {
-            builder.filter( filter.getValue() );
+            builder.filter( filter.getValue().trim() );
         }
 
         return builder.build();
