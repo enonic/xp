@@ -85,7 +85,7 @@ public final class DomElement
             }
         }
 
-        return str.toString().trim();
+        return str.toString();
     }
 
     public List<Attr> getAttributes()
@@ -131,6 +131,12 @@ public final class DomElement
     public String getChildValue( final String name )
     {
         return getChildValue( name, null );
+    }
+
+    public String getChildValueTrimmed( final String name )
+    {
+        String value = getChildValue( name, null );
+        return value != null ? value.trim() : null;
     }
 
     public String getChildValue( final String name, final String defValue )

@@ -1,0 +1,57 @@
+<node>
+  <id>5cc6bc16-0ab7-498d-8b7c-a250aadd8a0c</id>
+  <childOrder>modifiedtime DESC</childOrder>
+  <nodeType>content</nodeType>
+  <timestamp>2020-10-26T13:13:47.452Z</timestamp>
+  <inheritPermissions>true</inheritPermissions>
+  <permissions>
+    <principal key="role:system.admin">
+      <allow type="array">
+        <value>READ</value>
+        <value>CREATE</value>
+        <value>MODIFY</value>
+        <value>DELETE</value>
+        <value>PUBLISH</value>
+        <value>READ_PERMISSIONS</value>
+        <value>WRITE_PERMISSIONS</value>
+      </allow>
+      <deny type="array"/>
+    </principal>
+  </permissions>
+  <data>
+    <string name="displayName">&#x20;Picture Name.jpg</string> <!-- Unfortunately, filenames may start with space -->
+  </data>
+  <indexConfigs>
+    <analyzer>no</analyzer>
+    <defaultConfig>
+      <decideByType>true</decideByType>
+      <enabled>true</enabled>
+      <nGram>false</nGram>
+      <fulltext>false</fulltext>
+      <includeInAllText>false</includeInAllText>
+    </defaultConfig>
+    <pathIndexConfigs>
+      <pathIndexConfig>
+        <indexConfig>
+          <decideByType>false</decideByType>
+          <enabled>true</enabled>
+          <nGram>true</nGram>
+          <fulltext>true</fulltext>
+          <includeInAllText>true</includeInAllText>
+          <indexValueProcessors>
+            <indexValueProcessor>htmlStripper</indexValueProcessor>
+          </indexValueProcessors>
+          <languages>
+            <language>en</language>
+          </languages>
+        </indexConfig>
+        <path>mydata</path>
+      </pathIndexConfig>
+    </pathIndexConfigs>
+    <allTextIndexConfig>
+      <languages>
+        <language>en</language>
+      </languages>
+    </allTextIndexConfig>
+  </indexConfigs>
+</node>

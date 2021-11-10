@@ -38,7 +38,7 @@ public class XmlAdminToolDescriptorParser
             final List<DomElement> allowedPrincipalList = allowedPrincipals.getChildren( "principal" );
             for ( DomElement allowedPrincipal : allowedPrincipalList )
             {
-                this.builder.addAllowedPrincipals( PrincipalKey.from( allowedPrincipal.getValue() ) );
+                this.builder.addAllowedPrincipals( PrincipalKey.from( allowedPrincipal.getValue().trim() ) );
             }
         }
     }

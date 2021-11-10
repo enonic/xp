@@ -33,7 +33,7 @@ final class XmlWidgetDescriptorParser
             final List<DomElement> interfaceList = interfaces.getChildren( "interface" );
             for ( DomElement anInterface : interfaceList )
             {
-                this.builder.addInterface( anInterface.getValue() );
+                this.builder.addInterface( anInterface.getValue().trim() );
             }
         }
 
@@ -42,7 +42,7 @@ final class XmlWidgetDescriptorParser
         {
             final List<PrincipalKey> allowedPrincipalList = allowedPrincipals.getChildren( "principal" )
                 .stream()
-                .map( allowedPrincipal -> PrincipalKey.from( allowedPrincipal.getValue() ) )
+                .map( allowedPrincipal -> PrincipalKey.from( allowedPrincipal.getValue().trim() ) )
                 .collect( Collectors.toList() );
             this.builder.setAllowedPrincipals( allowedPrincipalList );
         }

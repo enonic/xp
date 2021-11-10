@@ -41,8 +41,8 @@ public final class XmlContentTypeParser
         this.builder.descriptionI18nKey(
             root.getChild( "description" ) != null ? root.getChild( "description" ).getAttribute( "i18n" ) : null );
 
-        this.builder.displayNameExpression( root.getChildValue( "display-name-expression" ) );
-        this.builder.superType( this.resolver.toContentTypeName( root.getChildValue( "super-type" ) ) );
+        this.builder.displayNameExpression( root.getChildValueTrimmed( "display-name-expression" ) );
+        this.builder.superType( this.resolver.toContentTypeName( root.getChildValueTrimmed( "super-type" ) ) );
 
         this.builder.setAbstract( root.getChildValueAs( "is-abstract", Boolean.class, false ) );
         this.builder.setFinal( root.getChildValueAs( "is-final", Boolean.class, false ) );
@@ -58,7 +58,7 @@ public final class XmlContentTypeParser
         this.builder.form( mapper.buildForm( root.getChild( "form" ) ) );
         this.builder.schemaConfig( CONFIG_MAPPER.build( root.getChild( "config" ) ) );
         this.builder.allowChildContentType(
-            root.getChildren( "allow-child-content-type" ).stream().map( DomElement::getValue ).collect( Collectors.toList() ) );
+            root.getChildren( "allow-child-content-type" ).stream().map( e -> e.getValue().trim() ).collect( Collectors.toList() ) );
     }
 
     private XDataNames buildMetaData( final DomElement root )

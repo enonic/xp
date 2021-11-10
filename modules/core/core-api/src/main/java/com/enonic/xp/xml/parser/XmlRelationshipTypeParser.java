@@ -28,8 +28,8 @@ public final class XmlRelationshipTypeParser
     {
         assertTagName( root, "relationship-type" );
         this.builder.description( root.getChildValue( "description" ) );
-        this.builder.fromSemantic( root.getChildValue( "from-semantic" ) );
-        this.builder.toSemantic( root.getChildValue( "to-semantic" ) );
+        this.builder.fromSemantic( root.getChildValueTrimmed( "from-semantic" ) );
+        this.builder.toSemantic( root.getChildValueTrimmed( "to-semantic" ) );
         this.builder.setAllowedFromTypes( parseTypes( root, "allowed-from-types" ) );
         this.builder.setAllowedToTypes( parseTypes( root, "allowed-to-types" ) );
     }
@@ -43,7 +43,7 @@ public final class XmlRelationshipTypeParser
         }
 
         final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( this.currentApplication );
-        return types.getChildren( "content-type" ).stream().map( child -> resolver.toContentTypeName( child.getValue() ) ).collect(
+        return types.getChildren( "content-type" ).stream().map( child -> resolver.toContentTypeName( child.getValue().trim() ) ).collect(
             Collectors.toList() );
     }
 }
