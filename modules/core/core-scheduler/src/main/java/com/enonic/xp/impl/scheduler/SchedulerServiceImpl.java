@@ -1,9 +1,12 @@
 package com.enonic.xp.impl.scheduler;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import com.enonic.xp.cluster.ClusterConfig;
+import com.enonic.xp.core.internal.concurrent.DynamicReference;
 import com.enonic.xp.index.IndexService;
-import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
@@ -18,39 +21,39 @@ public class SchedulerServiceImpl
 
     private final RepositoryService repositoryService;
 
-    private final NodeService nodeService;
-
     private final SchedulerExecutorService schedulerExecutorService;
 
     private final ScheduleAuditLogSupport auditLogSupport;
 
-    public SchedulerServiceImpl( final IndexService indexService, final RepositoryService repositoryService, final NodeService nodeService,
-                                 final SchedulerExecutorService schedulerExecutorService, final ScheduleAuditLogSupport auditLogSupport )
+    private final SchedulerJobManager localJobManager;
+
+    private final DynamicReference<SchedulerJobManager> clusteredJobManagerRef;
+
+    private final boolean clusterEnabled;
+
+    public SchedulerServiceImpl( final IndexService indexService, final RepositoryService repositoryService,
+                                 final SchedulerExecutorService schedulerExecutorService, final ScheduleAuditLogSupport auditLogSupport,
+                                 final SchedulerJobManager localJobManager,
+                                 final DynamicReference<SchedulerJobManager> clusteredJobManagerRef, final ClusterConfig config )
     {
         this.indexService = indexService;
         this.repositoryService = repositoryService;
-        this.nodeService = nodeService;
         this.schedulerExecutorService = schedulerExecutorService;
         this.auditLogSupport = auditLogSupport;
+        this.localJobManager = localJobManager;
+        this.clusteredJobManagerRef = clusteredJobManagerRef;
+        this.clusterEnabled = config.isEnabled();
     }
 
     public void initialize()
     {
-        SchedulerRepoInitializer.create().
-            setIndexService( indexService ).
-            setRepositoryService( repositoryService ).
-            build().
-            initialize();
+        SchedulerRepoInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
     }
 
     @Override
     public ScheduledJob create( final CreateScheduledJobParams params )
     {
-        final ScheduledJob job = CreateScheduledJobCommand.create().
-            nodeService( nodeService ).
-            params( params ).
-            build().
-            execute();
+        final ScheduledJob job = getJobManager().create( params );
 
         auditLogSupport.create( params, job );
 
@@ -60,17 +63,9 @@ public class SchedulerServiceImpl
     @Override
     public ScheduledJob modify( final ModifyScheduledJobParams params )
     {
-        UnscheduleJobCommand.create().
-            schedulerExecutorService( schedulerExecutorService ).
-            name( params.getName() ).
-            build().
-            execute();
+        UnscheduleJobCommand.create().schedulerExecutorService( schedulerExecutorService ).name( params.getName() ).build().execute();
 
-        final ScheduledJob job = ModifyScheduledJobCommand.create().
-            nodeService( nodeService ).
-            params( params ).
-            build().
-            execute();
+        final ScheduledJob job = getJobManager().modify( params );
 
         auditLogSupport.modify( params, job );
 
@@ -80,17 +75,9 @@ public class SchedulerServiceImpl
     @Override
     public boolean delete( final ScheduledJobName name )
     {
-        UnscheduleJobCommand.create().
-            schedulerExecutorService( schedulerExecutorService ).
-            name( name ).
-            build().
-            execute();
+        UnscheduleJobCommand.create().schedulerExecutorService( schedulerExecutorService ).name( name ).build().execute();
 
-        final boolean result = DeleteScheduledJobCommand.create().
-            nodeService( nodeService ).
-            name( name ).
-            build().
-            execute();
+        final boolean result = getJobManager().delete( name );
 
         auditLogSupport.delete( name, result );
 
@@ -100,19 +87,28 @@ public class SchedulerServiceImpl
     @Override
     public ScheduledJob get( final ScheduledJobName name )
     {
-        return GetScheduledJobCommand.create().
-            nodeService( nodeService ).
-            name( name ).
-            build().
-            execute();
+        return getJobManager().get( name );
     }
 
     @Override
     public List<ScheduledJob> list()
     {
-        return ListScheduledJobsCommand.create().
-            nodeService( nodeService ).
-            build().
-            execute();
+        return getJobManager().list();
+    }
+
+    private SchedulerJobManager getJobManager()
+    {
+        if ( clusterEnabled )
+        {
+            try
+            {
+                return clusteredJobManagerRef.get( 5, TimeUnit.SECONDS );
+            }
+            catch ( InterruptedException | TimeoutException e )
+            {
+                throw new RuntimeException( e );
+            }
+        }
+        return localJobManager;
     }
 }

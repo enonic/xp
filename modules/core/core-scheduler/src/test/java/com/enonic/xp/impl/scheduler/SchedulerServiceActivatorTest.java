@@ -16,6 +16,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
@@ -76,6 +77,12 @@ class SchedulerServiceActivatorTest
     @Mock(stubOnly = true)
     private ScheduleAuditLogSupport auditLogSupport;
 
+    @Mock(stubOnly = true)
+    private SchedulerJobManager localSchedulerJobManager;
+
+    @Mock(stubOnly = true)
+    private ClusterConfig config;
+
     private SchedulerServiceActivator activator;
 
     private CalendarService calendarService;
@@ -88,11 +95,12 @@ class SchedulerServiceActivatorTest
         when( indexService.isMaster() ).thenReturn( true );
         when( indexService.waitForYellowStatus() ).thenReturn( true );
 
-        activator = new SchedulerServiceActivator( repositoryService, indexService, nodeService, schedulerExecutorService, schedulerConfig,
-                                                   auditLogSupport );
+        activator =
+            new SchedulerServiceActivator( repositoryService, indexService, schedulerExecutorService, schedulerConfig, auditLogSupport,
+                                           config, localSchedulerJobManager );
 
-        when( bundleContext.registerService( same( SchedulerService.class ), any( SchedulerService.class ), isNull() ) ).
-            thenReturn( service );
+        when( bundleContext.registerService( same( SchedulerService.class ), any( SchedulerService.class ), isNull() ) ).thenReturn(
+            service );
     }
 
     @Test

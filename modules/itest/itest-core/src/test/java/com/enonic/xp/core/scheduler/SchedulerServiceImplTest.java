@@ -106,7 +106,7 @@ class SchedulerServiceImplTest
             new ScheduleAuditLogSupportImpl( schedulerConfig, new ScheduleAuditLogExecutorImpl(), auditLogService );
 
         schedulerService =
-            new SchedulerServiceImpl( indexService, repositoryService, nodeService, schedulerExecutorService, auditLogSupport );
+            new SchedulerServiceImpl( indexService, repositoryService, schedulerExecutorService, auditLogSupport, null, null, null );
 
         adminContext().runWith( () -> schedulerService.initialize() );
 
