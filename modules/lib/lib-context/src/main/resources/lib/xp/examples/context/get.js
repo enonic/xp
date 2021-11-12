@@ -17,7 +17,8 @@ var expected = {
             'user:system:anonymous',
             'role:system.everyone'
         ]
-    }
+    },
+    'attributes': {}
 };
 // END
 
