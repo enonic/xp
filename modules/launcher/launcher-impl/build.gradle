@@ -13,7 +13,7 @@ dependencies {
         exclude group: 'org.osgi'
         exclude group: 'org.apache.felix'
     }
-    runtimeOnly 'ch.qos.logback:logback-classic:1.2.6'
+    runtimeOnly 'ch.qos.logback:logback-classic:1.2.7'
     runtimeOnly 'org.fusesource.jansi:jansi:1.18'
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation "org.slf4j:jul-to-slf4j:${slf4jVersion}"
