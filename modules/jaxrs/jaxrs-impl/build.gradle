@@ -2,18 +2,12 @@ dependencies {
     implementation project( ':jaxrs:jaxrs-api' )
     implementation "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:${jacksonVersion}"
     implementation ( "org.jboss.resteasy:resteasy-core:${resteasyVersion}" ) {
-        exclude group: 'org.jboss.spec.javax.annotation'
-        exclude group: 'org.jboss.spec.javax.xml.bind'
         exclude group: 'org.jboss.spec.javax.ws.rs'
-        exclude group: 'io.smallrye.config'
     }
 
     testFixturesApi project( ':jaxrs:jaxrs-api' )
     testFixturesImplementation ( "org.jboss.resteasy:resteasy-core:${resteasyVersion}" ) {
-        exclude group: 'org.jboss.spec.javax.annotation'
-        exclude group: 'org.jboss.spec.javax.xml.bind'
         exclude group: 'org.jboss.spec.javax.ws.rs'
-        exclude group: 'io.smallrye.config'
     }
     testFixturesImplementation "org.eclipse.jetty:jetty-client:${jettyVersion}"
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
@@ -27,7 +21,7 @@ jar {
     bnd( 'Bundle-Name': 'Enonic XP JaxRs - Impl',
          'Export-Package': 'javax.ws.rs.*',
          'Import-Package': '*;resolution:=optional',
-         'Private-Package': 'org.jboss.resteasy.*' + ',' +
+         'Private-Package': 'org.jboss.resteasy.*;-split-package:=merge-first' + ',' +
              'org.reactivestreams.*' + ',' +
              'com.ibm.asyncutil.*' + ',' +
              'META-INF.services.*;-split-package:=merge-first' )

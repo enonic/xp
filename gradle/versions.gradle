@@ -14,7 +14,7 @@ ext {
     jakartaAnnotationApiVersion = '1.3.5'
     jaxrsApiVersion = '2.1.6'
     tikaVersion = '2.1.0'
-    resteasyVersion = '4.7.3.Final'
+    resteasyVersion = '5.0.0.Final'
     hazelcastVersion = '3.12.12'
     hazelcastK8sVersion = '1.5.5'
     mockitoVersion = '4.0.0'
