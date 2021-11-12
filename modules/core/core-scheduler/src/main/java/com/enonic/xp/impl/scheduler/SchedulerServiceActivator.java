@@ -101,7 +101,10 @@ public final class SchedulerServiceActivator
         adminContext().runWith( () -> schedulerConfig.jobs().forEach( job -> {
             try
             {
-                schedulerService.create( job );
+                if ( indexService.isMaster() )
+                {
+                    schedulerService.create( job );
+                }
             }
             catch ( NodeAlreadyExistAtPathException e )
             {
