@@ -4,6 +4,7 @@ dependencies {
     compile project( ':lib:lib-common' )
 
     testImplementation project( ':tools:testing' )
+    testImplementation( testFixtures( project(":core:core-api") ) )
 
     testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${junitJupiterVersion}"
 }

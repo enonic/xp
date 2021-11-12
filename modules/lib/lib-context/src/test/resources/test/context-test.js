@@ -14,7 +14,8 @@ exports.testNoChange = function () {
                 'user:system:anonymous',
                 'role:system.everyone'
             ]
-        }
+        },
+        'attributes': {}
     }, result);
 };
 
@@ -26,7 +27,10 @@ exports.testChange = function () {
             login: 'su',
             idProvider: 'system'
         },
-        principals: ['role:system.myrole']
+        principals: ['role:system.myrole'],
+        attributes: {
+            'attr': 'value'
+        }
     }, function () {
         return context.get();
     });
@@ -49,6 +53,9 @@ exports.testChange = function () {
                 'user:system:su',
                 'role:system.myrole'
             ]
+        },
+        'attributes': {
+            'attr': 'value'
         }
     }, result);
 };
