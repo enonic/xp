@@ -3,6 +3,7 @@ package com.enonic.xp.content;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableList;
@@ -35,6 +36,27 @@ public final class ValidationErrors
     public Stream<ValidationError> stream()
     {
         return errors.stream();
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        final ValidationErrors that = (ValidationErrors) o;
+        return errors.equals( that.errors );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( errors );
     }
 
     public static class Builder

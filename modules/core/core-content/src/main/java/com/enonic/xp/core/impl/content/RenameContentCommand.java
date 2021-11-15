@@ -82,7 +82,7 @@ final class RenameContentCommand
 
         final ValidationErrors validationErrors = validateContent( content );
 
-        if ( content.isValid() == validationErrors.hasErrors() )
+        if ( content.isValid() == validationErrors.hasErrors() || !validationErrors.equals( content.getValidationErrors() ) )
         {
             return updateValidState( content );
         }

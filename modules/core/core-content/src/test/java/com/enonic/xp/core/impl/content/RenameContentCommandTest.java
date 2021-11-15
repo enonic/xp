@@ -5,6 +5,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
@@ -13,8 +14,12 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.ValidationError;
+import com.enonic.xp.content.ValidationErrorCode;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
@@ -82,16 +87,14 @@ class RenameContentCommandTest
         this.partDescriptorService = mock( PartDescriptorService.class );
         this.layoutDescriptorService = mock( LayoutDescriptorService.class );
 
-        this.contentDataSerializer = ContentDataSerializer.create().
-            layoutDescriptorService( layoutDescriptorService ).
-            pageDescriptorService( pageDescriptorService ).
-            partDescriptorService( partDescriptorService ).
-            build();
+        this.contentDataSerializer = ContentDataSerializer.create()
+            .layoutDescriptorService( layoutDescriptorService )
+            .pageDescriptorService( pageDescriptorService )
+            .partDescriptorService( partDescriptorService )
+            .build();
 
-        final ContentType contentType = ContentType.create().
-            superType( ContentTypeName.documentMedia() ).
-            name( ContentTypeName.dataMedia() ).
-            build();
+        final ContentType contentType =
+            ContentType.create().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build();
 
         when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
@@ -132,7 +135,22 @@ class RenameContentCommandTest
         createCommand( params ).execute();
 
         verify( contentService, never() ).update( isA( UpdateContentParams.class ) );
+    }
 
+    @Test
+    void test_valid_not_changed_but_fiwer_errors()
+    {
+        final Content content = createContent( false );
+
+        when( translator.fromNode( mockNode, false ) ).thenReturn( content );
+        when( translator.fromNode( mockNode, true ) ).thenReturn( content );
+
+        final RenameContentParams params =
+            RenameContentParams.create().contentId( content.getId() ).newName( ContentName.unnamed() ).build();
+
+        createCommand( params ).execute();
+
+        verify( contentService, never() ).update( isA( UpdateContentParams.class ) );
     }
 
     @Test
@@ -155,16 +173,23 @@ class RenameContentCommandTest
         assertEquals( repositoryId, exception.getRepositoryId() );
     }
 
-    private Content createContent( final Boolean valid )
+    private Content createContent( final boolean valid )
     {
-        return Content.create().
-            id( ContentId.from( "testId" ) ).
-            path( "/mycontent" ).
-            creator( PrincipalKey.from( "user:system:anonymous" ) ).
-            type( ContentTypeName.folder() ).
-            data( new PropertyTree() ).
-            valid( valid ).
-            build();
+        return Content.create()
+            .id( ContentId.from( "testId" ) )
+            .path( "/mycontent" )
+            .creator( PrincipalKey.from( "user:system:anonymous" ) )
+            .type( ContentTypeName.folder() )
+            .data( new PropertyTree() )
+            .valid( valid )
+            .validationErrors( valid
+                                   ? null
+                                   : ValidationErrors.create()
+                                       .add(
+                                           ValidationError.dataError( ValidationErrorCode.from( ApplicationKey.from( "app" ), "SOME_CODE" ),
+                                                                      PropertyPath.from( "" ) ).build() )
+                                       .build() )
+            .build();
     }
 
     private RenameContentCommand createCommand( final RenameContentParams params )

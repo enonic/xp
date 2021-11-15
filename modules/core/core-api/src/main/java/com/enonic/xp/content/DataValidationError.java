@@ -21,4 +21,29 @@ public final class DataValidationError
     {
         return propertyPath;
     }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        if ( !super.equals( o ) )
+        {
+            return false;
+        }
+        final DataValidationError that = (DataValidationError) o;
+        return propertyPath.equals( that.propertyPath );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( super.hashCode(), propertyPath );
+    }
 }
