@@ -6,6 +6,8 @@ import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.util.BinaryReference;
@@ -123,5 +125,22 @@ public class ValidationErrorTest
         assertAll( () -> assertEquals( "some.message", validationError.getI18n() ),
                    () -> assertEquals( Arrays.asList( "a", 1 ), validationError.getArgs() ),
                    () -> assertEquals( "{0}", validationError.getMessage() ) );
+    }
+
+    @Test
+    public void equalsContract()
+    {
+        EqualsVerifier.forClass( ValidationError.class ).usingGetClass().withNonnullFields( "args" ).verify();
+
+        EqualsVerifier.forClass( AttachmentValidationError.class )
+            .withRedefinedSuperclass()
+            .withNonnullFields( "args", "attachment" )
+            .verify();
+
+        EqualsVerifier.forClass( DataValidationError.class )
+            .withRedefinedSuperclass()
+            .withPrefabValues( PropertyPath.class, PropertyPath.from( "red" ), PropertyPath.from( "blue" ) )
+            .withNonnullFields( "args", "propertyPath" )
+            .verify();
     }
 }
