@@ -47,6 +47,8 @@ public class AbstractQuery
 
     private final SearchOptimizer searchOptimizer;
 
+    private final SearchPreference searchPreference;
+
     private final ImmutableList<OrderExpr> orderBys;
 
     private final boolean explain;
@@ -65,6 +67,7 @@ public class AbstractQuery
         this.postFilters = builder.postFilters.build();
         this.queryFilters = builder.queryFilters.build();
         this.searchOptimizer = builder.searchOptimizer;
+        this.searchPreference = builder.searchPreference;
         this.explain = builder.explain;
     }
 
@@ -158,6 +161,11 @@ public class AbstractQuery
         return searchOptimizer;
     }
 
+    public SearchPreference getSearchPreference()
+    {
+        return searchPreference;
+    }
+
     public abstract static class Builder<B extends Builder>
     {
         private final Filters.Builder postFilters = Filters.create();
@@ -183,6 +191,8 @@ public class AbstractQuery
         private SearchMode searchMode = SearchMode.SEARCH;
 
         private SearchOptimizer searchOptimizer = SearchOptimizer.SPEED;
+
+        private SearchPreference searchPreference;
 
         private boolean explain = false;
 
@@ -320,6 +330,13 @@ public class AbstractQuery
         public B searchOptimizer( SearchOptimizer searchOptimizer )
         {
             this.searchOptimizer = searchOptimizer;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B searchPreference( SearchPreference searchPreference )
+        {
+            this.searchPreference = searchPreference;
             return (B) this;
         }
     }

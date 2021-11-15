@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.storage;
 
+import com.enonic.xp.node.SearchPreference;
 import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.StorageSource;
 
 public abstract class AbstractGetRequest
@@ -50,7 +50,7 @@ public abstract class AbstractGetRequest
         return timeout + "s";
     }
 
-    public static class Builder<B extends Builder>
+    public static class Builder<B extends Builder<B>>
     {
         private SearchPreference searchPreference = SearchPreference.LOCAL;
 

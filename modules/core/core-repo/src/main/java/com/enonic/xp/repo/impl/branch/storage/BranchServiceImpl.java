@@ -17,7 +17,6 @@ import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
@@ -25,7 +24,6 @@ import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.branch.BranchService;
@@ -36,7 +34,6 @@ import com.enonic.xp.repo.impl.cache.BranchCachePath;
 import com.enonic.xp.repo.impl.cache.BranchPath;
 import com.enonic.xp.repo.impl.search.SearchDao;
 import com.enonic.xp.repo.impl.search.SearchRequest;
-import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.DeleteRequests;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
@@ -242,31 +239,30 @@ public class BranchServiceImpl
             return getFromCache( nodePath, context, branchDocumentId );
         }
 
-        final NodeBranchQuery query = NodeBranchQuery.create().
-            addQueryFilter( ValueFilter.create().
-                fieldName( NodeIndexPath.PATH.getPath() ).
-                addValue( ValueFactory.newString( nodePath.toString() ) ).build() ).
-            size( 1 ).
-            build();
+        final NodeBranchQuery query = NodeBranchQuery.create()
+            .addQueryFilter( ValueFilter.create()
+                                 .fieldName( BranchIndexPath.PATH.getPath() )
+                                 .addValue( ValueFactory.newString( nodePath.toString() ) )
+                                 .build() )
+            .addQueryFilter( ValueFilter.create()
+                                 .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
+                                 .addValue( ValueFactory.newString( context.getBranch().getValue() ) )
+                                 .build() )
+            .size( 1 )
+            .searchPreference( context.getSearchPreference() )
+            .build();
 
-        final SearchResult result = this.searchDao.search( SearchRequest.create().
-            searchSource( SingleRepoSearchSource.from( context ) ).
-            query( query ).
-            build() );
+        final SearchResult result = this.searchDao.search( SearchRequest.create()
+                                                               .searchSource( SingleRepoStorageSource.create( context.getRepositoryId(),
+                                                                                                              SingleRepoStorageSource.Type.BRANCH ) )
+                                                               .returnFields( BRANCH_RETURN_FIELDS )
+                                                               .query( query )
+                                                               .build() );
 
         if ( !result.isEmpty() )
         {
-            final SearchHit firstHit = result.getHits().getFirst();
-
-            final NodeId nodeId = NodeId.from( firstHit.getId() );
-            final NodeBranchEntry nodeBranchEntry = doGetById( nodeId, context );
-
-            if ( nodeBranchEntry == null )
-            {
-                return null;
-            }
-
-            doCache( context, nodeBranchEntry.getNodePath(), nodeId );
+            final NodeBranchEntry nodeBranchEntry = NodeBranchVersionFactory.create( result.getHits().getFirst().getReturnValues() );
+            doCache( context, nodeBranchEntry.getNodePath(), nodeBranchEntry.getNodeId() );
 
             return nodeBranchEntry;
         }

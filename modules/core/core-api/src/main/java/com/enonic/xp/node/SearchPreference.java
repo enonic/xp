@@ -1,8 +1,8 @@
-package com.enonic.xp.repo.impl;
+package com.enonic.xp.node;
 
 public enum SearchPreference
 {
-    LOCAL( "_local" );
+    LOCAL( "_local" ), PRIMARY( "_primary" );
 
     private final String name;
 

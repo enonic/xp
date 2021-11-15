@@ -9,11 +9,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.node.SearchOptimizer;
+import com.enonic.xp.node.SearchPreference;
 import com.enonic.xp.query.highlight.constants.Encoder;
 import com.enonic.xp.query.highlight.constants.Fragmenter;
 import com.enonic.xp.query.highlight.constants.Order;
 import com.enonic.xp.query.highlight.constants.TagsSchema;
-import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticHighlightQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 
@@ -57,11 +57,11 @@ public class SearchRequestBuilderFactory
     {
         final SearchRequestBuilder searchRequestBuilder = initRequestBuilder();
 
-        searchRequestBuilder.
-            setExplain( query.isExplain() ).
-            setSearchType(
-                query.getSearchOptimizer().equals( SearchOptimizer.ACCURACY ) ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT ).
-            setPreference( SearchPreference.LOCAL.getName() );
+        searchRequestBuilder.setExplain( query.isExplain() )
+            .setSearchType(
+                query.getSearchOptimizer().equals( SearchOptimizer.ACCURACY ) ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT )
+            .setPreference(
+                query.getSearchPreference() != null ? query.getSearchPreference().toString() : SearchPreference.LOCAL.toString() );
 
         query.getAggregations().forEach( searchRequestBuilder::addAggregation );
         query.getSuggestions().forEach( searchRequestBuilder::addSuggestion );

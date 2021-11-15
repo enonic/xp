@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
+import com.enonic.xp.node.SearchPreference;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -20,12 +21,15 @@ public class InternalContext
 
     private final boolean skipConstraints;
 
+    private final SearchPreference searchPreference;
+
     private InternalContext( final Builder builder )
     {
         this.repositoryId = builder.repositoryId;
         this.branch = builder.branch;
         this.principalsKeys = builder.principalsKeys;
         this.skipConstraints = builder.skipConstraints;
+        this.searchPreference = builder.searchPreference;
     }
 
     public static InternalContext from( final Context context )
@@ -57,6 +61,15 @@ public class InternalContext
         return skipConstraints;
     }
 
+    public static Builder create( final InternalContext context )
+    {
+        return create().principalsKeys( context.getPrincipalsKeys() )
+            .branch( context.getBranch() )
+            .repositoryId( context.getRepositoryId() )
+            .skipConstraints( context.skipConstraints )
+            .searchPreference( context.searchPreference );
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -64,20 +77,15 @@ public class InternalContext
 
     public static Builder create( final Context context )
     {
-        return create().
-            authInfo( context.getAuthInfo() ).
-            principalsKeys( context.getAuthInfo() != null ? context.getAuthInfo().getPrincipals() : PrincipalKeys.empty() ).
-            branch( context.getBranch() ).
-            repositoryId( context.getRepositoryId() );
+        return create().authInfo( context.getAuthInfo() )
+            .principalsKeys( context.getAuthInfo() != null ? context.getAuthInfo().getPrincipals() : PrincipalKeys.empty() )
+            .branch( context.getBranch() )
+            .repositoryId( context.getRepositoryId() );
     }
 
-    public static Builder create( final InternalContext context )
+    public SearchPreference getSearchPreference()
     {
-        return create().
-            principalsKeys( context.getPrincipalsKeys() ).
-            branch( context.getBranch() ).
-            repositoryId( context.getRepositoryId() ).
-            skipConstraints( context.skipConstraints );
+        return searchPreference;
     }
 
     @Override
@@ -93,13 +101,14 @@ public class InternalContext
         }
         final InternalContext that = (InternalContext) o;
         return skipConstraints == that.skipConstraints && Objects.equals( repositoryId, that.repositoryId ) &&
-            Objects.equals( branch, that.branch ) && Objects.equals( principalsKeys, that.principalsKeys );
+            Objects.equals( branch, that.branch ) && Objects.equals( principalsKeys, that.principalsKeys ) &&
+            Objects.equals( searchPreference, that.searchPreference );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( repositoryId, branch, principalsKeys, skipConstraints );
+        return Objects.hash( repositoryId, branch, principalsKeys, skipConstraints, searchPreference );
     }
 
     public static final class Builder
@@ -111,6 +120,8 @@ public class InternalContext
         private PrincipalKeys principalsKeys;
 
         private boolean skipConstraints;
+
+        private SearchPreference searchPreference;
 
         private Builder()
         {
@@ -143,6 +154,12 @@ public class InternalContext
         public Builder skipConstraints( final boolean skip )
         {
             this.skipConstraints = skip;
+            return this;
+        }
+
+        public Builder searchPreference( final SearchPreference searchPreference )
+        {
+            this.searchPreference = searchPreference;
             return this;
         }
 

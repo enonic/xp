@@ -93,6 +93,8 @@ public class MoveNodeCommand
 
         checkContextUserPermissionOrAdmin( existingNode, newParentPath );
 
+        verifyNoExistingAtNewPath( newParentPath, newNodeName );
+
         doMoveNode( newParentPath, newNodeName, nodeId );
 
         RefreshCommand.create().refreshMode( RefreshMode.ALL ).indexServiceInternal( this.indexServiceInternal ).build().execute();
@@ -171,12 +173,7 @@ public class MoveNodeCommand
                                                                                                    InternalContext.from(
                                                                                                        ContextAccessor.current() ) );
 
-        final NodeName nodeName = ( newNodeName != null ) ? newNodeName : persistedNode.name();
-
-        verifyNoExistingAtNewPath( newParentPath, newNodeName );
-
-        final Node.Builder nodeToMoveBuilder = Node.create( persistedNode )
-            .name( nodeName )
+        final Node.Builder nodeToMoveBuilder = Node.create( persistedNode ).name( newNodeName )
             .data( processor.process( persistedNode.data() ) )
             .parentPath( newParentPath )
             .indexConfigDocument( persistedNode.getIndexConfigDocument() )
@@ -274,11 +271,7 @@ public class MoveNodeCommand
     {
         final NodePath newNodePath = NodePath.create( newParentPath, newNodeName.toString() ).build();
 
-        CheckNodeExistsCommand.create( this ).
-            nodePath( newNodePath ).
-            throwIfExists().
-            build().
-            execute();
+        CheckNodeExistsCommand.create( this ).nodePath( newNodePath ).throwIfExists().build().execute();
     }
 
     public static class Builder

@@ -6,6 +6,7 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.SearchOptimizer;
+import com.enonic.xp.node.SearchPreference;
 import com.enonic.xp.query.Query;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.ValueFilter;
@@ -35,6 +36,12 @@ class NodeQueryTranslator
     public SearchOptimizer getSearchOptimizer()
     {
         return nodeQuery.getSearchOptimizer();
+    }
+
+    @Override
+    public SearchPreference getSearchPreference()
+    {
+        return this.nodeQuery.getSearchPreference();
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.SearchOptimizer;
+import com.enonic.xp.node.SearchPreference;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.QueryBuilderFactory;
@@ -45,25 +46,31 @@ class NodeVersionQueryTranslator
     @Override
     public QueryBuilder createQueryBuilder( final Filters additionalFilters )
     {
-        final QueryBuilderFactory.Builder queryBuilderBuilder = QueryBuilderFactory.newBuilder().
-            queryExpr( this.query.getQuery() ).
-            addQueryFilters( this.query.getQueryFilters() ).
-            addQueryFilters( additionalFilters ).
-            fieldNameResolver( this.fieldNameResolver );
+        final QueryBuilderFactory.Builder queryBuilderBuilder = QueryBuilderFactory.newBuilder()
+            .queryExpr( this.query.getQuery() )
+            .addQueryFilters( this.query.getQueryFilters() )
+            .addQueryFilters( additionalFilters )
+            .fieldNameResolver( this.fieldNameResolver );
 
         addNodeIdFilter( this.query, queryBuilderBuilder );
 
         return queryBuilderBuilder.build().create();
     }
 
+    @Override
+    public SearchPreference getSearchPreference()
+    {
+        return this.query.getSearchPreference();
+    }
+
     private void addNodeIdFilter( final NodeVersionQuery nodeVersionQuery, final QueryBuilderFactory.Builder queryBuilderBuilder )
     {
         if ( nodeVersionQuery.getNodeId() != null )
         {
-            queryBuilderBuilder.addQueryFilter( ValueFilter.create().
-                fieldName( VersionIndexPath.NODE_ID.getPath() ).
-                addValue( ValueFactory.newString( nodeVersionQuery.getNodeId().toString() ) ).
-                build() );
+            queryBuilderBuilder.addQueryFilter( ValueFilter.create()
+                                                    .fieldName( VersionIndexPath.NODE_ID.getPath() )
+                                                    .addValue( ValueFactory.newString( nodeVersionQuery.getNodeId().toString() ) )
+                                                    .build() );
         }
     }
 }

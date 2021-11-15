@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.xp.node.SearchOptimizer;
+import com.enonic.xp.node.SearchPreference;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.QueryBuilderFactory;
@@ -40,13 +41,19 @@ class NodeBranchQueryTranslator
     }
 
     @Override
+    public SearchPreference getSearchPreference()
+    {
+        return this.query.getSearchPreference();
+    }
+
+    @Override
     public QueryBuilder createQueryBuilder( final Filters additionalFilters )
     {
-        final QueryBuilderFactory.Builder queryBuilderBuilder = QueryBuilderFactory.newBuilder().
-            queryExpr( this.query.getQuery() ).
-            addQueryFilters( this.query.getQueryFilters() ).
-            addQueryFilters( additionalFilters ).
-            fieldNameResolver( this.fieldNameResolver );
+        final QueryBuilderFactory.Builder queryBuilderBuilder = QueryBuilderFactory.newBuilder()
+            .queryExpr( this.query.getQuery() )
+            .addQueryFilters( this.query.getQueryFilters() )
+            .addQueryFilters( additionalFilters )
+            .fieldNameResolver( this.fieldNameResolver );
 
         return queryBuilderBuilder.build().create();
     }

@@ -62,7 +62,6 @@ public class VersionServiceImpl
             id( nodeVersionId.toString() ).
             returnFields( VERSION_RETURN_FIELDS ).
             storageSettings( createStorageSettings( context ) ).
-            routing( nodeId.toString() ).
             build();
 
         final GetResult getResult = this.storageDao.getById( getByIdRequest );

@@ -6,6 +6,8 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.node.SearchPreference;
 import com.enonic.xp.repo.impl.InternalContext;
 
 public class CheckNodeExistsCommand
@@ -15,14 +17,14 @@ public class CheckNodeExistsCommand
 
     private final boolean throwIfExists;
 
-    private final NodeId skipThrowIfSameId;
+    private final Mode mode;
 
     private CheckNodeExistsCommand( Builder builder )
     {
         super( builder );
         nodePath = builder.nodePath;
         throwIfExists = builder.throwIfExists;
-        skipThrowIfSameId = builder.skipThrowIfSameId;
+        mode = builder.mode;
     }
 
     public static Builder create()
@@ -37,21 +39,28 @@ public class CheckNodeExistsCommand
 
     public boolean execute()
     {
-        final InternalContext context = InternalContext.from( ContextAccessor.current() );
+        final InternalContext context = InternalContext.create( ContextAccessor.current() )
+            .searchPreference( Mode.ACCURACY.equals( mode ) ? SearchPreference.PRIMARY : SearchPreference.LOCAL )
+            .build();
+
+        if ( Mode.ACCURACY.equals( mode ) )
+        {
+            RefreshCommand.create().indexServiceInternal( this.indexServiceInternal ).refreshMode( RefreshMode.STORAGE ).build().execute();
+        }
+
         final NodeId found = nodeStorageService.getIdForPath( nodePath, context );
 
-        if ( throwIfExists && found != null )
+        if ( found != null && throwIfExists )
         {
-            if ( skipThrowIfSameId == null )
-            {
-                throw new NodeAlreadyExistAtPathException( nodePath, context.getRepositoryId(), context.getBranch() );
-            }
-            else if ( !found.equals( skipThrowIfSameId ) )
-            {
-                throw new NodeAlreadyExistAtPathException( nodePath, context.getRepositoryId(), context.getBranch() );
-            }
+            throw new NodeAlreadyExistAtPathException( nodePath, context.getRepositoryId(), context.getBranch() );
         }
+
         return found != null;
+    }
+
+    public enum Mode
+    {
+        SPEED, ACCURACY
     }
 
     public static final class Builder
@@ -61,7 +70,7 @@ public class CheckNodeExistsCommand
 
         private boolean throwIfExists;
 
-        private NodeId skipThrowIfSameId;
+        private Mode mode = Mode.ACCURACY;
 
         private Builder()
         {
@@ -85,9 +94,9 @@ public class CheckNodeExistsCommand
             return this;
         }
 
-        public Builder skipThrowIfSameId( final NodeId skipThrowIfSameId )
+        public Builder mode( final Mode mode )
         {
-            this.skipThrowIfSameId = skipThrowIfSameId;
+            this.mode = mode;
             return this;
         }
 
