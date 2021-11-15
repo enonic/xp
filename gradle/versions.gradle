@@ -18,5 +18,5 @@ ext {
     hazelcastVersion = '3.12.12'
     hazelcastK8sVersion = '1.5.5'
     mockitoVersion = '4.0.0'
-    cronUtilsVersion = '9.1.5'
+    cronUtilsVersion = '9.1.6'
 }
