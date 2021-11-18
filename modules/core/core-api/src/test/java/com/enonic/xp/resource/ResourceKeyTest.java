@@ -2,10 +2,11 @@ package com.enonic.xp.resource;
 
 import org.junit.jupiter.api.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import com.enonic.xp.app.ApplicationKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -25,8 +26,7 @@ public class ResourceKeyTest
     }
 
     private void fromUri( final String input, final String uri, final String application, final String path, final String name,
-                          final String ext,
-                          final boolean root )
+                          final String ext, final boolean root )
     {
         final ResourceKey key = ResourceKey.from( input );
 
@@ -69,23 +69,7 @@ public class ResourceKeyTest
     @Test
     public void invalidUri()
     {
-        assertThrows(IllegalArgumentException.class, () -> ResourceKey.from( "test" ));
-    }
-
-    @Test
-    public void testEquals()
-    {
-        testEquals( "myapplication-1.0.0:/", "myapplication-1.0.0:/", true );
-        testEquals( "myapplication-1.0.0:", "myapplication-1.0.0:/", true );
-        testEquals( "myapplication-1.0.0:/a/b", "myapplication-1.0.0:/a/b", true );
-        testEquals( "myapplication-1.0.0:/a", "myapplication-1.0.0:/a/b", false );
-        testEquals( "myapplication-1.0.0:/a/b", "myapplication-1.1.0:/a/b", false );
-    }
-
-    private void testEquals( final String key1, final String key2, final boolean flag )
-    {
-        final boolean result = ResourceKey.from( key1 ).equals( ResourceKey.from( key2 ) );
-        assertEquals( flag, result );
+        assertThrows( IllegalArgumentException.class, () -> ResourceKey.from( "test" ) );
     }
 
     @Test
@@ -108,13 +92,8 @@ public class ResourceKeyTest
     }
 
     @Test
-    public void testHashCode()
+    void equalsContract()
     {
-        final ResourceKey key1 = ResourceKey.from( "myapplication-1.0.0:/a/b" );
-        final ResourceKey key2 = ResourceKey.from( "myapplication-1.0.0:/a/b" );
-        final ResourceKey key3 = ResourceKey.from( "myapplication-1.0.0:/a" );
-
-        assertEquals( key1.hashCode(), key2.hashCode() );
-        assertNotEquals( key1.hashCode(), key3.hashCode() );
+        EqualsVerifier.forClass( ResourceKey.class ).withNonnullFields( "applicationKey", "path" ).verify();
     }
 }

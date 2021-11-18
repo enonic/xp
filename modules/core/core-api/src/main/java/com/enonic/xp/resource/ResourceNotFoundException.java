@@ -11,7 +11,7 @@ public final class ResourceNotFoundException
 
     public ResourceNotFoundException( final ResourceKey resource )
     {
-        super( "Resource [{0}] was not found", resource.getUri() );
+        super( "Resource [{0}] was not found", resource );
         this.resource = resource;
     }
 
