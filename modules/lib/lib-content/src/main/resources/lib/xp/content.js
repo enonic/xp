@@ -430,7 +430,7 @@ exports.move = function (params) {
  * @param {object} params JSON with the parameters.
  * @param {string} params.content Path or id of the content to be archived.
  *
- * @returns {string[]} List with ids of the content that were archived.
+ * @returns {string[]} List with ids of the contents that were archived.
  */
 exports.archive = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.ArchiveContentHandler');
@@ -447,7 +447,7 @@ exports.archive = function (params) {
  * @param {string} params.content Path or id of the content to be restored.
  * @param {string} params.path Path of parent for restored content.
  *
- * @returns {string[]} List with ids of the content that were archived.
+ * @returns {string[]} List with ids of the contents that were restored.
  */
 exports.restore = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.RestoreContentHandler');
