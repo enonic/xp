@@ -92,13 +92,23 @@ public class ContentNodeTranslator
         final ContentPath parentContentPath = getParent( node.path() );
 
         final Content.Builder<?> builder = contentDataSerializer.fromData( node.data().getRoot() );
-        builder.id( contentId ).parentPath( parentContentPath ).name( node.name().toString() )
+
+        builder.id( contentId )
+            .parentPath( parentContentPath )
+            .name( node.name().toString() )
             .childOrder( node.getChildOrder() )
             .permissions( node.getPermissions() )
             .inheritPermissions( node.inheritsPermissions() )
             .hasChildren( hasChildren )
             .contentState( ContentState.from( node.getNodeState().value() ) )
             .manualOrderValue( node.getManualOrderValue() );
+
+        final boolean isRoot = NodePath.ROOT.equals( node.parentPath() );
+
+        if ( isRoot )
+        {
+            builder.root();
+        }
 
         return builder.build();
     }
