@@ -21,11 +21,11 @@ final class MappingFilterHandlerWorker
 
     private final WebHandlerChain webHandlerChain;
 
-    protected ResourceService resourceService;
+    ResourceService resourceService;
 
-    protected FilterScriptFactory filterScriptFactory;
+    FilterScriptFactory filterScriptFactory;
 
-    protected ControllerMappingDescriptor mappingDescriptor;
+    ControllerMappingDescriptor mappingDescriptor;
 
     MappingFilterHandlerWorker( final PortalRequest request, final WebResponse response, final WebHandlerChain webHandlerChain )
     {
@@ -38,8 +38,6 @@ final class MappingFilterHandlerWorker
     public PortalResponse execute()
         throws Exception
     {
-        this.request.setApplicationKey( mappingDescriptor.getApplication() );
-
         final Trace trace = Tracer.current();
         if ( trace != null )
         {
