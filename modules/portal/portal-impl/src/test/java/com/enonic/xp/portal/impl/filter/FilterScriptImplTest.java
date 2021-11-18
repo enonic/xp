@@ -167,7 +167,6 @@ public class FilterScriptImplTest
         catch ( ResourceProblemException e )
         {
             assertEquals( "myapplication:/filter/duplicated_next_call.js", e.getResource().toString() );
-            assertEquals( 3, e.getLineNumber() );
             assertEquals( "Filter 'next' function was called multiple times", e.getMessage() );
         }
     }

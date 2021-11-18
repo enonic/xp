@@ -23,13 +23,13 @@ import com.enonic.xp.web.websocket.WebSocketEndpoint;
 final class MappingHandlerWorker
     extends PortalHandlerWorker<PortalRequest>
 {
-    protected ResourceService resourceService;
+    ResourceService resourceService;
 
-    protected ControllerScriptFactory controllerScriptFactory;
+    ControllerScriptFactory controllerScriptFactory;
 
-    protected ControllerMappingDescriptor mappingDescriptor;
+    ControllerMappingDescriptor mappingDescriptor;
 
-    protected RendererDelegate rendererDelegate;
+    RendererDelegate rendererDelegate;
 
     MappingHandlerWorker( final PortalRequest request )
     {
@@ -42,8 +42,6 @@ final class MappingHandlerWorker
     {
         final ControllerScript controllerScript = getScript();
 
-        this.request.setApplicationKey( mappingDescriptor.getApplication() );
-
         final Trace trace = Tracer.current();
         if ( trace != null )
         {
@@ -55,7 +53,7 @@ final class MappingHandlerWorker
 
         final WebSocketConfig webSocketConfig = portalResponse.getWebSocket();
         final WebSocketContext webSocketContext = this.request.getWebSocketContext();
-        if ( ( webSocketContext != null ) && ( webSocketConfig != null ) )
+        if ( webSocketContext != null && webSocketConfig != null )
         {
             final WebSocketEndpoint webSocketEndpoint =
                 newWebSocketEndpoint( webSocketConfig, this::getScript, request.getApplicationKey() );
@@ -79,7 +77,6 @@ final class MappingHandlerWorker
         }
         return this.controllerScriptFactory.fromScript( resource.getKey() );
     }
-
 
     private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final Supplier<ControllerScript> script,
                                                     final ApplicationKey app )

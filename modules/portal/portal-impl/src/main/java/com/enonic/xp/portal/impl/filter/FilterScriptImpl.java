@@ -27,13 +27,10 @@ final class FilterScriptImpl
 
     private final PortalScriptService scriptService;
 
-    private final ResourceKey script;
-
     FilterScriptImpl( final PortalScriptService scriptService, final ResourceKey script )
     {
         this.scriptExports = scriptService.execute( script );
         this.scriptService = scriptService;
-        this.script = script;
     }
 
     @Override
@@ -71,26 +68,16 @@ final class FilterScriptImpl
         if ( !this.scriptExports.hasMethod( FILTER_SCRIPT_METHOD ) )
         {
             throw new WebException( HttpStatus.NOT_IMPLEMENTED,
-                                    "Missing exported function '" + FILTER_SCRIPT_METHOD + "' in filter script: " + script.getUri() );
+                                    "Missing exported function '" + FILTER_SCRIPT_METHOD + "' in filter script: " +
+                                        scriptExports.getScript() );
         }
 
         Tracer.withCurrent( this::addTraceInfo );
         final PortalRequestMapper requestMapper = new PortalRequestMapper( request );
         final FilterNextFunctionWrapper nextHandler =
-            new FilterNextFunctionWrapper( webHandlerChain, request, response, scriptExports.getScript(), this::toScriptValue,
-                                           this::toNativeObject );
+            new FilterNextFunctionWrapper( webHandlerChain, request, response, scriptExports.getScript(), scriptService );
 
         final ScriptValue result = this.scriptExports.executeMethod( FILTER_SCRIPT_METHOD, requestMapper, nextHandler );
         return new PortalResponseSerializer( result ).serialize();
-    }
-
-    private ScriptValue toScriptValue( final Object value )
-    {
-        return scriptService.toScriptValue( this.script, value );
-    }
-
-    private Object toNativeObject( final Object value )
-    {
-        return scriptService.toNativeObject( this.script, value );
     }
 }

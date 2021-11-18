@@ -122,6 +122,7 @@ public final class MappingHandler
             request.setContent( content );
             request.setSite( site );
             request.setContextPath( request.getBaseUri() + "/" + request.getBranch() + site.getPath() );
+            request.setApplicationKey( mapping.getApplication() );
 
             if ( mapping.isController() )
             {
