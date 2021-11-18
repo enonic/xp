@@ -11,8 +11,6 @@ import com.enonic.xp.app.ApplicationKey;
 @PublicApi
 public final class ResourceKey
 {
-    private final String uri;
-
     private final ApplicationKey applicationKey;
 
     private final String path;
@@ -21,12 +19,11 @@ public final class ResourceKey
     {
         this.applicationKey = applicationKey;
         this.path = path;
-        this.uri = this.applicationKey.toString() + ":" + this.path;
     }
 
     public String getUri()
     {
-        return this.uri;
+        return this.applicationKey + ":" + this.path;
     }
 
     public ApplicationKey getApplicationKey()
@@ -53,12 +50,7 @@ public final class ResourceKey
     public String getExtension()
     {
         final int pos = this.path.lastIndexOf( '.' );
-        if ( pos > 0 )
-        {
-            return this.path.substring( pos + 1 );
-        }
-
-        return null;
+        return pos > 0 ? this.path.substring( pos + 1 ) : null;
     }
 
     public boolean isRoot()
@@ -84,7 +76,7 @@ public final class ResourceKey
     @Override
     public String toString()
     {
-        return uri;
+        return getUri();
     }
 
     @Override
@@ -94,18 +86,18 @@ public final class ResourceKey
         {
             return true;
         }
-        if ( !( o instanceof ResourceKey ) )
+        if ( o == null || getClass() != o.getClass() )
         {
             return false;
         }
         final ResourceKey that = (ResourceKey) o;
-        return uri.equals( that.uri );
+        return applicationKey.equals( that.applicationKey ) && path.equals( that.path );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( uri );
+        return Objects.hash( applicationKey, path );
     }
 
     private static String normalizePath( final String path )
