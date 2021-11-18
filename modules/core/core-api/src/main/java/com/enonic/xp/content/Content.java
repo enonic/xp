@@ -96,16 +96,6 @@ public class Content
 
     protected Content( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.name, "name is required for a Content" );
-        Preconditions.checkNotNull( builder.parentPath, "parentPath is required for a Content" );
-        Preconditions.checkNotNull( builder.data, "data is required for a Content" );
-
-        if ( builder.page != null )
-        {
-            Preconditions.checkArgument( !( builder.page.getDescriptor() != null && builder.page.getTemplate() != null ),
-                                         "A Page cannot have both have a descriptor and a template set" );
-        }
-
         if ( builder.type == null )
         {
             builder.type = ContentTypeName.unstructured();
@@ -115,9 +105,9 @@ public class Content
         this.validationErrors = builder.validationErrors;
         this.displayName = builder.displayName;
         this.type = builder.type;
-        this.name = builder.name;
-        this.parentPath = builder.parentPath;
-        this.path = ContentPath.from( builder.parentPath, builder.name.toString() );
+        this.name = builder.root ? null : builder.name;
+        this.parentPath = builder.root ? ContentPath.ROOT : builder.parentPath;
+        this.path = builder.root ? ContentPath.ROOT : ContentPath.from( builder.parentPath, builder.name.toString() );
         this.id = builder.id;
         this.data = builder.data;
         this.attachments = builder.attachments;
@@ -415,14 +405,14 @@ public class Content
         return Objects.equals( id, other.id ) && Objects.equals( name, other.name ) && Objects.equals( parentPath, other.parentPath ) &&
             Objects.equals( displayName, other.displayName ) && Objects.equals( type, other.type ) &&
             Objects.equals( valid, other.valid ) && Objects.equals( modifier, other.modifier ) &&
-            Objects.equals( validationErrors, other.validationErrors ) &&
-            Objects.equals( creator, other.creator ) && Objects.equals( owner, other.owner ) &&
-            Objects.equals( createdTime, other.createdTime ) && Objects.equals( modifiedTime, other.modifiedTime ) &&
-            Objects.equals( hasChildren, other.hasChildren ) && Objects.equals( inherit, other.inherit ) &&
-            Objects.equals( originProject, other.originProject ) && Objects.equals( inheritPermissions, other.inheritPermissions ) &&
-            Objects.equals( childOrder, other.childOrder ) && Objects.equals( thumbnail, other.thumbnail ) &&
-            Objects.equals( permissions, other.permissions ) && Objects.equals( attachments, other.attachments ) &&
-            Objects.equals( data, other.data ) && Objects.equals( extraDatas, other.extraDatas ) && Objects.equals( page, other.page ) &&
+            Objects.equals( validationErrors, other.validationErrors ) && Objects.equals( creator, other.creator ) &&
+            Objects.equals( owner, other.owner ) && Objects.equals( createdTime, other.createdTime ) &&
+            Objects.equals( modifiedTime, other.modifiedTime ) && Objects.equals( hasChildren, other.hasChildren ) &&
+            Objects.equals( inherit, other.inherit ) && Objects.equals( originProject, other.originProject ) &&
+            Objects.equals( inheritPermissions, other.inheritPermissions ) && Objects.equals( childOrder, other.childOrder ) &&
+            Objects.equals( thumbnail, other.thumbnail ) && Objects.equals( permissions, other.permissions ) &&
+            Objects.equals( attachments, other.attachments ) && Objects.equals( data, other.data ) &&
+            Objects.equals( extraDatas, other.extraDatas ) && Objects.equals( page, other.page ) &&
             Objects.equals( language, other.language ) && Objects.equals( contentState, other.contentState ) &&
             Objects.equals( publishInfo, other.publishInfo ) && Objects.equals( processedReferences, other.processedReferences ) &&
             Objects.equals( workflowInfo, other.workflowInfo ) && Objects.equals( manualOrderValue, other.manualOrderValue ) &&
@@ -507,6 +497,7 @@ public class Content
 
         protected PrincipalKey archivedBy;
 
+        protected boolean root;
 
         protected Builder()
         {
@@ -551,6 +542,7 @@ public class Content
             this.originalName = source.originalName;
             this.originalParentPath = source.originalParentPath;
             this.archivedTime = source.archivedTime;
+            this.root = source.name == null;
         }
 
         public BUILDER parentPath( final ContentPath path )
@@ -581,6 +573,12 @@ public class Content
             this.parentPath = path.getParentPath() != null ? path.getParentPath().asAbsolute() : null;
             Preconditions.checkArgument( path.elementCount() > 0, "No content can be \"root content\": " + path );
             this.name = ContentName.from( path.getElement( path.elementCount() - 1 ) );
+            return (BUILDER) this;
+        }
+
+        public BUILDER root()
+        {
+            this.root = true;
             return (BUILDER) this;
         }
 
@@ -802,8 +800,25 @@ public class Content
             return (BUILDER) this;
         }
 
+        private void validate()
+        {
+            if ( !root )
+            {
+                Preconditions.checkNotNull( name, "name is required for a Content" );
+                Preconditions.checkNotNull( parentPath, "parentPath is required for a Content" );
+            }
+            Preconditions.checkNotNull( data, "data is required for a Content" );
+
+            if ( page != null )
+            {
+                Preconditions.checkArgument( !( page.getDescriptor() != null && page.getTemplate() != null ),
+                                             "A Page cannot have both have a descriptor and a template set" );
+            }
+        }
+
         public Content build()
         {
+            validate();
             return new Content( this );
         }
     }
