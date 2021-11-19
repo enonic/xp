@@ -46,10 +46,11 @@ public class ImportNodeCommand
 
     public ImportNodeResult execute()
     {
-        final boolean exists = CheckNodeExistsCommand.create( this ).
-            nodePath( this.importNode.path() ).
-            build().
-            execute();
+        final boolean exists = CheckNodeExistsCommand.create( this )
+            .nodePath( this.importNode.path() )
+            .mode( CheckNodeExistsCommand.Mode.SPEED )
+            .build()
+            .execute();
 
         final Node node;
         if ( !exists )
@@ -58,10 +59,7 @@ public class ImportNodeCommand
         }
         else
         {
-            node = updateNode( GetNodeByPathCommand.create( this ).
-                nodePath( this.importNode.path() ).
-                build().
-                execute() );
+            node = updateNode( GetNodeByPathCommand.create( this ).nodePath( this.importNode.path() ).build().execute() );
         }
 
         return ImportNodeResult.create().

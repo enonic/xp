@@ -5,6 +5,7 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 
+import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
@@ -24,12 +25,12 @@ class CountExecutor
 
     public SearchResult execute( final ElasticsearchQuery query )
     {
-        SearchRequestBuilder searchRequestBuilder = new SearchRequestBuilder( this.client, SearchAction.INSTANCE ).
-            setIndices( query.getIndexNames() ).
-            setTypes( query.getIndexTypes() ).
-            setQuery( query.getQuery() ).
-            setSearchType( SearchType.COUNT ).
-            setPreference( searchPreference );
+        SearchRequestBuilder searchRequestBuilder =
+            new SearchRequestBuilder( this.client, SearchAction.INSTANCE ).setIndices( query.getIndexNames() )
+                .setTypes( query.getIndexTypes() )
+                .setQuery( query.getQuery() )
+                .setSearchType( SearchType.COUNT )
+                .setPreference( SearchPreference.LOCAL.toString() );
 
         return doSearchRequest( searchRequestBuilder );
     }

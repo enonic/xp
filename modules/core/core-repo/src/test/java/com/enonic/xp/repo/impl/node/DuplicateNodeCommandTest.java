@@ -75,6 +75,20 @@ public class DuplicateNodeCommandTest
     }
 
     @Test
+    public void duplicate_twice()
+        throws Exception
+    {
+        final String nodeName = "my-node";
+        final Node node = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( nodeName ).build() );
+
+        final Node duplicatedNode1 = duplicateNode( node );
+        final Node duplicatedNode2 = duplicateNode( node );
+
+        assertEquals( "my-node-copy", duplicatedNode1.name().toString() );
+        assertEquals( "my-node-copy-2", duplicatedNode2.name().toString() );
+    }
+
+    @Test
     public void with_children()
         throws Exception
     {

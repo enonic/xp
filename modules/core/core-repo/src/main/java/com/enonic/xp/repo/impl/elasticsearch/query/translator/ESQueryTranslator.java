@@ -80,23 +80,24 @@ public class ESQueryTranslator
         final QueryBuilder filterBuilder =
             new FilterBuilderFactory( queryTypeTranslator.getFieldNameResolver() ).create( query.getPostFilters() );
 
-        return ElasticsearchQuery.create().
-            addIndexNames( esSource.getIndexNames() ).
-            addIndexTypes( esSource.getIndexTypes() ).
-            query( queryBuilder ).
-            from( query.getFrom() ).
-            size( query.getSize() ).
-            explain( query.isExplain() ).
-            setReturnFields( request.getReturnFields() ).
-            setAggregations( aggregations ).
-            setSuggestions( suggestions ).
-            setHighlight( highlight ).
-            sortBuilders( sortBuilders ).
-            filter( filterBuilder ).
-            batchSize( queryTypeTranslator.getBatchSize() ).
-            searchMode( query.getSearchMode() ).
-            searchOptimizer( queryTypeTranslator.getSearchOptimizer() ).
-            build();
+        return ElasticsearchQuery.create()
+            .addIndexNames( esSource.getIndexNames() )
+            .addIndexTypes( esSource.getIndexTypes() )
+            .query( queryBuilder )
+            .from( query.getFrom() )
+            .size( query.getSize() )
+            .explain( query.isExplain() )
+            .setReturnFields( request.getReturnFields() )
+            .setAggregations( aggregations )
+            .setSuggestions( suggestions )
+            .setHighlight( highlight )
+            .sortBuilders( sortBuilders )
+            .filter( filterBuilder )
+            .batchSize( queryTypeTranslator.getBatchSize() )
+            .searchMode( query.getSearchMode() )
+            .searchOptimizer( queryTypeTranslator.getSearchOptimizer() )
+            .searchPreference( request.getSearchPreference() )
+            .build();
     }
 
 }

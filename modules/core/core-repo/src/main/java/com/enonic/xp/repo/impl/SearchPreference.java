@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl;
 
 public enum SearchPreference
 {
-    LOCAL( "_local" );
+    LOCAL( "_local" ), PRIMARY( "_primary" );
 
     private final String name;
 

@@ -65,11 +65,12 @@ public class SearchExecutor
 
     private SearchResult doSearch( final ElasticsearchQuery query )
     {
-        final SearchRequestBuilder searchRequestBuilder = SearchRequestBuilderFactory.newFactory().
-            query( query ).
-            client( this.client ).
-            resolvedSize( resolveSize( query ) ).
-            build().
+        final SearchRequestBuilder searchRequestBuilder = SearchRequestBuilderFactory.newFactory()
+            .query( query )
+            .client( this.client )
+            .resolvedSize( resolveSize( query ) )
+            .searchPreference( query.getSearchPreference() )
+            .build().
             createSearchRequest();
 
         //System.out.println( "######################\n\r" + searchRequestBuilder.toString() );
