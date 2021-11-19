@@ -18,6 +18,7 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.node.SearchOptimizer;
 import com.enonic.xp.repo.impl.ReturnFields;
+import com.enonic.xp.repo.impl.SearchPreference;
 
 public class ElasticsearchQuery
 {
@@ -53,6 +54,8 @@ public class ElasticsearchQuery
 
     private final SearchOptimizer searchOptimizer;
 
+    private final SearchPreference searchPreference;
+
     private ElasticsearchQuery( final Builder builder )
     {
         this.query = builder.queryBuilder;
@@ -70,6 +73,7 @@ public class ElasticsearchQuery
         this.searchMode = builder.searchMode;
         this.searchOptimizer = builder.searchOptimizer;
         this.explain = builder.explain;
+        this.searchPreference = builder.searchPreference;
     }
 
     public static Builder create()
@@ -142,6 +146,11 @@ public class ElasticsearchQuery
         return searchOptimizer;
     }
 
+    public SearchPreference getSearchPreference()
+    {
+        return searchPreference;
+    }
+
     public ElasticHighlightQuery getHighlight()
     {
         return highlight;
@@ -196,6 +205,8 @@ public class ElasticsearchQuery
         private SearchMode searchMode = SearchMode.SEARCH;
 
         private SearchOptimizer searchOptimizer = SearchOptimizer.DEFAULT;
+
+        private SearchPreference searchPreference;
 
         private boolean explain = false;
 
@@ -300,6 +311,12 @@ public class ElasticsearchQuery
         public Builder searchOptimizer( final SearchOptimizer searchOptimizer )
         {
             this.searchOptimizer = searchOptimizer;
+            return this;
+        }
+
+        public Builder searchPreference( final SearchPreference searchPreference )
+        {
+            this.searchPreference = searchPreference;
             return this;
         }
 

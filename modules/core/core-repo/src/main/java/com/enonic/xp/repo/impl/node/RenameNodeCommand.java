@@ -40,8 +40,6 @@ public final class RenameNodeCommand
 
         final NodePath parentPath = nodeToBeRenamed.parentPath().asAbsolute();
 
-        verifyNodeNotExistAtNewPath( nodeToBeRenamed );
-
         return MoveNodeCommand.create( this ).
             id( params.getNodeId() ).
             newParent( parentPath ).
@@ -50,20 +48,6 @@ public final class RenameNodeCommand
             build().
             execute();
     }
-
-    private void verifyNodeNotExistAtNewPath( final Node nodeToBeRenamed )
-    {
-        final NodePath parentPath = nodeToBeRenamed.parentPath().asAbsolute();
-        final NodePath targetPath = new NodePath( parentPath, params.getNewNodeName() );
-
-        CheckNodeExistsCommand.create( this ).
-            nodePath( targetPath ).
-            throwIfExists().
-            skipThrowIfSameId( nodeToBeRenamed.id() ).
-            build().
-            execute();
-    }
-
 
     public static Builder create()
     {

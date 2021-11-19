@@ -89,10 +89,7 @@ public class LoadNodeCommand
 
     private boolean nodeExistsAtPath( final NodePath nodePath )
     {
-        return CheckNodeExistsCommand.create( this ).
-            nodePath( nodePath ).
-            build().
-            execute();
+        return CheckNodeExistsCommand.create( this ).nodePath( nodePath ).mode( CheckNodeExistsCommand.Mode.SPEED ).build().execute();
     }
 
     private LoadNodeResult loadRootNode()

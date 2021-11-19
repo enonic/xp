@@ -25,8 +25,6 @@ abstract class AbstractExecutor
 
     private final ExecutorProgressListener progressReporter;
 
-    final String searchPreference = "_local";
-
     private final String searchTimeout = "30s";
 
     AbstractExecutor( final Builder builder )
@@ -49,7 +47,6 @@ abstract class AbstractExecutor
         try
         {
             final SearchResponse searchResponse = searchRequestBuilder.
-                setPreference( searchPreference ).
                 execute().
                 actionGet( searchTimeout );
 
