@@ -29,12 +29,15 @@ public class SearchRequestBuilderFactory
 
     private final TimeValue scrollTime;
 
+    private final SearchPreference searchPreference;
+
     private SearchRequestBuilderFactory( final Builder builder )
     {
         resolvedSize = builder.resolvedSize;
         query = builder.query;
         client = builder.client;
         scrollTime = builder.scrollTime;
+        searchPreference = builder.searchPreference;
     }
 
     public static Builder newFactory()
@@ -46,9 +49,8 @@ public class SearchRequestBuilderFactory
     {
         final SearchRequestBuilder searchRequestBuilder = initRequestBuilder();
 
-        searchRequestBuilder.
-            setScroll( scrollTime ).
-            setSearchType( query.getSortBuilders().isEmpty() ? SearchType.SCAN : SearchType.DEFAULT );
+        searchRequestBuilder.setScroll( scrollTime )
+            .setSearchType( query.getSortBuilders().isEmpty() ? SearchType.SCAN : SearchType.DEFAULT );
 
         return searchRequestBuilder;
     }
@@ -57,14 +59,14 @@ public class SearchRequestBuilderFactory
     {
         final SearchRequestBuilder searchRequestBuilder = initRequestBuilder();
 
-        searchRequestBuilder.
-            setExplain( query.isExplain() ).
-            setSearchType(
-                query.getSearchOptimizer().equals( SearchOptimizer.ACCURACY ) ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT ).
-            setPreference( SearchPreference.LOCAL.getName() );
+        searchRequestBuilder.setExplain( query.isExplain() )
+            .setSearchType(
+                query.getSearchOptimizer().equals( SearchOptimizer.ACCURACY ) ? SearchType.DFS_QUERY_THEN_FETCH : SearchType.DEFAULT );
 
         query.getAggregations().forEach( searchRequestBuilder::addAggregation );
         query.getSuggestions().forEach( searchRequestBuilder::addSuggestion );
+
+        searchRequestBuilder.setPreference( searchPreference != null ? searchPreference.toString() : SearchPreference.LOCAL.toString() );
 
         return searchRequestBuilder;
     }
@@ -73,11 +75,11 @@ public class SearchRequestBuilderFactory
     {
         final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexNames() );
 
-        searchRequestBuilder.setTypes( query.getIndexTypes() ).
-            setQuery( query.getQuery() ).
-            setPostFilter( query.getFilter() ).
-            setFrom( query.getFrom() ).
-            setSize( resolvedSize );
+        searchRequestBuilder.setTypes( query.getIndexTypes() )
+            .setQuery( query.getQuery() )
+            .setPostFilter( query.getFilter() )
+            .setFrom( query.getFrom() )
+            .setSize( resolvedSize );
 
         if ( query.getReturnFields() != null && query.getReturnFields().isNotEmpty() )
         {
@@ -165,6 +167,8 @@ public class SearchRequestBuilderFactory
 
         private TimeValue scrollTime;
 
+        private SearchPreference searchPreference;
+
         private Builder()
         {
         }
@@ -190,6 +194,12 @@ public class SearchRequestBuilderFactory
         public Builder scrollTime( final TimeValue scrollTime )
         {
             this.scrollTime = scrollTime;
+            return this;
+        }
+
+        public Builder searchPreference( final SearchPreference searchPreference )
+        {
+            this.searchPreference = searchPreference;
             return this;
         }
 

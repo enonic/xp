@@ -1,5 +1,8 @@
 package com.enonic.xp.repo.impl.node;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.ContextAccessor;
@@ -13,8 +16,8 @@ import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RefreshMode;
@@ -27,6 +30,8 @@ import com.enonic.xp.util.Reference;
 public final class DuplicateNodeCommand
     extends AbstractNodeCommand
 {
+    private static final Logger LOG = LoggerFactory.getLogger( DuplicateNodeCommand.class );
+
     private final DuplicateNodeParams params;
 
     private final BinaryService binaryService;
@@ -57,20 +62,30 @@ public final class DuplicateNodeCommand
             throw new OperationNotPermittedException( "Not allowed to duplicate root-node" );
         }
 
-        final String newNodeName = resolveNewNodeName( existingNode );
-
-        final CreateNodeParams.Builder createNodeParams = CreateNodeParams.from( existingNode ).
-            name( newNodeName );
+        final CreateNodeParams.Builder createNodeParams = CreateNodeParams.from( existingNode );
         attachBinaries( existingNode, createNodeParams );
-        final CreateNodeParams originalParams = createNodeParams.build();
 
-        final CreateNodeParams processedParams = executeProcessors( originalParams );
+        Node duplicatedNode = null;
+        String newNodeName = existingNode.name().toString();
+        do
+        {
+            try
+            {
+                newNodeName = DuplicateValueResolver.name( newNodeName );
+                final CreateNodeParams processedParams = executeProcessors( createNodeParams.name( newNodeName ).build() );
 
-        final Node duplicatedNode = CreateNodeCommand.create( this ).
-            params( processedParams ).
-            binaryService( binaryService ).
-            build().
-            execute();
+                duplicatedNode =
+                    CreateNodeCommand.create( this ).params( processedParams ).binaryService( binaryService ).build().execute();
+
+            }
+            catch ( NodeAlreadyExistAtPathException e )
+            {
+                // try again with other name
+                LOG.debug( String.format( "[%s] node with [%s] parent already exist.", newNodeName, existingNode.parentPath().toString() ),
+                           e );
+            }
+        }
+        while ( duplicatedNode == null );
 
         nodeDuplicated( 1 );
 
@@ -218,35 +233,6 @@ public final class DuplicateNodeCommand
         }
 
         nodeReferencesUpdated( 1 );
-    }
-
-    private String resolveNewNodeName( final Node existingNode )
-    {
-        // Process as file name as it is so for images
-        String newNodeName = DuplicateValueResolver.fileName( existingNode.name().toString() );
-
-        boolean resolvedUnique = false;
-
-        while ( !resolvedUnique )
-        {
-            final NodePath checkIfExistsPath = NodePath.create( existingNode.parentPath(), newNodeName ).build();
-
-            final boolean exists = CheckNodeExistsCommand.create( this ).
-                nodePath( checkIfExistsPath ).
-                build().
-                execute();
-
-            if ( !exists )
-            {
-                resolvedUnique = true;
-            }
-            else
-            {
-                newNodeName = DuplicateValueResolver.name( newNodeName );
-            }
-        }
-
-        return newNodeName;
     }
 
     private void nodeDuplicated( final int count )
