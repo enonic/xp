@@ -32,7 +32,6 @@ public class VersionStorageDocFactory
         return StoreRequest.create().
             nodePath( nodeVersion.getNodePath() ).
             id( nodeVersion.getNodeVersionId().toString() ).
-            forceRefresh( false ).
             settings( StorageSource.create().
                 storageName( StoreStorageName.from( repositoryId ) ).
                 storageType( StaticStorageType.VERSION ).
