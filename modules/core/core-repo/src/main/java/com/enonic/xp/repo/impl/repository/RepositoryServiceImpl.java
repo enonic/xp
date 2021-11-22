@@ -180,6 +180,8 @@ public class RepositoryServiceImpl
         if ( getRootNode( previousRepository.getId(), newBranch ) == null )
         {
             pushRootNode( previousRepository, newBranch );
+
+            RefreshCommand.create().indexServiceInternal( this.indexServiceInternal ).refreshMode( RefreshMode.ALL ).build().execute();
         }
 
         //Updates the repository entry

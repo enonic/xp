@@ -11,6 +11,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.BinaryAttachment;
+import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.node.AbstractNodeTest;
@@ -32,6 +33,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -181,15 +183,28 @@ class RepositoryServiceImplTest
         Branch branch = Branch.from( "myBranch" );
 
         Context mockCurrentContext = ContextBuilder.create().
-            branch( "master" ).
-            repositoryId( "fisk" ).
-            authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).
-            build();
+            branch( "master" ).repositoryId( "fisk" ).authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).build();
 
         mockCurrentContext.callWith( () -> repositoryService.createBranch( CreateBranchParams.from( branch ) ) );
 
         final Repository persistedRepo = getPersistedRepoWithoutCache( "fisk" );
         assertTrue( persistedRepo.getBranches().contains( branch ) );
+    }
+
+    @Test
+    void create_branch_with_node_in_root()
+    {
+        doCreateRepo( "fisk" );
+
+        Branch branch = Branch.from( "myBranch" );
+
+        final var mockCurrentContext =
+            ContextBuilder.create().branch( "myBranch" ).repositoryId( "fisk" ).authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).build();
+
+        mockCurrentContext.callWith( () -> repositoryService.createBranch( CreateBranchParams.from( branch ) ) );
+
+        assertDoesNotThrow( () -> mockCurrentContext.callWith( () -> nodeService.create(
+            CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).data( new PropertyTree() ).build() ) ) );
     }
 
 
