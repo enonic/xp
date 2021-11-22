@@ -23,7 +23,6 @@ public class CommitStorageRequestFactory
 
         return StoreRequest.create().
             id( id ).
-            forceRefresh( false ).
             settings( StorageSource.create().
                 storageName( StoreStorageName.from( context.getRepositoryId() ) ).
                 storageType( StaticStorageType.COMMIT ).
