@@ -12,6 +12,7 @@ import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
+import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.security.PrincipalKey;
 
 public final class CreateScheduledJobHandler
@@ -42,15 +43,15 @@ public final class CreateScheduledJobHandler
 
     private CreateScheduledJobParams createParams()
     {
-        return CreateScheduledJobParams.create().
-            name( name ).
-            descriptor( descriptor ).
-            calendar( schedule ).
-            description( description ).
-            config( config ).
-            enabled( enabled ).
-            user( user ).
-            build();
+        return CreateScheduledJobParams.create()
+            .name( name )
+            .descriptor( descriptor )
+            .calendar( schedule )
+            .description( description )
+            .config( config )
+            .enabled( enabled )
+            .user( user )
+            .build();
     }
 
     @Override
@@ -81,9 +82,10 @@ public final class CreateScheduledJobHandler
         this.schedule = buildCalendar( value );
     }
 
-    public void setConfig( final Map<String, Object> value )
+    public void setConfig( final ScriptValue value )
     {
-        this.config = Optional.ofNullable( propertyTreeMarshallerService.get().marshal( value ) ).orElse( null );
+        this.config =
+            propertyTreeMarshallerService.get().marshal( Optional.ofNullable( value ).map( ScriptValue::getMap ).orElse( Map.of() ) );
     }
 
     public void setEnabled( final boolean value )

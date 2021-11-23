@@ -51,7 +51,7 @@ exports.create = function (params) {
     bean.descriptor = required(params, 'descriptor');
     bean.enabled = required(params, 'enabled');
     bean.description = nullOrValue(params.description);
-    bean.config = nullOrValue(params.config);
+    bean.config = __.toScriptValue(params.config);
     bean.user = nullOrValue(params.user);
 
     return __.toNativeObject(bean.execute());
