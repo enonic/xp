@@ -18,6 +18,7 @@ var expected = {
     'allowChildContent': true,
     'displayNameExpression': '${name}',
     'icon': {
+        'data': {},
         'mimeType': 'image/png',
         'modifiedTime': '2016-01-01T12:00:00Z'
     },
