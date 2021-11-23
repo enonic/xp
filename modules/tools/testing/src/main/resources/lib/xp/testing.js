@@ -80,10 +80,17 @@ exports.assertNotEquals = function (expected, actual, message) {
  * @param message Optional message.
  */
 exports.assertJson = function (expected, actual, message) {
-    var expectedJson = JSON.stringify(expected, null, 2);
-    var actualJson = JSON.stringify(actual, null, 2);
+    var expectedJson = JSON.stringify(expected, replaceJava, 2);
+    var actualJson = JSON.stringify(actual, replaceJava, 2);
     helper.assertEquals(expectedJson, actualJson, message);
 };
+
+function replaceJava(key, value) {
+    if(value instanceof java.lang.Object) {
+        return {};
+    }
+    return value;
+}
 
 /**
  * Assert that the JSON expected == actual.
@@ -107,5 +114,5 @@ exports.assertNull = function (value, message) {
  * Assert not null.
  */
 exports.assertNotNull = function (value, message) {
-    helper.assertTrue(value || (value !== null), message || '');
+    helper.assertTrue(!!value || (value !== null), message || '');
 };
