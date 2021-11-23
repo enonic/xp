@@ -5,6 +5,6 @@ exports.generatePassword = function () {
 
     var result = auth.generatePassword();
 
-    t.assertTrue(result);
+    t.assertNotNull(result);
 
 };
