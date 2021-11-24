@@ -39,13 +39,13 @@ function required(params, name) {
  */
 exports.create = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.project.CreateProjectHandler');
-    bean.id = required(params, 'id');
-    bean.displayName = required(params, 'displayName');
-    bean.description = __.nullOrValue(params.description);
-    bean.language = __.nullOrValue(params.language);
-    bean.permissions = __.toScriptValue(params.permissions);
-    bean.readAccess = __.toScriptValue(params.readAccess);
-    bean.parent = __.nullOrValue(params.parent);
+    bean.setId(required(params, 'id'));
+    bean.setDisplayName(required(params, 'displayName'));
+    bean.setDescription(__.nullOrValue(params.description));
+    bean.setLanguage(__.nullOrValue(params.language));
+    bean.setPermissions(__.toScriptValue(params.permissions));
+    bean.setReadAccess(__.toScriptValue(params.readAccess));
+    bean.setParent(__.nullOrValue(params.parent));
     return __.toNativeObject(bean.execute());
 };
 
@@ -65,10 +65,10 @@ exports.create = function (params) {
  */
 exports.modify = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.project.ModifyProjectHandler');
-    bean.id = required(params, 'id');
-    bean.displayName = __.nullOrValue(params.displayName);
-    bean.description = __.nullOrValue(params.description);
-    bean.language = __.nullOrValue(params.language);
+    bean.setId(required(params, 'id'));
+    bean.setDisplayName(__.nullOrValue(params.displayName));
+    bean.setDescription(__.nullOrValue(params.description));
+    bean.setLanguage(__.nullOrValue(params.language));
     return __.toNativeObject(bean.execute());
 };
 
@@ -85,7 +85,7 @@ exports.modify = function (params) {
  */
 exports.delete = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.project.DeleteProjectHandler');
-    bean.id = required(params, 'id');
+    bean.setId(required(params, 'id'));
     return __.toNativeObject(bean.execute());
 };
 
@@ -102,7 +102,7 @@ exports.delete = function (params) {
  */
 exports.get = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.project.GetProjectHandler');
-    bean.id = required(params, 'id');
+    bean.setId(required(params, 'id'));
     return __.toNativeObject(bean.execute());
 };
 
@@ -137,8 +137,8 @@ exports.list = function () {
  */
 exports.addPermissions = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.project.AddProjectPermissionsHandler');
-    bean.id = required(params, 'id');
-    bean.permissions = __.toScriptValue(params.permissions);
+    bean.setId(required(params, 'id'));
+    bean.setPermissions(__.toScriptValue(params.permissions));
     return __.toNativeObject(bean.execute());
 };
 
@@ -158,8 +158,8 @@ exports.addPermissions = function (params) {
  */
 exports.removePermissions = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.project.RemoveProjectPermissionsHandler');
-    bean.id = required(params, 'id');
-    bean.permissions = __.toScriptValue(params.permissions);
+    bean.setId(required(params, 'id'));
+    bean.setPermissions(__.toScriptValue(params.permissions));
     return __.toNativeObject(bean.execute());
 };
 
@@ -179,8 +179,8 @@ exports.removePermissions = function (params) {
  */
 exports.modifyReadAccess = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.project.ModifyProjectReadAccessHandler');
-    bean.id = required(params, 'id');
-    bean.readAccess = __.toScriptValue(params.readAccess);
+    bean.setId(required(params, 'id'));
+    bean.setReadAccess(__.toScriptValue(params.readAccess));
     return __.toNativeObject(bean.execute());
 };
 

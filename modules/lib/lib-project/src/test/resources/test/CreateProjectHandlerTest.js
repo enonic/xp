@@ -127,6 +127,6 @@ exports.createProjectWithoutReadAccess = function () {
 
         throw new Error('IllegalArgumentException should be thrown.');
     } catch (e) {
-        assert.assertEquals('Invalid value for readAccess.', e.message);
+        assert.assertEquals('Invalid value for readAccess.', e.getMessage());
     }
 };

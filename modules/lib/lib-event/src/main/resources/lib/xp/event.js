@@ -21,11 +21,11 @@
 exports.listener = function (params) {
     var helper = __.newBean('com.enonic.xp.lib.event.EventListenerHelper');
 
-    helper.type = params.type || '';
-    helper.localOnly = params.localOnly || false;
-    helper.listener = function (event) {
+    helper.setType(params.type || '');
+    helper.setLocalOnly(params.localOnly || false);
+    helper.setListener(function (event) {
         params.callback(__.toNativeObject(event));
-    };
+    });
 
     helper.register();
 };
@@ -43,11 +43,11 @@ exports.listener = function (params) {
 exports.send = function (event) {
     var helper = __.newBean('com.enonic.xp.lib.event.EventSenderHelper');
 
-    helper.type = event.type || 'test';
-    helper.distributed = event.distributed || false;
+    helper.setType(event.type || 'test');
+    helper.setDistributed(event.distributed || false);
 
     if (event.data) {
-        helper.data = __.toScriptValue(event.data);
+        helper.setData(__.toScriptValue(event.data));
     }
 
     helper.send();

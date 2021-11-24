@@ -32,6 +32,8 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class FilterScriptImplTest
@@ -138,17 +140,11 @@ public class FilterScriptImplTest
         Mockito.when( webHandlerChain.handle( Mockito.any(), Mockito.any() ) ).thenReturn( this.portalResponse );
 
         this.portalRequest.setMethod( HttpMethod.POST );
-        try
-        {
-            execute( "myapplication:/filter/filtererror.js", webHandlerChain );
-            fail( "Expected exception" );
-        }
-        catch ( ResourceProblemException e )
-        {
-            assertEquals( "myapplication:/filter/filtererror.js", e.getResource().toString() );
-            assertEquals( 3, e.getLineNumber() );
-            assertEquals( "ReferenceError: \"callback\" is not defined", e.getMessage() );
-        }
+        final ResourceProblemException e =
+            assertThrows( ResourceProblemException.class, () -> execute( "myapplication:/filter/filtererror.js", webHandlerChain ) );
+        assertEquals( "myapplication:/filter/filtererror.js", e.getResource().toString() );
+        assertEquals( 3, e.getLineNumber() );
+        assertNotNull( e.getMessage() );
     }
 
     @Test

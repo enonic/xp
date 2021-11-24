@@ -37,9 +37,9 @@ function checkRequiredParams(params, names) {
 exports.refresh = function (params) {
     const bean = __.newBean('com.enonic.xp.lib.repo.RefreshHandler');
     params = params || {};
-    bean.mode = __.nullOrValue(params.mode);
-    bean.repoId = __.nullOrValue(params.repo);
-    bean.branch = __.nullOrValue(params.branch);
+    bean.setMode(__.nullOrValue(params.mode));
+    bean.setRepoId(__.nullOrValue(params.repo));
+    bean.setBranch(__.nullOrValue(params.branch));
     bean.refresh();
 };
 
@@ -71,10 +71,10 @@ exports.refresh = function (params) {
 exports.create = function (params) {
     checkRequiredParams(params, ['id']);
     const bean = __.newBean('com.enonic.xp.lib.repo.CreateRepositoryHandler');
-    bean.repositoryId = params.id;
-    bean.rootPermissions = params.rootPermissions ? __.toScriptValue(params.rootPermissions) : null;
-    bean.rootChildOrder = __.nullOrValue(params.rootChildOrder);
-    bean.indexDefinitions = params.settings && params.settings.definitions ? __.toScriptValue(params.settings.definitions) : null;
+    bean.setRepositoryId(params.id);
+    bean.setRootPermissions(params.rootPermissions ? __.toScriptValue(params.rootPermissions) : null);
+    bean.setRootChildOrder(__.nullOrValue(params.rootChildOrder));
+    bean.setIndexDefinitions(params.settings && params.settings.definitions ? __.toScriptValue(params.settings.definitions) : null);
     return __.toNativeObject(bean.execute());
 };
 
@@ -90,7 +90,7 @@ exports.create = function (params) {
 exports.delete = function (id) {
     checkRequiredValue(id, 'id');
     const bean = __.newBean('com.enonic.xp.lib.repo.DeleteRepositoryHandler');
-    bean.repositoryId = id;
+    bean.setRepositoryId(id);
     return bean.execute();
 };
 
@@ -119,7 +119,7 @@ exports.list = function () {
 exports.get = function (id) {
     checkRequiredValue(id, 'id');
     const bean = __.newBean('com.enonic.xp.lib.repo.GetRepositoryHandler');
-    bean.repositoryId = id;
+    bean.setRepositoryId(id);
     return __.toNativeObject(bean.execute());
 };
 
@@ -137,8 +137,8 @@ exports.get = function (id) {
 exports.createBranch = function (params) {
     checkRequiredParams(params, ['repoId', 'branchId']);
     const bean = __.newBean('com.enonic.xp.lib.repo.CreateBranchHandler');
-    bean.branchId = params.branchId;
-    bean.repoId = params.repoId;
+    bean.setBranchId(params.branchId);
+    bean.setRepoId(params.repoId);
     return __.toNativeObject(bean.execute());
 };
 
@@ -156,8 +156,8 @@ exports.createBranch = function (params) {
 exports.deleteBranch = function (params) {
     checkRequiredParams(params, ['repoId', 'branchId']);
     const bean = __.newBean('com.enonic.xp.lib.repo.DeleteBranchHandler');
-    bean.branchId = params.branchId;
-    bean.repoId = params.repoId;
+    bean.setBranchId(params.branchId);
+    bean.setRepoId(params.repoId);
     return __.toNativeObject(bean.execute());
 };
 
@@ -177,9 +177,9 @@ exports.deleteBranch = function (params) {
 exports.modify = function (params) {
     checkRequiredParams(params, ['id', 'editor']);
     const bean = __.newBean('com.enonic.xp.lib.repo.ModifyRepositoryHandler');
-    bean.id = params.id;
-    bean.editor = __.toScriptValue(params.editor);
-    bean.scope = bean.scope = __.nullOrValue(params.scope);
+    bean.setId(params.id);
+    bean.setEditor(__.toScriptValue(params.editor));
+    bean.setScope(__.nullOrValue(params.scope));
     return __.toNativeObject(bean.execute());
 };
 
@@ -197,7 +197,7 @@ exports.modify = function (params) {
 exports.getBinary = function (params) {
     checkRequiredParams(params, ['repoId', 'binaryReference']);
     const bean = __.newBean('com.enonic.xp.lib.repo.GetRepositoryBinaryHandler');
-    bean.repositoryId = params.repoId;
-    bean.binaryReference = params.binaryReference;
+    bean.setRepositoryId(params.repoId);
+    bean.setBinaryReference(params.binaryReference);
     return bean.execute();
 };

@@ -365,7 +365,7 @@ exports.getMultipartText = function (name, index) {
  */
 exports.imagePlaceholder = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.portal.url.ImagePlaceholderHandler');
-    bean.width = params.width || 0;
-    bean.height = params.height || 0;
+    bean.setWidth(params.width || 0);
+    bean.setHeight(params.height || 0);
     return bean.createImagePlaceholder();
 };

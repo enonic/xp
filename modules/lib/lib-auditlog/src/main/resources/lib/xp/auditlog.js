@@ -44,12 +44,12 @@ function nullOrValue(value) {
  */
 exports.log = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.audit.CreateAuditLogHandler');
-    bean.type = required(params, 'type');
-    bean.time = nullOrValue(params.time);
-    bean.source = params.source === undefined ? app.name : params.source;
-    bean.user = nullOrValue(params.user);
-    bean.objectUris = __.toScriptValue(params.objects);
-    bean.data = __.toScriptValue(params.data);
+    bean.setType(required(params, 'type'));
+    bean.setTime(nullOrValue(params.time));
+    bean.setSource(params.source === undefined ? app.name : params.source);
+    bean.setUser(nullOrValue(params.user));
+    bean.setObjectUris(__.toScriptValue(params.objects));
+    bean.setData(__.toScriptValue(params.data));
 
     return __.toNativeObject(bean.execute());
 };
@@ -66,7 +66,7 @@ exports.log = function (params) {
  */
 exports.get = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.audit.GetAuditLogHandler');
-    bean.id = required(params, 'id');
+    bean.setId(required(params, 'id'));
     return __.toNativeObject(bean.execute());
 };
 
@@ -93,14 +93,14 @@ exports.get = function (params) {
  */
 exports.find = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.audit.FindAuditLogHandler');
-    bean.start = params.start;
-    bean.count = params.count;
-    bean.ids = __.toScriptValue(params.ids);
-    bean.from = nullOrValue(params.from);
-    bean.to = nullOrValue(params.to);
-    bean.type = nullOrValue(params.type);
-    bean.source = nullOrValue(params.source);
-    bean.users = __.toScriptValue(params.users);
-    bean.objectUris = __.toScriptValue(params.objects);
+    bean.setStart(params.start);
+    bean.setCount(params.count);
+    bean.setIds(__.toScriptValue(params.ids));
+    bean.setFrom(nullOrValue(params.from));
+    bean.setTo(nullOrValue(params.to));
+    bean.setType(nullOrValue(params.type));
+    bean.setSource(nullOrValue(params.source));
+    bean.setUsers(__.toScriptValue(params.users));
+    bean.setObjectUris(__.toScriptValue(params.objects));
     return __.toNativeObject(bean.execute());
 };

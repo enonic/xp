@@ -60,8 +60,8 @@ function nullOrValue(value) {
  */
 exports.get = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.GetContentHandler');
-    bean.key = required(params, 'key');
-    bean.versionId = nullOrValue(params.versionId);
+    bean.setKey(required(params, 'key'));
+    bean.setVersionId(nullOrValue(params.versionId));
     return __.toNativeObject(bean.execute());
 };
 
@@ -76,7 +76,7 @@ exports.get = function (params) {
  */
 exports.getAttachments = function (key) {
     var bean = __.newBean('com.enonic.xp.lib.content.GetAttachmentsHandler');
-    bean.key = nullOrValue(key);
+    bean.setKey(nullOrValue(key));
     return __.toNativeObject(bean.execute());
 };
 
@@ -93,8 +93,8 @@ exports.getAttachments = function (key) {
  */
 exports.getAttachmentStream = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.GetAttachmentStreamHandler');
-    bean.key = required(params, 'key');
-    bean.name = required(params, 'name');
+    bean.setKey(required(params, 'key'));
+    bean.setName(required(params, 'name'));
     return bean.getStream();
 };
 
@@ -112,11 +112,11 @@ exports.getAttachmentStream = function (params) {
  */
 exports.addAttachment = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.AddAttachmentHandler');
-    bean.key = required(params, 'key');
-    bean.name = required(params, 'name');
-    bean.mimeType = required(params, 'mimeType');
-    bean.label = nullOrValue(params.label);
-    bean.data = required(params, 'data');
+    bean.setKey(required(params, 'key'));
+    bean.setName(required(params, 'name'));
+    bean.setMimeType(required(params, 'mimeType'));
+    bean.setLabel(nullOrValue(params.label));
+    bean.setData(required(params, 'data'));
     bean.execute();
 };
 
@@ -131,8 +131,8 @@ exports.addAttachment = function (params) {
  */
 exports.removeAttachment = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.RemoveAttachmentHandler');
-    bean.key = required(params, 'key');
-    bean.name = [].concat(required(params, 'name'));
+    bean.setKey(required(params, 'key'));
+    bean.setName([].concat(required(params, 'name')));
     bean.execute();
 };
 
@@ -148,7 +148,7 @@ exports.removeAttachment = function (params) {
  */
 exports.getSite = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.GetSiteHandler');
-    bean.key = nullOrValue(params.key);
+    bean.setKey(nullOrValue(params.key));
     return __.toNativeObject(bean.execute());
 };
 
@@ -165,8 +165,8 @@ exports.getSite = function (params) {
  */
 exports.getSiteConfig = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.GetSiteConfigHandler');
-    bean.key = nullOrValue(params.key);
-    bean.applicationKey = nullOrValue(params.applicationKey);
+    bean.setKey(nullOrValue(params.key));
+    bean.setApplicationKey(nullOrValue(params.applicationKey));
     return __.toNativeObject(bean.execute());
 };
 
@@ -182,7 +182,7 @@ exports.getSiteConfig = function (params) {
  */
 exports.delete = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.DeleteContentHandler');
-    bean.key = required(params, 'key');
+    bean.setKey(required(params, 'key'));
     return bean.execute();
 };
 
@@ -201,10 +201,10 @@ exports.delete = function (params) {
  */
 exports.getChildren = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.GetChildContentHandler');
-    bean.key = required(params, 'key');
-    bean.start = params.start;
-    bean.count = params.count;
-    bean.sort = nullOrValue(params.sort);
+    bean.setKey(required(params, 'key'));
+    bean.setStart(params.start);
+    bean.setCount(params.count);
+    bean.setSort(nullOrValue(params.sort));
     return __.toNativeObject(bean.execute());
 };
 
@@ -237,20 +237,20 @@ exports.getChildren = function (params) {
  */
 exports.create = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.CreateContentHandler');
-    bean.name = nullOrValue(params.name);
-    bean.parentPath = nullOrValue(params.parentPath);
-    bean.displayName = nullOrValue(params.displayName);
-    bean.contentType = nullOrValue(params.contentType);
-    bean.requireValid = nullOrValue(params.requireValid);
-    bean.refresh = nullOrValue(params.refresh);
-    bean.language = nullOrValue(params.language);
-    bean.childOrder = nullOrValue(params.childOrder);
+    bean.setName(nullOrValue(params.name));
+    bean.setParentPath(nullOrValue(params.parentPath));
+    bean.setDisplayName(nullOrValue(params.displayName));
+    bean.setContentType(nullOrValue(params.contentType));
+    bean.setRequireValid(nullOrValue(params.requireValid));
+    bean.setRefresh(nullOrValue(params.refresh));
+    bean.setLanguage(nullOrValue(params.language));
+    bean.setChildOrder(nullOrValue(params.childOrder));
 
-    bean.data = __.toScriptValue(params.data);
-    bean.x = __.toScriptValue(params.x);
+    bean.setData(__.toScriptValue(params.data));
+    bean.setX(__.toScriptValue(params.x));
 
-    bean.idGenerator = nullOrValue(params.idGenerator);
-    bean.workflow = __.toScriptValue(params.workflow);
+    bean.setIdGenerator(nullOrValue(params.idGenerator));
+    bean.setWorkflow(__.toScriptValue(params.workflow));
 
     return __.toNativeObject(bean.execute());
 };
@@ -273,14 +273,14 @@ exports.create = function (params) {
  */
 exports.query = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.QueryContentHandler');
-    bean.start = params.start;
-    bean.count = params.count;
-    bean.query = nullOrValue(params.query);
-    bean.sort = nullOrValue(params.sort);
-    bean.aggregations = __.toScriptValue(params.aggregations);
-    bean.contentTypes = __.toScriptValue(params.contentTypes);
-    bean.filters = __.toScriptValue(params.filters);
-    bean.highlight = __.toScriptValue(params.highlight);
+    bean.setStart(params.start);
+    bean.setCount(params.count);
+    bean.setQuery(nullOrValue(params.query));
+    bean.setSort(nullOrValue(params.sort));
+    bean.setAggregations(__.toScriptValue(params.aggregations));
+    bean.setContentTypes(__.toScriptValue(params.contentTypes));
+    bean.setFilters(__.toScriptValue(params.filters));
+    bean.setHighlight(__.toScriptValue(params.highlight));
     return __.toNativeObject(bean.execute());
 };
 
@@ -298,9 +298,9 @@ exports.query = function (params) {
  */
 exports.modify = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.ModifyContentHandler');
-    bean.key = required(params, 'key');
-    bean.editor = __.toScriptValue(params.editor);
-    bean.requireValid = nullOrValue(params.requireValid);
+    bean.setKey(required(params, 'key'));
+    bean.setEditor(__.toScriptValue(params.editor));
+    bean.setRequireValid(nullOrValue(params.requireValid));
     return __.toNativeObject(bean.execute());
 };
 
@@ -325,21 +325,21 @@ exports.modify = function (params) {
  */
 exports.publish = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.PublishContentHandler');
-    bean.keys = required(params, 'keys');
-    bean.targetBranch = required(params, 'targetBranch');
-    bean.sourceBranch = required(params, 'sourceBranch');
-    bean.contentPublishInfo = __.toScriptValue(params.schedule);
+    bean.setKeys(required(params, 'keys'));
+    bean.setTargetBranch(required(params, 'targetBranch'));
+    bean.setSourceBranch(required(params, 'sourceBranch'));
+    bean.setContentPublishInfo(__.toScriptValue(params.schedule));
     if (params.excludeChildrenIds) {
-        bean.excludeChildrenIds = params.excludeChildrenIds;
+        bean.setExcludeChildrenIds(params.excludeChildrenIds);
     }
     if (!nullOrValue(params.includeChildren)) {
         // keep for backwards compatibility
-        bean.includeChildren = params.includeChildren;
+        bean.setIncludeChildren(params.includeChildren);
     }
     if (!nullOrValue(params.includeDependencies)) {
-        bean.includeDependencies = params.includeDependencies;
+        bean.setIncludeDependencies(params.includeDependencies);
     }
-    bean.message = nullOrValue(params.message);
+    bean.setMessage(nullOrValue(params.message));
     return __.toNativeObject(bean.execute());
 };
 
@@ -355,7 +355,7 @@ exports.publish = function (params) {
  */
 exports.unpublish = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.UnpublishContentHandler');
-    bean.keys = required(params, 'keys');
+    bean.setKeys(required(params, 'keys'));
     return __.toNativeObject(bean.execute());
 };
 
@@ -372,7 +372,7 @@ exports.unpublish = function (params) {
 exports.exists = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.ContentExistsHandler');
 
-    bean.key = required(params, 'key');
+    bean.setKey(required(params, 'key'));
 
     return __.toNativeObject(bean.execute());
 };
@@ -394,17 +394,17 @@ exports.exists = function (params) {
  */
 exports.createMedia = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.CreateMediaHandler');
-    bean.name = required(params, 'name');
-    bean.parentPath = nullOrValue(params.parentPath);
-    bean.mimeType = nullOrValue(params.mimeType);
+    bean.setName(required(params, 'name'));
+    bean.setParentPath(nullOrValue(params.parentPath));
+    bean.setMimeType(nullOrValue(params.mimeType));
     if (params.focalX) {
-        bean.focalX = params.focalX;
+        bean.setFocalX(params.focalX);
     }
     if (params.focalY) {
-        bean.focalY = params.focalY;
+        bean.setFocalY(params.focalY);
     }
-    bean.data = nullOrValue(params.data);
-    bean.idGenerator = nullOrValue(params.idGenerator);
+    bean.setData(nullOrValue(params.data));
+    bean.setIdGenerator(nullOrValue(params.idGenerator));
     return __.toNativeObject(bean.execute());
 };
 
@@ -421,8 +421,8 @@ exports.createMedia = function (params) {
  */
 exports.move = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.MoveContentHandler');
-    bean.source = required(params, 'source');
-    bean.target = required(params, 'target');
+    bean.setSource(required(params, 'source'));
+    bean.setTarget(required(params, 'target'));
     return __.toNativeObject(bean.execute());
 };
 
@@ -438,7 +438,7 @@ exports.move = function (params) {
  */
 exports.archive = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.ArchiveContentHandler');
-    bean.content = required(params, 'content');
+    bean.setContent(required(params, 'content'));
     return __.toNativeObject(bean.execute());
 };
 
@@ -455,8 +455,8 @@ exports.archive = function (params) {
  */
 exports.restore = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.RestoreContentHandler');
-    bean.content = required(params, 'content');
-    bean.path = nullOrValue(params.path);
+    bean.setContent(required(params, 'content'));
+    bean.setPath(nullOrValue(params.path));
     return __.toNativeObject(bean.execute());
 };
 
@@ -479,16 +479,16 @@ exports.setPermissions = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.SetPermissionsHandler');
 
     if (params.key) {
-        bean.key = params.key;
+        bean.setKey(params.key);
     }
     if (params.inheritPermissions) {
-        bean.inheritPermissions = params.inheritPermissions;
+        bean.setInheritPermissions(params.inheritPermissions);
     }
     if (params.overwriteChildPermissions) {
-        bean.overwriteChildPermissions = params.overwriteChildPermissions;
+        bean.setOverwriteChildPermissions(params.overwriteChildPermissions);
     }
     if (params.permissions) {
-        bean.permissions = __.toScriptValue(params.permissions);
+        bean.setPermissions(__.toScriptValue(params.permissions));
     }
     return __.toNativeObject(bean.execute());
 };
@@ -506,7 +506,7 @@ exports.getPermissions = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.GetPermissionsHandler');
 
     if (params.key) {
-        bean.key = params.key;
+        bean.setKey(params.key);
     }
     return __.toNativeObject(bean.execute());
 };
@@ -521,7 +521,7 @@ exports.getPermissions = function (params) {
  */
 exports.getType = function (name) {
     var bean = __.newBean('com.enonic.xp.lib.content.ContentTypeHandler');
-    bean.name = nullOrValue(name);
+    bean.setName(nullOrValue(name));
     return __.toNativeObject(bean.getContentType());
 };
 
@@ -547,7 +547,7 @@ exports.getTypes = function () {
 exports.getOutboundDependencies = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.GetOutboundDependenciesHandler');
 
-    bean.key = required(params, 'key');
+    bean.setKey(required(params, 'key'));
 
     return __.toNativeObject(bean.execute());
 };
@@ -562,9 +562,9 @@ exports.getOutboundDependencies = function (params) {
 exports.resetInheritance = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.ResetInheritanceHandler');
 
-    bean.key = required(params, 'key');
-    bean.projectName = required(params, 'projectName');
-    bean.inherit = required(params, 'inherit');
+    bean.setKey(required(params, 'key'));
+    bean.setProjectName(required(params, 'projectName'));
+    bean.setInherit(required(params, 'inherit'));
 
     return __.toNativeObject(bean.execute());
 };

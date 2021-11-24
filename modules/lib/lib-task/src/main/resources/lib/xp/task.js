@@ -52,8 +52,8 @@ exports.submit = function (params) {
     checkRequired(params, 'description');
     checkRequired(params, 'task');
 
-    bean.description = __.nullOrValue(params.description);
-    bean.func = __.nullOrValue(params.task);
+    bean.setDescription(__.nullOrValue(params.description));
+    bean.setFunc(__.nullOrValue(params.task));
 
     return bean.submit();
 };
@@ -78,8 +78,8 @@ exports.executeFunction = function (params) {
     checkRequired(params, 'description');
     checkRequired(params, 'func');
 
-    bean.description = __.nullOrValue(params.description);
-    bean.func = __.nullOrValue(params.func);
+    bean.setDescription(__.nullOrValue(params.description));
+    bean.setFunc(__.nullOrValue(params.func));
 
     return bean.executeFunction();
 };
@@ -104,8 +104,8 @@ exports.submitNamed = function (params) {
 
     var bean = __.newBean('com.enonic.xp.lib.task.SubmitTaskHandler');
 
-    bean.descriptor = __.nullOrValue(params.name);
-    bean.config = __.toScriptValue(params.config);
+    bean.setDescriptor(__.nullOrValue(params.name));
+    bean.setConfig(__.toScriptValue(params.config));
 
     return bean.submit();
 };
@@ -128,8 +128,8 @@ exports.submitTask = function (params) {
 
     var bean = __.newBean('com.enonic.xp.lib.task.SubmitTaskHandler');
 
-    bean.descriptor = __.nullOrValue(params.descriptor);
-    bean.config = __.toScriptValue(params.config);
+    bean.setDescriptor(__.nullOrValue(params.descriptor));
+    bean.setConfig(__.toScriptValue(params.config));
 
     return bean.submitTask();
 };
@@ -148,8 +148,8 @@ exports.list = function (params) {
     params = params || {};
     var bean = __.newBean('com.enonic.xp.lib.task.ListTasksHandler');
 
-    bean.name = __.nullOrValue(params.name);
-    bean.state = __.nullOrValue(params.state);
+    bean.setName(__.nullOrValue(params.name));
+    bean.setState(__.nullOrValue(params.state));
 
     return __.toNativeObject(bean.list());
 
@@ -171,7 +171,7 @@ exports.get = function (taskId) {
         throw 'Parameter taskId is required';
     }
 
-    bean.taskId = __.nullOrValue(taskId);
+    bean.setTaskId(__.nullOrValue(taskId));
 
     return __.toNativeObject(bean.getTask());
 
@@ -188,7 +188,7 @@ exports.sleep = function (timeMillis) {
 
     var bean = __.newBean('com.enonic.xp.lib.task.SleepHandler');
 
-    bean.timeMillis = __.nullOrValue(timeMillis) || 0;
+    bean.setTimeMillis(__.nullOrValue(timeMillis) || 0);
 
     bean.sleep();
 
@@ -209,9 +209,9 @@ exports.progress = function (params) {
 
     var bean = __.newBean('com.enonic.xp.lib.task.TaskProgressHandler');
 
-    bean.current = __.nullOrValue(params.current);
-    bean.total = __.nullOrValue(params.total);
-    bean.info = __.nullOrValue(params.info);
+    bean.setCurrent(__.nullOrValue(params.current));
+    bean.setTotal(__.nullOrValue(params.total));
+    bean.setInfo(__.nullOrValue(params.info));
 
     bean.reportProgress();
 

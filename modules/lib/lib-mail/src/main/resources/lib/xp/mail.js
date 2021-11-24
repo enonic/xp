@@ -53,16 +53,16 @@ exports.send = function (message) {
     checkRequired(message, 'from');
     checkRequired(message, 'to');
 
-    bean.subject = __.nullOrValue(message.subject);
-    bean.from = [].concat(__.nullOrValue(message.from));
-    bean.to = [].concat(__.nullOrValue(message.to));
-    bean.cc = [].concat(__.nullOrValue(message.cc));
-    bean.bcc = [].concat(__.nullOrValue(message.bcc));
-    bean.replyTo = [].concat(__.nullOrValue(message.replyTo));
-    bean.body = __.nullOrValue(message.body);
-    bean.contentType = __.nullOrValue(message.contentType);
-    bean.headers = __.nullOrValue(message.headers);
-    bean.attachments = __.nullOrValue(message.attachments);
+    bean.setSubject(__.nullOrValue(message.subject));
+    bean.setFrom([].concat(__.nullOrValue(message.from)));
+    bean.setTo([].concat(__.nullOrValue(message.to)));
+    bean.setCc([].concat(__.nullOrValue(message.cc)));
+    bean.setBcc([].concat(__.nullOrValue(message.bcc)));
+    bean.setReplyTo([].concat(__.nullOrValue(message.replyTo)));
+    bean.setBody(__.nullOrValue(message.body));
+    bean.setContentType(__.nullOrValue(message.contentType));
+    bean.setHeaders(__.nullOrValue(message.headers));
+    bean.setAttachments(__.nullOrValue(message.attachments));
 
     return bean.send();
 

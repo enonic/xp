@@ -42,25 +42,25 @@ function nullOrValue(value) {
 exports.login = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.LoginHandler');
 
-    bean.user = required(params, 'user');
+    bean.setUser(required(params, 'user'));
 
     if (params.skipAuth) {
-        bean.skipAuth = params.skipAuth;
+        bean.setSkipAuth(params.skipAuth);
     } else {
-        bean.password = required(params, 'password');
+        bean.setPassword(required(params, 'password'));
     }
 
     if (params['idProvider']) {
-        bean.idProvider = [].concat(params['idProvider']);
+        bean.setIdProvider([].concat(params['idProvider']));
     }
 
     if (params['scope']) {
-        bean.scope = params['scope'];
+        bean.setScope(params['scope']);
     } else {
-        bean.scope = 'SESSION';
+        bean.setScope('SESSION');
     }
 
-    bean.sessionTimeout = nullOrValue(params['sessionTimeout']);
+    bean.setSessionTimeout(nullOrValue(params['sessionTimeout']));
 
     return __.toNativeObject(bean.login());
 };
@@ -89,7 +89,7 @@ exports.logout = function () {
 exports.getUser = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetUserHandler');
 
-    bean.includeProfile = params && params.includeProfile;
+    bean.setIncludeProfile(!!(params && params.includeProfile));
 
     return __.toNativeObject(bean.getUser());
 };
@@ -105,7 +105,7 @@ exports.getUser = function (params) {
 exports.hasRole = function (role) {
     var bean = __.newBean('com.enonic.xp.lib.auth.HasRoleHandler');
 
-    bean.role = __.nullOrValue(role);
+    bean.setRole(__.nullOrValue(role));
 
     return bean.hasRole();
 };
@@ -135,8 +135,8 @@ exports.generatePassword = function () {
 exports.changePassword = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.ChangePasswordHandler');
 
-    bean.userKey = required(params, 'userKey');
-    bean.password = required(params, 'password');
+    bean.setUserKey(required(params, 'userKey'));
+    bean.setPassword(required(params, 'password'));
 
     bean.changePassword();
 };
@@ -153,7 +153,7 @@ exports.changePassword = function (params) {
 exports.getPrincipal = function (principalKey) {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetPrincipalHandler');
 
-    bean.principalKey = __.nullOrValue(principalKey);
+    bean.setPrincipalKey(__.nullOrValue(principalKey));
 
     return __.toNativeObject(bean.getPrincipal());
 };
@@ -170,8 +170,8 @@ exports.getPrincipal = function (principalKey) {
 exports.getMemberships = function (principalKey, transitive) {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetMembershipsHandler');
 
-    bean.principalKey = __.nullOrValue(principalKey);
-    bean.transitive = transitive;
+    bean.setPrincipalKey(__.nullOrValue(principalKey));
+    bean.setTransitive(transitive);
 
     return __.toNativeObject(bean.getMemberships());
 };
@@ -187,7 +187,7 @@ exports.getMemberships = function (principalKey, transitive) {
 exports.getMembers = function (principalKey) {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetMembersHandler');
 
-    bean.principalKey = __.nullOrValue(principalKey);
+    bean.setPrincipalKey(__.nullOrValue(principalKey));
 
     return __.toNativeObject(bean.getMembers());
 };
@@ -206,10 +206,10 @@ exports.getMembers = function (principalKey) {
 exports.createUser = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.CreateUserHandler');
 
-    bean.idProvider = required(params, 'idProvider');
-    bean.name = required(params, 'name');
-    bean.displayName = nullOrValue(params.displayName);
-    bean.email = nullOrValue(params.email);
+    bean.setIdProvider(required(params, 'idProvider'));
+    bean.setName(required(params, 'name'));
+    bean.setDisplayName(nullOrValue(params.displayName));
+    bean.setEmail(nullOrValue(params.email));
 
     return __.toNativeObject(bean.createUser());
 };
@@ -227,8 +227,8 @@ exports.createUser = function (params) {
 exports.modifyUser = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.ModifyUserHandler');
 
-    bean.principalKey = required(params, 'key');
-    bean.editor = __.toScriptValue(required(params, 'editor'));
+    bean.setPrincipalKey(required(params, 'key'));
+    bean.setEditor(__.toScriptValue(required(params, 'editor')));
 
     return __.toNativeObject(bean.modifyUser());
 };
@@ -247,10 +247,10 @@ exports.modifyUser = function (params) {
 exports.createGroup = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.CreateGroupHandler');
 
-    bean.idProvider = required(params, 'idProvider');
-    bean.name = required(params, 'name');
-    bean.displayName = nullOrValue(params.displayName);
-    bean.description = nullOrValue(params.description);
+    bean.setIdProvider(required(params, 'idProvider'));
+    bean.setName(required(params, 'name'));
+    bean.setDisplayName(nullOrValue(params.displayName));
+    bean.setDescription(nullOrValue(params.description));
 
     return __.toNativeObject(bean.createGroup());
 };
@@ -268,8 +268,8 @@ exports.createGroup = function (params) {
 exports.modifyGroup = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.ModifyGroupHandler');
 
-    bean.principalKey = required(params, 'key');
-    bean.editor = __.toScriptValue(required(params, 'editor'));
+    bean.setPrincipalKey(required(params, 'key'));
+    bean.setEditor(__.toScriptValue(required(params, 'editor')));
 
     return __.toNativeObject(bean.modifyGroup());
 };
@@ -285,8 +285,8 @@ exports.modifyGroup = function (params) {
 exports.addMembers = function (principalKey, members) {
     var bean = __.newBean('com.enonic.xp.lib.auth.AddMembersHandler');
 
-    bean.principalKey = nullOrValue(principalKey);
-    bean.members = [].concat(__.nullOrValue(members));
+    bean.setPrincipalKey(nullOrValue(principalKey));
+    bean.setMembers([].concat(__.nullOrValue(members)));
 
     return __.toNativeObject(bean.addMembers());
 };
@@ -302,8 +302,8 @@ exports.addMembers = function (principalKey, members) {
 exports.removeMembers = function (principalKey, members) {
     var bean = __.newBean('com.enonic.xp.lib.auth.RemoveMembersHandler');
 
-    bean.principalKey = nullOrValue(principalKey);
-    bean.members = [].concat(__.nullOrValue(members));
+    bean.setPrincipalKey(nullOrValue(principalKey));
+    bean.setMembers([].concat(__.nullOrValue(members)));
 
     return __.toNativeObject(bean.removeMembers());
 };
@@ -325,12 +325,12 @@ exports.removeMembers = function (principalKey, members) {
 exports.findPrincipals = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.FindPrincipalsHandler');
 
-    bean.type = __.nullOrValue(params.type);
-    bean.idProvider = __.nullOrValue(params.idProvider);
-    bean.start = __.nullOrValue(params.start);
-    bean.count = __.nullOrValue(params.count);
-    bean.name = __.nullOrValue(params.name);
-    bean.searchText = __.nullOrValue(params.searchText);
+    bean.setType(__.nullOrValue(params.type));
+    bean.setIdProvider(__.nullOrValue(params.idProvider));
+    bean.setStart(__.nullOrValue(params.start));
+    bean.setCount(__.nullOrValue(params.count));
+    bean.setName(__.nullOrValue(params.name));
+    bean.setSearchText(__.nullOrValue(params.searchText));
 
     return __.toNativeObject(bean.findPrincipals());
 };
@@ -345,7 +345,7 @@ exports.findPrincipals = function (params) {
  */
 exports.deletePrincipal = function (principalKey) {
     var bean = __.newBean('com.enonic.xp.lib.auth.DeletePrincipalHandler');
-    bean.principalKey = __.nullOrValue(principalKey);
+    bean.setPrincipalKey(__.nullOrValue(principalKey));
     return __.toNativeObject(bean.deletePrincipal());
 };
 
@@ -375,8 +375,8 @@ exports.getIdProviderConfig = function () {
 exports.getProfile = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.GetProfileHandler');
 
-    bean.key = __.nullOrValue(params.key);
-    bean.scope = __.nullOrValue(params.scope);
+    bean.setKey(__.nullOrValue(params.key));
+    bean.setScope(__.nullOrValue(params.scope));
 
     return __.toNativeObject(bean.execute());
 };
@@ -395,9 +395,9 @@ exports.getProfile = function (params) {
 exports.modifyProfile = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.ModifyProfileHandler');
 
-    bean.key = __.nullOrValue(params.key);
-    bean.scope = __.nullOrValue(params.scope);
-    bean.editor = __.toScriptValue(required(params, 'editor'));
+    bean.setKey(__.nullOrValue(params.key));
+    bean.setScope(__.nullOrValue(params.scope));
+    bean.setEditor(__.toScriptValue(required(params, 'editor')));
 
     return __.toNativeObject(bean.execute());
 };
@@ -418,11 +418,11 @@ exports.modifyProfile = function (params) {
  */
 exports.findUsers = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.FindUsersHandler');
-    bean.start = params.start;
-    bean.count = params.count;
-    bean.query = nullOrValue(params.query);
-    bean.sort = nullOrValue(params.sort);
-    bean.includeProfile = !!params.includeProfile;
+    bean.setStart(params.start);
+    bean.setCount(params.count);
+    bean.setQuery(nullOrValue(params.query));
+    bean.setSort(nullOrValue(params.sort));
+    bean.setIncludeProfile(!!params.includeProfile);
     return __.toNativeObject(bean.execute());
 };
 
@@ -438,9 +438,9 @@ exports.findUsers = function (params) {
 exports.createRole = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.CreateRoleHandler');
 
-    bean.name = required(params, 'name');
-    bean.displayName = nullOrValue(params.displayName);
-    bean.description = nullOrValue(params.description);
+    bean.setName(required(params, 'name'));
+    bean.setDisplayName(nullOrValue(params.displayName));
+    bean.setDescription(nullOrValue(params.description));
 
     return __.toNativeObject(bean.createRole());
 };
@@ -458,8 +458,8 @@ exports.createRole = function (params) {
 exports.modifyRole = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.auth.ModifyRoleHandler');
 
-    bean.principalKey = required(params, 'key');
-    bean.editor = __.toScriptValue(required(params, 'editor'));
+    bean.setPrincipalKey(required(params, 'key'));
+    bean.setEditor(__.toScriptValue(required(params, 'editor')));
 
     return __.toNativeObject(bean.modifyRole());
 };

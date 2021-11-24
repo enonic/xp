@@ -288,7 +288,7 @@ exports.modifySiteConfig_strict = function () {
         });
         throw new Error();
     } catch (e) {
-        assert.assertEquals('No mapping defined for property invalidField with value a', e.message);
+        assert.assertEquals('No mapping defined for property invalidField with value a', e.getMessage());
     }
 };
 
@@ -310,7 +310,7 @@ exports.modifyNotMappedXDataFieldName_stricted = function () {
 
         throw new Error();
     } catch (e) {
-        assert.assertEquals('No mapping defined for property notMappedField with value value', e.message);
+        assert.assertEquals('No mapping defined for property notMappedField with value value', e.getMessage());
     }
 
 

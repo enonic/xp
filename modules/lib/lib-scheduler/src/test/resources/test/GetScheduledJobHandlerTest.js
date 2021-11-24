@@ -78,6 +78,6 @@ exports.getNull = function () {
             name: null
         });
     } catch (e) {
-        assert.assertJsonEquals('name cannot be null', e.message);
+        assert.assertEquals('name cannot be null', e.getMessage());
     }
 };

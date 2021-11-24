@@ -13,7 +13,7 @@ try {
     if (e.code === 'branchAlreadyExists') {
         log.error('Branch [features-branch] already exist');
     } else {
-        log.error('Unexpected error: ' + e.message);
+        log.error('Unexpected error: ' + e.getMessage());
     }
 }
 // END
