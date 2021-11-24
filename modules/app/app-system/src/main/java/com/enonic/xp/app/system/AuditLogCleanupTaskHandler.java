@@ -16,7 +16,12 @@ public class AuditLogCleanupTaskHandler
 
     private AuditLogService auditLogService;
 
-    public String ageThreshold;
+    private String ageThreshold;
+
+    public void setAgeThreshold( final String ageThreshold )
+    {
+        this.ageThreshold = ageThreshold;
+    }
 
     public void execute()
     {

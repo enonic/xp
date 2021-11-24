@@ -70,7 +70,7 @@ try {
     if (e.code === 'contentAlreadyExists') {
         log.error('There is already a content with that name');
     } else {
-        log.error('Unexpected error: ' + e.message);
+        log.error('Unexpected error: ' + e.getMessage());
     }
 }
 // END

@@ -28,30 +28,30 @@ var bean = __.newBean('com.enonic.xp.lib.context.ContextHandlerBean');
  */
 exports.run = function (context, callback) {
     var params = bean.newRunParams();
-    params.callback = callback;
+    params.setCallback(callback);
 
     if (context.repository) {
-        params.repository = context.repository;
+        params.setRepository(context.repository);
     }
 
     if (context.branch) {
-        params.branch = context.branch;
+        params.setBranch(context.branch);
     }
 
     if (context.user) {
         if (context.user.login) {
-            params.username = context.user.login;
+            params.setUsername(context.user.login);
         }
         if (context.user.idProvider) {
-            params.idProvider = context.user.idProvider;
+            params.setIdProvider(context.user.idProvider);
         }
     }
 
     if (context.principals) {
-        params.principals = context.principals;
+        params.setPrincipals(context.principals);
     }
     if (context.attributes) {
-        params.attributes = __.toScriptValue(context.attributes);
+        params.setAttributes(__.toScriptValue(context.attributes));
     }
 
     var result = bean.run(params);

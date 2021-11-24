@@ -40,14 +40,14 @@ function required(params, name) {
 exports.importNodes = function (params) {
     const bean = __.newBean('com.enonic.xp.lib.export.ImportHandler');
 
-    bean.source = required(params, 'source');
-    bean.targetNodePath = required(params, 'targetNodePath');
-    bean.xslt = __.nullOrValue(params.xslt);
-    bean.xsltParams = __.toScriptValue(params.xsltParams);
-    bean.includeNodeIds = __.nullOrValue(params.includeNodeIds);
-    bean.includePermissions = __.nullOrValue(params.includePermissions);
-    bean.nodeImported = __.nullOrValue(params.nodeImported);
-    bean.nodeResolved = __.nullOrValue(params.nodeResolved);
+    bean.setSource(required(params, 'source'));
+    bean.setTargetNodePath(required(params, 'targetNodePath'));
+    bean.setXslt(__.nullOrValue(params.xslt));
+    bean.setXsltParams(__.toScriptValue(params.xsltParams));
+    bean.setIncludeNodeIds(__.nullOrValue(params.includeNodeIds));
+    bean.setIncludePermissions(__.nullOrValue(params.includePermissions));
+    bean.setNodeImported(__.nullOrValue(params.nodeImported));
+    bean.setNodeResolved(__.nullOrValue(params.nodeResolved));
 
     return __.toNativeObject(bean.execute());
 };
@@ -70,12 +70,12 @@ exports.importNodes = function (params) {
  */
 exports.exportNodes = function (params) {
     const bean = __.newBean('com.enonic.xp.lib.export.ExportHandler');
-    bean.sourceNodePath = required(params, 'sourceNodePath');
-    bean.exportName = required(params, 'exportName');
-    bean.includeNodeIds = __.nullOrValue(params.includeNodeIds);
-    bean.includeVersions = __.nullOrValue(params.includeVersions);
-    bean.nodeExported = __.nullOrValue(params.nodeExported);
-    bean.nodeResolved = __.nullOrValue(params.nodeResolved);
+    bean.setSourceNodePath(required(params, 'sourceNodePath'));
+    bean.setExportName(required(params, 'exportName'));
+    bean.setIncludeNodeIds(__.nullOrValue(params.includeNodeIds));
+    bean.setIncludeVersions(__.nullOrValue(params.includeVersions));
+    bean.setNodeExported(__.nullOrValue(params.nodeExported));
+    bean.setNodeResolved(__.nullOrValue(params.nodeResolved));
 
     return __.toNativeObject(bean.execute());
 };

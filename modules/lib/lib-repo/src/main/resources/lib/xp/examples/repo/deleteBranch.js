@@ -13,7 +13,7 @@ try {
     if (e.code === 'branchNotFound') {
         log.error('Branch [test-branch] does not exist');
     } else {
-        log.error('Unexpected error: ' + e.message);
+        log.error('Unexpected error: ' + e.getMessage());
     }
 }
 // END

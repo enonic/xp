@@ -36,8 +36,5 @@ exports.testSend = function () {
         }
     });
 
-    var event = testInstance.publishedEvent;
-    assert.assertEquals('custom.myEvent', event.type);
-    assert.assertEquals(true, event.distributed);
-    assert.assertEquals('{a=1, b=2}', event.data.toString());
+    testInstance.checkPublishedEvent();
 };
