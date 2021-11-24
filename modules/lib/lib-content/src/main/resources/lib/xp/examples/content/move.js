@@ -53,7 +53,7 @@ try {
     if (e.code === 'contentAlreadyExists') {
         log.error('There is already a content in the target specified');
     } else {
-        log.error('Unexpected error: ' + e.message);
+        log.error('Unexpected error: ' + e.getMessage());
     }
 }
 // END

@@ -24,9 +24,19 @@ public class VacuumTaskHandler
 
     private VacuumService vacuumService;
 
-    public String ageThreshold;
+    private String ageThreshold;
 
-    public List<String> tasks;
+    private List<String> tasks;
+
+    public void setAgeThreshold( final String ageThreshold )
+    {
+        this.ageThreshold = ageThreshold;
+    }
+
+    public void setTasks( final List<String> tasks )
+    {
+        this.tasks = tasks;
+    }
 
     public void execute()
     {

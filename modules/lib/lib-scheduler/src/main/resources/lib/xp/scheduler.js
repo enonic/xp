@@ -46,13 +46,13 @@ function nullOrValue(value) {
 exports.create = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.scheduler.CreateScheduledJobHandler');
 
-    bean.name = required(params, 'name');
-    bean.schedule = required(params, 'schedule');
-    bean.descriptor = required(params, 'descriptor');
-    bean.enabled = required(params, 'enabled');
-    bean.description = nullOrValue(params.description);
-    bean.config = __.toScriptValue(params.config);
-    bean.user = nullOrValue(params.user);
+    bean.setName(required(params, 'name'));
+    bean.setSchedule(required(params, 'schedule'));
+    bean.setDescriptor(required(params, 'descriptor'));
+    bean.setEnabled(required(params, 'enabled'));
+    bean.setDescription(nullOrValue(params.description));
+    bean.setConfig(__.toScriptValue(params.config));
+    bean.setUser(nullOrValue(params.user));
 
     return __.toNativeObject(bean.execute());
 };
@@ -69,8 +69,8 @@ exports.create = function (params) {
 exports.modify = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.scheduler.ModifyScheduledJobHandler');
 
-    bean.name = required(params, 'name');
-    bean.editor = __.toScriptValue(params.editor);
+    bean.setName(required(params, 'name'));
+    bean.setEditor(__.toScriptValue(params.editor));
 
     return __.toNativeObject(bean.execute());
 };
@@ -86,7 +86,7 @@ exports.modify = function (params) {
 exports.delete = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.scheduler.DeleteScheduledJobHandler');
 
-    bean.name = required(params, 'name');
+    bean.setName(required(params, 'name'));
 
     return __.toNativeObject(bean.execute());
 };
@@ -102,7 +102,7 @@ exports.delete = function (params) {
 exports.get = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.scheduler.GetScheduledJobHandler');
 
-    bean.name = required(params, 'name');
+    bean.setName(required(params, 'name'));
 
     return __.toNativeObject(bean.execute());
 };

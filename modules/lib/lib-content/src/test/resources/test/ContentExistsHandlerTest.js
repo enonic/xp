@@ -17,7 +17,7 @@ exports.emptyKey = function () {
             key: '',
         });
     } catch (e) {
-        assert.assertEquals('\'key\' param is empty', e.message);
+        assert.assertEquals('\'key\' param is empty', e.getMessage());
     }
 
 };

@@ -190,12 +190,12 @@ RepoConnection.prototype.push = function (params) {
     if (params.key === undefined && params.keys === undefined) {
         throw 'Parameter \'key\' or \'keys\' is required';
     }
-    handlerParams.key = params.key ? params.key : null;
-    handlerParams.keys = params.keys ? params.keys : [];
-    handlerParams.targetBranch = required(params, 'target');
-    handlerParams.includeChildren = valueOrDefault(params.includeChildren, false);
-    handlerParams.exclude = nullOrValue(params.exclude);
-    handlerParams.resolve = valueOrDefault(params.resolve, true);
+    handlerParams.setKey(params.key ? params.key : null);
+    handlerParams.setKeys(params.keys ? params.keys : []);
+    handlerParams.setTargetBranch(required(params, 'target'));
+    handlerParams.setIncludeChildren(valueOrDefault(params.includeChildren, false));
+    handlerParams.setExclude(nullOrValue(params.exclude));
+    handlerParams.setResolve(valueOrDefault(params.resolve, true));
 
     return __.toNativeObject(this.repoConnection.push(handlerParams));
 };
@@ -215,9 +215,9 @@ RepoConnection.prototype.push = function (params) {
 RepoConnection.prototype.diff = function (params) {
     var handlerParams = __.newBean('com.enonic.xp.lib.node.DiffBranchesHandlerParams');
     params = params || {};
-    handlerParams.key = required(params, 'key');
-    handlerParams.targetBranch = required(params, 'target');
-    handlerParams.includeChildren = valueOrDefault(params.includeChildren, false);
+    handlerParams.setKey(required(params, 'key'));
+    handlerParams.setTargetBranch(required(params, 'target'));
+    handlerParams.setIncludeChildren(valueOrDefault(params.includeChildren, false));
 
     return __.toNativeObject(this.repoConnection.diff(handlerParams));
 };
@@ -291,15 +291,15 @@ RepoConnection.prototype.setChildOrder = function (params) {
  */
 RepoConnection.prototype.query = function (params) {
     var handlerParams = __.newBean('com.enonic.xp.lib.node.QueryNodeHandlerParams');
-    handlerParams.start = params.start;
-    handlerParams.count = params.count;
-    handlerParams.query = nullOrValue(params.query);
-    handlerParams.sort = valueOrDefault(params.sort, '_score DESC');
-    handlerParams.aggregations = __.toScriptValue(params.aggregations);
-    handlerParams.suggestions = __.toScriptValue(params.suggestions);
-    handlerParams.highlight = __.toScriptValue(params.highlight);
-    handlerParams.filters = __.toScriptValue(params.filters);
-    handlerParams.explain = valueOrDefault(params.explain, false);
+    handlerParams.setStart(params.start);
+    handlerParams.setCount(params.count);
+    handlerParams.setQuery(nullOrValue(params.query));
+    handlerParams.setSort(valueOrDefault(params.sort, '_score DESC'));
+    handlerParams.setAggregations(__.toScriptValue(params.aggregations));
+    handlerParams.setSuggestions(__.toScriptValue(params.suggestions));
+    handlerParams.setHighlight(__.toScriptValue(params.highlight));
+    handlerParams.setFilters(__.toScriptValue(params.filters));
+    handlerParams.setExplain(valueOrDefault(params.explain, false));
     return __.toNativeObject(this.repoConnection.query(handlerParams));
 };
 
@@ -322,15 +322,15 @@ RepoConnection.prototype.query = function (params) {
  */
 MultiRepoConnection.prototype.query = function (params) {
     var handlerParams = __.newBean('com.enonic.xp.lib.node.QueryNodeHandlerParams');
-    handlerParams.start = params.start;
-    handlerParams.count = params.count;
-    handlerParams.query = nullOrValue(params.query);
-    handlerParams.sort = valueOrDefault(params.sort, '_score DESC');
-    handlerParams.aggregations = __.toScriptValue(params.aggregations);
-    handlerParams.suggestions = __.toScriptValue(params.suggestions);
-    handlerParams.highlight = __.toScriptValue(params.highlight);
-    handlerParams.filters = __.toScriptValue(params.filters);
-    handlerParams.explain = valueOrDefault(params.explain, false);
+    handlerParams.setStart(params.start);
+    handlerParams.setCount(params.count);
+    handlerParams.setQuery(nullOrValue(params.query));
+    handlerParams.setSort(valueOrDefault(params.sort, '_score DESC'));
+    handlerParams.setAggregations(__.toScriptValue(params.aggregations));
+    handlerParams.setSuggestions(__.toScriptValue(params.suggestions));
+    handlerParams.setHighlight(__.toScriptValue(params.highlight));
+    handlerParams.setFilters(__.toScriptValue(params.filters));
+    handlerParams.setExplain(valueOrDefault(params.explain, false));
     return __.toNativeObject(this.multiRepoConnection.query(handlerParams));
 };
 
@@ -362,9 +362,9 @@ RepoConnection.prototype.exists = function (key) {
  */
 RepoConnection.prototype.findVersions = function (params) {
     var handlerParams = __.newBean('com.enonic.xp.lib.node.FindVersionsHandlerParams');
-    handlerParams.key = required(params, 'key');
-    handlerParams.start = nullOrValue(params.start);
-    handlerParams.count = nullOrValue(params.count);
+    handlerParams.setKey(required(params, 'key'));
+    handlerParams.setStart(nullOrValue(params.start));
+    handlerParams.setCount(nullOrValue(params.count));
     return __.toNativeObject(this.repoConnection.findVersions(handlerParams));
 };
 
@@ -414,12 +414,12 @@ RepoConnection.prototype.setActiveVersion = function (params) {
  */
 RepoConnection.prototype.findChildren = function (params) {
     var handlerParams = __.newBean('com.enonic.xp.lib.node.FindChildrenHandlerParams');
-    handlerParams.parentKey = params.parentKey;
-    handlerParams.start = valueOrDefault(params.start, 0);
-    handlerParams.count = valueOrDefault(params.count, 10);
-    handlerParams.childOrder = nullOrValue(params.childOrder);
-    handlerParams.countOnly = valueOrDefault(params.countOnly, false);
-    handlerParams.recursive = valueOrDefault(params.recursive, false);
+    handlerParams.setParentKey(params.parentKey);
+    handlerParams.setStart(valueOrDefault(params.start, 0));
+    handlerParams.setCount(valueOrDefault(params.count, 10));
+    handlerParams.setChildOrder(nullOrValue(params.childOrder));
+    handlerParams.setCountOnly(valueOrDefault(params.countOnly, false));
+    handlerParams.setRecursive(valueOrDefault(params.recursive, false));
     return __.toNativeObject(this.repoConnection.findChildren(handlerParams));
 };
 
@@ -500,20 +500,20 @@ RepoConnection.prototype.getCommit = function (params) {
 exports.connect = function (params) {
 
     var nodeHandleContext = __.newBean('com.enonic.xp.lib.node.NodeHandleContext');
-    nodeHandleContext.repoId = required(params, 'repoId');
-    nodeHandleContext.branch = required(params, 'branch');
+    nodeHandleContext.setRepoId(required(params, 'repoId'));
+    nodeHandleContext.setBranch(required(params, 'branch'));
 
     if (params.user) {
         if (params.user.login) {
-            nodeHandleContext.username = params.user.login;
+            nodeHandleContext.setUsername(params.user.login);
         }
         if (params.user.idProvider) {
-            nodeHandleContext.idProvider = params.user.idProvider;
+            nodeHandleContext.setIdProvider(params.user.idProvider);
         }
     }
 
     if (params.principals) {
-        nodeHandleContext.principals = params.principals;
+        nodeHandleContext.setPrincipals(params.principals);
     }
 
     return new RepoConnection(factory.create(nodeHandleContext));

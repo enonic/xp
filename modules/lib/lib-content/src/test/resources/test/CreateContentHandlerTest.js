@@ -85,7 +85,7 @@ exports.createContentNameAlreadyExists = function () {
         });
 
     } catch (e) {
-        assert.assertEquals('contentAlreadyExists', e.code);
+        assert.assertEquals('contentAlreadyExists', e.getCode());
         return;
     }
 

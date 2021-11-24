@@ -27,7 +27,7 @@ exports.localize = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.i18n.LocaleScriptBean');
     params = params || {};
     params.locale = [].concat(params.locale || []);
-    bean.application = __.nullOrValue(params.application);
+    bean.setApplication(__.nullOrValue(params.application));
     return bean.localize(params.key, params.locale, __.toScriptValue(params.values), __.nullOrValue(params.bundles));
 };
 

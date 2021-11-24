@@ -1,12 +1,16 @@
 package com.enonic.xp.lib.event;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.script.event.ScriptEventListener;
 import com.enonic.xp.script.event.ScriptEventManager;
 import com.enonic.xp.testing.ScriptRunnerSupport;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EventScriptTest
     extends ScriptRunnerSupport
@@ -54,9 +58,11 @@ public class EventScriptTest
         return "/test/event-test.js";
     }
 
-    public Event getPublishedEvent()
+    public void checkPublishedEvent()
     {
-        return this.published;
+        assertEquals( "custom.myEvent", this.published.getType() );
+        assertTrue(this.published.isDistributed() );
+        assertEquals( Map.of("a", 1, "b", 2), this.published.getData() );
     }
 
     public void fireEvent()

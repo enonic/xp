@@ -119,7 +119,7 @@ exports.modifyDescriptorWithNull = function () {
             }
         });
     } catch (e) {
-        assert.assertJsonEquals('descriptor cannot be null', e.message);
+        assert.assertEquals('descriptor cannot be null', e.getMessage());
     }
 
 };
@@ -137,7 +137,7 @@ exports.modifyConfigWithNull = function () {
             }
         });
     } catch (e) {
-        assert.assertJsonEquals('config cannot be null', e.message);
+        assert.assertEquals('config cannot be null', e.getMessage());
     }
 
 };
@@ -155,7 +155,7 @@ exports.modifyCalendarWithNull = function () {
             }
         });
     } catch (e) {
-        assert.assertJsonEquals('schedule cannot be null', e.message);
+        assert.assertEquals('schedule cannot be null', e.getMessage());
     }
 };
 
@@ -172,6 +172,6 @@ exports.modifyEnabledWithNull = function () {
             }
         });
     } catch (e) {
-        assert.assertJsonEquals('enabled cannot be null', e.message);
+        assert.assertEquals('enabled cannot be null', e.getMessage());
     }
 };
