@@ -50,7 +50,7 @@ public final class GetContentByIdAndVersionIdCommand
     {
         final Node node = nodeService.getByIdAndVersionId( nodeId, nodeVersionId );
 
-        final Content content = filter( translator.fromNode( node, true ) );
+        final Content content = filter( translator.fromNode( node, true, true ) );
 
         if ( content != null )
         {
