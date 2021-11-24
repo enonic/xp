@@ -31,11 +31,14 @@ public final class DuplicateNodeCommand
 
     private final BinaryService binaryService;
 
+    private final DuplicateNodeResult.Builder result;
+
     private DuplicateNodeCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.binaryService = builder.binaryService;
+        this.result = DuplicateNodeResult.create();
     }
 
     public static Builder create()
@@ -43,7 +46,7 @@ public final class DuplicateNodeCommand
         return new Builder();
     }
 
-    public Node execute()
+    public DuplicateNodeResult execute()
     {
         final Node existingNode = doGetById( params.getNodeId() );
 
@@ -72,6 +75,7 @@ public final class DuplicateNodeCommand
             build().
             execute();
 
+        result.node( duplicatedNode );
         nodeDuplicated( 1 );
 
         final NodeReferenceUpdatesHolder.Builder builder = NodeReferenceUpdatesHolder.create().
@@ -93,7 +97,7 @@ public final class DuplicateNodeCommand
         updateNodeReferences( duplicatedNode, nodesToBeUpdated );
         updateChildReferences( duplicatedNode, nodesToBeUpdated );
 
-        return duplicatedNode;
+        return result.build();
     }
 
     private CreateNodeParams executeProcessors( final CreateNodeParams originalParams )
@@ -137,17 +141,15 @@ public final class DuplicateNodeCommand
 
             final CreateNodeParams processedParams = executeProcessors( originalParams );
 
-            final Node newChildNode = CreateNodeCommand.create( this ).
-                params( processedParams ).
-                binaryService( this.binaryService ).
-                build().
-                execute();
+            final Node newChildNode =
+                CreateNodeCommand.create( this ).params( processedParams ).binaryService( this.binaryService ).build().execute();
 
             builder.add( node.id(), newChildNode.id() );
 
-            storeChildNodes( node, newChildNode, builder );
-
+            result.addChild( newChildNode );
             nodeDuplicated( 1 );
+
+            storeChildNodes( node, newChildNode, builder );
         }
     }
 
