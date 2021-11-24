@@ -1,5 +1,5 @@
 /**
- * Functions to find and manipulate content.
+ * Functions and constants to find and manipulate content.
  *
  * @example
  * var contentLib = require('/lib/xp/content');
@@ -7,6 +7,10 @@
  * @module content
  */
 /* global __*/
+
+exports.ARCHIVE_ROOT_PATH = com.enonic.xp.archive.ArchiveConstants.ARCHIVE_ROOT_PATH;
+exports.CONTENT_ROOT_PATH = com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH;
+
 
 function required(params, name) {
     var value = params[name];
