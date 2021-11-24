@@ -8,6 +8,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
@@ -130,6 +131,14 @@ public class ContentNodeTranslatorTest
         assertThrows( ContentNotFoundException.class, () -> this.contentNodeTranslator.fromNode( createNode( NodePath.ROOT ), false ) );
         assertThrows( ContentNotFoundException.class,
                       () -> this.contentNodeTranslator.fromNode( createNode( NodePath.create( "/non-content" ).build() ), false ) );
+    }
+
+    @Test
+    public void testNodeOutsideOfContentRootAllowed()
+        throws Exception
+    {
+        final Content content = this.contentNodeTranslator.fromNode( createNode( NodePath.ROOT ), false, true );
+        assertTrue( ContentPath.ROOT.equals( content.getPath() ) );
     }
 
     private Node createNode()

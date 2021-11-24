@@ -46,8 +46,13 @@ public class ContentNodeTranslator
 
     public Content fromNode( final Node node, final boolean resolveHasChildren )
     {
+        return fromNode( node, resolveHasChildren, false );
+    }
+
+    public Content fromNode( final Node node, final boolean resolveHasChildren, final boolean allowAltRootPath )
+    {
         final boolean hasChildren = resolveHasChildren && this.nodeService.hasChildren( node );
-        return doTranslate( node, hasChildren );
+        return doTranslate( node, hasChildren, allowAltRootPath );
     }
 
     private Contents doTranslate( final Nodes nodes, final NodesHasChildrenResult nodeHasChildren )
@@ -81,10 +86,15 @@ public class ContentNodeTranslator
 
     private Content doTranslate( final Node node, final boolean hasChildren )
     {
+        return doTranslate( node, hasChildren, false );
+    }
+
+    private Content doTranslate( final Node node, final boolean hasChildren, final boolean allowAltRootPath )
+    {
         final ContentId contentId = ContentId.from( node.id().toString() );
 
-        if ( !node.path().toString().startsWith( ContentNodeHelper.getContentRoot().toString() + "/" ) &&
-            !node.path().equals( ContentNodeHelper.getContentRoot() ) )
+        if ( !allowAltRootPath && !( node.path().toString().startsWith( ContentNodeHelper.getContentRoot().toString() + "/" ) ||
+            node.path().equals( ContentNodeHelper.getContentRoot() ) ) )
         {
             throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch(), ContentNodeHelper.getContentRoot() );
         }

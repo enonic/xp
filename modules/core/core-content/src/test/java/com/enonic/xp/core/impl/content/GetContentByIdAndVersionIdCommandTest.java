@@ -67,17 +67,15 @@ public class GetContentByIdAndVersionIdCommandTest
             build();
 
         when( nodeService.getByIdAndVersionId( any( NodeId.class ), any( NodeVersionId.class ) ) ).thenReturn( node );
-        when( translator.fromNode( any( Node.class ), anyBoolean() ) ).thenReturn( content );
+        when( translator.fromNode( any( Node.class ), anyBoolean(), anyBoolean() ) ).thenReturn( content );
 
         final Content result = createInstance().execute();
 
         assertNotNull( result );
         assertEquals( content, result );
 
-        verify( nodeService, times( 1 ) ).
-            getByIdAndVersionId( any( NodeId.class ), any( NodeVersionId.class ) );
-        verify( translator, times( 1 ) ).
-            fromNode( any( Node.class ), anyBoolean() );
+        verify( nodeService, times( 1 ) ).getByIdAndVersionId( any( NodeId.class ), any( NodeVersionId.class ) );
+        verify( translator, times( 1 ) ).fromNode( any( Node.class ), anyBoolean(), anyBoolean() );
         verifyNoMoreInteractions( nodeService, translator );
     }
 
@@ -101,10 +99,8 @@ public class GetContentByIdAndVersionIdCommandTest
 
         assertThrows( ContentNotFoundException.class, () -> createInstance().execute() );
 
-        verify( nodeService, times( 1 ) ).
-            getByIdAndVersionId( any( NodeId.class ), any( NodeVersionId.class ) );
-        verify( translator, times( 1 ) ).
-            fromNode( any( Node.class ), anyBoolean() );
+        verify( nodeService, times( 1 ) ).getByIdAndVersionId( any( NodeId.class ), any( NodeVersionId.class ) );
+        verify( translator, times( 1 ) ).fromNode( any( Node.class ), anyBoolean(), anyBoolean() );
         verifyNoMoreInteractions( nodeService, translator );
     }
 
