@@ -1476,13 +1476,15 @@ public class ResolveSyncWorkCommandTest
 
     private Node duplicateNode( final Node node1 )
     {
-        return DuplicateNodeCommand.create().params( DuplicateNodeParams.create().nodeId( node1.id() ).build() ).
-            indexServiceInternal( indexServiceInternal ).
-            binaryService( this.binaryService ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        return DuplicateNodeCommand.create()
+            .params( DuplicateNodeParams.create().nodeId( node1.id() ).build() )
+            .indexServiceInternal( indexServiceInternal )
+            .binaryService( this.binaryService )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute()
+            .getNode();
     }
 
     private PropertyTree createDataWithReferences( final Reference... references )
