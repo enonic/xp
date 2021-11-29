@@ -592,20 +592,19 @@ public class NodeServiceImpl
     public Node duplicate( final DuplicateNodeParams params )
     {
         verifyContext();
-        final Node duplicatedNode = DuplicateNodeCommand.create().
-            params( params ).
-            indexServiceInternal( this.indexServiceInternal ).
-            binaryService( this.binaryService ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        final DuplicateNodeResult result = DuplicateNodeCommand.create()
+            .params( params )
+            .indexServiceInternal( this.indexServiceInternal )
+            .binaryService( this.binaryService )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
 
-        if ( duplicatedNode != null )
-        {
-            this.eventPublisher.publish( NodeEvents.duplicated( duplicatedNode ) );
-        }
-        return duplicatedNode;
+        this.eventPublisher.publish( NodeEvents.duplicated( result.getNode() ) );
+        result.getChildren().forEach( child -> this.eventPublisher.publish( NodeEvents.created( child ) ) );
+
+        return result.getNode();
     }
 
     @Override
