@@ -145,8 +145,7 @@ public final class DuplicateNodeCommand
 
         for ( final Node node : children )
         {
-            final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( node ).
-                parent( newParent.path() );
+            final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( node ).parent( newParent.path() );
 
             decideInsertStrategy( originalParent, node, paramsBuilder );
 
