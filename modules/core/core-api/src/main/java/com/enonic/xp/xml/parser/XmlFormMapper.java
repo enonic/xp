@@ -230,7 +230,7 @@ public final class XmlFormMapper
 
     private String getLabel( final DomElement element, final String defaultValue )
     {
-        String label = element.getChildValue( "label" );
+        String label = element.getChildValueTrimmed( "label" );
         if ( label != null && label.isBlank() )
         {
             label = null;

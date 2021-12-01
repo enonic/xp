@@ -24,7 +24,7 @@ final class XmlWidgetDescriptorParser
         throws Exception
     {
         assertTagName( root, "widget" );
-        this.builder.displayName( root.getChildValue( "display-name" ) );
+        this.builder.displayName( root.getChildValueTrimmed( "display-name" ) );
         this.builder.description( root.getChildValue( "description" ) );
 
         final DomElement interfaces = root.getChild( "interfaces" );
