@@ -22,7 +22,7 @@ public final class XmlMixinParser
         throws Exception
     {
         assertTagName( root, "mixin" );
-        this.builder.displayName( root.getChildValue( "display-name" ) );
+        this.builder.displayName( root.getChildValueTrimmed( "display-name" ) );
         this.builder.displayNameI18nKey(
             root.getChild( "display-name" ) != null ? root.getChild( "display-name" ).getAttribute( "i18n" ) : null );
 

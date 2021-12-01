@@ -34,7 +34,7 @@ public final class XmlContentTypeParser
         this.resolver = new ApplicationRelativeResolver( this.currentApplication );
 
         assertTagName( root, "content-type" );
-        this.builder.displayName( root.getChildValue( "display-name" ) );
+        this.builder.displayName( root.getChildValueTrimmed( "display-name" ) );
         this.builder.displayNameI18nKey(
             root.getChild( "display-name" ) != null ? root.getChild( "display-name" ).getAttribute( "i18n" ) : null );
         this.builder.description( root.getChildValue( "description" ) );
@@ -50,7 +50,7 @@ public final class XmlContentTypeParser
 
         this.builder.xData( buildMetaData( root ) );
 
-        this.builder.displayNameLabel( root.getChildValue( "display-name-label" ) );
+        this.builder.displayNameLabel( root.getChildValueTrimmed( "display-name-label" ) );
         this.builder.displayNameLabelI18nKey(
             root.getChild( "display-name-label" ) != null ? root.getChild( "display-name-label" ).getAttribute( "i18n" ) : null );
 
