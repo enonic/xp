@@ -35,6 +35,6 @@ public class ScaledFunction
     {
         final ScaleCalculator.Values values = scaleCalculator.calc( sourceWidth, sourceHeight );
 
-        return Math.multiplyExact( values.newWidth, values.newWidth );
+        return Math.multiplyExact( values.newWidth, values.newHeight );
     }
 }

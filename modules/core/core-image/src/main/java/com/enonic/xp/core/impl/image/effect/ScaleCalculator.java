@@ -63,9 +63,8 @@ public interface ScaleCalculator
     {
         int diff = value1 - value2;
         final int centered = (int) ( value1 * offset ) - ( value2 / 2 );
-        return Math.max( Math.min( centered, 0 ), diff );
+        return Math.min( Math.max( centered, 0 ), diff );
     }
-
 
     private static Values scaledSub( final int newWidth, final int newHeight, final int widthOffset, final int heightOffset,
                                      final int viewWidth, final int viewHeight )
