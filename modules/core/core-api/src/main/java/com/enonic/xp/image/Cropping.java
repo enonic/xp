@@ -138,8 +138,8 @@ public final class Cropping
         {
             this.top = 0;
             this.left = 0;
-            this.bottom = 0;
-            this.right = 0;
+            this.bottom = 1.0;
+            this.right = 1.0;
             this.zoom = 1.0;
         }
 

@@ -39,7 +39,7 @@ class NormalizedImageParams
     {
         this.contentId = readImageParams.getContentId();
         this.binaryReference = readImageParams.getBinaryReference();
-        this.cropping = readImageParams.getCropping();
+        this.cropping = normalizeCropping( readImageParams.getCropping() );
         this.scaleParams = normalizeScaleParams( readImageParams );
         this.focalPoint = readImageParams.getFocalPoint();
         this.filterParam = FilterSetExpr.parse( readImageParams.getFilterParam() );
@@ -97,6 +97,11 @@ class NormalizedImageParams
     public ImageOrientation getOrientation()
     {
         return orientation;
+    }
+
+    private static Cropping normalizeCropping( final Cropping cropping )
+    {
+        return cropping == null || cropping.isUnmodified() ? null : cropping;
     }
 
     private static String normalizeFormat( final ReadImageParams readImageParams )

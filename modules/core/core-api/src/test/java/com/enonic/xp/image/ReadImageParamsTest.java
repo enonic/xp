@@ -20,7 +20,7 @@ public class ReadImageParamsTest
         final ReadImageParams readImageParams = ReadImageParams.newImageParams().
             contentId( ContentId.from( "contentId" ) ).
             binaryReference( BinaryReference.from( "binaryReference" ) ).
-            cropping( Cropping.create().bottom( 1 ).right( 1 ).build() ).
+            cropping( Cropping.create().build() ).
             scaleParams( new ScaleParams( "scaleParams", null ) ).
             focalPoint( FocalPoint.DEFAULT ).
             scaleSize( 1 ).
@@ -36,7 +36,7 @@ public class ReadImageParamsTest
         assertEquals( ContentId.from( "contentId" ), readImageParams.getContentId() );
         assertEquals( BinaryReference.from( "binaryReference" ), readImageParams.getBinaryReference() );
         assertEquals( BinaryReference.from( "binaryReference" ), readImageParams.getBinaryReference() );
-        assertEquals( Cropping.create().bottom( 1 ).right( 1 ).build(), readImageParams.getCropping() );
+        assertEquals( Cropping.create().build(), readImageParams.getCropping() );
         assertEquals( "scaleParams", readImageParams.getScaleParams().getName() );
         assertEquals( FocalPoint.DEFAULT, readImageParams.getFocalPoint() );
         assertEquals( 1, readImageParams.getScaleSize() );
