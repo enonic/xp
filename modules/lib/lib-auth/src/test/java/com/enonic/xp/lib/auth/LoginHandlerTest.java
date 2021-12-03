@@ -23,6 +23,8 @@ import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class LoginHandlerTest
     extends ScriptTestSupport
@@ -169,6 +171,25 @@ public class LoginHandlerTest
         assertEquals( "idprovider1", matcher.loginIdProviderAttempts.get( 0 ).toString() );
         assertEquals( "idprovider2", matcher.loginIdProviderAttempts.get( 1 ).toString() );
         assertEquals( "idprovider3", matcher.loginIdProviderAttempts.get( 2 ).toString() );
+    }
+
+    @Test
+    public void testSessionInvalidatedOnLogin()
+    {
+        final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
+
+        final IdProviders idProviders =
+            IdProviders.from( IdProvider.create().displayName( "system" ).key( IdProviderKey.from( "system" ) ).build() );
+
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+        Mockito.when( this.securityService.getIdProviders() ).thenReturn( idProviders );
+
+        final SessionMock session = Mockito.spy( new SessionMock() );
+        ContextAccessor.current().getLocalScope().setSession( session );
+
+        runScript( "/lib/xp/examples/auth/login.js" );
+
+        verify( session, times( 5 ) ).invalidate();
     }
 
     private static class AuthTokenMatcher

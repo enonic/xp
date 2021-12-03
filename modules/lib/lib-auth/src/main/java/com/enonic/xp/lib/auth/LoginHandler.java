@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -30,11 +31,6 @@ import com.enonic.xp.session.Session;
 public final class LoginHandler
     implements ScriptBean
 {
-    private enum Scope
-    {
-        SESSION, REQUEST
-    }
-
     private String user;
 
     private String password;
@@ -91,6 +87,9 @@ public final class LoginHandler
         {
             switch ( this.scope )
             {
+                case NONE:
+                    // do nothing
+                    break;
                 case REQUEST:
                     this.context.get().getLocalScope().setAttribute( authInfo );
                     break;
@@ -110,15 +109,26 @@ public final class LoginHandler
 
     private void createSession( final AuthenticationInfo authInfo )
     {
-        final Session session = this.context.get().getLocalScope().getSession();
+        final LocalScope localScope = this.context.get().getLocalScope();
+        final Session session = localScope.getSession();
+
         if ( session != null )
         {
-            session.setAttribute( authInfo );
-        }
+            final var attributes = session.getAttributes();
+            session.invalidate();
 
-        if ( this.sessionTimeout != null )
-        {
-            setSessionTimeout();
+            final Session newSession = localScope.getSession();
+
+            if ( newSession != null )
+            {
+                attributes.forEach( newSession::setAttribute );
+                session.setAttribute( authInfo );
+
+                if ( this.sessionTimeout != null )
+                {
+                    setSessionTimeout();
+                }
+            }
         }
     }
 
@@ -146,9 +156,8 @@ public final class LoginHandler
     private IdProviders getSortedIdProviders()
     {
         IdProviders idProviders = securityService.get().getIdProviders();
-        return IdProviders.from( idProviders.stream().
-            sorted( Comparator.comparing( u -> u.getKey().toString() ) ).
-            collect( Collectors.toList() ) );
+        return IdProviders.from(
+            idProviders.stream().sorted( Comparator.comparing( u -> u.getKey().toString() ) ).collect( Collectors.toList() ) );
     }
 
     private AuthenticationInfo attemptLogin()
@@ -218,11 +227,12 @@ public final class LoginHandler
     private <T> T runAsAuthenticated( Callable<T> runnable )
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.ANONYMOUS ).build();
-        return ContextBuilder.from( this.context.get() ).
-            authInfo( authInfo ).
-            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-            branch( SecurityConstants.BRANCH_SECURITY ).build().
-            callWith( runnable );
+        return ContextBuilder.from( this.context.get() )
+            .authInfo( authInfo )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .branch( SecurityConstants.BRANCH_SECURITY )
+            .build()
+            .callWith( runnable );
     }
 
     private boolean isValidEmail( final String value )
@@ -249,5 +259,10 @@ public final class LoginHandler
         this.securityService = context.getService( SecurityService.class );
         this.context = context.getBinding( Context.class );
         this.portalRequestSupplier = context.getBinding( PortalRequest.class );
+    }
+
+    private enum Scope
+    {
+        SESSION, REQUEST, NONE
     }
 }
