@@ -8,6 +8,7 @@ import java.time.LocalTime;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -116,5 +117,21 @@ public class JavaTypeConvertersTest
         assertEquals( LocalDate.class, JavaTypeConverters.LOCAL_DATE.convertFrom( LocalDateTime.now() ).getClass() );
         assertEquals( LocalDate.class, JavaTypeConverters.LOCAL_DATE.convertFrom( Instant.now() ).getClass() );
         assertNull( JavaTypeConverters.LOCAL_DATE.convertFrom( new Object() ) );
+    }
+
+    @Test
+    public void convertToGeoPoint()
+    {
+        assertEquals( GeoPoint.class, JavaTypeConverters.GEO_POINT.convertFrom( GeoPoint.from( "22.22, 33.33" ) ).getClass() );
+        assertEquals( GeoPoint.class, JavaTypeConverters.GEO_POINT.convertFrom( new GeoPoint( 2.2, 3.3 ) ).getClass() );
+        assertEquals( GeoPoint.class, JavaTypeConverters.GEO_POINT.convertFrom( "22.22, 33.33" ).getClass() );
+
+        final PropertySet set = new PropertySet();
+        set.addDouble( "lat", 2.2 );
+        set.addDouble( "lon", 3.3 );
+        assertEquals( GeoPoint.class, JavaTypeConverters.GEO_POINT.convertFrom( set ).getClass() );
+
+        assertNull( JavaTypeConverters.GEO_POINT.convertFrom( new Object() ) );
+        assertNull( JavaTypeConverters.GEO_POINT.convertFrom( null ) );
     }
 }
