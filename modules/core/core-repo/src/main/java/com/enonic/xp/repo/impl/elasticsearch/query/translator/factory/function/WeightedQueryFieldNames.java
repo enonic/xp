@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -12,7 +13,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public class WeightedQueryFieldNames
     implements Iterable<WeightedQueryFieldName>
 {
-
     private final ImmutableList<WeightedQueryFieldName> weightedQueryFieldNames;
 
     private WeightedQueryFieldNames( final Collection<WeightedQueryFieldName> weightedQueryFieldNames )
@@ -20,15 +20,10 @@ public class WeightedQueryFieldNames
         this.weightedQueryFieldNames = ImmutableList.copyOf( weightedQueryFieldNames );
     }
 
-    public ImmutableList<WeightedQueryFieldName> getWeightedQueryFieldNames()
+    public static WeightedQueryFieldNames from( final Collection<String> weightedQueryFieldNames )
     {
-        return weightedQueryFieldNames;
-    }
-
-    @Override
-    public Iterator<WeightedQueryFieldName> iterator()
-    {
-        return this.weightedQueryFieldNames.iterator();
+        return new WeightedQueryFieldNames(
+            weightedQueryFieldNames.stream().map( WeightedQueryFieldName::from ).collect( Collectors.toList() ) );
     }
 
     public static WeightedQueryFieldNames from( final String weightedQueryFieldNamesString )
@@ -48,6 +43,17 @@ public class WeightedQueryFieldNames
         }
 
         return new WeightedQueryFieldNames( list );
+    }
+
+    public ImmutableList<WeightedQueryFieldName> getWeightedQueryFieldNames()
+    {
+        return weightedQueryFieldNames;
+    }
+
+    @Override
+    public Iterator<WeightedQueryFieldName> iterator()
+    {
+        return this.weightedQueryFieldNames.iterator();
     }
 
 
