@@ -1,0 +1,7 @@
+{
+  "match": {
+    "_path._path": {
+      "query": "/fisk"
+    }
+  }
+}

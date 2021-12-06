@@ -1,0 +1,10 @@
+{
+  "boolean": {
+    "mustNot": {
+      "fulltext": {
+        "field": "displayName",
+        "query": "fisk"
+      }
+    }
+  }
+}

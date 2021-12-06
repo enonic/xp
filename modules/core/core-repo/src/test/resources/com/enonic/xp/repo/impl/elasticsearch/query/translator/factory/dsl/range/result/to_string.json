@@ -1,0 +1,11 @@
+{
+  "range": {
+    "string_field": {
+      "from": null,
+      "to": "d",
+      "include_lower": false,
+      "include_upper": false
+    },
+    "_name": "string_field"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "ngram": {
+    "field": "displayName",
+    "query": "fisk"
+  }
+}

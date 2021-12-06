@@ -1,0 +1,11 @@
+{
+  "range": {
+    "date_field._datetime": {
+      "from": "2017-09-11T09:00:00Z",
+      "to": null,
+      "include_lower": false,
+      "include_upper": false
+    },
+    "_name": "date_field._datetime"
+  }
+}

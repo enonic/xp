@@ -1,0 +1,95 @@
+{
+  "bool": {
+    "must": [
+      {
+        "simple_query_string": {
+          "query": "fisk",
+          "fields": [
+            "displayname._ngram"
+          ],
+          "analyzer": "ngram_search_default",
+          "analyze_wildcard": true
+        }
+      },
+      {
+        "range": {
+          "date_field._datetime": {
+            "from": null,
+            "to": "2021-09-11T09:00:00Z",
+            "include_lower": false,
+            "include_upper": false
+          },
+          "_name": "date_field._datetime"
+        }
+      },
+      {
+        "wildcard": {
+          "displayName": {
+            "wildcard": "fol*der",
+            "_name": "displayName"
+          }
+        }
+      },
+      {
+        "simple_query_string": {
+          "query": "apple",
+          "fields": [
+            "displayname._stemmed_en"
+          ],
+          "analyzer": "english",
+          "analyze_wildcard": true
+        }
+      }
+    ],
+    "must_not": [
+      {
+        "term": {
+          "custom_date": {
+            "value": "1970-01-01T00:00:00Z",
+            "_name": "custom_date"
+          }
+        }
+      },
+      {
+        "bool": {
+          "should": [
+            {
+              "term": {
+                "custom_in": {
+                  "value": "fisk",
+                  "_name": "custom_in"
+                }
+              }
+            },
+            {
+              "term": {
+                "custom_in": {
+                  "value": "ost",
+                  "_name": "custom_in"
+                }
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "should": {
+      "bool": {
+        "must": [
+          {
+            "term": {
+              "_path._path": "/fisk/a"
+            }
+          },
+          {
+            "match": {
+              "_path._path": {
+                "query": "/fisk/a/b"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "simple_query_string": {
+    "query": "apple",
+    "fields": [
+      "displayname._stemmed_no"
+    ],
+    "analyzer": "norwegian",
+    "default_operator": "and",
+    "analyze_wildcard": true
+  }
+}

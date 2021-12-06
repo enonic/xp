@@ -13,11 +13,16 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentByQueryParams;
 import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.query.expr.DslExpr;
+import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.query.parser.QueryParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ContentServiceImplTest_find
     extends AbstractContentServiceTest
@@ -135,19 +140,65 @@ public class ContentServiceImplTest_find
         createContent( ContentPath.ROOT, "title1" );
         createContent( ContentPath.ROOT, "title2" );
 
-        FindContentIdsByQueryResult result = this.contentService.find( ContentQuery.create().
-            queryFilter( ValueFilter.create().
-                fieldName( ContentPropertyNames.DISPLAY_NAME ).
-                addValue( ValueFactory.newString( "title1" ) ).
-                build() ).
-            queryFilter( ValueFilter.create().
-                fieldName( ContentPropertyNames.DISPLAY_NAME ).
-                addValue( ValueFactory.newString( "title2" ) ).
-                build() ).
-            build() );
+        FindContentIdsByQueryResult result = this.contentService.find( ContentQuery.create()
+                                                                           .queryFilter( ValueFilter.create()
+                                                                                             .fieldName( ContentPropertyNames.DISPLAY_NAME )
+                                                                                             .addValue( ValueFactory.newString( "title1" ) )
+                                                                                             .build() )
+                                                                           .queryFilter( ValueFilter.create()
+                                                                                             .fieldName( ContentPropertyNames.DISPLAY_NAME )
+                                                                                             .addValue( ValueFactory.newString( "title2" ) )
+                                                                                             .build() )
+                                                                           .build() );
 
         // Filters will be "must", and no entry matches both titles
         assertEquals( 0, result.getHits() );
+    }
+
+    @Test
+    public void dsl_query()
+        throws Exception
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+
+        final Content child3 = createContent( site.getPath(), "d" );
+        final Content child2 = createContent( site.getPath(), "c" );
+        final Content child1 = createContent( site.getPath(), "b" );
+
+        final PropertyTree request = new PropertyTree();
+        final PropertySet fulltext = new PropertySet();
+        fulltext.addString( "field", "displayName" );
+        fulltext.addString( "query", "c" );
+
+        request.addSet( "fulltext", fulltext );
+
+        final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
+
+        assertOrder( contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ), child2 );
+    }
+
+    @Test
+    public void dsl_query_empty()
+        throws Exception
+    {
+        final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( new PropertyTree() ) ) ).build();
+
+        assertThrows( IllegalArgumentException.class,
+                      () -> contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ) );
+    }
+
+    @Test
+    public void dsl_query_two_root_properties()
+        throws Exception
+    {
+        final PropertyTree request = new PropertyTree();
+        request.addSet( "fulltext", new PropertySet() );
+        request.addSet( "ngram", new PropertySet() );
+
+        final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
+
+        assertThrows( IllegalArgumentException.class,
+                      () -> contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ) );
     }
 
     private FindContentByQueryResult createAndFindContent( final ContentPublishInfo publishInfo )
@@ -155,13 +206,10 @@ public class ContentServiceImplTest_find
     {
         final Content content = createContent( ContentPath.ROOT, publishInfo );
 
-        final ContentQuery query = ContentQuery.create().
-            queryExpr( QueryParser.parse( "_id='" + content.getId().toString() + "'" ) ).
-            build();
+        final ContentQuery query =
+            ContentQuery.create().queryExpr( QueryParser.parse( "_id='" + content.getId().toString() + "'" ) ).build();
 
-        return contentService.find( FindContentByQueryParams.create().
-            contentQuery( query ).
-            build() );
+        return contentService.find( FindContentByQueryParams.create().contentQuery( query ).build() );
     }
 
 }

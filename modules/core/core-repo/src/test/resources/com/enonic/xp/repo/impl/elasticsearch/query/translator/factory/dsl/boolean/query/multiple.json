@@ -1,0 +1,56 @@
+{
+  "boolean": {
+    "should": {
+      "pathMatch": {
+        "field": "_path",
+        "path": "/fisk/a/b",
+        "minimumMatch": 2
+      }
+    },
+    "must": [
+      {
+        "ngram": {
+          "field": "displayName",
+          "query": "fisk"
+        }
+      },
+      {
+        "range": {
+          "field": "date_field",
+          "type": "dateTime",
+          "to": "2021-09-11T09:00:00Z"
+        }
+      },
+      {
+        "like": {
+          "field": "displayName",
+          "value": "fol*der"
+        }
+      },
+      {
+        "stemmed": {
+          "field": "displayName",
+          "query": "apple",
+          "language": "en"
+        }
+      }
+    ],
+    "mustNot": [
+      {
+        "term": {
+          "field": "custom_date",
+          "value": "1970-01-01T00:00:00Z"
+        }
+      },
+      {
+        "in": {
+          "field": "custom_in",
+          "values": [
+            "fisk",
+            "ost"
+          ]
+        }
+      }
+    ]
+  }
+}

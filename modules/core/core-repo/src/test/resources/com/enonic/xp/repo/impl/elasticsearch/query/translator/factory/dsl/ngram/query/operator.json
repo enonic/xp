@@ -1,0 +1,7 @@
+{
+  "ngram": {
+    "field": "displayName",
+    "query": "fisk",
+    "operator": "AND"
+  }
+}

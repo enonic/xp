@@ -1,0 +1,10 @@
+{
+  "ngram": {
+    "fields": [
+      "displayName^3",
+      "_name^5",
+      "custom"
+    ],
+    "query": "fisk"
+  }
+}

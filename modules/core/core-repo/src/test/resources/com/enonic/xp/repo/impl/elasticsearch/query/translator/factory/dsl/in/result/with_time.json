@@ -1,0 +1,22 @@
+{
+  "bool": {
+    "should": [
+      {
+        "term": {
+          "myTime": {
+            "value": "11:23",
+            "_name": "myTime"
+          }
+        }
+      },
+      {
+        "term": {
+          "myTime": {
+            "value": "10:36:30.400",
+            "_name": "myTime"
+          }
+        }
+      }
+    ]
+  }
+}

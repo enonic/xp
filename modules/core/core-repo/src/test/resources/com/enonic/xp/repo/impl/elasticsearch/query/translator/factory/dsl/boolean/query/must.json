@@ -1,0 +1,10 @@
+{
+  "boolean": {
+    "must": {
+      "term": {
+        "field": "custom_number",
+        "value": 2.4
+      }
+    }
+  }
+}
