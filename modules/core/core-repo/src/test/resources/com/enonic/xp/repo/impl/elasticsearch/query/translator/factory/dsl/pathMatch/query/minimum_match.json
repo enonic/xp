@@ -1,0 +1,7 @@
+{
+  "pathMatch": {
+    "field": "_path",
+    "path": "/fisk/a/b/c/d/e/f",
+    "minimumMatch": "3"
+  }
+}

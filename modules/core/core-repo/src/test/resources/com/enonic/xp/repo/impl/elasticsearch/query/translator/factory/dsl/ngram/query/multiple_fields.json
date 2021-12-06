@@ -1,0 +1,11 @@
+{
+  "ngram": {
+    "fields": [
+      "displayName",
+      "_name",
+      "custom"
+    ],
+    "query": "fisk",
+    "operator": "OR"
+  }
+}

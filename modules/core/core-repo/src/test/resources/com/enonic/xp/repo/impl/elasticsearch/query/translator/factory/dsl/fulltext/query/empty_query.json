@@ -1,0 +1,5 @@
+{
+  "fulltext": {
+    "field": "displayName"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "term": {
+    "field": "myBoolean",
+    "value": true
+  }
+}

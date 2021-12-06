@@ -1,0 +1,30 @@
+{
+  "bool": {
+    "should": [
+      {
+        "term": {
+          "mydatetime._datetime": {
+            "value": "2015-02-26T12:00:00.030Z",
+            "_name": "mydatetime._datetime"
+          }
+        }
+      },
+      {
+        "term": {
+          "mydatetime._datetime": {
+            "value": "2015-02-26T14:23:00Z",
+            "_name": "mydatetime._datetime"
+          }
+        }
+      },
+      {
+        "term": {
+          "mydatetime._datetime": {
+            "value": "2015-12-31T23:00:10Z",
+            "_name": "mydatetime._datetime"
+          }
+        }
+      }
+    ]
+  }
+}

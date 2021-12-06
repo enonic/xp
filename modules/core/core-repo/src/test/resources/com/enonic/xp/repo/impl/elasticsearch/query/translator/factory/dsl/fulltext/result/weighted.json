@@ -1,0 +1,12 @@
+{
+  "simple_query_string": {
+    "query": "fisk",
+    "fields": [
+      "custom._analyzed",
+      "_name._analyzed^5.0",
+      "displayname._analyzed^3.0"
+    ],
+    "analyzer": "fulltext_search_default",
+    "analyze_wildcard": true
+  }
+}

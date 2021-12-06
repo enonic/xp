@@ -34,6 +34,19 @@ public class FindNodesByQueryCommandTest_numeric
     }
 
     @Test
+    public void double_values_in()
+        throws Exception
+    {
+
+        createNodeWithDoubleValue( 1.0, "node1", NodePath.ROOT );
+        createNodeWithDoubleValue( 5.2, "node2", NodePath.ROOT );
+        createNodeWithDoubleValue( 10.7, "node3", NodePath.ROOT );
+
+        queryAndAssert( "myNumber IN (1, 10.7)", 2 );
+    }
+
+
+    @Test
     public void long_values()
         throws Exception
     {

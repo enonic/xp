@@ -1,0 +1,8 @@
+{
+  "term": {
+    "myBoolean": {
+      "value": true,
+      "_name": "myBoolean"
+    }
+  }
+}

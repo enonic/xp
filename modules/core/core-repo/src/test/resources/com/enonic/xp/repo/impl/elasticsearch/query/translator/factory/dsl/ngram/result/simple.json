@@ -1,0 +1,10 @@
+{
+  "simple_query_string": {
+    "query": "fisk",
+    "fields": [
+      "displayname._ngram"
+    ],
+    "analyzer": "ngram_search_default",
+    "analyze_wildcard": true
+  }
+}

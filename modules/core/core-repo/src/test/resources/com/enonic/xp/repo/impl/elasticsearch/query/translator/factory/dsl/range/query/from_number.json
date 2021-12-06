@@ -1,0 +1,6 @@
+{
+  "range": {
+    "field": "number_field",
+    "from": 2.3
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "wildcard": {
+    "displayName": {
+      "wildcard": "fol*der",
+      "_name": "displayName"
+    }
+  }
+}
