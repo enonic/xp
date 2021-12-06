@@ -173,9 +173,9 @@ public final class ServletRequestUrlHelper
     private static boolean needPortNumber( final String scheme, final int port )
     {
         final boolean isUndefined = port < 0;
-        final boolean isHttp = "http".equals( scheme ) && ( 80 == port );
-        final boolean isHttps = "https".equals( scheme ) && ( 443 == port );
-        return !( isUndefined || isHttp || isHttps );
+        final boolean isHttpOrWs = ( "http".equals( scheme ) || "ws".equals( scheme ) ) && 80 == port;
+        final boolean isHttpsOrWss = ( "https".equals( scheme ) || "wss".equals( scheme ) ) && 443 == port;
+        return !( isUndefined || isHttpOrWs || isHttpsOrWss );
     }
 
     @Deprecated

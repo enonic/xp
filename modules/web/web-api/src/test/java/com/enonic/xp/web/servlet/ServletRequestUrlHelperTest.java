@@ -55,6 +55,7 @@ public class ServletRequestUrlHelperTest
     {
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "https" );
+        when( req.isSecure() ).thenReturn( true );
         when( req.getServerPort() ).thenReturn( 443 );
 
         assertEquals( "https://localhost", ServletRequestUrlHelper.getServerUrl( req ) );
@@ -110,6 +111,50 @@ public class ServletRequestUrlHelperTest
         assertEquals( "attachment; filename=\"Prisliste for pakker, stykk- og partigods nasjonalt 01.12.2015.pdf\"; " +
                           "filename*=UTF-8''Prisliste%20for%20pakker%2C%20stykk-%20og%20partigods%20nasjonalt%2001.12.2015.pdf",
                       ServletRequestUrlHelper.contentDispositionAttachment( fileName ) );
+    }
+
+    @Test
+    public void createWsUriWithHost_http_port_8080()
+    {
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getScheme() ).thenReturn( "ws" );
+        when( req.isSecure() ).thenReturn( false );
+        when( req.getServerPort() ).thenReturn( 8080 );
+
+        assertEquals( "ws://localhost:8080", ServletRequestUrlHelper.getServerUrl( req ) );
+    }
+
+    @Test
+    public void createWsUriWithHost_http_port_80()
+    {
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getScheme() ).thenReturn( "ws" );
+        when( req.isSecure() ).thenReturn( false );
+        when( req.getServerPort() ).thenReturn( 80 );
+
+        assertEquals( "ws://localhost", ServletRequestUrlHelper.getServerUrl( req ) );
+    }
+
+    @Test
+    public void createWssUriWithHost_https_port_8080()
+    {
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getScheme() ).thenReturn( "wss" );
+        when( req.isSecure() ).thenReturn( false );
+        when( req.getServerPort() ).thenReturn( 8080 );
+
+        assertEquals( "wss://localhost:8080", ServletRequestUrlHelper.getServerUrl( req ) );
+    }
+
+    @Test
+    public void createWssUriWithHost_https_port_443()
+    {
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getScheme() ).thenReturn( "wss" );
+        when( req.isSecure() ).thenReturn( true );
+        when( req.getServerPort() ).thenReturn( 443 );
+
+        assertEquals( "wss://localhost", ServletRequestUrlHelper.getServerUrl( req ) );
     }
 
 }

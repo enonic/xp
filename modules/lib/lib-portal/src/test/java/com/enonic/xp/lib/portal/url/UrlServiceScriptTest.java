@@ -108,6 +108,12 @@ public class UrlServiceScriptTest
     }
 
     @Test
+    public void serviceUrlWebSocketTest()
+    {
+        assertTrue( execute( "serviceUrlWebSocketTest" ) );
+    }
+
+    @Test
     public void serviceUrlTest_unknownProperty()
     {
         assertTrue( execute( "serviceUrlTest_unknownProperty" ) );
