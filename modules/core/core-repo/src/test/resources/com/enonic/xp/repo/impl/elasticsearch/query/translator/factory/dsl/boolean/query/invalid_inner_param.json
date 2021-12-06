@@ -1,0 +1,9 @@
+{
+  "boolean": {
+    "must": {
+      "invalidFunction": {
+        "a": "b"
+      }
+    }
+  }
+}

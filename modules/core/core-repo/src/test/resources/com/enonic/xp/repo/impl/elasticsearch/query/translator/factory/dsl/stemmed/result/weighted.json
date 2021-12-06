@@ -1,0 +1,10 @@
+{
+  "simple_query_string": {
+    "query": "apple",
+    "fields": [
+      "displayname._stemmed_ru^5.0"
+    ],
+    "analyzer": "russian",
+    "analyze_wildcard": true
+  }
+}

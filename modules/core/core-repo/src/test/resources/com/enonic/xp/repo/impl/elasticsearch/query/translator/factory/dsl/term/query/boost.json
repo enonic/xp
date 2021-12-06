@@ -1,0 +1,7 @@
+{
+  "term": {
+    "field": "displayName",
+    "value": "fisk",
+    "boost": 2.3
+  }
+}

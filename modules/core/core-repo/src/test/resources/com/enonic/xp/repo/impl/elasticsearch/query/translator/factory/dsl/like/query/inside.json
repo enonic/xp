@@ -1,0 +1,6 @@
+{
+  "like": {
+    "field": "displayName",
+    "value": "fol*der"
+  }
+}

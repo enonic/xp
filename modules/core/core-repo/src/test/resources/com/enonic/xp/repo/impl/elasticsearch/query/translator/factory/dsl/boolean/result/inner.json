@@ -1,0 +1,26 @@
+{
+  "bool": {
+    "must": {
+      "bool": {
+        "should": [
+          {
+            "term": {
+              "a": {
+                "value": "a",
+                "_name": "a"
+              }
+            }
+          },
+          {
+            "term": {
+              "b": {
+                "value": "b",
+                "_name": "b"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "boolean": {
+    "should": {
+      "pathMatch": {
+        "field": "_path",
+        "path": "/fisk/a/b",
+        "minimumMatch": 2
+      }
+    }
+  }
+}

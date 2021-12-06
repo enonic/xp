@@ -1,0 +1,7 @@
+{
+  "range": {
+    "field": "date_field",
+    "type": "dateTime",
+    "to": "2021-09-11T09:00:00Z"
+  }
+}

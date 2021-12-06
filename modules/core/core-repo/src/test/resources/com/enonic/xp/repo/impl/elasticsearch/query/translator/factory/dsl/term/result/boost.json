@@ -1,0 +1,9 @@
+{
+  "term": {
+    "displayName": {
+      "value": "fisk",
+      "boost": 2.3,
+      "_name": "displayName"
+    }
+  }
+}

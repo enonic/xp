@@ -1,0 +1,11 @@
+{
+  "stemmed": {
+    "fields": [
+      "displayName",
+      "_name",
+      "custom"
+    ],
+    "query": "apple",
+    "language": "en"
+  }
+}

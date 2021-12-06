@@ -1,0 +1,6 @@
+{
+  "fulltext": {
+    "field": "displayName",
+    "query": "fisk"
+  }
+}

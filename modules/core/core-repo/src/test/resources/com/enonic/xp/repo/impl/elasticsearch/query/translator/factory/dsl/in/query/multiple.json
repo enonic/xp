@@ -1,0 +1,10 @@
+{
+  "in": {
+    "field": "displayName",
+    "values": [
+      "one",
+      "two",
+      "three"
+    ]
+  }
+}

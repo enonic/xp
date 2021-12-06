@@ -1,0 +1,6 @@
+{
+  "pathMatch": {
+    "field": "_path",
+    "path": ""
+  }
+}

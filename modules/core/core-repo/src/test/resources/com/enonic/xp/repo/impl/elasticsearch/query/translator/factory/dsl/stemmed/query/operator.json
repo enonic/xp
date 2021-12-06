@@ -1,0 +1,8 @@
+{
+  "stemmed": {
+    "field": "displayName",
+    "query": "apple",
+    "language": "no",
+    "operator": "AND"
+  }
+}

@@ -33,6 +33,7 @@ import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.highlight.HighlightedProperty;
 import com.enonic.xp.lib.content.mapper.ContentsResultMapper;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.serializer.JsonMapGenerator;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.sortvalues.SortValuesProperty;
@@ -45,19 +46,14 @@ public class QueryContentHandlerTest
     public void testExecute()
         throws Exception
     {
-        FindContentIdsByQueryResult queryResult = FindContentIdsByQueryResult.create().
-            contents( ContentIds.from( "contentId" ) ).
-            sort( Collections.singletonMap( ContentId.from( "contentId" ), SortValuesProperty.create().
-                values( 10 ).
-                build() ) ).build();
+        FindContentIdsByQueryResult queryResult = FindContentIdsByQueryResult.create()
+            .contents( ContentIds.from( "contentId" ) )
+            .sort( Collections.singletonMap( ContentId.from( "contentId" ), SortValuesProperty.create().values( 10 ).build() ) )
+            .build();
 
-        Contents contents = Contents.create().
-            add( Content.create().
-                id( ContentId.from( "contentId" ) ).
-                name( "name" ).
-                parentPath( ContentPath.ROOT ).
-                build() ).
-            build();
+        Contents contents = Contents.create()
+            .add( Content.create().id( ContentId.from( "contentId" ) ).name( "name" ).parentPath( ContentPath.ROOT ).build() )
+            .build();
 
         Mockito.when( contentService.find( Mockito.any( ContentQuery.class ) ) ).thenReturn( queryResult );
         Mockito.when( contentService.getByIds( Mockito.any( GetContentByIdsParams.class ) ) ).thenReturn( contents );
@@ -66,7 +62,13 @@ public class QueryContentHandlerTest
 
         instance.initialize( newBeanContext( ResourceKey.from( "myapp:/test" ) ) );
         instance.setSort( "getDistance(\"location\", \"83,80\", \"km\")" );
-        instance.setQuery( "_name = \"cityName\"" );
+
+        final ScriptValue value = Mockito.mock( ScriptValue.class );
+
+        Mockito.when( value.getValue() ).thenReturn( "_name = \"cityName\"" );
+        Mockito.when( value.isValue() ).thenReturn( true );
+
+        instance.setQuery( value );
 
         JsonMapGenerator generator = new JsonMapGenerator();
 
@@ -100,6 +102,30 @@ public class QueryContentHandlerTest
     {
         setupQuery( 3, true, false );
         runFunction( "/test/QueryContentHandlerTest.js", "query" );
+    }
+
+    @Test
+    public void dslQuery()
+        throws Exception
+    {
+        setupQuery( 3, true, false );
+        runFunction( "/test/QueryContentHandlerTest_dsl_query.js", "query" );
+    }
+
+    @Test
+    public void dslQueryInvalid()
+        throws Exception
+    {
+        setupQuery( 3, true, false );
+        runFunction( "/test/QueryContentHandlerTest_dsl_query.js", "invalid" );
+    }
+
+    @Test
+    public void dslQueryEmpty()
+        throws Exception
+    {
+        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( FindContentIdsByQueryResult.empty() );
+        runFunction( "/test/QueryContentHandlerTest_dsl_query.js", "queryEmpty" );
     }
 
     private void setupQuery( final int count, final boolean aggs, final boolean addHighlight )

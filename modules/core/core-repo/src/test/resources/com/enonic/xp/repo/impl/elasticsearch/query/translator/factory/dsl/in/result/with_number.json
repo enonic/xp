@@ -1,0 +1,30 @@
+{
+  "bool": {
+    "should": [
+      {
+        "term": {
+          "mynumber._number": {
+            "value": 3.2,
+            "_name": "mynumber._number"
+          }
+        }
+      },
+      {
+        "term": {
+          "mynumber._number": {
+            "value": 5.0,
+            "_name": "mynumber._number"
+          }
+        }
+      },
+      {
+        "term": {
+          "mynumber._number": {
+            "value": 4.0,
+            "_name": "mynumber._number"
+          }
+        }
+      }
+    ]
+  }
+}

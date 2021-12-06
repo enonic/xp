@@ -67,6 +67,7 @@ public class FindNodesByQueryCommandTest_dateTime
         createNodeWithLocalDate( LocalDate.parse( "2015-02-27" ), "node3", NodePath.ROOT );
 
         queryAndAssert( "myLocalDate = '2015-02-26'", 1 );
+        queryAndAssert( "myLocalDate = date('2015-02-26')", 1 );
         queryAndAssert( "myLocalDate >= '2015-02-26'", 2 );
     }
 

@@ -1,0 +1,12 @@
+{
+  "simple_query_string": {
+    "query": "apple",
+    "fields": [
+      "_name._stemmed_en",
+      "displayname._stemmed_en",
+      "custom._stemmed_en"
+    ],
+    "analyzer": "english",
+    "analyze_wildcard": true
+  }
+}

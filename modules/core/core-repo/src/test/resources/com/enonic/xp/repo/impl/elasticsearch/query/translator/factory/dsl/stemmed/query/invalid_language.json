@@ -1,0 +1,7 @@
+{
+  "stemmed": {
+    "field": "displayName",
+    "query": "apple",
+    "language": "rr"
+  }
+}

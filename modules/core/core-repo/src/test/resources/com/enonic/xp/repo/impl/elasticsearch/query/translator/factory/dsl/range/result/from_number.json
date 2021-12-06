@@ -1,0 +1,11 @@
+{
+  "range": {
+    "number_field._number": {
+      "from": 2.3,
+      "to": null,
+      "include_lower": false,
+      "include_upper": false
+    },
+    "_name": "number_field._number"
+  }
+}

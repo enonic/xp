@@ -1,0 +1,12 @@
+{
+  "bool": {
+    "must": {
+      "term": {
+        "custom_number._number": {
+          "value": 2.4,
+          "_name": "custom_number._number"
+        }
+      }
+    }
+  }
+}

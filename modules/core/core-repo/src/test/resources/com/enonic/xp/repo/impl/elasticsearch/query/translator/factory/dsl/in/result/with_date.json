@@ -1,0 +1,22 @@
+{
+  "bool": {
+    "should": [
+      {
+        "term": {
+          "mydate._datetime": {
+            "value": "2021-02-26",
+            "_name": "mydate._datetime"
+          }
+        }
+      },
+      {
+        "term": {
+          "mydate._datetime": {
+            "value": "2021-02-28",
+            "_name": "mydate._datetime"
+          }
+        }
+      }
+    ]
+  }
+}

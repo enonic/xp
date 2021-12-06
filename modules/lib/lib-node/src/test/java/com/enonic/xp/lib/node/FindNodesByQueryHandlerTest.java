@@ -123,20 +123,47 @@ public class FindNodesByQueryHandlerTest
     @Test
     public void testExample2()
     {
-        Mockito.when( this.nodeService.findByQuery( Mockito.isA( NodeQuery.class ) ) ).
-            thenReturn( FindNodesByQueryResult.create().
-                totalHits( 12902 ).
-                addNodeHit( NodeHit.create().
-                    nodeId( NodeId.from( "b186d24f-ac38-42ca-a6db-1c1bda6c6c26" ) ).
-                    score( 1.23f ).
-                    build() ).
-                addNodeHit( NodeHit.create().
-                    nodeId( NodeId.from( "350ba4a6-589c-498b-8af0-f183850e1120" ) ).
-                    score( 1.40f ).
-                    build() ).
-                build() );
+        Mockito.when( this.nodeService.findByQuery( Mockito.isA( NodeQuery.class ) ) )
+            .thenReturn( FindNodesByQueryResult.create()
+                             .totalHits( 12902 )
+                             .addNodeHit(
+                                 NodeHit.create().nodeId( NodeId.from( "b186d24f-ac38-42ca-a6db-1c1bda6c6c26" ) ).score( 1.23f ).build() )
+                             .addNodeHit(
+                                 NodeHit.create().nodeId( NodeId.from( "350ba4a6-589c-498b-8af0-f183850e1120" ) ).score( 1.40f ).build() )
+                             .build() );
 
         runScript( "/lib/xp/examples/node/query-filter-array-on-root.js" );
+    }
+
+    @Test
+    public void testDslExample()
+    {
+        Mockito.doReturn( FindNodesByQueryResult.create()
+                              .totalHits( 12902 )
+                              .addNodeHit(
+                                  NodeHit.create().nodeId( NodeId.from( "b186d24f-ac38-42ca-a6db-1c1bda6c6c26" ) ).score( 1.23f ).build() )
+                              .addNodeHit(
+                                  NodeHit.create().nodeId( NodeId.from( "350ba4a6-589c-498b-8af0-f183850e1120" ) ).score( 1.7f ).build() )
+                              .build() ).when( this.nodeService ).findByQuery( Mockito.isA( NodeQuery.class ) );
+
+        runScript( "/lib/xp/examples/node/query-dsl.js" );
+    }
+
+    @Test
+    public void dslQueryInvalid()
+        throws Exception
+    {
+        runFunction( "/test/FindNodesByQueryHandlerTest.js", "invalid" );
+    }
+
+    @Test
+    public void dslQueryEmpty()
+        throws Exception
+    {
+        Mockito.doReturn( FindNodesByQueryResult.create().totalHits( 0 ).build() )
+            .when( this.nodeService )
+            .findByQuery( Mockito.isA( NodeQuery.class ) );
+        runFunction( "/test/FindNodesByQueryHandlerTest.js", "queryEmpty" );
     }
 
 }

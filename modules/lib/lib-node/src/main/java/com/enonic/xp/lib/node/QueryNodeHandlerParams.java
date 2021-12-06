@@ -14,7 +14,7 @@ public class QueryNodeHandlerParams
 
     private Integer count;
 
-    private String query;
+    private ScriptValue query;
 
     private String sort;
 
@@ -94,13 +94,13 @@ public class QueryNodeHandlerParams
         this.count = count;
     }
 
-    String getQuery()
+    ScriptValue getQuery()
     {
         return query;
     }
 
     @SuppressWarnings("unused")
-    public void setQuery( final String query )
+    public void setQuery( final ScriptValue query )
     {
         this.query = query;
     }
