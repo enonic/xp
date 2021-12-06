@@ -14,7 +14,6 @@ exports.testGet = function () {
         'allowChildContent': true,
         'displayNameExpression': '${title} ${author}',
         'icon': {
-            'data': {},
             'mimeType': 'image/png',
             'modifiedTime': '2016-01-01T12:00:00Z'
         },
@@ -209,7 +208,6 @@ exports.testList = function () {
             'allowChildContent': true,
             'displayNameExpression': '${title} ${author}',
             'icon': {
-                'data': {},
                 'mimeType': 'image/png',
                 'modifiedTime': '2016-01-01T12:00:00Z'
             },
