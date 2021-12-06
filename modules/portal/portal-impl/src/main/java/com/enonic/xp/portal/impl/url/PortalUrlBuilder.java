@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.servlet.http.HttpServletRequestWrapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,6 +163,17 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
         if ( UrlTypeConstants.ABSOLUTE.equals( this.params.getType() ) )
         {
             return ServletRequestUrlHelper.getServerUrl( portalRequest.getRawRequest() ) + uri;
+        }
+        else if ( UrlTypeConstants.WEBSOCKET.equals( this.params.getType() ) )
+        {
+            return ServletRequestUrlHelper.getServerUrl( new HttpServletRequestWrapper( portalRequest.getRawRequest() )
+            {
+                @Override
+                public String getScheme()
+                {
+                    return isSecure() ? "wss" : "ws";
+                }
+            } ) + uri;
         }
         else
         {

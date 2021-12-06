@@ -176,6 +176,21 @@ exports.serviceUrlTest = function () {
     return true;
 };
 
+exports.serviceUrlWebSocketTest = function () {
+    var result = portal.serviceUrl({
+        service: 'myservice',
+        type: 'websocket',
+        params: {
+            a: 1,
+            b: [1, 2]
+        }
+    });
+
+    // NOTE: This is not the actual url. Only a mock representation.
+    assert.assertEquals('ServiceUrlParams{type=websocket, params={a=[1], b=[1, 2]}, service=myservice}', result);
+    return true;
+};
+
 exports.serviceUrlTest_unknownProperty = function () {
     var result = portal.serviceUrl({
         service: 'myservice',

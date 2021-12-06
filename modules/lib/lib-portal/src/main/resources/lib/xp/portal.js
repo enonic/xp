@@ -115,7 +115,7 @@ exports.pageUrl = function (params) {
  * @param {object} params Input parameters as JSON.
  * @param {string} params.service Name of the service.
  * @param {string} [params.application] Other application to reference to. Default is current application.
- * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
+ * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
  * @returns {string} The generated URL.
@@ -186,7 +186,7 @@ exports.logoutUrl = function (params) {
  *
  * @param {object} params Input parameters as JSON.
  * @param {string} params.path Path of the resource.
- * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
+ * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
  * @returns {string} The generated URL.

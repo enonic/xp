@@ -1,16 +1,12 @@
 package com.enonic.xp.portal.impl.url;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.ServiceUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class PortalUrlServiceImpl_serviceUrlTest
@@ -68,5 +64,22 @@ public class PortalUrlServiceImpl_serviceUrlTest
 
         final String url = this.service.serviceUrl( params );
         assertEquals( "http://localhost/site/default/draft/context/path/_/service/myapplication/myservice?a=3", url );
+    }
+
+    @Test
+    public void createUrl_websocket()
+    {
+        final ServiceUrlParams params = new ServiceUrlParams().
+            type( UrlTypeConstants.WEBSOCKET ).
+            portalRequest( this.portalRequest ).
+            service( "myservice" ).
+            param( "a", 3 );
+
+        when( req.getServerName() ).thenReturn( "localhost" );
+        when( req.getScheme() ).thenReturn( "http" );
+        when( req.getServerPort() ).thenReturn( 80 );
+
+        final String url = this.service.serviceUrl( params );
+        assertEquals( "ws://localhost/site/default/draft/context/path/_/service/myapplication/myservice?a=3", url );
     }
 }
