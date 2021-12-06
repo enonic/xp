@@ -11,9 +11,11 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.lib.common.JsonToFilterMapper;
+import com.enonic.xp.lib.common.JsonToPropertyTreeTranslator;
 import com.enonic.xp.lib.content.mapper.ContentsResultMapper;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.expr.ConstraintExpr;
+import com.enonic.xp.query.expr.DslExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.Filter;
@@ -22,6 +24,7 @@ import com.enonic.xp.query.highlight.HighlightQuery;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.util.JsonHelper;
 
 @SuppressWarnings("unused")
 public final class QueryContentHandler
@@ -31,7 +34,7 @@ public final class QueryContentHandler
 
     private Integer count;
 
-    private String query;
+    private ScriptValue query;
 
     private String sort;
 
@@ -48,26 +51,26 @@ public final class QueryContentHandler
     {
         final int start = valueOrDefault( this.start, 0 );
         final int count = valueOrDefault( this.count, GetChildContentHandler.DEFAULT_COUNT );
-        final String query = valueOrDefault( this.query, "" ).trim();
         final String sort = valueOrDefault( this.sort, "" ).trim();
         final ContentTypeNames contentTypeNames = getContentTypeNames();
 
         final List<OrderExpr> orderExpressions = QueryParser.parseOrderExpressions( sort );
-        final ConstraintExpr constraintExpr = QueryParser.parseCostraintExpression( query );
-        final QueryExpr queryExpr = QueryExpr.from( constraintExpr, orderExpressions );
+
+        final QueryExpr queryExpr = QueryExpr.from( buildConstraintExpr(), orderExpressions );
+
         final Filters filters = JsonToFilterMapper.create( this.filters );
 
         final Set<AggregationQuery> aggregations = new QueryAggregationParams().getAggregations( this.aggregations );
 
         final HighlightQuery highlight = new QueryHighlightParams().getHighlightQuery( this.highlight );
 
-        final ContentQuery.Builder queryBuilder = ContentQuery.create().
-            from( start ).
-            size( count ).
-            aggregationQueries( aggregations ).
-            highlight( highlight ).
-            addContentTypeNames( contentTypeNames ).
-            queryExpr( queryExpr );
+        final ContentQuery.Builder queryBuilder = ContentQuery.create()
+            .from( start )
+            .size( count )
+            .aggregationQueries( aggregations )
+            .highlight( highlight )
+            .addContentTypeNames( contentTypeNames )
+            .queryExpr( queryExpr );
 
         for ( final Filter filter : filters )
         {
@@ -77,6 +80,23 @@ public final class QueryContentHandler
         final FindContentIdsByQueryResult queryResult = contentService.find( queryBuilder.build() );
 
         return convert( queryResult );
+    }
+
+    private ConstraintExpr buildConstraintExpr()
+    {
+        if ( query == null )
+        {
+            return QueryParser.parseCostraintExpression( "" );
+        }
+        else if ( query.isValue() )
+        {
+            return QueryParser.parseCostraintExpression( query.getValue( String.class ) );
+        }
+        else if ( query.isObject() )
+        {
+            return DslExpr.from( JsonToPropertyTreeTranslator.translate( JsonHelper.from( query.getMap() ) ) );
+        }
+        throw new IllegalArgumentException( "query must be a String or JSON object" );
     }
 
     private ContentTypeNames getContentTypeNames()
@@ -115,7 +135,7 @@ public final class QueryContentHandler
         this.count = count;
     }
 
-    public void setQuery( final String query )
+    public void setQuery( final ScriptValue query )
     {
         this.query = query;
     }

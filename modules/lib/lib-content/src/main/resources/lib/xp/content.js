@@ -263,7 +263,7 @@ exports.create = function (params) {
  * @param {object} params JSON with the parameters.
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
- * @param {string} params.query Query expression.
+ * @param {string|object} params.query Query expression.
  * @param {object} [params.filters] Filters to apply to query result
  * @param {string} [params.sort] Sorting expression.
  * @param {string} [params.aggregations] Aggregations expression.
@@ -275,7 +275,7 @@ exports.query = function (params) {
     var bean = __.newBean('com.enonic.xp.lib.content.QueryContentHandler');
     bean.setStart(params.start);
     bean.setCount(params.count);
-    bean.setQuery(nullOrValue(params.query));
+    bean.setQuery(__.toScriptValue((params.query)));
     bean.setSort(nullOrValue(params.sort));
     bean.setAggregations(__.toScriptValue(params.aggregations));
     bean.setContentTypes(__.toScriptValue(params.contentTypes));

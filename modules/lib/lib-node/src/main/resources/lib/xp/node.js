@@ -281,7 +281,7 @@ RepoConnection.prototype.setChildOrder = function (params) {
  * @param {object} params JSON with the parameters.
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
- * @param {string} params.query Query expression.
+ * @param {string|object} [params.query] Query expression.
  * @param {object} [params.filters] Query filters
  * @param {string} [params.sort='_score DESC'] Sorting expression.
  * @param {string} [params.aggregations] Aggregations expression.
@@ -293,7 +293,7 @@ RepoConnection.prototype.query = function (params) {
     var handlerParams = __.newBean('com.enonic.xp.lib.node.QueryNodeHandlerParams');
     handlerParams.setStart(params.start);
     handlerParams.setCount(params.count);
-    handlerParams.setQuery(nullOrValue(params.query));
+    handlerParams.setQuery(__.toScriptValue((params.query)));
     handlerParams.setSort(valueOrDefault(params.sort, '_score DESC'));
     handlerParams.setAggregations(__.toScriptValue(params.aggregations));
     handlerParams.setSuggestions(__.toScriptValue(params.suggestions));
@@ -312,7 +312,7 @@ RepoConnection.prototype.query = function (params) {
  * @param {object} params JSON with the parameters.
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
- * @param {string} params.query Query expression.
+ * @param {string|object} [params.query] Query expression.
  * @param {object} [params.filters] Query filters
  * @param {string} [params.sort='_score DESC'] Sorting expression.
  * @param {string} [params.aggregations] Aggregations expression.
@@ -324,7 +324,7 @@ MultiRepoConnection.prototype.query = function (params) {
     var handlerParams = __.newBean('com.enonic.xp.lib.node.QueryNodeHandlerParams');
     handlerParams.setStart(params.start);
     handlerParams.setCount(params.count);
-    handlerParams.setQuery(nullOrValue(params.query));
+    handlerParams.setQuery(__.toScriptValue((params.query)));
     handlerParams.setSort(valueOrDefault(params.sort, '_score DESC'));
     handlerParams.setAggregations(__.toScriptValue(params.aggregations));
     handlerParams.setSuggestions(__.toScriptValue(params.suggestions));
