@@ -205,6 +205,10 @@ final class JavaTypeConverters
             final TemporalAccessor temporalAccessor = DATE_TIME_FORMATTER.parse( (String) value );
             return Instant.from( temporalAccessor );
         }
+        else if ( value instanceof Number )
+        {
+            return Instant.ofEpochSecond( ( (Number) value ).longValue() );
+        }
         else
         {
             return null;
@@ -305,6 +309,11 @@ final class JavaTypeConverters
         else if ( value instanceof String )
         {
             return GeoPoint.from( (String) value );
+        }
+        else if ( value instanceof PropertySet )
+        {
+            final PropertySet geoPointSet = (PropertySet) value;
+            return new GeoPoint( geoPointSet.getDouble( "lat" ), geoPointSet.getDouble( "lon" ) );
         }
         else
         {
