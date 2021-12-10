@@ -38,10 +38,12 @@ class RangeQueryBuilder
     {
         final String fieldName = getFieldName( from != null ? from : to );
 
-        return new org.elasticsearch.index.query.RangeQueryBuilder( fieldName ).from( parseValue( from ) )
+        final var builder = new org.elasticsearch.index.query.RangeQueryBuilder( fieldName ).from( parseValue( from ) )
             .to( parseValue( to ) )
             .includeLower( includeFrom )
             .includeUpper( includeTo )
             .queryName( fieldName );
+
+        return addBoost( builder );
     }
 }

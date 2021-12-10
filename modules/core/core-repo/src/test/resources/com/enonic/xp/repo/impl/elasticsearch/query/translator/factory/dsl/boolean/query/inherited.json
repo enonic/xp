@@ -1,0 +1,30 @@
+{
+  "boolean": {
+    "must": [
+      {
+        "boolean": {
+          "should": [
+            {
+              "term": {
+                "field": "myNumber1",
+                "value": 2.4
+              }
+            },
+            {
+              "term": {
+                "field": "myNumber2",
+                "value": 2.4
+              }
+            }
+          ]
+        }
+      },
+      {
+        "ngram": {
+          "field": "displayName",
+          "query": "fisk"
+        }
+      }
+    ]
+  }
+}

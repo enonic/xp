@@ -1,22 +1,32 @@
 {
   "bool": {
-    "should": {
-      "bool": {
-        "must": [
-          {
-            "term": {
-              "_path._path": "/fisk/a"
-            }
-          },
-          {
-            "match": {
-              "_path._path": {
-                "query": "/fisk/a/b"
+    "should": [
+      {
+        "bool": {
+          "must": [
+            {
+              "term": {
+                "_path._path": "/fisk/a"
+              }
+            },
+            {
+              "match": {
+                "_path._path": {
+                  "query": "/fisk/a/b"
+                }
               }
             }
+          ]
+        }
+      },
+      {
+        "wildcard": {
+          "displayName": {
+            "wildcard": "fol*der",
+            "_name": "displayName"
           }
-        ]
+        }
       }
-    }
+    ]
   }
 }

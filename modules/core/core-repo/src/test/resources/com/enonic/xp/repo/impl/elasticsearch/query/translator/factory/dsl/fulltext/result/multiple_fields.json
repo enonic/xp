@@ -1,6 +1,6 @@
 {
   "simple_query_string": {
-    "query": "fisk",
+    "query": "apple pork fish",
     "fields": [
       "custom._analyzed",
       "_name._analyzed",
