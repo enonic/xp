@@ -48,6 +48,13 @@ public class BooleanQueryBuilderTest
     }
 
     @Test
+    public void inherited()
+        throws Exception
+    {
+        test( "inherited" );
+    }
+
+    @Test
     public void invalid_param()
         throws Exception
     {

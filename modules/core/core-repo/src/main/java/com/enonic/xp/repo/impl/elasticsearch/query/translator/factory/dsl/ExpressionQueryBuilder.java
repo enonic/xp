@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.dsl;
 import java.time.ZoneOffset;
 
 import org.elasticsearch.common.Strings;
+import org.elasticsearch.index.query.BoostableQueryBuilder;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.ValueTypeException;
@@ -15,6 +16,8 @@ abstract class ExpressionQueryBuilder
 {
     private static final SearchQueryFieldNameResolver FIELD_NAME_RESOLVER = new SearchQueryFieldNameResolver();
 
+    protected final Double boost;
+
     private final String field;
 
     private final String type;
@@ -25,6 +28,7 @@ abstract class ExpressionQueryBuilder
 
         this.field = getString( "field" );
         this.type = getString( "type" );
+        this.boost = getDouble( "boost" );
     }
 
     protected Object parseValue( final Object value )
@@ -79,5 +83,14 @@ abstract class ExpressionQueryBuilder
             default:
                 throw new IllegalArgumentException( String.format( "There is no [%s] dsl expression type", type ) );
         }
+    }
+
+    protected <T extends BoostableQueryBuilder<?>> T addBoost( final T builder )
+    {
+        if ( boost != null )
+        {
+            builder.boost( boost.floatValue() );
+        }
+        return builder;
     }
 }

@@ -17,11 +17,11 @@ class PathMatchQueryBuilder
 {
     public static final String NAME = "pathMatch";
 
-    protected final String field;
+    private final String field;
 
-    protected final String path;
+    private final String path;
 
-    protected final Long minimumMatch;
+    private final Long minimumMatch;
 
     PathMatchQueryBuilder( final PropertySet expression )
     {

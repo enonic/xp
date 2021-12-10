@@ -12,27 +12,19 @@ class TermQueryBuilder
 
     private final Object value;
 
-    private final Double boost;
-
     TermQueryBuilder( final PropertySet expression )
     {
         super( expression );
 
         this.value = getObject( "value" );
-        this.boost = getDouble( "boost" );
     }
 
     public QueryBuilder create()
     {
         final String fieldName = getFieldName( value );
 
-        final org.elasticsearch.index.query.TermQueryBuilder builder =
-            QueryBuilders.termQuery( fieldName, parseValue( value ) ).queryName( fieldName );
+        final var builder = QueryBuilders.termQuery( fieldName, parseValue( value ) ).queryName( fieldName );
 
-        if ( boost != null )
-        {
-            builder.boost( boost.floatValue() );
-        }
-        return builder;
+        return addBoost( builder );
     }
 }

@@ -1,11 +1,19 @@
 {
   "boolean": {
-    "should": {
-      "pathMatch": {
-        "field": "_path",
-        "path": "/fisk/a/b",
-        "minimumMatch": 2
+    "should": [
+      {
+        "pathMatch": {
+          "field": "_path",
+          "path": "/fisk/a/b",
+          "minimumMatch": 2
+        }
+      },
+      {
+        "like": {
+          "field": "displayName",
+          "value": "fol*der"
+        }
       }
-    }
+    ]
   }
 }

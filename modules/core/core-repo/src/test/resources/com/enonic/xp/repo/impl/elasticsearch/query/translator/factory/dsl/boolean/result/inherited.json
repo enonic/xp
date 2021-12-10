@@ -1,0 +1,38 @@
+{
+  "bool": {
+    "must": [
+      {
+        "bool": {
+          "should": [
+            {
+              "term": {
+                "mynumber1._number": {
+                  "value": 2.4,
+                  "_name": "mynumber1._number"
+                }
+              }
+            },
+            {
+              "term": {
+                "mynumber2._number": {
+                  "value": 2.4,
+                  "_name": "mynumber2._number"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "simple_query_string": {
+          "query": "fisk",
+          "fields": [
+            "displayname._ngram"
+          ],
+          "analyzer": "ngram_search_default",
+          "analyze_wildcard": true
+        }
+      }
+    ]
+  }
+}
