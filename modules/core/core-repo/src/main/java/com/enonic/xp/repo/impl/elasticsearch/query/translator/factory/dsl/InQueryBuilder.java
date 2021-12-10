@@ -37,6 +37,6 @@ class InQueryBuilder
             query.should( QueryBuilders.termQuery( fieldName, parseValue( value ) ).queryName( fieldName ) );
         }
 
-        return query;
+        return addBoost( query );
     }
 }

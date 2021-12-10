@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.dsl;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.WildcardQueryBuilder;
 
 import com.google.common.base.Preconditions;
 
@@ -29,7 +30,9 @@ class LikeQueryBuilder
     {
         final String fieldName = getFieldName( value );
 
-        return QueryBuilders.wildcardQuery( fieldName, (String) parseValue( IndexValueNormalizer.normalize( value ) ) )
-            .queryName( fieldName );
+        final WildcardQueryBuilder builder =
+            QueryBuilders.wildcardQuery( fieldName, (String) parseValue( IndexValueNormalizer.normalize( value ) ) ).queryName( fieldName );
+
+        return addBoost( builder );
     }
 }
