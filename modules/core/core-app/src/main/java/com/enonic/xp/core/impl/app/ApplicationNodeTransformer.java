@@ -31,7 +31,7 @@ class ApplicationNodeTransformer
         final PropertyTree data = new PropertyTree();
         data.setString( ApplicationPropertyNames.DISPLAY_NAME, app.getDisplayName() );
         data.setString( ApplicationPropertyNames.MAX_SYSTEM_VERSION, app.getMaxSystemVersion() );
-        data.setString( ApplicationPropertyNames.MIN_SYSTEM_VERSION, app.getMaxSystemVersion() );
+        data.setString( ApplicationPropertyNames.MIN_SYSTEM_VERSION, app.getMinSystemVersion() );
         data.setString( ApplicationPropertyNames.VERSION, app.getVersion().toString() );
         data.setString( ApplicationPropertyNames.VENDOR_NAME, app.getVendorName() );
         data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, app.getModifiedTime() );
@@ -45,7 +45,7 @@ class ApplicationNodeTransformer
         return UpdateNodeParams.create().
             id( existingNode.id() ).
             attachBinary( BinaryReference.from( APPLICATION_BINARY_REF ), source ).
-            editor( ( node ) -> createApplicationProperties( app ) ).
+            editor( node -> node.data = createApplicationProperties( app ) ).
             build();
     }
 
