@@ -22,6 +22,9 @@ import com.enonic.xp.session.SessionKey;
 import com.enonic.xp.session.SimpleSession;
 import com.enonic.xp.testing.ScriptTestSupport;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 public class LoginHandlerTest
     extends ScriptTestSupport
 {
@@ -138,10 +141,29 @@ public class LoginHandlerTest
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
         Assert.assertEquals( authInfo, sessionAuthInfo );
-        Assert.assertEquals( 3, matcher.loginUserStoreAttempts.size());
+        Assert.assertEquals( 3, matcher.loginUserStoreAttempts.size() );
         Assert.assertEquals( "userstore1", matcher.loginUserStoreAttempts.get( 0 ).toString() );
         Assert.assertEquals( "userstore2", matcher.loginUserStoreAttempts.get( 1 ).toString() );
         Assert.assertEquals( "userstore3", matcher.loginUserStoreAttempts.get( 2 ).toString() );
+    }
+
+    @Test
+    public void testSessionInvalidatedOnLogin()
+    {
+        final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
+
+        final UserStores userStores =
+            UserStores.from( UserStore.create().displayName( "system" ).key( UserStoreKey.from( "system" ) ).build() );
+
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+        Mockito.when( this.securityService.getUserStores() ).thenReturn( userStores );
+
+        final Session session = Mockito.mock( Session.class );
+        ContextAccessor.current().getLocalScope().setSession( session );
+
+        runScript( "/site/lib/xp/examples/auth/login.js" );
+
+        verify( session, times( 4 ) ).invalidate();
     }
 
     private class AuthTokenMatcher
