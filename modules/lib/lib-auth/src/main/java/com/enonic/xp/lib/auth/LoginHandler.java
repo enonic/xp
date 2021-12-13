@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.auth;
 
 import java.util.Comparator;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -11,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -78,22 +80,37 @@ public final class LoginHandler
 
         if ( authInfo.isAuthenticated() )
         {
-            final Session session = this.context.get().getLocalScope().getSession();
-            if ( session != null )
-            {
-                session.setAttribute( authInfo );
-            }
-
-            if ( this.sessionTimeout != null )
-            {
-                setSessionTimeout();
-            }
-
+            createSession( authInfo );
             return new LoginResultMapper( authInfo );
         }
         else
         {
             return new LoginResultMapper( authInfo, "Access Denied" );
+        }
+    }
+
+    private void createSession( final AuthenticationInfo authInfo )
+    {
+        final LocalScope localScope = this.context.get().getLocalScope();
+        final Session session = localScope.getSession();
+
+        if ( session != null )
+        {
+            final Map<String, Object> attributes = session.getAttributes();
+            session.invalidate();
+
+            final Session newSession = localScope.getSession();
+
+            if ( newSession != null )
+            {
+                attributes.forEach( newSession::setAttribute );
+                session.setAttribute( authInfo );
+
+                if ( this.sessionTimeout != null )
+                {
+                    setSessionTimeout();
+                }
+            }
         }
     }
 
