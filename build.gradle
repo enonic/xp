@@ -13,7 +13,7 @@ allprojects {
 
     repositories {
         mavenLocal()
-        jcenter()
+        mavenCentral()
         maven {
             url 'https://repo.enonic.com/public'
         }
