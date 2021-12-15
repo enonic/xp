@@ -30,6 +30,9 @@ class ScheduledExecutorServiceObjectReport
             taskJson.put( "member", task.getMember() );
             taskJson.put( "taskName", task.getTaskName() );
             taskJson.put( "totalRuns", task.getTotalRuns() );
+            taskJson.put( "delaySeconds", task.getDelaySeconds() );
+            taskJson.put( "done", task.getDone() );
+            taskJson.put( "cancelled", task.getCancelled() );
 
             tasksArray.add( taskJson );
         } );

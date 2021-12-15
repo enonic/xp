@@ -1,5 +1,6 @@
 package com.enonic.xp.impl.scheduler;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -44,6 +45,12 @@ public final class SchedulerExecutorServiceImpl
     public Set<String> getAllFutures()
     {
         return getScheduler().getAllFutures();
+    }
+
+    @Override
+    public Optional<? extends ScheduledFuture<?>> get( final String name )
+    {
+        return getScheduler().get( name );
     }
 
     @Override
