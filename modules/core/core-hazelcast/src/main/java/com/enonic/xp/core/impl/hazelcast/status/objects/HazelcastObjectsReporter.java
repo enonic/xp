@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.hazelcast.status.objects;
 
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -80,15 +81,22 @@ public class HazelcastObjectsReporter
                             final String taskName = handler.getTaskName();
                             final String memberUuid = key.getUuid();
                             long totalRuns = -1;
+                            long delaySeconds = -1;
+                            Boolean isDone = null;
+                            Boolean isCancelled = null;
                             try
                             {
                                 totalRuns = future.getStats().getTotalRuns();
+                                isDone = future.isDone();
+                                isCancelled = future.isCancelled();
+                                delaySeconds = future.getDelay( TimeUnit.SECONDS);
                             }
                             catch ( Exception e )
                             {
-                                LOG.debug( "Cannot get totalRuns for task {}", taskName );
+                                LOG.debug( "Cannot get info for task {}", taskName );
                             }
-                            sbuilder.task( new ScheduledTaskReport( memberUuid, taskName, totalRuns ) );
+
+                            sbuilder.task( new ScheduledTaskReport( memberUuid, taskName, totalRuns, delaySeconds, isDone, isCancelled ) );
                         }
                     } );
                 } );

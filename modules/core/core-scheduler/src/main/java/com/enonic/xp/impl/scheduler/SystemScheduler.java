@@ -1,5 +1,6 @@
 package com.enonic.xp.impl.scheduler;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +14,8 @@ interface SystemScheduler
     void disposeAllDone();
 
     Set<String> getAllFutures();
+
+    Optional<? extends ScheduledFuture<?>> get( String name);
 
     ScheduledFuture<?> schedule( SchedulableTask command, long delay, TimeUnit unit );
 

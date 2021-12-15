@@ -1,6 +1,5 @@
 package com.enonic.xp.impl.scheduler;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.osgi.framework.BundleContext;
@@ -40,13 +39,13 @@ public final class SchedulerServiceActivator
 
     private final NodeService nodeService;
 
-    private ServiceRegistration<SchedulerService> schedulerServiceReg;
-
     private final SchedulerExecutorService schedulerExecutorService;
 
     private final SchedulerConfig schedulerConfig;
 
     private final ScheduleAuditLogSupport auditLogSupport;
+
+    private ServiceRegistration<SchedulerService> schedulerServiceReg;
 
     @Activate
     public SchedulerServiceActivator( @Reference final RepositoryService repositoryService, @Reference final IndexService indexService,
@@ -63,6 +62,16 @@ public final class SchedulerServiceActivator
         this.auditLogSupport = auditLogSupport;
     }
 
+    private static Context adminContext()
+    {
+        return ContextBuilder.from( ContextAccessor.current() )
+            .authInfo( AuthenticationInfo.create()
+                           .principals( RoleKeys.ADMIN )
+                           .user( User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build() )
+                           .build() )
+            .build();
+    }
+
     @Activate
     public void activate( final BundleContext context )
     {
@@ -74,13 +83,20 @@ public final class SchedulerServiceActivator
 
         try
         {
-            final Set<String> allFutures = schedulerExecutorService.getAllFutures();
-            if ( !allFutures.contains( RescheduleTask.NAME ) )
-            {
-                schedulerExecutorService.scheduleAtFixedRate( new RescheduleTask(), 0, 1, TimeUnit.SECONDS );
-            } else {
-                LOG.debug( "RescheduleTask already scheduled." );
-            }
+            final var reschedulerFuture = schedulerExecutorService.get( RescheduleTask.NAME );
+
+            reschedulerFuture.ifPresentOrElse( future -> {
+                if ( future.isDone() )
+                {
+                    schedulerExecutorService.dispose( RescheduleTask.NAME );
+                    scheduleRescheduler();
+                }
+                else
+                {
+                    LOG.debug( "RescheduleTask already scheduled." );
+                }
+            }, this::scheduleRescheduler );
+
         }
         catch ( Exception e )
         {
@@ -89,6 +105,11 @@ public final class SchedulerServiceActivator
 
         createConfigJobs( schedulerService );
 
+    }
+
+    private void scheduleRescheduler()
+    {
+        schedulerExecutorService.scheduleAtFixedRate( new RescheduleTask(), 0, 1, TimeUnit.SECONDS );
     }
 
     @Override
@@ -115,19 +136,6 @@ public final class SchedulerServiceActivator
                 LOG.debug( String.format( "[%s] job already exist.", job.getName().getValue() ), e );
             }
         } ) );
-    }
-
-    private static Context adminContext()
-    {
-        return ContextBuilder.from( ContextAccessor.current() ).
-            authInfo( AuthenticationInfo.create().
-                principals( RoleKeys.ADMIN ).
-                user( User.create().
-                    key( PrincipalKey.ofSuperUser() ).
-                    login( PrincipalKey.ofSuperUser().getId() ).
-                    build() ).
-                build() ).
-            build();
     }
 
     @Deactivate

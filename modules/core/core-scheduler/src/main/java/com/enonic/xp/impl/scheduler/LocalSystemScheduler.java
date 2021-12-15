@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.scheduler;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -83,7 +84,13 @@ public final class LocalSystemScheduler
     @Override
     public Set<String> getAllFutures()
     {
-        return new HashSet<String>( scheduledFutures.keySet() );
+        return new HashSet<>( scheduledFutures.keySet() );
+    }
+
+    @Override
+    public Optional<? extends ScheduledFuture<?>> get( final String name )
+    {
+        return Optional.ofNullable( scheduledFutures.get( name ) );
     }
 
     @Override

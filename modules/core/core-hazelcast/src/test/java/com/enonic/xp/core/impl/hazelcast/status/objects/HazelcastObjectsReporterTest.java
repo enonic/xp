@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.hazelcast.status.objects;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import com.hazelcast.cp.lock.FencedLock;
 import com.hazelcast.scheduledexecutor.IScheduledExecutorService;
 import com.hazelcast.scheduledexecutor.IScheduledFuture;
 import com.hazelcast.scheduledexecutor.ScheduledTaskHandler;
+import com.hazelcast.scheduledexecutor.ScheduledTaskStatistics;
 
 import com.enonic.xp.status.JsonStatusReporterTest;
 
@@ -75,6 +77,14 @@ class HazelcastObjectsReporterTest
         when( scheduledFuture.getHandler() ).thenReturn( scheduledTaskHandler );
         when( scheduledTaskHandler.getTaskName() ).thenReturn( "some-task" );
         when( scheduledExecutorService.getAllScheduledFutures() ).thenReturn( Map.of( member, List.of( scheduledFuture ) ) );
+
+        final ScheduledTaskStatistics stats = mock( ScheduledTaskStatistics.class );
+        when( scheduledFuture.getStats() ).thenReturn( stats );
+
+        when( stats.getTotalRuns() ).thenReturn( 3L );
+        when( scheduledFuture.getDelay( TimeUnit.SECONDS ) ).thenReturn( 123L );
+        when( scheduledFuture.isDone(  ) ).thenReturn( true );
+        when( scheduledFuture.isCancelled(  ) ).thenReturn( false );
 
         final ITopic<?> topic = mock( ITopic.class );
         when( topic.getName() ).thenReturn( "topic" );
