@@ -1,7 +1,9 @@
 package com.enonic.xp.impl.scheduler;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -43,6 +45,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -187,9 +191,42 @@ class SchedulerServiceActivatorTest
         when( schedulerConfig.jobs() ).thenReturn( Set.of( jobParams ) );
         when( schedulerExecutorService.getAllFutures() ).thenReturn( Set.of( RescheduleTask.NAME ) );
 
+        final ScheduledFuture<?> scheduledFuture = mock( ScheduledFuture.class );
+        when( scheduledFuture.isDone() ).thenReturn( false );
+
+        final Optional<? extends ScheduledFuture<?>> optional = Optional.of( scheduledFuture );
+        doReturn( optional ).when( schedulerExecutorService ).get( RescheduleTask.NAME );
+
         activator.activate( bundleContext );
 
         verify( schedulerExecutorService, never() ).scheduleAtFixedRate( isA( SchedulableTask.class ), anyLong(), anyLong(),
+                                                                         isA( TimeUnit.class ) );
+    }
+
+    @Test
+    void rescheduleFinishedRescheduleTask()
+    {
+        final CreateScheduledJobParams jobParams = CreateScheduledJobParams.create().
+            name( ScheduledJobName.from( "name" ) ).
+            descriptor( DescriptorKey.from( "appKey:descriptorName" ) ).
+            calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) ).
+            config( new PropertyTree() ).
+            build();
+
+        mockNode( jobParams );
+
+        when( schedulerConfig.jobs() ).thenReturn( Set.of( jobParams ) );
+        when( schedulerExecutorService.getAllFutures() ).thenReturn( Set.of( RescheduleTask.NAME ) );
+
+        final ScheduledFuture<?> scheduledFuture = mock( ScheduledFuture.class );
+        when( scheduledFuture.isDone() ).thenReturn( true );
+
+        final Optional<? extends ScheduledFuture<?>> optional = Optional.of( scheduledFuture );
+        doReturn( optional ).when( schedulerExecutorService ).get( RescheduleTask.NAME );
+
+        activator.activate( bundleContext );
+
+        verify( schedulerExecutorService, times(1) ).scheduleAtFixedRate( isA( SchedulableTask.class ), anyLong(), anyLong(),
                                                                          isA( TimeUnit.class ) );
     }
 

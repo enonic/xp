@@ -79,6 +79,7 @@ class SchedulerExecutorServiceImplTest
 
         assertEquals( 1, service.getAllFutures().size() );
         assertTrue( service.getAllFutures().contains( task.getName() ) );
+        assertTrue( service.get( task.getName() ).isPresent() );
     }
 
     @Test
@@ -123,6 +124,7 @@ class SchedulerExecutorServiceImplTest
 
         assertTrue( future.isDone() );
         assertTrue( service.getAllFutures().isEmpty() );
+        assertTrue( service.get( task.getName() ).isEmpty() );
     }
 
     @Test
@@ -140,10 +142,12 @@ class SchedulerExecutorServiceImplTest
         Thread.sleep( 100 );
 
         assertEquals( 2, service.getAllFutures().size() );
+        assertTrue( service.get("task1").isPresent() );
 
         service.disposeAllDone();
 
         assertEquals( 1, service.getAllFutures().size() );
+        assertTrue( service.get("task1").isEmpty() );
     }
 
     @Test
@@ -299,6 +303,9 @@ class SchedulerExecutorServiceImplTest
         final Set<String> futuresMap = service.getAllFutures();
 
         assertEquals( 2, futuresMap.size() );
+
+        assertTrue( service.get( "task1" ).isPresent() );
+        assertTrue( service.get( "task2" ).isPresent() );
     }
 
     @Test

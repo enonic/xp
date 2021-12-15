@@ -2,6 +2,7 @@ package com.enonic.xp.impl.scheduler;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
@@ -43,6 +44,19 @@ public final class ClusteredSystemScheduler
             } ).
             filter( Objects::nonNull ).
             collect( Collectors.toSet() );
+    }
+
+    @Override
+    public Optional<? extends ScheduledFuture<?>> get( final String name )
+    {
+        return hazelcastExecutor.getAllScheduledFutures().values().
+            stream().
+            flatMap( Collection::stream ).
+            filter( future -> {
+                final ScheduledTaskHandler handler = future.getHandler();
+                return handler != null && handler.getTaskName().equals( name );
+            }).
+            findAny();
     }
 
     @Override
