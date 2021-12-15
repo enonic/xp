@@ -55,7 +55,7 @@ exports.submit = function (params) {
     bean.description = __.nullOrValue(params.description);
     bean.func = __.nullOrValue(params.task);
 
-    return bean.submit();
+    return bean.executeFunction();
 };
 
 /**
@@ -107,7 +107,7 @@ exports.submitNamed = function (params) {
     bean.descriptor = __.nullOrValue(params.name);
     bean.config = __.toScriptValue(params.config);
 
-    return bean.submit();
+    return bean.submitTask();
 };
 
 /**
