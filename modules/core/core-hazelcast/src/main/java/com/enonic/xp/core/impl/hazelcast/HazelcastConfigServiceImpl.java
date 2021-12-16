@@ -84,7 +84,7 @@ public class HazelcastConfigServiceImpl
 
         config.setClassLoader( HazelcastConfigServiceImpl.class.getClassLoader() );
 
-        config.setLiteMember( hazelcastConfig.lightMember() );
+        config.setLiteMember( hazelcastConfig.liteMember() || hazelcastConfig.lightMember() );
 
         configureNetwork( config );
 

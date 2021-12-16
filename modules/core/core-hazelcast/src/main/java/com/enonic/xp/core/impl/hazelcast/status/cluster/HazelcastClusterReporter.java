@@ -50,8 +50,7 @@ public class HazelcastClusterReporter
                 address( member.getAddress().getHost() ).
                 port( member.getAddress().getPort() ).
                 version( member.getVersion().toString() ).
-                uuid( member.getUuid() ).
-                lightMember( member.isLiteMember() ).build() );
+                uuid( member.getUuid() ).liteMember( member.isLiteMember() ).build() );
         }
 
         return builder.build().toJson();

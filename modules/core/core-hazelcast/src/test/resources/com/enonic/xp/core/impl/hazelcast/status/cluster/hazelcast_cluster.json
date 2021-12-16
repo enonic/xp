@@ -7,14 +7,14 @@
       "uuid": "member1-uuid",
       "address": "127.0.0.1",
       "port": 5701,
-      "lightMember": false,
+      "liteMember": false,
       "version": "0.0.0"
     },
     {
       "uuid": "member2-uuid",
       "address": "127.0.0.2",
       "port": 5702,
-      "lightMember": true,
+      "liteMember": true,
       "version": "0.0.0"
     }
   ]
