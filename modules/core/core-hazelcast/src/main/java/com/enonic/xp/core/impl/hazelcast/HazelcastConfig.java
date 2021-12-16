@@ -24,7 +24,12 @@ public @interface HazelcastConfig
 
     int hazelcast_max_wait_seconds_before_join() default 20;
 
+    /**
+     * Misspelled. Use liteMember instead.
+     */
     boolean lightMember() default false;
+
+    boolean liteMember() default false;
 
     int network_port() default 5701;
 

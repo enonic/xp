@@ -11,7 +11,7 @@ final class HazelcastMemberState
 
     private final String uuid;
 
-    private final boolean lightMember;
+    private final boolean liteMember;
 
     private final String version;
 
@@ -20,7 +20,7 @@ final class HazelcastMemberState
         this.uuid = builder.uuid;
         this.address = builder.address;
         this.port = builder.port;
-        this.lightMember = builder.lightMember;
+        this.liteMember = builder.liteMember;
         this.version = builder.version;
     }
 
@@ -30,7 +30,7 @@ final class HazelcastMemberState
         json.put( "uuid", this.uuid );
         json.put( "address", this.address );
         json.put( "port", this.port );
-        json.put( "lightMember", this.lightMember );
+        json.put( "liteMember", this.liteMember );
         json.put( "version", this.version );
         return json;
     }
@@ -48,7 +48,7 @@ final class HazelcastMemberState
 
         String uuid;
 
-        boolean lightMember;
+        boolean liteMember;
 
         String version;
 
@@ -74,9 +74,9 @@ final class HazelcastMemberState
             return this;
         }
 
-        Builder lightMember( final boolean lightMember )
+        Builder liteMember( final boolean liteMember )
         {
-            this.lightMember = lightMember;
+            this.liteMember = liteMember;
             return this;
         }
 
