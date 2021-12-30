@@ -229,7 +229,7 @@ public class ImageServiceImpl
                             {
                                 ImageHelper.writeImage( outputStream, bufferedImage, readImageParams.getFormat(), writeImageQuality );
                             }
-                            LOG.info( "Finish writing" );
+
                             return true;
                         }
                     }
