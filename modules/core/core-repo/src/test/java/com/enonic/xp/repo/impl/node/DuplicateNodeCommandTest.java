@@ -360,8 +360,7 @@ public class DuplicateNodeCommandTest
         return foundNode;
     }
 
-    private void assertReferenceIntegrity( final NodePath duplicatedRootPath, final ImmutableList<Property> originalReferences,
-                                           final ImmutableList<Property> duplicateReferences )
+    private void assertReferenceIntegrity( final NodePath duplicatedRootPath, final ImmutableList<Property> originalReferences, final ImmutableList<Property> duplicateReferences )
     {
         assertEquals( originalReferences.size(), duplicateReferences.size() );
 
@@ -384,8 +383,7 @@ public class DuplicateNodeCommandTest
         return isChildOrSamePath( duplicatedRootPath, referredPath );
     }
 
-    private void assertReferencesOutsideTreeKept( final ImmutableList<Property> duplicateReferences,
-                                                  final Set<Property> referencesOutsideTree )
+    private void assertReferencesOutsideTreeKept( final ImmutableList<Property> duplicateReferences, final Set<Property> referencesOutsideTree )
     {
         if ( duplicateReferences.size() > 0 )
         {
@@ -393,8 +391,7 @@ public class DuplicateNodeCommandTest
         }
     }
 
-    private void assertReferencesInTreeMovedToDuplicatedNode( final ImmutableList<Property> duplicateReferences,
-                                                              final Set<Property> referencesWithinSameTree )
+    private void assertReferencesInTreeMovedToDuplicatedNode( final ImmutableList<Property> duplicateReferences, final Set<Property> referencesWithinSameTree )
     {
         for ( final Property ref : referencesWithinSameTree )
         {

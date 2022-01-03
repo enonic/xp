@@ -170,13 +170,70 @@ public class ProjectContentEventListenerTest
 
         final ContentId duplicatedContentId = targetContext.callWith(
             () -> contentService.duplicate( DuplicateContentParams.create().contentId( sourceContent.getId() ).build() )
-                .getDuplicatedContents()
-                .first() );
+                .getDuplicatedContents().first() );
 
         targetContext.runWith( () -> {
             final Content duplicatedTargetContent = contentService.getById( duplicatedContentId );
             assertEquals( "localName-copy", duplicatedTargetContent.getName().toString() );
             assertTrue( duplicatedTargetContent.getInherit().isEmpty() );
+        } );
+    }
+
+    @Test
+    public void testDuplicateInheritedWithChildren()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "localContent" ) );
+        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "localChild1" ) );
+        final Content sourceChild2 = sourceContext.callWith( () -> createContent( sourceChild1.getPath(), "localChild2" ) );
+
+        handleEvents();
+
+        final ContentId duplicatedContentId = targetContext.callWith(
+            () -> contentService.duplicate( DuplicateContentParams.create().contentId( sourceContent.getId() ).build() )
+                .getDuplicatedContents()
+                .first() );
+
+        targetContext.runWith( () -> {
+            final Content duplicatedTargetContent = contentService.getById( duplicatedContentId );
+            final Content duplicatedTargetChild1 = contentService.getByPath( ContentPath.from( "/localContent-copy/localChild1" ) );
+            final Content duplicatedTargetChild2 =
+                contentService.getByPath( ContentPath.from( "/localContent-copy/localChild1/localChild2" ) );
+
+            assertTrue( duplicatedTargetContent.getInherit().isEmpty() );
+            assertEquals( "localContent-copy", duplicatedTargetContent.getName().toString() );
+
+            assertEquals( "localChild1", duplicatedTargetChild1.getName().toString() );
+            assertEquals( "localChild2", duplicatedTargetChild2.getName().toString() );
+        } );
+    }
+
+    @Test
+    public void testDuplicateInheritedWithChildren()
+        throws InterruptedException
+    {
+        final Content sourceContent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "localContent" ) );
+        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceContent.getPath(), "localChild1" ) );
+        final Content sourceChild2 = sourceContext.callWith( () -> createContent( sourceChild1.getPath(), "localChild2" ) );
+
+        handleEvents();
+
+        final ContentId duplicatedContentId = targetContext.callWith(
+            () -> contentService.duplicate( DuplicateContentParams.create().contentId( sourceContent.getId() ).build() )
+                .getDuplicatedContents()
+                .first() );
+
+        targetContext.runWith( () -> {
+            final Content duplicatedTargetContent = contentService.getById( duplicatedContentId );
+            final Content duplicatedTargetChild1 = contentService.getByPath( ContentPath.from( "/localContent-copy/localChild1" ) );
+            final Content duplicatedTargetChild2 =
+                contentService.getByPath( ContentPath.from( "/localContent-copy/localChild1/localChild2" ) );
+
+            assertTrue( duplicatedTargetContent.getInherit().isEmpty() );
+            assertEquals( "localContent-copy", duplicatedTargetContent.getName().toString() );
+
+            assertEquals( "localChild1", duplicatedTargetChild1.getName().toString() );
+            assertEquals( "localChild2", duplicatedTargetChild2.getName().toString() );
         } );
     }
 

@@ -182,8 +182,8 @@ class RepositoryServiceImplTest
 
         Branch branch = Branch.from( "myBranch" );
 
-        Context mockCurrentContext = ContextBuilder.create().
-            branch( "master" ).repositoryId( "fisk" ).authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).build();
+        Context mockCurrentContext =
+            ContextBuilder.create().branch( "master" ).repositoryId( "fisk" ).authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).build();
 
         mockCurrentContext.callWith( () -> repositoryService.createBranch( CreateBranchParams.from( branch ) ) );
 
