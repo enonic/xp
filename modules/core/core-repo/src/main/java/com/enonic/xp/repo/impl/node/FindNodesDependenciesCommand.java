@@ -120,7 +120,7 @@ public class FindNodesDependenciesCommand
             }
 
             returnValue.getValues().stream().
-                map( ( value ) -> NodeId.from( value.toString() ) ).
+                map( NodeId::from ).
                 filter( ( value ) -> !processed.contains( value ) ).
                 filter( ( value ) -> !excludedIds.contains( value ) ).
                 forEach( builder::add );

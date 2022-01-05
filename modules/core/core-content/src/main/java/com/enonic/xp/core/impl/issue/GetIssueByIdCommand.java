@@ -22,7 +22,7 @@ public class GetIssueByIdCommand
 
     public Issue execute()
     {
-        final NodeId nodeId = NodeId.from( issueId.toString() );
+        final NodeId nodeId = NodeId.from( issueId);
 
         try
         {

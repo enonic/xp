@@ -93,7 +93,7 @@ abstract class AbstractNodeEventHandler
 
     NodeId getId( final Map<Object, Object> map )
     {
-        return NodeId.from( map.get( ID ).toString() );
+        return NodeId.from( map.get( ID ) );
     }
 
 

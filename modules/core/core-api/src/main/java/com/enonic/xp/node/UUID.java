@@ -1,7 +1,6 @@
 package com.enonic.xp.node;
 
 
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
@@ -13,7 +12,7 @@ public class UUID
 {
     protected final String value;
 
-    private static final Pattern VALID_NODE_ID_PATTERN = Pattern.compile( "^(?:[a-zA-Z0-9_\\-.:])+$" );
+    private static final Pattern VALID_NODE_ID_PATTERN = Pattern.compile( "[\\w\\-.:]+" );
 
     public UUID()
     {
@@ -22,11 +21,28 @@ public class UUID
 
     protected UUID( final String value )
     {
+        this.value = check( value );
+    }
+
+    protected UUID( final Object object )
+    {
+        if ( object instanceof UUID )
+        {
+            this.value = ( (UUID) object ).value;
+        }
+        else
+        {
+            Preconditions.checkNotNull( object, "object cannot be null" );
+            this.value = check( object.toString() );
+        }
+    }
+
+    private static String check( String value )
+    {
         Preconditions.checkNotNull( value, "UUID cannot be null" );
         Preconditions.checkArgument( !value.isBlank(), "UUID cannot be blank" );
         Preconditions.checkArgument( VALID_NODE_ID_PATTERN.matcher( value ).matches(), "UUID format incorrect: " + value );
-
-        this.value = value;
+        return value;
     }
 
     @Override
@@ -40,9 +56,8 @@ public class UUID
         {
             return false;
         }
-
-        final UUID other = (UUID) o;
-        return Objects.equals( value, other.value );
+        final UUID uuid = (UUID) o;
+        return value.equals( uuid.value );
     }
 
     @Override
@@ -57,14 +72,15 @@ public class UUID
         return value;
     }
 
-    public static UUID from( String string )
+    @Deprecated
+    public static UUID from( final String string )
     {
         return new UUID( string );
     }
 
-    public static UUID from( Object object )
+    @Deprecated
+    public static UUID from( final Object object )
     {
-        Preconditions.checkNotNull( object, "object cannot be null" );
-        return new UUID( object.toString() );
+        return new UUID( object );
     }
 }

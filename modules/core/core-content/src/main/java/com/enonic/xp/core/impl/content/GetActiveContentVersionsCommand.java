@@ -36,7 +36,7 @@ public class GetActiveContentVersionsCommand
     {
         this.nodeService.refresh( RefreshMode.STORAGE );
 
-        final NodeId nodeId = NodeId.from( contentId.toString() );
+        final NodeId nodeId = NodeId.from( contentId );
 
         final GetActiveNodeVersionsResult activeNodeVersions = this.nodeService.getActiveVersions( GetActiveNodeVersionsParams.create().
             nodeId( nodeId ).

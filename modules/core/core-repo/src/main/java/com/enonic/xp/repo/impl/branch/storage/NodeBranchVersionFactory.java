@@ -29,10 +29,10 @@ public class NodeBranchVersionFactory
         return NodeBranchEntry.create().
             nodePath( path != null ? NodePath.create( path.toString() ).build() : NodePath.ROOT ).
             nodeState( state != null ? NodeState.from( state.toString() ) : NodeState.DEFAULT ).
-            nodeVersionId( NodeVersionId.from( versionId.toString() ) ).
+            nodeVersionId( NodeVersionId.from( versionId ) ).
             nodeVersionKey( nodeVersionKey ).
             timestamp( Instant.parse( timestamp.toString() ) ).
-            nodeId( NodeId.from( nodeId.toString() ) ).
+            nodeId( NodeId.from( nodeId ) ).
             build();
     }
 }

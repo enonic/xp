@@ -24,7 +24,7 @@ class NodeVersionDiffResultFactory
 
         for ( final SearchHit hit : result.getHits() )
         {
-            builder.add( NodeId.from( hit.getField( VersionIndexPath.NODE_ID.toString() ).getSingleValue().toString() ) );
+            builder.add( NodeId.from( hit.getField( VersionIndexPath.NODE_ID.toString() ).getSingleValue() ) );
         }
 
         return builder.build();

@@ -67,7 +67,7 @@ class ContentNodeHelper
 
     public static NodeIds toNodeIds( final ContentIds contentIds )
     {
-        return NodeIds.from( contentIds.stream().map( contentId -> NodeId.from( contentId.toString() ) ).collect( Collectors.toList() ) );
+        return NodeIds.from( contentIds.stream().map( NodeId::from ).collect( Collectors.toList() ) );
     }
 
     public static ContentIds toContentIds( final NodeIds nodeIds )

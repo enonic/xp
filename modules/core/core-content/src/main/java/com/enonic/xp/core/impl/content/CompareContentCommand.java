@@ -29,7 +29,7 @@ public class CompareContentCommand
 
     public CompareContentResult execute()
     {
-        final NodeId nodeId = NodeId.from( contentId.toString() );
+        final NodeId nodeId = NodeId.from( contentId );
 
         final NodeComparison compareResult = this.nodeService.compare( nodeId, this.target );
 

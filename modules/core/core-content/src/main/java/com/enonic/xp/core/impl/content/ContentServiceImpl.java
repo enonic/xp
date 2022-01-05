@@ -1065,7 +1065,7 @@ public class ContentServiceImpl
     @Override
     public SetActiveContentVersionResult setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
     {
-        nodeService.setActiveVersion( NodeId.from( contentId.toString() ), NodeVersionId.from( versionId.toString() ) );
+        nodeService.setActiveVersion( NodeId.from( contentId ), NodeVersionId.from( versionId ) );
 
         contentAuditLogSupport.setActiveContentVersion( contentId, versionId );
 
@@ -1325,7 +1325,7 @@ public class ContentServiceImpl
     {
         try
         {
-            return nodeService.getBinary( NodeId.from( contentId.toString() ), binaryReference ).openStream();
+            return nodeService.getBinary( NodeId.from( contentId ), binaryReference ).openStream();
         }
         catch ( IOException e )
         {

@@ -101,7 +101,7 @@ final class DuplicateContentCommand
     private ContentIds getAllChildren( final Content duplicatedContent )
     {
         final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent( FindNodesByParentParams.create().
-            parentId( NodeId.from( duplicatedContent.getId().toString() ) ).
+            parentId( NodeId.from( duplicatedContent.getId() ) ).
             recursive( true ).
             build() );
 

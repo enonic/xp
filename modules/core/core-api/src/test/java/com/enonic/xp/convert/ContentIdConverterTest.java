@@ -12,7 +12,7 @@ public class ContentIdConverterTest
     @Test
     public void testSameType()
     {
-        final ContentId id = ContentId.from( "/123" );
+        final ContentId id = ContentId.from( "123" );
         assertSame( id, Converters.convert( id, ContentId.class ) );
     }
 
