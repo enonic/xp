@@ -40,7 +40,7 @@ class NodeVersionFactory
             nodeVersionId( NodeVersionId.from( versionId ) ).
             nodeVersionKey( nodeVersionKey ).
             binaryBlobKeys( binaryBlobKeys ).
-            nodeCommitId( commitId == null ? null : NodeCommitId.from( commitId.toString() ) ).
+            nodeCommitId( commitId == null ? null : NodeCommitId.from( commitId ) ).
             build();
     }
 

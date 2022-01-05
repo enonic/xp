@@ -58,7 +58,7 @@ public class ImportContentFactory
         nodeData.removeProperty( PUBLISH_INFO );
 
         return Node.create()
-            .id( NodeId.from( params.getContent().getId().toString() ) )
+            .id( NodeId.from( params.getContent().getId() ) )
             .parentPath( ContentNodeHelper.translateContentPathToNodePath( params.getTargetPath().getParentPath() ) )
             .name( NodeName.from( params.getTargetPath().getName() ) )
             .data( nodeData )

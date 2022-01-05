@@ -27,7 +27,7 @@ public class GetBinaryByVersionCommand
 
     public ByteSource execute()
     {
-        return nodeService.getBinary( NodeId.from( contentId.toString() ), NodeVersionId.from( contentVersionId.toString() ),
+        return nodeService.getBinary( NodeId.from( contentId ), NodeVersionId.from( contentVersionId ),
                                       binaryReference );
     }
 

@@ -119,7 +119,7 @@ public class SegmentVacuumCommand
                 build();
             final Instant since = Instant.now().minusMillis( params.getAgeThreshold() );
             final NodeVersionQuery findRecentVersionsQuery = NodeVersionQuery.create().
-                nodeId( NodeId.from( repositoryId.toString() ) ).
+                nodeId( NodeId.from( repositoryId ) ).
                 addQueryFilter( RangeFilter.create().
                     fieldName( VersionIndexPath.TIMESTAMP.getPath() ).
                     from( ValueFactory.newDateTime( since ) ).

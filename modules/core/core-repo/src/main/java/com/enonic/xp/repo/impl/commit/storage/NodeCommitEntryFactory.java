@@ -18,7 +18,7 @@ public class NodeCommitEntryFactory
         final Object committer = returnValues.getSingleValue( CommitIndexPath.COMMITTER.getPath() );
 
         return NodeCommitEntry.create().
-            nodeCommitId( NodeCommitId.from( commitId.toString() ) ).
+            nodeCommitId( NodeCommitId.from( commitId ) ).
             message( message.toString() ).
             timestamp( Instant.parse( timestamp.toString() ) ).
             committer( PrincipalKey.from(committer.toString()) ).

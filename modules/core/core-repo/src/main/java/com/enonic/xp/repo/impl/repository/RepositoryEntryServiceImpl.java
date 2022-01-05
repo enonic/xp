@@ -94,7 +94,7 @@ public class RepositoryEntryServiceImpl
     @Override
     public Repository getRepositoryEntry( final RepositoryId repositoryId )
     {
-        final NodeId nodeId = NodeId.from( repositoryId.toString() );
+        final NodeId nodeId = NodeId.from( repositoryId );
         final Node node = this.nodeStorageService.get( nodeId, createInternalContext() );
         return node == null ? null : RepositoryNodeTranslator.toRepository( node );
     }
@@ -136,7 +136,7 @@ public class RepositoryEntryServiceImpl
     public void deleteRepositoryEntry( final RepositoryId repositoryId )
     {
         final NodeBranchEntries deletedNodes = createContext().callWith( () -> DeleteNodeByIdCommand.create().
-            nodeId( NodeId.from( repositoryId.toString() ) ).
+            nodeId( NodeId.from( repositoryId ) ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).

@@ -67,7 +67,7 @@ public class ResolveContentsToBePublishedCommand
     {
         final NodeIds nodeIds = excludedContentIds != null ? NodeIds.from( excludedContentIds.
             stream().
-            map( id -> NodeId.from( id.toString() ) ).
+            map( NodeId::from ).
             collect( Collectors.toList() ) ) : NodeIds.empty();
 
         final boolean includeChildren = excludeChildrenIds == null || !this.excludeChildrenIds.contains( contentId );
@@ -75,7 +75,7 @@ public class ResolveContentsToBePublishedCommand
         return nodeService.resolveSyncWork( SyncWorkResolverParams.create().
             includeChildren( includeChildren ).
             includeDependencies( this.includeDependencies ).
-            nodeId( NodeId.from( contentId.toString() ) ).
+            nodeId( NodeId.from( contentId ) ).
             excludedNodeIds( nodeIds ).
             branch( this.target ).
             statusesToStopDependenciesSearch( Set.of( CompareStatus.EQUAL ) ).

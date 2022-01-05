@@ -28,7 +28,7 @@ public class GetAuditLogCommand
 
     private AuditLog doExecute()
     {
-        final NodeId nodeId = NodeId.from( auditLogId.toString() );
+        final NodeId nodeId = NodeId.from( auditLogId );
         try
         {
             final Node node = nodeService.getById( nodeId );

@@ -146,7 +146,7 @@ public class CreateIssueCommand
             final IndexConfigDocument indexConfigDocument = IssueIndexConfigFactory.create();
 
             final CreateNodeParams.Builder builder = CreateNodeParams.create().
-                setNodeId( NodeId.from( params.getId().toString() ) ).
+                setNodeId( NodeId.from( params.getId() ) ).
                 name( issueName.toString() ).
                 parent( IssueConstants.ISSUE_ROOT_PATH ).
                 data( contentAsData ).
