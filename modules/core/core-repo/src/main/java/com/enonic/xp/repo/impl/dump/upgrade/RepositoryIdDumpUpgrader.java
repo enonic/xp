@@ -130,7 +130,7 @@ public class RepositoryIdDumpUpgrader
         final NodeVersionDataJson sourceNodeVersion = getNodeVersion( dumpBlobRecord );
 
         final NodeVersion updatedNodeVersion = sourceNodeVersion.fromJson().
-            id( NodeId.from( upgradeString( sourceNodeVersion.getId() ) ) ).
+            id( NodeId. from( upgradeString( sourceNodeVersion.getId() ) ) ).
             build();
 
         writeNodeVersion( updatedNodeVersion, dumpBlobRecord );

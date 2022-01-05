@@ -33,8 +33,8 @@ public final class GetContentByIdAndVersionIdCommand
 
     public Content execute()
     {
-        final NodeId nodeId = NodeId.from( contentId.toString() );
-        final NodeVersionId nodeVersionId = NodeVersionId.from( versionId.toString() );
+        final NodeId nodeId = NodeId.from( contentId );
+        final NodeVersionId nodeVersionId = NodeVersionId.from( versionId );
 
         try
         {

@@ -37,7 +37,7 @@ public class GetContentByPathAndVersionIdCommand
     public Content execute()
     {
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( contentPath );
-        final NodeVersionId nodeVersionId = NodeVersionId.from( contentVersionId.toString() );
+        final NodeVersionId nodeVersionId = NodeVersionId.from( contentVersionId );
 
         try
         {

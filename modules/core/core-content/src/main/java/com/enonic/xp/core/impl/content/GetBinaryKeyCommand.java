@@ -30,13 +30,13 @@ final class GetBinaryKeyCommand
     {
         if ( shouldFilterScheduledPublished() )
         {
-            final Node node = nodeService.getById( NodeId.from( contentId.toString() ) );
+            final Node node = nodeService.getById( NodeId.from( contentId ) );
             if ( node == null || contentPendingOrExpired( node, Instant.now() ) )
             {
                 throw new ContentNotFoundException( contentId, ContextAccessor.current().getBranch() );
             }
         }
-        return nodeService.getBinaryKey( NodeId.from( contentId.toString() ), binaryReference );
+        return nodeService.getBinaryKey( NodeId.from( contentId ), binaryReference );
     }
 
     public static Builder create( final ContentId contentId, final BinaryReference binaryReference )

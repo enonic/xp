@@ -43,7 +43,7 @@ final class GetContentByIdsCommand
     {
         final List<NodeId> nodeIds = new ArrayList<>();
 
-        contentIds.forEach( contentId -> nodeIds.add( NodeId.from( contentId.toString() ) ) );
+        contentIds.forEach( contentId -> nodeIds.add( NodeId.from( contentId ) ) );
 
         return NodeIds.from( nodeIds );
     }

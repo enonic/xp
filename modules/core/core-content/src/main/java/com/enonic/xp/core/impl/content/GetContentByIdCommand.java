@@ -23,7 +23,7 @@ final class GetContentByIdCommand
     Content execute()
     {
         final Content content;
-        final NodeId nodeId = NodeId.from( contentId.toString() );
+        final NodeId nodeId = NodeId.from( contentId );
 
         try
         {

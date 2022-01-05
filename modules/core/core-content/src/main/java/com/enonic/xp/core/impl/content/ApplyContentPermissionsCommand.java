@@ -20,7 +20,7 @@ final class ApplyContentPermissionsCommand
 
     ApplyContentPermissionsResult execute()
     {
-        final NodeId nodeId = NodeId.from( params.getContentId().toString() );
+        final NodeId nodeId = NodeId.from( params.getContentId() );
 
         final ApplyNodePermissionsParams applyNodePermissionsParams = ApplyNodePermissionsParams.create().
             nodeId( nodeId ).

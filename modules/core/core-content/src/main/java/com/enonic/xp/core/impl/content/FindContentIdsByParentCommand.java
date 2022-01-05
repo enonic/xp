@@ -71,7 +71,7 @@ final class FindContentIdsByParentCommand
         }
         else
         {
-            final NodeId parentId = NodeId.from( params.getParentId().toString() );
+            final NodeId parentId = NodeId.from( params.getParentId() );
             findNodesParam.parentId( parentId );
         }
     }

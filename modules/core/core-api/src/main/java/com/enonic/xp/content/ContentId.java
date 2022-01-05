@@ -1,47 +1,47 @@
 package com.enonic.xp.content;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.node.UUID;
 import com.enonic.xp.util.Reference;
 
 @PublicApi
-public final class ContentId
+public final class ContentId extends UUID
 {
-    private final String id;
-
     private ContentId( final String id )
     {
-        this.id = id;
+        super(id);
+    }
+
+    private ContentId( final UUID id )
+    {
+        super(id);
     }
 
     @Override
     public boolean equals( final Object o )
     {
-        return ( o instanceof ContentId ) && ( (ContentId) o ).id.equals( this.id );
+        return super.equals( o );
     }
 
     @Override
     public int hashCode()
     {
-        return this.id.hashCode();
+        return super.hashCode();
     }
 
     @Override
     public String toString()
     {
-        return this.id;
+        return super.toString();
     }
 
     public static ContentId from( final String id )
     {
-        Preconditions.checkNotNull( id, "ContentId cannot be null" );
-        Preconditions.checkArgument( !id.isBlank(), "ContentId cannot be blank" );
         return new ContentId( id );
     }
 
     public static ContentId from( final Reference reference )
     {
-        return new ContentId( reference.getNodeId().toString() );
+        return new ContentId( reference.getNodeId() );
     }
 }
