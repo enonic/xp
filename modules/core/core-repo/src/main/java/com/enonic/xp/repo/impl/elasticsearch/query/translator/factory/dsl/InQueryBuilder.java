@@ -6,6 +6,8 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.data.PropertySet;
 
 class InQueryBuilder
@@ -28,6 +30,8 @@ class InQueryBuilder
         {
             throw new IllegalArgumentException( "Cannot build empty 'IN' statements" );
         }
+
+        Preconditions.checkArgument( !"geoPoint".equals( type ), "'in' query doesn't support [geoPoint] type" );
 
         final BoolQueryBuilder query = QueryBuilders.boolQuery();
 

@@ -18,9 +18,9 @@ abstract class ExpressionQueryBuilder
 
     protected final Double boost;
 
-    private final String field;
+    protected final String type;
 
-    private final String type;
+    protected final String field;
 
     ExpressionQueryBuilder( final PropertySet expression )
     {

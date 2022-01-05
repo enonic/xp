@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.util.JsonHelper;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class TermQueryBuilderTest
     extends QueryBuilderTest
 {
@@ -56,6 +58,13 @@ public class TermQueryBuilderTest
         throws Exception
     {
         test( "datetime_as_number" );
+    }
+
+    @Test
+    public void geo_point()
+        throws Exception
+    {
+        assertThrows( IllegalArgumentException.class, () -> test( "geo_point" ) );
     }
 
     private void test( final String fileName )

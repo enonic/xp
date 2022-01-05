@@ -45,7 +45,7 @@ public class InQueryBuilderTest
     public void with_geopoint()
         throws Exception
     {
-        test( "with_geopoint" );
+        assertThrows( IllegalArgumentException.class, () -> test( "with_geopoint" ) );
     }
 
     @Test

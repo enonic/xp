@@ -1,0 +1,7 @@
+{
+  "term": {
+    "field": "displayName",
+    "type": "geoPoint",
+    "value": "2.2,3.3"
+  }
+}
