@@ -30,6 +30,13 @@ public class PathMatchQueryBuilderTest
         test( "empty_path" );
     }
 
+    @Test
+    public void boosted()
+        throws Exception
+    {
+        test( "boosted" );
+    }
+
     private void test( final String fileName )
         throws Exception
     {

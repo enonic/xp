@@ -6,6 +6,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.Value;
 
 class BooleanQueryBuilder
     extends DslQueryBuilder
@@ -22,26 +23,49 @@ class BooleanQueryBuilder
         final BoolQueryBuilder builder = QueryBuilders.boolQuery();
         for ( final Property booleanProperty : getProperties() )
         {
-            for ( final Property queryProperty : booleanProperty.getValue().asData().getProperties() )
+            final Value queryValue = booleanProperty.getValue();
+
+            if ( queryValue.isPropertySet() )
             {
-                final QueryBuilder query = DslQueryParser.parseQuery( queryProperty );
-                switch ( booleanProperty.getName() )
+                for ( final Property queryProperty : booleanProperty.getValue().asData().getProperties() )
                 {
-                    case "must":
-                        builder.must( query );
-                        break;
-                    case "should":
-                        builder.should( query );
-                        break;
-                    case "mustNot":
-                        builder.mustNot( query );
-                        break;
-                    default:
-                        throw new IllegalArgumentException( "Invalid boolean expression: " + booleanProperty.getName() );
+                    final QueryBuilder query = DslQueryParser.parseQuery( queryProperty );
+                    switch ( booleanProperty.getName() )
+                    {
+                        case "must":
+                            builder.must( query );
+                            break;
+                        case "should":
+                            builder.should( query );
+                            break;
+                        case "mustNot":
+                            builder.mustNot( query );
+                            break;
+                        default:
+                            throw new IllegalArgumentException( "Invalid boolean expression: " + booleanProperty.getName() );
+                    }
                 }
             }
+            else if ( queryValue.isNumericType() )
+            {
+                if ( "boost".equals( booleanProperty.getName() ) )
+                {
+                    builder.boost( queryValue.asDouble().floatValue() );
+                }
+                else
+                {
+                    throw new IllegalArgumentException(
+                        "'" + booleanProperty.getName() + "' is not supported property for [boolean] query" );
+                }
+            }
+            else
+            {
+                throw new IllegalArgumentException(
+                    "[" + queryValue.getType().getName() + "] property type is not supported by [boolean] query" );
+            }
+
 
         }
-        return builder;
+        return addBoost( builder, boost );
     }
 }

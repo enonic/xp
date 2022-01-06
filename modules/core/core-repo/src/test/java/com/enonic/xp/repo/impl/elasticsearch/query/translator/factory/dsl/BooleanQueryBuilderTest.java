@@ -55,10 +55,24 @@ public class BooleanQueryBuilderTest
     }
 
     @Test
+    public void inner_boosted_boolean()
+        throws Exception
+    {
+        test( "inner_boosted_boolean" );
+    }
+
+    @Test
     public void invalid_param()
         throws Exception
     {
         assertThrows( IllegalArgumentException.class, () -> test( "invalid_param" ) );
+    }
+
+    @Test
+    public void invalid_property_type()
+        throws Exception
+    {
+        assertThrows( IllegalArgumentException.class, () -> test( "invalid_property_type" ) );
     }
 
 
@@ -67,6 +81,13 @@ public class BooleanQueryBuilderTest
         throws Exception
     {
         assertThrows( IllegalArgumentException.class, () -> test( "invalid_inner_param" ) );
+    }
+
+    @Test
+    public void invalid_numeric_property()
+        throws Exception
+    {
+        assertThrows( IllegalArgumentException.class, () -> test( "invalid_numeric_property" ) );
     }
 
     private void test( final String fileName )

@@ -44,6 +44,13 @@ public class NgramQueryBuilderTest
         test( "weighted" );
     }
 
+    @Test
+    public void boosted()
+        throws Exception
+    {
+        test( "boosted" );
+    }
+
     private void test( final String fileName )
         throws Exception
     {
