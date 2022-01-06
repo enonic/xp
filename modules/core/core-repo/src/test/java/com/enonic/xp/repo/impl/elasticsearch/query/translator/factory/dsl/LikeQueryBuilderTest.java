@@ -53,6 +53,13 @@ public class LikeQueryBuilderTest
         test( "right" );
     }
 
+    @Test
+    public void boosted()
+        throws Exception
+    {
+        test( "boosted" );
+    }
+
     private void test( final String fileName )
         throws Exception
     {

@@ -1,0 +1,31 @@
+{
+  "bool": {
+    "should": [
+      {
+        "term": {
+          "displayName": {
+            "value": "one",
+            "_name": "displayName"
+          }
+        }
+      },
+      {
+        "term": {
+          "displayName": {
+            "value": "two",
+            "_name": "displayName"
+          }
+        }
+      },
+      {
+        "term": {
+          "displayName": {
+            "value": "three",
+            "_name": "displayName"
+          }
+        }
+      }
+    ],
+    "boost": 2.3
+  }
+}

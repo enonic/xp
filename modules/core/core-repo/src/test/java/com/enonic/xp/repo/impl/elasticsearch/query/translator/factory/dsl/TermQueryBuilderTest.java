@@ -33,10 +33,10 @@ public class TermQueryBuilderTest
     }
 
     @Test
-    public void boost()
+    public void boosted()
         throws Exception
     {
-        test( "boost" );
+        test( "boosted" );
     }
 
     @Test

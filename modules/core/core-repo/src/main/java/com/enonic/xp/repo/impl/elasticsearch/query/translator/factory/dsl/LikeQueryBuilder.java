@@ -33,6 +33,6 @@ class LikeQueryBuilder
         final WildcardQueryBuilder builder =
             QueryBuilders.wildcardQuery( fieldName, (String) parseValue( IndexValueNormalizer.normalize( value ) ) ).queryName( fieldName );
 
-        return addBoost( builder );
+        return addBoost( builder, boost );
     }
 }

@@ -1,0 +1,9 @@
+{
+  "wildcard": {
+    "displayName": {
+      "wildcard": "*folder*",
+      "boost": 3.0,
+      "_name": "displayName"
+    }
+  }
+}

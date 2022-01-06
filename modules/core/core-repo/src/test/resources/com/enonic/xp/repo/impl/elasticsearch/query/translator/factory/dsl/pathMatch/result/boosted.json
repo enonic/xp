@@ -1,0 +1,8 @@
+{
+  "match": {
+    "_path._path": {
+      "query": "/fisk",
+      "boost": 0.1
+    }
+  }
+}

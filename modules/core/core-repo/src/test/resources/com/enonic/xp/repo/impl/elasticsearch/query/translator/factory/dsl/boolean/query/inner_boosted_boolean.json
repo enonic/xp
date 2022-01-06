@@ -1,0 +1,24 @@
+{
+  "boolean": {
+    "must": {
+      "boolean": {
+        "should": [
+          {
+            "term": {
+              "field": "a",
+              "value": "a"
+            }
+          },
+          {
+            "term": {
+              "field": "b",
+              "value": "b"
+            }
+          }
+        ],
+        "boost": 2.2
+      }
+    },
+    "boost": 1
+  }
+}

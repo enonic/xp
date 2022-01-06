@@ -88,6 +88,13 @@ public class RangeQueryBuilderTest
         test( "to_string_include" );
     }
 
+    @Test
+    public void boosted()
+        throws Exception
+    {
+        test( "boosted" );
+    }
+
     private void test( final String fileName )
         throws Exception
     {

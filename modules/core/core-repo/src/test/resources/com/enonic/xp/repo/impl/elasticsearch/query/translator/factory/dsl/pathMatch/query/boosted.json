@@ -1,0 +1,7 @@
+{
+  "pathMatch": {
+    "field": "_path",
+    "path": "/fisk",
+    "boost": 0.1
+  }
+}

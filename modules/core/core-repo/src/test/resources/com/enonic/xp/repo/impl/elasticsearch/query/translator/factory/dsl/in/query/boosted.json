@@ -1,0 +1,11 @@
+{
+  "in": {
+    "field": "displayName",
+    "values": [
+      "one",
+      "two",
+      "three"
+    ],
+    "boost": 2.3
+  }
+}
