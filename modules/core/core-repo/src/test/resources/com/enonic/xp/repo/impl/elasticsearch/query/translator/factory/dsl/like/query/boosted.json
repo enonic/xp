@@ -1,0 +1,7 @@
+{
+  "like": {
+    "field": "displayName",
+    "value": "*folder*",
+    "boost": 3
+  }
+}

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.elasticsearch.index.query.BoostableQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.xp.data.Property;
@@ -14,9 +15,13 @@ public abstract class DslQueryBuilder
 {
     private final PropertySet expression;
 
+    protected final Float boost;
+
     public DslQueryBuilder( final PropertySet expression )
     {
         this.expression = expression;
+
+        this.boost = getFloat( "boost" );
     }
 
     protected String getString( final String name )
@@ -34,9 +39,9 @@ public abstract class DslQueryBuilder
         return Optional.ofNullable( expression.getProperty( name ) ).map( Property::getLong ).orElse( defaultValue );
     }
 
-    protected Double getDouble( final String name )
+    protected Float getFloat( final String name )
     {
-        return Optional.ofNullable( expression.getProperty( name ) ).map( Property::getDouble ).orElse( null );
+        return Optional.ofNullable( expression.getProperty( name ) ).map( Property::getDouble ).map( Double::floatValue ).orElse( null );
     }
 
     protected List<String> getStrings( final String name )
@@ -57,6 +62,15 @@ public abstract class DslQueryBuilder
     protected Iterable<Property> getProperties()
     {
         return expression.getProperties();
+    }
+
+    protected <T extends BoostableQueryBuilder<?>> T addBoost( final T builder, final Float boost )
+    {
+        if ( boost != null )
+        {
+            builder.boost( boost );
+        }
+        return builder;
     }
 
     public abstract QueryBuilder create();

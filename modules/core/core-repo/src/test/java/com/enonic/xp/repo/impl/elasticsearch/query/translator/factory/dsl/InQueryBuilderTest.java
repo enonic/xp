@@ -76,6 +76,13 @@ public class InQueryBuilderTest
         test( "with_time" );
     }
 
+    @Test
+    public void boosted()
+        throws Exception
+    {
+        test( "boosted" );
+    }
+
     private void test( final String fileName )
         throws Exception
     {

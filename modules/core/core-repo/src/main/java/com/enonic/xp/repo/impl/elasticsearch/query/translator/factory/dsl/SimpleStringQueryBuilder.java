@@ -50,6 +50,6 @@ abstract class SimpleStringQueryBuilder
             builder.defaultOperator( SimpleQueryStringBuilder.Operator.valueOf( operator ) );
         }
 
-        return builder;
+        return addBoost( builder, boost );
     }
 }

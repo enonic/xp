@@ -45,7 +45,7 @@ class PathMatchQueryBuilder
             return new BoolQueryBuilder().must( termQueryBuilder ).must( matchQueryBuilder );
         }
 
-        return matchQueryBuilder;
+        return addBoost( matchQueryBuilder, boost );
     }
 
     private String getFieldName()

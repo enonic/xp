@@ -40,6 +40,13 @@ public class StemmedQueryBuilderTest
     }
 
     @Test
+    public void boosted()
+        throws Exception
+    {
+        test( "boosted" );
+    }
+
+    @Test
     public void invalid_language()
         throws Exception
     {

@@ -1,0 +1,11 @@
+{
+  "fulltext": {
+    "fields": [
+      "displayName",
+      "_name",
+      "custom"
+    ],
+    "query": "fisk",
+    "boost": 1.3
+  }
+}

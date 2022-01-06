@@ -44,6 +44,6 @@ class RangeQueryBuilder
             .includeUpper( includeTo )
             .queryName( fieldName );
 
-        return addBoost( builder );
+        return addBoost( builder, boost );
     }
 }
