@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Application;
 
+import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters;
 import org.jboss.resteasy.spi.UnhandledException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,8 +82,12 @@ final class JaxRsServlet
     {
         if ( this.needsRefresh )
         {
-            final JaxRsDispatcher newDispatcher = new JaxRsDispatcher( new JaxRsApplication( singletons ) );
-            newDispatcher.init( context );
+            final ServletConfigImpl config = new ServletConfigImpl( "jaxrs", context );
+            config.setInitParameter( ResteasyContextParameters.RESTEASY_SERVLET_MAPPING_PREFIX, "/" );
+            config.setInitParameter( ResteasyContextParameters.RESTEASY_ROLE_BASED_SECURITY, "true" );
+
+            final JaxRsDispatcher newDispatcher = new JaxRsDispatcher( config, new JaxRsApplication( singletons ) );
+            newDispatcher.init();
 
             final JaxRsDispatcher oldDispatcher = this.dispatcher;
             this.dispatcher = newDispatcher;
