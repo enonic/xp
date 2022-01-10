@@ -15,6 +15,7 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
@@ -121,7 +122,15 @@ final class PageHandlerWorker
             trace.put( "contentPath", effectiveContent.getPath().toString() );
             trace.put( "type", "page" );
         }
-        return rendererDelegate.render( effectiveContent, this.request );
+        final PortalResponse response = rendererDelegate.render( effectiveContent, this.request );
+        if ( request.getMode() == RenderMode.INLINE || request.getMode() == RenderMode.EDIT )
+        {
+            return PortalResponse.create( response ).header( "X-Frame-Options", "SAMEORIGIN" ).build();
+        }
+        else
+        {
+            return response;
+        }
     }
 
     private PortalResponse renderShortcut( final Content content )
