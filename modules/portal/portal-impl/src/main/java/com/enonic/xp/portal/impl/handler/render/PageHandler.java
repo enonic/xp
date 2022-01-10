@@ -1,6 +1,8 @@
 package com.enonic.xp.portal.impl.handler.render;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.ContentService;
@@ -10,6 +12,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.ContentResolver;
+import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.trace.Trace;
@@ -20,7 +23,7 @@ import com.enonic.xp.web.handler.BaseWebHandler;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = WebHandler.class)
+@Component(immediate = true, service = WebHandler.class, configurationPid = "com.enonic.xp.portal")
 public final class PageHandler
     extends BaseWebHandler
 {
@@ -34,9 +37,18 @@ public final class PageHandler
 
     private PortalUrlService portalUrlService;
 
+    private volatile String defaultContentSecurityPolicy;
+
     public PageHandler()
     {
         super( 50 );
+    }
+
+    @Activate
+    @Modified
+    public void activate( final PortalConfig config )
+    {
+        defaultContentSecurityPolicy = config.page_defaultContentSecurityPolicy();
     }
 
     @Override
@@ -57,6 +69,7 @@ public final class PageHandler
         worker.pageDescriptorService = pageDescriptorService;
         worker.pageTemplateService = pageTemplateService;
         worker.portalUrlService = portalUrlService;
+        worker.defaultContentSecurityPolicy = defaultContentSecurityPolicy;
         final Trace trace = Tracer.newTrace( "renderComponent" );
         if ( trace == null )
         {

@@ -28,6 +28,8 @@ import com.enonic.xp.util.Reference;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 
+import static com.google.common.base.Strings.nullToEmpty;
+
 final class PageHandlerWorker
     extends RenderHandlerWorker
 {
@@ -38,6 +40,8 @@ final class PageHandlerWorker
     PortalUrlService portalUrlService;
 
     ContentResolver contentResolver;
+
+    String defaultContentSecurityPolicy;
 
     PageHandlerWorker( final PortalRequest request )
     {
@@ -122,10 +126,24 @@ final class PageHandlerWorker
             trace.put( "contentPath", effectiveContent.getPath().toString() );
             trace.put( "type", "page" );
         }
+
         final PortalResponse response = rendererDelegate.render( effectiveContent, this.request );
-        if ( request.getMode() == RenderMode.INLINE || request.getMode() == RenderMode.EDIT )
+        final RenderMode mode = request.getMode();
+        if ( mode != RenderMode.LIVE )
         {
-            return PortalResponse.create( response ).header( "X-Frame-Options", "SAMEORIGIN" ).build();
+            final PortalResponse.Builder builder = PortalResponse.create( response );
+            {
+                if ( mode == RenderMode.INLINE || mode == RenderMode.EDIT )
+                {
+                    builder.header( "X-Frame-Options", "SAMEORIGIN" );
+                }
+            }
+            if ( !nullToEmpty( defaultContentSecurityPolicy ).isBlank() &&
+                !response.getHeaders().containsKey( "Content-Security-Policy" ) )
+            {
+                builder.header( "Content-Security-Policy", defaultContentSecurityPolicy );
+            }
+            return builder.build();
         }
         else
         {
