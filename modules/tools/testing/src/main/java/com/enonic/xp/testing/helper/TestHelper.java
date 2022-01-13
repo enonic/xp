@@ -7,6 +7,11 @@ import org.junit.jupiter.api.Assertions;
 
 public final class TestHelper
 {
+    public static void fail( final String message )
+    {
+        Assertions.fail( message );
+    }
+
     public static void assertFalse( final boolean flag, final String message )
     {
         Assertions.assertFalse( flag, message );
