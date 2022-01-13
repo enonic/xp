@@ -86,7 +86,7 @@ exports.assertJson = function (expected, actual, message) {
 };
 
 function replaceJava(key, value) {
-    if(value instanceof java.lang.Object) {
+    if (value instanceof Java.type('com.google.common.io.ByteSource')) {
         return {};
     }
     return value;
@@ -115,4 +115,18 @@ exports.assertNull = function (value, message) {
  */
 exports.assertNotNull = function (value, message) {
     helper.assertTrue(!!value || (value !== null), message || '');
+};
+
+/**
+ * Assert that function throws an exception.
+ * @param {function} fn executable function that should throw an exception when called.
+ * @returns {*} thrown exception
+ */
+exports.assertThrows = function (fn) {
+    try {
+        fn();
+    } catch (e) {
+        return e;
+    }
+    helper.fail( 'Nothing was thrown' );
 };
