@@ -61,14 +61,18 @@ public class QueryContentHandlerTest
         QueryContentHandler instance = new QueryContentHandler();
 
         instance.initialize( newBeanContext( ResourceKey.from( "myapp:/test" ) ) );
-        instance.setSort( "getDistance(\"location\", \"83,80\", \"km\")" );
 
-        final ScriptValue value = Mockito.mock( ScriptValue.class );
+        final ScriptValue sort = Mockito.mock( ScriptValue.class );
+        final ScriptValue query = Mockito.mock( ScriptValue.class );
 
-        Mockito.when( value.getValue() ).thenReturn( "_name = \"cityName\"" );
-        Mockito.when( value.isValue() ).thenReturn( true );
+        Mockito.when( sort.getValue( String.class ) ).thenReturn( "getDistance(\"location\", \"83,80\", \"km\")" );
+        Mockito.when( query.getValue( String.class ) ).thenReturn( "_name = \"cityName\"" );
 
-        instance.setQuery( value );
+        Mockito.when( query.isValue() ).thenReturn( true );
+        Mockito.when( sort.isValue() ).thenReturn( true );
+
+        instance.setSort( sort );
+        instance.setQuery( query );
 
         JsonMapGenerator generator = new JsonMapGenerator();
 
@@ -127,6 +131,39 @@ public class QueryContentHandlerTest
         Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( FindContentIdsByQueryResult.empty() );
         runFunction( "/test/QueryContentHandlerTest_dsl_query.js", "queryEmpty" );
     }
+
+    @Test
+    public void dslSortSingle()
+        throws Exception
+    {
+        setupQuery( 2, false, false );
+        runFunction( "/test/QueryContentHandlerTest_dsl_sort.js", "sortSingle" );
+    }
+
+    @Test
+    public void dslSortMultiple()
+        throws Exception
+    {
+        setupQuery( 2, false, false );
+        runFunction( "/test/QueryContentHandlerTest_dsl_sort.js", "sortMultiple" );
+    }
+
+    @Test
+    public void dslSortEmpty()
+        throws Exception
+    {
+        setupQuery( 2, false, false );
+        runFunction( "/test/QueryContentHandlerTest_dsl_sort.js", "sortEmpty" );
+    }
+
+    @Test
+    public void dslSortInvalid()
+        throws Exception
+    {
+        setupQuery( 2, false, false );
+        runFunction( "/test/QueryContentHandlerTest_dsl_sort.js", "invalid" );
+    }
+
 
     private void setupQuery( final int count, final boolean aggs, final boolean addHighlight )
     {

@@ -283,7 +283,7 @@ RepoConnection.prototype.setChildOrder = function (params) {
  * @param {number} [params.count=10] Number of contents to fetch.
  * @param {string|object} [params.query] Query expression.
  * @param {object} [params.filters] Query filters
- * @param {string} [params.sort='_score DESC'] Sorting expression.
+ * @param {string|object|object[]} [params.sort='_score DESC'] Sorting expression.
  * @param {string} [params.aggregations] Aggregations expression.
  * @param {string} [params.highlight] Highlighting parameters.
  * @param {boolean} [params.explain=false] Return score calculation explanation.
@@ -294,7 +294,7 @@ RepoConnection.prototype.query = function (params) {
     handlerParams.setStart(params.start);
     handlerParams.setCount(params.count);
     handlerParams.setQuery(__.toScriptValue((params.query)));
-    handlerParams.setSort(valueOrDefault(params.sort, '_score DESC'));
+    handlerParams.setSort(__.toScriptValue(params.sort));
     handlerParams.setAggregations(__.toScriptValue(params.aggregations));
     handlerParams.setSuggestions(__.toScriptValue(params.suggestions));
     handlerParams.setHighlight(__.toScriptValue(params.highlight));
@@ -314,7 +314,7 @@ RepoConnection.prototype.query = function (params) {
  * @param {number} [params.count=10] Number of contents to fetch.
  * @param {string|object} [params.query] Query expression.
  * @param {object} [params.filters] Query filters
- * @param {string} [params.sort='_score DESC'] Sorting expression.
+ * @param {string|object|object[]} [params.sort='_score DESC'] Sorting expression.
  * @param {string} [params.aggregations] Aggregations expression.
  * @param {string} [params.highlight] Highlighting parameters.
  * @param {boolean} [params.explain=false] Return score calculation explanation.
@@ -325,7 +325,7 @@ MultiRepoConnection.prototype.query = function (params) {
     handlerParams.setStart(params.start);
     handlerParams.setCount(params.count);
     handlerParams.setQuery(__.toScriptValue((params.query)));
-    handlerParams.setSort(valueOrDefault(params.sort, '_score DESC'));
+    handlerParams.setSort(__.toScriptValue(params.sort));
     handlerParams.setAggregations(__.toScriptValue(params.aggregations));
     handlerParams.setSuggestions(__.toScriptValue(params.suggestions));
     handlerParams.setHighlight(__.toScriptValue(params.highlight));
