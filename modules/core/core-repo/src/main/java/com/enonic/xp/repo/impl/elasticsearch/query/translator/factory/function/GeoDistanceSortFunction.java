@@ -5,6 +5,7 @@ import org.elasticsearch.search.sort.GeoDistanceSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
+import com.enonic.xp.query.expr.DslOrderExpr;
 import com.enonic.xp.query.expr.DynamicOrderExpr;
 import com.enonic.xp.query.expr.FunctionExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
@@ -24,11 +25,32 @@ class GeoDistanceSortFunction
 
         GeoDistanceSortBuilder builder = new GeoDistanceSortBuilder( queryFieldName );
         builder.point( arguments.getLatitude(), arguments.getLongitude() );
-        builder.order( SortOrder.valueOf( orderExpr.getDirection().toString() ) );
-
+        if ( orderExpr.getDirection() != null )
+        {
+            builder.order( SortOrder.valueOf( orderExpr.getDirection().name() ) );
+        }
         if ( arguments.getUnit() != null )
         {
             builder.unit( DistanceUnit.fromString( arguments.getUnit() ) );
+        }
+
+        return builder;
+    }
+
+    public static SortBuilder create( final DslOrderExpr orderExpr )
+    {
+        final String queryFieldName = new SearchQueryFieldNameResolver().resolve( orderExpr.getField(), IndexValueType.GEO_POINT );
+
+        GeoDistanceSortBuilder builder = new GeoDistanceSortBuilder( queryFieldName );
+        builder.point( orderExpr.getLat(), orderExpr.getLon() );
+        if ( orderExpr.getDirection() != null )
+        {
+            builder.order( SortOrder.valueOf( orderExpr.getDirection().toString() ) );
+        }
+
+        if ( orderExpr.getUnit() != null )
+        {
+            builder.unit( DistanceUnit.fromString( orderExpr.getUnit() ) );
         }
 
         return builder;

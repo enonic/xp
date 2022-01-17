@@ -265,7 +265,7 @@ exports.create = function (params) {
  * @param {number} [params.count=10] Number of contents to fetch.
  * @param {string|object} params.query Query expression.
  * @param {object} [params.filters] Filters to apply to query result
- * @param {string} [params.sort] Sorting expression.
+ * @param {string|object|object[]} [params.sort] Sorting expression.
  * @param {string} [params.aggregations] Aggregations expression.
  * @param {string[]} [params.contentTypes] Content types to filter on.
  *
@@ -276,7 +276,7 @@ exports.query = function (params) {
     bean.setStart(params.start);
     bean.setCount(params.count);
     bean.setQuery(__.toScriptValue((params.query)));
-    bean.setSort(nullOrValue(params.sort));
+    bean.setSort(__.toScriptValue(params.sort));
     bean.setAggregations(__.toScriptValue(params.aggregations));
     bean.setContentTypes(__.toScriptValue(params.contentTypes));
     bean.setFilters(__.toScriptValue(params.filters));

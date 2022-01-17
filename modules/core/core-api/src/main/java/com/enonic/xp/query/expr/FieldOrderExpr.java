@@ -33,7 +33,7 @@ public final class FieldOrderExpr
     @Override
     public String toString()
     {
-        return this.field + " " + getDirection();
+        return this.field + ( getDirection() != null ? " " + getDirection().name() : "" );
     }
 
     @Override

@@ -23,6 +23,6 @@ public final class DynamicOrderExpr
     @Override
     public String toString()
     {
-        return this.function + " " + getDirection();
+        return this.function + ( getDirection() != null ? " " + getDirection().name() : "" );
     }
 }

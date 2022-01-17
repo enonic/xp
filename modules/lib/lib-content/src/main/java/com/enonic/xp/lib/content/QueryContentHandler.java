@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentQuery;
@@ -16,6 +17,7 @@ import com.enonic.xp.lib.content.mapper.ContentsResultMapper;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.DslExpr;
+import com.enonic.xp.query.expr.DslOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.Filter;
@@ -36,7 +38,7 @@ public final class QueryContentHandler
 
     private ScriptValue query;
 
-    private String sort;
+    private ScriptValue sort;
 
     private Map<String, Object> aggregations;
 
@@ -51,12 +53,9 @@ public final class QueryContentHandler
     {
         final int start = valueOrDefault( this.start, 0 );
         final int count = valueOrDefault( this.count, GetChildContentHandler.DEFAULT_COUNT );
-        final String sort = valueOrDefault( this.sort, "" ).trim();
         final ContentTypeNames contentTypeNames = getContentTypeNames();
 
-        final List<OrderExpr> orderExpressions = QueryParser.parseOrderExpressions( sort );
-
-        final QueryExpr queryExpr = QueryExpr.from( buildConstraintExpr(), orderExpressions );
+        final QueryExpr queryExpr = QueryExpr.from( buildConstraintExpr(), buildOrderExpr() );
 
         final Filters filters = JsonToFilterMapper.create( this.filters );
 
@@ -82,6 +81,33 @@ public final class QueryContentHandler
         return convert( queryResult );
     }
 
+    private List<OrderExpr> buildOrderExpr()
+    {
+        if ( sort == null )
+        {
+            return List.of();
+        }
+        else if ( sort.isValue() )
+        {
+            return QueryParser.parseOrderExpressions( sort.getValue( String.class ) );
+        }
+        else if ( sort.isObject() )
+        {
+
+            return List.of( DslOrderExpr.from( JsonToPropertyTreeTranslator.translate( JsonHelper.from( sort.getMap() ) ) ) );
+
+        }
+        else if ( sort.isArray() )
+        {
+            return sort.getArray()
+                .stream()
+                .map( expr -> DslOrderExpr.from( JsonToPropertyTreeTranslator.translate( JsonHelper.from( expr.getMap() ) ) ) )
+                .collect( Collectors.toList() );
+        }
+
+        throw new IllegalArgumentException( "sort must be a String, JSON object or array of JSON objects" );
+    }
+
     private ConstraintExpr buildConstraintExpr()
     {
         if ( query == null )
@@ -96,6 +122,7 @@ public final class QueryContentHandler
         {
             return DslExpr.from( JsonToPropertyTreeTranslator.translate( JsonHelper.from( query.getMap() ) ) );
         }
+
         throw new IllegalArgumentException( "query must be a String or JSON object" );
     }
 
@@ -140,7 +167,7 @@ public final class QueryContentHandler
         this.query = query;
     }
 
-    public void setSort( final String sort )
+    public void setSort( final ScriptValue sort )
     {
         this.sort = sort;
     }
