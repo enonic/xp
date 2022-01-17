@@ -2,6 +2,7 @@ package com.enonic.xp.lib.node;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.lib.common.JsonToFilterMapper;
 import com.enonic.xp.lib.common.JsonToPropertyTreeTranslator;
@@ -9,6 +10,7 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.DslExpr;
+import com.enonic.xp.query.expr.DslOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.Filters;
@@ -27,7 +29,7 @@ abstract class AbstractFindNodesQueryHandler
 
     private final ScriptValue query;
 
-    private final String sort;
+    private final ScriptValue sort;
 
     private final List<Map<String, Object>> filters;
 
@@ -57,10 +59,8 @@ abstract class AbstractFindNodesQueryHandler
     {
         final int start = valueOrDefault( this.start, 0 );
         final int count = valueOrDefault( this.count, 10 );
-        final String sort = valueOrDefault( this.sort, "" ).trim();
 
-        final List<OrderExpr> orderExpressions = QueryParser.parseOrderExpressions( sort );
-        final QueryExpr queryExpr = QueryExpr.from( buildConstraintExpr(), orderExpressions );
+        final QueryExpr queryExpr = QueryExpr.from( buildConstraintExpr(), buildOrderExpr() );
         final Filters filters = JsonToFilterMapper.create( this.filters );
 
         final AggregationQueries aggregations = new QueryAggregationParams().getAggregations( this.aggregations );
@@ -97,6 +97,34 @@ abstract class AbstractFindNodesQueryHandler
         throw new IllegalArgumentException( "query must be a String or JSON object" );
     }
 
+    private List<OrderExpr> buildOrderExpr()
+    {
+        if ( sort == null )
+        {
+            return List.of();
+        }
+        if ( sort.isValue() )
+        {
+            return QueryParser.parseOrderExpressions( sort.getValue( String.class ) );
+        }
+        else if ( sort.isObject() )
+        {
+
+            return List.of( DslOrderExpr.from( JsonToPropertyTreeTranslator.translate( JsonHelper.from( sort.getMap() ) ) ) );
+
+        }
+        else if ( sort.isArray() )
+        {
+            return sort.getArray()
+                .stream()
+                .map( expr -> DslOrderExpr.from( JsonToPropertyTreeTranslator.translate( JsonHelper.from( expr.getMap() ) ) ) )
+                .collect( Collectors.toList() );
+        }
+
+        throw new IllegalArgumentException( "sort must be a String, JSON object or array of JSON objects" );
+    }
+
+
     public static class Builder<B extends Builder>
         extends AbstractNodeHandler.Builder<B>
     {
@@ -106,7 +134,7 @@ abstract class AbstractFindNodesQueryHandler
 
         private ScriptValue query;
 
-        private String sort;
+        private ScriptValue sort;
 
         private List<Map<String, Object>> filters;
 
@@ -144,7 +172,7 @@ abstract class AbstractFindNodesQueryHandler
         }
 
         @SuppressWarnings("unchecked")
-        public B sort( final String val )
+        public B sort( final ScriptValue val )
         {
             sort = val;
             return (B) this;

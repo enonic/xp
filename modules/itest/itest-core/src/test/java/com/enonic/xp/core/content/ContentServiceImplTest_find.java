@@ -17,6 +17,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.query.expr.DslExpr;
+import com.enonic.xp.query.expr.DslOrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.query.parser.QueryParser;
@@ -199,6 +200,40 @@ public class ContentServiceImplTest_find
 
         assertThrows( IllegalArgumentException.class,
                       () -> contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ) );
+    }
+
+    @Test
+    public void dsl_query_sort()
+        throws Exception
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+
+        final Content child3 = createContent( site.getPath(), "d" );
+        final Content child2 = createContent( site.getPath(), "c" );
+        final Content child1 = createContent( site.getPath(), "b" );
+
+        final PropertyTree request = new PropertyTree();
+        final PropertySet like = new PropertySet();
+        request.addSet( "like", like );
+        like.addString( "field", "_path" );
+        like.addString( "value", "*a/*" );
+
+        PropertyTree order = new PropertyTree();
+        order.addString( "field", "displayName" );
+        order.addString( "direction", "DESC" );
+
+        ContentQuery queryDsl =
+            ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ), DslOrderExpr.from( order ) ) ).build();
+
+        assertOrder( contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ), child3, child2, child1 );
+
+        order = new PropertyTree();
+        order.addString( "field", "displayName" );
+
+        queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ), DslOrderExpr.from( order ) ) ).build();
+
+        assertOrder( contentService.find( FindContentByQueryParams.create().contentQuery( queryDsl ).build() ), child1, child2, child3 );
+
     }
 
     private FindContentByQueryResult createAndFindContent( final ContentPublishInfo publishInfo )

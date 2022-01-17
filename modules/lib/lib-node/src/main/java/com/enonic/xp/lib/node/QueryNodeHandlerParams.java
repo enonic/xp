@@ -16,7 +16,7 @@ public class QueryNodeHandlerParams
 
     private ScriptValue query;
 
-    private String sort;
+    private ScriptValue sort;
 
     private Map<String, Object> aggregations;
 
@@ -105,13 +105,13 @@ public class QueryNodeHandlerParams
         this.query = query;
     }
 
-    String getSort()
+    ScriptValue getSort()
     {
         return sort;
     }
 
     @SuppressWarnings("unused")
-    public void setSort( final String sort )
+    public void setSort( final ScriptValue sort )
     {
         this.sort = sort;
     }
