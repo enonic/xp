@@ -48,6 +48,7 @@ public enum HttpStatus
     UNSUPPORTED_MEDIA_TYPE( 415, "Unsupported Media Type" ),
     REQUESTED_RANGE_NOT_SATISFIABLE( 416, "Requested range not satisfiable" ),
     EXPECTATION_FAILED( 417, "Expectation Failed" ),
+    IM_A_TEAPOT( 418, "I'm a teapot" ),
     UNPROCESSABLE_ENTITY( 422, "Unprocessable Entity" ),
     LOCKED( 423, "Locked" ),
     FAILED_DEPENDENCY( 424, "Failed Dependency" ),
