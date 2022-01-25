@@ -1,6 +1,7 @@
 package com.enonic.xp.core.content;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,16 +13,20 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.FindContentByParentParams;
+import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
@@ -29,11 +34,14 @@ import com.enonic.xp.core.impl.content.ContentEventsSyncParams;
 import com.enonic.xp.core.impl.content.ContentSyncEventType;
 import com.enonic.xp.core.impl.content.ContentSyncParams;
 import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
+import com.enonic.xp.core.impl.content.SyncContentServiceImpl;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.util.BinaryReferences;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -46,6 +54,8 @@ public class ParentContentSynchronizerTest
 {
     private ParentContentSynchronizer synchronizer;
 
+    private SyncContentServiceImpl syncContentService;
+
     @BeforeEach
     protected void setUpNode()
         throws Exception
@@ -53,6 +63,10 @@ public class ParentContentSynchronizerTest
         super.setUpNode();
 
         synchronizer = new ParentContentSynchronizer( this.contentService, this.mediaInfoService );
+
+        syncContentService =
+            new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, pageDescriptorService, partDescriptorService,
+                                        layoutDescriptorService, projectService, contentService, synchronizer );
     }
 
     private Content syncCreated( final ContentId contentId )
@@ -559,6 +573,75 @@ public class ParentContentSynchronizerTest
         assertNotEquals( targetParent.getChildOrder(), targetContentSorted.getChildOrder() );
     }
 
+    @Test
+    public void sortRestoredToManual()
+        throws Exception
+    {
+        final Content sourceParent = sourceContext.callWith( () -> createContent( ContentPath.ROOT, "parent" ) );
+        final Content sourceChild1 = sourceContext.callWith( () -> createContent( sourceParent.getPath(), "name1" ) );
+        final Content sourceChild2 = sourceContext.callWith( () -> createContent( sourceParent.getPath(), "name2" ) );
+        final Content sourceChild3 = sourceContext.callWith( () -> createContent( sourceParent.getPath(), "name3" ) );
+
+        syncCreated( sourceParent.getId() );
+        syncCreated( sourceChild1.getId() );
+        syncCreated( sourceChild2.getId() );
+        syncCreated( sourceChild3.getId() );
+
+        sourceContext.runWith( () -> {
+            contentService.setChildOrder(
+                SetContentChildOrderParams.create().contentId( sourceParent.getId() ).childOrder( ChildOrder.manualOrder() ).build() );
+
+            contentService.reorderChildren( ReorderChildContentsParams.create()
+                                                .contentId( sourceParent.getId() )
+                                                .add( ReorderChildParams.create()
+                                                          .contentToMove( sourceChild1.getId() )
+                                                          .contentToMoveBefore( sourceChild3.getId() )
+                                                          .build() )
+                                                .build() );
+
+
+        } );
+
+        syncSorted( sourceParent.getId() );
+        syncManualOrderUpdated( sourceChild1.getId() );
+        syncManualOrderUpdated( sourceChild2.getId() );
+        syncManualOrderUpdated( sourceChild3.getId() );
+
+        targetContext.runWith( () -> {
+            contentService.setChildOrder( SetContentChildOrderParams.create()
+                                              .contentId( sourceParent.getId() )
+                                              .childOrder( ChildOrder.manualOrder() )
+                                              .stopInherit( true )
+                                              .build() );
+
+            contentService.reorderChildren( ReorderChildContentsParams.create()
+                                                .contentId( sourceParent.getId() )
+                                                .add( ReorderChildParams.create()
+                                                          .contentToMove( sourceChild1.getId() )
+                                                          .contentToMoveBefore( sourceChild2.getId() )
+                                                          .build() )
+                                                .build() );
+
+            syncContentService.resetInheritance( ResetContentInheritParams.create()
+                                                     .contentId( sourceParent.getId() )
+                                                     .inherit( List.of( ContentInheritType.SORT ) )
+                                                     .projectName( ProjectName.from( targetContext.getRepositoryId() ) )
+                                                     .build() );
+        } );
+
+        syncSorted( sourceParent.getId() );
+
+        Thread.sleep( 1000 );
+
+        final FindContentByParentResult sourceOrderedChildren = sourceContext.callWith(
+            () -> contentService.findByParent( FindContentByParentParams.create().parentId( sourceParent.getId() ).build() ) );
+        final FindContentByParentResult targetOrderedChildren = targetContext.callWith(
+            () -> contentService.findByParent( FindContentByParentParams.create().parentId( sourceParent.getId() ).build() ) );
+
+        assertArrayEquals( sourceOrderedChildren.getContents().getIds().getSet().toArray(),
+                           targetOrderedChildren.getContents().getIds().getSet().toArray() );
+    }
+
 
     @Test
     public void moveNotExisted()
@@ -772,6 +855,9 @@ public class ParentContentSynchronizerTest
                 SetContentChildOrderParams.create().contentId( sourceParent.getId() ).childOrder( ChildOrder.manualOrder() ).build() );
 
             assertTrue( syncSorted( sourceParent.getId() ).getChildOrder().isManualOrder() );
+
+            syncManualOrderUpdated( sourceChild1.getId() );
+            syncManualOrderUpdated( sourceChild2.getId() );
 
             contentService.reorderChildren( ReorderChildContentsParams.create()
                                                 .contentId( sourceParent.getId() )

@@ -7,7 +7,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.UpdateContentParams;
-import com.enonic.xp.security.PrincipalKey;
 
 final class ManualOrderUpdatedEventSyncCommand
     extends AbstractContentEventSyncCommand
@@ -65,7 +64,6 @@ final class ManualOrderUpdatedEventSyncCommand
     private UpdateContentParams updateManualOrderValueParams( final Content source )
     {
         return new UpdateContentParams().contentId( source.getId() )
-            .modifier( PrincipalKey.ofAnonymous() )
             .requireValid( false )
             .stopInherit( false )
             .editor( edit -> edit.manualOrderValue = source.getManualOrderValue() );
