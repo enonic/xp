@@ -35,6 +35,9 @@ import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionsMetadata;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
+import com.enonic.xp.node.ReorderChildNodeParams;
+import com.enonic.xp.node.ReorderChildNodesParams;
+import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -52,6 +55,7 @@ import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -85,10 +89,7 @@ public class NodeServiceImplTest
     public void get_by_id()
         throws Exception
     {
-        final Node createdNode = createNode( CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            build() );
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
         final Node fetchedNode = this.nodeService.getById( NodeId.from( createdNode.id() ) );
 
@@ -99,60 +100,53 @@ public class NodeServiceImplTest
     public void get_by_id_non_existing()
         throws Exception
     {
-        assertThrows(NodeNotFoundException.class, () -> this.nodeService.getById( NodeId.from( "a" ) ));
+        assertThrows( NodeNotFoundException.class, () -> this.nodeService.getById( NodeId.from( "a" ) ) );
     }
 
     @Test
     public void get_by_id_repo_non_existing()
         throws Exception
     {
-        assertThrows(RepositoryNotFoundException.class, () ->
-            ContextBuilder.from(ContextAccessor.current()).
-                    repositoryId("missing-repo").
-                    build().
-                    callWith(() -> this.nodeService.getById(NodeId.from("a")))
-        );
+        assertThrows( RepositoryNotFoundException.class, () -> ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( "missing-repo" )
+            .build()
+            .callWith( () -> this.nodeService.getById( NodeId.from( "a" ) ) ) );
     }
 
     @Test
     public void get_by_id_branch_non_existing()
         throws Exception
     {
-        assertThrows(BranchNotFoundException.class, () -> ContextBuilder.from( ContextAccessor.current() ).
-            branch( "missing-branch" ).
-            build().
-            callWith( () -> this.nodeService.getById( NodeId.from( "a" ) ) ));
+        assertThrows( BranchNotFoundException.class, () -> ContextBuilder.from( ContextAccessor.current() )
+            .branch( "missing-branch" )
+            .build()
+            .callWith( () -> this.nodeService.getById( NodeId.from( "a" ) ) ) );
     }
 
     @Test
     public void createRootNode()
     {
-        final User user = User.create().
-            key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).
-            displayName( "User 1" ).
-            modifiedTime( Instant.now() ).
-            email( "user1@enonic.com" ).
-            login( "user1" ).
-            build();
+        final User user = User.create()
+            .key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) )
+            .displayName( "User 1" )
+            .modifiedTime( Instant.now() )
+            .email( "user1@enonic.com" )
+            .login( "user1" )
+            .build();
 
-        this.nodeService.createRootNode( CreateRootNodeParams.create().
-            childOrder( ChildOrder.from( "_name ASC" ) ).
-            permissions( AccessControlList.of( AccessControlEntry.create().
-                allowAll().
-                principal( user.getKey() ).
-                build() ) ).
-            build() );
+        this.nodeService.createRootNode( CreateRootNodeParams.create()
+                                             .childOrder( ChildOrder.from( "_name ASC" ) )
+                                             .permissions( AccessControlList.of(
+                                                 AccessControlEntry.create().allowAll().principal( user.getKey() ).build() ) )
+                                             .build() );
 
         printContentRepoIndex();
 
-        final Context context = ContextBuilder.create().
-            authInfo( AuthenticationInfo.create().
-                user( user ).
-                principals( RoleKeys.CONTENT_MANAGER_ADMIN ).
-                build() ).
-            branch( WS_DEFAULT ).
-            repositoryId( TEST_REPO_ID ).
-            build();
+        final Context context = ContextBuilder.create()
+            .authInfo( AuthenticationInfo.create().user( user ).principals( RoleKeys.CONTENT_MANAGER_ADMIN ).build() )
+            .branch( WS_DEFAULT )
+            .repositoryId( TEST_REPO_ID )
+            .build();
 
         context.runWith( () -> assertNotNull( this.nodeService.getByPath( NodePath.ROOT ) ) );
         context.runWith( () -> assertNotNull( this.nodeService.getRoot() ) );
@@ -197,12 +191,8 @@ public class NodeServiceImplTest
             .add( AccessControlEntry.create().principal( PrincipalKey.from( "user:myidprovider:rmy" ) ).allow( Permission.READ ).build() )
             .build();
 
-        final CreateNodeParams params = CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            permissions( aclList ).
-            childOrder( childOrder ).
-            build();
+        final CreateNodeParams params =
+            CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).permissions( aclList ).childOrder( childOrder ).build();
 
         final Node node = this.nodeService.create( params );
 
@@ -222,12 +212,12 @@ public class NodeServiceImplTest
 
         final String binarySource = "binary_source";
 
-        final Node node = this.nodeService.create( CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            attachBinary( binaryRef1, ByteSource.wrap( binarySource.getBytes() ) ).
-            build() );
+        final Node node = this.nodeService.create( CreateNodeParams.create()
+                                                       .name( "my-node" )
+                                                       .parent( NodePath.ROOT )
+                                                       .data( data )
+                                                       .attachBinary( binaryRef1, ByteSource.wrap( binarySource.getBytes() ) )
+                                                       .build() );
 
         this.nodeService.refresh( RefreshMode.SEARCH );
 
@@ -242,23 +232,14 @@ public class NodeServiceImplTest
     {
         final PropertyTree data = new PropertyTree();
 
-        final Node node_1 = this.nodeService.create( CreateNodeParams.create().
-            name( "parent" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            build() );
+        final Node node_1 =
+            this.nodeService.create( CreateNodeParams.create().name( "parent" ).parent( NodePath.ROOT ).data( data ).build() );
 
-        final Node node_1_2 = this.nodeService.create( CreateNodeParams.create().
-            name( "child" ).
-            parent( node_1.path() ).
-            data( data ).
-            build() );
+        final Node node_1_2 =
+            this.nodeService.create( CreateNodeParams.create().name( "child" ).parent( node_1.path() ).data( data ).build() );
 
-        final Node node_1_2_3 = this.nodeService.create( CreateNodeParams.create().
-            name( "child_of_child" ).
-            parent( node_1_2.path() ).
-            data( data ).
-            build() );
+        final Node node_1_2_3 =
+            this.nodeService.create( CreateNodeParams.create().name( "child_of_child" ).parent( node_1_2.path() ).data( data ).build() );
 
         this.nodeService.refresh( RefreshMode.SEARCH );
 
@@ -271,8 +252,10 @@ public class NodeServiceImplTest
 
         assertEquals( node_1_2.name(), node_1_2_dup.name() );
 
-        final NodeId node_1_2_3_dup_id = this.nodeService.findByParent(
-            FindNodesByParentParams.create().parentPath( node_1_2_dup.path() ).build() ).getNodeIds().first();
+        final NodeId node_1_2_3_dup_id =
+            this.nodeService.findByParent( FindNodesByParentParams.create().parentPath( node_1_2_dup.path() ).build() )
+                .getNodeIds()
+                .first();
 
         final Node node_1_2_3_dup = this.nodeService.getById( node_1_2_3_dup_id );
 
@@ -284,17 +267,11 @@ public class NodeServiceImplTest
     {
         final PropertyTree data = new PropertyTree();
 
-        final Node node_1 = this.nodeService.create( CreateNodeParams.create().
-            name( "parent" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            build() );
+        final Node node_1 =
+            this.nodeService.create( CreateNodeParams.create().name( "parent" ).parent( NodePath.ROOT ).data( data ).build() );
 
-        final Node node_1_2 = this.nodeService.create( CreateNodeParams.create().
-            name( "child" ).
-            parent( node_1.path() ).
-            data( data ).
-            build() );
+        final Node node_1_2 =
+            this.nodeService.create( CreateNodeParams.create().name( "child" ).parent( node_1.path() ).data( data ).build() );
 
         this.nodeService.refresh( RefreshMode.SEARCH );
 
@@ -317,12 +294,12 @@ public class NodeServiceImplTest
 
         final String binarySource = "binary_source";
 
-        final Node node = this.nodeService.create( CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            attachBinary( binaryRef1, ByteSource.wrap( binarySource.getBytes() ) ).
-            build() );
+        final Node node = this.nodeService.create( CreateNodeParams.create()
+                                                       .name( "my-node" )
+                                                       .parent( NodePath.ROOT )
+                                                       .data( data )
+                                                       .attachBinary( binaryRef1, ByteSource.wrap( binarySource.getBytes() ) )
+                                                       .build() );
 
         final String key = this.nodeService.getBinaryKey( node.id(), binaryRef1 );
 
@@ -340,12 +317,12 @@ public class NodeServiceImplTest
 
         final String binarySource = "binary_source";
 
-        final Node node = this.nodeService.create( CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            data( data ).
-            attachBinary( binaryRef1, ByteSource.wrap( binarySource.getBytes() ) ).
-            build() );
+        final Node node = this.nodeService.create( CreateNodeParams.create()
+                                                       .name( "my-node" )
+                                                       .parent( NodePath.ROOT )
+                                                       .data( data )
+                                                       .attachBinary( binaryRef1, ByteSource.wrap( binarySource.getBytes() ) )
+                                                       .build() );
 
         final ByteSource source = this.nodeService.getBinary( node.id(), binaryRef1 );
 
@@ -356,18 +333,12 @@ public class NodeServiceImplTest
     public void test_commit()
     {
         //Create and update node
-        final Node createdNode = createNode( CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            build() );
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
         final NodeId nodeId = createdNode.id();
 
-        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
-            id( nodeId ).
-            editor( toBeEdited -> {
-                toBeEdited.data.addString( "newField", "fisk" );
-            } ).
-            build();
+        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().id( nodeId ).editor( toBeEdited -> {
+            toBeEdited.data.addString( "newField", "fisk" );
+        } ).build();
         final Node updatedNode = updateNode( updateNodeParams );
         nodeService.refresh( RefreshMode.STORAGE );
 
@@ -381,9 +352,7 @@ public class NodeServiceImplTest
         assertNull( firstVersionMetadata.getNodeCommitId() );
 
         //Call commit with node ID
-        final NodeCommitEntry commitEntry = NodeCommitEntry.create().
-            message( "Commit message" ).
-            build();
+        final NodeCommitEntry commitEntry = NodeCommitEntry.create().message( "Commit message" ).build();
         final NodeCommitEntry returnedCommitEntry = nodeService.commit( commitEntry, NodeIds.from( nodeId ) );
         nodeService.refresh( RefreshMode.STORAGE );
 
@@ -404,9 +373,7 @@ public class NodeServiceImplTest
         assertNull( firstVersionMetadata2.getNodeCommitId() );
 
         //Call commit with the node version ID of the first version
-        final NodeCommitEntry commitEntry2 = NodeCommitEntry.create().
-            message( "Commit message 2" ).
-            build();
+        final NodeCommitEntry commitEntry2 = NodeCommitEntry.create().message( "Commit message 2" ).build();
         final RoutableNodeVersionId routableNodeVersionId = RoutableNodeVersionId.from( nodeId, firstVersionMetadata2.getNodeVersionId() );
         final NodeCommitEntry returnedCommitEntry2 =
             nodeService.commit( commitEntry, RoutableNodeVersionIds.from( routableNodeVersionId ) );
@@ -425,12 +392,9 @@ public class NodeServiceImplTest
     @Test
     public void testGetByIdAndVersionId()
     {
-        final Node createdNode = createNode( CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            build() );
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
-        final Node fetchedNode = this.nodeService.getByIdAndVersionId( createdNode.id(), createdNode.getNodeVersionId());
+        final Node fetchedNode = this.nodeService.getByIdAndVersionId( createdNode.id(), createdNode.getNodeVersionId() );
 
         assertEquals( createdNode, fetchedNode );
     }
@@ -438,30 +402,58 @@ public class NodeServiceImplTest
     @Test
     public void testGetByPathAndVersionId()
     {
-        final Node createdNode = createNode( CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            build() );
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
-        final Node fetchedNode = this.nodeService.getByPathAndVersionId( createdNode.path(), createdNode.getNodeVersionId());
+        final Node fetchedNode = this.nodeService.getByPathAndVersionId( createdNode.path(), createdNode.getNodeVersionId() );
 
         assertEquals( createdNode, fetchedNode );
     }
 
+    @Test
+    public void testReorderChildren()
+    {
+        final Node parent = createNode(
+            CreateNodeParams.create().name( "my-parent" ).parent( NodePath.ROOT ).childOrder( ChildOrder.manualOrder() ).build() );
+
+        final Node child1 = createNode( CreateNodeParams.create().name( "my-child-1" ).parent( parent.path() ).build() );
+
+        final Node child2 = createNode( CreateNodeParams.create().name( "my-child-2" ).parent( parent.path() ).build() );
+
+        final Node child3 = createNode( CreateNodeParams.create().name( "my-child-3" ).parent( parent.path() ).build() );
+
+        final ReorderChildNodesParams params = ReorderChildNodesParams.create()
+            .add( ReorderChildNodeParams.create().nodeId( child1.id() ).moveBefore( child2.id() ).build() )
+            .add( ReorderChildNodeParams.create().nodeId( child3.id() ).moveBefore( child1.id() ).build() )
+            .processor( data -> {
+                data.addString( "processedValue", "value" );
+                return data;
+            } )
+            .build();
+
+        final ReorderChildNodesResult result = this.nodeService.reorderChildren( params );
+
+        assertThat( result.getNodeIds() ).containsExactly( child1.id(), child3.id() );
+        assertThat( result.getParentNodes().getIds() ).containsExactly( parent.id() );
+        assertThat(
+            nodeService.findByParent( FindNodesByParentParams.create().parentId( parent.id() ).build() ).getNodeIds() ).containsExactly(
+            child3.id(), child1.id(), child2.id() );
+
+        nodeService.refresh( RefreshMode.ALL );
+
+        final Node processedParent = this.nodeService.getById( parent.id() );
+
+        assertEquals( "value", processedParent.data().getString( "processedValue" ) );
+    }
+
     private NodeVersionsMetadata getVersionsMetadata( NodeId nodeId )
     {
-        final GetNodeVersionsParams params = GetNodeVersionsParams.create().
-            nodeId( nodeId ).
-            build();
+        final GetNodeVersionsParams params = GetNodeVersionsParams.create().nodeId( nodeId ).build();
         return nodeService.findVersions( params ).getNodeVersionsMetadata();
     }
 
     private Node doRename( final NodeId nodeId, final String newName )
     {
-        return nodeService.rename( RenameNodeParams.create().
-            nodeName( NodeName.from( newName ) ).
-            nodeId( nodeId ).
-            build() );
+        return nodeService.rename( RenameNodeParams.create().nodeName( NodeName.from( newName ) ).nodeId( nodeId ).build() );
     }
 
 }
