@@ -80,13 +80,34 @@ public class WebDispatcherServletTest
     }
 
     @Test
+    public void test418Response()
+        throws Exception
+    {
+        this.handler.response = WebResponse.create().status( HttpStatus.IM_A_TEAPOT ).build();
+
+        final HttpRequest request = newRequest( "/site/master/a/b" ).GET().build();
+
+        final HttpResponse response = callRequest( request );
+        assertEquals( 418, response.statusCode() );
+    }
+
+    @Test
+    public void test500Response()
+        throws Exception
+    {
+        this.handler.response = WebResponse.create().status( HttpStatus.INTERNAL_SERVER_ERROR ).build();
+
+        final HttpRequest request = newRequest( "/site/master/a/b" ).GET().build();
+
+        final HttpResponse response = callRequest( request );
+        assertEquals( 404, response.statusCode() );
+    }
+
+    @Test
     public void testResponseHeaders()
         throws Exception
     {
-        this.handler.response = WebResponse.create().
-            status( HttpStatus.OK ).
-            header( "X-Header", "Value" ).
-            build();
+        this.handler.response = WebResponse.create().status( HttpStatus.OK ).header( "X-Header", "Value" ).build();
 
         final HttpRequest request = newRequest( "/site/master/a/b" ).
             GET().

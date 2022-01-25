@@ -48,6 +48,6 @@ public final class ExceptionMapperImpl
 
     private boolean isError( final HttpStatus status )
     {
-        return status != null && status != HttpStatus.IM_A_TEAPOT && ( status.is4xxClientError() || status.is5xxServerError() );
+        return ( status != null ) && ( status.is4xxClientError() || status.is5xxServerError() );
     }
 }

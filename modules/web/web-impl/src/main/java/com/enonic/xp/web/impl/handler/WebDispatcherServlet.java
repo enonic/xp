@@ -22,6 +22,7 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -154,7 +155,8 @@ public final class WebDispatcherServlet
 
     private WebResponse filterResponse( final WebRequest webRequest, final WebResponse webResponse )
     {
-        if ( webRequest.getRawRequest().getAttribute( "error.handled" ) != Boolean.TRUE )
+        if ( webRequest.getRawRequest().getAttribute( "error.handled" ) != Boolean.TRUE &&
+            webResponse.getStatus() != HttpStatus.IM_A_TEAPOT )
         {
             this.exceptionMapper.throwIfNeeded( webResponse );
         }
