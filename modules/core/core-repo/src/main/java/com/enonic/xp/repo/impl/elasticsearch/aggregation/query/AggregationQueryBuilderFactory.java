@@ -12,6 +12,7 @@ import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.aggregation.BucketAggregationQuery;
 import com.enonic.xp.query.aggregation.MetricAggregationQuery;
+import com.enonic.xp.query.aggregation.MissingAggregationQuery;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 
@@ -56,6 +57,11 @@ public class AggregationQueryBuilderFactory
             {
                 aggregationBuilder =
                     new MetricAggregationQueryBuilderFactory( fieldNameResolver ).create( (MetricAggregationQuery) aggregationQuery );
+            }
+            else if ( aggregationQuery instanceof MissingAggregationQuery )
+            {
+                aggregationBuilder =
+                    new MissingAggregationQueryBuilderFactory( fieldNameResolver ).create( (MissingAggregationQuery) aggregationQuery );
             }
             else
             {

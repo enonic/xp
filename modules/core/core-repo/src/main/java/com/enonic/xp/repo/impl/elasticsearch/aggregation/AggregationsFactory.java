@@ -7,6 +7,7 @@ import org.elasticsearch.search.aggregations.HasAggregations;
 import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
 import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram;
+import org.elasticsearch.search.aggregations.bucket.missing.Missing;
 import org.elasticsearch.search.aggregations.bucket.range.Range;
 import org.elasticsearch.search.aggregations.bucket.range.date.InternalDateRange;
 import org.elasticsearch.search.aggregations.bucket.range.geodistance.InternalGeoDistance;
@@ -79,6 +80,10 @@ public class AggregationsFactory
             else if ( aggregation instanceof Max )
             {
                 aggregationsBuilder.add( MaxAggregationFactory.create( (Max) aggregation ) );
+            }
+            else if ( aggregation instanceof Missing )
+            {
+                aggregationsBuilder.add( MissingAggregationFactory.create( (Missing) aggregation ) );
             }
             else
             {
