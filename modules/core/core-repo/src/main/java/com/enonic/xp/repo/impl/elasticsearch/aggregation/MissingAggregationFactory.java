@@ -12,6 +12,6 @@ public class MissingAggregationFactory
     static BucketAggregation create( final Missing value )
     {
         return BucketAggregation.bucketAggregation( value.getName() ).buckets( Buckets.create().
-            add( Bucket.create().docCount( value.getDocCount() ).build() ).build() ).build();
+            add( Bucket.create().docCount( value.getDocCount() ).key( value.getName() ).build() ).build() ).build();
     }
 }
