@@ -5,6 +5,7 @@ import java.time.Instant;
 
 import org.elasticsearch.search.aggregations.HasAggregations;
 import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
+import org.elasticsearch.search.aggregations.bucket.filters.Filters;
 import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
 import org.elasticsearch.search.aggregations.bucket.histogram.InternalHistogram;
 import org.elasticsearch.search.aggregations.bucket.missing.Missing;
@@ -84,6 +85,10 @@ public class AggregationsFactory
             else if ( aggregation instanceof Missing )
             {
                 aggregationsBuilder.add( MissingAggregationFactory.create( (Missing) aggregation ) );
+            }
+            else if ( aggregation instanceof Filters )
+            {
+                aggregationsBuilder.add( FiltersAggregationFactory.create( (Filters) aggregation ) );
             }
             else
             {

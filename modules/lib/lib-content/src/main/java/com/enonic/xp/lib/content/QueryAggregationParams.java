@@ -14,6 +14,7 @@ import com.enonic.xp.query.aggregation.DateHistogramAggregationQuery;
 import com.enonic.xp.query.aggregation.DateRange;
 import com.enonic.xp.query.aggregation.DateRangeAggregationQuery;
 import com.enonic.xp.query.aggregation.DistanceRange;
+import com.enonic.xp.query.aggregation.StatusesAggregationQuery;
 import com.enonic.xp.query.aggregation.GeoDistanceAggregationQuery;
 import com.enonic.xp.query.aggregation.HistogramAggregationQuery;
 import com.enonic.xp.query.aggregation.MissingAggregationQuery;
@@ -138,6 +139,11 @@ final class QueryAggregationParams
             final Map<String, Object> missingParamsMap = (Map<String, Object>) aggregationQueryMap.get( "missing" );
             final MissingAggregationQuery.Builder missingAggregationQuery = missingAggregationFromParams( name, missingParamsMap );
             return missingAggregationQuery.build();
+        }
+        else if ( aggregationQueryMap.containsKey( "filters" ) )
+        {
+            final StatusesAggregationQuery.Builder builder = filtersAggregationFromParams( name );
+            return builder.build();
         }
 
         return null;
@@ -344,6 +350,11 @@ final class QueryAggregationParams
     {
         final String fieldName = (String) paramsMap.get( "field" );
         return MissingAggregationQuery.create( name ).fieldName( fieldName );
+    }
+
+    private StatusesAggregationQuery.Builder filtersAggregationFromParams( final String name )
+    {
+        return StatusesAggregationQuery.create( name );
     }
 
     private Long getLong( final Map<String, Object> map, final String key )

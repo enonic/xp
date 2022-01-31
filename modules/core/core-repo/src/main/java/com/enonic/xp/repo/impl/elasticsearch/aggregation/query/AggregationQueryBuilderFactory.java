@@ -11,6 +11,7 @@ import com.enonic.xp.query.aggregation.AbstractRangeAggregationQuery;
 import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.aggregation.BucketAggregationQuery;
+import com.enonic.xp.query.aggregation.StatusesAggregationQuery;
 import com.enonic.xp.query.aggregation.MetricAggregationQuery;
 import com.enonic.xp.query.aggregation.MissingAggregationQuery;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
@@ -62,6 +63,11 @@ public class AggregationQueryBuilderFactory
             {
                 aggregationBuilder =
                     new MissingAggregationQueryBuilderFactory( fieldNameResolver ).create( (MissingAggregationQuery) aggregationQuery );
+            }
+            else if ( aggregationQuery instanceof StatusesAggregationQuery )
+            {
+                aggregationBuilder =
+                    new StatusesAggregationQueryBuilderFactory( fieldNameResolver ).create( (StatusesAggregationQuery) aggregationQuery );
             }
             else
             {
