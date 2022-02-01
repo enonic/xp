@@ -24,10 +24,13 @@ public class StatusesAggregationQueryBuilderFactory
 
     AggregationBuilder create( final StatusesAggregationQuery aggregationQuery )
     {
+        final Instant now = Instant.now();
+
         return new FiltersAggregationBuilder( aggregationQuery.getName() ).
             filter( "NEW", createNewContentFilter() ).
+            filter( "PUBLISHED", createPublishedContentFilter( now ) ).
             filter( "UNPUBLISHED", createUnpublishedContentFilter() ).
-            filter( "EXPIRED", createExpiredContentFilter() );
+            filter( "EXPIRED", createExpiredContentFilter( now ) );
     }
 
     private BoolQueryBuilder createNewContentFilter()
@@ -37,6 +40,19 @@ public class StatusesAggregationQueryBuilderFactory
         boolQueryBuilder.mustNot( new ExistsQueryBuilder( ContentIndexPath.PUBLISH_FIRST.getPath() ) );
 
         return boolQueryBuilder;
+    }
+
+    private BoolQueryBuilder createPublishedContentFilter( Instant time )
+    {
+        final BoolQueryBuilder notPendingFilter = new BoolQueryBuilder();
+        notPendingFilter.mustNot( new RangeQueryBuilder( ContentIndexPath.PUBLISH_FROM.getPath() ).
+            from( ValueFactory.newDateTime( time ) ).includeLower( true ) );
+
+        final BoolQueryBuilder notExpiredFilter =
+            new BoolQueryBuilder().mustNot( new RangeQueryBuilder( ContentIndexPath.PUBLISH_FROM.getPath() ).
+                from( ValueFactory.newDateTime( time ) ).includeLower( true ) );
+
+        return new BoolQueryBuilder().must( notPendingFilter ).must( notExpiredFilter );
     }
 
     private BoolQueryBuilder createUnpublishedContentFilter()
@@ -49,13 +65,12 @@ public class StatusesAggregationQueryBuilderFactory
         return boolQueryBuilder;
     }
 
-    private BoolQueryBuilder createExpiredContentFilter()
+    private BoolQueryBuilder createExpiredContentFilter( Instant time )
     {
         final BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
 
         boolQueryBuilder.must(
-            new RangeQueryBuilder( ContentIndexPath.PUBLISH_TO.getPath() ).to( ValueFactory.newDateTime( Instant.now() ) )
-                .includeUpper( true ) );
+            new RangeQueryBuilder( ContentIndexPath.PUBLISH_TO.getPath() ).to( ValueFactory.newDateTime( time ) ).includeUpper( true ) );
 
         return boolQueryBuilder;
     }
