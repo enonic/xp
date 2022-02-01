@@ -55,6 +55,21 @@ var expectedEmptyJson = {
     'hits': []
 };
 
+var expectedSortJson = {
+    'total': 12902,
+    'count': 2,
+    'hits': [
+        {
+            'id': 'b186d24f-ac38-42ca-a6db-1c1bda6c6c26',
+            'score': 1.2300000190734863
+        },
+        {
+            'id': '350ba4a6-589c-498b-8af0-f183850e1120',
+            'score': 1.7000000476837158
+        }
+    ]
+};
+
 exports.queryEmpty = function () {
     var result = repo.query({
         'start': 0,
@@ -92,7 +107,7 @@ exports.sort = function () {
             }
         ]
     });
-    assert.assertJsonEquals(expectedEmptyJson, result);
+    assert.assertJsonEquals(expectedSortJson, result);
 };
 
 exports.sortInvalid = function () {
