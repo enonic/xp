@@ -42,17 +42,10 @@ public class StatusesAggregationQueryBuilderFactory
         return boolQueryBuilder;
     }
 
-    private BoolQueryBuilder createPublishedContentFilter( Instant time )
+    private RangeQueryBuilder createPublishedContentFilter( Instant time )
     {
-        final BoolQueryBuilder notPendingFilter = new BoolQueryBuilder();
-        notPendingFilter.mustNot( new RangeQueryBuilder( ContentIndexPath.PUBLISH_FROM.getPath() ).
-            from( ValueFactory.newDateTime( time ) ).includeLower( true ) );
-
-        final BoolQueryBuilder notExpiredFilter =
-            new BoolQueryBuilder().mustNot( new RangeQueryBuilder( ContentIndexPath.PUBLISH_TO.getPath() ).
-                to( ValueFactory.newDateTime( time ) ).includeUpper( true ) );
-
-        return new BoolQueryBuilder().must( notPendingFilter ).must( notExpiredFilter );
+        return new RangeQueryBuilder( ContentIndexPath.PUBLISH_FROM.getPath() ).from( ValueFactory.newDateTime( time ) )
+            .includeLower( true );
     }
 
     private BoolQueryBuilder createUnpublishedContentFilter()
