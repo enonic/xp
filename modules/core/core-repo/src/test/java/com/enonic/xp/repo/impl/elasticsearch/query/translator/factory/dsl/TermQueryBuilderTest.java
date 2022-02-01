@@ -4,7 +4,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.util.JsonHelper;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -72,7 +71,7 @@ public class TermQueryBuilderTest
     {
         final String queryString = load( "term/query/" + fileName + ".json" );
 
-        final PropertyTree dslExpression = JsonToPropertyTreeTranslator.translate( JsonHelper.from( queryString ) );
+        final PropertyTree dslExpression = readJson( queryString );
         final QueryBuilder builder = new TermQueryBuilder( dslExpression.getSet( "term" ) ).create();
 
         assertJson( "term/result/" + fileName + ".json", builder.toString() );

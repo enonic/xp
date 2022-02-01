@@ -1,0 +1,9 @@
+{
+  "in": {
+    "field": "myLocalDateTime",
+    "type": "localDateTime",
+    "values": [
+      "2015-12-31T23:00:10"
+    ]
+  }
+}

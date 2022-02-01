@@ -4,7 +4,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.util.JsonHelper;
 
 public class FulltextQueryBuilderTest
     extends QueryBuilderTest
@@ -56,7 +55,7 @@ public class FulltextQueryBuilderTest
     {
         final String queryString = load( "fulltext/query/" + fileName + ".json" );
 
-        final PropertyTree dslExpression = JsonToPropertyTreeTranslator.translate( JsonHelper.from( queryString ) );
+        final PropertyTree dslExpression = readJson( queryString );
         final QueryBuilder builder = new FulltextQueryBuilder( dslExpression.getSet( "fulltext" ) ).create();
 
         assertJson( "fulltext/result/" + fileName + ".json", builder.toString() );

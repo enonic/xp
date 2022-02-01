@@ -4,7 +4,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.util.JsonHelper;
 
 public class NgramQueryBuilderTest
     extends QueryBuilderTest
@@ -56,7 +55,7 @@ public class NgramQueryBuilderTest
     {
         final String queryString = load( "ngram/query/" + fileName + ".json" );
 
-        final PropertyTree dslExpression = JsonToPropertyTreeTranslator.translate( JsonHelper.from( queryString ) );
+        final PropertyTree dslExpression = readJson( queryString );
         final QueryBuilder builder = new NgramQueryBuilder( dslExpression.getSet( "ngram" ) ).create();
 
         assertJson( "ngram/result/" + fileName + ".json", builder.toString() );

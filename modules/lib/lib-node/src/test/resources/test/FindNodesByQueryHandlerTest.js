@@ -64,6 +64,14 @@ exports.queryEmpty = function () {
     assert.assertJsonEquals(expectedEmptyJson, result);
 };
 
+exports.queryNull = function () {
+    var result = repo.query({
+        'start': 0,
+        'count': 100
+    });
+    assert.assertJsonEquals(expectedEmptyJson, result);
+};
+
 exports.sort = function () {
     var result = repo.query({
         'start': 0,

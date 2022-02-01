@@ -21,9 +21,9 @@
       },
       {
         "wildcard": {
-          "displayName": {
+          "displayname": {
             "wildcard": "fol*der",
-            "_name": "displayName"
+            "_name": "displayname"
           }
         }
       }

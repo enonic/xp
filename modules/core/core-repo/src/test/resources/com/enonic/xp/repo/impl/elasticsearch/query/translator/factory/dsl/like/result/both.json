@@ -1,8 +1,8 @@
 {
   "wildcard": {
-    "displayName": {
+    "displayname": {
       "wildcard": "*folder*",
-      "_name": "displayName"
+      "_name": "displayname"
     }
   }
 }

@@ -3,25 +3,25 @@
     "should": [
       {
         "term": {
-          "displayName": {
+          "displayname": {
             "value": "one",
-            "_name": "displayName"
+            "_name": "displayname"
           }
         }
       },
       {
         "term": {
-          "displayName": {
+          "displayname": {
             "value": "two",
-            "_name": "displayName"
+            "_name": "displayname"
           }
         }
       },
       {
         "term": {
-          "displayName": {
+          "displayname": {
             "value": "three",
-            "_name": "displayName"
+            "_name": "displayname"
           }
         }
       }

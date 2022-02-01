@@ -3,17 +3,17 @@
     "should": [
       {
         "term": {
-          "myTime": {
+          "mytime": {
             "value": "11:23",
-            "_name": "myTime"
+            "_name": "mytime"
           }
         }
       },
       {
         "term": {
-          "myTime": {
+          "mytime": {
             "value": "10:36:30.400",
-            "_name": "myTime"
+            "_name": "mytime"
           }
         }
       }

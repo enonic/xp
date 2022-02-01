@@ -1,5 +1,7 @@
 {
   "ngram": {
-    "field": "displayName"
+    "fields": [
+      "displayName"
+    ]
   }
 }

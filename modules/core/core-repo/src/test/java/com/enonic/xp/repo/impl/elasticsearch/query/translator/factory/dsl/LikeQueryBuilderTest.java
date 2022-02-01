@@ -4,7 +4,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.util.JsonHelper;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -65,7 +64,7 @@ public class LikeQueryBuilderTest
     {
         final String queryString = load( "like/query/" + fileName + ".json" );
 
-        final PropertyTree dslExpression = JsonToPropertyTreeTranslator.translate( JsonHelper.from( queryString ) );
+        final PropertyTree dslExpression = readJson( queryString );
         final QueryBuilder builder = new LikeQueryBuilder( dslExpression.getSet( "like" ) ).create();
 
         assertJson( "like/result/" + fileName + ".json", builder.toString() );

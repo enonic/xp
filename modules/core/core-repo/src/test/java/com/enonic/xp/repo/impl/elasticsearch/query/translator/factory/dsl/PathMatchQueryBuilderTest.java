@@ -4,7 +4,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.util.JsonHelper;
 
 public class PathMatchQueryBuilderTest
     extends QueryBuilderTest
@@ -42,7 +41,7 @@ public class PathMatchQueryBuilderTest
     {
         final String queryString = load( "pathMatch/query/" + fileName + ".json" );
 
-        final PropertyTree dslExpression = JsonToPropertyTreeTranslator.translate( JsonHelper.from( queryString ) );
+        final PropertyTree dslExpression = readJson( queryString );
         final QueryBuilder builder = new PathMatchQueryBuilder( dslExpression.getSet( "pathMatch" ) ).create();
 
         assertJson( "pathMatch/result/" + fileName + ".json", builder.toString() );

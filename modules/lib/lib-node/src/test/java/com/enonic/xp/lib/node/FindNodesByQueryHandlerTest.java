@@ -202,4 +202,14 @@ public class FindNodesByQueryHandlerTest
         runFunction( "/test/FindNodesByQueryHandlerTest.js", "queryEmpty" );
     }
 
+    @Test
+    public void dslQueryNull()
+        throws Exception
+    {
+        Mockito.doReturn( FindNodesByQueryResult.create().totalHits( 0 ).build() )
+            .when( this.nodeService )
+            .findByQuery( Mockito.isA( NodeQuery.class ) );
+        runFunction( "/test/FindNodesByQueryHandlerTest.js", "queryNull" );
+    }
+
 }
