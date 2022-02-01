@@ -100,9 +100,17 @@ final class PageHandlerWorker
 
         }
 
-        if ( pageTemplate != null && pageTemplate.getController() != null )
+        if ( pageTemplate != null )
         {
-            pageDescriptor = getPageDescriptor( pageTemplate );
+            if ( pageTemplate.getController() != null )
+            {
+                pageDescriptor = getPageDescriptor( pageTemplate );
+            }
+            else if ( request.getMode() != RenderMode.EDIT )
+            {
+                // There is no point in rendering without controller outside of edit mode
+                throw WebException.internalServerError( String.format( "Template [%s] has no page descriptor", pageTemplate.getName() ) );
+            }
         }
 
         ApplicationKey applicationKey = null;
@@ -138,8 +146,7 @@ final class PageHandlerWorker
                     builder.header( "X-Frame-Options", "SAMEORIGIN" );
                 }
             }
-            if ( !nullToEmpty( defaultContentSecurityPolicy ).isBlank() &&
-                !response.getHeaders().containsKey( "Content-Security-Policy" ) )
+            if ( !nullToEmpty( defaultContentSecurityPolicy ).isBlank() && !response.getHeaders().containsKey( "Content-Security-Policy" ) )
             {
                 builder.header( "Content-Security-Policy", defaultContentSecurityPolicy );
             }
