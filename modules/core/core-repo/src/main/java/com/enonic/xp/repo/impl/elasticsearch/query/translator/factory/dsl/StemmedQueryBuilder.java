@@ -3,14 +3,13 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.dsl;
 import java.util.Optional;
 
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.repo.impl.index.IndexStemmedController;
 import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 
 class StemmedQueryBuilder
-    extends SimpleStringQueryBuilder
+    extends SimpleQueryStringBuilder
 {
     public static final String NAME = "stemmed";
 
@@ -25,7 +24,8 @@ class StemmedQueryBuilder
 
     public QueryBuilder create()
     {
-        final SimpleQueryStringBuilder builder = ( (SimpleQueryStringBuilder) super.create() ).analyzeWildcard( true );
+        final org.elasticsearch.index.query.SimpleQueryStringBuilder builder =
+            ( (org.elasticsearch.index.query.SimpleQueryStringBuilder) super.create() ).analyzeWildcard( true );
 
         final IndexValueTypeInterface languageIndexType =
             Optional.ofNullable( IndexStemmedController.resolveIndexValueType( this.language ) )

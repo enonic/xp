@@ -6,6 +6,7 @@ import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.support.AbstractEqualsTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class FieldOrderExprTest
@@ -19,6 +20,17 @@ public class FieldOrderExprTest
         assertSame( field, expr.getField() );
         assertEquals( OrderExpr.Direction.DESC, expr.getDirection() );
         assertEquals( "name DESC", expr.toString() );
+    }
+
+    @Test
+    public void testExpressionWithoutDirection()
+    {
+        final FieldExpr field = FieldExpr.from( "name" );
+        final FieldOrderExpr expr = new FieldOrderExpr( field, null );
+
+        assertSame( field, expr.getField() );
+        assertNull( expr.getDirection() );
+        assertEquals( "name", expr.toString() );
     }
 
     @Test

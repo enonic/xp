@@ -4,7 +4,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.util.JsonHelper;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -70,6 +69,13 @@ public class InQueryBuilderTest
     }
 
     @Test
+    public void with_localDateTime()
+        throws Exception
+    {
+        test( "with_localDateTime" );
+    }
+
+    @Test
     public void with_time()
         throws Exception
     {
@@ -88,7 +94,7 @@ public class InQueryBuilderTest
     {
         final String queryString = load( "in/query/" + fileName + ".json" );
 
-        final PropertyTree dslExpression = JsonToPropertyTreeTranslator.translate( JsonHelper.from( queryString ) );
+        final PropertyTree dslExpression = readJson( queryString );
         final QueryBuilder builder = new InQueryBuilder( dslExpression.getSet( "in" ) ).create();
 
         assertJson( "in/result/" + fileName + ".json", builder.toString() );

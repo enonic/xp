@@ -2,20 +2,41 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.dsl;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
+import org.mockito.Mockito;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import com.enonic.xp.core.impl.PropertyTreeMarshallerServiceFactory;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.json.ObjectMapperHelper;
+import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.util.JsonHelper;
 
 public abstract class QueryBuilderTest
 {
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
     private static final ObjectWriter OBJECT_WRITER = MAPPER.writerWithDefaultPrettyPrinter();
+
+    private static final PropertyTreeMarshallerService MARSHALLER_SERVICE =
+        PropertyTreeMarshallerServiceFactory.newInstance( Mockito.mock( MixinService.class ) );
+
+    protected PropertyTree readJson( final String value )
+    {
+        final JsonNode jsonNode = JsonHelper.from( value );
+
+        return MARSHALLER_SERVICE.marshal( MAPPER.convertValue( jsonNode, new TypeReference<Map<String, Object>>()
+        {
+
+        } ) );
+    }
 
     protected final String load( final String name )
         throws Exception

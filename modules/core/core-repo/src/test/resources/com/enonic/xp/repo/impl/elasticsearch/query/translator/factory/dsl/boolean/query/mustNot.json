@@ -2,7 +2,9 @@
   "boolean": {
     "mustNot": {
       "fulltext": {
-        "field": "displayName",
+        "fields": [
+          "displayName"
+        ],
         "query": "fisk"
       }
     }

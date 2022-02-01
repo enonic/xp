@@ -1,6 +1,8 @@
 {
   "ngram": {
-    "field": "displayName",
+    "fields": [
+      "displayName"
+    ],
     "query": "fisk",
     "operator": "AND",
     "boost": 0.3

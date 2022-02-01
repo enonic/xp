@@ -12,7 +12,7 @@
       {
         "term": {
           "mynumber._number": {
-            "value": 5.0,
+            "value": 5.1,
             "_name": "mynumber._number"
           }
         }

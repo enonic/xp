@@ -1,0 +1,12 @@
+{
+  "bool": {
+    "should": {
+      "term": {
+        "mylocaldatetime._datetime": {
+          "value": "2015-12-31T23:00:10Z",
+          "_name": "mylocaldatetime._datetime"
+        }
+      }
+    }
+  }
+}

@@ -1,8 +1,8 @@
 {
   "term": {
-    "displayName": {
+    "displayname": {
       "value": null,
-      "_name": "displayName"
+      "_name": "displayname"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "range": {
     "field": "number_field",
-    "to": 5
+    "to": 5.0
   }
 }

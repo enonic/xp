@@ -40,6 +40,18 @@ public class SortBuilderFactoryTest
     }
 
     @Test
+    public void createFieldWithoutDirectionSort()
+    {
+        final Set<OrderExpr> orderExprs = new HashSet<>();
+        orderExprs.add( new FieldOrderExpr( FieldExpr.from( "myField" ), null ) );
+
+        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create( orderExprs );
+
+        assertEquals( 1, sortBuilders.size() );
+        assertTrue( sortBuilders.iterator().next() instanceof FieldSortBuilder );
+    }
+
+    @Test
     public void createMultipleFieldSort()
     {
         final Set<OrderExpr> orderExprs = new HashSet<>();
@@ -68,6 +80,20 @@ public class SortBuilderFactoryTest
     }
 
     @Test
+    public void createGeoDistanceWithoutDirection()
+    {
+        final Set<OrderExpr> orderExprs = new HashSet<>();
+        orderExprs.add( new DynamicOrderExpr( new FunctionExpr( "geoDistance",
+                                                                List.of( ValueExpr.string( "myField" ), ValueExpr.geoPoint( "-50,40" ),
+                                                                         ValueExpr.string( "km" ) ) ), null ) );
+
+        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create( orderExprs );
+
+        assertEquals( 1, sortBuilders.size() );
+        assertTrue( sortBuilders.iterator().next() instanceof GeoDistanceSortBuilder );
+    }
+
+    @Test
     public void createEmpty()
     {
         assertTrue( new SortQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create( List.of() ).isEmpty() );
@@ -81,9 +107,16 @@ public class SortBuilderFactoryTest
         geoExpression.addString( "field", "myGeoPoint" );
         geoExpression.addString( "unit", "ft" );
         geoExpression.addString( "direction", "ASC" );
-        final PropertySet location = geoExpression.addSet( "location" );
-        location.addDouble( "lat", 2.2 );
-        location.addDouble( "lon", 3.3 );
+        final PropertySet location1 = geoExpression.addSet( "location" );
+        location1.addDouble( "lat", 2.2 );
+        location1.addDouble( "lon", 3.3 );
+
+        final PropertyTree geoExpressionWithoutOptional = new PropertyTree();
+        geoExpressionWithoutOptional.addString( "type", "geoDistance" );
+        geoExpressionWithoutOptional.addString( "field", "myGeoPoint" );
+        final PropertySet location2 = geoExpressionWithoutOptional.addSet( "location" );
+        location2.addDouble( "lat", 2D );
+        location2.addDouble( "lon", 3D );
 
         final PropertyTree fieldExpressionWithDirection = new PropertyTree();
         fieldExpressionWithDirection.addString( "field", "myField" );
@@ -93,16 +126,18 @@ public class SortBuilderFactoryTest
         fieldExpressionWithoutDirection.addString( "field", "_name" );
 
         final DslOrderExpr geoOrderExpr = DslOrderExpr.from( geoExpression );
+        final DslOrderExpr geoOrderWithoutOptionalExpr = DslOrderExpr.from( geoExpressionWithoutOptional );
         final DslOrderExpr fieldWithDirectionOrderExpr = DslOrderExpr.from( fieldExpressionWithDirection );
         final DslOrderExpr fieldWithoutDirectionOrderExpr = DslOrderExpr.from( fieldExpressionWithoutDirection );
 
         final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( new SearchQueryFieldNameResolver() ).create(
-            List.of( geoOrderExpr, fieldWithDirectionOrderExpr, fieldWithoutDirectionOrderExpr ) );
+            List.of( geoOrderExpr, geoOrderWithoutOptionalExpr, fieldWithDirectionOrderExpr, fieldWithoutDirectionOrderExpr ) );
 
-        assertEquals( 3, sortBuilders.size() );
+        assertEquals( 4, sortBuilders.size() );
         assertTrue( sortBuilders.get( 0 ) instanceof GeoDistanceSortBuilder );
-        assertTrue( sortBuilders.get( 1 ) instanceof FieldSortBuilder );
+        assertTrue( sortBuilders.get( 1 ) instanceof GeoDistanceSortBuilder );
         assertTrue( sortBuilders.get( 2 ) instanceof FieldSortBuilder );
+        assertTrue( sortBuilders.get( 3 ) instanceof FieldSortBuilder );
     }
 
     @Test

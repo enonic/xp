@@ -21,7 +21,9 @@
       },
       {
         "ngram": {
-          "field": "displayName",
+          "fields": [
+            "displayName"
+          ],
           "query": "fisk"
         }
       }

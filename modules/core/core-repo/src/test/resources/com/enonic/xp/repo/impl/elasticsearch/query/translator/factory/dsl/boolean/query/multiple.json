@@ -10,7 +10,9 @@
     "must": [
       {
         "ngram": {
-          "field": "displayName",
+          "fields": [
+            "displayName"
+          ],
           "query": "fisk"
         }
       },
@@ -29,7 +31,9 @@
       },
       {
         "stemmed": {
-          "field": "displayName",
+          "fields": [
+            "displayName"
+          ],
           "query": "apple",
           "language": "en"
         }

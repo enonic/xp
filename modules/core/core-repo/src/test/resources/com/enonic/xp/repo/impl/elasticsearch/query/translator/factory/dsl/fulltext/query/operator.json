@@ -1,6 +1,8 @@
 {
   "fulltext": {
-    "field": "displayName",
+    "fields": [
+      "displayName"
+    ],
     "query": "fisk",
     "operator": "AND"
   }

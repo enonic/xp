@@ -1,8 +1,8 @@
 {
   "term": {
-    "displayName": {
+    "displayname": {
       "value": "fisk",
-      "_name": "displayName"
+      "_name": "displayname"
     }
   }
 }

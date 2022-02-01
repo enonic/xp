@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class DynamicOrderExprTest
@@ -18,5 +19,16 @@ public class DynamicOrderExprTest
         assertSame( func, expr.getFunction() );
         assertEquals( OrderExpr.Direction.DESC, expr.getDirection() );
         assertEquals( "name() DESC", expr.toString() );
+    }
+
+    @Test
+    public void testExpressionWithoutDirection()
+    {
+        final FunctionExpr func = FunctionExpr.from( "name", new ArrayList<>() );
+        final DynamicOrderExpr expr = new DynamicOrderExpr( func, null );
+
+        assertSame( func, expr.getFunction() );
+        assertNull( expr.getDirection() );
+        assertEquals( "name()", expr.toString() );
     }
 }

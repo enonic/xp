@@ -2,9 +2,9 @@
   "bool": {
     "should": {
       "term": {
-        "displayName": {
+        "displayname": {
           "value": "one",
-          "_name": "displayName"
+          "_name": "displayname"
         }
       }
     }
