@@ -28,7 +28,7 @@ public class StatusesAggregationQueryBuilderFactory
 
         return new FiltersAggregationBuilder( aggregationQuery.getName() ).
             filter( "NEW", createNewContentFilter() ).
-            filter( "PUBLISHED", createPublishedContentFilter( now ) ).
+            filter( "SCHEDULED", createScheduledContentFilter( now ) ).
             filter( "UNPUBLISHED", createUnpublishedContentFilter() ).
             filter( "EXPIRED", createExpiredContentFilter( now ) );
     }
@@ -42,7 +42,7 @@ public class StatusesAggregationQueryBuilderFactory
         return boolQueryBuilder;
     }
 
-    private RangeQueryBuilder createPublishedContentFilter( Instant time )
+    private RangeQueryBuilder createScheduledContentFilter( Instant time )
     {
         return new RangeQueryBuilder( ContentIndexPath.PUBLISH_FROM.getPath() ).from( ValueFactory.newDateTime( time ) )
             .includeLower( true );
