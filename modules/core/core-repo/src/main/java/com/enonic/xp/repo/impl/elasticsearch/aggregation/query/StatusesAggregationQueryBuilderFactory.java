@@ -49,8 +49,8 @@ public class StatusesAggregationQueryBuilderFactory
             from( ValueFactory.newDateTime( time ) ).includeLower( true ) );
 
         final BoolQueryBuilder notExpiredFilter =
-            new BoolQueryBuilder().mustNot( new RangeQueryBuilder( ContentIndexPath.PUBLISH_FROM.getPath() ).
-                from( ValueFactory.newDateTime( time ) ).includeLower( true ) );
+            new BoolQueryBuilder().mustNot( new RangeQueryBuilder( ContentIndexPath.PUBLISH_TO.getPath() ).
+                to( ValueFactory.newDateTime( time ) ).includeUpper( true ) );
 
         return new BoolQueryBuilder().must( notPendingFilter ).must( notExpiredFilter );
     }
