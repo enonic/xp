@@ -4,7 +4,7 @@
 
 [![Actions Status](https://github.com/enonic/xp/workflows/Java%20CI/badge.svg)](https://github.com/enonic/xp/actions)
 [![Codecov](https://codecov.io/gh/enonic/xp/branch/master/graph/badge.svg)](https://codecov.io/gh/enonic/xp)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ceca6f602c2a43e7a2f32287e202fe2c)](https://www.codacy.com/app/enonic/xp?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=enonic/xp&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/1c21f9de69f0444797abdeea49a682e6)](https://www.codacy.com/gh/enonic/xp/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=enonic/xp&amp;utm_campaign=Badge_Grade)
 
 Welcome to the home of Enonic XP. Here you will find all source code for the product. To get started,
 please read our docs here: https://developer.enonic.com/start.
