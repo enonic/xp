@@ -3,7 +3,7 @@
     "string_field": {
       "from": null,
       "to": "d",
-      "include_lower": false,
+      "include_lower": true,
       "include_upper": true
     },
     "_name": "string_field"

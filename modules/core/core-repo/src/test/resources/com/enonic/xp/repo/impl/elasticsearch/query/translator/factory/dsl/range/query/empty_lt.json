@@ -1,6 +1,6 @@
 {
   "range": {
     "field": "displayName",
-    "from": ""
+    "lt": ""
   }
 }

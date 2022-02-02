@@ -2,7 +2,7 @@
   "range": {
     "field": "date_field",
     "type": "dateTime",
-    "from": "2017-09-11T09:00:00Z",
+    "gt": "2017-09-11T09:00:00Z",
     "boost": 1
   }
 }
