@@ -1,6 +1,6 @@
 {
   "range": {
     "field": "number_field",
-    "from": 2.3
+    "gt": 2.3
   }
 }

@@ -18,73 +18,73 @@ public class RangeQueryBuilderTest
     }
 
     @Test
-    public void empty_from()
+    public void empty_lt()
         throws Exception
     {
-        assertThrows( RuntimeException.class, () -> test( "empty_from" ) );
+        assertThrows( RuntimeException.class, () -> test( "empty_lt" ) );
     }
 
     @Test
-    public void empty_to()
+    public void empty_gt()
         throws Exception
     {
-        assertThrows( RuntimeException.class, () -> test( "empty_to" ) );
+        assertThrows( RuntimeException.class, () -> test( "empty_gt" ) );
     }
 
     @Test
-    public void from_date()
+    public void gt_date()
         throws Exception
     {
-        test( "from_date" );
+        test( "gt_date" );
     }
 
     @Test
-    public void from_number()
+    public void gt_number()
         throws Exception
     {
-        test( "from_number" );
+        test( "gt_number" );
     }
 
     @Test
-    public void from_string()
+    public void gt_string()
         throws Exception
     {
-        test( "from_string" );
+        test( "gt_string" );
     }
 
     @Test
-    public void from_string_include()
+    public void gte()
         throws Exception
     {
-        test( "from_string_include" );
+        test( "gte" );
     }
 
     @Test
-    public void to_date()
+    public void lt_date()
         throws Exception
     {
-        test( "to_date" );
+        test( "lt_date" );
     }
 
     @Test
-    public void to_number()
+    public void lt_number()
         throws Exception
     {
-        test( "to_number" );
+        test( "lt_number" );
     }
 
     @Test
-    public void to_string()
+    public void lt_string()
         throws Exception
     {
-        test( "to_string" );
+        test( "lt_string" );
     }
 
     @Test
-    public void to_string_include()
+    public void lte()
         throws Exception
     {
-        test( "to_string_include" );
+        test( "lte" );
     }
 
     @Test
@@ -92,6 +92,13 @@ public class RangeQueryBuilderTest
         throws Exception
     {
         test( "boosted" );
+    }
+
+    @Test
+    public void diff_field_types()
+        throws Exception
+    {
+        assertThrows( RuntimeException.class, () -> test( "diff_field_types" ) );
     }
 
     private void test( final String fileName )

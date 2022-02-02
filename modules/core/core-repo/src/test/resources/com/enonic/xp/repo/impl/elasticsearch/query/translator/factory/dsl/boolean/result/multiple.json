@@ -16,7 +16,7 @@
           "date_field._datetime": {
             "from": null,
             "to": "2021-09-11T09:00:00Z",
-            "include_lower": false,
+            "include_lower": true,
             "include_upper": false
           },
           "_name": "date_field._datetime"

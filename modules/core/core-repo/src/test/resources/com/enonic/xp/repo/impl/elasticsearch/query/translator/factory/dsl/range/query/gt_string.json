@@ -1,7 +1,6 @@
 {
   "range": {
     "field": "string_field",
-    "to": "d",
-    "includeTo": true
+    "gt": "a"
   }
 }

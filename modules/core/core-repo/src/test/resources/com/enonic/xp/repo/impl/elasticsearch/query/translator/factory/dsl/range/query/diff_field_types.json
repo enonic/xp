@@ -1,7 +1,7 @@
 {
   "range": {
     "field": "string_field",
-    "from": "a",
-    "includeFrom": true
+    "lt": "123",
+    "gt": 456
   }
 }

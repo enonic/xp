@@ -1,6 +1,6 @@
 {
   "range": {
     "field": "string_field",
-    "to": "d"
+    "lt": "d"
   }
 }
