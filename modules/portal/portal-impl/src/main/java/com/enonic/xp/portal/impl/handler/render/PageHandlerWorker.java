@@ -15,6 +15,7 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
@@ -95,9 +96,17 @@ final class PageHandlerWorker
 
         }
 
-        if ( pageTemplate != null && pageTemplate.getController() != null )
+        if ( pageTemplate != null )
         {
-            pageDescriptor = getPageDescriptor( pageTemplate );
+            if ( pageTemplate.getController() != null )
+            {
+                pageDescriptor = getPageDescriptor( pageTemplate );
+            }
+            else if ( request.getMode() != RenderMode.EDIT )
+            {
+                // There is no point in rendering without controller outside of edit mode
+                throw WebException.internalServerError( String.format( "Template [%s] has no page descriptor", pageTemplate.getName() ) );
+            }
         }
 
         ApplicationKey applicationKey = null;
