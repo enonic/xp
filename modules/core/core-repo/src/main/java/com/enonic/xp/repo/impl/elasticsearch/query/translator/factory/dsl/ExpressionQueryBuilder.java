@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.dsl;
 import java.time.ZoneOffset;
 
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.ValueTypeException;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQueryFieldNameResolver;
 import com.enonic.xp.repo.impl.index.IndexValueType;
@@ -37,12 +38,30 @@ abstract class ExpressionQueryBuilder
         {
             case "time":
                 return ValueTypes.LOCAL_TIME.convert( value );
-            case "date":
-                return ValueTypes.LOCAL_DATE.convert( value ).atStartOfDay().toInstant( ZoneOffset.UTC );
-            case "localDateTime":
-                return ValueTypes.LOCAL_DATE_TIME.convert( value ).toInstant( ZoneOffset.UTC );
             case "dateTime":
-                return ValueTypes.DATE_TIME.convert( value );
+
+                try
+                {
+                    return ValueTypes.DATE_TIME.convert( value );
+                }
+                catch ( ValueTypeException dtEx )
+                {
+                    try
+                    {
+                        return ValueTypes.LOCAL_DATE_TIME.convert( value ).toInstant( ZoneOffset.UTC );
+                    }
+                    catch ( ValueTypeException ldtEx )
+                    {
+                        try
+                        {
+                            return ValueTypes.LOCAL_DATE.convert( value ).atStartOfDay().toInstant( ZoneOffset.UTC );
+                        }
+                        catch ( ValueTypeException ldEx )
+                        {
+                            throw new IllegalArgumentException( "value must be in either Date, DateTime or LocalDateTime format" );
+                        }
+                    }
+                }
             default:
                 throw new IllegalArgumentException( String.format( "There is no [%s] dsl expression type", type ) );
         }
@@ -61,9 +80,7 @@ abstract class ExpressionQueryBuilder
 
         switch ( type )
         {
-            case "date":
             case "dateTime":
-            case "localDateTime":
                 return FIELD_NAME_RESOLVER.resolve( field, IndexValueType.DATETIME );
             case "time":
                 return FIELD_NAME_RESOLVER.resolve( field );

@@ -60,6 +60,13 @@ public class TermQueryBuilderTest
     }
 
     @Test
+    public void invalid_datetime()
+        throws Exception
+    {
+        assertThrows( RuntimeException.class, () -> test( "invalid_datetime" ) );
+    }
+
+    @Test
     public void geo_point()
         throws Exception
     {
