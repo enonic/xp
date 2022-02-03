@@ -76,6 +76,13 @@ public class InQueryBuilderTest
     }
 
     @Test
+    public void with_mixed_date()
+        throws Exception
+    {
+        test( "with_mixed_date" );
+    }
+
+    @Test
     public void with_time()
         throws Exception
     {

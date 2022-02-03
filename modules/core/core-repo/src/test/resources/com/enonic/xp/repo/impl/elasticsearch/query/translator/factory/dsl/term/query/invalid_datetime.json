@@ -1,0 +1,7 @@
+{
+  "term": {
+    "field": "myDateTime",
+    "type": "dateTime",
+    "value": "25/25/2021"
+  }
+}
