@@ -835,34 +835,59 @@ to a jury trial in any resulting litigation.
 
 
 Eclipse Public License - v 2.0
-THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS ECLIPSE PUBLIC LICENSE (“AGREEMENT”). ANY USE, REPRODUCTION OR DISTRIBUTION OF THE PROGRAM CONSTITUTES RECIPIENT'S ACCEPTANCE OF THIS AGREEMENT.
+THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS ECLIPSE PUBLIC
+LICENSE (“AGREEMENT”). ANY USE, REPRODUCTION OR DISTRIBUTION OF THE PROGRAM
+CONSTITUTES RECIPIENT'S ACCEPTANCE OF THIS AGREEMENT.
 
 1. DEFINITIONS
 
 “Contribution” means:
 
-a) in the case of the initial Contributor, the initial content Distributed under this Agreement, and
+a) in the case of the initial Contributor, the initial content Distributed
+under this Agreement, and
 b) in the case of each subsequent Contributor:
 i) changes to the Program, and
 ii) additions to the Program;
-where such changes and/or additions to the Program originate from and are Distributed by that particular Contributor. A Contribution “originates” from a Contributor if it was added to the Program by such Contributor itself or anyone acting on such Contributor's behalf. Contributions do not include changes or additions to the Program that are not Modified Works.
+where such changes and/or additions to the Program originate from and are
+Distributed by that particular Contributor. A Contribution “originates” from a
+Contributor if it was added to the Program by such Contributor itself or anyone
+acting on such Contributor's behalf. Contributions do not include changes or
+additions to the Program that are not Modified Works.
 “Contributor” means any person or entity that Distributes the Program.
 
-“Licensed Patents” mean patent claims licensable by a Contributor which are necessarily infringed by the use or sale of its Contribution alone or when combined with the Program.
+“Licensed Patents” mean patent claims licensable by a Contributor which are
+necessarily infringed by the use or sale of its Contribution alone or when
+combined with the Program.
 
-“Program” means the Contributions Distributed in accordance with this Agreement.
+“Program” means the Contributions Distributed in accordance with this
+Agreement.
 
-“Recipient” means anyone who receives the Program under this Agreement or any Secondary License (as applicable), including Contributors.
+“Recipient” means anyone who receives the Program under this Agreement or any
+Secondary License (as applicable), including Contributors.
 
-“Derivative Works” shall mean any work, whether in Source Code or other form, that is based on (or derived from) the Program and for which the editorial revisions, annotations, elaborations, or other modifications represent, as a whole, an original work of authorship.
+“Derivative Works” shall mean any work, whether in Source Code or other form,
+that is based on (or derived from) the Program and for which the editorial
+revisions, annotations, elaborations, or other modifications represent, as a
+whole, an original work of authorship.
 
-“Modified Works” shall mean any work in Source Code or other form that results from an addition to, deletion from, or modification of the contents of the Program, including, for purposes of clarity any new file in Source Code form that contains any contents of the Program. Modified Works shall not include works that contain only declarations, interfaces, types, classes, structures, or files of the Program solely in each case in order to link to, bind by name, or subclass the Program or Modified Works thereof.
+“Modified Works” shall mean any work in Source Code or other form that results
+from an addition to, deletion from, or modification of the contents of the
+Program, including, for purposes of clarity any new file in Source Code form
+that contains any contents of the Program. Modified Works shall not include
+works that contain only declarations, interfaces, types, classes, structures,
+or files of the Program solely in each case in order to link to, bind by name,
+or subclass the Program or Modified Works thereof.
 
-“Distribute” means the acts of a) distributing or b) making available in any manner that enables the transfer of a copy.
+“Distribute” means the acts of a) distributing or b) making available in any
+manner that enables the transfer of a copy.
 
-“Source Code” means the form of a Program preferred for making modifications, including but not limited to software source code, documentation source, and configuration files.
+“Source Code” means the form of a Program preferred for making modifications,
+including but not limited to software source code, documentation source, and
+configuration files.
 
-“Secondary License” means either the GNU General Public License, Version 2.0, or any later versions of that license, including any exceptions or additional permissions as identified by the initial Contributor.
+“Secondary License” means either the GNU General Public License, Version 2.0,
+or any later versions of that license, including any exceptions or additional
+permissions as identified by the initial Contributor.
 
 2. GRANT OF RIGHTS
 
