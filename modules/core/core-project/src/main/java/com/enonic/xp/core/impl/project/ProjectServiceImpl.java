@@ -34,6 +34,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.project.init.ArchiveInitializer;
 import com.enonic.xp.core.impl.project.init.ContentInitializer;
 import com.enonic.xp.core.impl.project.init.IssueInitializer;
+import com.enonic.xp.core.impl.project.init.SchemaInitializer;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
@@ -153,11 +154,7 @@ public class ProjectServiceImpl
             .accessControlList( CreateProjectRootAccessListCommand.create()
                                     .projectName( params.getName() )
                                     .permissions( params.getPermissions() )
-                                    .build()
-                                    .execute() )
-            .forceInitialization( params.isForceInitialization() )
-            .build()
-            .initialize();
+                                    .build().execute() ).forceInitialization( params.isForceInitialization() ).build().initialize();
 
         IssueInitializer.create()
             .setIndexService( indexService )
@@ -169,6 +166,15 @@ public class ProjectServiceImpl
             .initialize();
 
         ArchiveInitializer.create()
+            .setIndexService( indexService )
+            .setNodeService( nodeService )
+            .repositoryId( params.getName().getRepoId() )
+            .accessControlList( CreateProjectRootAccessListCommand.create().projectName( params.getName() ).build().execute() )
+            .forceInitialization( params.isForceInitialization() )
+            .build()
+            .initialize();
+
+        SchemaInitializer.create()
             .setIndexService( indexService )
             .setNodeService( nodeService )
             .repositoryId( params.getName().getRepoId() )
