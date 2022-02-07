@@ -122,7 +122,7 @@ final class BuiltinContentTypes
                           .name( "altText" )
                           .inputType( InputTypeName.TEXT_LINE )
                           .label( "Alternative text" )
-                          .labelI18nKey( "media.image.alttext.label" )
+                          .labelI18nKey( "media.image.altText.label" )
                           .occurrences( 0, 1 )
                           .build() )
         .addFormItem( Input.create()
