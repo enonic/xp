@@ -3,7 +3,6 @@ package com.enonic.xp.lib.auth;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
@@ -49,6 +48,6 @@ public class CreateUserHandlerTest
     @Test
     public void testCreateUserWithMissingArg()
     {
-        assertThrows(ResourceProblemException.class, () -> runFunction( "/test/createUser-test.js", "createUserWithMissingArg" ));
+        assertThrows( NullPointerException.class, () -> runFunction( "/test/createUser-test.js", "createUserWithMissingArg" ) );
     }
 }
