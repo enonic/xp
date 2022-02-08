@@ -9,8 +9,7 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 
 public class RemoveMembersHandlerTest
@@ -44,18 +43,10 @@ public class RemoveMembersHandlerTest
 
     @Test
     public void testRemoveMembersFromUser()
-        throws Exception
     {
-        try
-        {
-            runFunction( "/test/removeMembers-test.js", "removeMembersFromUser" );
-            fail( "Expected exception" );
-        }
-        catch ( Exception e )
-        {
-            assertTrue( e.getCause() instanceof IllegalArgumentException );
-            assertEquals( "Principal relationship from User to another Principal is not allowed", e.getMessage() );
-        }
+        final IllegalArgumentException e =
+            assertThrows( IllegalArgumentException.class, () -> runFunction( "/test/removeMembers-test.js", "removeMembersFromUser" ) );
+        assertEquals( "Principal relationship from User to another Principal is not allowed", e.getMessage() );
     }
 
     @Test

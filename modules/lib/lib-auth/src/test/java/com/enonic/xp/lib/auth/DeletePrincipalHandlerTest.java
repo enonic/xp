@@ -3,7 +3,6 @@ package com.enonic.xp.lib.auth;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalNotFoundException;
 import com.enonic.xp.security.SecurityService;
@@ -48,6 +47,6 @@ public class DeletePrincipalHandlerTest
     @Test
     public void testDeleteSystemUser()
     {
-        assertThrows(ResourceProblemException.class, () -> runFunction( "/test/deletePrincipal-test.js", "deleteSystemUser" ));
+        assertThrows(IllegalArgumentException.class, () -> runFunction( "/test/deletePrincipal-test.js", "deleteSystemUser" ));
     }
 }
