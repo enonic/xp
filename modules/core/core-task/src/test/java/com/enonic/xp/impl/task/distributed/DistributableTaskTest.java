@@ -7,7 +7,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -15,6 +18,8 @@ import org.osgi.framework.ServiceReference;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.core.internal.osgi.OsgiSupportMock;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.impl.task.script.NamedTask;
 import com.enonic.xp.impl.task.script.NamedTaskFactory;
 import com.enonic.xp.page.DescriptorKey;
@@ -22,17 +27,20 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskDescriptor;
+import com.enonic.xp.task.TaskDescriptorService;
 import com.enonic.xp.task.TaskId;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class DistributableTaskTest
 {
     private static final TaskContext TEST_TASK_CONTEXT = TaskContext.create()
@@ -50,6 +58,19 @@ class DistributableTaskTest
     @Mock(stubOnly = true)
     NamedTaskFactory namedTaskFactory;
 
+    @Mock(stubOnly = true)
+    ServiceReference<TaskDescriptorService> taskDescriptorServiceReference;
+
+    @Mock(stubOnly = true)
+    ServiceReference<PropertyTreeMarshallerService> propertyTreeMarshallerServiceReference;
+
+    @Mock(stubOnly = true)
+    TaskDescriptorService taskDescriptorService;
+
+    @Mock(stubOnly = true)
+    PropertyTreeMarshallerService propertyTreeMarshallerService;
+
+
     Bundle bundle;
 
     @BeforeEach
@@ -58,8 +79,16 @@ class DistributableTaskTest
     {
         bundle = OsgiSupportMock.mockBundle();
         when( bundle.getBundleContext() ).thenReturn( bundleContext );
+
         when( bundleContext.getServiceReferences( NamedTaskFactory.class, null ) ).thenReturn( List.of( serviceReference ) );
+        when( bundleContext.getServiceReferences( TaskDescriptorService.class, null ) ).thenReturn(
+            List.of( taskDescriptorServiceReference ) );
+        when( bundleContext.getServiceReferences( PropertyTreeMarshallerService.class, null ) ).thenReturn(
+            List.of( propertyTreeMarshallerServiceReference ) );
+
         when( bundleContext.getService( serviceReference ) ).thenReturn( namedTaskFactory );
+        when( bundleContext.getService( taskDescriptorServiceReference ) ).thenReturn( taskDescriptorService );
+        when( bundleContext.getService( propertyTreeMarshallerServiceReference ) ).thenReturn( propertyTreeMarshallerService );
     }
 
     @AfterEach
@@ -71,14 +100,19 @@ class DistributableTaskTest
     @Test
     void fields()
     {
-        final NamedTask namedTask = mock( NamedTask.class );
-
         final DescriptorKey descriptorKey = DescriptorKey.from( "app:a" );
+        final TaskDescriptor descriptor =
+            TaskDescriptor.create().key( descriptorKey ).description( "task description" ).config( Form.create().build() ).build();
+
         final PropertyTree config = new PropertyTree();
-        when( namedTaskFactory.create( descriptorKey, config ) ).thenReturn( namedTask );
-        when( namedTask.getTaskDescriptor() ).
-            thenReturn( TaskDescriptor.create().key( descriptorKey ).description( "task description" ).build() );
+
+        when( taskDescriptorService.getTask( descriptorKey ) ).thenReturn( descriptor );
+        when(
+            propertyTreeMarshallerService.marshal( eq( config.toMap() ), eq( descriptor.getConfig() ), Mockito.anyBoolean() ) ).thenReturn(
+            config );
+
         final DistributableTask describedTask = new DistributableTask( descriptorKey, config, TEST_TASK_CONTEXT );
+
         assertAll( () -> assertEquals( "app:a", describedTask.getName() ), () -> assertNotNull( describedTask.getTaskId() ),
                    () -> assertNotNull( describedTask.getTaskContext() ),
                    () -> assertEquals( "task description", describedTask.getDescription() ),
@@ -91,10 +125,19 @@ class DistributableTaskTest
         final NamedTask namedTask = mock( NamedTask.class );
 
         final DescriptorKey descriptorKey = DescriptorKey.from( "app:a" );
+        final TaskDescriptor descriptor = TaskDescriptor.create().key( descriptorKey ).description( "task description" ).build();
+
         final PropertyTree config = new PropertyTree();
-        when( namedTaskFactory.create( descriptorKey, config ) ).thenReturn( namedTask );
+
+        when( namedTaskFactory.create( descriptor, config ) ).thenReturn( namedTask );
+
+        when( taskDescriptorService.getTask( descriptorKey ) ).thenReturn( descriptor );
+        when(
+            propertyTreeMarshallerService.marshal( eq( config.toMap() ), eq( descriptor.getConfig() ), Mockito.anyBoolean() ) ).thenReturn(
+            config );
 
         final DistributableTask describedTask = new DistributableTask( descriptorKey, config, TEST_TASK_CONTEXT );
+
         describedTask.run( mock( ProgressReporter.class ) );
         verify( namedTask ).run( any( TaskId.class ), any( ProgressReporter.class ) );
     }
