@@ -6,10 +6,12 @@ import java.util.UUID;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.internal.osgi.OsgiSupport;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.impl.task.script.NamedTask;
+import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.impl.task.script.NamedTaskFactory;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.ProgressReporter;
+import com.enonic.xp.task.TaskDescriptor;
+import com.enonic.xp.task.TaskDescriptorService;
 import com.enonic.xp.task.TaskId;
 
 public final class DistributableTask
@@ -23,11 +25,11 @@ public final class DistributableTask
 
     private final DescriptorKey key;
 
-    private final PropertyTree data;
-
     private final TaskContext context;
 
-    private transient NamedTask namedTask;
+    private volatile PropertyTree data;
+
+    private transient volatile TaskDescriptor taskDescriptor;
 
     public DistributableTask( final DescriptorKey key, final PropertyTree data, final TaskContext context )
     {
@@ -64,23 +66,28 @@ public final class DistributableTask
     @Override
     public String getDescription()
     {
-        initNamedTask();
-        return namedTask.getTaskDescriptor().getDescription();
+        initDescriptor();
+
+        return taskDescriptor.getDescription();
     }
 
     @Override
     public void run( final ProgressReporter progressReporter )
     {
-        initNamedTask();
-        namedTask.run( taskId, progressReporter );
+        initDescriptor();
+
+        OsgiSupport.withService( NamedTaskFactory.class, ntsf -> ntsf.create( taskDescriptor, data ) ).run( taskId, progressReporter );
     }
 
-    private void initNamedTask()
+    private synchronized void initDescriptor()
     {
-        if ( namedTask == null )
+        if ( taskDescriptor == null )
         {
             final DescriptorKey descriptorKey = DescriptorKey.from( name );
-            namedTask = OsgiSupport.withService( NamedTaskFactory.class, ntsf -> ntsf.create( descriptorKey, data ) );
+            taskDescriptor = OsgiSupport.withService( TaskDescriptorService.class, tds -> tds.getTask( descriptorKey ) );
+
+            data = OsgiSupport.withService( PropertyTreeMarshallerService.class,
+                                            ptms -> ptms.marshal( data.toMap(), taskDescriptor.getConfig(), true ) );
         }
     }
 }
