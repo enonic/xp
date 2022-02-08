@@ -5,11 +5,9 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -72,17 +70,8 @@ public class RefreshScriptTest
 
     @Test
     public void testRefreshInvalidMode()
-        throws Exception
     {
-        try
-        {
-            runFunction( "/test/refresh-test.js", "refreshInvalid" );
-            fail( "Exception expected" );
-        }
-        catch ( ResourceProblemException e )
-        {
-            assertTrue( e.getCause() instanceof IllegalArgumentException );
-        }
+        assertThrows( IllegalArgumentException.class, () -> runFunction( "/test/refresh-test.js", "refreshInvalid" ) );
         verify( this.nodeService, never() ).refresh( any( RefreshMode.class ) );
     }
 }
