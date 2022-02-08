@@ -5,7 +5,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
@@ -25,34 +24,31 @@ public class NamedTaskScriptFactoryImpl
 
     private final TaskDescriptorService taskDescriptorService;
 
-    private final PropertyTreeMarshallerService propertyTreeMarshallerService;
-
     @Activate
     public NamedTaskScriptFactoryImpl( @Reference final PortalScriptService scriptService,
-                                       @Reference final TaskDescriptorService taskDescriptorService,
-                                       @Reference final PropertyTreeMarshallerService propertyTreeMarshallerService )
+                                       @Reference final TaskDescriptorService taskDescriptorService )
     {
         this.scriptService = scriptService;
         this.taskDescriptorService = taskDescriptorService;
-        this.propertyTreeMarshallerService = propertyTreeMarshallerService;
     }
 
-    public NamedTaskScript create( final DescriptorKey key, final PropertyTree data )
+    public NamedTaskScript create( final TaskDescriptor descriptor, final PropertyTree data )
     {
-        return doCreate( key, data, true );
+        return doCreate( descriptor, data );
     }
 
     public NamedTaskScript createLegacy( final DescriptorKey key, final PropertyTree data )
     {
-        return doCreate( key, data, false );
+        final TaskDescriptor descriptor = taskDescriptorService.getTask( key );
+
+        return doCreate( descriptor, data );
     }
 
-    private NamedTaskScript doCreate( final DescriptorKey key, final PropertyTree data, final boolean marshal )
+    private NamedTaskScript doCreate( final TaskDescriptor descriptor, final PropertyTree data )
     {
-        final TaskDescriptor taskDescriptor = taskDescriptorService.getTask( key );
-
-        final ResourceKey scriptResourceKey =
-            ResourceKey.from( key.getApplicationKey(), TASKS_PATH_PREFIX + key.getName() + "/" + key.getName() + ".js" );
+        final ResourceKey scriptResourceKey = ResourceKey.from( descriptor.getApplicationKey(),
+                                                                TASKS_PATH_PREFIX + descriptor.getName() + "/" + descriptor.getName() +
+                                                                    ".js" );
 
         final ScriptExports exports;
         try
@@ -61,18 +57,16 @@ public class NamedTaskScriptFactoryImpl
         }
         catch ( ResourceNotFoundException e )
         {
-            throw new TaskNotFoundException( key, "Missing task script" );
+            throw new TaskNotFoundException( descriptor.getKey(), "Missing task script" );
         }
 
         final boolean exists = exports.hasMethod( NamedTaskScript.SCRIPT_METHOD_NAME );
         if ( !exists )
         {
-            throw new TaskNotFoundException( key, "Missing exported function '" + NamedTaskScript.SCRIPT_METHOD_NAME + "' in task script" );
+            throw new TaskNotFoundException( descriptor.getKey(),
+                                             "Missing exported function '" + NamedTaskScript.SCRIPT_METHOD_NAME + "' in task script" );
         }
 
-        final PropertyTree namedTaskConfig =
-            marshal ? propertyTreeMarshallerService.marshal( data.toMap(), taskDescriptor.getConfig(), true ) : data;
-
-        return new NamedTaskScript( exports, taskDescriptor, namedTaskConfig );
+        return new NamedTaskScript( exports, descriptor, data );
     }
 }
