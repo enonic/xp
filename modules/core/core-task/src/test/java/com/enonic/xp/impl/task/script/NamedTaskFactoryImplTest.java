@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -16,8 +18,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.Form;
-import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
 import com.enonic.xp.portal.script.PortalScriptService;
@@ -35,19 +35,16 @@ import com.enonic.xp.task.TaskNotFoundException;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class NamedTaskFactoryImplTest
 {
     @Mock
     TaskDescriptorService taskDescriptorService;
-
-    @Mock
-    PropertyTreeMarshallerService propertyTreeMarshallerService;
 
     NamedTaskScriptFactoryImpl namedTaskScriptFactory;
 
@@ -56,8 +53,7 @@ class NamedTaskFactoryImplTest
     {
         final PortalScriptService portalScriptService = setupPortalScriptService();
 
-        namedTaskScriptFactory =
-            new NamedTaskScriptFactoryImpl( portalScriptService, taskDescriptorService, propertyTreeMarshallerService );
+        namedTaskScriptFactory = new NamedTaskScriptFactoryImpl( portalScriptService, taskDescriptorService );
     }
 
     private PortalScriptService setupPortalScriptService()
@@ -99,11 +95,12 @@ class NamedTaskFactoryImplTest
     @Test
     void createExisting()
     {
-        when( propertyTreeMarshallerService.marshal( any(), any( Form.class ), eq( true ) ) ).thenReturn( new PropertyTree() );
         final DescriptorKey descriptorKey = DescriptorKey.from( "myapplication:mytask" );
-        when( taskDescriptorService.getTask( descriptorKey ) ).thenReturn( TaskDescriptor.create().key( descriptorKey ).build() );
+        final TaskDescriptor descriptor = TaskDescriptor.create().key( descriptorKey ).build();
 
-        final RunnableTask runnableTask = namedTaskScriptFactory.create( descriptorKey, new PropertyTree() );
+        when( taskDescriptorService.getTask( descriptorKey ) ).thenReturn( descriptor );
+
+        final RunnableTask runnableTask = namedTaskScriptFactory.create( descriptor, new PropertyTree() );
         assertNotNull( runnableTask );
         runnableTask.run( TaskId.from( "123" ), null );
     }
@@ -111,14 +108,16 @@ class NamedTaskFactoryImplTest
     @Test
     void createMissingRunExport()
     {
-        assertThrows( TaskNotFoundException.class,
-                      () -> namedTaskScriptFactory.create( DescriptorKey.from( "myapplication:mytask2" ), new PropertyTree() ) );
+        final TaskDescriptor descriptor = TaskDescriptor.create().key( DescriptorKey.from( "myapplication:mytask2" ) ).build();
+
+        assertThrows( TaskNotFoundException.class, () -> namedTaskScriptFactory.create( descriptor, new PropertyTree() ) );
     }
 
     @Test
     void createNotExisting()
     {
-        assertThrows( TaskNotFoundException.class,
-                      () -> namedTaskScriptFactory.create( DescriptorKey.from( "myapplication:mytask3" ), new PropertyTree() ) );
+        final TaskDescriptor descriptor = TaskDescriptor.create().key( DescriptorKey.from( "myapplication:mytask3" ) ).build();
+
+        assertThrows( TaskNotFoundException.class, () -> namedTaskScriptFactory.create( descriptor, new PropertyTree() ) );
     }
 }
