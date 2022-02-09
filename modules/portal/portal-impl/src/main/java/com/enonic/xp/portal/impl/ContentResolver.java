@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl;
 
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 import com.enonic.xp.content.Content;
@@ -42,46 +43,26 @@ public class ContentResolver
     private ContentResolverResult resolveInNonEditMode( final ContentPath contentPath )
     {
         Content content = getContentByPath( contentPath );
+
+        final boolean contentExists = content != null || contentExistsByPath( contentPath );
+
         final Site site = callAsContentAdmin( () -> this.contentService.findNearestSiteByPath( contentPath ) );
-        if ( site == null )
-        {
-            return ContentResolverResult.noSiteFound( content, contentPath.toString() );
-        }
-        else
-        {
-            return ContentResolverResult.build( content, site, contentPath.toString(), contentPath.toString() );
-        }
+
+        return new ContentResolverResult( content, contentExists, site, siteRelativePath( site, contentPath ), contentPath.toString() );
     }
 
     private ContentResolverResult resolveInEditMode( final ContentPath contentPath )
     {
-        final Site site;
+        final ContentId contentId = ContentId.from( contentPath.toString().substring( 1 ) );
 
-        Content content = getContentById( ContentId.from( contentPath.toString().substring( 1 ) ) );
+        final Content content = Optional.ofNullable( getContentById( contentId ) ).orElseGet( () -> getContentByPath( contentPath ) );
 
-        if ( content == null )
-        {
-            content = getContentByPath( contentPath );
-        }
+        final boolean contentExists = content != null || contentExistsById( contentId ) || contentExistsByPath( contentPath );
 
-        if ( content == null )
-        {
-            return ContentResolverResult.nothingFound( contentPath.toString() );
-        }
-        else
-        {
-            final ContentId contentId = content.getId();
-            site = callAsContentAdmin( () -> this.contentService.getNearestSite( contentId ) );
-        }
+        final Site site = content != null ? callAsContentAdmin( () -> this.contentService.getNearestSite( content.getId() ) ) : null;
 
-        if ( site == null )
-        {
-            return ContentResolverResult.noSiteFound( content, contentPath.toString() );
-        }
-        else
-        {
-            return ContentResolverResult.build( content, site, content.getPath().toString(), contentPath.toString() );
-        }
+        return new ContentResolverResult( content, contentExists, site,
+                                          siteRelativePath( site, content == null ? null : content.getPath() ), contentPath.toString() );
     }
 
     private Content getContentById( final ContentId contentId )
@@ -120,12 +101,35 @@ public class ContentResolver
         }
     }
 
-    private <T> T callAsContentAdmin( final Callable<T> callable )
+    private boolean contentExistsById( final ContentId contentId )
+    {
+        return this.contentService.contentExists( contentId );
+    }
+
+    private boolean contentExistsByPath( final ContentPath contentPath )
+    {
+        return !ContentPath.ROOT.equals( contentPath ) && this.contentService.contentExists( contentPath );
+    }
+
+    private static <T> T callAsContentAdmin( final Callable<T> callable )
     {
         final Context context = ContextAccessor.current();
         return ContextBuilder.from( context )
             .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.CONTENT_MANAGER_ADMIN ).build() )
             .build()
             .callWith( callable );
+    }
+
+    private static String siteRelativePath( final Site site, final ContentPath contentPath )
+    {
+        if ( site == null || contentPath == null)
+        {
+            return null;
+        }
+        if ( site.getPath().equals( contentPath ) )
+        {
+            return "/";
+        }
+        return contentPath.toString().substring( site.getPath().toString().length() );
     }
 }
