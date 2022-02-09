@@ -25,7 +25,7 @@ addBundle( "jakarta.annotation:jakarta.annotation-api:${jakartaAnnotationApiVers
 addBundle( "jakarta.validation:jakarta.validation-api:2.0.2", 4 )
 
 addBundle( 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.3', 4 )
-addBundle( 'com.sun.xml.bind:jaxb-osgi:2.3.3', 4 )
+addBundle( 'com.sun.xml.bind:jaxb-osgi:2.3.6', 4 )
 
 // Core bundles
 addBundle( 'org.apache.felix:org.apache.felix.metatype:1.2.4', 5 )
