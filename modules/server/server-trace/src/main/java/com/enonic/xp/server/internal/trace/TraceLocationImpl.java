@@ -17,7 +17,7 @@ final class TraceLocationImpl
 
     private final int lineNumber;
 
-    private TraceLocationImpl( final StackTraceElement elem )
+    private TraceLocationImpl( final StackWalker.StackFrame elem )
     {
         this.method = elem.getMethodName();
         this.className = elem.getClassName();
@@ -50,22 +50,10 @@ final class TraceLocationImpl
 
     static TraceLocation findLocation()
     {
-        final StackTraceElement elem = findStackTraceElement();
-        return elem != null ? new TraceLocationImpl( elem ) : null;
-    }
-
-    private static StackTraceElement findStackTraceElement()
-    {
-        for ( final StackTraceElement elem : new Throwable().getStackTrace() )
-        {
-            final String name = elem.getClassName();
-            if ( !IGNORED_CLASSES.contains( name ) )
-            {
-                return elem;
-            }
-
-        }
-
-        return null;
+        return StackWalker.getInstance()
+            .walk( frames -> frames.filter( frame -> !IGNORED_CLASSES.contains( frame.getClassName() ) )
+                .findFirst()
+                .map( TraceLocationImpl::new )
+                .orElse( null ) );
     }
 }
