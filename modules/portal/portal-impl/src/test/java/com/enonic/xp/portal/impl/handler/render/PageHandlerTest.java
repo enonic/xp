@@ -11,6 +11,9 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalResponse;
@@ -18,6 +21,8 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Reference;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -28,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class PageHandlerTest
     extends RenderBaseHandlerTest
@@ -109,7 +115,7 @@ public class PageHandlerTest
     public void getContentNotFound()
     {
         final ContentPath path = ContentPath.from( "/site/somepath/content" );
-        Mockito.when( this.contentService.getByPath( path ) ).thenThrow( new ContentNotFoundException( path, Branch.from( "draft" ) ) );
+        when( this.contentService.getByPath( path ) ).thenThrow( new ContentNotFoundException( path, Branch.from( "draft" ) ) );
         this.request.setContentPath( path );
 
         final WebException e =
@@ -119,12 +125,43 @@ public class PageHandlerTest
     }
 
     @Test
+    public void getContentExistsButNeedsAuthentication()
+    {
+        final ContentPath path = ContentPath.from( "/site/somepath/content" );
+        when( this.contentService.getByPath( path ) ).thenThrow( new ContentNotFoundException( path, Branch.from( "draft" ) ) );
+        when( this.contentService.contentExists( path ) ).thenReturn( true );
+        this.request.setContentPath( path );
+
+        final WebException e =
+            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        assertEquals( HttpStatus.UNAUTHORIZED, e.getStatus() );
+        assertEquals( "You don't have permission to access [/site/somepath/content]", e.getMessage() );
+    }
+
+    @Test
+    public void getContentExistsButInsufficientRights()
+    {
+        final AuthenticationInfo authenticationInfo = AuthenticationInfo.create().user( User.ANONYMOUS ).build();
+        final Context authenticatedContext = ContextBuilder.from( ContextAccessor.current() ).authInfo( authenticationInfo ).build();
+
+        final ContentPath path = ContentPath.from( "/site/somepath/content" );
+        when( this.contentService.getByPath( path ) ).thenThrow( new ContentNotFoundException( path, Branch.from( "draft" ) ) );
+        when( this.contentService.contentExists( path ) ).thenReturn( true );
+        this.request.setContentPath( path );
+
+        final WebException e = assertThrows( WebException.class, () -> authenticatedContext.callWith(
+            () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) ) );
+        assertEquals( HttpStatus.FORBIDDEN, e.getStatus() );
+        assertEquals( "You don't have permission to access [/site/somepath/content]", e.getMessage() );
+    }
+
+    @Test
     public void getSiteNotFound()
     {
         setupContent();
 
         final ContentPath path = ContentPath.from( "/site/somepath/content" );
-        Mockito.when( this.contentService.findNearestSiteByPath( path ) ).thenReturn( null );
+        when( this.contentService.findNearestSiteByPath( path ) ).thenReturn( null );
 
         this.request.setContentPath( path );
 
@@ -185,8 +222,8 @@ public class PageHandlerTest
             .data( rootDataSet )
             .build();
 
-        Mockito.when( this.contentService.getByPath( content.getPath().asAbsolute() ) ).thenReturn( content );
-        Mockito.when( this.portalUrlService.pageUrl( Mockito.any( PageUrlParams.class ) ) ).thenReturn( "/master/site/otherpath" );
+        when( this.contentService.getByPath( content.getPath().asAbsolute() ) ).thenReturn( content );
+        when( this.portalUrlService.pageUrl( Mockito.any( PageUrlParams.class ) ) ).thenReturn( "/master/site/otherpath" );
 
         this.request.setContentPath( ContentPath.from( "/site/somepath/shortcut" ) );
 
@@ -222,8 +259,8 @@ public class PageHandlerTest
             .data( rootDataSet )
             .build();
 
-        Mockito.when( this.contentService.getByPath( content.getPath().asAbsolute() ) ).thenReturn( content );
-        Mockito.when( this.portalUrlService.pageUrl( Mockito.any( PageUrlParams.class ) ) )
+        when( this.contentService.getByPath( content.getPath().asAbsolute() ) ).thenReturn( content );
+        when( this.portalUrlService.pageUrl( Mockito.any( PageUrlParams.class ) ) )
             .thenReturn( "/master/site/otherpath?product=123456&order=abcdef" );
 
         this.request.setContentPath( ContentPath.from( "/site/somepath/shortcut" ) );

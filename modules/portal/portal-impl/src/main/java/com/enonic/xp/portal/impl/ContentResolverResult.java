@@ -14,44 +14,16 @@ public final class ContentResolverResult
 
     private final String notFoundHint;
 
-    ContentResolverResult( final Content content, final Site nearestSite, final String siteRelativePath, final String notFoundHint )
+    private final boolean contentExists;
+
+    ContentResolverResult( final Content content, final boolean contentExists, final Site nearestSite, final String siteRelativePath,
+                           final String notFoundHint )
     {
         this.content = content;
         this.nearestSite = nearestSite;
         this.siteRelativePath = siteRelativePath;
         this.notFoundHint = notFoundHint;
-    }
-
-    static ContentResolverResult nothingFound( final String notFoundHint )
-    {
-        return new ContentResolverResult( null, null, null, notFoundHint );
-    }
-
-    static ContentResolverResult noSiteFound( final Content content, final String siteNotFoundHint )
-    {
-        return new ContentResolverResult( content, null, null, siteNotFoundHint );
-    }
-
-    static ContentResolverResult build( final Content content, final Site site, String contentPath, final String notFoundHint )
-    {
-        final String siteRelativePath;
-        if ( site == null )
-        {
-            siteRelativePath = null;
-        }
-        else
-        {
-            final String sitePath = site.getPath().toString();
-            if ( sitePath.equals( contentPath ) )
-            {
-                siteRelativePath = "/";
-            }
-            else
-            {
-                siteRelativePath = contentPath.substring( sitePath.length() );
-            }
-        }
-        return new ContentResolverResult( content, site, siteRelativePath, notFoundHint );
+        this.contentExists = contentExists;
     }
 
     public Content getContent()
@@ -65,10 +37,15 @@ public final class ContentResolverResult
         {
             return content;
         }
+        else if ( contentExists )
+        {
+            throw WebException.forbidden( String.format( "You don't have permission to access [%s]", notFoundHint ) );
+        }
         else
         {
             throw WebException.notFound( String.format( "Page [%s] not found", notFoundHint ) );
         }
+
     }
 
     public Site getNearestSite()

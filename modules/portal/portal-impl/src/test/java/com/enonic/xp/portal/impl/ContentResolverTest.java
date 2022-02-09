@@ -20,10 +20,13 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -201,6 +204,7 @@ class ContentResolverTest
         request.setContentPath( contentPath );
 
         when( this.contentService.getByPath( contentPath ) ).thenThrow( new ContentNotFoundException( contentPath, null ) );
+        when( this.contentService.contentExists( contentPath ) ).thenReturn( false );
         when( this.contentService.findNearestSiteByPath( contentPath ) ).thenReturn( site );
 
         final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
@@ -208,6 +212,30 @@ class ContentResolverTest
         assertNull( result.getContent() );
         assertSame( site, result.getNearestSite() );
         assertEquals( "/landing-page/non-existing", result.getSiteRelativePath() );
+        final WebException e = assertThrows( WebException.class, result::getContentOrElseThrow );
+        assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
+    }
+
+    @Test
+    void resolve_existing_but_needs_authentication_in_live_mode()
+    {
+        final Site site = newSite();
+
+        final PortalRequest request = new PortalRequest();
+        final ContentPath contentPath = ContentPath.from( "/mysite/landing-page/non-existing" );
+        request.setContentPath( contentPath );
+
+        when( this.contentService.getByPath( contentPath ) ).thenThrow( new ContentNotFoundException( contentPath, null ) );
+        when( this.contentService.contentExists( contentPath ) ).thenReturn( true );
+        when( this.contentService.findNearestSiteByPath( contentPath ) ).thenReturn( site );
+
+        final ContentResolverResult result = new ContentResolver( contentService ).resolve( request );
+
+        assertNull( result.getContent() );
+        assertSame( site, result.getNearestSite() );
+        assertEquals( "/landing-page/non-existing", result.getSiteRelativePath() );
+        final WebException e = assertThrows( WebException.class, result::getContentOrElseThrow );
+        assertEquals( HttpStatus.UNAUTHORIZED, e.getStatus() );
     }
 
     @Test
