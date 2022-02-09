@@ -22,7 +22,7 @@ public final class ErrorHelper
             return doHandleException( (ScriptException) e );
         }
 
-        if ( e instanceof NashornException )
+        if ( e instanceof NashornException || e instanceof IllegalArgumentException )
         {
             return doHandleException( (RuntimeException) e );
         }
