@@ -137,25 +137,20 @@ final class PageHandlerWorker
 
         final PortalResponse response = rendererDelegate.render( effectiveContent, this.request );
         final RenderMode mode = request.getMode();
-        if ( mode != RenderMode.LIVE )
+
+        final PortalResponse.Builder builder = PortalResponse.create( response );
+
+        if ( mode == RenderMode.INLINE || mode == RenderMode.EDIT )
         {
-            final PortalResponse.Builder builder = PortalResponse.create( response );
-            {
-                if ( mode == RenderMode.INLINE || mode == RenderMode.EDIT )
-                {
-                    builder.header( "X-Frame-Options", "SAMEORIGIN" );
-                }
-            }
-            if ( !nullToEmpty( defaultContentSecurityPolicy ).isBlank() && !response.getHeaders().containsKey( "Content-Security-Policy" ) )
-            {
-                builder.header( "Content-Security-Policy", defaultContentSecurityPolicy );
-            }
-            return builder.build();
+            builder.header( "X-Frame-Options", "SAMEORIGIN" );
         }
-        else
+
+        if ( mode != RenderMode.LIVE && mode != RenderMode.EDIT && !nullToEmpty( defaultContentSecurityPolicy ).isBlank() &&
+            !response.getHeaders().containsKey( "Content-Security-Policy" ) )
         {
-            return response;
+            builder.header( "Content-Security-Policy", defaultContentSecurityPolicy );
         }
+        return builder.build();
     }
 
     private PortalResponse renderShortcut( final Content content )
