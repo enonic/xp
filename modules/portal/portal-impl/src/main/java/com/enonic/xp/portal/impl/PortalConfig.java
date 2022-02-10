@@ -8,5 +8,5 @@ public @interface PortalConfig
 
     String media_private_cacheControl() default "private, max-age=31536000, immutable";
 
-    String page_defaultContentSecurityPolicy() default "default-src 'self'; object-src 'none'; style-src 'self' 'unsafe-inline'";
+    String page_defaultContentSecurityPolicy() default "default-src 'self' 'unsafe-eval'; object-src 'none'; style-src 'self' 'unsafe-inline'";
 }
