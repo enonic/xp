@@ -1,6 +1,6 @@
 package com.enonic.xp.web;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -109,7 +109,7 @@ public class WebResponse
     {
         private Object body;
 
-        private Map<String, String> headers = new HashMap<>();
+        private final Map<String, String> headers = new LinkedHashMap<>();
 
         private MediaType contentType = MediaType.PLAIN_TEXT_UTF_8;
 
@@ -151,9 +151,15 @@ public class WebResponse
             return (T) this;
         }
 
+        public T removeHeader( final String key )
+        {
+            this.headers.remove( key.toLowerCase( Locale.ROOT ) );
+            return (T) this;
+        }
+
         public T clearHeaders()
         {
-            headers = new HashMap<>();
+            headers.clear();
             return (T) this;
         }
 
