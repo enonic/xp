@@ -37,7 +37,7 @@ public final class PageHandler
 
     private PortalUrlService portalUrlService;
 
-    private volatile String defaultContentSecurityPolicy;
+    private volatile String previewContentSecurityPolicy;
 
     public PageHandler()
     {
@@ -48,7 +48,7 @@ public final class PageHandler
     @Modified
     public void activate( final PortalConfig config )
     {
-        defaultContentSecurityPolicy = config.page_defaultContentSecurityPolicy();
+        previewContentSecurityPolicy = config.page_previewContentSecurityPolicy();
     }
 
     @Override
@@ -69,7 +69,7 @@ public final class PageHandler
         worker.pageDescriptorService = pageDescriptorService;
         worker.pageTemplateService = pageTemplateService;
         worker.portalUrlService = portalUrlService;
-        worker.defaultContentSecurityPolicy = defaultContentSecurityPolicy;
+        worker.previewContentSecurityPolicy = previewContentSecurityPolicy;
         final Trace trace = Tracer.newTrace( "renderComponent" );
         if ( trace == null )
         {

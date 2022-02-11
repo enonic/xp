@@ -41,7 +41,7 @@ final class PageHandlerWorker
 
     ContentResolver contentResolver;
 
-    String defaultContentSecurityPolicy;
+    String previewContentSecurityPolicy;
 
     PageHandlerWorker( final PortalRequest request )
     {
@@ -138,6 +138,11 @@ final class PageHandlerWorker
         final PortalResponse response = rendererDelegate.render( effectiveContent, this.request );
         final RenderMode mode = request.getMode();
 
+        if ( mode == RenderMode.LIVE )
+        {
+            return response;
+        }
+
         final PortalResponse.Builder builder = PortalResponse.create( response );
 
         if ( mode == RenderMode.INLINE || mode == RenderMode.EDIT )
@@ -145,10 +150,14 @@ final class PageHandlerWorker
             builder.header( "X-Frame-Options", "SAMEORIGIN" );
         }
 
-        if ( mode != RenderMode.LIVE && mode != RenderMode.EDIT && !nullToEmpty( defaultContentSecurityPolicy ).isBlank() &&
+        if ( mode == RenderMode.EDIT )
+        {
+            builder.removeHeader( "Content-Security-Policy" );
+        }
+        else if ( !nullToEmpty( previewContentSecurityPolicy ).isBlank() &&
             !response.getHeaders().containsKey( "Content-Security-Policy" ) )
         {
-            builder.header( "Content-Security-Policy", defaultContentSecurityPolicy );
+            builder.header( "Content-Security-Policy", previewContentSecurityPolicy );
         }
         return builder.build();
     }
