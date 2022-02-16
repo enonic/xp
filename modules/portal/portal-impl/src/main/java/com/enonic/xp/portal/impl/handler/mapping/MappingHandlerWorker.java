@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.PortalHandlerWorker;
@@ -65,7 +66,22 @@ final class MappingHandlerWorker
     private PortalResponse renderController( final ControllerScript controllerScript )
     {
         this.request.setControllerScript( controllerScript );
-        return rendererDelegate.render( mappingDescriptor, this.request );
+        final PortalResponse response = rendererDelegate.render( mappingDescriptor, this.request );
+        final RenderMode mode = request.getMode();
+        if ( mode != RenderMode.LIVE )
+        {
+            final PortalResponse.Builder builder = PortalResponse.create( response );
+
+            if ( mode == RenderMode.INLINE || mode == RenderMode.EDIT )
+            {
+                builder.header( "X-Frame-Options", "SAMEORIGIN" );
+            }
+            return builder.build();
+        }
+        else
+        {
+            return response;
+        }
     }
 
     private ControllerScript getScript()
