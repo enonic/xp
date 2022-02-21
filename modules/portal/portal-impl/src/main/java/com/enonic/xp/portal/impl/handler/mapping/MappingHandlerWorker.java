@@ -21,6 +21,8 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
+import static com.google.common.base.Strings.nullToEmpty;
+
 final class MappingHandlerWorker
     extends PortalHandlerWorker<PortalRequest>
 {
@@ -31,6 +33,8 @@ final class MappingHandlerWorker
     ControllerMappingDescriptor mappingDescriptor;
 
     RendererDelegate rendererDelegate;
+
+    String previewContentSecurityPolicy;
 
     MappingHandlerWorker( final PortalRequest request )
     {
@@ -66,22 +70,32 @@ final class MappingHandlerWorker
     private PortalResponse renderController( final ControllerScript controllerScript )
     {
         this.request.setControllerScript( controllerScript );
+
         final PortalResponse response = rendererDelegate.render( mappingDescriptor, this.request );
         final RenderMode mode = request.getMode();
-        if ( mode != RenderMode.LIVE )
-        {
-            final PortalResponse.Builder builder = PortalResponse.create( response );
 
-            if ( mode == RenderMode.INLINE || mode == RenderMode.EDIT )
-            {
-                builder.header( "X-Frame-Options", "SAMEORIGIN" );
-            }
-            return builder.build();
-        }
-        else
+        if ( mode == RenderMode.LIVE )
         {
             return response;
         }
+
+        final PortalResponse.Builder builder = PortalResponse.create( response );
+
+        if ( mode == RenderMode.INLINE || mode == RenderMode.EDIT )
+        {
+            builder.header( "X-Frame-Options", "SAMEORIGIN" );
+        }
+
+        if ( mode == RenderMode.EDIT )
+        {
+            builder.removeHeader( "Content-Security-Policy" );
+        }
+        else if ( !nullToEmpty( previewContentSecurityPolicy ).isBlank() &&
+            !response.getHeaders().containsKey( "Content-Security-Policy" ) )
+        {
+            builder.header( "Content-Security-Policy", previewContentSecurityPolicy );
+        }
+        return builder.build();
     }
 
     private ControllerScript getScript()
