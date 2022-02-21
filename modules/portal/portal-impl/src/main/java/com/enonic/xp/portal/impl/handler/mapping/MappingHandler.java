@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.Content;
@@ -16,6 +17,7 @@ import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
+import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.Site;
@@ -31,7 +33,7 @@ import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
-@Component(immediate = true, service = WebHandler.class)
+@Component(immediate = true, service = WebHandler.class, configurationPid = "com.enonic.xp.portal")
 public final class MappingHandler
     implements WebHandler
 {
@@ -46,6 +48,8 @@ public final class MappingHandler
     private final ControllerMappingsResolver controllerMappingsResolver;
 
     private final ContentResolver contentResolver;
+
+    private volatile String previewContentSecurityPolicy;
 
     @Activate
     public MappingHandler( @Reference final SiteService siteService, @Reference final ContentService contentService,
@@ -68,6 +72,14 @@ public final class MappingHandler
         this.controllerMappingsResolver = controllerMappingsResolver;
         this.contentResolver = contentResolver;
     }
+
+    @Activate
+    @Modified
+    public void activate( final PortalConfig config )
+    {
+        previewContentSecurityPolicy = config.page_previewContentSecurityPolicy();
+    }
+
 
     @Override
     public int getOrder()
@@ -147,6 +159,8 @@ public final class MappingHandler
         worker.resourceService = this.resourceService;
         worker.controllerScriptFactory = this.controllerScriptFactory;
         worker.rendererDelegate = rendererDelegate;
+        worker.previewContentSecurityPolicy = previewContentSecurityPolicy;
+
         final Trace trace = Tracer.newTrace( "renderComponent" );
         if ( trace == null )
         {
