@@ -83,15 +83,7 @@ public final class ComponentInstruction
         else
         {
             final String name = componentSelector.substring( APPLICATION_COMPONENT_PREFIX.length() );
-            final ApplicationKey currentApplication;
-            if ( portalRequest.getPageTemplate() != null && portalRequest.getPageTemplate().getController() != null )
-            {
-                currentApplication = portalRequest.getPageTemplate().getController().getApplicationKey();
-            }
-            else
-            {
-                currentApplication = portalRequest.getApplicationKey();
-            }
+            final ApplicationKey currentApplication = portalRequest.getApplicationKey();
             component = currentApplication == null ? null : componentService.getByKey( DescriptorKey.from( currentApplication, name ) );
         }
         return renderComponent( portalRequest, component );

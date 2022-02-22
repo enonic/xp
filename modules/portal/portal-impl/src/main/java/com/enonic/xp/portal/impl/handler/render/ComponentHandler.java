@@ -5,7 +5,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -28,8 +27,6 @@ public final class ComponentHandler
 {
     private final RendererDelegate rendererDelegate;
 
-    private final PageDescriptorService pageDescriptorService;
-
     private final PageTemplateService pageTemplateService;
 
     private final PostProcessor postProcessor;
@@ -38,13 +35,11 @@ public final class ComponentHandler
 
     @Activate
     public ComponentHandler( @Reference final ContentService contentService, @Reference final RendererDelegate rendererDelegate,
-                             @Reference final PageDescriptorService pageDescriptorService,
                              @Reference final PageTemplateService pageTemplateService, @Reference final PostProcessor postProcessor )
     {
         super( "component" );
         this.contentService = contentService;
         this.rendererDelegate = rendererDelegate;
-        this.pageDescriptorService = pageDescriptorService;
         this.pageTemplateService = pageTemplateService;
         this.postProcessor = postProcessor;
     }
@@ -68,8 +63,7 @@ public final class ComponentHandler
         worker.contentService = contentService;
         worker.contentResolver = new ContentResolver( contentService );
         worker.rendererDelegate = rendererDelegate;
-        worker.pageDescriptorService = pageDescriptorService;
-        worker.pageTemplateService = pageTemplateService;
+        worker.pageResolver = new PageResolver( pageTemplateService );
         worker.postProcessor = postProcessor;
         final Trace trace = Tracer.newTrace( "renderComponent" );
         if ( trace == null )

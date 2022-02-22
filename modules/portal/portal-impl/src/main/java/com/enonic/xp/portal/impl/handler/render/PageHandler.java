@@ -66,8 +66,8 @@ public final class PageHandler
         final PageHandlerWorker worker = new PageHandlerWorker( (PortalRequest) webRequest );
         worker.contentResolver = new ContentResolver( contentService );
         worker.rendererDelegate = rendererDelegate;
+        worker.pageResolver = new PageResolver( pageTemplateService );
         worker.pageDescriptorService = pageDescriptorService;
-        worker.pageTemplateService = pageTemplateService;
         worker.portalUrlService = portalUrlService;
         worker.previewContentSecurityPolicy = previewContentSecurityPolicy;
         final Trace trace = Tracer.newTrace( "renderComponent" );

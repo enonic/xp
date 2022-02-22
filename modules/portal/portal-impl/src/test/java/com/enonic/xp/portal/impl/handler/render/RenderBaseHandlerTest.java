@@ -3,7 +3,6 @@ package com.enonic.xp.portal.impl.handler.render;
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -35,7 +34,11 @@ import com.enonic.xp.web.handler.BaseHandlerTest;
 import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public abstract class RenderBaseHandlerTest
@@ -63,45 +66,39 @@ public abstract class RenderBaseHandlerTest
     void setupRenderBaseHandlerTest()
     {
         this.request = new PortalRequest();
-        this.contentService = Mockito.mock( ContentService.class );
-        this.pageTemplateService = Mockito.mock( PageTemplateService.class );
-        this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
-        this.applicationService = Mockito.mock( ApplicationService.class );
-        this.portalUrlService = Mockito.mock( PortalUrlService.class );
+        this.contentService = mock( ContentService.class );
+        this.pageTemplateService = mock( PageTemplateService.class );
+        this.pageDescriptorService = mock( PageDescriptorService.class );
+        this.applicationService = mock( ApplicationService.class );
+        this.portalUrlService = mock( PortalUrlService.class );
 
-        this.rendererDelegate = Mockito.mock( RendererDelegate.class );
-        this.postProcessor = Mockito.mock( PostProcessor.class );
+        this.rendererDelegate = mock( RendererDelegate.class );
+        this.postProcessor = mock( PostProcessor.class );
 
         when( rendererDelegate.render( any(), same( request ) ) ).
             thenReturn( PortalResponse.create().body( "Ok" ).build() );
 
-        this.rawRequest = Mockito.mock( HttpServletRequest.class );
-        Mockito.when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( Boolean.TRUE );
+        this.rawRequest = mock( HttpServletRequest.class );
+        when( this.rawRequest.isUserInRole( anyString() ) ).thenReturn( Boolean.TRUE );
         this.request.setRawRequest( this.rawRequest );
         this.request.setBaseUri( "/site" );
     }
 
-    protected final void setupContentAndSite()
+    protected void setupSite()
     {
-        setupContent();
-
-        final Site site = createSite( "id", "site", "myapplication:contenttypename" );
-
-        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
-            thenReturn( site );
-
-        Mockito.when( this.contentService.findNearestSiteByPath( Mockito.isA( ContentPath.class ) ) ).
-            thenReturn( site );
+        final Site site = createSite( "id", "site" );
+        when( this.contentService.getNearestSite( isA( ContentId.class ) ) ).thenReturn( site );
+        when( this.contentService.findNearestSiteByPath( isA( ContentPath.class ) ) ).thenReturn( site );
     }
 
     protected void setupContent()
     {
         final Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", true );
 
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
+        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
             thenReturn( content );
 
-        Mockito.when( this.contentService.getById( content.getId() ) ).
+        when( this.contentService.getById( content.getId() ) ).
             thenReturn( content );
     }
 
@@ -112,39 +109,39 @@ public abstract class RenderBaseHandlerTest
         Page page = Page.create( content.getPage() ).template( null ).descriptor( controllerDescriptor.getKey() ).build();
         content = Content.create( content ).page( page ).build();
 
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
+        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
             thenReturn( content );
 
-        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).
-            thenReturn( createSite( "id", "site", "myapplication:contenttypename" ) );
+        when( this.contentService.getNearestSite( isA( ContentId.class ) ) ).
+            thenReturn( createSite( "id", "site" ) );
 
-        Mockito.when( this.contentService.getById( content.getId() ) ).
+        when( this.contentService.getById( content.getId() ) ).
             thenReturn( content );
     }
 
-    protected final void setupNonPageContent()
+    protected final void setupContentWithoutPage()
     {
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
+        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
             thenReturn( createPage( "id", "site/somepath/content", "myapplication:ctype", false ) );
 
-        final Site site = createSite( "id", "site", "myapplication:contenttypename" );
+        final Site site = createSite( "id", "site" );
 
-        Mockito.when( this.contentService.findNearestSiteByPath( Mockito.isA( ContentPath.class ) ) ).
+        when( this.contentService.findNearestSiteByPath( isA( ContentPath.class ) ) ).
             thenReturn( site );
     }
 
     protected final void setupTemplates()
     {
-        Mockito.when( this.pageTemplateService.getByKey( Mockito.eq( PageTemplateKey.from( "my-page" ) ) ) ).thenReturn(
+        when( this.pageTemplateService.getByKey( eq( PageTemplateKey.from( "my-page" ) ) ) ).thenReturn(
             createPageTemplate() );
 
-        Mockito.when( this.pageDescriptorService.getByKey( Mockito.isA( DescriptorKey.class ) ) ).thenReturn( createDescriptor() );
+        when( this.pageDescriptorService.getByKey( isA( DescriptorKey.class ) ) ).thenReturn( createDescriptor() );
 
     }
 
     protected final void setupController()
     {
-        Mockito.when( this.pageDescriptorService.getByKey( Mockito.isA( DescriptorKey.class ) ) ).thenReturn( createDescriptor() );
+        when( this.pageDescriptorService.getByKey( isA( DescriptorKey.class ) ) ).thenReturn( createDescriptor() );
     }
 
     private Content createPage( final String id, final String path, final String contentTypeName, final boolean withPage )
@@ -179,7 +176,7 @@ public abstract class RenderBaseHandlerTest
         return content.build();
     }
 
-    private Site createSite( final String id, final String path, final String contentTypeName )
+    private Site createSite( final String id, final String path )
     {
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
@@ -195,7 +192,7 @@ public abstract class RenderBaseHandlerTest
             owner( PrincipalKey.from( "user:myStore:me" ) ).
             displayName( "My Content" ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( ContentTypeName.from( contentTypeName ) ).
+            type( ContentTypeName.from( "portal:site" ) ).
             page( page ).
             build();
     }
@@ -214,13 +211,12 @@ public abstract class RenderBaseHandlerTest
 
         final PageTemplate.Builder builder = PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "abc" ) ).
-            canRender( ContentTypeNames.from( "myapplication:article", "myapplication:banner" ) ).
+            canRender( ContentTypeNames.from( "myapplication:article", "myapplication:banner", "myapplication:ctype" ) ).
             regions( pageRegions ).
             config( pageTemplateConfig );
 
         builder.controller( DescriptorKey.from( "mainapplication:landing-page" ) );
 
-        builder.displayName( "Main page template" );
         builder.displayName( "Main page template" );
         builder.name( "main-page-template" );
         builder.parentPath( ContentPath.ROOT );

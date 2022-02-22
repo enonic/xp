@@ -43,9 +43,7 @@ public class ComponentHandlerTest
     public final void setup()
         throws Exception
     {
-        this.handler =
-            new ComponentHandler( this.contentService, this.rendererDelegate, this.pageDescriptorService, this.pageTemplateService,
-                                  this.postProcessor );
+        this.handler = new ComponentHandler( this.contentService, this.rendererDelegate, this.pageTemplateService, this.postProcessor );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
@@ -78,7 +76,8 @@ public class ComponentHandlerTest
     public void testOptions()
         throws Exception
     {
-        setupContentAndSite();
+        setupSite();
+        setupContent();
         setupTemplates();
 
         final PortalResponse portalResponse = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
@@ -99,7 +98,8 @@ public class ComponentHandlerTest
     public void testComponentFound()
         throws Exception
     {
-        setupContentAndSite();
+        setupSite();
+        setupContent();
         setupTemplates();
 
         final PortalResponse portalResponse =
@@ -123,21 +123,25 @@ public class ComponentHandlerTest
     public void getComponentPageNotFound()
         throws Exception
     {
-        setupNonPageContent();
+        setupContentWithoutPage();
+
+        Mockito.when( this.pageTemplateService.getByKey( Mockito.eq( PageTemplateKey.from( "my-page" ) ) ) )
+            .thenThrow( ContentNotFoundException.class );
 
         this.request.setEndpointPath( "/_/component/main-region/0" );
 
         final WebException e =
             assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
         assertAll( () -> assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, e.getStatus() ),
-                   () -> assertEquals( "No template found for content", e.getMessage() ));
+                   () -> assertEquals( "No default template found for content", e.getMessage() ));
     }
 
     @Test
     public void getComponentNotFound()
         throws Exception
     {
-        setupContentAndSite();
+        setupSite();
+        setupContent();
         setupTemplates();
 
         this.request.setEndpointPath( "/_/component/main-region/666" );
@@ -204,13 +208,6 @@ public class ComponentHandlerTest
         assertEquals( MediaType.PLAIN_TEXT_UTF_8, res.getContentType() );
         assertEquals( "some-value", res.getHeaders().get( "some-header" ) );
         assertEquals( "component rendered", res.getBody() );
-    }
-
-    private void setupSite()
-    {
-        final Site site = createSite( "id", "site", "myapplication:contenttypename" );
-        Mockito.when( this.contentService.getNearestSite( Mockito.isA( ContentId.class ) ) ).thenReturn( site );
-        Mockito.when( this.contentService.findNearestSiteByPath( Mockito.isA( ContentPath.class ) ) ).thenReturn( site );
     }
 
     private void setupContentFragment()

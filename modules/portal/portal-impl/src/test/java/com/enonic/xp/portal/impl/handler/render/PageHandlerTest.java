@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.handler.render;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
 
@@ -16,6 +15,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.PortalConfig;
@@ -34,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -75,7 +77,8 @@ public class PageHandlerTest
     public void testOptions()
         throws Exception
     {
-        setupContentAndSite();
+        setupSite();
+        setupContent();
         setupTemplates();
 
         final PortalResponse portalResponse = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
@@ -96,7 +99,8 @@ public class PageHandlerTest
     public void getContentFound()
         throws Exception
     {
-        setupContentAndSite();
+        setupSite();
+        setupContent();
         setupTemplates();
 
         final PortalResponse portalResponse =
@@ -177,20 +181,26 @@ public class PageHandlerTest
     @Test
     public void getContentWithTemplateNotFound()
     {
-        setupContentAndSite();
+        setupSite();
+        setupContent();
+
+        when( this.pageTemplateService.getByKey( eq( PageTemplateKey.from( "my-page" ) ) ) )
+            .thenThrow( ContentNotFoundException.class );
+
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
 
         final WebException e =
             assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
         assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, e.getStatus() );
-        assertEquals( "Page template [my-page] not found", e.getMessage() );
+        assertEquals( "Template [my-page] is missing and no default template found for content", e.getMessage() );
     }
 
     @Test
     public void renderForNoPageDescriptor()
         throws Exception
     {
-        setupContentAndSite();
+        setupSite();
+        setupContent();
         setupTemplates();
 
         final PortalResponse portalResponse =
@@ -226,7 +236,7 @@ public class PageHandlerTest
             .build();
 
         when( this.contentService.getByPath( content.getPath().asAbsolute() ) ).thenReturn( content );
-        when( this.portalUrlService.pageUrl( Mockito.any( PageUrlParams.class ) ) ).thenReturn( "/master/site/otherpath" );
+        when( this.portalUrlService.pageUrl( any( PageUrlParams.class ) ) ).thenReturn( "/master/site/otherpath" );
 
         this.request.setContentPath( ContentPath.from( "/site/somepath/shortcut" ) );
 
@@ -263,7 +273,7 @@ public class PageHandlerTest
             .build();
 
         when( this.contentService.getByPath( content.getPath().asAbsolute() ) ).thenReturn( content );
-        when( this.portalUrlService.pageUrl( Mockito.any( PageUrlParams.class ) ) )
+        when( this.portalUrlService.pageUrl( any( PageUrlParams.class ) ) )
             .thenReturn( "/master/site/otherpath?product=123456&order=abcdef" );
 
         this.request.setContentPath( ContentPath.from( "/site/somepath/shortcut" ) );
