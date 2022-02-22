@@ -10,7 +10,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
-import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -70,8 +69,6 @@ public class ComponentInstructionTest
         portalRequest.setContent( content );
         Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
         portalRequest.setSite( site );
-        PageTemplate pageTemplate = createPageTemplate();
-        portalRequest.setPageTemplate( pageTemplate );
 
         String outputHtml = instruction.evaluate( portalRequest, "COMPONENT module:myPartComponent" ).getAsString();
         assertEquals( "<b>part content</b>", outputHtml );
@@ -95,21 +92,9 @@ public class ComponentInstructionTest
         portalRequest.setContent( content );
         Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
         portalRequest.setSite( site );
-        PageTemplate pageTemplate = createPageTemplate();
-        portalRequest.setPageTemplate( pageTemplate );
 
         String outputHtml = instruction.evaluate( portalRequest, "COMPONENT fragment" ).getAsString();
         assertEquals( "<b>part content</b>", outputHtml );
-    }
-
-    private PageTemplate createPageTemplate()
-    {
-        return PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( "my-page" ) ).
-            controller( DescriptorKey.from( "myapplication:mypagetemplate" ) ).
-            name( "my-page-template" ).
-            parentPath( ContentPath.ROOT ).
-            build();
     }
 
     private Component createPartComponent()

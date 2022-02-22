@@ -48,8 +48,9 @@ final class AdminToolHandlerWorker
         }
 
         //Renders the Admin application
-        final ResourceKey scriptDir = ResourceKey.from( descriptorKey.getApplicationKey(), "admin/tools/" + descriptorKey.getName() );
-        final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( scriptDir );
+        final ResourceKey script = ResourceKey.from( descriptorKey.getApplicationKey(),
+                                                     "admin/tools/" + descriptorKey.getName() + "/" + descriptorKey.getName() + ".js" );
+        final ControllerScript controllerScript = this.controllerScriptFactory.fromScript( script );
         return controllerScript.execute( this.request );
     }
 }
