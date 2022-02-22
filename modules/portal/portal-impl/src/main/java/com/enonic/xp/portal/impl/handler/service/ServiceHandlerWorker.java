@@ -15,9 +15,7 @@ import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.impl.app.WebAppHandler;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
-import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
@@ -33,8 +31,6 @@ final class ServiceHandlerWorker
     extends PortalHandlerWorker<PortalRequest>
 {
     private static final String ROOT_SERVICE_PREFIX = "services/";
-
-    ResourceService resourceService;
 
     ServiceDescriptorService serviceDescriptorService;
 
@@ -113,11 +109,8 @@ final class ServiceHandlerWorker
 
     private ControllerScript getScript()
     {
-        //Retrieves the resource
-        Resource resource = this.resourceService.getResource( ResourceKey.from( this.applicationKey, ROOT_SERVICE_PREFIX + this.name ) );
-
-        //Executes the service
-        return this.controllerScriptFactory.fromDir( resource.getKey() );
+        return this.controllerScriptFactory.fromScript(
+            ResourceKey.from( this.applicationKey, ROOT_SERVICE_PREFIX + this.name + "/" + this.name + ".js" ) );
     }
 
     private ApplicationKey getBaseApplicationKey()

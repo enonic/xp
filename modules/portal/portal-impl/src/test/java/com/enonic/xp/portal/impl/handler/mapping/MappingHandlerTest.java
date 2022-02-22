@@ -74,7 +74,7 @@ public class MappingHandlerTest
         this.request = new PortalRequest();
         final ControllerScriptFactory controllerScriptFactory = mock( ControllerScriptFactory.class );
         ControllerScript controllerScript = mock( ControllerScript.class );
-        when( controllerScriptFactory.fromDir( Mockito.any() ) ).thenReturn( controllerScript );
+        when( controllerScriptFactory.fromScript( Mockito.any() ) ).thenReturn( controllerScript );
         final PortalResponse portalResponse = PortalResponse.create().build();
         when( controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );
 

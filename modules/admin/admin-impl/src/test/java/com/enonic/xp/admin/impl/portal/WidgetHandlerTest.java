@@ -62,7 +62,7 @@ public class WidgetHandlerTest
         this.request = new PortalRequest();
         final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
         this.controllerScript = Mockito.mock( ControllerScript.class );
-        Mockito.when( controllerScriptFactory.fromDir( Mockito.any() ) ).thenReturn( this.controllerScript );
+        Mockito.when( controllerScriptFactory.fromScript( Mockito.any() ) ).thenReturn( this.controllerScript );
 
         final PortalResponse portalResponse = PortalResponse.create().build();
         Mockito.when( this.controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );

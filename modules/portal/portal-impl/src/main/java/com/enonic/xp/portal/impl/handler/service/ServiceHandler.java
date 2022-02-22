@@ -13,7 +13,6 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.impl.ContentResolver;
-import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
@@ -28,8 +27,6 @@ public final class ServiceHandler
     private static final Pattern PATTERN = Pattern.compile( "([^/]+)/([^/]+)" );
 
     private ContentService contentService;
-
-    private ResourceService resourceService;
 
     private ServiceDescriptorService serviceDescriptorService;
 
@@ -59,7 +56,6 @@ public final class ServiceHandler
         worker.applicationKey = ApplicationKey.from( matcher.group( 1 ) );
         worker.name = matcher.group( 2 );
         worker.contentResolver = new ContentResolver( this.contentService );
-        worker.resourceService = this.resourceService;
         worker.serviceDescriptorService = this.serviceDescriptorService;
         worker.controllerScriptFactory = this.controllerScriptFactory;
         return worker.execute();
@@ -69,12 +65,6 @@ public final class ServiceHandler
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
-    }
-
-    @Reference
-    public void setResourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
     }
 
     @Reference
