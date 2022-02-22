@@ -11,9 +11,9 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.impl.rendering.FragmentPageResolver;
@@ -29,7 +29,7 @@ import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebException;
 
 final class ComponentHandlerWorker
-    extends RenderHandlerWorker
+    extends PortalHandlerWorker<PortalRequest>
 {
     ComponentPath componentPath;
 
@@ -40,6 +40,8 @@ final class ComponentHandlerWorker
     ContentResolver contentResolver;
 
     ContentService contentService;
+
+    PageResolver pageResolver;
 
     ComponentHandlerWorker( final PortalRequest request )
     {
@@ -56,37 +58,16 @@ final class ComponentHandlerWorker
 
         final Site site = resolvedContent.getNearestSiteOrElseThrow();
 
-        this.request.setContent( content );
-        this.request.setSite( site );
+        Page page = content.getPage();
 
-        final PageTemplate pageTemplate;
-        final DescriptorKey pageController;
+        final PageResolverResult resolvedPage = pageResolver.resolve( request.getMode(), content, site );
+
         Component component = null;
 
-        if ( content.isPageTemplate() )
-        {
-            // content is a page-template
-            pageTemplate = (PageTemplate) content;
-            pageController = pageTemplate.getController();
-        }
-        else if ( !content.hasPage() )
-        {
-            // content without page -> use default page-template
-            pageTemplate = getDefaultPageTemplate( content.getType(), site.getPath() );
-            pageController = pageTemplate.getController();
-        }
-        else if ( content.getPage().hasDescriptor() )
-        {
-            // content with controller set but no page-template (customized)
-            pageTemplate = null;
-            pageController = content.getPage().getDescriptor();
-        }
-        else if ( content.getType().isFragment() )
+        if ( content.getType().isFragment() )
         {
             // fragment content, try resolving component path in Layout fragment
-            pageTemplate = null;
-            pageController = null;
-            final Component fragmentComponent = content.getPage().getFragment();
+            final Component fragmentComponent = page.getFragment();
             if ( this.componentPath.isEmpty() )
             {
                 component = fragmentComponent;
@@ -96,20 +77,16 @@ final class ComponentHandlerWorker
                 component = ( (LayoutComponent) fragmentComponent ).getComponent( this.componentPath );
             }
         }
-        else
-        {
-            // content with page-template assigned
-            final Page page = getPage( content );
-            pageTemplate = getPageTemplate( page );
-            pageController = pageTemplate.getController();
-        }
 
-        Page effectivePage = new EffectivePageResolver( content, pageTemplate ).resolve();
-
+        final Page effectivePage;
         if ( component == null )
         {
-            effectivePage = inlineFragments( effectivePage, this.componentPath );
+            effectivePage = inlineFragments( resolvedPage.getEffectivePage(), this.componentPath );
             component = effectivePage.getRegions().getComponent( this.componentPath );
+        }
+        else
+        {
+            effectivePage = resolvedPage.getEffectivePage();
         }
 
         if ( component == null )
@@ -118,13 +95,12 @@ final class ComponentHandlerWorker
         }
 
         final Content effectiveContent = Content.create( content ).page( effectivePage ).build();
+        final DescriptorKey controller = resolvedPage.getController();
 
         this.request.setSite( site );
         this.request.setContent( effectiveContent );
         this.request.setComponent( component );
-        this.request.setApplicationKey( pageController != null ? pageController.getApplicationKey() : null );
-        this.request.setPageTemplate( pageTemplate );
-        this.request.setPageDescriptor( null );
+        this.request.setApplicationKey( controller != null ? controller.getApplicationKey() : null );
 
         final Trace trace = Tracer.current();
         if ( trace != null )
