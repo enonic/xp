@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.rendering;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
 
@@ -26,6 +25,7 @@ import com.enonic.xp.web.websocket.WebSocketEvent;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class PartRendererTest
@@ -38,12 +38,15 @@ public class PartRendererTest
 
     private PartRenderer renderer;
 
+    PartDescriptorService partDescriptorService;
+
+    ControllerScriptFactory controllerScriptFactory;
+
     private String configureEmptyComponent( RenderMode mode )
     {
         // setup
         portalRequest.setMode( mode );
         partComponent = PartComponent.create().build();
-        renderer = new PartRenderer();
 
         // exercise
         portalResponse = renderer.render( partComponent, portalRequest );
@@ -54,6 +57,10 @@ public class PartRendererTest
     @BeforeEach
     public void before()
     {
+        partDescriptorService = mock( PartDescriptorService.class );
+        controllerScriptFactory = mock( ControllerScriptFactory.class );
+        renderer = new PartRenderer( controllerScriptFactory, partDescriptorService );
+
         this.portalRequest = new PortalRequest();
         this.portalRequest.setBranch( Branch.from( "draft" ) );
         this.portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
@@ -110,12 +117,17 @@ public class PartRendererTest
     public void errorComponentPlaceHolderEditMode()
     {
         // setup
+        final PartDescriptor partDescriptor = PartDescriptor.create()
+            .displayName( "My part component" )
+            .config( Form.create().build() )
+            .key( DescriptorKey.from( "module:myPartComponent" ) )
+            .build();
         portalRequest.setMode( RenderMode.EDIT );
-        partComponent = PartComponent.create().descriptor( "myapp:myPartComponent" ).
-            descriptor( "descriptor-x" ).
-            config( new PropertyTree() ).
-            build();
-        renderer = new PartRenderer();
+        partComponent =
+            PartComponent.create().descriptor( "myapp:myPartComponent" ).descriptor( "descriptor-x" ).config( new PropertyTree() ).build();
+
+        when( partDescriptorService.getByKey( any() ) ).thenReturn( partDescriptor );
+        when( controllerScriptFactory.fromScript( any() ) ).thenThrow( new RuntimeException() );
 
         // exercise
         portalResponse = renderer.render( partComponent, portalRequest );
@@ -129,18 +141,21 @@ public class PartRendererTest
     @Test
     public void htmlResponseComponentEditMode()
     {
-        final PartDescriptor partDescriptor = PartDescriptor.create().
-            displayName( "My part component" ).
-            config( Form.create().build() ).
-            key( DescriptorKey.from( "module:myPartComponent" ) ).
-            build();
+        final PartDescriptor partDescriptor = PartDescriptor.create()
+            .displayName( "My part component" )
+            .config( Form.create().build() )
+            .key( DescriptorKey.from( "module:myPartComponent" ) )
+            .build();
         final ControllerScript controllerScript = new ControllerScript()
         {
             @Override
             public PortalResponse execute( final PortalRequest portalRequest )
             {
-                return PortalResponse.create().body( "<h1 class=\"important\">My component</h1>" ).contentType(
-                    MediaType.HTML_UTF_8 ).status( HttpStatus.OK ).build();
+                return PortalResponse.create()
+                    .body( "<h1 class=\"important\">My component</h1>" )
+                    .contentType( MediaType.HTML_UTF_8 )
+                    .status( HttpStatus.OK )
+                    .build();
             }
 
             @Override
@@ -149,14 +164,8 @@ public class PartRendererTest
             }
         };
 
-        final PartDescriptorService partDescriptorService = Mockito.mock( PartDescriptorService.class );
-        final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
-        renderer = new PartRenderer();
-        renderer.setPartDescriptorService( partDescriptorService );
-        renderer.setControllerScriptFactory( controllerScriptFactory );
-
         when( partDescriptorService.getByKey( any() ) ).thenReturn( partDescriptor );
-        when( controllerScriptFactory.fromDir( any() ) ).thenReturn( controllerScript );
+        when( controllerScriptFactory.fromScript( any() ) ).thenReturn( controllerScript );
         portalRequest.setMode( RenderMode.EDIT );
         partComponent = PartComponent.create().descriptor( "myapp:myPartComponent" ).descriptor( partDescriptor.getKey() ).build();
 
@@ -171,11 +180,11 @@ public class PartRendererTest
     @Test
     public void htmlResponseComponentEditModeNoMethodToHandleReq()
     {
-        final PartDescriptor partDescriptor = PartDescriptor.create().
-            displayName( "My part component" ).
-            config( Form.create().build() ).
-            key( DescriptorKey.from( "module:myPartComponent" ) ).
-            build();
+        final PartDescriptor partDescriptor = PartDescriptor.create()
+            .displayName( "My part component" )
+            .config( Form.create().build() )
+            .key( DescriptorKey.from( "module:myPartComponent" ) )
+            .build();
         final ControllerScript controllerScript = new ControllerScript()
         {
             @Override
@@ -190,14 +199,8 @@ public class PartRendererTest
             }
         };
 
-        final PartDescriptorService partDescriptorService = Mockito.mock( PartDescriptorService.class );
-        final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
-        renderer = new PartRenderer();
-        renderer.setPartDescriptorService( partDescriptorService );
-        renderer.setControllerScriptFactory( controllerScriptFactory );
-
         when( partDescriptorService.getByKey( any() ) ).thenReturn( partDescriptor );
-        when( controllerScriptFactory.fromDir( any() ) ).thenReturn( controllerScript );
+        when( controllerScriptFactory.fromScript( any() ) ).thenReturn( controllerScript );
         portalRequest.setMode( RenderMode.EDIT );
         partComponent = PartComponent.create().descriptor( "myapp:myPartComponent" ).descriptor( partDescriptor.getKey() ).build();
 
@@ -213,11 +216,11 @@ public class PartRendererTest
     @Test
     public void nullResponseComponentEditMode()
     {
-        final PartDescriptor partDescriptor = PartDescriptor.create().
-            displayName( "My part component" ).
-            config( Form.create().build() ).
-            key( DescriptorKey.from( "module:myPartComponent" ) ).
-            build();
+        final PartDescriptor partDescriptor = PartDescriptor.create()
+            .displayName( "My part component" )
+            .config( Form.create().build() )
+            .key( DescriptorKey.from( "module:myPartComponent" ) )
+            .build();
         final ControllerScript controllerScript = new ControllerScript()
         {
             @Override
@@ -232,14 +235,8 @@ public class PartRendererTest
             }
         };
 
-        final PartDescriptorService partDescriptorService = Mockito.mock( PartDescriptorService.class );
-        final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
-        renderer = new PartRenderer();
-        renderer.setPartDescriptorService( partDescriptorService );
-        renderer.setControllerScriptFactory( controllerScriptFactory );
-
         when( partDescriptorService.getByKey( any() ) ).thenReturn( partDescriptor );
-        when( controllerScriptFactory.fromDir( any() ) ).thenReturn( controllerScript );
+        when( controllerScriptFactory.fromScript( any() ) ).thenReturn( controllerScript );
         portalRequest.setMode( RenderMode.EDIT );
         partComponent = PartComponent.create().descriptor( "myapp:myPartComponent" ).descriptor( partDescriptor.getKey() ).build();
 

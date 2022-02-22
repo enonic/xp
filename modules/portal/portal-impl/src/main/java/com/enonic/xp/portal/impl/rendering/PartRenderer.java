@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.rendering;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -13,7 +14,14 @@ import com.enonic.xp.region.PartDescriptorService;
 public final class PartRenderer
     extends DescriptorBasedComponentRenderer<PartComponent>
 {
-    private PartDescriptorService partDescriptorService;
+    private final PartDescriptorService partDescriptorService;
+
+    @Activate
+    public PartRenderer( @Reference final ControllerScriptFactory controllerScriptFactory, @Reference final PartDescriptorService partDescriptorService )
+    {
+        super( controllerScriptFactory );
+        this.partDescriptorService = partDescriptorService;
+    }
 
     @Override
     public Class<PartComponent> getType()
@@ -25,18 +33,5 @@ public final class PartRenderer
     protected ComponentDescriptor getComponentDescriptor( final DescriptorKey descriptorKey )
     {
         return this.partDescriptorService.getByKey( descriptorKey );
-    }
-
-    @Reference
-    public void setPartDescriptorService( final PartDescriptorService value )
-    {
-        this.partDescriptorService = value;
-    }
-
-    @Override
-    @Reference
-    public void setControllerScriptFactory( final ControllerScriptFactory value )
-    {
-        super.setControllerScriptFactory( value );
     }
 }
