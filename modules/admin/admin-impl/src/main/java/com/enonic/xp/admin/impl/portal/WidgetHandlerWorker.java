@@ -54,8 +54,10 @@ final class WidgetHandlerWorker
         //Renders the widget
         this.request.setApplicationKey( this.descriptorKey.getApplicationKey() );
 
-        final ResourceKey scriptDir = ResourceKey.from( descriptorKey.getApplicationKey(), "admin/widgets/" + descriptorKey.getName() );
-        final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( scriptDir );
+        final ResourceKey script = ResourceKey.from( descriptorKey.getApplicationKey(),
+                                                        "admin/widgets/" + descriptorKey.getName() + "/" + descriptorKey.getName() +
+                                                            ".js" );
+        final ControllerScript controllerScript = this.controllerScriptFactory.fromScript( script );
         return controllerScript.execute( this.request );
     }
 }
