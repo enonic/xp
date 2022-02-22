@@ -13,11 +13,19 @@ import com.enonic.xp.trace.Tracer;
 public abstract class PostProcessingRenderer<R>
     implements Renderer<R>
 {
-    protected PostProcessor postProcessor;
+    protected final PostProcessor postProcessor;
 
-    protected ResponseProcessorExecutor processorExecutor;
+    protected final ResponseProcessorExecutor processorExecutor;
 
-    protected ProcessorChainResolver processorChainResolver;
+    protected final ProcessorChainResolver processorChainResolver;
+
+    public PostProcessingRenderer( final PostProcessor postProcessor, final ResponseProcessorExecutor processorExecutor,
+                                   final ProcessorChainResolver processorChainResolver )
+    {
+        this.postProcessor = postProcessor;
+        this.processorExecutor = processorExecutor;
+        this.processorChainResolver = processorChainResolver;
+    }
 
     @Override
     public PortalResponse render( final R component, final PortalRequest portalRequest )
@@ -33,11 +41,12 @@ public abstract class PostProcessingRenderer<R>
 
     private PortalResponse executeResponseProcessors( final PortalRequest portalRequest, final PortalResponse portalResponse )
     {
-        final ResponseProcessorDescriptors filters = this.processorChainResolver.resolve( portalRequest );
-        if ( !portalResponse.applyFilters() || filters.isEmpty() )
+        if ( !portalResponse.applyFilters() )
         {
             return portalResponse;
         }
+
+        final ResponseProcessorDescriptors filters = this.processorChainResolver.resolve( portalRequest );
 
         PortalResponse filterResponse = portalResponse;
         for ( ResponseProcessorDescriptor filter : filters )
@@ -59,7 +68,7 @@ public abstract class PostProcessingRenderer<R>
 
             if ( !filterResponse.applyFilters() )
             {
-                break;
+                return filterResponse;
             }
         }
 

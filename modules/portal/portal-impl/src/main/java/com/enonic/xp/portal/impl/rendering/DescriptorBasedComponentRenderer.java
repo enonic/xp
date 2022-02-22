@@ -15,6 +15,7 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.DescriptorBasedComponent;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.web.HttpStatus;
 
 import static com.google.common.base.Strings.nullToEmpty;
@@ -33,7 +34,12 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
 
     private static final LiveEditAttributeInjection LIVE_EDIT_ATTRIBUTE_INJECTION = new LiveEditAttributeInjection();
 
-    protected ControllerScriptFactory controllerScriptFactory;
+    private final ControllerScriptFactory controllerScriptFactory;
+
+    public DescriptorBasedComponentRenderer( final ControllerScriptFactory controllerScriptFactory )
+    {
+        this.controllerScriptFactory = controllerScriptFactory;
+    }
 
     @Override
     public final PortalResponse render( final R component, final PortalRequest portalRequest )
@@ -61,8 +67,8 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
             return renderEmptyComponent( component, portalRequest );
         }
 
-        // create controller
-        final ControllerScript controllerScript = this.controllerScriptFactory.fromDir( descriptor.getComponentPath() );
+        final ResourceKey script = descriptor.getComponentPath().resolve( descriptor.getComponentPath().getName() + ".js" );
+        final ControllerScript controllerScript = this.controllerScriptFactory.fromScript( script );
 
         // render
         final Component previousComponent = portalRequest.getComponent();
@@ -162,10 +168,5 @@ public abstract class DescriptorBasedComponentRenderer<R extends DescriptorBased
     private RenderMode getRenderingMode( final PortalRequest portalRequest )
     {
         return portalRequest == null ? RenderMode.LIVE : portalRequest.getMode();
-    }
-
-    public void setControllerScriptFactory( final ControllerScriptFactory value )
-    {
-        this.controllerScriptFactory = value;
     }
 }

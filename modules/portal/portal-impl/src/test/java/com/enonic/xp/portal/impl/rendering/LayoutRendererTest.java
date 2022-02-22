@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.rendering;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.google.common.net.MediaType;
 
@@ -29,6 +28,7 @@ import com.enonic.xp.web.websocket.WebSocketEvent;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class LayoutRendererTest
@@ -41,12 +41,15 @@ public class LayoutRendererTest
 
     private LayoutRenderer renderer;
 
+    LayoutDescriptorService layoutDescriptorService;
+
+    ControllerScriptFactory controllerScriptFactory;
+
     private String configureEmptyComponent( RenderMode mode )
     {
         // setup
         portalRequest.setMode( mode );
         layoutComponent = LayoutComponent.create().build();
-        renderer = new LayoutRenderer();
 
         // exercise
         portalResponse = renderer.render( layoutComponent, portalRequest );
@@ -57,6 +60,10 @@ public class LayoutRendererTest
     @BeforeEach
     public void before()
     {
+        layoutDescriptorService = mock( LayoutDescriptorService.class );
+        controllerScriptFactory = mock( ControllerScriptFactory.class );
+        renderer = new LayoutRenderer( controllerScriptFactory, layoutDescriptorService );
+
         this.portalRequest = new PortalRequest();
         this.portalRequest.setBranch( Branch.from( "draft" ) );
         this.portalRequest.setApplicationKey( ApplicationKey.from( "myapplication" ) );
@@ -105,19 +112,31 @@ public class LayoutRendererTest
     @Test
     public void emptyComponentNoMode()
     {
-        assertThrows(DescriptorNotFoundException.class, () -> this.configureEmptyComponent( RenderMode.ADMIN ));
+        assertThrows( DescriptorNotFoundException.class, () -> this.configureEmptyComponent( RenderMode.ADMIN ) );
     }
 
     @Test
     public void errorComponentPlaceHolderEditMode()
     {
         // setup
+        final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create()
+            .displayName( "My layout component" )
+            .config( Form.create().build() )
+            .key( DescriptorKey.from( "module:myLayoutComponent" ) )
+            .regions( RegionDescriptors.create()
+                          .add( RegionDescriptor.create().name( "left" ).build() )
+                          .add( RegionDescriptor.create().name( "right" ).build() )
+                          .build() )
+            .build();
         portalRequest.setMode( RenderMode.EDIT );
-        layoutComponent = LayoutComponent.create().descriptor( "myapp:myLayoutComponent" ).
-            descriptor( "descriptor-x" ).
-            config( new PropertyTree() ).
-            build();
-        renderer = new LayoutRenderer();
+        layoutComponent = LayoutComponent.create()
+            .descriptor( "myapp:myLayoutComponent" )
+            .descriptor( "descriptor-x" )
+            .config( new PropertyTree() )
+            .build();
+
+        when( layoutDescriptorService.getByKey( any() ) ).thenReturn( layoutDescriptor );
+        when( controllerScriptFactory.fromScript( any() ) ).thenThrow( new RuntimeException() );
 
         // exercise
         portalResponse = renderer.render( layoutComponent, portalRequest );
@@ -131,23 +150,26 @@ public class LayoutRendererTest
     @Test
     public void htmlResponseComponentEditMode()
     {
-        final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
-            displayName( "My layout component" ).
-            config( Form.create().build() ).
-            key( DescriptorKey.from( "module:myLayoutComponent" ) ).
-            regions( RegionDescriptors.create().
-                add( RegionDescriptor.create().name( "left" ).build() ).
-                add( RegionDescriptor.create().name( "right" ).build() ).
-                build() ).
-            build();
+        final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create()
+            .displayName( "My layout component" )
+            .config( Form.create().build() )
+            .key( DescriptorKey.from( "module:myLayoutComponent" ) )
+            .regions( RegionDescriptors.create()
+                          .add( RegionDescriptor.create().name( "left" ).build() )
+                          .add( RegionDescriptor.create().name( "right" ).build() )
+                          .build() )
+            .build();
         final ControllerScript controllerScript = new ControllerScript()
         {
             @Override
             public PortalResponse execute( final PortalRequest portalRequest )
             {
-                return PortalResponse.create().body(
-                    "<div class=\"row\"><div data-portal-region=\"left\" class=\"col-left\"></div><div data-portal-region=\"right\" class=\"col-right\"></div></div>" ).contentType(
-                    MediaType.HTML_UTF_8 ).status( HttpStatus.OK ).build();
+                return PortalResponse.create()
+                    .body(
+                        "<div class=\"row\"><div data-portal-region=\"left\" class=\"col-left\"></div><div data-portal-region=\"right\" class=\"col-right\"></div></div>" )
+                    .contentType( MediaType.HTML_UTF_8 )
+                    .status( HttpStatus.OK )
+                    .build();
             }
 
             @Override
@@ -156,14 +178,8 @@ public class LayoutRendererTest
             }
         };
 
-        final LayoutDescriptorService layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
-        final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
-        renderer = new LayoutRenderer();
-        renderer.setLayoutDescriptorService( layoutDescriptorService );
-        renderer.setControllerScriptFactory( controllerScriptFactory );
-
         when( layoutDescriptorService.getByKey( any() ) ).thenReturn( layoutDescriptor );
-        when( controllerScriptFactory.fromDir( any() ) ).thenReturn( controllerScript );
+        when( controllerScriptFactory.fromScript( any() ) ).thenReturn( controllerScript );
         portalRequest.setMode( RenderMode.EDIT );
         layoutComponent = LayoutComponent.create().descriptor( "myapp:myLayoutComponent" ).descriptor( layoutDescriptor.getKey() ).build();
 
@@ -179,15 +195,15 @@ public class LayoutRendererTest
     @Test
     public void nullResponseComponentEditMode()
     {
-        final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create().
-            displayName( "My layout component" ).
-            config( Form.create().build() ).
-            key( DescriptorKey.from( "module:myLayoutComponent" ) ).
-            regions( RegionDescriptors.create().
-                add( RegionDescriptor.create().name( "left" ).build() ).
-                add( RegionDescriptor.create().name( "right" ).build() ).
-                build() ).
-            build();
+        final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create()
+            .displayName( "My layout component" )
+            .config( Form.create().build() )
+            .key( DescriptorKey.from( "module:myLayoutComponent" ) )
+            .regions( RegionDescriptors.create()
+                          .add( RegionDescriptor.create().name( "left" ).build() )
+                          .add( RegionDescriptor.create().name( "right" ).build() )
+                          .build() )
+            .build();
         final ControllerScript controllerScript = new ControllerScript()
         {
             @Override
@@ -202,14 +218,8 @@ public class LayoutRendererTest
             }
         };
 
-        final LayoutDescriptorService layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
-        final ControllerScriptFactory controllerScriptFactory = Mockito.mock( ControllerScriptFactory.class );
-        renderer = new LayoutRenderer();
-        renderer.setLayoutDescriptorService( layoutDescriptorService );
-        renderer.setControllerScriptFactory( controllerScriptFactory );
-
         when( layoutDescriptorService.getByKey( any() ) ).thenReturn( layoutDescriptor );
-        when( controllerScriptFactory.fromDir( any() ) ).thenReturn( controllerScript );
+        when( controllerScriptFactory.fromScript( any() ) ).thenReturn( controllerScript );
         portalRequest.setMode( RenderMode.EDIT );
         layoutComponent = LayoutComponent.create().descriptor( "myapp:myLayoutComponent" ).descriptor( layoutDescriptor.getKey() ).build();
 
