@@ -11,6 +11,7 @@ public interface Resource
 {
     ResourceKey getKey();
 
+    @Deprecated
     URL getUrl();
 
     void requireExists();

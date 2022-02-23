@@ -121,7 +121,7 @@ public final class PageDescriptorServiceImpl
         }
         catch ( final Exception e )
         {
-            throw new XmlException( e, "Could not load page descriptor [" + resource.getUrl() + "]: " + e.getMessage() );
+            throw new XmlException( e, "Could not load page descriptor [" + resource.getKey() + "]: " + e.getMessage() );
         }
     }
 

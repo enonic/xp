@@ -93,7 +93,7 @@ public class PartDescriptorLoader
         }
         catch ( final Exception e )
         {
-            throw new XmlException( e, "Could not load part descriptor [" + resource.getUrl() + "]: " + e.getMessage() );
+            throw new XmlException( e, "Could not load part descriptor [" + resource.getKey() + "]: " + e.getMessage() );
         }
     }
 
