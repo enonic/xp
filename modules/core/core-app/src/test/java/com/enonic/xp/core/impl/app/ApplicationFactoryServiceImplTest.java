@@ -1,24 +1,32 @@
 package com.enonic.xp.core.impl.app;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.node.NodeService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@ExtendWith(MockitoExtension.class)
 class ApplicationFactoryServiceImplTest
     extends BundleBasedTest
 {
+    @Mock(stubOnly = true)
+    private NodeService nodeService;
+
     @Test
     void lifecycle()
         throws Exception
     {
         final BundleContext bundleContext = getBundleContext();
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
         final String appName = "app1";
@@ -43,7 +51,7 @@ class ApplicationFactoryServiceImplTest
         throws Exception
     {
         final BundleContext bundleContext = getBundleContext();
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
         final String appName = "app1";
