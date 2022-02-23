@@ -12,14 +12,22 @@ import java.util.stream.Collectors;
 
 import com.google.common.reflect.ClassPath;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.UrlResource;
+
 public final class ClassLoaderApplicationUrlResolver
     implements ApplicationUrlResolver
 {
     private final ClassLoader loader;
 
-    public ClassLoaderApplicationUrlResolver( final URLClassLoader loader )
+    private final ApplicationKey applicationKey;
+
+    public ClassLoaderApplicationUrlResolver( final URLClassLoader loader, final ApplicationKey applicationKey )
     {
         this.loader = loader;
+        this.applicationKey = applicationKey;
     }
 
     @Override
@@ -38,7 +46,7 @@ public final class ClassLoaderApplicationUrlResolver
     }
 
     @Override
-    public URL findUrl( final String path )
+    public Resource findResource( final String path )
     {
         final URL url = this.loader.getResource( normalizePath( path ) );
 
@@ -59,7 +67,7 @@ public final class ClassLoaderApplicationUrlResolver
             {
                 return null;
             }
-            return url;
+            return new UrlResource( ResourceKey.from( applicationKey, path ), url );
         }
         else if ( url.getPath().endsWith( "/" ) )
         {
@@ -67,7 +75,7 @@ public final class ClassLoaderApplicationUrlResolver
         }
         else
         {
-            return url;
+            return new UrlResource( ResourceKey.from( applicationKey, path ), url );
         }
     }
 

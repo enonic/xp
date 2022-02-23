@@ -105,7 +105,7 @@ public class StyleDescriptorServiceImpl
         }
         catch ( final Exception e )
         {
-            throw new XmlException( e, "Could not load style descriptor [" + resource.getUrl() + "]: " + e.getMessage() );
+            throw new XmlException( e, "Could not load style descriptor [" + resource.getKey() + "]: " + e.getMessage() );
         }
     }
 

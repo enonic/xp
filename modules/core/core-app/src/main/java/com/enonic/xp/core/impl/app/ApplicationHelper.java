@@ -19,24 +19,13 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.security.SystemConstants;
 
+import static com.enonic.xp.core.impl.app.ApplicationManifestConstants.X_BUNDLE_TYPE;
+import static com.enonic.xp.core.impl.app.ApplicationManifestConstants.X_CAPABILITY;
+import static com.enonic.xp.core.impl.app.ApplicationManifestConstants.X_SOURCE_PATHS;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class ApplicationHelper
 {
-    static final String X_APPLICATION_URL = "X-Application-Url";
-
-    static final String X_VENDOR_NAME = "X-Vendor-Name";
-
-    static final String X_VENDOR_URL = "X-Vendor-Url";
-
-    static final String X_SYSTEM_VERSION = "X-System-Version";
-
-    static final String X_SOURCE_PATHS = "X-Source-Paths";
-
-    static final String X_CAPABILITY = "X-Capability";
-
-    static final String X_BUNDLE_TYPE = "X-Bundle-Type";
-
     private static final String APPLICATION_BUNDLE_TYPE = "application";
 
     private static final String SYSTEM_BUNDLE_TYPE = "system";
@@ -127,11 +116,11 @@ public final class ApplicationHelper
 
     private static Context createAdminContext()
     {
-        return ContextBuilder.create().
-            branch( SystemConstants.BRANCH_SYSTEM ).
-            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-            authInfo( ApplicationConstants.APPLICATION_SU_AUTH_INFO ).
-            build();
+        return ContextBuilder.create()
+            .branch( SystemConstants.BRANCH_SYSTEM )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .authInfo( ApplicationConstants.APPLICATION_SU_AUTH_INFO )
+            .build();
     }
 
     static <T> T callWithContext( Callable<T> runnable )
@@ -146,10 +135,10 @@ public final class ApplicationHelper
 
     private static Context createContext()
     {
-        return ContextBuilder.create().
-            branch( SystemConstants.BRANCH_SYSTEM ).
-            repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-            authInfo( ContextAccessor.current().getAuthInfo() ).
-            build();
+        return ContextBuilder.create()
+            .branch( SystemConstants.BRANCH_SYSTEM )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .authInfo( ContextAccessor.current().getAuthInfo() )
+            .build();
     }
 }

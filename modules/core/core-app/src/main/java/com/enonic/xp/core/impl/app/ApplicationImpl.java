@@ -13,11 +13,7 @@ import com.enonic.xp.app.ApplicationBundleUtils;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
-
-import static com.enonic.xp.core.impl.app.ApplicationHelper.X_APPLICATION_URL;
-import static com.enonic.xp.core.impl.app.ApplicationHelper.X_SYSTEM_VERSION;
-import static com.enonic.xp.core.impl.app.ApplicationHelper.X_VENDOR_NAME;
-import static com.enonic.xp.core.impl.app.ApplicationHelper.X_VENDOR_URL;
+import com.enonic.xp.resource.Resource;
 
 final class ApplicationImpl
     implements ApplicationAdaptor
@@ -41,7 +37,7 @@ final class ApplicationImpl
     {
         this.bundle = bundle;
         this.key = ApplicationKey.from( bundle );
-        this.systemVersion = ApplicationHelper.parseVersionRange( getHeader( X_SYSTEM_VERSION, null ) );
+        this.systemVersion = ApplicationHelper.parseVersionRange( getHeader( ApplicationManifestConstants.X_SYSTEM_VERSION, null ) );
         this.urlResolver = urlResolver;
         this.classLoader = classLoader;
         this.config = config;
@@ -93,19 +89,19 @@ final class ApplicationImpl
     @Override
     public String getUrl()
     {
-        return getHeader( X_APPLICATION_URL, null );
+        return getHeader( ApplicationManifestConstants.X_APPLICATION_URL, null );
     }
 
     @Override
     public String getVendorName()
     {
-        return getHeader( X_VENDOR_NAME, null );
+        return getHeader( ApplicationManifestConstants.X_VENDOR_NAME, null );
     }
 
     @Override
     public String getVendorUrl()
     {
-        return getHeader( X_VENDOR_URL, null );
+        return getHeader( ApplicationManifestConstants.X_VENDOR_URL, null );
     }
 
     @Override
@@ -146,7 +142,8 @@ final class ApplicationImpl
     @Override
     public URL resolveFile( final String path )
     {
-        return this.urlResolver.findUrl( path );
+        final Resource resource = this.urlResolver.findResource( path );
+        return resource != null ? resource.getUrl() : null;
     }
 
     @Override

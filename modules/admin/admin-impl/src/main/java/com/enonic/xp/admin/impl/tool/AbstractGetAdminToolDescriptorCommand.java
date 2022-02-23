@@ -57,7 +57,7 @@ abstract class AbstractGetAdminToolDescriptorCommand<T extends AbstractGetAdminT
         }
         catch ( final Exception e )
         {
-            throw new XmlException( e, "Could not load admin app descriptor [" + resource.getUrl() + "]: " + e.getMessage() );
+            throw new XmlException( e, "Could not load admin app descriptor [" + resource.getKey() + "]: " + e.getMessage() );
         }
     }
 }
