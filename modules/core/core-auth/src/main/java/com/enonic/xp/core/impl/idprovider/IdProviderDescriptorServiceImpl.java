@@ -56,7 +56,7 @@ public final class IdProviderDescriptorServiceImpl
         }
         catch ( final Exception e )
         {
-            throw new XmlException( e, "Could not load auth descriptor [" + resource.getUrl() + "]: " + e.getMessage() );
+            throw new XmlException( e, "Could not load auth descriptor [" + resource.getKey() + "]: " + e.getMessage() );
         }
     }
 

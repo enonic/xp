@@ -50,7 +50,7 @@ public abstract class BundleBasedTest
         throws Exception
     {
         this.felix.stop();
-        this.felix.waitForStop(FELIX_STOP_WAIT_TIMEOUT_MS);
+        this.felix.waitForStop( FELIX_STOP_WAIT_TIMEOUT_MS );
     }
 
     protected final Bundle deploy( final String name, final InputStream in )
@@ -88,13 +88,11 @@ public abstract class BundleBasedTest
 
     private TinyBundle doCreateNewBundle( final String name, final boolean isApp, final String version )
     {
-        final TinyBundle bundle = TinyBundles.bundle().
-            set( Constants.BUNDLE_SYMBOLICNAME, name ).
-            set( Constants.BUNDLE_VERSION, version );
+        final TinyBundle bundle = TinyBundles.bundle().set( Constants.BUNDLE_SYMBOLICNAME, name ).set( Constants.BUNDLE_VERSION, version );
 
         if ( isApp )
         {
-            bundle.set( ApplicationHelper.X_BUNDLE_TYPE, "application" );
+            bundle.set( ApplicationManifestConstants.X_BUNDLE_TYPE, "application" );
             bundle.add( "site/site.xml", getClass().getResource( "/myapp/site/site.xml" ) );
         }
 

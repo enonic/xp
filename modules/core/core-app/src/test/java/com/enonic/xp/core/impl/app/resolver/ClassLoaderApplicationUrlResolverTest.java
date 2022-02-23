@@ -8,6 +8,9 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.resource.Resource;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -23,7 +26,7 @@ public class ClassLoaderApplicationUrlResolverTest
     {
         URL[] resourcesPath = {Path.of( "src/test/resources" ).toUri().toURL()};
         URLClassLoader loader = new URLClassLoader( resourcesPath, ClassLoader.getSystemClassLoader() );
-        this.resolver = new ClassLoaderApplicationUrlResolver( loader );
+        this.resolver = new ClassLoaderApplicationUrlResolver( loader, ApplicationKey.from( "myapp" ) );
     }
 
     @Test
@@ -37,13 +40,13 @@ public class ClassLoaderApplicationUrlResolverTest
     @Test
     public void testFindUrl()
     {
-        final URL url1 = this.resolver.findUrl( "/myapp/site/site.xml" );
-        assertNotNull( url1 );
+        final Resource resource1 = this.resolver.findResource( "/myapp/site/site.xml" );
+        assertNotNull( resource1 );
 
-        final URL url2 = this.resolver.findUrl( "myapp/site/site.xml" );
-        assertNotNull( url2 );
+        final Resource resource2 = this.resolver.findResource( "myapp/site/site.xml" );
+        assertNotNull( resource2 );
 
-        final URL url3 = this.resolver.findUrl( "myapp/not-found.txt" );
-        assertNull( url3 );
+        final Resource resource3 = this.resolver.findResource( "myapp/not-found.txt" );
+        assertNull( resource3 );
     }
 }

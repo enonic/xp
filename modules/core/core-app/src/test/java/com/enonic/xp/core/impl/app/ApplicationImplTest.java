@@ -47,7 +47,7 @@ public class ApplicationImplTest
         Mockito.verify( urlResolver, Mockito.times( 1 ) ).findFiles();
 
         application.resolveFile( "a/b.txt" );
-        Mockito.verify( urlResolver, Mockito.times( 1 ) ).findUrl( "a/b.txt" );
+        Mockito.verify( urlResolver, Mockito.times( 1 ) ).findResource( "a/b.txt" );
 
         bundle.start();
         assertTrue( application.isStarted() );
@@ -56,14 +56,13 @@ public class ApplicationImplTest
     private Bundle deployBundle()
         throws Exception
     {
-        final InputStream in = newBundle( "myapplication", true ).
-            set( Constants.BUNDLE_NAME, "myapplication" ).
-            set( ApplicationHelper.X_APPLICATION_URL, "http://enonic.com/path/to/application" ).
-            set( ApplicationHelper.X_SYSTEM_VERSION, "[1.2,2)" ).
-            set( ApplicationHelper.X_VENDOR_NAME, "Enonic AS" ).
-            set( ApplicationHelper.X_VENDOR_URL, "http://enonic.com" ).
-            set( ApplicationHelper.X_SOURCE_PATHS, "/a/b,/c/d" ).
-            build();
+        final InputStream in = newBundle( "myapplication", true ).set( Constants.BUNDLE_NAME, "myapplication" )
+            .set( ApplicationManifestConstants.X_APPLICATION_URL, "http://enonic.com/path/to/application" )
+            .set( ApplicationManifestConstants.X_SYSTEM_VERSION, "[1.2,2)" )
+            .set( ApplicationManifestConstants.X_VENDOR_NAME, "Enonic AS" )
+            .set( ApplicationManifestConstants.X_VENDOR_URL, "http://enonic.com" )
+            .set( ApplicationManifestConstants.X_SOURCE_PATHS, "/a/b,/c/d" )
+            .build();
 
         return deploy( "bundle", in );
     }

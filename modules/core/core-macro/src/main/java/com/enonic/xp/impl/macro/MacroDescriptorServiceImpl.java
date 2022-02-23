@@ -157,7 +157,7 @@ public final class MacroDescriptorServiceImpl
         }
         catch ( final Exception e )
         {
-            throw new XmlException( e, "Could not load macro descriptor [" + resource.getUrl() + "]: " + e.getMessage() );
+            throw new XmlException( e, "Could not load macro descriptor [" + resource.getKey() + "]: " + e.getMessage() );
         }
     }
 

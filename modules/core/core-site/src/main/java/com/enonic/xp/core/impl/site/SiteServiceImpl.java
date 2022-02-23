@@ -74,7 +74,7 @@ public class SiteServiceImpl
         }
         catch ( final Exception e )
         {
-            throw new XmlException( e, "Could not load site descriptor [" + resource.getUrl() + "]: " + e.getMessage() );
+            throw new XmlException( e, "Could not load site descriptor [" + resource.getKey() + "]: " + e.getMessage() );
         }
     }
 
