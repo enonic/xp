@@ -46,8 +46,7 @@ public final class ResourceServiceImpl
     @Override
     public Resource getResource( final ResourceKey key )
     {
-        return findApplicationUrlResolver( key.getApplicationKey() ).map( urlResolver -> urlResolver.findUrl( key.getPath() ) )
-            .map( url -> new UrlResource( key, url ) )
+        return findApplicationUrlResolver( key.getApplicationKey() ).map( urlResolver -> urlResolver.findResource( key.getPath() ) )
             .orElse( new UrlResource( key, null ) );
     }
 

@@ -45,6 +45,7 @@ public interface Application
 
     Set<String> getFiles();
 
+    @Deprecated
     URL resolveFile( String path );
 
     Configuration getConfig();

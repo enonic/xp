@@ -9,6 +9,7 @@ import org.osgi.framework.BundleEvent;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 import org.osgi.util.tracker.BundleTracker;
 import org.osgi.util.tracker.BundleTrackerCustomizer;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationBundleUtils;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.RunMode;
 
 @Component(immediate = true)
@@ -26,9 +28,12 @@ public class ApplicationFactoryServiceImpl
 
     private final BundleTracker<ApplicationImpl> bundleTracker;
 
+    private final NodeService nodeService;
+
     @Activate
-    public ApplicationFactoryServiceImpl( final BundleContext context )
+    public ApplicationFactoryServiceImpl( final BundleContext context, @Reference final NodeService nodeService )
     {
+        this.nodeService = nodeService;
         bundleTracker =
             new BundleTracker<>( context, Bundle.INSTALLED + Bundle.RESOLVED + Bundle.STARTING + Bundle.STOPPING + Bundle.ACTIVE,
                                  new Customizer() );
@@ -55,18 +60,19 @@ public class ApplicationFactoryServiceImpl
     @Override
     public Optional<ApplicationAdaptor> findActiveApplication( final ApplicationKey applicationKey )
     {
-        return bundleTracker.getTracked().
-            entrySet().stream().
-            filter( bundleEntry -> applicationKey.equals( ApplicationKey.from( bundleEntry.getKey() ) ) ).
-            filter( bundleEntry -> bundleEntry.getKey().getState() == Bundle.ACTIVE ).
-            findAny().
-            map( Map.Entry::getValue );
+        return bundleTracker.getTracked()
+            .entrySet()
+            .stream()
+            .filter( bundleEntry -> applicationKey.equals( ApplicationKey.from( bundleEntry.getKey() ) ) )
+            .filter( bundleEntry -> bundleEntry.getKey().getState() == Bundle.ACTIVE )
+            .findAny()
+            .map( Map.Entry::getValue );
     }
 
-    private static class Customizer
+    private class Customizer
         implements BundleTrackerCustomizer<ApplicationImpl>
     {
-        private final ApplicationFactory factory = new ApplicationFactory( RunMode.get() );
+        private final ApplicationFactory factory = new ApplicationFactory( RunMode.get(), nodeService );
 
         @Override
         public ApplicationImpl addingBundle( final Bundle bundle, final BundleEvent event )
