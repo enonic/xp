@@ -14,6 +14,11 @@ import org.osgi.framework.Bundle;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.UrlResource;
+
 public final class BundleApplicationUrlResolver
     implements ApplicationUrlResolver
 {
@@ -45,9 +50,11 @@ public final class BundleApplicationUrlResolver
     }
 
     @Override
-    public URL findUrl( final String path )
+    public Resource findResource( final String path )
     {
         final URL url = this.bundle.getResource( path );
-        return ( url == null || url.getPath().endsWith( "/" ) ) ? null : url;
+        return ( url == null || url.getPath().endsWith( "/" ) )
+            ? null
+            : new UrlResource( ResourceKey.from( ApplicationKey.from( bundle ), path ), url );
     }
 }

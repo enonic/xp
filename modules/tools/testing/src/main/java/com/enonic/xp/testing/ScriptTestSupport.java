@@ -200,13 +200,14 @@ public abstract class ScriptTestSupport
     private Application createApplication()
         throws Exception
     {
+        final Bundle bundle = createBundle();
         final ApplicationBuilder builder = new ApplicationBuilder();
         builder.classLoader( getClass().getClassLoader() );
         URL[] resourcesPath = {Path.of( "src/test/resources" ).toUri().toURL()};
         URLClassLoader loader = new URLClassLoader( resourcesPath, ClassLoader.getPlatformClassLoader() );
-        builder.urlResolver( new ClassLoaderApplicationUrlResolver( loader ) );
+        builder.urlResolver( new ClassLoaderApplicationUrlResolver( loader, ApplicationKey.from( bundle ) ) );
         builder.config( ConfigBuilder.create().build() );
-        builder.bundle( createBundle() );
+        builder.bundle( bundle );
         return builder.build();
     }
 

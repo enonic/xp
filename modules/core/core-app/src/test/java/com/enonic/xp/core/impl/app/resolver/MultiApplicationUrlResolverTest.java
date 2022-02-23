@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.app.resolver;
 
-import java.net.URL;
-import java.nio.file.Path;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -10,10 +8,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.enonic.xp.resource.Resource;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,22 +49,22 @@ class MultiApplicationUrlResolverTest
     }
 
     @Test
-    void testFindUrl()
+    void testFindResource()
         throws Exception
     {
-        final URL expected1 = Path.of( "" ).toUri().toURL();
-        when( this.delegate1.findUrl( "a/b.txt" ) ).thenReturn( expected1 );
+        final Resource expected1 = mock( Resource.class );
+        when( this.delegate1.findResource( "a/b.txt" ) ).thenReturn( expected1 );
 
-        final URL expected2 = Path.of( "" ).toUri().toURL();
-        when( this.delegate2.findUrl( "a/other.txt" ) ).thenReturn( expected2 );
+        final Resource expected2 = mock( Resource.class );
+        when( this.delegate2.findResource( "a/other.txt" ) ).thenReturn( expected2 );
 
-        final URL url1 = this.resolver.findUrl( "a/b.txt" );
-        assertSame( expected1, url1 );
+        final Resource resource1 = this.resolver.findResource( "a/b.txt" );
+        assertSame( expected1, resource1 );
 
-        final URL url2 = this.resolver.findUrl( "a/other.txt" );
-        assertSame( expected2, url2 );
+        final Resource resource2 = this.resolver.findResource( "a/other.txt" );
+        assertSame( expected2, resource2 );
 
-        final URL url3 = this.resolver.findUrl( "other.txt" );
-        assertNull( url3 );
+        final Resource resource3 = this.resolver.findResource( "other.txt" );
+        assertNull( resource3 );
     }
 }

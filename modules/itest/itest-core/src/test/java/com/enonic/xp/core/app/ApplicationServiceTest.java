@@ -73,7 +73,7 @@ public class ApplicationServiceTest
 
         BundleContext bundleContext = felix.getBundleContext();
 
-        ApplicationFactoryServiceImpl applicationFactoryService = new ApplicationFactoryServiceImpl( bundleContext );
+        ApplicationFactoryServiceImpl applicationFactoryService = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         applicationFactoryService.activate();
 
         ApplicationAuditLogSupportImpl applicationAuditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
