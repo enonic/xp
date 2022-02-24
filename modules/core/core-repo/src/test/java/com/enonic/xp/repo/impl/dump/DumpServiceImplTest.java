@@ -103,9 +103,9 @@ import static org.mockito.Mockito.when;
 public class DumpServiceImplTest
     extends AbstractNodeTest
 {
-    private DumpServiceImpl dumpService;
-
     private static final AtomicLong UPDATE_COUNTER = new AtomicLong();
+
+    private DumpServiceImpl dumpService;
 
     @BeforeEach
     public void setUp()
@@ -136,11 +136,8 @@ public class DumpServiceImplTest
 
         refresh();
 
-        final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
-            archive( true ).
-            includeVersions( true ).
-            dumpName( "testDump" ).
-            build() ) );
+        final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dump(
+            SystemDumpParams.create().archive( true ).includeVersions( true ).dumpName( "testDump" ).build() ) );
 
         // 4 of node, 1 of root
         assertEquals( 5, systemDumpResult.get( TEST_REPO_ID ).getVersions() );
@@ -148,17 +145,14 @@ public class DumpServiceImplTest
 
         assertEquals( 2, branchDumpResult.getSuccessful() );
 
-        NodeHelper.runAsAdmin( () -> this.dumpService.load( SystemLoadParams.create().
-            archive( true ).
-            includeVersions( true ).
-            dumpName( "testDump" ).
-            build() ) );
+        NodeHelper.runAsAdmin( () -> this.dumpService.load(
+            SystemLoadParams.create().archive( true ).includeVersions( true ).dumpName( "testDump" ).build() ) );
 
         final Repositories newRepos = NodeHelper.runAsAdmin( this::doListRepositories );
 
         assertEquals( RepositoryIds.from( RepositoryId.from( "com.enonic.cms.test" ), RepositoryId.from( "system-repo" ),
-                                          RepositoryId.from( "system.auditlog" ), RepositoryId.from( "system.scheduler" ) ),
-                      newRepos.getIds() );
+                                          RepositoryId.from( "system.auditlog" ), RepositoryId.from( "system.scheduler" ),
+                                          RepositoryId.from( "system.app" ) ), newRepos.getIds() );
     }
 
     @Test
@@ -166,9 +160,7 @@ public class DumpServiceImplTest
         throws Exception
     {
         assertThrows( RepoDumpException.class, () -> {
-            doDump( SystemDumpParams.create().
-                dumpName( "testDump" ).
-                build() );
+            doDump( SystemDumpParams.create().dumpName( "testDump" ).build() );
 
         } );
     }
@@ -179,14 +171,10 @@ public class DumpServiceImplTest
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
 
-        NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
-            dumpName( "testDump" ).
-            build() ) );
+        NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().dumpName( "testDump" ).build() ) );
 
-        NodeHelper.runAsAdmin( () -> doDump( SystemDumpParams.create().dumpName( "myTestDump" ).
-            includeVersions( true ).
-            includeBinaries( true ).
-            build() ) );
+        NodeHelper.runAsAdmin(
+            () -> doDump( SystemDumpParams.create().dumpName( "myTestDump" ).includeVersions( true ).includeBinaries( true ).build() ) );
 
         final Node toBeDeleted = createNode( NodePath.ROOT, "ShouldBeDeleted" );
 
@@ -201,18 +189,13 @@ public class DumpServiceImplTest
     public void obsolete_repository_deleted()
         throws Exception
     {
-        final AccessControlList newRepoACL = AccessControlList.create().
-            add( AccessControlEntry.create().
-                principal( RoleKeys.EVERYONE ).
-                allowAll().
-                build() ).
-            build();
+        final AccessControlList newRepoACL =
+            AccessControlList.create().add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allowAll().build() ).build();
 
         final Repository newRepoInsideDump = NodeHelper.runAsAdmin(
             () -> doCreateRepository( RepositoryId.from( "new-repo-inside-dump" ), newRepoACL, ChildOrder.manualOrder() ) );
 
-        NodeHelper.runAsAdmin( () -> doDump( SystemDumpParams.create().dumpName( "myTestDump" ).
-            build() ) );
+        NodeHelper.runAsAdmin( () -> doDump( SystemDumpParams.create().dumpName( "myTestDump" ).build() ) );
 
         final Repository newRepoOutsideDump = NodeHelper.runAsAdmin(
             () -> doCreateRepository( RepositoryId.from( "new-repo-outside-dump" ), newRepoACL, ChildOrder.manualOrder() ) );
@@ -223,8 +206,8 @@ public class DumpServiceImplTest
 
         final Repositories newRepos = NodeHelper.runAsAdmin( this::doListRepositories );
 
-        assertEquals( 6, oldRepos.getIds().getSize() );
-        assertEquals( 5, newRepos.getIds().getSize() );
+        assertEquals( 7, oldRepos.getIds().getSize() );
+        assertEquals( 6, newRepos.getIds().getSize() );
 
         assertNotNull( newRepos.getRepositoryById( newRepoInsideDump.getId() ) );
         assertNull( newRepos.getRepositoryById( newRepoOutsideDump.getId() ) );
@@ -249,9 +232,8 @@ public class DumpServiceImplTest
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
 
-        final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
-            dumpName( "testDump" ).
-            build() ) );
+        final SystemDumpResult systemDumpResult =
+            NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().dumpName( "testDump" ).build() ) );
 
         final BranchDumpResult result = systemDumpResult.get( TEST_REPO_ID ).get( WS_DEFAULT );
         assertNotNull( result );
@@ -277,30 +259,28 @@ public class DumpServiceImplTest
         throws Exception
     {
         NodeHelper.runAsAdmin( () -> {
-            final Repository newRepo =
-                NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "new-repo" ), AccessControlList.create().
-                    add( AccessControlEntry.create().
-                        principal( RoleKeys.EVERYONE ).
-                        allowAll().
-                        build() ).
-                    build(), ChildOrder.manualOrder() ) );
+            final Repository newRepo = NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "new-repo" ),
+                                                                                        AccessControlList.create()
+                                                                                            .add( AccessControlEntry.create()
+                                                                                                      .principal( RoleKeys.EVERYONE )
+                                                                                                      .allowAll()
+                                                                                                      .build() )
+                                                                                            .build(), ChildOrder.manualOrder() ) );
 
             final PropertyTree data = new PropertyTree();
             data.addBinaryReference( "attachmentName", BinaryReference.from( "image.png" ) );
 
-            final UpdateRepositoryEntryParams updateParams = UpdateRepositoryEntryParams.create().
-                repositoryId( newRepo.getId() ).
-                repositoryData( data ).
-                attachments( ImmutableList.of(
-                    new BinaryAttachment( BinaryReference.from( "image.png" ), ByteSource.wrap( "attachmentName".getBytes() ) ) ) ).
-                build();
+            final UpdateRepositoryEntryParams updateParams = UpdateRepositoryEntryParams.create()
+                .repositoryId( newRepo.getId() )
+                .repositoryData( data )
+                .attachments( ImmutableList.of(
+                    new BinaryAttachment( BinaryReference.from( "image.png" ), ByteSource.wrap( "attachmentName".getBytes() ) ) ) )
+                .build();
 
             repositoryEntryService.updateRepositoryEntry( updateParams );
         } );
 
-        NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
-            dumpName( "testDump" ).
-            build() ) );
+        NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().dumpName( "testDump" ).build() ) );
 
         NodeHelper.runAsAdmin( () -> {
             dumpDeleteAndLoad( true );
@@ -321,9 +301,8 @@ public class DumpServiceImplTest
         final String nodeName = "this-is-my-node-with-very-long-filename-more-than-100-characters-yes-it-has-to-be-very-long-indeed-sir";
         final Node node = createNode( NodePath.ROOT, nodeName );
 
-        final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
-            dumpName( "testDump" ).
-            build() ) );
+        final SystemDumpResult systemDumpResult =
+            NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().dumpName( "testDump" ).build() ) );
 
         final BranchDumpResult result = systemDumpResult.get( TEST_REPO_ID ).get( WS_DEFAULT );
         assertNotNull( result );
@@ -347,9 +326,8 @@ public class DumpServiceImplTest
 
         refresh();
 
-        final SystemDumpResult systemDumpResult = NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
-            dumpName( "testDump" ).
-            build() ) );
+        final SystemDumpResult systemDumpResult =
+            NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().dumpName( "testDump" ).build() ) );
 
         // 4 of node, 1 of root
         assertEquals( 5, systemDumpResult.get( TEST_REPO_ID ).getVersions() );
@@ -362,20 +340,16 @@ public class DumpServiceImplTest
     public void root_node_gets_correct_properties()
         throws Exception
     {
-        final AccessControlList newRepoACL = AccessControlList.create().
-            add( AccessControlEntry.create().
-                principal( RoleKeys.EVERYONE ).
-                allowAll().
-                build() ).
-            build();
+        final AccessControlList newRepoACL =
+            AccessControlList.create().add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allowAll().build() ).build();
 
         final Repository newRepo =
             NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "my-new-repo" ), newRepoACL, ChildOrder.manualOrder() ) );
 
-        final Context newContext = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( newRepo.getId() ).
-            branch( RepositoryConstants.MASTER_BRANCH ).
-            build();
+        final Context newContext = ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( newRepo.getId() )
+            .branch( RepositoryConstants.MASTER_BRANCH )
+            .build();
 
         newContext.runWith( () -> createNode( NodePath.ROOT, "myNode" ) );
 
@@ -395,17 +369,13 @@ public class DumpServiceImplTest
         final RepositoryId currentRepoId = TEST_REPO_ID;
 
         NodeHelper.runAsAdmin( () -> {
-            doDump( SystemDumpParams.create().
-                dumpName( "testDump" ).
-                build() );
+            doDump( SystemDumpParams.create().dumpName( "testDump" ).build() );
 
             this.repositoryEntryService.removeBranchFromRepositoryEntry( currentRepoId, branch );
 
             assertFalse( this.repositoryEntryService.getRepositoryEntry( currentRepoId ).getBranches().contains( branch ) );
 
-            this.dumpService.load( SystemLoadParams.create().
-                dumpName( "testDump" ).
-                build() );
+            this.dumpService.load( SystemLoadParams.create().dumpName( "testDump" ).build() );
 
             assertTrue( this.repositoryEntryService.getRepositoryEntry( currentRepoId ).getBranches().contains( branch ) );
             assertNotNull( this.nodeService.getById( node.id() ) );
@@ -421,17 +391,15 @@ public class DumpServiceImplTest
         final Node currentNode = updateNode( updatedNode );
         refresh();
 
-        final NodeVersionQueryResult versionsBeforeDump = this.nodeService.findVersions( GetNodeVersionsParams.create().
-            nodeId( node.id() ).
-            build() );
+        final NodeVersionQueryResult versionsBeforeDump =
+            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
 
         refresh();
 
-        final NodeVersionQueryResult versionsAfterLoad = this.nodeService.findVersions( GetNodeVersionsParams.create().
-            nodeId( node.id() ).
-            build() );
+        final NodeVersionQueryResult versionsAfterLoad =
+            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
         assertEquals( 3, versionsAfterLoad.getTotalHits() );
 
         final Node currentStoredNode = this.nodeService.getById( node.id() );
@@ -447,9 +415,8 @@ public class DumpServiceImplTest
         this.nodeService.push( NodeIds.from( node.id() ), WS_OTHER );
         refresh();
 
-        final NodeVersionQueryResult versionsBeforeDump = this.nodeService.findVersions( GetNodeVersionsParams.create().
-            nodeId( node.id() ).
-            build() );
+        final NodeVersionQueryResult versionsBeforeDump =
+            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
         assertEquals( 1, versionsBeforeDump.getTotalHits() );
 
@@ -457,12 +424,11 @@ public class DumpServiceImplTest
 
         refresh();
 
-        final NodeVersionQueryResult versionsAfterLoad = this.nodeService.findVersions( GetNodeVersionsParams.create().
-            nodeId( node.id() ).
-            build() );
+        final NodeVersionQueryResult versionsAfterLoad =
+            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
-        versionsAfterLoad.getNodeVersionsMetadata().forEach(
-            ( e ) -> System.out.println( e.getNodeVersionId() + " - " + e.getTimestamp() ) );
+        versionsAfterLoad.getNodeVersionsMetadata()
+            .forEach( ( e ) -> System.out.println( e.getNodeVersionId() + " - " + e.getTimestamp() ) );
 
         assertEquals( 1, versionsAfterLoad.getTotalHits() );
     }
@@ -478,16 +444,14 @@ public class DumpServiceImplTest
         updateNode( node );
         refresh();
 
-        final NodeVersionQueryResult versionsBeforeDump = this.nodeService.findVersions( GetNodeVersionsParams.create().
-            nodeId( node.id() ).
-            build() );
+        final NodeVersionQueryResult versionsBeforeDump =
+            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
         refresh();
 
-        final NodeVersionQueryResult versionsAfterLoad = this.nodeService.findVersions( GetNodeVersionsParams.create().
-            nodeId( node.id() ).
-            build() );
+        final NodeVersionQueryResult versionsAfterLoad =
+            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
         assertEquals( versionsBeforeDump.getTotalHits(), versionsAfterLoad.getTotalHits() );
     }
@@ -504,10 +468,8 @@ public class DumpServiceImplTest
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
         refresh();
 
-        final GetActiveNodeVersionsResult activeVersions = this.nodeService.getActiveVersions( GetActiveNodeVersionsParams.create().
-            branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).
-            nodeId( node.id() ).
-            build() );
+        final GetActiveNodeVersionsResult activeVersions = this.nodeService.getActiveVersions(
+            GetActiveNodeVersionsParams.create().branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).nodeId( node.id() ).build() );
 
         final Node defaultBranchNode = ctxDefault().callWith( () -> this.nodeService.getById( node.id() ) );
         final Node otherBranchNode = ctxOther().callWith( () -> this.nodeService.getById( node.id() ) );
@@ -531,19 +493,17 @@ public class DumpServiceImplTest
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
         refresh();
 
-        final GetActiveNodeVersionsResult activeVersions = this.nodeService.getActiveVersions( GetActiveNodeVersionsParams.create().
-            branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).
-            nodeId( node.id() ).
-            build() );
+        final GetActiveNodeVersionsResult activeVersions = this.nodeService.getActiveVersions(
+            GetActiveNodeVersionsParams.create().branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).nodeId( node.id() ).build() );
 
         final ImmutableMap<Branch, NodeVersionMetadata> activeVersionsMap = activeVersions.getNodeVersions();
 
-        final NodeVersionQueryResult versionsAfterLoad = this.nodeService.findVersions( GetNodeVersionsParams.create().
-            nodeId( node.id() ).
-            build() );
+        final NodeVersionQueryResult versionsAfterLoad =
+            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
-        activeVersionsMap.values().forEach(
-            key -> assertTrue( versionsAfterLoad.getNodeVersionsMetadata().getAllVersionIds().contains( key.getNodeVersionId() ) ) );
+        activeVersionsMap.values()
+            .forEach(
+                key -> assertTrue( versionsAfterLoad.getNodeVersionsMetadata().getAllVersionIds().contains( key.getNodeVersionId() ) ) );
     }
 
     @Test
@@ -552,31 +512,26 @@ public class DumpServiceImplTest
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
 
-        RenameNodeCommand.create().
-            searchService( this.searchService ).
-            storageService( this.storageService ).
-            indexServiceInternal( this.indexServiceInternal ).
-            params( RenameNodeParams.create().
-                nodeId( node.id() ).
-                nodeName( NodeName.from( "renamed" ) ).
-                build() ).
-            build().
-            execute();
+        RenameNodeCommand.create()
+            .searchService( this.searchService )
+            .storageService( this.storageService )
+            .indexServiceInternal( this.indexServiceInternal )
+            .params( RenameNodeParams.create().nodeId( node.id() ).nodeName( NodeName.from( "renamed" ) ).build() )
+            .build()
+            .execute();
 
         this.nodeService.push( NodeIds.from( node.id() ), WS_OTHER );
         updateNode( node );
         refresh();
 
-        final NodeVersionQueryResult versionsBeforeLoad = this.nodeService.findVersions( GetNodeVersionsParams.create().
-            nodeId( node.id() ).
-            build() );
+        final NodeVersionQueryResult versionsBeforeLoad =
+            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
         refresh();
 
-        final NodeVersionQueryResult versionsAfterLoad = this.nodeService.findVersions( GetNodeVersionsParams.create().
-            nodeId( node.id() ).
-            build() );
+        final NodeVersionQueryResult versionsAfterLoad =
+            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
         final NodeVersionIds versionIdsBeforeLoad = versionsBeforeLoad.getNodeVersionsMetadata().getAllVersionIds();
         final NodeVersionIds versionIdsAfterLoad = versionsAfterLoad.getNodeVersionsMetadata().getAllVersionIds();
@@ -599,12 +554,12 @@ public class DumpServiceImplTest
         final BinaryReference binaryRef = BinaryReference.from( "binaryRef" );
         data.addBinaryReference( "myBinary", binaryRef );
 
-        final Node node = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "myNode" ).
-            data( data ).
-            attachBinary( binaryRef, ByteSource.wrap( "this is binary data".getBytes() ) ).
-            build() );
+        final Node node = createNode( CreateNodeParams.create()
+                                          .parent( NodePath.ROOT )
+                                          .name( "myNode" )
+                                          .data( data )
+                                          .attachBinary( binaryRef, ByteSource.wrap( "this is binary data".getBytes() ) )
+                                          .build() );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
 
@@ -623,15 +578,11 @@ public class DumpServiceImplTest
             updateNode( node );
         }
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true, SystemDumpParams.create().
-            dumpName( "myTestDump" ).
-            maxVersions( 5 ).
-            build() ) );
+        NodeHelper.runAsAdmin(
+            () -> dumpDeleteAndLoad( true, SystemDumpParams.create().dumpName( "myTestDump" ).maxVersions( 5 ).build() ) );
 
-        final NodeVersionQueryResult versionsAfterLoad = this.nodeService.findVersions( GetNodeVersionsParams.create().
-            nodeId( node.id() ).
-            size( -1 ).
-            build() );
+        final NodeVersionQueryResult versionsAfterLoad =
+            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).size( -1 ).build() );
 
         assertEquals( 6, versionsAfterLoad.getHits() );
     }
@@ -639,27 +590,22 @@ public class DumpServiceImplTest
     @Test
     public void number_of_versions_in_other_repo()
     {
-        final Repository myRepo =
-            NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "myrepo" ), AccessControlList.create().
-                add( AccessControlEntry.create().
-                    principal( ctxDefault().getAuthInfo().getUser().getKey() ).
-                    allowAll().
-                    build() ).
-                build(), null ) );
+        final Repository myRepo = NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "myrepo" ), AccessControlList.create()
+            .add( AccessControlEntry.create().principal( ctxDefault().getAuthInfo().getUser().getKey() ).allowAll().build() )
+            .build(), null ) );
 
-        final Context myRepoContext = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( myRepo.getId() ).
-            branch( RepositoryConstants.MASTER_BRANCH ).
-            build();
+        final Context myRepoContext = ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( myRepo.getId() )
+            .branch( RepositoryConstants.MASTER_BRANCH )
+            .build();
 
         final Node myNode = myRepoContext.callWith( () -> createNode( NodePath.ROOT, "myNode" ) );
         myRepoContext.runWith( () -> updateNode( myNode ) );
         myRepoContext.runWith( () -> updateNode( myNode ) );
         myRepoContext.runWith( () -> updateNode( myNode ) );
 
-        final SystemLoadResult dumpResult = NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true, SystemDumpParams.create().
-            dumpName( "myTestDump" ).
-            build() ) );
+        final SystemLoadResult dumpResult =
+            NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true, SystemDumpParams.create().dumpName( "myTestDump" ).build() ) );
 
         final RepoLoadResult repoLoadResult = getRepoLoadResult( dumpResult, myRepo.getId() );
 
@@ -690,26 +636,24 @@ public class DumpServiceImplTest
         final BinaryReference binaryRef = BinaryReference.from( "binaryRef" );
         data.addBinaryReference( "myBinary", binaryRef );
 
-        final Node node = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "myNode" ).
-            data( data ).
-            attachBinary( binaryRef, ByteSource.wrap( "this is binary data".getBytes() ) ).
-            build() );
+        final Node node = createNode( CreateNodeParams.create()
+                                          .parent( NodePath.ROOT )
+                                          .name( "myNode" )
+                                          .data( data )
+                                          .attachBinary( binaryRef, ByteSource.wrap( "this is binary data".getBytes() ) )
+                                          .build() );
 
         final BinaryReference binaryRef2 = BinaryReference.from( "anotherBinary" );
 
-        final Node updatedNode = updateNode( UpdateNodeParams.create().
-            id( node.id() ).
-            editor( n -> n.data.setBinaryReference( "myBinary", binaryRef2 ) ).
-            attachBinary( binaryRef2, ByteSource.wrap( "anotherBinary".getBytes() ) ).
-            build() );
+        final Node updatedNode = updateNode( UpdateNodeParams.create()
+                                                 .id( node.id() )
+                                                 .editor( n -> n.data.setBinaryReference( "myBinary", binaryRef2 ) )
+                                                 .attachBinary( binaryRef2, ByteSource.wrap( "anotherBinary".getBytes() ) )
+                                                 .build() );
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
 
-        final NodeVersionQueryResult versions = this.nodeService.findVersions( GetNodeVersionsParams.create().
-            nodeId( node.id() ).
-            build() );
+        final NodeVersionQueryResult versions = this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
         assertEquals( 2, versions.getHits() );
 
         verifyBinaries( node, updatedNode, versions );
@@ -721,26 +665,23 @@ public class DumpServiceImplTest
         createNode( NodePath.ROOT, "myNode" );
 
         final SystemDumpListener systemDumpListener = mock( SystemDumpListener.class );
-        NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().
-            dumpName( "myTestDump" ).
-            includeVersions( true ).
-            includeBinaries( true ).
-            listener( systemDumpListener ).
-            build() ) );
+        NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create()
+                                                                .dumpName( "myTestDump" )
+                                                                .includeVersions( true )
+                                                                .includeBinaries( true )
+                                                                .listener( systemDumpListener )
+                                                                .build() ) );
 
         Mockito.verify( systemDumpListener ).dumpingBranch( TEST_REPO_ID, WS_DEFAULT, 2 );
         Mockito.verify( systemDumpListener ).dumpingBranch( TEST_REPO_ID, WS_OTHER, 1 );
         Mockito.verify( systemDumpListener ).dumpingBranch( AUDIT_LOG_REPO_ID, AUDIT_LOG_BRANCH, 1 );
         Mockito.verify( systemDumpListener ).dumpingBranch( SCHEDULER_REPO_ID, SCHEDULER_BRANCH, 1 );
-        Mockito.verify( systemDumpListener ).dumpingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 6 );
-        Mockito.verify( systemDumpListener, Mockito.times( 11 ) ).nodeDumped();
+        Mockito.verify( systemDumpListener ).dumpingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 7 );
+        Mockito.verify( systemDumpListener, Mockito.times( 13 ) ).nodeDumped();
 
         final SystemLoadListener systemLoadListener = mock( SystemLoadListener.class );
-        NodeHelper.runAsAdmin( () -> this.dumpService.load( SystemLoadParams.create().
-            dumpName( "myTestDump" ).
-            includeVersions( true ).
-            listener( systemLoadListener ).
-            build() ) );
+        NodeHelper.runAsAdmin( () -> this.dumpService.load(
+            SystemLoadParams.create().dumpName( "myTestDump" ).includeVersions( true ).listener( systemLoadListener ).build() ) );
 
         Mockito.verify( systemLoadListener ).loadingBranch( TEST_REPO_ID, ctxDefault().getBranch(), 2L );
         Mockito.verify( systemLoadListener ).loadingVersions( TEST_REPO_ID );
@@ -750,9 +691,9 @@ public class DumpServiceImplTest
         Mockito.verify( systemLoadListener ).loadingBranch( SCHEDULER_REPO_ID, SCHEDULER_BRANCH, 1L );
         Mockito.verify( systemLoadListener ).loadingVersions( AUDIT_LOG_REPO_ID );
         Mockito.verify( systemLoadListener ).loadingVersions( SCHEDULER_REPO_ID );
-        Mockito.verify( systemLoadListener ).loadingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 6L );
+        Mockito.verify( systemLoadListener ).loadingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 7L );
         Mockito.verify( systemLoadListener ).loadingVersions( SystemConstants.SYSTEM_REPO_ID );
-        Mockito.verify( systemLoadListener, Mockito.times( 21 ) ).entryLoaded();
+        Mockito.verify( systemLoadListener, Mockito.times( 25 ) ).entryLoaded();
     }
 
     @Test
@@ -768,9 +709,8 @@ public class DumpServiceImplTest
 
         refresh();
 
-        final NodeVersionQueryResult versionsAfterLoad = this.nodeService.findVersions( GetNodeVersionsParams.create().
-            nodeId( node.id() ).
-            build() );
+        final NodeVersionQueryResult versionsAfterLoad =
+            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
         assertEquals( 1, versionsAfterLoad.getTotalHits() );
 
         final Node currentStoredNode = this.nodeService.getById( node.id() );
@@ -781,13 +721,9 @@ public class DumpServiceImplTest
     public void upgrade_up_to_date()
     {
         NodeHelper.runAsAdmin( () -> {
-            doDump( SystemDumpParams.create().
-                dumpName( "testDump" ).
-                build() );
+            doDump( SystemDumpParams.create().dumpName( "testDump" ).build() );
 
-            final SystemDumpUpgradeParams params = SystemDumpUpgradeParams.create().
-                dumpName( "testDump" ).
-                build();
+            final SystemDumpUpgradeParams params = SystemDumpUpgradeParams.create().dumpName( "testDump" ).build();
             final DumpUpgradeResult result = this.dumpService.upgrade( params );
             assertEquals( DumpConstants.MODEL_VERSION, result.getInitialVersion() );
             assertEquals( DumpConstants.MODEL_VERSION, result.getUpgradedVersion() );
@@ -804,10 +740,8 @@ public class DumpServiceImplTest
         NodeHelper.runAsAdmin( () -> {
             final UpgradeListener upgradeListener = mock( UpgradeListener.class );
 
-            final SystemDumpUpgradeParams params = SystemDumpUpgradeParams.create().
-                dumpName( dumpName ).
-                upgradeListener( upgradeListener ).
-                build();
+            final SystemDumpUpgradeParams params =
+                SystemDumpUpgradeParams.create().dumpName( dumpName ).upgradeListener( upgradeListener ).build();
 
             final DumpUpgradeResult result = this.dumpService.upgrade( params );
             assertEquals( new Version( 0, 0, 0 ), result.getInitialVersion() );
@@ -889,44 +823,35 @@ public class DumpServiceImplTest
         nodeService.refresh( RefreshMode.ALL );
 
         final NodeCommitQuery nodeCommitQuery = NodeCommitQuery.create().build();
-        final NodeCommitQueryResult nodeCommitQueryResult = ContextBuilder.
-            from( ContextAccessor.current() ).
-            branch( Branch.from( "master" ) ).
-            build().
-            callWith( () -> nodeService.findCommits( nodeCommitQuery ) );
+        final NodeCommitQueryResult nodeCommitQueryResult = ContextBuilder.from( ContextAccessor.current() )
+            .branch( Branch.from( "master" ) )
+            .build()
+            .callWith( () -> nodeService.findCommits( nodeCommitQuery ) );
         assertEquals( 1, nodeCommitQueryResult.getTotalHits() );
 
-        final NodeCommitEntry commitEntry = nodeCommitQueryResult.getNodeCommitEntries().
-            iterator().
-            next();
+        final NodeCommitEntry commitEntry = nodeCommitQueryResult.getNodeCommitEntries().iterator().next();
         final NodeCommitId nodeCommitId = commitEntry.getNodeCommitId();
         assertEquals( "Dump upgrade", commitEntry.getMessage() );
         assertEquals( "user:system:node-su", commitEntry.getCommitter().toString() );
 
-        final GetActiveNodeVersionsParams activeNodeVersionsParams = GetActiveNodeVersionsParams.create().
-            nodeId( nodeId ).
-            branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
-            build();
-        final GetActiveNodeVersionsResult activeNodeVersionsResult = ContextBuilder.
-            from( ContextAccessor.current() ).
-            branch( Branch.from( "master" ) ).
-            build().
-            callWith( () -> nodeService.getActiveVersions( activeNodeVersionsParams ) );
-        final NodeVersionMetadata draftNodeVersion = activeNodeVersionsResult.getNodeVersions().
-            get( ContentConstants.BRANCH_DRAFT );
+        final GetActiveNodeVersionsParams activeNodeVersionsParams = GetActiveNodeVersionsParams.create()
+            .nodeId( nodeId )
+            .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+            .build();
+        final GetActiveNodeVersionsResult activeNodeVersionsResult = ContextBuilder.from( ContextAccessor.current() )
+            .branch( Branch.from( "master" ) )
+            .build()
+            .callWith( () -> nodeService.getActiveVersions( activeNodeVersionsParams ) );
+        final NodeVersionMetadata draftNodeVersion = activeNodeVersionsResult.getNodeVersions().get( ContentConstants.BRANCH_DRAFT );
         assertNull( draftNodeVersion.getNodeCommitId() );
-        final NodeVersionMetadata masterNodeVersion = activeNodeVersionsResult.getNodeVersions().
-            get( ContentConstants.BRANCH_MASTER );
+        final NodeVersionMetadata masterNodeVersion = activeNodeVersionsResult.getNodeVersions().get( ContentConstants.BRANCH_MASTER );
         assertEquals( nodeCommitId, masterNodeVersion.getNodeCommitId() );
 
-        final NodeVersionQuery nodeVersionQuery = NodeVersionQuery.create().
-            nodeId( nodeId ).
-            build();
-        final NodeVersionQueryResult versionQueryResult = ContextBuilder.
-            from( ContextAccessor.current() ).
-            branch( Branch.from( "draft" ) ).
-            build().
-            callWith( () -> nodeService.findVersions( nodeVersionQuery ) );
+        final NodeVersionQuery nodeVersionQuery = NodeVersionQuery.create().nodeId( nodeId ).build();
+        final NodeVersionQueryResult versionQueryResult = ContextBuilder.from( ContextAccessor.current() )
+            .branch( Branch.from( "draft" ) )
+            .build()
+            .callWith( () -> nodeService.findVersions( nodeVersionQuery ) );
         assertEquals( 16, versionQueryResult.getTotalHits() );
     }
 
@@ -948,39 +873,49 @@ public class DumpServiceImplTest
         assertNotNull( pageConfig.getSet( "com-enonic-app-superhero" ).getSet( "default" ) );
 
         //Checks layout component
-        final PropertySet layoutComponent = StreamSupport.stream( components.spliterator(), false ).
-            filter( component -> "/main/0".equals( component.getString( "path" ) ) ).findFirst().orElseThrow();
+        final PropertySet layoutComponent = StreamSupport.stream( components.spliterator(), false )
+            .filter( component -> "/main/0".equals( component.getString( "path" ) ) )
+            .findFirst()
+            .orElseThrow();
         assertEquals( "layout", layoutComponent.getString( "type" ) );
         final PropertySet layoutComponentData = layoutComponent.getSet( "layout" );
         assertEquals( "com.enonic.app.superhero:two-column", layoutComponentData.getString( "descriptor" ) );
         assertNotNull( layoutComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ).getSet( "two-column" ) );
 
         //Checks image component
-        final PropertySet imageComponent = StreamSupport.stream( components.spliterator(), false ).
-            filter( component -> "/main/0/left/0".equals( component.getString( "path" ) ) ).findFirst().orElseThrow();
+        final PropertySet imageComponent = StreamSupport.stream( components.spliterator(), false )
+            .filter( component -> "/main/0/left/0".equals( component.getString( "path" ) ) )
+            .findFirst()
+            .orElseThrow();
         assertEquals( "image", imageComponent.getString( "type" ) );
         final PropertySet imageComponentData = imageComponent.getSet( "image" );
         assertEquals( "cf09fe7a-1be9-46bb-ad84-87ba69630cb7", imageComponentData.getString( "id" ) );
         assertEquals( "A caption", imageComponentData.getString( "caption" ) );
 
         //Checks part component
-        final PropertySet partComponent = StreamSupport.stream( components.spliterator(), false ).
-            filter( component -> "/main/0/right/0".equals( component.getString( "path" ) ) ).findFirst().orElseThrow();
+        final PropertySet partComponent = StreamSupport.stream( components.spliterator(), false )
+            .filter( component -> "/main/0/right/0".equals( component.getString( "path" ) ) )
+            .findFirst()
+            .orElseThrow();
         assertEquals( "part", partComponent.getString( "type" ) );
         final PropertySet partComponentData = partComponent.getSet( "part" );
         assertEquals( "com.enonic.app.superhero:tag-cloud", partComponentData.getString( "descriptor" ) );
         assertNotNull( partComponentData.getSet( "config" ).getSet( "com-enonic-app-superhero" ).getSet( "tag-cloud" ) );
 
         //Checks fragment component
-        final PropertySet fragmentComponent = StreamSupport.stream( components.spliterator(), false ).
-            filter( component -> "/main/0/right/1".equals( component.getString( "path" ) ) ).findFirst().orElseThrow();
+        final PropertySet fragmentComponent = StreamSupport.stream( components.spliterator(), false )
+            .filter( component -> "/main/0/right/1".equals( component.getString( "path" ) ) )
+            .findFirst()
+            .orElseThrow();
         assertEquals( "fragment", fragmentComponent.getString( "type" ) );
         final PropertySet fragmentComponentData = fragmentComponent.getSet( "fragment" );
         assertEquals( "7ee16649-85c6-4a76-8788-74be03be6c7a", fragmentComponentData.getString( "id" ) );
 
         //Checks text component
-        final PropertySet textComponent = StreamSupport.stream( components.spliterator(), false ).
-            filter( component -> "/main/1".equals( component.getString( "path" ) ) ).findFirst().orElseThrow();
+        final PropertySet textComponent = StreamSupport.stream( components.spliterator(), false )
+            .filter( component -> "/main/1".equals( component.getString( "path" ) ) )
+            .findFirst()
+            .orElseThrow();
         assertEquals( "text", textComponent.getString( "type" ) );
         final PropertySet textComponentData = textComponent.getSet( "text" );
         assertEquals( "<p>text1</p>\n" + "\n" + "<p>&nbsp;</p>\n", textComponentData.getString( "value" ) );
@@ -1031,9 +966,7 @@ public class DumpServiceImplTest
     private Path createIncompatibleDump( final String dumpName )
         throws Exception
     {
-        final URI oldDumpUri = getClass().
-            getResource( "/dumps/dump-6-15-5" ).
-            toURI();
+        final URI oldDumpUri = getClass().getResource( "/dumps/dump-6-15-5" ).toURI();
         final Path oldDumpFile = Path.of( oldDumpUri );
         final Path tmpDumpFile = this.temporaryFolder.resolve( dumpName );
         FileUtils.copyDirectoryRecursively( oldDumpFile, tmpDumpFile );
@@ -1049,8 +982,9 @@ public class DumpServiceImplTest
     {
         final NodeVersion storedNode = nodeService.getByNodeVersionKey( version.getNodeVersionKey() );
 
-        storedNode.getAttachedBinaries().forEach( entry -> assertNotNull(
-            this.nodeService.getBinary( version.getNodeId(), version.getNodeVersionId(), entry.getBinaryReference() ) ) );
+        storedNode.getAttachedBinaries()
+            .forEach( entry -> assertNotNull(
+                this.nodeService.getBinary( version.getNodeId(), version.getNodeVersionId(), entry.getBinaryReference() ) ) );
 
         if ( version.getNodeVersionId().equals( node.getNodeVersionId() ) )
         {
@@ -1069,11 +1003,8 @@ public class DumpServiceImplTest
 
     private SystemLoadResult dumpDeleteAndLoad( final boolean clearBlobStore, final boolean includeVersions )
     {
-        final SystemDumpParams params = SystemDumpParams.create().
-            dumpName( "myTestDump" ).
-            includeVersions( includeVersions ).
-            includeBinaries( true ).
-            build();
+        final SystemDumpParams params =
+            SystemDumpParams.create().dumpName( "myTestDump" ).includeVersions( includeVersions ).includeBinaries( true ).build();
 
         return dumpDeleteAndLoad( clearBlobStore, params );
     }
@@ -1082,14 +1013,13 @@ public class DumpServiceImplTest
     {
         doDump( params );
 
-        doListRepositories().
-            stream().
-            map( Repository::getId ).
-            filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID ).
-                or( Predicate.isEqual( AUDIT_LOG_REPO_ID ) ).
-                or( Predicate.isEqual( SCHEDULER_REPO_ID ) ).
-                negate() ).
-            forEach( this::doDeleteRepository );
+        doListRepositories().stream()
+            .map( Repository::getId )
+            .filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID )
+                         .or( Predicate.isEqual( AUDIT_LOG_REPO_ID ) )
+                         .or( Predicate.isEqual( SCHEDULER_REPO_ID ) )
+                         .negate() )
+            .forEach( this::doDeleteRepository );
 
         // Then delete all system repositories
         doDeleteRepository( AUDIT_LOG_REPO_ID );
@@ -1114,10 +1044,7 @@ public class DumpServiceImplTest
 
     private SystemLoadResult doLoad()
     {
-        return this.dumpService.load( SystemLoadParams.create().
-            dumpName( "myTestDump" ).
-            includeVersions( true ).
-            build() );
+        return this.dumpService.load( SystemLoadParams.create().dumpName( "myTestDump" ).includeVersions( true ).build() );
     }
 
     private void doDump( final SystemDumpParams params )
@@ -1128,17 +1055,13 @@ public class DumpServiceImplTest
     private Repository doCreateRepository( final RepositoryId repositoryId, final AccessControlList permissions,
                                            final ChildOrder childOrder )
     {
-        final CreateRepositoryParams params = CreateRepositoryParams.create().
-            repositoryId( repositoryId ).
-            data( new PropertyTree() ).
-            build();
+        final CreateRepositoryParams params =
+            CreateRepositoryParams.create().repositoryId( repositoryId ).data( new PropertyTree() ).build();
 
         this.nodeRepositoryService.create( params );
 
-        final Repository createRepositoryParams = Repository.create().
-            id( repositoryId ).
-            branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).
-            build();
+        final Repository createRepositoryParams =
+            Repository.create().id( repositoryId ).branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).build();
 
         this.repositoryEntryService.createRepositoryEntry( createRepositoryParams );
 
@@ -1151,18 +1074,18 @@ public class DumpServiceImplTest
 
     private void createRootNode( final RepositoryId repositoryId, final AccessControlList permissions, final ChildOrder childOrder )
     {
-        final Context rootNodeContext = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( repositoryId ).
-            branch( RepositoryConstants.MASTER_BRANCH ).
-            build();
+        final Context rootNodeContext = ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( repositoryId )
+            .branch( RepositoryConstants.MASTER_BRANCH )
+            .build();
 
         final InternalContext rootNodeInternalContext = InternalContext.create( rootNodeContext ).build();
 
-        this.storageService.store( Node.createRoot().
-            permissions( permissions != null ? permissions : RepositoryConstants.DEFAULT_REPO_PERMISSIONS ).
-            inheritPermissions( false ).
-            childOrder( childOrder != null ? childOrder : RepositoryConstants.DEFAULT_CHILD_ORDER ).
-            build(), rootNodeInternalContext );
+        this.storageService.store( Node.createRoot()
+                                       .permissions( permissions != null ? permissions : RepositoryConstants.DEFAULT_REPO_PERMISSIONS )
+                                       .inheritPermissions( false )
+                                       .childOrder( childOrder != null ? childOrder : RepositoryConstants.DEFAULT_CHILD_ORDER )
+                                       .build(), rootNodeInternalContext );
 
         rootNodeContext.runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
     }
@@ -1179,23 +1102,21 @@ public class DumpServiceImplTest
     {
         final ImmutableList.Builder<Repository> repositories = ImmutableList.builder();
 
-        repositoryEntryService.findRepositoryEntryIds().stream().
-            map( repositoryEntryService::getRepositoryEntry ).
-            filter( Objects::nonNull ).
-            forEach( repositories::add );
+        repositoryEntryService.findRepositoryEntryIds()
+            .stream()
+            .map( repositoryEntryService::getRepositoryEntry )
+            .filter( Objects::nonNull )
+            .forEach( repositories::add );
 
         return Repositories.from( repositories.build() );
     }
 
     private Node updateNode( final Node node )
     {
-        return updateNode( UpdateNodeParams.create().
-            id( node.id() ).
-            editor( ( n ) -> {
-                // Guarantee new node version is created. Without it update is ignored because node is not changed.
-                // N.B. Writing "current time" (even System#nanoTime) does not have the same guarantee due low timer resolution.
-                n.data.setLong( "update", UPDATE_COUNTER.incrementAndGet() );
-            } ).
-            build() );
+        return updateNode( UpdateNodeParams.create().id( node.id() ).editor( ( n ) -> {
+            // Guarantee new node version is created. Without it update is ignored because node is not changed.
+            // N.B. Writing "current time" (even System#nanoTime) does not have the same guarantee due low timer resolution.
+            n.data.setLong( "update", UPDATE_COUNTER.incrementAndGet() );
+        } ).build() );
     }
 }
