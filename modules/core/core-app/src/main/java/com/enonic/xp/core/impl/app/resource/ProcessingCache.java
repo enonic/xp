@@ -75,11 +75,6 @@ public final class ProcessingCache
 
     private void removeIfNeeded( final ProcessingKey key )
     {
-        if ( this.runMode != RunMode.DEV )
-        {
-            return;
-        }
-
         final ProcessingEntry entry = this.map.get( key );
         if ( entry == null )
         {
