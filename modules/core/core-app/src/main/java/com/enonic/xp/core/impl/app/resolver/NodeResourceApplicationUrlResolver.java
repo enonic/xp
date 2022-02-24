@@ -49,7 +49,10 @@ public final class NodeResourceApplicationUrlResolver
 
             return nodes.getNodeHits()
                 .stream()
-                .map( nodeHit -> nodeHit.getNodePath().asRelative().toString() )
+                .map( nodeHit -> nodeHit.getNodePath()
+                    .removeFromBeginning( NodePath.create( applicationKey.toString() ).build() )
+                    .asRelative()
+                    .toString() )
                 .collect( Collectors.toSet() );
         } );
 
