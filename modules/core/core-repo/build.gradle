@@ -17,6 +17,7 @@ dependencies {
     testFixturesApi project( ':core:core-api' )
     testFixturesImplementation( project( ":core:core-audit" ) )
     testFixturesImplementation( project( ":core:core-scheduler" ) )
+    testFixturesImplementation( project( ":core:core-app" ) )
     testFixturesImplementation( testFixtures( project( ":core:core-blobstore" ) ) )
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testFixturesImplementation "org.mockito:mockito-core:${mockitoVersion}"

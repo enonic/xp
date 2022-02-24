@@ -16,6 +16,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.app.VirtualAppRepoInitializer;
 import com.enonic.xp.core.impl.audit.AuditLogConstants;
 import com.enonic.xp.core.impl.audit.AuditLogRepoInitializer;
 import com.enonic.xp.data.PropertyTree;
@@ -242,24 +243,18 @@ public abstract class AbstractNodeTest
 
     protected void bootstrap()
     {
-        SystemRepoInitializer.create().
-            setIndexServiceInternal( indexServiceInternal ).
-            setRepositoryService( repositoryService ).
-            setNodeStorageService( storageService ).
-            build().
-            initialize();
+        SystemRepoInitializer.create()
+            .setIndexServiceInternal( indexServiceInternal )
+            .setRepositoryService( repositoryService )
+            .setNodeStorageService( storageService )
+            .build()
+            .initialize();
 
-        AuditLogRepoInitializer.create().
-            setIndexService( indexService ).
-            setRepositoryService( repositoryService ).
-            build().
-            initialize();
+        AuditLogRepoInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
 
-        SchedulerRepoInitializer.create().
-            setIndexService( indexService ).
-            setRepositoryService( repositoryService ).
-            build().
-            initialize();
+        SchedulerRepoInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
+
+        VirtualAppRepoInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
     }
 
     private void setUpRepositoryServices()

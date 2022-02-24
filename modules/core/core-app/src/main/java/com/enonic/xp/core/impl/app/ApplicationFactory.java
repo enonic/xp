@@ -47,18 +47,19 @@ final class ApplicationFactory
     ApplicationUrlResolver createUrlResolver( final Bundle bundle )
     {
         final ApplicationUrlResolver bundleUrlResolver = new BundleApplicationUrlResolver( bundle );
+        final ApplicationUrlResolver nodeResourceApplicationResolver = createNodeResourceApplicationResolver( bundle );
+
         if ( this.runMode != RunMode.DEV )
         {
-            return bundleUrlResolver;
+            return new MultiApplicationUrlResolver( nodeResourceApplicationResolver, bundleUrlResolver );
         }
 
         final List<String> sourcePaths = ApplicationHelper.getSourcePaths( bundle );
         if ( sourcePaths.isEmpty() )
         {
-            return bundleUrlResolver;
+            return new MultiApplicationUrlResolver( nodeResourceApplicationResolver, bundleUrlResolver );
         }
 
-        final ApplicationUrlResolver nodeResourceApplicationResolver = createNodeResourceApplicationResolver( bundle );
         final ApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
 
         return new MultiApplicationUrlResolver( nodeResourceApplicationResolver, classLoaderUrlResolver, bundleUrlResolver );
