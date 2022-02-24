@@ -8,7 +8,6 @@ import org.osgi.framework.Bundle;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
-import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.RunMode;
@@ -47,7 +46,7 @@ public class ApplicationFactoryTest
 
         final ApplicationUrlResolver resolver = new ApplicationFactory( RunMode.PROD, nodeService ).createUrlResolver( bundle );
         assertNotNull( resolver );
-        assertTrue( resolver instanceof BundleApplicationUrlResolver );
+        assertTrue( resolver instanceof MultiApplicationUrlResolver );
     }
 
     @Test
@@ -69,7 +68,7 @@ public class ApplicationFactoryTest
 
         final ApplicationUrlResolver resolver = new ApplicationFactory( RunMode.DEV, nodeService ).createUrlResolver( bundle );
         assertNotNull( resolver );
-        assertTrue( resolver instanceof BundleApplicationUrlResolver );
+        assertTrue( resolver instanceof MultiApplicationUrlResolver );
     }
 
     private Bundle deploy( final String name, final boolean isApp, final boolean hasSourcePath )
