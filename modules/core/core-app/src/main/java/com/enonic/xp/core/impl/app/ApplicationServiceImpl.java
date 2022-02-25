@@ -74,9 +74,9 @@ public final class ApplicationServiceImpl
     @Deactivate
     public void deactivate()
     {
-        for ( ApplicationKey applicationKey : registry.getKeys() )
+        for ( Application applicationKey : registry.getAll() )
         {
-            registry.uninstallApplication( applicationKey );
+            registry.uninstallApplication( applicationKey.getKey() );
         }
     }
 
@@ -89,13 +89,13 @@ public final class ApplicationServiceImpl
     @Override
     public ApplicationKeys getInstalledApplicationKeys()
     {
-        return this.registry.getKeys();
+        return getInstalledApplications().getApplicationKeys();
     }
 
     @Override
     public Applications getInstalledApplications()
     {
-        return registry.getAll();
+        return Applications.from( this.registry.getAll() );
     }
 
     @Override

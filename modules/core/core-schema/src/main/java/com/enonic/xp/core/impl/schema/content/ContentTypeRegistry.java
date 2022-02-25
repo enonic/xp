@@ -6,8 +6,6 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableList;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
@@ -55,17 +53,15 @@ final class ContentTypeRegistry
 
     public ContentTypes getByApplication( final ApplicationKey key )
     {
-        return ContentTypes.from( namesStream( ApplicationKeys.from( key ) ).map( this::get )
-                                      .filter( Objects::nonNull )
-                                      .collect( ImmutableList.toImmutableList() ) );
+        return ContentTypes.from( namesStream( ApplicationKeys.from( key ) ).map( this::get ).filter( Objects::nonNull ).iterator() );
     }
 
     public ContentTypes getAll()
     {
         return ContentTypes.from( Stream.concat( this.builtInTypes.getAll().stream(),
-                                                 namesStream( this.applicationService.getInstalledApplicationKeys() ).map( this::get ) )
-                                      .filter( Objects::nonNull )
-                                      .collect( ImmutableList.toImmutableList() ) );
+                                                 namesStream( this.applicationService.getInstalledApplications().getApplicationKeys() ).map(
+                                                     this::get ) )
+                                      .filter( Objects::nonNull ).iterator() );
     }
 
     private Stream<ContentTypeName> namesStream( final ApplicationKeys applicationKeys )

@@ -47,7 +47,8 @@ final class ApplicationFactory
     ApplicationUrlResolver createUrlResolver( final Bundle bundle )
     {
         final ApplicationUrlResolver bundleUrlResolver = new BundleApplicationUrlResolver( bundle );
-        final ApplicationUrlResolver nodeResourceApplicationResolver = createNodeResourceApplicationResolver( bundle );
+        final ApplicationUrlResolver nodeResourceApplicationResolver =
+            new NodeResourceApplicationUrlResolver( ApplicationKey.from( bundle ), nodeService );
 
         if ( this.runMode != RunMode.DEV )
         {
@@ -76,11 +77,6 @@ final class ApplicationFactory
         final List<URL> urls = getSearchPathUrls( sourcePaths );
         return new ClassLoaderApplicationUrlResolver( new URLClassLoader( urls.toArray( URL[]::new ), null ),
                                                       ApplicationKey.from( bundle ) );
-    }
-
-    private ApplicationUrlResolver createNodeResourceApplicationResolver( final Bundle bundle )
-    {
-        return new NodeResourceApplicationUrlResolver( bundle, nodeService );
     }
 
     private List<URL> getSearchPathUrls( final List<String> paths )
