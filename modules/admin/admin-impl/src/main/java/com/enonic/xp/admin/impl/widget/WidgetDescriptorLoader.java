@@ -1,18 +1,12 @@
 package com.enonic.xp.admin.impl.widget;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.time.Instant;
 
-import org.osgi.framework.Bundle;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.DescriptorLoader;
@@ -29,8 +23,6 @@ public final class WidgetDescriptorLoader
     private static final String PATH = "/admin/widgets";
 
     private ResourceService resourceService;
-
-    private ApplicationService applicationService;
 
     @Override
     public Class<WidgetDescriptor> getType()
@@ -81,12 +73,6 @@ public final class WidgetDescriptorLoader
         this.resourceService = resourceService;
     }
 
-    @Reference
-    public void setApplicationService( final ApplicationService applicationService )
-    {
-        this.applicationService = applicationService;
-    }
-
     private void parseXml( final ApplicationKey applicationKey, final WidgetDescriptor.Builder builder, final String xml )
     {
         final XmlWidgetDescriptorParser parser = new XmlWidgetDescriptorParser();
@@ -98,34 +84,17 @@ public final class WidgetDescriptorLoader
 
     private Icon loadIcon( final DescriptorKey key )
     {
-        final Application application = this.applicationService.getInstalledApplication( key.getApplicationKey() );
+        final String iconPath = PATH + "/" + key.getName() + "/" + key.getName() + ".svg";
 
-        if ( application != null )
+        final ResourceKey resourceKey = ResourceKey.from( key.getApplicationKey(), iconPath );
+        final Resource resource = this.resourceService.getResource( resourceKey );
+
+        if ( !resource.exists() )
         {
-            final String iconPath = PATH + "/" + key.getName() + "/" + key.getName() + ".svg";
-            final Bundle bundle = application.getBundle();
-
-            if ( this.hasAppIcon( bundle, iconPath ) )
-            {
-                final URL iconUrl = bundle.getResource( iconPath );
-                try (InputStream stream = iconUrl.openStream())
-                {
-                    final byte[] iconData = stream.readAllBytes();
-                    return Icon.from( iconData, "image/svg+xml", Instant.ofEpochMilli( bundle.getLastModified() ) );
-                }
-                catch ( IOException e )
-                {
-                    throw new RuntimeException( "Unable to load widget icon for " + bundle.getSymbolicName() + ":" + key.getName(), e );
-                }
-            }
+            return null;
         }
 
-        return null;
-    }
-
-    private boolean hasAppIcon( final Bundle bundle, final String iconPath )
-    {
-        final URL entry = bundle.getEntry( iconPath );
-        return entry != null;
+        final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
+        return Icon.from( resource.readBytes(), "image/svg+xml", modifiedTime );
     }
 }

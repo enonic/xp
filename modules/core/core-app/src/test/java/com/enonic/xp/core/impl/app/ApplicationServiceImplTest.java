@@ -64,6 +64,8 @@ public class ApplicationServiceImplTest
 
     private AppFilterService appFilterService;
 
+    private VirtualAppService virtualAppService;
+
     @BeforeEach
     public void initService()
     {
@@ -83,7 +85,7 @@ public class ApplicationServiceImplTest
         auditLogSupport.activate( appConfig );
 
         this.service = new ApplicationServiceImpl( bundleContext, applicationRegistry, repoService, eventPublisher, appFilterService,
-                                                   auditLogSupport );
+                                                   virtualAppService, auditLogSupport );
     }
 
     @Test
@@ -771,7 +773,7 @@ public class ApplicationServiceImplTest
         applicationRegistry.configureApplication( bundle3, mock( Configuration.class ) );
 
         service.deactivate();
-        assertThat( applicationRegistry.getKeys() ).containsOnly( ApplicationKey.from( "systemApp" ) );
+        assertThat( applicationRegistry.getAll() ).map( Application::getKey ).containsOnly( ApplicationKey.from( "systemApp" ) );
     }
 
     @Test

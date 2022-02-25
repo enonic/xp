@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.app;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.Application;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -36,7 +35,6 @@ class ApplicationNodeTransformer
         data.setString( ApplicationPropertyNames.VENDOR_NAME, app.getVendorName() );
         data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, app.getModifiedTime() );
         data.setBinaryReference( APPLICATION_BINARY_REF, BinaryReference.from( APPLICATION_BINARY_REF ) );
-        addFiles( app, data );
         return data;
     }
 
@@ -47,14 +45,5 @@ class ApplicationNodeTransformer
             attachBinary( BinaryReference.from( APPLICATION_BINARY_REF ), source ).
             editor( node -> node.data = createApplicationProperties( app ) ).
             build();
-    }
-
-    private static void addFiles( final Application app, final PropertyTree data )
-    {
-        final PropertySet filesSet = data.addSet( ApplicationPropertyNames.FILES );
-        for ( final String file : app.getFiles() )
-        {
-            filesSet.addString( ApplicationPropertyNames.FILE, file );
-        }
     }
 }

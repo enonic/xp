@@ -3,8 +3,6 @@ package com.enonic.xp.core.impl.app.resolver;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.osgi.framework.Bundle;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.VirtualAppContext;
 import com.enonic.xp.data.PropertySet;
@@ -28,9 +26,9 @@ public final class NodeResourceApplicationUrlResolver
 
     private final NodeService nodeService;
 
-    public NodeResourceApplicationUrlResolver( final Bundle bundle, final NodeService nodeService )
+    public NodeResourceApplicationUrlResolver( final ApplicationKey applicationKey, final NodeService nodeService )
     {
-        this.applicationKey = ApplicationKey.from( bundle );
+        this.applicationKey = applicationKey;
         this.nodeService = nodeService;
     }
 
