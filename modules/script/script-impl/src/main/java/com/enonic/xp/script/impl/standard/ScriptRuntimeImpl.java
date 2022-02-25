@@ -9,8 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
@@ -34,8 +34,17 @@ class ScriptRuntimeImpl
     @Override
     public boolean hasScript( final ResourceKey script )
     {
-        final ResourceService service = getExecutor( script.getApplicationKey() ).getResourceService();
-        return service.getResource( script ).exists();
+        final ScriptExecutor executor;
+        try
+        {
+            executor = getExecutor( script.getApplicationKey() );
+        }
+        catch ( ApplicationNotFoundException e )
+        {
+            return false;
+        }
+
+        return executor.getResourceService().getResource( script ).exists();
     }
 
     @Override
