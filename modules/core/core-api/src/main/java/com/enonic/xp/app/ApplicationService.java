@@ -13,6 +13,7 @@ public interface ApplicationService
     Application getInstalledApplication( ApplicationKey key )
         throws ApplicationNotFoundException;
 
+    @Deprecated
     ApplicationKeys getInstalledApplicationKeys();
 
     Applications getInstalledApplications();

@@ -761,7 +761,7 @@ public class ApplicationServiceImplTest
         applicationRegistry.configureApplication( bundle3, mock( Configuration.class ) );
 
         service.deactivate();
-        assertThat( applicationRegistry.getKeys() ).containsOnly( ApplicationKey.from( "systemApp" ) );
+        assertThat( applicationRegistry.getAll() ).map( Application::getKey ).containsOnly( ApplicationKey.from( "systemApp" ) );
     }
 
     @Test

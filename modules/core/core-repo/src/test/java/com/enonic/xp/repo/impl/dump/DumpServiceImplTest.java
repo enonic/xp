@@ -13,8 +13,6 @@ import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -98,7 +96,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class DumpServiceImplTest
     extends AbstractNodeTest
@@ -111,12 +108,7 @@ public class DumpServiceImplTest
     public void setUp()
         throws Exception
     {
-        final BundleContext bundleContext = mock( BundleContext.class );
-        final Bundle bundle = mock( Bundle.class );
-        when( bundleContext.getBundle() ).thenReturn( bundle );
-        when( bundle.getVersion() ).thenReturn( org.osgi.framework.Version.emptyVersion );
-
-        this.dumpService = new DumpServiceImpl( bundleContext, eventPublisher );
+        this.dumpService = new DumpServiceImpl( eventPublisher );
         this.dumpService.setBlobStore( this.blobStore );
         this.dumpService.setNodeService( this.nodeService );
         this.dumpService.setNodeRepositoryService( this.nodeRepositoryService );

@@ -43,6 +43,7 @@ public interface Application
 
     boolean isStarted();
 
+    @Deprecated
     Set<String> getFiles();
 
     @Deprecated

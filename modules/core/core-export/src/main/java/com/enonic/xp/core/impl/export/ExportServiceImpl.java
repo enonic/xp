@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.export;
 import java.nio.file.Path;
 import java.util.Optional;
 
-import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -15,6 +14,7 @@ import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.vfs.VirtualFile;
 import com.enonic.xp.vfs.VirtualFiles;
 
@@ -30,10 +30,10 @@ public class ExportServiceImpl
     private final Path exportsDir;
 
     @Activate
-    public ExportServiceImpl( final ComponentContext context, @Reference final ExportConfiguration exportConfiguration,
+    public ExportServiceImpl( @Reference final ExportConfiguration exportConfiguration,
                               @Reference final NodeService nodeService )
     {
-        this.xpVersion = context.getBundleContext().getBundle().getVersion().toString();
+        this.xpVersion = VersionInfo.get().getVersion();
         this.exportsDir = exportConfiguration.getExportsDir();
         this.nodeService = nodeService;
     }
