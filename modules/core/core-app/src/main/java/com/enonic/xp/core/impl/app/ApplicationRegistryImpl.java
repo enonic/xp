@@ -21,8 +21,6 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.app.Applications;
 import com.enonic.xp.config.Configuration;
 
 import static java.util.Objects.requireNonNull;
@@ -53,21 +51,15 @@ public class ApplicationRegistryImpl
     }
 
     @Override
-    public ApplicationKeys getKeys()
-    {
-        return ApplicationKeys.from( applications.keySet() );
-    }
-
-    @Override
     public Application get( final ApplicationKey key )
     {
         return applications.get( key );
     }
 
     @Override
-    public Applications getAll()
+    public List<Application> getAll()
     {
-        return Applications.from( applications.values() );
+        return List.copyOf( applications.values() );
     }
 
     @Override
