@@ -178,7 +178,8 @@ class ResourceServiceImplTest
         when( nodeService.getByPath( NodePath.create( "myapp/site/parts/my-part/my-part.xml" ).build().asAbsolute() ) ).thenReturn(
             partSchemaNode );
 
-        final ApplicationUrlResolver applicationUrlResolver = new NodeResourceApplicationUrlResolver( bundle, nodeService );
+        final ApplicationUrlResolver applicationUrlResolver =
+            new NodeResourceApplicationUrlResolver( ApplicationKey.from( "myapp" ), nodeService );
 
         when( application.getUrlResolver() ).thenReturn( applicationUrlResolver );
 
