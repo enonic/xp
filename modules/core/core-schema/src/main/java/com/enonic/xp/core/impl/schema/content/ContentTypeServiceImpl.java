@@ -30,7 +30,7 @@ public final class ContentTypeServiceImpl
     public ContentTypeServiceImpl( final @Reference ResourceService resourceService, @Reference final ApplicationService applicationService,
                                    final @Reference MixinService mixinService )
     {
-        this.registry = new ContentTypeRegistry( resourceService, applicationService );
+        this.registry = new ContentTypeRegistry( new ContentTypeLoader( resourceService ), applicationService );
         this.mixinService = mixinService;
     }
 

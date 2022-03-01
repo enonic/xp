@@ -9,7 +9,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.VirtualAppService;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexService;
@@ -27,9 +26,8 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 
-@Component(immediate = true)
-public class VirtualAppServiceImpl
-    implements VirtualAppService
+@Component(immediate = true, service = VirtualAppService.class)
+public class VirtualAppService
 {
     private final IndexService indexService;
 
@@ -38,8 +36,8 @@ public class VirtualAppServiceImpl
     private final NodeService nodeService;
 
     @Activate
-    public VirtualAppServiceImpl( @Reference final IndexService indexService, @Reference final RepositoryService repositoryService,
-                                  @Reference final NodeService nodeService )
+    public VirtualAppService( @Reference final IndexService indexService, @Reference final RepositoryService repositoryService,
+                              @Reference final NodeService nodeService )
     {
         this.indexService = indexService;
         this.repositoryService = repositoryService;
@@ -127,7 +125,6 @@ public class VirtualAppServiceImpl
                                        .build() ).id();
     }
 
-    @Override
     public List<Application> list()
     {
         PropertyTree request = new PropertyTree();
@@ -140,17 +137,14 @@ public class VirtualAppServiceImpl
                 NodeQuery.create().query( QueryExpr.from( DslExpr.from( request ) ) ).withPath( true ).build() );
             return nodes.getNodeHits()
                 .stream()
-                .map( nodeHit -> nodeHit.getNodePath()
-                    .getElementAsString(0)
-                     )
+                .map( nodeHit -> nodeHit.getNodePath().getElementAsString( 0 ) )
                 .map( ApplicationKey::from )
                 .distinct()
-                .map( key -> VirtualAppFactory.create( ApplicationKey.from( "com.enonic.app.test" ), nodeService ) )
+                .map( key -> VirtualAppFactory.create( key, nodeService ) )
                 .collect( Collectors.toList() );
         } );
     }
 
-    @Override
     public Application get( final ApplicationKey applicationKey )
     {
         PropertyTree request = new PropertyTree();
@@ -163,7 +157,7 @@ public class VirtualAppServiceImpl
                 NodeQuery.create().query( QueryExpr.from( DslExpr.from( request ) ) ).withPath( true ).build() );
             if ( nodes.getTotalHits() != 0 )
             {
-                return VirtualAppFactory.create( applicationKey, nodeService ) ;
+                return VirtualAppFactory.create( applicationKey, nodeService );
             }
             else
             {
