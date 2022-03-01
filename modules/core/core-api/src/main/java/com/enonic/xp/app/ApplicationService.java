@@ -13,10 +13,14 @@ public interface ApplicationService
     Application getInstalledApplication( ApplicationKey key )
         throws ApplicationNotFoundException;
 
+    Application getApplication( ApplicationKey key );
+
     @Deprecated
     ApplicationKeys getInstalledApplicationKeys();
 
     Applications getInstalledApplications();
+
+    Applications getAllApplications();
 
     boolean isLocalApplication( ApplicationKey key );
 
@@ -52,4 +56,5 @@ public interface ApplicationService
     void installAllStoredApplications();
 
     void installAllStoredApplications( ApplicationInstallationParams params );
+
 }
