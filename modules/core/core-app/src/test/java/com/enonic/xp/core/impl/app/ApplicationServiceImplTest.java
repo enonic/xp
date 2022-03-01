@@ -64,6 +64,8 @@ public class ApplicationServiceImplTest
 
     private AppFilterService appFilterService;
 
+    private VirtualAppService virtualAppService;
+
     @BeforeEach
     public void initService()
     {
@@ -83,7 +85,7 @@ public class ApplicationServiceImplTest
         auditLogSupport.activate( appConfig );
 
         this.service = new ApplicationServiceImpl( bundleContext, applicationRegistry, repoService, eventPublisher, appFilterService,
-                                                   auditLogSupport );
+                                                   virtualAppService, auditLogSupport );
     }
 
     @Test
